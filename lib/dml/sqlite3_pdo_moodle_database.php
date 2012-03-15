@@ -260,13 +260,6 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
                     $columninfo['meta_type'] = 'C';
                     break;
                 case 'enu': // enums
-                    if (preg_match('|'.$columninfo['name'].'\W+in\W+\(/\*liststart\*/(.*?)/\*listend\*/\)|im', $createsql, $tmp)) {
-                        $tmp = explode(',', $tmp[1]);
-                        foreach($tmp as $value) {
-                            $columninfo['enums'][] = trim($value, '\'"');
-                        }
-                        unset($tmp);
-                    }
                     $columninfo['meta_type'] = 'C';
                     break;
                 case 'tex': // text

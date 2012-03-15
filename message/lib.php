@@ -470,7 +470,6 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
  */
 function message_print_usergroup_selector($viewing, $courses, $coursecontexts, $countunreadtotal, $countblocked, $strunreadmessages) {
     $options = array();
-    $textlib = textlib_get_instance(); // going to use textlib services
 
     if ($countunreadtotal>0) { //if there are unread messages
         $options[MESSAGE_VIEW_UNREAD_MESSAGES] = $strunreadmessages;
@@ -489,8 +488,8 @@ function message_print_usergroup_selector($viewing, $courses, $coursecontexts, $
             if (has_capability('moodle/course:viewparticipants', $coursecontexts[$course->id])) {
                 //Not using short_text() as we want the end of the course name. Not the beginning.
                 $shortname = format_string($course->shortname, true, array('context' => $coursecontexts[$course->id]));
-                if ($textlib->strlen($shortname) > MESSAGE_MAX_COURSE_NAME_LENGTH) {
-                    $courses_options[MESSAGE_VIEW_COURSE.$course->id] = '...'.$textlib->substr($shortname, -MESSAGE_MAX_COURSE_NAME_LENGTH);
+                if (textlib::strlen($shortname) > MESSAGE_MAX_COURSE_NAME_LENGTH) {
+                    $courses_options[MESSAGE_VIEW_COURSE.$course->id] = '...'.textlib::substr($shortname, -MESSAGE_MAX_COURSE_NAME_LENGTH);
                 } else {
                     $courses_options[MESSAGE_VIEW_COURSE.$course->id] = $shortname;
                 }
@@ -1529,6 +1528,11 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
 ///
     global $CFG, $USER, $DB;
 
+    // If user is searching all messages check they are allowed to before doing anything else
+    if ($courseid == SITEID && !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
+        print_error('accessdenied','admin');
+    }
+
     /// If no userid sent then assume current user
     if ($userid == 0) $userid = $USER->id;
 
@@ -2034,26 +2038,6 @@ function message_post_message($userfrom, $userto, $message, $format) {
 
     $eventdata->timecreated     = time();
     return message_send($eventdata);
-}
-
-
-/**
- * Returns a list of all user ids who have used messaging in the site
- * This was the simple way to code the SQL ... is it going to blow up
- * on large datasets?
- *
- * @deprecated To be deleted in 2.2 MDL-31709
- * @return array
- */
-function message_get_participants() {
-    global $CFG, $DB;
-
-        return $DB->get_records_sql("SELECT useridfrom as id,1 FROM {message}
-                               UNION SELECT useridto as id,1 FROM {message}
-                               UNION SELECT useridfrom as id,1 FROM {message_read}
-                               UNION SELECT useridto as id,1 FROM {message_read}
-                               UNION SELECT userid as id,1 FROM {message_contacts}
-                               UNION SELECT contactid as id,1 from {message_contacts}");
 }
 
 /**

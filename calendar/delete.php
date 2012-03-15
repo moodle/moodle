@@ -68,8 +68,8 @@ $event->count_repeats();
 
 // Is used several times, and sometimes with modification if required
 $viewcalendarurl = new moodle_url(CALENDAR_URL.'view.php', array('view'=>'upcoming'));
-$viewcalendarurl->param('cal_y', date('Y', $event->timestart));
-$viewcalendarurl->param('cal_m', date('m', $event->timestart));
+$viewcalendarurl->param('cal_y', userdate($event->timestart, '%Y'));
+$viewcalendarurl->param('cal_m', userdate($event->timestart, '%m'));
 
 // If confirm is set (PARAM_BOOL) then we have confirmation of initention to delete
 if ($confirm) {

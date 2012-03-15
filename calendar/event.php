@@ -168,9 +168,9 @@ if ($data) {
 
     $params = array(
         'view' => 'day',
-        'cal_d' => date('j', $event->timestart),
-        'cal_m' => date('n', $event->timestart),
-        'cal_y' => date('y', $event->timestart),
+        'cal_d' => userdate($event->timestart, '%d'),
+        'cal_m' => userdate($event->timestart, '%m'),
+        'cal_y' => userdate($event->timestart, '%Y'),
     );
     $eventurl = new moodle_url('/calendar/view.php', $params);
     if (!empty($event->courseid) && $event->courseid != SITEID) {

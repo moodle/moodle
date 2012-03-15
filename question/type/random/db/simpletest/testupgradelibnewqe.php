@@ -232,7 +232,7 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
-            'questionsummary' => "(Notice in the panel at the left that the question you have just done is now greyed out. Remember that you can REVISIT ANY QUESTIONS by clicking on the NUMBERED BOXES. Click Q1 now to try this out and then click Q2 to return here.) \n\n[Table 1 showing Number of households receiving home care (England)] \n\n()  \n\nWhich was the first year when more than a quarter of a million households received care from independent agencies?",
+            'questionsummary' => "(Notice in the panel at the left that the question you have just done is now greyed out. Remember that you can REVISIT ANY QUESTIONS by clicking on the NUMBERED BOXES. Click Q1 now to try this out and then click Q2 to return here.) \n\n[Table 1 showing Number of households receiving home care (England)] \n\n(LINK TO RESIZABLE TABLE 1)  \n\nWhich was the first year when more than a quarter of a million households received care from independent agencies?",
             'rightanswer' => '2005',
             'responsesummary' => '2005',
             'timemodified' => 1238182723,

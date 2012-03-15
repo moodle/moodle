@@ -68,8 +68,7 @@ $leftcols = 1 + count($extrafields);
 function csv_quote($value) {
     global $excel;
     if ($excel) {
-        $tl = textlib_get_instance();
-        return $tl->convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
+        return textlib::convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
     } else {
         return '"'.str_replace('"',"'",$value).'"';
     }
@@ -90,6 +89,9 @@ if ($group === 0 && $course->groupmode == SEPARATEGROUPS) {
 /**
  * Load data
  */
+
+// Retrieve course_module data for all modules in the course
+$modinfo = get_fast_modinfo($course);
 
 // Get criteria for course
 $completion = new completion_info($course);
@@ -145,9 +147,8 @@ if (!$csv) {
  */
 if ($csv) {
     $shortname = format_string($course->shortname, true, array('context' => $context));
-    $textlib = textlib_get_instance();
     header('Content-Disposition: attachment; filename=progress.'.
-        preg_replace('/[^a-z0-9-]/','_',$textlib->strtolower(strip_tags($shortname))).'.csv');
+        preg_replace('/[^a-z0-9-]/','_',textlib::strtolower(strip_tags($shortname))).'.csv');
     // Unicode byte-order mark for Excel
     if ($excel) {
         header('Content-Type: text/csv; charset=UTF-16LE');
@@ -335,6 +336,7 @@ if (!$csv) {
         exit;
     }
 
+    print '<div id="completion-progress-wrapper" class="no-overflow">';
     print '<table id="completion-progress" class="generaltable flexible boxaligncenter completionreport" style="text-align: left" cellpadding="5" border="1">';
 
     // Print criteria group names
@@ -492,13 +494,10 @@ if (!$csv) {
         switch ($criterion->criteriatype) {
 
             case COMPLETION_CRITERIA_TYPE_ACTIVITY:
-                // Load activity
-                $activity = $criterion->get_mod_instance();
-
                 // Display icon
                 $icon = $OUTPUT->pix_url('icon', $criterion->module);
                 $iconlink = $CFG->wwwroot.'/mod/'.$criterion->module.'/view.php?id='.$criterion->moduleinstance;
-                $icontitle = $activity->name;
+                $icontitle = $modinfo->cms[$criterion->moduleinstance]->name;
                 $iconalt = get_string('modulename', $criterion->module);
                 break;
 
@@ -577,10 +576,7 @@ foreach ($progress as $user) {
         if ($criterion->criteriatype == COMPLETION_CRITERIA_TYPE_ACTIVITY) {
 
             // Load activity
-            $mod = $criterion->get_mod_instance();
-            $activity = $DB->get_record('course_modules', array('id' => $criterion->moduleinstance));
-            $activity->name = $mod->name;
-
+            $activity = $modinfo->cms[$criterion->moduleinstance];
 
             // Get progress information and state
             if (array_key_exists($activity->id,$user->progress)) {
@@ -707,6 +703,7 @@ if ($csv) {
     exit;
 }
 print '</table>';
+print '</div>';
 print $pagingbar;
 
 print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.

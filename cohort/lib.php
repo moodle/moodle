@@ -71,8 +71,9 @@ function cohort_add_cohort($cohort) {
  */
 function cohort_update_cohort($cohort) {
     global $DB;
-    if (isset($cohort->component) and empty($cohort->component)) {
-        $cohort->component = NULL;
+    if (property_exists($cohort, 'component') and empty($cohort->component)) {
+        // prevent NULLs
+        $cohort->component = '';
     }
     $cohort->timemodified = time();
     $DB->update_record('cohort', $cohort);

@@ -474,7 +474,13 @@ class moodle_url {
             $params = $this->params;
         }
         foreach ($params as $key => $val) {
-           $arr[] = rawurlencode($key)."=".rawurlencode($val);
+            if (is_array($val)) {
+                foreach ($val as $index => $value) {
+                    $arr[] = rawurlencode($key.'['.$index.']')."=".rawurlencode($value);
+                }
+            } else {
+                $arr[] = rawurlencode($key)."=".rawurlencode($val);
+            }
         }
         if ($escaped) {
             return implode('&amp;', $arr);
@@ -776,20 +782,17 @@ function data_submitted() {
  */
 function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 
-/// Loading the textlib singleton instance. We are going to need it.
-    $textlib = textlib_get_instance();
-
 /// First of all, save all the tags inside the text to skip them
     $tags = array();
     filter_save_tags($string,$tags);
 
 /// Process the string adding the cut when necessary
     $output = '';
-    $length = $textlib->strlen($string);
+    $length = textlib::strlen($string);
     $wordlength = 0;
 
     for ($i=0; $i<$length; $i++) {
-        $char = $textlib->substr($string, $i, 1);
+        $char = textlib::substr($string, $i, 1);
         if ($char == ' ' or $char == "\t" or $char == "\n" or $char == "\r" or $char == "<" or $char == ">") {
             $wordlength = 0;
         } else {
@@ -1696,7 +1699,7 @@ function highlightfast($needle, $haystack) {
         return $haystack;
     }
 
-    $parts = explode(moodle_strtolower($needle), moodle_strtolower($haystack));
+    $parts = explode(textlib::strtolower($needle), textlib::strtolower($haystack));
 
     if (count($parts) === 1) {
         return $haystack;
@@ -2721,7 +2724,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
     global $CFG, $USER, $UNITTEST;
 
     $forcedebug = false;
-    if (!empty($CFG->debugusers)) {
+    if (!empty($CFG->debugusers) && $USER) {
         $debugusers = explode(',', $CFG->debugusers);
         $forcedebug = in_array($USER->id, $debugusers);
     }

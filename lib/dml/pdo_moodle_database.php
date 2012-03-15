@@ -226,7 +226,7 @@ abstract class pdo_moodle_database extends moodle_database {
 
     /**
      * Execute general sql query. Should be used only when no other method suitable.
-     * Do NOT use this to make changes in db structure, use database_manager::execute_sql() instead!
+     * Do NOT use this to make changes in db structure, use database_manager methods instead!
      * @param string $sql query
      * @param array $params query parameters
      * @return bool success
@@ -410,17 +410,6 @@ abstract class pdo_moodle_database extends moodle_database {
             $column = $columns[$field];
             if (is_bool($value)) {
                 $value = (int)$value; // prevent "false" problems
-            }
-            if (!empty($column->enums)) {
-                // workaround for problem with wrong enums
-                if (is_null($value) and !$column->not_null) {
-                    // ok - nulls allowed
-                } else {
-                    if (!in_array((string)$value, $column->enums)) {
-                        debugging('Enum value '.s($value).' not allowed in field '.$field.' table '.$table.'.');
-                        return false;
-                    }
-                }
             }
             $cleaned[$field] = $value;
         }

@@ -1306,7 +1306,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
     static $categories = array();
     static $cachedcat = array();
     if ($cachecat != -1 && array_search($cachecat, $cachedcat) === false) {
-        $questions += $DB->get_records('question', array('category' => $cachecat));
+        $questions += $DB->get_records('question', array('category' => $cachecat), '', 'id,category,createdby');
         $cachedcat[] = $cachecat;
     }
     if (!is_object($question)) {
@@ -1649,14 +1649,16 @@ class question_edit_contexts {
 /**
  * Helps call file_rewrite_pluginfile_urls with the right parameters.
  *
+ * @package  core_question
+ * @category files
  * @param string $text text being processed
  * @param string $file the php script used to serve files
- * @param int $contextid
+ * @param int $contextid context ID
  * @param string $component component
  * @param string $filearea filearea
  * @param array $ids other IDs will be used to check file permission
- * @param int $itemid
- * @param array $options
+ * @param int $itemid item ID
+ * @param array $options options
  * @return string
  */
 function question_rewrite_question_urls($text, $file, $contextid, $component,
@@ -1729,8 +1731,10 @@ function question_send_questiontext_file($questionid, $args, $forcedownload) {
  *
  * Does not return, either calls send_file_not_found(); or serves the file.
  *
- * @param object $course course settings object
- * @param object $context context object
+ * @package  core_question
+ * @category files
+ * @param stdClass $course course settings object
+ * @param stdClass $context context object
  * @param string $component the name of the component we are serving files for.
  * @param string $filearea the name of the file area.
  * @param array $args the remaining bits of the file path.
@@ -1840,7 +1844,10 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
 
 /**
  * Serve questiontext files in the question text when they are displayed in this report.
- * @param context $context the context
+ *
+ * @package  core_files
+ * @category files
+ * @param stdClass $context the context
  * @param int $questionid the question id
  * @param array $args remaining file args
  * @param bool $forcedownload

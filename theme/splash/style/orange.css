@@ -2,129 +2,85 @@
 **
 ** Theme name: Splash
 ** Creation Date: 30/06/09
-** Author: Synergy Learning
+** Author: Caroline Kennedy - Synergy Learning
 ** Author URI: http://synergylearning.com
 **
 *********************************************************/
 
-/* Global 
-------------------------*/
-
-body.splash-orange {                /* Define margins and background colour/image */
-    background: url([[pix:theme|bgorange]]) top left repeat-x #f4f4f4;
-    margin: 0 auto;
-    padding: 0;
-    width: 100%;
+body.splash-orange {
+    background:url([[pix:theme|bgorange]]) top left repeat-x
 }
-
-.splash-orange a:link {        /* Defining all link styles*/
-    color: #7c7165;
+.splash-orange a:link,
+.splash-orange a:visited,
+.splash-orange a:active{
+    color:#7c7165;
 }
-
-.splash-orange a:visited {        /* Setting all visited link styles */
-    color: #7c7165;
+.splash-orange a:hover{
+    color:#5f564c;
 }
-
-.splash-orange a:hover {        /* Setting all rollover link styles */
-    color: #5f564c;
-}
-
-.splash-orange a:active {        /* Setting all active link styles */
-    color: #7c7165;
-}
-
-/* Header 
------------------------*/
-
-.splash-orange #page-header {            /* Set height for header */
-    float: none;
-    padding: 0;
-    margin:0;
-    color: #fff;
-    height: 308px;
-    background: url([[pix:theme|pageheaderbgorange]]) top center no-repeat;
-}
-
-.splash-orange #logobox{  /* holder background for logo*/
-    height: 185px;
-    width: 252px;
-    margin: auto;
-    text-align: center;
-    background: url([[pix:theme|lbgv2orange]]) no-repeat;
-    float: left;
-}
-
-.splash-orange #colourswitcher p{
-    color: #cb8f47;
-}
-
-/* Custom Menu
------------------------*/
- .splash-orange #custommenu .yui3-menu-content ul.first-of-type li{
-    border-right: 1px solid #dbcfc0;
-}
-
-.splash-orange #custommenu div.yui3-menu.custom_menu_submenu .yui3-menu-content{
-    background:#cb8f47;
-    border:1px solid #fff;
-    color: #fff;
-}
-
-/* Content
------------------------*/
-.splash-orange ul.topics li#section-0, ul.weeks li#section-0 {
-    background: #df9a55;
-    border: 1px solid #ccc;
-}
-
-.splash-orange .coursebox{
-    padding-left:5px;
-    border-bottom: 1px dashed #f0e7de;
-}
-
-/* Sideblocks
------------------------*/
-
-.splash-orange #region-pre .block .header,  /*-- right block header   --*/
-.splash-orange #region-post .block .header {  /*-- right block header   --*/
-    background: url([[pix:theme|sbheaderbg2orange]]) center no-repeat;
-    padding: 12px 5px 5px;
-    color: #fff;
-}
-
-/* Mini Calendar
-------------------------*/
-
-.splash-orange .block .minicalendar td.weekend {    /* setting weekend date colour */
+.splash-orange #region-main h1,
+.splash-orange #region-main h3,
+.splash-orange #region-main h6{
     color:#cb8f47;
 }
-
-/* Forum
-------------------------*/
-
-.splash-orange .forumpost .topic .subject {    /* forum subject section inside topic header */
-    font-weight: bold;
-    font-size: 1.1em;
-    padding-left: 5px;
-    background:  #cb8f47;
-    color: #fff;
+.splash-orange #page-header{
+    background:url([[pix:theme|pageheaderbgorange]]) top center no-repeat;
 }
-
-/* Blog
-------------------------*/
-
-.splash-orange .blog_entry .subject a:link {        /* Defining all link styles*/
-    color: #000;
+.splash-orange #logobox{
+    background:url([[pix:theme|lbgv2orange]]) no-repeat;
 }
-
-.splash-orange .blog_entry .subject a:visited {        /* Setting all visited link styles */
-    color: #000;
+.splash-orange #colourswitcher p{
+    color:#cb8f47;
 }
-
-.splash-orange .blog_entry .subject a:hover {        /* Setting all rollover link styles */
-    color: #000;
+.splash-orange .navbar .breadcrumb a {
+    color:#cb8f47;
 }
-
-.splash-orange .blog_entry .subject a:active {        /* Setting all active link styles */
-    color: #000;
+.splash-orange .navbar .arrow{color:#cb8f47;
+}
+.splash-orange .course-content ul.topics li.section .left{
+    color:#cb8f47;
+}
+.splash-orange .mform fieldset legend{
+    color:#cb8f47;
+}
+.splash-orange .tabtree .tabrow0 a:hover{
+    color:#5f564c;
+}
+.splash-orange .tabtree .tabrow0 .here a {
+    color:#cb8f47;
+}
+.splash-orange .tabtree .tabrow0 .here a:hover{
+    background:#fff;color: #5f564c;
+}
+.splash-orange .tabtree .here ul .here a.nolink:hover{
+    color:#cb8f47;
+}
+.splash-orange .coursebox{
+    border-bottom:1px dashed #f0e7de;
+}
+.splash-orange #categoryquestions tr th{
+    background:#cb8f47;
+}
+.splash-orange .path-mod-quiz .qnbutton{
+    background:#cb8f47;
+}
+.splash-orange .path-mod-quiz .qnbutton.open{
+    background:#cb8f47;
+}
+.splash-orange .block-region .block .header{
+    background:url([[pix:theme|sbheaderbg2orange]]) top center no-repeat;
+}
+.splash-orange .block .minicalendar td.weekend{
+    color:#cb8f47;
+}
+.splash-orange.pagelayout-redirect {
+    border-top: 1px solid #5f564c;
+}
+.splash-orange #dock {
+    background-color:#cb8f47;
+    border-right:1px solid #7c7165;
+}
+.splash-orange #dock .dockedtitle {
+    border-top:1px solid #b6916a;
+    border-bottom:1px solid #5f564c;
 }

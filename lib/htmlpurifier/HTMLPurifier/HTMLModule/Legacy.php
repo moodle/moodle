@@ -89,7 +89,7 @@ class HTMLPurifier_HTMLModule_Legacy extends HTMLPurifier_HTMLModule
         $hr->attr['width'] = 'Length';
 
         $img = $this->addBlankElement('img');
-        $img->attr['align'] = 'Enum#top,middle,bottom,left,right';
+        $img->attr['align'] = 'IAlign';
         $img->attr['border'] = 'Pixels';
         $img->attr['hspace'] = 'Pixels';
         $img->attr['vspace'] = 'Pixels';
@@ -135,6 +135,22 @@ class HTMLPurifier_HTMLModule_Legacy extends HTMLPurifier_HTMLModule
         $ul = $this->addBlankElement('ul');
         $ul->attr['compact'] = 'Bool#compact';
         $ul->attr['type'] = 'Enum#square,disc,circle';
+
+        // "safe" modifications to "unsafe" elements
+        // WARNING: If you want to add support for an unsafe, legacy
+        // attribute, make a new TrustedLegacy module with the trusted
+        // bit set appropriately
+
+        $form = $this->addBlankElement('form');
+        $form->content_model = 'Flow | #PCDATA';
+        $form->content_model_type = 'optional';
+        $form->attr['target'] = 'FrameTarget';
+
+        $input = $this->addBlankElement('input');
+        $input->attr['align'] = 'IAlign';
+
+        $legend = $this->addBlankElement('legend');
+        $legend->attr['align'] = 'LAlign';
 
     }
 

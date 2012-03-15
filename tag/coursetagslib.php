@@ -125,7 +125,7 @@ function coursetag_get_all_tags($sort='name', $numtags=0) {
     global $CFG, $DB;
 
     // note that this selects all tags except for courses that are not visible
-    $sql = "SELECT id, name, id, tagtype, rawname, f.timemodified, flag, count
+    $sql = "SELECT id, name, tagtype, rawname, f.timemodified, flag, count
         FROM {tag} t,
         (SELECT tagid, MAX(timemodified) as timemodified, COUNT(id) as count
             FROM {tag_instance} WHERE tagid NOT IN
@@ -367,7 +367,7 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
                 //add tag if does not exist
                 if (!$tagid = tag_get_id($tag)) {
                     $tag_id_array = tag_add(array($tag), $tagtype);
-                    $tagid = $tag_id_array[moodle_strtolower($tag)];
+                    $tagid = $tag_id_array[textlib::strtolower($tag)];
                 }
                 //ordering
                 $ordering = 0;
@@ -444,15 +444,11 @@ function coursetag_get_tagged_courses($tagid) {
     $courses = array();
     if ($crs = $DB->get_records_select('tag_instance', "tagid=:tagid AND itemtype='course'", array('tagid'=>$tagid))) {
         foreach ($crs as $c) {
-            //this capability check was introduced to stop display of courses that a student could not
-            //view, but arguably it is best that when clicking on a tag, the tagged course summary should
-            //be seen and then if the student clicks on that they will be given the opportunity to join
-            //note courses not visible should not have their tagid sent to this function
-            // $context = get_context_instance(CONTEXT_COURSE, $c->itemid);
-            //if (is_enrolled($context) oe is_viewing($context)) {
-                $course = $DB->get_record('course', array('id'=>$c->itemid));
+            $course = $DB->get_record('course', array('id'=>$c->itemid));
+            // check if the course is hidden
+            if ($course->visible == 1 || has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
                 $courses[$c->itemid] = $course;
-            //}
+            }
         }
     }
     return $courses;
@@ -695,8 +691,7 @@ function coursetag_get_official_keywords($courseid, $asarray=false) {
         }
         foreach ($tags as $tag) {
             if( empty($CFG->keeptagnamecase) ) {
-                $textlib = textlib_get_instance();
-                $name = $textlib->strtotitle($tag->name);
+                $name = textlib::strtotitle($tag->name);
             } else {
                 $name = $tag->rawname;
             }

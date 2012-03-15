@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,31 +17,37 @@
 /**
  * Course completion critieria - completion on achieving course grade
  *
- * @package   moodlecore
+ * @package core_completion
+ * @category completion
  * @copyright 2009 Catalyst IT Ltd
- * @author    Aaron Barnes <aaronb@catalyst.net.nz>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/querylib.php';
 
 /**
  * Course completion critieria - completion on achieving course grade
+ *
+ * @package core_completion
+ * @category completion
+ * @copyright 2009 Catalyst IT Ltd
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class completion_criteria_grade extends completion_criteria {
 
-    /**
-     * Criteria type constant
-     * @var int
-     */
+    /* @var int Criteria type constant [COMPLETION_CRITERIA_TYPE_GRADE] */
     public $criteriatype = COMPLETION_CRITERIA_TYPE_GRADE;
 
     /**
      * Finds and returns a data_object instance based on params.
-     * @static abstract
      *
-     * @param array $params associative arrays varname=>value
-     * @return object data_object instance or false if none found.
+     * @param array $params associative array varname => value of various 
+     * parameters used to fetch data_object
+     * @return data_object data_object instance or false if none found.
      */
     public static function fetch($params) {
         $params['criteriatype'] = COMPLETION_CRITERIA_TYPE_GRADE;
@@ -51,10 +56,9 @@ class completion_criteria_grade extends completion_criteria {
 
     /**
      * Add appropriate form elements to the critieria form
-     * @access  public
-     * @param   object  $mform  Moodle forms object
-     * @param   mixed   $data   optional
-     * @return  void
+     *
+     * @param moodle_form $mform Moodle forms object
+     * @param stdClass $data containing default values to be set in the form
      */
     public function config_form_display(&$mform, $data = null) {
         $mform->addElement('checkbox', 'criteria_grade', get_string('enable'));
@@ -69,9 +73,8 @@ class completion_criteria_grade extends completion_criteria {
 
     /**
      * Update the criteria information stored in the database
-     * @access  public
-     * @param   array   $data   Form data
-     * @return  void
+     *
+     * @param stdClass $data Form data
      */
     public function update_config(&$data) {
 
@@ -86,10 +89,9 @@ class completion_criteria_grade extends completion_criteria {
 
     /**
      * Get user's course grade in this course
-     * @static
-     * @access  private
-     * @param   object  $completion
-     * @return  float
+     *
+     * @param completion_completion $completion an instance of completion_completion class
+     * @return float
      */
     private function get_grade($completion) {
         $grade = grade_get_course_grade($completion->userid, $this->course);
@@ -98,10 +100,10 @@ class completion_criteria_grade extends completion_criteria {
 
     /**
      * Review this criteria and decide if the user has completed
-     * @access  public
-     * @param   object  $completion     The user's completion record
-     * @param   boolean $mark           Optionally set false to not save changes to database
-     * @return  boolean
+     *
+     * @param completion_completion $completion The user's completion record
+     * @param bool $mark Optionally set false to not save changes to database
+     * @return bool
      */
     public function review($completion, $mark = true) {
         // Get user's course grade
@@ -122,7 +124,7 @@ class completion_criteria_grade extends completion_criteria {
 
     /**
      * Return criteria title for display in reports
-     * @access  public
+     *
      * @return  string
      */
     public function get_title() {
@@ -131,8 +133,8 @@ class completion_criteria_grade extends completion_criteria {
 
     /**
      * Return a more detailed criteria title for display in reports
-     * @access  public
-     * @return  string
+     *
+     * @return string
      */
     public function get_title_detailed() {
         return (float) $this->gradepass . '% required';
@@ -140,8 +142,8 @@ class completion_criteria_grade extends completion_criteria {
 
     /**
      * Return criteria type title for display in reports
-     * @access  public
-     * @return  string
+     *
+     * @return string
      */
     public function get_type_title() {
         return get_string('grade');
@@ -149,9 +151,9 @@ class completion_criteria_grade extends completion_criteria {
 
     /**
      * Return criteria status text for display in reports
-     * @access  public
-     * @param   object  $completion     The user's completion record
-     * @return  string
+     *
+     * @param completion_completion $completion The user's completion record
+     * @return string
      */
     public function get_status($completion) {
         // Cast as floats to get rid of excess decimal places
@@ -167,8 +169,6 @@ class completion_criteria_grade extends completion_criteria {
 
     /**
      * Find user's who have completed this criteria
-     * @access  public
-     * @return  void
      */
     public function cron() {
         global $DB;
@@ -223,9 +223,10 @@ class completion_criteria_grade extends completion_criteria {
 
     /**
      * Return criteria progress details for display in reports
-     * @access  public
-     * @param   object  $completion     The user's completion record
-     * @return  array
+     *
+     * @param completion_completion $completion The user's completion record
+     * @return array An array with the following keys:
+     *     type, criteria, requirement, status
      */
     public function get_details($completion) {
         $details = array();

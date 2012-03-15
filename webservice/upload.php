@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * Accept uploading files by web service token
  *
@@ -23,26 +24,33 @@
  *  [_FILES] => for example you can send the files with <input type=file>,
  *              or with curl magic: 'file_1' => '@/path/to/file', or ...
  *
- * @package    moodlecore
- * @subpackage files
+ * @package    core_webservice
  * @copyright  2011 Dongsheng Cai <dongsheng@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * AJAX_SCRIPT - exception will be converted into JSON
+ */
 define('AJAX_SCRIPT', true);
+
+/**
+ * NO_MOODLE_COOKIES - we don't want any cookie
+ */
 define('NO_MOODLE_COOKIES', true);
+
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 $filepath = optional_param('filepath', '/', PARAM_PATH);
 
 echo $OUTPUT->header();
 
-//authenticate the user
+// authenticate the user
 $token = required_param('token', PARAM_ALPHANUM);
 $webservicelib = new webservice();
 $authenticationinfo = $webservicelib->authenticate_user($token);
 
-//check the user can manage his own files (can upload)
+// check the user can manage his own files (can upload)
 $context = get_context_instance(CONTEXT_USER, $USER->id);
 require_capability('moodle/user:manageownfiles', $context);
 

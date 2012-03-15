@@ -92,7 +92,6 @@ class assignment_uploadsingle extends assignment_base {
         $this->view_footer();
     }
 
-
     function process_feedback() {
         if (!$feedback = data_submitted() or !confirm_sesskey()) {      // No incoming data?
             return false;
@@ -101,7 +100,34 @@ class assignment_uploadsingle extends assignment_base {
         $offset = required_param('offset', PARAM_INT);
         $mform = $this->display_submission($offset, $userid, false);
         parent::process_feedback($mform);
-        }
+    }
+
+    /**
+     * Counts all complete (real) assignment submissions by enrolled students. This overrides assignment_base::count_real_submissions().
+     * This is necessary for simple file uploads where we need to check that the numfiles field is greater than zero to determine if a
+     * submission is complete.
+     *
+     * @param  int $groupid (optional) If nonzero then count is restricted to this group
+     * @return int          The number of submissions
+     */
+    function count_real_submissions($groupid=0) {
+        global $DB;
+
+        // Grab the context assocated with our course module
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+
+        // Get ids of users enrolled in the given course.
+        list($enroledsql, $params) = get_enrolled_sql($context, 'mod/assignment:view', $groupid);
+        $params['assignmentid'] = $this->cm->instance;
+
+        // Get ids of users enrolled in the given course.
+        return $DB->count_records_sql("SELECT COUNT('x')
+                                         FROM {assignment_submissions} s
+                                    LEFT JOIN {assignment} a ON a.id = s.assignment
+                                   INNER JOIN ($enroledsql) u ON u.id = s.userid
+                                        WHERE s.assignment = :assignmentid AND
+                                              s.numfiles > 0", $params);
+    }
 
     function print_responsefiles($userid, $return=false) {
         global $CFG, $USER, $OUTPUT, $PAGE;
@@ -154,7 +180,6 @@ class assignment_uploadsingle extends assignment_base {
         echo $OUTPUT->single_button(new moodle_url('/mod/assignment/type/uploadsingle/upload.php', array('contextid'=>$this->context->id, 'userid'=>$USER->id)), $str, 'get');
         echo $OUTPUT->box_end();
     }
-
 
     function upload($mform) {
         $action = required_param('action', PARAM_ALPHA);

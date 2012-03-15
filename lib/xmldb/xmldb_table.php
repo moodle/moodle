@@ -709,9 +709,6 @@ class xmldb_table extends xmldb_object {
     function addFieldInfo($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
 
         debugging('XMLDBTable->addFieldInfo() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_table->add_field() instead', DEBUG_DEVELOPER);
-        if ($enum) {
-            debugging('Also, ENUMs support has been dropped in Moodle 2.0. Your fields specs are incorrect because you are trying to introduce one new ENUM. Created DB estructures will ignore that.');
-        }
 
         return $this->add_field($name, $type, $precision, $unsigned, $notnull, $sequence, $default, $previous);
 
@@ -724,7 +721,7 @@ class xmldb_table extends xmldb_object {
      *
      * @param string name name of the field
      * @param string type XMLDB_TYPE_INTEGER, XMLDB_TYPE_NUMBER, XMLDB_TYPE_CHAR, XMLDB_TYPE_TEXT, XMLDB_TYPE_BINARY
-     * @param string precision length for integers and chars, two-comma separated numbers for numbers and 'small', 'medium', 'big' for texts and binaries
+     * @param string precision length for integers and chars, two-comma separated numbers for numbers
      * @param string unsigned XMLDB_UNSIGNED or null (or false)
      * @param string notnull XMLDB_NOTNULL or null (or false)
      * @param string sequence XMLDB_SEQUENCE or null (or false)

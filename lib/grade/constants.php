@@ -113,11 +113,6 @@ define('GRADE_UPDATE_FAILED', 1);
 define('GRADE_UPDATE_MULTIPLE', 2);
 
 /**
- * GRADE_UPDATE_DELETED - Grade item deleted (MDL-31362)
- */
-define('GRADE_UPDATE_ITEM_DELETED', 3);
-
-/**
  * GRADE_UPDATE_DELETED - Grade item cannot be updated as it is locked
  */
 define('GRADE_UPDATE_ITEM_LOCKED', 4);
@@ -201,11 +196,6 @@ define('GRADE_REPORT_AGGREGATION_POSITION_FIRST', 0);
  * GRADE_REPORT_AGGREGATION_POSITION_LAST - Display the course totals after the individual activity grades
  */
 define('GRADE_REPORT_AGGREGATION_POSITION_LAST', 1);
-
-// These constants dont seem to be in use (MDL-31363)
-define('GRADE_REPORT_AGGREGATION_VIEW_FULL', 0);
-define('GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY', 1);
-define('GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY', 2);
 
 // What to do if category or course total contains a hidden item
 

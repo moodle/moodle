@@ -393,7 +393,7 @@ switch ($mode) {
         $data->id = $cm->id;
         $data->attemptid = $attemptid;
         $data->score = $essayinfo->score;
-        $data->studentanswer = format_string($essayinfo->answer, FORMAT_MOODLE);
+        $data->studentanswer = format_string($essayinfo->answer, $essayinfo->answerformat);
         $data->response = $essayinfo->response;
         $mform->set_data($data);
 

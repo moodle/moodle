@@ -490,7 +490,7 @@ function wiki_get_orphaned_pages($swid) {
             AND s.id = ?
             AND w.id = s.wikiid
             AND p.title != w.firstpagetitle
-            AND p.id NOT IN (SELECT topageid FROM {wiki_links} WHERE subwikiid = ?);";
+            AND p.id NOT IN (SELECT topageid FROM {wiki_links} WHERE subwikiid = ?)";
 
     return $DB->get_records_sql($sql, array($swid, $swid, $swid));
 }

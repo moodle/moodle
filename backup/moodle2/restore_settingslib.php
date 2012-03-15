@@ -16,11 +16,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines classes used to handle restore settings
+ *
+ * @package     core_backup
+ * @subpackage  moodle2
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 // TODO: Reduce these to the minimum because ui/dependencies are 100% separated
 
@@ -43,13 +48,6 @@ class restore_users_setting extends restore_generic_setting {}
  * or no (any level), depends of @restore_users_setting
  */
 class restore_role_assignments_setting extends root_backup_setting {}
-
-/**
- * root setting to control if restore will create
- * user files or no (images, local storage), depends of @restore_users_setting
- * exactly in the same way than @restore_role_assignments_setting so we extend from it
- */
-class restore_user_files_setting extends restore_role_assignments_setting {}
 
 /**
  * root setting to control if restore will create activities

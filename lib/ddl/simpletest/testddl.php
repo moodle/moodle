@@ -544,14 +544,14 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['onechar']->meta_type    ,'C');
         $this->assertEqual($DB->get_field('test_table1', 'onechar', array(), IGNORE_MULTIPLE), 'Nice dflt!'); //check default has been applied
 
-        /// add one text field and check it
+        /// add one big text field and check it
         $field = new xmldb_field('onetext');
-        $field->set_attributes(XMLDB_TYPE_TEXT);
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'big');
         $dbman->add_field($table, $field);
         $this->assertTrue($dbman->field_exists($table, 'onetext'));
         $columns = $DB->get_columns('test_table1');
         $this->assertEqual($columns['onetext']->name         ,'onetext');
-        $this->assertEqual($columns['onetext']->max_length   , -1);
+        $this->assertEqual($columns['onetext']->max_length   , -1); // -1 means unknown or big
         $this->assertEqual($columns['onetext']->scale        , null);
         $this->assertEqual($columns['onetext']->not_null     , false);
         $this->assertEqual($columns['onetext']->primary_key  , false);
@@ -559,6 +559,20 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['onetext']->has_default  , false);
         $this->assertEqual($columns['onetext']->default_value, null);
         $this->assertEqual($columns['onetext']->meta_type    ,'X');
+
+        /// add one medium text field and check it
+        $field = new xmldb_field('mediumtext');
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'medium');
+        $dbman->add_field($table, $field);
+        $columns = $DB->get_columns('test_table1');
+        $this->assertTrue(($columns['mediumtext']->max_length == -1) or ($columns['mediumtext']->max_length >= 16777215)); // -1 means unknown or big
+
+        /// add one small text field and check it
+        $field = new xmldb_field('smalltext');
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'small');
+        $dbman->add_field($table, $field);
+        $columns = $DB->get_columns('test_table1');
+        $this->assertTrue(($columns['smalltext']->max_length == -1) or ($columns['smalltext']->max_length >= 65535)); // -1 means unknown or big
 
         /// add one binary field and check it
         $field = new xmldb_field('onebinary');
@@ -901,20 +915,6 @@ class ddl_test extends UnitTestCase {
         //TODO: check the rest of attributes
     }
 
-    public function testChangeFieldSign() {
-        $dbman = $this->tdb->get_manager();
-// TODO: verify the signed is changed in db
-
-        $table = $this->create_deftable('test_table1');
-        $field = new xmldb_field('grade');
-        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null);
-        $dbman->change_field_unsigned($table, $field);
-
-        $field = new xmldb_field('grade');
-        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null);
-        $dbman->change_field_unsigned($table, $field);
-    }
-
     public function testChangeFieldNullability() {
         $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();
@@ -1146,73 +1146,6 @@ class ddl_test extends UnitTestCase {
         $dbman->drop_key($table, $key);
     }
 
-    /**
-     * Test behaviour of drop_enum_from_field() and related functions (find_check_constraint_name
-     * and check_constraint_exists). Needed to be able to drop existing "enum" fields in the upgrade
-     * from 1.9 to 2.0, will be completely deleted for Moodle 2.1
-     *
-     * Because we already have dropped support for creation of enum fields in 2.0, we are going to
-     * create them here "manually" (hardcoded DB-dependent SQL). Just to be able to test the
-     * find and drop functions properly.
-     *
-     * TODO: Drop this tests completely from Moodle 2.1
-     */
-    public function test_drop_enum_from_field() {
-        $DB = $this->tdb; // do not use global $DB!
-        $dbman = $this->tdb->get_manager();
-
-        // Create normal table, no enums.
-        $table = new xmldb_table('test_table_cust0');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $field = new xmldb_field('type');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'general');
-        $table->addField($field);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-
-        $this->assertTrue($dbman->table_exists($table));
-        $this->assertTrue($dbman->field_exists($table, $field));
-
-        // Check table hasn't enums at all
-        $this->assertFalse($dbman->check_constraint_exists($table, $field));
-        $this->assertFalse($dbman->find_check_constraint_name($table, $field));
-        ob_start();
-        $this->assertFalse($dbman->drop_enum_from_field($table, $field)); // This just outputs debug warning if field hasn't enums
-        ob_end_clean();
-
-        // Insert some info
-        $record = new stdClass();
-        $record->course = 666;
-        $record->type = 'qanda';
-        $this->assertTrue($DB->insert_record('test_table_cust0', $record, false));
-
-        // Hackery starts here, depending of the db family we are testing... execute
-        // the needed SQL statements to get the "type" field defined as enum
-        $stmt = '';
-        switch ($DB->get_dbfamily()) {
-            case 'mysql': // It's ENUM field for mysql
-                $stmt = "ALTER TABLE {$DB->get_prefix()}test_table_cust0 MODIFY type ENUM ('general', 'qanda', 'moodle') NOT NULL DEFAULT 'general'";
-                break;
-            default: // It's check constraint for "normal" DBs
-                $stmt = "ALTER TABLE {$DB->get_prefix()}test_table_cust0 ADD CONSTRAINT ttcu0_ck CHECK (type IN ('general', 'qanda', 'moodle'))";
-        }
-        $DB->change_database_structure($stmt);
-
-        // Check table has enums now
-        $this->assertTrue($dbman->check_constraint_exists($table, $field));
-        $this->assertTrue($dbman->find_check_constraint_name($table, $field));
-
-        // Removing an enum value
-        $dbman->drop_enum_from_field($table, $field);
-
-        // Chech table hasn't enum anymore
-        $this->assertFalse($dbman->check_constraint_exists($table, $field));
-        $this->assertFalse($dbman->find_check_constraint_name($table, $field));
-
-        $dbman->drop_table($table);
-    }
-
     public function testRenameField() {
         $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();
@@ -1287,6 +1220,7 @@ class ddl_test extends UnitTestCase {
         $this->assertTrue($dbman->table_exists('test_table1'));
 
         // Real and valid xml file
+        //TODO: drop UNSINGED completely in Moodle 2.4
         $dbman->delete_tables_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/xmldb_table.xml');
 
         // Check that the table has been deleted from DB

@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 global $DB; // TODO: this is a hack, we should really do something with the SQL in SQL tables
 
 $logs = array(
-    array('module'=>'user', 'action'=>'view', 'mtable'=>'user', 'field'=>$DB->sql_concat('firstname', "' '" , 'lastname')),
     array('module'=>'course', 'action'=>'user report', 'mtable'=>'user', 'field'=>$DB->sql_concat('firstname', "' '" , 'lastname')),
     array('module'=>'course', 'action'=>'view', 'mtable'=>'course', 'field'=>'fullname'),
     array('module'=>'course', 'action'=>'update', 'mtable'=>'course', 'field'=>'fullname'),
@@ -49,4 +48,5 @@ $logs = array(
     array('module'=>'group', 'action'=>'view', 'mtable'=>'groups', 'field'=>'name'),
     array('module'=>'tag', 'action'=>'update', 'mtable'=>'tag', 'field'=>'name'),
     array('module'=>'tag', 'action'=>'flag', 'mtable'=>'tag', 'field'=>'name'),
+    array('module'=>'user', 'action'=>'view', 'mtable'=>'user', 'field'=>$DB->sql_concat('firstname', "' '" , 'lastname')),
 );

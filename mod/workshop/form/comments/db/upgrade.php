@@ -18,8 +18,7 @@
 /**
  * Keeps track of upgrades to the workshop comments grading strategy
  *
- * @package    workshopform
- * @subpackage comments
+ * @package    workshopform_comments
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -56,7 +56,7 @@ require_once($CFG->libdir . '/grade/grade_outcome.php');
  * @param int    $itemnumber Most probably 0. Modules can use other numbers when having more than one grade for each user
  * @param mixed  $grades Grade (object, array) or several grades (arrays of arrays or objects), NULL if updating grade_item definition only
  * @param mixed  $itemdetails Object or array describing the grading item, NULL if no change
- * @return int Returns GRADE_UPDATE_OK, GRADE_UPDATE_FAILED, GRADE_UPDATE_MULTIPLE, GRADE_UPDATE_ITEM_DELETED (MDL-31362) or GRADE_UPDATE_ITEM_LOCKED
+ * @return int Returns GRADE_UPDATE_OK, GRADE_UPDATE_FAILED, GRADE_UPDATE_MULTIPLE or GRADE_UPDATE_ITEM_LOCKED
  */
 function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades=NULL, $itemdetails=NULL) {
     global $USER, $CFG, $DB;

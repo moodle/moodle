@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,22 +14,42 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * Moodle REST client class
- * TODO: XML to PHP
+ * Moodle REST library
+ *
+ * @package    webservice_rest
+ * @copyright  2009 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+/**
+ * Moodle REST client
+ *
+ * It has been implemented for unit testing purpose (all protocols have similar client)
+ *
+ * @package    webservice_rest
+ * @copyright  2010 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class webservice_rest_client {
 
     /** @var moodle_url the REST server url */
     private $serverurl;
 
+    /** @var string token */
     private $token;
+
+    /** @var string returned value format: xml or json */
     private $format;
 
     /**
      * Constructor
+     *
      * @param string $serverurl a Moodle URL
-     * @param string $token
+     * @param string $token the token used to do the web service call
+     * @param string $format returned value format: xml or json
      */
     public function __construct($serverurl, $token, $format = 'xml') {
         $this->serverurl = new moodle_url($serverurl);
@@ -40,7 +59,8 @@ class webservice_rest_client {
 
     /**
      * Set the token used to do the REST call
-     * @param string $token
+     *
+     * @param string $token the token used to do the web service call
      */
     public function set_token($token) {
         $this->token = $token;
@@ -48,8 +68,9 @@ class webservice_rest_client {
 
     /**
      * Execute client WS request with token authentication
-     * @param string $functionname
-     * @param array $params
+     *
+     * @param string $functionname the function name
+     * @param array $params the parameters of the function
      * @return mixed
      */
     public function call($functionname, $params) {
@@ -67,7 +88,7 @@ class webservice_rest_client {
 
         $result = download_file_content($this->serverurl->out(false), null, $params);
 
-        //TODO : transform the XML result into PHP values - MDL-22965
+        //TODO MDL-22965 transform the XML result into PHP values
         if ($this->format == 'json') {
             $result = json_decode($result);
         }

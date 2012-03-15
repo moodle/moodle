@@ -18,8 +18,7 @@
 /**
  * Defines the capabilities used by the Language customization admin tool
  *
- * @package    tool
- * @subpackage customlang
+ * @package    tool_customlang
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

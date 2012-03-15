@@ -92,14 +92,51 @@ if ($tag->flag > 0 && has_capability('moodle/tag:manage', $systemcontext)) {
 echo $OUTPUT->heading($tagname, 2, 'headingblock header tag-heading');
 tag_print_management_box($tag);
 tag_print_description_box($tag);
+// Check what type of results are avaialable
+require_once($CFG->dirroot.'/tag/coursetagslib.php');
+$courses = coursetag_get_tagged_courses($tag->id);
 
-echo '<div class="relatedpages"><p><a href="#course">'.get_string('courses').
- '</a> | <a href="#blog">'.get_string('relatedblogs', 'tag').
- '</a> | <a href="#user">'.get_string('users').'</a></p></div>';
+if (has_capability('moodle/blog:view', $systemcontext)) {
+    require_once($CFG->dirroot.'/blog/lib.php');
+    require_once($CFG->dirroot.'/blog/locallib.php');
+
+    $bloglisting = new blog_listing(array('tag' => $tag->id));
+    $limit = 10;
+    $start = 0;
+    $blogs = $bloglisting->get_entries($start, $limit);
+}
+$usercount = tag_record_count('user', $tag->id);
+
+// Only include <a href />'s to those anchors that actually will be shown
+$relatedpageslink = "";
+$countanchors = 0;
+if (!empty($courses)) {
+    $relatedpageslink = '<a href="#course">'.get_string('courses').'</a>';
+    $countanchors++;
+}
+if (!empty($blogs)) {
+    if ($countanchors > 0) {
+        $relatedpageslink .= ' | ';
+    }
+    $relatedpageslink .= '<a href="#blog">'.get_string('relatedblogs', 'tag').'</a>';
+    $countanchors++;
+}
+if ($usercount > 0) {
+    if ($countanchors > 0) {
+        $relatedpageslink .= ' | ';
+    }
+    $relatedpageslink .= '<a href="#user">'.get_string('users').'</a>';
+    $countanchors++;
+}
+// If only one anchor is present, no <a href /> is needed
+if ($countanchors == 0) {
+    echo '<div class="relatedpages"><p>'.get_string('noresultsfor', 'tag', $tagname).'</p></div>';
+} elseif ($countanchors > 1) {
+    echo '<div class="relatedpages"><p>'.$relatedpageslink.'</p></div>';
+}
 
 // Display courses tagged with the tag
-require_once($CFG->dirroot.'/tag/coursetagslib.php');
-if ($courses = coursetag_get_tagged_courses($tag->id)) {
+if (!empty($courses)) {
 
     $totalcount = count( $courses );
     echo $OUTPUT->box_start('generalbox', 'tag-blogs'); //could use an id separate from tag-blogs, but would have to copy the css style to make it look the same
@@ -116,49 +153,39 @@ if ($courses = coursetag_get_tagged_courses($tag->id)) {
 }
 
 // Print up to 10 previous blogs entries
-if (has_capability('moodle/blog:view', $systemcontext)) {
-    require_once($CFG->dirroot.'/blog/lib.php');
-    require_once($CFG->dirroot.'/blog/locallib.php');
 
-    $bloglisting = new blog_listing(array('tag' => $tag->id));
-    $limit = 10;
-    $start = 0;
+if (!empty($blogs)) {
+    echo $OUTPUT->box_start('generalbox', 'tag-blogs');
+    $heading = get_string('relatedblogs', 'tag', $tagname). ' ' . get_string('taggedwith', 'tag', $tagname);
+    echo "<a name='blog'></a>";
+    echo $OUTPUT->heading($heading, 3);
 
-    if ($blogs = $bloglisting->get_entries($start, $limit)) {
-
-        echo $OUTPUT->box_start('generalbox', 'tag-blogs');
-        $heading = get_string('relatedblogs', 'tag', $tagname). ' ' . get_string('taggedwith', 'tag', $tagname);
-        echo "<a name='blog'></a>";
-        echo $OUTPUT->heading($heading, 3);
-
-        echo '<ul id="tagblogentries">';
-        foreach ($blogs as $blog) {
-            if ($blog->publishstate == 'draft') {
-                $class = 'class="dimmed"';
-            } else {
-                $class = '';
-            }
-            echo '<li '.$class.'>';
-            echo '<a '.$class.' href="'.$CFG->wwwroot.'/blog/index.php?entryid='.$blog->id.'">';
-            echo format_string($blog->subject);
-            echo '</a>';
-            echo ' - ';
-            echo '<a '.$class.' href="'.$CFG->wwwroot.'/user/view.php?id='.$blog->userid.'">';
-            echo fullname($blog);
-            echo '</a>';
-            echo ', '. userdate($blog->lastmodified);
-            echo '</li>';
+    echo '<ul id="tagblogentries">';
+    foreach ($blogs as $blog) {
+        if ($blog->publishstate == 'draft') {
+            $class = 'class="dimmed"';
+        } else {
+            $class = '';
         }
-        echo '</ul>';
-
-        $allblogsurl = new moodle_url('/blog/index.php', array('tagid' => $tag->id));
-        echo '<p class="moreblogs"><a href="'.$allblogsurl->out().'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
-
-        echo $OUTPUT->box_end();
+        echo '<li '.$class.'>';
+        echo '<a '.$class.' href="'.$CFG->wwwroot.'/blog/index.php?entryid='.$blog->id.'">';
+        echo format_string($blog->subject);
+        echo '</a>';
+        echo ' - ';
+        echo '<a '.$class.' href="'.$CFG->wwwroot.'/user/view.php?id='.$blog->userid.'">';
+        echo fullname($blog);
+        echo '</a>';
+        echo ', '. userdate($blog->lastmodified);
+        echo '</li>';
     }
+    echo '</ul>';
+
+    $allblogsurl = new moodle_url('/blog/index.php', array('tagid' => $tag->id));
+    echo '<p class="moreblogs"><a href="'.$allblogsurl->out().'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
+
+    echo $OUTPUT->box_end();
 }
 
-$usercount = tag_record_count('user', $tag->id);
 if ($usercount > 0) {
 
     //user table box

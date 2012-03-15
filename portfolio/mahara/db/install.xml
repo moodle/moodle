@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="portfolio/mahara/db" VERSION="20080827" COMMENT="XMLDB file for Moodle portfolio/mahara"
+<XMLDB PATH="portfolio/mahara/db" VERSION="20120122" COMMENT="XMLDB file for Moodle portfolio/mahara"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="portfolio_mahara_queue" COMMENT="maps mahara tokens to transfer ids">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="transferid"/>
-        <FIELD NAME="transferid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="fk to portfolio_tempdata.id" PREVIOUS="id" NEXT="token"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="transferid"/>
+        <FIELD NAME="transferid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="fk to portfolio_tempdata.id" PREVIOUS="id" NEXT="token"/>
         <FIELD NAME="token" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="the token mahara sent us to use for this transfer." PREVIOUS="transferid"/>
       </FIELDS>
       <KEYS>

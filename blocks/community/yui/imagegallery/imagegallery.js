@@ -44,12 +44,12 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
 
             this.overlay.render();
             this.overlay.hide();
-           
+
             //attach a show event on the image divs (<tag id='image-X'>)
             for (var i=0;i<this.get('imageids').length;i++)
             {
                 var imageid = this.get('imageids')[i];
-                this.imageidnumbers[imageid] = this.get('imagenumbers')[i];              
+                this.imageidnumbers[imageid] = this.get('imagenumbers')[i];
                 Y.one('#image-'+imageid).on('click', this.show, this, imageid, 1);
             }
 
@@ -60,9 +60,9 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
             if (this.imageloadingevent != null) {
                 this.imageloadingevent.detach();
             }
-            
+
             var url = this.get('huburl') + "/local/hub/webservice/download.php?courseid="
-            + imageid + "&filetype=screenshot&imagewidth=original&screenshotnumber=" + screennumber;  
+            + imageid + "&filetype=screenshot&imagewidth=original&screenshotnumber=" + screennumber;
 
             /// set the mask
             if (this.get('maskNode')) {
@@ -88,17 +88,17 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
             var overlaytitle = Y.one('#imagetitleoverlay');
             var previousimagelink = "<div id=\"previousarrow\" class=\"imagearrow\">←</div>";
             var nextimagelink = "<div id=\"nextarrow\" class=\"imagearrow\">→</div>";
-           
+
             /// need to load the images in the overlay
             var overlay = Y.one('#imageoverlay');
             overlay.setContent('');
-          
+
 
             overlay.append(Y.Node.create('<div style="text-align:center"><img id=\"imagetodisplay\" src="' + url
                 + '" style="max-height:' + maxheight + 'px;"></div>'));
             this.overlay.destroy();
             this.overlay = new M.core.dialogue({
-                headerContent:previousimagelink + '<div id=\"imagenumber\" class=\"imagetitle\"> Image ' 
+                headerContent:previousimagelink + '<div id=\"imagenumber\" class=\"imagetitle\"> Image '
                 + screennumber + ' / ' + this.imageidnumbers[imageid] + ' </div>' + nextimagelink,
                 bodyContent:Y.one('#imageoverlay').get('innerHTML'),
                 visible: false, //by default it is not displayed
@@ -127,7 +127,7 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
                 if(overlaywidth > screenshot.width) {
                     overlaywidth = screenshot.width;
                 }
-                
+
                 this.overlay.set('width', overlaywidth);
                 this.overlay.set("centered", true);
                 this.overlay.show();

@@ -37,6 +37,9 @@ class HTMLPurifier_HTMLModule_Tables extends HTMLPurifier_HTMLModule
                 'abbr'    => 'Text',
                 'colspan' => 'Number',
                 'rowspan' => 'Number',
+                // Apparently, as of HTML5 this attribute only applies
+                // to 'th' elements.
+                'scope'   => 'Enum#row,col,rowgroup,colgroup',
             ),
             $cell_align
         );

@@ -65,8 +65,6 @@ abstract class sql_generator {
     /** @var string Proper type for NUMBER(x) in this DB. */
     public $number_type = 'NUMERIC';
 
-    /** @var bool To define in the generator must handle unsigned information.*/
-    public $unsigned_allowed = true;
     /** @var string To define the default to set for NOT NULLs CHARs without default (null=do nothing).*/
     public $default_for_char = null;
 
@@ -489,14 +487,7 @@ abstract class sql_generator {
         /// The type and length
             $field .= ' ' . $this->getTypeSQL($xmldb_field->getType(), $xmldb_field->getLength(), $xmldb_field->getDecimals());
         }
-    /// The unsigned if supported
-        if ($this->unsigned_allowed && ($xmldb_field->getType() == XMLDB_TYPE_INTEGER ||
-                                      $xmldb_field->getType() == XMLDB_TYPE_NUMBER ||
-                                      $xmldb_field->getType() == XMLDB_TYPE_FLOAT)) {
-            if ($xmldb_field->getUnsigned()) {
-                $field .= ' unsigned';
-            }
-        }
+    /// note: unsigned is not supported any more since moodle 2.3, all numbers are signed
     /// Calculate the not null clause
         $notnull = '';
     /// Only if we don't want to skip it
@@ -1368,19 +1359,6 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
-     * (usually invoked from getModifyEnumSQL()
-     *
-     * Note that this method may be dropped in future.
-     *
-     * @param xmldb_table $xmldb_table The xmldb_table object instance.
-     * @param xmldb_field $xmldb_field The xmldb_field object instance.
-     *
-     * @todo MDL-31147 Moodle 2.1 - Drop getDropEnumSQL()
-     */
-    public abstract function getDropEnumSQL($xmldb_table, $xmldb_field);
-
-    /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its default
      * (usually invoked from getModifyDefaultSQL()
      *
@@ -1392,20 +1370,6 @@ abstract class sql_generator {
      * @todo MDL-31147 Moodle 2.1 - Drop getDropDefaultSQL()
      */
     public abstract function getDropDefaultSQL($xmldb_table, $xmldb_field);
-
-    /**
-     * Given one xmldb_table and one optional xmldb_field, return one array with all the check
-     * constrainst found for that table (or field). Must exist for each DB supported.
-     * (usually invoked from find_check_constraint_name)
-     *
-     * Note that this method may be dropped in future.
-     *
-     * @param xmldb_table $xmldb_table The xmldb_table object instance.
-     * @param xmldb_field $xmldb_field The xmldb_field object instance.
-     *
-     * @todo MDL-31147 Moodle 2.1 - Drop getCheckConstraintsFromDB
-     */
-    public abstract function getCheckConstraintsFromDB($xmldb_table, $xmldb_field=null);
 
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to add its default

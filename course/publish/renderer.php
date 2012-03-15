@@ -119,7 +119,7 @@ class core_publish_renderer extends plugin_renderer_base {
                                     . $courseid . "&updatestatusid=" . $publication->id
                                     . "&sesskey=" . sesskey()));
             }
-            //add button cells     
+            //add button cells
             $cells = array($publication->enrollable ?
                         get_string('advertised', 'hub') : get_string('shared', 'hub'),
                 $hubname, userdate($publication->timepublished,
@@ -207,7 +207,7 @@ class core_publish_renderer extends plugin_renderer_base {
         $hubdescription .= html_writer::tag('a', $hubinfo['name'],
                         array('class' => 'hublink', 'href' => $hubinfo['url'],
                             'onclick' => 'this.target="_blank"'));
-        
+
         $hubdescription .= html_writer::tag('div', format_text($hubinfo['description'], FORMAT_PLAIN),
                         array('class' => 'hubdescription'));
         $hubdescription = html_writer::tag('div', $hubdescription, array('class' => 'hubinfo'));

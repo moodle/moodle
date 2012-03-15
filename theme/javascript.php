@@ -130,6 +130,10 @@ function send_uncached_js($js) {
 }
 
 function minify($files) {
+    if (empty($files)) {
+        return '';
+    }
+
     if (0 === stripos(PHP_OS, 'win')) {
         Minify::setDocRoot(); // IIS may need help
     }
@@ -150,6 +154,30 @@ function minify($files) {
         'quiet' => true
     );
 
-    $result = Minify::serve('Files', $options);
-    return $result['content'];
+    $error = 'unknown';
+    try {
+        $result = Minify::serve('Files', $options);
+        if ($result['success']) {
+            return $result['content'];
+        }
+    } catch (Exception $e) {
+        $error = $e->getMessage();
+        $error = str_replace("\r", ' ', $error);
+        $error = str_replace("\n", ' ', $error);
+    }
+
+    // minification failed - try to inform the theme developer and include the non-minified version
+    $js = <<<EOD
+try {console.log('Error: Minimisation of theme javascript failed!');} catch (e) {}
+
+// Error: $error
+// Problem detected during javascript minimisation, please review the following code
+// =================================================================================
+
+
+EOD;
+    foreach ($files as $jsfile) {
+        $js .= file_get_contents($jsfile)."\n";
+    }
+    return $js;
 }

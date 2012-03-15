@@ -187,6 +187,32 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012021700.02);
     }
 
+    // The ability to backup user (private) files is out completely - MDL-29248
+    if ($oldversion < 2012030100.01) {
+        unset_config('backup_general_user_files', 'backup');
+        unset_config('backup_general_user_files_locked', 'backup');
+        unset_config('backup_auto_user_files', 'backup');
+
+        upgrade_main_savepoint(true, 2012030100.01);
+    }
+
+    if ($oldversion < 2012030100.02) {
+        // migrate all numbers to signed - it should be safe to interrupt this and continue later
+        upgrade_mysql_fix_unsigned_columns();
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012030100.02);
+    }
+
+    if ($oldversion < 2012030900.01) {
+        // migrate all texts and binaries to big size - it should be safe to interrupt this and continue later
+        upgrade_mysql_fix_lob_columns();
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012030900.01);
+    }
+
+
     return true;
 }
 

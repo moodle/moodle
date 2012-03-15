@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,7 @@
 /**
  * Utility class for browsing of user files.
  *
- * @package    core
- * @subpackage filebrowser
+ * @package    core_files
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,16 +26,23 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Represents a user context in the tree navigated by @see{file_browser}.
+ * Represents a user context in the tree navigated by {@link file_browser}.
  *
- * @package    core
- * @subpackage filebrowser
+ * @package    core_files
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_info_context_user extends file_info {
+    /** @var stdClass User object */
     protected $user;
 
+    /**
+     * Constructor
+     *
+     * @param file_browser $browser
+     * @param stdClass $context
+     * @param stdClass $user
+     */
     public function __construct($browser, $context, $user) {
         parent::__construct($browser, $context);
         $this->user = $user;
@@ -46,11 +51,12 @@ class file_info_context_user extends file_info {
     /**
      * Return information about this specific context level
      *
-     * @param $component
-     * @param $filearea
-     * @param $itemid
-     * @param $filepath
-     * @param $filename
+     * @param string $component componet
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null
      */
     public function get_file_info($component, $filearea, $itemid, $filepath, $filename) {
         global $USER;
@@ -76,6 +82,15 @@ class file_info_context_user extends file_info {
         return null;
     }
 
+    /**
+     * Get a file from user private area
+     *
+     * @todo MDL-31070 this method should respect $CFG->userquota
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null
+     */
     protected function get_area_user_private($itemid, $filepath, $filename) {
         global $USER, $CFG;
 
@@ -110,6 +125,14 @@ class file_info_context_user extends file_info {
         return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, get_string('areauserpersonal', 'repository'), false, true, true, false);
     }
 
+    /**
+     * Get a file from user profile area
+     *
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null
+     */
     protected function get_area_user_profile($itemid, $filepath, $filename) {
         global $CFG;
 
@@ -140,10 +163,18 @@ class file_info_context_user extends file_info {
             }
         }
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, 
+        return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase,
                 get_string('areauserprofile', 'repository'), false, $readaccess, $writeaccess, false);
     }
 
+    /**
+     * Get a file from user draft area
+     *
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null
+     */
     protected function get_area_user_draft($itemid, $filepath, $filename) {
         global $USER, $CFG;
 
@@ -174,6 +205,15 @@ class file_info_context_user extends file_info {
         return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, get_string('areauserdraft', 'repository'), true, true, true, true);
     }
 
+    /**
+     * Get a file from user backup area
+     *
+     * @todo MDL-31091 maybe we need new caability for access control
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null
+     */
     protected function get_area_user_backup($itemid, $filepath, $filename) {
         global $USER, $CFG;
 
@@ -206,6 +246,7 @@ class file_info_context_user extends file_info {
 
     /**
      * Returns localised visible name.
+     *
      * @return string
      */
     public function get_visible_name() {
@@ -213,7 +254,8 @@ class file_info_context_user extends file_info {
     }
 
     /**
-     * Can I add new files or directories?
+     * Whether or not new files or directories can be added
+     *
      * @return bool
      */
     public function is_writable() {
@@ -221,7 +263,8 @@ class file_info_context_user extends file_info {
     }
 
     /**
-     * Is directory?
+     * Whether or not this is a directory
+     *
      * @return bool
      */
     public function is_directory() {
@@ -230,6 +273,7 @@ class file_info_context_user extends file_info {
 
     /**
      * Returns list of children.
+     *
      * @return array of file_info instances
      */
     public function get_children() {
@@ -253,7 +297,8 @@ class file_info_context_user extends file_info {
 
     /**
      * Returns parent file_info instance
-     * @return file_info or null for root
+     *
+     * @return file_info|null file_info instance or null for root
      */
     public function get_parent() {
         return $this->browser->get_file_info();

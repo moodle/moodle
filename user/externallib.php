@@ -86,6 +86,7 @@ class core_user_external extends external_api {
      */
     public static function create_users($users) {
         global $CFG, $DB;
+        require_once($CFG->dirroot."/lib/weblib.php");
         require_once($CFG->dirroot."/user/lib.php");
         require_once($CFG->dirroot."/user/profile/lib.php"); //required for customfields related function
                                                              //TODO: move the functions somewhere else as
@@ -134,16 +135,19 @@ class core_user_external extends external_api {
                 throw new invalid_parameter_exception('Invalid theme: '.$user['theme']);
             }
 
-            // make sure there is no data loss during truncation
-            $truncated = truncate_userinfo($user);
-            foreach ($truncated as $key=>$value) {
-                    if ($truncated[$key] !== $user[$key]) {
-                        throw new invalid_parameter_exception('Property: '.$key.' is too long: '.$user[$key]);
-                    }
-            }
-
             $user['confirmed'] = true;
             $user['mnethostid'] = $CFG->mnet_localhost_id;
+
+            // Start of user info validation.
+            // Lets make sure we validate current user info as handled by current GUI. see user/editadvanced_form.php function validation()
+            if (!validate_email($user['email'])) {
+                throw new invalid_parameter_exception('Email address is invalid: '.$user['email']);
+            } else if ($DB->record_exists('user', array('email'=>$user['email'], 'mnethostid'=>$user['mnethostid']))) {
+                throw new invalid_parameter_exception('Email address already exists: '.$user['email']);
+            }
+            // End of user info validation.
+
+            // create the user data now!
             $user['id'] = user_create_user($user);
 
             // custom fields

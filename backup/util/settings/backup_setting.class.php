@@ -16,16 +16,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    moodlecore
- * @subpackage backup-settings
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines backup_setting class
+ *
+ * @package     core_backup
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * This abstract class defines one backup_setting
- *
- * TODO: Finish phpdocs
+ * Parent class for all backup settings
  */
 abstract class backup_setting extends base_setting implements checksumable {
 
@@ -35,12 +37,12 @@ abstract class backup_setting extends base_setting implements checksumable {
     const SECTION_LEVEL  = 9;
     const ACTIVITY_LEVEL = 13;
 
-    /**
-     * One of the above constants
-     * @var {int}
-     */
-    protected $level;  // level of the setting
+    /** @var int Level of the setting, eg {@link self::ROOT_LEVEL} */
+    protected $level;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct($name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED) {
         parent::__construct($name, $vtype, $value, $visibility, $status);
         // Generate a default ui
@@ -48,9 +50,7 @@ abstract class backup_setting extends base_setting implements checksumable {
     }
 
     /**
-     * Returns the level of the setting
-     *
-     * @return {int} One of the above constants
+     * @return int Level of the setting, eg {@link self::ROOT_LEVEL}
      */
     public function get_level() {
         return $this->level;
@@ -112,7 +112,7 @@ abstract class backup_setting extends base_setting implements checksumable {
     }
 }
 
-/*
+/**
  * Exception class used by all the @backup_setting stuff
  */
 class backup_setting_exception extends base_setting_exception {

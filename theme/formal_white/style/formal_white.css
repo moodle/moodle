@@ -133,6 +133,8 @@ th.header,
 .generalbox th,
 .generaltable th.header {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px #C6BDA8 solid;background-color:#E3DFD4;}
 /*#modules, .compatibleblockstable {margin-left:auto; margin-right:auto;} waiting for MDL-26760*/
+table.flexible .r0, table.generaltable .r0 {background-color: #F0F0F0;}
+table.flexible .r1, table.generaltable .r1 {background-color: #FAFAFA;}
 
 /* admin pages */
 div#chooseuser {border:0 transparent none;}
@@ -229,6 +231,27 @@ table#defineroletable th {border-top:none;}
 form.loginform .rememberusername {
     padding-left:0.3em;
     width: auto;
+}
+
+/* RSS - MDL-29367 */
+.block_rss_client .list li:first-child {
+    border-top-width: 0;
+}
+
+.block_rss_client .list li {
+    border-top: 1px solid #DDDDDD;
+    padding: 5px;
+}
+
+/* Upcoming events - MDL-29367 */
+/* to have the same separator as in .block_rss_client .list li */
+.block_calendar_upcoming .content > hr {
+    display:none;
+}
+
+.block_calendar_upcoming .event {
+    border-bottom: 1px solid #DDDDDD;
+    padding: 5px;
 }
 
 /** Custom CSS **/

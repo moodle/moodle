@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,58 +14,88 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * Test the different web service protocols.
  *
- * @author jerome@moodle.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package web service
+ * @package    core_webservice
+ * @copyright  2010 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 if (!defined('MOODLE_INTERNAL')) {
-    ///  It must be included from a Moodle page
+    // It must be included from a Moodle page
     die('Direct access to this script is forbidden.');
 }
 
 /**
- * How to configure this unit tests:
- * 0- Enable the web service you wish to test in the Moodle administration
- * 1- Create a service with all functions in the Moodle administration
- * 2- Create a token associate this service and to an admin (or a user with all required capabilities)
+ * Web service unit test class
+ *
+ * How to configure these unit tests:
+ * 0- Enable the web service you wish to test using Moodle site administration
+ * 1- Create a service with all functions using Moodle site administration
+ * 2- Create a token for this service. The token should be linked to an admin (or a user with all required capabilities)
  * 3- Configure setUp() function:
  *      a- write the token
  *      b- activate the protocols you wish to test
  *      c- activate the functions you wish to test (readonlytests and writetests arrays)
- *      d- set the number of time the web services are run
- * Do not run WRITE test function on a production site as they impact the DB (even though every
+ *      d- set the number of times the web services are run
+ * Do not run the WRITE test function on a production site as they impact the DB (even though every
  * test should clean the modified data)
  *
  * How to write a new function:
  * 1- Add the function name to the array readonlytests/writetests
  * 2- Set it as false when you commit!
- * 3- write the function  - Do not prefix the function name by 'test'
+ * 3- write the function  - Do not prefix the function name with 'test'
+ *
+ * @package    core_webservice
+ * @copyright  2010 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class webservice_test extends UnitTestCase {
 
+    /** @var string the token used to call the web service functions during tests */
     public $testtoken;
+
+    /** @var bool Set it to true if you want to test the functions with the REST protocol */
     public $testrest;
+
+    /** @var bool Set it to true if you want to test the functions with the XML-RPC protocol */
     public $testxmlrpc;
+
+    /** @var bool Set it to true if you want to test the functions with the SOAP protocol */
     public $testsoap;
+
+    /** @var bool Set it to true if you want to time profile the REST protocol */
     public $timerrest;
+
+    /** @var bool Set it to true if you want to time profile the XML-RPC protocol */
     public $timerxmlrpc;
+
+    /** @var bool Set it to true if you want to time profile the SOAP protocol */
     public $timersoap;
+
+    /** @var bool DB READ-ONLY functions. Only "set to true" functions are run.*/
     public $readonlytests;
+
+    /** @var bool DB WRITE functions. Only "set to true" functions are run. */
     public $writetests;
 
-    function setUp() {
-        //token to test
+    /**
+     * Test set up
+     */
+    public function setUp() {
+        // token to test
         $this->testtoken = 'acabec9d20933913f14309785324f579';
 
-        //protocols to test
-        $this->testrest = false; //Does not work till XML => PHP is implemented (MDL-22965)
+        // protocols to test
+        $this->testrest = false; // TODO MDL-30210/MDL-22965 call REST in JSON mode
+                                 // DO NOT CHANGE
+                                 // The REST server cannot be tested till the issue ares fixed
         $this->testxmlrpc = false;
         $this->testsoap = false;
 
-        ////// READ-ONLY DB tests ////
+        // READ-ONLY DB tests
         $this->readonlytests = array(
             'moodle_group_get_groups' => false,
             'moodle_course_get_courses' => false,
@@ -78,7 +107,7 @@ class webservice_test extends UnitTestCase {
             'core_course_get_contents' => false
         );
 
-        ////// WRITE DB tests ////
+        // WRITE DB tests
         $this->writetests = array(
             'moodle_user_create_users' => false,
             'moodle_course_create_courses' => false,
@@ -95,28 +124,32 @@ class webservice_test extends UnitTestCase {
             'moodle_notes_create_notes' => false
         );
 
-        //performance testing: number of time the web service are run
+        // performance testing: number of time the web service are run
         $this->iteration = 1;
 
-        //DO NOT CHANGE
-        //reset the timers
+        // DO NOT CHANGE
+        // reset the timers
         $this->timerrest = 0;
         $this->timerxmlrpc = 0;
         $this->timersoap = 0;
     }
 
-    function testRun() {
+    /**
+     * Run the tests
+     */
+    public function test_run() {
         global $CFG;
 
         if (!$this->testrest and !$this->testxmlrpc and !$this->testsoap) {
-            print_r("Web service unit tests are not run as not setup.
-                (see /webservice/simpletest/testwebservice.php)");
+            echo 'Web service unit tests are not run as not setup.' .
+                ' (see /webservice/simpletest/testwebservice.php)';
         }
 
         if (!empty($this->testtoken)) {
 
-            //Does not work till XML => PHP is implemented (MDL-22965)
-            if ($this->testrest) {
+            // TODO MDL-30210/MDL-22965 call REST in JSON mode
+            // The REST cannot be tested till the issue ares fixed
+            if ($this->testrest and 1 == 2) {
 
                 $this->timerrest = time();
 
@@ -127,21 +160,21 @@ class webservice_test extends UnitTestCase {
                 for ($i = 1; $i <= $this->iteration; $i = $i + 1) {
                     foreach ($this->readonlytests as $functioname => $run) {
                         if ($run) {
-                            //$this->{$functioname}($restclient);
+                            $this->{$functioname}($restclient);
                         }
                     }
                     foreach ($this->writetests as $functioname => $run) {
                         if ($run) {
-                            //$this->{$functioname}($restclient);
+                            $this->{$functioname}($restclient);
                         }
                     }
                 }
 
                 $this->timerrest = time() - $this->timerrest;
-                //here you could call a log function to display the timer
-                //example:
-                //error_log('REST time: ');
-                //error_log(print_r($this->timerrest));
+                // here you could call a log function to display the timer
+                // example:
+                // error_log('REST time: ');
+                // error_log(print_r($this->timerrest));
             }
 
             if ($this->testxmlrpc) {
@@ -166,10 +199,10 @@ class webservice_test extends UnitTestCase {
                 }
 
                 $this->timerxmlrpc = time() - $this->timerxmlrpc;
-                //here you could call a log function to display the timer
-                //example:
-                //error_log('XML-RPC time: ');
-                //error_log(print_r($this->timerxmlrpc));
+                // here you could call a log function to display the timer
+                // example:
+                // error_log('XML-RPC time: ');
+                // error_log(print_r($this->timerxmlrpc));
             }
 
             if ($this->testsoap) {
@@ -179,8 +212,8 @@ class webservice_test extends UnitTestCase {
                 require_once($CFG->dirroot . "/webservice/soap/lib.php");
                 $soapclient = new webservice_soap_client($CFG->wwwroot
                                 . '/webservice/soap/server.php', $this->testtoken,
-                        array("features" => SOAP_WAIT_ONE_WAY_CALLS)); //force SOAP synchronous mode
-                                                                     //when function return null
+                        array("features" => SOAP_WAIT_ONE_WAY_CALLS)); // force SOAP synchronous mode
+                                                                       // when function return null
                 $soapclient->setWsdlCache(false);
 
                 for ($i = 1; $i <= $this->iteration; $i = $i + 1) {
@@ -197,17 +230,20 @@ class webservice_test extends UnitTestCase {
                 }
 
                 $this->timersoap = time() - $this->timersoap;
-                //here you could call a log function to display the timer
-                //example:
-                //error_log('SOAP time: ');
-                //error_log(print_r($this->timersoap));
+                // here you could call a log function to display the timer
+                // example:
+                // error_log('SOAP time: ');
+                // error_log(print_r($this->timersoap));
             }
         }
     }
 
-    ///// WEB SERVICE TEST FUNCTIONS
-
-    function moodle_group_get_groups($client) {
+    /**
+     * Test moodle_group_get_groups web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_group_get_groups($client) {
         global $DB;
         $dbgroups = $DB->get_records('groups');
         $groupids = array();
@@ -221,7 +257,12 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual(count($groups), count($groupids));
     }
 
-    function moodle_webservice_get_siteinfo($client) {
+    /**
+     * Test moodle_webservice_get_siteinfo web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_webservice_get_siteinfo($client) {
         global $SITE, $CFG;
 
         $function = 'moodle_webservice_get_siteinfo';
@@ -233,7 +274,12 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual($info['siteurl'],  $CFG->wwwroot);
     }
 
-    function moodle_user_get_users_by_id($client) {
+    /**
+     * Test moodle_user_get_users_by_id web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_user_get_users_by_id($client) {
         global $DB;
         $dbusers = $DB->get_records('user', array('deleted' => 0));
         $userids = array();
@@ -248,7 +294,12 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual(count($users), count($userids));
     }
 
-    function core_course_get_contents($client) {
+    /**
+     * Test moodle_group_get_groups web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function core_course_get_contents($client) {
         global $DB, $CFG;
         $dbcourses = $DB->get_records('course');
         $function = 'core_course_get_contents';
@@ -262,26 +313,29 @@ class webservice_test extends UnitTestCase {
                 $coursecontents = $client->call($function, $params);
             }
 
-            //Display the content of $coursecontents in your php log and check if you obtain
-            //what you are expecting
-            //error_log(print_r($coursecontents, true));
+            // Display the content of $coursecontents in your php log and check if you obtain
+            // what you are expecting
+            // error_log(print_r($coursecontents, true));
         }
     }
 
     /**
+     * Test moodle_enrol_manual_enrol_users web service function
      * This test will:
      * 1- create a user (core call)
      * 2- enrol this user in the courses supporting enrolment
      * 3- unenrol this user (core call)
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
      */
-    function moodle_enrol_manual_enrol_users($client) {
+    private function moodle_enrol_manual_enrol_users($client) {
         global $DB, $CFG;
 
         require_once($CFG->dirroot . "/user/lib.php");
         require_once($CFG->dirroot . "/user/profile/lib.php");
         require_once($CFG->dirroot . "/lib/enrollib.php");
 
-        //Delete some previous test data
+        // Delete some previous test data
         if ($user = $DB->get_record('user', array('username' => 'veryimprobabletestusername2'))) {
             $DB->delete_records('user', array('id' => $user->id));
         }
@@ -290,7 +344,7 @@ class webservice_test extends UnitTestCase {
             delete_role($role->id);
         }
 
-        //create a user
+        // create a user
         $user = new stdClass();
         $user->username = 'veryimprobabletestusername2';
         $user->password = 'testpassword2';
@@ -313,12 +367,12 @@ class webservice_test extends UnitTestCase {
             }
         }
 
-        //web service call
+        // web service call
         $function = 'moodle_enrol_manual_enrol_users';
         $wsparams = array('enrolments' => $enrolments);
         $enrolmentsresult = $client->call($function, $wsparams);
 
-        //get instance that can unenrol
+        // get instance that can unenrol
         $enrols = enrol_get_plugins(true);
         $enrolinstances = enrol_get_instances($course->id, true);
         $unenrolled = false;
@@ -329,31 +383,35 @@ class webservice_test extends UnitTestCase {
             }
         }
 
-        //test and unenrol the user
+        // test and unenrol the user
         $enrolledusercourses = enrol_get_users_courses($user->id);
         foreach ($enrolledcourses as $course) {
-            //test
+            // test
             $this->assertEqual(true, isset($enrolledusercourses[$course->id]));
 
-            //unenrol the user
+            // unenrol the user
             $enrols[$unenrolinstance->enrol]->unenrol_user($unenrolinstance, $user->id, $roleid);
         }
 
-        //delete user
+        // delete user
         $DB->delete_records('user', array('id' => $user->id));
 
-        //delete the context level
+        // delete the context level
         set_role_contextlevels($roleid, array(CONTEXT_COURSE));
 
-        //delete role
+        // delete role
         delete_role($roleid);
     }
 
-
-    function moodle_enrol_get_enrolled_users($client) {
+    /**
+     * Test moodle_enrol_get_enrolled_users web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_enrol_get_enrolled_users($client) {
         global $DB;
 
-        //function settings
+        // function settings
         $withcapability = '';
         $groupid = null;
         $onlyactive = false;
@@ -385,26 +443,31 @@ class webservice_test extends UnitTestCase {
         }
     }
 
-    function moodle_course_get_courses($client) {
+    /**
+     * Test moodle_course_get_courses web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_course_get_courses($client) {
         global $DB;
 
         $function = 'moodle_course_get_courses';
 
-        //retrieve all courses from db
+        // retrieve all courses from db
         $dbcourses = $DB->get_records('course');
         $courseids = array();
         foreach ($dbcourses as $dbcourse) {
             $courseids[] = $dbcourse->id;
         }
 
-        //retrieve all courses by id
+        // retrieve all courses by id
         $params = array('options' => array('ids' => $courseids));
         $courses = $client->call($function, $params);
 
-        //check it is the same course count
+        // check it is the same course count
         $this->assertEqual(count($courses), count($courseids));
 
-        //check all course values are identic
+        // check all course values are identic
         foreach ($courses as $course) {
             $this->assertEqual($course['fullname'],
                     $dbcourses[$course['id']]->fullname);
@@ -465,10 +528,15 @@ class webservice_test extends UnitTestCase {
         }
     }
 
-    function moodle_course_create_courses($client) {
+    /**
+     * Test moodle_course_create_courses web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_course_create_courses($client) {
         global $DB, $CFG;
 
-        ///Test data
+        // Test data
         $courseconfig = get_config('moodlecourse');
 
         $themeobjects = get_list_of_themes();
@@ -510,7 +578,7 @@ class webservice_test extends UnitTestCase {
 
         $courses = array($course1, $course2);
 
-        //do not run the test if course1 or course2 already exists
+        // do not run the test if course1 or course2 already exists
         $existingcourses = $DB->get_records_list('course', 'fullname',
                         array($course1->fullname, $course2->fullname));
         if (!empty($existingcourses)) {
@@ -522,7 +590,7 @@ class webservice_test extends UnitTestCase {
         $resultcourses = $client->call($function, $params);
         $this->assertEqual(count($courses), count($resultcourses));
 
-        //retrieve user1 from the DB and check values
+        // retrieve user1 from the DB and check values
         $dbcourse1 = $DB->get_record('course', array('fullname' => $course1->fullname));
         $this->assertEqual($dbcourse1->fullname, $course1->fullname);
         $this->assertEqual($dbcourse1->shortname, $course1->shortname);
@@ -554,7 +622,7 @@ class webservice_test extends UnitTestCase {
             $this->assertEqual($dbcourse1->theme, $course1->forcetheme);
         }
 
-        //retrieve user2 from the DB and check values
+        // retrieve user2 from the DB and check values
         $dbcourse2 = $DB->get_record('course', array('fullname' => $course2->fullname));
         $this->assertEqual($dbcourse2->fullname, $course2->fullname);
         $this->assertEqual($dbcourse2->shortname, $course2->shortname);
@@ -572,16 +640,21 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual($dbcourse2->groupmodeforce, $courseconfig->groupmodeforce);
         $this->assertEqual($dbcourse2->defaultgroupingid, 0);
 
-        //delete users from DB
+        // delete users from DB
         $DB->delete_records_list('course', 'id',
                 array($dbcourse1->id, $dbcourse2->id));
     }
 
-    function moodle_user_create_users($client) {
+    /**
+     * Test moodle_user_create_users web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_user_create_users($client) {
         global $DB, $CFG;
 
-        //Test data
-        //a full user: user1
+        // Test data
+        // a full user: user1
         $user1 = new stdClass();
         $user1->username = 'testusername1';
         $user1->password = 'testpassword1';
@@ -607,7 +680,7 @@ class webservice_test extends UnitTestCase {
         $user1->customfields = array(
             array('type' => $customfieldname1, 'value' => 'customvalue'),
             array('type' => $customfieldname2, 'value' => 'customvalue2'));
-        //a small user: user2
+        // a small user: user2
         $user2 = new stdClass();
         $user2->username = 'testusername2';
         $user2->password = 'testpassword2';
@@ -618,21 +691,21 @@ class webservice_test extends UnitTestCase {
 
         $users = array($user1, $user2);
 
-        //do not run the test if user1 or user2 already exists
+        // do not run the test if user1 or user2 already exists
         $existingusers = $DB->get_records_list('user', 'username',
                         array($user1->username, $user2->username));
         if (!empty($existingusers)) {
             throw new moodle_exception('testdatausersalreadyexist');
         }
 
-        //do not run the test if data test custom fields already exists
+        // do not run the test if data test custom fields already exists
         $existingcustomfields = $DB->get_records_list('user_info_field', 'shortname',
                         array($customfieldname1, $customfieldname2));
         if (!empty($existingcustomfields)) {
             throw new moodle_exception('testdatacustomfieldsalreadyexist');
         }
 
-        //create the custom fields
+        // create the custom fields
         $customfield = new stdClass();
         $customfield->shortname = $customfieldname1;
         $customfield->name = $customfieldname1;
@@ -649,7 +722,7 @@ class webservice_test extends UnitTestCase {
         $resultusers = $client->call($function, $params);
         $this->assertEqual(count($users), count($resultusers));
 
-        //retrieve user1 from the DB and check values
+        // retrieve user1 from the DB and check values
         $dbuser1 = $DB->get_record('user', array('username' => $user1->username));
         $this->assertEqual($dbuser1->firstname, $user1->firstname);
         $this->assertEqual($dbuser1->password,
@@ -682,8 +755,7 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual($customfields[$customfieldname2],
                 $user1->customfields[1]['value']);
 
-
-        //retrieve user2 from the DB and check values
+        // retrieve user2 from the DB and check values
         $dbuser2 = $DB->get_record('user', array('username' => $user2->username));
         $this->assertEqual($dbuser2->firstname, $user2->firstname);
         $this->assertEqual($dbuser2->password,
@@ -692,26 +764,31 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual($dbuser2->email, $user2->email);
         $this->assertEqual($dbuser2->timezone, $user2->timezone);
 
-        //unset preferences
+        // unset preferences
         $DB->delete_records('user_preferences', array('userid' => $dbuser1->id));
 
-        //clear custom fields data
+        // clear custom fields data
         $DB->delete_records('user_info_data', array('userid' => $dbuser1->id));
 
-        //delete custom fields
+        // delete custom fields
         $DB->delete_records_list('user_info_field', 'shortname',
                 array($customfieldname1, $customfieldname2));
 
-        //delete users from DB
+        // delete users from DB
         $DB->delete_records_list('user', 'id',
                 array($dbuser1->id, $dbuser2->id));
     }
 
-    function moodle_user_delete_users($client) {
+    /**
+     * Test moodle_user_delete_users web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_user_delete_users($client) {
         global $DB, $CFG;
 
-        //Set test data
-        //a full user: user1
+        // Set test data
+        // a full user: user1
         $user1 = new stdClass();
         $user1->username = 'veryimprobabletestusername1';
         $user1->password = 'testpassword1';
@@ -737,7 +814,7 @@ class webservice_test extends UnitTestCase {
         $user1->customfields = array(
             array('type' => $customfieldname1, 'value' => 'customvalue'),
             array('type' => $customfieldname2, 'value' => 'customvalue2'));
-        //a small user: user2
+        // a small user: user2
         $user2 = new stdClass();
         $user2->username = 'veryimprobabletestusername2';
         $user2->password = 'testpassword2';
@@ -746,30 +823,30 @@ class webservice_test extends UnitTestCase {
         $user2->email = 'testemail1@moodle.com';
         $users = array($user1, $user2);
 
-        //can run this test only if test usernames don't exist
+        // can run this test only if test usernames don't exist
         $searchusers = $DB->get_records_list('user', 'username',
                 array($user1->username, $user1->username));
         if (count($searchusers) == 0) {
-            //create two users
+            // create two users
             require_once($CFG->dirroot."/user/lib.php");
             require_once($CFG->dirroot."/user/profile/lib.php");
             $user1->id = user_create_user($user1);
             // custom fields
-            if(!empty($user1->customfields)) {
-                foreach($user1->customfields as $customfield) {
+            if (!empty($user1->customfields)) {
+                foreach ($user1->customfields as $customfield) {
                     $user1->{"profile_field_".$customfield['type']} = $customfield['value'];
                 }
                 profile_save_data((object) $user1);
             }
-            //preferences
+            // preferences
             if (!empty($user1->preferences)) {
-                foreach($user1->preferences as $preference) {
-                    set_user_preference($preference['type'], $preference['value'],$user1->id);
+                foreach ($user1->preferences as $preference) {
+                    set_user_preference($preference['type'], $preference['value'], $user1->id);
                 }
             }
             $user2->id = user_create_user($user2);
 
-            //create the custom fields
+            // create the custom fields
             $customfield = new stdClass();
             $customfield->shortname = $customfieldname1;
             $customfield->name = $customfieldname1;
@@ -781,43 +858,48 @@ class webservice_test extends UnitTestCase {
             $customfield->datatype = 'text';
             $DB->insert_record('user_info_field', $customfield);
 
-            //search for them => TEST they exists
+            // search for them => TEST they exists
             $searchusers = $DB->get_records_list('user', 'username',
                     array($user1->username, $user2->username));
             $this->assertEqual(count($users), count($searchusers));
 
-            //delete the users by webservice
+            // delete the users by webservice
             $function = 'moodle_user_delete_users';
             $params = array('users' => array($user1->id, $user2->id));
             $client->call($function, $params);
 
-            //search for them => TESTS they don't exists
+            // search for them => TESTS they don't exists
             $searchusers = $DB->get_records_list('user', 'username',
                     array($user1->username, $user2->username));
-           
+
             $this->assertTrue(empty($searchusers));
 
-            //unset preferences
+            // unset preferences
             $DB->delete_records('user_preferences', array('userid' => $user1->id));
 
-            //clear custom fields data
+            // clear custom fields data
             $DB->delete_records('user_info_data', array('userid' => $user1->id));
 
-            //delete custom fields
+            // delete custom fields
             $DB->delete_records_list('user_info_field', 'shortname',
                     array($customfieldname1, $customfieldname2));
 
-            //delete users from DB
+            // delete users from DB
             $DB->delete_records_list('user', 'id',
                     array($user1->id, $user2->id));
         }
     }
 
-    function moodle_user_update_users($client) {
+    /**
+     * Test moodle_user_update_users web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_user_update_users($client) {
         global $DB, $CFG;
 
-        //Set test data
-        //a full user: user1
+        // Set test data
+        // a full user: user1
         $user1 = new stdClass();
         $user1->username = 'veryimprobabletestusername1';
         $user1->password = 'testpassword1';
@@ -843,7 +925,7 @@ class webservice_test extends UnitTestCase {
         $user1->customfields = array(
             array('type' => $customfieldname1, 'value' => 'customvalue'),
             array('type' => $customfieldname2, 'value' => 'customvalue2'));
-        //a small user: user2
+        // a small user: user2
         $user2 = new stdClass();
         $user2->username = 'veryimprobabletestusername2';
         $user2->password = 'testpassword2';
@@ -852,38 +934,38 @@ class webservice_test extends UnitTestCase {
         $user2->email = 'testemail1@moodle.com';
         $users = array($user1, $user2);
 
-        //can run this test only if test usernames don't exist
+        // can run this test only if test usernames don't exist
         $searchusers = $DB->get_records_list('user', 'username',
                 array($user1->username, $user1->username));
         if (count($searchusers) == 0) {
-            //create two users
+            // create two users
             require_once($CFG->dirroot."/user/lib.php");
             require_once($CFG->dirroot."/user/profile/lib.php");
             $user1->id = user_create_user($user1);
-            //unset field created by user_create_user
+            // unset field created by user_create_user
             unset($user1->timemodified);
             unset($user1->timecreated);
 
             // custom fields
-            if(!empty($user1->customfields)) {
+            if (!empty($user1->customfields)) {
                 $customuser1 = new stdClass();
                 $customuser1->id = $user1->id;
-                foreach($user1->customfields as $customfield) {
+                foreach ($user1->customfields as $customfield) {
                     $customuser1->{"profile_field_".$customfield['type']} = $customfield['value'];
                 }
                 profile_save_data((object) $customuser1);
             }
-            //preferences
+            // preferences
             if (!empty($user1->preferences)) {
-                foreach($user1->preferences as $preference) {
-                    set_user_preference($preference['type'], $preference['value'],$user1->id);
+                foreach ($user1->preferences as $preference) {
+                    set_user_preference($preference['type'], $preference['value'], $user1->id);
                 }
             }
             $user2->id = user_create_user($user2);
             unset($user2->timemodified);
             unset($user2->timecreated);
 
-             //create the custom fields
+             // create the custom fields
             $customfield = new stdClass();
             $customfield->shortname = $customfieldname1;
             $customfield->name = $customfieldname1;
@@ -894,13 +976,13 @@ class webservice_test extends UnitTestCase {
             $customfield->name = $customfieldname2;
             $customfield->datatype = 'text';
             $DB->insert_record('user_info_field', $customfield);
-            
-            //search for them => TEST they exists
+
+            // search for them => TEST they exists
             $searchusers = $DB->get_records_list('user', 'username',
                     array($user1->username, $user2->username));
             $this->assertEqual(count($users), count($searchusers));
 
-            //update the test data
+            // update the test data
             $user1->username = 'veryimprobabletestusername1_updated';
             $user1->password = 'testpassword1_updated';
             $user1->firstname = 'testfirstname1_updated';
@@ -931,13 +1013,13 @@ class webservice_test extends UnitTestCase {
             $user2->lastname = 'testlastname2_updated';
             $user2->email = 'testemail1_updated@moodle.com';
             $users = array($user1, $user2);
-            
-            //update the users by web service
+
+            // update the users by web service
             $function = 'moodle_user_update_users';
             $params = array('users' => $users);
             $client->call($function, $params);
 
-            //compare DB user with the test data
+            // compare DB user with the test data
             $dbuser1 = $DB->get_record('user', array('username' => $user1->username));
             $this->assertEqual($dbuser1->firstname, $user1->firstname);
             $this->assertEqual($dbuser1->password,
@@ -977,24 +1059,29 @@ class webservice_test extends UnitTestCase {
             $this->assertEqual($dbuser2->lastname, $user2->lastname);
             $this->assertEqual($dbuser2->email, $user2->email);
 
-            //unset preferences
+            // unset preferences
             $DB->delete_records('user_preferences', array('userid' => $dbuser1->id));
 
-            //clear custom fields data
+            // clear custom fields data
             $DB->delete_records('user_info_data', array('userid' => $dbuser1->id));
 
-            //delete custom fields
+            // delete custom fields
             $DB->delete_records_list('user_info_field', 'shortname',
                     array($customfieldname1, $customfieldname2));
 
-            //delete users from DB
+            // delete users from DB
             $DB->delete_records_list('user', 'id',
                     array($dbuser1->id, $dbuser2->id));
 
         }
     }
 
-    function moodle_role_assign($client) {
+    /**
+     * Test moodle_role_assign web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_role_assign($client) {
         global $DB, $CFG;
 
         $searchusers = $DB->get_records_list('user', 'username',
@@ -1004,7 +1091,7 @@ class webservice_test extends UnitTestCase {
 
         if (empty($searchusers) and empty($searchroles)) {
 
-            //create a temp user
+            // create a temp user
             $user = new stdClass();
             $user->username = 'veryimprobabletestusername2';
             $user->password = 'testpassword2';
@@ -1014,11 +1101,11 @@ class webservice_test extends UnitTestCase {
             require_once($CFG->dirroot."/user/lib.php");
             $user->id = user_create_user($user);
 
-            //create two roles
+            // create two roles
             $role1->id = create_role('role1thatshouldnotexist', 'role1thatshouldnotexist', '');
             $role2->id = create_role('role2thatshouldnotexist', 'role2thatshouldnotexist', '');
 
-            //assign user to role by webservice
+            // assign user to role by webservice
             $context = get_system_context();
             $assignments = array(
                 array('roleid' => $role1->id, 'userid' => $user->id, 'contextid' => $context->id),
@@ -1029,26 +1116,31 @@ class webservice_test extends UnitTestCase {
             $params = array('assignments' => $assignments);
             $client->call($function, $params);
 
-            //check that the assignment work
+            // check that the assignment work
             $roles = get_user_roles($context, $user->id, false);
             foreach ($roles as $role) {
                 $this->assertTrue(($role->roleid == $role1->id) or ($role->roleid == $role2->id) );
             }
 
-            //unassign roles from user
-            role_unassign($role1->id, $user->id, $context->id, '', NULL);
-            role_unassign($role2->id, $user->id, $context->id, '', NULL);
+            // unassign roles from user
+            role_unassign($role1->id, $user->id, $context->id, '', null);
+            role_unassign($role2->id, $user->id, $context->id, '', null);
 
-            //delete user from DB
+            // delete user from DB
             $DB->delete_records('user', array('id' => $user->id));
 
-            //delete the two role from DB
+            // delete the two role from DB
             delete_role($role1->id);
             delete_role($role2->id);
         }
     }
 
-    function moodle_role_unassign($client) {
+    /**
+     * Test moodle_role_unassign web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_role_unassign($client) {
         global $DB, $CFG;
 
         $searchusers = $DB->get_records_list('user', 'username',
@@ -1058,7 +1150,7 @@ class webservice_test extends UnitTestCase {
 
         if (empty($searchusers) and empty($searchroles)) {
 
-            //create a temp user
+            // create a temp user
             $user = new stdClass();
             $user->username = 'veryimprobabletestusername2';
             $user->password = 'testpassword2';
@@ -1068,22 +1160,22 @@ class webservice_test extends UnitTestCase {
             require_once($CFG->dirroot."/user/lib.php");
             $user->id = user_create_user($user);
 
-            //create two roles
+            // create two roles
             $role1->id = create_role('role1thatshouldnotexist', 'role1thatshouldnotexist', '');
             $role2->id = create_role('role2thatshouldnotexist', 'role2thatshouldnotexist', '');
-        
-            //assign roles from user
+
+            // assign roles from user
             $context = get_system_context();
             role_assign($role1->id, $user->id, $context->id);
             role_assign($role2->id, $user->id, $context->id);
 
-            //check that the local assignment work
+            // check that the local assignment work
             $roles = get_user_roles($context, $user->id, false);
             foreach ($roles as $role) {
                 $this->assertTrue(($role->roleid == $role1->id) or ($role->roleid == $role2->id) );
             }
 
-            //unassign user to role by webservice          
+            // unassign user to role by webservice
             $assignments = array(
                 array('roleid' => $role1->id, 'userid' => $user->id, 'contextid' => $context->id),
                 array('roleid' => $role2->id, 'userid' => $user->id, 'contextid' => $context->id)
@@ -1092,14 +1184,14 @@ class webservice_test extends UnitTestCase {
             $params = array('assignments' => $assignments);
             $client->call($function, $params);
 
-            //check that the web service unassignment work
+            // check that the web service unassignment work
             $roles = get_user_roles($context, $user->id, false);
             $this->assertTrue(empty($roles));
 
-            //delete user from DB
+            // delete user from DB
             $DB->delete_records('user', array('id' => $user->id));
 
-            //delete the two role from DB
+            // delete the two role from DB
             delete_role($role1->id);
             delete_role($role2->id);
         }
@@ -1107,17 +1199,15 @@ class webservice_test extends UnitTestCase {
     }
 
     /**
-     * READ ONLY test
-     * TODO: find a better solution that running web service for each course
-     * in the system
-     * For each courses, test the number of groups
-     * @param object $client
+     * Test moodle_group_get_course_groups web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
      */
-    function moodle_group_get_course_groups($client) {
+    private function moodle_group_get_course_groups($client) {
         global $DB;
 
         $courses = $DB->get_records('course');
-        foreach($courses as $course) {
+        foreach ($courses as $course) {
             $coursegroups = groups_get_all_groups($course->id);
             $function = 'moodle_group_get_course_groups';
             $params = array('courseid' => $course->id);
@@ -1126,14 +1216,14 @@ class webservice_test extends UnitTestCase {
         }
     }
 
-
     /**
-     * READ ONLY test
+     * Test moodle_group_get_groupmembers web service function
      * Test that the same number of members are returned
      * for each existing group in the system
-     * @param object $client
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
      */
-    function moodle_group_get_groupmembers($client) {
+    private function moodle_group_get_groupmembers($client) {
         global $DB;
 
         $groups = $DB->get_records('groups');
@@ -1145,27 +1235,30 @@ class webservice_test extends UnitTestCase {
         $params = array('groupids' => $groupids);
         $groupsmembers = $client->call($function, $params);
 
-        foreach($groupsmembers as $groupmembers) {
+        foreach ($groupsmembers as $groupmembers) {
             $dbgroupmembers = groups_get_members($groupmembers['groupid']);
             unset($groups[$groupmembers['groupid']]);
             $this->assertEqual(count($dbgroupmembers), count($groupmembers['userids']));
         }
 
-        //check that all existing groups have been returned by the web service function
+        // check that all existing groups have been returned by the web service function
         $this->assertTrue(empty($groups));
-       
-        
     }
 
-    function moodle_group_add_groupmembers($client) {
+    /**
+     * Test moodle_group_add_groupmembers web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_group_add_groupmembers($client) {
         global $DB, $CFG;
 
-        //create category
+        // create category
         $category = new stdClass();
         $category->name = 'tmpcategoryfortest123';
         $category->id = $DB->insert_record('course_categories', $category);
 
-        //create a course
+        // create a course
         $course = new stdClass();
         $course->fullname = 'tmpcoursefortest123';
         $course->shortname = 'tmpcoursefortest123';
@@ -1173,10 +1266,10 @@ class webservice_test extends UnitTestCase {
         $course->category = $category->id;
         $course->id = $DB->insert_record('course', $course);
 
-        //create a role
+        // create a role
         $role1->id = create_role('role1thatshouldnotexist', 'role1thatshouldnotexist', '');
 
-        //create a user
+        // create a user
         $user = new stdClass();
         $user->username = 'veryimprobabletestusername2';
         $user->password = 'testpassword2';
@@ -1187,10 +1280,10 @@ class webservice_test extends UnitTestCase {
         require_once($CFG->dirroot."/user/lib.php");
         $user->id = user_create_user($user);
 
-        //create course context
+        // create course context
         $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
-        //enrol the user in the course with the created role
+        // enrol the user in the course with the created role
         role_assign($role1->id, $user->id, $context->id);
         $enrol = new stdClass();
         $enrol->courseid = $course->id;
@@ -1201,61 +1294,65 @@ class webservice_test extends UnitTestCase {
         $enrolment->enrolid = $enrol->id;
         $enrolment->id = $DB->insert_record('user_enrolments', $enrolment);
 
-        //create a group in the course
+        // create a group in the course
         $group = new stdClass();
         $group->courseid = $course->id;
         $group->name = 'tmpgroufortest123';
         $group->id = $DB->insert_record('groups', $group);
 
-        //WEBSERVICE CALL
+        // WEBSERVICE CALL
         $function = 'moodle_group_add_groupmembers';
         $params = array('members' => array(array('groupid' => $group->id, 'userid' => $user->id)));
         $groupsmembers = $client->call($function, $params);
 
-        //CHECK TEST RESULT
+        // CHECK TEST RESULT
         require_once($CFG->libdir . '/grouplib.php');
         $groupmembers = groups_get_members($group->id);
         $this->assertEqual(count($groupmembers), 1);
         $this->assertEqual($groupmembers[$user->id]->id, $user->id);
 
-        //remove the members from the group
+        // remove the members from the group
         require_once($CFG->dirroot . "/group/lib.php");
         groups_remove_member($group->id, $user->id);
 
-        //delete the group
+        // delete the group
         $DB->delete_records('groups', array('id' => $group->id));
 
-        //unenrol the user
+        // unenrol the user
         $DB->delete_records('user_enrolments', array('id' => $enrolment->id));
         $DB->delete_records('enrol', array('id' => $enrol->id));
         role_unassign($role1->id, $user->id, $context->id);
 
-        //delete course context
+        // delete course context
         delete_context(CONTEXT_COURSE, $course->id);
 
-        //delete the user
+        // delete the user
         $DB->delete_records('user', array('id' => $user->id));
 
-        //delete the role
+        // delete the role
         delete_role($role1->id);
 
-        //delete the course
+        // delete the course
         $DB->delete_records('course', array('id' => $course->id));
 
-        //delete the category
+        // delete the category
         $DB->delete_records('course_categories', array('id' => $category->id));
-        
     }
 
-    function moodle_group_delete_groupmembers($client) {
+    /**
+     * Test moodle_group_delete_groupmembers web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_group_delete_groupmembers($client) {
         global $DB, $CFG;
 
-        //create category
+        // create category
         $category = new stdClass();
         $category->name = 'tmpcategoryfortest123';
         $category->id = $DB->insert_record('course_categories', $category);
 
-        //create a course
+        // create a course
         $course = new stdClass();
         $course->fullname = 'tmpcoursefortest123';
         $course->shortname = 'tmpcoursefortest123';
@@ -1263,10 +1360,10 @@ class webservice_test extends UnitTestCase {
         $course->category = $category->id;
         $course->id = $DB->insert_record('course', $course);
 
-        //create a role
+        // create a role
         $role1->id = create_role('role1thatshouldnotexist', 'role1thatshouldnotexist', '');
 
-        //create a user
+        // create a user
         $user = new stdClass();
         $user->username = 'veryimprobabletestusername2';
         $user->password = 'testpassword2';
@@ -1277,10 +1374,10 @@ class webservice_test extends UnitTestCase {
         require_once($CFG->dirroot."/user/lib.php");
         $user->id = user_create_user($user);
 
-        //create course context
+        // create course context
         $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
-        //enrol the user in the course with the created role
+        // enrol the user in the course with the created role
         role_assign($role1->id, $user->id, $context->id);
         $enrol = new stdClass();
         $enrol->courseid = $course->id;
@@ -1291,19 +1388,19 @@ class webservice_test extends UnitTestCase {
         $enrolment->enrolid = $enrol->id;
         $enrolment->id = $DB->insert_record('user_enrolments', $enrolment);
 
-        //create a group in the course
+        // create a group in the course
         $group = new stdClass();
         $group->courseid = $course->id;
         $group->name = 'tmpgroufortest123';
         $group->id = $DB->insert_record('groups', $group);
 
-        //add group member
+        // add group member
         require_once($CFG->dirroot . "/group/lib.php");
         groups_add_member($group->id, $user->id);
         $groupmembers = groups_get_members($group->id);
         $this->assertEqual(count($groupmembers), 1);
 
-        //WEB SERVICE CALL - remove the members from the group
+        // WEB SERVICE CALL - remove the members from the group
         $function = 'moodle_group_delete_groupmembers';
         $params = array('members' => array(array('groupid' => $group->id, 'userid' => $user->id)));
         $client->call($function, $params);
@@ -1312,40 +1409,45 @@ class webservice_test extends UnitTestCase {
         $groupmembers = groups_get_members($group->id);
         $this->assertEqual(count($groupmembers), 0);
 
-        //delete the group
+        // delete the group
         $DB->delete_records('groups', array('id' => $group->id));
 
-        //unenrol the user
+        // unenrol the user
         $DB->delete_records('user_enrolments', array('id' => $enrolment->id));
         $DB->delete_records('enrol', array('id' => $enrol->id));
         role_unassign($role1->id, $user->id, $context->id);
 
-        //delete course context
+        // delete course context
         delete_context(CONTEXT_COURSE, $course->id);
 
-        //delete the user
+        // delete the user
         $DB->delete_records('user', array('id' => $user->id));
 
-        //delete the role
+        // delete the role
         delete_role($role1->id);
 
-        //delete the course
+        // delete the course
         $DB->delete_records('course', array('id' => $course->id));
 
-        //delete the category
+        // delete the category
         $DB->delete_records('course_categories', array('id' => $category->id));
 
     }
 
-    function moodle_group_create_groups($client) {
+    /**
+     * Test moodle_group_create_groups web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_group_create_groups($client) {
         global $DB, $CFG;
 
-        //create category
+        // create category
         $category = new stdClass();
         $category->name = 'tmpcategoryfortest123';
         $category->id = $DB->insert_record('course_categories', $category);
 
-        //create a course
+        // create a course
         $course = new stdClass();
         $course->fullname = 'tmpcoursefortest123';
         $course->shortname = 'tmpcoursefortest123';
@@ -1353,10 +1455,10 @@ class webservice_test extends UnitTestCase {
         $course->category = $category->id;
         $course->id = $DB->insert_record('course', $course);
 
-        //create a role
+        // create a role
         $role1->id = create_role('role1thatshouldnotexist', 'role1thatshouldnotexist', '');
 
-        //create a user
+        // create a user
         $user = new stdClass();
         $user->username = 'veryimprobabletestusername2';
         $user->password = 'testpassword2';
@@ -1367,10 +1469,10 @@ class webservice_test extends UnitTestCase {
         require_once($CFG->dirroot."/user/lib.php");
         $user->id = user_create_user($user);
 
-        //create course context
+        // create course context
         $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
-        //enrol the user in the course with the created role
+        // enrol the user in the course with the created role
         role_assign($role1->id, $user->id, $context->id);
         $enrol = new stdClass();
         $enrol->courseid = $course->id;
@@ -1385,7 +1487,7 @@ class webservice_test extends UnitTestCase {
         $groups = groups_get_all_groups($course->id);
         $this->assertEqual(count($groups), 0);
 
-        //WEBSERVICE CALL - create a group in the course
+        // WEBSERVICE CALL - create a group in the course
         $group = new stdClass();
         $group->courseid = $course->id;
         $group->name = 'tmpgroufortest123';
@@ -1404,42 +1506,47 @@ class webservice_test extends UnitTestCase {
         $groups = groups_get_all_groups($course->id);
         $this->assertEqual(count($groups), count($paramgroups));
 
-        //delete the group
+        // delete the group
         foreach ($groups as $dbgroup) {
             $DB->delete_records('groups', array('id' => $dbgroup->id));
         }
 
-        //unenrol the user
+        // unenrol the user
         $DB->delete_records('user_enrolments', array('id' => $enrolment->id));
         $DB->delete_records('enrol', array('id' => $enrol->id));
         role_unassign($role1->id, $user->id, $context->id);
 
-        //delete course context
+        // delete course context
         delete_context(CONTEXT_COURSE, $course->id);
 
-        //delete the user
+        // delete the user
         $DB->delete_records('user', array('id' => $user->id));
 
-        //delete the role
+        // delete the role
         delete_role($role1->id);
 
-        //delete the course
+        // delete the course
         $DB->delete_records('course', array('id' => $course->id));
 
-        //delete the category
+        // delete the category
         $DB->delete_records('course_categories', array('id' => $category->id));
 
     }
 
-    function moodle_group_delete_groups($client) {
+    /**
+     * Test moodle_group_delete_groups web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
+    private function moodle_group_delete_groups($client) {
         global $DB, $CFG;
 
-        //create category
+        // create category
         $category = new stdClass();
         $category->name = 'tmpcategoryfortest123';
         $category->id = $DB->insert_record('course_categories', $category);
 
-        //create a course
+        // create a course
         $course = new stdClass();
         $course->fullname = 'tmpcoursefortest123';
         $course->shortname = 'tmpcoursefortest123';
@@ -1447,10 +1554,10 @@ class webservice_test extends UnitTestCase {
         $course->category = $category->id;
         $course->id = $DB->insert_record('course', $course);
 
-        //create a role
+        // create a role
         $role1->id = create_role('role1thatshouldnotexist', 'role1thatshouldnotexist', '');
 
-        //create a user
+        // create a user
         $user = new stdClass();
         $user->username = 'veryimprobabletestusername2';
         $user->password = 'testpassword2';
@@ -1461,10 +1568,10 @@ class webservice_test extends UnitTestCase {
         require_once($CFG->dirroot."/user/lib.php");
         $user->id = user_create_user($user);
 
-        //create course context
+        // create course context
         $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
-        //enrol the user in the course with the created role
+        // enrol the user in the course with the created role
         role_assign($role1->id, $user->id, $context->id);
         $enrol = new stdClass();
         $enrol->courseid = $course->id;
@@ -1475,7 +1582,7 @@ class webservice_test extends UnitTestCase {
         $enrolment->enrolid = $enrol->id;
         $enrolment->id = $DB->insert_record('user_enrolments', $enrolment);
 
-        //create a group in the course
+        // create a group in the course
         $group = new stdClass();
         $group->courseid = $course->id;
         $group->name = 'tmpgroufortest123';
@@ -1494,7 +1601,7 @@ class webservice_test extends UnitTestCase {
         $groups = groups_get_all_groups($course->id);
         $this->assertEqual(2, count($groups));
 
-        //WEBSERVICE CALL -  delete the group
+        // WEBSERVICE CALL -  delete the group
         $function = 'moodle_group_delete_groups';
         $params = array('groupids' => array($group->id, $group2->id));
         $client->call($function, $params);
@@ -1502,56 +1609,68 @@ class webservice_test extends UnitTestCase {
         $groups = groups_get_all_groups($course->id);
         $this->assertEqual(0, count($groups));
 
-        //unenrol the user
+        // unenrol the user
         $DB->delete_records('user_enrolments', array('id' => $enrolment->id));
         $DB->delete_records('enrol', array('id' => $enrol->id));
         role_unassign($role1->id, $user->id, $context->id);
 
-        //delete course context
+        // delete course context
         delete_context(CONTEXT_COURSE, $course->id);
 
-        //delete the user
+        // delete the user
         $DB->delete_records('user', array('id' => $user->id));
 
-        //delete the role
+        // delete the role
         delete_role($role1->id);
 
-        //delete the course
+        // delete the course
         $DB->delete_records('course', array('id' => $course->id));
 
-        //delete the category
+        // delete the category
         $DB->delete_records('course_categories', array('id' => $category->id));
     }
 
-    function moodle_message_send_messages($client) {
+    /**
+     * Test moodle_message_send_messages web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     * @since Moodle 2.1
+     */
+    private function moodle_message_send_messages($client) {
         global $DB;
         $function = 'moodle_message_send_messages';
         $message = array();
         $message['text'] = 'this is a message with a link http://www.google.com';
-        $message['touserid'] = 2;  //replace by a existing user id
+        $message['touserid'] = 2;  // replace by a existing user id
         $message['clientmsgid'] = 'message_1';
         $message2 = array();
         $message2['text'] = 'this is a message with an image
             http://moodle.org/pluginfile.php/51/mod_forum/post/713724/moodle2-logo.png';
-        $message2['touserid'] = 2;  //replace by a existing user id
+        $message2['touserid'] = 2;  // replace by a existing user id
         $message2['clientmsgid'] = 'message_2';
         $params = array('messages' => array($message, $message2));
         $success = $client->call($function, $params);
         $this->assertEqual(count($success), 2);
     }
 
-     function moodle_notes_create_notes($client) {
+    /**
+     * Test moodle_notes_create_notes web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     * @since Moodle 2.1
+     */
+    private function moodle_notes_create_notes($client) {
         global $DB, $CFG;
 
         $note1 = array();
-        $note1['userid'] = 2; //about who is the note
-        $note1['publishstate'] = 'personal'; //can be course, site, personal
-        $note1['courseid'] = 2; //in Moodle a notes is always created into a course, even a site note.
+        $note1['userid'] = 2; // about who is the note
+        $note1['publishstate'] = 'personal'; // can be course, site, personal
+        $note1['courseid'] = 2; // in Moodle a notes is always created into a course, even a site note.
         $note1['text'] = 'This is a personal note about the user';
         $note1['clientnoteid'] = 'note_1';
 
         $note2 = array();
-        $note2['userid'] = 40000; //mostl likely going to fail
+        $note2['userid'] = 40000; // mostly likely going to fail
         $note2['publishstate'] = 'course';
         $note2['courseid'] = 2;
         $note2['text'] = 'This is a teacher note about the user';
@@ -1560,7 +1679,7 @@ class webservice_test extends UnitTestCase {
         $note3 = array();
         $note3['userid'] = 2;
         $note3['publishstate'] = 'site';
-        $note3['courseid'] = 30000; //most likely going to fail
+        $note3['courseid'] = 30000; // mostly likely going to fail
         $note3['text'] = 'This is a teacher site-wide note about the user';
         $note3['clientnoteid'] = 'note_3';
 
@@ -1568,7 +1687,7 @@ class webservice_test extends UnitTestCase {
         $params = array('notes' => array($note1, $note2, $note3));
         $notes = $client->call($function, $params);
 
-        $this->assertEqual(3, count($notes)); //1 info is a success, 2 others should be failed
+        $this->assertEqual(3, count($notes)); // 1 info is a success, 2 others should be failed
     }
 
 }

@@ -18,8 +18,7 @@
 /**
  * Unit tests for Number of errors grading logic
  *
- * @package    workshopform
- * @subpackage numerrors
+ * @package    workshopform_numerrors
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

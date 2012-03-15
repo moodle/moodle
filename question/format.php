@@ -103,6 +103,20 @@ class qformat_default {
         return '.txt';
     }
 
+    /**
+     * Check if the given file is capable of being imported by this plugin.
+     *
+     * Note that expensive or detailed integrity checks on the file should
+     * not be performed by this method. Simple file type or magic-number tests
+     * would be suitable.
+     *
+     * @param stored_file $file the file to check
+     * @return bool whether this plugin can import the file
+     */
+    public function can_import_file($file) {
+        return ($file->get_mimetype() == $this->mime_type());
+    }
+
     // Accessor methods
 
     /**

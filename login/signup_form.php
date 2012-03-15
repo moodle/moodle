@@ -129,7 +129,7 @@ class login_signup_form extends moodleform {
             $errors['username'] = get_string('usernameexists');
         } else {
             //check allowed characters
-            if ($data['username'] !== moodle_strtolower($data['username'])) {
+            if ($data['username'] !== textlib::strtolower($data['username'])) {
                 $errors['username'] = get_string('usernamelowercase');
             } else {
                 if ($data['username'] !== clean_param($data['username'], PARAM_USERNAME)) {
@@ -182,6 +182,10 @@ class login_signup_form extends moodleform {
                 $errors['recaptcha'] = get_string('missingrecaptchachallengefield');
             }
         }
+        // Validate customisable profile fields. (profile_validation expects an object as the parameter with userid set)
+        $dataobject = (object)$data;
+        $dataobject->id = 0;
+        $errors += profile_validation($dataobject, $files);
 
         return $errors;
 

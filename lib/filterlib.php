@@ -855,6 +855,7 @@ function filter_get_active_in_context($context) {
          ) active
          LEFT JOIN {filter_config} fc ON fc.filter = active.filter AND fc.contextid = $context->id
          ORDER BY active.sortorder";
+    //TODO: remove sql_cast_2signed() once we do not support upgrade from Moodle 2.2
     $rs = $DB->get_recordset_sql($sql);
 
     // Masssage the data into the specified format to return.
@@ -1347,13 +1348,13 @@ function filter_remove_duplicates($linkarray) {
         if ($filterobject->casesensitive) {
             $exists = in_array($filterobject->phrase, $concepts);
         } else {
-            $exists = in_array(moodle_strtolower($filterobject->phrase), $lconcepts);
+            $exists = in_array(textlib::strtolower($filterobject->phrase), $lconcepts);
         }
 
         if (!$exists) {
             $cleanlinks[] = $filterobject;
             $concepts[] = $filterobject->phrase;
-            $lconcepts[] = moodle_strtolower($filterobject->phrase);
+            $lconcepts[] = textlib::strtolower($filterobject->phrase);
         }
     }
 

@@ -113,7 +113,7 @@ if ($user !== false or $frm !== false or $errormsg !== '') {
 
 if ($frm and isset($frm->username)) {                             // Login WITH cookies
 
-    $frm->username = trim(moodle_strtolower($frm->username));
+    $frm->username = trim(textlib::strtolower($frm->username));
 
     if (is_enabled_auth('none') ) {
         if ($frm->username !== clean_param($frm->username, PARAM_USERNAME)) {

@@ -97,7 +97,9 @@ class core_backup_renderer extends plugin_renderer_base {
         $html .= html_writer::start_tag('div', array('class'=>'backup-section settings-section'));
         $html .= $this->output->heading(get_string('backupsettings', 'backup'), 2, array('class'=>'header'));
         foreach ($details->root_settings as $label=>$value) {
-            if ($label == 'filename') continue;
+            if ($label == 'filename' or $label == 'user_files') {
+                continue;
+            }
             $html .= $this->backup_detail_pair(get_string('rootsetting'.str_replace('_','',$label), 'backup'), $value?$yestick:$notick);
         }
         $html .= html_writer::end_tag('div');
@@ -568,6 +570,12 @@ class core_backup_renderer extends plugin_renderer_base {
         $output = html_writer::start_tag('div', array('class' => 'import-course-search'));
         if ($component->get_count() === 0) {
             $output .= $this->output->notification(get_string('nomatchingcourses', 'backup'));
+
+            $output .= html_writer::start_tag('div', array('class'=>'ics-search'));
+            $output .= html_writer::empty_tag('input', array('type'=>'text', 'name'=>restore_course_search::$VAR_SEARCH, 'value'=>$component->get_search()));
+            $output .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'searchcourses', 'value'=>get_string('search')));
+            $output .= html_writer::end_tag('div');
+
             $output .= html_writer::end_tag('div');
             return $output;
         }

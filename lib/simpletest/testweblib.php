@@ -62,16 +62,15 @@ class web_test extends UnitTestCase {
     }
 
     function test_format_text_email() {
-        $this->assertEqual("\n\nThis is a TEST",
+        $this->assertEqual("This is a TEST",
             format_text_email('<p>This is a <strong>test</strong></p>',FORMAT_HTML));
-        $this->assertEqual("\n\nThis is a TEST",
+        $this->assertEqual("This is a TEST",
             format_text_email('<p class="frogs">This is a <strong class=\'fishes\'>test</strong></p>',FORMAT_HTML));
         $this->assertEqual('& so is this',
             format_text_email('&amp; so is this',FORMAT_HTML));
-        $tl = textlib_get_instance();
-        $this->assertEqual('Two bullets: '.$tl->code2utf8(8226).' *',
+        $this->assertEqual('Two bullets: '.textlib::code2utf8(8226).' *',
             format_text_email('Two bullets: &#x2022; &#8226;',FORMAT_HTML));
-        $this->assertEqual($tl->code2utf8(0x7fd2).$tl->code2utf8(0x7fd2),
+        $this->assertEqual(textlib::code2utf8(0x7fd2).textlib::code2utf8(0x7fd2),
             format_text_email('&#x7fd2;&#x7FD2;',FORMAT_HTML));
     }
 
@@ -98,6 +97,30 @@ class web_test extends UnitTestCase {
 
     function test_wikify_links() {
         $this->assertEqual(wikify_links('this is a <a href="http://someaddress.com/query">link</a>'), 'this is a link [ http://someaddress.com/query ]');
+    }
+
+    function test_moodle_url_round_trip() {
+        $strurl = 'http://moodle.org/course/view.php?id=5';
+        $url = new moodle_url($strurl);
+        $this->assertEqual($strurl, $url->out(false));
+
+        $strurl = 'http://moodle.org/user/index.php?contextid=53&sifirst=M&silast=D';
+        $url = new moodle_url($strurl);
+        $this->assertEqual($strurl, $url->out(false));
+    }
+
+    function test_moodle_url_round_trip_array_params() {
+        $strurl = 'http://example.com/?a%5B1%5D=1&a%5B2%5D=2';
+        $url = new moodle_url($strurl);
+        $this->assertEqual($strurl, $url->out(false));
+
+        $url = new moodle_url('http://example.com/?a[1]=1&a[2]=2');
+        $this->assertEqual($strurl, $url->out(false));
+
+        // For un-keyed array params, we expect 0..n keys to be returned
+        $strurl = 'http://example.com/?a%5B0%5D=0&a%5B1%5D=1';
+        $url = new moodle_url('http://example.com/?a[]=0&a[]=1');
+        $this->assertEqual($strurl, $url->out(false));
     }
 
     function test_compare_url() {
@@ -134,56 +157,6 @@ class web_test extends UnitTestCase {
         $url2 = new moodle_url('http://www.google.com/lib/simpletest/testweblib.php');
         $this->expectException('coding_exception');
         $url2->out_as_local_url();
-    }
-
-    public function test_html_to_text_simple() {
-        $this->assertEqual("\n\n_Hello_ WORLD!", html_to_text('<p><i>Hello</i> <b>world</b>!</p>'));
-    }
-
-    public function test_html_to_text_image() {
-        $this->assertEqual('[edit]', html_to_text('<img src="edit.png" alt="edit" />'));
-    }
-
-    public function test_html_to_text_image_with_backslash() {
-        $this->assertEqual('[\edit]', html_to_text('<img src="edit.png" alt="\edit" />'));
-    }
-
-    public function test_html_to_text_nowrap() {
-        $long = "Here is a long string, more than 75 characters long, since by default html_to_text wraps text at 75 chars.";
-        $this->assertEqual($long, html_to_text($long, 0));
-    }
-
-    public function test_html_to_text_dont_screw_up_utf8() {
-        $this->assertEqual("\n\nAll the WORLD’S a stage.", html_to_text('<p>All the <strong>world’s</strong> a stage.</p>'));
-    }
-
-    public function test_html_to_text_trailing_whitespace() {
-        $this->assertEqual('With trailing whitespace and some more text', html_to_text("With trailing whitespace   \nand some   more text", 0));
-    }
-
-    public function test_html_to_text_0() {
-        $this->assertIdentical('0', html_to_text('0'));
-    }
-
-    public function test_html_to_text_pre_parsing_problem() {
-        $strorig = 'Consider the following function:<br /><pre><span style="color: rgb(153, 51, 102);">void FillMeUp(char* in_string) {'.
-                   '<br />  int i = 0;<br />  while (in_string[i] != \'\0\') {<br />    in_string[i] = \'X\';<br />    i++;<br />  }<br />'.
-                   '}</span></pre>What would happen if a non-terminated string were input to this function?<br /><br />';
-
-        $strconv = 'Consider the following function:
-
-void FillMeUp(char* in_string) {
- int i = 0;
- while (in_string[i] != \'\0\') {
- in_string[i] = \'X\';
- i++;
- }
-}
-What would happen if a non-terminated string were input to this function?
-
-';
-
-        $this->assertIdentical($strconv, html_to_text($strorig));
     }
 
     public function test_clean_text() {

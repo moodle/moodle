@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_shortanswer_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('frogtoad', 'frogonly');
+        return array('frogtoad', 'frogonly', 'escapedwildcards');
     }
 
     /**
@@ -129,5 +129,26 @@ class qtype_shortanswer_test_helper extends question_test_helper {
         );
 
         return $qdata;
+    }
+
+    /**
+     * Makes a shortanswer question with just the correct ansewer 'frog', and
+     * no other answer matching.
+     * @return qtype_shortanswer_question
+     */
+    public function make_shortanswer_question_escapedwildcards() {
+        question_bank::load_question_definition_classes('shortanswer');
+        $sa = new qtype_shortanswer_question();
+        test_question_maker::initialise_a_question($sa);
+        $sa->name = 'Question with escaped * in the answer.';
+        $sa->questiontext = 'How to you write x times y in C? __________';
+        $sa->generalfeedback = 'In C, this expression is written x * y.';
+        $sa->usecase = false;
+        $sa->answers = array(
+            13 => new question_answer(13, '*x\*y*', 1.0, 'Well done.', FORMAT_HTML),
+        );
+        $sa->qtype = question_bank::get_qtype('shortanswer');
+
+        return $sa;
     }
 }
