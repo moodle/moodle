@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Common classes used by gradingform plugintypes are defined here
  *
- * @package    core
- * @subpackage grading
+ * @package    core_grading
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +25,25 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Grading method controller represents a plugin used in a particular area
+ * Class represents a grading form definition used in a particular area
+ *
+ * General data about definition is stored in the standard DB table
+ * grading_definitions. A separate entry is created for each grading area
+ * (i.e. for each module). Plugins may define and use additional tables
+ * to store additional data about definitions.
+ *
+ * Advanced grading plugins must declare a class gradingform_xxxx_controller
+ * extending this class and put it in lib.php in the plugin folder.
+ *
+ * See {@link gradingform_rubric_controller} as an example
+ *
+ * Except for overwriting abstract functions, plugin developers may want
+ * to overwrite functions responsible for loading and saving of the
+ * definition to include additional data stored.
+ *
+ * @copyright  2011 David Mudrak <david@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @category   grading
  */
 abstract class gradingform_controller {
 
@@ -35,7 +51,7 @@ abstract class gradingform_controller {
     const DEFINITION_STATUS_NULL = 0;
     /** the form is currently being edited and is not ready for usage yet */
     const DEFINITION_STATUS_DRAFT = 10;
-    /** the for was marked as ready for actual usage */
+    /** the form was marked as ready for actual usage */
     const DEFINITION_STATUS_READY = 20;
 
     /** @var stdClass the context */
@@ -80,6 +96,8 @@ abstract class gradingform_controller {
     }
 
     /**
+     * Returns controller context
+     *
      * @return stdClass controller context
      */
     public function get_context() {
@@ -87,6 +105,8 @@ abstract class gradingform_controller {
     }
 
     /**
+     * Returns gradable component name
+     *
      * @return string gradable component name
      */
     public function get_component() {
@@ -94,6 +114,8 @@ abstract class gradingform_controller {
     }
 
     /**
+     * Returns gradable area name
+     *
      * @return string gradable area name
      */
     public function get_area() {
@@ -101,6 +123,8 @@ abstract class gradingform_controller {
     }
 
     /**
+     * Returns gradable area id
+     *
      * @return int gradable area id
      */
     public function get_areaid() {
@@ -366,7 +390,7 @@ abstract class gradingform_controller {
                 'status1'  => gradingform_instance::INSTANCE_STATUS_ACTIVE,
                 'status2'  => gradingform_instance::INSTANCE_STATUS_NEEDUPDATE);
         $select = 'definitionid=:definitionid and itemid=:itemid and (status=:status1 or status=:status2)';
-        if (false /* TODO $manager->allow_multiple_raters() */) {
+        if (false /* TODO MDL-31237 $manager->allow_multiple_raters() */) {
             $select .= ' and raterid=:raterid';
             $params['raterid'] = $raterid;
         }
@@ -543,7 +567,7 @@ abstract class gradingform_controller {
         return array($subsql, $params);
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     /**
      * Loads the form definition if it exists
@@ -567,6 +591,8 @@ abstract class gradingform_controller {
     abstract protected function delete_plugin_definition();
 
     /**
+     * Returns the name of the grading method plugin, eg 'rubric'
+     *
      * @return string the name of the grading method plugin, eg 'rubric'
      * @see PARAM_PLUGIN
      */
@@ -617,15 +643,39 @@ abstract class gradingform_controller {
 }
 
 /**
- * Class to manage one grading instance. Stores information and performs actions like
- * update, copy, validate, submit, etc.
+ * Class to manage one gradingform instance.
+ *
+ * Gradingform instance is created for each evaluation of a student, using advanced grading.
+ * It is stored as an entry in the DB table gradingform_instance.
+ *
+ * One instance (usually the latest) has the status INSTANCE_STATUS_ACTIVE. Sometimes it may
+ * happen that a teacher wants to change the definition when some students have already been
+ * graded. In this case their instances change status to INSTANCE_STATUS_NEEDUPDATE.
+ *
+ * To support future use of AJAX for background saving of incomplete evaluations the
+ * status INSTANCE_STATUS_INCOMPLETE is introduced. If 'Cancel' is pressed this entry
+ * is deleted.
+ * When grade is updated the previous active instance receives status INSTANCE_STATUS_ACTIVE.
+ *
+ * Advanced grading plugins must declare a class gradingform_xxxx_instance
+ * extending this class and put it in lib.php in the plugin folder.
+ *
+ * The reference to an instance of this class is passed to an advanced grading form element
+ * included in the grading form, so this class must implement functions for rendering
+ * and validation of this form element. See {@link MoodleQuickForm_grading}
  *
  * @copyright  2011 Marina Glancy
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @category   grading
  */
 abstract class gradingform_instance {
+    /** Valid istance status */
     const INSTANCE_STATUS_ACTIVE = 1;
+    /** The grade needs to be updated by grader (usually because of changes is grading method) */
     const INSTANCE_STATUS_NEEDUPDATE = 2;
+    /** The grader started grading but did clicked neither submit nor cancel */
     const INSTANCE_STATUS_INCOMPLETE = 0;
+    /** Grader re-graded the student and this is the status for previous grade stored as history */
     const INSTANCE_STATUS_ARCHIVE = 3;
 
     /** @var stdClass record from table grading_instances */
@@ -768,8 +818,7 @@ abstract class gradingform_instance {
      */
     public function cancel() {
         global $DB;
-        // TODO what if we happen delete the ACTIVE instance, shall we rollback to the last ARCHIVE? or throw an exception?
-        // TODO create cleanup cron
+        // TODO MDL-31239 throw exception if status is not INSTANCE_STATUS_INCOMPLETE
         $DB->delete_records('grading_instances', array('id' => $this->get_id()));
     }
 
@@ -788,7 +837,7 @@ abstract class gradingform_instance {
         if (isset($elementvalue['itemid']) && $elementvalue['itemid'] != $this->data->itemid) {
             $newdata->itemid = $elementvalue['itemid'];
         }
-        // TODO also update: rawgrade, feedback, feedbackformat
+        // TODO MDL-31087 also update: rawgrade, feedback, feedbackformat
         $DB->update_record('grading_instances', $newdata);
         foreach ($newdata as $key => $value) {
             $this->data->$key = $value;
@@ -872,6 +921,9 @@ abstract class gradingform_instance {
      * Returns the error message displayed if validation failed.
      * If plugin wants to display custom message, the empty string should be returned here
      * and the custom message should be output in render_grading_element()
+     *
+     * Please note that in assignments grading in 2.2 the grading form is not validated
+     * properly and this message is not being displayed.
      *
      * @see validate_grading_element()
      * @return string

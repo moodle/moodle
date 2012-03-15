@@ -17,8 +17,7 @@
 /**
  * Allows to choose a form from the list of available templates
  *
- * @package    core_grades
- * @subpackage grading
+ * @package    core_grading
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -255,7 +254,4 @@ echo $output->single_button(
     get_string('back'), 'get');
 
 echo $output->footer();
-
-////////////////////////////////////////////////////////////////////////////////
-
 

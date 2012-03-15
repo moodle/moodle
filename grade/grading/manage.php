@@ -21,8 +21,7 @@
  * area, provides access to the plugin editor and allows user to save the
  * current form as a template or re-use some existing form.
  *
- * @package    core_grades
- * @subpackage grading
+ * @package    core_grading
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
