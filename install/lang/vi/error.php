@@ -30,4 +30,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatetempdir'] = 'Không thể tạo thư mục tạm thời';
+$string['cannotdownloadcomponents'] = 'Không thể tải component';
+$string['cannotdownloadzipfile'] = 'Không thể tải tập tin ZIP';
 $string['cannotfindcomponent'] = 'Không thấy component';
+$string['cannotsavezipfile'] = 'Không thể lưu tập tin ZIP';
+$string['cannotunzipfile'] = 'Không thể giải nén tập tin';
+$string['componentisuptodate'] = 'Component đang ở tình trạng mới nhất';
