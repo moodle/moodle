@@ -1550,9 +1550,6 @@ abstract class moodle_database {
     /**
      * Test whether a record exists in a table where all the given conditions met.
      *
-     * The record to test is specified by giving up to three fields that must
-     * equal the corresponding values.
-     *
      * @param string $table The table to check.
      * @param array $conditions optional array $fieldname=>requestedvalue with AND in between
      * @return bool true if a matching record exists, else false.
