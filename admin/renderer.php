@@ -651,7 +651,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 if (!$plugin->is_standard()) {
                     $numextension++;
                 }
-                if ($plugin->available_update()) {
+                if ($plugin->available_updates()) {
                     $numupdatable++;
                 }
             }
@@ -779,10 +779,11 @@ class core_admin_renderer extends plugin_renderer_base {
                     $requiredby = '';
                 }
 
-                if ($updateinfo = $plugin->available_update()) {
-                    $updateinfo = $this->plugin_available_update_info($updateinfo);
-                } else {
-                    $updateinfo = '';
+                $updateinfo = '';
+                if (is_array($plugin->available_updates())) {
+                    foreach ($plugin->available_updates() as $availableupdate) {
+                        $updateinfo .= $this->plugin_available_update_info($availableupdate);
+                    }
                 }
 
                 $notes = new html_table_cell($requiredby.$updateinfo);
@@ -801,12 +802,11 @@ class core_admin_renderer extends plugin_renderer_base {
      * Helper method to render the information about the available update
      *
      * The passed objects always provides at least the 'version' property containing
-     * the (higher) version of the plugin available. Other properties may be provided, see
-     * the specification of the protocol used by {@link available_update_checker}.
+     * the (higher) version of the plugin available.
      *
-     * @param stdClass $updateinfo information about the available update for the plugin
+     * @param available_update_info $updateinfo information about the available update for the plugin
      */
-    protected function plugin_available_update_info(stdClass $updateinfo) {
+    protected function plugin_available_update_info(available_update_info $updateinfo) {
 
         $box  = $this->output->box_start('pluginupdateinfo');
         $box .= html_writer::tag('div', get_string('updateavailable', 'core_plugin', $updateinfo->version), array('class' => 'version'));

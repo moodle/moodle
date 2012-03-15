@@ -123,7 +123,7 @@ class plugin_manager {
             $provider = available_update_checker::instance();
             foreach ($this->pluginsinfo as $plugintype => $plugins) {
                 foreach ($plugins as $plugininfoholder) {
-                    $plugininfoholder->check_available_update($provider);
+                    $plugininfoholder->check_available_updates($provider);
                 }
             }
         }
@@ -572,20 +572,15 @@ class available_update_checker {
 
     /** @var available_update_checker holds the singleton instance */
     protected static $singletoninstance;
-    /** @var null|string numerical version of the local Moodle site */
-    protected $localversion = null;
-    /** @var null|string release signature of the local Moodle site */
-    protected $localrelease = null;
-    /** @var array of (string)frankestyle => (string)version list of plugins installed at the local Moodle site */
-    protected $localplugins = array();
-    /** @var null|stdClass */
-    protected $config = null;
+    /** @var null|int the timestamp of when the most recent response was fetched */
+    protected $recentfetch = null;
+    /** @var null|array the recent response from the update notification provider */
+    protected $recentresponse = null;
 
     /**
      * Direct initiation not allowed, use the factory method {@link self::instance()}
      */
     protected function __construct() {
-        $this->load_config();
     }
 
     /**
@@ -658,10 +653,14 @@ class available_update_checker {
      * @return int|null null if it has never been executed or we don't known
      */
     public function get_last_timefetched() {
-        if (isset($this->config->timelastfetched)) {
-            return $this->config->timelastfetched;
+
+        $this->restore_response();
+
+        if (!empty($this->recentfetch)) {
+            return $this->recentfetch;
+
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -671,126 +670,133 @@ class available_update_checker {
      * @throws available_update_checker_exception
      */
     public function fetch() {
-        $response = $this->make_request();
+        $response = $this->get_response();
         $this->validate_response($response);
-        $this->process_response($response);
+        $this->store_response($response);
     }
 
     /**
      * Returns the available update information for the given component
      *
      * This method returns null if the most recent response does not contain any information
-     * about it. Note that this does not mean that the information is not provided by the
-     * remote site. The recent request might be specific
+     * about it. The returned structure is an array of available updates for the given
+     * component. Each update info is an object with at least one property called
+     * 'version'. Other possible properties are 'release', 'maturity', 'url' and 'downloadurl'.
      *
      * @param string $component frankenstyle
-     * @return null|stdClass null if the most recent response does not provide any info
+     * @return null|stdClass null or array of objects
      */
     public function get_update_info($component) {
 
-        $branch = moodle_major_version();
+        $this->restore_response();
 
-        if (!empty($this->config->components->$branch->$component)) {
-            return $this->config->components->$branch->$component;
+        if (!empty($this->recentresponse['updates'][$component])) {
+            $updates = array();
+            foreach ($this->recentresponse['updates'][$component] as $info) {
+                $updates[] = new available_update_info($component, $info);
+            }
+            return $updates;
         } else {
             return null;
         }
     }
 
     /**
-     * Executes cURL request to get data from the remote site
+     * Makes cURL request to get data from the remote site
      *
-     * @return stdClass request result
+     * @return string raw request result
      * @throws available_update_checker_exception
      */
-    protected function make_request() {
+    protected function get_response() {
         $curl = new curl(array('proxy' => true));
         $response = $curl->post($this->prepare_request_url(), $this->prepare_request_params());
         $curlinfo = $curl->get_info();
         if ($curlinfo['http_code'] != 200) {
             throw new available_update_checker_exception('err_response_http_code', $curlinfo['http_code']);
         }
-        $response = json_decode($response);
         return $response;
     }
 
     /**
      * Makes sure the response is valid, has correct API format etc.
      *
-     * @param stdClass $response
+     * @param string $response raw response as returned by the {@link self::get_response()}
      * @throws available_update_checker_exception
      */
-    protected function validate_response(stdClass $response) {
+    protected function validate_response($response) {
+
+        $response = $this->decode_response($response);
 
         if (empty($response)) {
             throw new available_update_checker_exception('err_response_empty');
         }
 
-        if (empty($response->status) or $response->status !== 'OK') {
-            throw new available_update_checker_exception('err_response_status', $response->status);
+        if (empty($response['status']) or $response['status'] !== 'OK') {
+            throw new available_update_checker_exception('err_response_status', $response['status']);
         }
 
-        if (empty($response->apiver) or $response->apiver != '1.0') {
-            throw new available_update_checker_exception('err_response_format_version', $response->apiver);
+        if (empty($response['apiver']) or $response['apiver'] !== '1.0') {
+            throw new available_update_checker_exception('err_response_format_version', $response['apiver']);
+        }
+
+        if (empty($response['forbranch']) or $response['forbranch'] !== moodle_major_version(true)) {
+            throw new available_update_checker_exception('err_response_target_version', $response['target']);
         }
     }
 
     /**
-     * Stores the fetched response for later usage
+     * Decodes the raw string response from the update notifications provider
+     *
+     * @param string $response as returned by {@link self::get_response()}
+     * @return array decoded response structure
+     */
+    protected function decode_response($response) {
+        return json_decode($response, true);
+    }
+
+    /**
+     * Stores the valid fetched response for later usage
      *
      * This implementation uses the config_plugins table as the permanent storage.
      *
-     * @param stdClass $response the data returned by the updates info provider
+     * @param string $response raw valid data returned by {@link self::get_response()}
      */
-    protected function process_response(stdClass $response) {
+    protected function store_response($response) {
 
-        $components = $this->merge_components_info($this->config->components, $response->components, $response->timegenerated);
+        set_config('recentfetch', time(), 'core_plugin');
+        set_config('recentresponse', $response, 'core_plugin');
 
-        set_config('timelastfetched', time(), 'core_plugin');
-        set_config('ticket', $response->ticket, 'core_plugin');
-        set_config('components', json_encode($components), 'core_plugin');
-
-        $this->load_config(true);
+        $this->restore_response(true);
     }
 
     /**
-     * Merges the current and the new info about the available updates
+     * Loads the most recent raw response record we have fetched
      *
-     * @param stdClass $old
-     * @param stdClass $new
-     * @param int $timegenerated the timestamp of when the $new was generated
-     * @return stdClass merged
+     * This implementation uses the config_plugins table as the permanent storage.
+     *
+     * @param bool $forcereload reload even if it was already loaded
      */
-    protected function merge_components_info(stdClass $old, stdClass $new, $timegenerated=null) {
-        $merged = clone($old);
-        if (is_null($timegenerated)) {
-            $timegenerated = time();
+    protected function restore_response($forcereload = false) {
+
+        if (!$forcereload and !is_null($this->recentresponse)) {
+            // we already have it, nothing to do
+            return;
         }
-        foreach ($new as $branch => $components) {
-            foreach ($components as $component => $info) {
-                $info->timegenerated = $timegenerated;
-                if (isset($info->version)) {
-                    $merged->$branch->$component = $info;
-                }
+
+        $config = get_config('core_plugin');
+
+        if (!empty($config->recentresponse) and !empty($config->recentfetch)) {
+            try {
+                $this->validate_response($config->recentresponse);
+                $this->recentfetch = $config->recentfetch;
+                $this->recentresponse = $this->decode_response($config->recentresponse);
             }
-        }
-        return $merged;
-    }
+            catch (available_update_checker_exception $e) {
+                // do not set recentresponse if the validation fails
+            }
 
-    /**
-     * Loads the core_plugin subsystem config
-     *
-     * @param bool $forcereload reload the config even if it was already loaded
-     */
-    protected function load_config($forcereload = false) {
-        if ($forcereload or is_null($this->config)) {
-            $this->config = get_config('core_plugin');
-        }
-
-        if (empty($this->config->components)) {
-            $this->config->components = new stdClass();
         } else {
-            $this->config->components = json_decode($this->config->components);
+            $this->recentresponse = array();
         }
     }
 
@@ -820,11 +826,13 @@ class available_update_checker {
     protected function prepare_request_params() {
         global $CFG;
 
+        $this->restore_response();
+
         $params = array();
         $params['format'] = 'json';
 
-        if (isset($this->config->ticket)) {
-            $params['ticket'] = $this->config->ticket;
+        if (isset($this->recentresponse['ticket'])) {
+            $params['ticket'] = $this->recentresponse['ticket'];
         }
 
         if (isset($this->localversion)) {
@@ -837,6 +845,44 @@ class available_update_checker {
 
         // todo localplugins
         return $params;
+    }
+}
+
+
+/**
+ * Defines the structure of objects returned by {@link available_update_checker::get_update_info()}
+ */
+class available_update_info {
+
+    /** @var string frankenstyle component name */
+    public $component;
+    /** @var int the available version of the component */
+    public $version;
+    /** @var string|null optional release name */
+    public $release = null;
+    /** @var int|null optional maturity info, eg {@link MATURITY_STABLE} */
+    public $maturity = null;
+    /** @var string|null optional URL of a page with more info about the update */
+    public $url = null;
+    /** @var string|null optional URL of a ZIP package that can be downloaded and installed */
+    public $download = null;
+
+    /**
+     * Creates new instance of the class
+     *
+     * The $info array must provide at least the 'version' value and optionally all other
+     * values to populate the object's properties.
+     *
+     * @param string $name the frankenstyle component name
+     * @param array $info associative array with other properties
+     */
+    public function __construct($name, array $info) {
+        $this->component = $name;
+        foreach ($info as $k => $v) {
+            if (property_exists('available_update_info', $k) and $k != 'component') {
+                $this->$k = $v;
+            }
+        }
     }
 }
 
@@ -905,8 +951,8 @@ abstract class plugininfo_base {
     public $instances;
     /** @var int order of the plugin among other plugins of the same type - not supported yet */
     public $sortorder;
-    /** @var null|stdClass holds the information about the remote available update for this plugin */
-    public $availableupdate;
+    /** @var array|null array of {@link available_update_info} for this plugin */
+    public $availableupdates;
 
     /**
      * Gathers and returns the information about all plugins of the given type
@@ -1136,35 +1182,43 @@ abstract class plugininfo_base {
     }
 
     /**
-     * Populates the property {@link $availableupdate} with the information provided by
+     * Populates the property {@link $availableupdates} with the information provided by
      * available update checker
      *
      * @param available_update_checker $provider the class providing the available update info
      */
-    public function check_available_update(available_update_checker $provider) {
-        $this->availableupdate = $provider->get_update_info($this->component);
+    public function check_available_updates(available_update_checker $provider) {
+        $this->availableupdates = $provider->get_update_info($this->component);
     }
 
     /**
-     * If there is an update of this plugin available, returns the data about it.
+     * If there are updates for this plugin available, returns them.
      *
-     * Returns object with various properties about the available update, if such
-     * an update is available. Returns false if there is no update available for
-     * this plugin. Returns null if the update availabitlity is unknown.
+     * Returns array of {@link available_update_info} objects, if some update
+     * is available. Returns null if there is no update available or if the update
+     * availability is unknown.
      *
-     * @return stdClass|false|null
+     * @return array|null
      */
-    public function available_update() {
+    public function available_updates() {
 
-        if (empty($this->availableupdate)) {
+        if (empty($this->availableupdates) or !is_array($this->availableupdates)) {
             return null;
         }
 
-        if ($this->availableupdate->version > $this->versiondisk) {
-            return $this->availableupdate;
+        $updates = array();
+
+        foreach ($this->availableupdates as $availableupdate) {
+            if ($availableupdate->version > $this->versiondisk) {
+                $updates[] = $availableupdate;
+            }
         }
 
-        return false;
+        if (empty($updates)) {
+            return null;
+        }
+
+        return $updates;
     }
 
     /**

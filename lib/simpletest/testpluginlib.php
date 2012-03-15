@@ -93,15 +93,12 @@ class testable_plugin_manager extends plugin_manager {
                     $CFG->dirroot.'/mod/foo', 'testable_plugininfo_mod'),
                 'bar' => plugininfo_default_factory::make('mod', $CFG->dirroot.'/bar', 'bar',
                     $CFG->dirroot.'/mod/bar', 'testable_plugininfo_mod'),
-                'buz' => plugininfo_default_factory::make('mod', $CFG->dirroot.'/buz', 'buz',
-                    $CFG->dirroot.'/mod/buz', 'testable_plugininfo_mod'),
             )
         );
 
         $checker = testable_available_update_checker::instance();
-        $this->pluginsinfo['mod']['foo']->check_available_update($checker);
-        $this->pluginsinfo['mod']['bar']->check_available_update($checker);
-        $this->pluginsinfo['mod']['buz']->check_available_update($checker);
+        $this->pluginsinfo['mod']['foo']->check_available_updates($checker);
+        $this->pluginsinfo['mod']['bar']->check_available_updates($checker);
 
         return $this->pluginsinfo;
     }
@@ -112,6 +109,9 @@ class testable_plugin_manager extends plugin_manager {
  * Modified version of {@link available_update_checker} suitable for testing
  */
 class testable_available_update_checker extends available_update_checker {
+
+    /** @var replaces the default DB table storage for the fetched response */
+    protected $responsestorage;
 
     /**
      * Factory method for this class
@@ -127,45 +127,65 @@ class testable_available_update_checker extends available_update_checker {
         return self::$singletoninstance;
     }
 
-    /**
-     * Do not load config in this testable subclass
-     */
-    protected function load_config() {
+    protected function validate_response() {
     }
 
-    /**
-     * Do not fetch anything in this testable subclass
-     */
-    public function fetch() {
+    protected function store_response($response) {
+        $this->responsestorage = $response;
     }
 
-    /**
-     * Here we simulate read access to the fetched remote statuses
-     */
-    public function get_update_info($component) {
-        if ($component === 'mod_foo') {
-            // no update available
-            return (object)array(
-                'version' => 2012030500,
-            );
-
-        } else if ($component === 'mod_bar') {
-            // there is an update available
-            return (object)array(
-                'version' => 2012030501,
-            );
-
-        } else {
-            // nothing known to us
-            return null;
-        }
+    protected function restore_response($forcereload = false) {
+        $this->recentfetch = time();
+        $this->recentresponse = $this->decode_response($this->get_fake_response());
     }
 
-    /**
-     * Makes the method public so we can test it
-     */
-    public function merge_components_info(stdClass $old, stdClass $new, $timegenerated=null) {
-        return parent::merge_components_info($old, $new, $timegenerated);
+    private function get_fake_response() {
+        $fakeresponse = array(
+            'status' => 'OK',
+            'provider' => 'http://download.moodle.org/api/1.0/updates.php',
+            'apiver' => '1.0',
+            'timegenerated' => time(),
+            'forversion' => '2012010100.00',
+            'forbranch' => '2.3',
+            'ticket' => sha1('No, I am not going to mention the word "frog" here. Oh crap. I just did.'),
+            'updates' => array(
+                'core' => array(
+                    array(
+                        'version' => 2012060103.00,
+                        'release' => '2.3.3 (Build: 20121201)',
+                        'maturity' => 200,
+                        'url' => 'http://download.moodle.org/',
+                        'download' => 'http://download.moodle.org/download.php/MOODLE_23_STABLE/moodle-2.3.3-latest.zip',
+                    ),
+                    array(
+                        'version' => 2012120100.00,
+                        'release' => '2.4 (Build: 20121201)',
+                        'maturity' => 200,
+                        'url' => 'http://download.moodle.org/',
+                        'download' => 'http://download.moodle.org/download.php/MOODLE_24_STABLE/moodle-2.4.0-latest.zip',
+                    ),
+                ),
+                'mod_foo' => array(
+                    array(
+                        'version' => 2012030501,
+                        'requires' => 2012010100,
+                        'maturity' => 200,
+                        'release' => '1.1',
+                        'url' => 'http://moodle.org/plugins/blahblahblah/',
+                        'download' => 'http://moodle.org/plugins/download.php/blahblahblah',
+                    ),
+                    array(
+                        'version' => 2012030502,
+                        'requires' => 2012010100,
+                        'maturity' => 100,
+                        'release' => '1.2 beta',
+                        'url' => 'http://moodle.org/plugins/',
+                    ),
+                ),
+            ),
+        );
+
+        return json_encode($fakeresponse);
     }
 }
 
@@ -197,10 +217,11 @@ class plugin_manager_test extends UnitTestCase {
     public function test_available_update() {
         $pluginman = testable_plugin_manager::instance();
         $plugins = $pluginman->get_plugins();
-        $this->assertFalse($plugins['mod']['foo']->available_update());
-        $this->assertNull($plugins['mod']['buz']->available_update());
-        $this->assertIsA($plugins['mod']['bar']->available_update(), 'stdClass');
-        $this->assertEqual($plugins['mod']['bar']->available_update()->version, 2012030501);
+        $this->assertNull($plugins['mod']['bar']->available_updates());
+        $this->assertIsA($plugins['mod']['foo']->available_updates(), 'array');
+        foreach ($plugins['mod']['foo']->available_updates() as $availableupdate) {
+            $this->assertIsA($availableupdate, 'available_update_info');
+        }
     }
 }
 
@@ -213,53 +234,5 @@ class available_update_checker_test extends UnitTestCase {
     public function test_core_available_update() {
         $provider = testable_available_update_checker::instance();
         $this->assertTrue($provider instanceof available_update_checker);
-    }
-
-    public function test_merge_components_info() {
-        $old = (object)array(
-            '2.2' => (object)array(
-                'core' => (object)array(
-                    'version' => 2011120501.11,
-                    'release' => '2.2.1+ (Build: 20120301)',
-                    'maturity' => MATURITY_STABLE,
-                ),
-                'mod_foo' => (object)array(
-                    'version' => 2011010100,
-                ),
-                'mod_bar' => (object)array(
-                    'version' => 2011020200,
-                )
-            )
-        );
-        $new = (object)array(
-            '2.2' => (object)array(
-                'core' => (object)array(
-                    'version' => 2011120501.12,
-                    'release' => '2.2.1+ (Build: 20120302)',
-                    'maturity' => MATURITY_STABLE,
-                ),
-                'mod_bar' => (object)array(
-                    'version' => 2011020201,
-                ),
-            ),
-            '2.3' => (object)array(
-                'core' => (object)array(
-                    'version' => 2012030100.00,
-                    'release' => '2.3dev (Build: 20120301)',
-                    'maturity' => MATURITY_ALPHA,
-                ),
-                'mod_foo' => (object)array(
-                    'version' => 2012010200,
-                )
-            )
-        );
-        $checker = testable_available_update_checker::instance();
-        $now = time();
-        $merged = $checker->merge_components_info($old, $new, $now);
-        $this->assertEqual($merged->{2.2}->core->version, 2011120501.12); // from $new
-        $this->assertEqual($merged->{2.2}->mod_bar->version, 2011020201); // from $new
-        $this->assertEqual($merged->{2.2}->mod_foo->version, 2011010100); // from $old
-        $this->assertEqual($merged->{2.3}->core->version, 2012030100.00); // from $new
-        $this->assertFalse(isset($merged->{2.3}->mod_bar));
     }
 }
