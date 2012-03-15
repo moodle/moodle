@@ -315,12 +315,12 @@ if($do_show == 'edit') {
                                     // echo '<input title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" hspace="1" height="11" width="11" border="0" />';
                                     // echo '<input class="feedback_required_button" title="'.get_string('switch_item_to_not_required','feedback').'" type="image" src="pics/required.gif" />';
                                     $buttontitle = get_string('switch_item_to_not_required','feedback');
-                                    $buttonimg = 'pics/required.gif';
+                                    $buttonimg = $OUTPUT->pix_url('required', 'feedback');
                                 } else {
                                     // echo '<input title="'.get_string('switch_item_to_required','feedback').'" type="image" src="pics/notrequired.gif" hspace="1" height="11" width="11" border="0" />';
                                     // echo '<input class="feedback_required_button" title="'.get_string('switch_item_to_required','feedback').'" type="image" src="pics/notrequired.gif" />';
                                     $buttontitle = get_string('switch_item_to_required','feedback');
-                                    $buttonimg = 'pics/notrequired.gif';
+                                    $buttonimg = $OUTPUT->pix_url('notrequired', 'feedback');
                                 }
                                 $requiredurl = new moodle_url($url, array('switchitemrequired'=>$feedbackitem->id));
                                 $buttonlink = $requiredurl->out();
