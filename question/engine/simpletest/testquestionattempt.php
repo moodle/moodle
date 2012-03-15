@@ -123,6 +123,16 @@ class question_attempt_test extends UnitTestCase {
                 'name', question_attempt::PARAM_MARK, array('name' => '123')));
     }
 
+    public function test_get_submitted_var_param_mark_number_uk_decimal() {
+        $this->assertIdentical(123.45, $this->qa->get_submitted_var(
+                'name', question_attempt::PARAM_MARK, array('name' => '123.45')));
+    }
+
+    public function test_get_submitted_var_param_mark_number_eu_decimal() {
+        $this->assertIdentical(123.45, $this->qa->get_submitted_var(
+                'name', question_attempt::PARAM_MARK, array('name' => '123,45')));
+    }
+
     public function test_get_submitted_var_param_mark_invalid() {
         $this->assertIdentical(0.0, $this->qa->get_submitted_var(
                 'name', question_attempt::PARAM_MARK, array('name' => 'frog')));
