@@ -103,11 +103,6 @@ if (!$version or !$release) {
     print_error('withoutversion', 'debug'); // without version, stop
 }
 
-if (!isset($maturity)) {
-    // Fallback for now. Should probably be removed in the future.
-    $maturity = MATURITY_STABLE;
-}
-
 // Turn off xmlstrictheaders during upgrade.
 $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
 $CFG->xmlstrictheaders = false;
