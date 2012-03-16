@@ -359,14 +359,14 @@ function search_generate_text_SQL($parsetree, $datafield, $metafield, $mainidfie
 
 /// First of all, search for reasons to switch to standard SQL generation
 /// Only mysql are supported for now
-    if ($DB->get_db_family() != 'mysql') {
+    if ($DB->get_dbfamily() != 'mysql') {
         return search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,
                                    $userfirstnamefield, $userlastnamefield, $timefield, $instancefield);
     }
 
 /// Some languages don't have "word separators" and MySQL FULLTEXT doesn't perform well with them, so
 /// switch to standard SQL search generation
-    if ($DB->get_db_family() == 'mysql') {
+    if ($DB->get_dbfamily() == 'mysql') {
         $nonseparatedlangs = array('ja', 'th', 'zh_cn', 'zh_tw');
         if (in_array(current_language(), $nonseparatedlangs)) {
             return search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,
@@ -445,12 +445,12 @@ function search_generate_text_SQL($parsetree, $datafield, $metafield, $mainidfie
                 $text_sql_string .= ', ' . $metafield;
             }
         /// Begin with the AGAINST clause
-            $text_sql_string .= ') AGAINST (' . "'";
+            $text_sql_string .= ') AGAINST (';
         /// Add the search terms
             $text_sql_string .= ':sgt'.$p;
             $params['sgt'.$p++] = trim($datasearch_clause);
         /// Close AGAINST clause
-            $text_sql_string .= "' IN BOOLEAN MODE)";
+            $text_sql_string .= " IN BOOLEAN MODE)";
         }
     }
 /// Now add the metasearch_clause
@@ -463,12 +463,12 @@ function search_generate_text_SQL($parsetree, $datafield, $metafield, $mainidfie
             }
             $text_sql_string .= 'MATCH (' . $metafield;
         /// Begin with the AGAINST clause
-            $text_sql_string .= ') AGAINST (' . "'";
+            $text_sql_string .= ') AGAINST (';
         /// Add the search terms
             $text_sql_string .= ':sgt'.$p;
             $params['sgt'.$p++] = trim($metasearch_clause);
         /// Close AGAINST clause
-            $text_sql_string .= "' IN BOOLEAN MODE)";
+            $text_sql_string .= " IN BOOLEAN MODE)";
         }
     }
 /// Finally add the non-text conditions
