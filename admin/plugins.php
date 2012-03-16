@@ -37,7 +37,8 @@ $pluginman = plugin_manager::instance();
 $checker = available_update_checker::instance();
 
 if ($fetchremote) {
-    $checker->fetch(true);
+    require_sesskey();
+    $checker->fetch();
     redirect($PAGE->url);
 }
 
