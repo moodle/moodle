@@ -397,7 +397,7 @@ class core_admin_renderer extends plugin_renderer_base {
         return $this->box(
                     get_string('maturitycoreinfo', 'admin', $maturitylevel) . ' ' .
                     $this->doc_link('admin/versions', get_string('morehelp')),
-                'generalbox adminwarning maturityinfo');
+                'generalbox adminwarning maturityinfo maturity'.$maturity);
     }
 
     /**

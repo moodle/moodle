@@ -84,6 +84,10 @@
 #page-admin-index .adminwarning .singlebutton,
 #page-admin-index #layout-table .singlebutton {margin:20px;}
 
+#page-admin-index .adminwarning.maturityinfo.maturity50 {background-color:#ffd3d9;}
+#page-admin-index .adminwarning.maturityinfo.maturity100,
+#page-admin-index .adminwarning.maturityinfo.maturity150 {background-color:#f3f2aa;}
+
 #page-admin-user-user_bulk #users .fgroup {white-space: nowrap;}
 #page-admin-report-stats-index .graph {text-align: center;margin-bottom: 1em;}
 #page-admin-report-courseoverview-index .graph {text-align: center;margin-bottom: 1em;}
