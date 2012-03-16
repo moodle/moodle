@@ -799,7 +799,7 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Helper method to render the information about the available update
+     * Helper method to render the information about the available plugin update
      *
      * The passed objects always provides at least the 'version' property containing
      * the (higher) version of the plugin available.
@@ -808,9 +808,7 @@ class core_admin_renderer extends plugin_renderer_base {
      */
     protected function plugin_available_update_info(available_update_info $updateinfo) {
 
-        $box  = $this->output->box_start('pluginupdateinfo');
-        $box .= html_writer::tag('div', get_string('updateavailable', 'core_plugin', $updateinfo->version), array('class' => 'version'));
-
+        $boxclasses = 'pluginupdateinfo';
         $info = array();
 
         if (isset($updateinfo->release)) {
@@ -821,6 +819,7 @@ class core_admin_renderer extends plugin_renderer_base {
         if (isset($updateinfo->maturity)) {
             $info[] = html_writer::tag('span', get_string('maturity'.$updateinfo->maturity, 'core_admin'),
                 array('class' => 'info maturity'));
+            $boxclasses .= ' maturity'.$updateinfo->maturity;
         }
 
         if (isset($updateinfo->download)) {
@@ -832,7 +831,9 @@ class core_admin_renderer extends plugin_renderer_base {
                 array('class' => 'info more'));
         }
 
-        $box .= $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '', 'infobox');
+        $box  = $this->output->box_start($boxclasses);
+        $box .= html_writer::tag('div', get_string('updateavailable', 'core_plugin', $updateinfo->version), array('class' => 'version'));
+        $box .= $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '');
         $box .= $this->output->box_end();
 
         return $box;

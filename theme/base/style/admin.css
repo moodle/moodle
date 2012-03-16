@@ -219,6 +219,9 @@
 #page-admin-plugins #plugins-overview-panel .separator {border-left:1px dotted #999;}
 #page-admin-plugins #plugins-overview-panel .info.updatable {margin-left:10px;background-color:#d2ebff;font-weight:bold;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo {padding:5px 10px;margin:10px;background-color:#d2ebff;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px;}
+#page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo.maturity50 {background-color:#ffd3d9;}
+#page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo.maturity100,
+#page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo.maturity150 {background-color:#f3f2aa;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo span,
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo a {padding-right:1em;}
 #page-admin-plugins #plugins-control-panel .notes .pluginupdateinfo .separator {border-left:1px dotted #333;}
