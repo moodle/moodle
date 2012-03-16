@@ -270,6 +270,8 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // removed in 2.3dev
+        '/lib/minify/builder/',
         // removed in 2.2dev
         '/lib/yui/3.4.1pr1/',
         // removed in 2.2

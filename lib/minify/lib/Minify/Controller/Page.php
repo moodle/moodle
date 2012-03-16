@@ -40,14 +40,19 @@ class Minify_Controller_Page extends Minify_Controller_Base {
             $sourceSpec = array(
                 'filepath' => $options['file']
             );
+            $f = $options['file'];
         } else {
             // strip controller options
             $sourceSpec = array(
                 'content' => $options['content']
                 ,'id' => $options['id']
             );
+            $f = $options['id'];
             unset($options['content'], $options['id']);
         }
+        // something like "builder,index.php" or "directory,file.html"
+        $this->selectionId = strtr(substr($f, 1 + strlen(dirname(dirname($f)))), '/\\', ',,');
+
         if (isset($options['minifyAll'])) {
             // this will be the 2nd argument passed to Minify_HTML::minify()
             $sourceSpec['minifyOptions'] = array(
