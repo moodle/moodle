@@ -139,6 +139,15 @@ class testable_available_update_checker extends available_update_checker {
         $this->recentresponse = $this->decode_response($this->get_fake_response());
     }
 
+    protected function load_current_environment($forcereload=false) {
+    }
+
+    public function fake_current_environment($version, $branch, array $plugins) {
+        $this->currentversion = $version;
+        $this->currentbranch = $branch;
+        $this->currentplugins = $plugins;
+    }
+
     private function get_fake_response() {
         $fakeresponse = array(
             'status' => 'OK',
@@ -159,8 +168,8 @@ class testable_available_update_checker extends available_update_checker {
                     ),
                     array(
                         'version' => 2012120100.00,
-                        'release' => '2.4 (Build: 20121201)',
-                        'maturity' => 200,
+                        'release' => '2.4dev (Build: 20121201)',
+                        'maturity' => 50,
                         'url' => 'http://download.moodle.org/',
                         'download' => 'http://download.moodle.org/download.php/MOODLE_24_STABLE/moodle-2.4.0-latest.zip',
                     ),
@@ -234,5 +243,17 @@ class available_update_checker_test extends UnitTestCase {
     public function test_core_available_update() {
         $provider = testable_available_update_checker::instance();
         $this->assertTrue($provider instanceof available_update_checker);
+
+        $provider->fake_current_environment(2012060102.00, '2.3', array());
+        $updates = $provider->get_core_update_info();
+        $this->assertEqual(count($updates), 2);
+
+        $provider->fake_current_environment(2012060103.00, '2.3', array());
+        $updates = $provider->get_core_update_info();
+        $this->assertEqual(count($updates), 1);
+
+        $provider->fake_current_environment(2012060103.00, '2.3', array());
+        $updates = $provider->get_core_update_info(MATURITY_STABLE);
+        $this->assertNull($updates);
     }
 }

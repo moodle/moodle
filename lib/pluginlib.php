@@ -64,11 +64,8 @@ class plugin_manager {
 
     /**
      * Direct initiation not allowed, use the factory method {@link self::instance()}
-     *
-     * @todo we might want to specify just a single plugin type to work with
      */
     protected function __construct() {
-        $this->get_plugins(true);
     }
 
     /**
@@ -576,6 +573,12 @@ class available_update_checker {
     protected $recentfetch = null;
     /** @var null|array the recent response from the update notification provider */
     protected $recentresponse = null;
+    /** @var null|string the numerical version of the local Moodle code */
+    protected $currentversion = null;
+    /** @var null|string branch of the local Moodle code */
+    protected $currentbranch = null;
+    /** @var array of (string)frankestyle => (string)version list of additional plugins deployed at this site */
+    protected $currentplugins = array();
 
     /**
      * Direct initiation not allowed, use the factory method {@link self::instance()}
@@ -599,52 +602,6 @@ class available_update_checker {
             self::$singletoninstance = new self();
         }
         return self::$singletoninstance;
-    }
-
-    /**
-     * Sets the local version
-     *
-     * If the version is set before the request is done, the version info will
-     * be sent to the remote site as a part of the request. The returned data can
-     * be filtered so that they contain just information relevant to the sent
-     * version.
-     *
-     * @param string $version our local Moodle version, usually $CFG->version
-     */
-    public function set_local_version($version) {
-        $this->localversion = $version;
-    }
-
-    /**
-     * Sets the local release info
-     *
-     * If the release is set before the request is done, the release info will
-     * be sent to the remote site as a part of the request. The returned data can
-     * be filtered so that they contain just information relevant to the sent
-     * release/build.
-     *
-     * @param string $version our local Moodle version, usually $CFG->release
-     */
-    public function set_local_release($release) {
-        $this->localrelease = $release;
-    }
-
-    /**
-     * Sets the list of plugins and their version at the local Moodle site
-     *
-     * The keys of the passed array are frankenstyle component names of plugins. The
-     * values are the on-disk versions of these plugins (allowing the null value where
-     * the version can't be obtained for any reason).
-     * If the plugins are set before the request is done, their list will be sent
-     * to the remote site as a part of the request. The returned data can
-     * be filtered so that they contain just information about the installed plugins.
-     * To obtain a list of all available plugins, do not set this list prior to calling
-     * {@link self::fetch()}
-     *
-     * @param array $plugins of (string)component => (string)version
-     */
-    public function set_local_plugins(array $plugins) {
-        $this->localplugins = $plugins;
     }
 
     /**
@@ -676,6 +633,40 @@ class available_update_checker {
     }
 
     /**
+     * Returns the available update information for Moodle core
+     *
+     * The returned structure is an array of available_update_info objects or null
+     * if there no such info available.
+     *
+     * @param int $minmaturity minimal maturity level to return, returns all by default
+     * @return null|stdClass null or array of available_update_info objects
+     */
+    public function get_core_update_info($minmaturity = 0) {
+
+        $this->load_current_environment();
+
+        $updates = $this->get_update_info('core');
+        if (empty($updates)) {
+            return null;
+        }
+        $return = array();
+        foreach ($updates as $update) {
+            if (isset($update->maturity) and ($update->maturity < $minmaturity)) {
+                continue;
+            }
+            if ($update->version > $this->currentversion) {
+                $return[] = $update;
+            }
+        }
+
+        if (empty($return)) {
+            return null;
+        }
+
+        return $return;
+    }
+
+    /**
      * Returns the available update information for the given component
      *
      * This method returns null if the most recent response does not contain any information
@@ -684,7 +675,7 @@ class available_update_checker {
      * 'version'. Other possible properties are 'release', 'maturity', 'url' and 'downloadurl'.
      *
      * @param string $component frankenstyle
-     * @return null|stdClass null or array of objects
+     * @return null|stdClass null or array of available_update_info objects
      */
     public function get_update_info($component) {
 
@@ -819,6 +810,34 @@ class available_update_checker {
     }
 
     /**
+     * Sets the properties currentversion, currentbranch and currentplugins
+     *
+     * @param bool $forcereload
+     */
+    protected function load_current_environment($forcereload=false) {
+        global $CFG;
+
+        if (!is_null($this->currentversion) and !$forcereload) {
+            // nothing to do
+            return;
+        }
+
+        require($CFG->dirroot.'/version.php');
+        $this->currentversion = $version;
+
+        $this->currentbranch = moodle_major_version(true);
+
+        $pluginman = plugin_manager::instance();
+        foreach ($pluginman->get_plugins() as $type => $plugins) {
+            foreach ($plugins as $plugin) {
+                if (!$plugin->is_standard()) {
+                    $this->currentplugins[$plugin->component] = $plugin->versiondisk;
+                }
+            }
+        }
+    }
+
+    /**
      * Returns the list of HTTP params to be sent to the updates provider URL
      *
      * @return array of (string)param => (string)value
@@ -826,6 +845,7 @@ class available_update_checker {
     protected function prepare_request_params() {
         global $CFG;
 
+        $this->load_current_environment();
         $this->restore_response();
 
         $params = array();
@@ -835,15 +855,26 @@ class available_update_checker {
             $params['ticket'] = $this->recentresponse['ticket'];
         }
 
-        if (isset($this->localversion)) {
-            $params['version'] = $this->localversion;
+        if (isset($this->currentversion)) {
+            $params['version'] = $this->currentversion;
+        } else {
+            throw new coding_exception('Main Moodle version must be already known here');
         }
 
-        if (isset($this->localrelease)) {
-            $params['release'] = $this->localrelease;
+        if (isset($this->currentbranch)) {
+            $params['branch'] = $this->currentbranch;
+        } else {
+            throw new coding_exception('Moodle release must be already known here');
         }
 
-        // todo localplugins
+        $plugins = array();
+        foreach ($this->currentplugins as $plugin => $version) {
+            $plugins[] = $plugin.'@'.$version;
+        }
+        if (!empty($plugins)) {
+            $params['plugins'] = implode(',', $plugins);
+        }
+
         return $params;
     }
 }

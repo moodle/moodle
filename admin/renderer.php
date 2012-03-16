@@ -202,14 +202,18 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param bool $cronoverdue warn cron not running
      * @param bool $dbproblems warn db has problems
      * @param bool $maintenancemode warn in maintenance mode
+     * @param array|null $availableupdates array of available_update_info objects or null
+     * @param int|null $availableupdatesfetch timestamp of the most recent updates fetch or null (unknown)
+     *
      * @return string HTML to output.
      */
     public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
-            $cronoverdue, $dbproblems, $maintenancemode) {
+            $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch) {
         $output = '';
 
         $output .= $this->header();
         $output .= $this->maturity_info($maturity);
+        $output .= $this->available_updates($availableupdates, $availableupdatesfetch);
         $output .= $this->insecure_dataroot_warning($insecuredataroot);
         $output .= $this->display_errors_warning($errorsdisplayed);
         $output .= $this->cron_overdue_warning($cronoverdue);
@@ -398,6 +402,80 @@ class core_admin_renderer extends plugin_renderer_base {
                     get_string('maturitycoreinfo', 'admin', $maturitylevel) . ' ' .
                     $this->doc_link('admin/versions', get_string('morehelp')),
                 'generalbox adminwarning maturityinfo maturity'.$maturity);
+    }
+
+    /**
+     * Displays the info about available Moodle updates
+     *
+     * @param array|null $updates array of available_update_info objects or null
+     * @param int|null $fetch timestamp of the most recent updates fetch or null (unknown)
+     * @return string
+     */
+    protected function available_updates($updates, $fetch) {
+
+        $updateinfo = $this->box_start('generalbox adminwarning availableupdatesinfo');
+        if (is_array($updates)) {
+            $updateinfo .= $this->heading(get_string('updateavailable', 'core_admin'), 3);
+            foreach ($updates as $update) {
+                $updateinfo .= $this->moodle_available_update_info($update);
+            }
+        } else {
+            $updateinfo .= $this->heading(get_string('updateavailablenot', 'core_admin'), 3);
+        }
+
+        $updateinfo .= $this->container_start('checkforupdates');
+        $updateinfo .= $this->single_button(new moodle_url($this->page->url, array('fetchupdates' => 1)), get_string('checkforupdates', 'core_plugin'));
+        if ($fetch) {
+            $updateinfo .= $this->container(get_string('checkforupdateslast', 'core_plugin',
+                userdate($fetch, get_string('strftimedatetime', 'core_langconfig'))));
+        }
+        $updateinfo .= $this->container_end();
+
+        $updateinfo .= $this->box_end();
+
+        return $updateinfo;
+    }
+
+    /**
+     * Helper method to render the information about the available Moodle update
+     *
+     * @param available_update_info $updateinfo information about the available Moodle core update
+     */
+    protected function moodle_available_update_info(available_update_info $updateinfo) {
+
+        $boxclasses = 'moodleupdateinfo';
+        $info = array();
+
+        if (isset($updateinfo->release)) {
+            $info[] = html_writer::tag('span', get_string('updateavailable_release', 'core_admin', $updateinfo->release),
+                array('class' => 'info release'));
+        }
+
+        if (isset($updateinfo->version)) {
+            $info[] = html_writer::tag('span', get_string('updateavailable_version', 'core_admin', $updateinfo->version),
+                array('class' => 'info version'));
+        }
+
+        if (isset($updateinfo->maturity)) {
+            $info[] = html_writer::tag('span', get_string('maturity'.$updateinfo->maturity, 'core_admin'),
+                array('class' => 'info maturity'));
+            $boxclasses .= ' maturity'.$updateinfo->maturity;
+        }
+
+        if (isset($updateinfo->download)) {
+            $info[] = html_writer::link($updateinfo->download, get_string('download'), array('class' => 'info download'));
+        }
+
+        if (isset($updateinfo->url)) {
+            $info[] = html_writer::link($updateinfo->url, get_string('updateavailable_moreinfo', 'core_plugin'),
+                array('class' => 'info more'));
+        }
+
+        $box  = $this->output->box_start($boxclasses);
+        $box .= $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '');
+        $box .= $this->output->box_end();
+
+        return $box;
     }
 
     /**

@@ -55,6 +55,7 @@ define('NO_OUTPUT_BUFFERING', true);
 require('../config.php');
 require_once($CFG->libdir.'/adminlib.php');    // various admin-only functions
 require_once($CFG->libdir.'/upgradelib.php');  // general upgrade/install related functions
+require_once($CFG->libdir.'/pluginlib.php');   // available updates notifications
 
 $id             = optional_param('id', '', PARAM_TEXT);
 $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
@@ -62,6 +63,7 @@ $confirmrelease = optional_param('confirmrelease', 0, PARAM_BOOL);
 $confirmplugins = optional_param('confirmplugincheck', 0, PARAM_BOOL);
 $showallplugins = optional_param('showallplugins', 0, PARAM_BOOL);
 $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
+$fetchupdates   = optional_param('fetchupdates', 0, PARAM_BOOL);
 
 // Check some PHP server settings
 
@@ -369,7 +371,18 @@ $cronoverdue = ($lastcron < time() - 3600 * 24);
 $dbproblems = $DB->diagnose();
 $maintenancemode = !empty($CFG->maintenance_enabled);
 
+$updateschecker = available_update_checker::instance();
+$availableupdates = $updateschecker->get_core_update_info(MATURITY_STABLE); // todo make it configurable
+$availableupdatesfetch = $updateschecker->get_last_timefetched();
+
 admin_externalpage_setup('adminnotifications');
+
+if ($fetchupdates) {
+    require_sesskey();
+    $updateschecker->fetch();
+    redirect($PAGE->url);
+}
+
 $output = $PAGE->get_renderer('core', 'admin');
 echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
-        $cronoverdue, $dbproblems, $maintenancemode);
+        $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch);
