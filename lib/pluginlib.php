@@ -1232,14 +1232,23 @@ abstract class plugininfo_base {
      * @return array|null
      */
     public function available_updates() {
+        global $CFG;
 
         if (empty($this->availableupdates) or !is_array($this->availableupdates)) {
             return null;
         }
 
+        if (!isset($CFG->updateminmaturity)) {
+            // this may happen during the very first upgrade to 2.3
+            $CFG->updateminmaturity = MATURITY_STABLE;
+        }
+
         $updates = array();
 
         foreach ($this->availableupdates as $availableupdate) {
+            if (isset($availableupdate->maturity) and $availableupdate->maturity < $CFG->updateminmaturity) {
+                continue;
+            }
             if ($availableupdate->version > $this->versiondisk) {
                 $updates[] = $availableupdate;
             }
