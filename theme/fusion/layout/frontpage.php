@@ -23,7 +23,7 @@ if ($hascustommenu) {
 if (!empty($PAGE->theme->settings->tagline)) {
     $tagline = $PAGE->theme->settings->tagline;
 } else {
-    $tagline = "Another Moodle Theme";
+    $tagline = '<!-- There was no custom tagline set -->';
 }
 
 if (!empty($PAGE->theme->settings->footertext)) {
@@ -49,90 +49,90 @@ echo $OUTPUT->doctype() ?>
   <div id="page-wrap1">
     <div id="page-wrap2">
 
-	<div id="wrapper" class="clearfix">
+    <div id="wrapper" class="clearfix">
 
 <!-- START OF HEADER -->
 
-	    <div id="page-header">
-			<div id="page-header-wrapper" class="wrapper clearfix">
+        <div id="page-header">
+            <div id="page-header-wrapper" class="wrapper clearfix">
 
-	    	    <div id="headermenus" class="clearfix">
-	    	    	<div class="headermenu clearfix">
-	        			<?php
-	    		        	echo $OUTPUT->lang_menu();
-		        	    	echo $OUTPUT->login_info();
-		    	    	    echo $PAGE->headingmenu;
-			    	    ?>
-			    	</div>
-		    	    <?php if ($hascustommenu) { ?>
-						<div id="custommenu"><?php echo $custommenu; ?></div>
-					<?php } else { ?>
-						<div id="custommenu" style="line-height:1em;">&nbsp;</div> <!-- temporary until I find a better fix -->
-					<?php } ?>
+                <div id="headermenus" class="clearfix">
+                    <div class="headermenu clearfix">
+                        <?php
+                            echo $OUTPUT->lang_menu();
+                            echo $OUTPUT->login_info();
+                            echo $PAGE->headingmenu;
+                        ?>
+                    </div>
+                    <?php if ($hascustommenu) { ?>
+                        <div id="custommenu"><?php echo $custommenu; ?></div>
+                    <?php } else { ?>
+                        <div id="custommenu" style="line-height:1em;">&nbsp;</div> <!-- temporary until I find a better fix -->
+                    <?php } ?>
 
-	    		</div>
+                </div>
 
-	    	</div>
-	    </div>
+            </div>
+        </div>
 
 <!-- END OF HEADER -->
 
 <!-- START OF CONTENT -->
 
-		<div id="page-content-wrapper" class="wrapper clearfix">
-		    <div id="page-content">
-    		    <div id="region-main-box">
-        		    <div id="region-post-box">
+        <div id="page-content-wrapper" class="wrapper clearfix">
+            <div id="page-content">
+                <div id="region-main-box">
+                    <div id="region-post-box">
 
-            		    <div id="region-main-wrap">
-                		    <div id="region-main">
-                    		    <div class="region-content">
+                        <div id="region-main-wrap">
+                            <div id="region-main">
+                                <div class="region-content">
 
-									<div id="region-header">
-							    	    <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
-							    	    <p class="tagline"><?php echo $tagline ?></p>
-							    	</div>
+                                    <div id="region-header">
+                                        <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
+                                        <p class="tagline"><?php echo $tagline ?></p>
+                                    </div>
 
-                        		    <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+                                    <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
 
-		                        </div>
-    		                </div>
-        		        </div>
+                                </div>
+                            </div>
+                        </div>
 
-    	    	        <?php if ($hassidepost) { ?>
-        	    	    <div id="region-post" class="block-region">
-        	    	    	<div id="region-post-wrap-1">
-        	    	    		<div id="region-post-wrap-2">
-		            	    	    <div class="region-content">
-        		        	    	    <?php echo $OUTPUT->blocks_for_region('side-post') ?>
-	            		        	</div>
-		                		</div>
-		                	</div>
-		                </div>
-    		            <?php } ?>
+                        <?php if ($hassidepost) { ?>
+                        <div id="region-post" class="block-region">
+                            <div id="region-post-wrap-1">
+                                <div id="region-post-wrap-2">
+                                    <div class="region-content">
+                                        <?php echo $OUTPUT->blocks_for_region('side-post') ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php } ?>
 
-            		</div>
-        	    </div>
-	        </div>
-    	</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 <!-- END OF CONTENT -->
 
-	</div> <!-- END #wrapper -->
+    </div> <!-- END #wrapper -->
 
-		</div>
-	</div>
+        </div>
+    </div>
 
 <!-- START OF FOOTER -->
     <div id="page-footer" class="wrapper clearfix">
     <?php echo $footnote ?>
-   	    <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
+        <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
         <?php
-   		    echo $OUTPUT->login_info();
-       		echo $OUTPUT->home_link();
-	        echo $OUTPUT->standard_footer_html();
-   	    ?>
-   	</div>
+            echo $OUTPUT->login_info();
+            echo $OUTPUT->home_link();
+            echo $OUTPUT->standard_footer_html();
+        ?>
+    </div>
 
 <!-- END OF FOOTER -->
 
