@@ -704,17 +704,6 @@ class xmldb_table extends xmldb_object {
         return $o;
     }
 
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-    function addFieldInfo($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
-
-        debugging('XMLDBTable->addFieldInfo() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_table->add_field() instead', DEBUG_DEVELOPER);
-
-        return $this->add_field($name, $type, $precision, $unsigned, $notnull, $sequence, $default, $previous);
-
-    }
-/// Deprecated API ends here
-
     /**
      * This function will add one new field to the table with all
      * its attributes defined
@@ -735,18 +724,6 @@ class xmldb_table extends xmldb_object {
         return $field;
     }
 
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-
-    function addKeyInfo($name, $type, $fields, $reftable=null, $reffields=null) {
-
-        debugging('XMLDBTable->addKeyInfo() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_table->add_key() instead', DEBUG_DEVELOPER);
-
-        return $this->add_key($name, $type, $fields, $reftable, $reffields);
-
-    }
-/// Deprecated API ends here
-
     /**
      * This function will add one new key to the table with all
      * its attributes defined
@@ -761,17 +738,6 @@ class xmldb_table extends xmldb_object {
         $key = new xmldb_key($name, $type, $fields, $reftable, $reffields);
         $this->addKey($key);
     }
-
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-    function addIndexInfo($name, $type, $fields) {
-
-        debugging('XMLDBTable->addIndexInfo() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_table->add_index() instead', DEBUG_DEVELOPER);
-
-        return $this->add_index($name, $type, $fields);
-
-    }
-/// Deprecated API ends here
 
     /**
      * This function will add one new index to the table with all
@@ -830,14 +796,3 @@ class xmldb_table extends xmldb_object {
         }
     }
 }
-
-/// TODO: Delete for 2.1 (deeprecated in 2.0).
-/// Deprecated API starts here
-class XMLDBTable extends xmldb_table {
-
-    function __construct($name) {
-        parent::__construct($name);
-    }
-
-}
-/// Deprecated API ends here
