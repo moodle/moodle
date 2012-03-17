@@ -221,4 +221,20 @@ $ADMIN->add('server', $temp);
 
 $ADMIN->add('server', new admin_externalpage('adminregistration', new lang_string('registration','admin'), "$CFG->wwwroot/$CFG->admin/registration/index.php"));
 
+// "update notifications" settingpage
+$temp = new admin_settingpage('updatenotifications', new lang_string('updatenotifications', 'core_admin'));
+$temp->add(new admin_setting_configcheckbox('updateautocheck', new lang_string('updateautocheck', 'core_admin'),
+                                            new lang_string('updateautocheck_desc', 'core_admin'), 1));
+$temp->add(new admin_setting_configselect('updateminmaturity', new lang_string('updateminmaturity', 'core_admin'),
+                                          new lang_string('updateminmaturity_desc', 'core_admin'), MATURITY_STABLE,
+                                          array(
+                                              MATURITY_ALPHA  => new lang_string('maturity'.MATURITY_ALPHA, 'core_admin'),
+                                              MATURITY_BETA   => new lang_string('maturity'.MATURITY_BETA, 'core_admin'),
+                                              MATURITY_RC     => new lang_string('maturity'.MATURITY_RC, 'core_admin'),
+                                              MATURITY_STABLE => new lang_string('maturity'.MATURITY_STABLE, 'core_admin'),
+                                          )));
+$temp->add(new admin_setting_configcheckbox('updatenotifybuilds', new lang_string('updatenotifybuilds', 'core_admin'),
+                                            new lang_string('updatenotifybuilds_desc', 'core_admin'), 0));
+$ADMIN->add('server', $temp);
+
 } // end of speedup
