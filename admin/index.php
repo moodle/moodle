@@ -372,7 +372,7 @@ $dbproblems = $DB->diagnose();
 $maintenancemode = !empty($CFG->maintenance_enabled);
 
 $updateschecker = available_update_checker::instance();
-$availableupdates = $updateschecker->get_core_update_info(MATURITY_STABLE); // todo make it configurable
+$availableupdates = $updateschecker->get_core_update_info($CFG->updateminmaturity);
 $availableupdatesfetch = $updateschecker->get_last_timefetched();
 
 admin_externalpage_setup('adminnotifications');
