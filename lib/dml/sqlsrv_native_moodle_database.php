@@ -579,6 +579,8 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return mixed the normalised value
      */
     protected function normalise_value($column, $value) {
+        $this->detect_objects($value);
+
         if (is_bool($value)) {                               /// Always, convert boolean to int
             $value = (int)$value;
         }                                                    // And continue processing because text columns with numeric info need special handling below

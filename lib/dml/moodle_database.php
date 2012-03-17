@@ -691,6 +691,17 @@ abstract class moodle_database {
     }
 
     /**
+     * Detects object parameters and throws exception if found
+     * @param mixed $value
+     * @return void
+     */
+    protected function detect_objects($value) {
+        if (is_object($value)) {
+            throw new coding_exception('Invalid database query parameter value', 'Objects are are not allowed: '.get_class($value));
+        }
+    }
+
+    /**
      * Normalizes sql query parameters and verifies parameters.
      * @param string $sql The query or part of it.
      * @param array $params The query parameters.
@@ -703,8 +714,9 @@ abstract class moodle_database {
         // convert table names
         $sql = $this->fix_table_names($sql);
 
-        // cast booleans to 1/0 int
+        // cast booleans to 1/0 int and detect forbidden objects
         foreach ($params as $key => $value) {
+            $this->detect_objects($value);
             $params[$key] = is_bool($value) ? (int)$value : $value;
         }
 
