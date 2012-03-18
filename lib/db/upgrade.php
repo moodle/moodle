@@ -285,7 +285,7 @@ function xmldb_main_upgrade($oldversion) {
 
         // Define field retrictmodules to be dropped from course
         $table = new xmldb_table('course');
-        $field = new xmldb_field('retrictmodules');
+        $field = new xmldb_field('restrictmodules');
 
         // Conditionally launch drop field requested
         if ($dbman->field_exists($table, $field)) {
