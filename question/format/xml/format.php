@@ -886,9 +886,10 @@ class qformat_xml extends qformat_default {
      * this *could* burn memory - but it won't happen that much
      * so fingers crossed!
      * @param array of lines from the input file.
+     * @param stdClass $context
      * @return array (of objects) question objects.
      */
-    protected function readquestions($lines) {
+    protected function readquestions($lines, $context) {
         // We just need it as one big string
         $text = implode($lines, ' ');
         unset($lines);

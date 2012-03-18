@@ -1011,7 +1011,8 @@ class grade_category extends grade_object {
                                 'children'=>$course_category->get_children($include_category_items));
 
         $course_category->sortorder = $course_category->get_sortorder();
-        return grade_category::_fetch_course_tree_recursion($category_array, $course_category->get_sortorder());
+        $sortorder = $course_category->get_sortorder();
+        return grade_category::_fetch_course_tree_recursion($category_array, $sortorder);
     }
 
     /**
