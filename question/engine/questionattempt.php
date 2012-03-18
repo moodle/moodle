@@ -1277,10 +1277,10 @@ class question_attempt_with_restricted_history extends question_attempt {
     protected function add_step(question_attempt_step $step) {
         coding_exception('Cannot modify a question_attempt_with_restricted_history.');
     }
-    public function process_action($submitteddata, $timestamp = null, $userid = null) {
+    public function process_action($submitteddata, $timestamp = null, $userid = null, $existingstepid = null) {
         coding_exception('Cannot modify a question_attempt_with_restricted_history.');
     }
-    public function start($preferredbehaviour, $variant, $submitteddata = array(), $timestamp = null, $userid = null) {
+    public function start($preferredbehaviour, $variant, $submitteddata = array(), $timestamp = null, $userid = null, $existingstepid = null) {
         coding_exception('Cannot modify a question_attempt_with_restricted_history.');
     }
 
