@@ -251,6 +251,7 @@ $string['useselfassessment_help'] = 'If enabled, a user may be allocated their o
 $string['useselfassessment_desc'] = 'Students may assess their own work';
 $string['weightinfo'] = 'Weight: {$a}';
 $string['withoutsubmission'] = 'Reviewer without own submission';
+$string['workshop:addinstance'] = 'Add a new workshop';
 $string['workshop:allocate'] = 'Allocate submissions for review';
 $string['workshop:editdimensions'] = 'Edit assessment forms';
 $string['workshopfeatures'] = 'Workshop features';

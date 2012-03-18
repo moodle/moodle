@@ -86,19 +86,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $ADMIN->add('security', $temp);
 
 
-    // "modulesecurity" settingpage
-    $temp = new admin_settingpage('modulesecurity', new lang_string('modulesecurity', 'admin'));
-    $temp->add(new admin_setting_configselect('restrictmodulesfor', new lang_string('restrictmodulesfor', 'admin'), new lang_string('configrestrictmodulesfor', 'admin'), 'none', array('none' => new lang_string('nocourses'),
-                                                                                                                                                                              'all' => new lang_string('fulllistofcourses'),
-                                                                                                                                                                              'requested' => new lang_string('requestedcourses'))));
-    $temp->add(new admin_setting_configcheckbox('restrictbydefault', new lang_string('restrictbydefault', 'admin'), new lang_string('configrestrictbydefault', 'admin'), 0));
-    $temp->add(new admin_setting_configmultiselect_modules('defaultallowedmodules',
-            new lang_string('defaultallowedmodules', 'admin'),
-            new lang_string('configdefaultallowedmodules', 'admin')));
-    $ADMIN->add('security', $temp);
-
-
-
     // "notifications" settingpage
     $temp = new admin_settingpage('notifications', new lang_string('notifications', 'admin'));
     $temp->add(new admin_setting_configselect('displayloginfailures', new lang_string('displayloginfailures', 'admin'), new lang_string('configdisplayloginfailures', 'admin'), '', array('' => new lang_string('nobody'),

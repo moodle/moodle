@@ -32,6 +32,7 @@ $string['allownotes_help'] = 'If enabled, students may enter notes into a text a
 $string['allowresubmit'] = 'Allow resubmitting';
 $string['allowresubmit_help'] = 'If enabled, students will be allowed to resubmit assignments after they have been graded (for them to be re-graded).';
 $string['alreadygraded'] = 'Your assignment has already been graded and resubmission is not allowed.';
+$string['assignment:addinstance'] = 'Add a new assignment';
 $string['assignmentdetails'] = 'Assignment details';
 $string['assignment:exportownsubmission'] = 'Export own submission';
 $string['assignment:exportsubmission'] = 'Export submission';

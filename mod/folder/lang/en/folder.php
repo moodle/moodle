@@ -25,6 +25,7 @@
  */
 
 $string['contentheader'] = 'Content';
+$string['folder:addinstance'] = 'Add a new folder';
 $string['folder:managefiles'] = 'Manage files in folder module';
 $string['folder:view'] = 'View folder content';
 $string['foldercontent'] = 'Files and subfolders';

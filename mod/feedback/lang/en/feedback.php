@@ -106,6 +106,7 @@ You can view it <a href="{$a->url}">here</a>.';
 $string['entries_saved'] = 'Your answers have been saved. Thank you.';
 $string['export_questions'] = 'Export questions';
 $string['export_to_excel'] = 'Export to Excel';
+$string['feedback:addinstance'] = 'Add a new feedback';
 $string['feedbackclose'] = 'Close the feedback at';
 $string['feedbackcloses'] = 'Feedback closes';
 $string['feedback:complete'] = 'Complete a feedback';

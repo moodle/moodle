@@ -225,6 +225,7 @@ $string['wikinowikitext'] = 'No wiki text';
 $string['wikiorderedlist'] = 'Ordered list';
 $string['wikisettings'] = 'Wiki settings';
 $string['wikiunorderedlist'] = 'Unordered list';
+$string['wiki:addinstance'] = 'Add a new wiki';
 $string['wiki:createpage'] = 'Create new wiki pages';
 $string['wiki:editcomment'] = 'Add comments to pages';
 $string['wiki:editpage'] = 'Save wiki pages';

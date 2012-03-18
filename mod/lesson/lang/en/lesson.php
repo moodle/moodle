@@ -208,6 +208,7 @@ $string['jumps_help'] = 'Each answer (for questions) or description (for content
 $string['jumpsto'] = 'Jumps to <em>{$a}</em>';
 $string['leftduringtimed'] = 'You have left during a timed lesson.<br />Please click on Continue to restart the lesson.';
 $string['leftduringtimednoretake'] = 'You have left during a timed lesson and you are<br />not allowed to retake or continue the lesson.';
+$string['lesson:addinstance'] = 'Add a new lesson';
 $string['lessonattempted'] = 'Lesson attempted';
 $string['lessonclosed'] = 'This lesson closed on {$a}.';
 $string['lessoncloses'] = 'Lesson closes';

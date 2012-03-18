@@ -24,6 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['label:addinstance'] = 'Add a new label';
 $string['labeltext'] = 'Label text';
 $string['modulename'] = 'Label';
 $string['modulename_help'] = 'A label enables text and images to be inserted among the activity links on the course page.';

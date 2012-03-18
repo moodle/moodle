@@ -40,6 +40,19 @@ $capabilities = array(
         )
     ),
 
+    // Ability to add a new workshop to the course.
+    'mod/workshop:addinstance' => array(
+        'riskbitmask' => RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:manageactivities'
+    ),
+
     // Ability to change the current phase (stage) of the workshop, for example
     // allow submitting, start assessment period, close workshop etc.
     'mod/workshop:switchphase' => array(
