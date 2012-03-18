@@ -497,7 +497,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
     if ($events !== false) {
 
-        $modinfo =& get_fast_modinfo($COURSE);
+        $modinfo = get_fast_modinfo($COURSE);
 
         foreach($events as $event) {
 

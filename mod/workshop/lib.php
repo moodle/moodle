@@ -343,7 +343,7 @@ function workshop_print_recent_activity($course, $viewfullnames, $timestart) {
 
     $rs = $DB->get_recordset_sql($sql, array($course->id, $timestart, $timestart));
 
-    $modinfo =& get_fast_modinfo($course); // reference needed because we might load the groups
+    $modinfo = get_fast_modinfo($course); // reference needed because we might load the groups
 
     $submissions = array(); // recent submissions indexed by submission id
     $assessments = array(); // recent assessments indexed by assessment id
@@ -552,7 +552,7 @@ function workshop_get_recent_mod_activity(&$activities, &$index, $timestart, $co
         $course = $DB->get_record('course', array('id'=>$courseid));
     }
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
 
     $cm = $modinfo->cms[$cmid];
 

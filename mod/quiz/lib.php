@@ -756,7 +756,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
         $course = $DB->get_record('course', array('id' => $courseid));
     }
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
 
     $cm = $modinfo->cms[$cmid];
     $quiz = $DB->get_record('quiz', array('id' => $cm->instance));

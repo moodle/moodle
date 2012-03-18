@@ -932,7 +932,7 @@ function print_recent_activity($course) {
 
 /// Next, have there been any modifications to the course structure?
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
 
     $changelist = array();
 

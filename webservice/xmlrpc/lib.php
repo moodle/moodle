@@ -67,7 +67,7 @@ class webservice_xmlrpc_client extends Zend_XmlRpc_Client {
      * @param array $params the parameters of the function
      * @return mixed
      */
-    public function call($functionname, $params) {
+    public function call($functionname, $params=array()) {
         global $DB, $CFG;
 
         //zend expects 0 based array with numeric indexes
