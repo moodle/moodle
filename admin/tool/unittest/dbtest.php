@@ -27,6 +27,11 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+
+// unfortunately outdated SimpleTest is not E_STRICT compatible
+$CFG->debug = ($CFG->debug & ~E_STRICT);
+error_reporting($CFG->debug);
+
 require_once('simpletestlib.php');
 require_once('simpletestcoveragelib.php');
 require_once('ex_simple_test.php');
