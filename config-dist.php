@@ -353,6 +353,10 @@ $CFG->admin = 'admin';
 //     $CFG->tempdir = '/var/www/moodle/temp';
 //     $CFG->cachedir = '/var/www/moodle/cache';
 //
+// Some filesystems such as NFS may not support file locking operations.
+// Locking resolves race conditions and is strongly recommended for production servers.
+//     $CFG->preventfilelocking = false;
+//
 // If $CFG->langstringcache is enabled (which should always be in production
 // environment), Moodle keeps aggregated strings in its own internal format
 // optimised for performance. By default, this on-disk cache is created in
