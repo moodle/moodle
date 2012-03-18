@@ -1249,7 +1249,7 @@ class css_rule {
                 list($name, $value) = array_map('trim', $bits);
             }
             if (isset($name) && isset($value) && $name !== '' && $value !== '') {
-                $style = css_style::init($name, $value);
+                $style = css_style::init_automatic($name, $value);
             }
         } else if ($style instanceof css_style) {
             // Clone the style as it may be coming from another rule and we don't
@@ -1646,7 +1646,7 @@ abstract class css_style {
      * @param string $value The value of the style.
      * @return css_style_generic
      */
-    public static function init($name, $value) {
+    public static function init_automatic($name, $value) {
         $specificclass = 'css_style_'.preg_replace('#[^a-zA-Z0-9]+#', '', $name);
         if (class_exists($specificclass)) {
             return $specificclass::init($value);
