@@ -92,7 +92,7 @@ class assignment_uploadsingle extends assignment_base {
         $this->view_footer();
     }
 
-    function process_feedback() {
+    function process_feedback($formdata=null) {
         if (!$feedback = data_submitted() or !confirm_sesskey()) {      // No incoming data?
             return false;
         }
