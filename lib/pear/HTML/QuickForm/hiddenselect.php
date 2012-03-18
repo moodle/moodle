@@ -29,7 +29,7 @@ require_once('HTML/QuickForm/select.php');
  * selected values to be passed.
  *
  * @author       Isaac Shepard <ishepard@bsiweb.com>
- * 
+ *
  * @version      1.0
  * @since        2.1
  * @access       public
@@ -37,10 +37,10 @@ require_once('HTML/QuickForm/select.php');
 class HTML_QuickForm_hiddenselect extends HTML_QuickForm_select
 {
     // {{{ constructor
-        
+
     /**
      * Class constructor
-     * 
+     *
      * @param     string    Select name attribute
      * @param     mixed     Label(s) for the select (not used)
      * @param     mixed     Data to be used to populate options
@@ -58,7 +58,7 @@ class HTML_QuickForm_hiddenselect extends HTML_QuickForm_select
             $this->load($options);
         }
     } //end constructor
-    
+
     // }}}
     // {{{ toHtml()
 
@@ -68,7 +68,7 @@ class HTML_QuickForm_hiddenselect extends HTML_QuickForm_select
      * @since     1.0
      * @access    public
      * @return    string
-     * @throws    
+     * @throws
      */
     function toHtml()
     {
@@ -90,14 +90,14 @@ class HTML_QuickForm_hiddenselect extends HTML_QuickForm_select
 
         return $strHtml;
     } //end func toHtml
-    
+
     // }}}
     // {{{ accept()
 
    /**
-    * This is essentially a hidden element and should be rendered as one  
+    * This is essentially a hidden element and should be rendered as one
     */
-    function accept(&$renderer)
+    function accept(&$renderer, $required=false, $error=null)
     {
         $renderer->renderHidden($this);
     }
