@@ -1146,7 +1146,8 @@ class restore_course_structure_step extends restore_structure_step {
             $data->hiddensections = 0;
         }
 
-        // Only restrict modules if original course was and target site too for new courses
+        // Set legacyrestrictmodules to true if the course was resticting modules. If so
+        // then we will need to process restricted modules after execution.
         $this->legacyrestrictmodules = !empty($data->restrictmodules);
 
         $data->startdate= $this->apply_date_offset($data->startdate);

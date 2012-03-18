@@ -245,7 +245,7 @@ function xmldb_main_upgrade($oldversion) {
             array('course' => $courseid), 'module', 'module, 1');
             if (empty($allowedmoduleids)) {
                 // This seems to be the best match for backwards compatibility,
-                // Non necessrily with the old code in course_allowed_module function,
+                // not necessarily with the old code in course_allowed_module function,
                 // but with the code that used to be in the coures settings form.
                 $allowedmoduleids = explode(',', $CFG->defaultallowedmodules);
                 $allowedmoduleids = array_combine($allowedmoduleids, $allowedmoduleids);
