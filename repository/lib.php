@@ -1952,7 +1952,7 @@ final class repository_instance_form extends moodleform {
         }
     }
 
-    public function validation($data) {
+    public function validation($data, $files) {
         global $DB;
         $errors = array();
         $plugin = $this->_customdata['plugin'];
@@ -2062,7 +2062,7 @@ final class repository_type_form extends moodleform {
         $this->add_action_buttons(true, get_string('save','repository'));
     }
 
-    public function validation($data) {
+    public function validation($data, $files) {
         $errors = array();
         $plugin = $this->_customdata['plugin'];
         $instance = (isset($this->_customdata['instance'])
