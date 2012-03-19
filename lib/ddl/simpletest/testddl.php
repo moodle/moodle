@@ -311,6 +311,52 @@ class ddl_test extends UnitTestCase {
             $this->assertTrue($e instanceof ddl_exception);
         }
 
+        // long table name names - the largest allowed
+        $table = new xmldb_table('abcdef____0123456789_____xyz');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        $dbman->create_table($table);
+        $this->assertTrue($dbman->table_exists($table));
+        $dbman->drop_table($table);
+
+        // table name is too long
+        $table = new xmldb_table('abcdef____0123456789_____xyz9');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // invalid table name
+        $table = new xmldb_table('abCD');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+
         // weird column names - the largest allowed
         $table = new xmldb_table('test_table3');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
