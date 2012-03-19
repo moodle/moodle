@@ -27,6 +27,9 @@ class course_reset_form extends moodleform {
         $mform->addElement('header', 'rolesheader', get_string('roles'));
 
         $roles = get_assignable_roles(get_context_instance(CONTEXT_COURSE, $COURSE->id));
+        $roles[0] = get_string('noroles', 'role');
+        $roles = array_reverse($roles, true);
+
         $mform->addElement('select', 'unenrol_users', get_string('unenrolroleusers', 'enrol'), $roles, array('multiple' => 'multiple'));
         $mform->addElement('checkbox', 'reset_roles_overrides', get_string('deletecourseoverrides', 'role'));
         $mform->setAdvanced('reset_roles_overrides');
