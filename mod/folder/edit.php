@@ -58,6 +58,7 @@ if ($mform->is_cancelled()) {
 
 } else if ($formdata = $mform->get_data()) {
     $formdata = file_postupdate_standard_filemanager($formdata, 'files', $options, $context, 'mod_folder', 'content', 0);
+    $DB->set_field('folder', 'revision', $folder->revision+1, array('id'=>$folder->id));
     redirect(new moodle_url('/mod/folder/view.php', array('id'=>$cm->id)));
 }
 
