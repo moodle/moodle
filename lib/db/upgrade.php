@@ -214,9 +214,9 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2012031500.01) {
         // Upgrade old course_allowed_modules data to be permission overrides.
-        if ($CFG->restrictmodulesfor = 'all') {
+        if ($CFG->restrictmodulesfor === 'all') {
             $courses = $DB->get_records_menu('course', array(), 'id', 'id, 1');
-        } else if ($CFG->restrictmodulesfor = 'requested') {
+        } else if ($CFG->restrictmodulesfor === 'requested') {
             $courses = $DB->get_records_menu('course', array('retrictmodules' => 1), 'id', 'id, 1');
         } else {
             $courses = array();
