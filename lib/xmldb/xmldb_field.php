@@ -726,6 +726,19 @@ class xmldb_field extends xmldb_object {
                 break;
 
             case XMLDB_TYPE_NUMBER:
+                $length = $this->getLength();
+                if (!is_number($length) or $length <= 0 or $length > 20) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_NUMBER field "'.$this->getName().'" has invalid length';
+                }
+                $decimals = $this->getDecimals();
+                $decimals = empty($decimals) ? 0 : $decimals; // fix missing decimals
+                if (!is_number($decimals) or $decimals < 0 or $decimals > $length) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_NUMBER field "'.$this->getName().'" has invalid decimals';
+                }
+                $default = $this->getDefault();
+                if (!empty($default) and !is_numeric($default)) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_NUMBER field "'.$this->getName().'" has invalid default';
+                }
                 break;
 
             case XMLDB_TYPE_FLOAT:

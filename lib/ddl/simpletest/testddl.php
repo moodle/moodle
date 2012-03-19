@@ -434,6 +434,54 @@ class ddl_test extends UnitTestCase {
             $this->assertIdentical(get_class($e), 'coding_exception');
         }
 
+        // Invalid decimal length
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('num', XMLDB_TYPE_NUMBER, '21,10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // Invalid decimal decimals
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('num', XMLDB_TYPE_NUMBER, '10,11', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // Invalid decimal default
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('num', XMLDB_TYPE_NUMBER, '10,5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 'x');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
     }
 
     /**
