@@ -20,7 +20,7 @@ $cancel  = optional_param('cancel', false, PARAM_BOOL);
 $group = $DB->get_record('groups', array('id'=>$groupid), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$group->courseid), '*', MUST_EXIST);
 
-$PAGE->set_url('/groups/members.php', array('id'=>$groupid));
+$PAGE->set_url('/group/members.php', array('group'=>$groupid));
 $PAGE->set_pagelayout('standard');
 
 require_login($course);
