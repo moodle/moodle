@@ -30,6 +30,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir.'/filelib.php');  // curl class needed here
+
 /**
  * Singleton class providing general plugins management functionality
  */
