@@ -9,6 +9,8 @@
  * 
  * @package Minify
  * @author Stephen Clay <steve@mrclay.org>
+ *
+ * @todo lose this singleton! pass log object in Minify::serve and distribute to others
  */
 class Minify_Logger {
 
