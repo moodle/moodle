@@ -66,8 +66,6 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 
 require_login($course->id, true, $cm);
 
-add_to_log($course->id, 'createpage', 'createpage', 'view.php?id=' . $cm->id, $wiki->id);
-
 $wikipage = new page_wiki_create($wiki, $subwiki, $cm);
 
 if (!empty($swid)) {
@@ -80,22 +78,25 @@ if (!empty($swid)) {
     $wikipage->set_uid($uid);
 }
 
-if (!empty($title)) {
-    $wikipage->set_title($title);
-} else {
-    $wikipage->set_title(get_string('newpage', 'wiki'));
+if (empty($title)) {
+    $title = get_string('newpage', 'wiki');
 }
+$wikipage->set_title($title);
 
 // set page action, and initialise moodle form
 $wikipage->set_action($action);
 
 switch ($action) {
 case 'create':
-    $wikipage->create_page($title);
+    $newpageid = $wikipage->create_page($title);
+    add_to_log($course->id, 'wiki', 'add page', "view.php?pageid=".$newpageid, $newpageid, $cm->id);
+    redirect($CFG->wwwroot . '/mod/wiki/edit.php?pageid='.$newpageid);
     break;
 case 'new':
     if ((int)$wiki->forceformat == 1 && !empty($title)) {
-        $wikipage->create_page($title);
+        $newpageid = $wikipage->create_page($title);
+        add_to_log($course->id, 'wiki', 'add page', "view.php?pageid=".$newpageid, $newpageid, $cm->id);
+        redirect($CFG->wwwroot . '/mod/wiki/edit.php?pageid='.$newpageid);
     } else {
         // create link from moodle navigation block without pagetitle
         $wikipage->print_header();

@@ -94,12 +94,12 @@ if ($action == 'delete') {
 
     if ($action == 'edit') {
         $comm->set_action($action, $id, $content);
-
     } else {
         $action = 'add';
         $comm->set_action($action, 0, $content);
     }
 }
+add_to_log($course->id, 'wiki', 'comment', "comments.php?pageid=".$pageid, $pageid, $cm->id);
 
 $comm->print_header();
 $comm->print_content();
