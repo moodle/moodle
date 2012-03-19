@@ -67,7 +67,7 @@ if (!empty($CFG->excludeoldflashclients) && $mimetype == 'application/x-shockwav
          && $userplayerversion[2] < $requiredplayerversion[2])) {
         $path = $CFG->dirroot."/lib/flashdetect/flashupgrade.swf";  // Alternate content asking user to upgrade Flash
         $filename = "flashupgrade.swf";
-        send_file($path, $filename, O, 0, false, false, 'application/x-shockwave-flash'); // Do not cache
+        send_file($path, $filename, 0, 0, false, false, 'application/x-shockwave-flash'); // Do not cache
     }
 }
 
