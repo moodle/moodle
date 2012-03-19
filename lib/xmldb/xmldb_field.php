@@ -726,8 +726,13 @@ class xmldb_field extends xmldb_object {
                 break;
 
             case XMLDB_TYPE_NUMBER:
+                $maxlength = 20;
+                if ($xmldb_table->getName() === 'question_numerical_units' and $name === 'multiplier') {
+                    //TODO: remove after MDL-32113 is resolved
+                    $maxlength = 40;
+                }
                 $length = $this->getLength();
-                if (!is_number($length) or $length <= 0 or $length > 20) {
+                if (!is_number($length) or $length <= 0 or $length > $maxlength) {
                     return 'Invalid field definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_NUMBER field "'.$this->getName().'" has invalid length';
                 }
                 $decimals = $this->getDecimals();
