@@ -701,7 +701,16 @@ class xmldb_field extends xmldb_object {
      */
     function validateDefinition(xmldb_table $xmldb_table=null) {
         if (!$xmldb_table) {
-            return 'Invalid xmldb_field->validateDefinition() call, $xmldb_table si required.';
+            return 'Invalid xmldb_field->validateDefinition() call, $xmldb_table is required.';
+        }
+
+        $name = $this->getName();
+        if (strlen($name) > 30) {
+            return 'Invalid field name in table {'.$xmldb_table->getName().'}: field "'.$this->getName().'" name is too long.'
+                .' Limit is 30 chars.';
+        }
+        if (!preg_match('/^[a-z][a-z0-9_]*$/', $name)) {
+            return 'Invalid field name in table {'.$xmldb_table->getName().'}: field "'.$this->getName().'" name includes invalid characters.';
         }
 
         switch ($this->getType()) {
