@@ -192,7 +192,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
           array("flags","meta","lastmodified");
       */
       case "GETALL":
-         switch ($DB->get_db_family()) {
+         switch ($DB->get_dbfamily()) {
              case 'postgres':
                  // All but the latest version eliminated by DISTINCT
                  // ON (pagename)
