@@ -2352,7 +2352,7 @@ class global_navigation extends navigation_node {
             if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
                and has_capability('moodle/blog:view', get_context_instance(CONTEXT_SYSTEM))) {
                 $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
-                $participants->add(get_string('blogs','blog'), $blogsurls->out());
+                $participants->add(get_string('blogscourse','blog'), $blogsurls->out());
             }
             if (!empty($CFG->enablenotes) && (has_capability('moodle/notes:manage', $this->page->context) || has_capability('moodle/notes:view', $this->page->context))) {
                 $participants->add(get_string('notes','notes'), new moodle_url('/notes/index.php', array('filtertype'=>'course', 'filterselect'=>$course->id)));
@@ -2417,7 +2417,7 @@ class global_navigation extends navigation_node {
           and ($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
           and has_capability('moodle/blog:view', get_context_instance(CONTEXT_SYSTEM))) {
             $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
-            $coursenode->add(get_string('blogs','blog'), $blogsurls->out());
+            $coursenode->add(get_string('blogssite','blog'), $blogsurls->out());
         }
 
         // Notes
