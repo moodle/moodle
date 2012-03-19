@@ -30,6 +30,7 @@ class mod_assignment_uploadsingle_form extends moodleform {
         //$mform->addElement('filemanager', 'newfile', get_string('uploadafile'));
         //$mform->addElement('filemanager', 'files_filemanager', get_string('uploadafile'), null, $instance['options']);
         $mform->addElement('filepicker', 'assignment_file', get_string('uploadafile'), null, $instance['options']);
+        $mform->addRule('assignment_file', get_string('uploadnofilefound'), 'required', null, 'client');
 
         // hidden params
         $mform->addElement('hidden', 'contextid', $instance['contextid']);
