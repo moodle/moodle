@@ -1261,6 +1261,7 @@ class global_navigation extends navigation_node {
                 if ($issite) {
                     // The users profile information etc is already loaded
                     // for the front page.
+                    break;
                 }
                 $course = $this->page->course;
                 if ($showcategories && !$ismycourse) {
