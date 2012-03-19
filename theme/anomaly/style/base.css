@@ -2,12 +2,7 @@
  * Core
  */
 
-#page, div, p, li, input, option, textarea {
-    font-size: 10pt;
-    line-height: 1.5em;
-}
-
-#page, div, p, li, input, option, textarea, h1, h2, h3, h4, h5 {
+h1, h2, h3, h4, h5 {
     font-family: Georgia,Times,"Times New Roman",serif;
 }
 
