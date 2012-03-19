@@ -420,7 +420,7 @@ class theme_config {
             // check if renderers.php file is missnamed renderer.php
             if (is_readable($this->dir.'/renderer.php')) {
                 debugging('Developer hint: '.$this->dir.'/renderer.php should be renamed to ' . $this->dir."/renderers.php.
-                	See: http://docs.moodle.org/dev/Output_renderers#Theme_renderers.", DEBUG_DEVELOPER);
+                    See: http://docs.moodle.org/dev/Output_renderers#Theme_renderers.", DEBUG_DEVELOPER);
             }
         }
 
