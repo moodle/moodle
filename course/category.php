@@ -266,15 +266,16 @@ $table = new html_table;
 $table->attributes = array('border' => '0', 'cellspacing' => '2', 'cellpadding' => '4', 'class' => 'generalbox boxaligncenter category_subcategories');
 $table->head = array(new lang_string('subcategories'));
 $table->data = array();
+$baseurl = new moodle_url('/course/category.php');
 foreach ($subcategories as $subcategory) {
     // Preload the context we will need it to format the category name shortly.
     context_helper::preload_from_record($subcategory);
     $context = get_context_instance(CONTEXT_COURSECAT, $subcategory->id);
     // Prepare the things we need to create a link to the subcategory
     $attributes = $subcategory->visible ? array() : array('class' => 'dimmed');
-    $url = new moodle_url('/course/category.php', array('id' => $subcategory->id));
     $text = format_string($subcategory->name, true, array('context' => $context));
     // Add the subcategory to the table
+    $url->param('id', $subcategory->id);
     $table->data[] = array(html_writer::link($url, $text, $attributes));
 }
 
@@ -331,6 +332,7 @@ if (!$courses) {
         $atlastpage = true;
     }
 
+    $baseurl = new moodle_url('/course/category.php', $urlparams + array('sesskey' => sesskey()));
     foreach ($courses as $acourse) {
         $coursecontext = get_context_instance(CONTEXT_COURSE, $acourse->id);
 
@@ -362,12 +364,11 @@ if (!$courses) {
 
             // MDL-8885, users with no capability to view hidden courses, should not be able to lock themselves out
             if (has_capability('moodle/course:visibility', $coursecontext) && has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
-                $baseurl = new moodle_url('/course/category.php', $urlparams);
                 if (!empty($acourse->visible)) {
-                    $url = new moodle_url($baseurl, array('hide' => $acourse->id, 'sesskey' => sesskey()));
+                    $url = new moodle_url($baseurl, array('hide' => $acourse->id));
                     echo $OUTPUT->action_icon($url, new pix_icon('t/hide', get_string('hide')));
                 } else {
-                    $url = new moodle_url($baseurl, array('show' => $acourse->id, 'sesskey' => sesskey()));
+                    $url = new moodle_url($baseurl, array('show' => $acourse->id));
                     echo $OUTPUT->action_icon($url, new pix_icon('t/show', get_string('show')));
                 }
             }
@@ -383,14 +384,13 @@ if (!$courses) {
             }
 
             if ($canmanage) {
-                $baseurl = new moodle_url('/course/category.php', $urlparams);
                 if ($up) {
-                    $url = new moodle_url($baseurl, array('moveup' => $acourse->id, 'sesskey' => sesskey()));
+                    $url = new moodle_url($baseurl, array('moveup' => $acourse->id));
                     echo $OUTPUT->action_icon($url, new pix_icon('t/up', get_string('moveup')));
                 }
 
                 if ($down) {
-                    $url = new moodle_url($baseurl, array('movedown' => $acourse->id, 'sesskey' => sesskey()));
+                    $url = new moodle_url($baseurl, array('movedown' => $acourse->id));
                     echo $OUTPUT->action_icon($url, new pix_icon('t/down', get_string('movedown')));
                 }
                 $abletomovecourses = true;
