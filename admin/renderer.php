@@ -165,18 +165,31 @@ class core_admin_renderer extends plugin_renderer_base {
     /**
      * Display the upgrade page that lists all the plugins that require attention.
      * @param plugin_manager $pluginman provides information about the plugins.
+     * @param available_update_checker $checker provides information about available updates.
      * @param int $version the version of the Moodle code from version.php.
      * @param bool $showallplugins
      * @param moodle_url $reloadurl
      * @param moodle_url $continueurl
      * @return string HTML to output.
      */
-    public function upgrade_plugin_check_page(plugin_manager $pluginman, $version, $showallplugins, $reloadurl, $continueurl) {
+    public function upgrade_plugin_check_page(plugin_manager $pluginman, available_update_checker $checker,
+            $version, $showallplugins, $reloadurl, $continueurl) {
+
         $output = '';
 
         $output .= $this->header();
         $output .= $this->box_start('generalbox');
-        $output .= $this->container(get_string('pluginchecknotice', 'core_plugin'), 'generalbox', 'notice');
+        $output .= $this->container_start('generalbox', 'notice');
+        $output .= html_writer::tag('p', get_string('pluginchecknotice', 'core_plugin'));
+        $output .= $this->container_start('checkforupdates');
+        $output .= $this->single_button(new moodle_url($reloadurl, array('fetchupdates' => 1)), get_string('checkforupdates', 'core_plugin'));
+        if ($timefetched = $checker->get_last_timefetched()) {
+            $output .= $this->container(get_string('checkforupdateslast', 'core_plugin',
+                userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
+        }
+        $output .= $this->container_end();
+        $output .= $this->container_end();
+
         $output .= $this->plugins_check_table($pluginman, $version, array('full' => $showallplugins));
         $output .= $this->box_end();
         $output .= $this->upgrade_reload($reloadurl);
@@ -592,8 +605,16 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 $statuscode = $plugin->get_status();
                 $row->attributes['class'] .= ' status-' . $statuscode;
+                $status = get_string('status_' . $statuscode, 'core_plugin');
 
-                $status = new html_table_cell(get_string('status_' . $statuscode, 'core_plugin'));
+                $availableupdates = $plugin->available_updates();
+                if (!empty($availableupdates)) {
+                    foreach ($availableupdates as $availableupdate) {
+                        $status .= $this->plugin_available_update_info($availableupdate);
+                    }
+                }
+
+                $status = new html_table_cell($status);
 
                 $requires = new html_table_cell($this->required_column($plugin, $pluginman, $version));
 
@@ -601,7 +622,7 @@ class core_admin_renderer extends plugin_renderer_base {
                         plugin_manager::PLUGIN_STATUS_NODB, plugin_manager::PLUGIN_STATUS_UPTODATE));
                 $dependenciesok = $pluginman->are_dependencies_satisfied(
                         $plugin->get_other_required_plugins());
-                if ($isstandard and $statusisboring and $dependenciesok) {
+                if ($isstandard and $statusisboring and $dependenciesok and empty($availableupdates)) {
                     if (empty($options['full'])) {
                         continue;
                     }

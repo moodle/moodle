@@ -232,9 +232,17 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_heading($strplugincheck);
         $PAGE->set_cacheable(false);
 
+        $reloadurl = new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1));
+
+        if ($fetchupdates) {
+            require_sesskey();
+            available_update_checker::instance()->fetch();
+            redirect($reloadurl);
+        }
+
         $output = $PAGE->get_renderer('core', 'admin');
-        echo $output->upgrade_plugin_check_page(plugin_manager::instance(), $version, $showallplugins,
-                new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1)),
+        echo $output->upgrade_plugin_check_page(plugin_manager::instance(), available_update_checker::instance(),
+                $version, $showallplugins, $reloadurl,
                 new moodle_url('/admin/index.php', array('confirmupgrade'=>1, 'confirmrelease'=>1, 'confirmplugincheck'=>1)));
         die();
 
@@ -265,9 +273,16 @@ if (moodle_needs_upgrading()) {
             $PAGE->set_heading($strplugincheck);
             $PAGE->set_cacheable(false);
 
+            if ($fetchupdates) {
+                require_sesskey();
+                available_update_checker::instance()->fetch();
+                redirect($PAGE->url);
+            }
+
             $output = $PAGE->get_renderer('core', 'admin');
-            echo $output->upgrade_plugin_check_page(plugin_manager::instance(), $version, $showallplugins,
-                    new moodle_url('/admin/index.php'),
+            echo $output->upgrade_plugin_check_page(plugin_manager::instance(), available_update_checker::instance(),
+                    $version, $showallplugins,
+                    new moodle_url($PAGE->url),
                     new moodle_url('/admin/index.php', array('confirmplugincheck'=>1)));
             die();
         }
