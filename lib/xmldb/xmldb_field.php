@@ -715,6 +715,14 @@ class xmldb_field extends xmldb_object {
 
         switch ($this->getType()) {
             case XMLDB_TYPE_INTEGER:
+                $length = $this->getLength();
+                if (!is_number($length) or $length <= 0 or $length > 20) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_INTEGER field "'.$this->getName().'" has invalid length';
+                }
+                $default = $this->getDefault();
+                if (!empty($default) and !is_number($default)) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_INTEGER field "'.$this->getName().'" has invalid default';
+                }
                 break;
 
             case XMLDB_TYPE_NUMBER:
