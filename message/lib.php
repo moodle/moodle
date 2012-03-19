@@ -814,6 +814,12 @@ function message_print_recent_conversations($user=null, $showicontext=false) {
 
     $conversations = message_get_recent_conversations($user);
 
+    // Attach context url information to create the "View this conversation" type links
+    foreach($conversations as $conversation) {
+        $conversation->contexturl = new moodle_url("/message/index.php?user2={$conversation->id}");
+        $conversation->contexturlname = get_string('thisconversation', 'message');
+    }
+
     $showotheruser = true;
     message_print_recent_messages_table($conversations, $user, $showotheruser, $showicontext);
 }
