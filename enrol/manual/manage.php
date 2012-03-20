@@ -64,7 +64,7 @@ $PAGE->set_heading($course->fullname);
 navigation_node::override_active_url(new moodle_url('/enrol/users.php', array('id'=>$course->id)));
 
 // Create the user selector objects.
-$options = array('enrolid' => $enrolid);
+$options = array('enrolid' => $enrolid, 'accesscontext' => $context);
 
 $potentialuserselector = new enrol_manual_potential_participant('addselect', $options);
 $currentuserselector = new enrol_manual_current_participant('removeselect', $options);
