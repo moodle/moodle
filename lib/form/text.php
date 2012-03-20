@@ -65,6 +65,19 @@ class MoodleQuickForm_text extends HTML_QuickForm_text{
     }
 
     /**
+     * Returns the html to be used when the element is frozen
+     *
+     * @since     2.4
+     * @return    string Frozen html
+     */
+    function getFrozenHtml()
+    {
+        $attributes = array('readonly' => 'readonly');
+        $this->updateAttributes($attributes);
+        return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' />' . $this->_getPersistantData();
+    } //end func getFrozenHtml
+
+    /**
      * Returns HTML for this form element.
      *
      * @return string
@@ -88,18 +101,4 @@ class MoodleQuickForm_text extends HTML_QuickForm_text{
         return $this->_helpbutton;
     }
 
-    /**
-     * Slightly different container template when frozen. Don't want to use a label tag
-     * with a for attribute in that case for the element label but instead use a div.
-     * Templates are defined in renderer constructor.
-     *
-     * @return string
-     */
-    function getElementTemplateType(){
-        if ($this->_flagFrozen){
-            return 'static';
-        } else {
-            return 'default';
-        }
-    }
 }
