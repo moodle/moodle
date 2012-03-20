@@ -15,10 +15,19 @@
     $blocklist = optional_param('blocklist', 0, PARAM_INT);
     $modulelist= optional_param('modulelist', '', PARAM_ALPHAEXT);
 
-    $PAGE->set_url('/course/search.php', compact('search', 'page', 'perpage', 'blocklist', 'modulelist', 'edit'));
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
-    $search = trim(strip_tags($search)); // trim & clean raw searched string
+    // List of minimum capabilities which user need to have for editing/moving course
+    $capabilities = array('moodle/course:create', 'moodle/category:manage');
 
+    // List of category id's in which current user has course:create and category:manage capability.
+    $usercatlist = array();
+
+    // List of parent category id's
+    $catparentlist = array();
+
+    //Populate usercatlist with list of category id's with required capabilities.
+    make_categories_list($usercatlist, $catparentlist, $capabilities);
+
+    $search = trim(strip_tags($search)); // trim & clean raw searched string
     if ($search) {
         $searchterms = explode(" ", $search);    // Search for words independently
         foreach ($searchterms as $key => $searchterm) {
@@ -32,7 +41,7 @@
     $site = get_site();
 
     $urlparams = array();
-    foreach (array('search', 'page', 'blocklist', 'modulelist') as $param) {
+    foreach (array('search', 'page', 'blocklist', 'modulelist', 'edit') as $param) {
         if (!empty($$param)) {
             $urlparams[$param] = $$param;
         }
@@ -48,11 +57,17 @@
         require_login();
     }
 
-    if (can_edit_in_category()) {
+    //Editing is possible if user have system or category level create and manage capability
+    if (can_edit_in_category() || !empty($usercatlist)) {
         if ($edit !== -1) {
             $USER->editing = $edit;
         }
         $adminediting = $PAGE->user_is_editing();
+
+        // Set perpage if user can edit in category
+        if ($perpage != 99999) {
+            $perpage = 30;
+        }
     } else {
         $adminediting = false;
     }
@@ -74,11 +89,6 @@
         }
     }
 
-    $capabilities = array('moodle/course:create', 'moodle/category:manage');
-    if (has_any_capability($capabilities, get_context_instance(CONTEXT_SYSTEM)) && ($perpage != 99999)) {
-        $perpage = 30;
-    }
-
     $displaylist = array();
     $parentlist = array();
     make_categories_list($displaylist, $parentlist);
@@ -94,7 +104,7 @@
     $strfrontpage = get_string('frontpage', 'admin');
     $strnovalidcourses = get_string('novalidcourses');
 
-    if (empty($search) and empty($blocklist) and empty($modulelist)) {
+    if (empty($search) and empty($blocklist) and empty($modulelist) and empty($moveto) and ($edit != -1)) {
         $PAGE->navbar->add($strcourses, new moodle_url('/course/index.php'));
         $PAGE->navbar->add($strsearch);
         $PAGE->set_title("$site->fullname : $strsearch");
@@ -114,18 +124,28 @@
         exit;
     }
 
+    $courses = array();
     if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
-        if (! $destcategory = $DB->get_record("course_categories", array("id"=>$data->moveto))) {
-            print_error('cannotfindcategory', '', '', $data->moveto);
+        if (!$destcategory = $DB->get_record("course_categories", array("id" => $moveto))) {
+            print_error('cannotfindcategory', '', '', $moveto);
         }
 
-        $courses = array();
+        //User should have manage and create capablity on destination category.
+        require_capability('moodle/category:manage', get_context_instance(CONTEXT_COURSECAT, $moveto));
+        require_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $moveto));
+
         foreach ( $data as $key => $value ) {
             if (preg_match('/^c\d+$/', $key)) {
-                array_push($courses, substr($key, 1));
+                $courseid = substr($key, 1);
+                // user must have category:manage and course:create capability for the course to be moved.
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+                foreach ($capabilities as $capability) {
+                    require_capability($capability, $coursecontext);
+                    array_push($courses, $courseid);
+                }
             }
         }
-        move_courses($courses, $data->moveto);
+        move_courses($courses, $moveto);
     }
 
     // get list of courses containing blocks if required
@@ -148,9 +168,7 @@
         foreach ($courses as $course) {
             $courses[$course->id] = $course;
         }
-    }
-    // get list of courses containing modules if required
-    elseif (!empty($modulelist) and confirm_sesskey()) {
+    } elseif (!empty($modulelist) and confirm_sesskey()) { // get list of courses containing modules
         $modulename = $modulelist;
         $sql =  "SELECT DISTINCT c.id FROM {".$modulelist."} module, {course} c"
             ." WHERE module.course=c.id";
@@ -172,34 +190,26 @@
         else {
             $totalcount = 0;
         }
-    }
-    else {
+    } else if (!empty($searchterm)) { //Donot do search for empty search request.
         $courses = get_courses_search($searchterms, "fullname ASC",
             $page, $perpage, $totalcount);
     }
 
-    $searchform = print_course_search($search, true, "navbar");
-
-    if (!empty($courses) && has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM))) {
-        $searchform = '';
-        // not sure if this capability is the best  here
-        if (has_capability('moodle/category:manage', get_context_instance(CONTEXT_SYSTEM))) {
-            if ($PAGE->user_is_editing()) {
-                $string = get_string("turneditingoff");
-                $edit = "off";
-            } else {
-                $string = get_string("turneditingon");
-                $edit = "on";
-            }
-
-            $aurl = new moodle_url("$CFG->wwwroot/course/search.php", array(
-                    'edit' => $edit,
-                    'sesskey' => sesskey(),
-                    'search' => $search,
-                    'page' => $page,
-                    'perpage' => $perpage));
-            $searchform = $OUTPUT->single_button($aurl, $string, 'get');
+    $searchform = '';
+    //Turn editing should be visible if user have system or category level capability
+    if (!empty($courses) && (can_edit_in_category() || !empty($usercatlist))) {
+        if ($PAGE->user_is_editing()) {
+            $string = get_string("turneditingoff");
+            $edit = "off";
+        } else {
+            $string = get_string("turneditingon");
+            $edit = "on";
         }
+        $params = array_merge($urlparams, array('sesskey' => sesskey(), 'edit' => $edit));
+        $aurl = new moodle_url("$CFG->wwwroot/course/search.php", $params);
+        $searchform = $OUTPUT->single_button($aurl, $string, 'get');
+    } else {
+        $searchform = print_course_search($search, true, "navbar");
     }
 
     $PAGE->navbar->add($strcourses, new moodle_url('/course/index.php'));
@@ -228,25 +238,30 @@
 
         print_navigation_bar($totalcount, $page, $perpage, $encodedsearch, $modulelink);
 
-        if (!$adminediting) {
+        // Show list of courses
+        if (!$adminediting) { //Not editing mode
             foreach ($courses as $course) {
-
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-
-                $course->summary .= "<br /><p class=\"category\">";
-                $course->summary .= "$strcategory: <a href=\"category.php?id=$course->category\">";
-                $course->summary .= $displaylist[$course->category];
-                $course->summary .= "</a></p>";
+                // front page don't belong to any category and block can exist.
+                if ($course->category > 0) {
+                    $course->summary .= "<br /><p class=\"category\">";
+                    $course->summary .= "$strcategory: <a href=\"category.php?id=$course->category\">";
+                    $course->summary .= $displaylist[$course->category];
+                    $course->summary .= "</a></p>";
+                }
                 print_course($course, $search);
                 echo $OUTPUT->spacer(array('height'=>5, 'width'=>5, 'br'=>true)); // should be done with CSS instead
             }
-        } else {
-        /// Show editing UI.
+        } else { //editing mode
             echo "<form id=\"movecourses\" action=\"search.php\" method=\"post\">\n";
             echo "<div><input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n";
             echo "<input type=\"hidden\" name=\"search\" value=\"".s($search)."\" />\n";
             echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
             echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" /></div>\n";
+            if (!empty($modulelist) and confirm_sesskey()) {
+                echo "<input type=\"hidden\" name=\"modulelist\" value=\"$modulelist\" /></div>\n";
+            } else if (!empty($blocklist) and confirm_sesskey()) {
+                echo "<input type=\"hidden\" name=\"blocklist\" value=\"$blocklist\" /></div>\n";
+            }
             echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"4\" class=\"generalbox boxaligncenter\">\n<tr>\n";
             echo "<th scope=\"col\">$strcourses</th>\n";
             echo "<th scope=\"col\">$strcategory</th>\n";
@@ -278,9 +293,8 @@
                 echo "<td>".$displaylist[$course->category]."</td>\n";
                 echo "<td>\n";
 
-                // this is ok since this will get inherited from course category context
-                // if it is set
-                if (has_capability('moodle/category:manage', $coursecontext)) {
+                // If user has all required capabilities to move course then show selectable checkbox
+                if (has_all_capabilities($capabilities, $coursecontext)) {
                     echo "<input type=\"checkbox\" name=\"c$course->id\" />\n";
                 } else {
                     echo "<input type=\"checkbox\" name=\"c$course->id\" disabled=\"disabled\" />\n";
@@ -338,7 +352,8 @@
             echo "<br />";
             echo "<input type=\"button\" onclick=\"checkall()\" value=\"$strselectall\" />\n";
             echo "<input type=\"button\" onclick=\"checknone()\" value=\"$strdeselectall\" />\n";
-            echo html_writer::select($displaylist, 'moveto', '', array(''=>get_string('moveselectedcoursesto')), array('id'=>'movetoid'));
+            //Select box should only show categories in which user has min capability to move course.
+            echo html_writer::select($usercatlist, 'moveto', '', array(''=>get_string('moveselectedcoursesto')), array('id'=>'movetoid'));
             $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('movecourses', 'movetoid', false));
             echo "</td>\n</tr>\n";
             echo "</table>\n</form>";
