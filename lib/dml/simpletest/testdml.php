@@ -3062,6 +3062,117 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1, $DB->count_records($tablename));
     }
 
+    public function test_object_params() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $o = new stdClass(); // objects without __toString - never worked
+        try {
+            $DB->fix_sql_params("SELECT {{$tablename}} WHERE course = ? ", array($o));
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        // objects with __toString() forbidden everywhere since 2.3
+        $o = new dml_test_object_one();
+        try {
+            $DB->fix_sql_params("SELECT {{$tablename}} WHERE course = ? ", array($o));
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        try {
+            $DB->execute("SELECT {{$tablename}} WHERE course = ? ", array($o));
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        try {
+            $DB->get_recordset_sql("SELECT {{$tablename}} WHERE course = ? ", array($o));
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        try {
+            $DB->get_records_sql("SELECT {{$tablename}} WHERE course = ? ", array($o));
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        try {
+            $record = new stdClass();
+            $record->course = $o;
+            $DB->insert_record_raw($tablename, $record);
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        try {
+            $record = new stdClass();
+            $record->course = $o;
+            $DB->insert_record($tablename, $record);
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        try {
+            $record = new stdClass();
+            $record->course = $o;
+            $DB->import_record($tablename, $record);
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        try {
+            $record = new stdClass();
+            $record->id = 1;
+            $record->course = $o;
+            $DB->update_record_raw($tablename, $record);
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        try {
+            $record = new stdClass();
+            $record->id = 1;
+            $record->course = $o;
+            $DB->update_record($tablename, $record);
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        try {
+            $DB->set_field_select($tablename, 'course', 1, "course = ? ", array($o));
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
+        try {
+            $DB->delete_records_select($tablename, "course = ? ", array($o));
+            $this->fail('coding_exception expected');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+    }
+
     function test_sql_null_from_clause() {
         $DB = $this->tdb;
         $sql = "SELECT 1 AS id ".$DB->sql_null_from_clause();
@@ -4505,4 +4616,14 @@ class moodle_database_for_testing extends moodle_database {
     public function begin_transaction() {}
     public function commit_transaction() {}
     public function rollback_transaction() {}
+}
+
+
+/**
+ * Dumb test class with toString() returrning 1.
+ */
+class dml_test_object_one {
+    public function __toString() {
+        return 1;
+    }
 }

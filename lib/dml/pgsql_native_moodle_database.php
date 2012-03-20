@@ -529,6 +529,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return mixed the normalised value
      */
     protected function normalise_value($column, $value) {
+        $this->detect_objects($value);
+
         if (is_bool($value)) { // Always, convert boolean to int
             $value = (int)$value;
 
@@ -778,9 +780,10 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $fields = implode(',', array_keys($params));
         $values = array();
-        $count = count($params);
-        for ($i=1; $i<=$count; $i++) {
-            $values[] = "\$".$i;
+        $i = 1;
+        foreach ($params as $value) {
+            $this->detect_objects($value);
+            $values[] = "\$".$i++;
         }
         $values = implode(',', $values);
 
@@ -876,6 +879,7 @@ class pgsql_native_moodle_database extends moodle_database {
         $blobs   = array();
 
         foreach ($dataobject as $field=>$value) {
+            $this->detect_objects($value);
             if (!isset($columns[$field])) {
                 continue;
             }
@@ -932,6 +936,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $sets = array();
         foreach ($params as $field=>$value) {
+            $this->detect_objects($value);
             $sets[] = "$field = \$".$i++;
         }
 

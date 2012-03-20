@@ -2,6 +2,12 @@ This files describes API changes in core lbraries and APIs,
 information provided here is intended especially for developers.
 
 
+=== 2.3 ===
+
+Database layer changes:
+* objects are not allowed in paramters of DML functions, use explicit casting to strings if necessary
+
+
 === 2.2 ===
 
 removed unused libraries:
