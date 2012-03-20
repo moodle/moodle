@@ -578,6 +578,12 @@ abstract class user_selector_base {
                 unset($this->selected[$user->id]);
                 $output .= '    <option' . $attributes . ' value="' . $user->id . '">' .
                         $this->output_user($user) . "</option>\n";
+                if (!empty($user->infobelow)) {
+                    // 'Poor man's indent' here is because CSS styles do not work
+                    // in select options, except in Firefox.
+                    $output .= '    <option disabled="disabled" class="userselector-infobelow">' .
+                            '&nbsp;&nbsp;&nbsp;&nbsp;' . s($user->infobelow) . '</option>';
+                }
             }
         } else {
             $output = '  <optgroup label="' . htmlspecialchars($groupname) . '">' . "\n";
@@ -712,6 +718,10 @@ abstract class groups_user_selector_base extends user_selector_base {
             foreach ($groupedusers[$groupname] as &$user) {
                 unset($user->roles);
                 $user->fullname = fullname($user);
+                if (!empty($user->component)) {
+                    $user->infobelow = get_string('addedby', 'group',
+                        get_string('pluginname', $user->component));
+                }
             }
         }
         return $groupedusers;
@@ -726,8 +736,8 @@ class group_members_selector extends groups_user_selector_base {
     public function find_users($search) {
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $roles = groups_get_members_by_role($this->groupid, $this->courseid,
-                $this->required_fields_sql('u'), 'u.lastname, u.firstname',
-                $wherecondition, $params);
+                $this->required_fields_sql('u') . ', gm.component',
+                'u.lastname, u.firstname', $wherecondition, $params);
         return $this->convert_array_format($roles, $search);
     }
 }
