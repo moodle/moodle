@@ -383,7 +383,7 @@ class assignment_upload extends assignment_base {
         parent::submissions($mode);
     }
 
-    function process_feedback() {
+    function process_feedback($formdata=null) {
         if (!$feedback = data_submitted() or !confirm_sesskey()) {      // No incoming data?
             return false;
         }

@@ -293,7 +293,7 @@ class lesson_page_type_matching extends lesson_page {
      * @param stdClass $properties
      * @return bool
      */
-    public function update($properties) {
+    public function update($properties, $context = null, $maxbytes = null) {
         global $DB, $PAGE;
         $answers  = $this->get_answers();
         $properties->id = $this->properties->id;

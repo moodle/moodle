@@ -41,7 +41,7 @@ class repository_coursefiles extends repository {
      * @param string $encodedpath
      * @return mixed
      */
-    public function get_listing($encodedpath = '') {
+    public function get_listing($encodedpath = '', $page = '') {
         global $CFG, $USER, $OUTPUT;
         $ret = array();
         $ret['dynload'] = true;

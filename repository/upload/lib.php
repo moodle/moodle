@@ -214,7 +214,7 @@ class repository_upload extends repository {
      * Return a upload form
      * @return array
      */
-    public function get_listing() {
+    public function get_listing($path = '', $page = '') {
         global $CFG;
         $ret = array();
         $ret['nologin']  = true;

@@ -1207,7 +1207,7 @@ class grade_report_grader extends grade_report {
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 // emulate grade element
-                $item =& $this->gtree->get_item($itemid);
+                $item = $this->gtree->get_item($itemid);
 
                 $eid = $this->gtree->get_item_eid($item);
                 $element = $this->gtree->locate_element($eid);

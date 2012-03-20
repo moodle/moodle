@@ -172,7 +172,7 @@ class qformat_webct extends qformat_default {
       return true;
     }
 
-    function readquestions ($lines) {
+    protected function readquestions($lines, $context) {
         $webctnumberregex =
                 '[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)((e|E|\\*10\\*\\*)([+-]?[0-9]+|\\([+-]?[0-9]+\\)))?';
 

@@ -50,7 +50,7 @@ class repository_s3 extends repository {
      * @param string $path
      * @return array The file list and options
      */
-    public function get_listing($path = '') {
+    public function get_listing($path = '', $page = '') {
         global $CFG, $OUTPUT;
         if (empty($this->access_key)) {
             die(json_encode(array('e'=>get_string('needaccesskey', 'repository_s3'))));

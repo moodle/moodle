@@ -361,8 +361,9 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         if (count($formats)>1) {
             $str.= html_writer::select($formats, $elname.'[format]', $format, false);
         } else {
+            $keys = array_keys($formats);
             $str.= html_writer::empty_tag('input',
-                    array('name'=>$elname.'[format]', 'type'=> 'hidden', 'value' => array_pop(array_keys($formats))));
+                    array('name'=>$elname.'[format]', 'type'=> 'hidden', 'value' => array_pop($keys)));
         }
         $str .= '</div>';
 

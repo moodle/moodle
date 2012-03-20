@@ -289,7 +289,7 @@ class csv_import_reader {
      * @param string separator name
      * @return string encoded delimiter char
      */
-    function get_encoded_delimiter($delimiter_name) {
+    static function get_encoded_delimiter($delimiter_name) {
         global $CFG;
         if ($delimiter_name == 'cfg' and isset($CFG->CSV_ENCODE)) {
             return $CFG->CSV_ENCODE;
@@ -305,7 +305,7 @@ class csv_import_reader {
      * @param string who imports?
      * @return int iid
      */
-    function get_new_iid($type) {
+    static function get_new_iid($type) {
         global $USER;
 
         $filename = make_temp_directory('csvimport/'.$type.'/'.$USER->id);

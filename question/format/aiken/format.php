@@ -58,7 +58,7 @@ class qformat_aiken extends qformat_default {
         return true;
     }
 
-    public function readquestions($lines) {
+    public function readquestions($lines, $context) {
         $questions = array();
         $question = $this->defaultquestion();
         $endchar = chr(13);

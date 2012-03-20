@@ -40,7 +40,7 @@ class qformat_multianswer extends qformat_default {
       return true;
     }
 
-    protected function readquestions($lines) {
+    protected function readquestions($lines, $context) {
         // For this class the method has been simplified as
         // there can never be more than one question for a
         // multianswer import

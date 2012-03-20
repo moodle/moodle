@@ -22,7 +22,7 @@ require_once 'HTML/QuickForm/static.php';
 
 /**
  * A pseudo-element used for adding raw HTML to form
- * 
+ *
  * Intended for use with the default renderer only, template-based
  * ones may (and probably will) completely ignore this
  *
@@ -35,7 +35,7 @@ class HTML_QuickForm_html extends HTML_QuickForm_static
 
    /**
     * Class constructor
-    * 
+    *
     * @param string $text   raw HTML to add
     * @access public
     * @return void
@@ -54,9 +54,9 @@ class HTML_QuickForm_html extends HTML_QuickForm_static
     *
     * @param object     An HTML_QuickForm_Renderer object
     * @access public
-    * @return void 
+    * @return void
     */
-    function accept(&$renderer)
+    function accept(&$renderer, $required=false, $error=null)
     {
         $renderer->renderHtml($this);
     } // end func accept

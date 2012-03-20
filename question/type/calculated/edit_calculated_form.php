@@ -162,8 +162,8 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         return $question;
     }
 
-    protected function data_preprocessing_answers($question) {
-        $question = parent::data_preprocessing_answers($question);
+    protected function data_preprocessing_answers($question, $withanswerfiles = false) {
+        $question = parent::data_preprocessing_answers($question, $withanswerfiles);
         if (empty($question->options->answers)) {
             return $question;
         }

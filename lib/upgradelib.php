@@ -1707,7 +1707,8 @@ function upgrade_plugin_mnet_functions($component) {
  * @return array
  */
 function admin_mnet_method_profile(Zend_Server_Reflection_Function_Abstract $function) {
-    $proto = array_pop($function->getPrototypes());
+    $protos = $function->getPrototypes();
+    $proto = array_pop($protos);
     $ret = $proto->getReturnValue();
     $profile = array(
         'parameters' =>  array(),

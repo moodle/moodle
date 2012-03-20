@@ -81,6 +81,9 @@ if (check_browser_version('MSIE')) {
     @header('Content-Type: text/plain; charset=utf-8');
 }
 
+// we do not want html markup in emulated CLI
+@ini_set('html_errors', 'off');
+
 // execute the cron
 cron_run();
 

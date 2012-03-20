@@ -62,7 +62,9 @@ function pear_handle_error($error){
 }
 
 if (!empty($CFG->debug) and $CFG->debug >= DEBUG_ALL){
-    PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pear_handle_error');
+    //TODO: this is a wrong place to init PEAR!
+    $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
+    $GLOBALS['_PEAR_default_error_options'] = 'pear_handle_error';
 }
 
 /**
@@ -1638,7 +1640,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             }
             foreach ($elementList as $elementName) {
                 $value = $this->exportValue($elementName);
-                if (PEAR::isError($value)) {
+                if (@PEAR::isError($value)) {
                     return $value;
                 }
                 //oh, stock QuickFOrm was returning array of arrays!

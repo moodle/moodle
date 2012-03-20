@@ -1733,9 +1733,10 @@ abstract class enrol_plugin {
      * Returns true if the plugin has one or more bulk operations that can be performed on
      * user enrolments.
      *
+     * @param course_enrolment_manager $manager
      * @return bool
      */
-    public function has_bulk_operations() {
+    public function has_bulk_operations(course_enrolment_manager $manager) {
        return false;
     }
 
@@ -1743,9 +1744,10 @@ abstract class enrol_plugin {
      * Return an array of enrol_bulk_enrolment_operation objects that define
      * the bulk actions that can be performed on user enrolments by the plugin.
      *
+     * @param course_enrolment_manager $manager
      * @return array
      */
-    public function get_bulk_operations() {
+    public function get_bulk_operations(course_enrolment_manager $manager) {
         return array();
     }
 }
