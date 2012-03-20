@@ -33,6 +33,15 @@ class xmldb_table extends xmldb_object {
     var $indexes;
 
     /**
+     * Note:
+     *  - Oracle has 30 chars limit for all names,
+     *    2 chars are reserved for prefix.
+     *
+     * @const maximumn length of field names
+     */
+    const NAME_MAX_LENGTH = 28;
+
+    /**
      * Creates one new xmldb_table
      */
     function __construct($name) {
@@ -671,7 +680,7 @@ class xmldb_table extends xmldb_object {
     function validateDefinition(xmldb_table $xmldb_table=null) {
         // table parameter is ignored
         $name = $this->getName();
-        if (strlen($name) > 28) {
+        if (strlen($name) > self::NAME_MAX_LENGTH) {
             return 'Invalid table name {'.$name.'}: name is too long. Limit is 28 chars.';
         }
         if (!preg_match('/^[a-z][a-z0-9_]*$/', $name)) {
