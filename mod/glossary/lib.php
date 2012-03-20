@@ -2887,7 +2887,7 @@ function glossary_comment_validate($comment_param) {
     } else {
         $glossary = $DB->get_record('glossary', array('id'=>$record->glossaryid));
     }
-    if (!$glossary) {    
+    if (!$glossary) {
         throw new comment_exception('invalidid', 'data');
     }
     if (!$course = $DB->get_record('course', array('id'=>$glossary->course))) {
