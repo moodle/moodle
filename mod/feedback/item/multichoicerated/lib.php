@@ -165,6 +165,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
     }
 
     function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
+        global $OUTPUT;
         $sep_dec = get_string('separator_decimal', 'feedback');
         if(substr($sep_dec, 0, 2) == '[['){
             $sep_dec = FEEDBACK_DECIMAL;
@@ -185,7 +186,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             $avg = 0.0;
             foreach($analysedVals as $val) {
                 $intvalue = $pixnr % 10;
-                $pix = "pics/$intvalue.gif";
+                $pix = $OUTPUT->pix_url('multichoice/' . $intvalue, 'feedback');
                 $pixnr++;
                 $pixwidth = intval($val->quotient * FEEDBACK_MAX_PIX_LENGTH);
 
