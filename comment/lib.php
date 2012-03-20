@@ -569,7 +569,7 @@ class comment {
             $c->format      = $u->cformat;
             $c->timecreated = $u->ctimecreated;
             $url = new moodle_url('/user/view.php', array('id'=>$u->id, 'course'=>$this->courseid));
-            $c->profileurl = $url->out();
+            $c->profileurl = $url->out(false);
             $c->fullname = fullname($u);
             $c->time = userdate($c->timecreated, get_string('strftimerecent', 'langconfig'));
             $c->content = format_text($c->content, $c->format, $formatoptions);
