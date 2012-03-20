@@ -21,8 +21,6 @@ body.jsenabled .questionflagcheckbox {display: none;}
 .path-mod-quiz #user-picture img {width: auto;height: auto;float: left;}
 
 .path-mod-quiz .qnbutton {display: block; position: relative; float: left; width: 1.5em; height: 1.5em; overflow: hidden; margin: 0.3em 0.3em 0.3em 0; padding: 0; border: 1px solid #bbb; background: #ddd; text-align: center; vertical-align: middle;line-height: 1.5em !important; font-weight: bold; text-decoration: none;}
-.path-mod-quiz .qnbutton:hover {text-decoration: underline;}
-.path-mod-quiz .qnbutton span {cursor: pointer; cursor: hand;}
 
 .path-mod-quiz .qnbutton .trafficlight,
 .path-mod-quiz .qnbutton .thispageholder {display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0;}
@@ -42,6 +40,9 @@ body.jsenabled .questionflagcheckbox {display: none;}
 .path-mod-quiz .qnbutton.incorrect {background-color: #fcc;}
 .path-mod-quiz .qnbutton.notanswered .trafficlight,
 .path-mod-quiz .qnbutton.incorrect .trafficlight {border-top: 3px solid #800;}
+
+.path-mod-quiz .qnbutton.free:hover {text-decoration: underline;}
+.path-mod-quiz .qnbutton.free span {cursor: pointer; cursor: hand;}
 
 .path-mod-quiz .othernav {clear: both; margin: 0.5em 0;}
 .path-mod-quiz .othernav a,

@@ -89,6 +89,11 @@ $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/questionsp
         get_string('newpageevery', 'quiz'), get_string('confignewpageevery', 'quiz'),
         array('value' => 1, 'fix' => false), $perpage));
 
+// Navigation method
+$quizsettings->add(new admin_setting_configselect_with_advanced('quiz/navmethod',
+        get_string('navmethod', 'quiz'), get_string('confignavmethod', 'quiz'),
+        array('value' => QUIZ_NAVMETHOD_FREE, 'adv' => true), quiz_get_navigation_options()));
+
 // Shuffle within questions
 $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/shuffleanswers',
         get_string('shufflewithin', 'quiz'), get_string('configshufflewithin', 'quiz'),

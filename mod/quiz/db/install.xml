@@ -26,8 +26,9 @@
         <FIELD NAME="reviewgeneralfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewspecificfeedback" NEXT="reviewrightanswer"/>
         <FIELD NAME="reviewrightanswer" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewgeneralfeedback" NEXT="reviewoverallfeedback"/>
         <FIELD NAME="reviewoverallfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewrightanswer" NEXT="questionsperpage"/>
-        <FIELD NAME="questionsperpage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="reviewoverallfeedback" NEXT="shufflequestions"/>
-        <FIELD NAME="shufflequestions" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="questionsperpage" NEXT="shuffleanswers"/>
+        <FIELD NAME="questionsperpage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="reviewoverallfeedback" NEXT="navmethod"/>
+        <FIELD NAME="navmethod" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="free" SEQUENCE="false" PREVIOUS="questionsperpage" NEXT="shufflequestions"/>
+        <FIELD NAME="shufflequestions" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="navmethod" NEXT="shuffleanswers"/>
         <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="shufflequestions" NEXT="questions"/>
         <FIELD NAME="questions" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="shuffleanswers" NEXT="sumgrades"/>
         <FIELD NAME="sumgrades" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" PREVIOUS="questions" NEXT="grade"/>
