@@ -661,8 +661,8 @@
 
                     $row->cells[2]->text .= implode('', $links);
 
-                    if (!empty($messageselect)) {
-                        $row->cells[2]->text .= '<br /><input type="checkbox" name="user'.$user->id.'" /> ';
+                    if ($bulkoperations) {
+                        $row->cells[2]->text .= '<br /><input type="checkbox" class="usercheckbox" name="user'.$user->id.'" /> ';
                     }
                     $table->data = array($row);
                     echo html_writer::table($table);
