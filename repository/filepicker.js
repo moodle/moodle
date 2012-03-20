@@ -149,7 +149,11 @@ M.core_filepicker.init = function(Y, options) {
                         // error checking
                         if (data && data.error) {
                             scope.print_msg(data.error, 'error');
-                            scope.list();
+                            if (args.onerror) {
+                                args.onerror(id,data,p);
+                            } else {
+                                Y.one(panel_id).set('innerHTML', '');
+                            }
                             return;
                         } else if (data && data.event) {
                             switch (data.event) {
@@ -678,6 +682,9 @@ M.core_filepicker.init = function(Y, options) {
                     client_id: client_id,
                     repository_id: repository_id,
                     'params': params,
+                    onerror: function(id, obj, args) {
+                        scope.view_files();
+                    },
                     callback: function(id, obj, args) {
                         if (scope.options.editor_target && scope.options.env=='editor') {
                             scope.options.editor_target.value=obj.url;
@@ -1189,6 +1196,9 @@ M.core_filepicker.init = function(Y, options) {
                             params: {'savepath':scope.options.savepath},
                             repository_id: scope.active_repo.id,
                             form: {id: id, upload:true},
+                            onerror: function(id, o, args) {
+                                scope.create_upload_form(data);
+                            },
                             callback: function(id, o, args) {
                                 if (scope.options.editor_target&&scope.options.env=='editor') {
                                     scope.options.editor_target.value=o.url;
