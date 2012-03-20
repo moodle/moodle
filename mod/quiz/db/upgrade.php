@@ -82,7 +82,7 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2011120703, 'quiz');
     }
 
-    if ($oldversion < 2011120704) {
+    if ($oldversion < 2012030901) {
         // Configuration option for navigation method
         $table = new xmldb_table('quiz');
 
@@ -91,7 +91,7 @@ function xmldb_quiz_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_mod_savepoint(true, 2011120704, 'quiz');
+        upgrade_mod_savepoint(true, 2012030901, 'quiz');
     }
 
     return true;
