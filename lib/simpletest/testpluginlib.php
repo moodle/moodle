@@ -111,7 +111,11 @@ class testable_plugin_manager extends plugin_manager {
 class testable_available_update_checker extends available_update_checker {
 
     /** @var replaces the default DB table storage for the fetched response */
-    protected $responsestorage;
+    protected $fakeresponsestorage;
+    /** @var int stores the fake recentfetch value */
+    public $fakerecentfetch = -1;
+    /** @var int stores the fake value of time() */
+    public $fakecurrenttimestamp = -1;
 
     /**
      * Factory method for this class
@@ -131,7 +135,7 @@ class testable_available_update_checker extends available_update_checker {
     }
 
     protected function store_response($response) {
-        $this->responsestorage = $response;
+        $this->fakeresponsestorage = $response;
     }
 
     protected function restore_response($forcereload = false) {
@@ -146,6 +150,14 @@ class testable_available_update_checker extends available_update_checker {
         $this->currentversion = $version;
         $this->currentbranch = $branch;
         $this->currentplugins = $plugins;
+    }
+
+    public function get_last_timefetched() {
+        if ($this->fakerecentfetch == -1) {
+            return parent::get_last_timefetched();
+        } else {
+            return $this->fakerecentfetch;
+        }
     }
 
     private function get_fake_response() {
@@ -196,8 +208,38 @@ class testable_available_update_checker extends available_update_checker {
 
         return json_encode($fakeresponse);
     }
+
+    protected function cron_current_timestamp() {
+        if ($this->fakecurrenttimestamp == -1) {
+            return parent::cron_current_timestamp();
+        } else {
+            return $this->fakecurrenttimestamp;
+        }
+    }
+
+    protected function cron_mtrace($msg, $eol = PHP_EOL) {
+    }
+
+    protected function cron_autocheck_enabled() {
+        return true;
+    }
+
+    protected function cron_execution_offset() {
+        // autofetch should run by the first cron after 01:42 AM
+        return 42 * MINSECS;
+    }
+
+    protected function cron_execute() {
+        throw new testable_available_update_checker_cron_executed('Cron executed but it should not!');
+    }
 }
 
+/**
+ * Exception used to detect {@link available_update_checker::cron_execute()} calls
+ */
+class testable_available_update_checker_cron_executed extends Exception {
+
+}
 
 /**
  * Tests of the basic API of the plugin manager
@@ -255,5 +297,64 @@ class available_update_checker_test extends UnitTestCase {
         $provider->fake_current_environment(2012060103.00, '2.3', array());
         $updates = $provider->get_core_update_info(MATURITY_STABLE);
         $this->assertNull($updates);
+    }
+
+    /**
+     * If there are no fetched data yet, the first cron should fetch them
+     */
+    public function test_cron_initial_fetch() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fakerecentfetch = null;
+        $provider->fakecurrenttimestamp = -1;
+        $this->expectException('testable_available_update_checker_cron_executed');
+        $provider->cron();
+    }
+
+    /**
+     * If there is a fresh fetch available, no cron execution is expected
+     */
+    public function test_cron_has_fresh_fetch() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fakerecentfetch = time() - 59 * MINSECS; // fetched an hour ago
+        $provider->fakecurrenttimestamp = -1;
+        $provider->cron();
+        $this->assertTrue(true); // we should get here with no exception thrown
+    }
+
+    /**
+     * If there is an outdated fetch, the cron execution is expected
+     */
+    public function test_cron_has_outdated_fetch() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fakerecentfetch = time() - 49 * HOURSECS; // fetched 49 hours ago
+        $provider->fakecurrenttimestamp = -1;
+        $this->expectException('testable_available_update_checker_cron_executed');
+        $provider->cron();
+    }
+
+    /**
+     * The first cron after 01:42 AM today should fetch the data
+     *
+     * @see testable_available_update_checker::cron_execution_offset()
+     */
+    public function test_cron_offset_execution_not_yet() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fakerecentfetch = time() - 24 * HOURSECS;
+        $provider->fakecurrenttimestamp = mktime(1, 40, 02); // 01:40:02 AM
+        $provider->cron();
+        $this->assertTrue(true); // we should get here with no exception thrown
+    }
+
+    /**
+     * The first cron after 01:42 AM today should fetch the data
+     *
+     * @see testable_available_update_checker::cron_execution_offset()
+     */
+    public function test_cron_offset_execution() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fakerecentfetch = time() - 24 * HOURSECS;
+        $provider->fakecurrenttimestamp = mktime(1, 45, 02); // 01:45:02 AM
+        $this->expectException('testable_available_update_checker_cron_executed');
+        $provider->cron();
     }
 }

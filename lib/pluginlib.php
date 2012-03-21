@@ -695,6 +695,41 @@ class available_update_checker {
     }
 
     /**
+     * The method being run via cron.php
+     */
+    public function cron() {
+        global $CFG;
+
+        if (!$this->cron_autocheck_enabled()) {
+            $this->cron_mtrace('Automatic check for available updates not enabled, skipping.');
+            return;
+        }
+
+        $now = $this->cron_current_timestamp();
+
+        if ($this->cron_has_fresh_fetch($now)) {
+            $this->cron_mtrace('Recently fetched info about available updates is still fresh enough, skipping.');
+            return;
+        }
+
+        if ($this->cron_has_outdated_fetch($now)) {
+            $this->cron_mtrace('Outdated or missing info about available updates, forced fetching ... ', '');
+            $this->cron_execute();
+            return;
+        }
+
+        $offset = $this->cron_execution_offset();
+        $start = mktime(1, 0, 0, date('n', $now), date('j', $now), date('Y', $now)); // 01:00 AM today local time
+        if ($now > $start + $offset) {
+            $this->cron_mtrace('Regular daily check for available updates ... ', '');
+            $this->cron_execute();
+            return;
+        }
+    }
+
+    /// end of public API //////////////////////////////////////////////////////
+
+    /**
      * Makes cURL request to get data from the remote site
      *
      * @return string raw request result
@@ -878,6 +913,117 @@ class available_update_checker {
         }
 
         return $params;
+    }
+
+    /**
+     * Returns the current timestamp
+     *
+     * @return int the timestamp
+     */
+    protected function cron_current_timestamp() {
+        return time();
+    }
+
+    /**
+     * Output cron debugging info
+     *
+     * @see mtrace()
+     * @param string $msg output message
+     * @param string $eol end of line
+     */
+    protected function cron_mtrace($msg, $eol = PHP_EOL) {
+        mtrace($msg, $eol);
+    }
+
+    /**
+     * Decide if the autocheck feature is disabled in the server setting
+     *
+     * @return bool true if autocheck enabled, false if disabled
+     */
+    protected function cron_autocheck_enabled() {
+        if (empty($CFG->updateautocheck)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Decide if the recently fetched data are still fresh enough
+     *
+     * @param int $now current timestamp
+     * @return bool true if no need to re-fetch, false otherwise
+     */
+    protected function cron_has_fresh_fetch($now) {
+        $recent = $this->get_last_timefetched();
+
+        if (empty($recent)) {
+            return false;
+        }
+
+        if ($now < $recent) {
+            $this->cron_mtrace('The most recent fetch is reported to be in the future, this is weird!');
+            return true;
+        }
+
+        if ($now - $recent > HOURSECS) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Decide if the fetch is outadated or even missing
+     *
+     * @param int $now current timestamp
+     * @return bool false if no need to re-fetch, true otherwise
+     */
+    protected function cron_has_outdated_fetch($now) {
+        $recent = $this->get_last_timefetched();
+
+        if (empty($recent)) {
+            return true;
+        }
+
+        if ($now < $recent) {
+            $this->cron_mtrace('The most recent fetch is reported to be in the future, this is weird!');
+            return false;
+        }
+
+        if ($now - $recent > 48 * HOURSECS) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns the cron execution offset for this site
+     *
+     * The main {@link self::cron()} is supposed to run every night in some random time
+     * between 01:00 and 06:00 AM (local time). The exact moment is defined by so called
+     * execution offset, that is the amount of time after 01:00 AM. The offset value is
+     * initially generated randomly and then used consistently at the site. This way, the
+     * regular checks against the download.moodle.org server are spread in time.
+     *
+     * @return int the offset number of seconds from range 1 sec to 5 hours
+     */
+    protected function cron_execution_offset() {
+        global $CFG;
+
+        if (empty($CFG->updatecronoffset)) {
+            set_config('updatecronoffset', rand(1, 5 * HOURSECS));
+        }
+
+        return $CFG->updatecronoffset;
+    }
+
+    /**
+     * Fetch available updates info and eventually send notification to site admins
+     */
+    protected function cron_execute() {
+        // todo
     }
 }
 
