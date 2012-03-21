@@ -60,17 +60,6 @@ class xmldb_field extends xmldb_object {
         $this->set_attributes($type, $precision, $unsigned, $notnull, $sequence, $default, $previous);
     }
 
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-
-    function setAttributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
-
-        debugging('XMLDBField->setAttributes() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_field->set_attributes() instead.', DEBUG_DEVELOPER);
-
-        return $this->set_attributes($type, $precision, $unsigned, $notnull, $sequence, $default, $previous);
-    }
-/// Deprecated API ends here
-
     /**
      * Set all the attributes of one xmldb_field
      *
@@ -748,14 +737,3 @@ class xmldb_field extends xmldb_object {
         return null;
     }
 }
-
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-class XMLDBField extends xmldb_field {
-
-    function __construct($name) {
-        parent::__construct($name);
-    }
-
-}
-/// Deprecated API ends here

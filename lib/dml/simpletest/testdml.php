@@ -3537,33 +3537,6 @@ class dml_test extends UnitTestCase {
         //$this->assertEqual(count($records), 3, 'Accent insensitive LIKE searches may not be supported in all databases, this is not a problem.');
     }
 
-    function test_sql_ilike() {
-        // note: this is deprecated, just make sure it does not throw error
-        $DB = $this->tdb;
-        $dbman = $DB->get_manager();
-
-        $table = $this->get_test_table();
-        $tablename = $table->getName();
-
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-
-        $DB->insert_record($tablename, array('name'=>'SuperDuperRecord'));
-        $DB->insert_record($tablename, array('name'=>'NoDupor'));
-        $DB->insert_record($tablename, array('name'=>'ouch'));
-
-        // make sure it prints debug message
-        $this->enable_debugging();
-        $sql = "SELECT * FROM {{$tablename}} WHERE name ".$DB->sql_ilike()." ?";
-        $params = array("%dup_r%");
-        $this->assertFalse($this->get_debugging() === '');
-
-        // following must not throw exception, we ignore result
-        $DB->get_records_sql($sql, $params);
-    }
-
     function test_coalesce() {
         $DB = $this->tdb;
 

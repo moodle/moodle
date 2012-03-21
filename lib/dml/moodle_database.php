@@ -1864,23 +1864,6 @@ abstract class moodle_database {
     }
 
     /**
-     * Returns the proper SQL to do LIKE in a case-insensitive way.
-     *
-     * Note the LIKE are case sensitive for Oracle. Oracle 10g is required to use
-     * the case insensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
-     * See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
-     *
-     * @deprecated since Moodle 2.0 MDL-23925 - please do not use this function any more.
-     * @todo MDL-31280 to remove deprecated functions prior to 2.3 release.
-     * @return string Do not use this function!
-     * @see sql_like()
-     */
-    public function sql_ilike() {
-        debugging('sql_ilike() is deprecated, please use sql_like() instead');
-        return 'LIKE';
-    }
-
-    /**
      * Returns the proper SQL to do CONCAT between the elements(fieldnames) passed.
      *
      * This function accepts variable number of string parameters.

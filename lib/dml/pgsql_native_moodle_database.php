@@ -1102,7 +1102,7 @@ class pgsql_native_moodle_database extends moodle_database {
      */
     public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notlike = false, $escapechar = '\\') {
         if (strpos($param, '%') !== false) {
-            debugging('Potential SQL injection detected, sql_ilike() expects bound parameters (? or :named)');
+            debugging('Potential SQL injection detected, sql_like() expects bound parameters (? or :named)');
         }
         $escapechar = pg_escape_string($this->pgsql, $escapechar); // prevents problems with C-style escapes of enclosing '\'
 
@@ -1113,11 +1113,6 @@ class pgsql_native_moodle_database extends moodle_database {
             $LIKE = $notlike ? 'NOT ILIKE' : 'ILIKE';
         }
         return "$fieldname $LIKE $param ESCAPE '$escapechar'";
-    }
-
-    public function sql_ilike() {
-        debugging('sql_ilike() is deprecated, please use sql_like() instead');
-        return 'ILIKE';
     }
 
     public function sql_bitxor($int1, $int2) {
