@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * textlib unit teststest
+ * textlib unit tests
  *
- * @package    core_core
+ * @package    core
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,18 +30,26 @@ defined('MOODLE_INTERNAL') || die();
  * Unit tests for our utf-8 aware text processing
  *
  * @package    core
- * @subpackage lib
+ * @category   phpunit
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_textlib_testcase extends basic_testcase {
 
+    /**
+     * Tests the static parse charset method
+     * @return void
+     */
     public function test_parse_charset() {
         $this->assertSame(textlib::parse_charset('Cp1250'), 'windows-1250');
         // does typo3 work? some encoding moodle does not use
         $this->assertSame(textlib::parse_charset('ms-ansi'), 'windows-1252');
     }
 
+    /**
+     * Tests the static convert method
+     * @return void
+     */
     public function test_convert() {
         $utf8 = "Žluťoučký koníček";
         $iso2 = pack("H*", "ae6c75bb6f75e86bfd206b6f6eede8656b");
@@ -79,6 +87,10 @@ class core_textlib_testcase extends basic_testcase {
         $this->assertSame(textlib::convert($str, 'GB18030', 'utf-8'), $utf8);
     }
 
+    /**
+     * Tests the static sub string method
+     * @return void
+     */
     public function test_substr() {
         $str = "Žluťoučký koníček";
         $this->assertSame(textlib::substr($str, 0), $str);
@@ -119,6 +131,10 @@ class core_textlib_testcase extends basic_testcase {
         $this->assertSame(textlib::substr($str, 1, 1, 'GB18030'), $s);
     }
 
+    /**
+     * Tests the static string length method
+     * @return void
+     */
     public function test_strlen() {
         $str = "Žluťoučký koníček";
         $this->assertSame(textlib::strlen($str), 17);
@@ -156,6 +172,10 @@ class core_textlib_testcase extends basic_testcase {
         $this->assertSame(textlib::strlen($str, 'GB18030'), 4);
     }
 
+    /**
+     * Tests the static strtolower method
+     * @return void
+     */
     public function test_strtolower() {
         $str = "Žluťoučký koníček";
         $low = 'žluťoučký koníček';
@@ -187,6 +207,10 @@ class core_textlib_testcase extends basic_testcase {
         $this->assertSame(textlib::strtolower($str, 'GB18030'), $str);
     }
 
+    /**
+     * Tests the static strtoupper
+     * @return void
+     */
     public function test_strtoupper() {
         $str = "Žluťoučký koníček";
         $up  = 'ŽLUŤOUČKÝ KONÍČEK';
@@ -218,31 +242,55 @@ class core_textlib_testcase extends basic_testcase {
         $this->assertSame(textlib::strtoupper($str, 'GB18030'), $str);
     }
 
+    /**
+     * Tests the static strpos method
+     * @return void
+     */
     public function test_strpos() {
         $str = "Žluťoučký koníček";
         $this->assertSame(textlib::strpos($str, 'koníč'), 10);
     }
 
+    /**
+     * Tests the static strrpos
+     * @return void
+     */
     public function test_strrpos() {
         $str = "Žluťoučký koníček";
         $this->assertSame(textlib::strrpos($str, 'o'), 11);
     }
 
+    /**
+     * Tests the static specialtoascii method
+     * @return void
+     */
     public function test_specialtoascii() {
         $str = "Žluťoučký koníček";
         $this->assertSame(textlib::specialtoascii($str), 'Zlutoucky konicek');
     }
 
+    /**
+     * Tests the static encode_mimeheader method
+     * @return void
+     */
     public function test_encode_mimeheader() {
         $str = "Žluťoučký koníček";
         $this->assertSame(textlib::encode_mimeheader($str), '=?utf-8?B?xb1sdcWlb3XEjWvDvSBrb27DrcSNZWs=?=');
     }
 
+    /**
+     * Tests the static entities_to_utf8 method
+     * @return void
+     */
     public function test_entities_to_utf8() {
         $str = "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&#237;&#269;ek";
         $this->assertSame(textlib::entities_to_utf8($str), "Žluťoučký koníček");
     }
 
+    /**
+     * Tests the static utf8_to_entities method
+     * @return void
+     */
     public function test_utf8_to_entities() {
         $str = "Žluťoučký koníček";
         $this->assertSame(textlib::utf8_to_entities($str), "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&#xed;&#x10d;ek");
@@ -250,12 +298,20 @@ class core_textlib_testcase extends basic_testcase {
 
     }
 
+    /**
+     * Tests the static trim_utf8_bom method
+     * @return void
+     */
     public function test_trim_utf8_bom() {
         $bom = "\xef\xbb\xbf";
         $str = "Žluťoučký koníček";
         $this->assertSame(textlib::trim_utf8_bom($bom.$str.$bom), $str.$bom);
     }
 
+    /**
+     * Tests the static get_encodings method
+     * @return void
+     */
     public function test_get_encodings() {
         $encodings = textlib::get_encodings();
         $this->assertTrue(is_array($encodings));
@@ -263,15 +319,27 @@ class core_textlib_testcase extends basic_testcase {
         $this->assertTrue(isset($encodings['UTF-8']));
     }
 
+    /**
+     * Tests the static code2utf8 method
+     * @return void
+     */
     public function test_code2utf8() {
         $this->assertSame(textlib::code2utf8(381), 'Ž');
     }
 
+    /**
+     * Tests the static strtotitle method
+     * @return void
+     */
     public function test_strtotitle() {
         $str = "žluťoučký koníček";
         $this->assertSame(textlib::strtotitle($str), "Žluťoučký Koníček");
     }
 
+    /**
+     * Tests the deprecated method of textlib that still require an instance.
+     * @return void
+     */
     public function test_deprecated_textlib_get_instance() {
         ob_start();
         $textlib = textlib_get_instance();
@@ -297,15 +365,26 @@ class core_textlib_testcase extends basic_testcase {
  * Used for sorting.
  *
  * @package    core
- * @subpackage lib
+ * @category   phpunit
  * @copyright  2011 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class collatorlib_testcase extends basic_testcase {
 
+    /**
+     * @var string The initial lang, stored because we change it during testing
+     */
     protected $initiallang = null;
+
+    /**
+     * @var string The last error that has occured
+     */
     protected $error = null;
 
+    /**
+     * Prepares things for this test case
+     * @return void
+     */
     public function setUp() {
         global $SESSION;
         if (isset($SESSION->lang)) {
@@ -319,6 +398,11 @@ class collatorlib_testcase extends basic_testcase {
         }
         parent::setUp();
     }
+
+    /**
+     * Cleans things up after this test case has run
+     * @return void
+     */
     public function tearDown() {
         global $SESSION;
         parent::tearDown();
@@ -329,7 +413,12 @@ class collatorlib_testcase extends basic_testcase {
             unset($SESSION->lang);
         }
     }
-    function test_asort() {
+
+    /**
+     * Tests the static asort method
+     * @return void
+     */
+    public function test_asort() {
         $arr = array('b' => 'ab', 1 => 'aa', 0 => 'cc');
         collatorlib::asort($arr);
         $this->assertSame(array_keys($arr), array(1, 'b', 0));
@@ -340,7 +429,12 @@ class collatorlib_testcase extends basic_testcase {
         $this->assertSame(array_keys($arr), array(1, 'b', 'a', 0), $this->error);
         $this->assertSame(array_values($arr), array('aa', 'ab', 'áb', 'cc'), $this->error);
     }
-    function test_asort_objects_by_method() {
+
+    /**
+     * Tests the static asort_objects_by_method method
+     * @return void
+     */
+    public function test_asort_objects_by_method() {
         $objects = array(
             'b' => new string_test_class('ab'),
             1 => new string_test_class('aa'),
@@ -360,7 +454,12 @@ class collatorlib_testcase extends basic_testcase {
         $this->assertSame(array_keys($objects), array(1, 'b', 'a', 0), $this->error);
         $this->assertSame($this->get_ordered_names($objects, 'get_private_name'), array('aa', 'ab', 'áb', 'cc'), $this->error);
     }
-    function test_asort_objects_by_property() {
+
+    /**
+     * Tests the static asort_objects_by_method method
+     * @return void
+     */
+    public function asort_objects_by_property() {
         $objects = array(
             'b' => new string_test_class('ab'),
             1 => new string_test_class('aa'),
@@ -380,6 +479,13 @@ class collatorlib_testcase extends basic_testcase {
         $this->assertSame(array_keys($objects), array(1, 'b', 'a', 0), $this->error);
         $this->assertSame($this->get_ordered_names($objects, 'publicname'), array('aa', 'ab', 'áb', 'cc'), $this->error);
     }
+
+    /**
+     * Returns an array of sorted names
+     * @param array $objects
+     * @param string $methodproperty
+     * @return type
+     */
     protected function get_ordered_names($objects, $methodproperty = 'get_protected_name') {
         $return = array();
         foreach ($objects as $object) {
@@ -398,22 +504,43 @@ class collatorlib_testcase extends basic_testcase {
  * Simple class used to work with the unit test.
  *
  * @package    core
- * @subpackage lib
+ * @category   phpunit
  * @copyright  2011 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class string_test_class extends stdClass {
+    /**
+     * @var string A public property
+     */
     public $publicname;
+    /**
+     * @var string A protected property
+     */
     protected $protectedname;
+    /**
+     * @var string A private property
+     */
     private $privatename;
+    /**
+     * Constructs the test instance
+     * @param string $name
+     */
     public function __construct($name) {
         $this->publicname = $name;
         $this->protectedname = $name;
         $this->privatename = $name;
     }
+    /**
+     * Returns the protected property
+     * @return string
+     */
     public function get_protected_name() {
         return $this->protectedname;
     }
+    /**
+     * Returns the protected property
+     * @return string
+     */
     public function get_private_name() {
         return $this->publicname;
     }

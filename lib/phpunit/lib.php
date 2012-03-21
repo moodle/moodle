@@ -17,19 +17,23 @@
 /**
  * Various PHPUnit classes and functions
  *
- * @package    core_core
+ * @package    core
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once 'PHPUnit/Autoload.php'; // necessary when loaded from cli/util.php script
+// necessary when loaded from cli/util.php script
+// If this is missing then PHPUnit is not in your PHP include path. This normally
+// happens if installation didn't complete correctly. Check your environment.
+require_once 'PHPUnit/Autoload.php';
 
 
 /**
  * Collection of utility methods.
  *
- * @package    core_phpunit
+ * @package    core
+ * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,6 +43,9 @@ class phpunit_util {
      */
     protected static $tabledata = null;
 
+    /**
+     * @var array An array of globals cloned from CFG
+     */
     protected static $globals = array();
 
     /**
@@ -134,7 +141,6 @@ class phpunit_util {
     /**
      * Called during bootstrap only!
      * @static
-     * @return void
      */
     public static function init_globals() {
         global $CFG;
@@ -236,7 +242,7 @@ class phpunit_util {
      * Note: To be used from CLI scripts only.
      *
      * @static
-     * @return void, may terminate execution with exit code
+     * @return void may terminate execution with exit code
      */
     public static function drop_site() {
         global $DB, $CFG;
@@ -270,7 +276,7 @@ class phpunit_util {
      * Note: To be used from CLI scripts only.
      *
      * @static
-     * @return void, may terminate execution with exit code
+     * @return void may terminate execution with exit code
      */
     public static function install_site() {
         global $DB, $CFG;
@@ -395,7 +401,7 @@ class phpunit_util {
             }
         }
 
-        $data = preg_replace('|<!--@plugin_suits_start@-->.*<!--@plugin_suits_end@-->|s', $suites, $data, 1);
+        $data = preg_replace('|<!--@plugin_suites_start@-->.*<!--@plugin_suites_end@-->|s', $suites, $data, 1);
 
         @unlink("$CFG->dirroot/phpunit.xml");
         file_put_contents("$CFG->dirroot/phpunit.xml", $data);
@@ -408,8 +414,9 @@ class phpunit_util {
  *
  * Note: this is supposed to work for very simple tests only.
  *
- * @deprecated
- * @package    core_phpunit
+ * @deprecated since 2.3
+ * @package    core
+ * @category   phpunit
  * @author     Petr Skoda
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -417,10 +424,9 @@ class phpunit_util {
 class UnitTestCase extends PHPUnit_Framework_TestCase {
 
     /**
-     * @deprecated
+     * @deprecated since 2.3
      * @param bool $expected
      * @param string $message
-     * @return void
      */
     public function expectException($expected, $message = '') {
         // use phpdocs: @expectedException ExceptionClassName
@@ -431,10 +437,9 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @deprecated
+     * @deprecated since 2.3
      * @param bool $expected
      * @param string $message
-     * @return void
      */
     public static function expectError($expected = false, $message = '') {
         // not available in PHPUnit
@@ -445,82 +450,75 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @deprecated
+     * @deprecated since 2.3
      * @static
      * @param mixed $actual
      * @param string $messages
-     * @return void
      */
     public static function assertTrue($actual, $messages = '') {
         parent::assertTrue((bool)$actual, $messages);
     }
 
     /**
-     * @deprecated
+     * @deprecated since 2.3
      * @static
      * @param mixed $actual
      * @param string $messages
-     * @return void
      */
     public static function assertFalse($actual, $messages = '') {
         parent::assertFalse((bool)$actual, $messages);
     }
 
     /**
-     * @deprecated
+     * @deprecated since 2.3
      * @static
      * @param mixed $expected
      * @param mixed $actual
      * @param string $message
-     * @return void
      */
     public static function assertEqual($expected, $actual, $message = '') {
         parent::assertEquals($expected, $actual, $message);
     }
 
     /**
-     * @deprecated
+     * @deprecated since 2.3
      * @static
      * @param mixed $expected
      * @param mixed $actual
      * @param string $message
-     * @return void
      */
     public static function assertNotEqual($expected, $actual, $message = '') {
         parent::assertNotEquals($expected, $actual, $message);
     }
 
     /**
-     * @deprecated
+     * @deprecated since 2.3
      * @static
      * @param mixed $expected
      * @param mixed $actual
      * @param string $message
-     * @return void
      */
     public static function assertIdentical($expected, $actual, $message = '') {
         parent::assertSame($expected, $actual, $message);
     }
 
     /**
-     * @deprecated
+     * @deprecated since 2.3
      * @static
      * @param mixed $expected
      * @param mixed $actual
      * @param string $message
-     * @return void
      */
     public static function assertNotIdentical($expected, $actual, $message = '') {
         parent::assertNotSame($expected, $actual, $message);
     }
 
     /**
-     * @deprecated
+     * @deprecated since 2.3
      * @static
      * @param mixed $actual
      * @param mixed $expected
      * @param string $message
-     * @return void
      */
     public static function assertIsA($actual, $expected, $message = '') {
         parent::assertInstanceOf($expected, $actual, $message);
@@ -529,10 +527,12 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
 
 
 /**
- * The simplest PHPUnit test case customised for Moodle,
- * do not modify database or any globals.
+ * The simplest PHPUnit test case customised for Moodle
  *
- * @package    core_phpunit
+ * This test case does not modify database or any globals.
+ *
+ * @package    core
+ * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -541,9 +541,9 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
     /**
      * Constructs a test case with the given name.
      *
-     * @param  string $name
-     * @param  array  $data
-     * @param  string $dataName
+     * @param string $name
+     * @param array  $data
+     * @param string $dataName
      */
     public function __construct($name = NULL, array $data = array(), $dataName = '') {
         parent::__construct($name, $data, $dataName);
@@ -599,4 +599,3 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
         //TODO: somehow find out if there are changes in dataroot
     }
 }
-

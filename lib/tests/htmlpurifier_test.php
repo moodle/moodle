@@ -17,7 +17,7 @@
 /**
  * Unit tests for the HTMLPurifier integration
  *
- * @package    core_core
+ * @package    core
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,6 +26,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 
+/**
+ * HTMLPurifier test case
+ *
+ * @package    core
+ * @category   phpunit
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class core_htmlpurifier_testcase extends basic_testcase {
 
     /**
@@ -126,7 +134,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
      * Test if linebreaks kept unchanged.
      * @return void
      */
-    function test_line_breaking() {
+    public function test_line_breaking() {
         $text = "\n\raa\rsss\nsss\r";
         $this->assertSame($text, purify_html($text));
     }
@@ -135,7 +143,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
      * Test fixing of strict problems.
      * @return void
      */
-    function test_tidy() {
+    public function test_tidy() {
         $text = "<p>xx";
         $this->assertSame('<p>xx</p>', purify_html($text));
 
@@ -150,7 +158,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
      * Test nesting - this used to cause problems in earlier versions
      * @return void
      */
-    function test_nested_lists() {
+    public function test_nested_lists() {
         $text = "<ul><li>One<ul><li>Two</li></ul></li><li>Three</li></ul>";
         $this->assertSame($text, purify_html($text));
     }
@@ -159,7 +167,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
      * Test that XSS protection works, complete smoke tests are in htmlpurifier itself.
      * @return void
      */
-    function test_cleaning_nastiness() {
+    public function test_cleaning_nastiness() {
         $text = "x<SCRIPT>alert('XSS')</SCRIPT>x";
         $this->assertSame('xx', purify_html($text));
 

@@ -36,11 +36,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_url_lib_testcase extends basic_testcase {
 
+    /**
+     * Prepares things before this test case is initialised
+     * @return void
+     */
     public static function setUpBeforeClass() {
         global $CFG;
         require_once($CFG->dirroot . '/mod/url/locallib.php');
     }
 
+    /**
+     * Tests the url_appears_valid_url function
+     * @return void
+     */
     public function test_url_appears_valid_url() {
         $this->assertTrue(url_appears_valid_url('http://example'));
         $this->assertTrue(url_appears_valid_url('http://www.example.com'));

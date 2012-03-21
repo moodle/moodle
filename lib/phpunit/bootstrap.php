@@ -24,7 +24,7 @@
  *  131 - configuration problem
  *  132 - drop data, then install new test database
  *
- * @package    core_core
+ * @package    core
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -183,9 +183,9 @@ phpunit_util::init_globals();
 
 /**
  * Print error and stop execution
- * @param $text
- * @param int $errorcode
- * @return void - stops code execution with error code
+ * @param string $text An error message to display
+ * @param int $errorcode The error code (see docblock for detailed list)
+ * @return void stops code execution with error code
  */
 function phpunit_bootstrap_error($text, $errorcode = 1) {
     fwrite(STDERR, $text."\n");
@@ -194,7 +194,7 @@ function phpunit_bootstrap_error($text, $errorcode = 1) {
 
 /**
  * Mark empty dataroot to be used for testing.
- * @param $dataroot
+ * @param string $dataroot The dataroot directory
  * @return void
  */
 function phpunit_bootstrap_initdataroot($dataroot) {

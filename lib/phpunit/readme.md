@@ -37,13 +37,13 @@ How to convert existing tests
 
 FAQs
 ----
-* Why is it necessary to execute the tests from commandline? PHPUnit is designed to be executed from shell, existing Moodle globals and constants would interfere with it.
-* Why `tests` subdirectory? It should not collide with any plugin name because plugin names use singular form.
+* Why is it necessary to execute the tests from the command line? PHPUnit is designed to be executed from shell, existing Moodle globals and constants would interfere with it.
+* Why `tests` subdirectory? It is very unlikely that it will collide with any plugin name because plugin names use singular form.
 * Why is it necessary to include core and plugin suites in configuration files? PHPUnit does not seem to allow dynamic loading of tests from our dir structure.
 
 
 TODO
 ----
-* stage 2 - implement advaced_testcase - support for database modifications, object generators, automatic rollback of db, blobals and dataroot
+* stage 2 - implement advanced_testcase - support for database modifications, object generators, automatic rollback of db, globals and dataroot
 * stage 3 - mocking and other advanced features, add support for execution of functional DB tests for different engines together (new options in phpunit.xml)
 * other - support for execution of tests and cli/util.php from web UI (to be implemented via shell execution), shell script that prepares everything for the first execution
