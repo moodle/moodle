@@ -143,6 +143,10 @@ class testable_available_update_checker extends available_update_checker {
         $this->recentresponse = $this->decode_response($this->get_fake_response());
     }
 
+    public function compare_responses($old, $new) {
+        return parent::compare_responses($old, $new);
+    }
+
     protected function load_current_environment($forcereload=false) {
     }
 
@@ -356,5 +360,130 @@ class available_update_checker_test extends UnitTestCase {
         $provider->fakecurrenttimestamp = mktime(1, 45, 02); // 01:45:02 AM
         $this->expectException('testable_available_update_checker_cron_executed');
         $provider->cron();
+    }
+
+    public function test_compare_responses_both_null() {
+        $provider = testable_available_update_checker::instance();
+        $old = null;
+        $new = null;
+        $cmp = $provider->compare_responses($old, $new);
+        $this->assertIsA($cmp, 'array');
+        $this->assertTrue(empty($cmp));
+    }
+
+    public function test_compare_responses_old_null() {
+        $provider = testable_available_update_checker::instance();
+        $old = null;
+        $new = array(
+            'updates' => array(
+                'core' => array(
+                    array(
+                        'version' => 2012060103
+                    )
+                )
+            )
+        );
+        $cmp = $provider->compare_responses($old, $new);
+        $this->assertIsA($cmp, 'array');
+        $this->assertFalse(empty($cmp));
+        $this->assertTrue(isset($cmp['core'][0]['version']));
+        $this->assertEqual($cmp['core'][0]['version'], 2012060103);
+    }
+
+    public function test_compare_responses_no_change() {
+        $provider = testable_available_update_checker::instance();
+        $old = $new = array(
+            'updates' => array(
+                'core' => array(
+                    array(
+                        'version' => 2012060104
+                    ),
+                    array(
+                        'version' => 2012120100
+                    )
+                ),
+                'mod_foo' => array(
+                    array(
+                        'version' => 2011010101
+                    )
+                )
+            )
+        );
+        $cmp = $provider->compare_responses($old, $new);
+        $this->assertIsA($cmp, 'array');
+        $this->assertTrue(empty($cmp));
+    }
+
+    public function test_compare_responses_new_and_missing_update() {
+        $provider = testable_available_update_checker::instance();
+        $old = array(
+            'updates' => array(
+                'core' => array(
+                    array(
+                        'version' => 2012060104
+                    )
+                ),
+                'mod_foo' => array(
+                    array(
+                        'version' => 2011010101
+                    )
+                )
+            )
+        );
+        $new = array(
+            'updates' => array(
+                'core' => array(
+                    array(
+                        'version' => 2012060104
+                    ),
+                    array(
+                        'version' => 2012120100
+                    )
+                )
+            )
+        );
+        $cmp = $provider->compare_responses($old, $new);
+        $this->assertIsA($cmp, 'array');
+        $this->assertFalse(empty($cmp));
+        $this->assertEqual(count($cmp), 1);
+        $this->assertEqual(count($cmp['core']), 1);
+        $this->assertEqual($cmp['core'][0]['version'], 2012120100);
+    }
+
+    public function test_compare_responses_modified_update() {
+        $provider = testable_available_update_checker::instance();
+        $old = array(
+            'updates' => array(
+                'mod_foo' => array(
+                    array(
+                        'version' => 2011010101
+                    )
+                )
+            )
+        );
+        $new = array(
+            'updates' => array(
+                'mod_foo' => array(
+                    array(
+                        'version' => 2011010102
+                    )
+                )
+            )
+        );
+        $cmp = $provider->compare_responses($old, $new);
+        $this->assertIsA($cmp, 'array');
+        $this->assertFalse(empty($cmp));
+        $this->assertEqual(count($cmp), 1);
+        $this->assertEqual(count($cmp['mod_foo']), 1);
+        $this->assertEqual($cmp['mod_foo'][0]['version'], 2011010102);
+    }
+
+    public function test_compare_responses_invalid_format() {
+        $provider = testable_available_update_checker::instance();
+        $broken = array(
+            'status' => 'ERROR' // no 'updates' key here
+        );
+        $this->expectException('available_update_checker_exception');
+        $cmp = $provider->compare_responses($broken, $broken);
     }
 }

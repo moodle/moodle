@@ -829,6 +829,60 @@ class available_update_checker {
     }
 
     /**
+     * Compares two raw {@link $recentresponse} records and returns the list of changed updates
+     *
+     * This method is used to populate potential update info to be sent to site admins.
+     *
+     * @param null|array $old
+     * @param null|array $new
+     * @throws available_update_checker_exception
+     * @return array parts of $new['updates'] that have changed
+     */
+    protected function compare_responses($old, $new) {
+
+        if (is_null($new)) {
+            return array();
+        }
+
+        if (!array_key_exists('updates', $new)) {
+            throw new available_update_checker_exception('err_response_format');
+        }
+
+        if (is_null($old)) {
+            return $new['updates'];
+        }
+
+        if (!array_key_exists('updates', $old)) {
+            throw new available_update_checker_exception('err_response_format');
+        }
+
+        $changes = array();
+
+        foreach ($new['updates'] as $newcomponent => $newcomponentupdates) {
+            if (empty($old['updates'][$newcomponent])) {
+                $changes[$newcomponent] = $newcomponentupdates;
+                continue;
+            }
+            foreach ($newcomponentupdates as $newcomponentupdate) {
+                $inold = false;
+                foreach ($old['updates'][$newcomponent] as $oldcomponentupdate) {
+                    if ($newcomponentupdate['version'] == $oldcomponentupdate['version']) {
+                        $inold = true;
+                    }
+                }
+                if (!$inold) {
+                    if (!isset($changes[$newcomponent])) {
+                        $changes[$newcomponent] = array();
+                    }
+                    $changes[$newcomponent][] = $newcomponentupdate;
+                }
+            }
+        }
+
+        return $changes;
+    }
+
+    /**
      * Returns the URL to send update requests to
      *
      * During the development or testing, you can set $CFG->alternativeupdateproviderurl
@@ -1023,7 +1077,13 @@ class available_update_checker {
      * Fetch available updates info and eventually send notification to site admins
      */
     protected function cron_execute() {
-        // todo
+
+        $this->restore_response();
+        $previous = $this->recentresponse;
+        $this->fetch();
+        $this->restore_response(true);
+        $current = $this->recentresponse;
+        $changes = $this->compare_responses($previous, $current);
     }
 }
 
