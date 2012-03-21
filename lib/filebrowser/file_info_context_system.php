@@ -99,10 +99,6 @@ class file_info_context_system extends file_info {
 
         $children = array();
 
-        if ($child = $this->browser->get_file_info(get_context_instance(CONTEXT_USER, $USER->id))) {
-            $children[] = $child;
-        }
-
         $course_cats = $DB->get_records('course_categories', array('parent'=>0), 'sortorder', 'id,visible');
         foreach ($course_cats as $category) {
             $context = get_context_instance(CONTEXT_COURSECAT, $category->id);

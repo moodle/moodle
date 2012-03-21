@@ -371,6 +371,12 @@ class file_info_context_course extends file_info {
             $children[] = $child;
         }
 
+        if (!has_capability('moodle/course:managefiles', $this->context)) {
+            // 'managefiles' capability is checked in every activity module callback.
+            // Don't even waste time on retrieving the modules if we can't browse the files anyway
+            return $children;
+        }
+
         // now list all modules
         $modinfo = get_fast_modinfo($this->course);
         foreach ($modinfo->cms as $cminfo) {
