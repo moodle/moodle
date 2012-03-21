@@ -17,27 +17,31 @@
 /**
  * Unit tests for some mod URL lib stuff.
  *
- * @package    mod
- * @subpackage url
- * @copyright  2011 petr Skoda
- * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package    mod_url
+ * @category   phpunit
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
-require_once($CFG->dirroot . '/mod/url/locallib.php');
-
 
 /**
- * @copyright  2011 petr Skoda
+ * mod_url tests
+ *
+ * @package    mod_url
+ * @category   phpunit
+ * @copyright  2011 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class url_lib_test extends UnitTestCase {
+class mod_url_lib_testcase extends basic_testcase {
+
+    public static function setUpBeforeClass() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/url/locallib.php');
+    }
 
     public function test_url_appears_valid_url() {
-
         $this->assertTrue(url_appears_valid_url('http://example'));
         $this->assertTrue(url_appears_valid_url('http://www.example.com'));
         $this->assertTrue(url_appears_valid_url('http://www.exa-mple2.com'));

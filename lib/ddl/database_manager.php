@@ -112,18 +112,15 @@ class database_manager {
 
     /**
      * Reset a sequence to the id field of a table.
-     * @param string $table Name of table.
-     * @throws ddl_exception|ddl_table_missing_exception Exception thrown upon reset errors.
+     * @param string|xmldb_table $table Name of table.
+     * @throws ddl_exception thrown upon reset errors.
      */
     public function reset_sequence($table) {
         if (!is_string($table) and !($table instanceof xmldb_table)) {
             throw new ddl_exception('ddlunknownerror', NULL, 'incorrect table parameter!');
         }
 
-    /// Check the table exists
-        if (!$this->table_exists($table)) {
-            throw new ddl_table_missing_exception($table);
-        }
+        // Do not test if table exists because it is slow
 
         if (!$sqlarr = $this->generator->getResetSequenceSQL($table)) {
             throw new ddl_exception('ddlunknownerror', null, 'table reset sequence sql not generated');

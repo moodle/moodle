@@ -2742,7 +2742,10 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
             $backtrace = debug_backtrace();
         }
         $from = format_backtrace($backtrace, CLI_SCRIPT);
-        if (!empty($UNITTEST->running)) {
+        if (PHPUNITTEST) {
+            echo 'Debugging: ' . $message . "\n" . $from;
+
+        } else if (!empty($UNITTEST->running)) {
             // When the unit tests are running, any call to trigger_error
             // is intercepted by the test framework and reported as an exception.
             // Therefore, we cannot use trigger_error during unit tests.
