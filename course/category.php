@@ -273,8 +273,8 @@ foreach ($subcategories as $subcategory) {
     $attributes = $subcategory->visible ? array() : array('class' => 'dimmed');
     $text = format_string($subcategory->name, true, array('context' => $context));
     // Add the subcategory to the table
-    $url->param('id', $subcategory->id);
-    $table->data[] = array(html_writer::link($url, $text, $attributes));
+    $baseurl->param('id', $subcategory->id);
+    $table->data[] = array(html_writer::link($baseurl, $text, $attributes));
 }
 
 $subcategorieswereshown = (count($table->data) > 0);
@@ -340,8 +340,7 @@ if (!$courses) {
 
         $linkcss = $acourse->visible ? '' : ' class="dimmed" ';
         echo '<tr>';
-        $coursename = get_course_display_name_for_list($acourse);
-        echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'. format_string($coursename) .'</a></td>';
+        echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'. format_string($acourse->fullname) .'</a></td>';
         if ($editingon) {
             echo '<td>';
             if (has_capability('moodle/course:update', $coursecontext)) {
