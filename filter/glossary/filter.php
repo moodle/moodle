@@ -57,7 +57,7 @@ class filter_glossary extends moodle_text_filter {
             $nothingtodo = false;
         }
 
-        if ($nothingtodo === true) {
+        if (($nothingtodo === true) || (!has_capability('mod/glossary:view', $this->context))) {
             return $text;
         }
 
