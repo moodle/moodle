@@ -262,7 +262,7 @@ $subcategories = $DB->get_recordset_sql($sql, array('parentid' => $category->id)
 // Prepare a table to display the sub categories.
 $table = new html_table;
 $table->attributes = array('border' => '0', 'cellspacing' => '2', 'cellpadding' => '4', 'class' => 'generalbox boxaligncenter category_subcategories');
-$table->head = array(new lang_string('subcategories'));
+$table->head = array(get_string('subcategories'));
 $table->data = array();
 $baseurl = new moodle_url('/course/category.php');
 foreach ($subcategories as $subcategory) {
