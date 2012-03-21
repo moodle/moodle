@@ -24,6 +24,9 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+
 require_once($CFG->libdir . '/outputcomponents.php');
 
 /**
@@ -142,7 +145,7 @@ EOF;
         $this->assertTrue($menu instanceof custom_menu);
         $this->assertTrue($menu->has_children());
         $firstlevel = $menu->get_children();
-        $this->assertIsA($firstlevel, 'array');
+        $this->assertTrue(is_array($firstlevel));
         $this->assertEqual(2, count($firstlevel));
 
         $item = array_shift($firstlevel);

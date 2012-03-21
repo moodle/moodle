@@ -479,7 +479,13 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->forced_plugin_settings = array('pluginname'  => array('settingname' => 'value', 'secondsetting' => 'othervalue'),
 //                                        'otherplugin' => array('mysetting' => 'myvalue', 'thesetting' => 'thevalue'));
-
+//
+//=========================================================================
+// 9. PHPUNIT SUPPORT
+//=========================================================================
+// $CFG->phpunit_prefix = 'phpu_';
+// $CFG->phpunit_dataroot = '/home/example/phpu_moodledata';
+// $CFG->phpunit_directorypermissions = 02777; // optional
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
