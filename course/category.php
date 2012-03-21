@@ -275,8 +275,8 @@ foreach ($subcategories as $subcategory) {
     $attributes = $subcategory->visible ? array() : array('class' => 'dimmed');
     $text = format_string($subcategory->name, true, array('context' => $context));
     // Add the subcategory to the table
-    $url->param('id', $subcategory->id);
-    $table->data[] = array(html_writer::link($url, $text, $attributes));
+    $baseurl->param('id', $subcategory->id);
+    $table->data[] = array(html_writer::link($baseurl, $text, $attributes));
 }
 
 $subcategorieswereshown = (count($table->data) > 0);
