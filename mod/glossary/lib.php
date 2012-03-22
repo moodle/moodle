@@ -329,7 +329,6 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
     if (!defined('GLOSSARY_RECENT_ACTIVITY_LIMIT')) {
         define('GLOSSARY_RECENT_ACTIVITY_LIMIT', 50);
     }
-
     $modinfo = get_fast_modinfo($course);
     $ids = array();
 
@@ -351,18 +350,20 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
     $approvals = array();
     foreach ($ids as $glinstanceid => $glcmid) {
         $context = get_context_instance(CONTEXT_MODULE, $glcmid);
-        if (!has_capability('mod/glossary:view', $context)) {
-            continue;
+        if (has_capability('mod/glossary:view', $context)) {
+            // get records glossary entries that are approved if user has no capability to approve entries.
+            if (has_capability('mod/glossary:approve', $context)) {
+                $approvals[] = ' ge.glossaryid = :glsid'.$glinstanceid.' ';
+            } else {
+                $approvals[] = ' (ge.approved = 1 AND ge.glossaryid = :glsid'.$glinstanceid.') ';
+            }
+            $params['glsid'.$glinstanceid] = $glinstanceid;
         }
-        // get records glossary entries that are approved if user has no capability to approve entries.
-        if (has_capability('mod/glossary:approve', $context)) {
-            $approvals[] = ' ge.glossaryid = :glsid'.$glinstanceid.' ';
-        } else {
-            $approvals[] = ' (ge.approved = 1 AND ge.glossaryid = :glsid'.$glinstanceid.') ';
-        }
-        $params['glsid'.$glinstanceid] = $glinstanceid;
     }
 
+    if (count($approvals) == 0) {
+        return false;
+    }
     $selectsql = 'SELECT ge.id, ge.concept, ge.approved, ge.timemodified, ge.glossaryid,
                                         '.user_picture::fields('u',null,'userid');
     $countsql = 'SELECT COUNT(*)';
@@ -387,7 +388,6 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
     }
 
     echo $OUTPUT->heading(get_string('newentries', 'glossary').':');
-
     $strftimerecent = get_string('strftimerecent');
     $entrycount = 0;
     foreach ($entries as $entry) {

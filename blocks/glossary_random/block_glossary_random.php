@@ -118,10 +118,6 @@ class block_glossary_random extends block_base {
     function get_content() {
         global $USER, $CFG, $DB;
 
-        if (!has_capability('mod/glossary:view', $this->context)) {
-            return '';
-        }
-
         if (empty($this->config->glossary)) {
             $this->content = new stdClass();
             $this->content->text   = get_string('notyetconfigured','block_glossary_random');
@@ -129,12 +125,15 @@ class block_glossary_random extends block_base {
             return $this->content;
         }
 
-        $glossaryid = $this->config->glossary;
-
-        $course = $this->page->course;
-
         require_once($CFG->dirroot.'/course/lib.php');
+        $course = $this->page->course;
         $modinfo = get_fast_modinfo($course);
+        $glossaryid = $this->config->glossary;
+        $cm = $modinfo->instances['glossary'][$glossaryid];
+
+        if (!has_capability('mod/glossary:view', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+            return '';
+        }
 
         if (!isset($modinfo->instances['glossary'][$glossaryid])) {
             // we can get here if the glossary has been deleted, so
@@ -147,8 +146,6 @@ class block_glossary_random extends block_base {
             $this->content->footer = '';
             return $this->content;
         }
-
-        $cm = $modinfo->instances['glossary'][$glossaryid];
 
         if (empty($this->config->cache)) {
             $this->config->cache = '';
