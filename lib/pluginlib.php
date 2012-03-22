@@ -1085,7 +1085,7 @@ class available_update_checker {
             $changes = $this->compare_responses($previous, $current);
             $notifications = $this->cron_notifications($changes);
             $this->cron_notify($notifications);
-            $this->cron_mtrace('OK');
+            $this->cron_mtrace('done');
         } catch (available_update_checker_exception $e) {
             $this->cron_mtrace('FAILED!');
         }
@@ -1136,6 +1136,124 @@ class available_update_checker {
         }
 
         return $notifications;
+    }
+
+    /**
+     * Sends the given notifications to site admins via messaging API
+     *
+     * @param array $notifications array of available_update_info objects to send
+     */
+    protected function cron_notify(array $notifications) {
+        global $CFG;
+
+        if (empty($notifications)) {
+            return;
+        }
+
+        $admins = get_admins();
+
+        if (empty($admins)) {
+            return;
+        }
+
+        $this->cron_mtrace('sending notifications ... ', '');
+
+        $text = get_string('updatenotifications', 'core_admin') . PHP_EOL;
+        $html = html_writer::tag('h1', get_string('updatenotifications', 'core_admin')) . PHP_EOL;
+
+        $coreupdates = array();
+        $pluginupdates = array();
+
+        foreach($notifications as $notification) {
+            if ($notification->component == 'core') {
+                $coreupdates[] = $notification;
+            } else {
+                $pluginupdates[] = $notification;
+            }
+        }
+
+        if (!empty($coreupdates)) {
+            $text .= PHP_EOL . get_string('updateavailable', 'core_admin') . PHP_EOL;
+            $html .= html_writer::tag('h2', get_string('updateavailable', 'core_admin')) . PHP_EOL;
+            $html .= html_writer::start_tag('ul') . PHP_EOL;
+            foreach ($coreupdates as $coreupdate) {
+                $html .= html_writer::start_tag('li');
+                if (isset($coreupdate->release)) {
+                    $text .= get_string('updateavailable_release', 'core_admin', $coreupdate->release);
+                    $html .= html_writer::tag('strong', get_string('updateavailable_release', 'core_admin', $coreupdate->release));
+                }
+                if (isset($coreupdate->version)) {
+                    $text .= ' '.get_string('updateavailable_version', 'core_admin', $coreupdate->version);
+                    $html .= ' '.get_string('updateavailable_version', 'core_admin', $coreupdate->version);
+                }
+                if (isset($coreupdate->maturity)) {
+                    $text .= ' ('.get_string('maturity'.$coreupdate->maturity, 'core_admin').')';
+                    $html .= ' ('.get_string('maturity'.$coreupdate->maturity, 'core_admin').')';
+                }
+                $text .= PHP_EOL;
+                $html .= html_writer::end_tag('li') . PHP_EOL;
+            }
+            $text .= PHP_EOL;
+            $html .= html_writer::end_tag('ul') . PHP_EOL;
+
+            $a = array('url' => $CFG->wwwroot.'/'.$CFG->admin.'/index.php');
+            $text .= get_string('updateavailabledetailslink', 'core_admin', $a) . PHP_EOL;
+            $a = array('url' => html_writer::link($CFG->wwwroot.'/'.$CFG->admin.'/index.php', $CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
+            $html .= html_writer::tag('p', get_string('updateavailabledetailslink', 'core_admin', $a)) . PHP_EOL;
+        }
+
+        if (!empty($pluginupdates)) {
+            $text .= PHP_EOL . get_string('updateavailableforplugin', 'core_admin') . PHP_EOL;
+            $html .= html_writer::tag('h2', get_string('updateavailableforplugin', 'core_admin')) . PHP_EOL;
+
+            $html .= html_writer::start_tag('ul') . PHP_EOL;
+            foreach ($pluginupdates as $pluginupdate) {
+                $html .= html_writer::start_tag('li');
+                $text .= get_string('pluginname', $pluginupdate->component);
+                $html .= html_writer::tag('strong', get_string('pluginname', $pluginupdate->component));
+
+                $text .= ' ('.$pluginupdate->component.')';
+                $html .= ' ('.$pluginupdate->component.')';
+
+                $text .= ' '.get_string('updateavailable', 'core_plugin', $pluginupdate->version);
+                $html .= ' '.get_string('updateavailable', 'core_plugin', $pluginupdate->version);
+
+                $text .= PHP_EOL;
+                $html .= html_writer::end_tag('li') . PHP_EOL;
+            }
+            $text .= PHP_EOL;
+            $html .= html_writer::end_tag('ul') . PHP_EOL;
+
+            $a = array('url' => $CFG->wwwroot.'/'.$CFG->admin.'/plugins.php');
+            $text .= get_string('updateavailabledetailslink', 'core_admin', $a) . PHP_EOL;
+            $a = array('url' => html_writer::link($CFG->wwwroot.'/'.$CFG->admin.'/plugins.php', $CFG->wwwroot.'/'.$CFG->admin.'/plugins.php'));
+            $html .= html_writer::tag('p', get_string('updateavailabledetailslink', 'core_admin', $a)) . PHP_EOL;
+        }
+
+        $a = array('siteurl' => $CFG->wwwroot);
+        $text .= get_string('updatenotificationfooter', 'core_admin', $a) . PHP_EOL;
+        $a = array('siteurl' => html_writer::link($CFG->wwwroot, $CFG->wwwroot));
+        $html .= html_writer::tag('footer', html_writer::tag('p', get_string('updatenotificationfooter', 'core_admin', $a),
+            array('style' => 'font-size:smaller; color:#333;')));
+
+        $mainadmin = reset($admins);
+
+        foreach ($admins as $admin) {
+            $message = new stdClass();
+            $message->component         = 'moodle';
+            $message->name              = 'availableupdate';
+            $message->userfrom          = $mainadmin;
+            $message->userto            = $admin;
+            $message->subject           = get_string('updatenotifications', 'core_admin');
+            $message->fullmessage       = $text;
+            $message->fullmessageformat = FORMAT_PLAIN;
+            $message->fullmessagehtml   = $html;
+            $message->smallmessage      = 'TODO';
+            $message->notification      = 0;
+            $message->contexturl        = 'http://glum/admin/TODO';
+            $message->contexturlname    = 'View details TODO';
+            message_send($message);
+        }
     }
 }
 

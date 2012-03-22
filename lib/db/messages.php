@@ -38,6 +38,15 @@ $messageproviders = array (
          'capability'  => 'moodle/site:config'
     ),
 
+    // cron-based notifications about available moodle and/or additional plugin updates
+    'availableupdate' => array(
+        'capability' => 'moodle/site:config',
+        'defaults' => array(
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF
+        ),
+
+    ),
+
     'instantmessage' => array (
         'defaults' => array(
             'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
