@@ -923,6 +923,10 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
 
     $fs = get_file_storage();
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        if ($filearea === 'content') { //return file not found straight away to improve performance.
+            header('HTTP/1.0 404 not found');
+            die;
+        }
         return false;
     }
 
