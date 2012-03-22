@@ -42,12 +42,14 @@ abstract class qtype_ddmarker_list_item {
 
     public function add_child($child) {
         $this->children[] = $child;
+        //array_unique relies on __toString() returning a unique string to determine if objects in array
+        //are the same or not
         $this->children = array_unique($this->children);
     }
 
     abstract protected function parent_node ();
 
-    abstract public function render ();
+    abstract public function render($stringidentifier, $link);
 
     public function leaf_to_root($qcount) {
         $this->qcount += $qcount;
@@ -58,10 +60,10 @@ abstract class qtype_ddmarker_list_item {
         }
     }
 
-    protected function render_children() {
+    protected function render_children($stringidentifier, $link) {
         $children = array();
         foreach ($this->children as $child) {
-            $children[] = $child->render();
+            $children[] = $child->render($stringidentifier, $link);
         }
         return html_writer::alist($children);
     }
@@ -87,11 +89,18 @@ class qtype_ddmarker_category_list_item extends qtype_ddmarker_list_item {
         }
     }
 
-    public function render () {
+    public function render ($stringidentifier, $link) {
+        global $PAGE;
         $a = new stdClass();
         $a->qcount = $this->qcount;
         $a->name = $this->record->name;
-        return get_string('categorylistitem', 'qtype_ddmarker', $a).$this->render_children();
+        $thisitem = get_string($stringidentifier.'category', 'qtype_ddmarker', $a);
+        if ($link) {
+            $actionurl = new moodle_url($PAGE->url, array('categoryid'=> $this->record->id));
+            $thisitem = html_writer::tag('a', $thisitem, array('href' => $actionurl));
+        }
+        
+        return $thisitem.$this->render_children($stringidentifier, $link);
     }
 }
 class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
@@ -113,11 +122,17 @@ class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
         }
     }
 
-    public function render () {
+    public function render ($stringidentifier, $link) {
+        global $PAGE;
         $a = new stdClass();
         $a->qcount = $this->qcount;
         $a->name = $this->record->get_context_name();
-        return get_string('contextlistitem', 'qtype_ddmarker', $a).$this->render_children();
+        $thisitem = get_string($stringidentifier.'context', 'qtype_ddmarker', $a);
+        if ($link) {
+            $actionurl = new moodle_url($PAGE->url, array('contextid'=> $this->record->id));
+            $thisitem = html_writer::tag('a', $thisitem,array('href' => $actionurl));
+        }
+        return $thisitem.$this->render_children($stringidentifier, $link);
     }
 }
 /**
@@ -162,8 +177,11 @@ class qtype_ddmarker_context_list extends qtype_ddmarker_list {
         }
         parent::make_list_item_instances_from_records ($contextids);
     }
-    public function render() {
-        $rootitem = html_writer::tag('li', $this->root_node()->render());
+    public function render($stringidentifier, $link, $roottorender = null) {
+        if ($roottorender === null) {
+            $roottorender = $this->root_node();
+        }
+        $rootitem = html_writer::tag('li', $roottorender->render($stringidentifier, $link));
         return html_writer::tag('ul', $rootitem);
     }
     public function root_node () {
@@ -187,6 +205,10 @@ class qtype_ddmarker_category_list extends qtype_ddmarker_list {
         parent::make_list_item_instances_from_records ($contextids);
     }
 }
+
+$categoryid = optional_param('categoryid', 0, PARAM_INT);
+$qcontextid = optional_param('contextid', 0, PARAM_INT);
+$confirm = optional_param('confirm', 0, PARAM_INT);
 // Check the user is logged in.
 require_login();
 $context = get_context_instance(CONTEXT_SYSTEM);
@@ -198,10 +220,29 @@ admin_externalpage_setup('qtypeddmarkerfromimagetarget');
 echo $OUTPUT->header();
 echo $OUTPUT->heading_with_help(get_string('imagetargetconverter', 'qtype_ddmarker'), '', 'qtype_ddmarker');
 
-$catswithquestions = $DB->get_records_sql('SELECT cat.id, cat.contextid, COUNT(1) AS qcount '.
-                                            'FROM {question_categories} cat, {question} q '.
-                                            'WHERE q.category =  cat.id '.
-                                            'GROUP BY cat.id, cat.contextid');
+
+$params = array();
+$from = 'FROM {question_categories} cat, {question} q';
+$where = ' WHERE q.category =  cat.id ';
+
+if ($qcontextid) {
+    $qcontext = get_context_instance_by_id($qcontextid, MUST_EXIST);
+    $from  .= ', {context} context';
+    $where .= 'AND cat.contextid = context.id AND (context.path LIKE :path OR context.id = :id) ';
+    $params['path'] = $qcontext->path.'/%';
+    $params['id'] = $qcontext->id;
+} else if ($categoryid) {
+    $from  .= ', {context} context, {question_categories} cat2';
+    $where .= 'AND cat.contextid = cat2.contextid AND cat2.id = :categoryid ';
+    $params['categoryid'] = $categoryid;
+}
+$sql = 'SELECT cat.id, cat.contextid, COUNT(1) AS qcount '.
+                                            $from.
+                                            $where.
+                                            'GROUP BY cat.id, cat.contextid';
+
+
+$catswithquestions = $DB->get_records_sql($sql, $params);
 //print_object($catswithquestions);
 
 $contextids = array();
@@ -216,8 +257,25 @@ foreach ($catswithquestions as $catwithquestions) {
     $categories->leaf_node($catwithquestions->id, $catwithquestions->qcount);
 }
 //print_object($contexts->root_node());
-
-echo $contexts->render();
+if ($categoryid || $qcontextid) {
+    if (!$confirm) {
+        $cofirmedurl = new moodle_url($PAGE->url, compact('categoryid', 'contextid')+array('confirm'=>1));
+        $cancelurl = new moodle_url($PAGE->url);
+        if ($categoryid) {
+            $torender = $categories->get_instance($categoryid);
+        } else if ($qcontextid) {
+            $torender = $contexts->get_instance($qcontextid);
+        } else {
+            $torender = $contexts->root_node();
+        }
+        echo $contexts->render('listitem', false, $torender);
+        echo $OUTPUT->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
+    } else if (confirm_sesskey()) {
+        
+    }
+} else {
+    echo $contexts->render('listitemaction', true, $contexts->root_node());
+}
 
 
 // Footer.
