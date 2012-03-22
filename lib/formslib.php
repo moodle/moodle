@@ -1066,7 +1066,8 @@ abstract class moodleform {
         if (!is_null($contollerbutton) || is_null($select_value)) {
             foreach ($mform->_elements as $element) {
                 if (($element instanceof MoodleQuickForm_advcheckbox) &&
-                    $element->getAttribute('class') == $checkboxgroupclass) {
+                        $element->getAttribute('class') == $checkboxgroupclass &&
+                        !$element->isFrozen()) {
                     $mform->setConstants(array($element->getName() => $new_select_value));
                 }
             }
