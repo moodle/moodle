@@ -831,14 +831,14 @@ class available_update_checker {
      *
      * This method is used to populate potential update info to be sent to site admins.
      *
-     * @param null|array $old
-     * @param null|array $new
+     * @param array $old
+     * @param array $new
      * @throws available_update_checker_exception
      * @return array parts of $new['updates'] that have changed
      */
-    protected function compare_responses($old, $new) {
+    protected function compare_responses(array $old, array $new) {
 
-        if (is_null($new)) {
+        if (empty($new)) {
             return array();
         }
 
@@ -846,7 +846,7 @@ class available_update_checker {
             throw new available_update_checker_exception('err_response_format');
         }
 
-        if (is_null($old)) {
+        if (empty($old)) {
             return $new['updates'];
         }
 
@@ -1081,7 +1081,61 @@ class available_update_checker {
         $this->fetch();
         $this->restore_response(true);
         $current = $this->recentresponse;
-        $changes = $this->compare_responses($previous, $current);
+        try {
+            $changes = $this->compare_responses($previous, $current);
+            $notifications = $this->cron_notifications($changes);
+            $this->cron_notify($notifications);
+            $this->cron_mtrace('OK');
+        } catch (available_update_checker_exception $e) {
+            $this->cron_mtrace('FAILED!');
+        }
+    }
+
+    /**
+     * Given the list of changes in available updates, pick those to send to site admins
+     *
+     * @param array $changes as returned by {@link self::compare_responses()}
+     * @return array of available_update_info objects to send to site admins
+     */
+    protected function cron_notifications(array $changes) {
+        global $CFG;
+
+        $notifications = array();
+        $pluginman = plugin_manager::instance();
+        $plugins = $pluginman->get_plugins(true);
+
+        foreach ($changes as $component => $componentchanges) {
+            $componentupdates = $this->get_update_info($component,
+                array('minmaturity' => $CFG->updateminmaturity, 'notifybuilds' => $CFG->updatenotifybuilds));
+            // notify only about those $componentchanges that are present in $componentupdates
+            // to respect the preferences
+            foreach ($componentchanges as $componentchange) {
+                foreach ($componentupdates as $componentupdate) {
+                    if ($componentupdate->version == $componentchange['version']) {
+                        if ($component == 'core') {
+                            // in case of 'core' this is enough, we already know that the
+                            // $componentupdate is a real update with higher version
+                            $notifications[] = $componentupdate;
+                        } else {
+                            // use the plugin_manager to check if the reported $componentchange
+                            // is a real update with higher version. such a real update must be
+                            // present in the 'availableupdates' property of one of the component's
+                            // available_update_info object
+                            list($plugintype, $pluginname) = normalize_component($component);
+                            if (!empty($plugins[$plugintype][$pluginname]->availableupdates)) {
+                                foreach ($plugins[$plugintype][$pluginname]->availableupdates as $availableupdate) {
+                                    if ($availableupdate->version == $componentchange['version']) {
+                                        $notifications[] = $componentupdate;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $notifications;
     }
 }
 

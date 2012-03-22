@@ -362,18 +362,18 @@ class available_update_checker_test extends UnitTestCase {
         $provider->cron();
     }
 
-    public function test_compare_responses_both_null() {
+    public function test_compare_responses_both_empty() {
         $provider = testable_available_update_checker::instance();
-        $old = null;
-        $new = null;
+        $old = array();
+        $new = array();
         $cmp = $provider->compare_responses($old, $new);
         $this->assertIsA($cmp, 'array');
         $this->assertTrue(empty($cmp));
     }
 
-    public function test_compare_responses_old_null() {
+    public function test_compare_responses_old_empty() {
         $provider = testable_available_update_checker::instance();
-        $old = null;
+        $old = array();
         $new = array(
             'updates' => array(
                 'core' => array(
