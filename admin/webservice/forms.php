@@ -107,7 +107,7 @@ class external_service_form extends moodleform {
         $mform->setType('id', PARAM_INT);
 
         if (!empty($service->id)) {
-            $buttonlabel = get_string('editaservice', 'webservice');
+            $buttonlabel = get_string('savechanges');
         } else {
             $buttonlabel = get_string('addaservice', 'webservice');
         }
