@@ -559,7 +559,7 @@ if ($showactivity) {
                 $where .= ' AND u.id = ' . $USER->id;
                 $params['myid2'] = $USER->id;
             }
-            $i = 0;
+
             if (!empty($advanced)) {                                                  //If advanced box is checked.
                 foreach($search_array as $key => $val) {                              //what does $search_array hold?
                     if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
@@ -586,34 +586,30 @@ if ($showactivity) {
     /// To actually fetch the records
 
         $fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
+        $sqlselect  = "SELECT $what $fromsql $sortorder";
         $sqlcount   = "SELECT $count $fromsql";   // Total number of records when searching
         $sqlmax     = "SELECT $count FROM $tables $where $groupselect $approveselect"; // number of all recoirds user may see
         $allparams  = array_merge($params, $advparams);
 
-        $recordids = data_get_all_recordids($data->id);
-        $newrecordids = data_get_advance_search_ids($recordids, $search_array, $data->id);
-        $totalcount = (count($newrecordids));
-        $selectdata = $groupselect . $approveselect;
+    /// Work out the paging numbers and counts
 
-        if (!empty($advanced)) {
-            $advancedsearchsql = data_get_advanced_search_sql($sort, $data, $newrecordids, $selectdata, $sortorder);
-            $sqlselect = $advancedsearchsql['sql'];
-            $allparams = array_merge($allparams, $advancedsearchsql['params']);
-        } else {
-            $sqlselect  = "SELECT $what $fromsql $sortorder";
-        }
-
-        /// Work out the paging numbers and counts
+        $totalcount = $DB->count_records_sql($sqlcount, $allparams);
         if (empty($searchselect) && empty($advsearchselect)) {
             $maxcount = $totalcount;
         } else {
-            $maxcount = count($recordids);
+            $maxcount = $DB->count_records_sql($sqlmax, $params);
         }
 
         if ($record) {     // We need to just show one, so where is it in context?
             $nowperpage = 1;
             $mode = 'single';
-            $page = (int)array_search($record->id, $recordids);
+
+            $page = 0;
+            // TODO: Improve this because we are executing $sqlselect twice (here and some lines below)!
+            if ($allrecordids = $DB->get_fieldset_sql($sqlselect, $allparams)) {
+                $page = (int)array_search($record->id, $allrecordids);
+                unset($allrecordids);
+            }
 
         } else if ($mode == 'single') {  // We rely on ambient $page settings
             $nowperpage = 1;
