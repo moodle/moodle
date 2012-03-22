@@ -635,40 +635,6 @@ class available_update_checker {
     }
 
     /**
-     * Returns the available update information for Moodle core
-     *
-     * The returned structure is an array of available_update_info objects or null
-     * if there no such info available.
-     *
-     * @param int $minmaturity minimal maturity level to return, returns all by default
-     * @return null|stdClass null or array of available_update_info objects
-     */
-    public function get_core_update_info($minmaturity = 0) {
-
-        $this->load_current_environment();
-
-        $updates = $this->get_update_info('core');
-        if (empty($updates)) {
-            return null;
-        }
-        $return = array();
-        foreach ($updates as $update) {
-            if (isset($update->maturity) and ($update->maturity < $minmaturity)) {
-                continue;
-            }
-            if ($update->version > $this->currentversion) {
-                $return[] = $update;
-            }
-        }
-
-        if (empty($return)) {
-            return null;
-        }
-
-        return $return;
-    }
-
-    /**
      * Returns the available update information for the given component
      *
      * This method returns null if the most recent response does not contain any information
@@ -676,22 +642,54 @@ class available_update_checker {
      * component. Each update info is an object with at least one property called
      * 'version'. Other possible properties are 'release', 'maturity', 'url' and 'downloadurl'.
      *
+     * For the 'core' component, the method returns real updates only (those with higher version).
+     * For all other components, the list of all known remote updates is returned and the caller
+     * (usually the {@link plugin_manager}) is supposed to make the actual comparison of versions.
+     *
      * @param string $component frankenstyle
-     * @return null|stdClass null or array of available_update_info objects
+     * @param array $options with supported keys 'minmaturity' and/or 'notifybuilds'
+     * @return null|array null or array of available_update_info objects
      */
-    public function get_update_info($component) {
+    public function get_update_info($component, array $options = array()) {
+
+        if (!isset($options['minmaturity'])) {
+            $options['minmaturity'] = 0;
+        }
+
+        if (!isset($options['notifybuilds'])) {
+            $options['notifybuilds'] = false;
+        }
+
+        if ($component == 'core') {
+            $this->load_current_environment();
+        }
 
         $this->restore_response();
 
-        if (!empty($this->recentresponse['updates'][$component])) {
-            $updates = array();
-            foreach ($this->recentresponse['updates'][$component] as $info) {
-                $updates[] = new available_update_info($component, $info);
-            }
-            return $updates;
-        } else {
+        if (empty($this->recentresponse['updates'][$component])) {
             return null;
         }
+
+        $updates = array();
+        foreach ($this->recentresponse['updates'][$component] as $info) {
+            $update = new available_update_info($component, $info);
+            if (isset($update->maturity) and ($update->maturity < $options['minmaturity'])) {
+                continue;
+            }
+            if ($component == 'core') {
+                if ($update->version <= $this->currentversion) {
+                    continue;
+                }
+                // todo notifybuild check
+            }
+            $updates[] = $update;
+        }
+
+        if (empty($updates)) {
+            return null;
+        }
+
+        return $updates;
     }
 
     /**
@@ -1427,7 +1425,17 @@ abstract class plugininfo_base {
      * @param available_update_checker $provider the class providing the available update info
      */
     public function check_available_updates(available_update_checker $provider) {
-        $this->availableupdates = $provider->get_update_info($this->component);
+        global $CFG;
+
+        if (isset($CFG->updateminmaturity)) {
+            $minmaturity = $CFG->updateminmaturity;
+        } else {
+            // this can happen during the very first upgrade to 2.3
+            $minmaturity = MATURITY_STABLE;
+        }
+
+        $this->availableupdates = $provider->get_update_info($this->component,
+            array('minmaturity' => $minmaturity));
     }
 
     /**
@@ -1440,23 +1448,14 @@ abstract class plugininfo_base {
      * @return array|null
      */
     public function available_updates() {
-        global $CFG;
 
         if (empty($this->availableupdates) or !is_array($this->availableupdates)) {
             return null;
         }
 
-        if (!isset($CFG->updateminmaturity)) {
-            // this may happen during the very first upgrade to 2.3
-            $CFG->updateminmaturity = MATURITY_STABLE;
-        }
-
         $updates = array();
 
         foreach ($this->availableupdates as $availableupdate) {
-            if (isset($availableupdate->maturity) and $availableupdate->maturity < $CFG->updateminmaturity) {
-                continue;
-            }
             if ($availableupdate->version > $this->versiondisk) {
                 $updates[] = $availableupdate;
             }

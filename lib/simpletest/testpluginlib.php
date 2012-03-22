@@ -291,15 +291,15 @@ class available_update_checker_test extends UnitTestCase {
         $this->assertTrue($provider instanceof available_update_checker);
 
         $provider->fake_current_environment(2012060102.00, '2.3', array());
-        $updates = $provider->get_core_update_info();
+        $updates = $provider->get_update_info('core');
         $this->assertEqual(count($updates), 2);
 
         $provider->fake_current_environment(2012060103.00, '2.3', array());
-        $updates = $provider->get_core_update_info();
+        $updates = $provider->get_update_info('core');
         $this->assertEqual(count($updates), 1);
 
         $provider->fake_current_environment(2012060103.00, '2.3', array());
-        $updates = $provider->get_core_update_info(MATURITY_STABLE);
+        $updates = $provider->get_update_info('core', array('minmaturity' => MATURITY_STABLE));
         $this->assertNull($updates);
     }
 
