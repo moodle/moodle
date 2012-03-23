@@ -84,6 +84,7 @@ class repository_picasa extends repository {
 
         $ret = array();
         $ret['dynload'] = true;
+        $ret['manage'] = google_picasa::MANAGE_URL;
         $ret['list'] = $picasa->get_file_list($path);
         return $ret;
     }
@@ -92,6 +93,7 @@ class repository_picasa extends repository {
         $picasa = new google_picasa(new google_authsub($this->subauthtoken));
 
         $ret = array();
+        $ret['manage'] = google_picasa::MANAGE_URL;
         $ret['list'] =  $picasa->do_photo_search($search_text);
         return $ret;
     }
