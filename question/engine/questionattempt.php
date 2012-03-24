@@ -884,10 +884,10 @@ class question_attempt {
             case self::PARAM_MARK:
                 // Special case to work around PARAM_NUMBER converting '' to 0.
                 $mark = $this->get_submitted_var($name, PARAM_RAW_TRIMMED, $postdata);
-                if ($mark === '') {
+                if ($mark === '' || is_null($mark)) {
                     return $mark;
                 } else {
-                    return $this->get_submitted_var($name, PARAM_NUMBER, $postdata);
+                    return clean_param(str_replace(',', '.', $mark), PARAM_NUMBER);
                 }
 
             case self::PARAM_FILES:

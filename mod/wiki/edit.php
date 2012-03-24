@@ -77,8 +77,6 @@ require_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/wiki:editpage', $context);
 
-add_to_log($course->id, 'wiki', 'edit', "edit.php?id=$cm->id", "$wiki->id");
-
 if ($option == get_string('save', 'wiki')) {
     if (!confirm_sesskey()) {
         print_error(get_string('invalidsesskey', 'wiki'));
@@ -87,6 +85,7 @@ if ($option == get_string('save', 'wiki')) {
     $wikipage->set_page($page);
     $wikipage->set_newcontent($newcontent);
     $wikipage->set_upload(true);
+    add_to_log($course->id, 'wiki', 'edit', "view.php?pageid=".$pageid, $pageid, $cm->id);
 } else {
     if ($option == get_string('preview')) {
         if (!confirm_sesskey()) {

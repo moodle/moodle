@@ -31,17 +31,41 @@ require_once('wikimedia.php');
 
 class repository_wikimedia extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
+        global $SESSION;
         parent::__construct($repositoryid, $context, $options);
         $this->keyword = optional_param('wikimedia_keyword', '', PARAM_RAW);
         if (empty($this->keyword)) {
             $this->keyword = optional_param('s', '', PARAM_RAW);
         }
+        $sess_keyword = 'wikimedia_'.$this->id.'_keyword';
+        if (empty($this->keyword) && optional_param('page', '', PARAM_RAW)) {
+            // This is the request of another page for the last search, retrieve the cached keyword
+            if (isset($SESSION->{$sess_keyword})) {
+                $this->keyword = $SESSION->{$sess_keyword};
+            }
+        } else if (!empty($this->keyword)) {
+            // save the search keyword in the session so we can retrieve it later
+            $SESSION->{$sess_keyword} = $this->keyword;
+        }
     }
     public function get_listing($path = '', $page = '') {
         $client = new wikimedia;
         $list = array();
-        $list['list'] = $client->search_images($this->keyword);
+        $list['page'] = (int)$page;
+        if ($list['page'] < 1) {
+            $list['page'] = 1;
+        }
+        $list['list'] = $client->search_images($this->keyword, $list['page'] - 1);
         $list['nologin'] = true;
+        $list['norefresh'] = true;
+        $list['nosearch'] = true;
+        if (!empty($list['list'])) {
+            $list['pages'] = -1; // means we don't know exactly how many pages there are but we can always jump to the next page
+        } else if ($list['page'] > 1) {
+            $list['pages'] = $list['page']; // no images available on this page, this is the last page
+        } else {
+            $list['pages'] = 0; // no paging
+        }
         return $list;
     }
    // login
@@ -57,10 +81,24 @@ class repository_wikimedia extends repository {
         $keyword->type  = 'text';
         $keyword->name  = 'wikimedia_keyword';
         $keyword->value = '';
-
-        $form = array();
-        $form['login'] = array($keyword);
-        return $form;
+        if ($this->options['ajax']) {
+            $form = array();
+            $form['login'] = array($keyword);
+            $form['nologin'] = true;
+            $form['norefresh'] = true;
+            $form['nosearch'] = true;
+            $form['allowcaching'] = true; // indicates that login form can be cached in filepicker.js
+            return $form;
+        } else {
+            echo <<<EOD
+<table>
+<tr>
+<td>{$keyword->label}</td><td><input name="{$keyword->name}" type="text" /></td>
+</tr>
+</table>
+<input type="submit" />
+EOD;
+        }
     }
     //search
     // if this plugin support global search, if this function return

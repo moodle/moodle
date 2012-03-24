@@ -44,7 +44,7 @@ question_bank = {
         question_bank.firstcheckbox = document.getElementById(firstcbid);
 
         // Add the event handler.
-        YAHOO.util.Event.addListener(question_bank.headercheckbox, 'change', question_bank.header_checkbox_click);
+        YAHOO.util.Event.addListener(question_bank.headercheckbox, 'click', question_bank.header_checkbox_click);
     },
 
     header_checkbox_click: function() {

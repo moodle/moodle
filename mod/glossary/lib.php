@@ -2882,7 +2882,12 @@ function glossary_comment_validate($comment_param) {
     if (!$record = $DB->get_record('glossary_entries', array('id'=>$comment_param->itemid))) {
         throw new comment_exception('invalidcommentitemid');
     }
-    if (!$glossary = $DB->get_record('glossary', array('id'=>$record->glossaryid))) {
+    if ($record->sourceglossaryid && $record->sourceglossaryid == $comment_param->cm->instance) {
+        $glossary = $DB->get_record('glossary', array('id'=>$record->sourceglossaryid));
+    } else {
+        $glossary = $DB->get_record('glossary', array('id'=>$record->glossaryid));
+    }
+    if (!$glossary) {
         throw new comment_exception('invalidid', 'data');
     }
     if (!$course = $DB->get_record('course', array('id'=>$glossary->course))) {

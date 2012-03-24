@@ -22,7 +22,6 @@ require_once $CFG->dirroot.'/grade/report/grader/lib.php';
 
 $courseid      = required_param('id', PARAM_INT);        // course id
 $page          = optional_param('page', 0, PARAM_INT);   // active page
-$perpageurl    = optional_param('perpage', 0, PARAM_INT);
 $edit          = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
 
 $sortitemid    = optional_param('sortitemid', 0, PARAM_ALPHANUM); // sort by which grade item
@@ -127,12 +126,6 @@ if ($data = data_submitted() and confirm_sesskey() and has_capability('moodle/gr
     $warnings = array();
 }
 
-
-// Override perpage if set in URL
-if ($perpageurl) {
-    $report->user_prefs['studentsperpage'] = $perpageurl;
-}
-
 // final grades MUST be loaded after the processing
 $report->load_users();
 $numusers = $report->get_numusers();
@@ -162,6 +155,7 @@ if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') 
     echo '<input type="hidden" value="'.s($courseid).'" name="id" />';
     echo '<input type="hidden" value="'.sesskey().'" name="sesskey" />';
     echo '<input type="hidden" value="grader" name="report"/>';
+    echo '<input type="hidden" value="'.$page.'" name="page"/>';
     echo $reporthtml;
     echo '<div class="submit"><input type="submit" value="'.s(get_string('update')).'" /></div>';
     echo '</div></form>';

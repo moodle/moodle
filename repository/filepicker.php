@@ -206,9 +206,23 @@ case 'sign':
                 }
             }
             if (!empty($list['page'])) {
-                // TODO: need a better solution
-                $pagingurl = new moodle_url("$CFG->httpswwwroot/repository/filepicker.php?action=list&itemid=$itemid&ctx_id=$contextid&repo_id=$repo_id&course=$courseid");
-                echo $OUTPUT->paging_bar($list['total'], $list['page'] - 1, $list['perpage'], $pagingurl);
+                // TODO MDL-28482: need a better solution
+                // paging_bar is not a good option because it starts page numbering from 0 and
+                // repositories number pages starting from 1.
+                $pagingurl = new moodle_url("$CFG->httpswwwroot/repository/filepicker.php?action=list&itemid=$itemid&ctx_id=$contextid&repo_id=$repo_id&course=$courseid&sesskey=".  sesskey());
+                if (!isset($list['perpage']) && !isset($list['total'])) {
+                    $list['perpage'] = 10; // instead of setting perpage&total we use number of pages, the result is the same
+                }
+                if (empty($list['total'])) {
+                    if ($list['pages'] == -1) {
+                        $total = ($list['page'] + 2) * $list['perpage'];
+                    } else {
+                        $total = $list['pages'] * $list['perpage'];
+                    }
+                } else {
+                    $total = $list['total'];
+                }
+                echo $OUTPUT->paging_bar($total, $list['page'], $list['perpage'], $pagingurl);
             }
             echo '<table>';
             foreach ($list['list'] as $item) {

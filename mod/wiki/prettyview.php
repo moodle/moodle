@@ -56,11 +56,10 @@ require_login($course->id, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/wiki:viewpage', $context);
 
-add_to_log($course->id, "wiki", "view", "prettyview.php?pageid=$pageid", "$wiki->id");
-
 $wikipage = new page_wiki_prettyview($wiki, $subwiki, $cm);
 
 $wikipage->set_page($page);
+add_to_log($course->id, "wiki", "view", "prettyview.php?pageid=".$pageid, $pageid, $cm->id);
 
 $wikipage->print_header();
 $wikipage->print_content();

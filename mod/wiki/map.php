@@ -56,13 +56,11 @@ if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
 require_login($course->id, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/wiki:viewpage', $context);
-add_to_log($course->id, "wiki", "map", "map.php?id=$cm->id", "$wiki->id");
 
-/// Print page header
-
-/// Finish the page
 $wikipage = new page_wiki_map($wiki, $subwiki, $cm);
+add_to_log($course->id, "wiki", "map", "map.php?pageid=".$pageid, $pageid, $cm->id);
 
+// Print page header
 $wikipage->set_view($option);
 $wikipage->set_page($page);
 $wikipage->print_header();

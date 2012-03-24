@@ -441,6 +441,12 @@ class theme_config {
         if (is_readable($rendererfile)) {
             // may contain core and plugin renderers and renderer factory
             include_once($rendererfile);
+        } else {
+            // check if renderers.php file is missnamed renderer.php
+            if (is_readable($this->dir.'/renderer.php')) {
+                debugging('Developer hint: '.$this->dir.'/renderer.php should be renamed to ' . $this->dir."/renderers.php.
+                    See: http://docs.moodle.org/dev/Output_renderers#Theme_renderers.", DEBUG_DEVELOPER);
+            }
         }
 
         // cascade all layouts properly
