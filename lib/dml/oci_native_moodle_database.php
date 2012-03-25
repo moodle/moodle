@@ -419,10 +419,12 @@ class oci_native_moodle_database extends moodle_database {
         oci_free_statement($stmt);
         $records = array_map('strtolower', $records['TABLE_NAME']);
         foreach ($records as $tablename) {
-            if (strpos($tablename, $this->prefix) !== 0) {
-                continue;
+            if ($this->prefix !== '') {
+                if (strpos($tablename, $this->prefix) !== 0) {
+                    continue;
+                }
+                $tablename = substr($tablename, strlen($this->prefix));
             }
-            $tablename = substr($tablename, strlen($this->prefix));
             $this->tables[$tablename] = $tablename;
         }
 

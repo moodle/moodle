@@ -152,10 +152,13 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
         foreach ($rstables as $table) {
             $table = $table['name'];
             $table = strtolower($table);
-            if (empty($this->prefix) || strpos($table, $this->prefix) === 0) {
+            if ($this->prefix !== '') {
+                if (strpos($table, $this->prefix) !== 0) {
+                    continue;
+                }
                 $table = substr($table, strlen($this->prefix));
-                $tables[$table] = $table;
             }
+            $tables[$table] = $table;
         }
         return $tables;
     }
