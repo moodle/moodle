@@ -86,6 +86,7 @@
 #page-mod-forum-discuss .discussioncontrol.displaymode {text-align:center;}
 #page-mod-forum-discuss .discussioncontrol.movediscussion {float:right;width:auto;text-align:right;padding-right:10px;}
 #page-mod-forum-discuss .discussioncontrol.movediscussion .movediscussionoption {}
+#page-mod-forum-discuss .discussioncontrol.pindiscussion {float:right;width:auto;text-align:right;padding-right:10px;}
 
 /** Styles for view.php **/
 #page-mod-forum-view .forumaddnew {margin-bottom: 20px;}

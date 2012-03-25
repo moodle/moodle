@@ -852,6 +852,7 @@ if ($mform_post->is_cancelled()) {
         }
         $discussion->timestart = $fromform->timestart;
         $discussion->timeend = $fromform->timeend;
+        $discussion->pinned = FORUM_DISCUSSION_UNPINNED;
 
         $allowedgroups = array();
         $groupstopostto = array();

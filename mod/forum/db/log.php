@@ -41,4 +41,6 @@ $logs = array(
     array('module'=>'forum', 'action'=>'view forum', 'mtable'=>'forum', 'field'=>'name'),
     array('module'=>'forum', 'action'=>'subscribe', 'mtable'=>'forum', 'field'=>'name'),
     array('module'=>'forum', 'action'=>'unsubscribe', 'mtable'=>'forum', 'field'=>'name'),
+    array('module'=>'forum', 'action'=>'pin discussion', 'mtable'=>'forum_discussions', 'field'=>'name'),
+    array('module'=>'forum', 'action'=>'unpin discussion', 'mtable'=>'forum_discussions', 'field'=>'name'),
 );
