@@ -672,7 +672,7 @@
             $querystring = '';
             foreach($_GET as $var => $val) {
                 $var = clean_param($var, PARAM_ALPHANUM);   // See MDL-22631
-                $val = clean_param($val, PARAM_CLEAN);
+                $val = urlencode(clean_param($val, PARAM_CLEAN));
                 if(!$first) {
                     $first = true;
                     if ($var != 'filterselect' && $var != 'filtertype') {
@@ -683,13 +683,13 @@
                     }
                 } else {
                     if ($var != 'filterselect' && $var != 'filtertype') {
-                        $querystring .= '&amp;'.$var.'='.$val;
+                        $querystring .= '&'.$var.'='.$val;
                         $hasparam = true;
                     }
                 }
             }
             if (isset($hasparam)) {
-                $querystring .= '&amp;';
+                $querystring .= '&';
             } else {
                 $querystring = '?';
             }
@@ -697,9 +697,8 @@
             $querystring = '?';
         }
 
-        return strip_querystring(qualified_me()) . $querystring. 'filtertype='.
-                $filtertype.'&amp;filterselect='.$filterselect.'&amp;';
-
+        return s(strip_querystring(qualified_me()) . $querystring. 'filtertype='.
+                $filtertype.'&filterselect='.$filterselect.'&', true);
     }
 
     /**
