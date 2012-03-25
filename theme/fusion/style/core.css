@@ -370,4 +370,15 @@ h2.headingblock {
     float: right;
 }
 
-.pagelayout-redirect {background-position:0 0;}
+.pagelayout-redirect {
+    background-position:0 0;
+}
+
+#page-mod-assignment-submissions #wrapper {
+    padding: 0 1%;
+}
+
+#page-mod-assignment-submissions #attempts td,
+#page-mod-assignment-submissions #attempts th.header {
+    font-size: 80%;
+}
