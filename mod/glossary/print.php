@@ -206,7 +206,7 @@ if ( $allentries ) {
             }
         }
 
-        glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook,1,$displayformat,false,true);
+        glossary_print_entry($course, $cm, $glossary, $entry, $mode, $hook, 1, $displayformat, true);
     }
 }
 
