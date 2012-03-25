@@ -6782,5 +6782,43 @@ FROM
         upgrade_main_savepoint(true, 2011070105.08);
     }
 
+    if ($oldversion < 2011070106.03) { // fix invalid course_completion_records MDL-27368
+        //first get all instances of duplicate records
+        $sql = 'SELECT userid, course FROM {course_completions} WHERE (deleted IS NULL OR deleted <> 1) GROUP BY userid, course HAVING (count(id) > 1)';
+        $duplicates = $DB->get_recordset_sql($sql, array());
+
+        foreach ($duplicates as $duplicate) {
+            $pointer = 0;
+            //now get all the records for this user/course
+            $sql = 'userid = ? AND course = ? AND (deleted IS NULL OR deleted <> 1)';
+            $completions = $DB->get_records_select('course_completions', $sql,
+                array($duplicate->userid, $duplicate->course), 'timecompleted DESC, timestarted DESC');
+            $needsupdate = false;
+            $origcompletion = null;
+            foreach ($completions as $completion) {
+                $pointer++;
+                if ($pointer === 1) { //keep 1st record but delete all others.
+                    $origcompletion = $completion;
+                } else {
+                    //we need to keep the "oldest" of all these fields as the valid completion record.
+                    $fieldstocheck = array('timecompleted', 'timestarted', 'timeenrolled');
+                    foreach ($fieldstocheck as $f) {
+                        if ($origcompletion->$f > $completion->$f) {
+                            $origcompletion->$f = $completion->$f;
+                            $needsupdate = true;
+                        }
+                    }
+                    $DB->delete_records('course_completions', array('id'=>$completion->id));
+                }
+            }
+            if ($needsupdate) {
+                $DB->update_record('course_completions', $origcompletion);
+            }
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true,2011070106.03);
+    }
+
     return true;
 }
