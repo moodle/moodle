@@ -1555,8 +1555,18 @@ function get_mimetype_description($mimetype, $capitalise=false) {
  */
 function send_file_not_found() {
     global $CFG, $COURSE;
-    header('HTTP/1.0 404 not found');
+    send_header_404();
     print_error('filenotfound', 'error', $CFG->wwwroot.'/course/view.php?id='.$COURSE->id); //this is not displayed on IIS??
+}
+/**
+ * Helper function to send correct 404 for server.
+ */
+function send_header_404() {
+    if (substr(php_sapi_name(), 0, 3) == 'cgi') {
+        header("Status: 404 Not Found");
+    } else {
+        header('HTTP/1.0 404 not found');
+    }
 }
 
 /**
@@ -1612,7 +1622,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
 
     if (!$pathisstring) {
         if (!file_exists($path)) {
-            header('HTTP/1.0 404 not found');
+            send_header_404();
             print_error('filenotfound', 'error', $CFG->wwwroot.'/');
         }
         // executed after normal finish or abort
