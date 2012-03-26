@@ -1005,21 +1005,15 @@ class question_type {
             array_shift($extraanswersfields);
         }
         foreach ($question->options->answers as $answer) {
-            // TODO this should be re-factored to use $format->write_answer().
-            $percent = 100 * $answer->fraction;
-            $expout .= "    <answer fraction=\"$percent\" {$format->format($answer->answerformat)}>\n";
-            $expout .= $format->writetext($answer->answer, 3, false);
-            $expout .= "      <feedback {$format->format($answer->feedbackformat)}>\n";
-            $expout .= $format->writetext($answer->feedback, 4, false);
-            $expout .= "      </feedback>\n";
+            $extra = '';
             if (is_array($extraanswersfields)) {
                 foreach ($extraanswersfields as $field) {
                     $exportedvalue = $format->xml_escape($answer->$field);
-                    $expout .= "      <{$field}>{$exportedvalue}</{$field}>\n";
+                    $extra .= "      <{$field}>{$exportedvalue}</{$field}>\n";
                 }
             }
 
-            $expout .= "    </answer>\n";
+            $expout .= $format->write_answer($answer, $extra);
         }
         return $expout;
     }
