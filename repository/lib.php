@@ -1672,7 +1672,7 @@ abstract class repository {
      *
      * @return mixed, see get_listing()
      */
-    public function search($search_text) {
+    public function search($search_text, $page = 0) {
         $list = array();
         $list['list'] = array();
         return false;
@@ -1754,7 +1754,7 @@ abstract class repository {
      * @param object $mform Moodle form (passed by reference)
      * @param string $classname repository class name
      */
-    public function type_config_form($mform, $classname = 'repository') {
+    public static function type_config_form($mform, $classname = 'repository') {
         $instnaceoptions = call_user_func(array($classname, 'get_instance_option_names'), $mform, $classname);
         if (empty($instnaceoptions)) {
             // this plugin has only one instance

@@ -106,7 +106,7 @@ EOD;
     public function global_search() {
         return false;
     }
-    public function search($search_text) {
+    public function search($search_text, $page = 0) {
         $client = new wikimedia;
         $search_result = array();
         $search_result['list'] = $client->search_images($search_text);

@@ -61,7 +61,7 @@ class repository_webdav extends repository {
     public function check_login() {
         return true;
     }
-    public function get_file($url, $title) {
+    public function get_file($url, $title = '') {
         global $CFG;
         $url = urldecode($url);
         $path = $this->prepare_file($title);

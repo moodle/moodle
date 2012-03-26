@@ -114,7 +114,7 @@ class repository_boxnet extends repository {
      * @param string $search_text
      * @return mixed
      */
-    public function search($search_text) {
+    public function search($search_text, $page = 0) {
         global $OUTPUT;
         $list = array();
         $ret  = array();
@@ -206,7 +206,7 @@ class repository_boxnet extends repository {
      * Add Plugin settings input to Moodle form
      * @param object $mform
      */
-    public function type_config_form($mform) {
+    public static function type_config_form($mform, $classname = 'repository') {
         global $CFG;
         parent::type_config_form($mform);
         $public_account = get_config('boxnet', 'public_account');

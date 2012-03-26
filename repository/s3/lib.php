@@ -104,7 +104,7 @@ class repository_s3 extends repository {
      * @param string $file The file path in moodle
      * @return array The local stored path
      */
-    public function get_file($filepath, $file) {
+    public function get_file($filepath, $file = '') {
         global $CFG;
         $arr = explode('/', $filepath);
         $bucket   = $arr[0];
@@ -136,7 +136,7 @@ class repository_s3 extends repository {
         return array('access_key', 'secret_key', 'pluginname');
     }
 
-    public function type_config_form($mform) {
+    public static function type_config_form($mform, $classname = 'repository') {
         parent::type_config_form($mform);
         $strrequired = get_string('required');
         $mform->addElement('text', 'access_key', get_string('access_key', 'repository_s3'));
