@@ -997,6 +997,8 @@ class available_update_checker {
      * @return bool true if autocheck enabled, false if disabled
      */
     protected function cron_autocheck_enabled() {
+        global $CFG;
+
         if (empty($CFG->updateautocheck)) {
             return false;
         } else {
@@ -1109,8 +1111,14 @@ class available_update_checker {
         $plugins = $pluginman->get_plugins(true);
 
         foreach ($changes as $component => $componentchanges) {
+            if (empty($componentchanges)) {
+                continue;
+            }
             $componentupdates = $this->get_update_info($component,
                 array('minmaturity' => $CFG->updateminmaturity, 'notifybuilds' => $CFG->updatenotifybuilds));
+            if (empty($componentupdates)) {
+                continue;
+            }
             // notify only about those $componentchanges that are present in $componentupdates
             // to respect the preferences
             foreach ($componentchanges as $componentchange) {
