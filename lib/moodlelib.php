@@ -5020,6 +5020,7 @@ function get_mailer($action='get') {
                 $mailer->SMTPDebug = true;
             }
             $mailer->Host          = $CFG->smtphosts;        // specify main and backup servers
+            $mailer->SMTPSecure    = $CFG->smtpsecure;       // specify secure connection protocol
             $mailer->SMTPKeepAlive = $prevkeepalive;         // use previous keepalive
 
             if ($CFG->smtpuser) {                            // Use SMTP authentication
