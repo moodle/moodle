@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class tinymce_texteditor extends texteditor {
     /** @var string active version - directory name */
-    public $version = '3.4.2';
+    public $version = '3.4.9';
 
     public function supported_by_browser() {
         if (check_browser_version('MSIE', 6)) {
@@ -44,6 +44,9 @@ class tinymce_texteditor extends texteditor {
             return true;
         }
         if (check_browser_version('Opera', 9)) {
+            return true;
+        }
+        if (check_browser_version('Safari iOS', 534)) {
             return true;
         }
 
@@ -144,7 +147,8 @@ class tinymce_texteditor extends texteditor {
                     'theme_advanced_resizing_min_height' => 30,
                     'theme_advanced_toolbar_location' => "top",
                     'theme_advanced_statusbar_location' => "bottom",
-                    'spellchecker_rpc_url' => $CFG->wwwroot."/lib/editor/tinymce/tiny_mce/$this->version/plugins/spellchecker/rpc.php"
+                    'spellchecker_rpc_url' => $CFG->wwwroot."/lib/editor/tinymce/tiny_mce/$this->version/plugins/spellchecker/rpc.php",
+                    'spellchecker_languages' => get_config('editor_tinymce', 'spelllanguagelist')
                   );
 
         if ($xemoticon) {
