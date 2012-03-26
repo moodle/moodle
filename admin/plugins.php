@@ -43,18 +43,4 @@ if ($fetchremote) {
 }
 
 $output = $PAGE->get_renderer('core', 'admin');
-
-echo $output->header();
-echo $output->heading(get_string('pluginsoverview', 'core_admin'));
-echo $output->plugins_overview_panel($pluginman);
-
-echo $output->container_start('checkforupdates');
-echo $output->single_button(new moodle_url($PAGE->url, array('fetchremote' => 1)), get_string('checkforupdates', 'core_plugin'));
-if ($timefetched = $checker->get_last_timefetched()) {
-    echo $output->container(get_string('checkforupdateslast', 'core_plugin',
-        userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
-}
-echo $output->container_end();
-
-echo $output->box($output->plugins_control_panel($pluginman), 'generalbox');
-echo $output->footer();
+echo $output->plugin_management_page($pluginman, $checker);

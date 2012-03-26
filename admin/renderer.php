@@ -249,6 +249,34 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Display the plugin management page (admin/plugins.php).
+     *
+     * @param plugin_manager $pluginman
+     * @param available_update_checker $checker
+     * @return string HTML to output.
+     */
+    public function plugin_management_page(plugin_manager $pluginman, available_update_checker $checker) {
+        $output = '';
+
+        $output .= $this->header();
+        $output .= $this->heading(get_string('pluginsoverview', 'core_admin'));
+        $output .= $this->plugins_overview_panel($pluginman);
+
+        $output .= $this->container_start('checkforupdates');
+        $output .= $this->single_button(new moodle_url($this->page->url, array('fetchremote' => 1)), get_string('checkforupdates', 'core_plugin'));
+        if ($timefetched = $checker->get_last_timefetched()) {
+            $output .= $this->container(get_string('checkforupdateslast', 'core_plugin',
+                userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
+        }
+        $output .= $this->container_end();
+
+        $output .= $this->box($this->plugins_control_panel($pluginman), 'generalbox');
+        $output .= $this->footer();
+
+        return $output;
+    }
+
+    /**
      * Display the plugin management page (admin/environment.php).
      * @param array $versions
      * @param string $version
