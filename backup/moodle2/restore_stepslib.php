@@ -2249,7 +2249,11 @@ class restore_block_instance_structure_step extends restore_structure_step {
         // If there is already one block of that type in the parent context
         // and the block is not multiple, stop processing
         // Use blockslib loader / method executor
-        if (!block_method_result($data->blockname, 'instance_allow_multiple')) {
+        if (!$bi = block_instance($data->blockname)) {
+            return false;
+        }
+
+        if (!$bi->instance_allow_multiple()) {
             if ($DB->record_exists_sql("SELECT bi.id
                                           FROM {block_instances} bi
                                           JOIN {block} b ON b.name = bi.blockname
