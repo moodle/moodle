@@ -299,6 +299,23 @@ class plugin_manager {
     }
 
     /**
+     * Checks if there are some plugins with a known available update
+     *
+     * @return bool true if there is at least one available update
+     */
+    public function some_plugins_updatable() {
+        foreach ($this->get_plugins() as $type => $plugins) {
+            foreach ($plugins as $plugin) {
+                if ($plugin->available_updates()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Defines a list of all plugins that were originally shipped in the standard Moodle distribution,
      * but are not anymore and are deleted during upgrades.
      *

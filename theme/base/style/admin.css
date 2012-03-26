@@ -220,6 +220,7 @@
 #page-admin-index #plugins-check .status .pluginupdateinfo span,
 #page-admin-index #plugins-check .status .pluginupdateinfo a {padding-right:1em;}
 #page-admin-index #plugins-check .status .pluginupdateinfo .separator {border-left:1px dotted #333;}
+#page-admin-index .upgradepluginsinfo {text-align:center;}
 
 /** Plugins management */
 #page-admin-plugins .checkforupdates {margin:0 auto 1em;text-align:center;}
