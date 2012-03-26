@@ -46,6 +46,30 @@ class xmldb_field extends xmldb_object {
      */
     const CHAR_MAX_LENGTH = 1333;
 
+
+    /**
+     * @const maximum number of digits of integers
+     */
+    const INTEGER_MAX_LENGTH = 20;
+
+    /**
+     * @const max length of decimals
+     */
+    const NUMBER_MAX_LENGTH = 20;
+
+    /**
+     * @const max length of floats
+     */
+    const FLOAT_MAX_LENGTH = 20;
+
+    /**
+     * Note:
+     *  - Oracle has 30 chars limit for all names
+     *
+     * @const maximumn length of field names
+     */
+    const NAME_MAX_LENGTH = 30;
+
     /**
      * Creates one new xmldb_field
      */
@@ -701,17 +725,66 @@ class xmldb_field extends xmldb_object {
      */
     function validateDefinition(xmldb_table $xmldb_table=null) {
         if (!$xmldb_table) {
-            return 'Invalid xmldb_field->validateDefinition() call, $xmldb_table si required.';
+            return 'Invalid xmldb_field->validateDefinition() call, $xmldb_table is required.';
+        }
+
+        $name = $this->getName();
+        if (strlen($name) > self::NAME_MAX_LENGTH) {
+            return 'Invalid field name in table {'.$xmldb_table->getName().'}: field "'.$this->getName().'" name is too long.'
+                .' Limit is '.self::NAME_MAX_LENGTH.' chars.';
+        }
+        if (!preg_match('/^[a-z][a-z0-9_]*$/', $name)) {
+            return 'Invalid field name in table {'.$xmldb_table->getName().'}: field "'.$this->getName().'" name includes invalid characters.';
         }
 
         switch ($this->getType()) {
             case XMLDB_TYPE_INTEGER:
+                $length = $this->getLength();
+                if (!is_number($length) or $length <= 0 or $length > self::INTEGER_MAX_LENGTH) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName().'}: XMLDB_TYPE_INTEGER field "'.$this->getName().'" has invalid length';
+                }
+                $default = $this->getDefault();
+                if (!empty($default) and !is_number($default)) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName().'}: XMLDB_TYPE_INTEGER field "'.$this->getName().'" has invalid default';
+                }
                 break;
 
             case XMLDB_TYPE_NUMBER:
+                $maxlength = self::NUMBER_MAX_LENGTH;
+                if ($xmldb_table->getName() === 'question_numerical_units' and $name === 'multiplier') {
+                    //TODO: remove after MDL-32113 is resolved
+                    $maxlength = 40;
+                }
+                $length = $this->getLength();
+                if (!is_number($length) or $length <= 0 or $length > $maxlength) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName().'}: XMLDB_TYPE_NUMBER field "'.$this->getName().'" has invalid length';
+                }
+                $decimals = $this->getDecimals();
+                $decimals = empty($decimals) ? 0 : $decimals; // fix missing decimals
+                if (!is_number($decimals) or $decimals < 0 or $decimals > $length) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName().'}: XMLDB_TYPE_NUMBER field "'.$this->getName().'" has invalid decimals';
+                }
+                $default = $this->getDefault();
+                if (!empty($default) and !is_numeric($default)) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName().'}: XMLDB_TYPE_NUMBER field "'.$this->getName().'" has invalid default';
+                }
                 break;
 
             case XMLDB_TYPE_FLOAT:
+                $length = $this->getLength();
+                $length = empty($length) ? 6 : $length; // weird, it might be better to require something here...
+                if (!is_number($length) or $length <= 0 or $length > self::FLOAT_MAX_LENGTH) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName().'}: XMLDB_TYPE_FLOAT field "'.$this->getName().'" has invalid length';
+                }
+                $decimals = $this->getDecimals();
+                $decimals = empty($decimals) ? 0 : $decimals; // fix missing decimals
+                if (!is_number($decimals) or $decimals < 0 or $decimals > $length) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName().'}: XMLDB_TYPE_FLOAT field "'.$this->getName().'" has invalid decimals';
+                }
+                $default = $this->getDefault();
+                if (!empty($default) and !is_numeric($default)) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName().'}: XMLDB_TYPE_FLOAT field "'.$this->getName().'" has invalid default';
+                }
                 break;
 
             case XMLDB_TYPE_CHAR:

@@ -292,6 +292,9 @@ abstract class sql_generator {
      * by any of its comments, indexes and sequence creation SQL statements.
      */
     public function getCreateTableSQL($xmldb_table) {
+        if ($error = $xmldb_table->validateDefinition()) {
+            throw new coding_exception($error);
+        }
 
         $results = array();  //Array where all the sentences will be stored
 

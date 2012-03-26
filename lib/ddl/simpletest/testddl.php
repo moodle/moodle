@@ -15,6 +15,7 @@ require_once($CFG->libdir . '/adminlib.php');
 class ddl_test extends UnitTestCase {
     private $tables = array();
     private $records= array();
+    /** @var moodle_database */
     private $tdb;
     public  static $includecoverage = array('lib/ddl');
     public  static $excludecoverage = array('lib/ddl/simpletest');
@@ -308,6 +309,225 @@ class ddl_test extends UnitTestCase {
             $this->fail('Exception expected');
         } catch (Exception $e) {
             $this->assertTrue($e instanceof ddl_exception);
+        }
+
+        // long table name names - the largest allowed
+        $table = new xmldb_table('abcdef____0123456789_____xyz');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        $dbman->create_table($table);
+        $this->assertTrue($dbman->table_exists($table));
+        $dbman->drop_table($table);
+
+        // table name is too long
+        $table = new xmldb_table('abcdef____0123456789_____xyz9');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // invalid table name
+        $table = new xmldb_table('abCD');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+
+        // weird column names - the largest allowed
+        $table = new xmldb_table('test_table3');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('abcdef____0123456789_______xyz', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        $dbman->create_table($table);
+        $this->assertTrue($dbman->table_exists($table));
+        $dbman->drop_table($table);
+
+        // Too long field name - max 30
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('abcdeabcdeabcdeabcdeabcdeabcdez', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // Invalid field name
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('abCD', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // Invalid integer length
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '21', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '2');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // Invalid integer default
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 'x');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // Invalid decimal length
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('num', XMLDB_TYPE_NUMBER, '21,10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // Invalid decimal decimals
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('num', XMLDB_TYPE_NUMBER, '10,11', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // Invalid decimal default
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('num', XMLDB_TYPE_NUMBER, '10,5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 'x');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // Invalid float length
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('num', XMLDB_TYPE_FLOAT, '21,10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // Invalid float decimals
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('num', XMLDB_TYPE_FLOAT, '10,11', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
+        }
+
+        // Invalid float default
+        $table = new xmldb_table('test_table4');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('num', XMLDB_TYPE_FLOAT, '10,5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 'x');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+
+        $this->tables[$table->getName()] = $table;
+
+        try {
+            $dbman->create_table($table);
+            $this->fail('Exception expected');
+        } catch (Exception $e) {
+            $this->assertIdentical(get_class($e), 'coding_exception');
         }
 
     }
