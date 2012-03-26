@@ -1277,10 +1277,8 @@ class available_update_checker {
             $message->fullmessage       = $text;
             $message->fullmessageformat = FORMAT_PLAIN;
             $message->fullmessagehtml   = $html;
-            $message->smallmessage      = 'TODO';
-            $message->notification      = 0;
-            $message->contexturl        = 'http://glum/admin/TODO';
-            $message->contexturlname    = 'View details TODO';
+            $message->smallmessage      = get_string('updatenotifications', 'core_admin');
+            $message->notification      = 1;
             message_send($message);
         }
     }
