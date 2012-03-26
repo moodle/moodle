@@ -147,11 +147,16 @@ class testable_available_update_checker extends available_update_checker {
         return parent::compare_responses($old, $new);
     }
 
+    public function is_same_release($remote, $local=null) {
+        return parent::is_same_release($remote, $local);
+    }
+
     protected function load_current_environment($forcereload=false) {
     }
 
-    public function fake_current_environment($version, $branch, array $plugins) {
+    public function fake_current_environment($version, $release, $branch, array $plugins) {
         $this->currentversion = $version;
+        $this->currentrelease = $release;
         $this->currentbranch = $branch;
         $this->currentplugins = $plugins;
     }
@@ -290,15 +295,15 @@ class available_update_checker_test extends UnitTestCase {
         $provider = testable_available_update_checker::instance();
         $this->assertTrue($provider instanceof available_update_checker);
 
-        $provider->fake_current_environment(2012060102.00, '2.3', array());
+        $provider->fake_current_environment(2012060102.00, '2.3.2 (Build: 20121012)', '2.3', array());
         $updates = $provider->get_update_info('core');
         $this->assertEqual(count($updates), 2);
 
-        $provider->fake_current_environment(2012060103.00, '2.3', array());
+        $provider->fake_current_environment(2012060103.00, '2.3.3 (Build: 20121212)', '2.3', array());
         $updates = $provider->get_update_info('core');
         $this->assertEqual(count($updates), 1);
 
-        $provider->fake_current_environment(2012060103.00, '2.3', array());
+        $provider->fake_current_environment(2012060103.00, '2.3.3 (Build: 20121212)', '2.3', array());
         $updates = $provider->get_update_info('core', array('minmaturity' => MATURITY_STABLE));
         $this->assertNull($updates);
     }
@@ -485,5 +490,28 @@ class available_update_checker_test extends UnitTestCase {
         );
         $this->expectException('available_update_checker_exception');
         $cmp = $provider->compare_responses($broken, $broken);
+    }
+
+    public function test_is_same_release_explicit() {
+        $provider = testable_available_update_checker::instance();
+        $this->assertTrue($provider->is_same_release('2.3dev (Build: 20120323)', '2.3dev (Build: 20120323)'));
+        $this->assertTrue($provider->is_same_release('2.3dev (Build: 20120323)', '2.3dev (Build: 20120330)'));
+        $this->assertFalse($provider->is_same_release('2.3dev (Build: 20120529)', '2.3 (Build: 20120601)'));
+        $this->assertFalse($provider->is_same_release('2.3dev', '2.3 dev'));
+        $this->assertFalse($provider->is_same_release('2.3.1', '2.3'));
+        $this->assertFalse($provider->is_same_release('2.3.1', '2.3.2'));
+        $this->assertTrue($provider->is_same_release('2.3.2+', '2.3.2')); // yes, really
+        $this->assertTrue($provider->is_same_release('2.3.2 (Build: 123456)', '2.3.2+ (Build: 123457)'));
+        $this->assertFalse($provider->is_same_release('3.0 Community Edition', '3.0 Enterprise Edition'));
+        $this->assertTrue($provider->is_same_release('3.0 Community Edition', '3.0 Community Edition (Build: 20290101)'));
+    }
+
+    public function test_is_same_release_implicit() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fake_current_environment(2012060102.00, '2.3.2 (Build: 20121012)', '2.3', array());
+        $this->assertTrue($provider->is_same_release('2.3.2'));
+        $this->assertTrue($provider->is_same_release('2.3.2+'));
+        $this->assertTrue($provider->is_same_release('2.3.2+ (Build: 20121013)'));
+        $this->assertFalse($provider->is_same_release('2.4dev (Build: 20121012)'));
     }
 }

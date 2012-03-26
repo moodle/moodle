@@ -577,6 +577,8 @@ class available_update_checker {
     protected $recentresponse = null;
     /** @var null|string the numerical version of the local Moodle code */
     protected $currentversion = null;
+    /** @var null|string the release info of the local Moodle code */
+    protected $currentrelease = null;
     /** @var null|string branch of the local Moodle code */
     protected $currentbranch = null;
     /** @var array of (string)frankestyle => (string)version list of additional plugins deployed at this site */
@@ -680,7 +682,9 @@ class available_update_checker {
                 if ($update->version <= $this->currentversion) {
                     continue;
                 }
-                // todo notifybuild check
+                if (empty($options['notifybuilds']) and $this->is_same_release($update->release)) {
+                    continue;
+                }
             }
             $updates[] = $update;
         }
@@ -899,7 +903,7 @@ class available_update_checker {
     }
 
     /**
-     * Sets the properties currentversion, currentbranch and currentplugins
+     * Sets the properties currentversion, currentrelease, currentbranch and currentplugins
      *
      * @param bool $forcereload
      */
@@ -913,7 +917,7 @@ class available_update_checker {
 
         require($CFG->dirroot.'/version.php');
         $this->currentversion = $version;
-
+        $this->currentrelease = $release;
         $this->currentbranch = moodle_major_version(true);
 
         $pluginman = plugin_manager::instance();
@@ -1253,6 +1257,35 @@ class available_update_checker {
             $message->contexturl        = 'http://glum/admin/TODO';
             $message->contexturlname    = 'View details TODO';
             message_send($message);
+        }
+    }
+
+    /**
+     * Compare two release labels and decide if they are the same
+     *
+     * @param string $remote release info of the available update
+     * @param null|string $local release info of the local code, defaults to $release defined in version.php
+     * @return boolean true if the releases declare the same minor+major version
+     */
+    protected function is_same_release($remote, $local=null) {
+
+        if (is_null($local)) {
+            $this->load_current_environment();
+            $local = $this->currentrelease;
+        }
+
+        $pattern = '/^([0-9\.\+]+)([^(]*)/';
+
+        preg_match($pattern, $remote, $remotematches);
+        preg_match($pattern, $local, $localmatches);
+
+        $remotematches[1] = str_replace('+', '', $remotematches[1]);
+        $localmatches[1] = str_replace('+', '', $localmatches[1]);
+
+        if ($remotematches[1] === $localmatches[1] and rtrim($remotematches[2]) === rtrim($localmatches[2])) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
