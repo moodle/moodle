@@ -100,16 +100,16 @@
         echo $OUTPUT->box(format_module_intro('choice', $choice, $cm->id), 'generalbox', 'intro');
     }
 
+    $timenow = time();
     $current = false;  // Initialise for later
-    //if user has already made a selection, and they are not allowed to update it, show their selected answer.
+    //if user has already made a selection, and they are not allowed to update it or if choice is not open,  show their selected answer.
     if (isloggedin() && ($current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) &&
-        empty($choice->allowupdate) ) {
+        (empty($choice->allowupdate) || ($timenow > $choice->timeclose)) ) {
         echo $OUTPUT->box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".format_string(choice_get_option_text($choice, $current->optionid)), 'generalbox', 'yourselection');
     }
 
 /// Print the form
     $choiceopen = true;
-    $timenow = time();
     if ($choice->timeclose !=0) {
         if ($choice->timeopen > $timenow ) {
             echo $OUTPUT->box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "generalbox notopenyet");
