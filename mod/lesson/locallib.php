@@ -201,6 +201,7 @@ function lesson_unseen_branch_jump($lesson, $userid) {
     // this function searches through the lesson pages to find all the branch tables
     // that follow the flagged branch table
     $pageid = $lessonpages[$start]->nextpageid; // move down from the flagged branch table
+    $branchtables = array();
     while ($pageid != 0) {  // grab all of the branch table till eol
         if ($lessonpages[$pageid]->qtype == LESSON_PAGE_BRANCHTABLE) {
             $branchtables[] = $lessonpages[$pageid]->id;
