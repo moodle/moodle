@@ -79,6 +79,10 @@ class lesson_page_type_branchtable extends lesson_page {
         $jump[LESSON_NEXTPAGE] = get_string("nextpage", "lesson");
         $jump[LESSON_PREVIOUSPAGE] = get_string("previouspage", "lesson");
         $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
+        $jump[LESSON_UNSEENBRANCHPAGE] = get_string("unseenpageinbranch", "lesson");
+        $jump[LESSON_RANDOMPAGE] = get_string("randompageinbranch", "lesson");
+        $jump[LESSON_RANDOMBRANCH] = get_string("randombranch", "lesson");
+
         if (!$firstpage) {
             if (!$apageid = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "prevpageid" => 0))) {
                 print_error('cannotfindfirstpage', 'lesson');
