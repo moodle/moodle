@@ -54,6 +54,7 @@ $string['rootdir'] = 'Directory';
 $string['settings'] = 'Settings';
 $string['somehighlighted'] = 'Number of plugins requiring attention during this upgrade: {$a}';
 $string['somehighlightedinfo'] = 'Display the full list of installed plugins';
+$string['somehighlightedonly'] = 'Display only plugins requiring your attention';
 $string['source'] = 'Source';
 $string['sourceext'] = 'Contributed';
 $string['sourcestd'] = 'Standard';

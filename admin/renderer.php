@@ -667,6 +667,10 @@ class core_admin_renderer extends plugin_renderer_base {
                 $out .= html_writer::link(new moodle_url('/admin/index.php',
                     array('confirmupgrade' => 1, 'confirmrelease' => 1, 'showallplugins' => 1)),
                     get_string('somehighlightedinfo', 'core_plugin'));
+            } else {
+                $out .= html_writer::link(new moodle_url('/admin/index.php',
+                    array('confirmupgrade' => 1, 'confirmrelease' => 1, 'showallplugins' => 0)),
+                    get_string('somehighlightedonly', 'core_plugin'));
             }
             $out .= $this->output->container_end();
         }
