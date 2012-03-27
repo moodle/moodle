@@ -657,13 +657,13 @@ M.core_filepicker.init = function(Y, options) {
                     params['author'] = author.get('value');
                 }
 
-                if (this.options.env == 'editor') {
+                if (this.options.externallink && this.options.env == 'editor') {
                     // in editor, images are stored in '/' only
                     params.savepath = '/';
                     // when image or media button is clicked
                     if ( this.options.return_types != 1 ) {
-                        var linkexternal = Y.one('#linkexternal-'+client_id).get('checked');
-                        if (linkexternal) {
+                        var linkexternal = Y.one('#linkexternal-'+client_id);
+                        if (linkexternal && linkexternal.get('checked')) {
                             params['linkexternal'] = 'yes';
                         }
                     } else {
