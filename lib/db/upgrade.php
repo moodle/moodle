@@ -317,5 +317,24 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012031500.04);
     }
 
+    if ($oldversion < 2012032300.01) {
+        // Delete orphaned criteria which were left when modules were removed
+        if ($DB->get_dbfamily() === 'mysql') {
+            $sql = "DELETE cc FROM {course_completion_criteria} cc
+                    LEFT JOIN {course_modules} cm ON cm.id = cc.moduleinstance
+                    WHERE cm.id IS NULL";
+        } else {
+            $sql = "DELETE FROM {course_completion_criteria}
+                    WHERE NOT EXISTS (
+                        SELECT 'x' FROM {course_modules}
+                        WHERE {course_modules}.id = {course_completion_criteria}.moduleinstance)";
+        }
+        $DB->execute($sql);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012032300.01);
+    }
+
+
     return true;
 }
