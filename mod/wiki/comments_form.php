@@ -7,9 +7,8 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot . '/lib/formslib.php');
 
 class mod_wiki_comments_form extends moodleform {
-    function definition() {
-        $pageid = optional_param('pageid', 0, PARAM_INT);
-        $mform =& $this->_form;
+    protected function definition() {
+        $mform = $this->_form;
 
         $current = $this->_customdata['current'];
         $commentoptions = $this->_customdata['commentoptions'];
@@ -24,7 +23,7 @@ class mod_wiki_comments_form extends moodleform {
         $mform->setType('id', PARAM_INT);
 
         $mform->addElement('hidden', 'action', '');
-        $mform->setType('action', PARAM_ACTION);
+        $mform->setType('action', PARAM_ALPHAEXT);
 
         //-------------------------------------------------------------------------------
         // buttons
