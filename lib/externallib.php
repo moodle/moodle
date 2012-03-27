@@ -335,11 +335,11 @@ class external_api {
  * Common ancestor of all parameter description classes
  */
 abstract class external_description {
-    /** @property string $description description of element */
+    /** @var string $description description of element */
     public $desc;
-    /** @property bool $required element value required, null not allowed */
+    /** @var bool $required element value required, null not allowed */
     public $required;
-    /** @property mixed $default default value */
+    /** @var mixed $default default value */
     public $default;
 
     /**
@@ -359,9 +359,9 @@ abstract class external_description {
  * Scalar alue description class
  */
 class external_value extends external_description {
-    /** @property mixed $type value type PARAM_XX */
+    /** @var mixed $type value type PARAM_XX */
     public $type;
-    /** @property bool $allownull allow null values */
+    /** @var bool $allownull allow null values */
     public $allownull;
 
     /**
@@ -384,7 +384,7 @@ class external_value extends external_description {
  * Associative array description class
  */
 class external_single_structure extends external_description {
-     /** @property array $keys description of array keys key=>external_description */
+     /** @var array $keys description of array keys key=>external_description */
     public $keys;
 
     /**
@@ -405,7 +405,7 @@ class external_single_structure extends external_description {
  * Bulk array description class.
  */
 class external_multiple_structure extends external_description {
-     /** @property external_description $content */
+     /** @var external_description $content */
     public $content;
 
     /**
