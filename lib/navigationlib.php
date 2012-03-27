@@ -1630,58 +1630,52 @@ class global_navigation extends navigation_node {
         global $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
 
-        if (!$this->cache->cached('course_sections_'.$course->id) || !$this->cache->cached('course_activites_'.$course->id)) {
-            $modinfo = get_fast_modinfo($course);
-            $sections = array_slice(get_all_sections($course->id), 0, $course->numsections+1, true);
+        $modinfo = get_fast_modinfo($course);
+        $sections = array_slice(get_all_sections($course->id), 0, $course->numsections+1, true);
 
-            $activities = array();
+        $activities = array();
 
-            foreach ($sections as $key => $section) {
-                $sections[$key]->hasactivites = false;
-                if (!array_key_exists($section->section, $modinfo->sections)) {
+        foreach ($sections as $key => $section) {
+            $sections[$key]->hasactivites = false;
+            if (!array_key_exists($section->section, $modinfo->sections)) {
+                continue;
+            }
+            foreach ($modinfo->sections[$section->section] as $cmid) {
+                $cm = $modinfo->cms[$cmid];
+                if (!$cm->uservisible) {
                     continue;
                 }
-                foreach ($modinfo->sections[$section->section] as $cmid) {
-                    $cm = $modinfo->cms[$cmid];
-                    if (!$cm->uservisible) {
-                        continue;
-                    }
-                    $activity = new stdClass;
-                    $activity->section = $section->section;
-                    $activity->name = $cm->name;
-                    $activity->icon = $cm->icon;
-                    $activity->iconcomponent = $cm->iconcomponent;
-                    $activity->id = $cm->id;
-                    $activity->hidden = (!$cm->visible);
-                    $activity->modname = $cm->modname;
-                    $activity->nodetype = navigation_node::NODETYPE_LEAF;
-                    $activity->onclick = $cm->get_on_click();
-                    if (empty($activity->onclick) && !empty($cm->extra) && preg_match('/onclick=(\'|")([^\1]+)\1/', $cm->extra, $matches)) {
-                        $activity->onclick = $matches[2];
-                    }
-                    $url = $cm->get_url();
-                    if (!$url) {
-                        $activity->url = null;
-                        $activity->display = false;
-                    } else {
-                        $activity->url = $cm->get_url()->out();
-                        $activity->display = true;
-                        if (self::module_extends_navigation($cm->modname)) {
-                            $activity->nodetype = navigation_node::NODETYPE_BRANCH;
-                        }
-                    }
-                    $activities[$cmid] = $activity;
-                    if ($activity->display) {
-                        $sections[$key]->hasactivites = true;
+                $activity = new stdClass;
+                $activity->section = $section->section;
+                $activity->name = $cm->name;
+                $activity->icon = $cm->icon;
+                $activity->iconcomponent = $cm->iconcomponent;
+                $activity->id = $cm->id;
+                $activity->hidden = (!$cm->visible);
+                $activity->modname = $cm->modname;
+                $activity->nodetype = navigation_node::NODETYPE_LEAF;
+                $activity->onclick = $cm->get_on_click();
+                if (empty($activity->onclick) && !empty($cm->extra) && preg_match('/onclick=(\'|")([^\1]+)\1/', $cm->extra, $matches)) {
+                    $activity->onclick = $matches[2];
+                }
+                $url = $cm->get_url();
+                if (!$url) {
+                    $activity->url = null;
+                    $activity->display = false;
+                } else {
+                    $activity->url = $cm->get_url()->out();
+                    $activity->display = true;
+                    if (self::module_extends_navigation($cm->modname)) {
+                        $activity->nodetype = navigation_node::NODETYPE_BRANCH;
                     }
                 }
+                $activities[$cmid] = $activity;
+                if ($activity->display) {
+                    $sections[$key]->hasactivites = true;
+                }
             }
-            $this->cache->set('course_sections_'.$course->id, $sections);
-            $this->cache->set('course_activites_'.$course->id, $activities);
-        } else {
-            $sections = $this->cache->{'course_sections_'.$course->id};
-            $activities = $this->cache->{'course_activites_'.$course->id};
         }
+
         return array($sections, $activities);
     }
 
