@@ -225,8 +225,7 @@ class completion_criteria_duration extends completion_criteria {
         $now = time();
         $rs = $DB->get_recordset_sql($sql, array($now, $now));
         foreach ($rs as $record) {
-
-            $completion = new completion_criteria_completion((array)$record);
+            $completion = new completion_criteria_completion($record, DATA_OBJECT_FETCH_BY_KEY);
 
             // Use time start if not 0, otherwise use timeenrolled
             if ($record->otimestart) {

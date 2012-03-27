@@ -293,8 +293,9 @@ class completion_info {
      */
     public function get_user_completion($user_id, $criteria) {
         $params = array(
+            'course'        => $this->course_id,
+            'userid'        => $user_id,
             'criteriaid'    => $criteria->id,
-            'userid'        => $user_id
         );
 
         $completion = new completion_criteria_completion($params);
@@ -336,7 +337,7 @@ class completion_info {
             // Build array of criteria objects
             $this->criteria = array();
             foreach ($records as $record) {
-                $this->criteria[$record->id] = completion_criteria::factory($record);
+                $this->criteria[$record->id] = completion_criteria::factory((array)$record);
             }
         }
 

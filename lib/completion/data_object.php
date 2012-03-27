@@ -1,85 +1,137 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+/**
+ * Course completion critieria aggregation
+ *
+ * @package core_completion
+ * @category completion
+ * @copyright 2009 Catalyst IT Ltd
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+
+/**
+ * Trigger for the new data_object api.
+ *
+ * See data_object::__constructor
+ */
+define('DATA_OBJECT_FETCH_BY_KEY',  2);
 
 /**
  * A data abstraction object that holds methods and attributes
- * @abstract
+ *
+ * @package core_completion
+ * @category completion
+ * @copyright 2009 Catalyst IT Ltd
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class data_object {
-    /**
-     * Table that the class maps to in the database
-     * @var string $table
-     */
+
+    /* @var string Table that the class maps to in the database */
     public $table;
 
-    /**
-     * Array of required table fields, must start with 'id'.
-     * @var array $required_fields
-     */
+    /* @var array Array of required table fields, must start with 'id'. */
     public $required_fields = array('id');
 
     /**
      * Array of optional fields with default values - usually long text information that is not always needed.
      * If you want to create an instance without optional fields use: new data_object($only_required_fields, false);
-     * @var array $optional_fields
+     * @var array
      */
     public $optional_fields = array();
 
-    /**
-     * The PK.
-     * @var int $id
-     */
+    /* @var Array of unique fields, used in where clauses and constructor */
+    public $unique_fields = array();
+
+    /* @var int The primary key */
     public $id;
+
 
     /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from DB.
-     * @param array $params an array with required parameters for this data object.
-     * @param boolean $fetch Whether to fetch corresponding row from DB or not,
-     *        optional fields might not be defined if false used
+     *
+     * If $fetch is not false, there are a few different things that can happen:
+     * - true:
+     *   load corresponding row from the database, using $params as the WHERE clause
+     *
+     * - DATA_OBJECT_FETCH_BY_KEY:
+     *  load corresponding row from the database, using only the $id in the WHERE clause (if set),
+     *  otherwise using the columns listed in $this->unique_fields.
+     *
+     * - array():
+     *   load corresponding row from the database, using the columns listed in this array
+     *   in the WHERE clause
+     *
+     * @param   array   $params     required parameters and their values for this data object
+     * @param   mixed   $fetch      if false, do not attempt to fetch from the database, otherwise see notes
      */
-    public function __construct($params=NULL, $fetch=true) {
-        if (!empty($params) and (is_array($params) or is_object($params))) {
-            if ($fetch) {
-                if ($data = $this->fetch($params)) {
-                    self::set_properties($this, $data);
-                } else {
-                    self::set_properties($this, $this->optional_fields);//apply defaults for optional fields
-                    self::set_properties($this, $params);
-                }
+    public function __construct($params = null, $fetch = true) {
 
-            } else {
-                self::set_properties($this, $params);
+        if (is_object($params)) {
+            throw new coding_exception('data_object params should be in the form of an array, not an object');
+        }
+
+        // If no params given, apply defaults for optional fields
+        if (empty($params) || !is_array($params)) {
+            self::set_properties($this, $this->optional_fields);
+            return;
+        }
+
+        // If fetch is false, do not load from database
+        if ($fetch === false) {
+            self::set_properties($this, $params);
+            return;
+        }
+
+        // Compose where clause only from fields in unique_fields
+        if ($fetch === DATA_OBJECT_FETCH_BY_KEY && !empty($this->unique_fields)) {
+            if (empty($params['id'])) {
+                $where = array_intersect_key($params, array_flip($this->unique_fields));
             }
-
+            else {
+                $where = array('id' => $params['id']);
+            }
+        // Compose where clause from given field names
+        } else if (is_array($fetch) && !empty($fetch)) {
+            $where = array_intersect_key($params, array_flip($fetch));
+        // Use entire params array for where clause
         } else {
-            self::set_properties($this, $this->optional_fields);//apply defaults for optional fields
+            $where = $params;
+        }
+
+        // Attempt to load from database
+        if ($data = $this->fetch($where)) {
+            // Apply data from database, then data sent to constructor
+            self::set_properties($this, $data);
+            self::set_properties($this, $params);
+        } else {
+            // Apply defaults for optional fields, then data from constructor
+            self::set_properties($this, $this->optional_fields);
+            self::set_properties($this, $params);
         }
     }
 
     /**
      * Makes sure all the optional fields are loaded.
+     *
      * If id present (==instance exists in db) fetches data from db.
      * Defaults are used for new instances.
      */
@@ -99,10 +151,12 @@ abstract class data_object {
 
     /**
      * Finds and returns a data_object instance based on params.
-     * @static abstract
      *
-     * @param array $params associative arrays varname=>value
-     * @return object data_object instance or false if none found.
+     * This function MUST be overridden by all deriving classes.
+     *
+     * @param array $params associative arrays varname => value
+     * @throws coding_exception This function MUST be overridden
+     * @return data_object instance  of data_object or false if none found.
      */
     public static function fetch($params) {
         throw new coding_exception('fetch() method needs to be overridden in each subclass of data_object');
@@ -111,7 +165,10 @@ abstract class data_object {
     /**
      * Finds and returns all data_object instances based on params.
      *
-     * @param array $params associative arrays varname=>value
+     * This function MUST be overridden by all deriving classes.
+     *
+     * @param array $params associative arrays varname => value
+     * @throws coding_exception This function MUST be overridden
      * @return array array of data_object instances or false if none found.
      */
     public static function fetch_all($params) {
@@ -120,8 +177,12 @@ abstract class data_object {
 
     /**
      * Factory method - uses the parameters to retrieve matching instance from the DB.
-     * @static final protected
-     * @return mixed object instance or false if not found
+     *
+     * @final
+     * @param string $table The table name to fetch from
+     * @param string $classname The class that you want the result instantiated as
+     * @param array $params Any params required to select the desired row
+     * @return object Instance of $classname or false.
      */
     protected static function fetch_helper($table, $classname, $params) {
         if ($instances = self::fetch_all_helper($table, $classname, $params)) {
@@ -137,7 +198,11 @@ abstract class data_object {
 
     /**
      * Factory method - uses the parameters to retrieve all matching instances from the DB.
-     * @static final protected
+     *
+     * @final
+     * @param string $table The table name to fetch from
+     * @param string $classname The class that you want the result instantiated as
+     * @param array $params Any params required to select the desired row
      * @return mixed array of object instances or false if not found
      */
     public static function fetch_all_helper($table, $classname, $params) {
@@ -185,7 +250,8 @@ abstract class data_object {
 
     /**
      * Updates this object in the Database, based on its object variables. ID must be set.
-     * @return boolean success
+     *
+     * @return bool success
      */
     public function update() {
         global $DB;
@@ -205,7 +271,8 @@ abstract class data_object {
 
     /**
      * Deletes this object from the database.
-     * @return boolean success
+     *
+     * @return bool success
      */
     public function delete() {
         global $DB;
@@ -228,6 +295,8 @@ abstract class data_object {
 
     /**
      * Returns object with fields and values that are defined in database
+     *
+     * @return stdClass
      */
     public function get_record_data() {
         $data = new stdClass();
@@ -248,6 +317,7 @@ abstract class data_object {
      * Records this object in the Database, sets its id to the returned value, and returns that value.
      * If successful this function also fetches the new object data from database and stores it
      * in object properties.
+     *
      * @return int PK ID if successful, false otherwise
      */
     public function insert() {
@@ -274,6 +344,8 @@ abstract class data_object {
      * each variable in turn. If the DB has different data, the db's data is used to update
      * the object. This is different from the update() function, which acts on the DB record
      * based on the object.
+     *
+     * @return bool True for success, false otherwise.
      */
     public function update_from_db() {
         if (empty($this->id)) {
@@ -294,7 +366,10 @@ abstract class data_object {
     /**
      * Given an associated array or object, cycles through each key/variable
      * and assigns the value to the corresponding variable in this object.
-     * @static final
+     *
+     * @final
+     * @param data_object $instance
+     * @param array $params
      */
     public static function set_properties(&$instance, $params) {
         $params = (array) $params;
@@ -310,8 +385,8 @@ abstract class data_object {
      * deleted in the database. Default does nothing, can be overridden to
      * hook in special behaviour.
      *
-     * @param bool $deleted
+     * @param bool $deleted Set this to true if it has been deleted.
      */
-    function notify_changed($deleted) {
+    public function notify_changed($deleted) {
     }
 }
