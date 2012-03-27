@@ -75,7 +75,7 @@ abstract class qtype_ddmarker_list_item {
 }
 class qtype_ddmarker_category_list_item extends qtype_ddmarker_list_item {
 
-    function __construct($record, $list, $parentlist) {
+    public function __construct($record, $list, $parentlist) {
         $this->record = $record;
         $this->list = $list;
         $this->parentlist = $parentlist;
@@ -108,7 +108,7 @@ class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
     protected $list;
     protected $parentlist = null;
 
-    function __construct($record, $list) {
+    public function __construct($record, $list) {
         $this->record = $record;
         $this->list = $list;
     }
@@ -130,7 +130,7 @@ class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
         $thisitem = get_string($stringidentifier.'context', 'qtype_ddmarker', $a);
         if ($link) {
             $actionurl = new moodle_url($PAGE->url, array('contextid'=> $this->record->id));
-            $thisitem = html_writer::tag('a', $thisitem,array('href' => $actionurl));
+            $thisitem = html_writer::tag('a', $thisitem, array('href' => $actionurl));
         }
         return $thisitem.$this->render_children($stringidentifier, $link);
     }
@@ -249,7 +249,6 @@ $sql = 'SELECT cat.id, cat.contextid, COUNT(1) AS qcount '.
 
 
 $catswithquestions = $DB->get_records_sql($sql, $params);
-//print_object($catswithquestions);
 
 $contextids = array();
 foreach ($catswithquestions as $catwithquestions) {
@@ -262,7 +261,6 @@ $categories = new qtype_ddmarker_category_list($contextids, $contexts);
 foreach ($catswithquestions as $catwithquestions) {
     $categories->leaf_node($catwithquestions->id, $catwithquestions->qcount);
 }
-//print_object($contexts->root_node());
 if ($categoryid || $qcontextid) {
     if (!$confirm) {
         $cofirmedurl = new moodle_url($PAGE->url, compact('categoryid', 'contextid')+array('confirm'=>1));
