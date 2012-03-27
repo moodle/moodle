@@ -99,7 +99,7 @@ class qtype_ddmarker_category_list_item extends qtype_ddmarker_list_item {
             $actionurl = new moodle_url($PAGE->url, array('categoryid'=> $this->record->id));
             $thisitem = html_writer::tag('a', $thisitem, array('href' => $actionurl));
         }
-        
+
         return $thisitem.$this->render_children($stringidentifier, $link);
     }
 }
@@ -126,7 +126,7 @@ class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
         global $PAGE;
         $a = new stdClass();
         $a->qcount = $this->qcount;
-        $a->name = $this->record->get_context_name();
+        $a->name = print_context_name($this->record);
         $thisitem = get_string($stringidentifier.'context', 'qtype_ddmarker', $a);
         if ($link) {
             $actionurl = new moodle_url($PAGE->url, array('contextid'=> $this->record->id));
@@ -170,10 +170,16 @@ class qtype_ddmarker_context_list extends qtype_ddmarker_list {
         global $DB;
         $this->records = array();
         foreach ($contextids as $contextid) {
-            if (!isset($records[$contextid])) {
-                $this->records[$contextid] = context::instance_by_id($contextid);
+            if (!isset($this->records[$contextid])) {
+                $this->records[$contextid] = get_context_instance_by_id($contextid, MUST_EXIST);
             }
-            $this->records += $this->records[$contextid]->get_parent_contexts();
+            $parents = get_parent_contexts($this->records[$contextid]);
+            foreach ($parents as $parentcontextid) {
+                if (!isset($this->records[$parentcontextid])) {
+                    $this->records[$parentcontextid] =
+                                        get_context_instance_by_id($parentcontextid, MUST_EXIST);
+                }
+            }
         }
         parent::make_list_item_instances_from_records ($contextids);
     }
@@ -271,7 +277,7 @@ if ($categoryid || $qcontextid) {
         echo $contexts->render('listitem', false, $torender);
         echo $OUTPUT->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
     } else if (confirm_sesskey()) {
-        
+
     }
 } else {
     echo $contexts->render('listitemaction', true, $contexts->root_node());
