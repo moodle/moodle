@@ -356,7 +356,8 @@ class question_engine_attempt_upgrader {
                 return 'qbehaviour_manualgraded_converter';
             }
         }
-        if ($question->qtype == 'essay') {
+        $qtype = question_bank::get_qtype($question->qtype, false);
+        if ($qtype->is_manual_graded()) {
             return 'qbehaviour_manualgraded_converter';
         } else if ($question->qtype == 'description') {
             return 'qbehaviour_informationitem_converter';
