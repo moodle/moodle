@@ -46,7 +46,7 @@ class qformat_learnwise extends qformat_default {
         return true;
     }
 
-    function readquestions($lines) {
+    protected function readquestions($lines) {
         $questions = array();
         $currentquestion = array();
 

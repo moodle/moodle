@@ -1,0 +1,9 @@
+This files describes API changes for question import/export format plugins.
+
+=== 2.1.5 / 2.2.3 / 2.3 ===
+
+* The readquestions method used to take a second argument $context. However, at
+  the point where this method was called, it was impossible to know what
+  context the quetsions were going to be saved into, so the value could be
+  wrong. Also, none of the standard question formats were using this argument,
+  so it was removed. See MDL-32220.
