@@ -26,6 +26,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+
+/**
+ * Trigger for the new data_object api.
+ *
+ * See data_object::__constructor
+ */
+define('DATA_OBJECT_FETCH_BY_KEY',  2);
+
 /**
  * A data abstraction object that holds methods and attributes
  *
@@ -50,32 +58,74 @@ abstract class data_object {
      */
     public $optional_fields = array();
 
+    /* @var Array of unique fields, used in where clauses and constructor */
+    public $unique_fields = array();
+
     /* @var int The primary key */
     public $id;
+
 
     /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from DB.
      *
-     * @param array $params an array with required parameters for this data object.
-     * @param bool $fetch Whether to fetch corresponding row from DB or not,
-     *        optional fields might not be defined if false used
+     * If $fetch is not false, there are a few different things that can happen:
+     * - true:
+     *   load corresponding row from the database, using $params as the WHERE clause
+     *
+     * - DATA_OBJECT_FETCH_BY_KEY:
+     *  load corresponding row from the database, using only the $id in the WHERE clause (if set),
+     *  otherwise using the columns listed in $this->unique_fields.
+     *
+     * - array():
+     *   load corresponding row from the database, using the columns listed in this array
+     *   in the WHERE clause
+     *
+     * @param   array   $params     required parameters and their values for this data object
+     * @param   mixed   $fetch      if false, do not attempt to fetch from the database, otherwise see notes
      */
     public function __construct($params = null, $fetch = true) {
-        if (!empty($params) and (is_array($params) or is_object($params))) {
-            if ($fetch) {
-                if ($data = $this->fetch($params)) {
-                    self::set_properties($this, $data);
-                } else {
-                    self::set_properties($this, $this->optional_fields);//apply defaults for optional fields
-                    self::set_properties($this, $params);
-                }
 
-            } else {
-                self::set_properties($this, $params);
+        if (is_object($params)) {
+            throw new coding_exception('data_object params should be in the form of an array, not an object');
+        }
+
+        // If no params given, apply defaults for optional fields
+        if (empty($params) || !is_array($params)) {
+            self::set_properties($this, $this->optional_fields);
+            return;
+        }
+
+        // If fetch is false, do not load from database
+        if ($fetch === false) {
+            self::set_properties($this, $params);
+            return;
+        }
+
+        // Compose where clause only from fields in unique_fields
+        if ($fetch === DATA_OBJECT_FETCH_BY_KEY && !empty($this->unique_fields)) {
+            if (empty($params['id'])) {
+                $where = array_intersect_key($params, array_flip($this->unique_fields));
             }
-
+            else {
+                $where = array('id' => $params['id']);
+            }
+        // Compose where clause from given field names
+        } else if (is_array($fetch) && !empty($fetch)) {
+            $where = array_intersect_key($params, array_flip($fetch));
+        // Use entire params array for where clause
         } else {
-            self::set_properties($this, $this->optional_fields);//apply defaults for optional fields
+            $where = $params;
+        }
+
+        // Attempt to load from database
+        if ($data = $this->fetch($where)) {
+            // Apply data from database, then data sent to constructor
+            self::set_properties($this, $data);
+            self::set_properties($this, $params);
+        } else {
+            // Apply defaults for optional fields, then data from constructor
+            self::set_properties($this, $this->optional_fields);
+            self::set_properties($this, $params);
         }
     }
 
