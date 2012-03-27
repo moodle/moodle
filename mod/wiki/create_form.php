@@ -29,8 +29,7 @@ require_once($CFG->libdir.'/formslib.php');
 class mod_wiki_create_form extends moodleform {
 
     protected function definition() {
-        global $CFG;
-        $mform =& $this->_form;
+        $mform = $this->_form;
 
         $formats = $this->_customdata['formats'];
         $defaultformat = $this->_customdata['defaultformat'];
@@ -43,6 +42,8 @@ class mod_wiki_create_form extends moodleform {
             $textoptions = array('readonly'=>'readonly');
         }
         $mform->addElement('text', 'pagetitle', get_string('newpagetitle', 'wiki'), $textoptions);
+        $mform->setType('pagetitle', PARAM_TEXT);
+        $mform->addRule('pagetitle', get_string('required'), 'required', null, 'client');
 
         if ($forceformat) {
             $mform->addElement('hidden', 'pageformat', $defaultformat);
@@ -60,10 +61,12 @@ class mod_wiki_create_form extends moodleform {
                 $mform->addElement('radio', 'pageformat', '', get_string('format'.$format, 'wiki'), $format, $attr);
             }
         }
+        $mform->setType('pageformat', PARAM_ALPHANUMEXT);
+        $mform->addRule('pageformat', get_string('required'), 'required', null, 'client');
 
         //hiddens
-        $mform->addElement('hidden', 'action');
-        $mform->setDefault('action', 'create');
+        $mform->addElement('hidden', 'action', 'create');
+        $mform->setType('action', PARAM_ALPHA);
 
         $this->add_action_buttons(false, get_string('createpage', 'wiki'));
     }
