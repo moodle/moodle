@@ -99,7 +99,7 @@ class qtype_ddmarker_category_list_item extends qtype_ddmarker_list_item {
             $actionurl = new moodle_url($PAGE->url, array('categoryid'=> $this->record->id));
             $thisitem = html_writer::tag('a', $thisitem, array('href' => $actionurl));
         }
-        
+
         return $thisitem.$this->render_children($stringidentifier, $link);
     }
 }
@@ -269,7 +269,7 @@ if ($categoryid || $qcontextid) {
         echo $contexts->render('listitem', false, $torender);
         echo $OUTPUT->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
     } else if (confirm_sesskey()) {
-        
+
     }
 } else {
     echo $contexts->render('listitemaction', true, $contexts->root_node());
