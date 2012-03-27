@@ -322,7 +322,7 @@ function completion_cron_completions() {
             foreach ($completions as $params) {
                 $timecompleted = max($timecompleted, $params->timecompleted);
 
-                $completion = new completion_criteria_completion($params, false);
+                $completion = new completion_criteria_completion((array)$params, false);
 
                 // Handle aggregation special cases
                 if ($params->criteriatype == COMPLETION_CRITERIA_TYPE_ACTIVITY) {
