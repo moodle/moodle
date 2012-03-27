@@ -177,6 +177,10 @@ class grade_report_grader extends grade_report {
         $queue = array();
         $this->load_users();
         $this->load_final_grades();
+
+        // Were any changes made?
+        $changedgrades = false;
+
         foreach ($data as $varname => $postedvalue) {
 
             $needsupdate = false;
@@ -204,6 +208,7 @@ class grade_report_grader extends grade_report {
                     // -1 means no grade
                     continue;
                 }
+                $changedgrades = true;
             } else if ($datatype == 'feedback') {
                 if ($oldvalue->feedback == $postedvalue) {
                     continue;
@@ -278,12 +283,15 @@ class grade_report_grader extends grade_report {
 
             $gradeitem->update_final_grade($userid, $finalgrade, 'gradebook', $feedback, FORMAT_MOODLE);
 
-            // Update the array of loaded grades
-            if ($datatype == 'grade') {
-                $this->grades[$userid][$itemid]->finalgrade = $finalgrade;
-            } else if ($datatype == 'feedback') {
+            // We can update feedback without reloading the grade item as it doesn't affect grade calculations
+            if ($datatype == 'feedback') {
                 $this->grades[$userid][$itemid]->feedback = $feedback;
             }
+        }
+
+        if ($changedgrades) {
+            // If a final grade was overriden reload grades so dependent grades like course total will be correct
+            $this->grades = null;
         }
 
         return $warnings;
@@ -892,6 +900,15 @@ class grade_report_grader extends grade_report {
                 } else {
                     $gradeval = $grade->finalgrade;
                 }
+                if (!empty($grade->finalgrade)) {
+                    $gradevalforJS = null;
+                    if ($item->scaleid && !empty($scalesarray[$item->scaleid])) {
+                        $gradevalforJS = (int)$gradeval;
+                    } else {
+                        $gradevalforJS = format_float($gradeval, $decimalpoints);
+                    }
+                    $jsarguments['grades'][] = array('user'=>$userid, 'item'=>$itemid, 'grade'=>$gradevalforJS);
+                }
 
                 // MDL-11274
                 // Hide grades in the grader report if the current grader doesn't have 'moodle/grade:viewhidden'
@@ -1056,8 +1073,7 @@ class grade_report_grader extends grade_report {
             }
             $jsarguments['cfg']['feedbacktrunclength'] =  $this->feedback_trunc_length;
 
-            //feedbacks are now being stored in $jsarguments['feedback'] in get_right_rows()
-            //$jsarguments['cfg']['feedback'] =  $this->feedbacks;
+            // Student grades and feedback are already at $jsarguments['feedback'] and $jsarguments['grades']
         }
         $jsarguments['cfg']['isediting'] = (bool)$USER->gradeediting[$this->courseid];
         $jsarguments['cfg']['courseid'] =  $this->courseid;
@@ -1673,21 +1689,21 @@ class grade_report_grader extends grade_report {
     }
 
     /**
-     * Returns the number of students to be displayed on each page
+     * Returns the maximum number of students to be displayed on each page
      *
      * Takes into account the 'studentsperpage' user preference and the 'max_input_vars'
      * PHP setting. Too many fields is only a problem when submitting grades but
      * we respect 'max_input_vars' even when viewing grades to prevent students disappearing
      * when toggling editing on and off.
      *
-     * @return int The number of students to display per page
+     * @return int The maximum number of students to display per page
      */
-    private function get_students_per_page() {
+    public function get_students_per_page() {
         global $USER;
         static $studentsperpage = null;
 
         if ($studentsperpage === null) {
-            $studentsperpage = $this->get_pref('studentsperpage');
+            $originalstudentsperpage = $studentsperpage = $this->get_pref('studentsperpage');
 
             // Will this number of students result in more fields that we are allowed?
             $maxinputvars = ini_get('max_input_vars');
@@ -1705,7 +1721,6 @@ class grade_report_grader extends grade_report {
 
                 $fieldsperstudent = $fieldspergradeitem * count($this->gtree->get_items());
                 $fieldsrequired = $studentsperpage * $fieldsperstudent;
-
                 if ($fieldsrequired > $maxinputvars) {
                     $studentsperpage = floor($maxinputvars / $fieldsperstudent);
                     if ($studentsperpage<1) {
@@ -1714,7 +1729,12 @@ class grade_report_grader extends grade_report {
                         // if there are >500 grade items and quickgrading and showquickfeedback are on
                         $studentsperpage = 1;
                     }
-                    debugging(get_string('studentsperpagereduced', 'grades'));
+
+                    $a = new stdClass();
+                    $a->originalstudentsperpage = $originalstudentsperpage;
+                    $a->studentsperpage = $studentsperpage;
+                    $a->maxinputvars = $maxinputvars;
+                    debugging(get_string('studentsperpagereduced', 'grades', $a));
                 }
             }
         }
