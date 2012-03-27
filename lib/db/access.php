@@ -854,6 +854,14 @@ $capabilities = array(
         )
     ),
 
+    'moodle/course:ignorefilesizelimits' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+        )
+    ),
+
     'moodle/course:manageactivities' => array(
 
         'riskbitmask' => RISK_XSS,
