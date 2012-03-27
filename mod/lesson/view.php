@@ -193,7 +193,7 @@ if (empty($pageid)) {
 
     // if there are any questions have been answered correctly in this attempt
     $corrrectattempts = $lesson->get_attempts($retries, true);
-    if ($corrrectattempts>0) {
+    if (!empty($corrrectattempts)) {
         $attempt = end($corrrectattempts);
         $jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
         // convert the jumpto to a proper page id
