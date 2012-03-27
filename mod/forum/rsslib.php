@@ -31,7 +31,7 @@
  * @return string the full path to the cached RSS feed directory. Null if there is a problem.
  */
 function forum_rss_get_feed($context, $args) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
 
     $status = true;
 
@@ -59,7 +59,7 @@ function forum_rss_get_feed($context, $args) {
     $sql = forum_rss_get_sql($forum, $cm);
 
     //hash the sql to get the cache file name
-    $filename = rss_get_file_name($forum, $sql);
+    $filename = rss_get_file_name($forum, $sql . $USER->id);
     $cachedfilepath = rss_get_file_full_name('mod_forum', $filename);
 
     //Is the cache out of date?
@@ -290,8 +290,10 @@ function forum_rss_get_group_sql($cm, $groupmode, $currentgroup, $modcontext=nul
  *
  * @Todo MDL-31129 implement post attachment handling
  */
-function forum_rss_feed_contents($forum, $sql, $context) {
-    global $CFG, $DB;
+
+function forum_rss_feed_contents($forum, $sql) {
+    global $CFG, $DB, $USER;
+
 
     $status = true;
 
@@ -305,28 +307,51 @@ function forum_rss_feed_contents($forum, $sql, $context) {
         $isdiscussion = false;
     }
 
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+        print_error('invalidcoursemodule');
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     $formatoptions = new stdClass();
     $items = array();
     foreach ($recs as $rec) {
             $item = new stdClass();
             $user = new stdClass();
-            if ($isdiscussion && !empty($rec->discussionname)) {
-                $item->title = format_string($rec->discussionname);
-            } else if (!empty($rec->postsubject)) {
-                $item->title = format_string($rec->postsubject);
+
+            if ($isdiscussion && !forum_user_can_see_discussion($forum, $rec->discussionid, $context)) {
+                // This is a discussion which the user can't has no permission to view
+                $item->title = get_string('forumsubjecthidden', 'forum');
+                $item->description = get_string('forumbodyhidden', 'forum');
+                $item->author = get_string('forumauthorhidden', 'forum');
+            } else if (!$isdiscussion && !forum_user_can_see_post($forum, $rec->discussionid, $rec->postid, $USER, $cm)) {
+                // This is a post which the user can't has no permission to view
+                $item->title = get_string('forumsubjecthidden', 'forum');
+                $item->description = get_string('forumbodyhidden', 'forum');
+                $item->author = get_string('forumauthorhidden', 'forum');
             } else {
-                //we should have an item title by now but if we dont somehow then substitute something somewhat meaningful
-                $item->title = format_string($forum->name.' '.userdate($rec->postcreated,get_string('strftimedatetimeshort', 'langconfig')));
+                // The user must have permission to view
+                if ($isdiscussion && !empty($rec->discussionname)) {
+                    $item->title = format_string($rec->discussionname);
+                } else if (!empty($rec->postsubject)) {
+                    $item->title = format_string($rec->postsubject);
+                } else {
+                    //we should have an item title by now but if we dont somehow then substitute something somewhat meaningful
+                    $item->title = format_string($forum->name.' '.userdate($rec->postcreated,get_string('strftimedatetimeshort', 'langconfig')));
+                }
+                $user->firstname = $rec->userfirstname;
+                $user->lastname = $rec->userlastname;
+                $item->author = fullname($user);
+
+                $formatoptions->trusted = $rec->posttrust;
+                $item->description = format_text($rec->postmessage,$rec->postformat,$formatoptions,$forum->course);
             }
-            $user->firstname = $rec->userfirstname;
-            $user->lastname = $rec->userlastname;
-            $item->author = fullname($user);
-            $item->pubdate = $rec->postcreated;
+
             if ($isdiscussion) {
                 $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid;
             } else {
                 $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid."&parent=".$rec->postid;
             }
+
 
             $formatoptions->trusted = $rec->posttrust;
             $message = file_rewrite_pluginfile_urls($rec->postmessage, 'pluginfile.php', $context->id,
