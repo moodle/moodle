@@ -33,18 +33,18 @@ class HTML_QuickForm_Rule
 
    /**
     * Validates a value
-    * 
+    *
     * @access public
     * @abstract
     */
-    function validate($value)
+    function validate($value, $options = null)
     {
         return true;
     }
 
    /**
     * Sets the rule name
-    * 
+    *
     * @access public
     */
     function setName($ruleName)

@@ -224,7 +224,7 @@ class repository_flickr_public extends repository {
      * @param string $search_text
      * @return array
      */
-    public function search($search_text, $page = 1) {
+    public function search($search_text, $page = 0) {
         global $SESSION;
         $ret = array();
         if (empty($page)) {
@@ -471,7 +471,7 @@ class repository_flickr_public extends repository {
      * Add Plugin settings input to Moodle form
      * @param object $mform
      */
-    public function type_config_form($mform) {
+    public static function type_config_form($mform, $classname = 'repository') {
         $api_key = get_config('flickr_public', 'api_key');
         if (empty($api_key)) {
             $api_key = '';

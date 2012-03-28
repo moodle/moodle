@@ -84,12 +84,12 @@ class repository_googledocs extends repository {
         return $ret;
     }
 
-    public function search($query){
+    public function search($search_text, $page = 0) {
         $gdocs = new google_docs(new google_authsub($this->subauthtoken));
 
         $ret = array();
         $ret['dynload'] = true;
-        $ret['list'] = $gdocs->get_file_list($query);
+        $ret['list'] = $gdocs->get_file_list($search_text);
         return $ret;
     }
 
@@ -108,7 +108,7 @@ class repository_googledocs extends repository {
         return parent::logout();
     }
 
-    public function get_file($url, $file) {
+    public function get_file($url, $file = '') {
         global $CFG;
         $path = $this->prepare_file($file);
 

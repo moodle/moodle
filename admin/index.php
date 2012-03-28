@@ -200,6 +200,7 @@ if ($version > $CFG->version) {  // upgrade
     }
 
     if (empty($confirmupgrade)) {
+        $a = new stdClass();
         $a->oldversion = "$CFG->release ($CFG->version)";
         $a->newversion = "$release ($version)";
         $strdatabasechecking = get_string('databasechecking', '', $a);

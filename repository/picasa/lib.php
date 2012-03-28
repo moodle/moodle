@@ -88,11 +88,11 @@ class repository_picasa extends repository {
         return $ret;
     }
 
-    public function search($query){
+    public function search($search_text, $page = 0) {
         $picasa = new google_picasa(new google_authsub($this->subauthtoken));
 
         $ret = array();
-        $ret['list'] =  $picasa->do_photo_search($query);
+        $ret['list'] =  $picasa->do_photo_search($search_text);
         return $ret;
     }
 

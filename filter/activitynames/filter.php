@@ -43,15 +43,15 @@ class filter_activitynames extends moodle_text_filter {
         }
 
         // Initialise/invalidate our trivial cache if dealing with a different course
-        if (!isset($this->cachedcourseid) || $this->cachedcourseid !== (int)$courseid) {
-            $this->activitylist = null;
+        if (!isset(self::$cachedcourseid) || self::$cachedcourseid !== (int)$courseid) {
+            self::$activitylist = null;
         }
-        $this->cachedcourseid = (int)$courseid;
+        self::$cachedcourseid = (int)$courseid;
 
         /// It may be cached
 
-        if (is_null($this->activitylist)) {
-            $this->activitylist = array();
+        if (is_null(self::$activitylist)) {
+            self::$activitylist = array();
 
             if ($COURSE->id == $courseid) {
                 $course = $COURSE;
@@ -68,7 +68,7 @@ class filter_activitynames extends moodle_text_filter {
 
             if (!empty($modinfo)) {
 
-                $this->activitylist = array();      /// We will store all the activities here
+                self::$activitylist = array();      /// We will store all the activities here
 
                 //Sort modinfo by name length
                 usort($modinfo, 'filter_activitynames_comparemodulenamesbylength');
@@ -82,9 +82,9 @@ class filter_activitynames extends moodle_text_filter {
                         /// Avoid empty or unlinkable activity names
                         if (!empty($title)) {
                             $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\">";
-                            $this->activitylist[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
+                            self::$activitylist[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
                             if ($currentname != $entitisedname) { /// If name has some entity (&amp; &quot; &lt; &gt;) add that filter too. MDL-17545
-                                $this->activitylist[] = new filterobject($entitisedname, $href_tag_begin, '</a>', false, true);
+                                self::$activitylist[] = new filterobject($entitisedname, $href_tag_begin, '</a>', false, true);
                             }
                         }
                     }
@@ -92,8 +92,8 @@ class filter_activitynames extends moodle_text_filter {
             }
         }
 
-        if ($this->activitylist) {
-            return $text = filter_phrases ($text, $this->activitylist);
+        if (self::$activitylist) {
+            return $text = filter_phrases ($text, self::$activitylist);
         } else {
             return $text;
         }

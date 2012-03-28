@@ -157,7 +157,7 @@ if ($backup->enforce_changed_dependencies()) {
     echo $renderer->dependency_notification(get_string('dependenciesenforced','backup'));
 }
 echo $renderer->progress_bar($backup->get_progress_bar());
-echo $backup->display();
+echo $backup->display($renderer);
 $backup->destroy();
 unset($backup);
 echo $OUTPUT->footer();
