@@ -1750,49 +1750,64 @@ class global_navigation extends navigation_node {
             return true;
         }
 
+        $catcontextsql = context_helper::get_preload_record_columns_sql('ctx');
+        $sqlselect = "SELECT cc.*, $catcontextsql
+                      FROM {course_categories} cc
+                      JOIN {context} ctx ON cc.id = ctx.instanceid";
+        $sqlwhere = "WHERE ctx.contextlevel = ".CONTEXT_COURSECAT;
+        $sqlorder = "ORDER BY depth ASC, sortorder ASC, id ASC";
+        $params = array();
+
         $categoriestoload = array();
         if ($categoryid == self::LOAD_ALL_CATEGORIES) {
-            $categories = $DB->get_records('course_categories', null, 'sortorder ASC, id ASC');
+            // We are going to load all categories regardless... prepare to fire
+            // on the database server!
         } else if ($categoryid == self::LOAD_ROOT_CATEGORIES) { // can be 0
             // We are going to load all of the first level categories (categories without parents)
-            $categories = $DB->get_records('course_categories', array('parent'=>'0'), 'sortorder ASC, id ASC');
+            $sqlwhere .= " AND cc.parent = 0";
         } else if (array_key_exists($categoryid, $this->addedcategories)) {
             // The category itself has been loaded already so we just need to ensure its subcategories
             // have been loaded
             list($sql, $params) = $DB->get_in_or_equal(array_keys($this->addedcategories), SQL_PARAMS_NAMED, 'parent', false);
             if ($showbasecategories) {
                 // We need to include categories with parent = 0 as well
-                $sql = "SELECT *
-                          FROM {course_categories} cc
-                         WHERE (parent = :categoryid OR parent = 0) AND
-                               parent {$sql}
-                      ORDER BY depth DESC, sortorder ASC, id ASC";
+                $sqlwhere .= " AND (parent = :categoryid OR parent = 0) AND parent {$sql}";
             } else {
-                $sql = "SELECT *
-                          FROM {course_categories} cc
-                         WHERE parent = :categoryid AND
-                               parent {$sql}
-                      ORDER BY depth DESC, sortorder ASC, id ASC";
+                // All we need is categories that match the parent
+                $sqlwhere .= " AND parent = :categoryid AND parent {$sql}";
             }
             $params['categoryid'] = $categoryid;
-            $categories = $DB->get_records_sql($sql, $params);
-            if (count($categories) == 0) {
-                // There are no further categories that require loading.
-                return;
-            }
         } else {
             // This category hasn't been loaded yet so we need to fetch it, work out its category path
             // and load this category plus all its parents and subcategories
             $category = $DB->get_record('course_categories', array('id' => $categoryid), 'path', MUST_EXIST);
             $categoriestoload = explode('/', trim($category->path, '/'));
             list($select, $params) = $DB->get_in_or_equal($categoriestoload);
-            $select = 'id '.$select.' OR parent '.$select;
-            if ($showbasecategories) {
-                $select .= ' OR depth = 1';
-            }
+            // We are going to use select twice so double the params
             $params = array_merge($params, $params);
-            $categories = $DB->get_records_select('course_categories', $select, $params, 'sortorder');
+            $basecategorysql = ($showbasecategories)?' OR depth = 1':'';
+            $sqlwhere .= " AND (id {$select} OR parent {$select}{$basecategorysql})";
         }
+
+        $categoriesrs = $DB->get_recordset_sql("$sqlselect $sqlwhere $sqlorder", $params);
+        $categories = array();
+        foreach ($categoriesrs as $category) {
+            // Preload the context.. we'll need it when adding the category in order
+            // to format the category name.
+            context_helper::preload_from_record($category);
+            if (array_key_exists($category->id, $this->addedcategories)) {
+                // Do nothing, its already been added.
+            } else if ($category->parent == '0') {
+                // This is a root category lets add it immediately
+                $this->add_category($category, $this->rootnodes['courses']);
+            } else if (array_key_exists($category->parent, $this->addedcategories)) {
+                // This categories parent has already been added we can add this immediately
+                $this->add_category($category, $this->addedcategories[$category->parent]);
+            } else {
+                $categories[] = $category;
+            }
+        }
+        $categoriesrs->close();
 
         // Now we have an array of categories we need to add them to the navigation.
         while (!empty($categories)) {
