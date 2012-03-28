@@ -44,8 +44,12 @@ $scrollpos = optional_param('scrollpos', 0, PARAM_INT);
 if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
     print_error('invalidcourseid');
 }
-//you need mod/quiz:manage in addition to question capabilities to access this page.
+// You need mod/quiz:manage in addition to question capabilities to access this page.
+// You also need the moodle/question:useall capability somewhere.
 require_capability('mod/quiz:manage', $contexts->lowest());
+if (!$contexts->having_cap('moodle/question:useall')) {
+    print_error('nopermissions', '', '', 'use');
+}
 
 $PAGE->set_url($thispageurl);
 

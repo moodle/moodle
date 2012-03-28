@@ -1058,10 +1058,13 @@ function question_make_default_categories($contexts) {
         } else {
             $category = question_get_default_category($context->id);
         }
-        if ($preferredlevels[$context->contextlevel] > $preferredness && has_any_capability(
-                array('moodle/question:usemine', 'moodle/question:useall'), $context)) {
+        $thispreferredness = $preferredlevels[$context->contextlevel];
+        if (has_any_capability(array('moodle/question:usemine', 'moodle/question:useall'), $context)) {
+            $thispreferredness += 10;
+        }
+        if ($thispreferredness > $preferredness) {
             $toreturn = $category;
-            $preferredness = $preferredlevels[$context->contextlevel];
+            $preferredness = $thispreferredness;
         }
     }
 
@@ -1582,6 +1585,23 @@ class question_edit_contexts {
     public function having_one_edit_tab_cap($tabname) {
         return $this->having_one_cap(self::$caps[$tabname]);
     }
+    /**
+     * @return those contexts where a user can add a question and then use it.
+     */
+    public function having_add_and_use() {
+        $contextswithcap = array();
+        foreach ($this->allcontexts as $context) {
+            if (!has_capability('moodle/question:add', $context)) {
+                continue;
+            }
+            if (!has_any_capability(array('moodle/question:useall', 'moodle/question:usemine'), $context)) {
+                            continue;
+            }
+            $contextswithcap[] = $context;
+        }
+        return $contextswithcap;
+    }
+
     /**
      * Has at least one parent context got the cap $cap?
      *
