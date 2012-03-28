@@ -43,7 +43,17 @@ class mod_wiki_edit_form extends moodleform {
         $version = $this->_customdata['version'];
         $format  = $this->_customdata['format'];
         $pagetitle = $this->_customdata['pagetitle'];
-        $contextid  = $this->_customdata['contextid'];
+
+        if (empty($this->_customdata['contextid'])) {
+            // Hack alert
+            // This is being done ONLY to aid those who may have created there own wiki pages. It should be removed sometime
+            // after the release of 2.3 (not creating an issue because this whole thing should be reviewed)
+            debugging('You must always provide mod_wiki_edit_form with a contextid in its custom data', DEBUG_DEVELOPER);
+            global $PAGE;
+            $contextid  = $PAGE->context->id;
+        } else {
+            $contextid  = $this->_customdata['contextid'];
+        }
 
         if (isset($this->_customdata['pagetitle'])) {
             // Page title must be formatted properly here as this is output and not an element.
