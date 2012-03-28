@@ -78,7 +78,6 @@ if (!empty($swid)) {
     $wikipage->set_uid($uid);
 }
 
-
 $wikipage->set_title($title);
 
 // set page action, and initialise moodle form
