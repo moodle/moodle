@@ -44,9 +44,8 @@ require_once($CFG->libdir . '/filelib.php');
  */
 class workshop {
 
-    /** return statuses of {@link add_allocation} to be passed to a workshop renderer method */
+    /** error status of the {@link self::add_allocation()} */
     const ALLOCATION_EXISTS             = -9999;
-    const ALLOCATION_ERROR              = -9998;
 
     /** the internal code of the workshop phases as are stored in the database */
     const PHASE_SETUP                   = 10;
@@ -965,7 +964,7 @@ class workshop {
      * @param int $reviewerid User ID
      * @param int $weight of the new assessment, from 0 to 16
      * @param bool $bulk repeated inserts into DB expected
-     * @return int ID of the new assessment or an error code
+     * @return int ID of the new assessment or an error code {@link self::ALLOCATION_EXISTS} if the allocation already exists
      */
     public function add_allocation(stdclass $submission, $reviewerid, $weight=1, $bulk=false) {
         global $DB;
@@ -3011,61 +3010,6 @@ class workshop_message implements renderable {
     }
 }
 
-/**
- * Renderable output of submissions allocation process
- */
-class workshop_allocation_init_result implements renderable {
-
-    /** @var workshop_message */
-    protected $message;
-    /** @var array of steps */
-    protected $info = array();
-    /** @var moodle_url */
-    protected $continue;
-
-    /**
-     * Supplied argument can be either integer status code or an array of string messages. Messages
-     * in a array can have optional prefix or prefixes, using '::' as delimiter. Prefixes determine
-     * the type of the message and may influence its visualisation.
-     *
-     * @param mixed $result int|array returned by {@see workshop_allocator::init()}
-     * @param moodle_url to continue
-     */
-    public function __construct($result, moodle_url $continue) {
-
-        if ($result === workshop::ALLOCATION_ERROR) {
-            $this->message = new workshop_message(get_string('allocationerror', 'workshop'), workshop_message::TYPE_ERROR);
-        } else {
-            $this->message = new workshop_message(get_string('allocationdone', 'workshop'), workshop_message::TYPE_OK);
-            if (is_array($result)) {
-                $this->info = $result;
-            }
-        }
-
-        $this->continue = $continue;
-    }
-
-    /**
-     * @return workshop_message instance to render
-     */
-    public function get_message() {
-        return $this->message;
-    }
-
-    /**
-     * @return array of strings with allocation process details
-     */
-    public function get_info() {
-        return $this->info;
-    }
-
-    /**
-     * @return moodle_url where the user shoudl continue
-     */
-    public function get_continue_url() {
-        return $this->continue;
-    }
-}
 
 /**
  * Renderable component containing all the data needed to display the grading report

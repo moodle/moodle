@@ -32,6 +32,7 @@ $string['allocatedetails'] = 'expected: {$a->expected}<br />submitted: {$a->subm
 $string['allocation'] = 'Submission allocation';
 $string['allocationdone'] = 'Allocation done';
 $string['allocationerror'] = 'Allocation error';
+$string['allocationscheduleconfigured'] = 'Scheduled allocation configured';
 $string['allsubmissions'] = 'All submissions';
 $string['alreadygraded'] = 'Already graded';
 $string['areainstructauthors'] = 'Instructions for submission';
