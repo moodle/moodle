@@ -335,6 +335,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012032300.01);
     }
 
+    if ($oldversion < 2012032300.02) {
+        // Migrate the old admin debug setting.
+        if ($CFG->debug == 38911) {
+            set_config('debug', DEBUG_DEVELOPER);
+        } else if ($CFG->debug == 6143) {
+            set_config('debug', DEBUG_ALL);
+        }
+        upgrade_main_savepoint(true, 2012032300.02);
+    }
+
 
     return true;
 }

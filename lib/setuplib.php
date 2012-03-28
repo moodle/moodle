@@ -27,17 +27,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Debug levels //
-/** no warnings at all */
+// Debug levels - always keep the values in ascending order!
+/** No warnings and errors at all */
 define('DEBUG_NONE', 0);
-/** E_ERROR | E_PARSE */
-define('DEBUG_MINIMAL', 5);
-/** E_ERROR | E_PARSE | E_WARNING | E_NOTICE */
-define('DEBUG_NORMAL', 15);
-/** E_ALL without E_STRICT for now, do show recoverable fatal errors */
-define('DEBUG_ALL', 6143);
-/** DEBUG_ALL with extra Moodle debug messages - (DEBUG_ALL | 32768) */
-define('DEBUG_DEVELOPER', 38911);
+/** Fatal errors only */
+define('DEBUG_MINIMAL', E_ERROR | E_PARSE);
+/** Errors, warnings and notices */
+define('DEBUG_NORMAL', E_ERROR | E_PARSE | E_WARNING | E_NOTICE);
+/** All problems except strict PHP warnings */
+define('DEBUG_ALL', E_ALL & ~E_STRICT);
+/** DEBUG_ALL with all debug messages and strict warnings */
+define('DEBUG_DEVELOPER', E_ALL | E_STRICT);
 
 /** Remove any memory limits */
 define('MEMORY_UNLIMITED', -1);
