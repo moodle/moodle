@@ -188,6 +188,7 @@ if ($id) {
     $formeditable = true;
     require_capability('moodle/question:add', $categorycontext);
 }
+$question->formoptions->mustbeusable = (bool) $appendqnumstring;
 
 // Validate the question type.
 $PAGE->set_pagetype('question-type-' . $question->qtype);
