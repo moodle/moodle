@@ -727,3 +727,76 @@ class moodle_group_delete_groupmembers_form extends moodleform {
         return $params;
     }
 }
+
+/**
+ * Form class for create_categories() web service function test.
+ */
+class core_course_create_categories_form extends moodleform {
+    /**
+     * The form definition.
+     */
+    public function definition() {
+        global $CFG;
+
+        $mform = $this->_form;
+
+        $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
+
+        // Note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters.
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
+        $mform->addElement('text', 'name[0]', 'name[0]');
+        $mform->addElement('text', 'parent[0]', 'parent[0]');
+        $mform->addElement('text', 'idnumber[0]', 'idnumber[0]');
+        $mform->addElement('text', 'description[0]', 'description[0]');
+        $mform->addElement('text', 'name[1]', 'name[1]');
+        $mform->addElement('text', 'parent[1]', 'parent[1]');
+        $mform->addElement('text', 'idnumber[1]', 'idnumber[1]');
+        $mform->addElement('text', 'description[1]', 'description[1]');
+
+        $mform->addElement('hidden', 'function');
+        $mform->setType('function', PARAM_SAFEDIR);
+
+        $mform->addElement('hidden', 'protocol');
+        $mform->setType('protocol', PARAM_SAFEDIR);
+
+        $this->add_action_buttons(true, get_string('execute', 'webservice'));
+    }
+
+    /**
+     * Get the parameters that the user submitted using the form.
+     * @return array|null
+     */
+    public function get_params() {
+        if (!$data = $this->get_data()) {
+            return null;
+        }
+        // Remove unused from form data.
+        unset($data->submitbutton);
+        unset($data->protocol);
+        unset($data->function);
+        unset($data->wsusername);
+        unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
+
+        $params = array();
+        $params['categories'] = array();
+        for ($i=0; $i<10; $i++) {
+            if (empty($data->name[$i]) or empty($data->parent[$i])) {
+                continue;
+            }
+            $params['categories'][] = array('name'=>$data->name[$i], 'parent'=>$data->parent[$i],
+                                            'idnumber'=>$data->idnumber[$i], 'description'=>$data->description[$i]);
+        }
+        return $params;
+    }
+}

@@ -419,14 +419,11 @@ class core_course_external extends external_api {
     }
 
     /**
-    * Returns description of method parameters
-    *
-    * @return external_function_parameters
-    * @since Moodle 2.3
-    * TODO is PARAM_CLEANHTML for the description enough secured? 
-    *      Is it possible to still pass some script tag that pass PARAM_CLEANHTML 
-    *      and execute dangereous javascript in the browser? 
-    */
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.3
+     */
     public static function create_categories_parameters() {
         return new external_function_parameters(
             array(
@@ -434,11 +431,15 @@ class core_course_external extends external_api {
                         new external_single_structure(
                             array(
                                 'name' => new external_value(PARAM_TEXT, 'new category name'),
-                                'parent' => new external_value(PARAM_INT, 'the parent category id inside which the new category will be created'),
-                                'idnumber' => new external_value(PARAM_RAW, 'the new category idnumber', VALUE_OPTIONAL),
-                                'description' => new external_value(PARAM_CLEANHTML, 'the new category description', VALUE_OPTIONAL),
+                                'parent' => new external_value(PARAM_INT,
+                                        'the parent category id inside which the new category will be created'),
+                                'idnumber' => new external_value(PARAM_RAW,
+                                        'the new category idnumber', VALUE_OPTIONAL),
+                                'description' => new external_value(PARAM_RAW,
+                                        'the new category description', VALUE_OPTIONAL),
                                 'theme' => new external_value(PARAM_THEME,
-                                        'the new category theme. This option must be enabled on moodle', VALUE_OPTIONAL),
+                                        'the new category theme. This option must be enabled on moodle',
+                                        VALUE_OPTIONAL),
                         )
                     )
                 )
@@ -452,7 +453,6 @@ class core_course_external extends external_api {
      * @param array $categories - see create_categories_parameters() for the array structure
      * @return array - see create_categories_returns() for the array structure
      * @since Moodle 2.3
-     * TODO: check exceptions
      */
     public static function create_categories($categories) {
         global $CFG, $DB;
@@ -462,65 +462,53 @@ class core_course_external extends external_api {
                         array('categories' => $categories));
 
         $transaction = $DB->start_delegated_transaction();
-	
+
         $createdcategories = array();
-        foreach($params['categories'] as $category) {
-
-            $newcategory = new stdClass();
-            $newcategory->sortorder = 999; //same as in the course/editcategory.php
-            $newcategory->parent = $category['parent'];
-
+        foreach ($params['categories'] as $category) {
             if ($category['parent']) {
                 if (!$DB->record_exists('course_categories', array('id' => $category['parent']))) {
-                    throw new moodle_exception('unknowncategory');
+                    throw new moodle_exception('unknowcategory');
                 }
                 $context = context_coursecat::instance($category['parent']);
-            }
-            else {
+            } else {
                 $context = context_system::instance();
             }
             self::validate_context($context);
             require_capability('moodle/category:manage', $context);
-                    
-            //check id number
-            if (!empty($category['idnumber'])) { //same as in course/editcategory_form.php
-                if (strlen($category['idnumber'])>100) {
-                    throw new moodle_exception('id number is too long');
-                }
 
+            // Check id number.
+            if (!empty($category['idnumber'])) { // Same as in course/editcategory_form.php .
+                if (textlib::strlen($category['idnumber'])>100) {
+                    throw new moodle_exception('idnumbertoolong');
+                }
                 if ($existing = $DB->get_record('course_categories', array('idnumber' => $category['idnumber']))) {
                     if ($existing->id) {
                         throw new moodle_exception('idnumbertaken');
                     }
                 }
             }
-            $newcategory->idnumber = $category['idnumber'];
-
-            //check name
-            if (strlen($category['name'])>30) {
-                    throw new moodle_exception('category name is too long.');
+            // Check name.
+            if (textlib::strlen($category['name'])>30) {
+                throw new moodle_exception('categorytoolong');
             }
-            $newcategory->name = $category['name'];
 
-            //Format the description
-            if (!empty($newcategory->description)) {
-                $options = new stdClass();
-                $options->para = false;
-                $options->newlines = false;
-                $options->context = $context;
-                $newcategory->description = format_text($category['description'], FORMAT_HTML, $options);
+            $newcategory = new stdClass();
+            $newcategory->name = $category['name'];
+            $newcategory->parent = $category['parent'];
+            $newcategory->idnumber = $category['idnumber'];
+            $newcategory->sortorder = 999; // Same as in the course/editcategory.php .
+            // Format the description.
+            if (!empty($category['description'])) {
+                $newcategory->description = $category['description'];
             }
             $newcategory->descriptionformat = FORMAT_HTML;
-
             if (isset($category['theme']) and !empty($CFG->allowcategorythemes)) {
                 $newcategory->theme = $category['theme'];
             }
-            $newcategory->id = $DB->insert_record('course_categories', $newcategory);       
-            $newcategory->context = context_coursecat::instance($newcategory->id);
-            mark_context_dirty($newcategory->context->path);
 
-            //populate special fields
-            fix_course_sortorder();	
+            $newcategory = create_course_category($newcategory);
+            // Populate special fields.
+            fix_course_sortorder();
 
             $createdcategories[] = array('id' => $newcategory->id, 'name' => $newcategory->name);
         }
@@ -531,11 +519,11 @@ class core_course_external extends external_api {
     }
 
     /**
-    * Returns description of method parameters
-    *
-    * @return external_function_parameters
-    * @since Moodle 2.3 
-    */
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.3
+     */
     public static function create_categories_returns() {
         return new external_multiple_structure(
             new external_single_structure(
