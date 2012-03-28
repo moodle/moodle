@@ -54,15 +54,11 @@ function get_module_from_cmid($cmid) {
 * @param bool $noparent if true only questions with NO parent will be selected
 * @param bool $recurse include subdirectories
 * @param bool $export set true if this is called by questionbank export
-* @author added by Howard Miller June 2004
 */
 function get_questions_category( $category, $noparent=false, $recurse=true, $export=true ) {
     global $DB;
 
-    // questions will be added to an array
-    $qresults = array();
-
-    // build sql bit for $noparent
+    // Build sql bit for $noparent
     $npsql = '';
     if ($noparent) {
       $npsql = " and parent='0' ";
@@ -75,16 +71,21 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
         $categorylist = array($category->id);
     }
 
-    // get the list of questions for the category
+    // Get the list of questions for the category
     list($usql, $params) = $DB->get_in_or_equal($categorylist);
-    if ($questions = $DB->get_records_select('question', "category $usql $npsql", $params, 'qtype, name')) {
+    $questions = $DB->get_records_select('question', "category $usql $npsql", $params, 'qtype, name');
 
-        // iterate through questions, getting stuff we need
-        foreach($questions as $question) {
-            $question->export_process = $export;
-            question_bank::get_qtype($question->qtype)->get_question_options($question);
-            $qresults[] = $question;
+    // Iterate through questions, getting stuff we need
+    $qresults = array();
+    foreach($questions as $key => $question) {
+        $question->export_process = $export;
+        $qtype = question_bank::get_qtype($question->qtype, false);
+        if ($export && $qtype->name() == 'missingtype') {
+            // Unrecognised question type. Skip this question when exporting.
+            continue;
         }
+        $qtype->get_question_options($question);
+        $qresults[] = $question;
     }
 
     return $qresults;
