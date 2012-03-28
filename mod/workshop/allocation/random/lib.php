@@ -18,8 +18,8 @@
 /**
  * Allocates the submissions randomly
  *
- * @package    workshopallocation
- * @subpackage random
+ * @package    workshopallocation_random
+ * @subpackage mod_workshop
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,10 +55,13 @@ class workshop_random_allocator implements workshop_allocator {
 
     /**
      * Allocate submissions as requested by user
+     *
+     * @return workshop_allocation_result
      */
     public function init() {
         global $PAGE;
 
+        $result = new workshop_allocation_result($this);
         $customdata = array();
         $customdata['workshop'] = $this->workshop;
         $this->mform = new workshop_random_allocator_form($PAGE->url, $customdata);
@@ -66,31 +69,30 @@ class workshop_random_allocator implements workshop_allocator {
             redirect($this->workshop->view_url());
         } else if ($settings = $this->mform->get_data()) {
             $settings = workshop_random_allocator_setting::instance_from_object($settings);
-            return $this->execute($settings);
+            $this->execute($settings, $result);
+            return $result;
         } else {
             // this branch is executed if the form is submitted but the data
             // doesn't validate and the form should be redisplayed
             // or on the first display of the form.
-            return array();
+            $result->set_status(workshop_allocation_result::STATUS_VOID);
+            return $result;
         }
     }
 
     /**
      * Executes the allocation based on the given settings
      *
-     * @param workshop_random_allocator_setting $settings
-     * @return array of output messages
+     * @param workshop_random_allocator_setting $setting
+     * @param workshop_allocation_result allocation result logger
      */
-    public function execute(workshop_random_allocator_setting $settings) {
-
-        $o = array();
+    public function execute(workshop_random_allocator_setting $settings, workshop_allocation_result $result) {
 
         $authors        = $this->workshop->get_potential_authors();
         $authors        = $this->workshop->get_grouped($authors);
         $reviewers      = $this->workshop->get_potential_reviewers(!$settings->assesswosubmission);
         $reviewers      = $this->workshop->get_grouped($reviewers);
         $assessments    = $this->workshop->get_all_assessments();
-
         $newallocations = array();      // array of array(reviewer => reviewee)
 
         if ($settings->numofreviews) {
@@ -104,19 +106,19 @@ class workshop_random_allocator implements workshop_allocator {
             $options['numofreviews']     = $settings->numofreviews;
             $options['numper']           = $settings->numper;
             $options['excludesamegroup'] = $settings->excludesamegroup;
-            $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $o, $options);
+            $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $result, $options);
             $newallocations     = array_merge($newallocations, $randomallocations);
-            $o[] = 'ok::' . get_string('numofrandomlyallocatedsubmissions', 'workshopallocation_random', count($randomallocations));
+            $result->log(get_string('numofrandomlyallocatedsubmissions', 'workshopallocation_random', count($randomallocations)));
             unset($randomallocations);
         }
         if ($settings->addselfassessment) {
             $selfallocations    = $this->self_allocation($authors, $reviewers, $assessments);
             $newallocations     = array_merge($newallocations, $selfallocations);
-            $o[] = 'ok::' . get_string('numofselfallocatedsubmissions', 'workshopallocation_random', count($selfallocations));
+            $result->log(get_string('numofselfallocatedsubmissions', 'workshopallocation_random', count($selfallocations)));
             unset($selfallocations);
         }
         if (empty($newallocations)) {
-            $o[] = 'info::' . get_string('noallocationtoadd', 'workshopallocation_random');
+            $result->log(get_string('noallocationtoadd', 'workshopallocation_random'), 'info');
         } else {
             $newnonexistingallocations = $newallocations;
             $this->filter_current_assessments($newnonexistingallocations, $assessments);
@@ -150,9 +152,9 @@ class workshop_random_allocator implements workshop_allocator {
                     $a->authorname = '#'.$authorid;
                 }
                 if (in_array($newallocation, $newnonexistingallocations)) {
-                    $o[] = 'ok::indent::' . get_string('allocationaddeddetail', 'workshopallocation_random', $a);
+                    $result->log(get_string('allocationaddeddetail', 'workshopallocation_random', $a), 'ok', 1);
                 } else {
-                    $o[] = 'ok::indent::' . get_string('allocationreuseddetail', 'workshopallocation_random', $a);
+                    $result->log(get_string('allocationreuseddetail', 'workshopallocation_random', $a), 'ok', 1);
                 }
             }
         }
@@ -160,7 +162,7 @@ class workshop_random_allocator implements workshop_allocator {
             $delassessments = $this->get_unkept_assessments($assessments, $newallocations, $settings->addselfassessment);
             // random allocator should not be able to delete assessments that have already been graded
             // by reviewer
-            $o[] = 'info::' . get_string('numofdeallocatedassessment', 'workshopallocation_random', count($delassessments));
+            $result->log(get_string('numofdeallocatedassessment', 'workshopallocation_random', count($delassessments)), 'info');
             foreach ($delassessments as $delassessmentkey => $delassessmentid) {
                 $a = new stdclass();
                 $a->authorname      = fullname((object)array(
@@ -170,15 +172,15 @@ class workshop_random_allocator implements workshop_allocator {
                         'lastname'  => $assessments[$delassessmentid]->reviewerlastname,
                         'firstname' => $assessments[$delassessmentid]->reviewerfirstname));
                 if (!is_null($assessments[$delassessmentid]->grade)) {
-                    $o[] = 'error::indent::' . get_string('allocationdeallocategraded', 'workshopallocation_random', $a);
+                    $result->log(get_string('allocationdeallocategraded', 'workshopallocation_random', $a), 'error', 1);
                     unset($delassessments[$delassessmentkey]);
                 } else {
-                    $o[] = 'info::indent::' . get_string('assessmentdeleteddetail', 'workshopallocation_random', $a);
+                    $result->log(get_string('assessmentdeleteddetail', 'workshopallocation_random', $a), 'info', 1);
                 }
             }
             $this->workshop->delete_assessment($delassessments);
         }
-        return $o;
+        $result->set_status(workshop_allocation_result::STATUS_EXECUTED);
     }
 
     /**
@@ -432,11 +434,11 @@ class workshop_random_allocator implements workshop_allocator {
      * @param array    $authors      structure of grouped authors
      * @param array    $reviewers    structure of grouped reviewers
      * @param array    $assessments  currently assigned assessments to be kept
-     * @param array    $o            reference to an array of log messages
+     * @param workshop_allocation_result $result allocation result logger
      * @param array    $options      allocation options
      * @return array                 array of (reviewerid => authorid) pairs
      */
-    protected function random_allocation($authors, $reviewers, $assessments, &$o, array $options) {
+    protected function random_allocation($authors, $reviewers, $assessments, $result, array $options) {
         if (empty($authors) || empty($reviewers)) {
             // nothing to be done
             return array();
@@ -447,14 +449,14 @@ class workshop_random_allocator implements workshop_allocator {
 
         if (workshop_random_allocator_setting::NUMPER_SUBMISSION == $numper) {
             // circles are authors, squares are reviewers
-            $o[] = 'info::'.get_string('resultnumperauthor', 'workshopallocation_random', $numofreviews);
+            $result->log(get_string('resultnumperauthor', 'workshopallocation_random', $numofreviews), 'info');
             $allcircles = $authors;
             $allsquares = $reviewers;
             // get current workload
             list($circlelinks, $squarelinks) = $this->convert_assessments_to_links($assessments);
         } elseif (workshop_random_allocator_setting::NUMPER_REVIEWER == $numper) {
             // circles are reviewers, squares are authors
-            $o[] = 'info::'.get_string('resultnumperreviewer', 'workshopallocation_random', $numofreviews);
+            $result->log(get_string('resultnumperreviewer', 'workshopallocation_random', $numofreviews), 'info');
             $allcircles = $reviewers;
             $allsquares = $authors;
             // get current workload
@@ -478,8 +480,8 @@ class workshop_random_allocator implements workshop_allocator {
                 unset($nogroupcircles[$circleid]);
             }
         }
-        // $o[] = 'debug::circle links = ' . json_encode($circlelinks);
-        // $o[] = 'debug::square links = ' . json_encode($squarelinks);
+        // $result->log('circle links = ' . json_encode($circlelinks), 'debug');
+        // $result->log('square links = ' . json_encode($squarelinks), 'debug');
         $squareworkload         = array();  // individual workload indexed by squareid
         $squaregroupsworkload   = array();    // group workload indexed by squaregroupid
         foreach ($allsquares as $squaregroupid => $squares) {
@@ -494,8 +496,8 @@ class workshop_random_allocator implements workshop_allocator {
             $squaregroupsworkload[$squaregroupid] /= count($squares);
         }
         unset($squaregroupsworkload[0]);    // [0] is not real group, it contains all users
-        // $o[] = 'debug::square workload = ' . json_encode($squareworkload);
-        // $o[] = 'debug::square group workload = ' . json_encode($squaregroupsworkload);
+        // $result->log('square workload = ' . json_encode($squareworkload), 'debug');
+        // $result->log('square group workload = ' . json_encode($squaregroupsworkload), 'debug');
         $gmode = groups_get_activity_groupmode($this->workshop->cm, $this->workshop->course);
         if (SEPARATEGROUPS == $gmode) {
             // shuffle all groups but [0] which means "all users"
@@ -505,9 +507,9 @@ class workshop_random_allocator implements workshop_allocator {
             // all users will be processed at once
             $circlegroups = array(0);
         }
-        // $o[] = 'debug::circle groups = ' . json_encode($circlegroups);
+        // $result->log('circle groups = ' . json_encode($circlegroups), 'debug');
         foreach ($circlegroups as $circlegroupid) {
-            $o[] = 'debug::processing circle group id ' . $circlegroupid;
+            $result->log('processing circle group id ' . $circlegroupid, 'debug');
             $circles = $allcircles[$circlegroupid];
             // iterate over all circles in the group until the requested number of links per circle exists
             // or it is not possible to fulfill that requirment
@@ -515,13 +517,13 @@ class workshop_random_allocator implements workshop_allocator {
             // second iteration, we try to allocate two, etc.
             for ($requiredreviews = 1; $requiredreviews <= $numofreviews; $requiredreviews++) {
                 $this->shuffle_assoc($circles);
-                $o[] = 'debug::iteration ' . $requiredreviews;
+                $result->log('iteration ' . $requiredreviews, 'debug');
                 foreach ($circles as $circleid => $circle) {
                     if (VISIBLEGROUPS == $gmode and isset($nogroupcircles[$circleid])) {
-                        $o[] = 'debug::skipping circle id ' . $circleid;
+                        $result->log('skipping circle id ' . $circleid, 'debug');
                         continue;
                     }
-                    $o[] = 'debug::processing circle id ' . $circleid;
+                    $result->log('processing circle id ' . $circleid, 'debug');
                     if (!isset($circlelinks[$circleid])) {
                         $circlelinks[$circleid] = array();
                     }
@@ -534,14 +536,14 @@ class workshop_random_allocator implements workshop_allocator {
                         if (NOGROUPS == $gmode) {
                             if (in_array(0, $failedgroups)) {
                                 $keeptrying = false;
-                                $o[] = 'error::indent::'.get_string('resultnomorepeers', 'workshopallocation_random');
+                                $result->log(get_string('resultnomorepeers', 'workshopallocation_random'), 'error', 1);
                                 break;
                             }
                             $targetgroup = 0;
                         } elseif (SEPARATEGROUPS == $gmode) {
                             if (in_array($circlegroupid, $failedgroups)) {
                                 $keeptrying = false;
-                                $o[] = 'error::indent::'.get_string('resultnomorepeersingroup', 'workshopallocation_random');
+                                $result->log(get_string('resultnomorepeersingroup', 'workshopallocation_random'), 'error', 1);
                                 break;
                             }
                             $targetgroup = $circlegroupid;
@@ -562,27 +564,27 @@ class workshop_random_allocator implements workshop_allocator {
                         }
                         if ($targetgroup === false) {
                             $keeptrying = false;
-                            $o[] = 'error::indent::'.get_string('resultnotenoughpeers', 'workshopallocation_random');
+                            $result->log(get_string('resultnotenoughpeers', 'workshopallocation_random'), 'error', 1);
                             break;
                         }
-                        $o[] = 'debug::indent::next square should be from group id ' . $targetgroup;
+                        $result->log('next square should be from group id ' . $targetgroup, 'debug', 1);
                         // now, choose a square from the target group
                         $trysquares = array_intersect_key($squareworkload, $allsquares[$targetgroup]);
-                        // $o[] = 'debug::indent::individual workloads in this group are ' . json_encode($trysquares);
+                        // $result->log('individual workloads in this group are ' . json_encode($trysquares), 'debug', 1);
                         unset($trysquares[$circleid]);  // can't allocate to self
                         $trysquares = array_diff_key($trysquares, array_flip($circlelinks[$circleid])); // can't re-allocate the same
                         $targetsquare = $this->get_element_with_lowest_workload($trysquares);
                         if (false === $targetsquare) {
-                            $o[] = 'debug::indent::unable to find an available square. trying another group';
+                            $result->log('unable to find an available square. trying another group', 'debug', 1);
                             $failedgroups[] = $targetgroup;
                             continue;
                         }
-                        $o[] = 'debug::indent::target square = ' . $targetsquare;
+                        $result->log('target square = ' . $targetsquare, 'debug', 1);
                         // ok - we have found the square
                         $circlelinks[$circleid][]       = $targetsquare;
                         $squarelinks[$targetsquare][]   = $circleid;
                         $squareworkload[$targetsquare]++;
-                        $o[] = 'debug::indent::increasing square workload to ' . $squareworkload[$targetsquare];
+                        $result->log('increasing square workload to ' . $squareworkload[$targetsquare], 'debug', 1);
                         if ($targetgroup) {
                             // recalculate the group workload
                             $squaregroupsworkload[$targetgroup] = 0;
@@ -590,7 +592,7 @@ class workshop_random_allocator implements workshop_allocator {
                                 $squaregroupsworkload[$targetgroup] += $squareworkload[$squareid];
                             }
                             $squaregroupsworkload[$targetgroup] /= count($allsquares[$targetgroup]);
-                            $o[] = 'debug::indent::increasing group workload to ' . $squaregroupsworkload[$targetgroup];
+                            $result->log('increasing group workload to ' . $squaregroupsworkload[$targetgroup], 'debug', 1);
                         }
                     } // end of processing this circle
                 } // end of one iteration of processing circles in the group
