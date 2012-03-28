@@ -605,7 +605,8 @@ abstract class question_bank_action_column_base extends question_bank_column_bas
     }
 
     public function get_required_fields() {
-        return array('q.id');
+        // createdby is required for permission checks.
+        return array('q.id, q.createdby');
     }
 }
 
@@ -631,10 +632,9 @@ class question_bank_edit_action_column extends question_bank_action_column_base 
     }
 
     protected function display_content($question, $rowclasses) {
-        if (question_has_capability_on($question, 'edit') ||
-                question_has_capability_on($question, 'move')) {
+        if (question_has_capability_on($question, 'edit')) {
             $this->print_icon('t/edit', $this->stredit, $this->qbank->edit_question_url($question->id));
-        } else {
+        } else if (question_has_capability_on($question, 'view')) {
             $this->print_icon('i/info', $this->strview, $this->qbank->edit_question_url($question->id));
         }
     }
