@@ -320,7 +320,7 @@ function wiki_refresh_page_links($page, $links) {
  * @param int $userid
  */
 function wiki_create_page($swid, $title, $format, $userid) {
-    global $DB, $PAGE;
+    global $DB;
     $subwiki = wiki_get_subwiki($swid);
     $cm = get_coursemodule_from_instance('wiki', $subwiki->wikiid);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -605,10 +605,12 @@ function wiki_parse_content($markup, $pagecontent, $options = array()) {
  *
  * NOTE: Empty pages and non-existent pages must be print in red color.
  *
- * @param link name of a page
- * @param $options
+ * !!!!!! IMPORTANT !!!!!!
+ * It is critical that you call format_string on the content before it is used.
  *
- * @return
+ * @param string|page_wiki $link name of a page
+ * @param array $options
+ * @return array Array('content' => string, 'url' => string, 'new' => bool, 'link_info' => array)
  *
  * @TODO Doc return and options
  */
@@ -1394,9 +1396,9 @@ function wiki_print_upload_table($context, $filearea, $fileitemid, $deleteupload
 /**
  * Generate wiki's page tree
  *
- * @param $page. A wiki page object
- * @param $node. Starting navigation_node
- * @param $keys. An array to store keys
+ * @param page_wiki $page. A wiki page object
+ * @param navigation_node $node. Starting navigation_node
+ * @param array $keys. An array to store keys
  * @return an array with all tree nodes
  */
 function wiki_build_tree($page, $node, &$keys) {
@@ -1412,6 +1414,7 @@ function wiki_build_tree($page, $node, &$keys) {
         array_push($keys, $key);
         $l = wiki_parser_link($p);
         $link = new moodle_url('/mod/wiki/view.php', array('pageid' => $p->id));
+        // navigation_node::get_content will format the title for us
         $nodeaux = $node->add($p->title, $link, null, null, null, $icon);
         if ($l['new']) {
             $nodeaux->add_class('wiki_newentry');

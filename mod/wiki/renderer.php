@@ -44,7 +44,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
         $pages = wiki_get_page_list($swid);
         $selectoptions = array();
         foreach ($pages as $page) {
-            $selectoptions[$page->id] = $page->title;
+            $selectoptions[$page->id] = format_string($page->title, true, array('context' => $this->page->context));
         }
         $label = get_string('pageindex', 'wiki') . ': ';
         $select = new single_select(new moodle_url('/mod/wiki/view.php'), 'pageid', $selectoptions);
@@ -365,7 +365,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
                 $baseurl->params($params);
 
                 echo $this->output->container_start('wiki_right');
-                groups_print_activity_menu($cm, $baseurl->out());
+                groups_print_activity_menu($cm, $baseurl);
                 echo $this->output->container_end();
                 return;
             } else if ($wiki->wikimode == 'individual') {
@@ -415,14 +415,15 @@ class mod_wiki_renderer extends plugin_renderer_base {
         CASE VISIBLEGROUPS:
             if ($wiki->wikimode == 'collaborative') {
                 // We need to print a select to choose a course group
-                $params = array('wid'=>$wiki->id, 'title'=>urlencode($page->title));
+                // moodle_url will take care of encoding for us
+                $params = array('wid'=>$wiki->id, 'title'=>$page->title);
                 if ($pagetype == 'files') {
                     $params['pageid'] = $page->id;
                 }
                 $baseurl->params($params);
 
                 echo $this->output->container_start('wiki_right');
-                groups_print_activity_menu($cm, $baseurl->out());
+                groups_print_activity_menu($cm, $baseurl);
                 echo $this->output->container_end();
                 return;
 
