@@ -340,12 +340,11 @@ class mod_workshop_renderer extends plugin_renderer_base {
             }
             break;
 
-        case workshop_allocation_result::STATUS_SCHEDULED_ON:
-        case workshop_allocation_result::STATUS_SCHEDULED_OFF:
+        case workshop_allocation_result::STATUS_CONFIGURED:
             if ($message = $result->get_message()) {
                 $message = new workshop_message($message, workshop_message::TYPE_INFO);
             } else {
-                $message = new workshop_message(get_string('allocationscheduleconfigured', 'workshop'), workshop_message::TYPE_INFO);
+                $message = new workshop_message(get_string('allocationconfigured', 'workshop'), workshop_message::TYPE_INFO);
             }
             break;
 

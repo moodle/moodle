@@ -85,10 +85,8 @@ class workshop_allocation_result implements renderable {
     const STATUS_EXECUTED       = 1;
     /** a serious error has occurred during the allocation (as a hole) */
     const STATUS_FAILED         = 2;
-    /** scheduled allocation was configured to be executed later */
-    const STATUS_SCHEDULED_ON   = 3;
-    /** scheduled allocation was disabled */
-    const STATUS_SCHEDULED_OFF  = 4;
+    /** scheduled allocation was configured (to be executed later, for example) */
+    const STATUS_CONFIGURED     = 3;
 
     /** @var workshop_allocator the instance of the allocator that produced this result */
     protected $allocator;
