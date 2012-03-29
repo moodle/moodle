@@ -882,14 +882,12 @@ function workshop_print_recent_mod_activity($activity, $courseid, $detail, $modn
 }
 
 /**
- * Function to be run periodically according to the moodle cron
- * This function searches for things that need to be done, such
- * as sending out mail, toggling flags etc ...
+ * Regular jobs to execute via cron
  *
- * @return boolean
- * @todo Finish documenting this function
- **/
-function workshop_cron () {
+ * @return boolean true on success, false otherwise
+ */
+function workshop_cron() {
+    cron_execute_plugin_type('workshopallocation', 'workshop allocation methods');
     return true;
 }
 
