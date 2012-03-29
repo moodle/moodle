@@ -55,6 +55,7 @@ $string['listitemactioncategory'] = 'Convert all imagetarget questions in catego
 $string['listitemactioncontext'] = 'Convert all imagetarget questions in context "{$a->name}" (contains {$a->qcount} imagetarget questions)';
 $string['listitemcategory'] = 'Questions in category "{$a->name}" (contains {$a->qcount} imagetarget questions)';
 $string['listitemcontext'] = 'Questions in context "{$a->name}" (contains {$a->qcount} imagetarget questions)';
+$string['listitemquestion'] = 'Question "{$a->name}"';
 $string['marker'] = 'Marker';
 $string['marker_n'] = 'Marker {no}';
 $string['markers'] = 'Markers';
