@@ -272,7 +272,7 @@ if ($qcontextid) {
     $params['path'] = $qcontext->path.'/%';
     $params['id'] = $qcontext->id;
 } else if ($categoryid) {
-    $from  .= ', {context} context, {question_categories} cat2';
+    $from  .= ', {question_categories} cat2';
     $where .= 'AND cat.contextid = cat2.contextid AND cat2.id = :categoryid ';
     $params['categoryid'] = $categoryid;
 }
