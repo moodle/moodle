@@ -123,7 +123,7 @@ class autogroup_test_coverage extends AutoGroupTest {
      * automatically generating the coverage report. Only supports one instrumentation
      * to be executed and reported.
      */
-    public function run(&$simpletestreporter) {
+    public function run($simpletestreporter) {
         global $CFG;
 
         if (moodle_coverage_recorder::can_run_codecoverage() && $this->performcoverage) {
@@ -148,7 +148,7 @@ class autogroup_test_coverage extends AutoGroupTest {
      * allowing further process of coverage data once tests are over. Supports multiple
      * instrumentations (code coverage gathering sessions) to be executed.
      */
-    public function run_with_external_coverage(&$simpletestreporter, &$covrecorder) {
+    public function run_with_external_coverage($simpletestreporter, $covrecorder) {
 
         if (moodle_coverage_recorder::can_run_codecoverage() && $this->performcoverage) {
             $covrecorder->setIncludePaths($this->includecoverage);

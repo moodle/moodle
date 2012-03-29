@@ -3,15 +3,110 @@
  *  Base include file for SimpleTest.
  *  @package    SimpleTest
  *  @subpackage WebTester
- *  @version    $Id$
+ *  @version    $Id: tag.php 2011 2011-04-29 08:22:48Z pp11 $
  */
-    
+
 /**#@+
  * include SimpleTest files
  */
-require_once(dirname(__FILE__) . '/parser.php');
+require_once(dirname(__FILE__) . '/page.php');
 require_once(dirname(__FILE__) . '/encoding.php');
 /**#@-*/
+
+/**
+ *    Creates tags and widgets given HTML tag
+ *    attributes.
+ *    @package SimpleTest
+ *    @subpackage WebTester
+ */
+class SimpleTagBuilder {
+
+    /**
+     *    Factory for the tag objects. Creates the
+     *    appropriate tag object for the incoming tag name
+     *    and attributes.
+     *    @param string $name        HTML tag name.
+     *    @param hash $attributes    Element attributes.
+     *    @return SimpleTag          Tag object.
+     *    @access public
+     */
+    function createTag($name, $attributes) {
+        static $map = array(
+                'a' => 'SimpleAnchorTag',
+                'title' => 'SimpleTitleTag',
+                'base' => 'SimpleBaseTag',
+                'button' => 'SimpleButtonTag',
+                'textarea' => 'SimpleTextAreaTag',
+                'option' => 'SimpleOptionTag',
+                'label' => 'SimpleLabelTag',
+                'form' => 'SimpleFormTag',
+                'frame' => 'SimpleFrameTag');
+        $attributes = $this->keysToLowerCase($attributes);
+        if (array_key_exists($name, $map)) {
+            $tag_class = $map[$name];
+            return new $tag_class($attributes);
+        } elseif ($name == 'select') {
+            return $this->createSelectionTag($attributes);
+        } elseif ($name == 'input') {
+            return $this->createInputTag($attributes);
+        }
+        return new SimpleTag($name, $attributes);
+    }
+
+    /**
+     *    Factory for selection fields.
+     *    @param hash $attributes    Element attributes.
+     *    @return SimpleTag          Tag object.
+     *    @access protected
+     */
+    protected function createSelectionTag($attributes) {
+        if (isset($attributes['multiple'])) {
+            return new MultipleSelectionTag($attributes);
+        }
+        return new SimpleSelectionTag($attributes);
+    }
+
+    /**
+     *    Factory for input tags.
+     *    @param hash $attributes    Element attributes.
+     *    @return SimpleTag          Tag object.
+     *    @access protected
+     */
+    protected function createInputTag($attributes) {
+        if (! isset($attributes['type'])) {
+            return new SimpleTextTag($attributes);
+        }
+        $type = strtolower(trim($attributes['type']));
+        $map = array(
+                'submit' => 'SimpleSubmitTag',
+                'image' => 'SimpleImageSubmitTag',
+                'checkbox' => 'SimpleCheckboxTag',
+                'radio' => 'SimpleRadioButtonTag',
+                'text' => 'SimpleTextTag',
+                'hidden' => 'SimpleTextTag',
+                'password' => 'SimpleTextTag',
+                'file' => 'SimpleUploadTag');
+        if (array_key_exists($type, $map)) {
+            $tag_class = $map[$type];
+            return new $tag_class($attributes);
+        }
+        return false;
+    }
+
+    /**
+     *    Make the keys lower case for case insensitive look-ups.
+     *    @param hash $map   Hash to convert.
+     *    @return hash       Unchanged values, but keys lower case.
+     *    @access private
+     */
+    protected function keysToLowerCase($map) {
+        $lower = array();
+        foreach ($map as $key => $value) {
+            $lower[strtolower($key)] = $value;
+        }
+        return $lower;
+    }
+}
 
 /**
  *    HTML or XML tag.
@@ -19,10 +114,10 @@ require_once(dirname(__FILE__) . '/encoding.php');
  *    @subpackage WebTester
  */
 class SimpleTag {
-    var $_name;
-    var $_attributes;
-    var $_content;
-    
+    private $name;
+    private $attributes;
+    private $content;
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param string $name        Tag name.
@@ -31,12 +126,12 @@ class SimpleTag {
      *                               the keys must have been
      *                               converted to lower case.
      */
-    function SimpleTag($name, $attributes) {
-        $this->_name = strtolower(trim($name));
-        $this->_attributes = $attributes;
-        $this->_content = '';
+    function __construct($name, $attributes) {
+        $this->name = strtolower(trim($name));
+        $this->attributes = $attributes;
+        $this->content = '';
     }
-    
+
     /**
      *    Check to see if the tag can have both start and
      *    end tags with content in between.
@@ -46,7 +141,7 @@ class SimpleTag {
     function expectEndTag() {
         return true;
     }
-    
+
     /**
      *    The current tag should not swallow all content for
      *    itself as it's searchable page content. Private
@@ -66,26 +161,37 @@ class SimpleTag {
      *    @access public
      */
     function addContent($content) {
-        $this->_content .= (string)$content;
+        $this->content .= (string)$content;
+        return $this;
     }
-    
+
     /**
      *    Adds an enclosed tag to the content.
      *    @param SimpleTag $tag    New tag.
      *    @access public
      */
-    function addTag(&$tag) {
+    function addTag($tag) {
     }
-    
+
+    /**
+     *    Adds multiple enclosed tags to the content.
+     *    @param array            List of SimpleTag objects to be added.
+     */
+    function addTags($tags) {
+        foreach ($tags as $tag) {
+            $this->addTag($tag);
+        }
+    }
+
     /**
      *    Accessor for tag name.
      *    @return string       Name of tag.
      *    @access public
      */
     function getTagName() {
-        return $this->_name;
+        return $this->name;
     }
-    
+
     /**
      *    List of legal child elements.
      *    @return array        List of element names.
@@ -94,7 +200,7 @@ class SimpleTag {
     function getChildElements() {
         return array();
     }
-    
+
     /**
      *    Accessor for an attribute.
      *    @param string $label    Attribute name.
@@ -103,31 +209,31 @@ class SimpleTag {
      */
     function getAttribute($label) {
         $label = strtolower($label);
-        if (! isset($this->_attributes[$label])) {
+        if (! isset($this->attributes[$label])) {
             return false;
         }
-        return (string)$this->_attributes[$label];
+        return (string)$this->attributes[$label];
     }
-    
+
     /**
      *    Sets an attribute.
      *    @param string $label    Attribute name.
      *    @return string $value   New attribute value.
      *    @access protected
      */
-    function _setAttribute($label, $value) {
-        $this->_attributes[strtolower($label)] = $value;
+    protected function setAttribute($label, $value) {
+        $this->attributes[strtolower($label)] = $value;
     }
-    
+
     /**
      *    Accessor for the whole content so far.
      *    @return string       Content as big raw string.
      *    @access public
      */
     function getContent() {
-        return $this->_content;
+        return $this->content;
     }
-    
+
     /**
      *    Accessor for content reduced to visible text. Acts
      *    like a text mode browser, normalising space and
@@ -136,9 +242,9 @@ class SimpleTag {
      *    @access public
      */
     function getText() {
-        return SimpleHtmlSaxParser::normalise($this->_content);
+        return SimplePage::normalise($this->content);
     }
-    
+
     /**
      *    Test to see if id attribute matches.
      *    @param string $id        ID to test against.
@@ -156,14 +262,14 @@ class SimpleTag {
  *    @subpackage WebTester
  */
 class SimpleBaseTag extends SimpleTag {
-    
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleBaseTag($attributes) {
-        $this->SimpleTag('base', $attributes);
+    function __construct($attributes) {
+        parent::__construct('base', $attributes);
     }
 
     /**
@@ -182,14 +288,14 @@ class SimpleBaseTag extends SimpleTag {
  *    @subpackage WebTester
  */
 class SimpleTitleTag extends SimpleTag {
-    
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleTitleTag($attributes) {
-        $this->SimpleTag('title', $attributes);
+    function __construct($attributes) {
+        parent::__construct('title', $attributes);
     }
 }
 
@@ -199,16 +305,16 @@ class SimpleTitleTag extends SimpleTag {
  *    @subpackage WebTester
  */
 class SimpleAnchorTag extends SimpleTag {
-    
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleAnchorTag($attributes) {
-        $this->SimpleTag('a', $attributes);
+    function __construct($attributes) {
+        parent::__construct('a', $attributes);
     }
-    
+
     /**
      *    Accessor for URL as string.
      *    @return string    Coerced as string.
@@ -229,33 +335,33 @@ class SimpleAnchorTag extends SimpleTag {
  *    @subpackage WebTester
  */
 class SimpleWidget extends SimpleTag {
-    var $_value;
-    var $_label;
-    var $_is_set;
-    
+    private $value;
+    private $label;
+    private $is_set;
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param string $name        Tag name.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleWidget($name, $attributes) {
-        $this->SimpleTag($name, $attributes);
-        $this->_value = false;
-        $this->_label = false;
-        $this->_is_set = false;
+    function __construct($name, $attributes) {
+        parent::__construct($name, $attributes);
+        $this->value = false;
+        $this->label = false;
+        $this->is_set = false;
     }
-    
+
     /**
      *    Accessor for name submitted as the key in
-     *    GET/POST variables hash.
+     *    GET/POST privateiables hash.
      *    @return string        Parsed value.
      *    @access public
      */
     function getName() {
         return $this->getAttribute('name');
     }
-    
+
     /**
      *    Accessor for default value parsed with the tag.
      *    @return string        Parsed value.
@@ -264,7 +370,7 @@ class SimpleWidget extends SimpleTag {
     function getDefault() {
         return $this->getAttribute('value');
     }
-    
+
     /**
      *    Accessor for currently set value or default if
      *    none.
@@ -273,12 +379,12 @@ class SimpleWidget extends SimpleTag {
      *    @access public
      */
     function getValue() {
-        if (! $this->_is_set) {
+        if (! $this->is_set) {
             return $this->getDefault();
         }
-        return $this->_value;
+        return $this->value;
     }
-    
+
     /**
      *    Sets the current form element value.
      *    @param string $value       New value.
@@ -286,20 +392,20 @@ class SimpleWidget extends SimpleTag {
      *    @access public
      */
     function setValue($value) {
-        $this->_value = $value;
-        $this->_is_set = true;
+        $this->value = $value;
+        $this->is_set = true;
         return true;
     }
-    
+
     /**
      *    Resets the form element value back to the
      *    default.
      *    @access public
      */
     function resetValue() {
-        $this->_is_set = false;
+        $this->is_set = false;
     }
-    
+
     /**
      *    Allows setting of a label externally, say by a
      *    label tag.
@@ -307,9 +413,10 @@ class SimpleWidget extends SimpleTag {
      *    @access public
      */
     function setLabel($label) {
-        $this->_label = trim($label);
+        $this->label = trim($label);
+        return $this;
     }
-    
+
     /**
      *    Reads external or internal label.
      *    @param string $label    Label to test.
@@ -317,15 +424,15 @@ class SimpleWidget extends SimpleTag {
      *    @access public
      */
     function isLabel($label) {
-        return $this->_label == trim($label);
+        return $this->label == trim($label);
     }
-    
+
     /**
      *    Dispatches the value into the form encoded packet.
      *    @param SimpleEncoding $encoding    Form packet.
      *    @access public
      */
-    function write(&$encoding) {
+    function write($encoding) {
         if ($this->getName()) {
             $encoding->add($this->getName(), $this->getValue());
         }
@@ -338,19 +445,19 @@ class SimpleWidget extends SimpleTag {
  *    @subpackage WebTester
  */
 class SimpleTextTag extends SimpleWidget {
-    
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleTextTag($attributes) {
-        $this->SimpleWidget('input', $attributes);
+    function __construct($attributes) {
+        parent::__construct('input', $attributes);
         if ($this->getAttribute('value') === false) {
-            $this->_setAttribute('value', '');
+            $this->setAttribute('value', '');
         }
     }
-    
+
     /**
      *    Tag contains no content.
      *    @return boolean        False.
@@ -359,7 +466,7 @@ class SimpleTextTag extends SimpleWidget {
     function expectEndTag() {
         return false;
     }
-    
+
     /**
      *    Sets the current form element value. Cannot
      *    change the value of a hidden field.
@@ -381,19 +488,19 @@ class SimpleTextTag extends SimpleWidget {
  *    @subpackage WebTester
  */
 class SimpleSubmitTag extends SimpleWidget {
-    
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleSubmitTag($attributes) {
-        $this->SimpleWidget('input', $attributes);
+    function __construct($attributes) {
+        parent::__construct('input', $attributes);
         if ($this->getAttribute('value') === false) {
-            $this->_setAttribute('value', 'Submit');
+            $this->setAttribute('value', 'Submit');
         }
     }
-    
+
     /**
      *    Tag contains no end element.
      *    @return boolean        False.
@@ -402,7 +509,7 @@ class SimpleSubmitTag extends SimpleWidget {
     function expectEndTag() {
         return false;
     }
-    
+
     /**
      *    Disables the setting of the button value.
      *    @param string $value       Ignored.
@@ -412,7 +519,7 @@ class SimpleSubmitTag extends SimpleWidget {
     function setValue($value) {
         return false;
     }
-    
+
     /**
      *    Value of browser visible text.
      *    @return string        Visible label.
@@ -421,7 +528,7 @@ class SimpleSubmitTag extends SimpleWidget {
     function getLabel() {
         return $this->getValue();
     }
-    
+
     /**
      *    Test for a label match when searching.
      *    @param string $label     Label to test.
@@ -432,23 +539,23 @@ class SimpleSubmitTag extends SimpleWidget {
         return trim($label) == trim($this->getLabel());
     }
 }
-    
+
 /**
  *    Image button as input tag.
  *    @package SimpleTest
  *    @subpackage WebTester
  */
 class SimpleImageSubmitTag extends SimpleWidget {
-    
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleImageSubmitTag($attributes) {
-        $this->SimpleWidget('input', $attributes);
+    function __construct($attributes) {
+        parent::__construct('input', $attributes);
     }
-    
+
     /**
      *    Tag contains no end element.
      *    @return boolean        False.
@@ -457,7 +564,7 @@ class SimpleImageSubmitTag extends SimpleWidget {
     function expectEndTag() {
         return false;
     }
-    
+
     /**
      *    Disables the setting of the button value.
      *    @param string $value       Ignored.
@@ -467,7 +574,7 @@ class SimpleImageSubmitTag extends SimpleWidget {
     function setValue($value) {
         return false;
     }
-    
+
     /**
      *    Value of browser visible text.
      *    @return string        Visible label.
@@ -479,7 +586,7 @@ class SimpleImageSubmitTag extends SimpleWidget {
         }
         return $this->getAttribute('alt');
     }
-    
+
     /**
      *    Test for a label match when searching.
      *    @param string $label     Label to test.
@@ -489,7 +596,7 @@ class SimpleImageSubmitTag extends SimpleWidget {
     function isLabel($label) {
         return trim($label) == trim($this->getLabel());
     }
-    
+
     /**
      *    Dispatches the value into the form encoded packet.
      *    @param SimpleEncoding $encoding    Form packet.
@@ -497,7 +604,7 @@ class SimpleImageSubmitTag extends SimpleWidget {
      *    @param integer $y                  Y coordinate of click.
      *    @access public
      */
-    function write(&$encoding, $x, $y) {
+    function write($encoding, $x = 1, $y = 1) {
         if ($this->getName()) {
             $encoding->add($this->getName() . '.x', $x);
             $encoding->add($this->getName() . '.y', $y);
@@ -507,24 +614,24 @@ class SimpleImageSubmitTag extends SimpleWidget {
         }
     }
 }
-    
+
 /**
  *    Submit button as button tag.
  *    @package SimpleTest
  *    @subpackage WebTester
  */
 class SimpleButtonTag extends SimpleWidget {
-    
+
     /**
      *    Starts with a named tag with attributes only.
      *    Defaults are very browser dependent.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleButtonTag($attributes) {
-        $this->SimpleWidget('button', $attributes);
+    function __construct($attributes) {
+        parent::__construct('button', $attributes);
     }
-    
+
     /**
      *    Check to see if the tag can have both start and
      *    end tags with content in between.
@@ -534,7 +641,7 @@ class SimpleButtonTag extends SimpleWidget {
     function expectEndTag() {
         return true;
     }
-    
+
     /**
      *    Disables the setting of the button value.
      *    @param string $value       Ignored.
@@ -544,7 +651,7 @@ class SimpleButtonTag extends SimpleWidget {
     function setValue($value) {
         return false;
     }
-    
+
     /**
      *    Value of browser visible text.
      *    @return string        Visible label.
@@ -553,7 +660,7 @@ class SimpleButtonTag extends SimpleWidget {
     function getLabel() {
         return $this->getContent();
     }
-    
+
     /**
      *    Test for a label match when searching.
      *    @param string $label     Label to test.
@@ -571,25 +678,25 @@ class SimpleButtonTag extends SimpleWidget {
  *    @subpackage WebTester
  */
 class SimpleTextAreaTag extends SimpleWidget {
-    
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleTextAreaTag($attributes) {
-        $this->SimpleWidget('textarea', $attributes);
+    function __construct($attributes) {
+        parent::__construct('textarea', $attributes);
     }
-    
+
     /**
      *    Accessor for starting value.
      *    @return string        Parsed value.
      *    @access public
      */
     function getDefault() {
-        return $this->_wrap(SimpleHtmlSaxParser::decodeHtml($this->getContent()));
+        return $this->wrap(html_entity_decode($this->getContent(), ENT_QUOTES));
     }
-    
+
     /**
      *    Applies word wrapping if needed.
      *    @param string $value      New value.
@@ -597,15 +704,15 @@ class SimpleTextAreaTag extends SimpleWidget {
      *    @access public
      */
     function setValue($value) {
-        return parent::setValue($this->_wrap($value));
+        return parent::setValue($this->wrap($value));
     }
-    
+
     /**
      *    Test to see if text should be wrapped.
      *    @return boolean        True if wrapping on.
      *    @access private
      */
-    function _wrapIsEnabled() {
+    function wrapIsEnabled() {
         if ($this->getAttribute('cols')) {
             $wrap = $this->getAttribute('wrap');
             if (($wrap == 'physical') || ($wrap == 'hard')) {
@@ -614,7 +721,7 @@ class SimpleTextAreaTag extends SimpleWidget {
         }
         return false;
     }
-    
+
     /**
      *    Performs the formatting that is peculiar to
      *    this tag. There is strange behaviour in this
@@ -625,13 +732,13 @@ class SimpleTextAreaTag extends SimpleWidget {
      *                           returns and line feeds
      *    @access private
      */
-    function _wrap($text) {
+    protected function wrap($text) {
         $text = str_replace("\r\r\n", "\r\n", str_replace("\n", "\r\n", $text));
         $text = str_replace("\r\n\n", "\r\n", str_replace("\r", "\r\n", $text));
         if (strncmp($text, "\r\n", strlen("\r\n")) == 0) {
             $text = substr($text, strlen("\r\n"));
         }
-        if ($this->_wrapIsEnabled()) {
+        if ($this->wrapIsEnabled()) {
             return wordwrap(
                     $text,
                     (integer)$this->getAttribute('cols'),
@@ -639,7 +746,7 @@ class SimpleTextAreaTag extends SimpleWidget {
         }
         return $text;
     }
-    
+
     /**
      *    The content of textarea is not part of the page.
      *    @return boolean        True.
@@ -656,16 +763,16 @@ class SimpleTextAreaTag extends SimpleWidget {
  *    @subpackage WebTester
  */
 class SimpleUploadTag extends SimpleWidget {
-    
+
     /**
      *    Starts with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleUploadTag($attributes) {
-        $this->SimpleWidget('input', $attributes);
+    function __construct($attributes) {
+        parent::__construct('input', $attributes);
     }
-    
+
     /**
      *    Tag contains no content.
      *    @return boolean        False.
@@ -674,13 +781,13 @@ class SimpleUploadTag extends SimpleWidget {
     function expectEndTag() {
         return false;
     }
-    
+
     /**
      *    Dispatches the value into the form encoded packet.
      *    @param SimpleEncoding $encoding    Form packet.
      *    @access public
      */
-    function write(&$encoding) {
+    function write($encoding) {
         if (! file_exists($this->getValue())) {
             return;
         }
@@ -697,39 +804,40 @@ class SimpleUploadTag extends SimpleWidget {
  *    @subpackage WebTester
  */
 class SimpleSelectionTag extends SimpleWidget {
-    var $_options;
-    var $_choice;
-    
+    private $options;
+    private $choice;
+
     /**
      *    Starts with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleSelectionTag($attributes) {
-        $this->SimpleWidget('select', $attributes);
-        $this->_options = array();
-        $this->_choice = false;
+    function __construct($attributes) {
+        parent::__construct('select', $attributes);
+        $this->options = array();
+        $this->choice = false;
     }
-    
+
     /**
      *    Adds an option tag to a selection field.
      *    @param SimpleOptionTag $tag     New option.
      *    @access public
      */
-    function addTag(&$tag) {
+    function addTag($tag) {
         if ($tag->getTagName() == 'option') {
-            $this->_options[] = &$tag;
+            $this->options[] = $tag;
         }
     }
-    
+
     /**
      *    Text within the selection element is ignored.
      *    @param string $content        Ignored.
      *    @access public
      */
     function addContent($content) {
+        return $this;
     }
-    
+
     /**
      *    Scans options for defaults. If none, then
      *    the first option is selected.
@@ -737,17 +845,17 @@ class SimpleSelectionTag extends SimpleWidget {
      *    @access public
      */
     function getDefault() {
-        for ($i = 0, $count = count($this->_options); $i < $count; $i++) {
-            if ($this->_options[$i]->getAttribute('selected') !== false) {
-                return $this->_options[$i]->getDefault();
+        for ($i = 0, $count = count($this->options); $i < $count; $i++) {
+            if ($this->options[$i]->getAttribute('selected') !== false) {
+                return $this->options[$i]->getDefault();
             }
         }
         if ($count > 0) {
-            return $this->_options[0]->getDefault();
+            return $this->options[0]->getDefault();
         }
         return '';
     }
-    
+
     /**
      *    Can only set allowed values.
      *    @param string $value       New choice.
@@ -755,15 +863,15 @@ class SimpleSelectionTag extends SimpleWidget {
      *    @access public
      */
     function setValue($value) {
-        for ($i = 0, $count = count($this->_options); $i < $count; $i++) {
-            if ($this->_options[$i]->isValue($value)) {
-                $this->_choice = $i;
+        for ($i = 0, $count = count($this->options); $i < $count; $i++) {
+            if ($this->options[$i]->isValue($value)) {
+                $this->choice = $i;
                 return true;
             }
         }
         return false;
     }
-    
+
     /**
      *    Accessor for current selection value.
      *    @return string      Value attribute or
@@ -771,10 +879,10 @@ class SimpleSelectionTag extends SimpleWidget {
      *    @access public
      */
     function getValue() {
-        if ($this->_choice === false) {
+        if ($this->choice === false) {
             return $this->getDefault();
         }
-        return $this->_options[$this->_choice]->getValue();
+        return $this->options[$this->choice]->getValue();
     }
 }
 
@@ -784,39 +892,40 @@ class SimpleSelectionTag extends SimpleWidget {
  *    @subpackage WebTester
  */
 class MultipleSelectionTag extends SimpleWidget {
-    var $_options;
-    var $_values;
-    
+    private $options;
+    private $values;
+
     /**
      *    Starts with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function MultipleSelectionTag($attributes) {
-        $this->SimpleWidget('select', $attributes);
-        $this->_options = array();
-        $this->_values = false;
+    function __construct($attributes) {
+        parent::__construct('select', $attributes);
+        $this->options = array();
+        $this->values = false;
     }
-    
+
     /**
      *    Adds an option tag to a selection field.
      *    @param SimpleOptionTag $tag     New option.
      *    @access public
      */
-    function addTag(&$tag) {
+    function addTag($tag) {
         if ($tag->getTagName() == 'option') {
-            $this->_options[] = &$tag;
+            $this->options[] = &$tag;
         }
     }
-    
+
     /**
      *    Text within the selection element is ignored.
      *    @param string $content        Ignored.
      *    @access public
      */
     function addContent($content) {
+        return $this;
     }
-    
+
     /**
      *    Scans options for defaults to populate the
      *    value array().
@@ -825,14 +934,14 @@ class MultipleSelectionTag extends SimpleWidget {
      */
     function getDefault() {
         $default = array();
-        for ($i = 0, $count = count($this->_options); $i < $count; $i++) {
-            if ($this->_options[$i]->getAttribute('selected') !== false) {
-                $default[] = $this->_options[$i]->getDefault();
+        for ($i = 0, $count = count($this->options); $i < $count; $i++) {
+            if ($this->options[$i]->getAttribute('selected') !== false) {
+                $default[] = $this->options[$i]->getDefault();
             }
         }
         return $default;
     }
-    
+
     /**
      *    Can only set allowed values. Any illegal value
      *    will result in a failure, but all correct values
@@ -845,9 +954,9 @@ class MultipleSelectionTag extends SimpleWidget {
         $achieved = array();
         foreach ($desired as $value) {
             $success = false;
-            for ($i = 0, $count = count($this->_options); $i < $count; $i++) {
-                if ($this->_options[$i]->isValue($value)) {
-                    $achieved[] = $this->_options[$i]->getValue();
+            for ($i = 0, $count = count($this->options); $i < $count; $i++) {
+                if ($this->options[$i]->isValue($value)) {
+                    $achieved[] = $this->options[$i]->getValue();
                     $success = true;
                     break;
                 }
@@ -856,20 +965,20 @@ class MultipleSelectionTag extends SimpleWidget {
                 return false;
             }
         }
-        $this->_values = $achieved;
+        $this->values = $achieved;
         return true;
     }
-    
+
     /**
      *    Accessor for current selection value.
      *    @return array      List of currently set options.
      *    @access public
      */
     function getValue() {
-        if ($this->_values === false) {
+        if ($this->values === false) {
             return $this->getDefault();
         }
-        return $this->_values;
+        return $this->values;
     }
 }
 
@@ -879,14 +988,14 @@ class MultipleSelectionTag extends SimpleWidget {
  *    @subpackage WebTester
  */
 class SimpleOptionTag extends SimpleWidget {
-    
+
     /**
      *    Stashes the attributes.
      */
-    function SimpleOptionTag($attributes) {
-        $this->SimpleWidget('option', $attributes);
+    function __construct($attributes) {
+        parent::__construct('option', $attributes);
     }
-    
+
     /**
      *    Does nothing.
      *    @param string $value      Ignored.
@@ -896,7 +1005,7 @@ class SimpleOptionTag extends SimpleWidget {
     function setValue($value) {
         return false;
     }
-    
+
     /**
      *    Test to see if a value matches the option.
      *    @param string $compare    Value to compare with.
@@ -908,9 +1017,9 @@ class SimpleOptionTag extends SimpleWidget {
         if (trim($this->getValue()) == $compare) {
             return true;
         }
-        return trim($this->getContent()) == $compare;
+        return trim(strip_tags($this->getContent())) == $compare;
     }
-    
+
     /**
      *    Accessor for starting value. Will be set to
      *    the option label if no value exists.
@@ -919,11 +1028,11 @@ class SimpleOptionTag extends SimpleWidget {
      */
     function getDefault() {
         if ($this->getAttribute('value') === false) {
-            return $this->getContent();
+            return strip_tags($this->getContent());
         }
         return $this->getAttribute('value');
     }
-    
+
     /**
      *    The content of options is not part of the page.
      *    @return boolean        True.
@@ -940,18 +1049,18 @@ class SimpleOptionTag extends SimpleWidget {
  *    @subpackage WebTester
  */
 class SimpleRadioButtonTag extends SimpleWidget {
-    
+
     /**
      *    Stashes the attributes.
      *    @param array $attributes        Hash of attributes.
      */
-    function SimpleRadioButtonTag($attributes) {
-        $this->SimpleWidget('input', $attributes);
+    function __construct($attributes) {
+        parent::__construct('input', $attributes);
         if ($this->getAttribute('value') === false) {
-            $this->_setAttribute('value', 'on');
+            $this->setAttribute('value', 'on');
         }
     }
-    
+
     /**
      *    Tag contains no content.
      *    @return boolean        False.
@@ -960,7 +1069,7 @@ class SimpleRadioButtonTag extends SimpleWidget {
     function expectEndTag() {
         return false;
     }
-    
+
     /**
      *    The only allowed value sn the one in the
      *    "value" attribute.
@@ -977,7 +1086,7 @@ class SimpleRadioButtonTag extends SimpleWidget {
         }
         return parent::setValue($value);
     }
-    
+
     /**
      *    Accessor for starting value.
      *    @return string        Parsed value.
@@ -997,19 +1106,19 @@ class SimpleRadioButtonTag extends SimpleWidget {
  *    @subpackage WebTester
  */
 class SimpleCheckboxTag extends SimpleWidget {
-    
+
     /**
      *    Starts with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleCheckboxTag($attributes) {
-        $this->SimpleWidget('input', $attributes);
+    function __construct($attributes) {
+        parent::__construct('input', $attributes);
         if ($this->getAttribute('value') === false) {
-            $this->_setAttribute('value', 'on');
+            $this->setAttribute('value', 'on');
         }
     }
-    
+
     /**
      *    Tag contains no content.
      *    @return boolean        False.
@@ -1018,7 +1127,7 @@ class SimpleCheckboxTag extends SimpleWidget {
     function expectEndTag() {
         return false;
     }
-    
+
     /**
      *    The only allowed value in the one in the
      *    "value" attribute. The default for this
@@ -1040,7 +1149,7 @@ class SimpleCheckboxTag extends SimpleWidget {
         }
         return parent::setValue($value);
     }
-    
+
     /**
      *    Accessor for starting value. The default
      *    value is "on".
@@ -1061,24 +1170,24 @@ class SimpleCheckboxTag extends SimpleWidget {
  *    @subpackage WebTester
  */
 class SimpleTagGroup {
-    var $_widgets = array();
+    private $widgets = array();
 
     /**
      *    Adds a tag to the group.
      *    @param SimpleWidget $widget
      *    @access public
      */
-    function addWidget(&$widget) {
-        $this->_widgets[] = &$widget;
+    function addWidget($widget) {
+        $this->widgets[] = $widget;
     }
-    
+
     /**
      *    Accessor to widget set.
      *    @return array        All widgets.
      *    @access protected
      */
-    function &_getWidgets() {
-        return $this->_widgets;
+    protected function &getWidgets() {
+        return $this->widgets;
     }
 
     /**
@@ -1090,7 +1199,7 @@ class SimpleTagGroup {
     function getAttribute($label) {
         return false;
     }
-    
+
     /**
      *    Fetches the name for the widget from the first
      *    member.
@@ -1098,11 +1207,11 @@ class SimpleTagGroup {
      *    @access public
      */
     function getName() {
-        if (count($this->_widgets) > 0) {
-            return $this->_widgets[0]->getName();
+        if (count($this->widgets) > 0) {
+            return $this->widgets[0]->getName();
         }
     }
-    
+
     /**
      *    Scans the widgets for one with the appropriate
      *    ID field.
@@ -1111,14 +1220,14 @@ class SimpleTagGroup {
      *    @access public
      */
     function isId($id) {
-        for ($i = 0, $count = count($this->_widgets); $i < $count; $i++) {
-            if ($this->_widgets[$i]->isId($id)) {
+        for ($i = 0, $count = count($this->widgets); $i < $count; $i++) {
+            if ($this->widgets[$i]->isId($id)) {
                 return true;
             }
         }
         return false;
     }
-    
+
     /**
      *    Scans the widgets for one with the appropriate
      *    attached label.
@@ -1127,20 +1236,20 @@ class SimpleTagGroup {
      *    @access public
      */
     function isLabel($label) {
-        for ($i = 0, $count = count($this->_widgets); $i < $count; $i++) {
-            if ($this->_widgets[$i]->isLabel($label)) {
+        for ($i = 0, $count = count($this->widgets); $i < $count; $i++) {
+            if ($this->widgets[$i]->isLabel($label)) {
                 return true;
             }
         }
         return false;
     }
-    
+
     /**
      *    Dispatches the value into the form encoded packet.
      *    @param SimpleEncoding $encoding    Form packet.
      *    @access public
      */
-    function write(&$encoding) {
+    function write($encoding) {
         $encoding->add($this->getName(), $this->getValue());
     }
 }
@@ -1151,7 +1260,7 @@ class SimpleTagGroup {
  *    @subpackage WebTester
  */
 class SimpleCheckboxGroup extends SimpleTagGroup {
-    
+
     /**
      *    Accessor for current selected widget or false
      *    if none.
@@ -1160,15 +1269,15 @@ class SimpleCheckboxGroup extends SimpleTagGroup {
      */
     function getValue() {
         $values = array();
-        $widgets = &$this->_getWidgets();
+        $widgets = $this->getWidgets();
         for ($i = 0, $count = count($widgets); $i < $count; $i++) {
             if ($widgets[$i]->getValue() !== false) {
                 $values[] = $widgets[$i]->getValue();
             }
         }
-        return $this->_coerceValues($values);
+        return $this->coerceValues($values);
     }
-    
+
     /**
      *    Accessor for starting value that is active.
      *    @return string/array      Widget values or false if none.
@@ -1176,15 +1285,15 @@ class SimpleCheckboxGroup extends SimpleTagGroup {
      */
     function getDefault() {
         $values = array();
-        $widgets = &$this->_getWidgets();
+        $widgets = $this->getWidgets();
         for ($i = 0, $count = count($widgets); $i < $count; $i++) {
             if ($widgets[$i]->getDefault() !== false) {
                 $values[] = $widgets[$i]->getDefault();
             }
         }
-        return $this->_coerceValues($values);
+        return $this->coerceValues($values);
     }
-    
+
     /**
      *    Accessor for current set values.
      *    @param string/array/boolean $values   Either a single string, a
@@ -1193,11 +1302,11 @@ class SimpleCheckboxGroup extends SimpleTagGroup {
      *    @access public
      */
     function setValue($values) {
-        $values = $this->_makeArray($values);
-        if (! $this->_valuesArePossible($values)) {
+        $values = $this->makeArray($values);
+        if (! $this->valuesArePossible($values)) {
             return false;
         }
-        $widgets = &$this->_getWidgets();
+        $widgets = $this->getWidgets();
         for ($i = 0, $count = count($widgets); $i < $count; $i++) {
             $possible = $widgets[$i]->getAttribute('value');
             if (in_array($widgets[$i]->getAttribute('value'), $values)) {
@@ -1208,7 +1317,7 @@ class SimpleCheckboxGroup extends SimpleTagGroup {
         }
         return true;
     }
-    
+
     /**
      *    Tests to see if a possible value set is legal.
      *    @param string/array/boolean $values   Either a single string, a
@@ -1217,9 +1326,9 @@ class SimpleCheckboxGroup extends SimpleTagGroup {
      *                                          missing value.
      *    @access private
      */
-    function _valuesArePossible($values) {
+    protected function valuesArePossible($values) {
         $matches = array();
-        $widgets = &$this->_getWidgets();
+        $widgets = &$this->getWidgets();
         for ($i = 0, $count = count($widgets); $i < $count; $i++) {
             $possible = $widgets[$i]->getAttribute('value');
             if (in_array($possible, $values)) {
@@ -1228,7 +1337,7 @@ class SimpleCheckboxGroup extends SimpleTagGroup {
         }
         return ($values == $matches);
     }
-    
+
     /**
      *    Converts the output to an appropriate format. This means
      *    that no values is false, a single value is just that
@@ -1237,7 +1346,7 @@ class SimpleCheckboxGroup extends SimpleTagGroup {
      *    @return string/array/boolean   Expected format for a tag.
      *    @access private
      */
-    function _coerceValues($values) {
+    protected function coerceValues($values) {
         if (count($values) == 0) {
             return false;
         } elseif (count($values) == 1) {
@@ -1246,7 +1355,7 @@ class SimpleCheckboxGroup extends SimpleTagGroup {
             return $values;
         }
     }
-    
+
     /**
      *    Converts false or string into array. The opposite of
      *    the coercian method.
@@ -1256,7 +1365,7 @@ class SimpleCheckboxGroup extends SimpleTagGroup {
      *    @return array                       List of values, possibly empty.
      *    @access private
      */
-    function _makeArray($value) {
+    protected function makeArray($value) {
         if ($value === false) {
             return array();
         }
@@ -1274,7 +1383,7 @@ class SimpleCheckboxGroup extends SimpleTagGroup {
  *    @subpackage WebTester
  */
 class SimpleRadioGroup extends SimpleTagGroup {
-    
+
     /**
      *    Each tag is tried in turn until one is
      *    successfully set. The others will be
@@ -1284,11 +1393,11 @@ class SimpleRadioGroup extends SimpleTagGroup {
      *    @access public
      */
     function setValue($value) {
-        if (! $this->_valueIsPossible($value)) {
+        if (! $this->valueIsPossible($value)) {
             return false;
         }
         $index = false;
-        $widgets = &$this->_getWidgets();
+        $widgets = $this->getWidgets();
         for ($i = 0, $count = count($widgets); $i < $count; $i++) {
             if (! $widgets[$i]->setValue($value)) {
                 $widgets[$i]->setValue(false);
@@ -1296,15 +1405,15 @@ class SimpleRadioGroup extends SimpleTagGroup {
         }
         return true;
     }
-    
+
     /**
      *    Tests to see if a value is allowed.
      *    @param string    Attempted value.
      *    @return boolean  True if a valid value.
      *    @access private
      */
-    function _valueIsPossible($value) {
-        $widgets = &$this->_getWidgets();
+    protected function valueIsPossible($value) {
+        $widgets = $this->getWidgets();
         for ($i = 0, $count = count($widgets); $i < $count; $i++) {
             if ($widgets[$i]->getAttribute('value') == $value) {
                 return true;
@@ -1312,7 +1421,7 @@ class SimpleRadioGroup extends SimpleTagGroup {
         }
         return false;
     }
-    
+
     /**
      *    Accessor for current selected widget or false
      *    if none.
@@ -1321,7 +1430,7 @@ class SimpleRadioGroup extends SimpleTagGroup {
      *    @access public
      */
     function getValue() {
-        $widgets = &$this->_getWidgets();
+        $widgets = $this->getWidgets();
         for ($i = 0, $count = count($widgets); $i < $count; $i++) {
             if ($widgets[$i]->getValue() !== false) {
                 return $widgets[$i]->getValue();
@@ -1329,7 +1438,7 @@ class SimpleRadioGroup extends SimpleTagGroup {
         }
         return false;
     }
-    
+
     /**
      *    Accessor for starting value that is active.
      *    @return string/boolean      Value of first checked
@@ -1337,7 +1446,7 @@ class SimpleRadioGroup extends SimpleTagGroup {
      *    @access public
      */
     function getDefault() {
-        $widgets = &$this->_getWidgets();
+        $widgets = $this->getWidgets();
         for ($i = 0, $count = count($widgets); $i < $count; $i++) {
             if ($widgets[$i]->getDefault() !== false) {
                 return $widgets[$i]->getDefault();
@@ -1353,16 +1462,16 @@ class SimpleRadioGroup extends SimpleTagGroup {
  *    @subpackage WebTester
  */
 class SimpleLabelTag extends SimpleTag {
-    
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleLabelTag($attributes) {
-        $this->SimpleTag('label', $attributes);
+    function __construct($attributes) {
+        parent::__construct('label', $attributes);
     }
-    
+
     /**
      *    Access for the ID to attach the label to.
      *    @return string        For attribute.
@@ -1379,14 +1488,14 @@ class SimpleLabelTag extends SimpleTag {
  *    @subpackage WebTester
  */
 class SimpleFormTag extends SimpleTag {
-    
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleFormTag($attributes) {
-        $this->SimpleTag('form', $attributes);
+    function __construct($attributes) {
+        parent::__construct('form', $attributes);
     }
 }
 
@@ -1396,16 +1505,16 @@ class SimpleFormTag extends SimpleTag {
  *    @subpackage WebTester
  */
 class SimpleFrameTag extends SimpleTag {
-    
+
     /**
      *    Starts with a named tag with attributes only.
      *    @param hash $attributes    Attribute names and
      *                               string values.
      */
-    function SimpleFrameTag($attributes) {
-        $this->SimpleTag('frame', $attributes);
+    function __construct($attributes) {
+        parent::__construct('frame', $attributes);
     }
-    
+
     /**
      *    Tag contains no content.
      *    @return boolean        False.

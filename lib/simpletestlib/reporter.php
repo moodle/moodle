@@ -3,13 +3,14 @@
  *  base include file for SimpleTest
  *  @package    SimpleTest
  *  @subpackage UnitTester
- *  @version    $Id$
+ *  @version    $Id: reporter.php 2005 2010-11-02 14:09:34Z lastcraft $
  */
 
 /**#@+
  *  include other SimpleTest class files
  */
 require_once(dirname(__FILE__) . '/scorer.php');
+//require_once(dirname(__FILE__) . '/arguments.php');
 /**#@-*/
 
 /**
@@ -19,7 +20,7 @@ require_once(dirname(__FILE__) . '/scorer.php');
  *    @subpackage UnitTester
  */
 class HtmlReporter extends SimpleReporter {
-    var $_character_set;
+    private $character_set;
 
     /**
      *    Does nothing yet. The first output will
@@ -27,9 +28,9 @@ class HtmlReporter extends SimpleReporter {
      *    by a web browser.
      *    @access public
      */
-    function HtmlReporter($character_set = 'ISO-8859-1') {
-        $this->SimpleReporter();
-        $this->_character_set = $character_set;
+    function __construct($character_set = 'ISO-8859-1') {
+        parent::__construct();
+        $this->character_set = $character_set;
     }
 
     /**
@@ -43,9 +44,9 @@ class HtmlReporter extends SimpleReporter {
         print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
         print "<html>\n<head>\n<title>$test_name</title>\n";
         print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=" .
-                $this->_character_set . "\">\n";
+                $this->character_set . "\">\n";
         print "<style type=\"text/css\">\n";
-        print $this->_getCss() . "\n";
+        print $this->getCss() . "\n";
         print "</style>\n";
         print "</head>\n<body>\n";
         print "<h1>$test_name</h1>\n";
@@ -57,9 +58,8 @@ class HtmlReporter extends SimpleReporter {
      *    reloaded on every request. Otherwise you could be
      *    scratching your head over out of date test data.
      *    @access public
-     *    @static
      */
-    function sendNoCacheHeaders() {
+    static function sendNoCacheHeaders() {
         if (! headers_sent()) {
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
             header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
@@ -74,7 +74,7 @@ class HtmlReporter extends SimpleReporter {
      *    @return string            CSS code as text.
      *    @access protected
      */
-    function _getCss() {
+    protected function getCss() {
         return ".fail { background-color: inherit; color: red; }" .
                 ".pass { background-color: inherit; color: green; }" .
                 " pre { background-color: lightgray; color: inherit; }";
@@ -106,7 +106,6 @@ class HtmlReporter extends SimpleReporter {
      *    top level test.
      *    @param string $message    Failure message displayed in
      *                              the context of the other tests.
-     *    @access public
      */
     function paintFail($message) {
         parent::paintFail($message);
@@ -114,7 +113,7 @@ class HtmlReporter extends SimpleReporter {
         $breadcrumb = $this->getTestList();
         array_shift($breadcrumb);
         print implode(" -&gt; ", $breadcrumb);
-        print " -&gt; " . $this->_htmlEntities($message) . "<br />\n";
+        print " -&gt; " . $this->htmlEntities($message) . "<br />\n";
     }
 
     /**
@@ -128,7 +127,7 @@ class HtmlReporter extends SimpleReporter {
         $breadcrumb = $this->getTestList();
         array_shift($breadcrumb);
         print implode(" -&gt; ", $breadcrumb);
-        print " -&gt; <strong>" . $this->_htmlEntities($message) . "</strong><br />\n";
+        print " -&gt; <strong>" . $this->htmlEntities($message) . "</strong><br />\n";
     }
 
     /**
@@ -146,9 +145,9 @@ class HtmlReporter extends SimpleReporter {
                 '] with message ['. $exception->getMessage() .
                 '] in ['. $exception->getFile() .
                 ' line ' . $exception->getLine() . ']';
-        print " -&gt; <strong>" . $this->_htmlEntities($message) . "</strong><br />\n";
+        print " -&gt; <strong>" . $this->htmlEntities($message) . "</strong><br />\n";
     }
-    
+
     /**
      *    Prints the message for skipping tests.
      *    @param string $message    Text of skip condition.
@@ -160,16 +159,16 @@ class HtmlReporter extends SimpleReporter {
         $breadcrumb = $this->getTestList();
         array_shift($breadcrumb);
         print implode(" -&gt; ", $breadcrumb);
-        print " -&gt; " . $this->_htmlEntities($message) . "<br />\n";
+        print " -&gt; " . $this->htmlEntities($message) . "<br />\n";
     }
 
     /**
-     *    Paints formatted text such as dumped variables.
+     *    Paints formatted text such as dumped privateiables.
      *    @param string $message        Text to show.
      *    @access public
      */
     function paintFormattedMessage($message) {
-        print '<pre>' . $this->_htmlEntities($message) . '</pre>';
+        print '<pre>' . $this->htmlEntities($message) . '</pre>';
     }
 
     /**
@@ -178,8 +177,8 @@ class HtmlReporter extends SimpleReporter {
      *    @return string            Browser readable message.
      *    @access protected
      */
-    function _htmlEntities($message) {
-        return htmlentities($message, ENT_COMPAT, $this->_character_set);
+    protected function htmlEntities($message) {
+        return htmlentities($message, ENT_COMPAT, $this->character_set);
     }
 }
 
@@ -197,10 +196,9 @@ class TextReporter extends SimpleReporter {
     /**
      *    Does nothing yet. The first output will
      *    be sent on the first test start.
-     *    @access public
      */
-    function TextReporter() {
-        $this->SimpleReporter();
+    function __construct() {
+        parent::__construct();
     }
 
     /**
@@ -283,7 +281,7 @@ class TextReporter extends SimpleReporter {
         print "\tin " . implode("\n\tin ", array_reverse($breadcrumb));
         print "\n";
     }
-    
+
     /**
      *    Prints the message for skipping tests.
      *    @param string $message    Text of skip condition.
@@ -295,7 +293,7 @@ class TextReporter extends SimpleReporter {
     }
 
     /**
-     *    Paints formatted text such as dumped variables.
+     *    Paints formatted text such as dumped privateiables.
      *    @param string $message        Text to show.
      *    @access public
      */
@@ -312,10 +310,10 @@ class TextReporter extends SimpleReporter {
  *    @subpackage UnitTester
  */
 class SelectiveReporter extends SimpleReporterDecorator {
-    var $_just_this_case = false;
-    var $_just_this_test = false;
-    var $_on;
-    
+    private $just_this_case = false;
+    private $just_this_test = false;
+    private $on;
+
     /**
      *    Selects the test case or group to be run,
      *    and optionally a specific test.
@@ -323,17 +321,17 @@ class SelectiveReporter extends SimpleReporterDecorator {
      *    @param string $just_this_case    Only this case or group will run.
      *    @param string $just_this_test    Only this test method will run.
      */
-    function SelectiveReporter(&$reporter, $just_this_case = false, $just_this_test = false) {
+    function __construct($reporter, $just_this_case = false, $just_this_test = false) {
         if (isset($just_this_case) && $just_this_case) {
-            $this->_just_this_case = strtolower($just_this_case);
-            $this->_off();
+            $this->just_this_case = strtolower($just_this_case);
+            $this->off();
         } else {
-            $this->_on();
+            $this->on();
         }
         if (isset($just_this_test) && $just_this_test) {
-            $this->_just_this_test = strtolower($just_this_test);
+            $this->just_this_test = strtolower($just_this_test);
         }
-        $this->SimpleReporterDecorator($reporter);
+        parent::__construct($reporter);
     }
 
     /**
@@ -342,8 +340,8 @@ class SelectiveReporter extends SimpleReporterDecorator {
      *    @return boolean             True if matched.
      *    @access protected
      */
-    function _matchesTestCase($test_case) {
-        return $this->_just_this_case == strtolower($test_case);
+    protected function matchesTestCase($test_case) {
+        return $this->just_this_case == strtolower($test_case);
     }
 
     /**
@@ -354,40 +352,40 @@ class SelectiveReporter extends SimpleReporterDecorator {
      *    @return boolean             True if matched.
      *    @access protected
      */
-    function _shouldRunTest($test_case, $method) {
-        if ($this->_isOn() || $this->_matchesTestCase($test_case)) {
-            if ($this->_just_this_test) {
-                return $this->_just_this_test == strtolower($method);
+    protected function shouldRunTest($test_case, $method) {
+        if ($this->isOn() || $this->matchesTestCase($test_case)) {
+            if ($this->just_this_test) {
+                return $this->just_this_test == strtolower($method);
             } else {
                 return true;
             }
         }
         return false;
     }
-    
+
     /**
      *    Switch on testing for the group or subgroup.
      *    @access private
      */
-    function _on() {
-        $this->_on = true;
+    protected function on() {
+        $this->on = true;
     }
-    
+
     /**
      *    Switch off testing for the group or subgroup.
      *    @access private
      */
-    function _off() {
-        $this->_on = false;
+    protected function off() {
+        $this->on = false;
     }
-    
+
     /**
      *    Is this group actually being tested?
      *    @return boolean     True if the current test group is active.
      *    @access private
      */
-    function _isOn() {
-        return $this->_on;
+    protected function isOn() {
+        return $this->on;
     }
 
     /**
@@ -398,8 +396,8 @@ class SelectiveReporter extends SimpleReporterDecorator {
      *    @access public
      */
     function shouldInvoke($test_case, $method) {
-        if ($this->_shouldRunTest($test_case, $method)) {
-            return $this->_reporter->shouldInvoke($test_case, $method);
+        if ($this->shouldRunTest($test_case, $method)) {
+            return $this->reporter->shouldInvoke($test_case, $method);
         }
         return false;
     }
@@ -411,10 +409,10 @@ class SelectiveReporter extends SimpleReporterDecorator {
      *    @access public
      */
     function paintGroupStart($test_case, $size) {
-        if ($this->_just_this_case && $this->_matchesTestCase($test_case)) {
-            $this->_on();
+        if ($this->just_this_case && $this->matchesTestCase($test_case)) {
+            $this->on();
         }
-        $this->_reporter->paintGroupStart($test_case, $size);
+        $this->reporter->paintGroupStart($test_case, $size);
     }
 
     /**
@@ -423,9 +421,9 @@ class SelectiveReporter extends SimpleReporterDecorator {
      *    @access public
      */
     function paintGroupEnd($test_case) {
-        $this->_reporter->paintGroupEnd($test_case);
-        if ($this->_just_this_case && $this->_matchesTestCase($test_case)) {
-            $this->_off();
+        $this->reporter->paintGroupEnd($test_case);
+        if ($this->just_this_case && $this->matchesTestCase($test_case)) {
+            $this->off();
         }
     }
 }
@@ -436,7 +434,7 @@ class SelectiveReporter extends SimpleReporterDecorator {
  *    @subpackage UnitTester
  */
 class NoSkipsReporter extends SimpleReporterDecorator {
-    
+
     /**
      *    Does nothing.
      *    @param string $message    Text of skip condition.

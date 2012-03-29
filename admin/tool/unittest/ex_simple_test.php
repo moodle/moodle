@@ -46,7 +46,7 @@ class AutoGroupTest extends TestSuite {
         $this->showsearch = $showsearch;
     }
 
-    function run(&$reporter) {
+    function run($reporter) {
         global $UNITTEST;
 
         $UNITTEST->running = true;
@@ -85,7 +85,7 @@ class AutoGroupTest extends TestSuite {
 
                 $s_count++;
                 // OK, found: this shows as a 'Notice' for any 'simpletest/test*.php' file.
-                $this->addTestCase(new FindFileNotice($file_path, 'Found unit test file, '. $s_count));
+                $this->add(new FindFileNotice($file_path, 'Found unit test file, '. $s_count));
 
                 // addTestFile: Unfortunately this doesn't return fail/success (bool).
                 $this->addTestFile($file_path, true);
@@ -105,9 +105,9 @@ class AutoGroupTest extends TestSuite {
         $path = $dir;
         $count = $this->_recurseFolders($path);
         if ($count <= 0) {
-            $this->addTestCase(new BadAutoGroupTest($path, 'Search complete. No unit test files found'));
+            $this->add(new BadAutoGroupTest($path, 'Search complete. No unit test files found'));
         } else {
-            $this->addTestCase(new AutoGroupTestNotice($path, 'Search complete. Total unit test files found: '. $count));
+            $this->add(new AutoGroupTestNotice($path, 'Search complete. Total unit test files found: '. $count));
         }
         if ($this->showsearch) {
                 echo '</ul>';
@@ -116,6 +116,7 @@ class AutoGroupTest extends TestSuite {
     }
 
     function addTestFile($file, $internalcall = false) {
+
         if ($this->showsearch) {
             if ($internalcall) {
                 echo '<li><b>' . basename($file) . '</b></li>';
@@ -126,10 +127,10 @@ class AutoGroupTest extends TestSuite {
             // get blank screens because evil people turn down error_reporting elsewhere.
             error_reporting(E_ALL);
         }
-        if(!is_file($file) ){
-            parent::addTestCase(new BadTest($file, 'Not a file or does not exist'));
+        if (!is_file($file) ){
+            parent::add(new BadTest($file, 'Not a file or does not exist'));
         }
-        parent::addTestFile($file);
+        parent::addFile($file);
     }
 }
 
