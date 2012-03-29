@@ -764,4 +764,27 @@ class workshop_random_allocator_setting {
 
         return $i;
     }
+
+    /**
+     * Factory method making the instance from data in the passed text
+     *
+     * @param string $text as returned by {@link self::export_text()}
+     * @return workshop_random_allocator_setting
+     */
+    public static function instance_from_text($text) {
+        return self::instance_from_object(json_decode($text));
+    }
+
+    /**
+     * Exports the instance data as a text for persistant storage
+     *
+     * The returned data can be later used by {@self::instance_from_text()} factory method
+     * to restore the instance data. The current implementation uses JSON export format.
+     *
+     * @return string JSON representation of our public properties
+     */
+    public function export_text() {
+        $getvars = function($obj) { return get_object_vars($obj); };
+        return json_encode($getvars($this));
+    }
 }

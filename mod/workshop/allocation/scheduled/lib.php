@@ -53,12 +53,13 @@ class workshop_scheduled_allocator implements workshop_allocator {
      * Save the settings for the random allocator to execute it later
      */
     public function init() {
-        global $PAGE;
+        global $PAGE, $DB;
 
         $result = new workshop_allocation_result($this);
         $customdata = array();
         $customdata['workshop'] = $this->workshop;
         $this->mform = new workshop_scheduled_allocator_form($PAGE->url, $customdata);
+
         if ($this->mform->is_cancelled()) {
             redirect($PAGE->url->out(false));
         } else if ($settings = $this->mform->get_data()) {
@@ -80,6 +81,16 @@ class workshop_scheduled_allocator implements workshop_allocator {
             // this branch is executed if the form is submitted but the data
             // doesn't validate and the form should be redisplayed
             // or on the first display of the form.
+
+            $current = $DB->get_record('workshopallocation_scheduled',
+                array('workshopid' => $this->workshop->id), '*', IGNORE_MISSING);
+
+            if ($current !== false) {
+                $data = workshop_random_allocator_setting::instance_from_text($current->settings);
+                $data->enablescheduled = $current->enabled;
+                $this->mform->set_data($data);
+            }
+
             $result->set_status(workshop_allocation_result::STATUS_VOID);
             return $result;
         }
@@ -132,6 +143,26 @@ class workshop_scheduled_allocator implements workshop_allocator {
      * @param workshop_allocation_result $result logger
      */
     protected function store_settings($enabled, workshop_random_allocator_setting $settings, workshop_allocation_result $result) {
-        $result->log(print_r($settings, true), 'debug');
+        global $DB;
+
+
+        $data = new stdClass();
+        $data->workshopid = $this->workshop->id;
+        $data->enabled = $enabled;
+        $data->submissionend = $this->workshop->submissionend;
+        $data->timeallocated = null;
+        $data->settings = $settings->export_text();
+
+        $result->log($data->settings, 'debug');
+
+        $current = $DB->get_record('workshopallocation_scheduled', array('workshopid' => $data->workshopid), '*', IGNORE_MISSING);
+
+        if ($current === false) {
+            $DB->insert_record('workshopallocation_scheduled', $data);
+
+        } else {
+            $data->id = $current->id;
+            $DB->update_record('workshopallocation_scheduled', $data);
+        }
     }
 }
