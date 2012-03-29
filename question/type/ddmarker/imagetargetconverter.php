@@ -103,6 +103,26 @@ class qtype_ddmarker_category_list_item extends qtype_ddmarker_list_item {
         return $thisitem.$this->render_children($stringidentifier, $link);
     }
 }
+class qtype_ddmarker_question_list_item extends qtype_ddmarker_list_item {
+
+    public function __construct($record, $list, $parentlist) {
+        $this->record = $record;
+        $this->list = $list;
+        $this->parentlist = $parentlist;
+    }
+
+    public function parent_node() {
+        return $this->parentlist->get_instance($this->record->cat_id);
+    }
+
+    public function render ($stringidentifier, $link) {
+        global $PAGE;
+        $a = new stdClass();
+        $a->name = $this->record->name;
+        $thisitem = get_string('listitemquestion', 'qtype_ddmarker', $a);
+        return $thisitem;
+    }
+}
 class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
 
     protected $list;
@@ -139,8 +159,10 @@ class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
  * Describes a nested list of listitems. This class and sub classes contain the functionality to build the nested list.
  **/
 abstract class qtype_ddmarker_list {
+    protected $records = array();
+    protected $instances = array();
     abstract protected function new_list_item($record);
-    protected function make_list_item_instances_from_records ($contextids) {
+    protected function make_list_item_instances_from_records ($contextids = null) {
         if (!empty($this->records)) {
             foreach ($this->records as $id => $record) {
                 $this->instances[$id] = $this->new_list_item($record);
@@ -154,13 +176,12 @@ abstract class qtype_ddmarker_list {
     public function leaf_node ($id, $qcount) {
         $instance = $this->get_instance($id);
         $instance->leaf_to_root($qcount);
+        //print_object(array('list' => $this)+ compact('id', 'qcount'));
     }
 
 }
 
 class qtype_ddmarker_context_list extends qtype_ddmarker_list {
-    protected $records = array();
-    protected $instances = array();
 
     protected function new_list_item($record) {
         return new qtype_ddmarker_context_list_item($record, $this);
@@ -195,9 +216,9 @@ class qtype_ddmarker_context_list extends qtype_ddmarker_list {
     }
 }
 
+
+
 class qtype_ddmarker_category_list extends qtype_ddmarker_list {
-    protected $records = array();
-    protected $instances = array();
     protected $contextlist;
     protected function new_list_item($record) {
         return new qtype_ddmarker_category_list_item($record, $this, $this->contextlist);
@@ -209,6 +230,19 @@ class qtype_ddmarker_category_list extends qtype_ddmarker_list {
         list($sql, $params) = $DB->get_in_or_equal($contextids);
         $this->records = $DB->get_records_select('question_categories', "contextid ".$sql, $params);
         parent::make_list_item_instances_from_records ($contextids);
+    }
+}
+
+class qtype_ddmarker_question_list extends qtype_ddmarker_list {
+    protected $categorylist;
+    protected function new_list_item($record) {
+        return new qtype_ddmarker_question_list_item($record, $this, $this->categorylist);
+    }
+    public function __construct($questions, $categorylist) {
+        global $DB;
+        $this->categorylist = $categorylist;
+        $this->records = $questions;
+        parent::make_list_item_instances_from_records ();
     }
 }
 
@@ -242,45 +276,45 @@ if ($qcontextid) {
     $where .= 'AND cat.contextid = cat2.contextid AND cat2.id = :categoryid ';
     $params['categoryid'] = $categoryid;
 }
-$sql = 'SELECT cat.id, cat.contextid, COUNT(1) AS qcount '.
+$sql = 'SELECT q.id, cat.id AS cat_id, cat.contextid, q.name '.
                                             $from.
                                             $where.
-                                            'GROUP BY cat.id, cat.contextid';
+                                            'ORDER BY cat.id';
 
 
-$catswithquestions = $DB->get_records_sql($sql, $params);
+$questions = $DB->get_records_sql($sql, $params);
 
 $contextids = array();
-foreach ($catswithquestions as $catwithquestions) {
-    $contextids[] = $catwithquestions->contextid;
+foreach ($questions as $question) {
+    $contextids[] = $question->contextid;
 }
 
-$contexts = new qtype_ddmarker_context_list($contextids);
-$categories = new qtype_ddmarker_category_list($contextids, $contexts);
+$contextlist = new qtype_ddmarker_context_list(array_unique($contextids));
+$categorylist = new qtype_ddmarker_category_list($contextids, $contextlist);
+$questionlist = new qtype_ddmarker_question_list($questions, $categorylist);
 
-foreach ($catswithquestions as $catwithquestions) {
-    $categories->leaf_node($catwithquestions->id, $catwithquestions->qcount);
+foreach ($questions as $question) {
+    $questionlist->leaf_node($question->id, 1);
 }
 if ($categoryid || $qcontextid) {
     if (!$confirm) {
         $cofirmedurl = new moodle_url($PAGE->url, compact('categoryid', 'contextid')+array('confirm'=>1));
         $cancelurl = new moodle_url($PAGE->url);
         if ($categoryid) {
-            $torender = $categories->get_instance($categoryid);
+            $torender = $categorylist->get_instance($categoryid);
         } else if ($qcontextid) {
-            $torender = $contexts->get_instance($qcontextid);
+            $torender = $contextlist->get_instance($qcontextid);
         } else {
-            $torender = $contexts->root_node();
+            $torender = $contextlist->root_node();
         }
-        echo $contexts->render('listitem', false, $torender);
+        echo $contextlist->render('listitem', false, $torender);
         echo $OUTPUT->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
     } else if (confirm_sesskey()) {
 
     }
 } else {
-    echo $contexts->render('listitemaction', true, $contexts->root_node());
+    echo $contextlist->render('listitemaction', true, $contextlist->root_node());
 }
-
 
 // Footer.
 echo $OUTPUT->footer();
