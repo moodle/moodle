@@ -580,7 +580,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual($wday,3);
         $this->assertEqual($mon,12);
         $this->assertEqual($year,2009);
-        $this->assertEqual($yday,357);
+        $this->assertEqual($yday,356);
         $this->assertEqual($weekday, 'Wednesday');
         $this->assertEqual($month, 'December');
 
@@ -595,7 +595,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual($wday,3);
         $this->assertEqual($mon,12);
         $this->assertEqual($year,2009);
-        $this->assertEqual($yday,357);
+        $this->assertEqual($yday,356);
         $this->assertEqual($weekday, 'Wednesday');
         $this->assertEqual($month, 'December');
 
