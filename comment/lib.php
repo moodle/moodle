@@ -636,7 +636,7 @@ class comment {
      * }
      * @return boolean
      */
-    public function delete_comments($param) {
+    public static function delete_comments($param) {
         global $DB;
         $param = (array)$param;
         if (empty($param['contextid'])) {
