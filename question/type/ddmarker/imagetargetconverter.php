@@ -176,7 +176,6 @@ abstract class qtype_ddmarker_list {
     public function leaf_node ($id, $qcount) {
         $instance = $this->get_instance($id);
         $instance->leaf_to_root($qcount);
-        //print_object(array('list' => $this)+ compact('id', 'qcount'));
     }
 
 }
@@ -272,6 +271,7 @@ if ($qcontextid) {
     $params['path'] = $qcontext->path.'/%';
     $params['id'] = $qcontext->id;
 } else if ($categoryid) {
+    //fetch all questions from this cats context
     $from  .= ', {question_categories} cat2';
     $where .= 'AND cat.contextid = cat2.contextid AND cat2.id = :categoryid ';
     $params['categoryid'] = $categoryid;
@@ -279,8 +279,7 @@ if ($qcontextid) {
 $sql = 'SELECT q.id, cat.id AS cat_id, cat.contextid, q.name '.
                                             $from.
                                             $where.
-                                            'ORDER BY cat.id';
-
+                                            'ORDER BY cat.id, q.name';
 
 $questions = $DB->get_records_sql($sql, $params);
 
@@ -296,24 +295,25 @@ $questionlist = new qtype_ddmarker_question_list($questions, $categorylist);
 foreach ($questions as $question) {
     $questionlist->leaf_node($question->id, 1);
 }
-if ($categoryid || $qcontextid) {
-    if (!$confirm) {
+$questionsselected = (bool) ($categoryid || $qcontextid);
+if ($categoryid) {
+    $top = $categorylist->get_instance($categoryid);
+} else if ($qcontextid) {
+    $top = $contextlist->get_instance($qcontextid);
+} else {
+    $top = $contextlist->root_node();
+}
+if (!$confirm) {
+    if ($questionsselected) {
+        echo $contextlist->render('listitemaction', false, $top);
         $cofirmedurl = new moodle_url($PAGE->url, compact('categoryid', 'contextid')+array('confirm'=>1));
         $cancelurl = new moodle_url($PAGE->url);
-        if ($categoryid) {
-            $torender = $categorylist->get_instance($categoryid);
-        } else if ($qcontextid) {
-            $torender = $contextlist->get_instance($qcontextid);
-        } else {
-            $torender = $contextlist->root_node();
-        }
-        echo $contextlist->render('listitem', false, $torender);
         echo $OUTPUT->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
-    } else if (confirm_sesskey()) {
-
+    } else {
+        echo $contextlist->render('listitem', true, $top);
     }
-} else {
-    echo $contextlist->render('listitemaction', true, $contextlist->root_node());
+} else if (confirm_sesskey()) {
+
 }
 
 // Footer.
