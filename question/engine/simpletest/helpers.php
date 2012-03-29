@@ -36,7 +36,7 @@ require_once(dirname(__FILE__) . '/../lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testable_question_attempt extends question_attempt {
-    public function add_step($step) {
+    public function add_step(question_attempt_step $step) {
         parent::add_step($step);
     }
     public function set_min_fraction($fraction) {
@@ -88,7 +88,7 @@ class test_question_maker {
      * @param number $maxmark the max mark to set.
      * @return question_attempt the question attempt.
      */
-    public function get_a_qa($question, $maxmark = 3) {
+    public static function get_a_qa($question, $maxmark = 3) {
         return new question_attempt($question, 13, null, $maxmark);
     }
 

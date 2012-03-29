@@ -71,6 +71,7 @@ class qtype_match_test extends UnitTestCase {
         $q->createdby = $USER->id;
         $q->modifiedby = $USER->id;
 
+        $q->options = new stdClass();
         $q->options->shuffleanswers = false;
         test_question_maker::set_standard_combined_feedback_fields($q->options);
 

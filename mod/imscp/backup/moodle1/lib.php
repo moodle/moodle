@@ -38,7 +38,7 @@ class moodle1_mod_imscp_handler extends moodle1_resource_successor_handler {
      * Converts /MOODLE_BACKUP/COURSE/MODULES/MOD/RESOURCE data
      * Called by moodle1_mod_resource_handler::process_resource()
      */
-    public function process_legacy_resource($data) {
+    public function process_legacy_resource(array $data, array $raw = null) {
 
         $instanceid    = $data['id'];
         $currentcminfo = $this->get_cminfo($instanceid);

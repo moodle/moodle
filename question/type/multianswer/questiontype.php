@@ -299,6 +299,7 @@ function qtype_multianswer_extract_question($text) {
     $question->generalfeedback['format'] = FORMAT_HTML;
     $question->generalfeedback['itemid'] = '';
 
+    $question->options = new stdClass();
     $question->options->questions = array();
     $question->defaultmark = 0; // Will be increased for each answer norm
 

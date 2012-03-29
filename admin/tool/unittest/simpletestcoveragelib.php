@@ -135,6 +135,7 @@ class autogroup_test_coverage extends AutoGroupTest {
             $covrecorder->start_instrumentation();
             parent::run($simpletestreporter);
             $covrecorder->stop_instrumentation();
+            set_time_limit(60*10); // it may take a long time to generate the report
             $covrecorder->generate_report();
             moodle_coverage_reporter::print_summary_info(basename($this->coveragedir));
         } else {

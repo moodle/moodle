@@ -1132,13 +1132,13 @@ class blog_filter_entry extends blog_filter {
 }
 
 /**
- * This filter restricts the results to a time interval in seconds up to mktime()
+ * This filter restricts the results to a time interval in seconds up to time()
  */
 class blog_filter_since extends blog_filter {
     public function __construct($interval) {
         $this->conditions[] = 'p.lastmodified >= ? AND p.lastmodified <= ?';
-        $this->params[] = mktime() - $interval;
-        $this->params[] = mktime();
+        $this->params[] = time() - $interval;
+        $this->params[] = time();
     }
 }
 

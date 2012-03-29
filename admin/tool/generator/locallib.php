@@ -348,7 +348,7 @@ class generator {
         $base_course->summary = 'Blah Blah';
         $base_course->format = 'weeks';
         $base_course->numsections = '10';
-        $base_course->startdate = mktime();
+        $base_course->startdate = time();
         $base_course->id = '0';
 
         $courses_count = 0;
@@ -461,7 +461,7 @@ class generator {
                             case 'assignment':
                                 $module->intro = $description;
                                 $module->assignmenttype = $this->get_module_type('assignment');
-                                $module->timedue = mktime() + 89487321;
+                                $module->timedue = time() + 89487321;
                                 $module->grade = rand(50,100);
                                 break;
                             case 'chat':
@@ -505,8 +505,8 @@ class generator {
                                 break;
                             case 'lesson':
                                 $module->lessondefault = 1;
-                                $module->available = mktime();
-                                $module->deadline = mktime() + 719891987;
+                                $module->available = time();
+                                $module->deadline = time() + 719891987;
                                 $module->grade = 100;
                                 break;
                             case 'quiz':

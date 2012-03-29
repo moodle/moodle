@@ -150,7 +150,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
     function prelogout_hook() {
         global $CFG;
 
-        if ($this->config->logoutcas) {
+        if (!empty($this->config->logoutcas)) {
             $backurl = $CFG->wwwroot;
             $this->connectCAS();
             phpCAS::logoutWithURL($backurl);

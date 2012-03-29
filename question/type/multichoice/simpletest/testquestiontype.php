@@ -53,6 +53,7 @@ class qtype_multichoice_test extends UnitTestCase {
     protected function get_test_question_data() {
         $q = new stdClass();
         $q->id = 1;
+        $q->options = new stdClass();
         $q->options->single = true;
         $q->options->answers[1] = (object) array('answer' => 'frog',
                 'answerformat' => FORMAT_HTML, 'fraction' => 1);

@@ -45,3 +45,6 @@ foreach (get_list_of_plugins('mod') as $module) {
     }
 }
 
+class empty_portfoliolib_test extends UnitTestCase {
+    // empty, this prevents warning in coverage report
+}

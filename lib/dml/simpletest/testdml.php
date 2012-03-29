@@ -2284,13 +2284,13 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1, $DB->count_records($tablename, array('course' => 2)));
         $this->assertEqual(1, $DB->count_records($tablename, array('course' => 3)));
 
-        $record = $DB->get_record($tablename, array('course' => 1));
+        $record = $DB->get_record($tablename, array('course' => 3));
         $record->xxxxx = 2;
         try {
            $DB->update_record_raw($tablename, $record);
            $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
-            $this->assertTrue($e instanceof coding_exception);
+            $this->assertTrue($e instanceof moodle_exception);
         }
 
         $record = $DB->get_record($tablename, array('course' => 3));

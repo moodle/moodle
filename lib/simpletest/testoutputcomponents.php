@@ -164,7 +164,8 @@ EOF;
         $this->assertEqual('Moodle company', $item->get_text());
         $this->assertTrue(is_null($item->get_url()));
 
-        $subitem = array_shift($item->get_children());
+        $children = $item->get_children();
+        $subitem = array_shift($children);
         $this->assertFalse($subitem->has_children());
         $this->assertEqual('Hosting', $subitem->get_text());
         $this->assertEqual('Commercial hosting', $subitem->get_title());
@@ -183,11 +184,14 @@ EOF;
         $this->assertTrue($menu->has_children());
         $this->assertEqual(2, count($menu->get_children()));
 
-        $infomenu = array_pop($menu->get_children());
+        $children = $menu->get_children();
+        $infomenu = array_pop($children);
         $this->assertTrue($infomenu->has_children());
-        $this->assertEqual(2, count($infomenu->get_children()));
+        $children = $infomenu->get_children();
+        $this->assertEqual(2, count($children));
 
-        $langspecinfo = array_shift($infomenu->get_children());
+        $children = $infomenu->get_children();
+        $langspecinfo = array_shift($children);
         $this->assertEqual('Information in English', $langspecinfo->get_title());
 
         // same menu for English language selected
@@ -195,11 +199,13 @@ EOF;
         $this->assertTrue($menu->has_children());
         $this->assertEqual(2, count($menu->get_children()));
 
-        $infomenu = array_pop($menu->get_children());
+        $children = $menu->get_children();
+        $infomenu = array_pop($children);
         $this->assertTrue($infomenu->has_children());
         $this->assertEqual(1, count($infomenu->get_children()));
 
-        $langspecinfo = array_shift($infomenu->get_children());
+        $children = $infomenu->get_children();
+        $langspecinfo = array_shift($children);
         $this->assertEqual('Information in English', $langspecinfo->get_title());
 
         // same menu for German (de_du) language selected
@@ -207,11 +213,13 @@ EOF;
         $this->assertTrue($menu->has_children());
         $this->assertEqual(2, count($menu->get_children()));
 
-        $infomenu = array_pop($menu->get_children());
+        $children = $menu->get_children();
+        $infomenu = array_pop($children);
         $this->assertTrue($infomenu->has_children());
         $this->assertEqual(1, count($infomenu->get_children()));
 
-        $langspecinfo = array_shift($infomenu->get_children());
+        $children = $infomenu->get_children();
+        $langspecinfo = array_shift($children);
         $this->assertEqual('Informationen in deutscher Sprache', $langspecinfo->get_title());
 
         // same menu for Czech language selected
@@ -219,7 +227,8 @@ EOF;
         $this->assertTrue($menu->has_children());
         $this->assertEqual(2, count($menu->get_children()));
 
-        $infomenu = array_pop($menu->get_children());
+        $children = $infomenu->get_children();
+        $infomenu = array_pop( $children);
         $this->assertFalse($infomenu->has_children());
     }
 }
