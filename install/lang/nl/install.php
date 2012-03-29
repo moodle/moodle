@@ -40,6 +40,7 @@ $string['databasehost'] = 'Databank host:';
 $string['databasename'] = 'Datanbanknaam:';
 $string['databasetypehead'] = 'Kies databankdriver';
 $string['dataroot'] = 'Gegevensmap';
+$string['datarootpermission'] = 'Toestemming datamappen';
 $string['dbprefix'] = 'Tabelvoorvoegsel';
 $string['dirroot'] = 'Moodle-map';
 $string['environmenthead'] = 'Omgeving controleren ...';
