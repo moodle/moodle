@@ -937,6 +937,8 @@ function forum_cron() {
                         $posttext  .= " -> ".format_string($discussion->name,true);
                     }
                     $posttext .= "\n";
+                    $posttext .= $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id;
+                    $posttext .= "\n";
 
                     $posthtml .= "<p><font face=\"sans-serif\">".
                     "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$shortname</a> -> ".
@@ -990,7 +992,9 @@ function forum_cron() {
                         $userfrom->customheaders = array ("Precedence: Bulk");
 
                         if ($userto->maildigest == 2) {
-                            // Subjects only
+                            // Subjects and link only
+                            $posttext .= "\n";
+                            $posttext .= $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id;
                             $by = new stdClass();
                             $by->name = fullname($userfrom);
                             $by->date = userdate($post->modified);
@@ -1125,6 +1129,8 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
     // add absolute file links
     $post->message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php', $modcontext->id, 'mod_forum', 'post', $post->id);
 
+    $posttext .= "\n";
+    $posttext .= $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id;
     $posttext .= "\n---------------------------------------------------------------------\n";
     $posttext .= format_string($post->subject,true);
     if ($bare) {
