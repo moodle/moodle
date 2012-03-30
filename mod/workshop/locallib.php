@@ -146,6 +146,9 @@ class workshop {
     /** @var int if greater than 0 then the peer assessment is not allowed after this timestamp */
     public $assessmentend;
 
+    /** @var bool automatically switch to the assessment phase after the submissions deadline */
+    public $phaseswitchassessment;
+
     /**
      * @var workshop_strategy grading strategy instance
      * Do not use directly, get the instance using {@link workshop::grading_strategy_instance()}

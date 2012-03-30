@@ -183,6 +183,12 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'submissionend', $label, array('optional' => true));
         $mform->setAdvanced('submissionend');
 
+        $label = get_string('submissionendswitch', 'mod_workshop');
+        $mform->addElement('checkbox', 'phaseswitchassessment', $label);
+        $mform->setAdvanced('phaseswitchassessment');
+        $mform->disabledIf('phaseswitchassessment', 'submissionend[enabled]');
+        $mform->addHelpButton('phaseswitchassessment', 'submissionendswitch', 'mod_workshop');
+
         $label = get_string('assessmentstart', 'workshop');
         $mform->addElement('date_time_selector', 'assessmentstart', $label, array('optional' => true));
         $mform->setAdvanced('assessmentstart');

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20120122" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20120331" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -9,11 +9,11 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the parent course" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Name of the activity" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The introduction or description of the activity" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The introduction or description of the activity" PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the intro field" PREVIOUS="intro" NEXT="instructauthors"/>
-        <FIELD NAME="instructauthors" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Instructions for the submission phase" PREVIOUS="introformat" NEXT="instructauthorsformat"/>
+        <FIELD NAME="instructauthors" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Instructions for the submission phase" PREVIOUS="introformat" NEXT="instructauthorsformat"/>
         <FIELD NAME="instructauthorsformat" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="instructauthors" NEXT="instructreviewers"/>
-        <FIELD NAME="instructreviewers" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Instructions for the assessment phase" PREVIOUS="instructauthorsformat" NEXT="instructreviewersformat"/>
+        <FIELD NAME="instructreviewers" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Instructions for the assessment phase" PREVIOUS="instructauthorsformat" NEXT="instructreviewersformat"/>
         <FIELD NAME="instructreviewersformat" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="instructreviewers" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp when the module was modified" PREVIOUS="instructreviewersformat" NEXT="phase"/>
         <FIELD NAME="phase" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The current phase of workshop (0 = not available, 1 = submission, 2 = assessment, 3 = closed)" PREVIOUS="timemodified" NEXT="useexamples"/>
@@ -32,7 +32,8 @@
         <FIELD NAME="submissionstart" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be started manually, greater than 0 the timestamp of the start of the submission phase" PREVIOUS="examplesmode" NEXT="submissionend"/>
         <FIELD NAME="submissionend" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be closed manually, greater than 0 the timestamp of the end of the submission phase" PREVIOUS="submissionstart" NEXT="assessmentstart"/>
         <FIELD NAME="assessmentstart" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be started manually, greater than 0 the timestamp of the start of the assessment phase" PREVIOUS="submissionend" NEXT="assessmentend"/>
-        <FIELD NAME="assessmentend" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be closed manually, greater than 0 the timestamp of the end of the assessment phase" PREVIOUS="assessmentstart"/>
+        <FIELD NAME="assessmentend" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be closed manually, greater than 0 the timestamp of the end of the assessment phase" PREVIOUS="assessmentstart" NEXT="phaseswitchassessment"/>
+        <FIELD NAME="phaseswitchassessment" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Automatically switch to the assessment phase after the submissions deadline" PREVIOUS="assessmentend"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="course_fk"/>
@@ -48,14 +49,14 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp when the work was submitted for the first time" PREVIOUS="authorid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp when the submission has been updated" PREVIOUS="timecreated" NEXT="title"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The submission title" PREVIOUS="timemodified" NEXT="content"/>
-        <FIELD NAME="content" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Submission text" PREVIOUS="title" NEXT="contentformat"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Submission text" PREVIOUS="title" NEXT="contentformat"/>
         <FIELD NAME="contentformat" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of submission text" PREVIOUS="content" NEXT="contenttrust"/>
         <FIELD NAME="contenttrust" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The trust mode of the data" PREVIOUS="contentformat" NEXT="attachment"/>
         <FIELD NAME="attachment" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Used by File API file_postupdate_standard_filemanager" PREVIOUS="contenttrust" NEXT="grade"/>
         <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="Aggregated grade for the submission. The grade is a decimal number from interval 0..100. If NULL then the grade for submission has not been aggregated yet." PREVIOUS="attachment" NEXT="gradeover"/>
         <FIELD NAME="gradeover" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the submission manually overridden by a teacher. Grade is always from interval 0..100. If NULL then the grade is not overriden." PREVIOUS="grade" NEXT="gradeoverby"/>
         <FIELD NAME="gradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradeover" NEXT="feedbackauthor"/>
-        <FIELD NAME="feedbackauthor" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Teacher comment/feedback for the author of the submission, for example describing the reasons for the grade overriding" PREVIOUS="gradeoverby" NEXT="feedbackauthorformat"/>
+        <FIELD NAME="feedbackauthor" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Teacher comment/feedback for the author of the submission, for example describing the reasons for the grade overriding" PREVIOUS="gradeoverby" NEXT="feedbackauthorformat"/>
         <FIELD NAME="feedbackauthorformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbackauthor" NEXT="timegraded"/>
         <FIELD NAME="timegraded" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp when grade or gradeover was recently modified" PREVIOUS="feedbackauthorformat" NEXT="published"/>
         <FIELD NAME="published" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Shall the submission be available to other when the workshop is closed" PREVIOUS="timegraded" NEXT="late"/>
@@ -80,9 +81,9 @@
         <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The computed grade 0..100 for this assessment. If NULL then it has not been computed yet." PREVIOUS="grade" NEXT="gradinggradeover"/>
         <FIELD NAME="gradinggradeover" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the assessment manually overridden by a teacher. Grade is always from interval 0..100. If NULL then the grade is not overriden." PREVIOUS="gradinggrade" NEXT="gradinggradeoverby"/>
         <FIELD NAME="gradinggradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradinggradeover" NEXT="feedbackauthor"/>
-        <FIELD NAME="feedbackauthor" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The comment/feedback from the reviewer for the author." PREVIOUS="gradinggradeoverby" NEXT="feedbackauthorformat"/>
+        <FIELD NAME="feedbackauthor" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The comment/feedback from the reviewer for the author." PREVIOUS="gradinggradeoverby" NEXT="feedbackauthorformat"/>
         <FIELD NAME="feedbackauthorformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbackauthor" NEXT="feedbackreviewer"/>
-        <FIELD NAME="feedbackreviewer" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The comment/feedback from the teacher for the reviewer. For example the reason why the grade for assessment was overridden" PREVIOUS="feedbackauthorformat" NEXT="feedbackreviewerformat"/>
+        <FIELD NAME="feedbackreviewer" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The comment/feedback from the teacher for the reviewer. For example the reason why the grade for assessment was overridden" PREVIOUS="feedbackauthorformat" NEXT="feedbackreviewerformat"/>
         <FIELD NAME="feedbackreviewerformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbackreviewer"/>
       </FIELDS>
       <KEYS>
@@ -99,7 +100,7 @@
         <FIELD NAME="strategy" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="assessmentid" NEXT="dimensionid"/>
         <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key. References dimension id in one of the grading strategy tables." PREVIOUS="strategy" NEXT="grade"/>
         <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5" COMMENT="Given grade in the referenced assessment dimension." PREVIOUS="dimensionid" NEXT="peercomment"/>
-        <FIELD NAME="peercomment" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Reviewer's comment to the grade value." PREVIOUS="grade" NEXT="peercommentformat"/>
+        <FIELD NAME="peercomment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Reviewer's comment to the grade value." PREVIOUS="grade" NEXT="peercommentformat"/>
         <FIELD NAME="peercommentformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The format of peercomment field" PREVIOUS="peercomment"/>
       </FIELDS>
       <KEYS>

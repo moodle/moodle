@@ -70,14 +70,15 @@ function workshop_add_instance(stdclass $workshop) {
     global $CFG, $DB;
     require_once(dirname(__FILE__) . '/locallib.php');
 
-    $workshop->phase                = workshop::PHASE_SETUP;
-    $workshop->timecreated          = time();
-    $workshop->timemodified         = $workshop->timecreated;
-    $workshop->useexamples          = (int)!empty($workshop->useexamples);          // unticked checkbox hack
-    $workshop->usepeerassessment    = (int)!empty($workshop->usepeerassessment);    // unticked checkbox hack
-    $workshop->useselfassessment    = (int)!empty($workshop->useselfassessment);    // unticked checkbox hack
-    $workshop->latesubmissions      = (int)!empty($workshop->latesubmissions);      // unticked checkbox hack
-    $workshop->evaluation           = 'best';
+    $workshop->phase                 = workshop::PHASE_SETUP;
+    $workshop->timecreated           = time();
+    $workshop->timemodified          = $workshop->timecreated;
+    $workshop->useexamples           = (int)!empty($workshop->useexamples);
+    $workshop->usepeerassessment     = (int)!empty($workshop->usepeerassessment);
+    $workshop->useselfassessment     = (int)!empty($workshop->useselfassessment);
+    $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
+    $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
+    $workshop->evaluation            = 'best';
 
     // insert the new record so we get the id
     $workshop->id = $DB->insert_record('workshop', $workshop);
@@ -122,13 +123,14 @@ function workshop_update_instance(stdclass $workshop) {
     global $CFG, $DB;
     require_once(dirname(__FILE__) . '/locallib.php');
 
-    $workshop->timemodified         = time();
-    $workshop->id                   = $workshop->instance;
-    $workshop->useexamples          = (int)!empty($workshop->useexamples);          // unticked checkbox hack
-    $workshop->usepeerassessment    = (int)!empty($workshop->usepeerassessment);    // unticked checkbox hack
-    $workshop->useselfassessment    = (int)!empty($workshop->useselfassessment);    // unticked checkbox hack
-    $workshop->latesubmissions      = (int)!empty($workshop->latesubmissions);      // unticked checkbox hack
-    $workshop->evaluation           = 'best';
+    $workshop->timemodified          = time();
+    $workshop->id                    = $workshop->instance;
+    $workshop->useexamples           = (int)!empty($workshop->useexamples);
+    $workshop->usepeerassessment     = (int)!empty($workshop->usepeerassessment);
+    $workshop->useselfassessment     = (int)!empty($workshop->useselfassessment);
+    $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
+    $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
+    $workshop->evaluation            = 'best';
 
     // todo - if the grading strategy is being changed, we must replace all aggregated peer grades with nulls
     // todo - if maximum grades are being changed, we should probably recalculate or invalidate them

@@ -211,6 +211,10 @@ $string['submissioncontent'] = 'Submission content';
 $string['submissionend'] = 'Submissions deadline';
 $string['submissionendbeforestart'] = 'Submissions deadline can not be specified before the open for submissions date';
 $string['submissionenddatetime'] = 'Submissions deadline: {$a->daydatetime} ({$a->distanceday})';
+$string['submissionendswitch'] = 'Switch to the next phase after the submissions deadline';
+$string['submissionendswitch_help'] = 'If the submissions deadline is specified and this box is checked, the workshop will automatically switch to the assessment phase after the submissions deadline.
+
+If you enable this feature, it is recommended to set up the scheduled allocation method, too. If the submissions are not allocated, no assessment can be done even if the workshop itself is in the assessment phase.';
 $string['submissiongrade'] = 'Grade for submission';
 $string['submissiongrade_help'] = 'This setting specifies the maximum grade that may be obtained for submitted work.';
 $string['submissiongradeof'] = 'Grade for submission (of {$a})';

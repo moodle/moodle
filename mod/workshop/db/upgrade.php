@@ -18,8 +18,8 @@
 /**
  * Keeps track of upgrades to the workshop module
  *
- * @package    mod
- * @subpackage workshop
+ * @package    mod_workshop
+ * @category   upgrade
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,9 +38,17 @@ function xmldb_workshop_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-
     // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
+
+    if ($oldversion < 2012033100) {
+        // add the field 'phaseswitchassessment' to the 'workshop' table
+        $table = new xmldb_table('workshop');
+        $field = new xmldb_field('phaseswitchassessment', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'assessmentend');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2012033100, 'workshop');
+    }
 
     return true;
 }
