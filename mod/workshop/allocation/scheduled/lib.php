@@ -56,20 +56,32 @@ class workshop_scheduled_allocator implements workshop_allocator {
         global $PAGE, $DB;
 
         $result = new workshop_allocation_result($this);
+
         $customdata = array();
         $customdata['workshop'] = $this->workshop;
+
+        $current = $DB->get_record('workshopallocation_scheduled',
+            array('workshopid' => $this->workshop->id), '*', IGNORE_MISSING);
+
+        $customdata['current'] = $current;
+
         $this->mform = new workshop_scheduled_allocator_form($PAGE->url, $customdata);
 
         if ($this->mform->is_cancelled()) {
-            redirect($PAGE->url->out(false));
+            redirect($this->workshop->view_url());
         } else if ($settings = $this->mform->get_data()) {
             if (empty($settings->enablescheduled)) {
                 $enabled = false;
             } else {
                 $enabled = true;
             }
+            if (empty($settings->reenablescheduled)) {
+                $reset = false;
+            } else {
+                $reset = true;
+            }
             $settings = workshop_random_allocator_setting::instance_from_object($settings);
-            $this->store_settings($enabled, $settings, $result);
+            $this->store_settings($enabled, $reset, $settings, $result);
             if ($enabled) {
                 $msg = get_string('resultenabled', 'workshopallocation_scheduled');
             } else {
@@ -81,9 +93,6 @@ class workshop_scheduled_allocator implements workshop_allocator {
             // this branch is executed if the form is submitted but the data
             // doesn't validate and the form should be redisplayed
             // or on the first display of the form.
-
-            $current = $DB->get_record('workshopallocation_scheduled',
-                array('workshopid' => $this->workshop->id), '*', IGNORE_MISSING);
 
             if ($current !== false) {
                 $data = workshop_random_allocator_setting::instance_from_text($current->settings);
@@ -103,13 +112,6 @@ class workshop_scheduled_allocator implements workshop_allocator {
         global $PAGE;
 
         $output = $PAGE->get_renderer('mod_workshop');
-
-        // the submissions deadline must be defined
-        if (empty($this->workshop->submissionend)) {
-            $out  = $output->box(get_string('nosubmissionend', 'workshopallocation_scheduled'), 'generalbox', 'notice');
-            $out .= $output->continue_button($this->workshop->updatemod_url());
-            return $out;
-        }
 
         $out = $output->container_start('scheduled-allocator');
         // the nasty hack follows to bypass the sad fact that moodle quickforms do not allow to actually
@@ -211,10 +213,11 @@ class workshop_scheduled_allocator implements workshop_allocator {
      * Stores the pre-defined random allocation settings for later usage
      *
      * @param bool $enabled is the scheduled allocation enabled
+     * @param bool $reset reset the recent execution info
      * @param workshop_random_allocator_setting $settings settings form data
      * @param workshop_allocation_result $result logger
      */
-    protected function store_settings($enabled, workshop_random_allocator_setting $settings, workshop_allocation_result $result) {
+    protected function store_settings($enabled, $reset, workshop_random_allocator_setting $settings, workshop_allocation_result $result) {
         global $DB;
 
 
@@ -222,8 +225,14 @@ class workshop_scheduled_allocator implements workshop_allocator {
         $data->workshopid = $this->workshop->id;
         $data->enabled = $enabled;
         $data->submissionend = $this->workshop->submissionend;
-        $data->timeallocated = null;
         $data->settings = $settings->export_text();
+
+        if ($reset) {
+            $data->timeallocated = null;
+            $data->resultstatus = null;
+            $data->resultmessage = null;
+            $data->resultlog = null;
+        }
 
         $result->log($data->settings, 'debug');
 
@@ -257,9 +266,11 @@ function workshopallocation_scheduled_cron() {
     $workshops = $DB->get_records_sql($sql, array(time()));
 
     if (empty($workshops)) {
-        mtrace('No workshops ready for scheduled allocation');
+        mtrace('... no workshops awaiting scheduled allocation. ', '');
         return;
     }
+
+    mtrace('... executing scheduled allocation in '.count($workshops).' workshop(s) ... ', '');
 
     // let's have some fun!
     require_once($CFG->dirroot.'/mod/workshop/locallib.php');

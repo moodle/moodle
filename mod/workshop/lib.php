@@ -887,7 +887,9 @@ function workshop_print_recent_mod_activity($activity, $courseid, $detail, $modn
  * @return boolean true on success, false otherwise
  */
 function workshop_cron() {
+    mtrace(' processing workshop subplugins ...');
     cron_execute_plugin_type('workshopallocation', 'workshop allocation methods');
+
     return true;
 }
 
