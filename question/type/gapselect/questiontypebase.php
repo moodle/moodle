@@ -313,10 +313,12 @@ abstract class qtype_gapselect_base extends question_type {
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
     }
 
     protected function delete_files($questionid, $contextid) {
         parent::delete_files($questionid, $contextid);
         $this->delete_files_in_combined_feedback($questionid, $contextid);
+        $this->delete_files_in_hints($questionid, $contextid);
     }
 }
