@@ -157,6 +157,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
         }
 
         $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
     }
 
     /**
@@ -178,6 +179,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
         }
 
         $this->delete_files_in_combined_feedback($questionid, $contextid);
+        $this->delete_files_in_hints($questionid, $contextid);
     }
 
 
