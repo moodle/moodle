@@ -1521,15 +1521,6 @@ class global_navigation extends navigation_node {
             $limit = $CFG->navcourselimit;
         }
 
-        // Work out the key to use for caching.
-        if (is_array($categoryids)) {
-            $cachekey = sprintf('load_all_courses_%d_%s', $limit, md5(join('_', $categoryids)));
-        } else if (is_string($categoryids) || is_int($categoryids)) {
-            $cachekey = sprintf('load_all_courses_%d_%s', $limit, md5($categoryids));
-        } else {
-            $cachekey = sprintf('load_all_courses_%d', $limit);
-        }
-
         $toload = (empty($CFG->navshowallcourses))?self::LOAD_ROOT_CATEGORIES:self::LOAD_ALL_CATEGORIES;
 
         // If we are going to show all courses AND we are showing categories then
@@ -1541,70 +1532,90 @@ class global_navigation extends navigation_node {
         // Will be the return of our efforts
         $coursenodes = array();
 
-        // Here we have a very important cache check.
-        // Loading all courses is a VERY costly buisness for two reasons.
-        // 1. We still have a limit per category of courses, however there is no
-        //    great way to select a maximum per category in a single query.
-        // 2. Each course loaded is costly as we have permission checks, ajax tie
-        //    in's and a great deal of code that will be executed.
-        if (!$this->cache->cached($cachekey)) {
-            // Check if we need to show categories.
-            if ($this->show_categories()) {
-                // Hmmm we need to show categories... this is going to be painful.
-                // We now need to fetch up to $limit courses for each category to
-                // be displayed.
-                if ($categoryids !== null) {
-                    if (!is_array($categoryids)) {
-                        $categoryids = array($categoryids);
-                    }
-                    list($categorywhere, $categoryparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'cc');
-                    $categorywhere = 'WHERE cc.id '.$categorywhere;
-                } else if ($toload == self::LOAD_ROOT_CATEGORIES) {
-                    $categorywhere = 'WHERE cc.depth = 1 OR cc.depth = 2';
-                    $categoryparams = array();
-                } else {
-                    $categorywhere = '';
-                    $categoryparams = array();
+        // Check if we need to show categories.
+        if ($this->show_categories()) {
+            // Hmmm we need to show categories... this is going to be painful.
+            // We now need to fetch up to $limit courses for each category to
+            // be displayed.
+            if ($categoryids !== null) {
+                if (!is_array($categoryids)) {
+                    $categoryids = array($categoryids);
                 }
+                list($categorywhere, $categoryparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'cc');
+                $categorywhere = 'WHERE cc.id '.$categorywhere;
+            } else if ($toload == self::LOAD_ROOT_CATEGORIES) {
+                $categorywhere = 'WHERE cc.depth = 1 OR cc.depth = 2';
+                $categoryparams = array();
+            } else {
+                $categorywhere = '';
+                $categoryparams = array();
+            }
 
-                // First up we are going to get the categories that we are going to
-                // need so that we can determine how best to load the courses from them.
-                $sql = "SELECT cc.id, COUNT(c.id) AS coursecount
-                          FROM {course_categories} cc
-                     LEFT JOIN {course} c ON c.category = cc.id
-                               {$categorywhere}
-                      GROUP BY cc.id";
-                $categories = $DB->get_recordset_sql($sql, $categoryparams);
-                $fullfetch = array();
-                $partfetch = array();
-                foreach ($categories as $category) {
-                    if (!$this->can_add_more_courses_to_category($category->id)) {
+            // First up we are going to get the categories that we are going to
+            // need so that we can determine how best to load the courses from them.
+            $sql = "SELECT cc.id, COUNT(c.id) AS coursecount
+                        FROM {course_categories} cc
+                    LEFT JOIN {course} c ON c.category = cc.id
+                            {$categorywhere}
+                    GROUP BY cc.id";
+            $categories = $DB->get_recordset_sql($sql, $categoryparams);
+            $fullfetch = array();
+            $partfetch = array();
+            foreach ($categories as $category) {
+                if (!$this->can_add_more_courses_to_category($category->id)) {
+                    continue;
+                }
+                if ($category->coursecount > $limit * 5) {
+                    $partfetch[] = $category->id;
+                } else if ($category->coursecount > 0) {
+                    $fullfetch[] = $category->id;
+                }
+            }
+            $categories->close();
+
+            if (count($fullfetch)) {
+                // First up fetch all of the courses in categories where we know that we are going to
+                // need the majority of courses.
+                list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+                list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array(SITEID), SQL_PARAMS_NAMED, 'lcourse', false);
+                list($categoryids, $categoryparams) = $DB->get_in_or_equal($fullfetch, SQL_PARAMS_NAMED, 'lcategory');
+                $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
+                            FROM {course} c
+                                $ccjoin
+                            WHERE c.category {$categoryids} AND
+                                c.id {$courseids}
+                        ORDER BY c.sortorder ASC";
+                $coursesrs = $DB->get_recordset_sql($sql, $courseparams + $categoryparams);
+                foreach ($coursesrs as $course) {
+                    if (!$this->can_add_more_courses_to_category($course->category)) {
                         continue;
                     }
-                    if ($category->coursecount > $limit * 5) {
-                        $partfetch[] = $category->id;
-                    } else if ($category->coursecount > 0) {
-                        $fullfetch[] = $category->id;
+                    context_instance_preload($course);
+                    if ($course->id != SITEID && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                        continue;
                     }
+                    $coursenodes[$course->id] = $this->add_course($course);
                 }
-                $categories->close();
+                $coursesrs->close();
+            }
 
-                if (count($fullfetch)) {
-                    // First up fetch all of the courses in categories where we know that we are going to
-                    // need the majority of courses.
+            if (count($partfetch)) {
+                // Next we will work our way through the categories where we will likely only need a small
+                // proportion of the courses.
+                foreach ($partfetch as $categoryid) {
                     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
                     list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array(SITEID), SQL_PARAMS_NAMED, 'lcourse', false);
-                    list($categoryids, $categoryparams) = $DB->get_in_or_equal($fullfetch, SQL_PARAMS_NAMED, 'lcategory');
                     $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
-                              FROM {course} c
-                                   $ccjoin
-                             WHERE c.category {$categoryids} AND
-                                   c.id {$courseids}
-                          ORDER BY c.sortorder ASC";
-                    $coursesrs = $DB->get_recordset_sql($sql, $courseparams + $categoryparams);
+                                FROM {course} c
+                                    $ccjoin
+                                WHERE c.category = :categoryid AND
+                                    c.id {$courseids}
+                            ORDER BY c.sortorder ASC";
+                    $courseparams['categoryid'] = $categoryid;
+                    $coursesrs = $DB->get_recordset_sql($sql, $courseparams, 0, $limit * 5);
                     foreach ($coursesrs as $course) {
                         if (!$this->can_add_more_courses_to_category($course->category)) {
-                            continue;
+                            break;
                         }
                         context_instance_preload($course);
                         if ($course->id != SITEID && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
@@ -1614,97 +1625,30 @@ class global_navigation extends navigation_node {
                     }
                     $coursesrs->close();
                 }
-
-                if (count($partfetch)) {
-                    // Next we will work our way through the categories where we will likely only need a small
-                    // proportion of the courses.
-                    foreach ($partfetch as $categoryid) {
-                        list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-                        list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array(SITEID), SQL_PARAMS_NAMED, 'lcourse', false);
-                        $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
-                                  FROM {course} c
-                                       $ccjoin
-                                 WHERE c.category = :categoryid AND
-                                       c.id {$courseids}
-                              ORDER BY c.sortorder ASC";
-                        $courseparams['categoryid'] = $categoryid;
-                        $coursesrs = $DB->get_recordset_sql($sql, $courseparams, 0, $limit * 5);
-                        foreach ($coursesrs as $course) {
-                            if (!$this->can_add_more_courses_to_category($course->category)) {
-                                break;
-                            }
-                            context_instance_preload($course);
-                            if ($course->id != SITEID && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                                continue;
-                            }
-                            $coursenodes[$course->id] = $this->add_course($course);
-                        }
-                        $coursesrs->close();
-                    }
-                }
-            } else {
-                // Prepare the SQL to load the courses and their contexts
-                list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-                list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses), SQL_PARAMS_NAMED, 'lc', false);
-                $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
-                          FROM {course} c
-                               $ccjoin
-                         WHERE c.id {$courseids}
-                      ORDER BY c.sortorder ASC";
-                $coursesrs = $DB->get_recordset_sql($sql, $courseparams);
-                foreach ($coursesrs as $course) {
-                    context_instance_preload($course);
-                    if ($course->id != SITEID && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                        continue;
-                    }
-                    $coursenodes[$course->id] = $this->add_course($course);
-                    if (count($coursenodes) >= $limit) {
-                        break;
-                    }
-                }
-                $coursesrs->close();
             }
-
-            // Cache the course id's that we've had to load to save us running these queries again.
-            $this->cache->set($cachekey, array_keys($coursenodes));
         } else {
-            // YAY we've already cached this information
-            // First get the courses that we need to load from the navigation cache
-            $courseids = $this->cache->$cachekey;
-
-            // Check to make sure we have some course nodes.
-            if (!count($courseids)) {
-                return $coursenodes;
-            }
-
-            // Next check for courses that have already been loaded and remove them
-            // from the array we are about to load.
-            foreach (array_intersect($courseids, array_keys($this->addedcourses)) as $id) {
-                $key = array_search($id, $courseids);
-                unset($courseids[$key]);
-            }
-
-            // Check that we still have course nodes. Any that have already been loaded
-            // will now have been removed.
-            if (!count($courseids)) {
-                return $coursenodes;
-            }
-
             // Prepare the SQL to load the courses and their contexts
             list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-            list($courseids, $courseparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'lc');
+            list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses), SQL_PARAMS_NAMED, 'lc', false);
             $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
-                      FROM {course} c
-                           $ccjoin
-                     WHERE c.id {$courseids}
-                  ORDER BY c.sortorder ASC";
+                        FROM {course} c
+                            $ccjoin
+                        WHERE c.id {$courseids}
+                    ORDER BY c.sortorder ASC";
             $coursesrs = $DB->get_recordset_sql($sql, $courseparams);
             foreach ($coursesrs as $course) {
                 context_instance_preload($course);
+                if ($course->id != SITEID && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                    continue;
+                }
                 $coursenodes[$course->id] = $this->add_course($course);
+                if (count($coursenodes) >= $limit) {
+                    break;
+                }
             }
             $coursesrs->close();
         }
+
         return $coursenodes;
     }
 
