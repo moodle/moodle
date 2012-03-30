@@ -428,7 +428,7 @@ class page_requirements_manager {
      * @return array description of module or null if not found
      */
     protected function find_module($component) {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $module = null;
 
@@ -439,12 +439,13 @@ class page_requirements_manager {
                 case 'core_filepicker':
                     $module = array('name'     => 'core_filepicker',
                                     'fullpath' => '/repository/filepicker.js',
-                                    'requires' => array('base', 'node', 'node-event-simulate', 'json', 'async-queue', 'io-base', 'io-upload-iframe', 'io-form', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview', 'yui2-dragdrop', 'yui2-cookie'),
+                                    'requires' => array('base', 'node', 'node-event-simulate', 'json', 'async-queue', 'io-base', 'io-upload-iframe', 'io-form', 'yui2-menu', 'yui2-treeview', 'yui2-dragdrop', 'panel', 'cookie'),
+                                    // TODO check if those all are really required
                                     'strings'  => array(array('add', 'repository'), array('back', 'repository'), array('cancel', 'moodle'), array('close', 'repository'),
                                                         array('cleancache', 'repository'), array('copying', 'repository'), array('date', 'repository'), array('downloadsucc', 'repository'),
                                                         array('emptylist', 'repository'), array('error', 'repository'), array('federatedsearch', 'repository'),
                                                         array('filenotnull', 'repository'), array('getfile', 'repository'), array('help', 'moodle'), array('iconview', 'repository'),
-                                                        array('invalidjson', 'repository'), array('linkexternal', 'repository'), array('listview', 'repository'),
+                                                        array('invalidjson', 'repository'), array('linkexternal', 'repository'), array('listview', 'repository'), array('detailview', 'repository'),
                                                         array('loading', 'repository'), array('login', 'repository'), array('logout', 'repository'), array('noenter', 'repository'),
                                                         array('noresult', 'repository'), array('manageurl', 'repository'), array('popup', 'repository'), array('preview', 'repository'),
                                                         array('refresh', 'repository'), array('save', 'repository'), array('saveas', 'repository'), array('saved', 'repository'),
@@ -453,7 +454,7 @@ class page_requirements_manager {
                                                         array('uploading', 'repository'), array('xhtmlerror', 'repository'),
                                                         array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),array('next', 'moodle'),
                                                         array('ok', 'moodle'), array('error', 'moodle'), array('info', 'moodle'), array('norepositoriesavailable', 'repository'), array('norepositoriesexternalavailable', 'repository'),
-                                                        array('nofilesattached', 'repository'), array('filepicker', 'repository'),
+                                                        array('attachment', 'repository'), array('nofilesattached', 'repository'), array('filepicker', 'repository'),
                                                         array('nofilesavailable', 'repository'), array('overwrite', 'repository'),
                                                         array('renameto', 'repository'), array('fileexists', 'repository'),
                                                         array('fileexistsdialogheader', 'repository'), array('fileexistsdialog_editor', 'repository'),

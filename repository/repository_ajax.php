@@ -160,7 +160,9 @@ switch ($action) {
         echo json_encode($logout);
         break;
     case 'searchform':
+        $search_form['repo_id'] = $repo_id;
         $search_form['form'] = $repo->print_search();
+        $search_form['allowcaching'] = true;
         echo json_encode($search_form);
         break;
     case 'search':

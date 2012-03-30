@@ -48,7 +48,8 @@ $THEME->sheets = array(
     'grade',
     'message',
     'question',
-    'user'
+    'user',
+    'filemanager'
 );
 
 $THEME->editor_sheets = array('editor');
