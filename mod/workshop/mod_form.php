@@ -283,4 +283,42 @@ class mod_workshop_mod_form extends moodleform_mod {
 
         parent::definition_after_data();
     }
+
+    /**
+     * Validates the form input
+     *
+     * @param array $data submitted data
+     * @param array $files submitted files
+     * @return array eventual errors indexed by the field name
+     */
+    public function validation(array $data, array $files) {
+        $errors = array();
+
+        // check the phases borders are valid
+        if ($data['submissionstart'] > 0 and $data['submissionend'] > 0 and $data['submissionstart'] >= $data['submissionend']) {
+            $errors['submissionend'] = get_string('submissionendbeforestart', 'mod_workshop');
+        }
+        if ($data['assessmentstart'] > 0 and $data['assessmentend'] > 0 and $data['assessmentstart'] >= $data['assessmentend']) {
+            $errors['assessmentend'] = get_string('assessmentendbeforestart', 'mod_workshop');
+        }
+
+        // check the phases do not overlap
+        if (max($data['submissionstart'], $data['submissionend']) > 0 and max($data['assessmentstart'], $data['assessmentend']) > 0) {
+            $phasesubmissionend = max($data['submissionstart'], $data['submissionend']);
+            $phaseassessmentstart = min($data['assessmentstart'], $data['assessmentend']);
+            if ($phaseassessmentstart == 0) {
+                $phaseassessmentstart = max($data['assessmentstart'], $data['assessmentend']);
+            }
+            if ($phasesubmissionend > 0 and $phaseassessmentstart > 0 and $phaseassessmentstart < $phasesubmissionend) {
+                foreach (array('submissionend', 'submissionstart', 'assessmentstart', 'assessmentend') as $f) {
+                    if ($data[$f] > 0) {
+                        $errors[$f] = get_string('phasesoverlap', 'mod_workshop');
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $errors;
+    }
 }
