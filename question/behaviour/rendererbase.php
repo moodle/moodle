@@ -94,6 +94,7 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                     'name' => $inputname . 'format', 'value' => key($formats)));
 
         } else {
+            $commenteditor .= html_writer::label($commentformat, 'menu' . $inputname, false, array('class' => 'accesshide'));
             $commenteditor .= html_writer::select(
                     $formats, $inputname . 'format', $commentformat, '');
         }

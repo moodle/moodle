@@ -21,9 +21,9 @@ if (!isset($config->changepasswordurl)) {
 <table cellspacing="0" cellpadding="5" border="0">
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_pop3host_key', 'auth_pop3') ?>: </td>
+    <td align="right"><label for="host"><?php print_string('auth_pop3host_key', 'auth_pop3') ?>: </label></td>
     <td>
-        <input name="host" type="text" size="30" value="<?php echo $config->host ?>" />
+        <input name="host" id="host" type="text" size="30" value="<?php echo $config->host ?>" />
         <?php
 
         if (isset($err['host'])) {
@@ -43,7 +43,7 @@ if (!isset($config->changepasswordurl)) {
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_pop3type_key', 'auth_pop3') ?>: </td>
+    <td align="right"><?php echo html_writer::label(get_string('auth_pop3type_key', 'auth_pop3'), 'menutype'); ?>: </td>
     <td>
         <?php
 
@@ -59,9 +59,9 @@ if (!isset($config->changepasswordurl)) {
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_pop3port_key', 'auth_pop3') ?>: </td>
+    <td align="right"><label for="port"><?php print_string('auth_pop3port_key', 'auth_pop3') ?>: </label></td>
     <td>
-        <input name="port" type="text" size="6" value="<?php echo $config->port ?>" />
+        <input name="port" id="port" type="text" size="6" value="<?php echo $config->port ?>" />
         <?php
 
         if (isset($err['port'])) {
@@ -74,9 +74,9 @@ if (!isset($config->changepasswordurl)) {
 </tr>
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string('auth_pop3mailbox_key', 'auth_pop3') ?>: </td>
+    <td align="right"><label for="mailbox"><?php print_string('auth_pop3mailbox_key', 'auth_pop3') ?>: </label></td>
     <td>
-        <input name="mailbox" type="text" size="6" value="<?php echo $config->mailbox ?>" />
+        <input name="mailbox" id="mailbox" type="text" size="6" value="<?php echo $config->mailbox ?>" />
         <?php
 
         if (isset($err['mailbox'])) {
@@ -89,9 +89,9 @@ if (!isset($config->changepasswordurl)) {
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string('auth_pop3changepasswordurl_key', 'auth_pop3') ?>: </td>
+    <td align="right"><label for="changepasswordurl"><?php print_string('auth_pop3changepasswordurl_key', 'auth_pop3') ?>: </label></td>
     <td>
-        <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
+        <input name="changepasswordurl" id="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
         <?php
 
         if (isset($err['changepasswordurl'])) {
