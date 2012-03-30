@@ -219,6 +219,7 @@ real estate to the tool, and others provide a more integrated feel with the Mood
         It is possible that browsers will prevent the new window from opening.';
 $string['launchoptions'] = 'Launch Options';
 $string['lti'] = 'LTI';
+$string['lti:addinstance'] = 'Add a new LTI activity';
 $string['lti:addcoursetool'] = 'Grade LTI activities';
 $string['lti:grade'] = 'Grade LTI activities';
 $string['lti:manage'] = 'Edit LTI activities';

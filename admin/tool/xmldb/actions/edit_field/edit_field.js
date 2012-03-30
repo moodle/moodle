@@ -74,21 +74,25 @@ function transformForm(event) {
     // Based on type, disable some items
     switch (typeField.value) {
         case '1':  // XMLDB_TYPE_INTEGER
-            lengthTip.innerHTML = ' 1...20';
+            lengthTip.innerHTML = ' 1...20'; // Hardcoded xmldb_field::INTEGER_MAX_LENGTH, yes!
+            lengthField.disabled = false;
             decimalsTip.innerHTML = '';
             decimalsField.disabled = true;
             decimalsField.value = '';
             break;
         case '2':  // XMLDB_TYPE_NUMBER
-            lengthTip.innerHTML = ' 1...20';
+            lengthTip.innerHTML = ' 1...20'; // Hardcoded xmldb_field::NUMBER_MAX_LENGTH, yes!
+            lengthField.disabled = false;
             decimalsTip.innerHTML = ' 0...length or empty';
             break;
         case '3':  // XMLDB_TYPE_FLOAT
-            lengthTip.innerHTML = ' 1...20 or empty';
+            lengthTip.innerHTML = ' 1...20 or empty'; // Hardcoded xmldb_field::FLOAT_MAX_LENGTH, yes!
+            lengthField.disabled = false;
             decimalsTip.innerHTML = ' 0...length or empty';
             break;
         case '4':  // XMLDB_TYPE_CHAR
-            lengthTip.innerHTML = ' 1...1333'; // Hardcoded, yes!
+            lengthTip.innerHTML = ' 1...1333'; // Hardcoded xmldb_field::CHAR_MAX_LENGTH, yes!
+            lengthField.disabled = false;
             decimalsTip.innerHTML = '';
             decimalsField.disabled = true;
             decimalsField.value = '';
@@ -96,7 +100,8 @@ function transformForm(event) {
             sequenceField.value = '0';
             break;
         case '5':  // XMLDB_TYPE_TEXT
-            lengthTip.innerHTML = ' small, medium, big';
+            lengthTip.innerHTML = '';
+            lengthField.disabled = true;
             decimalsTip.innerHTML = '';
             decimalsField.disabled = true;
             decimalsField.value = '';
@@ -106,7 +111,8 @@ function transformForm(event) {
             defaultField.value = '';
             break;
         case '6':  // XMLDB_TYPE_BINARY
-            lengthTip.innerHTML = ' small, medium, big';
+            lengthTip.innerHTML = '';
+            lengthField.disabled = true;
             decimalsTip.innerHTML = '';
             decimalsField.disabled = true;
             decimalsField.value = '';

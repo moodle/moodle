@@ -55,17 +55,10 @@ class XMLDBAction {
     var $sesskey_protected; // Actions must be protected by sesskey mechanism
 
     /**
-     * Constructor
-     */
-    function XMLDBAction() {
-        $this->init();
-    }
-
-    /**
      * Constructor to keep PHP5 happy
      */
     function __construct() {
-        $this->XMLDBAction();
+        $this->init();
     }
 
     /**

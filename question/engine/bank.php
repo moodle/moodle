@@ -324,7 +324,7 @@ abstract class question_bank {
         self::$testdata[$question->id] = $question;
     }
 
-    protected function ensure_fraction_options_initialised() {
+    protected static function ensure_fraction_options_initialised() {
         if (!is_null(self::$fractionoptions)) {
             return;
         }

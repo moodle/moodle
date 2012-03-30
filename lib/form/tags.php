@@ -150,7 +150,8 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
 
             // Create the element.
             $size = min(5, count($officialtags));
-            $officialtagsselect = MoodleQuickForm::createElement('select', 'officialtags', $label, $officialtags, array('size' => $size));
+            // E_STRICT creating elements without forms is nasty because it internally uses $this
+            $officialtagsselect = @MoodleQuickForm::createElement('select', 'officialtags', $label, $officialtags, array('size' => $size));
             $officialtagsselect->setMultiple(true);
             if ($noofficial) {
                 $officialtagsselect->updateAttributes(array('disabled' => 'disabled'));
@@ -165,7 +166,8 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
             } else {
                 $label = get_string('entertags', 'tag');
             }
-            $othertags = MoodleQuickForm::createElement('textarea', 'othertags', $label, array('cols'=>'40', 'rows'=>'5'));
+            // E_STRICT creating elements without forms is nasty because it internally uses $this
+            $othertags = @MoodleQuickForm::createElement('textarea', 'othertags', $label, array('cols'=>'40', 'rows'=>'5'));
             $this->_elements[] = $othertags;
         }
 

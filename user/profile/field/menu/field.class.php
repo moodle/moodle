@@ -84,6 +84,23 @@ class profile_field_menu extends profile_field_base {
             $mform->setConstant($this->inputname, $this->datakey);
         }
     }
+    /**
+     * Convert external data (csv file) from value to key for processing later
+     * by edit_save_data_preprocess
+     *
+     * @param string $value one of the values in menu options.
+     * @return int options key for the menu
+     */
+    function convert_external_data($value) {
+        $retval = array_search($value, $this->options);
+
+        // If value is not found in options then return null, so that it can be handled
+        // later by edit_save_data_preprocess
+        if ($retval === false) {
+            $retval = null;
+        }
+        return $retval;
+    }
 }
 
 

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,25 +17,34 @@
 /**
  * Course completion critieria - student self marked
  *
- * @package   moodlecore
+ * @package core_completion
+ * @category completion
  * @copyright 2009 Catalyst IT Ltd
- * @author    Aaron Barnes <aaronb@catalyst.net.nz>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Course completion critieria - student self marked
+ *
+ * @package core_completion
+ * @category completion
+ * @copyright 2009 Catalyst IT Ltd
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class completion_criteria_self extends completion_criteria {
 
-    /**
-     * Criteria type constant
-     * @var int
-     */
+    /* @var int Criteria type constant [COMPLETION_CRITERIA_TYPE_SELF] */
     public $criteriatype = COMPLETION_CRITERIA_TYPE_SELF;
 
     /**
      * Finds and returns a data_object instance based on params.
-     * @static abstract
      *
      * @param array $params associative arrays varname=>value
-     * @return object data_object instance or false if none found.
+     * @return data_object data_object instance or false if none found.
      */
     public static function fetch($params) {
         $params['criteriatype'] = COMPLETION_CRITERIA_TYPE_SELF;
@@ -45,10 +53,9 @@ class completion_criteria_self extends completion_criteria {
 
     /**
      * Add appropriate form elements to the critieria form
-     * @access  public
-     * @param   object  $mform  Moodle forms object
-     * @param   mixed   $data   optional
-     * @return  void
+     *
+     * @param moodleform $mform  Moodle forms object
+     * @param stdClass $data Form data
      */
     public function config_form_display(&$mform, $data = null) {
         $mform->addElement('checkbox', 'criteria_self', get_string('enable'));
@@ -60,9 +67,8 @@ class completion_criteria_self extends completion_criteria {
 
     /**
      * Update the criteria information stored in the database
-     * @access  public
-     * @param   array   $data   Form data
-     * @return  void
+     *
+     * @param stdClass $data Form data
      */
     public function update_config(&$data) {
         if (!empty($data->criteria_self)) {
@@ -73,9 +79,8 @@ class completion_criteria_self extends completion_criteria {
 
     /**
      * Mark this criteria as complete
-     * @access  public
-     * @param   object  $completion     The user's completion record
-     * @return  void
+     *
+     * @param completion_completion $completion The user's completion record
      */
     public function complete($completion) {
         $this->review($completion, true, true);
@@ -83,15 +88,15 @@ class completion_criteria_self extends completion_criteria {
 
     /**
      * Review this criteria and decide if the user has completed
-     * @access  public
-     * @param   object  $completion     The user's completion record
-     * @param   boolean $mark           Optionally set false to not save changes to database
-     * @return  boolean
+     *
+     * @param completion_completion $completion     The user's completion record
+     * @param bool $mark Optionally set false to not save changes to database
+     * @param bool $is_complete set true to mark activity complete.
+     * @return bool
      */
     public function review($completion, $mark = true, $is_complete = false) {
         // If we are marking this as complete
-        if ($is_complete && $mark)
-        {
+        if ($is_complete && $mark) {
             $completion->completedself = 1;
             $completion->mark_complete();
 
@@ -103,8 +108,8 @@ class completion_criteria_self extends completion_criteria {
 
     /**
      * Return criteria title for display in reports
-     * @access  public
-     * @return  string
+     *
+     * @return string
      */
     public function get_title() {
         return get_string('selfcompletion', 'completion');
@@ -112,8 +117,8 @@ class completion_criteria_self extends completion_criteria {
 
     /**
      * Return a more detailed criteria title for display in reports
-     * @access  public
-     * @return  string
+     *
+     * @return string
      */
     public function get_title_detailed() {
         return $this->get_title();
@@ -121,8 +126,8 @@ class completion_criteria_self extends completion_criteria {
 
     /**
      * Return criteria type title for display in reports
-     * @access  public
-     * @return  string
+     *
+     * @return string
      */
     public function get_type_title() {
         return get_string('self', 'completion');
@@ -130,9 +135,10 @@ class completion_criteria_self extends completion_criteria {
 
     /**
      * Return criteria progress details for display in reports
-     * @access  public
-     * @param   object  $completion     The user's completion record
-     * @return  array
+     *
+     * @param completion_completion $completion The user's completion record
+     * @return array An array with the following keys:
+     *     type, criteria, requirement, status
      */
     public function get_details($completion) {
         $details = array();

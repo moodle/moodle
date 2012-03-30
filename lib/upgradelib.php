@@ -270,6 +270,8 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // removed in 2.3dev
+        '/lib/minify/builder/',
         // removed in 2.2dev
         '/lib/yui/3.4.1pr1/',
         // removed in 2.2
@@ -1705,7 +1707,8 @@ function upgrade_plugin_mnet_functions($component) {
  * @return array
  */
 function admin_mnet_method_profile(Zend_Server_Reflection_Function_Abstract $function) {
-    $proto = array_pop($function->getPrototypes());
+    $protos = $function->getPrototypes();
+    $proto = array_pop($protos);
     $ret = $proto->getReturnValue();
     $profile = array(
         'parameters' =>  array(),

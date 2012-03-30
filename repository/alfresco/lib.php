@@ -238,7 +238,7 @@ class repository_alfresco extends repository {
      * @param string $search_text
      * @return array
      */
-    public function search($search_text) {
+    public function search($search_text, $page = 0) {
         $space = optional_param('space', 'workspace://SpacesStore', PARAM_RAW);
         $currentStore = $this->user_session->getStoreFromString($space);
         $nodes = $this->user_session->query($currentStore, $search_text);

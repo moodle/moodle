@@ -1373,7 +1373,7 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
          return false;
     }
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
 
     $groupmodes = array();
     $cms    = array();
@@ -1858,7 +1858,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
 
     foreach ($courses as $course) {
 
-        $modinfo =& get_fast_modinfo($course);
+        $modinfo = get_fast_modinfo($course);
         if (is_null($modinfo->groups)) {
             $modinfo->groups = groups_get_user_groups($course->id, $userid);
         }
@@ -2442,7 +2442,7 @@ function forum_count_discussions($forum, $cm, $course) {
 
     require_once($CFG->dirroot.'/course/lib.php');
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
     if (is_null($modinfo->groups)) {
         $modinfo->groups = groups_get_user_groups($course->id, $USER->id);
     }
@@ -4433,7 +4433,7 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if ($children != 'ignore' && ($childposts = $DB->get_records('forum_posts', array('parent'=>$post->id)))) {
+    if ($children !== 'ignore' && ($childposts = $DB->get_records('forum_posts', array('parent'=>$post->id)))) {
        if ($children) {
            foreach ($childposts as $childpost) {
                forum_delete_post($childpost, true, $course, $cm, $forum, $skipcompletion);
@@ -5750,7 +5750,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
         $course = $DB->get_record('course', array('id' => $courseid));
     }
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
 
     $cm = $modinfo->cms[$cmid];
     $params = array($timestart, $cm->instance);
@@ -6451,7 +6451,7 @@ function forum_tp_count_forum_unread_posts($cm, $course) {
 
     require_once($CFG->dirroot.'/course/lib.php');
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
     if (is_null($modinfo->groups)) {
         $modinfo->groups = groups_get_user_groups($course->id, $USER->id);
     }

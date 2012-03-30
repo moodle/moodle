@@ -72,6 +72,7 @@ M.core_filepicker.init = function(Y, options) {
 
     Y.extend(FilePickerHelper, Y.Base, {
         api: M.cfg.wwwroot+'/repository/repository_ajax.php',
+        cached_responses: {},
 
         initializer: function(options) {
             this.options = options;
@@ -149,7 +150,11 @@ M.core_filepicker.init = function(Y, options) {
                         // error checking
                         if (data && data.error) {
                             scope.print_msg(data.error, 'error');
-                            scope.list();
+                            if (args.onerror) {
+                                args.onerror(id,data,p);
+                            } else {
+                                Y.one(panel_id).set('innerHTML', '');
+                            }
                             return;
                         } else if (data && data.event) {
                             switch (data.event) {
@@ -163,6 +168,11 @@ M.core_filepicker.init = function(Y, options) {
                             if (data.msg) {
                                 scope.print_msg(data.msg, 'info');
                             }
+                            // cache result if applicable
+                            if (args.action != 'upload' && data.allowcaching) {
+                                scope.cached_responses[params] = data;
+                            }
+                            // invoke callback
                             args.callback(id,data,p);
                         }
                     }
@@ -179,9 +189,15 @@ M.core_filepicker.init = function(Y, options) {
             if (args.form) {
                 cfg.form = args.form;
             }
-            Y.io(api, cfg);
-            if (redraw) {
-                this.wait('load');
+            // check if result of the same request has been already cached. If not, request it
+            // (never applicable in case of form submission and/or upload action):
+            if (!args.form && args.action != 'upload' && scope.cached_responses[params]) {
+                args.callback(null, scope.cached_responses[params], {scope: scope})
+            } else {
+                Y.io(api, cfg);
+                if (redraw) {
+                    this.wait('load');
+                }
             }
         },
         process_existing_file: function(data) {
@@ -653,13 +669,13 @@ M.core_filepicker.init = function(Y, options) {
                     params['author'] = author.get('value');
                 }
 
-                if (this.options.env == 'editor') {
+                if (this.options.externallink && this.options.env == 'editor') {
                     // in editor, images are stored in '/' only
                     params.savepath = '/';
                     // when image or media button is clicked
                     if ( this.options.return_types != 1 ) {
-                        var linkexternal = Y.one('#linkexternal-'+client_id).get('checked');
-                        if (linkexternal) {
+                        var linkexternal = Y.one('#linkexternal-'+client_id);
+                        if (linkexternal && linkexternal.get('checked')) {
                             params['linkexternal'] = 'yes';
                         }
                     } else {
@@ -678,6 +694,9 @@ M.core_filepicker.init = function(Y, options) {
                     client_id: client_id,
                     repository_id: repository_id,
                     'params': params,
+                    onerror: function(id, obj, args) {
+                        scope.view_files();
+                    },
                     callback: function(id, obj, args) {
                         if (scope.options.editor_target && scope.options.env=='editor') {
                             scope.options.editor_target.value=obj.url;
@@ -1188,6 +1207,9 @@ M.core_filepicker.init = function(Y, options) {
                         params: {'savepath':scope.options.savepath},
                         repository_id: scope.active_repo.id,
                         form: {id: id, upload:true},
+                        onerror: function(id, o, args) {
+                            scope.create_upload_form(data);
+                        },
                         callback: function(id, o, args) {
                             if (scope.options.editor_target&&scope.options.env=='editor') {
                                 scope.options.editor_target.value=o.url;
@@ -1370,15 +1392,21 @@ M.core_filepicker.init = function(Y, options) {
             var r = this.active_repo;
             var str = '';
             var action = '';
-            if(r.pages > 1) {
+            var lastpage = r.pages;
+            var lastpagetext = r.pages;
+            if (r.pages == -1) {
+                lastpage = r.page + 1;
+                lastpagetext = M.str.moodle.next;
+            }
+            if (lastpage > 1) {
                 str += '<div class="fp-paging" id="paging-'+html_id+'-'+client_id+'">';
                 str += this.get_page_button(1)+'1</a> ';
 
                 var span = 5;
                 var ex = (span-1)/2;
 
-                if (r.page+ex>=r.pages) {
-                    var max = r.pages;
+                if (r.page+ex>=lastpage) {
+                    var max = lastpage;
                 } else {
                     if (r.page<span) {
                         var max = span;
@@ -1405,11 +1433,11 @@ M.core_filepicker.init = function(Y, options) {
                 }
 
                 // won't display upper boundary
-                if (max==r.pages) {
-                    str += this.get_page_button(r.pages)+r.pages+'</a>';
+                if (max==lastpage) {
+                    str += this.get_page_button(lastpage)+lastpagetext+'</a>';
                 } else {
                     str += this.get_page_button(max)+max+'</a>';
-                    str += ' ... '+this.get_page_button(r.pages)+r.pages+'</a>';
+                    str += ' ... '+this.get_page_button(lastpage)+lastpagetext+'</a>';
                 }
                 str += '</div>';
             }

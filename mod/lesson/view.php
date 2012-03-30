@@ -193,21 +193,19 @@ if (empty($pageid)) {
 
     // if there are any questions have been answered correctly in this attempt
     $corrrectattempts = $lesson->get_attempts($retries, true);
-    if ($corrrectattempts>0) {
-        foreach ($corrrectattempts as $attempt) {
-            $jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
-            // convert the jumpto to a proper page id
-            if ($jumpto == 0) { // unlikely value!
-                $lastpageseen = $attempt->pageid;
-            } elseif ($jumpto == LESSON_NEXTPAGE) {
-                if (!$lastpageseen = $DB->get_field('lesson_pages', 'nextpageid', array('id' => $attempt->pageid))) {
-                    // no nextpage go to end of lesson
-                    $lastpageseen = LESSON_EOL;
-                }
-            } else {
-                $lastpageseen = $jumpto;
+    if (!empty($corrrectattempts)) {
+        $attempt = end($corrrectattempts);
+        $jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
+        // convert the jumpto to a proper page id
+        if ($jumpto == 0) { // unlikely value!
+            $lastpageseen = $attempt->pageid;
+        } elseif ($jumpto == LESSON_NEXTPAGE) {
+            if (!$lastpageseen = $DB->get_field('lesson_pages', 'nextpageid', array('id' => $attempt->pageid))) {
+                // no nextpage go to end of lesson
+                $lastpageseen = LESSON_EOL;
             }
-            break; // only look at the latest correct attempt
+        } else {
+            $lastpageseen = $jumpto;
         }
     }
 

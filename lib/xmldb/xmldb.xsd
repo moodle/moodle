@@ -34,6 +34,7 @@
 
   <xs:simpleType name="fieldLength" >
     <xs:restriction base="xs:string" >
+    <!-- TODO: Moodle 2.5 - Drop LOB sizes, keep only numbers -->
      <xs:pattern value='(\d+)|(small|medium|big)'/>
     </xs:restriction >
   </xs:simpleType >
@@ -64,9 +65,6 @@
       <xs:attribute name="DECIMALS"   type="xs:positiveInteger" use="optional" />
       <!-- TODO: Moodle 2.4 - Drop ignored UNSIGNED attribute -->
       <xs:attribute name="UNSIGNED"   type="trueFalse"   use="optional" />
-      <!-- TODO: Moodle 2.1 - Drop ENUM and ENUMVALUES attributes -->
-      <xs:attribute name="ENUM"       type="trueFalse"   use="optional" />
-      <xs:attribute name="ENUMVALUES" type="xs:string"   use="optional" />
       <xs:attribute name="DEFAULT"    type="xs:string"   use="optional" />
       <xs:attribute name="COMMENT"    type="xs:string"   use="optional" />
       <xs:attribute name="PREVIOUS"   type="fieldName"   use="optional" />

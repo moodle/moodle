@@ -292,6 +292,9 @@ abstract class sql_generator {
      * by any of its comments, indexes and sequence creation SQL statements.
      */
     public function getCreateTableSQL($xmldb_table) {
+        if ($error = $xmldb_table->validateDefinition()) {
+            throw new coding_exception($error);
+        }
 
         $results = array();  //Array where all the sentences will be stored
 
@@ -1359,19 +1362,6 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
-     * (usually invoked from getModifyEnumSQL()
-     *
-     * Note that this method may be dropped in future.
-     *
-     * @param xmldb_table $xmldb_table The xmldb_table object instance.
-     * @param xmldb_field $xmldb_field The xmldb_field object instance.
-     *
-     * @todo MDL-31147 Moodle 2.1 - Drop getDropEnumSQL()
-     */
-    public abstract function getDropEnumSQL($xmldb_table, $xmldb_field);
-
-    /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its default
      * (usually invoked from getModifyDefaultSQL()
      *
@@ -1383,20 +1373,6 @@ abstract class sql_generator {
      * @todo MDL-31147 Moodle 2.1 - Drop getDropDefaultSQL()
      */
     public abstract function getDropDefaultSQL($xmldb_table, $xmldb_field);
-
-    /**
-     * Given one xmldb_table and one optional xmldb_field, return one array with all the check
-     * constrainst found for that table (or field). Must exist for each DB supported.
-     * (usually invoked from find_check_constraint_name)
-     *
-     * Note that this method may be dropped in future.
-     *
-     * @param xmldb_table $xmldb_table The xmldb_table object instance.
-     * @param xmldb_field $xmldb_field The xmldb_field object instance.
-     *
-     * @todo MDL-31147 Moodle 2.1 - Drop getCheckConstraintsFromDB
-     */
-    public abstract function getCheckConstraintsFromDB($xmldb_table, $xmldb_field=null);
 
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to add its default

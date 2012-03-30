@@ -588,29 +588,6 @@ function choice_delete_instance($id) {
 }
 
 /**
- * Returns the users with data in one choice
- * (users with records in choice_responses, students)
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $choiceid
- * @return array
- */
-function choice_get_participants($choiceid) {
-    global $DB;
-
-    //Get students
-    $students = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                 FROM {user} u,
-                                      {choice_answers} a
-                                 WHERE a.choiceid = ? AND
-                                       u.id = a.userid", array($choiceid));
-
-    //Return students array (it contains an array of unique users)
-    return ($students);
-}
-
-/**
  * Returns text string which is the answer that matches the id
  *
  * @global object

@@ -15,24 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Popup message processor - lib file
+ * PHPUnit info
  *
- * @package   message_popup
- * @copyright 2008 Luis Rodrigues
- * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package    tool_phpunit
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Register the popup message processor
- */
-function popup_install(){
-    global $DB;
+define('NO_OUTPUT_BUFFERING', true);
 
-    $result = true;
+require(dirname(__FILE__) . '/../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
-    $provider = new stdClass();
-    $provider->name  = 'popup';
-    $DB->insert_record('message_processors', $provider);
-    return $result;
-}
+admin_externalpage_setup('toolphpunit');
 
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('pluginname', 'tool_phpunit'));
+echo $OUTPUT->box_start();
+
+$info = file_get_contents("$CFG->libdir/phpunit/readme.md");
+echo markdown_to_html($info);
+
+echo $OUTPUT->box_end();
+echo $OUTPUT->footer();

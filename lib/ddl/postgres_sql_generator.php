@@ -47,8 +47,6 @@ class postgres_sql_generator extends sql_generator {
     public $sequence_name_small = 'SERIAL'; //Particular name for inline sequences in this generator
     public $sequence_only = true; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name variable
 
-    public $enum_inline_code = false; //Does the generator need to add inline code in the column definition
-
     public $rename_index_sql = 'ALTER TABLE OLDINDEXNAME RENAME TO NEWINDEXNAME'; //SQL sentence to rename one index
                                       //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dynamically replaced
 
@@ -181,20 +179,6 @@ class postgres_sql_generator extends sql_generator {
     /// Rename de sequence
         $results[] = 'ALTER TABLE ' . $oldseqname . ' RENAME TO ' . $newseqname;
 
-    /// Rename all the check constraints in the table
-        $oldtablename = $this->getTableName($xmldb_table);
-        $newtablename = $this->getTableName($newt);
-
-        $oldconstraintprefix = $this->getNameForObject($xmldb_table->getName(), '');
-        $newconstraintprefix = $this->getNameForObject($newt->getName(), '', '');
-
-        if ($constraints = $this->getCheckConstraintsFromDB($xmldb_table)) {
-            foreach ($constraints as $constraint) {
-            /// Drop the old constraint
-                $results[] = 'ALTER TABLE ' . $newtablename . ' DROP CONSTRAINT ' . $constraint->name;
-            }
-         }
-
         return $results;
     }
 
@@ -318,25 +302,6 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
-     * (usually invoked from getModifyEnumSQL()
-     *
-     * TODO: Moodle 2.1 - drop in Moodle 2.1
-     */
-    public function getDropEnumSQL($xmldb_table, $xmldb_field) {
-    /// Let's introspect to know the real name of the check constraint
-        if ($check_constraints = $this->getCheckConstraintsFromDB($xmldb_table, $xmldb_field)) {
-            $check_constraint = array_shift($check_constraints); /// Get the 1st (should be only one)
-            $constraint_name = strtolower($check_constraint->name); /// Extract the REAL name
-        /// All we have to do is to drop the check constraint
-            return array('ALTER TABLE ' . $this->getTableName($xmldb_table) .
-                     ' DROP CONSTRAINT ' . $constraint_name);
-        } else { /// Constraint not found. Nothing to do
-            return array();
-        }
-    }
-
-    /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
@@ -354,55 +319,6 @@ class postgres_sql_generator extends sql_generator {
     /// Just a wrapper over the getAlterFieldSQL() function for PostgreSQL that
     /// is capable of handling defaults
         return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
-    }
-
-    /**
-     * Given one xmldb_table returns one array with all the check constraints
-     * in the table (fetched from DB)
-     * Optionally the function allows one xmldb_field to be specified in
-     * order to return only the check constraints belonging to one field.
-     * Each element contains the name of the constraint and its description
-     * If no check constraints are found, returns an empty array
-     *
-     * TODO: Moodle 2.1 - drop in Moodle 2.1
-     */
-    public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
-
-        $results = array();
-
-        $tablename = $this->getTableName($xmldb_table);
-
-        if ($constraints = $this->mdb->get_records_sql("SELECT co.conname AS name, co.consrc AS description
-                                                          FROM pg_constraint co, pg_class cl
-                                                         WHERE co.conrelid = cl.oid
-                                                               AND co.contype = 'c' AND cl.relname = ?",
-                                                       array($tablename))) {
-            foreach ($constraints as $constraint) {
-                $results[$constraint->name] = $constraint;
-            }
-        }
-
-    /// Filter by the required field if specified
-        if ($xmldb_field) {
-            $filtered_results = array();
-            $filter = $xmldb_field->getName();
-        /// Lets clean a bit each constraint description, looking for the filtered field
-            foreach ($results as $key => $result) {
-                $description = preg_replace('/\("(.*?)"\)/', '($1)', $result->description);// Double quotes out
-                $description = preg_replace('/[\(\)]/', '', $description);                 // Parenthesis out
-                $description = preg_replace('/::[a-z]+/i', '', $description);              // Casts out
-                $description = preg_replace("/({$filter})/i", '@$1@', $description);
-                $description = trim(preg_replace('/ or /i', ' OR ', $description));        // Uppercase or & trim
-            /// description starts by @$filter@ assume it's a constraint belonging to the field
-                if (preg_match("/^@{$filter}@/i", $description)) {
-                    $filtered_results[$key] = $result;
-                }
-            }
-        /// Assign filtered results to the final results array
-            $results =  $filtered_results;
-        }
-
-        return $results;
     }
 
     public function addslashes($s) {

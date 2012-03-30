@@ -214,7 +214,7 @@ class repository_upload extends repository {
      * Return a upload form
      * @return array
      */
-    public function get_listing() {
+    public function get_listing($path = '', $page = '') {
         global $CFG;
         $ret = array();
         $ret['nologin']  = true;
@@ -223,6 +223,7 @@ class repository_upload extends repository {
         $ret['list'] = array();
         $ret['dynload'] = false;
         $ret['upload'] = array('label'=>get_string('attachment', 'repository'), 'id'=>'repo-form');
+        $ret['allowcaching'] = true; // indicates that result of get_listing() can be cached in filepicker.js
         return $ret;
     }
 

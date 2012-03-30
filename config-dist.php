@@ -353,6 +353,10 @@ $CFG->admin = 'admin';
 //     $CFG->tempdir = '/var/www/moodle/temp';
 //     $CFG->cachedir = '/var/www/moodle/cache';
 //
+// Some filesystems such as NFS may not support file locking operations.
+// Locking resolves race conditions and is strongly recommended for production servers.
+//     $CFG->preventfilelocking = false;
+//
 // If $CFG->langstringcache is enabled (which should always be in production
 // environment), Moodle keeps aggregated strings in its own internal format
 // optimised for performance. By default, this on-disk cache is created in
@@ -383,7 +387,7 @@ $CFG->admin = 'admin';
 // memory limit to something higher.
 // The value for the settings should be a valid PHP memory value. e.g. 512M, 1G
 //
-//     $CFG->extramemorylimit = 1G;
+//     $CFG->extramemorylimit = '1G';
 //
 // The CSS files the Moodle produces can be extremely large and complex, especially
 // if you are using a custom theme that builds upon several other themes.
@@ -479,7 +483,13 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->forced_plugin_settings = array('pluginname'  => array('settingname' => 'value', 'secondsetting' => 'othervalue'),
 //                                        'otherplugin' => array('mysetting' => 'myvalue', 'thesetting' => 'thevalue'));
-
+//
+//=========================================================================
+// 9. PHPUNIT SUPPORT
+//=========================================================================
+// $CFG->phpunit_prefix = 'phpu_';
+// $CFG->phpunit_dataroot = '/home/example/phpu_moodledata';
+// $CFG->phpunit_directorypermissions = 02777; // optional
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

@@ -81,7 +81,7 @@ class enrol_database_plugin extends enrol_plugin {
         $instance = $ue->enrolmentinstance;
         $params = $manager->get_moodlepage()->url->params();
         $params['ue'] = $ue->id;
-        if ($this->allow_unenrol_user($instance, $ue) && has_capability('enrol/meta:unenrol', $context)) {
+        if ($this->allow_unenrol_user($instance, $ue) && has_capability('enrol/database:unenrol', $context)) {
             $url = new moodle_url('/enrol/unenroluser.php', $params);
             $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
         }
@@ -354,9 +354,7 @@ class enrol_database_plugin extends enrol_plugin {
         }
         $preventfullunenrol = empty($externalcourses);
         if ($preventfullunenrol and $unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
-            if ($verbose) {
-                mtrace('  Preventing unenrolment of all current users, because it might result in major data loss, there has to be at least one record in external enrol table, sorry.');
-            }
+            mtrace('  Preventing unenrolment of all current users, because it might result in major data loss, there has to be at least one record in external enrol table, sorry.');
         }
 
         // first find all existing courses with enrol instance
@@ -622,6 +620,8 @@ class enrol_database_plugin extends enrol_plugin {
         $idnumber  = strtolower($this->get_config('newcourseidnumber'));
         $category  = strtolower($this->get_config('newcoursecategory'));
 
+        $localcategoryfield = $this->get_config('localcategoryfield', 'id');
+
         $sqlfields = array($fullname, $shortname);
         if ($category) {
             $sqlfields[] = $category;
@@ -653,17 +653,17 @@ class enrol_database_plugin extends enrol_plugin {
                         }
                         continue;
                     }
-                    if ($category and !$DB->record_exists('course_categories', array('id'=>$fields[$category]))) {
+                    if ($category and !$coursecategory = $DB->get_record('course_categories', array($localcategoryfield=>$fields[$category]), 'id')) {
                         if ($verbose) {
-                            mtrace('  error: invalid category id, can not create course: '.$fields[$shortname]);
+                            mtrace('  error: invalid category '.$localcategoryfield.', can not create course: '.$fields[$shortname]);
                         }
                         continue;
                     }
                     $course = new stdClass();
                     $course->fullname  = $fields[$fullname];
                     $course->shortname = $fields[$shortname];
-                    $course->idnumber  = $idnumber ? $fields[$idnumber] : NULL;
-                    $course->category  = $category ? $fields[$category] : NULL;
+                    $course->idnumber  = $idnumber ? $fields[$idnumber] : '';
+                    $course->category  = $category ? $coursecategory->id : NULL;
                     $createcourses[] = $course;
                 }
             }

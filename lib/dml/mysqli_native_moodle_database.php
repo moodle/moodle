@@ -439,7 +439,12 @@ class mysqli_native_moodle_database extends moodle_database {
 
         $this->columns[$table] = array();
 
-        $sql = "SHOW COLUMNS FROM {$this->prefix}$table";
+        $sql = "SELECT column_name, data_type, character_maximum_length, numeric_precision,
+                       numeric_scale, is_nullable, column_type, column_default, column_key, extra
+                  FROM information_schema.columns
+                 WHERE table_name = '" . $this->prefix.$table . "'
+                       AND table_schema = '" . $this->dbname . "'
+              ORDER BY ordinal_position";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end(true); // Don't want to throw anything here ever. MDL-30147
@@ -448,140 +453,194 @@ class mysqli_native_moodle_database extends moodle_database {
             return array();
         }
 
-        while ($rawcolumn = $result->fetch_assoc()) {
-            $rawcolumn = (object)array_change_key_case($rawcolumn, CASE_LOWER);
-
-            $info = new stdClass();
-            $info->name = $rawcolumn->field;
-            $matches = null;
-
-            if (preg_match('/varchar\((\d+)\)/i', $rawcolumn->type, $matches)) {
-                $info->type          = 'varchar';
-                $info->meta_type     = 'C';
-                $info->max_length    = $matches[1];
-                $info->scale         = null;
-                $info->not_null      = ($rawcolumn->null === 'NO');
-                $info->default_value = $rawcolumn->default;
-                $info->has_default   = is_null($info->default_value) ? false : true;
-                $info->primary_key   = ($rawcolumn->key === 'PRI');
-                $info->binary        = false;
-                $info->unsigned      = null;
-                $info->auto_increment= false;
-                $info->unique        = null;
-
-            } else if (preg_match('/([a-z]*int[a-z]*)\((\d+)\)/i', $rawcolumn->type, $matches)) {
-                $info->type = $matches[1];
-                $info->primary_key       = ($rawcolumn->key === 'PRI');
-                if ($info->primary_key) {
-                    $info->meta_type     = 'R';
-                    $info->max_length    = $matches[2];
-                    $info->scale         = null;
-                    $info->not_null      = ($rawcolumn->null === 'NO');
-                    $info->default_value = $rawcolumn->default;
-                    $info->has_default   = is_null($info->default_value) ? false : true;
-                    $info->binary        = false;
-                    $info->unsigned      = (stripos($rawcolumn->type, 'unsigned') !== false);
-                    $info->auto_increment= true;
-                    $info->unique        = true;
-                } else {
-                    $info->meta_type     = 'I';
-                    $info->max_length    = $matches[2];
-                    $info->scale         = null;
-                    $info->not_null      = ($rawcolumn->null === 'NO');
-                    $info->default_value = $rawcolumn->default;
-                    $info->has_default   = is_null($info->default_value) ? false : true;
-                    $info->binary        = false;
-                    $info->unsigned      = (stripos($rawcolumn->type, 'unsigned') !== false);
-                    $info->auto_increment= false;
-                    $info->unique        = null;
-                }
-
-            } else if (preg_match('/(decimal)\((\d+),(\d+)\)/i', $rawcolumn->type, $matches)) {
-                $info->type          = $matches[1];
-                $info->meta_type     = 'N';
-                $info->max_length    = $matches[2];
-                $info->scale         = $matches[3];
-                $info->not_null      = ($rawcolumn->null === 'NO');
-                $info->default_value = $rawcolumn->default;
-                $info->has_default   = is_null($info->default_value) ? false : true;
-                $info->primary_key   = ($rawcolumn->key === 'PRI');
-                $info->binary        = false;
-                $info->unsigned      = (stripos($rawcolumn->type, 'unsigned') !== false);
-                $info->auto_increment= false;
-                $info->unique        = null;
-
-            } else if (preg_match('/(double|float)(\((\d+),(\d+)\))?/i', $rawcolumn->type, $matches)) {
-                $info->type          = $matches[1];
-                $info->meta_type     = 'N';
-                $info->max_length    = isset($matches[3]) ? $matches[3] : null;
-                $info->scale         = isset($matches[4]) ? $matches[4] : null;
-                $info->not_null      = ($rawcolumn->null === 'NO');
-                $info->default_value = $rawcolumn->default;
-                $info->has_default   = is_null($info->default_value) ? false : true;
-                $info->primary_key   = ($rawcolumn->key === 'PRI');
-                $info->binary        = false;
-                $info->unsigned      = (stripos($rawcolumn->type, 'unsigned') !== false);
-                $info->auto_increment= false;
-                $info->unique        = null;
-
-            } else if (preg_match('/([a-z]*text)/i', $rawcolumn->type, $matches)) {
-                $info->type          = $matches[1];
-                $info->meta_type     = 'X';
-                $info->max_length    = -1;
-                $info->scale         = null;
-                $info->not_null      = ($rawcolumn->null === 'NO');
-                $info->default_value = $rawcolumn->default;
-                $info->has_default   = is_null($info->default_value) ? false : true;
-                $info->primary_key   = ($rawcolumn->key === 'PRI');
-                $info->binary        = false;
-                $info->unsigned      = null;
-                $info->auto_increment= false;
-                $info->unique        = null;
-
-            } else if (preg_match('/([a-z]*blob)/i', $rawcolumn->type, $matches)) {
-                $info->type          = $matches[1];
-                $info->meta_type     = 'B';
-                $info->max_length    = -1;
-                $info->scale         = null;
-                $info->not_null      = ($rawcolumn->null === 'NO');
-                $info->default_value = $rawcolumn->default;
-                $info->has_default   = is_null($info->default_value) ? false : true;
-                $info->primary_key   = false;
-                $info->binary        = true;
-                $info->unsigned      = null;
-                $info->auto_increment= false;
-                $info->unique        = null;
-
-            } else if (preg_match('/enum\((.*)\)/i', $rawcolumn->type, $matches)) {
-                $info->type          = 'enum';
-                $info->meta_type     = 'C';
-                $info->enums         = array();
-                $info->max_length    = 0;
-                $values = $matches[1];
-                $values = explode(',', $values);
-                foreach ($values as $val) {
-                    $val = trim($val, "'");
-                    $length = textlib::strlen($val);
-                    $info->enums[] = $val;
-                    $info->max_length = ($info->max_length < $length) ? $length : $info->max_length;
-                }
-                $info->scale         = null;
-                $info->not_null      = ($rawcolumn->null === 'NO');
-                $info->default_value = $rawcolumn->default;
-                $info->has_default   = is_null($info->default_value) ? false : true;
-                $info->primary_key   = ($rawcolumn->key === 'PRI');
-                $info->binary        = false;
-                $info->unsigned      = null;
-                $info->auto_increment= false;
-                $info->unique        = null;
+        if ($result->num_rows > 0) {
+            // standard table exists
+            while ($rawcolumn = $result->fetch_assoc()) {
+                $info = (object)$this->get_column_info((object)$rawcolumn);
+                $this->columns[$table][$info->name] = new database_column_info($info);
             }
+            $result->close();
 
-            $this->columns[$table][$info->name] = new database_column_info($info);
+        } else {
+            // temporary tables are not in information schema, let's try it the old way
+            $result->close();
+            $sql = "SHOW COLUMNS FROM {$this->prefix}$table";
+            $this->query_start($sql, null, SQL_QUERY_AUX);
+            $result = $this->mysqli->query($sql);
+            $this->query_end(true);
+            if ($result === false) {
+                return array();
+            }
+            while ($rawcolumn = $result->fetch_assoc()) {
+                $rawcolumn = (object)array_change_key_case($rawcolumn, CASE_LOWER);
+                $rawcolumn->column_name              = $rawcolumn->field; unset($rawcolumn->field);
+                $rawcolumn->column_type              = $rawcolumn->type; unset($rawcolumn->type);
+                $rawcolumn->character_maximum_length = null;
+                $rawcolumn->numeric_precision        = null;
+                $rawcolumn->numeric_scale            = null;
+                $rawcolumn->is_nullable              = $rawcolumn->null; unset($rawcolumn->null);
+                $rawcolumn->column_default           = $rawcolumn->default; unset($rawcolumn->default);
+                $rawcolumn->column_key               = $rawcolumn->key; unset($rawcolumn->default);
+                $rawcolumn->extra                    = ($rawcolumn->column_name === 'id') ? 'auto_increment' : '';
+
+                if (preg_match('/(enum|varchar)\((\d+)\)/i', $rawcolumn->column_type, $matches)) {
+                    $rawcolumn->data_type = $matches[1];
+                    $rawcolumn->character_maximum_length = $matches[2];
+
+                } else if (preg_match('/([a-z]*int[a-z]*)\((\d+)\)/i', $rawcolumn->column_type, $matches)) {
+                    $rawcolumn->data_type = $matches[1];
+                    $rawcolumn->character_maximum_length = $matches[2];
+
+                } else if (preg_match('/(decimal)\((\d+),(\d+)\)/i', $rawcolumn->column_type, $matches)) {
+                    $rawcolumn->data_type = $matches[1];
+                    $rawcolumn->numeric_precision = $matches[2];
+                    $rawcolumn->numeric_scale = $matches[3];
+
+                } else if (preg_match('/(double|float)(\((\d+),(\d+)\))?/i', $rawcolumn->column_type, $matches)) {
+                    $rawcolumn->data_type = $matches[1];
+                    $rawcolumn->numeric_precision = isset($matches[3]) ? $matches[3] : null;
+                    $rawcolumn->numeric_scale = isset($matches[4]) ? $matches[4] : null;
+
+                } else if (preg_match('/([a-z]*text)/i', $rawcolumn->column_type, $matches)) {
+                    $rawcolumn->data_type = $matches[1];
+                    $rawcolumn->character_maximum_length = -1; // unknown
+
+                } else if (preg_match('/([a-z]*blob)/i', $rawcolumn->column_type, $matches)) {
+                    $rawcolumn->data_type = $matches[1];
+
+                } else {
+                    $rawcolumn->data_type = $rawcolumn->column_type;
+                }
+
+                $info = $this->get_column_info($rawcolumn);
+                $this->columns[$table][$info->name] = new database_column_info($info);
+            }
+            $result->close();
         }
 
-        $result->close();
-
         return $this->columns[$table];
+    }
+
+    /**
+     * Returns moodle column info for raw column from information schema.
+     * @param stdClass $rawcolumn
+     * @return stdClass standardised colum info
+     */
+    private function get_column_info(stdClass $rawcolumn) {
+        $rawcolumn = (object)$rawcolumn;
+        $info = new stdClass();
+        $info->name           = $rawcolumn->column_name;
+        $info->type           = $rawcolumn->data_type;
+        $info->meta_type      = $this->mysqltype2moodletype($rawcolumn->data_type);
+        $info->default_value  = $rawcolumn->column_default;
+        $info->has_default    = !is_null($rawcolumn->column_default);
+        $info->not_null       = ($rawcolumn->is_nullable === 'NO');
+        $info->primary_key    = ($rawcolumn->column_key === 'PRI');
+        $info->binary         = false;
+        $info->unsigned       = null;
+        $info->auto_increment = false;
+        $info->unique         = null;
+        $info->scale          = null;
+
+        if ($info->meta_type === 'C') {
+            $info->max_length = $rawcolumn->character_maximum_length;
+
+        } else if ($info->meta_type === 'I') {
+            if ($info->primary_key) {
+                $info->meta_type = 'R';
+                $info->unique    = true;
+            }
+            $info->max_length    = $rawcolumn->numeric_precision;
+            $info->unsigned      = (stripos($rawcolumn->column_type, 'unsigned') !== false);
+            $info->auto_increment= (strpos($rawcolumn->extra, 'auto_increment') !== false);
+
+        } else if ($info->meta_type === 'N') {
+            $info->max_length    = $rawcolumn->numeric_precision;
+            $info->scale         = $rawcolumn->numeric_scale;
+            $info->unsigned      = (stripos($rawcolumn->column_type, 'unsigned') !== false);
+
+        } else if ($info->meta_type === 'X') {
+            if ("$rawcolumn->character_maximum_length" === '4294967295') { // watch out for PHP max int limits!
+                // means maximum moodle size for text column, in other drivers it may also mean unknown size
+                $info->max_length = -1;
+            } else {
+                $info->max_length = $rawcolumn->character_maximum_length;
+            }
+            $info->primary_key   = false;
+
+        } else if ($info->meta_type === 'B') {
+            $info->max_length    = -1;
+            $info->primary_key   = false;
+            $info->binary        = true;
+        }
+
+        return $info;
+    }
+
+    /**
+     * Normalise column type.
+     * @param string $mysql_type
+     * @return string one character
+     * @throws dml_exception
+     */
+    private function mysqltype2moodletype($mysql_type) {
+        $type = null;
+
+        switch(strtoupper($mysql_type)) {
+            case 'BIT':
+                $type = 'L';
+                break;
+
+            case 'TINYINT':
+            case 'SMALLINT':
+            case 'MEDIUMINT':
+            case 'INT':
+            case 'BIGINT':
+                $type = 'I';
+                break;
+
+            case 'FLOAT':
+            case 'DOUBLE':
+            case 'DECIMAL':
+                $type = 'N';
+                break;
+
+            case 'CHAR':
+            case 'ENUM':
+            case 'SET':
+            case 'VARCHAR':
+                $type = 'C';
+                break;
+
+            case 'TINYTEXT':
+            case 'TEXT':
+            case 'MEDIUMTEXT':
+            case 'LONGTEXT':
+                $type = 'X';
+                break;
+
+            case 'BINARY':
+            case 'VARBINARY':
+            case 'BLOB':
+            case 'TINYBLOB':
+            case 'MEDIUMBLOB':
+            case 'LONGBLOB':
+                $type = 'B';
+                break;
+
+            case 'DATE':
+            case 'TIME':
+            case 'DATETIME':
+            case 'TIMESTAMP':
+            case 'YEAR':
+                $type = 'D';
+                break;
+        }
+
+        if (!$type) {
+            throw new dml_exception('invalidmysqlnativetype', $mysql_type);
+        }
+        return $type;
     }
 
     /**
@@ -592,6 +651,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return mixed the normalised value
      */
     protected function normalise_value($column, $value) {
+        $this->detect_objects($value);
+
         if (is_bool($value)) { // Always, convert boolean to int
             $value = (int)$value;
 
@@ -603,16 +664,6 @@ class mysqli_native_moodle_database extends moodle_database {
         // any implicit conversion by MySQL
         } else if (is_float($value) and ($column->meta_type == 'C' or $column->meta_type == 'X')) {
             $value = "$value";
-        }
-        // workaround for problem with wrong enums in mysql - TODO: Out in Moodle 2.1
-        if (!empty($column->enums)) {
-            if (is_null($value) and !$column->not_null) {
-                // ok - nulls allowed
-            } else {
-                if (!in_array((string)$value, $column->enums)) {
-                    throw new dml_write_exception('Enum value '.s($value).' not allowed in field '.$field.' table '.$table.'.');
-                }
-            }
         }
         return $value;
     }
@@ -1127,7 +1178,7 @@ class mysqli_native_moodle_database extends moodle_database {
      */
     public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notlike = false, $escapechar = '\\') {
         if (strpos($param, '%') !== false) {
-            debugging('Potential SQL injection detected, sql_ilike() expects bound parameters (? or :named)');
+            debugging('Potential SQL injection detected, sql_like() expects bound parameters (? or :named)');
         }
         $escapechar = $this->mysqli->real_escape_string($escapechar); // prevents problems with C-style escapes of enclosing '\'
 

@@ -33,6 +33,15 @@ class xmldb_table extends xmldb_object {
     var $indexes;
 
     /**
+     * Note:
+     *  - Oracle has 30 chars limit for all names,
+     *    2 chars are reserved for prefix.
+     *
+     * @const maximumn length of field names
+     */
+    const NAME_MAX_LENGTH = 28;
+
+    /**
      * Creates one new xmldb_table
      */
     function __construct($name) {
@@ -660,6 +669,27 @@ class xmldb_table extends xmldb_object {
     }
 
     /**
+     * Validates the table restrictions (does not validate child elements).
+     *
+     * The error message should not be localised because it is intended for developers,
+     * end users and admins should never see these problems!
+     *
+     * @param xmldb_table $xmldb_table optional when object is table
+     * @return string null if ok, error message if problem found
+     */
+    function validateDefinition(xmldb_table $xmldb_table=null) {
+        // table parameter is ignored
+        $name = $this->getName();
+        if (strlen($name) > self::NAME_MAX_LENGTH) {
+            return 'Invalid table name {'.$name.'}: name is too long. Limit is 28 chars.';
+        }
+        if (!preg_match('/^[a-z][a-z0-9_]*$/', $name)) {
+            return 'Invalid table name {'.$name.'}: name includes invalid characters.';
+        }
+
+        return null;
+    }
+        /**
      * This function will output the XML text for one table
      */
     function xmlOutput() {
@@ -704,27 +734,13 @@ class xmldb_table extends xmldb_object {
         return $o;
     }
 
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-    function addFieldInfo($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
-
-        debugging('XMLDBTable->addFieldInfo() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_table->add_field() instead', DEBUG_DEVELOPER);
-        if ($enum) {
-            debugging('Also, ENUMs support has been dropped in Moodle 2.0. Your fields specs are incorrect because you are trying to introduce one new ENUM. Created DB estructures will ignore that.');
-        }
-
-        return $this->add_field($name, $type, $precision, $unsigned, $notnull, $sequence, $default, $previous);
-
-    }
-/// Deprecated API ends here
-
     /**
      * This function will add one new field to the table with all
      * its attributes defined
      *
      * @param string name name of the field
      * @param string type XMLDB_TYPE_INTEGER, XMLDB_TYPE_NUMBER, XMLDB_TYPE_CHAR, XMLDB_TYPE_TEXT, XMLDB_TYPE_BINARY
-     * @param string precision length for integers and chars, two-comma separated numbers for numbers and 'small', 'medium', 'big' for texts and binaries
+     * @param string precision length for integers and chars, two-comma separated numbers for numbers
      * @param string unsigned XMLDB_UNSIGNED or null (or false)
      * @param string notnull XMLDB_NOTNULL or null (or false)
      * @param string sequence XMLDB_SEQUENCE or null (or false)
@@ -737,18 +753,6 @@ class xmldb_table extends xmldb_object {
 
         return $field;
     }
-
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-
-    function addKeyInfo($name, $type, $fields, $reftable=null, $reffields=null) {
-
-        debugging('XMLDBTable->addKeyInfo() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_table->add_key() instead', DEBUG_DEVELOPER);
-
-        return $this->add_key($name, $type, $fields, $reftable, $reffields);
-
-    }
-/// Deprecated API ends here
 
     /**
      * This function will add one new key to the table with all
@@ -764,17 +768,6 @@ class xmldb_table extends xmldb_object {
         $key = new xmldb_key($name, $type, $fields, $reftable, $reffields);
         $this->addKey($key);
     }
-
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-    function addIndexInfo($name, $type, $fields) {
-
-        debugging('XMLDBTable->addIndexInfo() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_table->add_index() instead', DEBUG_DEVELOPER);
-
-        return $this->add_index($name, $type, $fields);
-
-    }
-/// Deprecated API ends here
 
     /**
      * This function will add one new index to the table with all
@@ -833,14 +826,3 @@ class xmldb_table extends xmldb_object {
         }
     }
 }
-
-/// TODO: Delete for 2.1 (deeprecated in 2.0).
-/// Deprecated API starts here
-class XMLDBTable extends xmldb_table {
-
-    function __construct($name) {
-        parent::__construct($name);
-    }
-
-}
-/// Deprecated API ends here

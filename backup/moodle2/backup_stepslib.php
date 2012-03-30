@@ -403,7 +403,7 @@ class backup_course_structure_step extends backup_structure_step {
             'visible', 'hiddensections', 'groupmode', 'groupmodeforce',
             'defaultgroupingid', 'lang', 'theme',
             'timecreated', 'timemodified',
-            'requested', 'restrictmodules',
+            'requested',
             'enablecompletion', 'completionstartonenrol', 'completionnotify'));
 
         $category = new backup_nested_element('category', array('id'), array(
@@ -413,10 +413,6 @@ class backup_course_structure_step extends backup_structure_step {
 
         $tag = new backup_nested_element('tag', array('id'), array(
             'name', 'rawname'));
-
-        $allowedmodules = new backup_nested_element('allowed_modules');
-
-        $module = new backup_nested_element('module', array(), array('modulename'));
 
         // attach format plugin structure to $course element, only one allowed
         $this->add_plugin_structure('format', $course, false);
@@ -444,9 +440,6 @@ class backup_course_structure_step extends backup_structure_step {
         $course->add_child($tags);
         $tags->add_child($tag);
 
-        $course->add_child($allowedmodules);
-        $allowedmodules->add_child($module);
-
         // Set the sources
 
         $courserec = $DB->get_record('course', array('id' => $this->task->get_courseid()));
@@ -465,11 +458,6 @@ class backup_course_structure_step extends backup_structure_step {
                                  AND ti.itemid = ?', array(
                                      backup_helper::is_sqlparam('course'),
                                      backup::VAR_PARENTID));
-
-        $module->set_source_sql('SELECT m.name AS modulename
-                                   FROM {modules} m
-                                   JOIN {course_allowed_modules} cam ON m.id = cam.module
-                                  WHERE course = ?', array(backup::VAR_COURSEID));
 
         // Some annotations
 

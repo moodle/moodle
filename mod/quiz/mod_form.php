@@ -154,6 +154,13 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('questionsperpagegrp', 'newpage', 'quiz');
         $mform->setAdvanced('questionsperpagegrp', $quizconfig->questionsperpage_adv);
 
+        // Navigation method
+        $mform->addElement('select', 'navmethod', get_string('navmethod', 'quiz'),
+                quiz_get_navigation_options());
+        $mform->addHelpButton('navmethod', 'navmethod', 'quiz');
+        $mform->setAdvanced('navmethod', $quizconfig->navmethod_adv);
+        $mform->setDefault('navmethod', $quizconfig->navmethod);
+
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'interactionhdr', get_string('questionbehaviour', 'quiz'));
 
@@ -310,10 +317,10 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         $repeatarray = array();
         $repeatedoptions = array();
-        $repeatarray[] = MoodleQuickForm::createElement('editor', 'feedbacktext',
+        $repeatarray[] = $mform->createElement('editor', 'feedbacktext',
                 get_string('feedback', 'quiz'), null, array('maxfiles' => EDITOR_UNLIMITED_FILES,
                         'noclean' => true, 'context' => $this->context));
-        $repeatarray[] = MoodleQuickForm::createElement('text', 'feedbackboundaries',
+        $repeatarray[] = $mform->createElement('text', 'feedbackboundaries',
                 get_string('gradeboundary', 'quiz'), array('size' => 10));
         $repeatedoptions['feedbacktext']['type'] = PARAM_RAW;
         $repeatedoptions['feedbackboundaries']['type'] = PARAM_RAW;
@@ -331,12 +338,12 @@ class mod_quiz_mod_form extends moodleform_mod {
                 get_string('addmoreoverallfeedbacks', 'quiz'), true);
 
         // Put some extra elements in before the button
-        $mform->insertElementBefore(MoodleQuickForm::createElement('editor',
+        $mform->insertElementBefore($mform->createElement('editor',
                 "feedbacktext[$nextel]", get_string('feedback', 'quiz'), null,
                 array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true,
                       'context' => $this->context)),
                 'boundary_add_fields');
-        $mform->insertElementBefore(MoodleQuickForm::createElement('static',
+        $mform->insertElementBefore($mform->createElement('static',
                 'gradeboundarystatic2', get_string('gradeboundary', 'quiz'), '0%'),
                 'boundary_add_fields');
 

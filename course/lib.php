@@ -932,7 +932,7 @@ function print_recent_activity($course) {
 
 /// Next, have there been any modifications to the course structure?
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
 
     $changelist = array();
 
@@ -1730,9 +1730,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
                 if ($completionicon) {
                     $imgsrc = $OUTPUT->pix_url('i/completion-'.$completionicon);
-                    $imgalt = s(get_string('completion-alt-'.$completionicon, 'completion'));
+                    $imgalt = s(get_string('completion-alt-'.$completionicon, 'completion', $mod->name));
                     if ($completion == COMPLETION_TRACKING_MANUAL && !$isediting) {
-                        $imgtitle = s(get_string('completion-title-'.$completionicon, 'completion'));
+                        $imgtitle = s(get_string('completion-title-'.$completionicon, 'completion', $mod->name));
                         $newstate =
                             $completiondata->completionstate==COMPLETION_COMPLETE
                             ? COMPLETION_INCOMPLETE
@@ -1751,6 +1751,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         echo "
 <form class='togglecompletion$extraclass' method='post' action='".$CFG->wwwroot."/course/togglecompletion.php'><div>
 <input type='hidden' name='id' value='{$mod->id}' />
+<input type='hidden' name='modulename' value='".s($mod->name)."' />
 <input type='hidden' name='sesskey' value='".sesskey()."' />
 <input type='hidden' name='completionstate' value='$newstate' />
 <input type='image' src='$imgsrc' alt='$imgalt' title='$imgtitle' />
@@ -1815,65 +1816,49 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         return false;
     }
 
-    $urlbase = "/course/mod.php?id=$course->id&section=$section&sesskey=".sesskey().'&add=';
+    // Retrieve all modules with associated metadata
+    $modules = get_module_metadata($course, $modnames);
 
+    // We'll sort resources and activities into two lists
     $resources = array();
     $activities = array();
 
-    foreach($modnames as $modname=>$modnamestr) {
-        if (!course_allowed_module($course, $modname)) {
-            continue;
-        }
+    // We need to add the section section to the link for each module
+    $sectionlink = '&section=' . $section;
 
-        $libfile = "$CFG->dirroot/mod/$modname/lib.php";
-        if (!file_exists($libfile)) {
-            continue;
-        }
-        include_once($libfile);
-        $gettypesfunc =  $modname.'_get_types';
-        if (function_exists($gettypesfunc)) {
+    foreach ($modules as $module) {
+        if (isset($module->types)) {
+            // This module has a subtype
             // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
-            if ($types = $gettypesfunc()) {
-                $menu = array();
-                $atype = null;
-                $groupname = null;
-                foreach($types as $type) {
-                    if ($type->typestr === '--') {
-                        continue;
-                    }
-                    if (strpos($type->typestr, '--') === 0) {
-                        $groupname = str_replace('--', '', $type->typestr);
-                        continue;
-                    }
-                    $type->type = str_replace('&amp;', '&', $type->type);
-                    if ($type->modclass == MOD_CLASS_RESOURCE) {
-                        $atype = MOD_CLASS_RESOURCE;
-                    }
-                    $menu[$urlbase.$type->type] = $type->typestr;
-                }
-                if (!is_null($groupname)) {
-                    if ($atype == MOD_CLASS_RESOURCE) {
-                        $resources[] = array($groupname=>$menu);
-                    } else {
-                        $activities[] = array($groupname=>$menu);
-                    }
+            $subtypes = array();
+            foreach ($module->types as $subtype) {
+                $subtypes[$subtype->link . $sectionlink] = $subtype->title;
+            }
+
+            // Sort module subtypes into the list
+            if (!empty($module->title)) {
+                // This grouping has a name
+                if ($module->archetype == MOD_CLASS_RESOURCE) {
+                    $resources[] = array($module->title=>$subtypes);
                 } else {
-                    if ($atype == MOD_CLASS_RESOURCE) {
-                        $resources = array_merge($resources, $menu);
-                    } else {
-                        $activities = array_merge($activities, $menu);
-                    }
+                    $activities[] = array($module->title=>$subtypes);
+                }
+            } else {
+                // This grouping does not have a name
+                if ($module->archetype == MOD_CLASS_RESOURCE) {
+                    $resources = array_merge($resources, $subtypes);
+                } else {
+                    $activities = array_merge($activities, $subtypes);
                 }
             }
         } else {
-            $archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
-            if ($archetype == MOD_ARCHETYPE_RESOURCE) {
-                $resources[$urlbase.$modname] = $modnamestr;
-            } else if ($archetype === MOD_ARCHETYPE_SYSTEM) {
+            // This module has no subtypes
+            if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
+                $resources[$module->link . $sectionlink] = $module->title;
+            } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
                 // System modules cannot be added by user, do not add to dropdown
             } else {
-                // all other archetypes are considered activity
-                $activities[$urlbase.$modname] = $modnamestr;
+                $activities[$module->link . $sectionlink] = $module->title;
             }
         }
     }
@@ -1910,6 +1895,96 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     } else {
         echo $output;
     }
+}
+
+/**
+ * Retrieve all metadata for the requested modules
+ *
+ * @param object $course The Course
+ * @param array $modnames An array containing the list of modules and their
+ * names
+ * @return array A list of stdClass objects containing metadata about each
+ * module
+ */
+function get_module_metadata($course, $modnames) {
+    global $CFG, $OUTPUT;
+
+    // get_module_metadata will be called once per section on the page and courses may show
+    // different modules to one another
+    static $modlist = array();
+    if (!isset($modlist[$course->id])) {
+        $modlist[$course->id] = array();
+    }
+
+    $return = array();
+    $urlbase = "/course/mod.php?id=$course->id&sesskey=".sesskey().'&add=';
+    foreach($modnames as $modname => $modnamestr) {
+        if (!course_allowed_module($course, $modname)) {
+            continue;
+        }
+        if (isset($modlist[$modname])) {
+            // This module is already cached
+            $return[$modname] = $modlist[$course->id][$modname];
+            continue;
+        }
+
+        // Include the module lib
+        $libfile = "$CFG->dirroot/mod/$modname/lib.php";
+        if (!file_exists($libfile)) {
+            continue;
+        }
+        include_once($libfile);
+
+        // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
+        $gettypesfunc =  $modname.'_get_types';
+        if (function_exists($gettypesfunc)) {
+            if ($types = $gettypesfunc()) {
+                $group = new stdClass();
+                $group->name = $modname;
+                $group->icon = $OUTPUT->pix_icon('icon', '', $modname, array('class' => 'icon'));
+                foreach($types as $type) {
+                    if ($type->typestr === '--') {
+                        continue;
+                    }
+                    if (strpos($type->typestr, '--') === 0) {
+                        $group->title = str_replace('--', '', $type->typestr);
+                        continue;
+                    }
+                    // Set the Sub Type metadata
+                    $subtype = new stdClass();
+                    $subtype->title = $type->typestr;
+                    $subtype->type = str_replace('&amp;', '&', $type->type);
+                    $subtype->name = preg_replace('/.*type=/', '', $subtype->type);
+                    $subtype->archetype = $type->modclass;
+
+                    // The group archetype should match the subtype archetypes and all subtypes
+                    // should have the same archetype
+                    $group->archetype = $subtype->archetype;
+
+                    if (get_string_manager()->string_exists('help' . $subtype->name, $modname)) {
+                        $subtype->help = get_string('help' . $subtype->name, $modname);
+                    }
+                    $subtype->link = $urlbase . $subtype->type;
+                    $group->types[] = $subtype;
+                }
+                $modlist[$course->id][$modname] = $group;
+            }
+        } else {
+            $module = new stdClass();
+            $module->title = get_string('modulename', $modname);
+            $module->name = $modname;
+            $module->link = $urlbase . $modname;
+            $module->icon = $OUTPUT->pix_icon('icon', '', $module->name, array('class' => 'icon'));
+            if (get_string_manager()->string_exists('modulename_help', $modname)) {
+                $module->help = get_string('modulename_help', $modname);
+            }
+            $module->archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
+            $modlist[$course->id][$modname] = $module;
+        }
+        $return[$modname] = $modlist[$course->id][$modname];
+    }
+
+    return $return;
 }
 
 /**
@@ -3316,58 +3391,37 @@ function course_format_name ($course,$max=100) {
     }
 }
 
-function update_restricted_mods($course, $mods) {
-    global $DB;
-
-/// Delete all the current restricted list
-    $DB->delete_records('course_allowed_modules', array('course'=>$course->id));
-
-    if (empty($course->restrictmodules)) {
-        return;   // We're done
-    }
-
-/// Insert the new list of restricted mods
-    foreach ($mods as $mod) {
-        if ($mod == 0) {
-            continue; // this is the 'allow none' option
-        }
-        $am = new stdClass();
-        $am->course = $course->id;
-        $am->module = $mod;
-        $DB->insert_record('course_allowed_modules',$am);
-    }
-}
-
 /**
- * This function will take an int (module id) or a string (module name)
- * and return true or false, whether it's allowed in the given course (object)
- * $mod is not allowed to be an object, as the field for the module id is inconsistent
- * depending on where in the code it's called from (sometimes $mod->id, sometimes $mod->module)
+ * Is the user allowed to add this type of module to this course?
+ * @param object $course the course settings. Only $course->id is used.
+ * @param string $modname the module name. E.g. 'forum' or 'quiz'.
+ * @return bool whether the current user is allowed to add this type of module to this course.
  */
-
-function course_allowed_module($course,$mod) {
+function course_allowed_module($course, $modname) {
     global $DB;
 
-    if (empty($course->restrictmodules)) {
+    if (is_numeric($modname)) {
+        throw new coding_exception('Function course_allowed_module no longer
+                supports numeric module ids. Please update your code to pass the module name.');
+    }
+
+    $capability = 'mod/' . $modname . ':addinstance';
+    if (!get_capability_info($capability)) {
+        // Debug warning that the capability does not exist, but no more than once per page.
+        static $warned = array();
+        $archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
+        if (!isset($warned[$modname]) && $archetype !== MOD_ARCHETYPE_SYSTEM) {
+            debugging('The module ' . $modname . ' does not define the standard capability ' .
+                    $capability , DEBUG_DEVELOPER);
+            $warned[$modname] = 1;
+        }
+
+        // If the capability does not exist, the module can always be added.
         return true;
     }
 
-    // Admins and admin-like people who can edit everything can also add anything.
-    // Originally there was a course:update test only, but it did not match the test in course edit form
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-        return true;
-    }
-
-    if (is_numeric($mod)) {
-        $modid = $mod;
-    } else if (is_string($mod)) {
-        $modid = $DB->get_field('modules', 'id', array('name'=>$mod));
-    }
-    if (empty($modid)) {
-        return false;
-    }
-
-    return $DB->record_exists('course_allowed_modules', array('course'=>$course->id, 'module'=>$modid));
+    $coursecontext = context_course::instance($course->id);
+    return has_capability($capability, $coursecontext);
 }
 
 /**
@@ -3835,17 +3889,6 @@ function create_course($data, $editoroptions = NULL) {
 
     fix_course_sortorder();
 
-    // update module restrictions
-    if ($course->restrictmodules) {
-        if (isset($data->allowedmods)) {
-            update_restricted_mods($course, $data->allowedmods);
-        } else {
-            if (!empty($CFG->defaultallowedmodules)) {
-                update_restricted_mods($course, explode(',', $CFG->defaultallowedmodules));
-            }
-        }
-    }
-
     // new context created - better mark it as dirty
     mark_context_dirty($context->path);
 
@@ -3923,11 +3966,6 @@ function update_course($data, $editoroptions = NULL) {
 
     // Test for and remove blocks which aren't appropriate anymore
     blocks_remove_inappropriate($course);
-
-    // update module restrictions
-    if (isset($data->allowedmods)) {
-        update_restricted_mods($course, $data->allowedmods);
-    }
 
     // Save any custom role names.
     save_local_role_names($course->id, $data);
@@ -4241,9 +4279,6 @@ class course_request {
 
         // Set misc settings
         $data->requested = 1;
-        if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
-            $data->restrictmodules = 1;
-        }
 
         // Apply course default settings
         $data->format             = $courseconfig->format;

@@ -297,10 +297,12 @@ class pgsql_native_moodle_database extends moodle_database {
         if ($result) {
             while ($row = pg_fetch_row($result)) {
                 $tablename = reset($row);
-                if (strpos($tablename, $this->prefix) !== 0) {
-                    continue;
+                if ($this->prefix !== '') {
+                    if (strpos($tablename, $this->prefix) !== 0) {
+                        continue;
+                    }
+                    $tablename = substr($tablename, strlen($this->prefix));
                 }
-                $tablename = substr($tablename, strlen($this->prefix));
                 $this->tables[$tablename] = $tablename;
             }
             pg_free_result($result);
@@ -529,6 +531,8 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return mixed the normalised value
      */
     protected function normalise_value($column, $value) {
+        $this->detect_objects($value);
+
         if (is_bool($value)) { // Always, convert boolean to int
             $value = (int)$value;
 
@@ -778,9 +782,10 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $fields = implode(',', array_keys($params));
         $values = array();
-        $count = count($params);
-        for ($i=1; $i<=$count; $i++) {
-            $values[] = "\$".$i;
+        $i = 1;
+        foreach ($params as $value) {
+            $this->detect_objects($value);
+            $values[] = "\$".$i++;
         }
         $values = implode(',', $values);
 
@@ -876,6 +881,7 @@ class pgsql_native_moodle_database extends moodle_database {
         $blobs   = array();
 
         foreach ($dataobject as $field=>$value) {
+            $this->detect_objects($value);
             if (!isset($columns[$field])) {
                 continue;
             }
@@ -932,6 +938,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $sets = array();
         foreach ($params as $field=>$value) {
+            $this->detect_objects($value);
             $sets[] = "$field = \$".$i++;
         }
 
@@ -1097,7 +1104,7 @@ class pgsql_native_moodle_database extends moodle_database {
      */
     public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notlike = false, $escapechar = '\\') {
         if (strpos($param, '%') !== false) {
-            debugging('Potential SQL injection detected, sql_ilike() expects bound parameters (? or :named)');
+            debugging('Potential SQL injection detected, sql_like() expects bound parameters (? or :named)');
         }
         $escapechar = pg_escape_string($this->pgsql, $escapechar); // prevents problems with C-style escapes of enclosing '\'
 
@@ -1108,11 +1115,6 @@ class pgsql_native_moodle_database extends moodle_database {
             $LIKE = $notlike ? 'NOT ILIKE' : 'ILIKE';
         }
         return "$fieldname $LIKE $param ESCAPE '$escapechar'";
-    }
-
-    public function sql_ilike() {
-        debugging('sql_ilike() is deprecated, please use sql_like() instead');
-        return 'ILIKE';
     }
 
     public function sql_bitxor($int1, $int2) {

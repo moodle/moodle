@@ -9,13 +9,13 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Course basiclti activity belongs to" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="name field for moodle instances" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="General introduction of the basiclti activity" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="General introduction of the basiclti activity" PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the intro field (MOODLE, HTML, MARKDOWN...)" PREVIOUS="intro" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="typeid"/>
         <FIELD NAME="typeid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Basic LTI type" PREVIOUS="timemodified" NEXT="toolurl"/>
-        <FIELD NAME="toolurl" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="Remote tool url" PREVIOUS="typeid" NEXT="securetoolurl"/>
-        <FIELD NAME="securetoolurl" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="toolurl" NEXT="instructorchoicesendname"/>
+        <FIELD NAME="toolurl" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Remote tool url" PREVIOUS="typeid" NEXT="securetoolurl"/>
+        <FIELD NAME="securetoolurl" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="toolurl" NEXT="instructorchoicesendname"/>
         <FIELD NAME="instructorchoicesendname" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Send user's name" PREVIOUS="securetoolurl" NEXT="instructorchoicesendemailaddr"/>
         <FIELD NAME="instructorchoicesendemailaddr" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Send user's email" PREVIOUS="instructorchoicesendname" NEXT="instructorchoiceallowroster"/>
         <FIELD NAME="instructorchoiceallowroster" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Allow the roster to be retrieved" PREVIOUS="instructorchoicesendemailaddr" NEXT="instructorchoiceallowsetting"/>
@@ -30,8 +30,8 @@
         <FIELD NAME="showtitlelaunch" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="debuglaunch" NEXT="showdescriptionlaunch"/>
         <FIELD NAME="showdescriptionlaunch" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="showtitlelaunch" NEXT="servicesalt"/>
         <FIELD NAME="servicesalt" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" PREVIOUS="showdescriptionlaunch" NEXT="icon"/>
-        <FIELD NAME="icon" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="servicesalt" NEXT="secureicon"/>
-        <FIELD NAME="secureicon" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="icon"/>
+        <FIELD NAME="icon" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="servicesalt" NEXT="secureicon"/>
+        <FIELD NAME="secureicon" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="icon"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -44,7 +44,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="basiclti Activity" SEQUENCE="false" COMMENT="Activity name" PREVIOUS="id" NEXT="baseurl"/>
-        <FIELD NAME="baseurl" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="tooldomain"/>
+        <FIELD NAME="baseurl" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="tooldomain"/>
         <FIELD NAME="tooldomain" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="baseurl" NEXT="state"/>
         <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="2" SEQUENCE="false" COMMENT="Active = 1, Pending = 2, Rejected = 3" PREVIOUS="tooldomain" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="state" NEXT="coursevisible"/>

@@ -127,7 +127,7 @@ class auth_plugin_email extends auth_plugin_base {
             if ($user->confirmed) {
                 return AUTH_CONFIRM_ALREADY;
 
-            } else if ($user->auth != 'email') {
+            } else if ($user->auth != $this->authtype) {
                 return AUTH_CONFIRM_ERROR;
 
             } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in

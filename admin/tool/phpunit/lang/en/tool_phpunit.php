@@ -15,22 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Email message processor library file
+ * Strings for component 'tool_phpunit'
  *
- * @package    message_email
- * @copyright  2008 Luis Rodrigues and Martin Dougiamas
+ * @package    tool_phpunit
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Register the processor
- */
-function email_install(){
-    global $DB;
-    $result = true;
-
-    $provider = new stdClass();
-    $provider->name  = 'email';
-    $DB->insert_record('message_processors', $provider);
-    return $result;
-}
+$string['pluginname'] = 'PHPUnit tests';

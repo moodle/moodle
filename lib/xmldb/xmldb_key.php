@@ -45,17 +45,6 @@ class xmldb_key extends xmldb_object {
         $this->set_attributes($type, $fields, $reftable, $reffields);
     }
 
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-
-    function setAttributes($type, $fields, $reftable=null, $reffields=null) {
-
-        debugging('XMLDBKey->setAttributes() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_key->set_attributes() instead.', DEBUG_DEVELOPER);
-
-        return $this->set_attributes($type, $fields, $reftable, $reffields);
-    }
-/// Deprecated API ends here
-
     /**
      * Set all the attributes of one xmldb_key
      *
@@ -469,14 +458,3 @@ class xmldb_key extends xmldb_object {
         return $o;
     }
 }
-
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-class XMLDBKey extends xmldb_key {
-
-    function __construct($name) {
-        parent::__construct($name);
-    }
-
-}
-/// Deprecated API ends here

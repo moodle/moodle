@@ -8,7 +8,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="name"/>
@@ -20,7 +20,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="plugin"/>
         <FIELD NAME="plugin" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="core" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="plugin" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="plugin_name"/>
@@ -34,8 +34,8 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="plugin"/>
         <FIELD NAME="plugin" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" PREVIOUS="timemodified" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="plugin" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="oldvalue"/>
-        <FIELD NAME="oldvalue" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="value"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="oldvalue"/>
+        <FIELD NAME="oldvalue" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="value"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>
@@ -53,8 +53,8 @@
         <FIELD NAME="version" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="plugin or main version if known" PREVIOUS="plugin" NEXT="targetversion"/>
         <FIELD NAME="targetversion" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="version of plugin or core specified in version.php at the time of upgrade loggging" PREVIOUS="version" NEXT="info"/>
         <FIELD NAME="info" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="targetversion" NEXT="details"/>
-        <FIELD NAME="details" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="info" NEXT="backtrace"/>
-        <FIELD NAME="backtrace" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="details" NEXT="userid"/>
+        <FIELD NAME="details" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="info" NEXT="backtrace"/>
+        <FIELD NAME="backtrace" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="details" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="backtrace" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid"/>
       </FIELDS>
@@ -75,11 +75,11 @@
         <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" PREVIOUS="sortorder" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="fullname" NEXT="idnumber"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" NEXT="summary"/>
-        <FIELD NAME="summary" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="idnumber" NEXT="summaryformat"/>
+        <FIELD NAME="summary" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="idnumber" NEXT="summaryformat"/>
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="summary" NEXT="format"/>
         <FIELD NAME="format" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="topics" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="showgrades"/>
         <FIELD NAME="showgrades" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="format" NEXT="modinfo"/>
-        <FIELD NAME="modinfo" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="showgrades" NEXT="newsitems"/>
+        <FIELD NAME="modinfo" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="showgrades" NEXT="newsitems"/>
         <FIELD NAME="newsitems" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="modinfo" NEXT="startdate"/>
         <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="newsitems" NEXT="numsections"/>
         <FIELD NAME="numsections" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="startdate" NEXT="marker"/>
@@ -97,9 +97,8 @@
         <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="lang" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="theme" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="requested"/>
-        <FIELD NAME="requested" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="restrictmodules"/>
-        <FIELD NAME="restrictmodules" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="requested" NEXT="enablecompletion"/>
-        <FIELD NAME="enablecompletion" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = allow use of 'completion' progress-tracking on this course. 0 = disable completion tracking on this course." PREVIOUS="restrictmodules" NEXT="completionstartonenrol"/>
+        <FIELD NAME="requested" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="enablecompletion"/>
+        <FIELD NAME="enablecompletion" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = allow use of 'completion' progress-tracking on this course. 0 = disable completion tracking on this course." PREVIOUS="requested" NEXT="completionstartonenrol"/>
         <FIELD NAME="completionstartonenrol" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = allow use of 'activty completion' progress-tracking on this course. 0 = disable activity completion tracking on this course." PREVIOUS="enablecompletion" NEXT="completionnotify"/>
         <FIELD NAME="completionnotify" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Notify users when they complete this course" PREVIOUS="completionstartonenrol"/>
       </FIELDS>
@@ -117,7 +116,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="idnumber"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="idnumber" NEXT="descriptionformat"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="idnumber" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="parent"/>
         <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="descriptionformat" NEXT="sortorder"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="parent" NEXT="coursecount"/>
@@ -196,7 +195,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="role"/>
         <FIELD NAME="role" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the role to receive this notification message when a course has been completed" PREVIOUS="course" NEXT="message"/>
-        <FIELD NAME="message" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="HTML formatted message to be sent" PREVIOUS="role" NEXT="timesent"/>
+        <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="HTML formatted message to be sent" PREVIOUS="role" NEXT="timesent"/>
         <FIELD NAME="timesent" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="message"/>
       </FIELDS>
       <KEYS>
@@ -267,8 +266,8 @@
         <FIELD NAME="customchar2" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general short name" PREVIOUS="customchar1" NEXT="customdec1"/>
         <FIELD NAME="customdec1" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="Custom - general decimal" PREVIOUS="customchar2" NEXT="customdec2"/>
         <FIELD NAME="customdec2" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="Custom - general decimal" PREVIOUS="customdec1" NEXT="customtext1"/>
-        <FIELD NAME="customtext1" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general text" PREVIOUS="customdec2" NEXT="customtext2"/>
-        <FIELD NAME="customtext2" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general text" PREVIOUS="customtext1" NEXT="timecreated"/>
+        <FIELD NAME="customtext1" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general text" PREVIOUS="customdec2" NEXT="customtext2"/>
+        <FIELD NAME="customtext2" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general text" PREVIOUS="customtext1" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="customtext2" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated"/>
       </FIELDS>
@@ -379,9 +378,9 @@
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="section"/>
         <FIELD NAME="section" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="section" NEXT="summary"/>
-        <FIELD NAME="summary" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="summaryformat"/>
+        <FIELD NAME="summary" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="summaryformat"/>
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="summary" NEXT="sequence"/>
-        <FIELD NAME="sequence" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="visible"/>
+        <FIELD NAME="sequence" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="visible"/>
         <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="sequence"/>
       </FIELDS>
       <KEYS>
@@ -391,14 +390,14 @@
         <INDEX NAME="course_section" UNIQUE="false" FIELDS="course, section"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="course_request" COMMENT="course requests" PREVIOUS="course_sections" NEXT="course_allowed_modules">
+    <TABLE NAME="course_request" COMMENT="course requests" PREVIOUS="course_sections" NEXT="filter_active">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="fullname"/>
         <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="fullname" NEXT="summary"/>
-        <FIELD NAME="summary" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" NEXT="summaryformat"/>
+        <FIELD NAME="summary" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" NEXT="summaryformat"/>
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="summary" NEXT="reason"/>
-        <FIELD NAME="reason" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="requester"/>
+        <FIELD NAME="reason" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="requester"/>
         <FIELD NAME="requester" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="reason" NEXT="password"/>
         <FIELD NAME="password" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="requester"/>
       </FIELDS>
@@ -409,21 +408,7 @@
         <INDEX NAME="shortname" UNIQUE="false" FIELDS="shortname"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="course_allowed_modules" COMMENT="allowed modules foreach course" PREVIOUS="course_request" NEXT="filter_active">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="module"/>
-        <FIELD NAME="module" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="course" UNIQUE="false" FIELDS="course" NEXT="module"/>
-        <INDEX NAME="module" UNIQUE="false" FIELDS="module" PREVIOUS="course"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="filter_active" COMMENT="Stores information about which filters are active in which contexts. Also the filter sort order. See get_active_filters in lib/filterlib.php for how this data is used." PREVIOUS="course_allowed_modules" NEXT="filter_config">
+    <TABLE NAME="filter_active" COMMENT="Stores information about which filters are active in which contexts. Also the filter sort order. See get_active_filters in lib/filterlib.php for how this data is used." PREVIOUS="course_request" NEXT="filter_config">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="filter"/>
         <FIELD NAME="filter" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The filter internal name, like 'filter/tex' or 'mod/glossary'." PREVIOUS="id" NEXT="contextid"/>
@@ -445,7 +430,7 @@
         <FIELD NAME="filter" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The filter internal name, like 'filter/tex' or 'mod/glossary'." PREVIOUS="id" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="References context.id." PREVIOUS="filter" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The config variable name." PREVIOUS="contextid" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="The correspoding config variable value." PREVIOUS="name"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The correspoding config variable value." PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="contextid"/>
@@ -459,7 +444,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="format"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="format"/>
         <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="format" NEXT="groupid"/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="userid"/>
@@ -492,7 +477,7 @@
         <FIELD NAME="filter" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="version"/>
         <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="filter" NEXT="md5key"/>
         <FIELD NAME="md5key" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="version" NEXT="rawtext"/>
-        <FIELD NAME="rawtext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="md5key" NEXT="timemodified"/>
+        <FIELD NAME="rawtext" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="md5key" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="rawtext"/>
       </FIELDS>
       <KEYS>
@@ -506,7 +491,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="md5key"/>
         <FIELD NAME="md5key" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="formattedtext"/>
-        <FIELD NAME="formattedtext" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" PREVIOUS="md5key" NEXT="timemodified"/>
+        <FIELD NAME="formattedtext" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="md5key" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="formattedtext"/>
       </FIELDS>
       <KEYS>
@@ -545,11 +530,11 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="qtype"/>
         <FIELD NAME="qtype" TYPE="int" LENGTH="5" NOTNULL="true" SEQUENCE="false" COMMENT="query type constant" PREVIOUS="id" NEXT="sqltext"/>
-        <FIELD NAME="sqltext" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" COMMENT="query sql" PREVIOUS="qtype" NEXT="sqlparams"/>
-        <FIELD NAME="sqlparams" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="query parameters" PREVIOUS="sqltext" NEXT="error"/>
+        <FIELD NAME="sqltext" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="query sql" PREVIOUS="qtype" NEXT="sqlparams"/>
+        <FIELD NAME="sqlparams" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="query parameters" PREVIOUS="sqltext" NEXT="error"/>
         <FIELD NAME="error" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="is error" PREVIOUS="sqlparams" NEXT="info"/>
-        <FIELD NAME="info" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="detailed info such as error text" PREVIOUS="error" NEXT="backtrace"/>
-        <FIELD NAME="backtrace" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="php execution trace" PREVIOUS="info" NEXT="exectime"/>
+        <FIELD NAME="info" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="detailed info such as error text" PREVIOUS="error" NEXT="backtrace"/>
+        <FIELD NAME="backtrace" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="php execution trace" PREVIOUS="info" NEXT="exectime"/>
         <FIELD NAME="exectime" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5" COMMENT="query execution time in seconds as float" PREVIOUS="backtrace" NEXT="timelogged"/>
         <FIELD NAME="timelogged" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="timestamp when log info stored into db" PREVIOUS="exectime"/>
       </FIELDS>
@@ -578,14 +563,14 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="useridfrom"/>
         <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="useridto"/>
         <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="useridfrom" NEXT="subject"/>
-        <FIELD NAME="subject" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="The message subject" PREVIOUS="useridto" NEXT="fullmessage"/>
-        <FIELD NAME="fullmessage" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="subject" NEXT="fullmessageformat"/>
+        <FIELD NAME="subject" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The message subject" PREVIOUS="useridto" NEXT="fullmessage"/>
+        <FIELD NAME="fullmessage" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="subject" NEXT="fullmessageformat"/>
         <FIELD NAME="fullmessageformat" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the full message" PREVIOUS="fullmessage" NEXT="fullmessagehtml"/>
-        <FIELD NAME="fullmessagehtml" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="html format of message" PREVIOUS="fullmessageformat" NEXT="smallmessage"/>
-        <FIELD NAME="smallmessage" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Smal version of message (eg sms)" PREVIOUS="fullmessagehtml" NEXT="notification"/>
+        <FIELD NAME="fullmessagehtml" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="html format of message" PREVIOUS="fullmessageformat" NEXT="smallmessage"/>
+        <FIELD NAME="smallmessage" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Smal version of message (eg sms)" PREVIOUS="fullmessagehtml" NEXT="notification"/>
         <FIELD NAME="notification" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="smallmessage" NEXT="contexturl"/>
-        <FIELD NAME="contexturl" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="If this message is a notification of an event contexturl should contain a link to view this event. For example if its a notification of a forum post contexturl should contain a link to the forum post." PREVIOUS="notification" NEXT="contexturlname"/>
-        <FIELD NAME="contexturlname" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Display text for the contexturl" PREVIOUS="contexturl" NEXT="timecreated"/>
+        <FIELD NAME="contexturl" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="If this message is a notification of an event contexturl should contain a link to view this event. For example if its a notification of a forum post contexturl should contain a link to the forum post." PREVIOUS="notification" NEXT="contexturlname"/>
+        <FIELD NAME="contexturlname" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Display text for the contexturl" PREVIOUS="contexturl" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="contexturlname"/>
       </FIELDS>
       <KEYS>
@@ -601,14 +586,14 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="useridfrom"/>
         <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="useridto"/>
         <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="useridfrom" NEXT="subject"/>
-        <FIELD NAME="subject" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="The message subject" PREVIOUS="useridto" NEXT="fullmessage"/>
-        <FIELD NAME="fullmessage" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="subject" NEXT="fullmessageformat"/>
+        <FIELD NAME="subject" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The message subject" PREVIOUS="useridto" NEXT="fullmessage"/>
+        <FIELD NAME="fullmessage" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="subject" NEXT="fullmessageformat"/>
         <FIELD NAME="fullmessageformat" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the full message" PREVIOUS="fullmessage" NEXT="fullmessagehtml"/>
-        <FIELD NAME="fullmessagehtml" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="html format of message" PREVIOUS="fullmessageformat" NEXT="smallmessage"/>
-        <FIELD NAME="smallmessage" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Smal version of message (eg sms)" PREVIOUS="fullmessagehtml" NEXT="notification"/>
+        <FIELD NAME="fullmessagehtml" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="html format of message" PREVIOUS="fullmessageformat" NEXT="smallmessage"/>
+        <FIELD NAME="smallmessage" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Smal version of message (eg sms)" PREVIOUS="fullmessagehtml" NEXT="notification"/>
         <FIELD NAME="notification" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="smallmessage" NEXT="contexturl"/>
-        <FIELD NAME="contexturl" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="If this message is a notification of an event contexturl should contain a link to view this event. For example if its a notification of a forum post contexturl should contain a link to the forum post." PREVIOUS="notification" NEXT="contexturlname"/>
-        <FIELD NAME="contexturlname" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Display text for the contexturl" PREVIOUS="contexturl" NEXT="timecreated"/>
+        <FIELD NAME="contexturl" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="If this message is a notification of an event contexturl should contain a link to view this event. For example if its a notification of a forum post contexturl should contain a link to the forum post." PREVIOUS="notification" NEXT="contexturlname"/>
+        <FIELD NAME="contexturlname" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Display text for the contexturl" PREVIOUS="contexturl" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="contexturlname" NEXT="timeread"/>
         <FIELD NAME="timeread" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated"/>
       </FIELDS>
@@ -672,7 +657,7 @@
         <FIELD NAME="state" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 means normal session" PREVIOUS="id" NEXT="sid"/>
         <FIELD NAME="sid" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" COMMENT="Session id" PREVIOUS="state" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="sid" NEXT="sessdata"/>
-        <FIELD NAME="sessdata" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="session content" PREVIOUS="userid" NEXT="timecreated"/>
+        <FIELD NAME="sessdata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="session content" PREVIOUS="userid" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="sessdata" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="timecreated" NEXT="firstip"/>
         <FIELD NAME="firstip" TYPE="char" LENGTH="45" NOTNULL="false" SEQUENCE="false" PREVIOUS="timemodified" NEXT="lastip"/>
@@ -751,7 +736,7 @@
         <FIELD NAME="secret" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" PREVIOUS="lastip" NEXT="picture"/>
         <FIELD NAME="picture" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="secret" NEXT="url"/>
         <FIELD NAME="url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="picture" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="url" NEXT="descriptionformat"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="url" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="mailformat"/>
         <FIELD NAME="mailformat" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="descriptionformat" NEXT="maildigest"/>
         <FIELD NAME="maildigest" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mailformat" NEXT="maildisplay"/>
@@ -819,8 +804,8 @@
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="scale"/>
-        <FIELD NAME="scale" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="scale" NEXT="descriptionformat"/>
+        <FIELD NAME="scale" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="scale" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="descriptionformat"/>
       </FIELDS>
@@ -842,8 +827,8 @@
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="loggeduser" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="scale"/>
-        <FIELD NAME="scale" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="scale"/>
+        <FIELD NAME="scale" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="scale"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="oldid"/>
@@ -985,8 +970,8 @@
         <FIELD NAME="moduleid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="groupid" NEXT="coursemoduleid"/>
         <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="moduleid" NEXT="subject"/>
         <FIELD NAME="subject" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" PREVIOUS="coursemoduleid" NEXT="summary"/>
-        <FIELD NAME="summary" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="subject" NEXT="content"/>
-        <FIELD NAME="content" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="summary" NEXT="uniquehash"/>
+        <FIELD NAME="summary" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="subject" NEXT="content"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="summary" NEXT="uniquehash"/>
         <FIELD NAME="uniquehash" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="content" NEXT="rating"/>
         <FIELD NAME="rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="uniquehash" NEXT="format"/>
         <FIELD NAME="format" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="rating" NEXT="summaryformat"/>
@@ -1013,7 +998,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" NEXT="sortorder"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" NEXT="sortorder"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="archetype"/>
         <FIELD NAME="archetype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="Role archetype is used during install and role reset, marks admin role and helps in site settings" PREVIOUS="sortorder"/>
       </FIELDS>
@@ -1207,9 +1192,9 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="shortname" SEQUENCE="false" COMMENT="short name for each field" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" COMMENT="field name" PREVIOUS="shortname" NEXT="datatype"/>
+        <FIELD NAME="name" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="field name" PREVIOUS="shortname" NEXT="datatype"/>
         <FIELD NAME="datatype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Type of data held in this field" PREVIOUS="name" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Description of field" PREVIOUS="datatype" NEXT="descriptionformat"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Description of field" PREVIOUS="datatype" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="categoryid"/>
         <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="id from category table" PREVIOUS="descriptionformat" NEXT="sortorder"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="order within the category" PREVIOUS="categoryid" NEXT="required"/>
@@ -1218,13 +1203,13 @@
         <FIELD NAME="visible" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Visibility: private, public, hidden" PREVIOUS="locked" NEXT="forceunique"/>
         <FIELD NAME="forceunique" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="should the field contain unique data" PREVIOUS="visible" NEXT="signup"/>
         <FIELD NAME="signup" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="display field on signup page" PREVIOUS="forceunique" NEXT="defaultdata"/>
-        <FIELD NAME="defaultdata" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Default value for this field" PREVIOUS="signup" NEXT="defaultdataformat"/>
+        <FIELD NAME="defaultdata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Default value for this field" PREVIOUS="signup" NEXT="defaultdataformat"/>
         <FIELD NAME="defaultdataformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultdata" NEXT="param1"/>
-        <FIELD NAME="param1" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="General parameter field" PREVIOUS="defaultdataformat" NEXT="param2"/>
-        <FIELD NAME="param2" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="General parameter field" PREVIOUS="param1" NEXT="param3"/>
-        <FIELD NAME="param3" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="General parameter field" PREVIOUS="param2" NEXT="param4"/>
-        <FIELD NAME="param4" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="General parameter field" PREVIOUS="param3" NEXT="param5"/>
-        <FIELD NAME="param5" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="General parameter field" PREVIOUS="param4"/>
+        <FIELD NAME="param1" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="General parameter field" PREVIOUS="defaultdataformat" NEXT="param2"/>
+        <FIELD NAME="param2" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="General parameter field" PREVIOUS="param1" NEXT="param3"/>
+        <FIELD NAME="param3" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="General parameter field" PREVIOUS="param2" NEXT="param4"/>
+        <FIELD NAME="param4" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="General parameter field" PREVIOUS="param3" NEXT="param5"/>
+        <FIELD NAME="param5" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="General parameter field" PREVIOUS="param4"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -1245,7 +1230,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="id from the user table" PREVIOUS="id" NEXT="fieldid"/>
         <FIELD NAME="fieldid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="id from the field table" PREVIOUS="userid" NEXT="data"/>
-        <FIELD NAME="data" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" COMMENT="Field data" PREVIOUS="fieldid" NEXT="dataformat"/>
+        <FIELD NAME="data" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Field data" PREVIOUS="fieldid" NEXT="dataformat"/>
         <FIELD NAME="dataformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="data"/>
       </FIELDS>
       <KEYS>
@@ -1260,7 +1245,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="context that this category is shared in" PREVIOUS="name" NEXT="info"/>
-        <FIELD NAME="info" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="contextid" NEXT="infoformat"/>
+        <FIELD NAME="info" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="contextid" NEXT="infoformat"/>
         <FIELD NAME="infoformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="info" NEXT="stamp"/>
         <FIELD NAME="stamp" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="infoformat" NEXT="parent"/>
         <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="stamp" NEXT="sortorder"/>
@@ -1280,9 +1265,9 @@
         <FIELD NAME="category" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="parent"/>
         <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="category" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="parent" NEXT="questiontext"/>
-        <FIELD NAME="questiontext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="questiontextformat"/>
+        <FIELD NAME="questiontext" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="questiontextformat"/>
         <FIELD NAME="questiontextformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="questiontext" NEXT="generalfeedback"/>
-        <FIELD NAME="generalfeedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="to store the question feedback" PREVIOUS="questiontextformat" NEXT="generalfeedbackformat"/>
+        <FIELD NAME="generalfeedback" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="to store the question feedback" PREVIOUS="questiontextformat" NEXT="generalfeedbackformat"/>
         <FIELD NAME="generalfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="generalfeedback" NEXT="defaultmark"/>
         <FIELD NAME="defaultmark" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="1" SEQUENCE="false" DECIMALS="7" PREVIOUS="generalfeedbackformat" NEXT="penalty"/>
         <FIELD NAME="penalty" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0.3333333" SEQUENCE="false" DECIMALS="7" PREVIOUS="defaultmark" NEXT="qtype"/>
@@ -1308,10 +1293,10 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="question"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="answer"/>
-        <FIELD NAME="answer" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="question" NEXT="answerformat"/>
+        <FIELD NAME="answer" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="question" NEXT="answerformat"/>
         <FIELD NAME="answerformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="answer" NEXT="fraction"/>
         <FIELD NAME="fraction" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7" PREVIOUS="answerformat" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="fraction" NEXT="feedbackformat"/>
+        <FIELD NAME="feedback" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="fraction" NEXT="feedbackformat"/>
         <FIELD NAME="feedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback"/>
       </FIELDS>
       <KEYS>
@@ -1323,7 +1308,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="questionid"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="hint"/>
-        <FIELD NAME="hint" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="The text of the feedback to be given." PREVIOUS="questionid" NEXT="hintformat"/>
+        <FIELD NAME="hint" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The text of the feedback to be given." PREVIOUS="questionid" NEXT="hintformat"/>
         <FIELD NAME="hintformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the hint." PREVIOUS="hint" NEXT="shownumcorrect"/>
         <FIELD NAME="shownumcorrect" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether the feedback should include a message about how many things the student got right. This is only applicable to certain question types (for example matching or multiple choice multiple-response)." PREVIOUS="hintformat" NEXT="clearwrong"/>
         <FIELD NAME="clearwrong" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether any wrong choices should be cleared before the next try. Whether this is applicable, and what it means, depends on the question type, as with the shownumright option." PREVIOUS="shownumcorrect" NEXT="options"/>
@@ -1357,9 +1342,9 @@
         <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="true" SEQUENCE="false" DECIMALS="7" COMMENT="The grade this question is marked out of in this attempt." PREVIOUS="variant" NEXT="minfraction"/>
         <FIELD NAME="minfraction" TYPE="number" LENGTH="12" NOTNULL="true" SEQUENCE="false" DECIMALS="7" COMMENT="Some questions can award negative marks. This indicates the most negative mark that can be awarded, on the faction scale where the maximum positive mark is 1." PREVIOUS="maxmark" NEXT="flagged"/>
         <FIELD NAME="flagged" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether this question has been flagged within the attempt." PREVIOUS="minfraction" NEXT="questionsummary"/>
-        <FIELD NAME="questionsummary" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="If this question uses randomisation, it should set this field to summarise what random version the student actually saw. This is a human-readable textual summary of the student's response which might, for example, be used in a report." PREVIOUS="flagged" NEXT="rightanswer"/>
-        <FIELD NAME="rightanswer" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="This is a human-readable textual summary of the right answer to this question. Might be used, for example on the quiz preview, to help people who are testing the question. Or might be used in reports." PREVIOUS="questionsummary" NEXT="responsesummary"/>
-        <FIELD NAME="responsesummary" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="This is a textual summary of the student's response (basically what you would expect to in the Quiz responses report)." PREVIOUS="rightanswer" NEXT="timemodified"/>
+        <FIELD NAME="questionsummary" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="If this question uses randomisation, it should set this field to summarise what random version the student actually saw. This is a human-readable textual summary of the student's response which might, for example, be used in a report." PREVIOUS="flagged" NEXT="rightanswer"/>
+        <FIELD NAME="rightanswer" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="This is a human-readable textual summary of the right answer to this question. Might be used, for example on the quiz preview, to help people who are testing the question. Or might be used in reports." PREVIOUS="questionsummary" NEXT="responsesummary"/>
+        <FIELD NAME="responsesummary" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="This is a textual summary of the student's response (basically what you would expect to in the Quiz responses report)." PREVIOUS="rightanswer" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The time this record was last changed." PREVIOUS="responsesummary"/>
       </FIELDS>
       <KEYS>
@@ -1395,7 +1380,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="attemptstepid"/>
         <FIELD NAME="attemptstepid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key, references question_attempt_steps.id" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The name of this bit of data." PREVIOUS="attemptstepid" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="The corresponding value" PREVIOUS="name"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The corresponding value" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="attemptstepid"/>
@@ -1411,7 +1396,7 @@
         <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="question"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="attempt" NEXT="seq_number"/>
         <FIELD NAME="seq_number" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="question" NEXT="answer"/>
-        <FIELD NAME="answer" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="seq_number" NEXT="timestamp"/>
+        <FIELD NAME="answer" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="seq_number" NEXT="timestamp"/>
         <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="answer" NEXT="event"/>
         <FIELD NAME="event" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timestamp" NEXT="grade"/>
         <FIELD NAME="grade" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7" PREVIOUS="event" NEXT="raw_grade"/>
@@ -1432,7 +1417,7 @@
         <FIELD NAME="newest" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="questionid" NEXT="newgraded"/>
         <FIELD NAME="newgraded" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="newest" NEXT="sumpenalty"/>
         <FIELD NAME="sumpenalty" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7" PREVIOUS="newgraded" NEXT="manualcomment"/>
-        <FIELD NAME="manualcomment" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="sumpenalty" NEXT="manualcommentformat"/>
+        <FIELD NAME="manualcomment" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="sumpenalty" NEXT="manualcommentformat"/>
         <FIELD NAME="manualcommentformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="manualcomment" NEXT="flagged"/>
         <FIELD NAME="flagged" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The person attempting the question may mark certain questions within their question_attempt if the module that owns the attempt allow it. This field stores the status of that flag." PREVIOUS="manualcommentformat"/>
       </FIELDS>
@@ -1467,7 +1452,7 @@
         <FIELD NAME="wwwroot" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="deleted" NEXT="ip_address"/>
         <FIELD NAME="ip_address" TYPE="char" LENGTH="45" NOTNULL="true" SEQUENCE="false" PREVIOUS="wwwroot" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="80" NOTNULL="true" SEQUENCE="false" PREVIOUS="ip_address" NEXT="public_key"/>
-        <FIELD NAME="public_key" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="public_key_expires"/>
+        <FIELD NAME="public_key" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="public_key_expires"/>
         <FIELD NAME="public_key_expires" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="public_key" NEXT="transport"/>
         <FIELD NAME="transport" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="public_key_expires" NEXT="portno"/>
         <FIELD NAME="portno" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="transport" NEXT="last_connect_time"/>
@@ -1528,8 +1513,8 @@
         <FIELD NAME="plugintype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="xmlrpcpath" NEXT="pluginname"/>
         <FIELD NAME="pluginname" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="plugintype" NEXT="enabled"/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="pluginname" NEXT="help"/>
-        <FIELD NAME="help" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" PREVIOUS="enabled" NEXT="profile"/>
-        <FIELD NAME="profile" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" COMMENT="Method signature" PREVIOUS="help" NEXT="filename"/>
+        <FIELD NAME="help" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="enabled" NEXT="profile"/>
+        <FIELD NAME="profile" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Method signature" PREVIOUS="help" NEXT="filename"/>
         <FIELD NAME="filename" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="profile" NEXT="classname"/>
         <FIELD NAME="classname" TYPE="char" LENGTH="150" NOTNULL="false" SEQUENCE="false" PREVIOUS="filename" NEXT="static"/>
         <FIELD NAME="static" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="classname"/>
@@ -1628,8 +1613,8 @@
     <TABLE NAME="events_queue" COMMENT="This table is for storing queued events. It stores only one copy of the eventdata here, and entries from this table are being references by the event_queue_handlers table." PREVIOUS="mnet_sso_access_control" NEXT="events_handlers">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="eventdata"/>
-        <FIELD NAME="eventdata" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" COMMENT="serialized version of the data object passed to the event handler." PREVIOUS="id" NEXT="stackdump"/>
-        <FIELD NAME="stackdump" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="serialized debug_backtrace showing where the event was fired from" PREVIOUS="eventdata" NEXT="userid"/>
+        <FIELD NAME="eventdata" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="serialized version of the data object passed to the event handler." PREVIOUS="id" NEXT="stackdump"/>
+        <FIELD NAME="stackdump" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="serialized debug_backtrace showing where the event was fired from" PREVIOUS="eventdata" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="$USER-&amp;gt;id when the event was fired" PREVIOUS="stackdump" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="time stamp of the first time this was added" PREVIOUS="userid"/>
       </FIELDS>
@@ -1644,7 +1629,7 @@
         <FIELD NAME="eventname" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" COMMENT="name of the event, e.g. 'grade_updated'" PREVIOUS="id" NEXT="component"/>
         <FIELD NAME="component" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" COMMENT="e.g. moodle, mod_forum, block_rss_client" PREVIOUS="eventname" NEXT="handlerfile"/>
         <FIELD NAME="handlerfile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="path to the file of the function, eg /grade/export/lib.php" PREVIOUS="component" NEXT="handlerfunction"/>
-        <FIELD NAME="handlerfunction" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="serialized string or array describing function, suitable to be passed to call_user_func()" PREVIOUS="handlerfile" NEXT="schedule"/>
+        <FIELD NAME="handlerfunction" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="serialized string or array describing function, suitable to be passed to call_user_func()" PREVIOUS="handlerfile" NEXT="schedule"/>
         <FIELD NAME="schedule" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="'cron' or 'instant'." PREVIOUS="handlerfunction" NEXT="status"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="number of failed attempts to process this handler" PREVIOUS="schedule" NEXT="internal"/>
         <FIELD NAME="internal" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="1 means standard plugin handler, 0 indicates if event handler sends data to external systems, this is used for example to prevent immediate sending of events from pending db transactions" PREVIOUS="status"/>
@@ -1662,7 +1647,7 @@
         <FIELD NAME="queuedeventid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="foreign key id corresponding to the id of the event_queues table" PREVIOUS="id" NEXT="handlerid"/>
         <FIELD NAME="handlerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="foreign key id corresponding to the id of the event_handlers table" PREVIOUS="queuedeventid" NEXT="status"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="number of failed attempts to process this handler" PREVIOUS="handlerid" NEXT="errormessage"/>
-        <FIELD NAME="errormessage" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="if an error happened last time we tried to process this event, record it here." PREVIOUS="status" NEXT="timemodified"/>
+        <FIELD NAME="errormessage" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="if an error happened last time we tried to process this event, record it here." PREVIOUS="status" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="time stamp of the last attempt to run this from the queue" PREVIOUS="errormessage"/>
       </FIELDS>
       <KEYS>
@@ -1676,9 +1661,9 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="id of the table" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Mostly these are defined site wide ie NULL" PREVIOUS="id" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The short name or code for this outcome statement" PREVIOUS="courseid" NEXT="fullname"/>
-        <FIELD NAME="fullname" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="The full description of the outcome (usually 1 sentence)" PREVIOUS="shortname" NEXT="scaleid"/>
+        <FIELD NAME="fullname" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The full description of the outcome (usually 1 sentence)" PREVIOUS="shortname" NEXT="scaleid"/>
         <FIELD NAME="scaleid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The recommended scale for this outcome." PREVIOUS="fullname" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="outcome description" PREVIOUS="scaleid" NEXT="descriptionformat"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="outcome description" PREVIOUS="scaleid" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the time this outcome was first created" PREVIOUS="descriptionformat" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the time this outcome was last updated" PREVIOUS="timecreated" NEXT="usermodified"/>
@@ -1739,9 +1724,9 @@
         <FIELD NAME="itemmodule" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" COMMENT="'forum', 'quiz', 'csv', etc" PREVIOUS="itemtype" NEXT="iteminstance"/>
         <FIELD NAME="iteminstance" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="id of the item module" PREVIOUS="itemmodule" NEXT="itemnumber"/>
         <FIELD NAME="itemnumber" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Can be used to distinguish multiple grades for an activity" PREVIOUS="iteminstance" NEXT="iteminfo"/>
-        <FIELD NAME="iteminfo" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Info and notes about this item XXX" PREVIOUS="itemnumber" NEXT="idnumber"/>
+        <FIELD NAME="iteminfo" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Info and notes about this item XXX" PREVIOUS="itemnumber" NEXT="idnumber"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Arbitrary idnumber provided by the module responsible" PREVIOUS="iteminfo" NEXT="calculation"/>
-        <FIELD NAME="calculation" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Formula describing how to derive this grade from other items, referring to them using giXXX where XXX is grade item id ... eg something like: =sin(square([#gi20#])) + [#gi30#]" PREVIOUS="idnumber" NEXT="gradetype"/>
+        <FIELD NAME="calculation" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Formula describing how to derive this grade from other items, referring to them using giXXX where XXX is grade item id ... eg something like: =sin(square([#gi20#])) + [#gi30#]" PREVIOUS="idnumber" NEXT="gradetype"/>
         <FIELD NAME="gradetype" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="0 = none, 1 = value, 2 = scale, 3 = text" PREVIOUS="calculation" NEXT="grademax"/>
         <FIELD NAME="grademax" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false" DECIMALS="5" COMMENT="What is the maximum allowable grade?" PREVIOUS="gradetype" NEXT="grademin"/>
         <FIELD NAME="grademin" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="What is the minimum allowable grade?" PREVIOUS="grademax" NEXT="scaleid"/>
@@ -1792,9 +1777,9 @@
         <FIELD NAME="exported" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="date of last grade export, 0 if none" PREVIOUS="locktime" NEXT="overridden"/>
         <FIELD NAME="overridden" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="indicates grade overridden from gradebook, 0 means none, date means overridden" PREVIOUS="exported" NEXT="excluded"/>
         <FIELD NAME="excluded" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="grade excluded from aggregation functions, date means when excluded" PREVIOUS="overridden" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="grading feedback" PREVIOUS="excluded" NEXT="feedbackformat"/>
+        <FIELD NAME="feedback" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="grading feedback" PREVIOUS="excluded" NEXT="feedbackformat"/>
         <FIELD NAME="feedbackformat" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="format of feedback text" PREVIOUS="feedback" NEXT="information"/>
-        <FIELD NAME="information" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="optiona information" PREVIOUS="feedbackformat" NEXT="informationformat"/>
+        <FIELD NAME="information" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="optiona information" PREVIOUS="feedbackformat" NEXT="informationformat"/>
         <FIELD NAME="informationformat" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="format of information text" PREVIOUS="information" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the time this grade was first created" PREVIOUS="informationformat" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the time this grade was last modified" PREVIOUS="timecreated"/>
@@ -1821,9 +1806,9 @@
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Mostly these are defined site wide ie NULL" PREVIOUS="loggeduser" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The short name or code for this outcome statement" PREVIOUS="courseid" NEXT="fullname"/>
-        <FIELD NAME="fullname" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="The full description of the outcome (usually 1 sentence)" PREVIOUS="shortname" NEXT="scaleid"/>
+        <FIELD NAME="fullname" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The full description of the outcome (usually 1 sentence)" PREVIOUS="shortname" NEXT="scaleid"/>
         <FIELD NAME="scaleid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The recommended scale for this outcome." PREVIOUS="fullname" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Outcome description" PREVIOUS="scaleid" NEXT="descriptionformat"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Outcome description" PREVIOUS="scaleid" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description"/>
       </FIELDS>
       <KEYS>
@@ -1884,9 +1869,9 @@
         <FIELD NAME="itemmodule" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" COMMENT="'forum', 'quiz', 'csv', etc" PREVIOUS="itemtype" NEXT="iteminstance"/>
         <FIELD NAME="iteminstance" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="id of the item module" PREVIOUS="itemmodule" NEXT="itemnumber"/>
         <FIELD NAME="itemnumber" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Can be used to distinguish multiple grades for an activity" PREVIOUS="iteminstance" NEXT="iteminfo"/>
-        <FIELD NAME="iteminfo" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Info and notes about this item XXX" PREVIOUS="itemnumber" NEXT="idnumber"/>
+        <FIELD NAME="iteminfo" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Info and notes about this item XXX" PREVIOUS="itemnumber" NEXT="idnumber"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Arbitrary idnumber provided by the module responsible" PREVIOUS="iteminfo" NEXT="calculation"/>
-        <FIELD NAME="calculation" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Formula describing how to derive this grade from other items, referring to them using giXXX where XXX is grade item id ... eg something like: =sin(square([#gi20#])) + [#gi30#]" PREVIOUS="idnumber" NEXT="gradetype"/>
+        <FIELD NAME="calculation" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Formula describing how to derive this grade from other items, referring to them using giXXX where XXX is grade item id ... eg something like: =sin(square([#gi20#])) + [#gi30#]" PREVIOUS="idnumber" NEXT="gradetype"/>
         <FIELD NAME="gradetype" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="0 = none, 1 = value, 2 = scale, 3 = text" PREVIOUS="calculation" NEXT="grademax"/>
         <FIELD NAME="grademax" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false" DECIMALS="5" COMMENT="What is the maximum allowable grade?" PREVIOUS="gradetype" NEXT="grademin"/>
         <FIELD NAME="grademin" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="What is the minimum allowable grade?" PREVIOUS="grademax" NEXT="scaleid"/>
@@ -1939,9 +1924,9 @@
         <FIELD NAME="exported" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="date of last grade export, 0 if none" PREVIOUS="locktime" NEXT="overridden"/>
         <FIELD NAME="overridden" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="indicates grade overridden from gradebook, 0 means none, date means overridden" PREVIOUS="exported" NEXT="excluded"/>
         <FIELD NAME="excluded" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="grade excluded from aggregation functions, date means when excluded" PREVIOUS="overridden" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="grading feedback" PREVIOUS="excluded" NEXT="feedbackformat"/>
+        <FIELD NAME="feedback" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="grading feedback" PREVIOUS="excluded" NEXT="feedbackformat"/>
         <FIELD NAME="feedbackformat" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="format of feedback text" PREVIOUS="feedback" NEXT="information"/>
-        <FIELD NAME="information" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="optiona information" PREVIOUS="feedbackformat" NEXT="informationformat"/>
+        <FIELD NAME="information" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="optiona information" PREVIOUS="feedbackformat" NEXT="informationformat"/>
         <FIELD NAME="informationformat" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="format of information text" PREVIOUS="information"/>
       </FIELDS>
       <KEYS>
@@ -1976,7 +1961,7 @@
         <FIELD NAME="newgradeitem" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="if set, points to the id of grade_import_newitem" PREVIOUS="itemid" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="newgradeitem" NEXT="finalgrade"/>
         <FIELD NAME="finalgrade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="raw grade value" PREVIOUS="userid" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" PREVIOUS="finalgrade" NEXT="importcode"/>
+        <FIELD NAME="feedback" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="finalgrade" NEXT="importcode"/>
         <FIELD NAME="importcode" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="similar to backup_code, a unique batch code for identifying one batch of imports" PREVIOUS="feedback" NEXT="importer"/>
         <FIELD NAME="importer" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="importcode"/>
       </FIELDS>
@@ -1994,7 +1979,7 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="rawname"/>
         <FIELD NAME="rawname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The raw, unnormalised name for the tag as entered by users" PREVIOUS="name" NEXT="tagtype"/>
         <FIELD NAME="tagtype" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="rawname" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="tagtype" NEXT="descriptionformat"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="tagtype" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="flag"/>
         <FIELD NAME="flag" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="a tag can be 'flagged' as inappropriate" PREVIOUS="descriptionformat" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="flag"/>
@@ -2011,7 +1996,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="tagid"/>
         <FIELD NAME="tagid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="correlatedtags"/>
-        <FIELD NAME="correlatedtags" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="tagid"/>
+        <FIELD NAME="correlatedtags" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="tagid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="tagid"/>
@@ -2041,7 +2026,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="Short human readable unique name for the group." PREVIOUS="courseid" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="descriptionformat"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="enrolmentkey"/>
         <FIELD NAME="enrolmentkey" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" PREVIOUS="descriptionformat" NEXT="picture"/>
         <FIELD NAME="picture" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="enrolmentkey" NEXT="hidepicture"/>
@@ -2059,9 +2044,9 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Short human readable unique name for group." PREVIOUS="courseid" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="descriptionformat"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="configdata"/>
-        <FIELD NAME="configdata" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="extra configuration data - may be used by group IU tools" PREVIOUS="descriptionformat" NEXT="timecreated"/>
+        <FIELD NAME="configdata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="extra configuration data - may be used by group IU tools" PREVIOUS="descriptionformat" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="configdata" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated"/>
       </FIELDS>
@@ -2102,7 +2087,7 @@
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context is usually ignored in sync operations so that the cohorts may be moved freely around in the context tree without any side affects." PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="Short human readable name for the cohort, does not have to be unique" PREVIOUS="contextid" NEXT="idnumber"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="Unique identifier of a cohort, useful especially for mapping to external entities" PREVIOUS="name" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Standard description text box" PREVIOUS="idnumber" NEXT="descriptionformat"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Standard description text box" PREVIOUS="idnumber" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" PREVIOUS="description" NEXT="component"/>
         <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Component (plugintype_pluignname) that manages the cohort, manual modifications are allowed only when set to NULL" PREVIOUS="descriptionformat" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="component" NEXT="timemodified"/>
@@ -2168,7 +2153,7 @@
         <FIELD NAME="flagtype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="flagtype" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="name" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="expiry"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="expiry"/>
         <FIELD NAME="expiry" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="value"/>
       </FIELDS>
       <KEYS>
@@ -2184,7 +2169,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
@@ -2232,7 +2217,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="instance"/>
         <FIELD NAME="instance" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="instance of plugin we're configurating" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="config field" PREVIOUS="instance" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="config value" PREVIOUS="name"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="config value" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="instancefk"/>
@@ -2248,7 +2233,7 @@
         <FIELD NAME="instance" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="fk to instance table" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="fk to user table" PREVIOUS="instance" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="name of config item" PREVIOUS="userid" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="value of config item" PREVIOUS="name"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="value of config item" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="instancefk"/>
@@ -2278,7 +2263,7 @@
     <TABLE NAME="portfolio_tempdata" COMMENT="stores temporary data for portfolio exports. the id of this table is used for the itemid for the temporary files area.  cron can clean up stale records (and associated file data) after expirytime." PREVIOUS="portfolio_log" NEXT="message_providers">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="data"/>
-        <FIELD NAME="data" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="dumping ground for portfolio callers to store their data in." PREVIOUS="id" NEXT="expirytime"/>
+        <FIELD NAME="data" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="dumping ground for portfolio callers to store their data in." PREVIOUS="id" NEXT="expirytime"/>
         <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="time this record will expire (used for cron cleanups) - the start of export + 24 hours" PREVIOUS="data" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="psuedo fk to user.  this is stored in the serialised data structure in the data field, but added here for ease of lookups." PREVIOUS="expirytime" NEXT="instance"/>
         <FIELD NAME="instance" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="which portfolio plugin instance is being used" PREVIOUS="userid"/>
@@ -2338,7 +2323,7 @@
         <FIELD NAME="filesize" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="mimetype"/>
         <FIELD NAME="mimetype" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="type of file - jpeg image, open document spreadsheet" PREVIOUS="filesize" NEXT="status"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="number greater than 0 means something is wrong with this file (virus, missing, etc.)" PREVIOUS="mimetype" NEXT="source"/>
-        <FIELD NAME="source" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="contains the reference if the file is imported from external sites" PREVIOUS="status" NEXT="author"/>
+        <FIELD NAME="source" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="contains the reference if the file is imported from external sites" PREVIOUS="status" NEXT="author"/>
         <FIELD NAME="author" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The original author of the file" PREVIOUS="source" NEXT="license"/>
         <FIELD NAME="license" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="license of the file to guide reuse" PREVIOUS="author" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="license" NEXT="timemodified"/>
@@ -2389,7 +2374,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="instanceid"/>
         <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="instanceid" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -2416,7 +2401,7 @@
         <FIELD NAME="table_name" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="backup_code" NEXT="old_id"/>
         <FIELD NAME="old_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="table_name" NEXT="new_id"/>
         <FIELD NAME="new_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="old_id" NEXT="info"/>
-        <FIELD NAME="info" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" PREVIOUS="new_id"/>
+        <FIELD NAME="info" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="new_id"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="backup_code-table_name-old_id"/>
@@ -2463,7 +2448,7 @@
         <FIELD NAME="subpagepattern" TYPE="char" LENGTH="16" NOTNULL="false" SEQUENCE="false" COMMENT="Further restrictions on where this block appears. In some places, e.g. during a quiz or lesson attempt, different pages have different subpage ids. If this field is not null, the block only appears on that particular subpage." PREVIOUS="pagetypepattern" NEXT="defaultregion"/>
         <FIELD NAME="defaultregion" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false" COMMENT="Which block region this block should appear in on each page, in the absence of a specific position in the block_positions table." PREVIOUS="subpagepattern" NEXT="defaultweight"/>
         <FIELD NAME="defaultweight" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Used to order the blocks within a block region. Again, may be overridden by the block_positions table for a specific page where this block appears." PREVIOUS="defaultregion" NEXT="configdata"/>
-        <FIELD NAME="configdata" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="A serialized blob of configuration data for this block instance." PREVIOUS="defaultweight"/>
+        <FIELD NAME="configdata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="A serialized blob of configuration data for this block instance." PREVIOUS="defaultweight"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="parentcontextid"/>
@@ -2499,7 +2484,7 @@
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="commentarea"/>
         <FIELD NAME="commentarea" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="contextid" NEXT="itemid"/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="commentarea" NEXT="content"/>
-        <FIELD NAME="content" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="itemid" NEXT="format"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="itemid" NEXT="format"/>
         <FIELD NAME="format" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="content" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="format" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid"/>
@@ -2611,8 +2596,8 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="url"/>
-        <FIELD NAME="url" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="description" NEXT="filtertags"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="url"/>
+        <FIELD NAME="url" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="description" NEXT="filtertags"/>
         <FIELD NAME="filtertags" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Comma-separated list of tags that will be used to filter which entries are copied over from the external blog. They refer to existing tags in the external blog." PREVIOUS="url" NEXT="failedlastsync"/>
         <FIELD NAME="failedlastsync" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the last sync failed for some reason" PREVIOUS="filtertags" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="failedlastsync" NEXT="timefetched"/>
@@ -2649,7 +2634,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="fullname"/>
-        <FIELD NAME="fullname" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="shortname" NEXT="source"/>
+        <FIELD NAME="fullname" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="shortname" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="fullname" NEXT="enabled"/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="source" NEXT="version"/>
         <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="enabled"/>
@@ -2688,7 +2673,7 @@
         <FIELD NAME="checksum" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="checksum of the backup_controller object" PREVIOUS="executiontime" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="time the controller was created" PREVIOUS="checksum" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="last time the controller was modified" PREVIOUS="timecreated" NEXT="controller"/>
-        <FIELD NAME="controller" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" COMMENT="serialised backup_controller object" PREVIOUS="timemodified"/>
+        <FIELD NAME="controller" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="serialised backup_controller object" PREVIOUS="timemodified"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="backupid_uk"/>
@@ -2707,7 +2692,7 @@
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="id of the component (usually table-&amp;gt;id values)" PREVIOUS="itemname" NEXT="newitemid"/>
         <FIELD NAME="newitemid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="new id of the component after restore" PREVIOUS="itemid" NEXT="parentitemid"/>
         <FIELD NAME="parentitemid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="other id that can be useful to represent parent-child relations" PREVIOUS="newitemid" NEXT="info"/>
-        <FIELD NAME="info" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="to store information related with the item, base64(serialize())" PREVIOUS="parentitemid"/>
+        <FIELD NAME="info" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="to store information related with the item, base64(serialize())" PREVIOUS="parentitemid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="backupid_itemname_itemid_uk"/>
@@ -2726,7 +2711,7 @@
         <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="contextid" NEXT="filearea"/>
         <FIELD NAME="filearea" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="component" NEXT="itemid"/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="filearea" NEXT="info"/>
-        <FIELD NAME="info" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="to store the complete file record (serialized)" PREVIOUS="itemid"/>
+        <FIELD NAME="info" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="to store the complete file record (serialized)" PREVIOUS="itemid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -2756,7 +2741,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="runid"/>
         <FIELD NAME="runid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="the unique id for this run (as generated by xhprof)" PREVIOUS="id" NEXT="url"/>
         <FIELD NAME="url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="the url this profiling record is about (without wwwroot nor query params)" PREVIOUS="runid" NEXT="data"/>
-        <FIELD NAME="data" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" COMMENT="the raw data gathered by xhprof" PREVIOUS="url" NEXT="totalexecutiontime"/>
+        <FIELD NAME="data" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="the raw data gathered by xhprof" PREVIOUS="url" NEXT="totalexecutiontime"/>
         <FIELD NAME="totalexecutiontime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="time (in microseconds) spent by the run" PREVIOUS="data" NEXT="totalcputime"/>
         <FIELD NAME="totalcputime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="time (in microseconds) spent by the CPU in this run" PREVIOUS="totalexecutiontime" NEXT="totalcalls"/>
         <FIELD NAME="totalcalls" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Total number of calls performed by the run" PREVIOUS="totalcputime" NEXT="totalmemory"/>
@@ -2809,7 +2794,7 @@
         <FIELD NAME="areaid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="method"/>
         <FIELD NAME="method" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the plugin providing this grading form" PREVIOUS="areaid" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The title of the form that helps users to identify it" PREVIOUS="method" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="More detailed description of the form" PREVIOUS="name" NEXT="descriptionformat"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="More detailed description of the form" PREVIOUS="name" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Format of the description field" PREVIOUS="description" NEXT="status"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Status of the form definition, by default in the under-construction state" PREVIOUS="descriptionformat" NEXT="copiedfromid"/>
         <FIELD NAME="copiedfromid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the original definition that this was initially copied from or null if it was from scratch" PREVIOUS="status" NEXT="timecreated"/>
@@ -2818,7 +2803,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The time stamp of when the form definition was modified recently" PREVIOUS="usercreated" NEXT="usermodified"/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the user who did the most recent modification" PREVIOUS="timemodified" NEXT="timecopied"/>
         <FIELD NAME="timecopied" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp of when this form was most recently copied into another area" PREVIOUS="usermodified" NEXT="options"/>
-        <FIELD NAME="options" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="General field to be used by plugins as a general storage place for their own settings" PREVIOUS="timecopied"/>
+        <FIELD NAME="options" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="General field to be used by plugins as a general storage place for their own settings" PREVIOUS="timecopied"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_areaid"/>
@@ -2836,7 +2821,7 @@
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="This identifies the graded item within the grabable area" PREVIOUS="raterid" NEXT="rawgrade"/>
         <FIELD NAME="rawgrade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The raw normalized grade 0.00000 - 100.00000 as a result of the most recent assessment" PREVIOUS="itemid" NEXT="status"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The status of the assessment. By default the instance is under-assessment state" PREVIOUS="rawgrade" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Overall feedback from the rater for the author of the graded item" PREVIOUS="status" NEXT="feedbackformat"/>
+        <FIELD NAME="feedback" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Overall feedback from the rater for the author of the graded item" PREVIOUS="status" NEXT="feedbackformat"/>
         <FIELD NAME="feedbackformat" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The format of the feedback field" PREVIOUS="feedback" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp of when the assessment was most recently modified" PREVIOUS="feedbackformat"/>
       </FIELDS>

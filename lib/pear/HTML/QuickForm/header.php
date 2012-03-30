@@ -21,7 +21,7 @@
 require_once 'HTML/QuickForm/static.php';
 
 /**
- * A pseudo-element used for adding headers to form  
+ * A pseudo-element used for adding headers to form
  *
  * @author Alexey Borzov <borz_off@cs.msu.su>
  * @access public
@@ -32,7 +32,7 @@ class HTML_QuickForm_header extends HTML_QuickForm_static
 
    /**
     * Class constructor
-    * 
+    *
     * @param string $elementName    Header name
     * @param string $text           Header text
     * @access public
@@ -52,9 +52,9 @@ class HTML_QuickForm_header extends HTML_QuickForm_static
     *
     * @param object     An HTML_QuickForm_Renderer object
     * @access public
-    * @return void 
+    * @return void
     */
-    function accept(&$renderer)
+    function accept(&$renderer, $required=false, $error=null)
     {
         $renderer->renderHeader($this);
     } // end func accept

@@ -137,12 +137,11 @@ class grade_report_grader extends grade_report {
 
         $this->baseurl = new moodle_url('index.php', array('id' => $this->courseid));
 
-        $studentsperpage = $this->get_pref('studentsperpage');
-        if (!empty($studentsperpage)) {
-            $this->baseurl->params(array('perpage' => $studentsperpage, 'page' => $this->page));
+        if (!empty($this->page)) {
+            $this->baseurl->params(array('page' => $this->page));
         }
 
-        $this->pbarurl = new moodle_url('/grade/report/grader/index.php', array('id' => $this->courseid, 'perpage' => $studentsperpage));
+        $this->pbarurl = new moodle_url('/grade/report/grader/index.php', array('id' => $this->courseid));
 
         $this->setup_groups();
 
@@ -1207,7 +1206,7 @@ class grade_report_grader extends grade_report {
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 // emulate grade element
-                $item =& $this->gtree->get_item($itemid);
+                $item = $this->gtree->get_item($itemid);
 
                 $eid = $this->gtree->get_item_eid($item);
                 $element = $this->gtree->locate_element($eid);

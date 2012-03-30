@@ -1411,6 +1411,7 @@ class assignment_base {
             $offset = $page * $perpage;
             $strupdate = get_string('update');
             $strgrade  = get_string('grade');
+            $strview  = get_string('view');
             $grademenu = make_grades_menu($this->assignment->grade);
 
             if ($ausers !== false) {
@@ -1527,6 +1528,9 @@ class assignment_base {
                         }
 
                         $buttontext = ($auser->status == 1) ? $strupdate : $strgrade;
+                        if ($final_grade->locked or $final_grade->overridden) {
+                            $buttontext = $strview;
+                        }
 
                         ///No more buttons, we use popups ;-).
                         $popup_url = '/mod/assignment/submissions.php?id='.$this->cm->id
@@ -2556,7 +2560,7 @@ class mod_assignment_grading_form extends moodleform {
         }
     }
 
-    function add_action_buttons() {
+    function add_action_buttons($cancel = true, $submitlabel = NULL) {
         $mform =& $this->_form;
         //if there are more to be graded.
         if ($this->_customdata->nextid>0) {
@@ -3207,7 +3211,7 @@ function assignment_print_recent_activity($course, $viewfullnames, $timestart) {
          return false;
     }
 
-    $modinfo =& get_fast_modinfo($course); // reference needed because we might load the groups
+    $modinfo = get_fast_modinfo($course); // reference needed because we might load the groups
     $show    = array();
     $grader  = array();
 
@@ -3290,7 +3294,7 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $timestart, $
         $course = $DB->get_record('course', array('id'=>$courseid));
     }
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
 
     $cm = $modinfo->cms[$cmid];
 
@@ -3622,6 +3626,7 @@ function assignment_types() {
 
 function assignment_print_overview($courses, &$htmlarray) {
     global $USER, $CFG, $DB;
+    require_once($CFG->libdir.'/gradelib.php');
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return array();
@@ -3690,6 +3695,9 @@ function assignment_print_overview($courses, &$htmlarray) {
                                       assignment $sqlassignmentids", array_merge(array($USER->id), $assignmentidparams));
 
     foreach ($assignments as $assignment) {
+        $grading_info = grade_get_grades($assignment->course, 'mod', 'assignment', $assignment->id, $USER->id);
+        $final_grade = $grading_info->items[0]->grades[$USER->id];
+
         $str = '<div class="assignment overview"><div class="name">'.$strassignment. ': '.
                '<a '.($assignment->visible ? '':' class="dimmed"').
                'title="'.$strassignment.'" href="'.$CFG->wwwroot.
@@ -3723,9 +3731,9 @@ function assignment_print_overview($courses, &$htmlarray) {
 
                 $submission = $mysubmissions[$assignment->id];
 
-                if ($submission->teacher == 0 && $submission->timemarked == 0) {
+                if ($submission->teacher == 0 && $submission->timemarked == 0 && !$final_grade->grade) {
                     $str .= $strsubmitted . ', ' . $strnotgradedyet;
-                } else if ($submission->grade <= 0) {
+                } else if ($submission->grade <= 0 && !$final_grade->grade) {
                     $str .= $strsubmitted . ', ' . $strreviewed;
                 } else {
                     $str .= $strsubmitted . ', ' . $strgraded;

@@ -77,8 +77,8 @@ final class portfolio_export_form extends moodleform {
             && $this->_customdata['expectedtime'] != PORTFOLIO_TIME_LOW
             && $this->_customdata['expectedtime'] != PORTFOLIO_TIME_FORCEQUEUE) {
             $radioarray = array();
-            $radioarray[] = &MoodleQuickForm::createElement('radio', 'wait', '', get_string('wait', 'portfolio'), 1);
-            $radioarray[] = &MoodleQuickForm::createElement('radio', 'wait', '', get_string('dontwait', 'portfolio'),  0);
+            $radioarray[] = $mform->createElement('radio', 'wait', '', get_string('wait', 'portfolio'), 1);
+            $radioarray[] = $mform->createElement('radio', 'wait', '', get_string('dontwait', 'portfolio'),  0);
             $mform->addGroup($radioarray, 'radioar', get_string('wanttowait_' . $this->_customdata['expectedtime'], 'portfolio') , array(' '), false);
             $mform->setDefault('wait', 0);
         } else {

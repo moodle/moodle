@@ -115,9 +115,10 @@ abstract class base_ui_stage {
      * By default this involves instantiating the form for the stage and the calling
      * it to display.
      *
-     * @return string HTML code to display
+     * @param core_backup_renderer $renderer
+     * @return string HTML code to echo
      */
-    public function display() {
+    public function display(core_backup_renderer $renderer) {
 
         $form = $this->initialise_stage_form();
         // a nasty hack follows to work around the sad fact that moodle quickforms

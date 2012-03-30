@@ -33,7 +33,7 @@
 .user-grade td.item {border-left: 1px solid gray;border-right: 1px solid gray;}
 .user-grade td.excluded {background-color: #666;}
 .user-grade td.hidden {color: #aaa;}
-.user-grade td.feedbacktext {max-width:600px;padding:0;}
+.user-grade td.feedbacktext {max-width:600px;padding:2px 2px;}
 .pagelayout-report .user-grade .feedbacktext .no-overflow {overflow:auto;padding:0.25em;}
 
 table.user-grade td.feedbacktext {text-align:left;width: 40%;font-size: 0.8em;white-space:normal;}

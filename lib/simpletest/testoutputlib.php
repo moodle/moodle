@@ -40,6 +40,7 @@ require_once($CFG->libdir . '/outputlib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class xhtml_container_stack_test extends UnitTestCase {
+    protected $olddebug;
 
     public static $includecoverage = array('lib/outputlib.php');
     protected function start_capture() {
@@ -50,6 +51,19 @@ class xhtml_container_stack_test extends UnitTestCase {
         $result = ob_get_contents();
         ob_end_clean();
         return $result;
+    }
+
+    function setUp() {
+        global $CFG;
+        parent::setUp();
+        $this->olddebug = $CFG->debug;
+        $CFG->debug = DEBUG_DEVELOPER;
+    }
+
+    function tearDown() {
+        global $CFG;
+        $CFG->debug = $this->olddebug;
+        parent::tearDown();
     }
 
     public function test_push_then_pop() {

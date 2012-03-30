@@ -14,24 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * Jabber message processor - lib file
+ * Defines the version of scormreport_graphs
  *
- * @package    message_jabber
- * @copyright  2008 Luis Rodrigues
- * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package   scormreport_graphs
+ * @copyright 2012 Ankit Kumar Agarwal
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Register the processor.
- */
-function jabber_install(){
-    global $DB;
+defined('MOODLE_INTERNAL') || die();
 
-    $result = true;
-
-    $provider = new stdClass();
-    $provider->name  = 'jabber';
-    $DB->insert_record('message_processors', $provider);
-    return $result;
-}
+$plugin->version   = 2012021000;                 // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011120500;                 // Requires this Moodle version
+$plugin->component = 'scormreport_graphs'; // Full name of the plugin (used for diagnostics)

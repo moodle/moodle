@@ -312,7 +312,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param quiz_nav_question_button $button
      */
     protected function render_quiz_nav_question_button(quiz_nav_question_button $button) {
-        $classes = array('qnbutton', $button->stateclass);
+        $classes = array('qnbutton', $button->stateclass, $button->navmethod);
         $attributes = array();
 
         if ($button->currentpage) {
@@ -338,13 +338,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $a = new stdClass();
         $a->number = $button->number;
         $a->attributes = implode(' ', $attributes);
+        $tagcontents = html_writer::tag('span', '', array('class' => 'thispageholder')) .
+                        html_writer::tag('span', '', array('class' => 'trafficlight')) .
+                        get_string($qnostring, 'quiz', $a);
+        $tagattributes = array('class' => implode(' ', $classes), 'id' => $button->id,
+                                  'title' => $button->statestring);
 
-        return html_writer::link($button->url,
-                html_writer::tag('span', '', array('class' => 'thispageholder')) .
-                html_writer::tag('span', '', array('class' => 'trafficlight')) .
-                get_string($qnostring, 'quiz', $a),
-                array('class' => implode(' ', $classes), 'id' => $button->id,
-                        'title' => $button->statestring));
+        if ($button->url) {
+            return html_writer::link($button->url, $tagcontents, $tagattributes);
+        } else {
+            return html_writer::tag('span', $tagcontents, $tagattributes);
+        }
     }
 
     /**
@@ -572,9 +576,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 $flag = html_writer::empty_tag('img', array('src' => $this->pix_url('i/flagged'),
                         'alt' => get_string('flagged', 'question'), 'class' => 'questionflag'));
             }
-            $row = array(html_writer::link($attemptobj->attempt_url($slot),
-                    $attemptobj->get_question_number($slot) . $flag),
-                    $attemptobj->get_question_status($slot, $displayoptions->correctness));
+            if ($attemptobj->can_navigate_to($slot)) {
+                $row = array(html_writer::link($attemptobj->attempt_url($slot),
+                        $attemptobj->get_question_number($slot) . $flag),
+                        $attemptobj->get_question_status($slot, $displayoptions->correctness));
+            } else {
+                $row = array($attemptobj->get_question_number($slot) . $flag, $attemptobj->get_question_status($slot, $displayoptions->correctness));
+            }
             if ($markscolumn) {
                 $row[] = $attemptobj->get_question_mark($slot);
             }
@@ -598,6 +606,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output = '';
         // countdown timer
         $output .= $this->countdown_timer();
+
+        // Return to place button
+        $button = new single_button(
+                new moodle_url($attemptobj->attempt_url(null, $attemptobj->get_currentpage())), get_string('returnattempt', 'quiz'));
+        $output .= $this->container($this->container($this->render($button),
+                'controls'), 'submitbtns mdl-align');
 
         // Finish attempt button.
         $options = array(

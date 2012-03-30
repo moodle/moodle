@@ -112,18 +112,15 @@ class database_manager {
 
     /**
      * Reset a sequence to the id field of a table.
-     * @param string $table Name of table.
-     * @throws ddl_exception|ddl_table_missing_exception Exception thrown upon reset errors.
+     * @param string|xmldb_table $table Name of table.
+     * @throws ddl_exception thrown upon reset errors.
      */
     public function reset_sequence($table) {
         if (!is_string($table) and !($table instanceof xmldb_table)) {
             throw new ddl_exception('ddlunknownerror', NULL, 'incorrect table parameter!');
         }
 
-    /// Check the table exists
-        if (!$this->table_exists($table)) {
-            throw new ddl_table_missing_exception($table);
-        }
+        // Do not test if table exists because it is slow
 
         if (!$sqlarr = $this->generator->getResetSequenceSQL($table)) {
             throw new ddl_exception('ddlunknownerror', null, 'table reset sequence sql not generated');
@@ -219,57 +216,6 @@ class database_manager {
             return false;
         }
         return ($this->find_index_name($xmldb_table, $xmldb_index) !== false);
-    }
-
-    /**
-     * Given one xmldb_field, the function returns the name of the check constraint in DB (if exists)
-     * of false if it doesn't exist. Note that XMLDB limits the number of check constraints per field
-     * to 1 "enum-like" constraint. So, if more than one is returned, only the first one will be
-     * retrieved by this function.
-     *
-     * @todo MDL-31147 Moodle 2.1 - Drop find_check_constraint_name()
-     *
-     * @param xmldb_table $xmldb_table The table to be searched.
-     * @param xmldb_field $xmldb_field The field to be searched.
-     * @return string|bool check constraint name or false
-     */
-    public function find_check_constraint_name(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
-
-    /// Check the table exists
-        if (!$this->table_exists($xmldb_table)) {
-            throw new ddl_table_missing_exception($xmldb_table->getName());
-        }
-
-    /// Check the field exists
-        if (!$this->field_exists($xmldb_table, $xmldb_field)) {
-            throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
-        }
-
-    /// Get list of check_constraints in table/field
-        $checks = false;
-        if ($objchecks = $this->generator->getCheckConstraintsFromDB($xmldb_table, $xmldb_field)) {
-        /// Get only the 1st element. Shouldn't be more than 1 under XMLDB
-            $objcheck = array_shift($objchecks);
-            if ($objcheck) {
-                $checks = strtolower($objcheck->name);
-            }
-        }
-
-    /// Arriving here, check not found
-        return $checks;
-    }
-
-    /**
-     * Given one xmldb_field, check if it has a check constraint in DB
-     *
-     * TODO: Moodle 2.1 - Drop check_constraint_exists()
-     *
-     * @param xmldb_table $xmldb_table The table.
-     * @param xmldb_field $xmldb_field The field to be searched for any existing constraint.
-     * @return boolean true/false
-     */
-    public function check_constraint_exists(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
-        return ($this->find_check_constraint_name($xmldb_table, $xmldb_field) !== false);
     }
 
     /**
@@ -701,37 +647,6 @@ class database_manager {
         $this->check_field_dependencies($xmldb_table, $xmldb_field);
 
         if (!$sqlarr = $this->generator->getModifyDefaultSQL($xmldb_table, $xmldb_field)) {
-            return; //Empty array = nothing to do = no error
-        }
-
-        $this->execute_sql_arr($sqlarr);
-    }
-
-    /**
-     * This function will drop the existing enum of the field in the table passed as arguments
-     *
-     * TODO: Moodle 2.1 - Drop drop_enum_from_field()
-     *
-     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
-     * @param xmldb_field $xmldb_field Index object (full specs are required).
-     * @return void
-     */
-    public function drop_enum_from_field(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
-        if (!$this->table_exists($xmldb_table)) {
-            throw new ddl_table_missing_exception($xmldb_table->getName());
-        }
-    /// Check the field exists
-        if (!$this->field_exists($xmldb_table, $xmldb_field)) {
-            throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
-        }
-
-        if (!$this->check_constraint_exists($xmldb_table, $xmldb_field)) {
-            debugging('Enum for ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' does not exist. Delete skipped', DEBUG_DEVELOPER);
-            return; //Enum does not exist, nothing to delete
-        }
-
-        if (!$sqlarr = $this->generator->getDropEnumSQL($xmldb_table, $xmldb_field)) {
             return; //Empty array = nothing to do = no error
         }
 

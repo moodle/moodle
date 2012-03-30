@@ -24,10 +24,10 @@
 #page-mod-scorm-view .structurelist  {list-style-type: none;white-space: nowrap;}
 
 #page-mod-scorm-player #altfinishlink {font-size: 140%;border: 0px; padding: 0px; }
-#page-mod-scorm-player #altpopuplink  {position: left; padding: 5px; border: 0px; }
 #page-mod-scorm-player #scormmode  {float: left; border: 0px; }
 #page-mod-scorm-player.pagelayout-popup #page-content .region-content {padding: 0px; }
 #page-mod-scorm-player.pagelayout-popup #page-wrapper {width:100%;}
+#page-mod-scorm-player .yui-layout-scroll div.yui-layout-bd {overflow:visible;}
 
 .path-mod-scorm.forcejavascript .scorm-center { display:none;}
 .path-mod-scorm.forcejavascript .toc { display:none;}

@@ -419,10 +419,12 @@ class oci_native_moodle_database extends moodle_database {
         oci_free_statement($stmt);
         $records = array_map('strtolower', $records['TABLE_NAME']);
         foreach ($records as $tablename) {
-            if (strpos($tablename, $this->prefix) !== 0) {
-                continue;
+            if ($this->prefix !== '') {
+                if (strpos($tablename, $this->prefix) !== 0) {
+                    continue;
+                }
+                $tablename = substr($tablename, strlen($this->prefix));
             }
-            $tablename = substr($tablename, strlen($this->prefix));
             $this->tables[$tablename] = $tablename;
         }
 
@@ -523,7 +525,6 @@ class oci_native_moodle_database extends moodle_database {
              or $rawcolumn->COLTYPE === 'NVARCHAR'
              or $rawcolumn->COLTYPE === 'CHAR'
              or $rawcolumn->COLTYPE === 'NCHAR') {
-                //TODO add some basic enum support here
                 $info->type          = $rawcolumn->COLTYPE;
                 $info->meta_type     = 'C';
                 $info->max_length    = $rawcolumn->WIDTH;
@@ -683,6 +684,8 @@ class oci_native_moodle_database extends moodle_database {
      * @return mixed the normalised value
      */
     protected function normalise_value($column, $value) {
+        $this->detect_objects($value);
+
         if (is_bool($value)) { // Always, convert boolean to int
             $value = (int)$value;
 
@@ -1542,7 +1545,7 @@ class oci_native_moodle_database extends moodle_database {
      */
     public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notlike = false, $escapechar = '\\') {
         if (strpos($param, '%') !== false) {
-            debugging('Potential SQL injection detected, sql_ilike() expects bound parameters (? or :named)');
+            debugging('Potential SQL injection detected, sql_like() expects bound parameters (? or :named)');
         }
 
         $LIKE = $notlike ? 'NOT LIKE' : 'LIKE';

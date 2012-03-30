@@ -50,8 +50,10 @@ if ($course) {
 
 // security first
 require_login($course, false, $cm);
+$safeoverridesonly = false;
 if (!has_capability('moodle/role:override', $context)) {
     require_capability('moodle/role:safeoverride', $context);
+    $safeoverridesonly = true;
 }
 $PAGE->set_url($url);
 $PAGE->set_context($context);
@@ -119,7 +121,7 @@ if (empty($overridableroles[$roleid])) {
 }
 
 // If we are actually overriding a role, create the table object, and save changes if appropriate.
-$overridestable = new override_permissions_table_advanced($context, $roleid, false);
+$overridestable = new override_permissions_table_advanced($context, $roleid, $safeoverridesonly);
 $overridestable->read_submitted_permissions();
 
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {

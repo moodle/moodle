@@ -141,10 +141,10 @@ class mnet_review_host_form extends moodleform {
 
         if ($mnet_peer && !empty($mnet_peer->deleted)) {
             $radioarray = array();
-            $radioarray[] = MoodleQuickForm::createElement('static', 'deletedinfo', '',
+            $radioarray[] = $mform->createElement('static', 'deletedinfo', '',
                 $OUTPUT->container(get_string('deletedhostinfo', 'mnet'), 'deletedhostinfo'));
-            $radioarray[] = MoodleQuickForm::createElement('radio', 'deleted', '', get_string('yes'), 1);
-            $radioarray[] = MoodleQuickForm::createElement('radio', 'deleted', '', get_string('no'), 0);
+            $radioarray[] = $mform->createElement('radio', 'deleted', '', get_string('yes'), 1);
+            $radioarray[] = $mform->createElement('radio', 'deleted', '', get_string('no'), 0);
             $mform->addGroup($radioarray, 'radioar', get_string('deleted'), array(' ', ' '), false);
         } else {
             $mform->addElement('hidden', 'deleted');

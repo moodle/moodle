@@ -204,7 +204,129 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012030100.02);
     }
 
+    if ($oldversion < 2012030900.01) {
+        // migrate all texts and binaries to big size - it should be safe to interrupt this and continue later
+        upgrade_mysql_fix_lob_columns();
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012030900.01);
+    }
+
+    if ($oldversion < 2012031500.01) {
+        // Upgrade old course_allowed_modules data to be permission overrides.
+        if ($CFG->restrictmodulesfor === 'all') {
+            $courses = $DB->get_records_menu('course', array(), 'id', 'id, 1');
+        } else if ($CFG->restrictmodulesfor === 'requested') {
+            $courses = $DB->get_records_menu('course', array('retrictmodules' => 1), 'id', 'id, 1');
+        } else {
+            $courses = array();
+        }
+
+        if (!$dbman->table_exists('course_allowed_modules')) {
+            // Upgrade must already have been run on this server. This might happen,
+            // for example, during development of these changes.
+            $courses = array();
+        }
+
+        $modidtoname = $DB->get_records_menu('modules', array(), 'id', 'id, name');
+
+        $coursecount = count($courses);
+        if ($coursecount) {
+            $pbar = new progress_bar('allowedmods', 500, true);
+            $transaction = $DB->start_delegated_transaction();
+        }
+
+        $i = 0;
+        foreach ($courses as $courseid => $notused) {
+            $i += 1;
+            upgrade_set_timeout(60); // 1 minute per course should be fine.
+
+            $allowedmoduleids = $DB->get_records_menu('course_allowed_modules',
+            array('course' => $courseid), 'module', 'module, 1');
+            if (empty($allowedmoduleids)) {
+                // This seems to be the best match for backwards compatibility,
+                // not necessarily with the old code in course_allowed_module function,
+                // but with the code that used to be in the coures settings form.
+                $allowedmoduleids = explode(',', $CFG->defaultallowedmodules);
+                $allowedmoduleids = array_combine($allowedmoduleids, $allowedmoduleids);
+            }
+
+            $context = context_course::instance($courseid);
+
+            list($roleids) = get_roles_with_cap_in_context($context, 'moodle/course:manageactivities');
+            list($managerroleids) = get_roles_with_cap_in_context($context, 'moodle/site:config');
+            foreach ($managerroleids as $roleid) {
+                unset($roleids[$roleid]);
+            }
+
+            foreach ($modidtoname as $modid => $modname) {
+                if (isset($allowedmoduleids[$modid])) {
+                    // Module is allowed, no worries.
+                    continue;
+                }
+
+                $capability = 'mod/' . $modname . ':addinstance';
+                foreach ($roleids as $roleid) {
+                    assign_capability($capability, CAP_PREVENT, $roleid, $context);
+                }
+            }
+
+            $pbar->update($i, $coursecount, "Upgrading legacy course_allowed_modules data - $i/$coursecount.");
+        }
+
+        if ($coursecount) {
+            $transaction->allow_commit();
+        }
+
+        upgrade_main_savepoint(true, 2012031500.01);
+    }
+
+    if ($oldversion < 2012031500.02) {
+
+        // Define field retrictmodules to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('restrictmodules');
+
+        // Conditionally launch drop field requested
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2012031500.02);
+    }
+
+    if ($oldversion < 2012031500.03) {
+
+        // Define table course_allowed_modules to be dropped
+        $table = new xmldb_table('course_allowed_modules');
+
+        // Conditionally launch drop table for course_allowed_modules
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        upgrade_main_savepoint(true, 2012031500.03);
+    }
+
+    if ($oldversion < 2012031500.04) {
+        // Clean up the old admin settings.
+        unset_config('restrictmodulesfor');
+        unset_config('restrictbydefault');
+        unset_config('defaultallowedmodules');
+
+        upgrade_main_savepoint(true, 2012031500.04);
+    }
+
+    if ($oldversion < 2012032300.02) {
+        // Migrate the old admin debug setting.
+        if ($CFG->debug == 38911) {
+            set_config('debug', DEBUG_DEVELOPER);
+        } else if ($CFG->debug == 6143) {
+            set_config('debug', DEBUG_ALL);
+        }
+        upgrade_main_savepoint(true, 2012032300.02);
+    }
+
 
     return true;
 }
-

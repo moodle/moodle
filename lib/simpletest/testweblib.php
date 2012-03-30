@@ -62,9 +62,9 @@ class web_test extends UnitTestCase {
     }
 
     function test_format_text_email() {
-        $this->assertEqual("\n\nThis is a TEST",
+        $this->assertEqual("This is a TEST",
             format_text_email('<p>This is a <strong>test</strong></p>',FORMAT_HTML));
-        $this->assertEqual("\n\nThis is a TEST",
+        $this->assertEqual("This is a TEST",
             format_text_email('<p class="frogs">This is a <strong class=\'fishes\'>test</strong></p>',FORMAT_HTML));
         $this->assertEqual('& so is this',
             format_text_email('&amp; so is this',FORMAT_HTML));
@@ -157,56 +157,6 @@ class web_test extends UnitTestCase {
         $url2 = new moodle_url('http://www.google.com/lib/simpletest/testweblib.php');
         $this->expectException('coding_exception');
         $url2->out_as_local_url();
-    }
-
-    public function test_html_to_text_simple() {
-        $this->assertEqual("\n\n_Hello_ WORLD!", html_to_text('<p><i>Hello</i> <b>world</b>!</p>'));
-    }
-
-    public function test_html_to_text_image() {
-        $this->assertEqual('[edit]', html_to_text('<img src="edit.png" alt="edit" />'));
-    }
-
-    public function test_html_to_text_image_with_backslash() {
-        $this->assertEqual('[\edit]', html_to_text('<img src="edit.png" alt="\edit" />'));
-    }
-
-    public function test_html_to_text_nowrap() {
-        $long = "Here is a long string, more than 75 characters long, since by default html_to_text wraps text at 75 chars.";
-        $this->assertEqual($long, html_to_text($long, 0));
-    }
-
-    public function test_html_to_text_dont_screw_up_utf8() {
-        $this->assertEqual("\n\nAll the WORLD’S a stage.", html_to_text('<p>All the <strong>world’s</strong> a stage.</p>'));
-    }
-
-    public function test_html_to_text_trailing_whitespace() {
-        $this->assertEqual('With trailing whitespace and some more text', html_to_text("With trailing whitespace   \nand some   more text", 0));
-    }
-
-    public function test_html_to_text_0() {
-        $this->assertIdentical('0', html_to_text('0'));
-    }
-
-    public function test_html_to_text_pre_parsing_problem() {
-        $strorig = 'Consider the following function:<br /><pre><span style="color: rgb(153, 51, 102);">void FillMeUp(char* in_string) {'.
-                   '<br />  int i = 0;<br />  while (in_string[i] != \'\0\') {<br />    in_string[i] = \'X\';<br />    i++;<br />  }<br />'.
-                   '}</span></pre>What would happen if a non-terminated string were input to this function?<br /><br />';
-
-        $strconv = 'Consider the following function:
-
-void FillMeUp(char* in_string) {
- int i = 0;
- while (in_string[i] != \'\0\') {
- in_string[i] = \'X\';
- i++;
- }
-}
-What would happen if a non-terminated string were input to this function?
-
-';
-
-        $this->assertIdentical($strconv, html_to_text($strorig));
     }
 
     public function test_clean_text() {

@@ -9,7 +9,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="timeopen"/>
         <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timeclose"/>
         <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeopen" NEXT="preferredbehaviour"/>
@@ -26,10 +26,11 @@
         <FIELD NAME="reviewgeneralfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewspecificfeedback" NEXT="reviewrightanswer"/>
         <FIELD NAME="reviewrightanswer" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewgeneralfeedback" NEXT="reviewoverallfeedback"/>
         <FIELD NAME="reviewoverallfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewrightanswer" NEXT="questionsperpage"/>
-        <FIELD NAME="questionsperpage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="reviewoverallfeedback" NEXT="shufflequestions"/>
-        <FIELD NAME="shufflequestions" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="questionsperpage" NEXT="shuffleanswers"/>
+        <FIELD NAME="questionsperpage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="reviewoverallfeedback" NEXT="navmethod"/>
+        <FIELD NAME="navmethod" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="free" SEQUENCE="false" PREVIOUS="questionsperpage" NEXT="shufflequestions"/>
+        <FIELD NAME="shufflequestions" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="navmethod" NEXT="shuffleanswers"/>
         <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="shufflequestions" NEXT="questions"/>
-        <FIELD NAME="questions" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="shuffleanswers" NEXT="sumgrades"/>
+        <FIELD NAME="questions" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="shuffleanswers" NEXT="sumgrades"/>
         <FIELD NAME="sumgrades" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" PREVIOUS="questions" NEXT="grade"/>
         <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" PREVIOUS="sumgrades" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="timemodified"/>
@@ -61,7 +62,7 @@
         <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="sumgrades" NEXT="timefinish"/>
         <FIELD NAME="timefinish" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timestart" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timefinish" NEXT="layout"/>
-        <FIELD NAME="layout" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="currentpage"/>
+        <FIELD NAME="layout" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="currentpage"/>
         <FIELD NAME="currentpage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="layout" NEXT="preview"/>
         <FIELD NAME="preview" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="currentpage" NEXT="needsupgradetonewqe"/>
         <FIELD NAME="needsupgradetonewqe" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="preview"/>
@@ -108,7 +109,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="quizid"/>
         <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id." PREVIOUS="id" NEXT="feedbacktext"/>
-        <FIELD NAME="feedbacktext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="The feedback to show for a attempt where mingrade &lt;= attempt grade &lt; maxgrade. See function quiz_feedback_for_grade in mod/quiz/locallib.php." PREVIOUS="quizid" NEXT="feedbacktextformat"/>
+        <FIELD NAME="feedbacktext" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The feedback to show for a attempt where mingrade &lt;= attempt grade &lt; maxgrade. See function quiz_feedback_for_grade in mod/quiz/locallib.php." PREVIOUS="quizid" NEXT="feedbacktextformat"/>
         <FIELD NAME="feedbacktextformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbacktext" NEXT="mingrade"/>
         <FIELD NAME="mingrade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The lower limit of this grade band. Inclusive." PREVIOUS="feedbacktextformat" NEXT="maxgrade"/>
         <FIELD NAME="maxgrade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The upper limit of this grade band. Exclusive." PREVIOUS="mingrade"/>

@@ -73,8 +73,8 @@ class grade_export_form extends moodleform {
 
         if (!empty($features['includeseparator'])) {
             $radio = array();
-            $radio[] = &MoodleQuickForm::createElement('radio', 'separator', null, get_string('septab', 'grades'), 'tab');
-            $radio[] = &MoodleQuickForm::createElement('radio', 'separator', null, get_string('sepcomma', 'grades'), 'comma');
+            $radio[] = $mform->createElement('radio', 'separator', null, get_string('septab', 'grades'), 'tab');
+            $radio[] = $mform->createElement('radio', 'separator', null, get_string('sepcomma', 'grades'), 'comma');
             $mform->addGroup($radio, 'separator', get_string('separator', 'grades'), ' ', false);
             $mform->setDefault('separator', 'comma');
         }

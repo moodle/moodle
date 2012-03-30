@@ -813,6 +813,12 @@ function message_print_recent_conversations($user=null, $showicontext=false) {
 
     $conversations = message_get_recent_conversations($user);
 
+    // Attach context url information to create the "View this conversation" type links
+    foreach($conversations as $conversation) {
+        $conversation->contexturl = new moodle_url("/message/index.php?user2={$conversation->id}");
+        $conversation->contexturlname = get_string('thisconversation', 'message');
+    }
+
     $showotheruser = true;
     message_print_recent_messages_table($conversations, $user, $showotheruser, $showicontext);
 }
@@ -1497,7 +1503,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
 
         // everyone who has a role assignment in this course or higher
         $params = array($USER->id, "%$searchtext%");
-        $users = $DB->get_records_sql("SELECT $ufields, mc.id as contactlistid, mc.blocked
+        $users = $DB->get_records_sql("SELECT DISTINCT $ufields, mc.id as contactlistid, mc.blocked
                                          FROM {user} u
                                          JOIN {role_assignments} ra ON ra.userid = u.id
                                          LEFT JOIN {message_contacts} mc
@@ -1527,6 +1533,11 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
 /// eg   word  +word -word
 ///
     global $CFG, $USER, $DB;
+
+    // If user is searching all messages check they are allowed to before doing anything else
+    if ($courseid == SITEID && !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
+        print_error('accessdenied','admin');
+    }
 
     /// If no userid sent then assume current user
     if ($userid == 0) $userid = $USER->id;
@@ -2033,26 +2044,6 @@ function message_post_message($userfrom, $userto, $message, $format) {
 
     $eventdata->timecreated     = time();
     return message_send($eventdata);
-}
-
-
-/**
- * Returns a list of all user ids who have used messaging in the site
- * This was the simple way to code the SQL ... is it going to blow up
- * on large datasets?
- *
- * @deprecated To be deleted in 2.2 MDL-31709
- * @return array
- */
-function message_get_participants() {
-    global $CFG, $DB;
-
-        return $DB->get_records_sql("SELECT useridfrom as id,1 FROM {message}
-                               UNION SELECT useridto as id,1 FROM {message}
-                               UNION SELECT useridfrom as id,1 FROM {message_read}
-                               UNION SELECT useridto as id,1 FROM {message_read}
-                               UNION SELECT userid as id,1 FROM {message_contacts}
-                               UNION SELECT contactid as id,1 from {message_contacts}");
 }
 
 /**

@@ -329,7 +329,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access    public
      * @return    void
      */
-    function registerElementType($typeName, $include, $className)
+    static function registerElementType($typeName, $include, $className)
     {
         $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'][strtolower($typeName)] = array($include, $className);
     } // end func registerElementType
@@ -348,7 +348,7 @@ class HTML_QuickForm extends HTML_Common {
      * @access    public
      * @return    void
      */
-    function registerRule($ruleName, $type, $data1, $data2 = null)
+    static function registerRule($ruleName, $type, $data1, $data2 = null)
     {
         include_once('HTML/QuickForm/RuleRegistry.php');
         $registry =& HTML_QuickForm_RuleRegistry::singleton();
@@ -600,7 +600,7 @@ class HTML_QuickForm extends HTML_Common {
         } else {
             $args = func_get_args();
             $elementObject =& $this->_loadElement('addElement', $element, array_slice($args, 1));
-            if (PEAR::isError($elementObject)) {
+            if (@PEAR::isError($elementObject)) {
                 return $elementObject;
             }
         }
@@ -676,8 +676,10 @@ class HTML_QuickForm extends HTML_Common {
                 if ($this->_elementIndex[$currentName] == $i) {
                     $this->_elementIndex[$currentName] = $i + 1;
                 } else {
-                    $dupIdx = array_search($i, $this->_duplicateIndex[$currentName]);
-                    $this->_duplicateIndex[$currentName][$dupIdx] = $i + 1;
+                    if (!empty($currentName)) {
+                        $dupIdx = array_search($i, $this->_duplicateIndex[$currentName]);
+                        $this->_duplicateIndex[$currentName][$dupIdx] = $i + 1;
+                    }
                 }
                 unset($this->_elements[$i]);
             }
@@ -1258,8 +1260,10 @@ class HTML_QuickForm extends HTML_Common {
     * @param    array   $b  array which will be merged into first one
     * @return   array   merged array
     */
-    function arrayMerge($a, $b)
+    static function arrayMerge($a, $b)
     {
+        if (is_null($a)) {$a = array();}
+        if (is_null($b)) {$b = array();}
         foreach ($b as $k => $v) {
             if (is_array($v)) {
                 if (isset($a[$k]) && !is_array($a[$k])) {

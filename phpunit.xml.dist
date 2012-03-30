@@ -1,0 +1,30 @@
+<phpunit
+        bootstrap="lib/phpunit/bootstrap.php"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        processIsolation="false"
+        backupGlobals="false"
+        backupStaticAttributes="false"
+        stopOnError="false"
+        stopOnFailure="false"
+        stopOnIncomplete="false"
+        stopOnSkipped="false"
+        strict="false"
+        verbose="false"
+        >
+
+<!--All core suites need to be manually added here-->
+
+    <testsuites>
+        <testsuite name="core_lib">
+            <directory suffix="_test.php">lib/tests</directory>
+        </testsuite>
+    </testsuites>
+
+<!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from phpunit.xml.dist with up-to-date list of plugins in current install-->
+<!--@plugin_suites_start@-->
+<!--@plugin_suites_end@-->
+
+</phpunit>

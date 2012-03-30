@@ -49,8 +49,6 @@ class edit_field_save extends XMLDBAction {
             'numberincorrectlength' => 'tool_xmldb',
             'floatincorrectlength' => 'tool_xmldb',
             'charincorrectlength' => 'tool_xmldb',
-            'textincorrectlength' => 'tool_xmldb',
-            'binaryincorrectlength' => 'tool_xmldb',
             'numberincorrectdecimals' => 'tool_xmldb',
             'floatincorrectdecimals' => 'tool_xmldb',
             'defaultincorrect' => 'tool_xmldb',
@@ -88,7 +86,7 @@ class edit_field_save extends XMLDBAction {
 
         $tableparam = strtolower(required_param('table', PARAM_PATH));
         $fieldparam = strtolower(required_param('field', PARAM_PATH));
-        $name = substr(trim(strtolower(optional_param('name', $fieldparam, PARAM_PATH))),0,30);
+        $name = substr(trim(strtolower(optional_param('name', $fieldparam, PARAM_PATH))),0,xmldb_field::NAME_MAX_LENGTH);
 
         $comment = required_param('comment', PARAM_CLEAN);
         $comment = trim($comment);
@@ -140,7 +138,7 @@ class edit_field_save extends XMLDBAction {
         // Integer checks
         if ($type == XMLDB_TYPE_INTEGER) {
             if (!(is_numeric($length) && !empty($length) && intval($length)==floatval($length) &&
-                  $length > 0 && $length <= 20)) {
+                  $length > 0 && $length <= xmldb_field::INTEGER_MAX_LENGTH)) {
                 $errors[] = $this->str['integerincorrectlength'];
             }
             if (!(empty($default) || (is_numeric($default) &&
@@ -152,7 +150,7 @@ class edit_field_save extends XMLDBAction {
         // Number checks
         if ($type == XMLDB_TYPE_NUMBER) {
             if (!(is_numeric($length) && !empty($length) && intval($length)==floatval($length) &&
-                  $length > 0 && $length <= 20)) {
+                  $length > 0 && $length <= xmldb_field::NUMBER_MAX_LENGTH)) {
                 $errors[] = $this->str['numberincorrectlength'];
             }
             if (!(empty($decimals) || (is_numeric($decimals) &&
@@ -173,7 +171,7 @@ class edit_field_save extends XMLDBAction {
                                      !empty($length) &&
                                      intval($length)==floatval($length) &&
                                      $length > 0 &&
-                                     $length <= 20))) {
+                                     $length <= xmldb_field::FLOAT_MAX_LENGTH))) {
                 $errors[] = $this->str['floatincorrectlength'];
             }
             if (!(empty($decimals) || (is_numeric($decimals) &&
@@ -201,28 +199,8 @@ class edit_field_save extends XMLDBAction {
                 }
             }
         }
-        // Text checks
-        if ($type == XMLDB_TYPE_TEXT) {
-            if ($length != 'small' &&
-                $length != 'medium' &&
-                $length != 'big') {
-                $errors[] = $this->str['textincorrectlength'];
-            }
-            if ($default !== NULL && $default !== '') {
-                if (substr($default, 0, 1) == "'" ||
-                    substr($default, -1, 1) == "'") {
-                    $errors[] = $this->str['defaultincorrect'];
-                }
-            }
-        }
-        // Binary checks
-        if ($type == XMLDB_TYPE_BINARY) {
-            if ($length != 'small' &&
-                $length != 'medium' &&
-                $length != 'big') {
-                $errors[] = $this->str['binaryincorrectlength'];
-            }
-        }
+        // No text checks
+        // No binary checks
 
         if (!empty($errors)) {
             $tempfield = new xmldb_field($name);

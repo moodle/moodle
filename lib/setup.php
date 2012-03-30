@@ -45,7 +45,7 @@
 global $CFG; // this should be done much earlier in config.php before creating new $CFG instance
 
 if (!isset($CFG)) {
-    if (defined('PHPUNIT_SCRIPT') and PHPUNIT_SCRIPT) {
+    if (defined('PHPUNITTEST') and PHPUNITTEST) {
         echo('There is a missing "global $CFG;" at the beginning of the config.php file.'."\n");
         exit(1);
     } else {
@@ -112,7 +112,10 @@ if (!isset($CFG->cachedir)) {
 // directory of the script when run from the command line. The require_once()
 // would fail, so we'll have to chdir()
 if (!isset($_SERVER['REMOTE_ADDR']) && isset($_SERVER['argv'][0])) {
-    chdir(dirname($_SERVER['argv'][0]));
+    // do it only once - skip the second time when continuing after prevous abort
+    if (!defined('ABORT_AFTER_CONFIG') and !defined('ABORT_AFTER_CONFIG_CANCEL')) {
+        chdir(dirname($_SERVER['argv'][0]));
+    }
 }
 
 // sometimes default PHP settings are borked on shared hosting servers, I wonder why they have to do that??
@@ -130,6 +133,11 @@ if (!defined('NO_OUTPUT_BUFFERING')) {
     define('NO_OUTPUT_BUFFERING', false);
 }
 
+// PHPUnit tests need custom init
+if (!defined('PHPUNITTEST')) {
+    define('PHPUNITTEST', false);
+}
+
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
 // This is a quick hack.  Ideally we should ask the admin for a value.  See MDL-22625 for more on this.
 if (function_exists('date_default_timezone_set') and function_exists('date_default_timezone_get')) {
@@ -137,15 +145,6 @@ if (function_exists('date_default_timezone_set') and function_exists('date_defau
     date_default_timezone_set(date_default_timezone_get());
     error_reporting($olddebug);
     unset($olddebug);
-}
-
-// PHPUnit scripts are a special case, for now we treat them as normal CLI scripts,
-// please note you must install PHPUnit library separately via PEAR
-if (!defined('PHPUNIT_SCRIPT')) {
-    define('PHPUNIT_SCRIPT', false);
-}
-if (PHPUNIT_SCRIPT) {
-    define('CLI_SCRIPT', true);
 }
 
 // Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
@@ -471,7 +470,11 @@ if (isset($CFG->debug)) {
 }
 
 // Load up any configuration from the config table
-initialise_cfg();
+if (PHPUNITTEST) {
+    phpunit_util::initialise_cfg();
+} else {
+    initialise_cfg();
+}
 
 // Verify upgrade is not running unless we are in a script that needs to execute in any case
 if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {
@@ -820,7 +823,7 @@ if (!empty($CFG->customscripts)) {
     }
 }
 
-if (CLI_SCRIPT and !defined('WEB_CRON_EMULATED_CLI') and !PHPUNIT_SCRIPT) {
+if ((CLI_SCRIPT and !defined('WEB_CRON_EMULATED_CLI')) or PHPUNITTEST) {
     // no ip blocking
 } else if (!empty($CFG->allowbeforeblock)) { // allowed list processed before blocked list?
     // in this case, ip in allowed list will be performed first

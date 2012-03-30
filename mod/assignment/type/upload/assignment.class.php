@@ -113,9 +113,6 @@ class assignment_upload extends assignment_base {
             $userid = $submission->userid;
         }
 
-        if (empty($submission->timemarked)) {   /// Nothing to show, so print nothing
-            return;
-        }
         // Check the user can submit
         $canviewfeedback = ($userid == $USER->id && has_capability('mod/assignment:submit', $this->context, $USER->id, false));
         // If not then check if the user still has the view cap and has a previous submission
@@ -386,7 +383,7 @@ class assignment_upload extends assignment_base {
         parent::submissions($mode);
     }
 
-    function process_feedback() {
+    function process_feedback($formdata=null) {
         if (!$feedback = data_submitted() or !confirm_sesskey()) {      // No incoming data?
             return false;
         }

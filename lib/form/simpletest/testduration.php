@@ -36,7 +36,7 @@ require_once($CFG->libdir . '/form/duration.php');
  * Unit tests for MoodleQuickForm_duration
  *
  * Contains test cases for testing MoodleQuickForm_duration
- * 
+ *
  * @package    core_form
  * @category   unittest
  * @copyright  2009 Tim Hunt
@@ -107,16 +107,24 @@ class duration_form_element_test extends UnitTestCase {
     function test_exportValue() {
         $el = new MoodleQuickForm_duration('testel');
         $el->_createElements();
-        $this->assertEqual($el->exportValue(array('testel' => array('number' => 10, 'timeunit' => 1))), array('testel' => 10));
-        $this->assertEqual($el->exportValue(array('testel' => array('number' => 3, 'timeunit' => 60))), array('testel' => 180));
-        $this->assertEqual($el->exportValue(array('testel' => array('number' => 1.5, 'timeunit' => 60))), array('testel' => 90));
-        $this->assertEqual($el->exportValue(array('testel' => array('number' => 2, 'timeunit' => 3600))), array('testel' => 7200));
-        $this->assertEqual($el->exportValue(array('testel' => array('number' => 1, 'timeunit' => 86400))), array('testel' => 86400));
-        $this->assertEqual($el->exportValue(array('testel' => array('number' => 0, 'timeunit' => 3600))), array('testel' => 0));
+        $values = array('testel' => array('number' => 10, 'timeunit' => 1));
+        $this->assertEqual($el->exportValue($values), array('testel' => 10));
+        $values = array('testel' => array('number' => 3, 'timeunit' => 60));
+        $this->assertEqual($el->exportValue($values), array('testel' => 180));
+        $values = array('testel' => array('number' => 1.5, 'timeunit' => 60));
+        $this->assertEqual($el->exportValue($values), array('testel' => 90));
+        $values = array('testel' => array('number' => 2, 'timeunit' => 3600));
+        $this->assertEqual($el->exportValue($values), array('testel' => 7200));
+        $values = array('testel' => array('number' => 1, 'timeunit' => 86400));
+        $this->assertEqual($el->exportValue($values), array('testel' => 86400));
+        $values = array('testel' => array('number' => 0, 'timeunit' => 3600));
+        $this->assertEqual($el->exportValue($values), array('testel' => 0));
 
         $el = new MoodleQuickForm_duration('testel', null, array('optional' => true));
         $el->_createElements();
-        $this->assertEqual($el->exportValue(array('testel' => array('number' => 10, 'timeunit' => 1))), array('testel' => 0));
-        $this->assertEqual($el->exportValue(array('testel' => array('number' => 20, 'timeunit' => 1, 'enabled' => 1))), array('testel' => 20));
+        $values = array('testel' => array('number' => 10, 'timeunit' => 1));
+        $this->assertEqual($el->exportValue($values), array('testel' => 0));
+        $values = array('testel' => array('number' => 20, 'timeunit' => 1, 'enabled' => 1));
+        $this->assertEqual($el->exportValue($values), array('testel' => 20));
     }
 }

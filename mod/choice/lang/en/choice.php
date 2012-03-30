@@ -35,6 +35,7 @@ $string['atleastoneoption'] = 'You need to provide at least one possible answer.
 $string['full'] = '(Full)';
 $string['havetologin'] = 'You have to log in before you can submit your choice';
 $string['choice'] = 'Choice';
+$string['choice:addinstance'] = 'Add a new choice';
 $string['choiceclose'] = 'Until';
 $string['choice:deleteresponses'] = 'Delete responses';
 $string['choice:downloadresponses'] = 'Download responses';

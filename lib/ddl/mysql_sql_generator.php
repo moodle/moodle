@@ -59,8 +59,6 @@ class mysql_sql_generator extends sql_generator {
     public $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
     public $sequence_name = 'auto_increment'; //Particular name for inline sequences in this generator
 
-    public $enum_extra_code = false; //Does the generator need to add extra code to generate code for the enums in the table
-
     public $add_after_clause = true; // Does the generator need to add the after clause for fields
 
     public $concat_character = null; //Characters to be used as concatenation operator. If not defined
@@ -204,58 +202,15 @@ class mysql_sql_generator extends sql_generator {
                 $dbtype .= '(' . $xmldb_length . ')';
                 break;
             case XMLDB_TYPE_TEXT:
-                if (empty($xmldb_length)) {
-                    $xmldb_length = 'small';
-                }
-                if ($xmldb_length == 'small') {
-                    $dbtype = 'TEXT';
-                } else if ($xmldb_length == 'medium') {
-                    $dbtype = 'MEDIUMTEXT';
-                } else {
-                    $dbtype = 'LONGTEXT';
-                }
+                $dbtype = 'LONGTEXT';
                 break;
             case XMLDB_TYPE_BINARY:
-                if (empty($xmldb_length)) {
-                    $xmldb_length = 'small';
-                }
-                if ($xmldb_length == 'small') {
-                    $dbtype = 'BLOB';
-                } else if ($xmldb_length == 'medium') {
-                    $dbtype = 'MEDIUMBLOB';
-                } else {
-                    $dbtype = 'LONGBLOB';
-                }
+                $dbtype = 'LONGBLOB';
                 break;
             case XMLDB_TYPE_DATETIME:
                 $dbtype = 'DATETIME';
         }
         return $dbtype;
-    }
-
-    /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its enum
-     * (usually invoked from getModifyEnumSQL()
-     */
-    public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
-    /// For MySQL, just alter the field
-        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
-    }
-
-    /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
-     * (usually invoked from getModifyEnumSQL()
-     *
-     * TODO: Moodle 2.1 - drop in Moodle 2.1
-     */
-    public function getDropEnumSQL($xmldb_table, $xmldb_field) {
-    /// Let's introspect to know if there is one enum
-        if ($check_constraints = $this->getCheckConstraintsFromDB($xmldb_table, $xmldb_field)) {
-        /// For MySQL, just alter the field
-            return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
-        } else {
-            return array(); /// Enum not found. Nothing to do
-        }
     }
 
     /**
@@ -279,11 +234,12 @@ class mysql_sql_generator extends sql_generator {
         $xmldb_field_clone = clone($xmldb_field);
 
     /// Change the name of the field to perform the change
-        $xmldb_field_clone->setName($xmldb_field_clone->getName() . ' ' . $newname);
+        $xmldb_field_clone->setName($newname);
 
         $fieldsql = $this->getFieldSQL($xmldb_table, $xmldb_field_clone);
 
-        $sql = 'ALTER TABLE ' . $this->getTableName($xmldb_table) . ' CHANGE ' . $fieldsql;
+        $sql = 'ALTER TABLE ' . $this->getTableName($xmldb_table) . ' CHANGE ' .
+               $xmldb_field->getName() . ' ' . $fieldsql;
 
         return array($sql);
     }
@@ -309,59 +265,6 @@ class mysql_sql_generator extends sql_generator {
             $comment .= " COMMENT='" . $this->addslashes(substr($xmldb_table->getComment(), 0, 60)) . "'";
         }
         return array($comment);
-    }
-
-    /**
-     * Given one xmldb_table returns one array with all the check constraints
-     * in the table (fetched from DB)
-     * Optionally the function allows one xmldb_field to be specified in
-     * order to return only the check constraints belonging to one field.
-     * Each element contains the name of the constraint and its description
-     * If no check constraints are found, returns an empty array
-     * MySQL doesn't have check constraints in this implementation, but
-     * we return them based on the enum fields in the table
-     *
-     * TODO: Moodle 2.1 - drop in Moodle 2.1
-     */
-    public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
-
-        $tablename = $xmldb_table->getName($xmldb_table);
-
-    /// Fetch all the columns in the table
-        if (!$columns = $this->mdb->get_columns($tablename)) {
-            return array();
-        }
-
-    /// Filter by the required field if specified
-        if ($xmldb_field) {
-            $filter = $xmldb_field->getName();
-            if (!isset($columns[$filter])) {
-                return array();
-            }
-            $column = ($columns[$filter]);
-            if (!empty($column->enums)) {
-                $result = new stdClass();
-                $result->name = $filter;
-                $result->description = implode(', ', $column->enums);
-                return array($result);
-            } else {
-                return array();
-            }
-
-        } else {
-            $results = array();
-        /// Iterate over columns searching for enums
-            foreach ($columns as $key => $column) {
-            /// Enum found, let's add it to the constraints list
-                if (!empty($column->enums)) {
-                    $result = new stdClass();
-                    $result->name = $key;
-                    $result->description = implode(', ', $column->enums);
-                    $results[$key] = $result;
-                }
-            }
-            return $results;
-        }
     }
 
     /**

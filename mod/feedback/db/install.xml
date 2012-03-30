@@ -9,14 +9,14 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="anonymous"/>
         <FIELD NAME="anonymous" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="introformat" NEXT="email_notification"/>
         <FIELD NAME="email_notification" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="anonymous" NEXT="multiple_submit"/>
         <FIELD NAME="multiple_submit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="email_notification" NEXT="autonumbering"/>
         <FIELD NAME="autonumbering" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="multiple_submit" NEXT="site_after_submit"/>
         <FIELD NAME="site_after_submit" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="autonumbering" NEXT="page_after_submit"/>
-        <FIELD NAME="page_after_submit" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="site_after_submit" NEXT="page_after_submitformat"/>
+        <FIELD NAME="page_after_submit" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="site_after_submit" NEXT="page_after_submitformat"/>
         <FIELD NAME="page_after_submitformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="page_after_submit" NEXT="publish_stats"/>
         <FIELD NAME="publish_stats" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="page_after_submitformat" NEXT="timeopen"/>
         <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="publish_stats" NEXT="timeclose"/>
@@ -52,7 +52,7 @@
         <FIELD NAME="template" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="template" NEXT="label"/>
         <FIELD NAME="label" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="presentation"/>
-        <FIELD NAME="presentation" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="label" NEXT="typ"/>
+        <FIELD NAME="presentation" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="label" NEXT="typ"/>
         <FIELD NAME="typ" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="presentation" NEXT="hasvalue"/>
         <FIELD NAME="hasvalue" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="typ" NEXT="position"/>
         <FIELD NAME="position" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="hasvalue" NEXT="required"/>
@@ -109,7 +109,7 @@
         <FIELD NAME="item" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course_id" NEXT="completed"/>
         <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="item" NEXT="tmp_completed"/>
         <FIELD NAME="tmp_completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="completed" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="tmp_completed"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="tmp_completed"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_value" NEXT="item"/>
@@ -126,7 +126,7 @@
         <FIELD NAME="item" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course_id" NEXT="completed"/>
         <FIELD NAME="completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="item" NEXT="tmp_completed"/>
         <FIELD NAME="tmp_completed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="completed" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="tmp_completed"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="tmp_completed"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_valuetmp" NEXT="item"/>

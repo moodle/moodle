@@ -9,7 +9,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Course wiki activity belongs to" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="Wiki" SEQUENCE="false" COMMENT="name field for moodle instances" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="General introduction of the wiki activity" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="General introduction of the wiki activity" PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the intro field (MOODLE, HTML, MARKDOWN...)" PREVIOUS="intro" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="firstpagetitle"/>
@@ -45,7 +45,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="subwikiid"/>
         <FIELD NAME="subwikiid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Subwiki instance of this page" PREVIOUS="id" NEXT="title"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="title" SEQUENCE="false" COMMENT="Page name" PREVIOUS="subwikiid" NEXT="cachedcontent"/>
-        <FIELD NAME="cachedcontent" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" COMMENT="Cache wiki content" PREVIOUS="title" NEXT="timecreated"/>
+        <FIELD NAME="cachedcontent" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Cache wiki content" PREVIOUS="title" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Wiki page creation timestamp" PREVIOUS="cachedcontent" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="page edition timestamp" PREVIOUS="timecreated" NEXT="timerendered"/>
         <FIELD NAME="timerendered" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Last render timestamp" PREVIOUS="timemodified" NEXT="userid"/>
@@ -63,7 +63,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="pageid"/>
         <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page id" PREVIOUS="id" NEXT="content"/>
-        <FIELD NAME="content" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" COMMENT="Not parsed wiki content" PREVIOUS="pageid" NEXT="contentformat"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Not parsed wiki content" PREVIOUS="pageid" NEXT="contentformat"/>
         <FIELD NAME="contentformat" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="creole" SEQUENCE="false" COMMENT="Markup used to write content" PREVIOUS="content" NEXT="version"/>
         <FIELD NAME="version" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Wiki page version" PREVIOUS="contentformat" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page edition timestamp" PREVIOUS="version" NEXT="userid"/>

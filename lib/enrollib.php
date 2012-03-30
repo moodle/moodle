@@ -476,8 +476,10 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
     $usersnode->trim_if_empty();
 
     if ($course->id != SITEID) {
-        // Unenrol link
-        if (is_enrolled($coursecontext)) {
+        if (isguestuser() or !isloggedin()) {
+            // guest account can not be enrolled - no links for them
+        } else if (is_enrolled($coursecontext)) {
+            // unenrol link if possible
             foreach ($instances as $instance) {
                 if (!isset($plugins[$instance->enrol])) {
                     continue;
@@ -491,6 +493,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
                 }
             }
         } else {
+            // enrol link if possible
             if (is_viewing($coursecontext)) {
                 // better not show any enrol link, this is intended for managers and inspectors
             } else {
@@ -1730,9 +1733,10 @@ abstract class enrol_plugin {
      * Returns true if the plugin has one or more bulk operations that can be performed on
      * user enrolments.
      *
+     * @param course_enrolment_manager $manager
      * @return bool
      */
-    public function has_bulk_operations() {
+    public function has_bulk_operations(course_enrolment_manager $manager) {
        return false;
     }
 
@@ -1740,9 +1744,10 @@ abstract class enrol_plugin {
      * Return an array of enrol_bulk_enrolment_operation objects that define
      * the bulk actions that can be performed on user enrolments by the plugin.
      *
+     * @param course_enrolment_manager $manager
      * @return array
      */
-    public function get_bulk_operations() {
+    public function get_bulk_operations(course_enrolment_manager $manager) {
         return array();
     }
 }

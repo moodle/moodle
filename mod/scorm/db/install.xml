@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/scorm/db" VERSION="20120122" COMMENT="XMLDB file for Moodle mod/scorm"
+<XMLDB PATH="mod/scorm/db" VERSION="20120326" COMMENT="XMLDB file for Moodle mod/scorm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -11,7 +11,7 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="scormtype"/>
         <FIELD NAME="scormtype" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="local" SEQUENCE="false" COMMENT="local, external or repository" PREVIOUS="name" NEXT="reference"/>
         <FIELD NAME="reference" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="scormtype" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="reference" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="reference" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="version"/>
         <FIELD NAME="version" TYPE="char" LENGTH="9" NOTNULL="true" SEQUENCE="false" PREVIOUS="introformat" NEXT="maxgrade"/>
         <FIELD NAME="maxgrade" TYPE="float" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="version" NEXT="grademethod"/>
@@ -39,7 +39,9 @@
         <FIELD NAME="height" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="600" SEQUENCE="false" PREVIOUS="width" NEXT="timeopen"/>
         <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="height" NEXT="timeclose"/>
         <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeopen" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeclose"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeclose" NEXT="completionstatusrequired"/>
+        <FIELD NAME="completionstatusrequired" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="timemodified" NEXT="completionscorerequired"/>
+        <FIELD NAME="completionscorerequired" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" PREVIOUS="completionstatusrequired"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -56,7 +58,7 @@
         <FIELD NAME="organization" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="manifest" NEXT="parent"/>
         <FIELD NAME="parent" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="organization" NEXT="identifier"/>
         <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="parent" NEXT="launch"/>
-        <FIELD NAME="launch" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="identifier" NEXT="scormtype"/>
+        <FIELD NAME="launch" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="identifier" NEXT="scormtype"/>
         <FIELD NAME="scormtype" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" PREVIOUS="launch" NEXT="title"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="scormtype"/>
       </FIELDS>
@@ -70,7 +72,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="scoid"/>
         <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="scoid" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_scoes_data_scoid"/>
@@ -85,7 +87,7 @@
         <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="scormid" NEXT="attempt"/>
         <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="scoid" NEXT="element"/>
         <FIELD NAME="element" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="attempt" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" PREVIOUS="element" NEXT="timemodified"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="element" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="value"/>
       </FIELDS>
       <KEYS>
@@ -194,27 +196,26 @@
         <KEY NAME="scorm_rolluprulecond_rolluprule" TYPE="foreign" FIELDS="rollupruleid" REFTABLE="scorm_seq_rolluprule" REFFIELDS="id" COMMENT="The relative rolluprule" PREVIOUS="scorm_rolluprulecond_scoid"/>
       </KEYS>
     </TABLE>
-      <TABLE NAME="scorm_aicc_session" COMMENT="Used by AICC HACP to store session information" PREVIOUS="scorm_seq_rolluprulecond">
-        <FIELDS>
-          <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
-          <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="id from user table" PREVIOUS="id" NEXT="scormid"/>
-          <FIELD NAME="scormid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="id from scorm table" PREVIOUS="userid" NEXT="hacpsession"/>
-          <FIELD NAME="hacpsession" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="sessionid used to authenticate AICC HACP communication" PREVIOUS="scormid" NEXT="scoid"/>
-          <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="id from scorm_scoes table" PREVIOUS="hacpsession" NEXT="scormmode"/>
-          <FIELD NAME="scormmode" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" PREVIOUS="scoid" NEXT="scormstatus"/>
-          <FIELD NAME="scormstatus" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="scormmode" NEXT="attempt"/>
-          <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="scormstatus" NEXT="lessonstatus"/>
-          <FIELD NAME="lessonstatus" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="attempt" NEXT="sessiontime"/>
-          <FIELD NAME="sessiontime" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="lessonstatus" NEXT="timecreated"/>
-          <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="time this session was created" PREVIOUS="sessiontime" NEXT="timemodified"/>
-          <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="time this session was last used" PREVIOUS="timecreated"/>
-        </FIELDS>
-        <KEYS>
-          <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scormid"/>
-          <KEY NAME="scormid" TYPE="foreign" FIELDS="scormid" REFTABLE="scorm" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
-          <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="scormid"/>
-        </KEYS>
-      </TABLE>
-
+    <TABLE NAME="scorm_aicc_session" COMMENT="Used by AICC HACP to store session information" PREVIOUS="scorm_seq_rolluprulecond">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="id from user table" PREVIOUS="id" NEXT="scormid"/>
+        <FIELD NAME="scormid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="id from scorm table" PREVIOUS="userid" NEXT="hacpsession"/>
+        <FIELD NAME="hacpsession" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="sessionid used to authenticate AICC HACP communication" PREVIOUS="scormid" NEXT="scoid"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="id from scorm_scoes table" PREVIOUS="hacpsession" NEXT="scormmode"/>
+        <FIELD NAME="scormmode" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" PREVIOUS="scoid" NEXT="scormstatus"/>
+        <FIELD NAME="scormstatus" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="scormmode" NEXT="attempt"/>
+        <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="scormstatus" NEXT="lessonstatus"/>
+        <FIELD NAME="lessonstatus" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="attempt" NEXT="sessiontime"/>
+        <FIELD NAME="sessiontime" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="lessonstatus" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="time this session was created" PREVIOUS="sessiontime" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="time this session was last used" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scormid"/>
+        <KEY NAME="scormid" TYPE="foreign" FIELDS="scormid" REFTABLE="scorm" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="scormid"/>
+      </KEYS>
+    </TABLE>
   </TABLES>
 </XMLDB>

@@ -953,6 +953,48 @@ class moodlelib_test extends UnitTestCase {
         $text = "<h1>123456789</h1>";//a string with no convenient breaks
         $this->assertEqual("<h1>12345...</h1>",
             shorten_text($text, 8));
+
+        // ==== this must work with UTF-8 too! ======
+
+        // text without tags
+        $text = "Žluťoučký koníček přeskočil";
+        $this->assertEqual($text, shorten_text($text)); // 30 chars by default
+        $this->assertEqual("Žluťoučký koníče...", shorten_text($text, 19, true));
+        $this->assertEqual("Žluťoučký ...", shorten_text($text, 19, false));
+        // And try it with 2-less (that are, in bytes, the middle of a sequence)
+        $this->assertEqual("Žluťoučký koní...", shorten_text($text, 17, true));
+        $this->assertEqual("Žluťoučký ...", shorten_text($text, 17, false));
+
+        $text = "<p>Žluťoučký koníček <b>přeskočil</b> potůček</p>";
+        $this->assertEqual($text, shorten_text($text, 60));
+        $this->assertEqual("<p>Žluťoučký koníček ...</p>", shorten_text($text, 21));
+        $this->assertEqual("<p>Žluťoučký koníče...</p>", shorten_text($text, 19, true));
+        $this->assertEqual("<p>Žluťoučký ...</p>", shorten_text($text, 19, false));
+        // And try it with 2-less (that are, in bytes, the middle of a sequence)
+        $this->assertEqual("<p>Žluťoučký koní...</p>", shorten_text($text, 17, true));
+        $this->assertEqual("<p>Žluťoučký ...</p>", shorten_text($text, 17, false));
+        // And try over one tag (start/end), it does proper text len
+        $this->assertEqual("<p>Žluťoučký koníček <b>př...</b></p>", shorten_text($text, 23, true));
+        $this->assertEqual("<p>Žluťoučký koníček <b>přeskočil</b> pot...</p>", shorten_text($text, 34, true));
+        // And in the middle of one tag
+        $this->assertEqual("<p>Žluťoučký koníček <b>přeskočil...</b></p>", shorten_text($text, 30, true));
+
+        // Japanese
+        $text = '言語設定言語設定abcdefghijkl';
+        $this->assertEqual($text, shorten_text($text)); // 30 chars by default
+        $this->assertEqual("言語設定言語...", shorten_text($text, 9, true));
+        $this->assertEqual("言語設定言語...", shorten_text($text, 9, false));
+        $this->assertEqual("言語設定言語設定ab...", shorten_text($text, 13, true));
+        $this->assertEqual("言語設定言語設定...", shorten_text($text, 13, false));
+
+        // Chinese
+        $text = '简体中文简体中文abcdefghijkl';
+        $this->assertEqual($text, shorten_text($text)); // 30 chars by default
+        $this->assertEqual("简体中文简体...", shorten_text($text, 9, true));
+        $this->assertEqual("简体中文简体...", shorten_text($text, 9, false));
+        $this->assertEqual("简体中文简体中文ab...", shorten_text($text, 13, true));
+        $this->assertEqual("简体中文简体中文...", shorten_text($text, 13, false));
+
     }
 
     function test_usergetdate() {

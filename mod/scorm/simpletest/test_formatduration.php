@@ -20,6 +20,8 @@ if (!defined('MOODLE_INTERNAL')) {
 
 // Unit tests for scorm_formatduration function from locallib.php
 
+global $CFG;
+
 // Make sure the code being tested is accessible.
 require_once($CFG->dirroot . '/mod/scorm/locallib.php'); // Include the code to test
 

@@ -46,7 +46,11 @@ foreach ($files as $fsfile) {
         // does not exist
         continue;
     }
-    if (strpos($jsfile, $CFG->dirroot . DIRECTORY_SEPARATOR) !== 0) {
+    if ($CFG->dirroot === '/') {
+        // Some shared hosting sites serve files directly from '/',
+        // this is NOT supported, but at least allow JS when showing
+        // errors and warnings.
+    } else if (strpos($jsfile, $CFG->dirroot . DIRECTORY_SEPARATOR) !== 0) {
         // hackers - not in dirroot
         continue;
     }

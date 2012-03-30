@@ -288,7 +288,7 @@ function wiki_print_recent_activity($course, $viewfullnames, $timestart) {
     if (!$pages = $DB->get_records_sql($sql, array($timestart, $course->id))) {
         return false;
     }
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
 
     $wikis = array();
 
