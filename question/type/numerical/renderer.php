@@ -76,7 +76,8 @@ class qtype_numerical_renderer extends qtype_renderer {
             $inputattributes['size'] = round(strlen($placeholder) * 1.1);
         }
 
-        $input = html_writer::empty_tag('input', $inputattributes) . $feedbackimg;
+        $input = html_writer::label($inputattributes['name'], $inputattributes['id']);
+        $input .= html_writer::empty_tag('input', $inputattributes) . $feedbackimg;
 
         if ($question->has_separate_unit_field()) {
             if ($question->unitdisplay == qtype_numerical::UNITRADIO) {
@@ -98,7 +99,8 @@ class qtype_numerical_renderer extends qtype_renderer {
                         array('class' => 'unitchoices'));
 
             } else if ($question->unitdisplay == qtype_numerical::UNITSELECT) {
-                $unitchoice = html_writer::select($question->ap->get_unit_options(),
+                $unitchoice = html_writer::label($selectedunit, 'menu' . $qa->get_qt_field_name('unit'));
+                $unitchoice .= html_writer::select($question->ap->get_unit_options(),
                         $qa->get_qt_field_name('unit'), $selectedunit, array(''=>'choosedots'),
                         array('disabled' => $options->readonly));
             }

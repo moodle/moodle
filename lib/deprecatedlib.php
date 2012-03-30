@@ -2525,12 +2525,12 @@ function print_textfield($name, $value, $alt = '', $size=50, $maxlength=0, $retu
     }
 
     $style = "width: {$size}px;";
-    $attributes = array('type'=>'text', 'name'=>$name, 'alt'=>$alt, 'style'=>$style, 'value'=>$value);
+    $attributes = array('type' => 'text', 'id' => $name, 'name' => $name, 'alt' => $alt, 'style' => $style, 'value' => $value);
     if ($maxlength) {
         $attributes['maxlength'] = $maxlength;
     }
-
-    $output = html_writer::empty_tag('input', $attributes);
+    $output =  html_writer::label($name, $name, false, array('class' => 'accesshide'));
+    $output .= html_writer::empty_tag('input', $attributes);
 
     if (empty($return)) {
         echo $output;

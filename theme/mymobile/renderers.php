@@ -746,6 +746,8 @@ class theme_mymobile_core_renderer extends core_renderer {
 
         if ($select->label) {
             $output .= html_writer::label($select->label, $select->attributes['id']);
+        } else {
+            $output .= html_writer::label($select->selected, $select->attributes['id']);
         }
 
         if ($select->helpicon instanceof help_icon) {

@@ -354,15 +354,16 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $editorrules = ' onblur="'.htmlspecialchars($this->getAttribute('onblur')).'" onchange="'.htmlspecialchars($this->getAttribute('onchange')).'"';
         }
         $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="'.$rows.'" cols="'.$cols.'"'.$editorrules.'>';
-        $str .= s($text);
+        $str .= s($text);if (count($formats)>1) {
         $str .= '</textarea></div>';
 
         $str .= '<div>';
         if (count($formats)>1) {
-            $str.= html_writer::select($formats, $elname.'[format]', $format, false);
+            $str .= html_writer::label(get_string('format'), 'menu'. $elname. '[format]', false, array('class' => 'accesshide'));
+            $str .= html_writer::select($formats, $elname.'[format]', $format, false);
         } else {
             $keys = array_keys($formats);
-            $str.= html_writer::empty_tag('input',
+            $str .= html_writer::empty_tag('input',
                     array('name'=>$elname.'[format]', 'type'=> 'hidden', 'value' => array_pop($keys)));
         }
         $str .= '</div>';
