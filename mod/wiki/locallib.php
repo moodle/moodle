@@ -145,7 +145,8 @@ function wiki_get_current_version($pageid) {
             FROM {wiki_versions}
             WHERE pageid = ?
             ORDER BY version DESC";
-    return array_pop($DB->get_records_sql($sql, array($pageid), 0, 1));
+    $records = $DB->get_records_sql($sql, array($pageid), 0, 1);
+    return array_pop($records);
 
 }
 

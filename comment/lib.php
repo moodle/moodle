@@ -651,7 +651,7 @@ class comment {
      *
      * @param stdClass $context course context
      */
-    public function reset_course_page_comments($context) {
+    public static function reset_course_page_comments($context) {
         global $DB;
         $contexts = array();
         $contexts[] = $context->id;
