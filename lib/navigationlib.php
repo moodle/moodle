@@ -1202,7 +1202,10 @@ class global_navigation extends navigation_node {
             case CONTEXT_COURSE :
                 if ($issite) {
                     // If it is the front page course, or a block on it then
-                    // everything has already been loaded.
+                    // all we need to do is load the root categories if required
+                    if ($this->show_categories()) {
+                        $this->load_all_categories(self::LOAD_ROOT_CATEGORIES, $showcategories);
+                    }
                     break;
                 }
                 // Load the course associated with the page into the navigation
@@ -1731,7 +1734,7 @@ class global_navigation extends navigation_node {
         } else if (is_object($category) && property_exists($category,'id')) {
             $coursecount = count($this->addedcategories[$category->id]->children->type(self::TYPE_COURSE));
         }
-        return ($coursecount < $limit);
+        return ($coursecount <= $limit);
     }
 
     /**
@@ -1771,10 +1774,10 @@ class global_navigation extends navigation_node {
             list($sql, $params) = $DB->get_in_or_equal(array_keys($this->addedcategories), SQL_PARAMS_NAMED, 'parent', false);
             if ($showbasecategories) {
                 // We need to include categories with parent = 0 as well
-                $sqlwhere .= " AND (parent = :categoryid OR parent = 0) AND parent {$sql}";
+                $sqlwhere .= " AND (cc.parent = :categoryid OR cc.parent = 0) AND cc.parent {$sql}";
             } else {
                 // All we need is categories that match the parent
-                $sqlwhere .= " AND parent = :categoryid AND parent {$sql}";
+                $sqlwhere .= " AND cc.parent = :categoryid AND cc.parent {$sql}";
             }
             $params['categoryid'] = $categoryid;
         } else {
@@ -1785,8 +1788,8 @@ class global_navigation extends navigation_node {
             list($select, $params) = $DB->get_in_or_equal($categoriestoload);
             // We are going to use select twice so double the params
             $params = array_merge($params, $params);
-            $basecategorysql = ($showbasecategories)?' OR depth = 1':'';
-            $sqlwhere .= " AND (id {$select} OR parent {$select}{$basecategorysql})";
+            $basecategorysql = ($showbasecategories)?' OR cc.depth = 1':'';
+            $sqlwhere .= " AND (cc.id {$select} OR cc.parent {$select}{$basecategorysql})";
         }
 
         $categoriesrs = $DB->get_recordset_sql("$sqlselect $sqlwhere $sqlorder", $params);
@@ -2877,15 +2880,7 @@ class global_navigation_for_ajax extends global_navigation {
         // Branchtype will be one of navigation_node::TYPE_*
         switch ($this->branchtype) {
             case self::TYPE_CATEGORY :
-                $this->load_all_categories($this->instanceid);
-                $limit = 20;
-                if (!empty($CFG->navcourselimit)) {
-                    $limit = (int)$CFG->navcourselimit;
-                }
-                $courses = $DB->get_records('course', array('category' => $this->instanceid), 'sortorder','*', 0, $limit);
-                foreach ($courses as $course) {
-                    $this->add_course($course);
-                }
+                $this->load_category($this->instanceid);
                 break;
             case self::TYPE_COURSE :
                 $course = $DB->get_record('course', array('id' => $this->instanceid), '*', MUST_EXIST);
@@ -2943,6 +2938,61 @@ class global_navigation_for_ajax extends global_navigation {
 
         $this->find_expandable($this->expandable);
         return $this->expandable;
+    }
+
+    /**
+     * Loads a single category into the AJAX navigation.
+     *
+     * This function is special in that it doesn't concern itself with the parent of
+     * the requested category or its siblings.
+     * This is because with the AJAX navigation we know exactly what is wanted and only need to
+     * request that.
+     *
+     * @global moodle_database $DB
+     * @param int $categoryid
+     */
+    protected function load_category($categoryid) {
+        global $CFG, $DB;
+
+        $limit = 20;
+        if (!empty($CFG->navcourselimit)) {
+            $limit = (int)$CFG->navcourselimit;
+        }
+
+        $catcontextsql = context_helper::get_preload_record_columns_sql('ctx');
+        $sql = "SELECT cc.*, $catcontextsql
+                  FROM {course_categories} cc
+                  JOIN {context} ctx ON cc.id = ctx.instanceid
+                 WHERE ctx.contextlevel = ".CONTEXT_COURSECAT." AND
+                       (cc.id = :categoryid1 OR cc.parent = :categoryid2)
+              ORDER BY depth ASC, sortorder ASC, id ASC";
+        $params = array('categoryid1' => $categoryid, 'categoryid2' => $categoryid);
+        $categories = $DB->get_recordset_sql($sql, $params, 0, $limit);
+        $subcategories = array();
+        $basecategory = null;
+        foreach ($categories as $category) {
+            context_helper::preload_from_record($category);
+            if ($category->id == $categoryid) {
+                $this->add_category($category, $this);
+                $basecategory = $this->addedcategories[$category->id];
+            } else {
+                $subcategories[] = $category;
+            }
+        }
+        $categories->close();
+
+        if (!is_null($basecategory)) {
+            //echo "<pre>".print_r($subcategories, true).'</pre>';
+            foreach ($subcategories as $category) {
+                $this->add_category($category, $basecategory);
+            }
+        }
+
+        $courses = $DB->get_recordset('course', array('category' => $categoryid), 'sortorder','*', 0, $limit);
+        foreach ($courses as $course) {
+            $this->add_course($course);
+        }
+        $courses->close();
     }
 
     /**
