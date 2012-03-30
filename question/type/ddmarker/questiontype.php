@@ -250,6 +250,7 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
                                     $newcontextid, 'qtype_ddmarker', 'bgimage', $questionid);
 
         $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
     }
 
     /**
@@ -265,6 +266,7 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
         parent::delete_files($questionid, $contextid);
 
         $this->delete_files_in_combined_feedback($questionid, $contextid);
+        $this->delete_files_in_hints($questionid, $contextid);
     }
 
     public function export_to_xml($question, qformat_xml $format, $extra = null) {
