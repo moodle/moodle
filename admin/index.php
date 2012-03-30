@@ -235,7 +235,7 @@ if ($version > $CFG->version) {  // upgrade
         $reloadurl = new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1));
 
         if ($fetchupdates) {
-            require_sesskey();
+            // no sesskey support guaranteed here
             available_update_checker::instance()->fetch();
             redirect($reloadurl);
         }
@@ -274,7 +274,7 @@ if (moodle_needs_upgrading()) {
             $PAGE->set_cacheable(false);
 
             if ($fetchupdates) {
-                require_sesskey();
+                // no sesskey support guaranteed here
                 available_update_checker::instance()->fetch();
                 redirect($PAGE->url);
             }
