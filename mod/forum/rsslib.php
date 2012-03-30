@@ -43,13 +43,11 @@ function forum_rss_get_feed($context, $args) {
 
     $forumid  = clean_param($args[3], PARAM_INT);
     $cm = get_coursemodule_from_instance('forum', $forumid, 0, false, MUST_EXIST);
-    if ($cm) {
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        //context id from db should match the submitted one
-        if ($context->id != $modcontext->id || !has_capability('mod/forum:viewdiscussion', $modcontext)) {
-            return null;
-        }
+    //context id from db should match the submitted one
+    if ($context->id != $modcontext->id || !has_capability('mod/forum:viewdiscussion', $modcontext)) {
+        return null;
     }
 
     $forum = $DB->get_record('forum', array('id' => $forumid), '*', MUST_EXIST);
@@ -73,7 +71,7 @@ function forum_rss_get_feed($context, $args) {
     $dontrecheckcutoff = time()-60;
     if ( $dontrecheckcutoff > $cachedfilelastmodified && forum_rss_newstuff($forum, $cm, $cachedfilelastmodified)) {
         //need to regenerate the cached version
-        $result = forum_rss_feed_contents($forum, $sql);
+        $result = forum_rss_feed_contents($forum, $sql, $modcontext);
         if (!empty($result)) {
             $status = rss_save_file('mod_forum',$filename,$result);
         }
@@ -185,7 +183,7 @@ function forum_rss_feed_discussions_sql($forum, $cm, $newsince=0) {
     }
 
     $forumsort = "d.timemodified DESC";
-    $postdata = "p.id, p.subject, p.created as postcreated, p.modified, p.discussion, p.userid, p.message as postmessage, p.messageformat AS postformat, p.messagetrust AS posttrust";
+    $postdata = "p.id AS postid, p.subject, p.created as postcreated, p.modified, p.discussion, p.userid, p.message as postmessage, p.messageformat AS postformat, p.messagetrust AS posttrust";
 
     $sql = "SELECT $postdata, d.id as discussionid, d.name as discussionname, d.timemodified, d.usermodified, d.groupid, d.timestart, d.timeend,
                    u.firstname as userfirstname, u.lastname as userlastname, u.email, u.picture, u.imagealt
@@ -287,11 +285,12 @@ function forum_rss_get_group_sql($cm, $groupmode, $currentgroup, $modcontext=nul
  *
  * @param stdClass $forum the forum object
  * @param string   $sql   The SQL used to retrieve the contents from the database
+ * @param object $context the context this forum relates to
  * @return bool|string false if the contents is empty, otherwise the contents of the feed is returned
  *
  * @Todo MDL-31129 implement post attachment handling
  */
-function forum_rss_feed_contents($forum, $sql) {
+function forum_rss_feed_contents($forum, $sql, $context) {
     global $CFG, $DB;
 
     $status = true;
@@ -330,7 +329,9 @@ function forum_rss_feed_contents($forum, $sql) {
             }
 
             $formatoptions->trusted = $rec->posttrust;
-            $item->description = format_text($rec->postmessage,$rec->postformat,$formatoptions,$forum->course);
+            $message = file_rewrite_pluginfile_urls($rec->postmessage, 'pluginfile.php', $context->id,
+                'mod_forum', 'post', $rec->postid);
+            $item->description = format_text($message, $rec->postformat, $formatoptions, $forum->course);
 
             //TODO: MDL-31129 implement post attachment handling
             /*if (!$isdiscussion) {
