@@ -75,6 +75,8 @@ class core_repository_renderer extends plugin_renderer_base {
      * wrap-{TOOLSEARCHID}, wrap-{TOOLREFRESHID}, wrap-{TOOLLOGOUTID}, wrap-{TOOLMANAGEID} and
      * wrap-{TOOLHELPID} will have class 'enabled' or 'disabled' when applicable or not for
      * the current repository view;
+     *
+     * @return string
      */
     public function js_template_generallayout() {
         $rv = '
@@ -128,6 +130,8 @@ class core_repository_renderer extends plugin_renderer_base {
      * the width of element with class 'fp-filename' will be set to the repository thumbnail width
      * (unless min-width is set in css) and the content of an element will be replaced with filename
      * supplied by repository;
+     *
+     * @return string
      */
     public function js_template_iconview() {
         $rv = '<div class="fp-iconview">
@@ -157,6 +161,8 @@ class core_repository_renderer extends plugin_renderer_base {
      *
      * Elements with ids 'wrap-{LINKEXTID}', 'wrap-{AUTHORID}' and 'wrap-{LICENSEID}' may be
      * assigned with class 'uneditable' if not applicable for particular repository;
+     *
+     * @return string
      */
     public function js_template_selectlayout() {
         $rv = '<div class="{!}fp-select"><form>
@@ -190,6 +196,8 @@ class core_repository_renderer extends plugin_renderer_base {
      *   {BUTUPLOADID} (any element type, will hold onclick event)
      *
      * Please note that some fields may be hidden using CSS if this is part of quickupload form
+     *
+     * @return string
      */
     public function js_template_uploadform() {
         return '<div class="fp-upload-form mdl-align">
@@ -219,6 +227,8 @@ class core_repository_renderer extends plugin_renderer_base {
 
     /**
      * Content to display during loading process in filepicker (inside element with class 'fp-content').
+     *
+     * @return string
      */
     public function js_template_loading() {
         return '<div style="text-align:center">
@@ -233,6 +243,8 @@ class core_repository_renderer extends plugin_renderer_base {
      * must have element with class 'fp-error', its content will be replaced with error text
      * and the error code will be assigned as additional class to this element
      * used errors: invalidjson, nofilesavailable
+     *
+     * @return string
      */
     public function js_template_error() {
         $rv = '<div class="{!}fp-error" />';
@@ -249,6 +261,8 @@ class core_repository_renderer extends plugin_renderer_base {
      * content of element with class 'fp-msg-text' will be replaced with error/info text;
      *
      * element with class 'fp-msg-butok' will hold onclick event
+     *
+     * @return string
      */
     public function js_template_message() {
         $rv = '<div class="{!}fp-msg">
@@ -270,12 +284,61 @@ class core_repository_renderer extends plugin_renderer_base {
      *
      * content of element with class 'fp-dlg-butrename' will be substituted with appropriate string
      * (Note that it may have long text)
+     *
+     * @return string
      */
     public function js_template_processexistingfile() {
         $rv = '<div class="{!}fp-dlg"><div class="{!}fp-dlg-text"></div>
 <div class="fp-dlg-but"><button class="{!}fp-dlg-butoverwrite" >'.get_string('overwrite', 'repository').'</button></div>
 <div class="fp-dlg-but"><button class="{!}fp-dlg-butrename" /></div>
 <div class="fp-dlg-but"><button class="{!}fp-dlg-butcancel" >'.get_string('cancel').'</button></div>
+</div>';
+        return preg_replace('/\{\!\}/', '', $rv);
+    }
+
+    /**
+     * Template for repository login form including templates for each element type
+     *
+     * Elements with classes 'fp-login-popup', 'fp-login-textarea', 'fp-login-select' and
+     * 'fp-login-input' are templates for displaying respective login form elements. Inside
+     * there must be exactly one element with type <button>, <textarea>, <select> or <input>
+     * (i.e. fp-login-popup should have <button>, fp-login-textarea should have <textarea>, etc.);
+     * They may also contain the <label> element and it's content will be substituted with
+     * label;
+     *
+     * You can also define elements with classes 'fp-login-checkbox', 'fp-login-text',
+     * 'fp-login-radio' but if they are not found, 'fp-login-input' will be used;
+     *
+     * Element with class 'fp-login-submit' will hold on click mouse event (form submission). It
+     * will be removed if at least one popup element is present;
+     *
+     * @return string
+     */
+    public function js_template_loginform() {
+        $rv = '
+<div class="fp-login-form">
+  <form>
+    <table width="100%">
+      <tr class="{!}fp-login-popup">
+        <td colspan="2">
+          <label>'.get_string('popup', 'repository').'</label>
+          <p class="fp-popup"><button class="{!}fp-login-popup-but">'.get_string('login', 'repository').'</button></p>
+        </td>
+      </tr>
+      <tr class="{!}fp-login-textarea">
+        <td colspan="2"><p><textarea></textarea></p></td>
+      </tr>
+      <tr class="{!}fp-login-select">
+        <td align="right"><label></label></td>
+        <td align="left"><select></select></td>
+      </tr>
+      <tr class="{!}fp-login-input">
+        <td align="right" width="30%" valign="center"><label /></td>
+        <td align="left"><input/></td>
+      </tr>
+    </table>
+    <p><button class="{!}fp-login-submit">'.get_string('submit', 'repository').'</button></p>
+  </form>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }

@@ -839,7 +839,68 @@ M.core_filepicker.init = function(Y, options) {
             var login_button_id    = 'fp-form-login-button-'+client_id;
             var popup_button_id    = 'fp-form-popup-button-'+client_id;
 
-            var str = '<div class="fp-login-form">';
+            var loginform_node = Y.Node.create(M.core_filepicker.templates.loginform);
+            loginform_node.one('form').set('id', form_id);
+            this.fpnode.one('.fp-content').setContent('').appendChild(loginform_node);
+            var templates = {
+                'popup' : loginform_node.one('.fp-login-popup'),
+                'textarea' : loginform_node.one('.fp-login-textarea'),
+                'select' : loginform_node.one('.fp-login-select'),
+                'text' : loginform_node.one('.fp-login-text'),
+                'radio' : loginform_node.one('.fp-login-radio'),
+                'checkbox' : loginform_node.one('.fp-login-checkbox'),
+                'input' : loginform_node.one('.fp-login-input')
+            };
+            var container;
+            for (var i in templates) {
+                if (templates[i]) {
+                    container = templates[i].get('parentNode');
+                    container.removeChild(templates[i])
+                }
+            }
+
+            for(var k in l) {
+                if (templates[l[k].type]) {
+                    var node = templates[l[k].type].cloneNode(true);
+                } else {
+                    node = templates['input'].cloneNode(true);
+                }
+                if (l[k].type == 'popup') {
+                    node.one('button').set('id', popup_button_id);
+                    loginform_node.all('.fp-login-submit').remove();
+                    action = 'popup';
+                }else if(l[k].type=='textarea') {
+                    // textarea element
+                    if (node.one('label')) { node.one('label').set('for', l[k].id).setContent(l[k].label) }
+                    node.one('textarea').set('id', l[k].id).set('name', l[k].name);
+                }else if(l[k].type=='select') {
+                    // select element
+                    if (node.one('label')) { node.one('label').set('for', l[k].id).setContent(l[k].label) }
+                    node.one('select').set('id', l[k].id).set('name', l[k].name).setContent('');
+                    for (i in l[k].options) {
+                        node.one('select').appendChild(
+                            Y.Node.create('<option/>').
+                                set('value', l[k].options[i].value).
+                                setContent(l[k].options[i].label))
+                    }
+                }else if(l[k].type=='radio') {
+                    // radio input element
+                    //node.one('label').set('for', l[k].id).setContent(l[k].label)
+                    //node.one('input').set('id', l[k].id).set('name', l[k].name).set('value', l[k].value)
+                    // TODO
+                }else {
+                    // input element
+                    if (node.one('label')) { node.one('label').set('for', l[k].id).setContent(l[k].label) }
+                    node.one('input').
+                        set('type', l[k].type).
+                        set('id', l[k].id).
+                        set('name', l[k].name).
+                        set('value', l[k].value?l[k].value:'')
+                }
+                container.appendChild(node);
+            }
+
+/*            var str = '<div class="fp-login-form">';
             str += '<form id="'+form_id+'">';
             var has_pop = false;
             str +='<table width="100%">';
@@ -900,39 +961,31 @@ M.core_filepicker.init = function(Y, options) {
             }
             str +='</table>';
             str += '</form>';
-
+*/
             // custom lable text
-            var btn_label = data['login_btn_label']?data['login_btn_label']:M.str.repository.submit;
             if (action != 'popup') {
-                str += '<p><input type="button" id="';
+                if (data['login_btn_label']) {
+                    loginform_node.one('.fp-login-submit').setContent(data['login_btn_label'])
+                }
+                var button_id = login_button_id;
                 switch (action) {
                     case 'search':
-                        str += search_button_id;
+                        button_id = search_button_id;
                         break;
                     case 'download':
-                        str += download_button_id;
-                        break;
-                    default:
-                        str += login_button_id;
+                        button_id = download_button_id;
                         break;
                 }
-                str += '" value="'+btn_label+'" /></p>';
+                loginform_node.one('.fp-login-submit').set('id', button_id);
             }
 
-            str += '</div>';
-
-            // insert login form
-            try {
-                panel.set('innerHTML', str);
-            } catch(e) {
-                alert(M.str.repository.xhtmlerror);
-            }
             // register buttons
             // process login action
             var login_button = Y.one('#'+login_button_id);
             var scope = this;
             if (login_button) {
-                login_button.on('click', function(){
+                login_button.on('click', function(e){
+                    e.preventDefault();
                     // collect form data
                     var data = this.logindata;
                     var scope = this;
@@ -964,7 +1017,8 @@ M.core_filepicker.init = function(Y, options) {
             }
             var search_button = Y.one('#'+search_button_id);
             if (search_button) {
-                search_button.on('click', function(){
+                search_button.on('click', function(e){
+                    e.preventDefault();
                     var data = this.logindata;
                     var params = {};
 
@@ -997,6 +1051,7 @@ M.core_filepicker.init = function(Y, options) {
                     }, true);
                 }, this);
             }
+            // TODO not used code?
             var download_button = Y.one('#'+download_button_id);
             if (download_button) {
                 download_button.on('click', function(){
@@ -1011,7 +1066,7 @@ M.core_filepicker.init = function(Y, options) {
                     e.preventDefault();
                 }, this);
             }
-            var elform = Y.one('#'+form_id);
+            var elform = loginform_node.one('form');
             elform.on('keydown', function(e) {
                 if (e.keyCode == 13) {
                     switch (action) {
@@ -1032,6 +1087,13 @@ M.core_filepicker.init = function(Y, options) {
             // highlight the current repository in repositories list
             scope.fpnode.all('.fp-repo.active').removeClass('active');
             scope.fpnode.all('#fp-repo-'+scope.options.client_id+'-'+obj.repo_id).addClass('active')
+            // add class repository_REPTYPE to the filepicker (for repository-specific styles)
+            for (var i in scope.options.repositories) {
+                scope.fpnode.removeClass('repository_'+scope.options.repositories[i].type)
+            }
+            if (obj.repo_id && scope.options.repositories[obj.repo_id]) {
+                scope.fpnode.addClass('repository_'+scope.options.repositories[obj.repo_id].type)
+            }
             // display response
             if (obj.login) {
                 scope.viewbar_set_enabled(false);
