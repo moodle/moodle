@@ -138,6 +138,13 @@ class workshop_allocation_result implements renderable {
     }
 
     /**
+     * @return int|null the timestamp of when the final status was set
+     */
+    public function get_timeend() {
+        return $this->timeend;
+    }
+
+    /**
      * Appends a new message to the log
      *
      * The available levels are

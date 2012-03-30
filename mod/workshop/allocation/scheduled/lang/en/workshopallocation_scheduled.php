@@ -36,5 +36,12 @@ Internally, the random allocation method is executed with the parameters pre-def
 Note that the scheduled allocation is *not* executed if you manually switch the workshop into the assessment phase before the submissions deadline. You have to allocate submissions yourself in that case. The scheduled allocation method is particularly useful when used together with the automatic phase switching feature.';
 $string['nosubmissionend'] = 'You have to define the submissions deadline in the workshop settings in order to use scheduled allocation. Press the \'Continue\' button to edit the workshop settings.';
 $string['pluginname'] = 'Scheduled allocation';
-$string['resultdisabled'] = 'Scheduled allocation DISABLED';
-$string['resultenabled'] = 'Scheduled allocation ENABLED';
+$string['resultdisabled'] = 'Scheduled allocation disabled';
+$string['resultenabled'] = 'Scheduled allocation enabled';
+$string['resultfailed'] = 'Unable to automatically allocate submissions';
+$string['resultfailedconfig'] = 'Scheduled allocation misconfigured';
+$string['resultfaileddeadline'] = 'Workshop does not have the submissions deadline defined';
+$string['resultfailedphase'] = 'Workshop not in the submission phase';
+$string['resultvoid'] = 'No submissions were allocated';
+$string['resultvoiddeadline'] = 'Not after the submissions deadline yet';
+$string['resultvoidexecuted'] = 'The allocation has been already executed';
