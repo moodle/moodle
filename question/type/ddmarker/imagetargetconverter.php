@@ -128,7 +128,7 @@ if (!$confirm) {
         $cancelurl = new moodle_url($PAGE->url);
         echo $OUTPUT->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
     } else {
-        echo $contextlist->render('listitem', true, $top);
+        echo $contextlist->render('listitemlist', true, $top);
     }
 } else if (confirm_sesskey()) {
     $questionlist->prepare_for_processing($top);

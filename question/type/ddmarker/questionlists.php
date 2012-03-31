@@ -61,7 +61,7 @@ abstract class qtype_ddmarker_list_item {
         if (null === $progresstrace) {
             $progresstrace = new html_list_progress_trace();
         }
-        $progresstrace->output((string)$this, $depth);
+        $progresstrace->output($this->render('listitemprocessing', false), $depth);
         $this->process_children($progresstrace, $depth);
     }
 
@@ -143,7 +143,7 @@ class qtype_ddmarker_question_list_item extends qtype_ddmarker_list_item {
         global $PAGE;
         $a = new stdClass();
         $a->name = $this->record->name;
-        $thisitem = get_string('listitemquestion', 'qtype_ddmarker', $a);
+        $thisitem = get_string($stringidentifier.'question', 'qtype_ddmarker', $a);
         if ($link) {
             $actionurl = new moodle_url($PAGE->url, array('questionid'=> $this->record->id));
             $thisitem = html_writer::tag('a', $thisitem, array('href' => $actionurl));
