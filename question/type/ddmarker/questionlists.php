@@ -144,6 +144,10 @@ class qtype_ddmarker_question_list_item extends qtype_ddmarker_list_item {
         $a = new stdClass();
         $a->name = $this->record->name;
         $thisitem = get_string('listitemquestion', 'qtype_ddmarker', $a);
+        if ($link) {
+            $actionurl = new moodle_url($PAGE->url, array('questionid'=> $this->record->id));
+            $thisitem = html_writer::tag('a', $thisitem, array('href' => $actionurl));
+        }
         return $thisitem;
     }
     public function question_ids() {

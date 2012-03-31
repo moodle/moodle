@@ -61,6 +61,7 @@ class qtype_ddmarker_question_converter_list_item extends qtype_ddmarker_questio
 
 $categoryid = optional_param('categoryid', 0, PARAM_INT);
 $qcontextid = optional_param('contextid', 0, PARAM_INT);
+$questionid = optional_param('questionid', 0, PARAM_INT);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 // Check the user is logged in.
 require_login();
@@ -89,6 +90,10 @@ if ($qcontextid) {
     $from  .= ', {question_categories} cat2';
     $where .= 'AND cat.contextid = cat2.contextid AND cat2.id = :categoryid ';
     $params['categoryid'] = $categoryid;
+} else if ($questionid) {
+    //fetch all questions from this cats context
+    $where .= 'AND q.id = :questionid ';
+    $params['questionid'] = $questionid;
 }
 $sql = 'SELECT q.*, cat.contextid '.$from.$where.'ORDER BY cat.id, q.name';
 
@@ -106,8 +111,10 @@ $questionlist = new qtype_ddmarker_question_converter_list($questions, $category
 foreach ($questions as $question) {
     $questionlist->leaf_node($question->id, 1);
 }
-$questionsselected = (bool) ($categoryid || $qcontextid);
-if ($categoryid) {
+$questionsselected = (bool) ($categoryid || $qcontextid || $questionid);
+if ($questionid) {
+    $top = $questionlist->get_instance($questionid);
+} else if ($categoryid) {
     $top = $categorylist->get_instance($categoryid);
 } else if ($qcontextid) {
     $top = $contextlist->get_instance($qcontextid);
@@ -117,7 +124,7 @@ if ($categoryid) {
 if (!$confirm) {
     if ($questionsselected) {
         echo $contextlist->render('listitemaction', false, $top);
-        $cofirmedurl = new moodle_url($PAGE->url, compact('categoryid', 'contextid')+array('confirm'=>1));
+        $cofirmedurl = new moodle_url($PAGE->url, compact('categoryid', 'contextid', 'questionid') + array('confirm'=>1));
         $cancelurl = new moodle_url($PAGE->url);
         echo $OUTPUT->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
     } else {
