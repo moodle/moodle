@@ -55,7 +55,70 @@ class qtype_ddmarker_question_converter_list_item extends qtype_ddmarker_questio
         parent::process($progresstrace, $depth);//outputs progress message
     }
     protected function convert_question() {
-        $questionrec = $this->record;
+        global $DB;
+        foreach ($this->answers as $answer) {
+            $no = 1;
+            if ('*' !== $answer->answer) {
+                $drop = new stdClass();
+                $drop->questionid = $this->record->id;
+                $drop->shape = 'rectangle';
+                $drop->no = $no;
+                list($x1, $y1, $x2, $y2) = explode(',', $answer->answer);
+                $width = $x2 - $x1;
+                $height = $y2 - $y1;
+                $drop->coords = "{$x1},{$y1};{$width},{$height}";
+                $drop->choice = 1;
+                $DB->insert_record('qtype_ddmarker_drops', $drop);
+                $no++;
+                $correctfeedback = $answer->feedback;
+                $correctfeedbackformat = $answer->feedbackformat;
+            } else {
+                $incorrectfeedback = $answer->feedback;
+                $incorrectfeedbackformat = $answer->feedbackformat;
+            }
+        }
+        $drag = new stdClass();
+        $drag->questionid = $this->record->id;
+        $drag->no = 1;
+        $drag->label = "X";
+        $drag->infinite = 0;
+        $DB->insert_record('qtype_ddmarker_drags', $drag);
+
+        $ddmarker = new stdClass();
+        $ddmarker->questionid = $this->record->id;
+        $ddmarker->shuffleanswers = 0;
+        $ddmarker->correctfeedback = $correctfeedback;
+        $ddmarker->correctfeedbackformat = $correctfeedbackformat;
+        $ddmarker->partiallycorrectfeedback = '';
+        $ddmarker->partiallycorrectfeedbackformat = 1;
+        $ddmarker->incorrectfeedback = $incorrectfeedback;
+        $ddmarker->incorrectfeedbackformat = $incorrectfeedbackformat;
+        $ddmarker->shownumcorrect = 0;
+        $ddmarker->showmisplaced = 0;
+        $DB->insert_record('qtype_ddmarker', $ddmarker);
+
+        $newrec = clone($this->record);
+        unset($newrec->contextid);
+        $newrec->qtype = 'ddmarker';
+        $newrec->timemodified = time();
+        $DB->update_record('question', $newrec);
+
+        $fs = get_file_storage();
+        $bgimagefile = $fs->get_file($this->course_context_id(),
+                                        'course',
+                                        'legacy',
+                                        '0',
+                                        '/'.dirname($this->imagetargetrecord->qimage).'/',
+                                        basename($this->imagetargetrecord->qimage));
+        $newbgimagefile = new stdClass();
+        $newbgimagefile->component = 'qtype_ddmarker';
+        $newbgimagefile->filearea = 'bgimage';
+        $newbgimagefile->filepath = '/';
+        $newbgimagefile->itemid = $this->record->id;
+        $fs->create_file_from_storedfile($newbgimagefile, $bgimagefile);
+
+        $DB->delete_records('question_imagetarget', array('question' => $this->record->id));
+        $DB->delete_records('question_answers', array('question' => $this->record->id));
     }
 }
 
@@ -77,7 +140,7 @@ echo $OUTPUT->heading_with_help(get_string('imagetargetconverter', 'qtype_ddmark
 
 $params = array();
 $from = 'FROM {question_categories} cat, {question} q';
-$where = ' WHERE q.category =  cat.id ';
+$where = ' WHERE q.qtype = \'imagetarget\' AND q.category =  cat.id ';
 
 if ($qcontextid) {
     $qcontext = get_context_instance_by_id($qcontextid, MUST_EXIST);

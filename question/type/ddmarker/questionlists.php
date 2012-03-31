@@ -96,6 +96,13 @@ abstract class qtype_ddmarker_list_item {
         return get_class($this).' '.$this->record->id;
     }
 
+    /**
+     * @return the course id in which this item is contained or the id of the front page course
+     */
+    public function course_context_id() {
+        return $this->parent_node()->course_context_id();
+    }
+
 }
 class qtype_ddmarker_category_list_item extends qtype_ddmarker_list_item {
 
@@ -184,6 +191,14 @@ class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
             $thisitem = html_writer::tag('a', $thisitem, array('href' => $actionurl));
         }
         return $thisitem.$this->render_children($stringidentifier, $link);
+    }
+
+    public function course_context_id() {
+        if ((int)$this->record->contextlevel === CONTEXT_COURSE) {
+            return $this->record->id;
+        } else {
+            return parent::course_context_id();
+        }
     }
 }
 /**
