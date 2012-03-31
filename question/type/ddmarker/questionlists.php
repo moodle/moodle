@@ -1,5 +1,4 @@
 <?php
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,8 @@
  * These classes handle transforming arrays of records into a linked tree of contexts, categories and questions.
  *
  * @package    qtype
- * @subpackage pmatch
- * @copyright  2012 The Open University
+ * @subpackage ddmarker
+ * @copyright  2012 Jamie Pratt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qtype_ddmarker_list_item {

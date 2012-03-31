@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This page lets admins check the environment requirements for this question type.
+ * This page lets admin convert imagetarget questions to the ddmarker question type.
  *
  * @package    qtype
- * @subpackage pmatch
- * @copyright  2012 The Open University
+ * @subpackage ddmarker
+ * @copyright  2012 Jamie Pratt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
