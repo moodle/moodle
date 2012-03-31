@@ -212,7 +212,7 @@ input[type="text"], input[type="password"], textarea {
 /*
 Coursebox Info & Summary
 ------------------------*/
-.coursebox h3
+.coursebox h3,
 .coursebox .info,
 .coursebox .summary {
     text-align: left;
