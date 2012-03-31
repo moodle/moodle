@@ -22,7 +22,7 @@ Test execution
 How to add more tests
 ---------------------
 1. create `tests` directory in any plugin
-2. add `*_test.php` files with custom class that extends `basic_testcase`
+2. add `*_test.php` files with custom class that extends `basic_testcase` or `advanced_testcase`
 3. manually add all core unit test locations to `phpunit.xml.dist`
 
 
@@ -44,6 +44,9 @@ FAQs
 
 TODO
 ----
-* stage 2 - implement advanced_testcase - support for database modifications, object generators, automatic rollback of db, globals and dataroot
-* stage 3 - mocking and other advanced features, add support for execution of functional DB tests for different engines together (new options in phpunit.xml)
-* other - support for execution of tests and cli/util.php from web UI (to be implemented via shell execution), shell script that prepares everything for the first execution
+* add plugin callbacks to data generator
+* convert remaining tests
+* improve performance
+* hide old SimpleTests and FUnctional DB tests in UI
+* shell script that prepares everything for the first execution
+* optionally support for execution of tests and cli/util.php from web UI (to be implemented via shell execution)

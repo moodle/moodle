@@ -2776,7 +2776,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
         $forcedebug = in_array($USER->id, $debugusers);
     }
 
-    if (!$forcedebug and (empty($CFG->debug) || $CFG->debug < $level)) {
+    if (!$forcedebug and (empty($CFG->debug) || ($CFG->debug != -1 and $CFG->debug < $level))) {
         return false;
     }
 
@@ -2789,7 +2789,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
             $backtrace = debug_backtrace();
         }
         $from = format_backtrace($backtrace, CLI_SCRIPT);
-        if (PHPUNITTEST) {
+        if (PHPUNIT_TEST) {
             echo 'Debugging: ' . $message . "\n" . $from;
 
         } else if (!empty($UNITTEST->running)) {
