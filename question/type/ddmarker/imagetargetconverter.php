@@ -32,16 +32,30 @@ class qtype_ddmarker_question_converter_list extends qtype_ddmarker_question_lis
     protected function new_list_item($record) {
         return new qtype_ddmarker_question_converter_list_item($record, $this, $this->categorylist);
     }
+    public function prepare_for_processing($top) {
+        global $DB;
+        $questionids = $top->question_ids();
+        list($inorequalsql, $inorequalparams) = $DB->get_in_or_equal($questionids);
+        $imagetargetrecords = $DB->get_records_select('question_imagetarget', 'question '.$inorequalsql, $inorequalparams);
+        $answers = array();
+        foreach ($imagetargetrecords as $imagetargetrecord) {
+            $this->get_instance($imagetargetrecord->question)->imagetargetrecord = $imagetargetrecord;
+        }
+        $answerrecords = $DB->get_records_select('question_answers', 'question '.$inorequalsql, $inorequalparams);
+        foreach ($answerrecords as $answerrecord) {
+            $this->get_instance($answerrecord->question)->answers[] = $answerrecord;
+        }
+    }
 }
 class qtype_ddmarker_question_converter_list_item extends qtype_ddmarker_question_list_item {
+    public $imagetargetrecord = null;
+    public $answers = array();
     public function process($progresstrace = null, $depth = 0) {
         $this->convert_question();
         parent::process($progresstrace, $depth);//outputs progress message
     }
-
     protected function convert_question() {
         $questionrec = $this->record;
-
     }
 }
 
@@ -76,10 +90,7 @@ if ($qcontextid) {
     $where .= 'AND cat.contextid = cat2.contextid AND cat2.id = :categoryid ';
     $params['categoryid'] = $categoryid;
 }
-$sql = 'SELECT q.id, cat.id AS cat_id, cat.contextid, q.name '.
-                                            $from.
-                                            $where.
-                                            'ORDER BY cat.id, q.name';
+$sql = 'SELECT q.*, cat.contextid '.$from.$where.'ORDER BY cat.id, q.name';
 
 $questions = $DB->get_records_sql($sql, $params);
 
@@ -113,6 +124,7 @@ if (!$confirm) {
         echo $contextlist->render('listitem', true, $top);
     }
 } else if (confirm_sesskey()) {
+    $questionlist->prepare_for_processing($top);
     $top->process();
 }
 

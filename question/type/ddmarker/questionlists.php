@@ -72,6 +72,18 @@ abstract class qtype_ddmarker_list_item {
         }
     }
 
+    public function question_ids() {
+        return $this->child_question_ids();
+    }
+
+    protected function child_question_ids() {
+        $ids = array();
+        foreach ($this->children as $child) {
+            $ids = array_merge($ids, $child->question_ids());
+        }
+        return $ids;
+    }
+
     protected function render_children($stringidentifier, $link) {
         $children = array();
         foreach ($this->children as $child) {
@@ -124,7 +136,7 @@ class qtype_ddmarker_question_list_item extends qtype_ddmarker_list_item {
     }
 
     public function parent_node() {
-        return $this->parentlist->get_instance($this->record->cat_id);
+        return $this->parentlist->get_instance($this->record->category);
     }
 
     public function render ($stringidentifier, $link) {
@@ -133,6 +145,9 @@ class qtype_ddmarker_question_list_item extends qtype_ddmarker_list_item {
         $a->name = $this->record->name;
         $thisitem = get_string('listitemquestion', 'qtype_ddmarker', $a);
         return $thisitem;
+    }
+    public function question_ids() {
+        return array($this->record->id);
     }
 }
 class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
@@ -254,5 +269,7 @@ class qtype_ddmarker_question_list extends qtype_ddmarker_list {
         $this->categorylist = $categorylist;
         $this->records = $questions;
         parent::make_list_item_instances_from_records ();
+    }
+    public function prepare_for_processing($top) {
     }
 }
