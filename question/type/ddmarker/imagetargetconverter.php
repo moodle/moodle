@@ -60,6 +60,21 @@ abstract class qtype_ddmarker_list_item {
         }
     }
 
+    public function process($progresstrace = null, $depth = 0) {
+        if (null === $progresstrace) {
+            $progresstrace = new html_list_progress_trace();
+        }
+        $progresstrace->output((string)$this, $depth);
+        $this->process_children($progresstrace, $depth);
+    }
+
+    protected function process_children($progresstrace, $depth) {
+        $children = array();
+        foreach ($this->children as $child) {
+            $child->process($progresstrace, $depth + 1);
+        }
+    }
+
     protected function render_children($stringidentifier, $link) {
         $children = array();
         foreach ($this->children as $child) {
@@ -313,7 +328,7 @@ if (!$confirm) {
         echo $contextlist->render('listitem', true, $top);
     }
 } else if (confirm_sesskey()) {
-
+    $top->process();
 }
 
 // Footer.
