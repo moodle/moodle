@@ -28,6 +28,23 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot.'/question/type/ddmarker/questionlists.php');
 
+class qtype_ddmarker_question_converter_list extends qtype_ddmarker_question_list {
+    protected function new_list_item($record) {
+        return new qtype_ddmarker_question_converter_list_item($record, $this, $this->categorylist);
+    }
+}
+class qtype_ddmarker_question_converter_list_item extends qtype_ddmarker_question_list_item {
+    public function process($progresstrace = null, $depth = 0) {
+        $this->convert_question();
+        parent::process($progresstrace, $depth);//outputs progress message
+    }
+
+    protected function convert_question() {
+        $questionrec = $this->record;
+
+    }
+}
+
 $categoryid = optional_param('categoryid', 0, PARAM_INT);
 $qcontextid = optional_param('contextid', 0, PARAM_INT);
 $confirm = optional_param('confirm', 0, PARAM_INT);
@@ -73,7 +90,7 @@ foreach ($questions as $question) {
 
 $contextlist = new qtype_ddmarker_context_list(array_unique($contextids));
 $categorylist = new qtype_ddmarker_category_list($contextids, $contextlist);
-$questionlist = new qtype_ddmarker_question_list($questions, $categorylist);
+$questionlist = new qtype_ddmarker_question_converter_list($questions, $categorylist);
 
 foreach ($questions as $question) {
     $questionlist->leaf_node($question->id, 1);
