@@ -105,7 +105,7 @@ class plugin_defective_exception extends moodle_exception {
  * Please do not make large upgrade blocks with lots of operations,
  * for example when adding tables keep only one table operation per block.
  *
- * @global object
+ * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
  * @param bool $allowabort allow user to abort script execution here
@@ -146,7 +146,7 @@ function upgrade_main_savepoint($result, $version, $allowabort=true) {
  * It stores module version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
  *
- * @global object
+ * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
  * @param string $modname name of module
@@ -186,7 +186,7 @@ function upgrade_mod_savepoint($result, $version, $modname, $allowabort=true) {
  * It stores block version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
  *
- * @global object
+ * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
  * @param string $blockname name of block
@@ -226,6 +226,7 @@ function upgrade_block_savepoint($result, $version, $blockname, $allowabort=true
  * It stores plugin version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
  *
+ * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
  * @param string or float $version main version
  * @param string $type name of plugin

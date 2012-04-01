@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,12 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of log events
+ * Definition of log events associated with the current component
  *
- * @package    core
- * @subpackage admin
- * @copyright  2010 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The log events defined on this file are processed and stored into
+ * the Moodle DB after any install or upgrade operation. All plugins
+ * support this.
+ *
+ * For more information, take a look to the documentation available:
+ *     - Logging API: {@link http://docs.moodle.org/dev/Logging_API}
+ *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *
+ * @package   core
+ * @category  log
+ * @copyright 2010 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
