@@ -162,41 +162,44 @@ $sql = 'SELECT q.*, cat.contextid '.$from.$where.'ORDER BY cat.id, q.name';
 
 $questions = $DB->get_records_sql($sql, $params);
 
-$contextids = array();
-foreach ($questions as $question) {
-    $contextids[] = $question->contextid;
-}
-
-$contextlist = new qtype_ddmarker_context_list(array_unique($contextids));
-$categorylist = new qtype_ddmarker_category_list($contextids, $contextlist);
-$questionlist = new qtype_ddmarker_question_converter_list($questions, $categorylist);
-
-foreach ($questions as $question) {
-    $questionlist->leaf_node($question->id, 1);
-}
-$questionsselected = (bool) ($categoryid || $qcontextid || $questionid);
-if ($questionid) {
-    $top = $questionlist->get_instance($questionid);
-} else if ($categoryid) {
-    $top = $categorylist->get_instance($categoryid);
-} else if ($qcontextid) {
-    $top = $contextlist->get_instance($qcontextid);
+if (!count($questions)) {
+    echo html_writer::tag('div', get_string('noquestionsfound', 'qtype_ddmarker'));
 } else {
-    $top = $contextlist->root_node();
-}
-if (!$confirm) {
-    if ($questionsselected) {
-        echo $contextlist->render('listitemaction', false, $top);
-        $cofirmedurl = new moodle_url($PAGE->url, compact('categoryid', 'contextid', 'questionid') + array('confirm'=>1));
-        $cancelurl = new moodle_url($PAGE->url);
-        echo $OUTPUT->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
-    } else {
-        echo $contextlist->render('listitemlist', true, $top);
+    $contextids = array();
+    foreach ($questions as $question) {
+        $contextids[] = $question->contextid;
     }
-} else if (confirm_sesskey()) {
-    $questionlist->prepare_for_processing($top);
-    $top->process();
-}
 
+    $contextlist = new qtype_ddmarker_context_list(array_unique($contextids));
+    $categorylist = new qtype_ddmarker_category_list($contextids, $contextlist);
+    $questionlist = new qtype_ddmarker_question_converter_list($questions, $categorylist);
+
+    foreach ($questions as $question) {
+        $questionlist->leaf_node($question->id, 1);
+    }
+    $questionsselected = (bool) ($categoryid || $qcontextid || $questionid);
+    if ($questionid) {
+        $top = $questionlist->get_instance($questionid);
+    } else if ($categoryid) {
+        $top = $categorylist->get_instance($categoryid);
+    } else if ($qcontextid) {
+        $top = $contextlist->get_instance($qcontextid);
+    } else {
+        $top = $contextlist->root_node();
+    }
+    if (!$confirm) {
+        if ($questionsselected) {
+            echo $contextlist->render('listitemaction', false, $top);
+            $cofirmedurl = new moodle_url($PAGE->url, compact('categoryid', 'contextid', 'questionid') + array('confirm'=>1));
+            $cancelurl = new moodle_url($PAGE->url);
+            echo $OUTPUT->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
+        } else {
+            echo $contextlist->render('listitemlist', true, $top);
+        }
+    } else if (confirm_sesskey()) {
+        $questionlist->prepare_for_processing($top);
+        $top->process();
+    }
+}
 // Footer.
 echo $OUTPUT->footer();

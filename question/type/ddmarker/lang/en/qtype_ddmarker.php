@@ -69,6 +69,7 @@ $string['marker'] = 'Marker';
 $string['marker_n'] = 'Marker {no}';
 $string['markers'] = 'Markers';
 $string['nolabel'] = 'No label text';
+$string['noquestionsfound'] = 'No questions found to convert here.';
 $string['pleasedragatleastonemarker'] = 'Your answer is not complete, you must place at least one marker on the image.';
 $string['pluginname'] = 'Drag and drop markers';
 $string['previewarea'] = 'Preview area -';
