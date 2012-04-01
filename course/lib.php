@@ -2830,6 +2830,7 @@ function add_mod_to_section($mod, $beforemod=NULL) {
         return $section->id;     // Return course_sections ID that was used.
 
     } else {  // Insert a new record
+        $section = new stdClass();
         $section->course   = $mod->course;
         $section->section  = $mod->section;
         $section->summary  = "";
