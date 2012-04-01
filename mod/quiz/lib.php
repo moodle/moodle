@@ -473,6 +473,8 @@ function quiz_cron() {
         }
     }
     mtrace("Finished legacy quiz reports");
+
+    return true;
 }
 
 /**
