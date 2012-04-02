@@ -36,7 +36,7 @@ class backup_task_test extends advanced_testcase {
     protected $courseid;  // course id used for testing
     protected $userid;      // user record used for testing
 
-    public function setUp() {
+    protected function setUp() {
         global $DB, $CFG;
         parent::setUp();
 

@@ -35,7 +35,7 @@ class moodle1_converter_test extends advanced_testcase {
     /** @var string the name of the directory containing the unpacked Moodle 1.9 backup */
     protected $tempdir;
 
-    public function setUp() {
+    protected function setUp() {
         global $CFG;
 
         $this->tempdir = convert_helper::generate_id('simpletest');
@@ -67,7 +67,7 @@ class moodle1_converter_test extends advanced_testcase {
         );
     }
 
-    public function tearDown() {
+    protected function tearDown() {
         global $CFG;
         if (empty($CFG->keeptempdirectoriesonbackup)) {
             fulldelete("$CFG->tempdir/backup/$this->tempdir");

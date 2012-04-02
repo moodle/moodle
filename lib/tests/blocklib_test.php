@@ -53,14 +53,14 @@ class moodle_block_manager_testcase extends basic_testcase {
     protected $testpage;
     protected $blockmanager;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->testpage = new moodle_page();
         $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM));
         $this->blockmanager = new testable_block_manager($this->testpage);
     }
 
-    public function tearDown() {
+    protected function tearDown() {
         $this->testpage = null;
         $this->blockmanager = null;
         parent::tearDown();

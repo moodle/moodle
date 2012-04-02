@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/filterlib.php');
  */
 class filter_active_global_test extends advanced_testcase {
 
-    public function setUp() {
+    protected function setUp() {
         global $DB;
         parent::setUp();
         $DB->delete_records('filter_active', array());
@@ -236,7 +236,7 @@ class filter_active_global_test extends advanced_testcase {
  */
 class filter_active_local_test extends advanced_testcase {
 
-    public function setUp() {
+    protected function setUp() {
         global $DB;
         parent::setUp();
         $DB->delete_records('filter_active', array());
@@ -317,7 +317,7 @@ class filter_active_local_test extends advanced_testcase {
  */
 class filter_config_test extends advanced_testcase {
 
-    public function setUp() {
+    protected function setUp() {
         global $DB;
         parent::setUp();
         $DB->delete_records('filter_config', array());
@@ -383,7 +383,7 @@ class filter_get_active_available_in_context_test extends advanced_testcase {
         self::$syscontext = context_system::instance();
     }
 
-    public function setUp() {
+    protected function setUp() {
         global $DB;
         parent::setUp();
 
@@ -562,7 +562,7 @@ class filter_preload_activities_test extends advanced_testcase {
         self::$activity2context = context_module::instance($page2->cmid);
     }
 
-    public function setUp() {
+    protected function setUp() {
         global $DB;
         parent::setUp();
 
@@ -653,7 +653,7 @@ class filter_preload_activities_test extends advanced_testcase {
 
 
 class filter_delete_config_test extends advanced_testcase {
-    public function setUp() {
+    protected function setUp() {
         global $DB;
         parent::setUp();
 
@@ -708,7 +708,7 @@ class filter_filter_set_applies_to_strings extends advanced_testcase {
     protected $origcfgstringfilters;
     protected $origcfgfilterall;
 
-    public function setUp() {
+    protected function setUp() {
         global $DB, $CFG;
         parent::setUp();
 
@@ -721,7 +721,7 @@ class filter_filter_set_applies_to_strings extends advanced_testcase {
         $this->origcfgfilterall = $CFG->filterall;
     }
 
-    public function tearDown() {
+    protected function tearDown() {
         global $CFG;
         $CFG->stringfilters = $this->origcfgstringfilters;
         $CFG->filterall = $this->origcfgfilterall;

@@ -42,7 +42,7 @@ class css_optimiser_test extends advanced_testcase {
     /**
      * Sets up the test class
      */
-    public function setUp() {
+    protected function setUp() {
         global $CFG;
         parent::setUp();
         // We need to disable these if they are enabled to that we can predict

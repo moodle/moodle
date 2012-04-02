@@ -39,7 +39,7 @@ class backup_check_test extends advanced_testcase {
     protected $courseid;  // course id used for testing
     protected $userid;    // user record id
 
-    public function setUp() {
+    protected function setUp() {
         global $DB, $CFG;
         parent::setUp();
 

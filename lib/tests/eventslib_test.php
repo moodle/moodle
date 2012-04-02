@@ -103,7 +103,7 @@ class eventslib_test extends advanced_testcase {
      * data have to be artificially inseminated (:-) in the DB.
      * @return void
      */
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         // Set global category settings to -1 (not force)
         sample_function_handler('reset');
@@ -117,7 +117,7 @@ class eventslib_test extends advanced_testcase {
      * Delete temporary entries from the database
      * @return void
      */
-    public function tearDown() {
+    protected function tearDown() {
         events_uninstall('unittest');
         parent::tearDown();
     }

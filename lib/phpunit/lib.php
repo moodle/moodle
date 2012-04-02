@@ -954,7 +954,7 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
         self::$extradb = $d;
     }
 
-    public function setUp() {
+    protected function setUp() {
         global $DB;
 
         if (self::$extradb) {
@@ -964,7 +964,7 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
         }
     }
 
-    public function tearDown() {
+    protected function tearDown() {
         // delete all test tables
         $dbman = $this->tdb->get_manager();
         $tables = $this->tdb->get_tables(false);

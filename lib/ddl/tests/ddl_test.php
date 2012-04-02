@@ -30,7 +30,7 @@ class ddl_testcase extends database_driver_testcase {
     private $tables = array();
     private $records= array();
 
-    public function setUp() {
+    protected function setUp() {
         //global $CFG;
         //require_once($CFG->libdir . '/adminlib.php');
 
