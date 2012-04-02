@@ -23,9 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Include all the needed stuff
-global $CFG;
-require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+require_once(__DIR__.'/fixtures/plan_fixtures.php');
 
 
 /**
@@ -148,11 +146,3 @@ class backup_plan_test extends advanced_testcase {
     }
 }
 
-
-/**
- * Instantiable class extending base_plan in order to be able to perform tests
- */
-class mock_base_plan extends base_plan {
-    public function build() {
-    }
-}

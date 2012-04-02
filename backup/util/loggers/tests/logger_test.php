@@ -34,10 +34,11 @@ require_once($CFG->dirroot . '/backup/util/loggers/output_indented_logger.class.
 require_once($CFG->dirroot . '/backup/util/loggers/database_logger.class.php');
 require_once($CFG->dirroot . '/backup/util/loggers/file_logger.class.php');
 
+
 /**
  * logger tests (all)
  */
-class logger_test extends basic_testcase {
+class backup_logger_test extends basic_testcase {
 
     /**
      * test base_logger class

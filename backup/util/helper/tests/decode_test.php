@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 /**
  * restore_decode tests (both rule and content)
  */
-class restore_decode_test extends basic_testcase {
+class backup_restore_decode_test extends basic_testcase {
 
     /**
      * test restore_decode_rule class

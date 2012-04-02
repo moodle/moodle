@@ -46,7 +46,6 @@ TODO
 ----
 * add plugin callbacks to data generator
 * convert remaining tests
-* improve performance
 * hide old SimpleTests and FUnctional DB tests in UI
 * shell script that prepares everything for the first execution
 * optionally support for execution of tests and cli/util.php from web UI (to be implemented via shell execution)

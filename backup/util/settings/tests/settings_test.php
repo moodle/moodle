@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/backup/util/ui/backup_ui_setting.class.php');
 /**
  * setting tests (all)
  */
-class setting_test extends basic_testcase {
+class backp_settings_test extends basic_testcase {
 
     /**
      * test base_setting class

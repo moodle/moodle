@@ -23,65 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Include all the needed stuff
-global $CFG;
-require_once($CFG->dirroot . '/backup/util/interfaces/checksumable.class.php');
-require_once($CFG->dirroot . '/backup/util/interfaces/processable.class.php');
-require_once($CFG->dirroot . '/backup/util/interfaces/annotable.class.php');
-require_once($CFG->dirroot . '/backup/util/interfaces/executable.class.php');
-require_once($CFG->dirroot . '/backup/util/interfaces/loggable.class.php');
-require_once($CFG->dirroot . '/backup/backup.class.php');
-require_once($CFG->dirroot . '/backup/util/factories/backup_factory.class.php');
-require_once($CFG->dirroot . '/backup/util/helper/backup_array_iterator.class.php');
-require_once($CFG->dirroot . '/backup/util/dbops/backup_dbops.class.php');
-require_once($CFG->dirroot . '/backup/util/dbops/backup_controller_dbops.class.php');
-require_once($CFG->dirroot . '/backup/util/dbops/backup_structure_dbops.class.php');
-require_once($CFG->dirroot . '/backup/util/helper/backup_helper.class.php');
-require_once($CFG->dirroot . '/backup/util/helper/backup_general_helper.class.php');
-require_once($CFG->dirroot . '/backup/util/checks/backup_check.class.php');
-require_once($CFG->dirroot . '/backup/util/loggers/base_logger.class.php');
-require_once($CFG->dirroot . '/backup/util/loggers/error_log_logger.class.php');
-require_once($CFG->dirroot . '/backup/util/loggers/file_logger.class.php');
-require_once($CFG->dirroot . '/backup/util/loggers/database_logger.class.php');
-require_once($CFG->dirroot . '/backup/util/loggers/output_indented_logger.class.php');
-require_once($CFG->dirroot . '/backup/util/xml/contenttransformer/xml_contenttransformer.class.php');
-require_once($CFG->dirroot . '/backup/util/xml/output/xml_output.class.php');
-require_once($CFG->dirroot . '/backup/util/xml/output/file_xml_output.class.php');
-require_once($CFG->dirroot . '/backup/util/xml/xml_writer.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_atom.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_attribute.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_final_element.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_nested_element.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_optigroup.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_processor.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_attribute.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_final_element.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_nested_element.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_optigroup.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_optigroup_element.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_structure_processor.class.php');
-require_once($CFG->dirroot . '/backup/controller/backup_controller.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/base_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/root/root_backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/section/section_backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/activity/activity_backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/moodle2/backup_settingslib.php');
-require_once($CFG->dirroot . '/backup/util/settings/base_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/activity/activity_backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/base_plan.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_plan.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/base_task.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_task.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/base_step.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_step.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_execution_step.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_structure_step.class.php');
-require_once($CFG->dirroot . '/backup/util/output/output_controller.class.php');
-require_once($CFG->dirroot . '/backup/util/ui/backup_ui_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/setting_dependency.class.php');
-require_once($CFG->dirroot . '/backup/util/dbops/backup_plan_dbops.class.php');
+require_once(__DIR__.'/fixtures/plan_fixtures.php');
 
 
 /*
@@ -121,8 +63,8 @@ class backup_step_test extends advanced_testcase {
      */
     function test_base_step() {
 
-        $bp = new mock_base_plan2('planname'); // We need one plan
-        $bt = new mock_base_task2('taskname', $bp); // We need one task
+        $bp = new mock_base_plan('planname'); // We need one plan
+        $bt = new mock_base_task('taskname', $bp); // We need one task
         // Instantiate
         $bs = new mock_base_step('stepname', $bt);
         $this->assertTrue($bs instanceof base_step);
@@ -140,7 +82,7 @@ class backup_step_test extends advanced_testcase {
         // We need one plan
         $bp = new backup_plan($bc);
         // We need one task
-        $bt = new mock_backup_task2('taskname', $bp);
+        $bt = new mock_backup_task('taskname', $bp);
         // Instantiate step
         $bs = new mock_backup_step('stepname', $bt);
         $this->assertTrue($bs instanceof backup_step);
@@ -220,106 +162,5 @@ class backup_step_test extends advanced_testcase {
             $this->assertTrue($e instanceof backup_step_exception);
             $this->assertEquals($e->errorcode, 'wrong_backup_task_specified');
         }
-    }
-}
-
-/**
- * Instantiable class extending base_step in order to be able to perform tests
- */
-class mock_base_step extends base_step {
-    public function execute() {
-    }
-}
-
-/**
- * Instantiable class extending backup_step in order to be able to perform tests
- */
-class mock_backup_step extends backup_step {
-    public function execute() {
-    }
-}
-
-/**
- * Instantiable class extending backup_task in order to mockup get_taskbasepath()
- */
-class mock_backup_task_basepath extends backup_task {
-
-    public function build() {
-        // Nothing to do
-    }
-
-    public function define_settings() {
-        // Nothing to do
-    }
-
-    public function get_taskbasepath() {
-        global $CFG;
-        return $CFG->tempdir . '/test';
-    }
-}
-
-/**
- * Instantiable class extending backup_structure_step in order to be able to perform tests
- */
-class mock_backup_structure_step extends backup_structure_step {
-
-    protected function define_structure() {
-
-        // Create really simple structure (1 nested with 1 attr and 2 fields)
-        $test = new backup_nested_element('test',
-            array('id'),
-            array('field1', 'field2')
-        );
-        $test->set_source_array(array(array('id' => 1, 'field1' => 'value1', 'field2' => 'value2')));
-
-        return $test;
-    }
-}
-
-/**
- * Instantiable class extending activity_backup_setting to be added to task and perform tests
- */
-class mock_fullpath_activity_setting extends activity_backup_setting {
-    public function process_change($setting, $ctype, $oldv) {
-        // Nothing to do
-    }
-}
-
-/**
- * Instantiable class extending activity_backup_setting to be added to task and perform tests
- */
-class mock_backupid_activity_setting extends activity_backup_setting {
-    public function process_change($setting, $ctype, $oldv) {
-        // Nothing to do
-    }
-}
-
-/**
- * Instantiable class extending base_plan in order to be able to perform tests
- */
-class mock_base_plan2 extends base_plan {
-    public function build() {
-    }
-}
-
-/**
- * Instantiable class extending base_task in order to be able to perform tests
- */
-class mock_base_task2 extends base_task {
-    public function build() {
-    }
-
-    public function define_settings() {
-    }
-}
-
-/**
- * Instantiable class extending backup_task in order to be able to perform tests
- */
-class mock_backup_task2 extends backup_task {
-    public function build() {
-    }
-
-    public function define_settings() {
     }
 }

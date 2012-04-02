@@ -23,64 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Include all the needed stuff
-global $CFG;
-require_once($CFG->dirroot . '/backup/util/interfaces/checksumable.class.php');
-require_once($CFG->dirroot . '/backup/util/interfaces/executable.class.php');
-require_once($CFG->dirroot . '/backup/util/interfaces/loggable.class.php');
-require_once($CFG->dirroot . '/backup/util/interfaces/processable.class.php');
-require_once($CFG->dirroot . '/backup/util/interfaces/annotable.class.php');
-require_once($CFG->dirroot . '/backup/backup.class.php');
-require_once($CFG->dirroot . '/backup/util/factories/backup_factory.class.php');
-require_once($CFG->dirroot . '/backup/util/dbops/backup_dbops.class.php');
-require_once($CFG->dirroot . '/backup/util/dbops/backup_controller_dbops.class.php');
-require_once($CFG->dirroot . '/backup/util/helper/backup_helper.class.php');
-require_once($CFG->dirroot . '/backup/util/helper/backup_general_helper.class.php');
-require_once($CFG->dirroot . '/backup/util/checks/backup_check.class.php');
-require_once($CFG->dirroot . '/backup/util/loggers/base_logger.class.php');
-require_once($CFG->dirroot . '/backup/util/loggers/error_log_logger.class.php');
-require_once($CFG->dirroot . '/backup/util/loggers/file_logger.class.php');
-require_once($CFG->dirroot . '/backup/util/loggers/database_logger.class.php');
-require_once($CFG->dirroot . '/backup/util/loggers/output_indented_logger.class.php');
-require_once($CFG->dirroot . '/backup/controller/backup_controller.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/base_plan.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_plan.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/base_task.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_task.class.php');
-require_once($CFG->dirroot . '/backup/util/xml/contenttransformer/xml_contenttransformer.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/base_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/root/root_backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/section/section_backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/activity/activity_backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/moodle2/backup_settingslib.php');
-require_once($CFG->dirroot . '/backup/util/settings/base_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/activity/activity_backup_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/base_plan.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_plan.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/base_task.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_task.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/base_step.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_step.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_execution_step.class.php');
-require_once($CFG->dirroot . '/backup/util/plan/backup_structure_step.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_atom.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_attribute.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_final_element.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_nested_element.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_optigroup.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/base_processor.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_attribute.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_final_element.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_nested_element.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_optigroup.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_optigroup_element.class.php');
-require_once($CFG->dirroot . '/backup/util/structure/backup_structure_processor.class.php');
-require_once($CFG->dirroot . '/backup/util/output/output_controller.class.php');
-require_once($CFG->dirroot . '/backup/util/ui/backup_ui_setting.class.php');
-require_once($CFG->dirroot . '/backup/util/settings/setting_dependency.class.php');
-require_once($CFG->dirroot . '/backup/util/dbops/backup_plan_dbops.class.php');
+require_once(__DIR__.'/fixtures/plan_fixtures.php');
 
 
 /**
@@ -120,7 +63,7 @@ class backup_task_test extends advanced_testcase {
      */
     function test_base_task() {
 
-        $bp = new mock_base_plan3('planname'); // We need one plan
+        $bp = new mock_base_plan('planname'); // We need one plan
         // Instantiate
         $bt = new mock_base_task('taskname', $bp);
         $this->assertTrue($bt instanceof base_task);
@@ -167,7 +110,7 @@ class backup_task_test extends advanced_testcase {
         }
 
         // Add wrong step to task
-        $bp = new mock_base_plan3('planname'); // We need one plan
+        $bp = new mock_base_plan('planname'); // We need one plan
         // Instantiate
         $bt = new mock_base_task('taskname', $bp);
         try {
@@ -195,34 +138,3 @@ class backup_task_test extends advanced_testcase {
         }
     }
 }
-
-/**
- * Instantiable class extending base_task in order to be able to perform tests
- */
-class mock_base_task extends base_task {
-    public function build() {
-    }
-
-    public function define_settings() {
-    }
-}
-
-/**
- * Instantiable class extending backup_task in order to be able to perform tests
- */
-class mock_backup_task extends backup_task {
-    public function build() {
-    }
-
-    public function define_settings() {
-    }
-}
-
-/**
- * Instantiable class extending base_plan in order to be able to perform tests
- */
-class mock_base_plan3 extends base_plan {
-    public function build() {
-    }
-}
-

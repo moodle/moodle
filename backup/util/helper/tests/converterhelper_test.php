@@ -42,7 +42,7 @@ class testable_convert_helper extends convert_helper {
 /**
  * Defines the test methods
  */
-class convert_helper_test extends basic_testcase {
+class backup_convert_helper_test extends basic_testcase {
 
     public function test_choose_conversion_path() {
 
