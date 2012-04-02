@@ -225,7 +225,9 @@ function phpunit_bootstrap_error($text, $errorcode = 1) {
 function phpunit_bootstrap_initdataroot($dataroot) {
     global $CFG;
 
-    file_put_contents("$dataroot/phpunittestdir.txt", 'Contents of this directory are used during tests only, do not delete this file!');
+    if (!file_exists("$dataroot/phpunittestdir.txt")) {
+        file_put_contents("$dataroot/phpunittestdir.txt", 'Contents of this directory are used during tests only, do not delete this file!');
+    }
     chmod("$dataroot/phpunittestdir.txt", $CFG->filepermissions);
     if (!file_exists("$CFG->phpunit_dataroot/phpunit")) {
         mkdir("$CFG->phpunit_dataroot/phpunit", $CFG->directorypermissions);

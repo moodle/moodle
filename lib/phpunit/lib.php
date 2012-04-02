@@ -127,33 +127,92 @@ class phpunit_util {
         if (is_null(self::$lastdbwrites) or self::$lastdbwrites != $DB->perf_get_writes()) {
             if ($data = self::get_tabledata()) {
                 $trans = $DB->start_delegated_transaction(); // faster and safer
+
+                $resetseq = array();
                 foreach ($data as $table=>$records) {
-                    $DB->delete_records($table, array());
-                    $resetseq = null;
-                    foreach ($records as $record) {
-                        if (is_null($resetseq)) {
-                            $resetseq = property_exists($record, 'id');
+                    if (empty($records)) {
+                        if ($DB->count_records($table)) {
+                            $DB->delete_records($table, array());
+                            $resetseq[$table] = $table;
                         }
+                        continue;
+                    }
+
+                    $firstrecord = reset($records);
+                    if (property_exists($firstrecord, 'id')) {
+                        if ($DB->count_records($table) == count($records)) {
+                            $currentrecords = $DB->get_records($table, array(), 'id ASC');
+                            $changed = false;
+                            foreach ($records as $id=>$record) {
+                                if (!isset($currentrecords[$id])) {
+                                    $changed = true;
+                                    break;
+                                }
+                                if ((array)$record != (array)$currentrecords[$id]) {
+                                    $changed = true;
+                                    break;
+                                }
+                            }
+                            if (!$changed) {
+                                continue;
+                            }
+                        }
+                    }
+
+                    $DB->delete_records($table, array());
+                    if (property_exists($firstrecord, 'id')) {
+                        $resetseq[$table] = $table;
+                    }
+                    foreach ($records as $record) {
                         $DB->import_record($table, $record, false, true);
                     }
-                    if ($resetseq === true) {
-                        $DB->get_manager()->reset_sequence($table, true);
-                    }
                 }
+                // reset all sequences
+                foreach ($resetseq as $table) {
+                    $DB->get_manager()->reset_sequence($table, true);
+                }
+
                 $trans->allow_commit();
-                $dbreset = true;
+
                 // remove extra tables
                 foreach ($tables as $tablename) {
                     if (!isset($data[$tablename])) {
                         $DB->get_manager()->drop_table(new xmldb_table($tablename));
                     }
                 }
+                $dbreset = true;
             }
         }
 
         self::$lastdbwrites = $DB->perf_get_writes();
 
         return $dbreset;
+    }
+
+    /**
+     * Purge dataroot
+     * @static
+     * @return void
+     */
+    public static function reset_dataroot() {
+        global $CFG;
+
+        $handle = opendir($CFG->dataroot);
+        $skip = array('.', '..', 'phpunittestdir.txt', 'phpunit', '.htaccess');
+        while (false !== ($item = readdir($handle))) {
+            if (in_array($item, $skip)) {
+                continue;
+            }
+            if (is_dir("$CFG->dataroot/$item")) {
+                remove_dir("$CFG->dataroot/$item", false);
+            } else {
+                unlink("$CFG->dataroot/$item");
+            }
+        }
+        closedir($handle);
+        make_temp_directory('');
+        make_cache_directory('');
+        make_cache_directory('htmlpurifier');
     }
 
     /**
@@ -230,22 +289,7 @@ class phpunit_util {
         //TODO: add more resets here and probably refactor them to new core function
 
         // purge dataroot
-        $handle = opendir($CFG->dataroot);
-        $skip = array('.', '..', 'phpunittestdir.txt', 'phpunit', '.htaccess');
-        while (false !== ($item = readdir($handle))) {
-            if (in_array($item, $skip)) {
-                continue;
-            }
-            if (is_dir("$CFG->dataroot/$item")) {
-                remove_dir("$CFG->dataroot/$item", false);
-            } else {
-                unlink("$CFG->dataroot/$item");
-            }
-        }
-        closedir($handle);
-        make_temp_directory('');
-        make_cache_directory('');
-        make_cache_directory('htmlpurifier');
+        self::reset_dataroot();
 
         // restore original config once more in case resetting of caches changes CFG
         $CFG = self::get_global_backup('CFG');
@@ -379,18 +423,17 @@ class phpunit_util {
         }
 
         // drop dataroot
-        remove_dir($CFG->dataroot, true);
+        self::reset_dataroot();
         phpunit_bootstrap_initdataroot($CFG->dataroot);
+        remove_dir("$CFG->dataroot/phpunit", true);
 
         // drop all tables
-        $trans = $DB->start_delegated_transaction();
         $tables = $DB->get_tables(false);
-        foreach ($tables as $tablename) {
-            $DB->delete_records($tablename, array());
+        if (isset($tables['config'])) {
+            // config always last to prevent problems with interrupted drops!
+            unset($tables['config']);
+            $tables['config'] = 'config';
         }
-        $trans->allow_commit();
-
-        // now drop them
         foreach ($tables as $tablename) {
             $table = new xmldb_table($tablename);
             $DB->get_manager()->drop_table($table);
@@ -434,7 +477,13 @@ class phpunit_util {
         $data = array();
         $tables = $DB->get_tables();
         foreach ($tables as $table) {
-            $data[$table] = $DB->get_records($table, array());
+            $columns = $DB->get_columns($table);
+            if (isset($columns['id'])) {
+                $data[$table] = $DB->get_records($table, array(), 'id ASC');
+            } else {
+                // there should not be many of these
+                $data[$table] = $DB->get_records($table, array());
+            }
         }
         $data = serialize($data);
         @unlink("$CFG->dataroot/phpunit/tabledata.ser");
