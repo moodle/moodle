@@ -161,7 +161,7 @@ class phpunit_util {
      * @static
      */
     public static function reset_all_data($logchanges = false, PHPUnit_Framework_TestCase $caller = null) {
-        global $DB, $CFG, $USER;
+        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
 
         $dbreset = self::reset_database($logchanges, $caller);
 
@@ -173,6 +173,7 @@ class phpunit_util {
             }
 
             $oldcfg = self::get_global_backup('CFG');
+            $oldsite = self::get_global_backup('SITE');
             foreach($CFG as $k=>$v) {
                 if (!property_exists($oldcfg, $k)) {
                     error_log('warning: unexpected new $CFG->'.$k.' value'.$where);
@@ -191,10 +192,25 @@ class phpunit_util {
             if ($USER->id != 0) {
                 error_log('warning: unexpected change of $USER'.$where);
             }
+
+            if ($COURSE->id != $oldsite->id) {
+                error_log('warning: unexpected change of $COURSE'.$where);
+            }
         }
 
         // restore original config
         $CFG = self::get_global_backup('CFG');
+        $SITE = self::get_global_backup('SITE');
+        $COURSE = $SITE;
+
+        // recreate globals
+        $OUTPUT = new bootstrap_renderer();
+        $PAGE = new moodle_page();
+        $FULLME = null;
+        $ME = null;
+        $SCRIPT = null;
+        $SESSION = new stdClass();
+        $_SESSION['SESSION'] =& $SESSION;
 
         // set fresh new user
         $user = new stdClass();
@@ -243,10 +259,11 @@ class phpunit_util {
      * @static
      */
     public static function bootstrap_init() {
-        global $CFG;
+        global $CFG, $SITE;
 
         // backup the globals
         self::$globals['CFG'] = clone($CFG);
+        self::$globals['SITE'] = clone($SITE);
 
         // refresh data in all tables, clear caches, etc.
         phpunit_util::reset_all_data();
@@ -657,7 +674,7 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
      * @param array  $data
      * @param string $dataName
      */
-    public function __construct($name = NULL, array $data = array(), $dataName = '') {
+    public function __construct($name = null, array $data = array(), $dataName = '') {
         parent::__construct($name, $data, $dataName);
 
         $this->setBackupGlobals(false);
@@ -685,7 +702,7 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class advanced_testcase extends PHPUnit_Framework_TestCase {
-    /** @var bool automatically reset everything? */
+    /** @var bool automatically reset everything? null means log changes */
     protected $resetAfterTest;
 
     /**
@@ -695,7 +712,7 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
      * @param array  $data
      * @param string $dataName
      */
-    public function __construct($name = NULL, array $data = array(), $dataName = '') {
+    public function __construct($name = null, array $data = array(), $dataName = '') {
         parent::__construct($name, $data, $dataName);
 
         $this->setBackupGlobals(false);
@@ -756,6 +773,28 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Set current $USER, reset access cache.
+     * @static
+     * @param null|\stdClass $user user record, null means none
+     * @return void
+     */
+    public static function setUser(stdClass $user = null) {
+        global $CFG;
+
+        if (!$user) {
+            $user = new stdClass();
+            $user->id = 0;
+            $user->mnethostid = $CFG->mnet_localhost_id;
+        } else {
+            $user = clone($user);
+        }
+        unset($user->description);
+        unset($user->access);
+
+        session_set_user($user);
+    }
+
+    /**
      * Get data generator
      * @static
      * @return phpunit_data_generator
@@ -769,9 +808,9 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
      * function with the pathname of each file found.
      *
      * @param $path the folder to start searching from.
-     * @param $callback the function to call with the name of each file found.
+     * @param $callback the method of this class to call with the name of each file found.
      * @param $fileregexp a regexp used to filter the search (optional).
-     * @param $exclude If true, pathnames that match the regexp will be ingored. If false,
+     * @param $exclude If true, pathnames that match the regexp will be ignored. If false,
      *     only files that match the regexp will be included. (default false).
      * @param array $ignorefolders will not go into any of these folders (optional).
      * @return void
@@ -797,7 +836,9 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
 
 
 /**
- * Test integration of PHPUnit and custom Moodle hacks.
+ * Special test case for testing of DML drivers and DDL layer.
+ *
+ * Note: Use only 'test_table*' when creating new tables.
  *
  * @package    core
  * @category   phpunit
@@ -806,7 +847,6 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
  */
 class database_driver_testcase extends PHPUnit_Framework_TestCase {
     protected static $extradb = null;
-    protected $skipped = false;
 
     /** @var moodle_database */
     protected $tdb;
@@ -818,7 +858,7 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
      * @param array  $data
      * @param string $dataName
      */
-    public function __construct($name = NULL, array $data = array(), $dataName = '') {
+    public function __construct($name = null, array $data = array(), $dataName = '') {
         parent::__construct($name, $data, $dataName);
 
         $this->setBackupGlobals(false);
@@ -857,15 +897,6 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
         $d->connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
         self::$extradb = $d;
-    }
-
-    public function getStatus() {
-        if ($this->skipped) {
-            // fake the status
-            return PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED;
-        } else {
-            return parent::getStatus();
-        }
     }
 
     public function setUp() {

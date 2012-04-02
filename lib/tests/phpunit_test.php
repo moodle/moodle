@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * PHPunit implementation unit tests
+ * PHPUnit integration unit tests
  *
  * @package    core
  * @category   phpunit
@@ -23,10 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Test integration of PHPUnit and custom Moodle hacks.
+ * Test basic_testcase extra features and PHPUnit Moodle integration.
  *
  * @package    core
  * @category   phpunit
@@ -54,5 +55,48 @@ class core_phpunit_basic_testcase extends basic_testcase {
         $CFG->xx = 'yy';
     }
 */
+}
 
+
+/**
+ * Test advanced_testcase extra features.
+ *
+ * @package    core
+ * @category   phpunit
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class core_phpunit_advanced_testcase extends advanced_testcase {
+
+    public function test_set_user() {
+        global $USER, $DB;
+
+        $this->assertEquals(0, $USER->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+
+        $user = $DB->get_record('user', array('id'=>2));
+        $this->setUser($user);
+        $this->assertEquals(2, $USER->id);
+        $this->assertEquals(2, $_SESSION['USER']->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+
+        $USER->id = 3;
+        $this->assertEquals(3, $USER->id);
+        $this->assertEquals(3, $_SESSION['USER']->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+
+        session_set_user($user);
+        $this->assertEquals(2, $USER->id);
+        $this->assertEquals(2, $_SESSION['USER']->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+
+        $USER = $DB->get_record('user', array('id'=>1));
+        $this->assertEquals(1, $USER->id);
+        $this->assertEquals(1, $_SESSION['USER']->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+
+        $this->setUser(null);
+        $this->assertEquals(0, $USER->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+    }
 }
