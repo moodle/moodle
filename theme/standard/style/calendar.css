@@ -50,6 +50,7 @@
 .calendartable .eventnone a {text-decoration:none;color:black;cursor:text;}
 
 .block .minicalendar {font-size:0.85em;border:1px solid #DDDDDD;margin: 10px 0;border-collapse:separate;border-spacing:1px;}
+.block .minicalendar .duration {border-width:1px 0;}
 .block .calendar_filters.filters {background-color: #EEEEEE;}
 .block .calendar_filters.filters table {width:100%;}
 
