@@ -208,7 +208,7 @@ class completionlib_test extends UnitTestCaseUsingDatabase {
             new TimeModifiedExpectation(array('completionstate'=>COMPLETION_COMPLETE_PASS))));
         $c->update_state($cm,COMPLETION_COMPLETE_PASS);
 
-        $c->tally();
+        //$c->tally();
     }
 
     function test_internal_get_state() {
@@ -242,8 +242,8 @@ class completionlib_test extends UnitTestCaseUsingDatabase {
         // * the grade_item/grade_grade calls are static and can't be mocked
         // * the plugin_supports call is static and can't be mocked
 
-        $DB->tally();
-        $c->tally();
+        //$DB->tally();
+        //$c->tally();
     }
 
     function test_set_module_viewed() {
@@ -281,7 +281,7 @@ class completionlib_test extends UnitTestCaseUsingDatabase {
         $c->expectOnce('update_state',array($cm,COMPLETION_COMPLETE,1337));
         $c->set_module_viewed($cm,1337);
 
-        $c->tally();
+        //$c->tally();
     }
 
     function test_count_user_data() {
@@ -298,7 +298,7 @@ WHERE
         $c=new completion_info($course);
         $this->assertEqual(666,$c->count_user_data($cm));
 
-        $DB->tally();
+        //$DB->tally();
     }
 
     function test_delete_all_state() {
@@ -325,7 +325,7 @@ WHERE
         $this->assertEqual(array(13=>array(43=>'foo'),14=>array(42=>'foo')),
             $SESSION->completioncache);
 
-        $DB->tally();
+        //$DB->tally();
     }
 
     function test_reset_all_state() {
@@ -355,8 +355,8 @@ WHERE
 
         $c->reset_all_state($cm);
 
-        $DB->tally();
-        $c->tally();
+        //$DB->tally();
+        //$c->tally();
     }
 
     function test_get_data() {
@@ -447,7 +447,7 @@ WHERE
             'id'=>'0','coursemoduleid'=>14,'userid'=>314159,'completionstate'=>0,
             'viewed'=>0,'timemodified'=>0),'updated'=>$now)),$SESSION->completioncache);
 
-        $DB->tally();
+        //$DB->tally();
     }
 
     function test_internal_set_data() {
@@ -487,7 +487,7 @@ WHERE
         $DB->expectAt(1,'update_record', array('course_modules_completion', $d3));
         $c->internal_set_data($cm, $data);
 
-        $DB->tally();
+        //$DB->tally();
     }
 
     function test_get_activities() {
@@ -514,7 +514,7 @@ WHERE
         $result=$c->get_activities($modinfo);
         $this->assertEqual(array(13=>(object)array('id'=>13,'modname'=>'frog','name'=>'kermit')),$result);
 
-        $DB->tally();
+        //$DB->tally();
     }
 
     // get_tracked_users() cannot easily be tested because it uses
@@ -606,8 +606,8 @@ WHERE
         }
         $this->assertTrue($resultok);
 
-        $DB->tally();
-        $c->tally();
+        //$DB->tally();
+        //$c->tally();
     }
 
     function test_inform_grade_changed() {
@@ -652,7 +652,7 @@ WHERE
         $c->expectAt(1,'update_state',array($cm,COMPLETION_INCOMPLETE,31337));
         $c->inform_grade_changed($cm,$item,$grade,false);
 
-        $c->tally();
+        //$c->tally();
     }
 
     function test_internal_get_grade_state() {
