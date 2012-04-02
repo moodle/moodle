@@ -237,9 +237,7 @@ abstract class question_edit_form extends question_wizard_form {
             if ($this->question->formoptions->movecontext) {
                 $buttonarray[] = $mform->createElement('submit', 'submitbutton',
                         get_string('moveq', 'question'));
-            } else if ($this->question->formoptions->canedit ||
-                    $this->question->formoptions->canmove ||
-                    $this->question->formoptions->movecontext) {
+            } else if ($this->question->formoptions->canedit) {
                 $buttonarray[] = $mform->createElement('submit', 'submitbutton',
                         get_string('savechanges'));
             }
@@ -641,10 +639,10 @@ abstract class question_edit_form extends question_wizard_form {
 
     public function validation($fromform, $files) {
         $errors = parent::validation($fromform, $files);
-        if (empty($fromform->makecopy) && isset($this->question->id)
+        if (empty($fromform['makecopy']) && isset($this->question->id)
                 && ($this->question->formoptions->canedit ||
                         $this->question->formoptions->cansaveasnew)
-                && empty($fromform->usecurrentcat) && !$this->question->formoptions->canmove) {
+                && empty($fromform['usecurrentcat']) && !$this->question->formoptions->canmove) {
             $errors['currentgrp'] = get_string('nopermissionmove', 'question');
         }
         return $errors;
