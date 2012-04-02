@@ -395,6 +395,8 @@ abstract class restore_structure_step extends restore_step {
                 $pobject->launch_after_restore_methods();
             }
         }
+        // Finally execute own (restore_structure_step) after_restore method
+        $this->after_restore();
     }
 
     /**
@@ -405,6 +407,16 @@ abstract class restore_structure_step extends restore_step {
      * overwrite in in your steps if needed
      */
     protected function after_execute() {
+        // do nothing by default
+    }
+
+    /**
+     * This method will be executed after the rest of the restore has been processed.
+     *
+     * Use if you need to update IDs based on things which are restored after this
+     * step has completed.
+     */
+    protected function after_restore() {
         // do nothing by default
     }
 
