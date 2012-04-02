@@ -229,23 +229,32 @@ function groups_get_user_groups($courseid, $userid=0) {
 }
 
 /**
- * Gets an array of all groupings in a specified course.
+ * Gets an array of all groupings in a specified course. This value is cached
+ * for a single course (so you can call it repeatedly for the same course
+ * without a performance penalty).
  *
  * @category group
- * @param int $courseid return only groupings in this with this courseid
- * @return array|bool Returns an array of the grouping objects or false if no records
- * or an error occurred.
+ * @param int $courseid return all groupings from course with this courseid
+ * @return array Returns an array of the grouping objects (empty if none)
  */
 function groups_get_all_groupings($courseid) {
-    global $CFG, $DB;
+    global $CFG, $DB, $GROUPLIB_CACHE;
 
-    return $DB->get_records_sql("SELECT *
-                                   FROM {groupings}
-                                  WHERE courseid = ?
-                               ORDER BY name ASC", array($courseid));
+    // Use cached data if available. (Note: We only cache a single request, so
+    // as not to waste memory if processing is happening for multiple courses.)
+    if (!empty($GROUPLIB_CACHE->groupings) &&
+            $GROUPLIB_CACHE->groupings->courseid == $courseid) {
+        return $GROUPLIB_CACHE->groupings->result;
+    }
+    if (empty($GROUPLIB_CACHE)) {
+        $GROUPLIB_CACHE = new stdClass();
+    }
+    $GROUPLIB_CACHE->groupings = new stdClass();
+    $GROUPLIB_CACHE->groupings->courseid = $courseid;
+    $GROUPLIB_CACHE->groupings->result =
+            $DB->get_records('groupings', array('courseid' => $courseid), 'name ASC');
+    return $GROUPLIB_CACHE->groupings->result;
 }
-
-
 
 /**
  * Determines if the user is a member of the given group.

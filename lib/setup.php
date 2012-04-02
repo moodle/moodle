@@ -343,6 +343,14 @@ global $OUTPUT;
 global $MCACHE;
 
 /**
+ * Cache used within grouplib to cache data within current request only.
+ *
+ * @global object $GROUPLLIB_CACHE
+ * @name $GROUPLIB_CACHE
+ */
+global $GROUPLIB_CACHE;
+
+/**
  * Full script path including all params, slash arguments, scheme and host.
  *
  * Note: Do NOT use for getting of current page URL or detection of https,

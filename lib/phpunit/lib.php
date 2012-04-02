@@ -545,7 +545,7 @@ class phpunit_util {
      * @return void
      */
     public static function reset_all_data($logchanges = false) {
-        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
+        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $GROUPLIB_CACHE;
 
         // reset global $DB in case somebody mocked it
         $DB = self::get_global_backup('DB');
@@ -615,6 +615,7 @@ class phpunit_util {
         get_string_manager()->reset_caches();
         events_get_handlers('reset');
         textlib::reset_caches();
+        $GROUPLIB_CACHE = null;
         //TODO: add more resets here and probably refactor them to new core function
 
         // purge dataroot directory
