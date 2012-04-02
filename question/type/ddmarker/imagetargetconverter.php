@@ -198,7 +198,9 @@ if (!count($questions)) {
         }
     } else if (confirm_sesskey()) {
         $questionlist->prepare_for_processing($top);
+        echo '<ul>';
         $top->process();
+        echo '</ul>';
     }
 }
 // Footer.

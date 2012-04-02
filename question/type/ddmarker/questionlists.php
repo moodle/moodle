@@ -46,7 +46,11 @@ abstract class qtype_ddmarker_list_item {
 
     abstract protected function parent_node ();
 
-    abstract public function render($stringidentifier, $link);
+    public function render($stringidentifier, $link) {
+        return $this->render_item($stringidentifier, $link).$this->render_children($stringidentifier, $link);
+    }
+
+    abstract protected function render_item($stringidentifier, $link);
 
     public function leaf_to_root($qcount) {
         $this->qcount += $qcount;
@@ -57,19 +61,20 @@ abstract class qtype_ddmarker_list_item {
         }
     }
 
-    public function process($progresstrace = null, $depth = 0) {
-        if (null === $progresstrace) {
-            $progresstrace = new html_list_progress_trace();
-        }
-        $progresstrace->output($this->render('listitemprocessing', false), $depth);
-        $this->process_children($progresstrace, $depth);
+    public function process() {
+        echo '<li>';
+        echo $this->render_item('listitemprocessing', false);
+        $this->process_children();
+        echo '</li>';
+        flush();
     }
 
-    protected function process_children($progresstrace, $depth) {
-        $children = array();
+    protected function process_children() {
+        echo '<ul>';
         foreach ($this->children as $child) {
-            $child->process($progresstrace, $depth + 1);
+            $child->process();
         }
+        echo '</ul>';
     }
 
     public function question_ids() {
@@ -120,7 +125,7 @@ class qtype_ddmarker_category_list_item extends qtype_ddmarker_list_item {
         }
     }
 
-    public function render ($stringidentifier, $link) {
+    protected function render_item ($stringidentifier, $link) {
         global $PAGE;
         $a = new stdClass();
         $a->qcount = $this->qcount;
@@ -131,7 +136,7 @@ class qtype_ddmarker_category_list_item extends qtype_ddmarker_list_item {
             $thisitem = html_writer::tag('a', $thisitem, array('href' => $actionurl));
         }
 
-        return $thisitem.$this->render_children($stringidentifier, $link);
+        return $thisitem;
     }
 }
 class qtype_ddmarker_question_list_item extends qtype_ddmarker_list_item {
@@ -146,7 +151,7 @@ class qtype_ddmarker_question_list_item extends qtype_ddmarker_list_item {
         return $this->parentlist->get_instance($this->record->category);
     }
 
-    public function render ($stringidentifier, $link) {
+    protected function render_item ($stringidentifier, $link) {
         global $PAGE;
         $a = new stdClass();
         $a->name = $this->record->name;
@@ -180,7 +185,7 @@ class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
         }
     }
 
-    public function render ($stringidentifier, $link) {
+    protected function render_item ($stringidentifier, $link) {
         global $PAGE;
         $a = new stdClass();
         $a->qcount = $this->qcount;
@@ -190,7 +195,7 @@ class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
             $actionurl = new moodle_url($PAGE->url, array('contextid'=> $this->record->id));
             $thisitem = html_writer::tag('a', $thisitem, array('href' => $actionurl));
         }
-        return $thisitem.$this->render_children($stringidentifier, $link);
+        return $thisitem;
     }
 
     public function course_context_id() {
