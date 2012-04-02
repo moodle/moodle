@@ -17,10 +17,6 @@
 /**
  * Full functional accesslib test
  *
- * It is implemented as one test case because it would take hours
- * to prepare the fake test site for each test, at the same time
- * we have to work around multiple problems in UnitTestCaseUsingDatabase.
- *
  * @package    core
  * @category   phpunit
  * @copyright  2011 Petr Skoda {@link http://skodak.org}

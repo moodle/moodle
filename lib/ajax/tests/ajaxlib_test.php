@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Unit tests for (some of) ../ajaxlib.php.
  *
@@ -36,7 +35,7 @@ require_once($CFG->libdir . '/ajax/ajaxlib.php');
  * @copyright 2008 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ajax_test extends UnitTestCase {
+class ajax_test extends advanced_testcase {
 
     var $user_agents = array(
         'MSIE' => array(
@@ -65,11 +64,13 @@ class ajax_test extends UnitTestCase {
     /**
      * Uses the array of user agents to test ajax_lib::ajaxenabled
      */
-    function test_ajaxenabled()
-    {
+    function test_ajaxenabled() {
         global $CFG, $USER;
-        $CFG->enableajax = true;
-        $USER->ajax      = true;
+
+        $this->resetAfterTest(true);
+
+        $CFG->enableajax = 1;
+        $USER->ajax      = 1;
 
         // Should be true
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['2.0']['Windows XP'];
