@@ -1898,8 +1898,7 @@ class global_navigation extends navigation_node {
         require_once($CFG->dirroot.'/course/lib.php');
 
         $modinfo = get_fast_modinfo($course);
-
-        $sections = array_slice(get_all_sections($course->id), 0, $course->numsections+1, true);
+        $sections = array_slice($modinfo->get_section_info_all(), 0, $course->numsections+1, true);
         $activities = array();
 
         foreach ($sections as $key => $section) {
@@ -1961,8 +1960,6 @@ class global_navigation extends navigation_node {
         $namingfunction = 'callback_'.$courseformat.'_get_section_name';
         $namingfunctionexists = (function_exists($namingfunction));
 
-        $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
-
         $urlfunction = 'callback_'.$courseformat.'_get_section_url';
         if (function_exists($urlfunction)) {
             // This code path is deprecated but we decided not to warn developers as
@@ -1982,10 +1979,11 @@ class global_navigation extends navigation_node {
             if ($course->id == $SITE->id) {
                 $this->load_section_activities($coursenode, $section->section, $activities);
             } else {
-                if ((!$viewhiddensections && !$section->visible) || (!$this->showemptysections &&
+                if (!$section->uservisible || (!$this->showemptysections &&
                         !$section->hasactivites && $this->includesectionnum !== $section->section)) {
                     continue;
                 }
+
                 if ($namingfunctionexists) {
                     $sectionname = $namingfunction($course, $section, $sections);
                 } else {
@@ -2003,7 +2001,7 @@ class global_navigation extends navigation_node {
                 }
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
-                $sectionnode->hidden = (!$section->visible);
+                $sectionnode->hidden = (!$section->visible || !$section->available);
                 if ($key != '0' && $section->section != '0' && $section->section == $key && $this->page->context->contextlevel != CONTEXT_MODULE && $section->hasactivites) {
                     $sectionnode->make_active();
                     $this->load_section_activities($sectionnode, $section->section, $activities);
@@ -3709,7 +3707,8 @@ class settings_navigation extends navigation_node {
             $formatidentifier = optional_param($requestkey, 0, PARAM_INT);
         }
 
-        $sections = get_all_sections($course->id);
+        $modinfo = get_fast_modinfo($course);
+        $sections = $modinfo->get_section_info_all();
 
         $addresource = $this->add(get_string('addresource'));
         $addactivity = $this->add(get_string('addactivity'));

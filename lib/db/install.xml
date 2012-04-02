@@ -78,8 +78,9 @@
         <FIELD NAME="summary" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="idnumber" NEXT="summaryformat"/>
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="summary" NEXT="format"/>
         <FIELD NAME="format" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="topics" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="showgrades"/>
-        <FIELD NAME="showgrades" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="format" NEXT="modinfo"/>
-        <FIELD NAME="modinfo" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="showgrades" NEXT="newsitems"/>
+        <FIELD NAME="showgrades" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="format" NEXT="sectioncache"/>
+        <FIELD NAME="sectioncache" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="showgrades" NEXT="modinfo"/>
+        <FIELD NAME="modinfo" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="sectioncache" NEXT="newsitems"/>
         <FIELD NAME="newsitems" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="modinfo" NEXT="startdate"/>
         <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="newsitems" NEXT="numsections"/>
         <FIELD NAME="numsections" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="startdate" NEXT="marker"/>
@@ -360,7 +361,7 @@
         <INDEX NAME="userid-coursemoduleid" UNIQUE="true" FIELDS="userid, coursemoduleid" PREVIOUS="coursemoduleid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="course_sections" COMMENT="to define the sections for each course" PREVIOUS="course_modules_completion" NEXT="course_request">
+    <TABLE NAME="course_sections" COMMENT="to define the sections for each course" PREVIOUS="course_modules_completion" NEXT="course_sections_availability">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="section"/>
@@ -369,7 +370,11 @@
         <FIELD NAME="summary" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="summaryformat"/>
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="summary" NEXT="sequence"/>
         <FIELD NAME="sequence" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="visible"/>
-        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="sequence"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="sequence" NEXT="availablefrom"/>
+        <FIELD NAME="availablefrom" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If set non-zero, the section only becomes available from the time given here." PREVIOUS="visible" NEXT="availableuntil"/>
+        <FIELD NAME="availableuntil" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If set non-zero, the section is only available until the time given here." PREVIOUS="availablefrom" NEXT="showavailability"/>
+        <FIELD NAME="showavailability" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1 and the section is not available because the 'availablefrom' date has not been reached, or one of the conditions in course_sections_availability_cg is not matched, then the item will be displayed greyed-out (unclickable) with an information message such as 'Available from (date)'. Otherwise, the item will not be displayed to students at all." PREVIOUS="availableuntil" NEXT="groupingid"/>
+        <FIELD NAME="groupingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Grouping that has access to this section." PREVIOUS="showavailability"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -378,7 +383,24 @@
         <INDEX NAME="course_section" UNIQUE="true" FIELDS="course, section"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="course_request" COMMENT="course requests" PREVIOUS="course_sections" NEXT="filter_active">
+    <TABLE NAME="course_sections_availability" COMMENT="Completion or grade conditions that affect if a section is currently available to students."  PREVIOUS="course_sections" NEXT="course_request">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="coursesectionid"/>
+        <FIELD NAME="coursesectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the section whose availability is being restricted by this condition." PREVIOUS="id" NEXT="sourcecmid"/>
+        <FIELD NAME="sourcecmid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If this condition is based on completion of some activity, then this is the course-module ID of that activity. Otherwise null." PREVIOUS="coursesectionid" NEXT="requiredcompletion"/>
+        <FIELD NAME="requiredcompletion" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="If this condition is on a module's completion, then this should be set to the required completion state. Otherwise null. Suitable values are 1 = completed, 2 = completed-passed, 3 = completed-failed." PREVIOUS="sourcecmid" NEXT="gradeitemid"/>
+        <FIELD NAME="gradeitemid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If this condition is based on a gradebook score, the item ID is given here (and the item will now not be available until a value is achieved for that grade). Otherwise null." PREVIOUS="requiredcompletion" NEXT="grademin"/>
+        <FIELD NAME="grademin" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="If set, this is the minimum grade percentage that must be reached (greater than or equal) in order for this section to appear. Otherwise null." PREVIOUS="gradeitemid" NEXT="grademax"/>
+        <FIELD NAME="grademax" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="If set, this is the maximum grade percentage that users must be below (less than) in order to display this item. Otherwise null." PREVIOUS="grademin"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="coursesectionid"/>
+        <KEY NAME="coursesectionid" TYPE="foreign" FIELDS="coursesectionid" REFTABLE="course_sections" REFFIELDS="id" PREVIOUS="primary" NEXT="sourcecmid"/>
+        <KEY NAME="sourcecmid" TYPE="foreign" FIELDS="sourcecmid" REFTABLE="course_modules" REFFIELDS="id" PREVIOUS="coursesectionid" NEXT="gradeitemid"/>
+        <KEY NAME="gradeitemid" TYPE="foreign" FIELDS="gradeitemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="sourcecmid"/>
+      </KEYS>
+	</TABLE>
+    <TABLE NAME="course_request" COMMENT="course requests" PREVIOUS="course_sections_availability" NEXT="filter_active">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="fullname"/>
         <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="shortname"/>

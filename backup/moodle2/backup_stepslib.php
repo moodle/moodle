@@ -364,14 +364,20 @@ class backup_section_structure_step extends backup_structure_step {
         // Define each element separated
 
         $section = new backup_nested_element('section', array('id'), array(
-            'number', 'name', 'summary', 'summaryformat', 'sequence', 'visible'));
+                'number', 'name', 'summary', 'summaryformat', 'sequence', 'visible',
+                'availablefrom', 'availableuntil', 'showavailability', 'groupingid'));
 
         // attach format plugin structure to $section element, only one allowed
         $this->add_plugin_structure('format', $section, false);
 
-        // Define sources
+        // Add nested elements for _availability table
+        $avail = new backup_nested_element('availability', array('id'), array(
+                'sourcecmid', 'requiredcompletion', 'gradeitemid', 'grademin', 'grademax'));
+        $section->add_child($avail);
 
+        // Define sources
         $section->set_source_table('course_sections', array('id' => backup::VAR_SECTIONID));
+        $avail->set_source_table('course_sections_availability', array('coursesectionid' => backup::VAR_SECTIONID));
 
         // Aliases
         $section->set_source_alias('section', 'number');

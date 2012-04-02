@@ -38,6 +38,10 @@ $string['completioncondition'] = 'Activity completion condition';
 $string['completioncondition_help'] = 'This setting determines any activity completion conditions which must be met in order to access the activity. Note that completion tracking must first be set before an activity completion condition can be set.
 
 Multiple activity completion conditions may be set if desired.  If so, access to the activity will only be permitted when ALL activity completion conditions are met.';
+$string['completionconditionsection'] = 'Activity completion condition';
+$string['completionconditionsection_help'] = 'This setting determines any activity completion conditions which must be met in order to access the section. Note that completion tracking must first be set before an activity completion condition can be set.
+
+Multiple activity completion conditions may be set if desired.  If so, access to the section will only be permitted when ALL activity completion conditions are met.';
 $string['completion_fail'] = 'must be complete with fail grade';
 $string['completion_incomplete'] = 'must not be marked complete';
 $string['completion_pass'] = 'must be complete with pass grade';
@@ -48,6 +52,10 @@ $string['gradecondition'] = 'Grade condition';
 $string['gradecondition_help'] = 'This setting determines any grade conditions which must be met in order to access the activity.
 
 Multiple grade conditions may be set if desired. If so, the activity will only allow access when ALL grade conditions are met.';
+$string['gradeconditionsection'] = 'Grade condition';
+$string['gradeconditionsection_help'] = 'This setting determines any grade conditions which must be met in order to access the section.
+
+Multiple grade conditions may be set if desired. If so, the section will only allow access when ALL grade conditions are met.';
 $string['grade_upto'] = 'and less than';
 $string['gradeitembutnolimits'] = 'You must enter an upper or lower limit, or both.';
 $string['gradelimitsbutnoitem'] = 'You must choose a grade item.';
@@ -67,7 +75,11 @@ $string['requires_grade_max'] = 'Not available unless you get an appropriate sco
 $string['requires_grade_min'] = 'Not available until you achieve a required score in <strong>{$a}</strong>.';
 $string['requires_grade_range'] = 'Not available unless you get a particular score in <strong>{$a}</strong>.';
 $string['showavailability'] = 'Before activity can be accessed';
+$string['showavailabilitysection'] = 'Before section can be accessed';
 $string['showavailability_hide'] = 'Hide activity entirely';
 $string['showavailability_show'] = 'Show activity greyed-out, with restriction information';
+$string['showavailabilitysection_hide'] = 'Hide section entirely';
+$string['showavailabilitysection_show'] = 'Show section greyed-out, with restriction information';
 $string['userrestriction_hidden'] = 'Restricted (completely hidden, no message): &lsquo;{$a}&rsquo;';
 $string['userrestriction_visible'] = 'Restricted: &lsquo;{$a}&rsquo;';
+$string['groupingnoaccess'] = 'You do not currently belong to a group which has access to this section. ';
