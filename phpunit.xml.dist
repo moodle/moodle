@@ -33,6 +33,11 @@
         <testsuite name="core_form">
             <directory suffix="_test.php">lib/form/tests</directory>
         </testsuite>
+        <testsuite name="core_backup">
+            <directory suffix="_test.php">backup/controller/tests</directory>
+            <directory suffix="_test.php">backup/converter/moodle1/tests</directory>
+            <directory suffix="_test.php">backup/util</directory>
+        </testsuite>
 
         <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from phpunit.xml.dist with up-to-date list of plugins in current install-->
 <!--@plugin_suites_start@-->

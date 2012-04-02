@@ -142,6 +142,12 @@ class phpunit_util {
                 }
                 $trans->allow_commit();
                 $dbreset = true;
+                // remove extra tables
+                foreach ($tables as $tablename) {
+                    if (!isset($data[$tablename])) {
+                        $DB->get_manager()->drop_table(new xmldb_table($tablename));
+                    }
+                }
             }
         }
 

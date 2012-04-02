@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
 class core_phpunit_basic_testcase extends basic_testcase {
 
     /**
-     * Tests that bootstraping has occurred correctly
+     * Tests that bootstrapping has occurred correctly
      * @return void
      */
     public function test_bootstrap() {

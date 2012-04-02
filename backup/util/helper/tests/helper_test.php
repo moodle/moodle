@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,26 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    moodlecore
- * @subpackage backup-logger
+ * @package    core_backup
+ * @category   phpunit
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Logger implementation that sends messages to error_log()
- *
- * TODO: Finish phpdocs
+defined('MOODLE_INTERNAL') || die();
+
+// Include all the needed stuff
+global $CFG;
+require_once($CFG->dirroot . '/backup/util/interfaces/checksumable.class.php');
+require_once($CFG->dirroot . '/backup/backup.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/backup_helper.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/backup_general_helper.class.php');
+
+/*
+ * backup_helper tests (all)
  */
-class error_log_logger extends base_logger {
+class backup_helper_test extends basic_testcase {
 
-// Protected API starts here
+    /*
+     * test backup_helper class
+     */
+    function test_backup_helper() {
+    }
 
-    protected function action($message, $level, $options = null) {
-        if (PHPUNIT_TEST) {
-            // no logging from PHPUnit, it is admins fault if it does not work!!!
-            return true;
-        }
-        return error_log($message);
+    /*
+     * test backup_general_helper class
+     */
+    function test_backup_general_helper() {
     }
 }
