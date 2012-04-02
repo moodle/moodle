@@ -46,18 +46,18 @@ defined('MOODLE_INTERNAL') || die();
  * Main upgrade tasks to be executed on Moodle version bump
  *
  * This function is automatically executed after one bump in the Moodle core
- * version is detected. It's in charge of perform the required tasks
+ * version is detected. It's in charge of performing the required tasks
  * to raise core from the previous version to the next one.
  *
  * It's a collection of ordered blocks of code, named "upgrade steps",
- * each one performing one isolated (from the rest of steps) task. Usual
+ * each one performing one isolated (from the rest of steps) task. Usually
  * tasks involve creating new DB objects or performing manipulation of the
  * information for cleanup/fixup purposes.
  *
  * Each upgrade step has a fixed structure, that can be summarised as follows:
  *
  * if ($oldversion < XXXXXXXXXX.XX) {
- *     // Explanation of the update step, linking to issue in the Tracker, if necessary
+ *     // Explanation of the update step, linking to issue in the Tracker if necessary
  *     upgrade_set_timeout(XX); // Optional for big tasks
  *     // Code to execute goes here, usually the XMLDB Editor will
  *     // help you here. See {@link http://docs.moodle.org/dev/XMLDB_editor}.
@@ -74,7 +74,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * In order to keep the contents of this file reduced, it's allowed to create some helper
  * functions to be used here in the {@link upgradelib.php} file at the same directory. Note
- * that such file must be manually included from upgrade.php, and there are some restrictions
+ * that such a file must be manually included from upgrade.php, and there are some restrictions
  * about what can be used within it.
  *
  * For more information, take a look to the documentation available:
