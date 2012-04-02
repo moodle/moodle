@@ -151,7 +151,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
 
         $newattempts = $this->observer->get_attempts_added();
         $this->assertEqual(1, count($newattempts));
-        $this->asserttrue($this->quba->get_question_attempt($slot) === reset($newattempts));
+        $this->assertTrue($this->quba->get_question_attempt($slot) === reset($newattempts));
         $this->assertIdentical($slot, key($newattempts));
     }
 
