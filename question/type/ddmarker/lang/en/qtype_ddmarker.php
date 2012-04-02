@@ -64,6 +64,7 @@ $string['marker'] = 'Marker';
 $string['marker_n'] = 'Marker {no}';
 $string['markers'] = 'Markers';
 $string['nolabel'] = 'No label text';
+$string['noquestionsfound'] = 'No questions found to convert here.';
 $string['pleasedragatleastonemarker'] = 'Your answer is not complete, you must place at least one marker on the image.';
 $string['pluginname'] = 'Drag and drop markers';
 $string['pluginname_help'] = 'select a background image file, enter text labels for markers and define the drop zones on the background image to which they must be dragged.';
