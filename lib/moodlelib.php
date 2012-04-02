@@ -8692,8 +8692,9 @@ function moodle_needs_upgrading() {
  *
  * The script may be automatically aborted if upgrade times out.
  *
- * @global object
+ * @category upgrade
  * @param int $max_execution_time in seconds (can not be less than 60 s)
+ * @todo MDL-32293 - Move this function to lib/upgradelib.php
  */
 function upgrade_set_timeout($max_execution_time=300) {
     global $CFG;
