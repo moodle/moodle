@@ -274,6 +274,9 @@ class phpunit_util {
             }
         }
 
+        // restore _SERVER
+        unset($_SERVER['HTTP_USER_AGENT']);
+
         // restore original config
         $CFG = self::get_global_backup('CFG');
         $SITE = self::get_global_backup('SITE');
