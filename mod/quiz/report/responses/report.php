@@ -26,9 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/quiz/report/attemptsreport.php');
-require_once($CFG->dirroot.'/mod/quiz/report/responses/responsessettings_form.php');
-require_once($CFG->dirroot.'/mod/quiz/report/responses/responses_table.php');
+require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport.php');
+require_once($CFG->dirroot . '/mod/quiz/report/responses/responsessettings_form.php');
+require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_table.php');
 
 
 /**
@@ -64,7 +64,7 @@ class quiz_responses_report extends quiz_attempt_report {
         $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
 
-        $mform = new mod_quiz_report_responses_settings($reporturl,
+        $mform = new quiz_responses_settings_form($reporturl,
                 array('qmsubselect' => $qmsubselect, 'quiz' => $quiz,
                 'currentgroup' => $currentgroup, 'context' => $this->context));
 

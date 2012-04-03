@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright  2008 Jean-Michel Vedrine
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_report_responses_settings extends moodleform {
+class quiz_responses_settings_form extends moodleform {
 
     protected function definition() {
         $mform = $this->_form;

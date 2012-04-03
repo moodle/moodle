@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright  2008 Jamie Pratt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_statistics_statistics_settings_form extends moodleform {
+class quiz_statistics_settings_form extends moodleform {
     protected function definition() {
         $mform = $this->_form;
 

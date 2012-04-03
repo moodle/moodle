@@ -371,7 +371,8 @@ function quiz_report_download_filename($report, $courseshortname, $quizname) {
  * @param object $context the quiz context.
  */
 function quiz_report_default_report($context) {
-    return reset(quiz_report_list($context));
+    $reports = quiz_report_list($context);
+    return reset($reports);
 }
 
 /**

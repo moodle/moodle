@@ -70,7 +70,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);
 
-        $mform = new quiz_statistics_statistics_settings_form($reporturl);
+        $mform = new quiz_statistics_settings_form($reporturl);
         if ($fromform = $mform->get_data()) {
             $useallattempts = $fromform->useallattempts;
             if ($fromform->useallattempts) {

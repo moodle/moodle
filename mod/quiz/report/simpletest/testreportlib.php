@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php'); // Include the c
  * @copyright  2008 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class question_reportlib_test extends UnitTestCase {
+class mod_quiz_reportlib_test extends UnitTestCase {
     public static $includecoverage = array('mod/quiz/report/reportlib.php');
 
     public function test_quiz_report_index_by_keys() {
