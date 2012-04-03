@@ -736,11 +736,13 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
     /**
      * Constructs a test case with the given name.
      *
+     * Note: use setUp() or setUpBeforeClass() in custom test cases.
+     *
      * @param string $name
      * @param array  $data
      * @param string $dataName
      */
-    public function __construct($name = null, array $data = array(), $dataName = '') {
+    final public function __construct($name = null, array $data = array(), $dataName = '') {
         parent::__construct($name, $data, $dataName);
 
         $this->setBackupGlobals(false);
@@ -774,11 +776,13 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
     /**
      * Constructs a test case with the given name.
      *
+     * Note: use setUp() or setUpBeforeClass() in custom test cases.
+     *
      * @param string $name
      * @param array  $data
      * @param string $dataName
      */
-    public function __construct($name = null, array $data = array(), $dataName = '') {
+    final public function __construct($name = null, array $data = array(), $dataName = '') {
         parent::__construct($name, $data, $dataName);
 
         $this->setBackupGlobals(false);
@@ -924,7 +928,7 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
      * @param array  $data
      * @param string $dataName
      */
-    public function __construct($name = null, array $data = array(), $dataName = '') {
+    final public function __construct($name = null, array $data = array(), $dataName = '') {
         parent::__construct($name, $data, $dataName);
 
         $this->setBackupGlobals(false);
