@@ -381,9 +381,9 @@ $functions = array(
         'classname'   => 'core_course_external',
         'methodname'  => 'get_categories',
         'classpath'   => 'course/externallib.php',
-        'description' => 'Return category details',
+        'description' => 'Return categories details',
         'type'        => 'read',
-        'capabilities'=> 'moodle/category:viewhiddencategories',
+        'capabilities'=> '',
     ),
 
     'moodle_course_get_courses' => array(
