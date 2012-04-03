@@ -195,7 +195,8 @@ class phpunit_data_generator {
     /**
      * Create a test course
      * @param array|stdClass $record
-     * @param array $options
+     * @param array $options with keys:
+     *      'createsections'=>bool precreate all sections
      * @return stdClass course record
      */
     function create_course($record=null, array $options=null) {
@@ -246,7 +247,60 @@ class phpunit_data_generator {
         $course = create_course((object)$record);
         context_course::instance($course->id);
 
+        if (!empty($options['createsections'])) {
+            for($i=1; $i<$record['numsections']; $i++) {
+                self::create_course_section(array('course'=>$course->id, 'section'=>$i));
+            }
+        }
+
         return $course;
+    }
+
+    /**
+     * Create course section if does not exist yet
+     * @param mixed $record
+     * @param array|null $options
+     * @return stdClass
+     * @throws coding_exception
+     */
+    public function create_course_section($record = null, array $options = null) {
+        global $DB;
+
+        $record = (array)$record;
+
+        if (empty($record['course'])) {
+            throw new coding_exception('course must be present in phpunit_util::create_course_section() $record');
+        }
+
+        if (!isset($record['section'])) {
+            throw new coding_exception('section must be present in phpunit_util::create_course_section() $record');
+        }
+
+        if (!isset($record['name'])) {
+            $record['name'] = '';
+        }
+
+        if (!isset($record['summary'])) {
+            $record['summary'] = '';
+        }
+
+        if (!isset($record['summaryformat'])) {
+            $record['summaryformat'] = FORMAT_MOODLE;
+        }
+
+        if ($section = $DB->get_record('course_sections', array('course'=>$record['course'], 'section'=>$record['section']))) {
+            return $section;
+        }
+
+        $section = new stdClass();
+        $section->course        = $record['course'];
+        $section->section       = $record['section'];
+        $section->name          = $record['name'];
+        $section->summary       = $record['summary'];
+        $section->summaryformat = $record['summaryformat'];
+        $id = $DB->insert_record('course_sections', $section);
+
+        return $DB->get_record('course_sections', array('id'=>$id));
     }
 
     /**
