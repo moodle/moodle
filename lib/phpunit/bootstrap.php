@@ -46,11 +46,6 @@ if (defined('PHPUNIT_TEST')) {
 /** PHPUnit testing framework active */
 define('PHPUNIT_TEST', true);
 
-if (!defined('PHPUNIT_LONGTEST')) {
-    /** Execute longer version of tests */
-    define('PHPUNIT_LONGTEST', false);
-}
-
 if (!defined('PHPUNIT_UTIL')) {
     /** Identifies utility scripts */
     define('PHPUNIT_UTIL', false);
@@ -66,6 +61,11 @@ define('NO_OUTPUT_BUFFERING', true);
 // only load CFG from config.php
 define('ABORT_AFTER_CONFIG', true);
 require(__DIR__ . '/../../config.php');
+
+if (!defined('PHPUNIT_LONGTEST')) {
+    /** Execute longer version of tests */
+    define('PHPUNIT_LONGTEST', false);
+}
 
 // remove error handling overrides done in config.php
 error_reporting(E_ALL | E_STRICT);

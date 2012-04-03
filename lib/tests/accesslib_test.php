@@ -577,49 +577,48 @@ class accesslib_testcase extends advanced_testcase {
         $capabilities = $DB->get_records('capabilities', array(), 'id');
         $capabilities = array_values($capabilities);
         $roles = array($allroles['guest'], $allroles['user'], $allroles['teacher'], $allroles['editingteacher'], $allroles['coursecreator'], $allroles['manager']);
+        $userids = array_values($testusers);
+        $userids[] = get_admin()->id;
 
-        if (PHPUNIT_LONGTEST) {
-            // Random time!
-            srand(666);
-            foreach($testusers as $userid) { // no guest or deleted
-                // each user gets 0-20 random roles
-                $rcount = rand(0, 20);
-                for($j=0; $j<$rcount; $j++) {
-                    $roleid = $roles[rand(0, count($roles)-1)];
-                    $contextid = $contexts[rand(0, count($contexts)-1)]->id;
-                    role_assign($roleid, $userid, $contextid);
-                }
-            }
-            $permissions = array(CAP_ALLOW, CAP_PREVENT, CAP_INHERIT, CAP_PREVENT);
-            for($j=0; $j<1000; $j++) {
+        if (!PHPUNIT_LONGTEST) {
+            $contexts = array_slice($contexts, 0, 10);
+            $capabilities = array_slice($capabilities, 0, 5);
+            $userids = array_slice($userids, 0, 5);
+        }
+
+        // Random time!
+        //srand(666);
+        foreach($userids as $userid) { // no guest or deleted
+            // each user gets 0-10 random roles
+            $rcount = rand(0, 10);
+            for($j=0; $j<$rcount; $j++) {
                 $roleid = $roles[rand(0, count($roles)-1)];
                 $contextid = $contexts[rand(0, count($contexts)-1)]->id;
-                $permission = $permissions[rand(0,count($permissions)-1)];
-                $capname = $capabilities[rand(0, count($capabilities)-1)]->name;
-                assign_capability($capname, $permission, $roleid, $contextid, true);
+                role_assign($roleid, $userid, $contextid);
             }
-            unset($permissions);
-            unset($roles);
-            unset($contexts);
-            unset($users);
-            unset($capabilities);
-
-            accesslib_clear_all_caches(false); // must be done after assign_capability()
-
-            // Test time - let's set up some real user, just in case the logic for USER affects the others...
-            $USER = $DB->get_record('user', array('id'=>$testusers[3]));
-            load_all_capabilities();
-
-            $contexts = $DB->get_records('context', array(), 'id');
-            $users = $DB->get_records('user', array(), 'id', 'id');
-            $capabilities = $DB->get_records('capabilities', array(), 'id');
-            $users[0]  = null; // not-logged-in user
-            $users[-1] = null; // non-existent user
-
-        } else {
-            // context testing takes a very long time...
-            $contexts = array();
         }
+
+        $permissions = array(CAP_ALLOW, CAP_PREVENT, CAP_INHERIT, CAP_PREVENT);
+        $maxoverrides = count($contexts)*10;
+        for($j=0; $j<$maxoverrides; $j++) {
+            $roleid = $roles[rand(0, count($roles)-1)];
+            $contextid = $contexts[rand(0, count($contexts)-1)]->id;
+            $permission = $permissions[rand(0,count($permissions)-1)];
+            $capname = $capabilities[rand(0, count($capabilities)-1)]->name;
+            assign_capability($capname, $permission, $roleid, $contextid, true);
+        }
+        unset($permissions);
+        unset($roles);
+
+        accesslib_clear_all_caches(false); // must be done after assign_capability()
+
+        // Test time - let's set up some real user, just in case the logic for USER affects the others...
+        $USER = $DB->get_record('user', array('id'=>$testusers[3]));
+        load_all_capabilities();
+
+        $userids[] = $CFG->siteguest;
+        $userids[] = 0; // not-logged-in user
+        $userids[] = -1; // non-existent user
 
         foreach ($contexts as $crecord) {
             $context = context::instance_by_id($crecord->id);
@@ -635,7 +634,7 @@ class accesslib_testcase extends advanced_testcase {
                 } else {
                     $enrolledwithcap = array();
                 }
-                foreach ($users as $userid=>$unused) {
+                foreach ($userids as $userid) {
                     if ($userid == 0 or isguestuser($userid)) {
                         if ($userid == 0) {
                             $CFG->forcelogin = true;
@@ -663,7 +662,7 @@ class accesslib_testcase extends advanced_testcase {
         $USER = new stdClass();
         $USER->id = 0;
         unset($contexts);
-        unset($users);
+        unset($userids);
         unset($capabilities);
 
         // Now let's do all the remaining tests that break our carefully prepared fake site
