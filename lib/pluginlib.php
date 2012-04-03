@@ -2309,6 +2309,18 @@ class plugininfo_message extends plugininfo_base {
             return parent::is_enabled();
         }
     }
+
+    /**
+     * @see plugintype_interface::get_uninstall_url()
+     */
+    public function get_uninstall_url() {
+        $processors = get_message_processors();
+        if (isset($processors[$this->name])) {
+            return new moodle_url('message.php', array('uninstall' => $processors[$this->name]->id, 'sesskey' => sesskey()));
+        } else {
+            return parent::get_uninstall_url();
+        }
+    }
 }
 
 
