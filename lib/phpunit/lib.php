@@ -140,7 +140,7 @@ class phpunit_util {
 
                     $firstrecord = reset($records);
                     if (property_exists($firstrecord, 'id')) {
-                        if ($DB->count_records($table) == count($records)) {
+                        if ($DB->count_records($table) >= count($records)) {
                             $currentrecords = $DB->get_records($table, array(), 'id ASC');
                             $changed = false;
                             foreach ($records as $id=>$record) {
@@ -152,9 +152,20 @@ class phpunit_util {
                                     $changed = true;
                                     break;
                                 }
+                                unset($currentrecords[$id]);
                             }
                             if (!$changed) {
-                                continue;
+                                if ($currentrecords) {
+                                    $remainingfirst = reset($currentrecords);
+                                    $lastrecord = end($records);
+                                    if ($remainingfirst->id > $lastrecord->id) {
+                                        $DB->delete_records_select($table, "id >= ?", array($remainingfirst->id));
+                                        $resetseq[$table] = $table;
+                                        continue;
+                                    }
+                                } else {
+                                    continue;
+                                }
                             }
                         }
                     }
