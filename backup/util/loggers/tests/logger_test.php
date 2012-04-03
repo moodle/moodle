@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/backup/util/loggers/file_logger.class.php');
 /**
  * logger tests (all)
  */
-class backup_logger_test extends basic_testcase {
+class backup_logger_testcase extends basic_testcase {
 
     /**
      * test base_logger class

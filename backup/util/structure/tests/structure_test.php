@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.ph
 /**
  * Unit test case the all the backup structure classes. Note: Uses database
  */
-class backup_structure_test extends advanced_testcase {
+class backup_structure_testcase extends advanced_testcase {
 
     protected $forumid;   // To store the inserted forum->id
     protected $contextid; // Official contextid for these tests

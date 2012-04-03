@@ -30,7 +30,7 @@ global $CFG;
 /**
  * ui tests (all)
  */
-class backup_ui_test extends basic_testcase {
+class backup_ui_testcase extends basic_testcase {
 
     /**
      * test backup_ui class

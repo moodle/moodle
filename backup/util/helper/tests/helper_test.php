@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/backup/util/helper/backup_general_helper.class.ph
 /*
  * backup_helper tests (all)
  */
-class backup_helper_test extends basic_testcase {
+class backup_helper_testcase extends basic_testcase {
 
     /*
      * test backup_helper class

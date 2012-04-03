@@ -30,7 +30,7 @@ require_once(__DIR__.'/fixtures/structure_fixtures.php');
 /**
  * Unit test case the base_optigroup class. Note: highly imbricated with nested/final base elements
  */
-class backup_base_optigroup_test extends basic_testcase {
+class backup_base_optigroup_testcase extends basic_testcase {
 
     /**
      * Correct creation tests (s)

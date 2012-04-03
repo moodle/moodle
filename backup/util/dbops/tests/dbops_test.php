@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 /*
  * dbops tests (all)
  */
-class backup_dbops_test extends advanced_testcase {
+class backup_dbops_testcase extends advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing

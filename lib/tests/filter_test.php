@@ -32,7 +32,7 @@ require_once($CFG->libdir . '/filterlib.php');
 /**
  * Test functions that affect filter_active table with contextid = $syscontextid.
  */
-class filter_active_global_test extends advanced_testcase {
+class filter_active_global_testcase extends advanced_testcase {
 
     protected function setUp() {
         global $DB;
@@ -234,7 +234,7 @@ class filter_active_global_test extends advanced_testcase {
 /**
  * Test functions that affect filter_active table with contextid = $syscontextid.
  */
-class filter_active_local_test extends advanced_testcase {
+class filter_active_local_testcase extends advanced_testcase {
 
     protected function setUp() {
         global $DB;
@@ -315,7 +315,7 @@ class filter_active_local_test extends advanced_testcase {
 /**
  * Test functions that use just the filter_config table.
  */
-class filter_config_test extends advanced_testcase {
+class filter_config_testcase extends advanced_testcase {
 
     protected function setUp() {
         global $DB;
@@ -368,7 +368,7 @@ class filter_config_test extends advanced_testcase {
 }
 
 
-class filter_get_active_available_in_context_test extends advanced_testcase {
+class filter_get_active_available_in_context_testcase extends advanced_testcase {
     private static $syscontext;
     private static $childcontext;
     private static $childcontext2;
@@ -541,7 +541,7 @@ class filter_get_active_available_in_context_test extends advanced_testcase {
 }
 
 
-class filter_preload_activities_test extends advanced_testcase {
+class filter_preload_activities_testcase extends advanced_testcase {
     private static $syscontext;
     private static $catcontext;
     private static $coursecontext;
@@ -652,7 +652,7 @@ class filter_preload_activities_test extends advanced_testcase {
 }
 
 
-class filter_delete_config_test extends advanced_testcase {
+class filter_delete_config_testcase extends advanced_testcase {
     protected function setUp() {
         global $DB;
         parent::setUp();

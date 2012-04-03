@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+
 /**
  * Test basic_testcase extra features and PHPUnit Moodle integration.
  *

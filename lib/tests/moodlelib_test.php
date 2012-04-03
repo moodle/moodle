@@ -30,7 +30,7 @@ global $CFG;
 require_once($CFG->libdir . '/moodlelib.php');
 
 
-class moodlelib_test extends advanced_testcase {
+class moodlelib_testcase extends advanced_testcase {
 
     public static $includecoverage = array('lib/moodlelib.php');
 

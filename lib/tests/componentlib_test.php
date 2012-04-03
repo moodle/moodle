@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir.'/componentlib.class.php');
 
-class componentlib_test extends advanced_testcase {
+class componentlib_testcase extends advanced_testcase {
 
     public function test_component_installer() {
         global $CFG;

@@ -29,7 +29,7 @@ require_once(__DIR__.'/fixtures/plan_fixtures.php');
 /*
  * step tests (all)
  */
-class backup_step_test extends advanced_testcase {
+class backup_step_testcase extends advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing

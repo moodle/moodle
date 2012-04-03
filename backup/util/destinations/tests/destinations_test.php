@@ -30,7 +30,7 @@ global $CFG;
 /**
  * dbops tests (all)
  */
-class backup_destinations_test extends basic_testcase {
+class backup_destinations_testcase extends basic_testcase {
 
     /**
      * test backup_destination class

@@ -37,7 +37,7 @@ require_once($CFG->libdir . '/csslib.php');
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class css_optimiser_test extends advanced_testcase {
+class css_optimiser_testcase extends advanced_testcase {
 
     /**
      * Sets up the test class

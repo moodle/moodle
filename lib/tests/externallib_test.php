@@ -29,7 +29,7 @@ global $CFG;
 require_once($CFG->libdir . '/externallib.php');
 
 
-class externallib_test extends basic_testcase {
+class externallib_testcase extends basic_testcase {
     public function test_validate_params() {
         $params = array('text'=>'aaa', 'someid'=>'6',);
         $description = new external_function_parameters(array('someid' => new external_value(PARAM_INT, 'Some int value'),

@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/backup/util/factories/backup_factory.class.php');
 /**
  * backup_factory tests (all)
  */
-class backup_factories_test extends advanced_testcase {
+class backup_factories_testcase extends advanced_testcase {
 
     function setUp() {
         global $CFG;

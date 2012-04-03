@@ -30,7 +30,7 @@ require_once(__DIR__.'/fixtures/structure_fixtures.php');
 /**
  * Unit test case the base_nested_element class. Note: highly imbricated with base_final_element class
  */
-class backup_base_nested_element_test extends basic_testcase {
+class backup_base_nested_element_testcase extends basic_testcase {
 
     /**
      * Correct creation tests (attributes and final elements)

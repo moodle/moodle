@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/filelib.php');
 
-class filelib_test extends basic_testcase {
+class filelib_testcase extends basic_testcase {
     public function test_format_postdata_for_curlcall() {
 
         //POST params with just simple types

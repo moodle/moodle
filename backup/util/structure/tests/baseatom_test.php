@@ -31,7 +31,7 @@ require_once(__DIR__.'/fixtures/structure_fixtures.php');
  * Unit test case the base_atom class. Note: as it's abstract we are testing
  * mock_base_atom instantiable class instead
  */
-class backup_base_atom_test extends basic_testcase {
+class backup_base_atom_testcase extends basic_testcase {
 
     /**
      * Correct base_atom_tests

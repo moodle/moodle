@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/backup/util/xml/contenttransformer/xml_contenttra
 /**
  * xml_writer tests
  */
-class xml_writer_test extends basic_testcase {
+class xml_writer_testcase extends basic_testcase {
 
     /**
      * test xml_writer public methods

@@ -25,6 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Data generator for unit tests
+ */
 class phpunit_data_generator {
     protected $usercounter = 0;
     protected $categorycount = 0;
@@ -49,7 +52,7 @@ class phpunit_data_generator {
      * Create a test user
      * @param array|stdClass $record
      * @param array $options
-     * @return stdClass
+     * @return stdClass user record
      */
     public function create_user($record=null, array $options=null) {
         global $DB, $CFG;
@@ -135,7 +138,7 @@ class phpunit_data_generator {
      * Create a test course category
      * @param array|stdClass $record
      * @param array $options
-     * @return stdClass
+     * @return stdClass course category record
      */
     function create_category($record=null, array $options=null) {
         global $DB, $CFG;
@@ -193,7 +196,7 @@ class phpunit_data_generator {
      * Create a test course
      * @param array|stdClass $record
      * @param array $options
-     * @return stdClass
+     * @return stdClass course record
      */
     function create_course($record=null, array $options=null) {
         global $DB, $CFG;
@@ -251,7 +254,7 @@ class phpunit_data_generator {
      * @param string $blockname
      * @param array|stdClass $record
      * @param array $options
-     * @return stdClass
+     * @return stdClass block instance record
      */
     public function create_block($blockname, $record=null, array $options=null) {
         global $DB;
@@ -296,7 +299,7 @@ class phpunit_data_generator {
      * @param string $modulename
      * @param array|stdClass $record
      * @param array $options
-     * @return stdClass
+     * @return stdClass activity record
      */
     public function create_module($modulename, $record=null, array $options=null) {
         global $DB, $CFG;

@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 /*
  * check tests (all)
  */
-class backup_check_test extends advanced_testcase {
+class backup_check_testcase extends advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing
