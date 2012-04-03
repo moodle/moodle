@@ -23,10 +23,9 @@
  * It plots a bar graph showing certain question statistics plotted against
  * question number.
  *
- * @package    quiz
- * @subpackage statistics
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_statistics
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 

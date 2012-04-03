@@ -17,10 +17,9 @@
 /**
  * This file defines the setting form for the quiz overview report.
  *
- * @package    quiz
- * @subpackage overview
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_overview
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,8 +31,8 @@ require_once($CFG->libdir . '/formslib.php');
 /**
  * Quiz overview report settings form.
  *
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_overview_settings_form extends moodleform {
 

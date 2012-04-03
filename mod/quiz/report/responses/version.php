@@ -17,10 +17,9 @@
 /**
  * Quiz responses report version information.
  *
- * @package    quiz
- * @subpackage responses
- * @copyright  2011 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_responses
+ * @copyright 2011 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

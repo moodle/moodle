@@ -17,12 +17,10 @@
 /**
  * Strings for component 'quiz_responses', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    quiz
- * @subpackage responses
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_responses
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 $string['cannotloadoptions'] = 'Could not load question options';
 $string['include'] = 'Include';

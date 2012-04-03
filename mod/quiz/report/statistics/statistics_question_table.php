@@ -17,10 +17,9 @@
 /**
  * Quiz statistics report, table for showing statistics about a particular question.
  *
- * @package    quiz
- * @subpackage statistics
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_statistics
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -37,8 +36,8 @@ require_once($CFG->libdir . '/tablelib.php');
  * The responses may be grouped, either by subpart of the question, or by the
  * answer they match.
  *
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_question_table extends flexible_table {
     /** @var object this question with a _stats field. */

@@ -17,10 +17,9 @@
 /**
  * This file defines the quiz overview report class.
  *
- * @package    quiz
- * @subpackage overview
- * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_overview
+ * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -34,8 +33,8 @@ require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_table.php');
 /**
  * Quiz report subclass for the overview (grades) report.
  *
- * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_overview_report extends quiz_attempt_report {
 

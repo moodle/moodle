@@ -17,10 +17,9 @@
 /**
  * This file defines the setting form for the quiz responses report.
  *
- * @package    quiz
- * @subpackage responses
- * @copyright  2008 Jean-Michel Vedrine
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_responses
+ * @copyright 2008 Jean-Michel Vedrine
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,8 +31,8 @@ require_once($CFG->libdir . '/formslib.php');
 /**
  * Quiz responses report settings form.
  *
- * @copyright  2008 Jean-Michel Vedrine
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2008 Jean-Michel Vedrine
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_responses_settings_form extends moodleform {
 

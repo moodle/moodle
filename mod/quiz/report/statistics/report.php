@@ -17,10 +17,9 @@
 /**
  * Quiz statistics report class.
  *
- * @package    quiz
- * @subpackage statistics
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_statistics
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -38,8 +37,8 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/responseanalysis.php')
  * a quiz, compared to the whole quiz. It also provides a drill-down to more
  * detailed information about each question.
  *
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_report extends quiz_default_report {
     /** @var integer Time after which statistics are automatically recomputed. */

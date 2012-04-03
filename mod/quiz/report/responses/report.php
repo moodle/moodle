@@ -17,10 +17,9 @@
 /**
  * This file defines the quiz responses report class.
  *
- * @package    quiz
- * @subpackage responses
- * @copyright  2006 Jean-Michel Vedrine
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_responses
+ * @copyright 2006 Jean-Michel Vedrine
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -42,8 +41,8 @@ require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_table.php');
  * Like the overview report, there are options for showing students with/without
  * attempts, and for deleting selected attempts.
  *
- * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_responses_report extends quiz_attempt_report {
 

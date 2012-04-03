@@ -17,10 +17,9 @@
 /**
  * Quiz statistics report, table for showing statistics of each question in the quiz.
  *
- * @package    quiz
- * @subpackage statistics
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_statistics
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -33,8 +32,8 @@ require_once($CFG->libdir.'/tablelib.php');
  * This table has one row for each question in the quiz, with sub-rows when
  * random questions appear. There are columns for the various statistics.
  *
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_table extends flexible_table {
     /** @var object the quiz settings. */

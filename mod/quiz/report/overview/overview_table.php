@@ -17,10 +17,9 @@
 /**
  * This file defines the quiz grades table.
  *
- * @package    quiz
- * @subpackage overview
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_overview
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,8 +31,8 @@ require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_table.php');
 /**
  * This is a table subclass for displaying the quiz grades report.
  *
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_overview_table extends quiz_attempt_report_table {
 
