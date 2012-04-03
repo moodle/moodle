@@ -50,7 +50,7 @@ class quiz_statistics_table extends flexible_table {
     }
 
     /**
-     * Setup the columns and headers and other properties of the table and then
+     * Set up the columns and headers and other properties of the table and then
      * call flexible_table::setup() method.
      *
      * @param object $quiz the quiz settings
@@ -58,7 +58,7 @@ class quiz_statistics_table extends flexible_table {
      * @param moodle_url $reporturl the URL to redisplay this report.
      * @param int $s number of attempts included in the statistics.
      */
-    public function setup($quiz, $cmid, $reporturl, $s) {
+    public function statistics_setup($quiz, $cmid, $reporturl, $s) {
         $this->quiz = $quiz;
         $this->cmid = $cmid;
 

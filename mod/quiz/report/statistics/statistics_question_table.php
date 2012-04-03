@@ -53,14 +53,14 @@ class quiz_statistics_question_table extends flexible_table {
     }
 
     /**
-     * Setup the columns and headers and other properties of the table and then
+     * Set up the columns and headers and other properties of the table and then
      * call flexible_table::setup() method.
      *
      * @param moodle_url $reporturl the URL to redisplay this report.
      * @param object $question a question with a _stats field
      * @param bool $hassubqs
      */
-    public function setup($reporturl, $questiondata,
+    public function question_setup($reporturl, $questiondata,
             quiz_statistics_response_analyser $responesstats) {
         $this->questiondata = $questiondata;
 

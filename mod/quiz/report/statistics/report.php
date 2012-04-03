@@ -146,7 +146,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         // Set up the table, if there is data.
         if ($s) {
-            $this->table->setup($quiz, $cm->id, $reporturl, $s);
+            $this->table->statistics_setup($quiz, $cm->id, $reporturl, $s);
         }
 
         // Print the page header stuff (if not downloading.
@@ -391,7 +391,7 @@ class quiz_statistics_report extends quiz_default_report {
         $responesstats = new quiz_statistics_response_analyser($question);
         $responesstats->load_cached($quizstats->id);
 
-        $qtable->setup($reporturl, $question, $responesstats);
+        $qtable->question_setup($reporturl, $question, $responesstats);
         if ($this->table->is_downloading()) {
             $exportclass->output_headers($qtable->headers);
         }
