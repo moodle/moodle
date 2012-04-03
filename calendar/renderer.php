@@ -581,22 +581,24 @@ class core_calendar_renderer extends plugin_renderer_base {
 
         // Global events
         $link = new moodle_url(CALENDAR_URL.'set.php', array('var' => 'showglobal', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
+        $strglobalevents = get_string('globalevents', 'calendar');
         if (calendar_show_event_type(CALENDAR_EVENT_GLOBAL)) {
             $output .= html_writer::tag('td', '', array('class'=>'calendar_event_global', 'style'=>'width:8px;'));
-            $output .= html_writer::tag('td', html_writer::tag('strong', get_string('globalevents', 'calendar')).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar')).')');
+            $output .= html_writer::tag('td', html_writer::tag('strong', $strglobalevents).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar').'<span class="accesshide">'.$strglobalevents.'</span>').')');
         } else {
             $output .= html_writer::tag('td', '', array('style'=>'width:8px;'));
-            $output .= html_writer::tag('td', html_writer::tag('strong', get_string('globalevents', 'calendar')).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar')).')');
+            $output .= html_writer::tag('td', html_writer::tag('strong', $strglobalevents).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar').'<span class="accesshide">'.$strglobalevents.'</span>').')');
         }
 
         // Course events
         $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showcourses', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
+        $strcourseevents = get_string('courseevents', 'calendar');
         if (calendar_show_event_type(CALENDAR_EVENT_COURSE)) {
             $output .= html_writer::tag('td', '', array('class'=>'calendar_event_course', 'style'=>'width:8px;'));
-            $output .= html_writer::tag('td', html_writer::tag('strong', get_string('courseevents', 'calendar')).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar')).')');
+            $output .= html_writer::tag('td', html_writer::tag('strong', $strcourseevents).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar').'<span class="accesshide">'.$strcourseevents.'</span>').')');
         } else {
             $output .= html_writer::tag('td', '', array('style'=>'width:8px;'));
-            $output .= html_writer::tag('td', html_writer::tag('strong', get_string('courseevents', 'calendar')).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar')).')');
+            $output .= html_writer::tag('td', html_writer::tag('strong', $strcourseevents).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar').'<span class="accesshide">'.$strcourseevents.'</span>').')');
         }
         $output .= html_writer::end_tag('tr');
 
@@ -604,21 +606,23 @@ class core_calendar_renderer extends plugin_renderer_base {
             $output .= html_writer::start_tag('tr');
             // Group events
             $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showgroups', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
+            $strgroupevents = get_string('groupevents', 'calendar');
             if (calendar_show_event_type(CALENDAR_EVENT_GROUP)) {
                 $output .= html_writer::tag('td', '', array('class'=>'calendar_event_group', 'style'=>'width:8px;'));
-                $output .= html_writer::tag('td', html_writer::tag('strong', get_string('groupevents', 'calendar')).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar')).')');
+                $output .= html_writer::tag('td', html_writer::tag('strong', $strgroupevents).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar').'<span class="accesshide">'.$strgroupevents.'</span>').')');
             } else {
                 $output .= html_writer::tag('td', '', array('style'=>'width:8px;'));
-                $output .= html_writer::tag('td', html_writer::tag('strong', get_string('groupevents', 'calendar')).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar')).')');
+                $output .= html_writer::tag('td', html_writer::tag('strong', $strgroupevents).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar').'<span class="accesshide">'.$strgroupevents.'</span>').')');
             }
             // User events
             $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showuser', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
+            $struserevents = get_string('userevents', 'calendar');
             if (calendar_show_event_type(CALENDAR_EVENT_USER)) {
                 $output .= html_writer::tag('td', '', array('class'=>'calendar_event_user', 'style'=>'width:8px;'));
-                $output .= html_writer::tag('td', html_writer::tag('strong', get_string('userevents', 'calendar')).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar')).')');
+                $output .= html_writer::tag('td', html_writer::tag('strong', $struserevents).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar').'<span class="accesshide">'.$struserevents.'</span>').')');
             } else {
                 $output .= html_writer::tag('td', '', array('style'=>'width:8px;'));
-                $output .= html_writer::tag('td', html_writer::tag('strong', get_string('userevents', 'calendar')).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar')).')');
+                $output .= html_writer::tag('td', html_writer::tag('strong', $struserevents).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar').'<span class="accesshide">'.$struserevents.'</span>').')');
             }
             $output .= html_writer::end_tag('tr');
         }
