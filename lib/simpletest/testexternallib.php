@@ -20,7 +20,7 @@
  * Unit tests for /lib/externallib.php.
  *
  * @package   webservices
- * @copyright 2009 Pwetr Skoda
+ * @copyright 2009 Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

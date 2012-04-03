@@ -10767,17 +10767,22 @@ class lang_string {
                 $this->a = $a;
             } else if ($a instanceof lang_string) {
                 $this->a = $a->out();
-            } else if (is_object($a)) {
-                $this->a = new stdClass;
-                foreach (get_object_vars($a) as $key => $value) {
-                    // Make sure conversion errors don't get displayed (results in '')
-                    $this->a->$key = @(string)$value;
-                }
-            } else if (is_array($a)) {
+            } else if (is_object($a) or is_array($a)) {
+                $a = (array)$a;
                 $this->a = array();
                 foreach ($a as $key => $value) {
                     // Make sure conversion errors don't get displayed (results in '')
-                    $this->a[$key] = @(string)$value;
+                    if (is_array($value)) {
+                        $this->a[$key] = '';
+                    } else if (is_object($value)) {
+                        if (method_exists($value, '__toString')) {
+                            $this->a[$key] = $value->__toString();
+                        } else {
+                            $this->a[$key] = '';
+                        }
+                    } else {
+                        $this->a[$key] = (string)$value;
+                    }
                 }
             }
         }

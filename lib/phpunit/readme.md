@@ -2,11 +2,18 @@ PHPUnit testing support in Moodle
 ==================================
 
 
+Documentation
+-------------
+* [Moodle Dev wiki](http://docs.moodle.org/dev/PHPUnit)
+* [PHPUnit online documentaion](http://www.phpunit.de/manual/current/en/)
+* [MDL-32323](http://tracker.moodle.org/browse/MDL-32323), [MDL-32149](http://tracker.moodle.org/browse/MDL-32149), [MDL-31857](http://tracker.moodle.org/browse/MDL-31857)
+
+
 Installation
 ------------
 1. install PHPUnit PEAR extension - see [PHPUnit docs](http://www.phpunit.de/manual/current/en/installation.html) for more details
 2. edit main config.php - add $CFG->phpunit_prefix and $CFG->phpunit_dataroot - see config-dist.php for more details
-3. execute `php admin/tool/phpunit/cli/util.php --install` to initialise test database
+3. execute `php admin/tool/phpunit/cli/util.php --install` from dirroot to initialise test database and dataroot
 4. it is necessary to reinitialise the test database manually after every upgrade or installation of new plugins
 
 
@@ -19,15 +26,17 @@ Test execution
 * it is possible to create custom configuration files in xml format and use `phpunit -c myconfig.xml`
 
 
-How to add more tests
----------------------
-1. create `tests` directory in any plugin
-2. add `*_test.php` files with custom class that extends `basic_testcase`
-3. manually add all core unit test locations to `phpunit.xml.dist`
+How to add more tests?
+----------------------
+1. create `tests` directory in your plugin if does not already exist
+2. add `*_test.php` files with custom class that extends `basic_testcase` or `advanced_testcase`
+3. execute your new test, for example `phpunit core_phpunit_basic_testcase local/mytest/tests/mytest_test.php`
+4. optionally build new phpunit.xml by executing `php admin/tool/phpunit/cli/util.php --buildconfig` and run all tests
+5. core developers have to add all core unit test locations to `phpunit.xml.dist`
 
 
-How to convert existing tests
------------------------------
+How to convert existing tests?
+------------------------------
 1. create new test file in `xxx/tests/yyy_test.php`
 2. copy contents of the old test file
 3. replace `extends UnitTestCase` with `extends basic_testcase`
@@ -44,6 +53,9 @@ FAQs
 
 TODO
 ----
-* stage 2 - implement advanced_testcase - support for database modifications, object generators, automatic rollback of db, globals and dataroot
-* stage 3 - mocking and other advanced features, add support for execution of functional DB tests for different engines together (new options in phpunit.xml)
-* other - support for execution of tests and cli/util.php from web UI (to be implemented via shell execution), shell script that prepares everything for the first execution
+* add plugin callbacks to data generator
+* convert remaining tests
+* delete all simpletests
+* hide old SimpleTests in UI and delete Functional DB tests
+* shell script that prepares everything for the first execution
+* optional support for execution of tests and cli/util.php from web UI (to be implemented via shell execution)

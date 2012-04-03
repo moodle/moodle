@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * PHPunit implementation unit tests
+ * PHPUnit integration unit tests
  *
  * @package    core
  * @category   phpunit
@@ -25,8 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+
 /**
- * Test integration of PHPUnit and custom Moodle hacks.
+ * Test basic_testcase extra features and PHPUnit Moodle integration.
  *
  * @package    core
  * @category   phpunit
@@ -36,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
 class core_phpunit_basic_testcase extends basic_testcase {
 
     /**
-     * Tests that bootstraping has occurred correctly
+     * Tests that bootstrapping has occurred correctly
      * @return void
      */
     public function test_bootstrap() {
@@ -46,13 +47,138 @@ class core_phpunit_basic_testcase extends basic_testcase {
         $this->assertEquals($CFG->prefix, $CFG->phpunit_prefix);
     }
 
-/*
-    public function test_borked_tests() {
-        global $DB;
+    /**
+     * This is just a verification if I understand the PHPUnit assert docs right --skodak
+     * @return void
+     */
+    public function test_assert_behaviour() {
+        // arrays
+        $a = array('a', 'b', 'c');
+        $b = array('a', 'c', 'b');
+        $c = array('a', 'b', 'c');
+        $d = array('a', 'b', 'C');
+        $this->assertNotEquals($a, $b);
+        $this->assertNotEquals($a, $d);
+        $this->assertEquals($a, $c);
+        $this->assertEquals($a, $b, '', 0, 10, true);
 
+        // objects
+        $a = new stdClass();
+        $a->x = 'x';
+        $a->y = 'y';
+        $b = new stdClass(); // switched order
+        $b->y = 'y';
+        $b->x = 'x';
+        $c = $a;
+        $d = new stdClass();
+        $d->x = 'x';
+        $d->y = 'y';
+        $d->z = 'z';
+        $this->assertEquals($a, $b);
+        $this->assertNotSame($a, $b);
+        $this->assertEquals($a, $c);
+        $this->assertSame($a, $c);
+        $this->assertNotEquals($a, $d);
+
+        // string comparison
+        $this->assertEquals(1, '1');
+        $this->assertEquals(null, '');
+
+        $this->assertNotEquals(1, '1 ');
+        $this->assertNotEquals(0, '');
+        $this->assertNotEquals(null, '0');
+        $this->assertNotEquals(array(), '');
+
+        // other comparison
+        $this->assertEquals(null, null);
+        $this->assertEquals(false, null);
+        $this->assertEquals(0, null);
+
+        // emptiness
+        $this->assertEmpty(0);
+        $this->assertEmpty(0.0);
+        $this->assertEmpty('');
+        $this->assertEmpty('0');
+        $this->assertEmpty(false);
+        $this->assertEmpty(null);
+        $this->assertEmpty(array());
+
+        $this->assertNotEmpty(1);
+        $this->assertNotEmpty(0.1);
+        $this->assertNotEmpty(-1);
+        $this->assertNotEmpty(' ');
+        $this->assertNotEmpty('0 ');
+        $this->assertNotEmpty(true);
+        $this->assertNotEmpty(array(null));
+        $this->assertNotEmpty(new stdClass());
+    }
+
+// Uncomment following tests to see logging of unexpected changes in global state and database
+/*
+    public function test_db_modification() {
+        global $DB;
         $DB->set_field('user', 'confirmed', 1, array('id'=>-1));
+    }
+
+    public function test_cfg_modification() {
+        global $CFG;
         $CFG->xx = 'yy';
+        unset($CFG->admin);
+        $CFG->rolesactive = 0;
+    }
+
+    public function test_user_modification() {
+        global $USER;
+        $USER->id = 10;
+    }
+
+    public function test_course_modification() {
+        global $COURSE;
+        $COURSE->id = 10;
     }
 */
+}
 
+
+/**
+ * Test advanced_testcase extra features.
+ *
+ * @package    core
+ * @category   phpunit
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class core_phpunit_advanced_testcase extends advanced_testcase {
+
+    public function test_set_user() {
+        global $USER, $DB;
+
+        $this->assertEquals(0, $USER->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+
+        $user = $DB->get_record('user', array('id'=>2));
+        $this->setUser($user);
+        $this->assertEquals(2, $USER->id);
+        $this->assertEquals(2, $_SESSION['USER']->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+
+        $USER->id = 3;
+        $this->assertEquals(3, $USER->id);
+        $this->assertEquals(3, $_SESSION['USER']->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+
+        session_set_user($user);
+        $this->assertEquals(2, $USER->id);
+        $this->assertEquals(2, $_SESSION['USER']->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+
+        $USER = $DB->get_record('user', array('id'=>1));
+        $this->assertEquals(1, $USER->id);
+        $this->assertEquals(1, $_SESSION['USER']->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+
+        $this->setUser(null);
+        $this->assertEquals(0, $USER->id);
+        $this->assertSame($_SESSION['USER'], $USER);
+    }
 }

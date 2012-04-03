@@ -29,7 +29,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('PHPUNIT_CLI_UTIL', true);
+define('PHPUNIT_UTIL', true);
 
 require(__DIR__ . '/../../../../lib/phpunit/bootstrap.php');
 require_once($CFG->libdir.'/phpunit/lib.php');

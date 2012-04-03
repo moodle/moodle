@@ -385,7 +385,7 @@ class collatorlib_testcase extends basic_testcase {
      * Prepares things for this test case
      * @return void
      */
-    public function setUp() {
+    protected function setUp() {
         global $SESSION;
         if (isset($SESSION->lang)) {
             $this->initiallang = $SESSION->lang;
@@ -403,7 +403,7 @@ class collatorlib_testcase extends basic_testcase {
      * Cleans things up after this test case has run
      * @return void
      */
-    public function tearDown() {
+    protected function tearDown() {
         global $SESSION;
         parent::tearDown();
         if ($this->initiallang !== null) {

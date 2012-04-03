@@ -49,12 +49,40 @@ class phpunit_util {
     protected static $globals = array();
 
     /**
+     * @var int last value of db writes counter, used for db resetting
+     */
+    protected static $lastdbwrites = null;
+
+    /**
+     * @var phpunit_data_generator
+     */
+    protected static $generator = null;
+
+    /**
+     * Get data generator
+     * @static
+     * @return phpunit_data_generator
+     */
+    public static function get_data_generator() {
+        if (is_null(self::$generator)) {
+            require_once(__DIR__.'/generatorlib.php');
+            self::$generator = new phpunit_data_generator();
+        }
+        return self::$generator;
+    }
+
+    /**
      * Returns contents of all tables right after installation.
      * @static
      * @return array $table=>$records
      */
     protected static function get_tabledata() {
         global $CFG;
+
+        if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser")) {
+            // not initialised yet
+            return array();
+        }
 
         if (!isset(self::$tabledata)) {
             $data = file_get_contents("$CFG->dataroot/phpunit/tabledata.ser");
@@ -69,35 +97,133 @@ class phpunit_util {
     }
 
     /**
-     * Initialise CFG using data from fresh new install.
+     * Reset all database tables to default values.
      * @static
+     * @param bool $logchanges
+     * @param null|PHPUnit_Framework_TestCase $caller
+     * @return bool true if reset done, false if skipped
      */
-    public static function initialise_cfg() {
-        global $CFG, $DB;
+    public static function reset_database($logchanges = false, PHPUnit_Framework_TestCase $caller = null) {
+        global $DB;
 
-        if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser")) {
-            // most probably PHPUnit CLI installer
+        if ($logchanges) {
+            if (self::$lastdbwrites != $DB->perf_get_writes()) {
+                if ($caller) {
+                    $where = ' in testcase: '.get_class($caller).'->'.$caller->getName(true);
+                } else {
+                    $where = '';
+                }
+                error_log('warning: unexpected database modification, resetting DB state'.$where);
+            }
+        }
+
+        $tables = $DB->get_tables(false);
+        if (!$tables or empty($tables['config'])) {
+            // not installed yet
             return;
         }
 
-        if (!$DB->get_manager()->table_exists('config') or !$DB->count_records('config')) {
-            @unlink("$CFG->dataroot/phpunit/tabledata.ser");
-            @unlink("$CFG->dataroot/phpunit/versionshash.txt");
-            self::$tabledata = null;
-            return;
+        $dbreset = false;
+        if (is_null(self::$lastdbwrites) or self::$lastdbwrites != $DB->perf_get_writes()) {
+            if ($data = self::get_tabledata()) {
+                $trans = $DB->start_delegated_transaction(); // faster and safer
+
+                $resetseq = array();
+                foreach ($data as $table=>$records) {
+                    if (empty($records)) {
+                        if ($DB->count_records($table)) {
+                            $DB->delete_records($table, array());
+                            $resetseq[$table] = $table;
+                        }
+                        continue;
+                    }
+
+                    $firstrecord = reset($records);
+                    if (property_exists($firstrecord, 'id')) {
+                        if ($DB->count_records($table) >= count($records)) {
+                            $currentrecords = $DB->get_records($table, array(), 'id ASC');
+                            $changed = false;
+                            foreach ($records as $id=>$record) {
+                                if (!isset($currentrecords[$id])) {
+                                    $changed = true;
+                                    break;
+                                }
+                                if ((array)$record != (array)$currentrecords[$id]) {
+                                    $changed = true;
+                                    break;
+                                }
+                                unset($currentrecords[$id]);
+                            }
+                            if (!$changed) {
+                                if ($currentrecords) {
+                                    $remainingfirst = reset($currentrecords);
+                                    $lastrecord = end($records);
+                                    if ($remainingfirst->id > $lastrecord->id) {
+                                        $DB->delete_records_select($table, "id >= ?", array($remainingfirst->id));
+                                        $resetseq[$table] = $table;
+                                        continue;
+                                    }
+                                } else {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+
+                    $DB->delete_records($table, array());
+                    if (property_exists($firstrecord, 'id')) {
+                        $resetseq[$table] = $table;
+                    }
+                    foreach ($records as $record) {
+                        $DB->import_record($table, $record, false, true);
+                    }
+                }
+                // reset all sequences
+                foreach ($resetseq as $table) {
+                    $DB->get_manager()->reset_sequence($table, true);
+                }
+
+                $trans->allow_commit();
+
+                // remove extra tables
+                foreach ($tables as $tablename) {
+                    if (!isset($data[$tablename])) {
+                        $DB->get_manager()->drop_table(new xmldb_table($tablename));
+                    }
+                }
+                $dbreset = true;
+            }
         }
 
-        $data = self::get_tabledata();
+        self::$lastdbwrites = $DB->perf_get_writes();
 
-        foreach($data['config'] as $record) {
-            $name = $record->name;
-            $value = $record->value;
-            if (property_exists($CFG, $name)) {
-                // config.php settings always take precedence
+        return $dbreset;
+    }
+
+    /**
+     * Purge dataroot
+     * @static
+     * @return void
+     */
+    public static function reset_dataroot() {
+        global $CFG;
+
+        $handle = opendir($CFG->dataroot);
+        $skip = array('.', '..', 'phpunittestdir.txt', 'phpunit', '.htaccess');
+        while (false !== ($item = readdir($handle))) {
+            if (in_array($item, $skip)) {
                 continue;
             }
-            $CFG->{$name} = $value;
+            if (is_dir("$CFG->dataroot/$item")) {
+                remove_dir("$CFG->dataroot/$item", false);
+            } else {
+                unlink("$CFG->dataroot/$item");
+            }
         }
+        closedir($handle);
+        make_temp_directory('');
+        make_cache_directory('');
+        make_cache_directory('htmlpurifier');
     }
 
     /**
@@ -105,47 +231,106 @@ class phpunit_util {
      *
      * Note: this is relatively slow (cca 2 seconds for pg and 7 for mysql) - please use with care!
      *
+     * @param bool $logchanges log changes in global state and database in error log
+     * @param PHPUnit_Framework_TestCase $caller caller object, used for logging only
+     * @return void
      * @static
      */
-    public static function reset_all_data() {
-        global $DB, $CFG;
+    public static function reset_all_data($logchanges = false, PHPUnit_Framework_TestCase $caller = null) {
+        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
 
-        $data = self::get_tabledata();
+        $dbreset = self::reset_database($logchanges, $caller);
 
-        $trans = $DB->start_delegated_transaction(); // faster and safer
-        foreach ($data as $table=>$records) {
-            $DB->delete_records($table, array());
-            $resetseq = null;
-            foreach ($records as $record) {
-                if (is_null($resetseq)) {
-                    $resetseq = property_exists($record, 'id');
-                }
-                $DB->import_record($table, $record, false, true);
+        if ($logchanges) {
+            if ($caller) {
+                $where = ' in testcase: '.get_class($caller).'->'.$caller->getName(true);
+            } else {
+                $where = '';
             }
-            if ($resetseq === true) {
-                $DB->get_manager()->reset_sequence($table, true);
+
+            $oldcfg = self::get_global_backup('CFG');
+            $oldsite = self::get_global_backup('SITE');
+            foreach($CFG as $k=>$v) {
+                if (!property_exists($oldcfg, $k)) {
+                    error_log('warning: unexpected new $CFG->'.$k.' value'.$where);
+                } else if ($oldcfg->$k !== $CFG->$k) {
+                    error_log('warning: unexpected change of $CFG->'.$k.' value'.$where);
+                }
+                unset($oldcfg->$k);
+
+            }
+            if ($oldcfg) {
+                foreach($oldcfg as $k=>$v) {
+                    error_log('warning: unexpected removal of $CFG->'.$k.$where);
+                }
+            }
+
+            if ($USER->id != 0) {
+                error_log('warning: unexpected change of $USER'.$where);
+            }
+
+            if ($COURSE->id != $oldsite->id) {
+                error_log('warning: unexpected change of $COURSE'.$where);
             }
         }
-        $trans->allow_commit();
 
-        purge_all_caches();
+        // restore _SERVER
+        unset($_SERVER['HTTP_USER_AGENT']);
 
+        // restore original config
+        $CFG = self::get_global_backup('CFG');
+        $SITE = self::get_global_backup('SITE');
+        $COURSE = $SITE;
+
+        // recreate globals
+        $OUTPUT = new bootstrap_renderer();
+        $PAGE = new moodle_page();
+        $FULLME = null;
+        $ME = null;
+        $SCRIPT = null;
+        $SESSION = new stdClass();
+        $_SESSION['SESSION'] =& $SESSION;
+
+        // set fresh new user
         $user = new stdClass();
         $user->id = 0;
-        $user->mnet = 0;
         $user->mnethostid = $CFG->mnet_localhost_id;
         session_set_user($user);
-        accesslib_clear_all_caches_for_unit_testing();
+
+        // reset all static caches
+        accesslib_clear_all_caches(true);
+        get_string_manager()->reset_caches();
+        //TODO: add more resets here and probably refactor them to new core function
+
+        // purge dataroot
+        self::reset_dataroot();
+
+        // restore original config once more in case resetting of caches changes CFG
+        $CFG = self::get_global_backup('CFG');
+
+        // remember db writes
+        self::$lastdbwrites = $DB->perf_get_writes();
+
+        // inform data generator
+        self::get_data_generator()->reset();
+
+        // fix PHP settings
+        error_reporting($CFG->debug);
     }
 
     /**
      * Called during bootstrap only!
      * @static
      */
-    public static function init_globals() {
-        global $CFG;
+    public static function bootstrap_init() {
+        global $CFG, $SITE;
 
+        // backup the globals
         self::$globals['CFG'] = clone($CFG);
+        self::$globals['SITE'] = clone($SITE);
+
+        // refresh data in all tables, clear caches, etc.
+        phpunit_util::reset_all_data();
     }
 
     /**
@@ -178,7 +363,7 @@ class phpunit_util {
 
         if (!file_exists("$CFG->dataroot/phpunittestdir.txt")) {
             // this is already tested in bootstrap script,
-            // but anway presence of this file means the dataroot is for testing
+            // but anyway presence of this file means the dataroot is for testing
             return false;
         }
 
@@ -199,41 +384,41 @@ class phpunit_util {
      * Is this site initialised to run unit tests?
      *
      * @static
-     * @return bool
+     * @return int error code, 0 means ok
      */
-    public static function is_testing_ready() {
+    public static function testing_ready_problem() {
         global $DB, $CFG;
 
         if (!self::is_test_site()) {
-            return false;
+            return 131;
         }
 
         $tables = $DB->get_tables(true);
 
         if (!$tables) {
-            return false;
+            return 132;
         }
 
         if (!get_config('core', 'phpunittest')) {
-             return false;
+             return 131;
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser")) {
-            return false;
+            return 131;
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/versionshash.txt")) {
-            return false;
+            return 131;
         }
 
         $hash = phpunit_util::get_version_hash();
         $oldhash = file_get_contents("$CFG->dataroot/phpunit/versionshash.txt");
 
         if ($hash !== $oldhash) {
-            return false;
+            return 133;
         }
 
-        return true;
+        return 0;
     }
 
     /**
@@ -252,18 +437,17 @@ class phpunit_util {
         }
 
         // drop dataroot
-        remove_dir($CFG->dataroot, true);
+        self::reset_dataroot();
         phpunit_bootstrap_initdataroot($CFG->dataroot);
+        remove_dir("$CFG->dataroot/phpunit", true);
 
         // drop all tables
-        $trans = $DB->start_delegated_transaction();
         $tables = $DB->get_tables(false);
-        foreach ($tables as $tablename) {
-            $DB->delete_records($tablename, array());
+        if (isset($tables['config'])) {
+            // config always last to prevent problems with interrupted drops!
+            unset($tables['config']);
+            $tables['config'] = 'config';
         }
-        $trans->allow_commit();
-
-        // now drop them
         foreach ($tables as $tablename) {
             $table = new xmldb_table($tablename);
             $DB->get_manager()->drop_table($table);
@@ -296,8 +480,9 @@ class phpunit_util {
 
         install_cli_database($options, false);
 
-        // just in case remove admin password so that normal login is not possible
-        $DB->set_field('user', 'password', 'not cached', array('username' => 'admin'));
+        // install timezone info
+        $timezones = get_records_csv($CFG->libdir.'/timezone.txt', 'timezone');
+        update_timezone_records($timezones);
 
         // add test db flag
         set_config('phpunittest', 'phpunittest');
@@ -306,7 +491,13 @@ class phpunit_util {
         $data = array();
         $tables = $DB->get_tables();
         foreach ($tables as $table) {
-            $data[$table] = $DB->get_records($table, array());
+            $columns = $DB->get_columns($table);
+            if (isset($columns['id'])) {
+                $data[$table] = $DB->get_records($table, array(), 'id ASC');
+            } else {
+                // there should not be many of these
+                $data[$table] = $DB->get_records($table, array());
+            }
         }
         $data = serialize($data);
         @unlink("$CFG->dataroot/phpunit/tabledata.ser");
@@ -319,7 +510,7 @@ class phpunit_util {
     }
 
     /**
-     * Culculate unique version hash for all available plugins and core.
+     * Calculate unique version hash for all available plugins and core.
      * @static
      * @return string sha1 hash
      */
@@ -372,11 +563,9 @@ class phpunit_util {
         global $CFG;
 
         $template = '
-    <testsuites>
         <testsuite name="@component@">
             <directory suffix="_test.php">@dir@</directory>
-        </testsuite>
-    </testsuites>';
+        </testsuite>';
         $data = file_get_contents("$CFG->dirroot/phpunit.xml.dist");
 
         $suites = '';
@@ -427,6 +616,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @deprecated since 2.3
      * @param bool $expected
      * @param string $message
+     * @return void
      */
     public function expectException($expected, $message = '') {
         // use phpdocs: @expectedException ExceptionClassName
@@ -440,6 +630,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @deprecated since 2.3
      * @param bool $expected
      * @param string $message
+     * @return void
      */
     public static function expectError($expected = false, $message = '') {
         // not available in PHPUnit
@@ -454,6 +645,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @static
      * @param mixed $actual
      * @param string $messages
+     * @return void
      */
     public static function assertTrue($actual, $messages = '') {
         parent::assertTrue((bool)$actual, $messages);
@@ -464,6 +656,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @static
      * @param mixed $actual
      * @param string $messages
+     * @return void
      */
     public static function assertFalse($actual, $messages = '') {
         parent::assertFalse((bool)$actual, $messages);
@@ -475,6 +668,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @param mixed $expected
      * @param mixed $actual
      * @param string $message
+     * @return void
      */
     public static function assertEqual($expected, $actual, $message = '') {
         parent::assertEquals($expected, $actual, $message);
@@ -486,6 +680,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @param mixed $expected
      * @param mixed $actual
      * @param string $message
+     * @return void
      */
     public static function assertNotEqual($expected, $actual, $message = '') {
         parent::assertNotEquals($expected, $actual, $message);
@@ -497,6 +692,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @param mixed $expected
      * @param mixed $actual
      * @param string $message
+     * @return void
      */
     public static function assertIdentical($expected, $actual, $message = '') {
         parent::assertSame($expected, $actual, $message);
@@ -508,6 +704,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @param mixed $expected
      * @param mixed $actual
      * @param string $message
+     * @return void
      */
     public static function assertNotIdentical($expected, $actual, $message = '') {
         parent::assertNotSame($expected, $actual, $message);
@@ -519,6 +716,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @param mixed $actual
      * @param mixed $expected
      * @param string $message
+     * @return void
      */
     public static function assertIsA($actual, $expected, $message = '') {
         parent::assertInstanceOf($expected, $actual, $message);
@@ -529,7 +727,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
 /**
  * The simplest PHPUnit test case customised for Moodle
  *
- * This test case does not modify database or any globals.
+ * It is intended for isolated tests that do not modify database or any globals.
  *
  * @package    core
  * @category   phpunit
@@ -541,17 +739,58 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
     /**
      * Constructs a test case with the given name.
      *
+     * Note: use setUp() or setUpBeforeClass() in custom test cases.
+     *
      * @param string $name
      * @param array  $data
      * @param string $dataName
      */
-    public function __construct($name = NULL, array $data = array(), $dataName = '') {
+    final public function __construct($name = null, array $data = array(), $dataName = '') {
         parent::__construct($name, $data, $dataName);
 
         $this->setBackupGlobals(false);
         $this->setBackupStaticAttributes(false);
         $this->setRunTestInSeparateProcess(false);
-        $this->setInIsolation(false);
+    }
+
+    /**
+     * Runs the bare test sequence and log any changes in global state or database.
+     * @return void
+     */
+    public function runBare() {
+        parent::runBare();
+        phpunit_util::reset_all_data(true, $this);
+    }
+}
+
+
+/**
+ * Advanced PHPUnit test case customised for Moodle.
+ *
+ * @package    core
+ * @category   phpunit
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class advanced_testcase extends PHPUnit_Framework_TestCase {
+    /** @var bool automatically reset everything? null means log changes */
+    protected $resetAfterTest;
+
+    /**
+     * Constructs a test case with the given name.
+     *
+     * Note: use setUp() or setUpBeforeClass() in custom test cases.
+     *
+     * @param string $name
+     * @param array  $data
+     * @param string $dataName
+     */
+    final public function __construct($name = null, array $data = array(), $dataName = '') {
+        parent::__construct($name, $data, $dataName);
+
+        $this->setBackupGlobals(false);
+        $this->setBackupStaticAttributes(false);
+        $this->setRunTestInSeparateProcess(false);
     }
 
     /**
@@ -559,43 +798,209 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
      * @return void
      */
     public function runBare() {
-        global $CFG, $USER, $DB;
-
-        $dbwrites = $DB->perf_get_writes();
+        $this->resetAfterTest = null;
 
         parent::runBare();
 
-        $oldcfg = phpunit_util::get_global_backup('CFG');
-        foreach($CFG as $k=>$v) {
-            if (!property_exists($oldcfg, $k)) {
-                unset($CFG->$k);
-                error_log('warning: unexpected new $CFG->'.$k.' value in testcase: '.get_class($this).'->'.$this->getName(true));
-            } else if ($oldcfg->$k !== $CFG->$k) {
-                $CFG->$k = $oldcfg->$k;
-                error_log('warning: unexpected change of $CFG->'.$k.' value in testcase: '.get_class($this).'->'.$this->getName(true));
+        if ($this->resetAfterTest === true) {
+            self::resetAllData();
+        } else if ($this->resetAfterTest === false) {
+            // keep all data untouched for other tests
+        } else {
+            // reset but log what changed
+            phpunit_util::reset_all_data(true, $this);
+        }
+
+        $this->resetAfterTest = null;
+    }
+
+    /**
+     * Reset everything after current test.
+     * @param bool $reset true means reset state back, false means keep all data for the next test,
+     *      null means reset state and show warnings if anything changed
+     * @return void
+     */
+    public function resetAfterTest($reset = true) {
+        $this->resetAfterTest = $reset;
+    }
+
+    /**
+     * Cleanup after all tests are executed.
+     *
+     * Note: do not forget to call this if overridden...
+     *
+     * @static
+     * @return void
+     */
+    public static function tearDownAfterClass() {
+        phpunit_util::reset_all_data();
+    }
+
+    /**
+     * Reset all database tables, restore global state and clear caches and optionally purge dataroot dir.
+     * @static
+     * @return void
+     */
+    public static function resetAllData() {
+        phpunit_util::reset_all_data();
+    }
+
+    /**
+     * Set current $USER, reset access cache.
+     * @static
+     * @param null|int|stdClass $user user record, null means non-logged-in, integer means userid
+     * @return void
+     */
+    public static function setUser($user = null) {
+        global $CFG, $DB;
+
+        if (is_object($user)) {
+            $user = clone($user);
+        } else if (!$user) {
+            $user = new stdClass();
+            $user->id = 0;
+            $user->mnethostid = $CFG->mnet_localhost_id;
+        } else {
+            $user = $DB->get_record('user', array('id'=>$user));
+        }
+        unset($user->description);
+        unset($user->access);
+
+        session_set_user($user);
+    }
+
+    /**
+     * Get data generator
+     * @static
+     * @return phpunit_data_generator
+     */
+    public static function getDataGenerator() {
+        return phpunit_util::get_data_generator();
+    }
+
+    /**
+     * Recursively visit all the files in the source tree. Calls the callback
+     * function with the pathname of each file found.
+     *
+     * @param $path the folder to start searching from.
+     * @param $callback the method of this class to call with the name of each file found.
+     * @param $fileregexp a regexp used to filter the search (optional).
+     * @param $exclude If true, pathnames that match the regexp will be ignored. If false,
+     *     only files that match the regexp will be included. (default false).
+     * @param array $ignorefolders will not go into any of these folders (optional).
+     * @return void
+     */
+    public function recurseFolders($path, $callback, $fileregexp = '/.*/', $exclude = false, $ignorefolders = array()) {
+        $files = scandir($path);
+
+        foreach ($files as $file) {
+            $filepath = $path .'/'. $file;
+            if (strpos($file, '.') === 0) {
+                /// Don't check hidden files.
+                continue;
+            } else if (is_dir($filepath)) {
+                if (!in_array($filepath, $ignorefolders)) {
+                    $this->recurseFolders($filepath, $callback, $fileregexp, $exclude, $ignorefolders);
+                }
+            } else if ($exclude xor preg_match($fileregexp, $filepath)) {
+                $this->$callback($filepath);
             }
-            unset($oldcfg->$k);
-
         }
-        if ($oldcfg) {
-            foreach($oldcfg as $k=>$v) {
-                $CFG->$k = $v;
-                error_log('warning: unexpected removal of $CFG->'.$k.' in testcase: '.get_class($this).'->'.$this->getName(true));
+    }
+}
+
+
+/**
+ * Special test case for testing of DML drivers and DDL layer.
+ *
+ * Note: Use only 'test_table*' when creating new tables.
+ *
+ * @package    core
+ * @category   phpunit
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class database_driver_testcase extends PHPUnit_Framework_TestCase {
+    protected static $extradb = null;
+
+    /** @var moodle_database */
+    protected $tdb;
+
+    /**
+     * Constructs a test case with the given name.
+     *
+     * @param string $name
+     * @param array  $data
+     * @param string $dataName
+     */
+    final public function __construct($name = null, array $data = array(), $dataName = '') {
+        parent::__construct($name, $data, $dataName);
+
+        $this->setBackupGlobals(false);
+        $this->setBackupStaticAttributes(false);
+        $this->setRunTestInSeparateProcess(false);
+    }
+
+    public static function setUpBeforeClass() {
+        global $CFG;
+
+        if (!defined('PHPUNIT_TEST_DRIVER')) {
+            // use normal $DB
+            return;
+        }
+
+        if (!isset($CFG->phpunit_extra_drivers[PHPUNIT_TEST_DRIVER])) {
+            throw new exception('Can not find driver configuration options with index: '.PHPUNIT_TEST_DRIVER);
+        }
+
+        $dblibrary = empty($CFG->phpunit_extra_drivers[PHPUNIT_TEST_DRIVER]['dblibrary']) ? 'native' : $CFG->phpunit_extra_drivers[PHPUNIT_TEST_DRIVER]['dblibrary'];
+        $dbtype = $CFG->phpunit_extra_drivers[PHPUNIT_TEST_DRIVER]['dbtype'];
+        $dbhost = $CFG->phpunit_extra_drivers[PHPUNIT_TEST_DRIVER]['dbhost'];
+        $dbname = $CFG->phpunit_extra_drivers[PHPUNIT_TEST_DRIVER]['dbname'];
+        $dbuser = $CFG->phpunit_extra_drivers[PHPUNIT_TEST_DRIVER]['dbuser'];
+        $dbpass = $CFG->phpunit_extra_drivers[PHPUNIT_TEST_DRIVER]['dbpass'];
+        $prefix = $CFG->phpunit_extra_drivers[PHPUNIT_TEST_DRIVER]['prefix'];
+        $dboptions = empty($CFG->phpunit_extra_drivers[PHPUNIT_TEST_DRIVER]['dboptions']) ? array() : $CFG->phpunit_extra_drivers[PHPUNIT_TEST_DRIVER]['dboptions'];
+
+        $classname = "{$dbtype}_{$dblibrary}_moodle_database";
+        require_once("$CFG->libdir/dml/$classname.php");
+        $d = new $classname();
+        if (!$d->driver_installed()) {
+            throw new exception('Database driver for '.$classname.' is not installed');
+        }
+
+        $d->connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
+
+        self::$extradb = $d;
+    }
+
+    protected function setUp() {
+        global $DB;
+
+        if (self::$extradb) {
+            $this->tdb = self::$extradb;
+        } else {
+            $this->tdb = $DB;
+        }
+    }
+
+    protected function tearDown() {
+        // delete all test tables
+        $dbman = $this->tdb->get_manager();
+        $tables = $this->tdb->get_tables(false);
+        foreach($tables as $tablename) {
+            if (strpos($tablename, 'test_table') === 0) {
+                $table = new xmldb_table($tablename);
+                $dbman->drop_table($table);
             }
         }
+    }
 
-        if ($USER->id != 0) {
-            error_log('warning: unexpected change of $USER in testcase: '.get_class($this).'->'.$this->getName(true));
-            $USER = new stdClass();
-            $USER->id = 0;
+    public static function tearDownAfterClass() {
+        if (self::$extradb) {
+            self::$extradb->dispose();
+            self::$extradb = null;
         }
-
-        if ($dbwrites != $DB->perf_get_writes()) {
-            //TODO: find out what was changed exactly
-            error_log('warning: unexpected database modification, resetting DB state in testcase: '.get_class($this).'->'.$this->getName(true));
-            phpunit_util::reset_all_data();
-        }
-
-        //TODO: somehow find out if there are changes in dataroot
+        phpunit_util::reset_all_data();
     }
 }

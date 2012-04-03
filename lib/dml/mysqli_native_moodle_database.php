@@ -410,7 +410,11 @@ class mysqli_native_moodle_database extends moodle_database {
         $sql = "SHOW INDEXES FROM {$this->prefix}$table";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
-        $this->query_end($result);
+        try {
+            $this->query_end($result);
+        } catch (dml_read_exception $e) {
+            return $indexes; // table does not exist - no indexes...
+        }
         if ($result) {
             while ($res = $result->fetch_object()) {
                 if ($res->Key_name === 'PRIMARY') {

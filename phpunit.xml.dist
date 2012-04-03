@@ -20,11 +20,33 @@
     <testsuites>
         <testsuite name="core_lib">
             <directory suffix="_test.php">lib/tests</directory>
+            <directory suffix="_test.php">lib/ajax/tests</directory>
+            <directory suffix="_test.php">lib/form/tests</directory>
         </testsuite>
-    </testsuites>
+        <testsuite name="core_db">
+            <directory suffix="_test.php">lib/ddl/tests</directory>
+            <directory suffix="_test.php">lib/dml/tests</directory>
+        </testsuite>
+        <testsuite name="core_backup">
+            <directory suffix="_test.php">backup/controller/tests</directory>
+            <directory suffix="_test.php">backup/converter/moodle1/tests</directory>
+            <directory suffix="_test.php">backup/util</directory>
+        </testsuite>
+        <testsuite name="core_blog">
+            <directory suffix="_test.php">blog/tests</directory>
+        </testsuite>
+        <testsuite name="core_course">
+            <directory suffix="_test.php">course/tests</directory>
+        </testsuite>
+        <testsuite name="core_grade">
+            <directory suffix="_test.php">grade/tests</directory>
+            <directory suffix="_test.php">grade/grading/tests</directory>
+        </testsuite>
 
-<!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from phpunit.xml.dist with up-to-date list of plugins in current install-->
+        <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from phpunit.xml.dist with up-to-date list of plugins in current install-->
 <!--@plugin_suites_start@-->
 <!--@plugin_suites_end@-->
+
+    </testsuites>
 
 </phpunit>

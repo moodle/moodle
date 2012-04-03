@@ -1070,6 +1070,13 @@ function session_set_user($user) {
     $_SESSION['USER'] = $user;
     unset($_SESSION['USER']->description); // conserve memory
     sesskey(); // init session key
+
+    if (PHPUNIT_TEST) {
+        // phpunit tests use reversed reference
+        global $USER;
+        $USER = $_SESSION['USER'];
+        $_SESSION['USER'] =& $USER;
+    }
 }
 
 /**
