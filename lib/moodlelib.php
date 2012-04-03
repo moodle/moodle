@@ -2682,6 +2682,13 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
         }
     }
 
+    // If this is an AJAX request and $setwantsurltome is true then we need to override it and set it to false.
+    // Otherwise the AJAX request URL will be set to $SESSION->wantsurl and events such as self enrolment in the future
+    // risk leading the user back to the AJAX request URL.
+    if ($setwantsurltome && defined('AJAX_SCRIPT') && AJAX_SCRIPT) {
+        $setwantsurltome = false;
+    }
+
     // If the user is not even logged in yet then make sure they are
     if (!isloggedin()) {
         if ($autologinguest and !empty($CFG->guestloginbutton) and !empty($CFG->autologinguests)) {
