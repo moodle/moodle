@@ -889,7 +889,7 @@ class qformat_xml extends qformat_default {
      * @param stdClass $context
      * @return array (of objects) question objects.
      */
-    protected function readquestions($lines, $context) {
+    protected function readquestions($lines) {
         // We just need it as one big string
         $text = implode($lines, ' ');
         unset($lines);

@@ -128,6 +128,7 @@ class qformat_default {
             debugging('You shouldn\'t call setCategory after setQuestions');
         }
         $this->category = $category;
+        $this->importcontext = get_context_instance_by_id($this->category->contextid);
     }
 
     /**
@@ -311,9 +312,6 @@ class qformat_default {
     public function importprocess($category) {
         global $USER, $CFG, $DB, $OUTPUT;
 
-        $context = $category->context;
-        $this->importcontext = $context;
-
         // reset the timer in case file upload was slow
         set_time_limit(0);
 
@@ -325,7 +323,7 @@ class qformat_default {
             return false;
         }
 
-        if (!$questions = $this->readquestions($lines, $context)) {   // Extract all the questions
+        if (!$questions = $this->readquestions($lines)) {   // Extract all the questions
             echo $OUTPUT->notification(get_string('noquestionsinfile', 'question'));
             return false;
         }
@@ -397,7 +395,7 @@ class qformat_default {
                 }
                 continue;
             }
-            $question->context = $context;
+            $question->context = $this->importcontext;
 
             $count++;
 
@@ -415,13 +413,13 @@ class qformat_default {
             if (isset($question->questiontextfiles)) {
                 foreach ($question->questiontextfiles as $file) {
                     question_bank::get_qtype($question->qtype)->import_file(
-                            $context, 'question', 'questiontext', $question->id, $file);
+                            $this->importcontext, 'question', 'questiontext', $question->id, $file);
                 }
             }
             if (isset($question->generalfeedbackfiles)) {
                 foreach ($question->generalfeedbackfiles as $file) {
                     question_bank::get_qtype($question->qtype)->import_file(
-                            $context, 'question', 'generalfeedback', $question->id, $file);
+                            $this->importcontext, 'question', 'generalfeedback', $question->id, $file);
                 }
             }
 
@@ -507,6 +505,7 @@ class qformat_default {
         } else {
             $context = get_context_instance_by_id($this->category->contextid);
         }
+        $this->importcontext = $context;
 
         // Now create any categories that need to be created.
         foreach ($catnames as $catname) {
@@ -556,14 +555,19 @@ class qformat_default {
      * readquestion().   Questions are defined as anything
      * between blank lines.
      *
+     * NOTE this method used to take $context as a second argument. However, at
+     * the point where this method was called, it was impossible to know what
+     * context the quetsions were going to be saved into, so the value could be
+     * wrong. Also, none of the standard question formats were using this argument,
+     * so it was removed. See MDL-32220.
+     *
      * If your format does not use blank lines as a delimiter
      * then you will need to override this method. Even then
      * try to use readquestion for each question
      * @param array lines array of lines from readdata
-     * @param object $context
      * @return array array of question objects
      */
-    protected function readquestions($lines, $context) {
+    protected function readquestions($lines) {
 
         $questions = array();
         $currentquestion = array();
@@ -583,7 +587,7 @@ class qformat_default {
         }
 
         if (!empty($currentquestion)) {  // There may be a final question
-            if ($question = $this->readquestion($currentquestion, $context)) {
+            if ($question = $this->readquestion($currentquestion)) {
                 $questions[] = $question;
             }
         }
