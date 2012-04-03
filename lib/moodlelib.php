@@ -8608,8 +8608,7 @@ function check_gd_version() {
  * Checks version numbers of main code and all modules to see
  * if there are any mismatches
  *
- * @global object
- * @global object
+ * @global moodle_database $DB
  * @return bool
  */
 function moodle_needs_upgrading() {
@@ -8672,6 +8671,8 @@ function moodle_needs_upgrading() {
     $plugintypes = get_plugin_types();
     unset($plugintypes['mod']);
     unset($plugintypes['block']);
+
+    $versions = $DB->get_records_menu('config_plugins', array('name' => 'version'), 'plugin', 'plugin, value');
     foreach ($plugintypes as $type=>$unused) {
         $plugs = get_plugin_list($type);
         foreach ($plugs as $plug=>$fullplug) {
@@ -8681,7 +8682,11 @@ function moodle_needs_upgrading() {
             }
             $plugin = new stdClass();
             include($fullplug.'/version.php');  // defines $plugin with version etc
-            $installedversion = get_config($component, 'version');
+            if (array_key_exists($component, $versions)) {
+                $installedversion = $versions[$component];
+            } else {
+                $installedversion = get_config($component, 'version');
+            }
             if (empty($installedversion)) { // new installation
                 return true;
             } else if ($installedversion < $plugin->version) { // upgrade
