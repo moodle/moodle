@@ -656,7 +656,7 @@ abstract class moodleform_mod extends moodleform {
      * @return bool True if one or more rules is enabled, false if none are;
      *   default returns false
      */
-    function completion_rule_enabled(&$data) {
+    function completion_rule_enabled($data) {
         return false;
     }
 

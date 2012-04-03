@@ -337,7 +337,8 @@ class backup_structure_test extends UnitTestCaseUsingDatabase {
         $this->assertEqual($inventeds->get_counter(), 2); // Array
 
         // Perform some validations with the generated XML
-        $dom = DOMDocument::loadXML($xo->get_allcontents());
+        $dom = new DomDocument();
+        $dom->loadXML($xo->get_allcontents());
         $xpath = new DOMXPath($dom);
         // Some more counters
         $query = '/forum/discussions/discussion/posts/post';

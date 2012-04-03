@@ -280,6 +280,10 @@ class grade_report_grader extends grade_report {
 
         global $SESSION;
 
+        if (!isset($SESSION->gradeuserreport)) {
+            $SESSION->gradeuserreport = new stdClass();
+        }
+
         if ($this->sortitemid) {
             if (!isset($SESSION->gradeuserreport->sort)) {
                 if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname') {
@@ -439,7 +443,7 @@ class grade_report_grader extends grade_report {
             foreach ($grades as $graderec) {
                 if (in_array($graderec->userid, $userids) and array_key_exists($graderec->itemid, $this->gtree->get_items())) { // some items may not be present!!
                     $this->grades[$graderec->userid][$graderec->itemid] = new grade_grade($graderec, false);
-                    $this->grades[$graderec->userid][$graderec->itemid]->grade_item =& $this->gtree->get_item($graderec->itemid); // db caching
+                    $this->grades[$graderec->userid][$graderec->itemid]->grade_item = $this->gtree->get_item($graderec->itemid); // db caching
                 }
             }
         }
@@ -451,7 +455,7 @@ class grade_report_grader extends grade_report {
                     $this->grades[$userid][$itemid] = new grade_grade();
                     $this->grades[$userid][$itemid]->itemid = $itemid;
                     $this->grades[$userid][$itemid]->userid = $userid;
-                    $this->grades[$userid][$itemid]->grade_item =& $this->gtree->get_item($itemid); // db caching
+                    $this->grades[$userid][$itemid]->grade_item = $this->gtree->get_item($itemid); // db caching
                 }
             }
         }

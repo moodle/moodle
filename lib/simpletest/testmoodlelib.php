@@ -369,7 +369,7 @@ class moodlelib_test extends UnitTestCase {
         // make sure warning is displayed if array submitted - TODO: throw exception in Moodle 2.3
         $debugging = isset($CFG->debug) ? $CFG->debug : null;
         $debugdisplay = isset($CFG->debugdisplay) ? $CFG->debugdisplay : null;
-        $CFG->debug = 38911;
+        $CFG->debug = DEBUG_DEVELOPER;
         $CFG->debugdisplay = true;
 
         ob_start();
@@ -441,7 +441,7 @@ class moodlelib_test extends UnitTestCase {
         // do not allow non-arrays
         $debugging = isset($CFG->debug) ? $CFG->debug : null;
         $debugdisplay = isset($CFG->debugdisplay) ? $CFG->debugdisplay : null;
-        $CFG->debug = 38911;
+        $CFG->debug = DEBUG_DEVELOPER;
         $CFG->debugdisplay = true;
 
         ob_start();
@@ -511,7 +511,7 @@ class moodlelib_test extends UnitTestCase {
         // make sure warning is displayed if array submitted - TODO: throw exception in Moodle 2.3
         $debugging = isset($CFG->debug) ? $CFG->debug : null;
         $debugdisplay = isset($CFG->debugdisplay) ? $CFG->debugdisplay : null;
-        $CFG->debug = 38911;
+        $CFG->debug = DEBUG_DEVELOPER;
         $CFG->debugdisplay = true;
 
         ob_start();
@@ -583,7 +583,7 @@ class moodlelib_test extends UnitTestCase {
         // do not allow non-arrays
         $debugging = isset($CFG->debug) ? $CFG->debug : null;
         $debugdisplay = isset($CFG->debugdisplay) ? $CFG->debugdisplay : null;
-        $CFG->debug = 38911;
+        $CFG->debug = DEBUG_DEVELOPER;
         $CFG->debugdisplay = true;
 
         // make sure array keys are sanitised

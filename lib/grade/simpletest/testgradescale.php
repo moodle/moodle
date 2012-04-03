@@ -48,7 +48,7 @@ class grade_scale_test extends grade_test {
         $params->userid      = $this->userid;
         $params->scale       = 'Distinction, Very Good, Good, Pass, Fail';
         $params->description = 'This scale is used to mark standard assignments.';
-        $params->timemodified = mktime();
+        $params->timemodified = time();
 
         $scale = new grade_scale($params, false);
 

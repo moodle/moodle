@@ -402,9 +402,9 @@ function install_cli_database(array $options, $interactive) {
     require_once($CFG->libdir.'/upgradelib.php');
 
     // show as much debug as possible
-    @error_reporting(1023);
+    @error_reporting(E_ALL | E_STRICT);
     @ini_set('display_errors', '1');
-    $CFG->debug = 38911;
+    $CFG->debug = (E_ALL | E_STRICT);
     $CFG->debugdisplay = true;
 
     $CFG->version = '';

@@ -434,6 +434,7 @@ WHERE
     cm.course=? AND cmc.userid=?"),array(42,314159)));
 
         // There are two CMids in total, the one we had data for and another one
+        $modinfo = new stdClass();
         $modinfo->cms=array((object)array('id'=>13),(object)array('id'=>14));
         $result=$c->get_data($cm,true,0,$modinfo);
 
@@ -615,8 +616,8 @@ WHERE
         $c->__construct((object)array('id'=>42));
 
         $cm=(object)array('course'=>42,'id'=>13,'completion'=>0,'completiongradeitemnumber'=>null);
-        $item=(object)array('itemnumber'=>3);
-        $grade=(object)array('userid'=>31337);
+        $item=(object)array('itemnumber'=>3, 'gradepass'=>1, 'hidden'=>0);
+        $grade=(object)array('userid'=>31337, 'finalgrade'=>0, 'rawgrade'=>0);
 
         // Not enabled (should do nothing)
         $c->setReturnValueAt(0,'is_enabled',false);
@@ -640,9 +641,8 @@ WHERE
         $cm->completiongradeitemnumber=3;
         $c->setReturnValueAt(3,'is_enabled',true);
         $c->expectAt(3,'is_enabled',array($cm));
-        $c->expectAt(0,'internal_get_grade_state',array($item,$grade));
-        $c->setReturnValueAt(0,'internal_get_grade_state',COMPLETION_COMPLETE_PASS);
         $c->expectAt(0,'update_state',array($cm,COMPLETION_COMPLETE_PASS,31337));
+        $grade->finalgrade = 1;
         $c->inform_grade_changed($cm,$item,$grade,false);
 
         // Same as above but marked deleted. It is supposed to call update_state

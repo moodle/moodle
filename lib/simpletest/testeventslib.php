@@ -63,7 +63,7 @@ function sample_function_handler($eventdata) {
 
 // test handler class with static method
 class sample_handler_class {
-    function static_method($eventdata) {
+    static function static_method($eventdata) {
         static $called = 0;
         static $ignorefail = false;
 

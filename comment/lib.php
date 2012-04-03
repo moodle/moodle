@@ -636,7 +636,7 @@ class comment {
      * }
      * @return boolean
      */
-    public function delete_comments($param) {
+    public static function delete_comments($param) {
         global $DB;
         $param = (array)$param;
         if (empty($param['contextid'])) {
@@ -651,7 +651,7 @@ class comment {
      *
      * @param stdClass $context course context
      */
-    public function reset_course_page_comments($context) {
+    public static function reset_course_page_comments($context) {
         global $DB;
         $contexts = array();
         $contexts[] = $context->id;

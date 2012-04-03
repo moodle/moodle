@@ -160,6 +160,7 @@ if ($grade = $DB->get_record('grade_grades', array('itemid' => $grade_item->id, 
 
     $mform->set_data($grade);
 } else {
+    $grade = new stdClass();
     $grade->feedback = array('text'=>'', 'format'=>FORMAT_HTML);
     $mform->set_data(array('itemid'=>$itemid, 'userid'=>$userid, 'locked'=>$grade_item->locked, 'locktime'=>$grade_item->locktime));
 }

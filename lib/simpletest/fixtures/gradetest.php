@@ -104,7 +104,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $scale->userid      = $this->userid;
         $scale->scale       = 'Way off topic, Not very helpful, Fairly neutral, Fairly helpful, Supportive, Some good information, Perfect answer!';
         $scale->description = 'This scale defines some of qualities that make posts helpful within the Moodle help forums.\n Your feedback will help others see how their posts are being received.';
-        $scale->timemodified = mktime();
+        $scale->timemodified = time();
 
         $scale->id = $DB->insert_record('scale', $scale);
         $this->scale[0] = $scale;
@@ -118,7 +118,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $scale->userid      = $this->userid;
         $scale->scale       = 'Distinction, Very Good, Good, Pass, Fail';
         $scale->description = 'This scale is used to mark standard assignments.';
-        $scale->timemodified = mktime();
+        $scale->timemodified = time();
 
         $scale->id = $DB->insert_record('scale', $scale);
         $this->scale[1] = $scale;
@@ -132,7 +132,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $scale->userid      = $this->userid;
         $scale->scale       = 'Loner, Contentious, Disinterested, Participative, Follower, Leader';
         $scale->description = 'Describes the level of teamwork of a student.';
-        $scale->timemodified = mktime();
+        $scale->timemodified = time();
         $temp  = explode(',', $scale->scale);
         $scale->max         = count($temp) -1;
 
@@ -146,7 +146,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $scale->userid      = $this->userid;
         $scale->scale       = 'Does not understand theory, Understands theory but fails practice, Manages through, Excels';
         $scale->description = 'Level of expertise at a technical task, with a theoretical framework.';
-        $scale->timemodified = mktime();
+        $scale->timemodified = time();
         $temp  = explode(',', $scale->scale);
         $scale->max         = count($temp) -1;
 
@@ -160,7 +160,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $scale->userid      = $this->userid;
         $scale->scale       = 'Insufficient, Acceptable, Excellent.';
         $scale->description = 'Description of skills.';
-        $scale->timemodified = mktime();
+        $scale->timemodified = time();
         $temp  = explode(',', $scale->scale);
         $scale->max         = count($temp) -1;
 
@@ -197,8 +197,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
         $grade_category->parent      = $course_category->id;
-        $grade_category->timecreated = mktime();
-        $grade_category->timemodified = mktime();
+        $grade_category->timecreated = time();
+        $grade_category->timemodified = time();
         $grade_category->depth = 2;
 
         $grade_category->id = $DB->insert_record('grade_categories', $grade_category);
@@ -215,8 +215,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
         $grade_category->parent      = $this->grade_categories[0]->id;
-        $grade_category->timecreated = mktime();
-        $grade_category->timemodified = mktime();
+        $grade_category->timecreated = time();
+        $grade_category->timemodified = time();
         $grade_category->depth = 3;
 
         $grade_category->id = $DB->insert_record('grade_categories', $grade_category);
@@ -233,8 +233,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
         $grade_category->parent      = $this->grade_categories[0]->id;
-        $grade_category->timecreated = mktime();
-        $grade_category->timemodified = mktime();
+        $grade_category->timecreated = time();
+        $grade_category->timemodified = time();
         $grade_category->depth = 3;
 
         $grade_category->id = $DB->insert_record('grade_categories', $grade_category);
@@ -253,8 +253,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
         $grade_category->parent      = $course_category->id;
-        $grade_category->timecreated = mktime();
-        $grade_category->timemodified = mktime();
+        $grade_category->timecreated = time();
+        $grade_category->timemodified = time();
         $grade_category->depth = 2;
 
         $grade_category->id = $DB->insert_record('grade_categories', $grade_category);
@@ -378,8 +378,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->itemnumber = 1;
         $grade_item->idnumber = 'item id 0';
         $grade_item->iteminfo = 'Grade item 0 used for unit testing';
-        $grade_item->timecreated = mktime();
-        $grade_item->timemodified = mktime();
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
         $grade_item->sortorder = 3;
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
@@ -400,8 +400,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Grade item 1 used for unit testing';
-        $grade_item->timecreated = mktime();
-        $grade_item->timemodified = mktime();
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
         $grade_item->sortorder = 4;
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
@@ -421,8 +421,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->grademin = 0;
         $grade_item->grademax = $this->scalemax[0];
         $grade_item->iteminfo = 'Grade item 2 used for unit testing';
-        $grade_item->timecreated = mktime();
-        $grade_item->timemodified = mktime();
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
         $grade_item->sortorder = 6;
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
@@ -441,8 +441,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Grade item 3 used for unit testing';
-        $grade_item->timecreated = mktime();
-        $grade_item->timemodified = mktime();
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
         $grade_item->sortorder = 1;
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
@@ -460,8 +460,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Grade item 4 used for unit testing';
-        $grade_item->timecreated = mktime();
-        $grade_item->timemodified = mktime();
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
         $grade_item->sortorder = 2;
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
@@ -479,8 +479,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Grade item 5 used for unit testing';
-        $grade_item->timecreated = mktime();
-        $grade_item->timemodified = mktime();
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
         $grade_item->sortorder = 5;
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
@@ -502,8 +502,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->grademax = 120;
         $grade_item->locked = time();
         $grade_item->iteminfo = 'Orphan Grade 6 item used for unit testing';
-        $grade_item->timecreated = mktime();
-        $grade_item->timemodified = mktime();
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
         $grade_item->sortorder = 7;
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
@@ -524,8 +524,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->grademin = 0;
         $grade_item->grademax = $this->scalemax[0];
         $grade_item->iteminfo = 'Grade item 7 used for unit testing';
-        $grade_item->timecreated = mktime();
-        $grade_item->timemodified = mktime();
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
         $grade_item->sortorder = 9;
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
@@ -544,8 +544,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Grade item 8 used for unit testing';
-        $grade_item->timecreated = mktime();
-        $grade_item->timemodified = mktime();
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
         $grade_item->sortorder = 10;
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
@@ -565,8 +565,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Orphan Grade item 9 used for unit testing';
-        $grade_item->timecreated = mktime();
-        $grade_item->timemodified = mktime();
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
         $grade_item->sortorder = 8;
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
@@ -586,8 +586,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Manual grade item 10 used for unit testing';
-        $grade_item->timecreated = mktime();
-        $grade_item->timemodified = mktime();
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
         $this->grade_items[10] = $grade_item;
@@ -608,8 +608,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->userid = 1;
         $grade->rawgrade = 15; // too small
         $grade->finalgrade = 30;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '1 of 17 grade_grades';
         $grade->informationformat = FORMAT_PLAIN;
         $grade->feedback = 'Good, but not good enough..';
@@ -623,8 +623,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->userid = 2;
         $grade->rawgrade = 40;
         $grade->finalgrade = 40;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '2 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -635,8 +635,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->userid = 3;
         $grade->rawgrade = 170; // too big
         $grade->finalgrade = 110;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '3 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -649,8 +649,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->itemid = $this->grade_items[1]->id;
         $grade->userid = 1;
         $grade->finalgrade = 72;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '4 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -660,8 +660,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->itemid = $this->grade_items[1]->id;
         $grade->userid = 2;
         $grade->finalgrade = 92;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '5 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -671,8 +671,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->itemid = $this->grade_items[1]->id;
         $grade->userid = 3;
         $grade->finalgrade = 100;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '6 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -687,8 +687,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->rawgrade = 2;
         $grade->finalgrade = 6;
         $grade->scaleid = $this->scale[3]->id;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '7 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -700,8 +700,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->rawgrade = 3;
         $grade->finalgrade = 2;
         $grade->scaleid = $this->scale[3]->id;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '8 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -713,8 +713,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->rawgrade = 1;
         $grade->finalgrade = 3;
         $grade->scaleid = $this->scale[3]->id;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '9 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -727,8 +727,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->userid = 1;
         $grade->rawgrade = 97;
         $grade->finalgrade = 69;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '10 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -739,8 +739,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->userid = 2;
         $grade->rawgrade = 49;
         $grade->finalgrade = 87;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '11 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -751,8 +751,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->userid = 3;
         $grade->rawgrade = 67;
         $grade->finalgrade = 94;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '12 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -765,8 +765,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->userid = 2;
         $grade->rawgrade = 3;
         $grade->finalgrade = 3;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '13 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -777,8 +777,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->userid = 3;
         $grade->rawgrade = 6;
         $grade->finalgrade = 6;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '14 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -791,8 +791,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->userid = 1;
         $grade->rawgrade = 20;
         $grade->finalgrade = 20;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '15 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -803,8 +803,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->userid = 2;
         $grade->rawgrade = 50;
         $grade->finalgrade = 50;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '16 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -815,8 +815,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade->userid = 3;
         $grade->rawgrade = 100;
         $grade->finalgrade = 100;
-        $grade->timecreated = mktime();
-        $grade->timemodified = mktime();
+        $grade->timecreated = time();
+        $grade->timemodified = time();
         $grade->information = '17 of 17 grade_grades';
 
         $grade->id = $DB->insert_record('grade_grades', $grade);
@@ -837,8 +837,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_outcome->fullname = 'Team work';
         $grade_outcome->shortname = 'Team work';
         $grade_outcome->fullname = 'Team work outcome';
-        $grade_outcome->timecreated = mktime();
-        $grade_outcome->timemodified = mktime();
+        $grade_outcome->timecreated = time();
+        $grade_outcome->timemodified = time();
         $grade_outcome->scaleid = $this->scale[2]->id;
 
         $grade_outcome->id = $DB->insert_record('grade_outcomes', $grade_outcome);
@@ -849,8 +849,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_outcome->fullname = 'Complete circuit board';
         $grade_outcome->shortname = 'Complete circuit board';
         $grade_outcome->fullname = 'Complete circuit board';
-        $grade_outcome->timecreated = mktime();
-        $grade_outcome->timemodified = mktime();
+        $grade_outcome->timecreated = time();
+        $grade_outcome->timemodified = time();
         $grade_outcome->scaleid = $this->scale[3]->id;
 
         $grade_outcome->id = $DB->insert_record('grade_outcomes', $grade_outcome);
@@ -861,8 +861,8 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade_outcome->fullname = 'Debug Java program';
         $grade_outcome->shortname = 'Debug Java program';
         $grade_outcome->fullname = 'Debug Java program';
-        $grade_outcome->timecreated = mktime();
-        $grade_outcome->timemodified = mktime();
+        $grade_outcome->timecreated = time();
+        $grade_outcome->timemodified = time();
         $grade_outcome->scaleid = $this->scale[4]->id;
 
         $grade_outcome->id = $DB->insert_record('grade_outcomes', $grade_outcome);

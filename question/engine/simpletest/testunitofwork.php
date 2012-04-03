@@ -195,6 +195,12 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
     public function test_regrade_same_steps() {
 
         // Change the question in a minor way and regrade.
+        if (!isset($this->quba->get_question($this->slot)->answer)) {
+            $this->quba->get_question($this->slot)->answer = array();
+        }
+        if (!isset($this->quba->get_question($this->slot)->answer[14])) {
+            $this->quba->get_question($this->slot)->answer[14] = new stdClass();
+        }
         $this->quba->get_question($this->slot)->answer[14]->fraction = 0.5;
         $this->quba->regrade_all_questions();
 
