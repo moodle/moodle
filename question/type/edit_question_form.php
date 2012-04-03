@@ -129,9 +129,15 @@ abstract class question_edit_form extends question_wizard_form {
         $mform->addElement('header', 'generalheader', get_string("general", 'form'));
 
         if (!isset($this->question->id)) {
+            if (!empty($this->question->formoptions->mustbeusable)) {
+                $contexts = $this->contexts->having_add_and_use();
+            } else {
+                $contexts = $this->contexts->having_cap('moodle/question:add');
+            }
+
             // Adding question
             $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
-                    array('contexts' => $this->contexts->having_cap('moodle/question:add')));
+                    array('contexts' => $contexts));
         } else if (!($this->question->formoptions->canmove ||
                 $this->question->formoptions->cansaveasnew)) {
             // Editing question with no permission to move from category.

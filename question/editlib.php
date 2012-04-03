@@ -407,6 +407,7 @@ class question_bank_checkbox_column extends question_bank_column_base {
         echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
                 $question->id . '" id="checkq' . $question->id . '" value="1"/>';
         if ($this->firstrow) {
+            $PAGE->requires->js('/question/qbank.js');
             $PAGE->requires->js_function_call('question_bank.init_checkbox_column', array(get_string('selectall'),
                     get_string('deselectall'), 'checkq' . $question->id));
             $this->firstrow = false;

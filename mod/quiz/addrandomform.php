@@ -42,13 +42,14 @@ class quiz_add_random_form extends moodleform {
         $mform =& $this->_form;
 
         $contexts = $this->_customdata;
+        $usablecontexts = $contexts->having_cap('moodle/question:useall');
 
         //--------------------------------------------------------------------------------
         $mform->addElement('header', 'categoryheader',
                 get_string('randomfromexistingcategory', 'quiz'));
 
         $mform->addElement('questioncategory', 'category', get_string('category'),
-                array('contexts' => $contexts->all(), 'top' => false));
+                array('contexts' => $usablecontexts, 'top' => false));
 
         $mform->addElement('checkbox', 'includesubcategories', '', get_string('recurse', 'quiz'));
 
@@ -62,7 +63,7 @@ class quiz_add_random_form extends moodleform {
         $mform->setType('name', PARAM_MULTILANG);
 
         $mform->addElement('questioncategory', 'parent', get_string('parentcategory', 'question'),
-                array('contexts' => $contexts->all(), 'top' => true));
+                array('contexts' => $usablecontexts, 'top' => true));
         $mform->addHelpButton('parent', 'parentcategory', 'question');
 
         $mform->addElement('submit', 'newcategory',
