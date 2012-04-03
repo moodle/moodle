@@ -845,18 +845,20 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
     /**
      * Set current $USER, reset access cache.
      * @static
-     * @param null|\stdClass $user user record, null means none
+     * @param null|int|stdClass $user user record, null means non-logged-in, integer means userid
      * @return void
      */
-    public static function setUser(stdClass $user = null) {
-        global $CFG;
+    public static function setUser($user = null) {
+        global $CFG, $DB;
 
-        if (!$user) {
+        if (is_object($user)) {
+            $user = clone($user);
+        } else if (!$user) {
             $user = new stdClass();
             $user->id = 0;
             $user->mnethostid = $CFG->mnet_localhost_id;
         } else {
-            $user = clone($user);
+            $user = $DB->get_record('user', array('id'=>$user));
         }
         unset($user->description);
         unset($user->access);
