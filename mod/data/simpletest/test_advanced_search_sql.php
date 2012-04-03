@@ -151,6 +151,7 @@ class data_advanced_search_sql_test extends UnitTestCaseUsingDatabase {
             } else {
                 $val = $field->data;
             }
+            $search_array[$field->id] = new stdClass();
             list($search_array[$field->id]->sql, $search_array[$field->id]->params) = $searchfield->generate_sql('c' . $field->id, $val);
         }
 
