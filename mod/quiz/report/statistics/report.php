@@ -54,7 +54,7 @@ class quiz_statistics_report extends quiz_default_report {
     public function display($quiz, $cm, $course) {
         global $CFG, $DB, $OUTPUT, $PAGE;
 
-        $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $this->context = context_module::instance($cm->id);
 
         // Work out the display options.
         $download = optional_param('download', '', PARAM_ALPHA);
@@ -118,9 +118,8 @@ class quiz_statistics_report extends quiz_default_report {
         } else {
             $report = get_string('questionstatsfilename', 'quiz_statistics');
         }
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $courseshortname = format_string($course->shortname, true,
-                array('context' => $coursecontext));
+                array('context' => context_course::instance($course->id)));
         $filename = quiz_report_download_filename($report, $courseshortname, $quiz->name);
         $this->table->is_downloading($download, $filename,
                 get_string('quizstructureanalysis', 'quiz_statistics'));

@@ -84,7 +84,7 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         // Check permissions
-        $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $this->context = context_module::instance($cm->id);
         require_capability('mod/quiz:grade', $this->context);
         $shownames = has_capability('quiz/grading:viewstudentnames', $this->context);
         $showidnumbers = has_capability('quiz/grading:viewidnumber', $this->context);

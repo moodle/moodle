@@ -37,7 +37,7 @@ $course = $DB->get_record('course', array('id' => $quiz->course));
 $cm = get_coursemodule_from_instance('quiz', $quizid);
 
 require_login($course, false, $cm);
-$modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+$modcontext = context_module::instance($cm->id);
 require_capability('mod/quiz:viewreports', $modcontext);
 
 if ($groupid && $groupmode = groups_get_activity_groupmode($cm)) {

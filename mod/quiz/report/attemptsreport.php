@@ -346,7 +346,7 @@ abstract class quiz_attempt_report_table extends table_sql {
     }
 
     public function col_picture($attempt) {
-        global $COURSE, $OUTPUT;
+        global $OUTPUT;
         $user = new stdClass();
         $user->id = $attempt->userid;
         $user->lastname = $attempt->lastname;

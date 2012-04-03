@@ -48,9 +48,9 @@ require_once($CFG->dirroot.'/mod/quiz/report/responses/responses_table.php');
 class quiz_responses_report extends quiz_attempt_report {
 
     public function display($quiz, $cm, $course) {
-        global $CFG, $COURSE, $DB, $PAGE, $OUTPUT;
+        global $CFG, $DB, $PAGE, $OUTPUT;
 
-        $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $this->context = context_module::instance($cm->id);
 
         $download = optional_param('download', '', PARAM_ALPHA);
 
@@ -137,21 +137,15 @@ class quiz_responses_report extends quiz_attempt_report {
         // Load the required questions.
         $questions = quiz_report_get_significant_questions($quiz);
 
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $courseshortname = format_string($course->shortname, true,
-                array('context' => $coursecontext));
-
-        $displaycoursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-        $displaycourseshortname = format_string($COURSE->shortname, true,
-                array('context' => $displaycoursecontext));
-
+                array('context' => context_course::instance($course->id)));
         $table = new quiz_responses_table($quiz, $this->context, $qmsubselect,
                 $qmfilter, $attemptsmode, $groupstudents, $students, $questions,
                 $includecheckboxes, $reporturl, $displayoptions);
         $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),
                 $courseshortname, $quiz->name);
         $table->is_downloading($download, $filename,
-                $displaycourseshortname . ' ' . format_string($quiz->name, true));
+                $courseshortname . ' ' . format_string($quiz->name, true));
         if ($table->is_downloading()) {
             raise_memory_limit(MEMORY_EXTRA);
         }

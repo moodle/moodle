@@ -62,7 +62,7 @@ $cm = get_coursemodule_from_instance('quiz', $quiz->id);
 
 // Check access.
 require_login($quiz->course, false, $cm);
-$modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+$modcontext = context_module::instance($cm->id);
 require_capability('quiz/statistics:view', $modcontext);
 
 if (groups_get_activity_groupmode($cm)) {
