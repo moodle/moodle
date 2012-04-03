@@ -38,6 +38,10 @@
         <testsuite name="core_course">
             <directory suffix="_test.php">course/tests</directory>
         </testsuite>
+        <testsuite name="core_grade">
+            <directory suffix="_test.php">grade/tests</directory>
+            <directory suffix="_test.php">grade/grading/tests</directory>
+        </testsuite>
 
         <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from phpunit.xml.dist with up-to-date list of plugins in current install-->
 <!--@plugin_suites_start@-->
