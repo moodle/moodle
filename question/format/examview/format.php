@@ -149,7 +149,7 @@ class qformat_examview extends qformat_default {
         return str_replace('&#x2019;', "'", $text);
     }
 
-    function readquestions($lines) {
+    protected function readquestions($lines) {
         /// Parses an array of lines into an array of questions,
         /// where each item is a question object as defined by
         /// readquestion().
