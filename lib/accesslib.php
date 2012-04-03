@@ -4541,7 +4541,7 @@ function role_change_permission($roleid, $context, $capname, $permission) {
  * @property-read string $path path to context, starts with system context
  * @property-read int $depth
  */
-abstract class context extends stdClass {
+abstract class context extends stdClass implements IteratorAggregate {
 
     /**
      * The context id
@@ -4785,6 +4785,25 @@ abstract class context extends stdClass {
      */
     public function __unset($name) {
         debugging('Can not unset context instance properties!');
+    }
+
+    // ====== implementing method from interface IteratorAggregate ======
+
+    /**
+     * Create an iterator because magic vars can't be seen by 'foreach'.
+     *
+     * Now we can convert context object to array using convert_to_array(),
+     * and feed it properly to json_encode().
+     */
+    public function getIterator() {
+        $ret = array(
+            'id'           => $this->id,
+            'contextlevel' => $this->contextlevel,
+            'instanceid'   => $this->instanceid,
+            'path'         => $this->path,
+            'depth'        => $this->depth
+        );
+        return new ArrayIterator($ret);
     }
 
     // ====== general context methods ======

@@ -10206,6 +10206,40 @@ function object_property_exists( $obj, $property ) {
     return array_key_exists( $property, $properties );
 }
 
+/**
+ * Converts an object into an associative array
+ *
+ * This function converts an object into an associative array by iterating
+ * over its public properties. Because this function uses the foreach
+ * construct, Iterators are respected. It works recursively on arrays of objects.
+ * Arrays and simple values are returned as is.
+ *
+ * If class has magic properties, it can implement IteratorAggregate
+ * and return all available properties in getIterator()
+ *
+ * @param mixed $var
+ * @return array
+ */
+function convert_to_array($var) {
+    $result = array();
+    $references = array();
+
+    // loop over elements/properties
+    foreach ($var as $key => $value) {
+        // recursively convert objects
+        if (is_object($value) || is_array($value)) {
+            // but prevent cycles
+            if (!in_array($value, $references)) {
+                $result[$key] = convert_to_array($value);
+                $references[] = $value;
+            }
+        } else {
+            // simple values are untouched
+            $result[$key] = $value;
+        }
+    }
+    return $result;
+}
 
 /**
  * Detect a custom script replacement in the data directory that will
