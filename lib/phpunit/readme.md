@@ -6,7 +6,7 @@ Installation
 ------------
 1. install PHPUnit PEAR extension - see [PHPUnit docs](http://www.phpunit.de/manual/current/en/installation.html) for more details
 2. edit main config.php - add $CFG->phpunit_prefix and $CFG->phpunit_dataroot - see config-dist.php for more details
-3. execute `php admin/tool/phpunit/cli/util.php --install` to initialise test database
+3. execute `php admin/tool/phpunit/cli/util.php --install` from dirroot to initialise test database and dataroot
 4. it is necessary to reinitialise the test database manually after every upgrade or installation of new plugins
 
 
@@ -21,9 +21,11 @@ Test execution
 
 How to add more tests
 ---------------------
-1. create `tests` directory in any plugin
+1. create `tests` directory in any plugin if does not already exist
 2. add `*_test.php` files with custom class that extends `basic_testcase` or `advanced_testcase`
-3. manually add all core unit test locations to `phpunit.xml.dist`
+3. execute your new test, for example `phpunit core_phpunit_basic_testcase local/mytest/tests/mytest_test.php`
+4. optionally build new phpunit.xml by executing `php admin/tool/phpunit/cli/util.php --buildconfig` and run all tests
+5. core developers have to add all core unit test locations to `phpunit.xml.dist`
 
 
 How to convert existing tests
@@ -46,6 +48,7 @@ TODO
 ----
 * add plugin callbacks to data generator
 * convert remaining tests
-* hide old SimpleTests and FUnctional DB tests in UI
+* delete all simpletests
+* hide old SimpleTests in UI and delete Functional DB tests
 * shell script that prepares everything for the first execution
-* optionally support for execution of tests and cli/util.php from web UI (to be implemented via shell execution)
+* optional support for execution of tests and cli/util.php from web UI (to be implemented via shell execution)
