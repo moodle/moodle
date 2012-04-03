@@ -3573,12 +3573,15 @@ function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $so
                              {user} u ';
         $groupsql = ' GROUP BY r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
     } else {
-        $nestselectsql = 'SELECT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, c.content
+        $sortfield = data_get_field_from_id($sort, $data);
+        $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
+        $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
+        $nestselectsql = 'SELECT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' . $sortcontentfull . '
                               AS _order
                             FROM {data_content} c,
                                  {data_records} r,
                                  {user} u ';
-        $groupsql = ' GROUP BY r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, c.content ';
+        $groupsql = ' GROUP BY r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' .$sortcontentfull;
     }
     $nestfromsql = 'WHERE c.recordid = r.id
                       AND r.dataid = :dataid
