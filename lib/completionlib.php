@@ -573,7 +573,7 @@ class completion_info {
                     $this->internal_systemerror("Unexpected result: multiple grades for
                         item '{$item->id}', user '{$userid}'");
                 }
-                $newstate = $this->internal_get_grade_state($item, reset($grades));
+                $newstate = self::internal_get_grade_state($item, reset($grades));
                 if ($newstate == COMPLETION_INCOMPLETE) {
                     return COMPLETION_INCOMPLETE;
                 }
