@@ -34,6 +34,7 @@ class phpunit_data_generator {
     protected $coursecount = 0;
     protected $blockcount = 0;
     protected $modulecount = 0;
+    protected $scalecount = 0;
 
     /**
      * To be called from data reset code only,
@@ -46,6 +47,7 @@ class phpunit_data_generator {
         $this->coursecount = 0;
         $this->blockcount = 0;
         $this->modulecount = 0;
+        $this->scalecount = 0;
     }
 
     /**
@@ -413,5 +415,56 @@ class phpunit_data_generator {
         $instance->cmid = $cm->id;
 
         return $instance;
+    }
+
+    /**
+     * Create a test scale
+     * @param array|stdClass $record
+     * @param array $options
+     * @return stdClass block instance record
+     */
+    public function create_scale($record=null, array $options=null) {
+        global $DB;
+
+        $this->scalecount++;
+        $i = $this->scalecount;
+
+        $record = (array)$record;
+
+        if (!isset($record['name'])) {
+            $record['name'] = 'Test scale '.$i;
+        }
+
+        if (!isset($record['scale'])) {
+            $record['scale'] = 'A,B,C,D,F';
+        }
+
+        if (!isset($record['courseid'])) {
+            $record['courseid'] = 0;
+        }
+
+        if (!isset($record['userid'])) {
+            $record['userid'] = 0;
+        }
+
+        if (!isset($record['description'])) {
+            $record['description'] = 'Test scale description '.$i;
+        }
+
+        if (!isset($record['descriptionformat'])) {
+            $record['descriptionformat'] = FORMAT_MOODLE;
+        }
+
+        $record['timemodified'] = time();
+
+        if (isset($record['id'])) {
+            $DB->import_record('scale', $record);
+            $DB->get_manager()->reset_sequence('scale');
+            $id = $record['id'];
+        } else {
+            $id = $DB->insert_record('scale', $record);
+        }
+
+        return $DB->get_record('scale', array('id'=>$id), '*', MUST_EXIST);
     }
 }
