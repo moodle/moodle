@@ -1530,15 +1530,49 @@ class plugintype_enrol extends plugintype_base implements plugin_information {
  */
 class plugintype_message extends plugintype_base implements plugin_information {
 
+    private $processors;
+
+    protected function __construct() {
+        global $CFG;
+        require_once($CFG->dirroot . '/message/lib.php');
+        $this->processors = get_message_processors();
+    }
+
     /**
      * @see plugin_information::get_settings_url()
      */
     public function get_settings_url() {
 
-        if (file_exists($this->full_path('settings.php')) or file_exists($this->full_path('settingstree.php'))) {
-            return new moodle_url('/admin/settings.php', array('section' => 'messagesetting' . $this->name));
+        if (isset($this->processors[$this->name])) {
+            $processor = $this->processors[$this->name];
         } else {
             return parent::get_settings_url();
+        }
+
+        if ($processor->available && $processor->hassettings) {
+            return new moodle_url('settings.php', array('section' => 'messagesetting'.$processor->name));
+        }
+    }
+
+    /**
+     * @see plugintype_interface::is_enabled()
+     */
+    public function is_enabled() {
+        if (isset($this->processors[$this->name])) {
+            return $this->processors[$this->name]->configured && $this->processors[$this->name]->enabled;
+        } else {
+            return parent::is_enabled();
+        }
+    }
+
+    /**
+     * @see plugintype_interface::get_uninstall_url()
+     */
+    public function get_uninstall_url() {
+        if (isset($this->processors[$this->name])) {
+            return new moodle_url('message.php', array('uninstall' => $this->processors[$this->name]->id, 'sesskey' => sesskey()));
+        } else {
+            return parent::get_uninstall_url();
         }
     }
 }
