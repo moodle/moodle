@@ -88,4 +88,17 @@ abstract class mod_quiz_attempt_report_form extends moodleform {
      * @param MoodleQuickForm $mform the form we are building.
      */
     protected abstract function definition_inner(MoodleQuickForm $mform);
+
+    /**
+     * Create the standard checkbox for the 'include highest graded only' option.
+     *
+     * @param MoodleQuickForm $mform the form we are building.
+     */
+    protected function create_qmfilter_checkbox(MoodleQuickForm $mform) {
+        $gm = html_writer::tag('span', quiz_get_grading_option_name(
+                $this->_customdata['quiz']->grademethod), array('class' => 'highlight'));
+        return $mform->createElement('advcheckbox', 'qmfilter',
+                get_string('showattempts', 'quiz_overview'),
+                get_string('optonlygradedattempts', 'quiz_overview', $gm), null, array(0, 1));
+    }
 }

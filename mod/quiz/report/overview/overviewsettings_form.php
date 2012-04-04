@@ -38,12 +38,7 @@ class quiz_overview_settings_form extends mod_quiz_attempt_report_form {
     protected function definition_inner(MoodleQuickForm $mform) {
         $showattemptsgrp = array();
         if ($this->_customdata['qmsubselect']) {
-            $gm = '<span class="highlight">' .
-                    quiz_get_grading_option_name($this->_customdata['quiz']->grademethod) .
-                    '</span>';
-            $showattemptsgrp[] = $mform->createElement('advcheckbox', 'qmfilter',
-                    get_string('showattempts', 'quiz_overview'),
-                    get_string('optonlygradedattempts', 'quiz_overview', $gm), null, array(0, 1));
+            $showattemptsgrp[] = $this->create_qmfilter_checkbox($mform);
         }
         if (has_capability('mod/quiz:regrade', $this->_customdata['context'])) {
             $showattemptsgrp[] = $mform->createElement('advcheckbox', 'regradefilter',

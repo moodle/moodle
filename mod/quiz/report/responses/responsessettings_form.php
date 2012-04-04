@@ -37,12 +37,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_form.php');
 class quiz_responses_settings_form extends mod_quiz_attempt_report_form {
     protected function definition_inner(MoodleQuickForm $mform) {
         if ($this->_customdata['qmsubselect']) {
-            $gm = '<span class="highlight">' .
-                    quiz_get_grading_option_name($this->_customdata['quiz']->grademethod) .
-                    '</span>';
-            $mform->addElement('advcheckbox', 'qmfilter',
-                    get_string('showattempts', 'quiz_overview'),
-                    get_string('optonlygradedattempts', 'quiz_overview', $gm), null, array(0, 1));
+            $mform->addElement($this->create_qmfilter_checkbox($mform));
         }
 
         $colsgroup = array();
