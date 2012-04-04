@@ -174,14 +174,15 @@ class quiz_overview_report extends quiz_attempt_report {
         }
 
         if ($groupmode = groups_get_activity_groupmode($cm)) {
-            // Groups are being used, output the group selector if we are not downloading.
+            // Groups are being used, so output the group selector if we are not downloading.
             if (!$table->is_downloading()) {
                 groups_print_activity_menu($cm, $reporturl->out(true, $displayoptions));
             }
         }
 
         // Print information on the number of existing attempts.
-        if (!$table->is_downloading()) { // Do not print notices when downloading.
+        if (!$table->is_downloading()) {
+            // Do not print notices when downloading.
             if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
                 echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
@@ -197,12 +198,12 @@ class quiz_overview_report extends quiz_attempt_report {
                 echo $OUTPUT->notification(get_string('nostudentsingroup'));
             }
 
-            // Print display options.
+            // Print the display options.
             $mform->display();
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
-        if ($hasquestions && ($hasstudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL))) {
+        if ($hasquestions && ($hasstudents || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)) {
             // Construct the SQL.
             $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
                     ' AS uniqueid, ';

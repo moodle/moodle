@@ -71,7 +71,7 @@ class quiz_responses_settings_form extends moodleform {
                 get_string('show', 'quiz_overview'), $options);
 
         if ($this->_customdata['qmsubselect']) {
-            $gm = '<span class="gradedattempt">' .
+            $gm = '<span class="highlight">' .
                     quiz_get_grading_option_name($this->_customdata['quiz']->grademethod) .
                     '</span>';
             $mform->addElement('advcheckbox', 'qmfilter',

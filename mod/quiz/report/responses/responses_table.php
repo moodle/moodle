@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file defines the quiz responses report class.
+ * This file defines the quiz responses table.
  *
  * @package   quiz_responses
  * @copyright 2008 Jean-Michel Vedrine
@@ -45,10 +45,12 @@ class quiz_responses_table extends quiz_attempt_report_table {
     }
 
     public function build_table() {
-        if ($this->rawdata) {
-            $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetime'));
-            parent::build_table();
+        if (!$this->rawdata) {
+            return;
         }
+
+        $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetime'));
+        parent::build_table();
     }
 
     public function col_sumgrades($attempt) {

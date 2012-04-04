@@ -67,7 +67,8 @@ class quiz_overview_settings_form extends moodleform {
             $options[QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO] =
                     get_string('optnoattemptsonly', 'quiz_overview', $studentsstring);
         }
-        $mform->addElement('select', 'attemptsmode', get_string('show', 'quiz_overview'), $options);
+        $mform->addElement('select', 'attemptsmode',
+                get_string('show', 'quiz_overview'), $options);
 
         $showattemptsgrp = array();
         if ($this->_customdata['qmsubselect']) {

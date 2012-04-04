@@ -54,7 +54,7 @@ class quiz_overview_table extends quiz_attempt_report_table {
             return;
         }
 
-        $this->strtimeformat = str_replace(',', '', get_string('strftimedatetime'));
+        $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetime'));
         parent::build_table();
 
         // End of adding the data from attempts. Now add averages at bottom.
@@ -219,6 +219,7 @@ class quiz_overview_table extends quiz_attempt_report_table {
             return null;
         }
         $slot = $matches[1];
+
         $question = $this->questions[$slot];
         if (!isset($this->lateststeps[$attempt->usageid][$slot])) {
             return '-';

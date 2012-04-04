@@ -47,7 +47,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_table.php');
 class quiz_responses_report extends quiz_attempt_report {
 
     public function display($quiz, $cm, $course) {
-        global $CFG, $DB, $PAGE, $OUTPUT;
+        global $CFG, $DB, $OUTPUT;
 
         $this->context = context_module::instance($cm->id);
 
@@ -97,6 +97,16 @@ class quiz_responses_report extends quiz_attempt_report {
         }
 
         $this->validate_common_options($attemptsmode, $pagesize, $course, $currentgroup);
+        $displayoptions = array();
+        $displayoptions['attemptsmode'] = $attemptsmode;
+        $displayoptions['qmfilter'] = $qmfilter;
+        $displayoptions['qtext'] = $includeqtext;
+        $displayoptions['resp'] = $includeresp;
+        $displayoptions['right'] = $includeright;
+
+        $mform->set_data($displayoptions +
+                array('pagesize' => $pagesize));
+
         if (!$includeqtext && !$includeresp && !$includeright) {
             $includeresp = 1;
             set_user_preference('quiz_report_responses_resp', 1);
@@ -107,15 +117,6 @@ class quiz_responses_report extends quiz_attempt_report {
         $includecheckboxes = has_capability('mod/quiz:deleteattempts', $this->context)
                 && ($attemptsmode != QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO);
 
-        $displayoptions = array();
-        $displayoptions['attemptsmode'] = $attemptsmode;
-        $displayoptions['qmfilter'] = $qmfilter;
-        $displayoptions['qtext'] = $includeqtext;
-        $displayoptions['resp'] = $includeresp;
-        $displayoptions['right'] = $includeright;
-
-        $mform->set_data($displayoptions + array('pagesize' => $pagesize));
-
         if ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL) {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
@@ -123,6 +124,24 @@ class quiz_responses_report extends quiz_attempt_report {
             $allowed = array();
         }
 
+        // Load the required questions.
+        $questions = quiz_report_get_significant_questions($quiz);
+
+        // Prepare for downloading, if applicable.
+        $courseshortname = format_string($course->shortname, true,
+                array('context' => context_course::instance($course->id)));
+        $table = new quiz_responses_table($quiz, $this->context, $qmsubselect,
+                $qmfilter, $attemptsmode, $groupstudents, $students,
+                $questions, $includecheckboxes, $reporturl, $displayoptions);
+        $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),
+                $courseshortname, $quiz->name);
+        $table->is_downloading($download, $filename,
+                $courseshortname . ' ' . format_string($quiz->name, true));
+        if ($table->is_downloading()) {
+            raise_memory_limit(MEMORY_EXTRA);
+        }
+
+        // Process actions.
         if (empty($currentgroup) || $groupstudents) {
             if (optional_param('delete', 0, PARAM_BOOL) && confirm_sesskey()) {
                 if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
@@ -133,22 +152,7 @@ class quiz_responses_report extends quiz_attempt_report {
             }
         }
 
-        // Load the required questions.
-        $questions = quiz_report_get_significant_questions($quiz);
-
-        $courseshortname = format_string($course->shortname, true,
-                array('context' => context_course::instance($course->id)));
-        $table = new quiz_responses_table($quiz, $this->context, $qmsubselect,
-                $qmfilter, $attemptsmode, $groupstudents, $students, $questions,
-                $includecheckboxes, $reporturl, $displayoptions);
-        $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),
-                $courseshortname, $quiz->name);
-        $table->is_downloading($download, $filename,
-                $courseshortname . ' ' . format_string($quiz->name, true));
-        if ($table->is_downloading()) {
-            raise_memory_limit(MEMORY_EXTRA);
-        }
-
+        // Start output.
         if (!$table->is_downloading()) {
             // Only print headers if not asked to download data.
             $this->print_header_and_tabs($cm, $course, $quiz, 'responses');
