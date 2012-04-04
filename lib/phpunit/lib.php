@@ -88,7 +88,7 @@ class phpunit_util {
         }
 
         if (!is_array(self::$tabledata)) {
-            phpunit_bootstrap_error('Can not read dataroot/phpunit/tabledata.ser or invalid format!');
+            phpunit_bootstrap_error(1, 'Can not read dataroot/phpunit/tabledata.ser or invalid format, reinitialize test database.');
         }
 
         return self::$tabledata;
@@ -97,23 +97,10 @@ class phpunit_util {
     /**
      * Reset all database tables to default values.
      * @static
-     * @param bool $logchanges
-     * @param null|PHPUnit_Framework_TestCase $caller
      * @return bool true if reset done, false if skipped
      */
-    public static function reset_database($logchanges = false, PHPUnit_Framework_TestCase $caller = null) {
+    public static function reset_database() {
         global $DB;
-
-        if ($logchanges) {
-            if (self::$lastdbwrites != $DB->perf_get_writes()) {
-                if ($caller) {
-                    $where = ' in testcase: '.get_class($caller).'->'.$caller->getName(true);
-                } else {
-                    $where = '';
-                }
-                error_log('warning: unexpected database modification, resetting DB state'.$where);
-            }
-        }
 
         $tables = $DB->get_tables(false);
         if (!$tables or empty($tables['config'])) {
@@ -230,45 +217,43 @@ class phpunit_util {
      * Note: this is relatively slow (cca 2 seconds for pg and 7 for mysql) - please use with care!
      *
      * @param bool $logchanges log changes in global state and database in error log
-     * @param PHPUnit_Framework_TestCase $caller caller object, used for logging only
      * @return void
      * @static
      */
-    public static function reset_all_data($logchanges = false, PHPUnit_Framework_TestCase $caller = null) {
+    public static function reset_all_data($logchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
 
-        $dbreset = self::reset_database($logchanges, $caller);
+        self::reset_database($logchanges);
+        $warnings = array();
 
         if ($logchanges) {
-            if ($caller) {
-                $where = ' in testcase: '.get_class($caller).'->'.$caller->getName(true);
-            } else {
-                $where = '';
+            if (self::$lastdbwrites != $DB->perf_get_writes()) {
+                $warnings[] = 'warning: unexpected database modification, resetting DB state';
             }
 
             $oldcfg = self::get_global_backup('CFG');
             $oldsite = self::get_global_backup('SITE');
             foreach($CFG as $k=>$v) {
                 if (!property_exists($oldcfg, $k)) {
-                    error_log('warning: unexpected new $CFG->'.$k.' value'.$where);
+                    $warnings[] = 'warning: unexpected new $CFG->'.$k.' value';
                 } else if ($oldcfg->$k !== $CFG->$k) {
-                    error_log('warning: unexpected change of $CFG->'.$k.' value'.$where);
+                    $warnings[] = 'warning: unexpected change of $CFG->'.$k.' value';
                 }
                 unset($oldcfg->$k);
 
             }
             if ($oldcfg) {
                 foreach($oldcfg as $k=>$v) {
-                    error_log('warning: unexpected removal of $CFG->'.$k.$where);
+                    $warnings[] = 'warning: unexpected removal of $CFG->'.$k;
                 }
             }
 
             if ($USER->id != 0) {
-                error_log('warning: unexpected change of $USER'.$where);
+                $warnings[] = 'warning: unexpected change of $USER';
             }
 
             if ($COURSE->id != $oldsite->id) {
-                error_log('warning: unexpected change of $COURSE'.$where);
+                $warnings[] = 'warning: unexpected change of $COURSE';
             }
         }
 
@@ -314,6 +299,11 @@ class phpunit_util {
 
         // fix PHP settings
         error_reporting($CFG->debug);
+
+        if ($warnings) {
+            $warnings = implode("\n", $warnings);
+            trigger_error($warnings, E_USER_WARNING);
+        }
     }
 
     /**
@@ -382,41 +372,42 @@ class phpunit_util {
      * Is this site initialised to run unit tests?
      *
      * @static
-     * @return int error code, 0 means ok
+     * @return int array errorcode=>message, 0 means ok
      */
     public static function testing_ready_problem() {
-        global $DB, $CFG;
+        global $CFG, $DB;
+
+        $tables = $DB->get_tables(false);
 
         if (!self::is_test_site()) {
-            return 131;
-        }
-
-        $tables = $DB->get_tables(true);
-
-        if (!$tables) {
-            return 132;
-        }
-
-        if (!get_config('core', 'phpunittest')) {
-             return 131;
+            // dataroot was verified in bootstrap, so it must be DB
+            return array(131, 'Can not use test database, try changing prefix');
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser")) {
-            return 131;
+            if (empty($table)) {
+                return array(132, '');
+            } else {
+                return array(133, '');
+            }
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/versionshash.txt")) {
-            return 131;
+            if (empty($table)) {
+                return array(132, '');
+            } else {
+                return array(133, '');
+            }
         }
 
         $hash = phpunit_util::get_version_hash();
         $oldhash = file_get_contents("$CFG->dataroot/phpunit/versionshash.txt");
 
         if ($hash !== $oldhash) {
-            return 133;
+            return array(133, '');
         }
 
-        return 0;
+        return array(0, '');
     }
 
     /**
@@ -500,11 +491,17 @@ class phpunit_util {
         $data = serialize($data);
         @unlink("$CFG->dataroot/phpunit/tabledata.ser");
         file_put_contents("$CFG->dataroot/phpunit/tabledata.ser", $data);
+        if (fileperms("$CFG->dataroot/phpunit/tabledata.ser") & $CFG->filepermissions != $CFG->filepermissions) {
+            chmod("$CFG->dataroot/phpunit/tabledata.ser", $CFG->filepermissions);
+        }
 
         // hash all plugin versions - helps with very fast detection of db structure changes
         $hash = phpunit_util::get_version_hash();
         @unlink("$CFG->dataroot/phpunit/versionshash.txt");
         file_put_contents("$CFG->dataroot/phpunit/versionshash.txt", $hash);
+        if (fileperms("$CFG->dataroot/phpunit/versionshash.txt") & $CFG->filepermissions != $CFG->filepermissions) {
+            chmod("$CFG->dataroot/phpunit/versionshash.txt", $CFG->filepermissions);
+        }
     }
 
     /**
@@ -553,9 +550,9 @@ class phpunit_util {
     }
 
     /**
-     * Builds /phpunit.xml file using defaults from /phpunit.xml.dist
+     * Builds dirroot/phpunit.xml and dataroot/phpunit/webrunner.xml file using defaults from /phpunit.xml.dist
      * @static
-     * @return void
+     * @return bool true means main config file created, false means only dataroot file created
      */
     public static function build_config_file() {
         global $CFG;
@@ -590,8 +587,23 @@ class phpunit_util {
 
         $data = preg_replace('|<!--@plugin_suites_start@-->.*<!--@plugin_suites_end@-->|s', $suites, $data, 1);
 
-        @unlink("$CFG->dirroot/phpunit.xml");
-        file_put_contents("$CFG->dirroot/phpunit.xml", $data);
+        $result = false;
+        if (is_writable($CFG->dirroot)) {
+            if ($result = file_put_contents("$CFG->dirroot/phpunit.xml", $data)) {
+                if (fileperms("$CFG->dirroot/phpunit.xml") & $CFG->filepermissions != $CFG->filepermissions) {
+                    chmod("$CFG->dirroot/phpunit.xml", $CFG->filepermissions);
+                }
+            }
+        }
+        // relink - it seems that xml:base does not work in phpunit xml files
+        $data = str_replace('lib/phpunit/', "$CFG->dirroot/lib/phpunit/", $data);
+        $data = preg_replace('|<directory suffix="_test.php">([^<]+)</directory>|', '<directory suffix="_test.php">'.$CFG->dirroot.'/$1</directory>', $data);
+        file_put_contents("$CFG->dataroot/phpunit/webrunner.xml", $data);
+        if (fileperms("$CFG->dirroot/phpunit.xml") & $CFG->filepermissions != $CFG->filepermissions) {
+            chmod("$CFG->dirroot/phpunit.xml", $CFG->filepermissions);
+        }
+
+        return (bool)$result;
     }
 }
 
@@ -757,7 +769,7 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
      */
     public function runBare() {
         parent::runBare();
-        phpunit_util::reset_all_data(true, $this);
+        phpunit_util::reset_all_data(true);
     }
 }
 
@@ -806,7 +818,7 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
             // keep all data untouched for other tests
         } else {
             // reset but log what changed
-            phpunit_util::reset_all_data(true, $this);
+            phpunit_util::reset_all_data(true);
         }
 
         $this->resetAfterTest = null;

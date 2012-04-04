@@ -56,4 +56,3 @@ TODO
 * convert remaining tests
 * delete all simpletests
 * hide old SimpleTests in UI and delete Functional DB tests
-* optional support for execution of tests and cli/util.php from web UI (to be implemented via shell execution)

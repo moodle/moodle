@@ -3,22 +3,24 @@
 CLIDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 UTIL="$CLIDIR/util.php"
 
-echo "Building phpunit.xml and initialising test database..."
+echo "Initialising test database and creating phpunit.xml configuration..."
+
+DIGERROR=`php $UTIL --diag`
+DIAG=$?
+if [ $DIAG -eq 132 ] ; then
+    php $UTIL --install
+else
+    if [ $DIAG -eq 133 ] ; then
+        php $UTIL --drop
+        RESULT=$?
+        if [ $RESULT -gt 0 ] ; then
+            exit $RESULT
+        fi
+        php $UTIL --install
+    else
+        echo $DIGERROR
+        exit $DIAG
+    fi
+fi
 
 php $UTIL --buildconfig
-RESULT=$?
-if [ $RESULT -gt 0 ] ; then
-    exit $RESULT
-fi
-
-php $UTIL --drop
-RESULT=$?
-if [ $RESULT -gt 0 ] ; then
-    exit $RESULT
-fi
-
-php $UTIL --install
-RESULT=$?
-if [ $RESULT -gt 0 ] ; then
-    exit $RESULT
-fi

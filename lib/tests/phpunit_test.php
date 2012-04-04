@@ -136,6 +136,16 @@ class core_phpunit_basic_testcase extends basic_testcase {
         global $COURSE;
         $COURSE->id = 10;
     }
+
+    public function test_all_modifications() {
+        global $DB, $CFG, $USER, $COURSE;
+        $DB->set_field('user', 'confirmed', 1, array('id'=>-1));
+        $CFG->xx = 'yy';
+        unset($CFG->admin);
+        $CFG->rolesactive = 0;
+        $USER->id = 10;
+        $COURSE->id = 10;
+    }
 */
 }
 

@@ -20,10 +20,10 @@
  * Exit codes:
  *  0   - success
  *  1   - general error
- *  130 - coding error
+ *  130 - missing PHPUnit error
  *  131 - configuration problem
  *  132 - install new test database
- *  133 - drop old data, then install new test database
+ *  133 - drop existing data before installing
  *
  * @package    core
  * @category   phpunit
@@ -36,12 +36,14 @@ error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', '1');
 ini_set('log_errors', '1');
 
+require_once(__DIR__.'/bootstraplib.php');
+
 if (isset($_SERVER['REMOTE_ADDR'])) {
-    phpunit_bootstrap_error('Unit tests can be executed only from command line!', 1);
+    phpunit_bootstrap_error(1, 'Unit tests can be executed only from command line!');
 }
 
 if (defined('PHPUNIT_TEST')) {
-    phpunit_bootstrap_error("PHPUNIT_TEST constant must not be manually defined anywhere!", 130);
+    phpunit_bootstrap_error(1, "PHPUNIT_TEST constant must not be manually defined anywhere!");
 }
 /** PHPUnit testing framework active */
 define('PHPUNIT_TEST', true);
@@ -52,7 +54,7 @@ if (!defined('PHPUNIT_UTIL')) {
 }
 
 if (defined('CLI_SCRIPT')) {
-    phpunit_bootstrap_error('CLI_SCRIPT must not be manually defined in any PHPUnit test scripts', 130);
+    phpunit_bootstrap_error(1, 'CLI_SCRIPT must not be manually defined in any PHPUnit test scripts');
 }
 define('CLI_SCRIPT', true);
 
@@ -82,37 +84,38 @@ if (isset($CFG->phpunit_directorypermissions)) {
 }
 $CFG->filepermissions = ($CFG->directorypermissions & 0666);
 if (!isset($CFG->phpunit_dataroot)) {
-    phpunit_bootstrap_error('Missing $CFG->phpunit_dataroot in config.php, can not run tests!', 131);
+    phpunit_bootstrap_error(131, 'Missing $CFG->phpunit_dataroot in config.php, can not run tests!');
 }
 if (isset($CFG->dataroot) and $CFG->phpunit_dataroot === $CFG->dataroot) {
-    phpunit_bootstrap_error('$CFG->dataroot and $CFG->phpunit_dataroot must not be identical, can not run tests!', 131);
+    phpunit_bootstrap_error(131, '$CFG->dataroot and $CFG->phpunit_dataroot must not be identical, can not run tests!');
 }
 if (!file_exists($CFG->phpunit_dataroot)) {
     mkdir($CFG->phpunit_dataroot, $CFG->directorypermissions);
 }
 if (!is_dir($CFG->phpunit_dataroot)) {
-    phpunit_bootstrap_error('$CFG->phpunit_dataroot directory can not be created, can not run tests!', 131);
+    phpunit_bootstrap_error(131, '$CFG->phpunit_dataroot directory can not be created, can not run tests!');
 }
+
 if (!is_writable($CFG->phpunit_dataroot)) {
     // try to fix premissions if possible
     if (function_exists('posix_getuid')) {
         $chmod = fileperms($CFG->phpunit_dataroot);
-        if (fileowner($dir) == posix_getuid()) {
+        if (fileowner($CFG->phpunit_dataroot) == posix_getuid()) {
             $chmod = $chmod | 0700;
             chmod($CFG->phpunit_dataroot, $chmod);
         }
     }
     if (!is_writable($CFG->phpunit_dataroot)) {
-        phpunit_bootstrap_error('$CFG->phpunit_dataroot directory is not writable, can not run tests!', 131);
+        phpunit_bootstrap_error(131, '$CFG->phpunit_dataroot directory is not writable, can not run tests!');
     }
 }
 if (!file_exists("$CFG->phpunit_dataroot/phpunittestdir.txt")) {
     if ($dh = opendir($CFG->phpunit_dataroot)) {
         while (($file = readdir($dh)) !== false) {
-            if ($file === 'phpunit' or $file === '.' or $file === '..' or $file === '.DS_store') {
+            if ($file === 'phpunit' or $file === '.' or $file === '..' or $file === '.DS_Store') {
                 continue;
             }
-            phpunit_bootstrap_error('$CFG->phpunit_dataroot directory is not empty, can not run tests! Is it used for anything else?', 131);
+            phpunit_bootstrap_error(131, '$CFG->phpunit_dataroot directory is not empty, can not run tests! Is it used for anything else?');
         }
         closedir($dh);
         unset($dh);
@@ -126,13 +129,13 @@ if (!file_exists("$CFG->phpunit_dataroot/phpunittestdir.txt")) {
 
 // verify db prefix
 if (!isset($CFG->phpunit_prefix)) {
-    phpunit_bootstrap_error('Missing $CFG->phpunit_prefix in config.php, can not run tests!', 131);
+    phpunit_bootstrap_error(131, 'Missing $CFG->phpunit_prefix in config.php, can not run tests!');
 }
 if ($CFG->phpunit_prefix === '') {
-    phpunit_bootstrap_error('$CFG->phpunit_prefix can not be empty, can not run tests!', 131);
+    phpunit_bootstrap_error(131, '$CFG->phpunit_prefix can not be empty, can not run tests!');
 }
 if (isset($CFG->prefix) and $CFG->prefix === $CFG->phpunit_prefix) {
-    phpunit_bootstrap_error('$CFG->prefix and $CFG->phpunit_prefix must not be identical, can not run tests!', 131);
+    phpunit_bootstrap_error(131, '$CFG->prefix and $CFG->phpunit_prefix must not be identical, can not run tests!');
 }
 
 // throw away standard CFG settings
@@ -187,49 +190,11 @@ if (PHPUNIT_UTIL) {
 }
 
 // is database and dataroot ready for testing?
-$problem = phpunit_util::testing_ready_problem();
-
-if ($problem) {
-    switch ($problem) {
-        case 132:
-            phpunit_bootstrap_error('Database was not initialised to run unit tests, please use "php admin/tool/phpunit/cli/util.php --install"', $problem);
-        case 133:
-            phpunit_bootstrap_error('Database was initialised for different version, please use "php admin/tool/phpunit/cli/util.php --drop; php admin/tool/phpunit/cli/util.php --install"', $problem);
-        default:
-            phpunit_bootstrap_error('Unknown problem initialising test database', $problem);
-    }
+list($errorcode, $message) = phpunit_util::testing_ready_problem();
+if ($errorcode) {
+    phpunit_bootstrap_error($errorcode, $message);
 }
 
 // prepare for the first test run - store fresh globals, reset dataroot, etc.
 phpunit_util::bootstrap_init();
 
-
-//=========================================================
-
-/**
- * Print error and stop execution
- * @param string $text An error message to display
- * @param int $errorcode The error code (see docblock for detailed list)
- * @return void stops code execution with error code
- */
-function phpunit_bootstrap_error($text, $errorcode = 1) {
-    fwrite(STDERR, $text."\n");
-    exit($errorcode);
-}
-
-/**
- * Mark empty dataroot to be used for testing.
- * @param string $dataroot The dataroot directory
- * @return void
- */
-function phpunit_bootstrap_initdataroot($dataroot) {
-    global $CFG;
-
-    if (!file_exists("$dataroot/phpunittestdir.txt")) {
-        file_put_contents("$dataroot/phpunittestdir.txt", 'Contents of this directory are used during tests only, do not delete this file!');
-    }
-    chmod("$dataroot/phpunittestdir.txt", $CFG->filepermissions);
-    if (!file_exists("$CFG->phpunit_dataroot/phpunit")) {
-        mkdir("$CFG->phpunit_dataroot/phpunit", $CFG->directorypermissions);
-    }
-}
