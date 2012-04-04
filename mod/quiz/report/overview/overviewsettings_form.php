@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_form.php');
 
 
 /**
@@ -34,42 +34,8 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright 2008 Jamie Pratt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_overview_settings_form extends moodleform {
-
-    protected function definition() {
-        $mform = $this->_form;
-
-        $mform->addElement('header', 'preferencespage',
-                get_string('preferencespage', 'quiz_overview'));
-
-        if (!$this->_customdata['currentgroup']) {
-            $studentsstring = get_string('participants');
-        } else {
-            $a = new stdClass();
-            $a->coursestudent = get_string('participants');
-            $a->groupname = groups_get_group_name($this->_customdata['currentgroup']);
-            if (20 < strlen($a->groupname)) {
-                $studentsstring = get_string('studentingrouplong', 'quiz_overview', $a);
-            } else {
-                $studentsstring = get_string('studentingroup', 'quiz_overview', $a);
-            }
-        }
-        $options = array();
-        if (!$this->_customdata['currentgroup']) {
-            $options[QUIZ_REPORT_ATTEMPTS_ALL] = get_string('optallattempts', 'quiz_overview');
-        }
-        if ($this->_customdata['currentgroup'] ||
-                !is_inside_frontpage($this->_customdata['context'])) {
-            $options[QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS] =
-                    get_string('optallstudents', 'quiz_overview', $studentsstring);
-            $options[QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH] =
-                     get_string('optattemptsonly', 'quiz_overview', $studentsstring);
-            $options[QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO] =
-                    get_string('optnoattemptsonly', 'quiz_overview', $studentsstring);
-        }
-        $mform->addElement('select', 'attemptsmode',
-                get_string('show', 'quiz_overview'), $options);
-
+class quiz_overview_settings_form extends mod_quiz_attempt_report_form {
+    protected function definition_inner(MoodleQuickForm $mform) {
         $showattemptsgrp = array();
         if ($this->_customdata['qmsubselect']) {
             $gm = '<span class="highlight">' .
@@ -89,16 +55,7 @@ class quiz_overview_settings_form extends moodleform {
                     get_string('showattempts', 'quiz_overview'), '<br />', false);
         }
 
-        $mform->addElement('header', 'preferencesuser',
-                get_string('preferencesuser', 'quiz_overview'));
-
-        $mform->addElement('text', 'pagesize', get_string('pagesize', 'quiz_overview'));
-        $mform->setType('pagesize', PARAM_INT);
-
         $mform->addElement('selectyesno', 'detailedmarks',
                 get_string('showdetailedmarks', 'quiz_overview'));
-
-        $mform->addElement('submit', 'submitbutton',
-                get_string('preferencessave', 'quiz_overview'));
     }
 }
