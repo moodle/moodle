@@ -8699,6 +8699,42 @@ function moodle_needs_upgrading() {
 }
 
 /**
+ * Returns the major version of this site
+ *
+ * Moodle version numbers consist of three numbers separated by a dot, for
+ * example 1.9.11 or 2.0.2. The first two numbers, like 1.9 or 2.0, represent so
+ * called major version. This function extracts the major version from either
+ * $CFG->release (default) or eventually from the $release variable defined in
+ * the main version.php.
+ *
+ * @param bool $fromdisk should the version if source code files be used
+ * @return string|false the major version like '2.3', false if could not be determined
+ */
+function moodle_major_version($fromdisk = false) {
+    global $CFG;
+
+    if ($fromdisk) {
+        $release = null;
+        require($CFG->dirroot.'/version.php');
+        if (empty($release)) {
+            return false;
+        }
+
+    } else {
+        if (empty($CFG->release)) {
+            return false;
+        }
+        $release = $CFG->release;
+    }
+
+    if (preg_match('/^[0-9]+\.[0-9]+/', $release, $matches)) {
+        return $matches[0];
+    } else {
+        return false;
+    }
+}
+
+/**
  * Sets maximum expected time needed for upgrade task.
  * Please always make sure that upgrade will not run longer!
  *
