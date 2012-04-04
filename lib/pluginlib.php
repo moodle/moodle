@@ -527,14 +527,13 @@ class plugin_manager {
 
         if (isset($standard_plugins[$type])) {
             return $standard_plugins[$type];
-
         } else {
             return false;
         }
     }
 
     /**
-     * Reordes plugin types into a sequence to be displayed
+     * Reorders plugin types into a sequence to be displayed
      *
      * For technical reasons, plugin types returned by {@link get_plugin_types()} are
      * in a certain order that does not need to fit the expected order for the display.
@@ -837,8 +836,7 @@ class available_update_checker {
                 $this->validate_response($config->recentresponse);
                 $this->recentfetch = $config->recentfetch;
                 $this->recentresponse = $this->decode_response($config->recentresponse);
-            }
-            catch (available_update_checker_exception $e) {
+            } catch (available_update_checker_exception $e) {
                 // do not set recentresponse if the validation fails
             }
 
@@ -1193,7 +1191,7 @@ class available_update_checker {
         $coreupdates = array();
         $pluginupdates = array();
 
-        foreach($notifications as $notification) {
+        foreach ($notifications as $notification) {
             if ($notification->component == 'core') {
                 $coreupdates[] = $notification;
             } else {
