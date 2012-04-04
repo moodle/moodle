@@ -281,7 +281,9 @@ class qtype_numerical extends question_type {
         } else if (isset($question->showunits)) {
             // Updated import, e.g. Moodle XML.
             $options->showunits = $question->showunits;
-
+            if (isset($question->unitgradingtype)) {
+                $options->unitgradingtype = $question->unitgradingtype;
+            }
         } else {
             // Legacy import.
             if ($defaultunit = $this->get_default_numerical_unit($question)) {
