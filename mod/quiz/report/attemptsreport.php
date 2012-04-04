@@ -48,11 +48,55 @@ abstract class quiz_attempt_report extends quiz_default_report {
     /** @var int include all enroled users. */
     const ALL_STUDENTS = 3;
 
+    /** @var string the mode this report is. */
+    protected $mode;
+
     /** @var object the quiz context. */
     protected $context;
 
+    /** @var mod_quiz_attempt_report_form The settings form to use. */
+    protected $form;
+
+    /** @var string SQL fragment for selecting the attempt that gave the final grade,
+     * if applicable. */
+    protected $qmsubselect;
+
     /** @var boolean caches the results of {@link should_show_grades()}. */
     protected $showgrades = null;
+
+    /**
+     *  Initialise various aspects of this report.
+     *
+     * @param string $mode
+     * @param string $formclass
+     * @param object $quiz
+     * @param object $cm
+     * @param object $course
+     */
+    protected function init($mode, $formclass, $quiz, $cm, $course) {
+        $this->mode = $mode;
+
+        $this->context = context_module::instance($cm->id);
+
+        list($currentgroup, $students, $groupstudents, $allowed) =
+                $this->load_relevant_students($cm, $course);
+
+        $this->qmsubselect = quiz_report_qm_filter_select($quiz);
+
+        $this->form = new $formclass($this->get_base_url(),
+                array('qmsubselect' => $this->qmsubselect, 'quiz' => $quiz,
+                'currentgroup' => $currentgroup, 'context' => $this->context));
+
+        return array($currentgroup, $students, $groupstudents, $allowed);
+    }
+
+    /**
+     * @return moodle_url the base URL for this report.
+     */
+    protected function get_base_url() {
+        return new moodle_url('/mod/quiz/report.php',
+                array('id' => $this->context->instanceid, 'mode' => $this->mode));
+    }
 
     /**
      * Should the grades be displayed in this report. That depends on the quiz

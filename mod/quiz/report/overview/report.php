@@ -41,30 +41,15 @@ class quiz_overview_report extends quiz_attempt_report {
     public function display($quiz, $cm, $course) {
         global $CFG, $DB, $OUTPUT;
 
-        $this->context = context_module::instance($cm->id);
-
-        $download = optional_param('download', '', PARAM_ALPHA);
-
         list($currentgroup, $students, $groupstudents, $allowed) =
-                $this->load_relevant_students($cm, $course);
+                $this->init('overview', 'quiz_overview_settings_form', $quiz, $cm, $course);
 
-        $pageoptions = array();
-        $pageoptions['id'] = $cm->id;
-        $pageoptions['mode'] = 'overview';
-
-        $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);
-        $qmsubselect = quiz_report_qm_filter_select($quiz);
-
-        $mform = new quiz_overview_settings_form($reporturl,
-                array('qmsubselect' => $qmsubselect, 'quiz' => $quiz,
-                'currentgroup' => $currentgroup, 'context' => $this->context));
-
-        if ($fromform = $mform->get_data()) {
+        if ($fromform = $this->form->get_data()) {
             $regradeall = false;
             $regradealldry = false;
             $regradealldrydo = false;
             $attemptsmode = $fromform->attemptsmode;
-            if ($qmsubselect) {
+            if ($this->qmsubselect) {
                 $qmfilter = $fromform->qmfilter;
             } else {
                 $qmfilter = 0;
@@ -80,7 +65,7 @@ class quiz_overview_report extends quiz_attempt_report {
             $regradealldry  = optional_param('regradealldry', 0, PARAM_BOOL);
             $regradealldrydo  = optional_param('regradealldrydo', 0, PARAM_BOOL);
             $attemptsmode = optional_param('attemptsmode', null, PARAM_INT);
-            if ($qmsubselect) {
+            if ($this->qmsubselect) {
                 $qmfilter = optional_param('qmfilter', 0, PARAM_INT);
             } else {
                 $qmfilter = 0;
@@ -96,7 +81,7 @@ class quiz_overview_report extends quiz_attempt_report {
         $displayoptions['qmfilter'] = $qmfilter;
         $displayoptions['regradefilter'] = $regradefilter;
 
-        $mform->set_data($displayoptions +
+        $this->form->set_data($displayoptions +
                 array('detailedmarks' => $detailedmarks, 'pagesize' => $pagesize));
 
         if (!$this->should_show_grades($quiz)) {
@@ -122,12 +107,12 @@ class quiz_overview_report extends quiz_attempt_report {
         // Prepare for downloading, if applicable.
         $courseshortname = format_string($course->shortname, true,
                 array('context' => context_course::instance($course->id)));
-        $table = new quiz_overview_table($quiz, $this->context, $qmsubselect,
+        $table = new quiz_overview_table($quiz, $this->context, $this->qmsubselect,
                 $qmfilter, $attemptsmode, $groupstudents, $students, $detailedmarks,
-                $questions, $includecheckboxes, $reporturl, $displayoptions);
+                $questions, $includecheckboxes, $this->get_base_url(), $displayoptions);
         $filename = quiz_report_download_filename(get_string('overviewfilename', 'quiz_overview'),
                 $courseshortname, $quiz->name);
-        $table->is_downloading($download, $filename,
+        $table->is_downloading(optional_param('download', '', PARAM_ALPHA), $filename,
                 $courseshortname . ' ' . format_string($quiz->name, true));
         if ($table->is_downloading()) {
             raise_memory_limit(MEMORY_EXTRA);
@@ -139,14 +124,14 @@ class quiz_overview_report extends quiz_attempt_report {
                 if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
                     require_capability('mod/quiz:deleteattempts', $this->context);
                     $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowed);
-                    redirect($reporturl->out(false, $displayoptions));
+                    redirect($this->get_base_url()->out(false, $displayoptions));
                 }
 
             } else if (optional_param('regrade', 0, PARAM_BOOL) && confirm_sesskey()) {
                 if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
                     require_capability('mod/quiz:regrade', $this->context);
                     $this->regrade_attempts($quiz, false, $groupstudents, $attemptids);
-                    redirect($reporturl->out(false, $displayoptions));
+                    redirect($this->get_base_url()->out(false, $displayoptions));
                 }
             }
         }
@@ -154,17 +139,17 @@ class quiz_overview_report extends quiz_attempt_report {
         if ($regradeall && confirm_sesskey()) {
             require_capability('mod/quiz:regrade', $this->context);
             $this->regrade_attempts($quiz, false, $groupstudents);
-            redirect($reporturl->out(false, $displayoptions), '', 5);
+            redirect($this->get_base_url()->out(false, $displayoptions), '', 5);
 
         } else if ($regradealldry && confirm_sesskey()) {
             require_capability('mod/quiz:regrade', $this->context);
             $this->regrade_attempts($quiz, true, $groupstudents);
-            redirect($reporturl->out(false, $displayoptions), '', 5);
+            redirect($this->get_base_url()->out(false, $displayoptions), '', 5);
 
         } else if ($regradealldrydo && confirm_sesskey()) {
             require_capability('mod/quiz:regrade', $this->context);
             $this->regrade_attempts_needing_it($quiz, $groupstudents);
-            redirect($reporturl->out(false, $displayoptions), '', 5);
+            redirect($this->get_base_url()->out(false, $displayoptions), '', 5);
         }
 
         // Start output.
@@ -176,7 +161,7 @@ class quiz_overview_report extends quiz_attempt_report {
         if ($groupmode = groups_get_activity_groupmode($cm)) {
             // Groups are being used, so output the group selector if we are not downloading.
             if (!$table->is_downloading()) {
-                groups_print_activity_menu($cm, $reporturl->out(true, $displayoptions));
+                groups_print_activity_menu($cm, $this->get_base_url()->out(true, $displayoptions));
             }
         }
 
@@ -199,7 +184,7 @@ class quiz_overview_report extends quiz_attempt_report {
             }
 
             // Print the display options.
-            $mform->display();
+            $this->form->display();
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
@@ -207,10 +192,10 @@ class quiz_overview_report extends quiz_attempt_report {
             // Construct the SQL.
             $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
                     ' AS uniqueid, ';
-            if ($qmsubselect) {
+            if ($this->qmsubselect) {
                 $fields .=
                     "(CASE " .
-                    "   WHEN $qmsubselect THEN 1" .
+                    "   WHEN {$this->qmsubselect} THEN 1" .
                     "   ELSE 0 " .
                     "END) AS gradedattempt, ";
             }
@@ -258,7 +243,7 @@ class quiz_overview_report extends quiz_attempt_report {
                         $regradealllabel =
                                 get_string('regradeall', 'quiz_overview');
                     }
-                    $displayurl = new moodle_url($reporturl,
+                    $displayurl = new moodle_url($this->get_base_url(),
                             $displayoptions + array('sesskey' => sesskey()));
                     echo '<div class="mdl-align">';
                     echo '<form action="'.$displayurl->out_omit_querystring().'">';
@@ -277,7 +262,7 @@ class quiz_overview_report extends quiz_attempt_report {
                 }
                 // Print information on the grading method.
                 if ($strattempthighlight = quiz_report_highlighting_grading_method(
-                        $quiz, $qmsubselect, $qmfilter)) {
+                        $quiz, $this->qmsubselect, $qmfilter)) {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
                 }
             }
@@ -319,7 +304,7 @@ class quiz_overview_report extends quiz_attempt_report {
             $this->add_grade_columns($quiz, $columns, $headers, false);
 
             $this->set_up_table_columns(
-                    $table, $columns, $headers, $reporturl, $displayoptions, false);
+                    $table, $columns, $headers, $this->get_base_url(), $displayoptions, false);
             $table->set_attribute('class', 'generaltable generalbox grades');
 
             $table->out($pagesize, true);

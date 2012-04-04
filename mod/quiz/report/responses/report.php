@@ -49,27 +49,12 @@ class quiz_responses_report extends quiz_attempt_report {
     public function display($quiz, $cm, $course) {
         global $CFG, $DB, $OUTPUT;
 
-        $this->context = context_module::instance($cm->id);
-
-        $download = optional_param('download', '', PARAM_ALPHA);
-
         list($currentgroup, $students, $groupstudents, $allowed) =
-                $this->load_relevant_students($cm, $course);
+                $this->init('responses', 'quiz_responses_settings_form', $quiz, $cm, $course);
 
-        $pageoptions = array();
-        $pageoptions['id'] = $cm->id;
-        $pageoptions['mode'] = 'responses';
-
-        $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);
-        $qmsubselect = quiz_report_qm_filter_select($quiz);
-
-        $mform = new quiz_responses_settings_form($reporturl,
-                array('qmsubselect' => $qmsubselect, 'quiz' => $quiz,
-                'currentgroup' => $currentgroup, 'context' => $this->context));
-
-        if ($fromform = $mform->get_data()) {
+        if ($fromform = $this->form->get_data()) {
             $attemptsmode = $fromform->attemptsmode;
-            if ($qmsubselect) {
+            if ($this->qmsubselect) {
                 $qmfilter = $fromform->qmfilter;
             } else {
                 $qmfilter = 0;
@@ -85,7 +70,7 @@ class quiz_responses_report extends quiz_attempt_report {
 
         } else {
             $attemptsmode = optional_param('attemptsmode', null, PARAM_INT);
-            if ($qmsubselect) {
+            if ($this->qmsubselect) {
                 $qmfilter = optional_param('qmfilter', 0, PARAM_INT);
             } else {
                 $qmfilter = 0;
@@ -104,7 +89,7 @@ class quiz_responses_report extends quiz_attempt_report {
         $displayoptions['resp'] = $includeresp;
         $displayoptions['right'] = $includeright;
 
-        $mform->set_data($displayoptions +
+        $this->form->set_data($displayoptions +
                 array('pagesize' => $pagesize));
 
         if (!$includeqtext && !$includeresp && !$includeright) {
@@ -130,12 +115,12 @@ class quiz_responses_report extends quiz_attempt_report {
         // Prepare for downloading, if applicable.
         $courseshortname = format_string($course->shortname, true,
                 array('context' => context_course::instance($course->id)));
-        $table = new quiz_responses_table($quiz, $this->context, $qmsubselect,
+        $table = new quiz_responses_table($quiz, $this->context, $this->qmsubselect,
                 $qmfilter, $attemptsmode, $groupstudents, $students,
-                $questions, $includecheckboxes, $reporturl, $displayoptions);
+                $questions, $includecheckboxes, $this->get_base_url(), $displayoptions);
         $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),
                 $courseshortname, $quiz->name);
-        $table->is_downloading($download, $filename,
+        $table->is_downloading(optional_param('download', '', PARAM_ALPHA), $filename,
                 $courseshortname . ' ' . format_string($quiz->name, true));
         if ($table->is_downloading()) {
             raise_memory_limit(MEMORY_EXTRA);
@@ -147,7 +132,7 @@ class quiz_responses_report extends quiz_attempt_report {
                 if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
                     require_capability('mod/quiz:deleteattempts', $this->context);
                     $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowed);
-                    redirect($reporturl->out(false, $displayoptions));
+                    redirect($this->get_base_url()->out(false, $displayoptions));
                 }
             }
         }
@@ -161,7 +146,7 @@ class quiz_responses_report extends quiz_attempt_report {
         if ($groupmode = groups_get_activity_groupmode($cm)) {
             // Groups are being used, so output the group selector if we are not downloading.
             if (!$table->is_downloading()) {
-                groups_print_activity_menu($cm, $reporturl->out(true, $displayoptions));
+                groups_print_activity_menu($cm, $this->get_base_url()->out(true, $displayoptions));
             }
         }
 
@@ -184,7 +169,7 @@ class quiz_responses_report extends quiz_attempt_report {
             }
 
             // Print the display options.
-            $mform->display();
+            $this->form->display();
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
@@ -193,7 +178,7 @@ class quiz_responses_report extends quiz_attempt_report {
             if (!$table->is_downloading()) {
                 // Do not print notices when downloading.
                 if ($strattempthighlight = quiz_report_highlighting_grading_method(
-                        $quiz, $qmsubselect, $qmfilter)) {
+                        $quiz, $this->qmsubselect, $qmfilter)) {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
                 }
             }
@@ -241,7 +226,7 @@ class quiz_responses_report extends quiz_attempt_report {
             $table->sortable(true, 'uniqueid');
 
             // Set up the table.
-            $table->define_baseurl($reporturl->out(true, $displayoptions));
+            $table->define_baseurl($this->get_base_url()->out(true, $displayoptions));
 
             $this->configure_user_columns($table);
 
