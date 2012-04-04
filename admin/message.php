@@ -24,7 +24,6 @@
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot . '/message/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/messagelib.php');
 
 // This is an admin page
 admin_externalpage_setup('managemessageoutputs');
@@ -35,8 +34,8 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 // Get the submitted params
 $disable    = optional_param('disable', 0, PARAM_INT);
 $enable     = optional_param('enable', 0, PARAM_INT);
-$uninstall  = optional_param('uninstall', '', PARAM_INT);
-$confirm  = optional_param('confirm', 0, PARAM_BOOL);
+$uninstall  = optional_param('uninstall', 0, PARAM_INT);
+$confirm  = optional_param('confirm', false, PARAM_BOOL);
 
 $headingtitle = get_string('managemessageoutputs', 'message');
 

@@ -1530,8 +1530,14 @@ class plugintype_enrol extends plugintype_base implements plugin_information {
  */
 class plugintype_message extends plugintype_base implements plugin_information {
 
+    /**
+     * @var array An array of processor objects
+     */
     private $processors;
 
+    /**
+     * Constructs a plugintype_message instance
+     */
     protected function __construct() {
         global $CFG;
         require_once($CFG->dirroot . '/message/lib.php');
@@ -1539,23 +1545,27 @@ class plugintype_message extends plugintype_base implements plugin_information {
     }
 
     /**
+     * Returns a URL to the settings page for the plugin if there is one
+     *
      * @see plugin_information::get_settings_url()
+     * @return moodle_url|null
      */
     public function get_settings_url() {
 
         if (isset($this->processors[$this->name])) {
             $processor = $this->processors[$this->name];
-        } else {
-            return parent::get_settings_url();
+            if ($processor->available && $processor->hassettings) {
+                return new moodle_url('settings.php', array('section' => 'messagesetting'.$processor->name));
+            }
         }
-
-        if ($processor->available && $processor->hassettings) {
-            return new moodle_url('settings.php', array('section' => 'messagesetting'.$processor->name));
-        }
+        return parent::get_settings_url();
     }
 
     /**
+     * Returns true if this plugin is enabled
+     *
      * @see plugintype_interface::is_enabled()
+     * @return bool
      */
     public function is_enabled() {
         if (isset($this->processors[$this->name])) {
@@ -1566,6 +1576,8 @@ class plugintype_message extends plugintype_base implements plugin_information {
     }
 
     /**
+     * Returns the URL used to uninstall the plugin if there is one.
+     *
      * @see plugintype_interface::get_uninstall_url()
      */
     public function get_uninstall_url() {
