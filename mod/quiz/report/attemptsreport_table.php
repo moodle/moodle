@@ -306,9 +306,9 @@ abstract class quiz_attempt_report_table extends table_sql {
             // subtracting a larger unsigned int from a smaller one gave an error.
             // Therefore, we avoid doing that. timefinish can be non-zero and less
             // than timestart when you have two load-balanced servers with very
-            // badly synchronised clocks, and a student does a really quick attempt.';
+            // badly synchronised clocks, and a student does a really quick attempt.
 
-        // This part is the same for all cases - join users and quiz_attempts tables
+        // This part is the same for all cases. Join the users and quiz_attempts tables.
         $from = "\n{user} u";
         $from .= "\nLEFT JOIN {quiz_attempts} quiza ON
                                     quiza.userid = u.id AND quiza.quiz = :quizid";
@@ -319,25 +319,25 @@ abstract class quiz_attempt_report_table extends table_sql {
         }
         switch ($this->attemptsmode) {
             case QUIZ_REPORT_ATTEMPTS_ALL:
-                // Show all attempts, including students who are no longer in the course
+                // Show all attempts, including students who are no longer in the course.
                 $where = 'quiza.id IS NOT NULL AND quiza.preview = 0';
                 break;
             case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
-                // Show only students with attempts
+                // Show only students with attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND quiza.preview = 0 AND quiza.id IS NOT NULL";
                 break;
             case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
-                // Show only students without attempts
+                // Show only students without attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND quiza.id IS NULL";
                 break;
             case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
-                // Show all students with or without attempts
+                // Show all students with or without attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
@@ -464,7 +464,8 @@ abstract class quiz_attempt_report_table extends table_sql {
         echo '&nbsp;&nbsp;';
         $this->submit_buttons();
         echo '</div>';
-        // Close form
+
+        // Close the form.
         echo '</div>';
         echo '</form></div>';
     }

@@ -62,7 +62,7 @@ class quiz_statistics_table extends flexible_table {
         $this->quiz = $quiz;
         $this->cmid = $cmid;
 
-        // Define table columns
+        // Define the table columns.
         $columns = array();
         $headers = array();
 
@@ -121,7 +121,7 @@ class quiz_statistics_table extends flexible_table {
         $this->column_class('discrimination_index', 'numcol');
         $this->column_class('discriminative_efficiency', 'numcol');
 
-        // Set up the table
+        // Set up the table.
         $this->define_baseurl($reporturl->out());
 
         $this->collapsible(true);

@@ -169,18 +169,19 @@ class quiz_overview_report extends quiz_attempt_report {
 
         // Start output.
         if (!$table->is_downloading()) {
-            // Only print headers if not asked to download data
+            // Only print headers if not asked to download data.
             $this->print_header_and_tabs($cm, $course, $quiz, 'overview');
         }
 
-        if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
+        if ($groupmode = groups_get_activity_groupmode($cm)) {
+            // Groups are being used, output the group selector if we are not downloading.
             if (!$table->is_downloading()) {
                 groups_print_activity_menu($cm, $reporturl->out(true, $displayoptions));
             }
         }
 
-        // Print information on the number of existing attempts
-        if (!$table->is_downloading()) { //do not print notices when downloading
+        // Print information on the number of existing attempts.
+        if (!$table->is_downloading()) { // Do not print notices when downloading.
             if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
                 echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
@@ -196,13 +197,13 @@ class quiz_overview_report extends quiz_attempt_report {
                 echo $OUTPUT->notification(get_string('nostudentsingroup'));
             }
 
-            // Print display options
+            // Print display options.
             $mform->display();
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
         if ($hasquestions && ($hasstudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL))) {
-            // Construct the SQL
+            // Construct the SQL.
             $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
                     ' AS uniqueid, ';
             if ($qmsubselect) {
@@ -233,7 +234,7 @@ class quiz_overview_report extends quiz_attempt_report {
             $table->set_sql($fields, $from, $where, $params);
 
             if (!$table->is_downloading()) {
-                // Regrade buttons
+                // Output the regrade buttons.
                 if (has_capability('mod/quiz:regrade', $this->context)) {
                     $regradesneeded = $this->count_question_attempts_needing_regrade(
                             $quiz, $groupstudents);
@@ -273,14 +274,14 @@ class quiz_overview_report extends quiz_attempt_report {
                     echo '</form>';
                     echo '</div>';
                 }
-                // Print information on the grading method
+                // Print information on the grading method.
                 if ($strattempthighlight = quiz_report_highlighting_grading_method(
                         $quiz, $qmsubselect, $qmfilter)) {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
                 }
             }
 
-            // Define table columns
+            // Define table columns.
             $columns = array();
             $headers = array();
 
@@ -295,7 +296,7 @@ class quiz_overview_report extends quiz_attempt_report {
 
             if ($detailedmarks) {
                 foreach ($questions as $slot => $question) {
-                    // Ignore questions of zero length
+                    // Ignore questions of zero length.
                     $columns[] = 'qsgrade' . $slot;
                     $header = get_string('qbrief', 'quiz', $question->number);
                     if (!$table->is_downloading()) {
@@ -466,7 +467,7 @@ class quiz_overview_report extends quiz_attempt_report {
         $where = "quiza.quiz = ? AND quiza.preview = 0 AND qqr.regraded = 0";
         $params = array($quiz->id);
 
-        // Fetch all attempts that need regrading
+        // Fetch all attempts that need regrading.
         if ($groupstudents) {
             list($usql, $uparams) = $DB->get_in_or_equal($groupstudents);
             $where .= " AND quiza.userid $usql";
@@ -551,7 +552,7 @@ class quiz_overview_report extends quiz_attempt_report {
     protected function clear_regrade_table($quiz, $groupstudents) {
         global $DB;
 
-        // Fetch all attempts that need regrading
+        // Fetch all attempts that need regrading.
         $where = '';
         $params = array();
         if ($groupstudents) {

@@ -68,7 +68,7 @@ class quiz_statistics_question_table extends flexible_table {
         $this->collapsible(false);
         $this->set_attribute('class', 'generaltable generalbox boxaligncenter');
 
-        // Define table columns
+        // Define the table columns.
         $columns = array();
         $headers = array();
 

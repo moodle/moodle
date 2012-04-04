@@ -150,18 +150,20 @@ class quiz_responses_report extends quiz_attempt_report {
         }
 
         if (!$table->is_downloading()) {
-            // Only print headers if not asked to download data
+            // Only print headers if not asked to download data.
             $this->print_header_and_tabs($cm, $course, $quiz, 'responses');
         }
 
-        if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
+        if ($groupmode = groups_get_activity_groupmode($cm)) {
+            // Groups are being used, so output the group selector if we are not downloading.
             if (!$table->is_downloading()) {
                 groups_print_activity_menu($cm, $reporturl->out(true, $displayoptions));
             }
         }
 
-        // Print information on the number of existing attempts
-        if (!$table->is_downloading()) { //do not print notices when downloading
+        // Print information on the number of existing attempts.
+        if (!$table->is_downloading()) {
+            // Do not print notices when downloading.
             if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
                 echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
@@ -177,14 +179,15 @@ class quiz_responses_report extends quiz_attempt_report {
                 echo $OUTPUT->notification(get_string('nostudentsingroup'));
             }
 
-            // Print display options
+            // Print the display options.
             $mform->display();
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
         if ($hasquestions && ($hasstudents || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)) {
-            // Print information on the grading method and whether we are displaying
-            if (!$table->is_downloading()) { //do not print notices when downloading
+            // Print information on the grading method and whether we are displaying.
+            if (!$table->is_downloading()) {
+                // Do not print notices when downloading.
                 if ($strattempthighlight = quiz_report_highlighting_grading_method(
                         $quiz, $qmsubselect, $qmfilter)) {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
@@ -197,7 +200,7 @@ class quiz_responses_report extends quiz_attempt_report {
 
             $table->set_sql($fields, $from, $where, $params);
 
-            // Define table columns
+            // Define table columns.
             $columns = array();
             $headers = array();
 
@@ -233,7 +236,7 @@ class quiz_responses_report extends quiz_attempt_report {
             $table->define_headers($headers);
             $table->sortable(true, 'uniqueid');
 
-            // Set up the table
+            // Set up the table.
             $table->define_baseurl($reporturl->out(true, $displayoptions));
 
             $this->configure_user_columns($table);

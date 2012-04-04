@@ -118,15 +118,16 @@ abstract class quiz_attempt_report extends quiz_default_report {
      */
     protected function validate_common_options(&$attemptsmode, &$pagesize, $course, $currentgroup) {
         if ($currentgroup) {
-            //default for when a group is selected
+            // Default for when a group is selected.
             if ($attemptsmode === null || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL) {
                 $attemptsmode = QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH;
             }
+
         } else if (!$currentgroup && $course->id == SITEID) {
-            //force report on front page to show all, unless a group is selected.
+            // Force report on front page to show all, unless a group is selected.
             $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
+
         } else if ($attemptsmode === null) {
-            //default
             $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
         }
 
@@ -158,7 +159,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
         }
 
         // When downloading, some extra fields are always displayed (because
-        // there's no space constraint) so do not include in extra-field list
+        // there's no space constraint) so do not include in extra-field list.
         $extrafields = get_extra_user_fields($this->context,
                 $table->is_downloading() ? array('institution', 'department', 'email') : array());
         foreach ($extrafields as $field) {

@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php'); // Include the code to test
+require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 
 
 /**

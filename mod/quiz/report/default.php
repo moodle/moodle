@@ -63,7 +63,7 @@ abstract class quiz_default_report {
     public function print_header_and_tabs($cm, $course, $quiz, $reportmode = 'overview') {
         global $PAGE, $OUTPUT;
 
-        // Print the page header
+        // Print the page header.
         $PAGE->set_title(format_string($quiz->name));
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();

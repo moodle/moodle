@@ -82,7 +82,7 @@ class quiz_grading_report extends quiz_default_report {
             $this->viewoptions['order'] = $order;
         }
 
-        // Check permissions
+        // Check permissions.
         $this->context = context_module::instance($cm->id);
         require_capability('mod/quiz:grade', $this->context);
         $shownames = has_capability('quiz/grading:viewstudentnames', $this->context);
@@ -269,7 +269,7 @@ class quiz_grading_report extends quiz_default_report {
         global $OUTPUT;
 
         if ($groupmode = groups_get_activity_groupmode($this->cm)) {
-            // Groups are being used
+            // Groups is being used.
             groups_print_activity_menu($this->cm, $this->list_questions_url());
         }
 

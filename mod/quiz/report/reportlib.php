@@ -141,7 +141,8 @@ WHERE
  * empty string if all attempts contribute to final grade.
  */
 function quiz_report_qm_filter_select($quiz, $quizattemptsalias = 'quiza') {
-    if ($quiz->attempts == 1) { // Only one attempt allowed on this quiz
+    if ($quiz->attempts == 1) {
+        // This quiz only allows one attempt.
         return '';
     }
 
@@ -217,13 +218,13 @@ ORDER BY
 
     $data = $DB->get_records_sql_menu($sql, $params);
 
-    //need to create array elements with values 0 at indexes where there is no element
+    // We need to create array elements with values 0 at indexes where there is no element.
     $data =  $data + array_fill(0, $bands+1, 0);
     ksort($data);
 
-    //place the maximum (prefect grade) into the last band i.e. make last
-    //band for example 9 <= g <=10 (where 10 is the perfect grade) rather than
-    //just 9 <= g <10.
+    // Place the maximum (prefect grade) into the last band i.e. make last
+    // band for example 9 <= g <=10 (where 10 is the perfect grade) rather than
+    // just 9 <= g <10.
     $data[$bands - 1] += $data[$bands];
     unset($data[$bands]);
 
@@ -326,7 +327,7 @@ function quiz_report_list($context) {
     $reports = $DB->get_records('quiz_reports', null, 'displayorder DESC', 'name, capability');
     $reportdirs = get_plugin_list('quiz');
 
-    // Order the reports tab in descending order of displayorder
+    // Order the reports tab in descending order of displayorder.
     $reportcaps = array();
     foreach ($reports as $key => $report) {
         if (array_key_exists($report->name, $reportdirs)) {
@@ -334,7 +335,7 @@ function quiz_report_list($context) {
         }
     }
 
-    // Add any other reports, which are on disc but not in the DB, on the end
+    // Add any other reports, which are on disc but not in the DB, on the end.
     foreach ($reportdirs as $reportname => $notused) {
         if (!isset($reportcaps[$reportname])) {
             $reportcaps[$reportname] = null;
