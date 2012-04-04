@@ -1531,60 +1531,14 @@ class plugintype_enrol extends plugintype_base implements plugin_information {
 class plugintype_message extends plugintype_base implements plugin_information {
 
     /**
-     * @var array An array of processor objects
-     */
-    private $processors;
-
-    /**
-     * Constructs a plugintype_message instance
-     */
-    protected function __construct() {
-        global $CFG;
-        require_once($CFG->dirroot . '/message/lib.php');
-        $this->processors = get_message_processors();
-    }
-
-    /**
-     * Returns a URL to the settings page for the plugin if there is one
-     *
      * @see plugin_information::get_settings_url()
-     * @return moodle_url|null
      */
     public function get_settings_url() {
 
-        if (isset($this->processors[$this->name])) {
-            $processor = $this->processors[$this->name];
-            if ($processor->available && $processor->hassettings) {
-                return new moodle_url('settings.php', array('section' => 'messagesetting'.$processor->name));
-            }
-        }
-        return parent::get_settings_url();
-    }
-
-    /**
-     * Returns true if this plugin is enabled
-     *
-     * @see plugintype_interface::is_enabled()
-     * @return bool
-     */
-    public function is_enabled() {
-        if (isset($this->processors[$this->name])) {
-            return $this->processors[$this->name]->configured && $this->processors[$this->name]->enabled;
+        if (file_exists($this->full_path('settings.php')) or file_exists($this->full_path('settingstree.php'))) {
+            return new moodle_url('/admin/settings.php', array('section' => 'messagesetting' . $this->name));
         } else {
-            return parent::is_enabled();
-        }
-    }
-
-    /**
-     * Returns the URL used to uninstall the plugin if there is one.
-     *
-     * @see plugintype_interface::get_uninstall_url()
-     */
-    public function get_uninstall_url() {
-        if (isset($this->processors[$this->name])) {
-            return new moodle_url('message.php', array('uninstall' => $this->processors[$this->name]->id, 'sesskey' => sesskey()));
-        } else {
-            return parent::get_uninstall_url();
+            return parent::get_settings_url();
         }
     }
 }
