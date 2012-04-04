@@ -31,6 +31,12 @@
 
 define('PHPUNIT_UTIL', true);
 
+// verify PHPUnit installation
+if (!@include_once('PHPUnit/Autoload.php')) {
+    fwrite(STDERR, "Can not load PHPUnit PEAR library, is it installed?\n");
+    exit(1);
+}
+
 require(__DIR__ . '/../../../../lib/phpunit/bootstrap.php');
 require_once($CFG->libdir.'/phpunit/lib.php');
 require_once($CFG->libdir.'/adminlib.php');

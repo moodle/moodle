@@ -13,13 +13,12 @@ Installation
 ------------
 1. install PHPUnit PEAR extension - see [PHPUnit docs](http://www.phpunit.de/manual/current/en/installation.html) for more details
 2. edit main config.php - add $CFG->phpunit_prefix and $CFG->phpunit_dataroot - see config-dist.php for more details
-3. execute `php admin/tool/phpunit/cli/util.php --install` from dirroot to initialise test database and dataroot
+3. execute `admin/tool/phpunit/cli/init.sh` initialise test database and dataroot
 4. it is necessary to reinitialise the test database manually after every upgrade or installation of new plugins
 
 
 Test execution
 --------------
-* optionally generate phpunit.xml by executing `php admin/tool/phpunit/cli/util.php --buildconfig` - it collects test cases from all plugins
 * execute `phpunit` shell command from dirroot directory
 * you can also execute a single test `phpunit core_phpunit_basic_testcase lib/tests/phpunit_test.php`
 * or all tests in one directory `phpunit --configuration phpunit.xml lib/tests/*_test.php`
@@ -57,5 +56,4 @@ TODO
 * convert remaining tests
 * delete all simpletests
 * hide old SimpleTests in UI and delete Functional DB tests
-* shell script that prepares everything for the first execution
 * optional support for execution of tests and cli/util.php from web UI (to be implemented via shell execution)

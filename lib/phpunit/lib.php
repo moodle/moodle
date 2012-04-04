@@ -23,9 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// necessary when loaded from cli/util.php script
-// If this is missing then PHPUnit is not in your PHP include path. This normally
-// happens if installation didn't complete correctly. Check your environment.
+
 require_once 'PHPUnit/Autoload.php';
 
 
