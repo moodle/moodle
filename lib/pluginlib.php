@@ -118,11 +118,14 @@ class plugin_manager {
                 $this->pluginsinfo[$plugintype] = $plugins;
             }
 
-            // append the information about available updates provided by {@link available_update_checker()}
-            $provider = available_update_checker::instance();
-            foreach ($this->pluginsinfo as $plugintype => $plugins) {
-                foreach ($plugins as $plugininfoholder) {
-                    $plugininfoholder->check_available_updates($provider);
+            // TODO: MDL-20438 verify this is the correct solution/replace
+            if (!during_initial_install()) {
+                // append the information about available updates provided by {@link available_update_checker()}
+                $provider = available_update_checker::instance();
+                foreach ($this->pluginsinfo as $plugintype => $plugins) {
+                    foreach ($plugins as $plugininfoholder) {
+                        $plugininfoholder->check_available_updates($provider);
+                    }
                 }
             }
         }
