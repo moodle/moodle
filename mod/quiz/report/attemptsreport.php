@@ -36,6 +36,18 @@ require_once($CFG->libdir.'/tablelib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class quiz_attempt_report extends quiz_default_report {
+    /** @var int default page size for reports. */
+    const DEFAULT_PAGE_SIZE = 30;
+
+    /** @var int include all attempts. */
+    const ALL_ATTEMPTS = 0;
+    /** @var int include just enroled users who have not attempted the quiz. */
+    const STUDENTS_WITH_NO = 1;
+    /** @var int include just enroled users who have attempted the quiz. */
+    const STUDENTS_WITH = 2;
+    /** @var int include all enroled users. */
+    const ALL_STUDENTS = 3;
+
     /** @var object the quiz context. */
     protected $context;
 
@@ -119,20 +131,20 @@ abstract class quiz_attempt_report extends quiz_default_report {
     protected function validate_common_options(&$attemptsmode, &$pagesize, $course, $currentgroup) {
         if ($currentgroup) {
             // Default for when a group is selected.
-            if ($attemptsmode === null || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL) {
-                $attemptsmode = QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH;
+            if ($attemptsmode === null || $attemptsmode == self::ALL_ATTEMPTS) {
+                $attemptsmode = self::STUDENTS_WITH;
             }
 
         } else if (!$currentgroup && $course->id == SITEID) {
             // Force report on front page to show all, unless a group is selected.
-            $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
+            $attemptsmode = self::ALL_ATTEMPTS;
 
         } else if ($attemptsmode === null) {
-            $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
+            $attemptsmode = self::ALL_ATTEMPTS;
         }
 
         if ($pagesize < 1) {
-            $pagesize = QUIZ_REPORT_DEFAULT_PAGE_SIZE;
+            $pagesize = self::DEFAULT_PAGE_SIZE;
         }
     }
 

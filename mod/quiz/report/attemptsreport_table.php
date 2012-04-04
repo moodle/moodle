@@ -318,25 +318,25 @@ abstract class quiz_attempt_report_table extends table_sql {
             $from .= " AND $this->qmsubselect";
         }
         switch ($this->attemptsmode) {
-            case QUIZ_REPORT_ATTEMPTS_ALL:
+            case quiz_attempt_report::ALL_ATTEMPTS:
                 // Show all attempts, including students who are no longer in the course.
                 $where = 'quiza.id IS NOT NULL AND quiza.preview = 0';
                 break;
-            case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
+            case quiz_attempt_report::STUDENTS_WITH:
                 // Show only students with attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND quiza.preview = 0 AND quiza.id IS NOT NULL";
                 break;
-            case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
+            case quiz_attempt_report::STUDENTS_WITH_NO:
                 // Show only students without attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND quiza.id IS NULL";
                 break;
-            case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
+            case quiz_attempt_report::ALL_STUDENTS:
                 // Show all students with or without attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');

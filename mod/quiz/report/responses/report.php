@@ -115,9 +115,9 @@ class quiz_responses_report extends quiz_attempt_report {
         // We only want to show the checkbox to delete attempts
         // if the user has permissions and if the report mode is showing attempts.
         $includecheckboxes = has_capability('mod/quiz:deleteattempts', $this->context)
-                && ($attemptsmode != QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO);
+                && ($attemptsmode != self::STUDENTS_WITH_NO);
 
-        if ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL) {
+        if ($attemptsmode == self::ALL_ATTEMPTS) {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
             // are accessible, is not a security porblem.
@@ -188,7 +188,7 @@ class quiz_responses_report extends quiz_attempt_report {
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
-        if ($hasquestions && ($hasstudents || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)) {
+        if ($hasquestions && ($hasstudents || $attemptsmode == self::ALL_ATTEMPTS)) {
             // Print information on the grading method and whether we are displaying.
             if (!$table->is_downloading()) {
                 // Do not print notices when downloading.

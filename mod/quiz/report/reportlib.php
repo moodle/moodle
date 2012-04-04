@@ -28,14 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 
-define('QUIZ_REPORT_DEFAULT_PAGE_SIZE', 30);
-define('QUIZ_REPORT_DEFAULT_GRADING_PAGE_SIZE', 10);
-
-define('QUIZ_REPORT_ATTEMPTS_ALL', 0);
-define('QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO', 1);
-define('QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH', 2);
-define('QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS', 3);
-
 /**
  * Takes an array of objects and constructs a multidimensional array keyed by
  * the keys it finds on the object.
