@@ -27,7 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * Class for converting attempt data from imagetarget questions when converting
  * attempts to the new question engine.

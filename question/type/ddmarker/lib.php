@@ -36,3 +36,101 @@ function qtype_ddmarker_pluginfile($course, $cm, $context, $filearea, $args, $fo
     require_once($CFG->libdir . '/questionlib.php');
     question_pluginfile($course, $context, 'qtype_ddmarker', $filearea, $args, $forcedownload);
 }
+
+
+
+function qtype_ddmarker_course_context_id($catcontextid) {
+    $context = get_context_instance_by_id($catcontextid);
+    while ($context->contextlevel != CONTEXT_COURSE) {
+        $context = get_context_instance_by_id(get_parent_contextid($context));
+    }
+    return $context->id;
+}
+
+function qtype_ddmarker_convert_image_target_question($question, $imgfilename, $answers) {
+    global $DB, $OUTPUT;
+    $correctfeedback = '';
+    $correctfeedbackformat = 1;
+    $incorrectfeedback = '';
+    $incorrectfeedbackformat = 1;
+    $foundincorrectanswer = false;
+    foreach ($answers as $answer) {
+        $no = 1;
+        if ('*' !== $answer->answer) {
+            $drop = new stdClass();
+            $drop->questionid = $question->id;
+            $drop->shape = 'rectangle';
+            $drop->no = $no;
+            list($x1, $y1, $x2, $y2) = explode(',', $answer->answer);
+            $width = $x2 - $x1;
+            $height = $y2 - $y1;
+            $drop->coords = "{$x1},{$y1};{$width},{$height}";
+            $drop->choice = 1;
+            $DB->insert_record('qtype_ddmarker_drops', $drop);
+            $no++;
+            $correctfeedback = $answer->feedback;
+            $correctfeedbackformat = $answer->feedbackformat;
+        } else {
+            $foundincorrectanswer = true;
+            $incorrectfeedback = $answer->feedback;
+            $incorrectfeedbackformat = $answer->feedbackformat;
+        }
+    }
+    if (count($answers) < 2) {
+        echo $OUTPUT->notification('There are less than 2 answers. '.
+                                    '(Normally we expect at least a correct and incorrect answer). '.
+                                    'For question id '.$question->id.' "'.$question->name.'".',
+                                    'notifyproblem');
+    }
+    if (!$foundincorrectanswer) {
+        echo $OUTPUT->notification('No incorrect answer found for question id '.$question->id.' "'.$question->name.'".',
+                                    'notifyproblem');
+    }
+    $drag = new stdClass();
+    $drag->questionid = $question->id;
+    $drag->no = 1;
+    $drag->label = "X";
+    $drag->infinite = 0;
+    $DB->insert_record('qtype_ddmarker_drags', $drag);
+
+    $ddmarker = new stdClass();
+    $ddmarker->questionid = $question->id;
+    $ddmarker->shuffleanswers = 0;
+    $ddmarker->correctfeedback = $correctfeedback;
+    $ddmarker->correctfeedbackformat = $correctfeedbackformat;
+    $ddmarker->partiallycorrectfeedback = '';
+    $ddmarker->partiallycorrectfeedbackformat = 1;
+    $ddmarker->incorrectfeedback = $incorrectfeedback;
+    $ddmarker->incorrectfeedbackformat = $incorrectfeedbackformat;
+    $ddmarker->shownumcorrect = 0;
+    $ddmarker->showmisplaced = 0;
+    $DB->insert_record('qtype_ddmarker', $ddmarker);
+
+    $newrec = clone($question);
+    unset($newrec->contextid);
+    $newrec->qtype = 'ddmarker';
+    $newrec->timemodified = time();
+    $DB->update_record('question', $newrec);
+
+    $fs = get_file_storage();
+    //we need to look in the course legacy files area for file
+    $bgimagefile = $fs->get_file(qtype_ddmarker_course_context_id($question->contextid),
+                                    'course',
+                                    'legacy',
+                                    '0',
+                                    '/'.dirname($imgfilename).'/',
+                                    basename($imgfilename));
+    if ($bgimagefile === false) {
+        echo $OUTPUT->notification('File "'.$imgfilename.'" not found in legacy course files area. '.
+                                    'For question id '.$question->id.' "'.$question->name.'".',
+                                    'notifyproblem');
+    } else {
+        $newbgimagefile = new stdClass();
+        $newbgimagefile->component = 'qtype_ddmarker';
+        $newbgimagefile->filearea = 'bgimage';
+        $newbgimagefile->filepath = '/';
+        $newbgimagefile->itemid = $question->id;
+        $newbgimagefile->contextid = $question->contextid;
+        $fs->create_file_from_storedfile($newbgimagefile, $bgimagefile);
+    }
+}
