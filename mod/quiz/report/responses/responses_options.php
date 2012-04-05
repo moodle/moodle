@@ -93,5 +93,10 @@ class quiz_responses_options extends mod_quiz_attempts_report_options {
             // We have to show at least something.
             $this->showresponses = true;
         }
+
+        // We only want to show the checkbox to delete attempts
+        // if the user has permissions and if the report mode is showing attempts.
+        $this->checkboxcolumn = has_capability('mod/quiz:deleteattempts', context_module::instance($this->cm->id))
+                && ($this->attempts != quiz_attempts_report::STUDENTS_WITH_NO);
     }
 }

@@ -79,8 +79,14 @@ class quiz_overview_options extends mod_quiz_attempts_report_options {
     public function resolve_dependencies() {
         parent::resolve_dependencies();
 
-        if (!quiz_report_should_show_grades($this->quiz)) {
+        if (!$this->usercanseegrades) {
             $this->slotmarks = false;
         }
+
+        // We only want to show the checkbox to delete attempts
+        // if the user has permissions and if the report mode is showing attempts.
+        $this->checkboxcolumn = has_any_capability(
+                array('mod/quiz:regrade', 'mod/quiz:deleteattempts'), context_module::instance($this->cm->id))
+                && ($this->attempts != quiz_attempts_report::STUDENTS_WITH_NO);
     }
 }

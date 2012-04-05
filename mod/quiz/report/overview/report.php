@@ -60,12 +60,6 @@ class quiz_overview_report extends quiz_attempts_report {
 
         $this->form->set_data($options->get_initial_form_data());
 
-        // We only want to show the checkbox to delete attempts
-        // if the user has permissions and if the report mode is showing attempts.
-        $includecheckboxes = has_any_capability(
-                array('mod/quiz:regrade', 'mod/quiz:deleteattempts'), $this->context)
-                && ($options->attempts != self::STUDENTS_WITH_NO);
-
         if ($options->attempts == self::ALL_ATTEMPTS) {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
@@ -81,7 +75,7 @@ class quiz_overview_report extends quiz_attempts_report {
                 array('context' => context_course::instance($course->id)));
         $table = new quiz_overview_table($quiz, $this->context, $this->qmsubselect,
                 $options->onlygraded, $options->attempts, $groupstudents, $students, $options->slotmarks,
-                $questions, $includecheckboxes, $this->get_base_url(), $displayoptions);
+                $questions, $options->checkboxcolumn, $this->get_base_url(), $displayoptions);
         $filename = quiz_report_download_filename(get_string('overviewfilename', 'quiz_overview'),
                 $courseshortname, $quiz->name);
         $table->is_downloading($options->download, $filename,
@@ -246,7 +240,7 @@ class quiz_overview_report extends quiz_attempts_report {
             $columns = array();
             $headers = array();
 
-            if (!$table->is_downloading() && $includecheckboxes) {
+            if (!$table->is_downloading() && $options->checkboxcolumn) {
                 $columns[] = 'checkbox';
                 $headers[] = null;
             }
@@ -276,7 +270,7 @@ class quiz_overview_report extends quiz_attempts_report {
                 $headers[] = get_string('regrade', 'quiz_overview');
             }
 
-            $this->add_grade_columns($quiz, $columns, $headers, false);
+            $this->add_grade_columns($quiz, $options->usercanseegrades, $columns, $headers, false);
 
             $this->set_up_table_columns(
                     $table, $columns, $headers, $this->get_base_url(), $displayoptions, false);
@@ -285,7 +279,7 @@ class quiz_overview_report extends quiz_attempts_report {
             $table->out($options->pagesize, true);
         }
 
-        if (!$table->is_downloading() && quiz_report_should_show_grades($quiz)) {
+        if (!$table->is_downloading() && $options->usercanseegrades) {
             if ($currentgroup && $groupstudents) {
                 list($usql, $params) = $DB->get_in_or_equal($groupstudents);
                 $params[] = $quiz->id;

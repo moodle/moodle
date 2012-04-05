@@ -45,31 +45,29 @@ class mod_quiz_attempts_report_options {
     /** @var object the course settings for the course the quiz is in. */
     public $course;
 
-    /**
-     * @var string quiz_attempts_report:: constants.
-     */
+    /** @var string quiz_attempts_report:: constants. */
     public $attempts = quiz_attempts_report::STUDENTS_WITH;
 
-    /**
-     * @var int the currently selected group. 0 if no group is selected.
-     */
+    /** @var int the currently selected group. 0 if no group is selected. */
     public $group = 0;
 
     /**
-     * @var bool wether to show all finished attmepts, or just the one that gave
+     * @var bool whether to show all finished attmepts, or just the one that gave
      *      the final grade for the user.
      */
     public $onlygraded = false;
 
-    /**
-     * @var int Number of attempts to show per page.
-     */
+    /** @var int Number of attempts to show per page. */
     public $pagesize = quiz_attempts_report::DEFAULT_PAGE_SIZE;
 
-    /**
-     * @var string whether the data should be downloaded in some format, or '' to display it.
-     */
+    /** @var string whether the data should be downloaded in some format, or '' to display it. */
     public $download = '';
+
+    /** @var bool whether the current user has permission to see grades. */
+    public $usercanseegrades;
+
+    /** @var bool whether the report table should have a column of checkboxes. */
+    public $checkboxcolumn = false;
 
     /**
      * Constructor.
@@ -80,6 +78,8 @@ class mod_quiz_attempts_report_options {
         $this->quiz   = $quiz;
         $this->cm     = $cm;
         $this->course = $course;
+
+        $this->usercanseegrades = quiz_report_should_show_grades($quiz);
     }
 
     /**

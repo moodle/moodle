@@ -70,11 +70,6 @@ class quiz_responses_report extends quiz_attempts_report {
 
         $this->form->set_data($options->get_initial_form_data());
 
-        // We only want to show the checkbox to delete attempts
-        // if the user has permissions and if the report mode is showing attempts.
-        $includecheckboxes = has_capability('mod/quiz:deleteattempts', $this->context)
-                && ($options->attempts != self::STUDENTS_WITH_NO);
-
         if ($options->attempts == self::ALL_ATTEMPTS) {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
@@ -90,10 +85,10 @@ class quiz_responses_report extends quiz_attempts_report {
                 array('context' => context_course::instance($course->id)));
         $table = new quiz_responses_table($quiz, $this->context, $this->qmsubselect,
                 $options->onlygraded, $options->attempts, $groupstudents, $students,
-                $questions, $includecheckboxes, $this->get_base_url(), $displayoptions);
+                $questions, $options->checkboxcolumn, $this->get_base_url(), $displayoptions);
         $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),
                 $courseshortname, $quiz->name);
-        $table->is_downloading(optional_param('download', '', PARAM_ALPHA), $filename,
+        $table->is_downloading($options->download, $filename,
                 $courseshortname . ' ' . format_string($quiz->name, true));
         if ($table->is_downloading()) {
             raise_memory_limit(MEMORY_EXTRA);
@@ -166,7 +161,7 @@ class quiz_responses_report extends quiz_attempts_report {
             $columns = array();
             $headers = array();
 
-            if (!$table->is_downloading() && $includecheckboxes) {
+            if (!$table->is_downloading() && $options->checkboxcolumn) {
                 $columns[] = 'checkbox';
                 $headers[] = null;
             }
@@ -177,7 +172,7 @@ class quiz_responses_report extends quiz_attempts_report {
                 $this->add_time_columns($columns, $headers);
             }
 
-            $this->add_grade_columns($quiz, $columns, $headers);
+            $this->add_grade_columns($quiz, $options->usercanseegrades, $columns, $headers);
 
             foreach ($questions as $id => $question) {
                 if ($options->showqtext) {

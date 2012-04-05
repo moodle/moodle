@@ -218,12 +218,13 @@ abstract class quiz_attempts_report extends quiz_default_report {
      * Add all the grade and feedback columns, if applicable, to the $columns
      * and $headers arrays.
      * @param object $quiz the quiz settings.
+     * @param bool $usercanseegrades whether the user is allowed to see grades for this quiz.
      * @param array $columns the list of columns. Added to.
      * @param array $headers the columns headings. Added to.
      * @param bool $includefeedback whether to include the feedbacktext columns
      */
-    protected function add_grade_columns($quiz, &$columns, &$headers, $includefeedback = true) {
-        if (quiz_report_should_show_grades($quiz)) {
+    protected function add_grade_columns($quiz, $usercanseegrades, &$columns, &$headers, $includefeedback = true) {
+        if ($usercanseegrades) {
             $columns[] = 'sumgrades';
             $headers[] = get_string('grade', 'quiz') . '/' .
                     quiz_format_grade($quiz, $quiz->grade);
