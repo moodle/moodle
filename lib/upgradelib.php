@@ -276,6 +276,8 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
     $plugs = get_plugin_list($type);
 
     foreach ($plugs as $plug=>$fullplug) {
+        // Reset time so that it works when installing a large number of plugins
+        set_time_limit(600);
         $component = clean_param($type.'_'.$plug, PARAM_COMPONENT); // standardised plugin name
 
         // check plugin dir is valid name
