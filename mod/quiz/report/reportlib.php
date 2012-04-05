@@ -387,3 +387,22 @@ function quiz_no_questions_message($quiz, $cm, $context) {
 
     return $output;
 }
+
+/**
+ * Should the grades be displayed in this report. That depends on the quiz
+ * display options, and whether the quiz is graded.
+ * @param object $quiz the quiz settings.
+ * @return bool
+ */
+function quiz_report_should_show_grades($quiz) {
+    if ($quiz->timeclose && time() > $quiz->timeclose) {
+        $when = mod_quiz_display_options::AFTER_CLOSE;
+    } else {
+        $when = mod_quiz_display_options::LATER_WHILE_OPEN;
+    }
+    $reviewoptions = mod_quiz_display_options::make_from_quiz($quiz, $when);
+
+    return quiz_has_grades($quiz) &&
+            ($reviewoptions->marks >= question_display_options::MARK_AND_MAX ||
+            has_capability('moodle/grade:viewhidden', $this->context));
+}

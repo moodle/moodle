@@ -26,7 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport.php');
-require_once($CFG->dirroot . '/mod/quiz/report/responses/responsessettings_form.php');
+require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_options.php');
+require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_form.php');
 require_once($CFG->dirroot . '/mod/quiz/report/responses/responses_table.php');
 
 
@@ -51,58 +52,30 @@ class quiz_responses_report extends quiz_attempt_report {
 
         list($currentgroup, $students, $groupstudents, $allowed) =
                 $this->init('responses', 'quiz_responses_settings_form', $quiz, $cm, $course);
+        $options = new quiz_responses_options($quiz, $cm, $course);
 
         if ($fromform = $this->form->get_data()) {
-            $attemptsmode = $fromform->attemptsmode;
-            if ($this->qmsubselect) {
-                $qmfilter = $fromform->qmfilter;
-            } else {
-                $qmfilter = 0;
-            }
-            set_user_preference('quiz_report_responses_qtext', $fromform->qtext);
-            set_user_preference('quiz_report_responses_resp', $fromform->resp);
-            set_user_preference('quiz_report_responses_right', $fromform->right);
-            set_user_preference('quiz_report_pagesize', $fromform->pagesize);
-            $includeqtext = $fromform->qtext;
-            $includeresp = $fromform->resp;
-            $includeright = $fromform->right;
-            $pagesize = $fromform->pagesize;
+            $options->process_settings_from_form($fromform);
 
         } else {
-            $attemptsmode = optional_param('attemptsmode', null, PARAM_INT);
-            if ($this->qmsubselect) {
-                $qmfilter = optional_param('qmfilter', 0, PARAM_INT);
-            } else {
-                $qmfilter = 0;
-            }
-            $includeqtext = get_user_preferences('quiz_report_responses_qtext', 0);
-            $includeresp = get_user_preferences('quiz_report_responses_resp', 1);
-            $includeright = get_user_preferences('quiz_report_responses_right', 0);
-            $pagesize = get_user_preferences('quiz_report_pagesize', 0);
+            $options->process_settings_from_params();
         }
 
-        $this->validate_common_options($attemptsmode, $pagesize, $course, $currentgroup);
         $displayoptions = array();
-        $displayoptions['attemptsmode'] = $attemptsmode;
-        $displayoptions['qmfilter'] = $qmfilter;
-        $displayoptions['qtext'] = $includeqtext;
-        $displayoptions['resp'] = $includeresp;
-        $displayoptions['right'] = $includeright;
+        $displayoptions['attemptsmode'] = $options->attempts;
+        $displayoptions['qmfilter']     = $options->onlygraded;
+        $displayoptions['qtext']        = $options->showqtext;
+        $displayoptions['resp']         = $options->showresponses;
+        $displayoptions['right']        = $options->showright;
 
-        $this->form->set_data($displayoptions +
-                array('pagesize' => $pagesize));
-
-        if (!$includeqtext && !$includeresp && !$includeright) {
-            $includeresp = 1;
-            set_user_preference('quiz_report_responses_resp', 1);
-        }
+        $this->form->set_data($options->get_initial_form_data());
 
         // We only want to show the checkbox to delete attempts
         // if the user has permissions and if the report mode is showing attempts.
         $includecheckboxes = has_capability('mod/quiz:deleteattempts', $this->context)
-                && ($attemptsmode != self::STUDENTS_WITH_NO);
+                && ($options->attempts != self::STUDENTS_WITH_NO);
 
-        if ($attemptsmode == self::ALL_ATTEMPTS) {
+        if ($options->attempts == self::ALL_ATTEMPTS) {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
             // are accessible, is not a security porblem.
@@ -116,7 +89,7 @@ class quiz_responses_report extends quiz_attempt_report {
         $courseshortname = format_string($course->shortname, true,
                 array('context' => context_course::instance($course->id)));
         $table = new quiz_responses_table($quiz, $this->context, $this->qmsubselect,
-                $qmfilter, $attemptsmode, $groupstudents, $students,
+                $options->onlygraded, $options->attempts, $groupstudents, $students,
                 $questions, $includecheckboxes, $this->get_base_url(), $displayoptions);
         $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),
                 $courseshortname, $quiz->name);
@@ -178,7 +151,7 @@ class quiz_responses_report extends quiz_attempt_report {
             if (!$table->is_downloading()) {
                 // Do not print notices when downloading.
                 if ($strattempthighlight = quiz_report_highlighting_grading_method(
-                        $quiz, $this->qmsubselect, $qmfilter)) {
+                        $quiz, $this->qmsubselect, $options->onlygraded)) {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
                 }
             }
@@ -207,15 +180,15 @@ class quiz_responses_report extends quiz_attempt_report {
             $this->add_grade_columns($quiz, $columns, $headers);
 
             foreach ($questions as $id => $question) {
-                if ($displayoptions['qtext']) {
+                if ($options->showqtext) {
                     $columns[] = 'question' . $id;
                     $headers[] = get_string('questionx', 'question', $question->number);
                 }
-                if ($displayoptions['resp']) {
+                if ($options->showresponses) {
                     $columns[] = 'response' . $id;
                     $headers[] = get_string('responsex', 'quiz_responses', $question->number);
                 }
-                if ($displayoptions['right']) {
+                if ($options->showright) {
                     $columns[] = 'right' . $id;
                     $headers[] = get_string('rightanswerx', 'quiz_responses', $question->number);
                 }
@@ -237,7 +210,7 @@ class quiz_responses_report extends quiz_attempt_report {
 
             $table->collapsible(true);
 
-            $table->out($pagesize, true);
+            $table->out($options->pagesize, true);
         }
         return true;
     }

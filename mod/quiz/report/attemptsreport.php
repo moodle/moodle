@@ -99,31 +99,6 @@ abstract class quiz_attempt_report extends quiz_default_report {
     }
 
     /**
-     * Should the grades be displayed in this report. That depends on the quiz
-     * display options, and whether the quiz is graded.
-     * @param object $quiz the quiz settings.
-     * @return bool
-     */
-    protected function should_show_grades($quiz) {
-        if (!is_null($this->showgrades)) {
-            return $this->showgrades;
-        }
-
-        if ($quiz->timeclose && time() > $quiz->timeclose) {
-            $when = mod_quiz_display_options::AFTER_CLOSE;
-        } else {
-            $when = mod_quiz_display_options::LATER_WHILE_OPEN;
-        }
-        $reviewoptions = mod_quiz_display_options::make_from_quiz($quiz, $when);
-
-        $this->showgrades = quiz_has_grades($quiz) &&
-                ($reviewoptions->marks >= question_display_options::MARK_AND_MAX ||
-                has_capability('moodle/grade:viewhidden', $this->context));
-
-        return $this->showgrades;
-    }
-
-    /**
      * Get information about which students to show in the report.
      * @param object $cm the coures module.
      * @param object $course the course settings.
@@ -163,33 +138,6 @@ abstract class quiz_attempt_report extends quiz_default_report {
         }
 
         return array($currentgroup, $students, $groupstudents, $groupstudents);
-    }
-
-    /**
-     * Alters $attemptsmode and $pagesize if the current values are inappropriate.
-     * @param int $attemptsmode what sort of attempts to display (may be updated)
-     * @param int $pagesize number of records to display per page (may be updated)
-     * @param object $course the course settings.
-     * @param int $currentgroup the currently selected group. 0 for none.
-     */
-    protected function validate_common_options(&$attemptsmode, &$pagesize, $course, $currentgroup) {
-        if ($currentgroup) {
-            // Default for when a group is selected.
-            if ($attemptsmode === null || $attemptsmode == self::ALL_ATTEMPTS) {
-                $attemptsmode = self::STUDENTS_WITH;
-            }
-
-        } else if (!$currentgroup && $course->id == SITEID) {
-            // Force report on front page to show all, unless a group is selected.
-            $attemptsmode = self::ALL_ATTEMPTS;
-
-        } else if ($attemptsmode === null) {
-            $attemptsmode = self::ALL_ATTEMPTS;
-        }
-
-        if ($pagesize < 1) {
-            $pagesize = self::DEFAULT_PAGE_SIZE;
-        }
     }
 
     /**
@@ -275,7 +223,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
      * @param bool $includefeedback whether to include the feedbacktext columns
      */
     protected function add_grade_columns($quiz, &$columns, &$headers, $includefeedback = true) {
-        if ($this->should_show_grades($quiz)) {
+        if (quiz_report_should_show_grades($quiz)) {
             $columns[] = 'sumgrades';
             $headers[] = get_string('grade', 'quiz') . '/' .
                     quiz_format_grade($quiz, $quiz->grade);

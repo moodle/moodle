@@ -26,7 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport.php');
-require_once($CFG->dirroot . '/mod/quiz/report/overview/overviewsettings_form.php');
+require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_options.php');
+require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_form.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_table.php');
 
 
@@ -43,58 +44,29 @@ class quiz_overview_report extends quiz_attempt_report {
 
         list($currentgroup, $students, $groupstudents, $allowed) =
                 $this->init('overview', 'quiz_overview_settings_form', $quiz, $cm, $course);
+        $options = new quiz_overview_options($quiz, $cm, $course);
 
         if ($fromform = $this->form->get_data()) {
-            $regradeall = false;
-            $regradealldry = false;
-            $regradealldrydo = false;
-            $attemptsmode = $fromform->attemptsmode;
-            if ($this->qmsubselect) {
-                $qmfilter = $fromform->qmfilter;
-            } else {
-                $qmfilter = 0;
-            }
-            $regradefilter = !empty($fromform->regradefilter);
-            set_user_preference('quiz_report_overview_detailedmarks', $fromform->detailedmarks);
-            set_user_preference('quiz_report_pagesize', $fromform->pagesize);
-            $detailedmarks = $fromform->detailedmarks;
-            $pagesize = $fromform->pagesize;
+            $options->process_settings_from_form($fromform);
 
         } else {
-            $regradeall  = optional_param('regradeall', 0, PARAM_BOOL);
-            $regradealldry  = optional_param('regradealldry', 0, PARAM_BOOL);
-            $regradealldrydo  = optional_param('regradealldrydo', 0, PARAM_BOOL);
-            $attemptsmode = optional_param('attemptsmode', null, PARAM_INT);
-            if ($this->qmsubselect) {
-                $qmfilter = optional_param('qmfilter', 0, PARAM_INT);
-            } else {
-                $qmfilter = 0;
-            }
-            $regradefilter = optional_param('regradefilter', 0, PARAM_INT);
-            $detailedmarks = get_user_preferences('quiz_report_overview_detailedmarks', 1);
-            $pagesize = get_user_preferences('quiz_report_pagesize', 0);
+            $options->process_settings_from_params();
         }
 
-        $this->validate_common_options($attemptsmode, $pagesize, $course, $currentgroup);
         $displayoptions = array();
-        $displayoptions['attemptsmode'] = $attemptsmode;
-        $displayoptions['qmfilter'] = $qmfilter;
-        $displayoptions['regradefilter'] = $regradefilter;
+        $displayoptions['attemptsmode']  = $options->attempts;
+        $displayoptions['qmfilter']      = $options->onlygraded;
+        $displayoptions['regradefilter'] = $options->onlyregraded;
 
-        $this->form->set_data($displayoptions +
-                array('detailedmarks' => $detailedmarks, 'pagesize' => $pagesize));
-
-        if (!$this->should_show_grades($quiz)) {
-            $detailedmarks = 0;
-        }
+        $this->form->set_data($options->get_initial_form_data());
 
         // We only want to show the checkbox to delete attempts
         // if the user has permissions and if the report mode is showing attempts.
         $includecheckboxes = has_any_capability(
                 array('mod/quiz:regrade', 'mod/quiz:deleteattempts'), $this->context)
-                && ($attemptsmode != self::STUDENTS_WITH_NO);
+                && ($options->attempts != self::STUDENTS_WITH_NO);
 
-        if ($attemptsmode == self::ALL_ATTEMPTS) {
+        if ($options->attempts == self::ALL_ATTEMPTS) {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
             // are accessible, is not a security porblem.
@@ -108,11 +80,11 @@ class quiz_overview_report extends quiz_attempt_report {
         $courseshortname = format_string($course->shortname, true,
                 array('context' => context_course::instance($course->id)));
         $table = new quiz_overview_table($quiz, $this->context, $this->qmsubselect,
-                $qmfilter, $attemptsmode, $groupstudents, $students, $detailedmarks,
+                $options->onlygraded, $options->attempts, $groupstudents, $students, $options->slotmarks,
                 $questions, $includecheckboxes, $this->get_base_url(), $displayoptions);
         $filename = quiz_report_download_filename(get_string('overviewfilename', 'quiz_overview'),
                 $courseshortname, $quiz->name);
-        $table->is_downloading(optional_param('download', '', PARAM_ALPHA), $filename,
+        $table->is_downloading($options->download, $filename,
                 $courseshortname . ' ' . format_string($quiz->name, true));
         if ($table->is_downloading()) {
             raise_memory_limit(MEMORY_EXTRA);
@@ -136,6 +108,9 @@ class quiz_overview_report extends quiz_attempt_report {
             }
         }
 
+        $regradeall  = optional_param('regradeall', 0, PARAM_BOOL);
+        $regradealldry  = optional_param('regradealldry', 0, PARAM_BOOL);
+        $regradealldrydo  = optional_param('regradealldrydo', 0, PARAM_BOOL);
         if ($regradeall && confirm_sesskey()) {
             require_capability('mod/quiz:regrade', $this->context);
             $this->regrade_attempts($quiz, false, $groupstudents);
@@ -188,7 +163,7 @@ class quiz_overview_report extends quiz_attempt_report {
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
-        if ($hasquestions && ($hasstudents || $attemptsmode == self::ALL_ATTEMPTS)) {
+        if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_ATTEMPTS)) {
             // Construct the SQL.
             $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
                     ' AS uniqueid, ';
@@ -210,7 +185,7 @@ class quiz_overview_report extends quiz_attempt_report {
                                   FROM {quiz_overview_regrades} qqr
                                  WHERE qqr.questionusageid = quiza.uniqueid
                           ), -1) AS regraded";
-            if ($regradefilter) {
+            if ($options->onlyregraded) {
                 $where .= " AND COALESCE((
                                     SELECT MAX(qqr.regraded)
                                       FROM {quiz_overview_regrades} qqr
@@ -262,7 +237,7 @@ class quiz_overview_report extends quiz_attempt_report {
                 }
                 // Print information on the grading method.
                 if ($strattempthighlight = quiz_report_highlighting_grading_method(
-                        $quiz, $this->qmsubselect, $qmfilter)) {
+                        $quiz, $this->qmsubselect, $options->onlygraded)) {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
                 }
             }
@@ -280,7 +255,7 @@ class quiz_overview_report extends quiz_attempt_report {
 
             $this->add_time_columns($columns, $headers);
 
-            if ($detailedmarks) {
+            if ($options->slotmarks) {
                 foreach ($questions as $slot => $question) {
                     // Ignore questions of zero length.
                     $columns[] = 'qsgrade' . $slot;
@@ -307,10 +282,10 @@ class quiz_overview_report extends quiz_attempt_report {
                     $table, $columns, $headers, $this->get_base_url(), $displayoptions, false);
             $table->set_attribute('class', 'generaltable generalbox grades');
 
-            $table->out($pagesize, true);
+            $table->out($options->pagesize, true);
         }
 
-        if (!$table->is_downloading() && $this->should_show_grades($quiz)) {
+        if (!$table->is_downloading() && quiz_report_should_show_grades($quiz)) {
             if ($currentgroup && $groupstudents) {
                 list($usql, $params) = $DB->get_in_or_equal($groupstudents);
                 $params[] = $quiz->id;
