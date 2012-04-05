@@ -30,7 +30,6 @@ require_once($CFG->libdir.'/adminlib.php');
 $path    = optional_param('path', null, PARAM_PATH);
 $execute = optional_param('execute', 0, PARAM_BOOL);
 
-
 navigation_node::override_active_url(new moodle_url('/admin/tool/phpunit/index.php'));
 admin_externalpage_setup('toolphpunitwebrunner');
 
@@ -64,7 +63,6 @@ if ($code != 0) {
 }
 
 if ($execute) {
-
     require_sesskey();
 
     chdir($CFG->dirroot);
@@ -95,7 +93,6 @@ if ($execute) {
 
     } else if ($code == 133) {
         tool_phpunit_header();
-        ignore_user_abort(true);
         echo $OUTPUT->box_start('generalbox');
         echo '<pre>';
         echo "Reinitialising test database:\n\n";
@@ -130,7 +127,6 @@ if ($execute) {
     echo $OUTPUT->box_start('generalbox');
     echo '<pre>';
 
-    chdir($CFG->dirroot);
     // use the dataroot file
     $configdir = "$CFG->phpunit_dataroot/phpunit/webrunner.xml";
     if (!file_exists($configdir)) {
@@ -143,6 +139,7 @@ if ($execute) {
     // cleanup the path - this is tricky because we can not use quotes for escaping
     $path = escapeshellcmd($path);
     $path = str_replace('\*', '*', $path);
+    chdir($CFG->dirroot);
     passthru("phpunit -c $configdir $path", $code);
     chdir($oldcwd);
 
@@ -173,7 +170,8 @@ die;
 //========================================
 
 /**
- * Print headers and warning
+ * Print headers and experimental warning
+ * @return void
  */
 function tool_phpunit_header() {
     global $OUTPUT;
@@ -188,7 +186,7 @@ function tool_phpunit_header() {
  * @return void
  */
 function tool_phpunit_problem($message) {
-    global $OUTPUT, $PAGE;
+    global $PAGE;
     if (!$PAGE->headerprinted) {
         tool_phpunit_header();
     }

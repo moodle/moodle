@@ -20,7 +20,7 @@
  * Exit codes:
  *  0   - success
  *  1   - general error
- *  130 - missing PHPUnit error
+ *  130 - missing PHPUnit library error
  *  131 - configuration problem
  *  132 - install new test database
  *  133 - drop existing data before installing

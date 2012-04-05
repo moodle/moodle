@@ -48,7 +48,7 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
             $text = 'Database was initialised for different version, please use "php admin/tool/phpunit/cli/util.php --drop; php admin/tool/phpunit/cli/util.php --install"';
             break;
         case 134:
-            $text = 'Can not create main configuration file, please verify dirroot permissions."';
+            $text = 'Can not create main configuration file, please verify dirroot permissions.';
             break;
         default:
             $text = empty($text) ? '' : ': '.$text;
@@ -75,10 +75,25 @@ function phpunit_bootstrap_initdataroot($dataroot) {
     if (!file_exists("$dataroot/phpunittestdir.txt")) {
         file_put_contents("$dataroot/phpunittestdir.txt", 'Contents of this directory are used during tests only, do not delete this file!');
     }
-    if (fileperms("$dataroot/phpunittestdir.txt") & $CFG->filepermissions != $CFG->filepermissions) {
-        chmod("$dataroot/phpunittestdir.txt", $CFG->filepermissions);
-    }
+    phpunit_boostrap_fix_file_permissions("$dataroot/phpunittestdir.txt");
     if (!file_exists("$CFG->phpunit_dataroot/phpunit")) {
         mkdir("$CFG->phpunit_dataroot/phpunit", $CFG->directorypermissions);
     }
+}
+
+/**
+ * Try to change permissions to $CFG->dirroot or $CFG->dataroot if possible
+ * @param string $file
+ * @return bool success
+ */
+function phpunit_boostrap_fix_file_permissions($file) {
+    global $CFG;
+
+    $permissions = fileperms($file);
+    if ($permissions & $CFG->filepermissions != $CFG->filepermissions) {
+        $permissions = $permissions | $CFG->filepermissions;
+        return chmod($file, $permissions);
+    }
+
+    return true;
 }

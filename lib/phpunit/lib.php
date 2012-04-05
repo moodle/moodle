@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 require_once 'PHPUnit/Autoload.php';
 
 
@@ -228,39 +227,37 @@ class phpunit_util {
 
         if ($logchanges) {
             if (self::$lastdbwrites != $DB->perf_get_writes()) {
-                $warnings[] = 'warning: unexpected database modification, resetting DB state';
+                $warnings[] = 'Warning: unexpected database modification, resetting DB state';
             }
 
             $oldcfg = self::get_global_backup('CFG');
             $oldsite = self::get_global_backup('SITE');
             foreach($CFG as $k=>$v) {
                 if (!property_exists($oldcfg, $k)) {
-                    $warnings[] = 'warning: unexpected new $CFG->'.$k.' value';
+                    $warnings[] = 'Warning: unexpected new $CFG->'.$k.' value';
                 } else if ($oldcfg->$k !== $CFG->$k) {
-                    $warnings[] = 'warning: unexpected change of $CFG->'.$k.' value';
+                    $warnings[] = 'Warning: unexpected change of $CFG->'.$k.' value';
                 }
                 unset($oldcfg->$k);
 
             }
             if ($oldcfg) {
                 foreach($oldcfg as $k=>$v) {
-                    $warnings[] = 'warning: unexpected removal of $CFG->'.$k;
+                    $warnings[] = 'Warning: unexpected removal of $CFG->'.$k;
                 }
             }
 
             if ($USER->id != 0) {
-                $warnings[] = 'warning: unexpected change of $USER';
+                $warnings[] = 'Warning: unexpected change of $USER';
             }
 
             if ($COURSE->id != $oldsite->id) {
-                $warnings[] = 'warning: unexpected change of $COURSE';
+                $warnings[] = 'Warning: unexpected change of $COURSE';
             }
         }
 
-        // restore _SERVER
-        unset($_SERVER['HTTP_USER_AGENT']);
-
         // restore original config
+        $_SERVER = self::get_global_backup('_SERVER');
         $CFG = self::get_global_backup('CFG');
         $SITE = self::get_global_backup('SITE');
         $COURSE = $SITE;
@@ -314,6 +311,7 @@ class phpunit_util {
         global $CFG, $SITE;
 
         // backup the globals
+        self::$globals['_SERVER'] = $_SERVER;
         self::$globals['CFG'] = clone($CFG);
         self::$globals['SITE'] = clone($SITE);
 
@@ -385,7 +383,7 @@ class phpunit_util {
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser")) {
-            if (empty($table)) {
+            if (empty($tables)) {
                 return array(132, '');
             } else {
                 return array(133, '');
@@ -393,7 +391,7 @@ class phpunit_util {
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/versionshash.txt")) {
-            if (empty($table)) {
+            if (empty($tables)) {
                 return array(132, '');
             } else {
                 return array(133, '');
@@ -463,7 +461,7 @@ class phpunit_util {
         }
 
         $options = array();
-        $options['adminpass'] = 'admin'; // removed later
+        $options['adminpass'] = 'admin';
         $options['shortname'] = 'phpunit';
         $options['fullname'] = 'PHPUnit test site';
 
@@ -489,19 +487,13 @@ class phpunit_util {
             }
         }
         $data = serialize($data);
-        @unlink("$CFG->dataroot/phpunit/tabledata.ser");
         file_put_contents("$CFG->dataroot/phpunit/tabledata.ser", $data);
-        if (fileperms("$CFG->dataroot/phpunit/tabledata.ser") & $CFG->filepermissions != $CFG->filepermissions) {
-            chmod("$CFG->dataroot/phpunit/tabledata.ser", $CFG->filepermissions);
-        }
+        phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/tabledata.ser");
 
         // hash all plugin versions - helps with very fast detection of db structure changes
         $hash = phpunit_util::get_version_hash();
-        @unlink("$CFG->dataroot/phpunit/versionshash.txt");
         file_put_contents("$CFG->dataroot/phpunit/versionshash.txt", $hash);
-        if (fileperms("$CFG->dataroot/phpunit/versionshash.txt") & $CFG->filepermissions != $CFG->filepermissions) {
-            chmod("$CFG->dataroot/phpunit/versionshash.txt", $CFG->filepermissions);
-        }
+        phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/versionshash.txt", $hash);
     }
 
     /**
@@ -590,18 +582,14 @@ class phpunit_util {
         $result = false;
         if (is_writable($CFG->dirroot)) {
             if ($result = file_put_contents("$CFG->dirroot/phpunit.xml", $data)) {
-                if (fileperms("$CFG->dirroot/phpunit.xml") & $CFG->filepermissions != $CFG->filepermissions) {
-                    chmod("$CFG->dirroot/phpunit.xml", $CFG->filepermissions);
-                }
+                phpunit_boostrap_fix_file_permissions("$CFG->dirroot/phpunit.xml");
             }
         }
-        // relink - it seems that xml:base does not work in phpunit xml files
+        // relink - it seems that xml:base does not work in phpunit xml files, remove this nasty hack if you find a way to set xml base for relative refs
         $data = str_replace('lib/phpunit/', "$CFG->dirroot/lib/phpunit/", $data);
         $data = preg_replace('|<directory suffix="_test.php">([^<]+)</directory>|', '<directory suffix="_test.php">'.$CFG->dirroot.'/$1</directory>', $data);
         file_put_contents("$CFG->dataroot/phpunit/webrunner.xml", $data);
-        if (fileperms("$CFG->dirroot/phpunit.xml") & $CFG->filepermissions != $CFG->filepermissions) {
-            chmod("$CFG->dirroot/phpunit.xml", $CFG->filepermissions);
-        }
+        phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/webrunner.xml");
 
         return (bool)$result;
     }
@@ -729,7 +717,11 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @return void
      */
     public static function assertIsA($actual, $expected, $message = '') {
-        parent::assertInstanceOf($expected, $actual, $message);
+        if ($expected === 'array') {
+            parent::assertEquals(gettype($actual), 'array', $message);
+        } else {
+            parent::assertInstanceOf($expected, $actual, $message);
+        }
     }
 }
 
@@ -892,10 +884,10 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
      * Recursively visit all the files in the source tree. Calls the callback
      * function with the pathname of each file found.
      *
-     * @param $path the folder to start searching from.
-     * @param $callback the method of this class to call with the name of each file found.
-     * @param $fileregexp a regexp used to filter the search (optional).
-     * @param $exclude If true, pathnames that match the regexp will be ignored. If false,
+     * @param string $path the folder to start searching from.
+     * @param string $callback the method of this class to call with the name of each file found.
+     * @param string $fileregexp a regexp used to filter the search (optional).
+     * @param bool $exclude If true, pathnames that match the regexp will be ignored. If false,
      *     only files that match the regexp will be included. (default false).
      * @param array $ignorefolders will not go into any of these folders (optional).
      * @return void
@@ -931,9 +923,10 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class database_driver_testcase extends PHPUnit_Framework_TestCase {
+    /** @var moodle_database connection to extra database */
     protected static $extradb = null;
 
-    /** @var moodle_database */
+    /** @var moodle_database used in these tests*/
     protected $tdb;
 
     /**
@@ -953,6 +946,7 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
 
     public static function setUpBeforeClass() {
         global $CFG;
+        parent::setUpBeforeClass();
 
         if (!defined('PHPUNIT_TEST_DRIVER')) {
             // use normal $DB
@@ -986,6 +980,7 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
 
     protected function setUp() {
         global $DB;
+        parent::setUp();
 
         if (self::$extradb) {
             $this->tdb = self::$extradb;
@@ -1004,6 +999,7 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
                 $dbman->drop_table($table);
             }
         }
+        parent::tearDown();
     }
 
     public static function tearDownAfterClass() {
@@ -1012,5 +1008,6 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
             self::$extradb = null;
         }
         phpunit_util::reset_all_data();
+        parent::tearDownAfterClass();
     }
 }

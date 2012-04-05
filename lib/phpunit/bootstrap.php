@@ -15,12 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Prepares PHPUnit environment, it is called automatically.
+ * Prepares PHPUnit environment, the phpunit.xml configuration
+ * must specify this file as bootstrap.
  *
  * Exit codes:
  *  0   - success
  *  1   - general error
- *  130 - missing PHPUnit error
+ *  130 - missing PHPUnit library error
  *  131 - configuration problem
  *  132 - install new test database
  *  133 - drop existing data before installing
@@ -49,7 +50,7 @@ if (defined('PHPUNIT_TEST')) {
 define('PHPUNIT_TEST', true);
 
 if (!defined('PHPUNIT_UTIL')) {
-    /** Identifies utility scripts */
+    /** Identifies utility scripts - the database does not need to be initialised */
     define('PHPUNIT_UTIL', false);
 }
 
@@ -60,7 +61,7 @@ define('CLI_SCRIPT', true);
 
 define('NO_OUTPUT_BUFFERING', true);
 
-// only load CFG from config.php
+// only load CFG from config.php, stop ASAP in lib/setup.php
 define('ABORT_AFTER_CONFIG', true);
 require(__DIR__ . '/../../config.php');
 
@@ -97,7 +98,7 @@ if (!is_dir($CFG->phpunit_dataroot)) {
 }
 
 if (!is_writable($CFG->phpunit_dataroot)) {
-    // try to fix premissions if possible
+    // try to fix permissions if possible
     if (function_exists('posix_getuid')) {
         $chmod = fileperms($CFG->phpunit_dataroot);
         if (fileowner($CFG->phpunit_dataroot) == posix_getuid()) {
@@ -138,10 +139,17 @@ if (isset($CFG->prefix) and $CFG->prefix === $CFG->phpunit_prefix) {
     phpunit_bootstrap_error(131, '$CFG->prefix and $CFG->phpunit_prefix must not be identical, can not run tests!');
 }
 
-// throw away standard CFG settings
-
-$CFG->dataroot = $CFG->phpunit_dataroot;
-$CFG->prefix = $CFG->phpunit_prefix;
+// override CFG settings if necessary nad throw away extra CFG settings
+$CFG->dataroot  = $CFG->phpunit_dataroot;
+$CFG->prefix    = $CFG->phpunit_prefix;
+$CFG->dbtype    = isset($CFG->phpunit_dbtype) ? $CFG->phpunit_dbtype : $CFG->dbtype;
+$CFG->dblibrary = isset($CFG->phpunit_dblibrary) ? $CFG->phpunit_dblibrary : $CFG->dblibrary;
+$CFG->dbhost    = isset($CFG->phpunit_dbhost) ? $CFG->phpunit_dbhost : $CFG->dbhost;
+$CFG->dbname    = isset($CFG->phpunit_dbname) ? $CFG->phpunit_dbname : $CFG->dbname;
+$CFG->dbuser    = isset($CFG->phpunit_dbuser) ? $CFG->phpunit_dbuser : $CFG->dbuser;
+$CFG->dbpass    = isset($CFG->phpunit_dbpass) ? $CFG->phpunit_dbpass : $CFG->dbpass;
+$CFG->prefix    = isset($CFG->phpunit_prefix) ? $CFG->phpunit_prefix : $CFG->prefix;
+$CFG->dboptions = isset($CFG->phpunit_dboptions) ? $CFG->phpunit_dboptions : $CFG->dboptions;
 
 $allowed = array('wwwroot', 'dataroot', 'dirroot', 'admin', 'directorypermissions', 'filepermissions',
                  'dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'prefix', 'dboptions');
@@ -164,7 +172,7 @@ $CFG->debug = (E_ALL | E_STRICT); // can not use DEBUG_DEVELOPER yet
 $CFG->debugdisplay = 1;
 error_reporting($CFG->debug);
 ini_set('display_errors', '1');
-ini_set('log_errors', '0');
+ini_set('log_errors', '1');
 
 $CFG->passwordsaltmain = 'phpunit'; // makes login via normal UI impossible
 
@@ -185,7 +193,7 @@ require("$CFG->dirroot/lib/setup.php");
 raise_memory_limit(MEMORY_EXTRA);
 
 if (PHPUNIT_UTIL) {
-    // we are not going to do testing, this is 'true' in utility scripts that init database usually
+    // we are not going to do testing, this is 'true' in utility scripts that only init database
     return;
 }
 
@@ -195,6 +203,5 @@ if ($errorcode) {
     phpunit_bootstrap_error($errorcode, $message);
 }
 
-// prepare for the first test run - store fresh globals, reset dataroot, etc.
+// prepare for the first test run - store fresh globals, reset database and dataroot, etc.
 phpunit_util::bootstrap_init();
-
