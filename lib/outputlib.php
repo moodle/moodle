@@ -941,6 +941,9 @@ class theme_config {
                     return $imagefile;
                 }
             }
+            if ($imagefile = $this->image_exists("$CFG->dataroot/pix/$image")) {
+                return $imagefile;
+            }
             if ($imagefile = $this->image_exists("$CFG->dirroot/pix/$image")) {
                 return $imagefile;
             }
@@ -973,6 +976,9 @@ class theme_config {
                 if ($imagefile = $this->image_exists("$parent_config->dir/pix_plugins/$type/$plugin/$image")) {
                     return $imagefile;
                 }
+            }
+            if ($imagefile = $this->image_exists("$CFG->dataroot/pix_plugins/$type/$plugin/$image")) {
+                return $imagefile;
             }
             $dir = get_plugin_directory($type, $plugin);
             if ($imagefile = $this->image_exists("$dir/pix/$image")) {
