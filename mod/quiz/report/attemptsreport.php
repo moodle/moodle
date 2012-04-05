@@ -35,7 +35,7 @@ require_once($CFG->libdir.'/tablelib.php');
  * @copyright 2010 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class quiz_attempt_report extends quiz_default_report {
+abstract class quiz_attempts_report extends quiz_default_report {
     /** @var int default page size for reports. */
     const DEFAULT_PAGE_SIZE = 30;
 
@@ -54,7 +54,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
     /** @var object the quiz context. */
     protected $context;
 
-    /** @var mod_quiz_attempt_report_form The settings form to use. */
+    /** @var mod_quiz_attempts_report_form The settings form to use. */
     protected $form;
 
     /** @var string SQL fragment for selecting the attempt that gave the final grade,

@@ -913,7 +913,7 @@ ORDER BY
     /**
      * Get a subquery that returns the latest step of every qa in some qubas.
      * Currently, this is only used by the quiz reports. See
-     * {@link quiz_attempt_report_table::add_latest_state_join()}.
+     * {@link quiz_attempts_report_table::add_latest_state_join()}.
      * @param string $alias alias to use for this inline-view.
      * @param qubaid_condition $qubaids restriction on which question_usages we
      *      are interested in. This is important for performance.

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for the settings form for {@link quiz_attempt_report}s.
+ * Base class for the settings form for {@link quiz_attempts_report}s.
  *
  * @package   mod_quiz
  * @copyright 2012 The Open University
@@ -29,12 +29,12 @@ require_once($CFG->libdir . '/formslib.php');
 
 
 /**
- * Base class for the settings form for {@link quiz_attempt_report}s.
+ * Base class for the settings form for {@link quiz_attempts_report}s.
  *
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class mod_quiz_attempt_report_form extends moodleform {
+abstract class mod_quiz_attempts_report_form extends moodleform {
 
     protected function definition() {
         $mform = $this->_form;
@@ -56,15 +56,15 @@ abstract class mod_quiz_attempt_report_form extends moodleform {
         }
         $options = array();
         if (!$this->_customdata['currentgroup']) {
-            $options[quiz_attempt_report::ALL_ATTEMPTS] = get_string('optallattempts', 'quiz_overview');
+            $options[quiz_attempts_report::ALL_ATTEMPTS] = get_string('optallattempts', 'quiz_overview');
         }
         if ($this->_customdata['currentgroup'] ||
                 !is_inside_frontpage($this->_customdata['context'])) {
-            $options[quiz_attempt_report::ALL_STUDENTS] =
+            $options[quiz_attempts_report::ALL_STUDENTS] =
                     get_string('optallstudents', 'quiz_overview', $studentsstring);
-            $options[quiz_attempt_report::STUDENTS_WITH] =
+            $options[quiz_attempts_report::STUDENTS_WITH] =
                      get_string('optattemptsonly', 'quiz_overview', $studentsstring);
-            $options[quiz_attempt_report::STUDENTS_WITH_NO] =
+            $options[quiz_attempts_report::STUDENTS_WITH_NO] =
                     get_string('optnoattemptsonly', 'quiz_overview', $studentsstring);
         }
         $mform->addElement('select', 'attemptsmode',

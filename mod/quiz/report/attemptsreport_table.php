@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for the table used by a {@link quiz_attempt_report}.
+ * Base class for the table used by a {@link quiz_attempts_report}.
  *
  * @package   mod_quiz
  * @copyright 2010 The Open University
@@ -29,12 +29,12 @@ require_once($CFG->libdir.'/tablelib.php');
 
 
 /**
- * Base class for the table used by a {@link quiz_attempt_report}.
+ * Base class for the table used by a {@link quiz_attempts_report}.
  *
  * @copyright 2010 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class quiz_attempt_report_table extends table_sql {
+abstract class quiz_attempts_report_table extends table_sql {
     public $useridfield = 'userid';
 
     /** @var moodle_url the URL of this report. */
@@ -318,25 +318,25 @@ abstract class quiz_attempt_report_table extends table_sql {
             $from .= " AND $this->qmsubselect";
         }
         switch ($this->attemptsmode) {
-            case quiz_attempt_report::ALL_ATTEMPTS:
+            case quiz_attempts_report::ALL_ATTEMPTS:
                 // Show all attempts, including students who are no longer in the course.
                 $where = 'quiza.id IS NOT NULL AND quiza.preview = 0';
                 break;
-            case quiz_attempt_report::STUDENTS_WITH:
+            case quiz_attempts_report::STUDENTS_WITH:
                 // Show only students with attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND quiza.preview = 0 AND quiza.id IS NOT NULL";
                 break;
-            case quiz_attempt_report::STUDENTS_WITH_NO:
+            case quiz_attempts_report::STUDENTS_WITH_NO:
                 // Show only students without attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND quiza.id IS NULL";
                 break;
-            case quiz_attempt_report::ALL_STUDENTS:
+            case quiz_attempts_report::ALL_STUDENTS:
                 // Show all students with or without attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');

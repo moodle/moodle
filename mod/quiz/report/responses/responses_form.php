@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_form.php');
  * @copyright 2008 Jean-Michel Vedrine
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_responses_settings_form extends mod_quiz_attempt_report_form {
+class quiz_responses_settings_form extends mod_quiz_attempts_report_form {
     protected function definition_inner(MoodleQuickForm $mform) {
         if ($this->_customdata['qmsubselect']) {
             $mform->addElement($this->create_qmfilter_checkbox($mform));

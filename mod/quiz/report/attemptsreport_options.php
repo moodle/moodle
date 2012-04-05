@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for the options that control what is visible in an {@link quiz_attempt_report}.
+ * Base class for the options that control what is visible in an {@link quiz_attempts_report}.
  *
  * @package   mod_quiz
  * @copyright 2012 The Open University
@@ -29,12 +29,12 @@ require_once($CFG->libdir . '/formslib.php');
 
 
 /**
- * Base class for the options that control what is visible in an {@link quiz_attempt_report}.
+ * Base class for the options that control what is visible in an {@link quiz_attempts_report}.
  *
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_attempt_report_options {
+class mod_quiz_attempts_report_options {
 
     /** @var object the settings for the quiz being reported on. */
     public $quiz;
@@ -46,9 +46,9 @@ class mod_quiz_attempt_report_options {
     public $course;
 
     /**
-     * @var string quiz_attempt_report:: constants.
+     * @var string quiz_attempts_report:: constants.
      */
-    public $attempts = quiz_attempt_report::STUDENTS_WITH;
+    public $attempts = quiz_attempts_report::STUDENTS_WITH;
 
     /**
      * @var int the currently selected group. 0 if no group is selected.
@@ -64,7 +64,7 @@ class mod_quiz_attempt_report_options {
     /**
      * @var int Number of attempts to show per page.
      */
-    public $pagesize = quiz_attempt_report::DEFAULT_PAGE_SIZE;
+    public $pagesize = quiz_attempts_report::DEFAULT_PAGE_SIZE;
 
     /**
      * @var string whether the data should be downloaded in some format, or '' to display it.
@@ -161,20 +161,20 @@ class mod_quiz_attempt_report_options {
     public function resolve_dependencies() {
         if ($this->group) {
             // Default for when a group is selected.
-            if ($this->attempts === null || $this->attempts == quiz_attempt_report::ALL_ATTEMPTS) {
-                $this->attempts = quiz_attempt_report::STUDENTS_WITH;
+            if ($this->attempts === null || $this->attempts == quiz_attempts_report::ALL_ATTEMPTS) {
+                $this->attempts = quiz_attempts_report::STUDENTS_WITH;
             }
 
         } else if (!$this->group && $this->course->id == SITEID) {
             // Force report on front page to show all, unless a group is selected.
-            $this->attempts = quiz_attempt_report::ALL_ATTEMPTS;
+            $this->attempts = quiz_attempts_report::ALL_ATTEMPTS;
 
         } else if ($this->attempts === null) {
-            $this->attempts = quiz_attempt_report::ALL_ATTEMPTS;
+            $this->attempts = quiz_attempts_report::ALL_ATTEMPTS;
         }
 
         if ($this->pagesize < 1) {
-            $this->pagesize = quiz_attempt_report::DEFAULT_PAGE_SIZE;
+            $this->pagesize = quiz_attempts_report::DEFAULT_PAGE_SIZE;
         }
 
         if (!quiz_report_qm_filter_select($this->quiz)) {
@@ -183,7 +183,7 @@ class mod_quiz_attempt_report_options {
             $this->onlygraded = false;
         }
 
-        if ($this->attempts == quiz_attempt_report::STUDENTS_WITH_NO) {
+        if ($this->attempts == quiz_attempts_report::STUDENTS_WITH_NO) {
             $this->onlygraded = false;
         }
     }

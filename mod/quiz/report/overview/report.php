@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_table.php');
  * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_overview_report extends quiz_attempt_report {
+class quiz_overview_report extends quiz_attempts_report {
 
     public function display($quiz, $cm, $course) {
         global $CFG, $DB, $OUTPUT;

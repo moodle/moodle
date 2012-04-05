@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_options.php');
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_overview_options extends mod_quiz_attempt_report_options {
+class quiz_overview_options extends mod_quiz_attempts_report_options {
 
     /** @var bool whether to show only attempt that need regrading. */
     public $onlyregraded = false;
