@@ -1,18 +1,12 @@
 This files describes API changes for question type plugins.
 
-=== 2.0 ===
+=== 2.3 ===
 
-* Lots of changes due to all the API changes in Moodle 2.0.
-
-* This plugin type now supports cron in the standard way. If required, Create a
-  lib.php file containing
-function qtype_mypluginname_cron() {};
-
-
-=== 2.1 ===
-
-* Lots of API changes due to the new question engine. See
-http://docs.moodle.org/dev/Developing_a_Question_Type#Converting_a_Moodle_2.0_question_type
+* Support for backwards-compatible string names dropped. MDL-30120. (See under 2.2 below.)
+* If you are overriding export_to_xml and import_from_xml to provide Moodle XML format
+  import and export, then you will probably get PHP strict syntax notices in developer
+  debug mode until you change the method signature to include qformat_xml $format.
+  That is, you need to specify the argument type.
 
 
 === 2.2 ===
@@ -59,6 +53,17 @@ The old strings will continue to work, but only until Moodle 2.3 is released.
   methods. (This is required so that backup and restore can be made to work
   automatically. MDL-24408, MDL-25617, MDL-30562)
 
-=== 2.3 ===
 
-* Support for backwards-compatible string names dropped. MDL-30120. (See under 2.2 above.)
+=== 2.1 ===
+
+* Lots of API changes due to the new question engine. See
+http://docs.moodle.org/dev/Developing_a_Question_Type#Converting_a_Moodle_2.0_question_type
+
+
+=== 2.0 ===
+
+* Lots of changes due to all the API changes in Moodle 2.0.
+
+* This plugin type now supports cron in the standard way. If required, Create a
+  lib.php file containing
+function qtype_mypluginname_cron() {};

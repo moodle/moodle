@@ -906,7 +906,7 @@ class question_type {
      * Imports question using information from extra_question_fields function
      * If some of you fields contains id's you'll need to reimplement this
      */
-    public function import_from_xml($data, $question, $format, $extra=null) {
+    public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
         $question_type = $data['@']['type'];
         if ($question_type != $this->name()) {
             return false;
@@ -959,7 +959,7 @@ class question_type {
      * Export question using information from extra_question_fields function
      * If some of you fields contains id's you'll need to reimplement this
      */
-    public function export_to_xml($question, $format, $extra=null) {
+    public function export_to_xml($question, qformat_xml $format, $extra=null) {
         $extraquestionfields = $this->extra_question_fields();
         if (!is_array($extraquestionfields)) {
             return false;
