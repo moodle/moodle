@@ -45,6 +45,14 @@ class quiz_responses_options extends mod_quiz_attempts_report_options {
     /** @var bool whether to show the correct response columns. */
     public $showright = false;
 
+    protected function get_url_params() {
+        $params = parent::get_url_params();
+        $params['qtext'] = $this->showqtext;
+        $params['resp']  = $this->showresponses;
+        $params['right'] = $this->showright;
+        return $params;
+    }
+
     public function get_initial_form_data() {
         $toform = parent::get_initial_form_data();
         $toform->qtext = $this->showqtext;

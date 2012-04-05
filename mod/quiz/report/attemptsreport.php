@@ -242,16 +242,16 @@ abstract class quiz_attempts_report extends quiz_default_report {
      * @param array $columns the list of columns.
      * @param array $headers the columns headings.
      * @param moodle_url $reporturl the URL of this report.
-     * @param array $displayoptions the display options.
+     * @param mod_quiz_attempts_report_options $options the display options.
      * @param bool $collapsible whether to allow columns in the report to be collapsed.
      */
     protected function set_up_table_columns($table, $columns, $headers, $reporturl,
-            $displayoptions, $collapsible) {
+            mod_quiz_attempts_report_options $options, $collapsible) {
         $table->define_columns($columns);
         $table->define_headers($headers);
         $table->sortable(true, 'uniqueid');
 
-        $table->define_baseurl($reporturl->out(false, $displayoptions));
+        $table->define_baseurl($options->get_url());
 
         $this->configure_user_columns($table);
 

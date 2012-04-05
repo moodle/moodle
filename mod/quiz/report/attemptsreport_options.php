@@ -36,6 +36,9 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class mod_quiz_attempts_report_options {
 
+    /** @var string the report mode. */
+    public $mode;
+
     /** @var object the settings for the quiz being reported on. */
     public $quiz;
 
@@ -74,12 +77,32 @@ class mod_quiz_attempts_report_options {
      * @param object $quiz the settings for the quiz being reported on.
      * @param object $cm the course module objects for the quiz being reported on.
      */
-    public function __construct($quiz, $cm, $course) {
+    public function __construct($mode, $quiz, $cm, $course) {
+        $this->mode   = $mode;
         $this->quiz   = $quiz;
         $this->cm     = $cm;
         $this->course = $course;
 
         $this->usercanseegrades = quiz_report_should_show_grades($quiz);
+    }
+
+    /**
+     * @return array the URL parameters required to show the report with these options.
+     */
+    protected function get_url_params() {
+        return array(
+            'id'           => $this->cm->id,
+            'mode'         => $this->mode,
+            'attemptsmode' => $this->attempts,
+            'qmfilter'     => $this->onlygraded,
+        );
+    }
+
+    /**
+     * @return moodle_url the URL to show the report with these options.
+     */
+    public function get_url() {
+        return new moodle_url('/mod/quiz/report.php', $this->get_url_params());
     }
 
     /**

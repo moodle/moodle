@@ -36,12 +36,10 @@ require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_table.php');
  */
 class quiz_responses_table extends quiz_attempts_report_table {
 
-    public function __construct($quiz, $context, $qmsubselect, $qmfilter,
-            $attemptsmode, $groupstudents, $students,
-            $questions, $includecheckboxes, $reporturl, $displayoptions) {
+    public function __construct($quiz, $context, $qmsubselect, quiz_responses_options $options,
+            $groupstudents, $students, $questions, $reporturl) {
         parent::__construct('mod-quiz-report-responses-report', $quiz, $context,
-                $qmsubselect, $qmfilter, $attemptsmode, $groupstudents, $students,
-                $questions, $includecheckboxes, $reporturl, $displayoptions);
+                $qmsubselect, $options, $groupstudents, $students, $questions, $reporturl);
     }
 
     public function build_table() {

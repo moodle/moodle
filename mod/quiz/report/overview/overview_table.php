@@ -38,13 +38,11 @@ class quiz_overview_table extends quiz_attempts_report_table {
 
     protected $regradedqs = array();
 
-    public function __construct($quiz, $context, $qmsubselect, $qmfilter,
-            $attemptsmode, $groupstudents, $students, $detailedmarks,
-            $questions, $includecheckboxes, $reporturl, $displayoptions) {
+    public function __construct($quiz, $context, $qmsubselect,
+            quiz_overview_options $options, $groupstudents, $students, $questions, $reporturl) {
         parent::__construct('mod-quiz-report-overview-report', $quiz , $context,
-                $qmsubselect, $qmfilter, $attemptsmode, $groupstudents, $students,
-                $questions, $includecheckboxes, $reporturl, $displayoptions);
-        $this->detailedmarks = $detailedmarks;
+                $qmsubselect, $options, $groupstudents, $students, $questions, $reporturl);
+        $this->detailedmarks = $options->slotmarks;
     }
 
     public function build_table() {

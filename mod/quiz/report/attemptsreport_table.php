@@ -52,6 +52,7 @@ abstract class quiz_attempts_report_table extends table_sql {
     protected $quiz;
     protected $context;
     protected $qmsubselect;
+    protected $options;
     protected $qmfilter;
     protected $attemptsmode;
     protected $groupstudents;
@@ -59,21 +60,21 @@ abstract class quiz_attempts_report_table extends table_sql {
     protected $questions;
     protected $includecheckboxes;
 
-    public function __construct($uniqueid, $quiz, $context, $qmsubselect, $qmfilter,
-            $attemptsmode, $groupstudents, $students, $questions, $includecheckboxes,
-            $reporturl, $displayoptions) {
+    public function __construct($uniqueid, $quiz, $context, $qmsubselect,
+            mod_quiz_attempts_report_options $options, $groupstudents, $students,
+            $questions, $reporturl) {
         parent::__construct($uniqueid);
         $this->quiz = $quiz;
         $this->context = $context;
         $this->qmsubselect = $qmsubselect;
-        $this->qmfilter = $qmfilter;
-        $this->attemptsmode = $attemptsmode;
+        $this->qmfilter = $options->onlygraded;
+        $this->attemptsmode = $options->attempts;
         $this->groupstudents = $groupstudents;
         $this->students = $students;
         $this->questions = $questions;
-        $this->includecheckboxes = $includecheckboxes;
+        $this->includecheckboxes = $options->checkboxcolumn;
         $this->reporturl = $reporturl;
-        $this->displayoptions = $displayoptions;
+        $this->options = $options;
     }
 
     public function col_checkbox($attempt) {

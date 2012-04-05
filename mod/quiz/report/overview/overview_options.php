@@ -42,6 +42,13 @@ class quiz_overview_options extends mod_quiz_attempts_report_options {
     /** @var bool whether to show marks for each question (slot). */
     public $slotmarks = true;
 
+    protected function get_url_params() {
+        $params = parent::get_url_params();
+        $params['regradefilter'] = $this->onlyregraded;
+        $params['detailedmarks'] = $this->slotmarks;
+        return $params;
+    }
+
     public function get_initial_form_data() {
         $toform = parent::get_initial_form_data();
         $toform->regradefilter = $this->onlyregraded;
