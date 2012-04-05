@@ -86,21 +86,12 @@ class quiz_responses_report extends quiz_attempts_report {
             raise_memory_limit(MEMORY_EXTRA);
         }
 
-        // Process actions.
-        if (empty($currentgroup) || $groupstudents) {
-            if (optional_param('delete', 0, PARAM_BOOL) && confirm_sesskey()) {
-                if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
-                    require_capability('mod/quiz:deleteattempts', $this->context);
-                    $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowed);
-                    redirect($options->get_url());
-                }
-            }
-        }
+        $this->process_actions($quiz, $currentgroup, $groupstudents, $allowed);
 
         // Start output.
         if (!$table->is_downloading()) {
             // Only print headers if not asked to download data.
-            $this->print_header_and_tabs($cm, $course, $quiz, 'responses');
+            $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
         }
 
         if ($groupmode = groups_get_activity_groupmode($cm)) {

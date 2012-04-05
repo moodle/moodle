@@ -264,6 +264,25 @@ abstract class quiz_attempts_report extends quiz_default_report {
     }
 
     /**
+     * Process any submitted actions.
+     * @param object $quiz the quiz settings.
+     * @param int $currentgroup the currently selected group.
+     * @param array $groupstudents the students in the current group.
+     * @param array $allowed the users whose attempt this user is allowed to modify.
+     */
+    protected function process_actions($quiz, $currentgroup, $groupstudents, $allowed) {
+        if (empty($currentgroup) || $groupstudents) {
+            if (optional_param('delete', 0, PARAM_BOOL) && confirm_sesskey()) {
+                if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
+                    require_capability('mod/quiz:deleteattempts', $this->context);
+                    $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowed);
+                    redirect($options->get_url());
+                }
+            }
+        }
+    }
+
+    /**
      * Delete the quiz attempts
      * @param object $quiz the quiz settings. Attempts that don't belong to
      * this quiz are not deleted.

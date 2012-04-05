@@ -78,47 +78,12 @@ class quiz_overview_report extends quiz_attempts_report {
             raise_memory_limit(MEMORY_EXTRA);
         }
 
-        // Process actions.
-        if (empty($currentgroup) || $groupstudents) {
-            if (optional_param('delete', 0, PARAM_BOOL) && confirm_sesskey()) {
-                if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
-                    require_capability('mod/quiz:deleteattempts', $this->context);
-                    $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowed);
-                    redirect($options->get_url());
-                }
-
-            } else if (optional_param('regrade', 0, PARAM_BOOL) && confirm_sesskey()) {
-                if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
-                    require_capability('mod/quiz:regrade', $this->context);
-                    $this->regrade_attempts($quiz, false, $groupstudents, $attemptids);
-                    redirect($options->get_url());
-                }
-            }
-        }
-
-        $regradeall  = optional_param('regradeall', 0, PARAM_BOOL);
-        $regradealldry  = optional_param('regradealldry', 0, PARAM_BOOL);
-        $regradealldrydo  = optional_param('regradealldrydo', 0, PARAM_BOOL);
-        if ($regradeall && confirm_sesskey()) {
-            require_capability('mod/quiz:regrade', $this->context);
-            $this->regrade_attempts($quiz, false, $groupstudents);
-            redirect($options->get_url(), '', 5);
-
-        } else if ($regradealldry && confirm_sesskey()) {
-            require_capability('mod/quiz:regrade', $this->context);
-            $this->regrade_attempts($quiz, true, $groupstudents);
-            redirect($options->get_url(), '', 5);
-
-        } else if ($regradealldrydo && confirm_sesskey()) {
-            require_capability('mod/quiz:regrade', $this->context);
-            $this->regrade_attempts_needing_it($quiz, $groupstudents);
-            redirect($options->get_url(), '', 5);
-        }
+        $this->process_actions($quiz, $currentgroup, $groupstudents, $allowed);
 
         // Start output.
         if (!$table->is_downloading()) {
             // Only print headers if not asked to download data.
-            $this->print_header_and_tabs($cm, $course, $quiz, 'overview');
+            $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
         }
 
         if ($groupmode = groups_get_activity_groupmode($cm)) {
@@ -299,6 +264,36 @@ class quiz_overview_report extends quiz_attempts_report {
             }
         }
         return true;
+    }
+
+    protected function process_actions($quiz, $currentgroup, $groupstudents, $allowed) {
+        parent::process_actions($quiz, $currentgroup, $groupstudents, $allowed);
+
+        if (empty($currentgroup) || $groupstudents) {
+            if (optional_param('regrade', 0, PARAM_BOOL) && confirm_sesskey()) {
+                if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
+                    require_capability('mod/quiz:regrade', $this->context);
+                    $this->regrade_attempts($quiz, false, $groupstudents, $attemptids);
+                    redirect($options->get_url());
+                }
+            }
+        }
+
+        if (optional_param('regradeall', 0, PARAM_BOOL) && confirm_sesskey()) {
+            require_capability('mod/quiz:regrade', $this->context);
+            $this->regrade_attempts($quiz, false, $groupstudents);
+            redirect($options->get_url(), '', 5);
+
+        } else if (optional_param('regradealldry', 0, PARAM_BOOL) && confirm_sesskey()) {
+            require_capability('mod/quiz:regrade', $this->context);
+            $this->regrade_attempts($quiz, true, $groupstudents);
+            redirect($options->get_url(), '', 5);
+
+        } else if (optional_param('regradealldrydo', 0, PARAM_BOOL) && confirm_sesskey()) {
+            require_capability('mod/quiz:regrade', $this->context);
+            $this->regrade_attempts_needing_it($quiz, $groupstudents);
+            redirect($options->get_url(), '', 5);
+        }
     }
 
     /**
