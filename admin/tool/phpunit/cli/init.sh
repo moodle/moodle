@@ -18,8 +18,10 @@ else
         fi
         php $UTIL --install
     else
-        echo $DIGERROR
-        exit $DIAG
+        if [ $DIAG -gt 0 ] ; then
+            echo $DIGERROR
+            exit $DIAG
+        fi
     fi
 fi
 
