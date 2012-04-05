@@ -40,6 +40,7 @@ $string['databasehost'] = 'Host da base de dados';
 $string['databasename'] = 'Nome da base de dados';
 $string['databasetypehead'] = 'Escolha o driver da base de dados';
 $string['dataroot'] = 'Diretório de dados';
+$string['datarootpermission'] = 'Permissões nos diretórios de dados';
 $string['dbprefix'] = 'Prefixo das tabelas';
 $string['dirroot'] = 'Diretório Moodle';
 $string['environmenthead'] = 'Verificando o ambiente ...';
