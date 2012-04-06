@@ -196,9 +196,6 @@ if (PHPUNIT_UTIL) {
     return;
 }
 
-// make sure tests do not run in parallel
-phpunit_util::acquire_test_lock();
-
 // is database and dataroot ready for testing?
 list($errorcode, $message) = phpunit_util::testing_ready_problem();
 if ($errorcode) {
