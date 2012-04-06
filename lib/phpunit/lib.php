@@ -148,84 +148,86 @@ class phpunit_util {
         $tables = $DB->get_tables(false);
         if (!$tables or empty($tables['config'])) {
             // not installed yet
-            return;
+            return false;
         }
 
-        $dbreset = false;
-        if (is_null(self::$lastdbwrites) or self::$lastdbwrites != $DB->perf_get_writes()) {
-            if ($data = self::get_tabledata()) {
-                $trans = $DB->start_delegated_transaction(); // faster and safer
+        if (!is_null(self::$lastdbwrites) and self::$lastdbwrites == $DB->perf_get_writes()) {
+            return false;
+        }
+        if (!$data = self::get_tabledata()) {
+            // not initialised yet
+            return false;
+        }
 
-                $resetseq = array();
-                foreach ($data as $table=>$records) {
-                    if (empty($records)) {
-                        if ($DB->count_records($table)) {
-                            $DB->delete_records($table, array());
-                            $resetseq[$table] = $table;
-                        }
-                        continue;
-                    }
+        $trans = $DB->start_delegated_transaction(); // faster and safer
 
-                    $firstrecord = reset($records);
-                    if (property_exists($firstrecord, 'id')) {
-                        if ($DB->count_records($table) >= count($records)) {
-                            $currentrecords = $DB->get_records($table, array(), 'id ASC');
-                            $changed = false;
-                            foreach ($records as $id=>$record) {
-                                if (!isset($currentrecords[$id])) {
-                                    $changed = true;
-                                    break;
-                                }
-                                if ((array)$record != (array)$currentrecords[$id]) {
-                                    $changed = true;
-                                    break;
-                                }
-                                unset($currentrecords[$id]);
-                            }
-                            if (!$changed) {
-                                if ($currentrecords) {
-                                    $remainingfirst = reset($currentrecords);
-                                    $lastrecord = end($records);
-                                    if ($remainingfirst->id > $lastrecord->id) {
-                                        $DB->delete_records_select($table, "id >= ?", array($remainingfirst->id));
-                                        $resetseq[$table] = $table;
-                                        continue;
-                                    }
-                                } else {
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-
+        $resetseq = array();
+        foreach ($data as $table=>$records) {
+            if (empty($records)) {
+                if ($DB->count_records($table)) {
                     $DB->delete_records($table, array());
-                    if (property_exists($firstrecord, 'id')) {
-                        $resetseq[$table] = $table;
-                    }
-                    foreach ($records as $record) {
-                        $DB->import_record($table, $record, false, true);
-                    }
+                    $resetseq[$table] = $table;
                 }
-                // reset all sequences
-                foreach ($resetseq as $table) {
-                    $DB->get_manager()->reset_sequence($table, true);
-                }
+                continue;
+            }
 
-                $trans->allow_commit();
-
-                // remove extra tables
-                foreach ($tables as $tablename) {
-                    if (!isset($data[$tablename])) {
-                        $DB->get_manager()->drop_table(new xmldb_table($tablename));
+            $firstrecord = reset($records);
+            if (property_exists($firstrecord, 'id')) {
+                if ($DB->count_records($table) >= count($records)) {
+                    $currentrecords = $DB->get_records($table, array(), 'id ASC');
+                    $changed = false;
+                    foreach ($records as $id=>$record) {
+                        if (!isset($currentrecords[$id])) {
+                            $changed = true;
+                            break;
+                        }
+                        if ((array)$record != (array)$currentrecords[$id]) {
+                            $changed = true;
+                            break;
+                        }
+                        unset($currentrecords[$id]);
+                    }
+                    if (!$changed) {
+                        if ($currentrecords) {
+                            $remainingfirst = reset($currentrecords);
+                            $lastrecord = end($records);
+                            if ($remainingfirst->id > $lastrecord->id) {
+                                $DB->delete_records_select($table, "id >= ?", array($remainingfirst->id));
+                                $resetseq[$table] = $table;
+                                continue;
+                            }
+                        } else {
+                            continue;
+                        }
                     }
                 }
-                $dbreset = true;
+            }
+
+            $DB->delete_records($table, array());
+            if (property_exists($firstrecord, 'id')) {
+                $resetseq[$table] = $table;
+            }
+            foreach ($records as $record) {
+                $DB->import_record($table, $record, false, true);
+            }
+        }
+        // reset all sequences
+        foreach ($resetseq as $table) {
+            $DB->get_manager()->reset_sequence($table, true);
+        }
+
+        $trans->allow_commit();
+
+        // remove extra tables
+        foreach ($tables as $tablename) {
+            if (!isset($data[$tablename])) {
+                $DB->get_manager()->drop_table(new xmldb_table($tablename));
             }
         }
 
         self::$lastdbwrites = $DB->perf_get_writes();
 
-        return $dbreset;
+        return true;
     }
 
     /**
@@ -266,11 +268,11 @@ class phpunit_util {
     public static function reset_all_data($logchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
 
-        self::reset_database($logchanges);
+        $resetdb = self::reset_database();
         $warnings = array();
 
         if ($logchanges) {
-            if (self::$lastdbwrites != $DB->perf_get_writes()) {
+            if ($resetdb) {
                 $warnings[] = 'Warning: unexpected database modification, resetting DB state';
             }
 
