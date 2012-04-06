@@ -41,6 +41,11 @@ class phpunit_util {
     protected static $tabledata = null;
 
     /**
+     * @var array original structure of all database tables
+     */
+    protected static $tablestructure = null;
+
+    /**
      * @var array An array of globals cloned from CFG
      */
     protected static $globals = array();
@@ -138,6 +143,31 @@ class phpunit_util {
     }
 
     /**
+     * Returns structure of all tables right after installation.
+     * @static
+     * @return array $table=>$records
+     */
+    protected static function get_tablestructure() {
+        global $CFG;
+
+        if (!file_exists("$CFG->dataroot/phpunit/tablestructure.ser")) {
+            // not initialised yet
+            return array();
+        }
+
+        if (!isset(self::$tablestructure)) {
+            $data = file_get_contents("$CFG->dataroot/phpunit/tablestructure.ser");
+            self::$tablestructure = unserialize($data);
+        }
+
+        if (!is_array(self::$tablestructure)) {
+            phpunit_bootstrap_error(1, 'Can not read dataroot/phpunit/tablestructure.ser or invalid format, reinitialize test database.');
+        }
+
+        return self::$tablestructure;
+    }
+
+    /**
      * Reset all database tables to default values.
      * @static
      * @return bool true if reset done, false if skipped
@@ -158,6 +188,10 @@ class phpunit_util {
             // not initialised yet
             return false;
         }
+        if (!$structure = self::get_tablestructure()) {
+            // not initialised yet
+            return false;
+        }
 
         $trans = $DB->start_delegated_transaction(); // faster and safer
 
@@ -171,8 +205,7 @@ class phpunit_util {
                 continue;
             }
 
-            $firstrecord = reset($records);
-            if (property_exists($firstrecord, 'id')) {
+            if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
                 if ($DB->count_records($table) >= count($records)) {
                     $currentrecords = $DB->get_records($table, array(), 'id ASC');
                     $changed = false;
@@ -204,16 +237,16 @@ class phpunit_util {
             }
 
             $DB->delete_records($table, array());
-            if (property_exists($firstrecord, 'id')) {
-                $resetseq[$table] = $table;
-            }
+            $resetseq[$table] = $table;
             foreach ($records as $record) {
                 $DB->import_record($table, $record, false, true);
             }
         }
         // reset all sequences
         foreach ($resetseq as $table) {
-            $DB->get_manager()->reset_sequence($table, true);
+            if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
+                $DB->get_manager()->reset_sequence($table, true);
+            }
         }
 
         $trans->allow_commit();
@@ -428,7 +461,7 @@ class phpunit_util {
             return array(131, 'Can not use test database, try changing prefix');
         }
 
-        if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser")) {
+        if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser") or !file_exists("$CFG->dataroot/phpunit/tablestructure.ser")) {
             if (empty($tables)) {
                 return array(132, '');
             } else {
@@ -534,9 +567,11 @@ class phpunit_util {
 
         // store data for all tables
         $data = array();
+        $structure = array();
         $tables = $DB->get_tables();
         foreach ($tables as $table) {
             $columns = $DB->get_columns($table);
+            $structure[$table] = $columns;
             if (isset($columns['id'])) {
                 $data[$table] = $DB->get_records($table, array(), 'id ASC');
             } else {
@@ -547,6 +582,10 @@ class phpunit_util {
         $data = serialize($data);
         file_put_contents("$CFG->dataroot/phpunit/tabledata.ser", $data);
         phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/tabledata.ser");
+
+        $structure = serialize($structure);
+        file_put_contents("$CFG->dataroot/phpunit/tablestructure.ser", $structure);
+        phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/tablestructure.ser");
 
         // hash all plugin versions - helps with very fast detection of db structure changes
         $hash = phpunit_util::get_version_hash();
