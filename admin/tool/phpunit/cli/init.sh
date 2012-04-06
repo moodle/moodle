@@ -1,6 +1,9 @@
 #!/bin/bash
 
-CLIDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
+CLIDIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
 UTIL="$CLIDIR/util.php"
 
 echo "Initialising test database and creating phpunit.xml configuration..."
