@@ -191,4 +191,71 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertEquals(0, $USER->id);
         $this->assertSame($_SESSION['USER'], $USER);
     }
+
+    public function test_getDataGenerator() {
+        $generator = $this->getDataGenerator();
+        $this->assertInstanceOf('phpunit_data_generator', $generator);
+    }
+}
+
+
+/**
+ * Test data generator
+ *
+ * @package    core
+ * @category   phpunit
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class core_phpunit_generator_testcase extends advanced_testcase {
+    public function test_create() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        $count = $DB->count_records('user');
+        $user = $generator->create_user();
+        $this->assertEquals($count+1, $DB->count_records('user'));
+
+        $count = $DB->count_records('course_categories');
+        $category = $generator->create_category();
+        $this->assertEquals($count+1, $DB->count_records('course_categories'));
+
+        $count = $DB->count_records('course');
+        $course = $generator->create_course();
+        $this->assertEquals($count+1, $DB->count_records('course'));
+
+        $section = $generator->create_course_section(array('course'=>$course->id, 'section'=>3));
+        $this->assertEquals($course->id, $section->course);
+
+        $scale = $generator->create_scale();
+        $this->assertNotEmpty($scale);
+    }
+
+    public function test_create_module() {
+        global $CFG, $SITE;
+        if (!file_exists("$CFG->dirroot/mod/page/")) {
+            $this->markTestSkipped('Can not find standard Page module');
+        }
+
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        $page = $generator->create_module('page', array('course'=>$SITE->id));
+        $this->assertNotEmpty($page);
+    }
+
+    public function test_create_block() {
+        global $CFG;
+        if (!file_exists("$CFG->dirroot/blocks/online_users/")) {
+            $this->markTestSkipped('Can not find standard Online users block');
+        }
+
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        $page = $generator->create_block('online_users');
+        $this->assertNotEmpty($page);
+    }
 }
