@@ -52,11 +52,6 @@ if (!is_writable($CFG->phpunit_dataroot)) {
     tool_phpunit_problem('$CFG->phpunit_dataroot in not writable, can not execute tests.');
 }
 $output = null;
-exec('phpunit --version', $output, $code);
-if ($code != 0) {
-    tool_phpunit_problem('Can not execute \'phpunit\' script.');
-}
-$output = null;
 exec('php --version', $output, $code);
 if ($code != 0) {
     tool_phpunit_problem('Can not execute \'php\' binary.');
@@ -140,7 +135,7 @@ if ($execute) {
     $path = escapeshellcmd($path);
     $path = str_replace('\*', '*', $path);
     chdir($CFG->dirroot);
-    passthru("phpunit -c $configdir $path", $code);
+    passthru("php $CFG->admin/tool/phpunit/cli/util.php --run -c $configdir $path", $code);
     chdir($oldcwd);
 
     echo '</pre>';

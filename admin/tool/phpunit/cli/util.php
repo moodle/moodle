@@ -31,22 +31,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('PHPUNIT_UTIL', true);
-
-require_once(__DIR__ . '/../../../../lib/phpunit/bootstraplib.php');
-
-// verify PHPUnit installation
-if (!@include_once('PHPUnit/Autoload.php')) {
-    phpunit_bootstrap_error(130);
+if (isset($_SERVER['REMOTE_ADDR'])) {
+    die; // no access from web!
 }
 
-require(__DIR__ . '/../../../../lib/phpunit/bootstrap.php');
-require_once($CFG->libdir.'/phpunit/lib.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/upgradelib.php');
-require_once($CFG->libdir.'/clilib.php');
-require_once($CFG->libdir.'/pluginlib.php');
-require_once($CFG->libdir.'/installlib.php');
+require_once(__DIR__.'/../../../../lib/clilib.php');
+require_once(__DIR__.'/../../../../lib/phpunit/bootstraplib.php');
 
 // now get cli options
 list($options, $unrecognized) = cli_get_params(
@@ -55,12 +45,62 @@ list($options, $unrecognized) = cli_get_params(
         'install'     => false,
         'buildconfig' => false,
         'diag'        => false,
+        'phpunitdir'  => false,
+        'run'         => false,
         'help'        => false,
     ),
     array(
         'h' => 'help'
     )
 );
+
+if ($options['phpunitdir']) {
+    // nasty skodak's hack for testing of future PHPUnit versions - intentionally not documented
+    if (!file_exists($options['phpunitdir'])) {
+        cli_error('Invalid custom PHPUnit lib location');
+    }
+    $files = scandir($options['phpunitdir']);
+    foreach ($files as $file) {
+        $path = $options['phpunitdir'].'/'.$file;
+        if (!is_dir($path) or strpos($file, '.') === 0) {
+            continue;
+        }
+        ini_set('include_path', $path . PATH_SEPARATOR . ini_get('include_path'));
+    }
+    unset($files);
+    unset($file);
+}
+
+// verify PHPUnit libs are loaded
+if (!@include_once('PHPUnit/Autoload.php')) {
+    phpunit_bootstrap_error(130);
+}
+
+if ($options['run']) {
+    unset($options);
+    unset($unrecognized);
+
+    foreach ($_SERVER['argv'] as $k=>$v) {
+        if (strpos($v, '--run') === 0 or strpos($v, '--phpunitdir') === 0) {
+            unset($_SERVER['argv'][$k]);
+        }
+    }
+    $_SERVER['argv'] = array_values($_SERVER['argv']);
+    PHPUnit_TextUI_Command::main();
+    exit(0);
+}
+
+define('PHPUNIT_UTIL', true);
+
+require(__DIR__ . '/../../../../lib/phpunit/bootstrap.php');
+
+// from now on this is a regular moodle CLI_SCRIPT
+
+require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/upgradelib.php');
+require_once($CFG->libdir.'/clilib.php');
+require_once($CFG->libdir.'/pluginlib.php');
+require_once($CFG->libdir.'/installlib.php');
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -80,11 +120,12 @@ Options:
 --install             Install database
 --buildconfig         Build /phpunit.xml from /phpunit.xml.dist that includes suites for all plugins and core
 --diag                Diagnose installation and return error code only
+--run                 Execute PHPUnit tests (alternative for standard phpunit binary)
 
 -h, --help            Print out this help
 
 Example:
-\$/usr/bin/php lib/phpunit/tool.php
+\$/usr/bin/php lib/phpunit/tool.php --install
 ";
     echo $help;
     exit(0);
