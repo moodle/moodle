@@ -55,6 +55,50 @@ class phpunit_util {
      */
     protected static $generator = null;
 
+    protected static $lockhandle = null;
+
+    /**
+     * Prevent parallel test execution - this can not work in Moodle because we modify DB and dataroot.
+     *
+     * Note: do not call manually!
+     *
+     * @static
+     * @return void
+     */
+    public static function acquire_test_lock() {
+        global $CFG;
+        if (!file_exists("$CFG->phpunit_dataroot/phpunit/lock")) {
+            file_put_contents("$CFG->phpunit_dataroot/phpunit/lock", 'This file prevents concurrent execution of Moodle PHPUnit tests');
+            phpunit_boostrap_fix_file_permissions("$CFG->phpunit_dataroot/phpunit/lock");
+        }
+        if (self::$lockhandle = fopen("$CFG->phpunit_dataroot/phpunit/lock", 'r')) {
+            $wouldblock = null;
+            $locked = flock(self::$lockhandle, (LOCK_EX | LOCK_NB), $wouldblock);
+            if (!$locked and $wouldblock) {
+                echo "Waiting for other test execution to complete...\n";
+                $locked = flock(self::$lockhandle, LOCK_EX);
+            }
+            if (!$locked) {
+                fclose(self::$lockhandle);
+                self::$lockhandle = null;
+            }
+        }
+        register_shutdown_function(array('phpunit_util', 'release_test_lock'));
+    }
+
+    /**
+     * Note: do not call manually!
+     * @static
+     * @return void
+     */
+    public static function release_test_lock() {
+        if (self::$lockhandle) {
+            flock(self::$lockhandle, LOCK_UN);
+            fclose(self::$lockhandle);
+            self::$lockhandle = null;
+        }
+    }
+
     /**
      * Get data generator
      * @static
@@ -423,10 +467,22 @@ class phpunit_util {
             cli_error('Can not drop non-test sites!!', 131);
         }
 
-        // drop dataroot
+        // purge dataroot
         self::reset_dataroot();
         phpunit_bootstrap_initdataroot($CFG->dataroot);
-        remove_dir("$CFG->dataroot/phpunit", true);
+        $keep = array('.', '..', 'lock', 'webrunner.xml');
+        $files = scandir("$CFG->dataroot/phpunit");
+        foreach ($files as $file) {
+            if (in_array($file, $keep)) {
+                continue;
+            }
+            $path = "$CFG->dataroot/phpunit/$file";
+            if (is_dir($path)) {
+                remove_dir($path, false);
+            } else {
+                unlink($path);
+            }
+        }
 
         // drop all tables
         $tables = $DB->get_tables(false);

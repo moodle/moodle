@@ -145,8 +145,9 @@ if ($diag) {
         phpunit_bootstrap_error(134);
     }
 
-
 } else if ($drop) {
+    // make sure tests do not run in parallel
+    phpunit_util::acquire_test_lock();
     phpunit_util::drop_site();
     // note: we must stop here because $CFG is messed up and we can not reinstall, sorry
     exit(0);

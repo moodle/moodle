@@ -127,7 +127,6 @@ if (!file_exists("$CFG->phpunit_dataroot/phpunittestdir.txt")) {
     phpunit_bootstrap_initdataroot($CFG->phpunit_dataroot);
 }
 
-
 // verify db prefix
 if (!isset($CFG->phpunit_prefix)) {
     phpunit_bootstrap_error(131, 'Missing $CFG->phpunit_prefix in config.php, can not run tests!');
@@ -196,6 +195,9 @@ if (PHPUNIT_UTIL) {
     // we are not going to do testing, this is 'true' in utility scripts that only init database
     return;
 }
+
+// make sure tests do not run in parallel
+phpunit_util::acquire_test_lock();
 
 // is database and dataroot ready for testing?
 list($errorcode, $message) = phpunit_util::testing_ready_problem();
