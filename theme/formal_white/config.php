@@ -53,7 +53,6 @@ $THEME->parents = array('base','canvas');
 
 $THEME->parents_exclude_sheets = array(
     'canvas'=>array(
-        'core',
         'pagelayout',
         'tabs',
         'tables',

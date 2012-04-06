@@ -36,6 +36,10 @@
  *
  ****/
 
+#page {
+    font-size: 100%;
+}
+
 #page-header {
     background-color:[[setting:headerbgc]];
     /* arrotonadamento angoli in alto dell'header */
@@ -89,6 +93,10 @@
 
 #page-content .region-content {
     padding:[[setting:blockpadding]] [[setting:blockpadding]] 0 [[setting:blockpadding]];
+}
+
+#maincontent {
+    margin-top:0;
 }
 
 .pagelayout-report #page-content .region-content {
