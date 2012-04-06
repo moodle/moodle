@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Unit tests for blog
  *
@@ -35,19 +34,23 @@ require_once($CFG->dirroot . '/blog/lib.php');
 class bloglib_testcase extends advanced_testcase {
 
     private $courseid; // To store important ids to be used in tests
+    private $cmid;
     private $groupid;
     private $userid;
     private $tagid;
+    private $postid;
 
     protected function setUp() {
         global $DB;
         parent::setUp();
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
         // Create default course
-        $course = $this->getDataGenerator()->create_course(array('category'=>1, 'fullname'=>'Anonymous test course', 'shortname'=>'ANON'));
+        $course = $this->getDataGenerator()->create_course(array('category'=>1, 'shortname'=>'ANON'));
+        $this->assertNotEmpty($course);
         $page = $this->getDataGenerator()->create_module('page', array('course'=>$course->id));
+        $this->assertNotEmpty($page);
 
         // Create default group
         $group = new stdClass();
@@ -75,17 +78,20 @@ class bloglib_testcase extends advanced_testcase {
 
         // Grab important ids
         $this->courseid = $course->id;
+        $this->cmid = $page->cmid;
         $this->groupid  = $group->id;
         $this->userid  = $user->id;
         $this->tagid  = $tag->id;
+        $this->postid = $post->id;
     }
 
 
     public function test_overrides() {
+        global $SITE;
 
         // Try all the filters at once: Only the entry filter is active
-        $filters = array('site' => 1, 'course' => $this->courseid, 'module' => 1,
-            'group' => $this->groupid, 'user' => 1, 'tag' => 1, 'entry' => 1);
+        $filters = array('site' => $SITE->id, 'course' => $this->courseid, 'module' => $this->cmid,
+            'group' => $this->groupid, 'user' => $this->userid, 'tag' => $this->tagid, 'entry' => $this->postid);
         $blog_listing = new blog_listing($filters);
         $this->assertFalse(array_key_exists('site', $blog_listing->filters));
         $this->assertFalse(array_key_exists('course', $blog_listing->filters));
@@ -96,8 +102,8 @@ class bloglib_testcase extends advanced_testcase {
         $this->assertTrue(array_key_exists('entry', $blog_listing->filters));
 
         // Again, but without the entry filter: This time, the tag, user and module filters are active
-        $filters = array('site' => 1, 'course' => $this->courseid, 'module' => 1,
-            'group' => $this->groupid, 'user' => 1, 'tag' => 1);
+        $filters = array('site' => $SITE->id, 'course' => $this->courseid, 'module' => $this->cmid,
+            'group' => $this->groupid, 'user' => $this->userid, 'tag' => $this->postid);
         $blog_listing = new blog_listing($filters);
         $this->assertFalse(array_key_exists('site', $blog_listing->filters));
         $this->assertFalse(array_key_exists('course', $blog_listing->filters));
@@ -107,7 +113,7 @@ class bloglib_testcase extends advanced_testcase {
         $this->assertTrue(array_key_exists('tag', $blog_listing->filters));
 
         // We should get the same result by removing the 3 inactive filters: site, course and group:
-        $filters = array('module' => 1, 'user' => 1, 'tag' => 1);
+        $filters = array('module' => $this->cmid, 'user' => $this->userid, 'tag' => $this->tagid);
         $blog_listing = new blog_listing($filters);
         $this->assertFalse(array_key_exists('site', $blog_listing->filters));
         $this->assertFalse(array_key_exists('course', $blog_listing->filters));
@@ -135,9 +141,10 @@ class bloglib_testcase extends advanced_testcase {
 
     public function test_blog_get_headers_case_7() {
         global $CFG, $PAGE, $OUTPUT;
-        $blog_headers = blog_get_headers(NULL, 1);
+        $blog_headers = blog_get_headers(NULL, $this->groupid);
         $this->assertNotEquals($blog_headers['heading'], '');
     }
+
     public function test_blog_get_headers_case_10() {
         global $CFG, $PAGE, $OUTPUT;
         $blog_headers = blog_get_headers($this->courseid);

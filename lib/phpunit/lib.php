@@ -195,66 +195,97 @@ class phpunit_util {
 
         $trans = $DB->start_delegated_transaction(); // faster and safer
 
-        $resetseq = array();
         foreach ($data as $table=>$records) {
             if (empty($records)) {
-                if ($DB->count_records($table)) {
-                    $DB->delete_records($table, array());
-                    $resetseq[$table] = $table;
-                }
+                $DB->delete_records($table, array());
                 continue;
             }
 
             if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
-                if ($DB->count_records($table) >= count($records)) {
-                    $currentrecords = $DB->get_records($table, array(), 'id ASC');
-                    $changed = false;
-                    foreach ($records as $id=>$record) {
-                        if (!isset($currentrecords[$id])) {
-                            $changed = true;
-                            break;
-                        }
-                        if ((array)$record != (array)$currentrecords[$id]) {
-                            $changed = true;
-                            break;
-                        }
-                        unset($currentrecords[$id]);
+                $currentrecords = $DB->get_records($table, array(), 'id ASC');
+                $changed = false;
+                foreach ($records as $id=>$record) {
+                    if (!isset($currentrecords[$id])) {
+                        $changed = true;
+                        break;
                     }
-                    if (!$changed) {
-                        if ($currentrecords) {
-                            $remainingfirst = reset($currentrecords);
-                            $lastrecord = end($records);
-                            if ($remainingfirst->id > $lastrecord->id) {
-                                $DB->delete_records_select($table, "id >= ?", array($remainingfirst->id));
-                                $resetseq[$table] = $table;
-                                continue;
-                            }
-                        } else {
-                            continue;
-                        }
+                    if ((array)$record != (array)$currentrecords[$id]) {
+                        $changed = true;
+                        break;
+                    }
+                    unset($currentrecords[$id]);
+                }
+                if (!$changed) {
+                    if ($currentrecords) {
+                        $lastrecord = end($records);
+                        $DB->delete_records_select($table, "id > ?", array($lastrecord->id));
+                        continue;
+                    } else {
+                        continue;
                     }
                 }
             }
 
             $DB->delete_records($table, array());
-            $resetseq[$table] = $table;
             foreach ($records as $record) {
                 $DB->import_record($table, $record, false, true);
             }
         }
-        // reset all sequences
-        foreach ($resetseq as $table) {
+
+        // reset all sequences as fast as possible, it is usually faster to find out current value than to update all,
+        // please note we really must verify all tables because sometimes records are added and later removed,
+        // but in the next run we really want to start again from MAX(id)+1
+        $dbfamily = $DB->get_dbfamily();
+        $sequences = array();
+        if ($dbfamily === 'mysql') {
+            $prefix = $DB->get_prefix();
+            $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
+            foreach ($rs as $info) {
+                $table = strtolower($info->name);
+                if (strpos($table, $prefix) !== 0) {
+                    // incorrect table match caused by _
+                    continue;
+                }
+                if (!is_null($info->auto_increment)) {
+                    $table = preg_replace('/^'.preg_quote($prefix).'/', '', $table);
+                    $sequences[$table] = $info->auto_increment;
+                }
+            }
+            $rs->close();
+        } else if ($dbfamily === 'postgres') {
+            foreach ($data as $table=>$records) {
+                if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
+                    $sequences[$table] = $DB->get_field_sql("SELECT last_value FROM {{$table}}_id_seq;");
+
+                }
+            }
+        }
+
+        foreach ($data as $table=>$records) {
             if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
-                $DB->get_manager()->reset_sequence($table, true);
+                if (isset($sequences[$table])) {
+                    if (empty($records)) {
+                        $lastid = 0;
+                    } else {
+                        $lastrecord = end($records);
+                        $lastid = $lastrecord->id;
+                    }
+                    if ($sequences[$table] != $lastid +1) {
+                        $DB->get_manager()->reset_sequence($table);
+                    }
+
+                } else {
+                    $DB->get_manager()->reset_sequence($table);
+                }
             }
         }
 
         $trans->allow_commit();
 
         // remove extra tables
-        foreach ($tables as $tablename) {
-            if (!isset($data[$tablename])) {
-                $DB->get_manager()->drop_table(new xmldb_table($tablename));
+        foreach ($tables as $table) {
+            if (!isset($data[$table])) {
+                $DB->get_manager()->drop_table(new xmldb_table($table));
             }
         }
 
@@ -572,7 +603,7 @@ class phpunit_util {
         foreach ($tables as $table) {
             $columns = $DB->get_columns($table);
             $structure[$table] = $columns;
-            if (isset($columns['id'])) {
+            if (isset($columns['id']) and $columns['id']->primary_key) {
                 $data[$table] = $DB->get_records($table, array(), 'id ASC');
             } else {
                 // there should not be many of these
@@ -873,7 +904,7 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
  */
 class advanced_testcase extends PHPUnit_Framework_TestCase {
     /** @var bool automatically reset everything? null means log changes */
-    protected $resetAfterTest;
+    protected $resetAfterTest = null;
 
     /**
      * Constructs a test case with the given name.
@@ -897,20 +928,16 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
      * @return void
      */
     public function runBare() {
-        $this->resetAfterTest = null;
-
         parent::runBare();
 
         if ($this->resetAfterTest === true) {
-            self::resetAllData();
+            phpunit_util::reset_all_data();
         } else if ($this->resetAfterTest === false) {
             // keep all data untouched for other tests
         } else {
             // reset but log what changed
             phpunit_util::reset_all_data(true);
         }
-
-        $this->resetAfterTest = null;
     }
 
     /**
