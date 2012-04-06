@@ -139,5 +139,6 @@ $string['wrongdestpath'] = 'Wrong destination path';
 $string['wrongsourcebase'] = 'Wrong source URL base';
 $string['wrongzipfilename'] = 'Wrong ZIP file name';
 $string['youcannotdeletecategory'] = 'You cannot delete category \'$a\' because you can neither delete the contents, nor move them elsewhere.';
+$string['zipfileserror'] = 'Cannot create zip file';
 
 ?>
