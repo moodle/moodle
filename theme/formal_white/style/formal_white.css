@@ -164,7 +164,7 @@ ul.topics .section span.commands {position:absolute;right:1em;}
 table td.cell p {margin:0;}
 
 /* block */
-.block {border:1px #C6BDA8 solid;margin-bottom:0.5em;}
+.block {border:1px #C6BDA8 solid;margin-bottom:[[setting:blockpadding]];}
 .block .header h2 {margin:0;padding-left:0.3em;}
 .block .header .title {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;clear:both;line-height:2em;background-color:#E3DFD4;}
 .block .header .title .commands {padding-left:0.3em;text-align:right;}

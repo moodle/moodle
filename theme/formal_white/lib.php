@@ -67,6 +67,14 @@ function formal_white_user_settings($css, $theme) {
     }
     $css = formal_white_set_blockcolumnwidth($css, $blockcolumnwidth);
 
+    // set blocks margin
+    if (!empty($theme->settings->blockpadding)) {
+        $blockpadding = $theme->settings->blockpadding;
+    } else {
+        $blockpadding = '8'; // default
+    }
+    $css = formal_white_set_blockpadding($css, $blockpadding);
+
     // set the customcss
     if (!empty($theme->settings->customcss)) {
         $customcss = $theme->settings->customcss;
@@ -142,6 +150,12 @@ function formal_white_set_blockcolumnwidth($css, $blockcolumnwidth) {
     $tag = '[[setting:minwidth]]';
     $css = str_replace($tag, (3*$blockcolumnwidth + 34).'px', $css); // 34 = 2*17 (17px is the width of the frame)
 
+    return $css;
+}
+
+function formal_white_set_blockpadding($css, $blockpadding) {
+    $tag = '[[setting:blockpadding]]';
+    $css = str_replace($tag, $blockpadding.'px', $css);
     return $css;
 }
 

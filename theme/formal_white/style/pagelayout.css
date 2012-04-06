@@ -88,7 +88,7 @@
 }
 
 #page-content .region-content {
-    padding:0.6em 8px 0.1em 8px; /* definisco lo spazio sopra e sotto ai blocchi */
+    padding:[[setting:blockpadding]] [[setting:blockpadding]] 0 [[setting:blockpadding]];
 }
 
 .pagelayout-report #page-content .region-content {
