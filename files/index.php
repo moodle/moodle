@@ -539,7 +539,7 @@
                 $file = basename($file);
 
                 if (!unzip_file("$basedir$wdir/$file")) {
-                    print_error("unzipfileserror","error");
+                    print_error("cannotunzipfile", "error");
                 }
 
                 echo "<div style=\"text-align:center\"><form action=\"index.php\" method=\"get\">";

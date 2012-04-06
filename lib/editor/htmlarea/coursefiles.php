@@ -495,7 +495,7 @@
                 $file = basename($file);
 
                 if (!unzip_file("$basedir/$wdir/$file")) {
-                    print_error("unzipfileserror","error");
+                    print_error("cannotunzipfile", "error");
                 }
 
                 echo "<center><form action=\"coursefiles.php\" method=\"get\">\n";
