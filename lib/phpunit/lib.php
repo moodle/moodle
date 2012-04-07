@@ -53,7 +53,7 @@ class phpunit_util {
     /**
      * @var int last value of db writes counter, used for db resetting
      */
-    protected static $lastdbwrites = null;
+    public static $lastdbwrites = null;
 
     /**
      * @var phpunit_data_generator
@@ -193,8 +193,6 @@ class phpunit_util {
             return false;
         }
 
-        $trans = $DB->start_delegated_transaction(); // faster and safer
-
         foreach ($data as $table=>$records) {
             if (empty($records)) {
                 $DB->delete_records($table, array());
@@ -279,8 +277,6 @@ class phpunit_util {
                 }
             }
         }
-
-        $trans->allow_commit();
 
         // remove extra tables
         foreach ($tables as $table) {
@@ -398,8 +394,11 @@ class phpunit_util {
         // restore original config once more in case resetting of caches changes CFG
         $CFG = self::get_global_backup('CFG');
 
-        // remember db writes
-        self::$lastdbwrites = $DB->perf_get_writes();
+        // verify db writes just in case something goes wrong in reset
+        if (self::$lastdbwrites != $DB->perf_get_writes()) {
+            error_log('Unexpected DB writes in reset_all_data.');
+            self::$lastdbwrites = $DB->perf_get_writes();
+        }
 
         // inform data generator
         self::get_data_generator()->reset();
@@ -906,6 +905,9 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
     /** @var bool automatically reset everything? null means log changes */
     protected $resetAfterTest = null;
 
+    /** @var moodle_transaction */
+    protected $testdbtransaction = null;
+
     /**
      * Constructs a test case with the given name.
      *
@@ -928,14 +930,36 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
      * @return void
      */
     public function runBare() {
+        global $DB;
+
+        if ($DB->get_dbfamily() === 'postgres') {
+            // database must allow rollback of DDL, so no mysql here
+            $this->testdbtransaction = $DB->start_delegated_transaction();
+        }
+
         parent::runBare();
 
+        if (!$this->testdbtransaction or $this->testdbtransaction->is_disposed()) {
+            $this->testdbtransaction = null;
+        }
+        $trans = $this->testdbtransaction;
+
         if ($this->resetAfterTest === true) {
+            if ($trans) {
+                $DB->force_transaction_rollback();
+                phpunit_util::$lastdbwrites = $DB->perf_get_writes(); // no db reset necessary
+            }
             phpunit_util::reset_all_data();
         } else if ($this->resetAfterTest === false) {
+            if ($trans) {
+                $trans->allow_commit();
+            }
             // keep all data untouched for other tests
         } else {
             // reset but log what changed
+            if ($trans) {
+                $trans->allow_commit();
+            }
             phpunit_util::reset_all_data(true);
         }
     }
