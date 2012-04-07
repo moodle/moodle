@@ -83,8 +83,10 @@ class phpunit_util {
         if (self::$lockhandle = fopen("$CFG->phpunit_dataroot/phpunit/lock", 'r')) {
             $wouldblock = null;
             $locked = flock(self::$lockhandle, (LOCK_EX | LOCK_NB), $wouldblock);
-            if (!$locked and $wouldblock) {
-                echo "Waiting for other test execution to complete...\n";
+            if (!$locked) {
+                if ($wouldblock) {
+                    echo "Waiting for other test execution to complete...\n";
+                }
                 $locked = flock(self::$lockhandle, LOCK_EX);
             }
             if (!$locked) {
