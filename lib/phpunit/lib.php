@@ -945,10 +945,10 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
  */
 class advanced_testcase extends PHPUnit_Framework_TestCase {
     /** @var bool automatically reset everything? null means log changes */
-    protected $resetAfterTest;
+    private $resetAfterTest;
 
     /** @var moodle_transaction */
-    protected $testdbtransaction;
+    private $testdbtransaction;
 
     /**
      * Constructs a test case with the given name.
@@ -1133,7 +1133,7 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
  */
 class database_driver_testcase extends PHPUnit_Framework_TestCase {
     /** @var moodle_database connection to extra database */
-    protected static $extradb = null;
+    private static $extradb = null;
 
     /** @var moodle_database used in these tests*/
     protected $tdb;

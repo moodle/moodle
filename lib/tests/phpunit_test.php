@@ -192,7 +192,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertSame($_SESSION['USER'], $USER);
     }
 
-    public function test_database_reset_repeated() {
+    public function test_database_reset() {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -253,6 +253,66 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertEquals(2, $course->id);
 
         $this->assertEquals(2, $DB->count_records('user'));
+    }
+
+    public function test_change_detection() {
+        global $DB, $CFG, $COURSE, $SITE, $USER;
+
+        $this->preventResetByRollback();
+        phpunit_util::reset_all_data(true);
+
+        // database change
+        $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
+        $DB->set_field('user', 'confirmed', 0, array('id'=>2));
+        try {
+            phpunit_util::reset_all_data(true);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+        }
+        $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
+
+        // config change
+        $CFG->xx = 'yy';
+        unset($CFG->admin);
+        $CFG->rolesactive = 0;
+        try {
+            phpunit_util::reset_all_data(true);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertContains('xx', $e->getMessage());
+            $this->assertContains('admin', $e->getMessage());
+            $this->assertContains('rolesactive', $e->getMessage());
+        }
+        $this->assertFalse(isset($CFG->xx));
+        $this->assertTrue(isset($CFG->admin));
+        $this->assertEquals(1, $CFG->rolesactive);
+
+        //silent changes
+        $_SERVER['xx'] = 'yy';
+        phpunit_util::reset_all_data(true);
+        $this->assertFalse(isset($_SERVER['xx']));
+
+        // COURSE
+        $SITE->id = 10;
+        $COURSE = new stdClass();
+        $COURSE->id = 7;
+        try {
+            phpunit_util::reset_all_data(true);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertEquals(1, $SITE->id);
+            $this->assertSame($SITE, $COURSE);
+            $this->assertSame($SITE, $COURSE);
+        }
+
+        // USER change
+        $this->setUser(2);
+        try {
+            phpunit_util::reset_all_data(true);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertEquals(0, $USER->id);
+        }
     }
 
     public function test_getDataGenerator() {
