@@ -72,6 +72,10 @@ class phpunit_util {
      */
     public static function acquire_test_lock() {
         global $CFG;
+        if (!file_exists("$CFG->phpunit_dataroot/phpunit")) {
+            // dataroot not initialised yet
+            return;
+        }
         if (!file_exists("$CFG->phpunit_dataroot/phpunit/lock")) {
             file_put_contents("$CFG->phpunit_dataroot/phpunit/lock", 'This file prevents concurrent execution of Moodle PHPUnit tests');
             phpunit_boostrap_fix_file_permissions("$CFG->phpunit_dataroot/phpunit/lock");
