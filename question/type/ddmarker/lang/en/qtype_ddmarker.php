@@ -29,6 +29,7 @@ $string['answer'] = 'Answer';
 $string['bgimage'] = 'Background image';
 $string['confirmimagetargetconversion'] = 'You are about to convert the above image target questions to the drag and drop markers question type.';
 $string['coords'] = 'Coords';
+$string['convertingimagetargetquestion'] = 'Converted question "{$a->name}"';
 $string['correctansweris'] = 'The correct answer is: {$a}';
 $string['ddmarker'] = 'Drag and drop markers';
 $string['ddmarker_help'] = 'select a background image file, enter text labels for markers and define the drop zones on the background image to which they must be dragged.';

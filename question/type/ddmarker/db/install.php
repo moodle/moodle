@@ -52,8 +52,13 @@ function xmldb_qtype_ddmarker_install() {
         $answers = xmldb_qtype_ddmarker_index_array_of_records_by_key('question', $DB->get_records_sql($answerssql));
 
         $imgfiles = $DB->get_records_sql_menu('SELECT question, qimage FROM {question_imagetarget}');
+        $progressbar = new progress_bar('qtype_ddmarker_convert_from_imagetarget');
+        $progressbar->create();
+        $done = 0;
         foreach ($questions as $question) {
             qtype_ddmarker_convert_image_target_question($question, $imgfiles[$question->id], $answers[$question->id]);
+            $done++;
+            $progressbar->update($done, count($questions), get_string('convertingimagetargetquestion', 'qtype_ddmarker', $question));
         }
         list($qsql, $qparams) = $DB->get_in_or_equal(array_keys($questions));
         $DB->delete_records_select('question_answers', 'question '.$qsql, $qparams);
