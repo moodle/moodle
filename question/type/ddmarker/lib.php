@@ -27,6 +27,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ *
+ * @var string label to use for drag items when converting image target questions to ddmarker question type
+ */
+define('QTYPE_DDMARKER_LABEL_FOR_MARKER_FOR_IMAGE_TARGET_QS', 'X');
 
 /**
  * Checks file access for essay questions.
@@ -89,7 +94,7 @@ function qtype_ddmarker_convert_image_target_question($question, $imgfilename, $
     $drag = new stdClass();
     $drag->questionid = $question->id;
     $drag->no = 1;
-    $drag->label = "X";
+    $drag->label = QTYPE_DDMARKER_LABEL_FOR_MARKER_FOR_IMAGE_TARGET_QS;
     $drag->infinite = 0;
     $DB->insert_record('qtype_ddmarker_drags', $drag);
 
