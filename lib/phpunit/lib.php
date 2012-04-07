@@ -423,6 +423,7 @@ class phpunit_util {
         // reset all static caches
         accesslib_clear_all_caches(true);
         get_string_manager()->reset_caches();
+        events_get_handlers('reset');
         //TODO: add more resets here and probably refactor them to new core function
 
         // purge dataroot
