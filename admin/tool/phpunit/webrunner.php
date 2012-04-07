@@ -131,9 +131,8 @@ if ($execute) {
         }
     }
     $configdir = escapeshellarg($configdir);
-    // cleanup the path - this is tricky because we can not use quotes for escaping
-    $path = escapeshellcmd($path);
-    $path = str_replace('\*', '*', $path);
+    // no cleanup of path - this is tricky because we can not use escapeshellarg and friends for escaping,
+    // this is from admin user so PARAM_PATH must be enough
     chdir($CFG->dirroot);
     passthru("php $CFG->admin/tool/phpunit/cli/util.php --run -c $configdir $path", $code);
     chdir($oldcwd);
