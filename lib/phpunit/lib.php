@@ -168,6 +168,86 @@ class phpunit_util {
     }
 
     /**
+     * Reset all database sequences
+     * @static
+     * @return void
+     */
+    public static function reset_all_database_sequences() {
+        global $DB;
+
+        // reset all sequences as fast as possible, it is usually faster to find out current value than to update all,
+        // please note we really must verify all tables because sometimes records are added and later removed,
+        // but in the next run we really want to start again from MAX(id)+1
+
+        if (!$data = self::get_tabledata()) {
+            // not initialised yet
+            return false;
+        }
+        if (!$structure = self::get_tablestructure()) {
+            // not initialised yet
+            return false;
+        }
+
+        $dbfamily = $DB->get_dbfamily();
+        if ($dbfamily === 'postgres') {
+            $queries = array();
+            $prefix = $DB->get_prefix();
+            foreach ($data as $table=>$records) {
+                if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
+                    if (empty($records)) {
+                        $nextid = 1;
+                    } else {
+                        $lastrecord = end($records);
+                        $nextid = $lastrecord->id + 1;
+                    }
+                    $queries[] = "ALTER SEQUENCE {$prefix}{$table}_id_seq RESTART WITH $nextid";
+                }
+            }
+            if ($queries) {
+                $DB->change_database_structure(implode(';', $queries));
+            }
+            return;
+        }
+
+        $sequences = array();
+        if ($dbfamily === 'mysql') {
+            $prefix = $DB->get_prefix();
+            $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
+            foreach ($rs as $info) {
+                $table = strtolower($info->name);
+                if (strpos($table, $prefix) !== 0) {
+                    // incorrect table match caused by _
+                    continue;
+                }
+                if (!is_null($info->auto_increment)) {
+                    $table = preg_replace('/^'.preg_quote($prefix).'/', '', $table);
+                    $sequences[$table] = $info->auto_increment;
+                }
+            }
+            $rs->close();
+        }
+
+        foreach ($data as $table=>$records) {
+            if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
+                if (isset($sequences[$table])) {
+                    if (empty($records)) {
+                        $lastid = 0;
+                    } else {
+                        $lastrecord = end($records);
+                        $lastid = $lastrecord->id;
+                    }
+                    if ($sequences[$table] != $lastid +1) {
+                        $DB->get_manager()->reset_sequence($table);
+                    }
+
+                } else {
+                    $DB->get_manager()->reset_sequence($table);
+                }
+            }
+        }
+    }
+
+    /**
      * Reset all database tables to default values.
      * @static
      * @return bool true if reset done, false if skipped
@@ -230,53 +310,8 @@ class phpunit_util {
             }
         }
 
-        // reset all sequences as fast as possible, it is usually faster to find out current value than to update all,
-        // please note we really must verify all tables because sometimes records are added and later removed,
-        // but in the next run we really want to start again from MAX(id)+1
-        $dbfamily = $DB->get_dbfamily();
-        $sequences = array();
-        if ($dbfamily === 'mysql') {
-            $prefix = $DB->get_prefix();
-            $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
-            foreach ($rs as $info) {
-                $table = strtolower($info->name);
-                if (strpos($table, $prefix) !== 0) {
-                    // incorrect table match caused by _
-                    continue;
-                }
-                if (!is_null($info->auto_increment)) {
-                    $table = preg_replace('/^'.preg_quote($prefix).'/', '', $table);
-                    $sequences[$table] = $info->auto_increment;
-                }
-            }
-            $rs->close();
-        } else if ($dbfamily === 'postgres') {
-            foreach ($data as $table=>$records) {
-                if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
-                    $sequences[$table] = $DB->get_field_sql("SELECT last_value FROM {{$table}}_id_seq;");
-
-                }
-            }
-        }
-
-        foreach ($data as $table=>$records) {
-            if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
-                if (isset($sequences[$table])) {
-                    if (empty($records)) {
-                        $lastid = 0;
-                    } else {
-                        $lastrecord = end($records);
-                        $lastid = $lastrecord->id;
-                    }
-                    if ($sequences[$table] != $lastid +1) {
-                        $DB->get_manager()->reset_sequence($table);
-                    }
-
-                } else {
-                    $DB->get_manager()->reset_sequence($table);
-                }
-            }
-        }
+        // reset all next record ids - aka sequences
+        self::reset_all_database_sequences();
 
         // remove extra tables
         foreach ($tables as $table) {
@@ -394,17 +429,17 @@ class phpunit_util {
         // restore original config once more in case resetting of caches changes CFG
         $CFG = self::get_global_backup('CFG');
 
-        // verify db writes just in case something goes wrong in reset
-        if (self::$lastdbwrites != $DB->perf_get_writes()) {
-            error_log('Unexpected DB writes in reset_all_data.');
-            self::$lastdbwrites = $DB->perf_get_writes();
-        }
-
         // inform data generator
         self::get_data_generator()->reset();
 
         // fix PHP settings
         error_reporting($CFG->debug);
+
+        // verify db writes just in case something goes wrong in reset
+        if (self::$lastdbwrites != $DB->perf_get_writes()) {
+            error_log('Unexpected DB writes in reset_all_data.');
+            self::$lastdbwrites = $DB->perf_get_writes();
+        }
 
         if ($warnings) {
             $warnings = implode("\n", $warnings);
@@ -903,10 +938,10 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
  */
 class advanced_testcase extends PHPUnit_Framework_TestCase {
     /** @var bool automatically reset everything? null means log changes */
-    protected $resetAfterTest = null;
+    protected $resetAfterTest;
 
     /** @var moodle_transaction */
-    protected $testdbtransaction = null;
+    protected $testdbtransaction;
 
     /**
      * Constructs a test case with the given name.
@@ -932,7 +967,11 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
     public function runBare() {
         global $DB;
 
-        if ($DB->get_dbfamily() === 'postgres') {
+        if (phpunit_util::$lastdbwrites != $DB->perf_get_writes()) {
+            // this happens when previous test does not reset, we can not use transactions
+            $this->testdbtransaction = null;
+
+        } else if ($DB->get_dbfamily() === 'postgres') {
             // database must allow rollback of DDL, so no mysql here
             $this->testdbtransaction = $DB->start_delegated_transaction();
         }
@@ -942,25 +981,40 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
         if (!$this->testdbtransaction or $this->testdbtransaction->is_disposed()) {
             $this->testdbtransaction = null;
         }
-        $trans = $this->testdbtransaction;
 
         if ($this->resetAfterTest === true) {
-            if ($trans) {
+            if ($this->testdbtransaction) {
                 $DB->force_transaction_rollback();
+                phpunit_util::reset_all_database_sequences();
                 phpunit_util::$lastdbwrites = $DB->perf_get_writes(); // no db reset necessary
             }
             phpunit_util::reset_all_data();
+
         } else if ($this->resetAfterTest === false) {
-            if ($trans) {
-                $trans->allow_commit();
+            if ($this->testdbtransaction) {
+                $this->testdbtransaction->allow_commit();
             }
             // keep all data untouched for other tests
+
         } else {
             // reset but log what changed
-            if ($trans) {
-                $trans->allow_commit();
+            if ($this->testdbtransaction) {
+                $this->testdbtransaction->allow_commit();
             }
             phpunit_util::reset_all_data(true);
+        }
+    }
+
+    /**
+     * Call this method from test if you want to make sure that
+     * the resetting of database is done the slow way without transaction
+     * rollback.
+     * @return void
+     */
+    public function preventResetByRollback() {
+        if ($this->testdbtransaction and !$this->testdbtransaction->is_disposed()) {
+            $this->testdbtransaction->allow_commit();
+            $this->testdbtransaction = null;
         }
     }
 

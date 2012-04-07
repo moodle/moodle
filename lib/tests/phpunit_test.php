@@ -192,6 +192,69 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertSame($_SESSION['USER'], $USER);
     }
 
+    public function test_database_reset_repeated() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $this->preventResetByRollback();
+
+        $this->assertEquals(1, $DB->count_records('course')); // only frontpage in new site
+
+        // this is weird table - id is NOT a sequence here
+        $this->assertEquals(0, $DB->count_records('context_temp'));
+        $DB->import_record('context_temp', array('id'=>5, 'path'=>'/1/2', 'depth'=>2));
+        $record = $DB->get_record('context_temp', array());
+        $this->assertEquals(5, $record->id);
+
+        $this->assertEquals(0, $DB->count_records('course_display'));
+        $originaldisplayid = $DB->insert_record('course_display', array('userid'=>2, 'course'=>1, 'display'=>1));
+        $this->assertEquals(1, $originaldisplayid);
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->assertEquals(2, $course->id);
+
+        $this->assertEquals(2, $DB->count_records('user'));
+        $DB->delete_records('user', array('id'=>1));
+        $this->assertEquals(1, $DB->count_records('user'));
+
+        //=========
+
+        $this->resetAllData();
+
+        $this->assertEquals(1, $DB->count_records('course')); // only frontpage in new site
+        $this->assertEquals(0, $DB->count_records('context_temp')); // only frontpage in new site
+        $course = $this->getDataGenerator()->create_course();
+        $this->assertEquals(2, $course->id);
+
+        $displayid = $DB->insert_record('course_display', array('userid'=>2, 'course'=>1, 'display'=>1));
+        $this->assertEquals($originaldisplayid, $displayid);
+
+        $this->assertEquals(2, $DB->count_records('user'));
+        $DB->delete_records('user', array('id'=>2));
+        $user = $this->getDataGenerator()->create_user();
+        $this->assertEquals(3, $user->id);
+
+        // =========
+
+        $this->resetAllData();
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->assertEquals(2, $course->id);
+
+        $this->assertEquals(2, $DB->count_records('user'));
+        $DB->delete_records('user', array('id'=>2));
+
+        //==========
+
+        $this->resetAllData();
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->assertEquals(2, $course->id);
+
+        $this->assertEquals(2, $DB->count_records('user'));
+    }
+
     public function test_getDataGenerator() {
         $generator = $this->getDataGenerator();
         $this->assertInstanceOf('phpunit_data_generator', $generator);
