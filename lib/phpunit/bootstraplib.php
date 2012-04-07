@@ -58,7 +58,7 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
             $text = 'Unknown error '.$errorcode.$text;
             break;
     }
-    if (PHPUNIT_UTIL) {
+    if (defined('PHPUNIT_UTIL') and PHPUNIT_UTIL) {
         // do not write to error stream because we need the error message in PHP exec from web ui
         echo($text."\n");
     } else {

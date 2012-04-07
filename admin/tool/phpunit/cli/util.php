@@ -83,6 +83,7 @@ if ($options['run']) {
     foreach ($_SERVER['argv'] as $k=>$v) {
         if (strpos($v, '--run') === 0 or strpos($v, '--phpunitdir') === 0) {
             unset($_SERVER['argv'][$k]);
+            $_SERVER['argc'] = $_SERVER['argc'] - 1;
         }
     }
     $_SERVER['argv'] = array_values($_SERVER['argv']);
