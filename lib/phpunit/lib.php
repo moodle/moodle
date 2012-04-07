@@ -584,20 +584,16 @@ class phpunit_util {
             return array(131, 'Can not use test database, try changing prefix');
         }
 
+        if (empty($tables)) {
+            return array(132, '');
+        }
+
         if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser") or !file_exists("$CFG->dataroot/phpunit/tablestructure.ser")) {
-            if (empty($tables)) {
-                return array(132, '');
-            } else {
-                return array(133, '');
-            }
+            return array(133, '');
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/versionshash.txt")) {
-            if (empty($tables)) {
-                return array(132, '');
-            } else {
-                return array(133, '');
-            }
+            return array(133, '');
         }
 
         $hash = phpunit_util::get_version_hash();
