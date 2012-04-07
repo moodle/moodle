@@ -111,7 +111,7 @@ class backup_factories_testcase extends advanced_testcase {
         $this->assertTrue($logger2 instanceof file_logger);  // 2nd logger is file_logger (output_indented_logger skiped)
 
         // Define extra file logger and instantiate, should be 5th and last logger
-        $CFG->backup_file_logger_extra = '/tmp/test.html';
+        $CFG->backup_file_logger_extra = $CFG->tempdir.'/test.html';
         $CFG->backup_file_logger_level_extra = backup::LOG_NONE;
         $logger1 = backup_factory::get_logger_chain(backup::INTERACTIVE_YES, backup::EXECUTION_INMEDIATE, 'test');
         $logger2 = $logger1->get_next();
