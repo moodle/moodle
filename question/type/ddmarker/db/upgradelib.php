@@ -20,13 +20,13 @@
  *
  * @package    qtype
  * @subpackage ddmarker
- * @copyright  2012 Jamie Pratt
+ * @copyright  2012 The Open University
+ * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Class for converting attempt data from imagetarget questions when converting
