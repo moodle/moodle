@@ -673,9 +673,9 @@ class phpunit_util {
         if ($DB->get_tables()) {
             list($errorcode, $message) = phpunit_util::testing_ready_problem();
             if ($errorcode) {
-                phpunit_bootstrap_error(133, 'Database tables already installed, drop the site first.');
+                phpunit_bootstrap_error(133, 'Database tables already present, Moodle PHPUnit test environment can not be initialised');
             } else {
-                phpunit_bootstrap_error(0, 'Test database is already initialised');
+                phpunit_bootstrap_error(0, 'Moodle PHPUnit test environment is already initialised');
             }
         }
 

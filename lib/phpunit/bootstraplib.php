@@ -45,10 +45,10 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
             $text = 'Configuration problem: '.$text;
             break;
         case 132:
-            $text = 'Database was not initialised to run unit tests, please use "php admin/tool/phpunit/cli/util.php --install"';
+            $text = "Moodle PHPUnit environment is not initialised, please use:\n php admin/tool/phpunit/cli/util.php --install";
             break;
         case 133:
-            $text = 'Database was initialised for different version, please use "php admin/tool/phpunit/cli/util.php --drop; php admin/tool/phpunit/cli/util.php --install"';
+            $text = "Moodle PHPUnit environment was initialised for different version, please use:\n php admin/tool/phpunit/cli/util.php --drop\n php admin/tool/phpunit/cli/util.php --install";
             break;
         case 134:
             $text = 'Can not create main configuration file, please verify dirroot permissions.';

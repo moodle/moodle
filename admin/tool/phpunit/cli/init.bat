@@ -1,4 +1,6 @@
 @ECHO OFF
+ECHO Initialising Moodle PHPUnit test environment...
+
 CALL php %~dp0\util.php --diag > NUL 2>&1
 
 IF ERRORLEVEL 133 GOTO drop

@@ -6,7 +6,7 @@ CLIDIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 UTIL="$CLIDIR/util.php"
 
-echo "Initialising test database and creating phpunit.xml configuration..."
+echo "Initialising Moodle PHPUnit test environment..."
 
 DIGERROR=`php $UTIL --diag`
 DIAG=$?
