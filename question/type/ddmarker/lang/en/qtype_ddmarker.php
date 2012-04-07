@@ -18,7 +18,8 @@
  *
  * @package    qtype
  * @subpackage ddmarker
- * @copyright  2011 The Open University
+ * @copyright  2012 The Open University
+ * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
