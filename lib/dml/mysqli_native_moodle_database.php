@@ -485,7 +485,6 @@ class mysqli_native_moodle_database extends moodle_database {
                 $rawcolumn->is_nullable              = $rawcolumn->null; unset($rawcolumn->null);
                 $rawcolumn->column_default           = $rawcolumn->default; unset($rawcolumn->default);
                 $rawcolumn->column_key               = $rawcolumn->key; unset($rawcolumn->default);
-                $rawcolumn->extra                    = ($rawcolumn->column_name === 'id') ? 'auto_increment' : '';
 
                 if (preg_match('/(enum|varchar)\((\d+)\)/i', $rawcolumn->column_type, $matches)) {
                     $rawcolumn->data_type = $matches[1];
