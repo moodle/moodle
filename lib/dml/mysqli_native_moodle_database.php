@@ -955,7 +955,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $id = @$this->mysqli->insert_id; // must be called before query_end() which may insert log into db
         $this->query_end($result);
 
-        if (!$id) {
+        if (!$customsequence and !$id) {
             throw new dml_write_exception('unknown error fetching inserted id');
         }
 
