@@ -168,24 +168,21 @@ class phpunit_util {
     }
 
     /**
-     * Reset all database sequences
+     * Reset all database sequences to initial values.
+     *
      * @static
      * @return void
      */
     public static function reset_all_database_sequences() {
         global $DB;
 
-        // reset all sequences as fast as possible, it is usually faster to find out current value than to update all,
-        // please note we really must verify all tables because sometimes records are added and later removed,
-        // but in the next run we really want to start again from MAX(id)+1
-
         if (!$data = self::get_tabledata()) {
             // not initialised yet
-            return false;
+            return;
         }
         if (!$structure = self::get_tablestructure()) {
             // not initialised yet
-            return false;
+            return;
         }
 
         $dbfamily = $DB->get_dbfamily();
@@ -193,7 +190,7 @@ class phpunit_util {
             $queries = array();
             $prefix = $DB->get_prefix();
             foreach ($data as $table=>$records) {
-                if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
+                if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     if (empty($records)) {
                         $nextid = 1;
                     } else {
@@ -206,11 +203,9 @@ class phpunit_util {
             if ($queries) {
                 $DB->change_database_structure(implode(';', $queries));
             }
-            return;
-        }
 
-        $sequences = array();
-        if ($dbfamily === 'mysql') {
+        } else if ($dbfamily === 'mysql') {
+            $sequences = array();
             $prefix = $DB->get_prefix();
             $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
             foreach ($rs as $info) {
@@ -225,22 +220,29 @@ class phpunit_util {
                 }
             }
             $rs->close();
-        }
+            foreach ($data as $table=>$records) {
+                if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
+                    if (isset($sequences[$table])) {
+                        if (empty($records)) {
+                            $lastid = 0;
+                        } else {
+                            $lastrecord = end($records);
+                            $lastid = $lastrecord->id;
+                        }
+                        if ($sequences[$table] != $lastid +1) {
+                            $DB->get_manager()->reset_sequence($table);
+                        }
 
-        foreach ($data as $table=>$records) {
-            if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
-                if (isset($sequences[$table])) {
-                    if (empty($records)) {
-                        $lastid = 0;
                     } else {
-                        $lastrecord = end($records);
-                        $lastid = $lastrecord->id;
-                    }
-                    if ($sequences[$table] != $lastid +1) {
                         $DB->get_manager()->reset_sequence($table);
                     }
+                }
+            }
 
-                } else {
+        } else {
+            // note: does mssql and oracle support any kind of faster reset?
+            foreach ($data as $table=>$records) {
+                if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     $DB->get_manager()->reset_sequence($table);
                 }
             }
@@ -279,7 +281,7 @@ class phpunit_util {
                 continue;
             }
 
-            if (isset($structure[$table]['id']) and $structure[$table]['id']->primary_key) {
+            if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                 $currentrecords = $DB->get_records($table, array(), 'id ASC');
                 $changed = false;
                 foreach ($records as $id=>$record) {
@@ -642,7 +644,7 @@ class phpunit_util {
         foreach ($tables as $table) {
             $columns = $DB->get_columns($table);
             $structure[$table] = $columns;
-            if (isset($columns['id']) and $columns['id']->primary_key) {
+            if (isset($columns['id']) and $columns['id']->auto_increment) {
                 $data[$table] = $DB->get_records($table, array(), 'id ASC');
             } else {
                 // there should not be many of these
