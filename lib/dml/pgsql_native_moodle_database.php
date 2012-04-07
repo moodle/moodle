@@ -179,8 +179,8 @@ class pgsql_native_moodle_database extends moodle_database {
         pg_set_client_encoding($this->pgsql, 'utf8');
         $this->query_end(true);
 
-        // find out the bytea oid
-        $sql = "SELECT oid FROM pg_type WHERE typname = 'bytea'";
+        // set bytea encoding to old format and find out the bytea oid
+        $sql = "SET bytea_output = 'escape'; SELECT oid FROM pg_type WHERE typname = 'bytea'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
