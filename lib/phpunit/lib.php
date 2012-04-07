@@ -174,12 +174,49 @@ class phpunit_util {
     }
 
     /**
+     * Returns list of tables that are unmodified and empty.
+     *
+     * @static
+     * @return array of table names, empty if unknown
+     */
+    protected static function guess_unmodified_empty_tables() {
+        global $DB;
+
+        $dbfamily = $DB->get_dbfamily();
+
+        if ($dbfamily === 'mysql') {
+            $empties = array();
+            $prefix = $DB->get_prefix();
+            $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
+            foreach ($rs as $info) {
+                $table = strtolower($info->name);
+                if (strpos($table, $prefix) !== 0) {
+                    // incorrect table match caused by _
+                    continue;
+                }
+                if (!is_null($info->auto_increment)) {
+                    $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
+                    if ($info->auto_increment == 1) {
+                        $empties[$table] = $table;
+                    }
+                }
+            }
+            $rs->close();
+            return $empties;
+
+        } else {
+            return array();
+        }
+    }
+
+    /**
      * Reset all database sequences to initial values.
      *
      * @static
+     * @param array $empties tables that are known to be unmodified and empty
      * @return void
      */
-    public static function reset_all_database_sequences() {
+    public static function reset_all_database_sequences(array $empties = null) {
         global $DB;
 
         if (!$data = self::get_tabledata()) {
@@ -221,7 +258,7 @@ class phpunit_util {
                     continue;
                 }
                 if (!is_null($info->auto_increment)) {
-                    $table = preg_replace('/^'.preg_quote($prefix).'/', '', $table);
+                    $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
                     $sequences[$table] = $info->auto_increment;
                 }
             }
@@ -247,7 +284,13 @@ class phpunit_util {
 
         } else {
             // note: does mssql and oracle support any kind of faster reset?
+            if (is_null($empties)) {
+                $empties = self::guess_unmodified_empty_tables();
+            }
             foreach ($data as $table=>$records) {
+                if (isset($empties[$table])) {
+                    continue;
+                }
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     $DB->get_manager()->reset_sequence($table);
                 }
@@ -281,9 +324,15 @@ class phpunit_util {
             return false;
         }
 
+        $empties = self::guess_unmodified_empty_tables();
+
         foreach ($data as $table=>$records) {
             if (empty($records)) {
-                $DB->delete_records($table, array());
+                if (isset($empties[$table])) {
+                    // table was not modified and is empty
+                } else {
+                    $DB->delete_records($table, array());
+                }
                 continue;
             }
 
@@ -319,7 +368,7 @@ class phpunit_util {
         }
 
         // reset all next record ids - aka sequences
-        self::reset_all_database_sequences();
+        self::reset_all_database_sequences($empties);
 
         // remove extra tables
         foreach ($tables as $table) {
