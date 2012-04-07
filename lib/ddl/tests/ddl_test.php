@@ -32,6 +32,7 @@ class ddl_testcase extends database_driver_testcase {
 
     protected function setUp() {
         parent::setUp();
+        $dbman = $this->tdb->get_manager(); // loads DDL libs
 
         $table = new xmldb_table('test_table0');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);

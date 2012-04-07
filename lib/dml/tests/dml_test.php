@@ -28,6 +28,11 @@ defined('MOODLE_INTERNAL') || die();
 
 class dml_testcase extends database_driver_testcase {
 
+    protected function setUp() {
+        parent::setUp();
+        $dbman = $this->tdb->get_manager(); // loads DDL libs
+    }
+
     /**
      * Get a xmldb_table object for testing, deleting any existing table
      * of the same name, for example if one was left over from a previous test
