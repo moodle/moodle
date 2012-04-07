@@ -564,7 +564,7 @@ class phpunit_util {
         global $DB, $CFG;
 
         if (!self::is_test_site()) {
-            cli_error('Can not drop non-test sites!!', 131);
+            phpunit_bootstrap_error(131, 'Can not drop non-test site!!');
         }
 
         // purge dataroot
@@ -609,11 +609,16 @@ class phpunit_util {
         global $DB, $CFG;
 
         if (!self::is_test_site()) {
-            cli_error('Can not install non-test sites!!', 131);
+            phpunit_bootstrap_error(131, 'Can not install on non-test site!!');
         }
 
         if ($DB->get_tables()) {
-            cli_error('Database tables already installed, drop the site first.', 133);
+            list($errorcode, $message) = phpunit_util::testing_ready_problem();
+            if ($errorcode) {
+                phpunit_bootstrap_error(133, 'Database tables already installed, drop the site first.');
+            } else {
+                phpunit_bootstrap_error(0, 'Test database is already initialised');
+            }
         }
 
         $options = array();

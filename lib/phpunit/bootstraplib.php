@@ -33,6 +33,9 @@
  */
 function phpunit_bootstrap_error($errorcode, $text = '') {
     switch ($errorcode) {
+        case 0:
+            // this is not an error, just print information and exit
+            break;
         case 1:
             $text = 'Error: '.$text;
             break;
