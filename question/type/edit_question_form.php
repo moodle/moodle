@@ -26,6 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->libdir.'/formslib.php');
+
 
 abstract class question_wizard_form extends moodleform {
     /**

@@ -26,9 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
-
-
 /**
  * Represents a numerical question.
  *
