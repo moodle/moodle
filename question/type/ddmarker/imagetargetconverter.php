@@ -72,7 +72,7 @@ admin_externalpage_setup('qtypeddmarkerfromimagetarget');
 // Header.
 $renderer = $PAGE->get_renderer('qtype_ddmarker', 'list');
 echo $renderer->header();
-echo $renderer->heading_with_help(get_string('imagetargetconverter', 'qtype_ddmarker'), '', 'qtype_ddmarker');
+echo $renderer->heading(get_string('imagetargetconverter', 'qtype_ddmarker'), 2);
 
 
 $params = array();
