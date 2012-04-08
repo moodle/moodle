@@ -146,6 +146,11 @@ class core_phpunit_basic_testcase extends basic_testcase {
         $USER->id = 10;
         $COURSE->id = 10;
     }
+
+    public function test_transaction_problem() {
+        global $DB;
+        $DB->start_delegated_transaction();
+    }
 */
 }
 

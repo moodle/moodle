@@ -981,7 +981,16 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
      * @return void
      */
     public function runBare() {
+        global $DB;
+
         parent::runBare();
+
+        if ($DB->is_transaction_started()) {
+            $DB->force_transaction_rollback();
+            phpunit_util::reset_all_data();
+            throw new coding_exception('basic_testcase '.$this->getName().' is not supposed to use database transactions!');
+        }
+
         phpunit_util::reset_all_data(true);
     }
 }
@@ -1058,9 +1067,26 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
         } else {
             // reset but log what changed
             if ($this->testdbtransaction) {
-                $this->testdbtransaction->allow_commit();
+                try {
+                    $this->testdbtransaction->allow_commit();
+                } catch (dml_transaction_exception $e) {
+                    $DB->force_transaction_rollback();
+                    phpunit_util::reset_all_data();
+                    throw new coding_exception('Invalid transaction state detected in test '.$this->getName());
+                }
             }
             phpunit_util::reset_all_data(true);
+        }
+
+        // make sure test did not forget to close transaction
+        if ($DB->is_transaction_started()) {
+            $DB->force_transaction_rollback();
+            phpunit_util::reset_all_data();
+            if ($this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_PASSED
+                    or $this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED
+                    or $this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE) {
+                throw new coding_exception('Test '.$this->getName().' did not close database transaction');
+            }
         }
     }
 
