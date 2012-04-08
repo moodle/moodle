@@ -1202,7 +1202,18 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
 /**
  * Special test case for testing of DML drivers and DDL layer.
  *
- * Note: Use only 'test_table*' when creating new tables.
+ * Note: Use only 'test_table*' names when creating new tables.
+ *
+ * For DML/DDL developers: you can add following settings to config.php if you want to test different driver than the main one,
+ *                         the reason is to allow testing of incomplete drivers that do not allow full PHPUnit environment
+ *                         initialisation (the database can be empty).
+ * $CFG->phpunit_extra_drivers = array(
+ *      1=>array('dbtype'=>'mysqli', 'dbhost'=>'localhost', 'dbname'=>'moodle', 'dbuser'=>'root', 'dbpass'=>'', 'prefix'=>'phpu2_'),
+ *      2=>array('dbtype'=>'pgsql', 'dbhost'=>'localhost', 'dbname'=>'moodle', 'dbuser'=>'postgres', 'dbpass'=>'', 'prefix'=>'phpu2_'),
+ *      3=>array('dbtype'=>'sqlsrv', 'dbhost'=>'127.0.0.1', 'dbname'=>'moodle', 'dbuser'=>'sa', 'dbpass'=>'', 'prefix'=>'phpu2_'),
+ *      4=>array('dbtype'=>'oci', 'dbhost'=>'127.0.0.1', 'dbname'=>'XE', 'dbuser'=>'sa', 'dbpass'=>'', 'prefix'=>'t_'),
+ * );
+ * define('PHPUNIT_TEST_DRIVER')=1; //number is index in the previous array
  *
  * @package    core
  * @category   phpunit
