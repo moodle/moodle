@@ -15,7 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Admin settings for the Opaque question type.
  *
  * @package    qtype
  * @subpackage ddmarker
