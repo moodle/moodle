@@ -39,10 +39,14 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
         case 1:
             $text = 'Error: '.$text;
             break;
+        case 129:
+            $text = 'Moodle requires PHPUnit 3.6.x, '.$text.' is not compatible';
+            break;
         case 130:
-            $text = 'Can not load PHPUnit PEAR library, is it installed?';
+            $text = 'Moodle can not find PHPUnit PEAR library';
+            break;
         case 131:
-            $text = 'Configuration problem: '.$text;
+            $text = 'Moodle configuration problem: '.$text;
             break;
         case 132:
             $text = "Moodle PHPUnit environment is not initialised, please use:\n php admin/tool/phpunit/cli/util.php --install";
@@ -51,7 +55,7 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
             $text = "Moodle PHPUnit environment was initialised for different version, please use:\n php admin/tool/phpunit/cli/util.php --drop\n php admin/tool/phpunit/cli/util.php --install";
             break;
         case 134:
-            $text = 'Can not create main configuration file, please verify dirroot permissions.';
+            $text = 'Moodle can not create PHPUnit configuration file, please verify dirroot permissions';
             break;
         default:
             $text = empty($text) ? '' : ': '.$text;

@@ -59,6 +59,14 @@ if (defined('CLI_SCRIPT')) {
 }
 define('CLI_SCRIPT', true);
 
+$phpunitversion = PHPUnit_Runner_Version::id();
+if ($phpunitversion === '@package_version@') {
+    // library checked out from git, let's hope dev knows that 3.6.0 is required
+} else if (version_compare($phpunitversion, '3.6.0', 'lt')) {
+    phpunit_bootstrap_error(129, $phpunitversion);
+}
+unset($phpunitversion);
+
 define('NO_OUTPUT_BUFFERING', true);
 
 // only load CFG from config.php, stop ASAP in lib/setup.php
