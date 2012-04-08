@@ -27,11 +27,12 @@
 
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->dirroot.'/question/type/ddmarker/questionlists.php');
+require_once(dirname(__FILE__).'/questionlists.php');
+require_once(dirname(__FILE__).'/lib.php');
 
 class qtype_ddmarker_question_converter_list extends qtype_ddmarker_question_list {
-    protected function new_list_item($record) {
-        return new qtype_ddmarker_question_converter_list_item($record, $this, $this->categorylist);
+    protected function new_list_item($stringidentifier, $link, $record) {
+        return new qtype_ddmarker_question_converter_list_item($stringidentifier, $link, $record, $this, $this->categorylist);
     }
     public function prepare_for_processing($top) {
         global $DB;
@@ -51,9 +52,9 @@ class qtype_ddmarker_question_converter_list extends qtype_ddmarker_question_lis
 class qtype_ddmarker_question_converter_list_item extends qtype_ddmarker_question_list_item {
     public $imagetargetrecord = null;
     public $answers = array();
-    public function process($progresstrace = null, $depth = 0) {
+    public function process($renderer) {
         qtype_ddmarker_convert_image_target_question($this->record, $this->imagetargetrecord->qimage, $this->answers);
-        parent::process($progresstrace, $depth);//outputs progress message
+        parent::process($renderer);//outputs progress message
     }
 }
 
@@ -69,8 +70,9 @@ require_capability('moodle/question:config', $context);
 admin_externalpage_setup('qtypeddmarkerfromimagetarget');
 
 // Header.
-echo $OUTPUT->header();
-echo $OUTPUT->heading_with_help(get_string('imagetargetconverter', 'qtype_ddmarker'), '', 'qtype_ddmarker');
+$renderer = $PAGE->get_renderer('qtype_ddmarker', 'list');
+echo $renderer->header();
+echo $renderer->heading_with_help(get_string('imagetargetconverter', 'qtype_ddmarker'), '', 'qtype_ddmarker');
 
 
 $params = array();
@@ -105,14 +107,24 @@ if (!count($questions)) {
         $contextids[] = $question->contextid;
     }
 
-    $contextlist = new qtype_ddmarker_context_list(array_unique($contextids));
-    $categorylist = new qtype_ddmarker_category_list($contextids, $contextlist);
-    $questionlist = new qtype_ddmarker_question_converter_list($questions, $categorylist);
+    $questionsselected = (bool) ($categoryid || $qcontextid || $questionid);
+    if (!$confirm) {
+        if (!$questionsselected) {
+            $pagestate = 'listall';
+        } else {
+            $pagestate = 'confirm';
+        }
+    } else if (confirm_sesskey()) {
+        $pagestate = 'processing';
+    }
+    $link = ($pagestate == 'listall');
+    $contextlist = new qtype_ddmarker_context_list($pagestate, $link, array_unique($contextids));
+    $categorylist = new qtype_ddmarker_category_list($pagestate, $link, $contextids, $contextlist);
+    $questionlist = new qtype_ddmarker_question_converter_list($pagestate, $link, $questions, $categorylist);
 
     foreach ($questions as $question) {
         $questionlist->leaf_node($question->id, 1);
     }
-    $questionsselected = (bool) ($categoryid || $qcontextid || $questionid);
     if ($questionid) {
         $top = $questionlist->get_instance($questionid);
     } else if ($categoryid) {
@@ -122,22 +134,25 @@ if (!count($questions)) {
     } else {
         $top = $contextlist->root_node();
     }
-    if (!$confirm) {
-        if ($questionsselected) {
-            echo $contextlist->render('listitemaction', false, $top);
+    switch ($pagestate) {
+        case 'listall' :
+            echo $renderer->render_qtype_ddmarker_list($top);
+            break;
+        case 'confirm' :
+            echo $renderer->render_qtype_ddmarker_list($top);
             $cofirmedurl = new moodle_url($PAGE->url, compact('categoryid', 'contextid', 'questionid') + array('confirm'=>1));
             $cancelurl = new moodle_url($PAGE->url);
-            echo $OUTPUT->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
-        } else {
-            echo $contextlist->render('listitemlist', true, $top);
-        }
-    } else if (confirm_sesskey()) {
-        require_once(dirname(__FILE__).'/lib.php');
-        $questionlist->prepare_for_processing($top);
-        echo '<ul>';
-        $top->process();
-        echo '</ul>';
+            echo $renderer->confirm(get_string('confirmimagetargetconversion', 'qtype_ddmarker'), $cofirmedurl, $cancelurl);
+            break;
+        case 'processing' :
+            $questionlist->prepare_for_processing($top);
+            echo '<ul>';
+            $top->process($renderer);
+            echo '</ul>';
+            break;
+        default :
+            break;
     }
 }
 // Footer.
-echo $OUTPUT->footer();
+echo $renderer->footer();
