@@ -420,6 +420,11 @@ class phpunit_util {
     public static function reset_all_data($logchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
 
+        if ($DB->is_transaction_started()) {
+            // we can not reset inside transaction
+            $DB->force_transaction_rollback();
+        }
+
         $resetdb = self::reset_database();
         $warnings = array();
 
@@ -992,7 +997,6 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
         }
 
         if ($DB->is_transaction_started()) {
-            $DB->force_transaction_rollback();
             phpunit_util::reset_all_data();
             throw new coding_exception('basic_testcase '.$this->getName().' is not supposed to use database transactions!');
         }
@@ -1054,9 +1058,6 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
             parent::runBare();
         } catch (Exception $e) {
             // cleanup after failed expectation
-            if ($DB->is_transaction_started()) {
-                $DB->force_transaction_rollback();
-            }
             phpunit_util::reset_all_data();
             throw $e;
         }
@@ -1085,7 +1086,6 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
                 try {
                     $this->testdbtransaction->allow_commit();
                 } catch (dml_transaction_exception $e) {
-                    $DB->force_transaction_rollback();
                     phpunit_util::reset_all_data();
                     throw new coding_exception('Invalid transaction state detected in test '.$this->getName());
                 }
@@ -1095,7 +1095,6 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
 
         // make sure test did not forget to close transaction
         if ($DB->is_transaction_started()) {
-            $DB->force_transaction_rollback();
             phpunit_util::reset_all_data();
             if ($this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_PASSED
                     or $this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED
