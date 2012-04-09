@@ -427,9 +427,11 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         get_string('areyousureremoveselected', 'quiz') . '\');" value="' .
         get_string('removeselected', 'quiz') . '"  ' . $disabled . ' /></div>';
 
-    $a = '<input name="moveselectedonpagetop" type="text" size="2" ' .
+    $a = '<label class="accesshide" for="moveselectedonpagetop">' . get_string('moveup') . '</label>';
+    $a .= '<input name="moveselectedonpagetop" id="moveselectedonpagetop" type="text" size="2" ' .
         $pagingdisabled . ' />';
-    $b = '<input name="moveselectedonpagebottom" type="text" size="2" ' .
+    $b = '<label class="accesshide" for="moveselectedonpagebottom">' . get_string('movedown') . '</label>';
+    $b .='<input name="moveselectedonpagebottom" id="moveselectedonpagebottom" type="text" size="2" ' .
         $pagingdisabled . ' />';
 
     $reordercontrols2top = '<div class="moveselectedonpage">' .
@@ -626,6 +628,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
     <?php echo html_writer::input_hidden_params($pageurl); ?>
     <input type="hidden" name="savechanges" value="save" />
                     <?php
+                    echo '<label class="accesshide" for="inputq' . $question->id .'">' . get_string('question', 'quiz') . '</label>';
                     echo '<input type="text" name="g' . $question->id .
                             '" id="inputq' . $question->id .
                             '" size="' . ($quiz->decimalpoints + 2) .
@@ -652,7 +655,9 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                         ?>
 <div class="qorder">
                         <?php
+                        echo '<label class="accesshide" for="o' . $question->id . '">' . get_string('reorderquestions', 'quiz') . '</label>';
                         echo '<input type="text" name="o' . $question->id .
+                                '" id="o' . $question->id . '"' .
                                 '" size="2" value="' . (10*$count + 10) .
                                 '" tabindex="' . ($lastindex + $qno) . '" />';
                         ?>

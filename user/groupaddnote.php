@@ -119,6 +119,7 @@ echo '<br /><textarea name="content" rows="5" cols="50">' . strip_tags(@$content
 echo '<p>';
 echo get_string('publishstate', 'notes');
 echo $OUTPUT->help_icon('publishstate', 'notes');
+echo html_writer::label(get_string('state'), 'menustate', false, array('class' => 'accesshide'));
 echo html_writer::select($state_names, 'state', empty($state) ? NOTES_STATE_PUBLIC : $state, false);
 echo '</p>';
 

@@ -346,7 +346,8 @@ class mod_wiki_renderer extends plugin_renderer_base {
                     $baseurl->params($params);
                     $name = 'uid';
                     $selected = $subwiki->userid;
-                    echo $this->output->single_select($baseurl, $name, $options, $selected);
+                    $label  = get_accesshide(get_string('user'));
+                    echo $this->output->single_select($baseurl, $name, $options, $selected, $label);
                     echo $this->output->container_end();
                 }
                 return;
@@ -403,7 +404,8 @@ class mod_wiki_renderer extends plugin_renderer_base {
                 $baseurl->params($params);
                 $name = 'groupanduser';
                 $selected = $subwiki->groupid . '-' . $subwiki->userid;
-                echo $this->output->single_select($baseurl, $name, $options, $selected);
+                $label  = get_accesshide(get_string('group'));
+                echo $this->output->single_select($baseurl, $name, $options, $selected, $label);
                 echo $this->output->container_end();
 
                 return;
@@ -450,7 +452,8 @@ class mod_wiki_renderer extends plugin_renderer_base {
                 $baseurl->params($params);
                 $name = 'groupanduser';
                 $selected = $subwiki->groupid . '-' . $subwiki->userid;
-                echo $this->output->single_select($baseurl, $name, $options, $selected);
+                $label  = get_accesshide(get_string('user'));
+                echo $this->output->single_select($baseurl, $name, $options, $selected, $label);
                 echo $this->output->container_end();
 
                 return;

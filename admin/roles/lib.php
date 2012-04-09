@@ -721,7 +721,10 @@ class define_role_table_advanced extends capability_table_with_risks {
         foreach(get_role_archetypes() as $type) {
             $options[$type] = get_string('archetype'.$type, 'role');
         }
-        return html_writer::select($options, 'archetype', $this->role->archetype, false);
+
+        $return = html_writer::label(get_string('archetype'.$type, 'role'), 'menuarchetype', false, array('class' => 'accesshide'));
+        $return .= html_writer::select($options, 'archetype', $this->role->archetype, false);
+        return $return;
     }
 
     protected function get_assignable_levels_control() {
