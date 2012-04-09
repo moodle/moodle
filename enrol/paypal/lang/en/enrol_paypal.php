@@ -44,6 +44,7 @@ $string['enrolstartdate_help'] = 'If enabled, users can be enrolled from this da
 $string['mailadmins'] = 'Notify admin';
 $string['mailstudents'] = 'Notify students';
 $string['mailteachers'] = 'Notify teachers';
+$string['messageprovider:paypal_enrolment'] = 'PayPal enrolment messages';
 $string['nocost'] = 'There is no cost associated with enrolling in this course!';
 $string['paypal:config'] = 'Configure PayPal enrol instances';
 $string['paypal:manage'] = 'Manage enrolled users';
