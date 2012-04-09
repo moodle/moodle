@@ -983,7 +983,13 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
     public function runBare() {
         global $DB;
 
-        parent::runBare();
+        try {
+            parent::runBare();
+        } catch (Exception $e) {
+            // cleanup after failed expectation
+            phpunit_util::reset_all_data();
+            throw $e;
+        }
 
         if ($DB->is_transaction_started()) {
             $DB->force_transaction_rollback();
@@ -1044,7 +1050,16 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
             $this->testdbtransaction = $DB->start_delegated_transaction();
         }
 
-        parent::runBare();
+        try {
+            parent::runBare();
+        } catch (Exception $e) {
+            // cleanup after failed expectation
+            if ($DB->is_transaction_started()) {
+                $DB->force_transaction_rollback();
+            }
+            phpunit_util::reset_all_data();
+            throw $e;
+        }
 
         if (!$this->testdbtransaction or $this->testdbtransaction->is_disposed()) {
             $this->testdbtransaction = null;
