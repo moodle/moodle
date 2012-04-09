@@ -8734,47 +8734,6 @@ function moodle_major_version($fromdisk = false) {
     }
 }
 
-/**
- * Sets maximum expected time needed for upgrade task.
- * Please always make sure that upgrade will not run longer!
- *
- * The script may be automatically aborted if upgrade times out.
- *
- * @category upgrade
- * @param int $max_execution_time in seconds (can not be less than 60 s)
- * @todo MDL-32293 - Move this function to lib/upgradelib.php
- */
-function upgrade_set_timeout($max_execution_time=300) {
-    global $CFG;
-
-    if (!isset($CFG->upgraderunning) or $CFG->upgraderunning < time()) {
-        $upgraderunning = get_config(null, 'upgraderunning');
-    } else {
-        $upgraderunning = $CFG->upgraderunning;
-    }
-
-    if (!$upgraderunning) {
-        // upgrade not running or aborted
-        print_error('upgradetimedout', 'admin', "$CFG->wwwroot/$CFG->admin/");
-        die;
-    }
-
-    if ($max_execution_time < 60) {
-        // protection against 0 here
-        $max_execution_time = 60;
-    }
-
-    $expected_end = time() + $max_execution_time;
-
-    if ($expected_end < $upgraderunning + 10 and $expected_end > $upgraderunning - 10) {
-        // no need to store new end, it is nearly the same ;-)
-        return;
-    }
-
-    set_time_limit($max_execution_time);
-    set_config('upgraderunning', $expected_end); // keep upgrade locked until this time
-}
-
 /// MISCELLANEOUS ////////////////////////////////////////////////////////////////////
 
 /**
