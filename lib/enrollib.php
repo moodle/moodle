@@ -204,11 +204,8 @@ function enrol_check_plugins($user) {
         return;
     }
 
-    if (is_siteadmin()) {
-        // no sync for admin user, please use admin accounts only for admin tasks like the unix root user!
-        // if plugin fails on sync admins need to be able to log in and fix the settings
-        return;
-    }
+    // originally there was a broken admin test, but accidentally it was non-functional in 2.2,
+    // which proved it was actually not necessary.
 
     static $inprogress = array();  // To prevent this function being called more than once in an invocation
 
