@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_page_generator_testcase extends advanced_testcase {
-    public function test_geenrator() {
+    public function test_generator() {
         global $DB, $SITE;
 
         $this->resetAfterTest(true);

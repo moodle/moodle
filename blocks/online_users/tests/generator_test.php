@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_online_users_generator_testcase extends advanced_testcase {
-    public function test_geenrator() {
+    public function test_generator() {
         global $DB;
 
         $this->resetAfterTest(true);

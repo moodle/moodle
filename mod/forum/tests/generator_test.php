@@ -17,7 +17,7 @@
 /**
  * PHPUnit data generator tests
  *
- * @package    mod_assignment
+ * @package    mod_forum
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,35 +29,35 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * PHPUnit data generator testcase
  *
- * @package    mod_assignment
+ * @package    mod_forum
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assignment_generator_testcase extends advanced_testcase {
-    public function test_geenrator() {
+class mod_forum_generator_testcase extends advanced_testcase {
+    public function test_generator() {
         global $DB, $SITE;
 
         $this->resetAfterTest(true);
 
-        $this->assertEquals(0, $DB->count_records('assignment'));
+        $this->assertEquals(0, $DB->count_records('forum'));
 
-        /** @var mod_assignment_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
-        $this->assertInstanceOf('mod_assignment_generator', $generator);
-        $this->assertEquals('assignment', $generator->get_modulename());
+        /** @var mod_forum_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+        $this->assertInstanceOf('mod_forum_generator', $generator);
+        $this->assertEquals('forum', $generator->get_modulename());
 
         $generator->create_instance(array('course'=>$SITE->id));
         $generator->create_instance(array('course'=>$SITE->id));
-        $assignment = $generator->create_instance(array('course'=>$SITE->id));
-        $this->assertEquals(3, $DB->count_records('assignment'));
+        $forum = $generator->create_instance(array('course'=>$SITE->id));
+        $this->assertEquals(3, $DB->count_records('forum'));
 
-        $cm = get_coursemodule_from_instance('assignment', $assignment->id);
-        $this->assertEquals($assignment->id, $cm->instance);
-        $this->assertEquals('assignment', $cm->modname);
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+        $this->assertEquals($forum->id, $cm->instance);
+        $this->assertEquals('forum', $cm->modname);
         $this->assertEquals($SITE->id, $cm->course);
 
         $context = context_module::instance($cm->id);
-        $this->assertEquals($assignment->cmid, $context->instanceid);
+        $this->assertEquals($forum->cmid, $context->instanceid);
     }
 }
