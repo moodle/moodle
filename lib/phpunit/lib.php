@@ -850,7 +850,7 @@ class phpunit_util {
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class UnitTestCase extends PHPUnit_Framework_TestCase {
+abstract class UnitTestCase extends PHPUnit_Framework_TestCase {
 
     /**
      * @deprecated since 2.3
@@ -978,7 +978,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class basic_testcase extends PHPUnit_Framework_TestCase {
+abstract class basic_testcase extends PHPUnit_Framework_TestCase {
 
     /**
      * Constructs a test case with the given name.
@@ -1030,7 +1030,7 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class advanced_testcase extends PHPUnit_Framework_TestCase {
+abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     /** @var bool automatically reset everything? null means log changes */
     private $resetAfterTest;
 
@@ -1255,7 +1255,7 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class database_driver_testcase extends PHPUnit_Framework_TestCase {
+abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
     /** @var moodle_database connection to extra database */
     private static $extradb = null;
 
