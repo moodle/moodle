@@ -414,21 +414,14 @@ abstract class testing_db_record_builder {
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class data_loading_method_test_base extends advanced_testcase {
+abstract class data_loading_method_test_base extends advanced_testcase {
     public function build_db_records(array $table) {
         return testing_db_record_builder::build_db_records($table);
-    }
-    public function test_must_have_methods() {
-        // each test case must have at least one method..
     }
 }
 
 
-class question_testcase extends advanced_testcase {
-
-    public function test_must_have_methods() {
-        // each test case must have at least one method..
-    }
+abstract class question_testcase extends advanced_testcase {
 
     public function assert($expectation, $compare, $message = '') {
         $message = (isset($expectation->message) and $expectation->message !== '') ? $expectation->message : $message;
@@ -618,7 +611,7 @@ class question_no_pattern_expectation {
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_walkthrough_test_base extends question_testcase {
+abstract class qbehaviour_walkthrough_test_base extends question_testcase {
     /** @var question_display_options */
     protected $displayoptions;
     /** @var question_usage_by_activity */

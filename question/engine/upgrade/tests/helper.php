@@ -93,7 +93,7 @@ class test_question_engine_upgrade_question_loader extends question_engine_upgra
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_attempt_upgrader_test_base extends advanced_testcase {
+abstract class question_attempt_upgrader_test_base extends advanced_testcase {
     protected $updater;
     protected $loader;
 
@@ -107,10 +107,6 @@ class question_attempt_upgrader_test_base extends advanced_testcase {
     protected function tearDown() {
         $this->updater = null;
         parent::tearDown();
-    }
-
-    public function test_must_have_methods() {
-        // each test case must have at least one method..
     }
 
     /**
