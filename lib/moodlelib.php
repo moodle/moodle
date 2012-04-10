@@ -8173,7 +8173,8 @@ function notify_login_failures() {
 
 /// Now, select all the login error logged records belonging to the ips and infos
 /// since lastnotifyfailure, that we have stored in the cache_flags table
-    $sql = "SELECT l.*, u.firstname, u.lastname
+    $sql = "SELECT * FROM (
+        SELECT l.*, u.firstname, u.lastname
               FROM {log} l
               JOIN {cache_flags} cf ON l.ip = cf.name
          LEFT JOIN {user} u         ON l.userid = u.id
@@ -8187,8 +8188,8 @@ function notify_login_failures() {
          LEFT JOIN {user} u         ON l.userid = u.id
              WHERE l.module = 'login' AND l.action = 'error'
                    AND l.time > ?
-                   AND cf.flagtype = 'login_failure_by_info'
-          ORDER BY time DESC";
+                   AND cf.flagtype = 'login_failure_by_info') t
+        ORDER BY t.time DESC";
     $params = array($CFG->lastnotifyfailure, $CFG->lastnotifyfailure);
 
 /// Init some variables
