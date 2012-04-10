@@ -197,6 +197,7 @@ if (($action == 'edit') || ($action == 'new')) {
                 $currentaction = 'hide';
             }
             $select = new single_select(portfolio_action_url($pluginid, 'pf'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . $pluginid);
+            $select->set_label(get_accesshide(get_string('portfolio', 'portfolio')));
             $table->data[] = array($pluginname, $OUTPUT->render($select), $settings);
         }
         if (!in_array($plugin, $usedplugins)) {

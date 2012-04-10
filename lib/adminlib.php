@@ -1787,7 +1787,7 @@ class admin_setting_configtext extends admin_setting {
 
         return format_admin_setting($this, $this->visiblename,
         '<div class="form-text defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" /></div>',
-        $this->description, true, '', $default, $query);
+               $this->description, true, '', $default, $query);
     }
 }
 
@@ -1992,7 +1992,7 @@ class admin_setting_configfile extends admin_setting_configtext {
 
         return format_admin_setting($this, $this->visiblename,
         '<div class="form-file defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
-        $this->description, true, '', $default, $query);
+               $this->description, true, '', $default, $query);
     }
 }
 
@@ -2026,7 +2026,7 @@ class admin_setting_configexecutable extends admin_setting_configfile {
 
         return format_admin_setting($this, $this->visiblename,
         '<div class="form-file defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
-        $this->description, true, '', $default, $query);
+               $this->description, true, '', $default, $query);
     }
 }
 
@@ -2060,7 +2060,7 @@ class admin_setting_configdirectory extends admin_setting_configfile {
 
         return format_admin_setting($this, $this->visiblename,
         '<div class="form-file defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
-        $this->description, true, '', $default, $query);
+               $this->description, true, '', $default, $query);
     }
 }
 
@@ -2748,11 +2748,14 @@ class admin_setting_configtime extends admin_setting {
         }
 
         $return = '<div class="form-time defaultsnext">'.
+            '<label class="accesshide" for="' . $this->get_id() . '">' . get_string('hour') . '</label>' .
             '<select id="'.$this->get_id().'h" name="'.$this->get_full_name().'[h]">';
         for ($i = 0; $i < 24; $i++) {
             $return .= '<option value="'.$i.'"'.($i == $data['h'] ? ' selected="selected"' : '').'>'.$i.'</option>';
         }
-        $return .= '</select>:<select id="'.$this->get_id().'m" name="'.$this->get_full_name().'[m]">';
+        $return .= '</select>:';
+        $return .= '<label class="accesshide" for="' . $this->get_id() . '">' . get_string('minutes') . '</label>';
+        $return .= '<select id="'.$this->get_id().'m" name="'.$this->get_full_name().'[m]">';
         for ($i = 0; $i < 60; $i += 5) {
             $return .= '<option value="'.$i.'"'.($i == $data['m'] ? ' selected="selected"' : '').'>'.$i.'</option>';
         }
@@ -3165,6 +3168,7 @@ class admin_setting_courselist_frontpage extends admin_setting {
             if (!array_key_exists($i, $currentsetting)) {
                 $currentsetting[$i] = 'none'; //none
             }
+            $return .= '<label class="accesshide" for="' . $this->get_id().$i . '">' . get_string($this->name, 'admin') . '</label>';
             $return .='<select class="form-select" id="'.$this->get_id().$i.'" name="'.$this->get_full_name().'[]">';
             foreach ($this->choices as $key => $value) {
                 $return .= '<option value="'.$key.'"'.("$key" == $currentsetting[$i] ? ' selected="selected"' : '').'>'.$value.'</option>';
@@ -3436,8 +3440,10 @@ class admin_setting_emoticons extends admin_setting {
             }
 
             $out .= html_writer::tag('td',
+                html_writer::label($value, $this->get_full_name() . $field, false, array('class' => 'accesshide')) .
                 html_writer::empty_tag('input',
                     array(
+                        'id'    => $this->get_full_name() . $field,
                         'type'  => 'text',
                         'class' => 'form-text',
                         'name'  => $this->get_full_name().'['.$field.']',
@@ -6518,7 +6524,7 @@ class admin_setting_managerepository extends admin_setting {
                 }
 
                 $select = new single_select($this->repository_action_url($typename, 'repos'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . basename($typename));
-
+                $select->set_label(get_accesshide(get_string('select') . ' '. get_string('action')));
                 // Display up/down link
                 $updown = '';
                 $spacer = $OUTPUT->spacer(array('height'=>15, 'width'=>15)); // should be done with CSS instead
@@ -6555,6 +6561,7 @@ class admin_setting_managerepository extends admin_setting {
                 // Check that it has not already been listed
                 if (!in_array($plugin, $alreadyplugins)) {
                     $select = new single_select($this->repository_action_url($plugin, 'repos'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . basename($plugin));
+                    $select->set_label(get_accesshide(get_string('select') . ' '. get_string('action')));
                     $table->data[] = array(get_string('pluginname', 'repository_'.$plugin), $OUTPUT->render($select), '', '');
                 }
             }
@@ -7666,6 +7673,7 @@ class admin_setting_configcolourpicker extends admin_setting {
         $PAGE->requires->js_init_call('M.util.init_colour_picker', array($this->get_id(), $this->previewconfig));
         $content  = html_writer::start_tag('div', array('class'=>'form-colourpicker defaultsnext'));
         $content .= html_writer::tag('div', $OUTPUT->pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', array('class'=>'loadingicon')), array('class'=>'admin_colourpicker clearfix'));
+        $content .= html_writer::label($this->get_full_name(), $this->get_id(), false, array('class' => 'accesshide'));
         $content .= html_writer::empty_tag('input', array('type'=>'text','id'=>$this->get_id(), 'name'=>$this->get_full_name(), 'value'=>$this->get_setting(), 'size'=>'12'));
         if (!empty($this->previewconfig)) {
             $content .= html_writer::empty_tag('input', array('type'=>'button','id'=>$this->get_id().'_preview', 'value'=>get_string('preview'), 'class'=>'admin_colourpicker_preview'));
@@ -7765,8 +7773,10 @@ class admin_setting_devicedetectregex extends admin_setting {
             }
 
             $out .= html_writer::tag('td',
+                html_writer::label($this->get_full_name(), $this->get_full_name() . 'expression' . $i, false, array('class' => 'accesshide')) .
                 html_writer::empty_tag('input',
                     array(
+                        'id'    => $this->get_full_name() . 'expression' . $i,
                         'type'  => 'text',
                         'class' => 'form-text',
                         'name'  => $this->get_full_name().'[expression'.$i.']',
@@ -7784,8 +7794,10 @@ class admin_setting_devicedetectregex extends admin_setting {
             }
 
             $out .= html_writer::tag('td',
+                    html_writer::label($this->get_full_name(), $this->get_full_name() . 'value' . $i, false, array('class' => 'accesshide')) .
                 html_writer::empty_tag('input',
                     array(
+                        'id'    => $this->get_full_name() . 'value' . $i,
                         'type'  => 'text',
                         'class' => 'form-text',
                         'name'  => $this->get_full_name().'[value'.$i.']',

@@ -275,12 +275,12 @@ function slasharguments($texexp, $md5) {
 <html>
 <head><title>Algebra Filter Debugger</title></head>
 <body>
-    <p>Please enter an algebraic expression <b>without</b> any surrounding @@ into
-       the text box below. (Click <a href="#help">here for help.</a>)
+    <p><label for="algebra">Please enter an algebraic expression <b>without</b> any surrounding @@ into
+       the text box below. (Click <a href="#help">here for help.</a>)</label>
           <form action="algebradebug.php" method="get"
            target="inlineframe">
             <center>
-             <input type="text" name="algebra" size="50"
+             <input type="text" id="algebra" name="algebra" size="50"
                     value="sin(z)/(x^2+y^2)" />
             </center>
            <ol>

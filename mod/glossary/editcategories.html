@@ -7,15 +7,15 @@
 <div>
 <table  class="generalbox" cellpadding="5">
 <tr valign="top">
-    <td align="right"><?php echo get_string("name") ?>:</td>
+    <td align="right"><label for="name"><?php echo get_string("name") ?>:</label></td>
     <td>
-        <input type="text" name="name" size="30" value="<?php p($name) ?>" />
+        <input type="text" name="name" id="name" size="30" value="<?php p($name) ?>" />
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><?php echo get_string("linkcategory","glossary") ?>:</td>
+    <td align="right"><label for="usedynalink"><?php echo get_string("linkcategory","glossary") ?>:</label></td>
     <td>
-      <select size="1" name="usedynalink">
+      <select size="1" id="usedynalink" name="usedynalink">
       <option value="1" <?php
        if ( $usedynalink ) {
           echo "selected=\"selected\"";

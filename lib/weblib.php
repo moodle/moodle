@@ -2241,6 +2241,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
     for ($i=100; $i>=1; $i--) {
         $grades[$i] = $i;
     }
+    $output .= html_writer::label(get_string('gradeitems', 'grades'), 'menu' . $name, false, array('class' => 'accesshide'));
     $output .= html_writer::select($grades, $name, $current, false);
 
     $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$OUTPUT->pix_url('help') . '" /></span>';

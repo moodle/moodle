@@ -38,6 +38,7 @@ $string['spamfromcomments'] = 'From comments:';
 $string['spamfrommessages'] = 'From messages:';
 $string['spamfromforumpost'] = 'From forum post:';
 $string['spaminvalidresult'] = 'Unknown but invalid result';
+$string['spamkeyword'] = 'Keyword';
 $string['spamoperation'] = 'Operation';
 $string['spamresult'] = 'Results of searching user profiles containing:';
 $string['spamsearch'] = 'Search for these keywords';
