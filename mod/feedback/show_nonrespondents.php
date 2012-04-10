@@ -80,15 +80,13 @@ if (($formdata = data_submitted()) AND !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
-$strfeedbacks = get_string("modulenameplural", "feedback");
-$strfeedback  = get_string("modulename", "feedback");
-
 require_capability('mod/feedback:viewreports', $context);
 
 if ($action == 'sendmessage' AND has_capability('moodle/course:bulkmessaging', $coursecontext)) {
     $shortname = format_string($course->shortname,
                             true,
                             array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+    $strfeedbacks = get_string("modulenameplural", "feedback");
 
     $htmlmessage = "<body id=\"email\">";
 
