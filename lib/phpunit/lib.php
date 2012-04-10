@@ -420,6 +420,9 @@ class phpunit_util {
     public static function reset_all_data($logchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
 
+        // reset global $DB in case somebody mocked it
+        $DB = self::get_global_backup('DB');
+
         if ($DB->is_transaction_started()) {
             // we can not reset inside transaction
             $DB->force_transaction_rollback();
@@ -515,12 +518,13 @@ class phpunit_util {
      * @static
      */
     public static function bootstrap_init() {
-        global $CFG, $SITE;
+        global $CFG, $SITE, $DB;
 
         // backup the globals
         self::$globals['_SERVER'] = $_SERVER;
         self::$globals['CFG'] = clone($CFG);
         self::$globals['SITE'] = clone($SITE);
+        self::$globals['DB'] = $DB;
 
         // refresh data in all tables, clear caches, etc.
         phpunit_util::reset_all_data();
@@ -533,6 +537,11 @@ class phpunit_util {
      * @return mixed
      */
     public static function get_global_backup($name) {
+        if ($name === 'DB') {
+            // no cloning of database object,
+            // we just need the original reference, not original state
+            return self::$globals['DB'];
+        }
         if (isset(self::$globals[$name])) {
             if (is_object(self::$globals[$name])) {
                 $return = clone(self::$globals[$name]);
@@ -1056,6 +1065,8 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
 
         try {
             parent::runBare();
+            // set DB reference in case somebody mocked it in test
+            $DB = phpunit_util::get_global_backup('DB');
         } catch (Exception $e) {
             // cleanup after failed expectation
             phpunit_util::reset_all_data();

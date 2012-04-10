@@ -324,6 +324,27 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $this->assertInstanceOf('phpunit_data_generator', $generator);
     }
+
+    public function test_database_mock1() {
+        global $DB;
+
+        try {
+            $DB->get_record('pokus', array());
+            $this->fail('Exception expected when accessing non existent table');
+        } catch (dml_exception $e) {
+            $this->assertTrue(true);
+        }
+        $DB = $this->getMock(get_class($DB));
+        $this->assertNull($DB->get_record('pokus', array()));
+        // test continues after reset
+    }
+
+    public function test_database_mock2() {
+        global $DB;
+
+        // now the database should be back to normal
+        $this->assertFalse($DB->get_record('user', array('id'=>9999)));
+    }
 }
 
 
