@@ -27,8 +27,9 @@ define('NO_OUTPUT_BUFFERING', true);
 require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$path    = optional_param('path', null, PARAM_PATH);
-$execute = optional_param('execute', 0, PARAM_BOOL);
+$testpath  = optional_param('testpath', '', PARAM_PATH);
+$testclass = optional_param('testclass', '', PARAM_ALPHANUMEXT);
+$execute   = optional_param('execute', 0, PARAM_BOOL);
 
 navigation_node::override_active_url(new moodle_url('/admin/tool/phpunit/index.php'));
 admin_externalpage_setup('toolphpunitwebrunner');
@@ -82,7 +83,7 @@ if ($execute) {
             tool_phpunit_problem('Can not initialize database');
         }
         $CFG->debug = 0; // no pesky redirect warning, we really want to redirect
-        redirect(new moodle_url($PAGE->url, array('execute'=>1, 'path'=>$path, 'sesskey'=>sesskey())), 'Reloading page');
+        redirect(new moodle_url($PAGE->url, array('execute'=>1, 'tespath'=>$testpath, 'testclass'=>$testclass, 'sesskey'=>sesskey())), 'Reloading page');
         echo $OUTPUT->footer();
         die();
 
@@ -103,7 +104,7 @@ if ($execute) {
             tool_phpunit_problem('Can not initialize database');
         }
         $CFG->debug = 0; // no pesky redirect warning, we really want to redirect
-        redirect(new moodle_url($PAGE->url, array('execute'=>1, 'path'=>$path, 'sesskey'=>sesskey())), 'Reloading page');
+        redirect(new moodle_url($PAGE->url, array('execute'=>1, 'tespath'=>$testpath, 'testclass'=>$testclass, 'sesskey'=>sesskey())), 'Reloading page');
         die();
 
     } else {
@@ -134,7 +135,7 @@ if ($execute) {
     // no cleanup of path - this is tricky because we can not use escapeshellarg and friends for escaping,
     // this is from admin user so PARAM_PATH must be enough
     chdir($CFG->dirroot);
-    passthru("php $CFG->admin/tool/phpunit/cli/util.php --run -c $configdir $path", $code);
+    passthru("php $CFG->admin/tool/phpunit/cli/util.php --run -c $configdir $testclass $testpath", $code);
     chdir($oldcwd);
 
     echo '</pre>';
@@ -147,8 +148,11 @@ if ($execute) {
 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
 echo '<form method="get" action="webrunner.php">';
 echo '<fieldset class="invisiblefieldset">';
-echo '<label for="path">Test only</label> ';
-echo '<input type="text" id="path" name="path" value="'.s($path).'" size="40" />';
+echo '<label for="testpath">Test one file</label> ';
+echo '<input type="text" id="testpath" name="testpath" value="'.s($testpath).'" size="50" /> (all test cases from webrunner.xml if empty)';
+echo '</p>';
+echo '<label for="testclass">Class name</label> ';
+echo '<input type="text" id="testclass" name="testclass" value="'.s($testclass).'" size="50" /> (first class in file if empty)';
 echo '</p>';
 echo '<input type="submit" value="Run" />';
 echo '<input type="hidden" name="execute" value="1" />';
