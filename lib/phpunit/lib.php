@@ -1144,7 +1144,7 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Creates a new CvsDataSet from the given array of csv files . (absolute path.)
+     * Creates a new CsvDataSet from the given array of csv files. (absolute paths.)
      *
      * @param array $files array tablename=>cvsfile
      * @param string $delimiter
@@ -1152,7 +1152,7 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
      * @param string $escape
      * @return PHPUnit_Extensions_Database_DataSet_CsvDataSet
      */
-    protected function createCvsDataSet($files, $delimiter = ',', $enclosure = '"', $escape = '"') {
+    protected function createCsvDataSet($files, $delimiter = ',', $enclosure = '"', $escape = '"') {
         $dataSet = new PHPUnit_Extensions_Database_DataSet_CsvDataSet($delimiter, $enclosure, $escape);
         foreach($files as $table=>$file) {
             $dataSet->addTable($table, $file);

@@ -90,12 +90,6 @@ class data_advanced_search_sql_test extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        // Set up data for the test database.
-        $tablenames = array(
-            'data_fields',
-            'data_records',
-            'data_content',
-        );
 
         // we already have 2 users, we need 98 more - let's ignore the fact that guest can not post anywhere
         for($i=3;$i<=100;$i++) {
@@ -107,16 +101,15 @@ class data_advanced_search_sql_test extends advanced_testcase {
         $data = $this->getDataGenerator()->create_module('data', array('course'=>$course->id));
         $this->recorddata = $data;
 
-        foreach ($tablenames as $tablename) {
-            $filename = __DIR__. '/fixtures/test_' . $tablename . '.csv';
-            if (file_exists($filename)) {
-                $file = file_get_contents($filename);
-            }
-            $this->insert_data_from_csv($file, $tablename);
-        }
+        // Set up data for the test database.
+        $files = array(
+            'data_fields'  => __DIR__.'/fixtures/test_data_fields.csv',
+            'data_records' => __DIR__.'/fixtures/test_data_records.csv',
+            'data_content' => __DIR__.'/fixtures/test_data_content.csv',
+        );
+        $this->loadDataSet($this->createCsvDataSet($files));
 
         // Create the search array which contains our advanced search criteria.
-
         $fieldinfo = array('0' => new stdClass(),
             '1' => new stdClass(),
             '2' => new stdClass(),
@@ -200,30 +193,5 @@ class data_advanced_search_sql_test extends advanced_testcase {
         $allparams = array_merge($html['params'], array('dataid' => $this->recorddata->id));
         $records = $DB->get_records_sql($html['sql'], $allparams);
         $this->assertEquals($records, $this->finalrecord);
-    }
-
-    /**
-     * Inserts data from a csv file into the data module table specified.
-     *
-     * @param string $file comma seperated value file
-     * @param string $tablename name of the table for the data to be inserted into.
-     */
-    function insert_data_from_csv($file, $tablename) {
-        global $DB;
-        $iid = csv_import_reader::get_new_iid('moddata');
-        $csvdata = new csv_import_reader($iid, 'moddata');
-        $fielddata = $csvdata->load_csv_content($file, 'utf-8', 'comma');
-        $columns = $csvdata->get_columns();
-        $columncount = count($columns);
-        $csvdata->init();
-        $fieldinfo = array();
-        for ($j = 0; $j < $fielddata; $j++) {
-            $thing = $csvdata->next();
-            $fieldinfo[$j] = new stdClass();
-            for ($i = 0; $i < $columncount; $i++) {
-                $fieldinfo[$j]->$columns[$i] = $thing[$i];
-            }
-            $DB->insert_record($tablename, $fieldinfo[$j], false);
-        }
     }
 }

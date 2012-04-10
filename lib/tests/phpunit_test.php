@@ -362,7 +362,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertEquals('john.doe', $user5->username);
         $this->assertEquals('jane.doe', $user7->username);
 
-        $dataset = $this->createCvsDataSet(array('user'=>__DIR__.'/fixtures/sample_dataset.csv'));
+        $dataset = $this->createCsvDataSet(array('user'=>__DIR__.'/fixtures/sample_dataset.csv'));
         $this->loadDataSet($dataset);
         $this->assertEquals(8, $DB->get_field('user', 'id', array('username'=>'pepa.novak')));
         $this->assertEquals(9, $DB->get_field('user', 'id', array('username'=>'bozka.novakova')));
