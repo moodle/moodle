@@ -11,7 +11,7 @@ Documentation
 Installation
 ------------
 1. install PEAR package manager - see [PEAR Manual](http://pear.php.net/manual/en/installation.php)
-2. install PHPUnit package - see [PHPUnit installation documentation](http://www.phpunit.de/manual/current/en/installation.html)
+2. install PHPUnit package and phpunit/DbUnit extension - see [PHPUnit installation documentation](http://www.phpunit.de/manual/current/en/installation.html)
 3. edit main config.php - add `$CFG->phpunit_prefix` and `$CFG->phpunit_dataroot` - see config-dist.php
 4. execute `admin/tool/phpunit/cli/init.sh` to initialise the test environemnt, repeat it after every upgrade or installation of plugins
 

@@ -76,6 +76,10 @@ if (!@include_once('PHPUnit/Autoload.php')) {
     phpunit_bootstrap_error(130);
 }
 
+if (!@include_once('PHPUnit/Extensions/Database/Autoload.php')) {
+    phpunit_bootstrap_error(130);
+}
+
 if ($options['run']) {
     unset($options);
     unset($unrecognized);

@@ -43,7 +43,7 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
             $text = 'Moodle requires PHPUnit 3.6.x, '.$text.' is not compatible';
             break;
         case 130:
-            $text = 'Moodle can not find PHPUnit PEAR library';
+            $text = 'Moodle can not find PHPUnit PEAR library or necessary PHPUnit extension';
             break;
         case 131:
             $text = 'Moodle configuration problem: '.$text;
