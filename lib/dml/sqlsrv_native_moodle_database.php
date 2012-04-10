@@ -277,10 +277,11 @@ class sqlsrv_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Get the minimum SQL allowed
+     * Returns if the RDBMS server fulfills the required version
      *
-     * @param mixed $version
-     * @return mixed
+     * @param string $version version to check against
+     * @return bool returns if the version is fulfilled (true) or no (false)
+     * @todo Delete this unused and protected method. MDL-32392
      */
     protected function is_min_version($version) {
         $server = $this->get_server_info();
