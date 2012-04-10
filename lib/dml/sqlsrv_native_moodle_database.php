@@ -871,14 +871,26 @@ class sqlsrv_native_moodle_database extends moodle_database {
         if (!is_array($params)) {
             $params = (array)$params;
         }
+
+        $isidentity = false;
+
         if ($customsequence) {
             if (!isset($params['id'])) {
                 throw new coding_exception('moodle_database::insert_record_raw() id field must be specified if custom sequences used.');
             }
+
             $returnid = false;
-            // Disable IDENTITY column before inserting record with id
-            $sql = 'SET IDENTITY_INSERT {'.$table.'} ON'; // Yes, it' ON!!
-            $this->do_query($sql, null, SQL_QUERY_AUX);
+            $columns = $this->get_columns($table);
+            if (isset($columns['id']) and $columns['id']->auto_increment) {
+                $isidentity = true;
+            }
+
+            // Disable IDENTITY column before inserting record with id, only if the
+            // column is identity, from meta information.
+            if ($isidentity) {
+                $sql = 'SET IDENTITY_INSERT {'.$table.'} ON'; // Yes, it' ON!!
+                $this->do_query($sql, null, SQL_QUERY_AUX);
+            }
 
         } else {
             unset($params['id']);
@@ -894,9 +906,12 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $query_id = $this->do_query($sql, $params, SQL_QUERY_INSERT);
 
         if ($customsequence) {
-            // Enable IDENTITY column after inserting record with id
-            $sql = 'SET IDENTITY_INSERT {'.$table.'} OFF'; // Yes, it' OFF!!
-            $this->do_query($sql, null, SQL_QUERY_AUX);
+            // Enable IDENTITY column after inserting record with id, only if the
+            // column is identity, from meta information.
+            if ($isidentity) {
+                $sql = 'SET IDENTITY_INSERT {'.$table.'} OFF'; // Yes, it' OFF!!
+                $this->do_query($sql, null, SQL_QUERY_AUX);
+            }
         }
 
         if ($returnid) {
