@@ -354,7 +354,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $editorrules = ' onblur="'.htmlspecialchars($this->getAttribute('onblur')).'" onchange="'.htmlspecialchars($this->getAttribute('onchange')).'"';
         }
         $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="'.$rows.'" cols="'.$cols.'"'.$editorrules.'>';
-        $str .= s($text);if (count($formats)>1) {
+        $str .= s($text);
         $str .= '</textarea></div>';
 
         $str .= '<div>';
