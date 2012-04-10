@@ -2338,7 +2338,10 @@ EOD;
             if ($item->hidden) {
                 $link->add_class('dimmed');
             }
-            $link->text = $content.$link->text; // add help icon
+            if (!empty($content)) {
+                // Providing there is content we will use that for the link content.
+                $link->text = $content;
+            }
             $content = $this->render($link);
         } else if ($item->action instanceof moodle_url) {
             $attributes = array();
