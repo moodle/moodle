@@ -1001,7 +1001,7 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
      * Runs the bare test sequence and log any changes in global state or database.
      * @return void
      */
-    public function runBare() {
+    final public function runBare() {
         global $DB;
 
         try {
@@ -1058,7 +1058,7 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
      * Runs the bare test sequence.
      * @return void
      */
-    public function runBare() {
+    final public function runBare() {
         global $DB;
 
         if (phpunit_util::$lastdbwrites != $DB->perf_get_writes()) {
