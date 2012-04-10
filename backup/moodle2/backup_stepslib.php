@@ -802,7 +802,8 @@ class backup_calendarevents_structure_step extends backup_structure_step {
         // Return the root element (events)
         return $events;
     }
- }
+}
+
 /**
  * structure step in charge of constructing the gradebook.xml file for all the gradebook config in the course
  * NOTE: the backup of the grade items themselves is handled by backup_activity_grades_structure_step

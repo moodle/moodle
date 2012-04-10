@@ -1661,12 +1661,10 @@ class restore_calendarevents_structure_step extends restore_structure_step {
 
     }
     protected function after_execute() {
-        global $DB;
         // Add related files
         $this->add_related_files('calendar', 'event_description', 'event_description');
     }
- }
-
+}
 
 class restore_course_completion_structure_step extends restore_structure_step {
 
