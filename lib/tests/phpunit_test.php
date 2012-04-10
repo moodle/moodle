@@ -345,6 +345,51 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         // now the database should be back to normal
         $this->assertFalse($DB->get_record('user', array('id'=>9999)));
     }
+
+    public function test_load_dataset() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $this->assertFalse($DB->record_exists('user', array('id'=>5)));
+        $this->assertFalse($DB->record_exists('user', array('id'=>7)));
+        $dataset = $this->createXMLDataSet(__DIR__.'/fixtures/sample_dataset.xml');
+        $this->loadDataSet($dataset);
+        $this->assertTrue($DB->record_exists('user', array('id'=>5)));
+        $this->assertTrue($DB->record_exists('user', array('id'=>7)));
+        $user5 = $DB->get_record('user', array('id'=>5));
+        $user7 = $DB->get_record('user', array('id'=>7));
+        $this->assertEquals('john.doe', $user5->username);
+        $this->assertEquals('jane.doe', $user7->username);
+
+        $dataset = $this->createCvsDataSet(array('user'=>__DIR__.'/fixtures/sample_dataset.csv'));
+        $this->loadDataSet($dataset);
+        $this->assertEquals(8, $DB->get_field('user', 'id', array('username'=>'pepa.novak')));
+        $this->assertEquals(9, $DB->get_field('user', 'id', array('username'=>'bozka.novakova')));
+
+        $data = array(
+            'user' => array(
+                array('username', 'email'),
+                array('top.secret', 'top@example.com'),
+                array('low.secret', 'low@example.com'),
+            ),
+        );
+        $dataset = $this->createArrayDataSet($data);
+        $this->loadDataSet($dataset);
+        $this->assertTrue($DB->record_exists('user', array('email'=>'top@example.com')));
+        $this->assertTrue($DB->record_exists('user', array('email'=>'low@example.com')));
+
+        $data = array(
+            'user' => array(
+                array('username'=>'noidea', 'email'=>'noidea@example.com'),
+                array('username'=>'onemore', 'email'=>'onemore@example.com'),
+            ),
+        );
+        $dataset = $this->createArrayDataSet($data);
+        $this->loadDataSet($dataset);
+        $this->assertTrue($DB->record_exists('user', array('username'=>'noidea')));
+        $this->assertTrue($DB->record_exists('user', array('username'=>'onemore')));
+    }
 }
 
 

@@ -24,6 +24,7 @@
  */
 
 require_once 'PHPUnit/Autoload.php';
+require_once 'PHPUnit/Extensions/Database/Autoload.php';
 
 
 /**
@@ -158,7 +159,7 @@ class phpunit_util {
      * @static
      * @return array $table=>$records
      */
-    protected static function get_tablestructure() {
+    public static function get_tablestructure() {
         global $CFG;
 
         if (!file_exists("$CFG->dataroot/phpunit/tablestructure.ser")) {
@@ -1123,6 +1124,90 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Creates a new FlatXmlDataSet with the given $xmlFile. (absolute path.)
+     *
+     * @param string $xmlFile
+     * @return PHPUnit_Extensions_Database_DataSet_FlatXmlDataSet
+     */
+    protected function createFlatXMLDataSet($xmlFile) {
+        return new PHPUnit_Extensions_Database_DataSet_FlatXmlDataSet($xmlFile);
+    }
+
+    /**
+     * Creates a new XMLDataSet with the given $xmlFile. (absolute path.)
+     *
+     * @param string $xmlFile
+     * @return PHPUnit_Extensions_Database_DataSet_XmlDataSet
+     */
+    protected function createXMLDataSet($xmlFile) {
+        return new PHPUnit_Extensions_Database_DataSet_XmlDataSet($xmlFile);
+    }
+
+    /**
+     * Creates a new CvsDataSet from the given array of csv files . (absolute path.)
+     *
+     * @param array $files array tablename=>cvsfile
+     * @param string $delimiter
+     * @param string $enclosure
+     * @param string $escape
+     * @return PHPUnit_Extensions_Database_DataSet_CsvDataSet
+     */
+    protected function createCvsDataSet($files, $delimiter = ',', $enclosure = '"', $escape = '"') {
+        $dataSet = new PHPUnit_Extensions_Database_DataSet_CsvDataSet($delimiter, $enclosure, $escape);
+        foreach($files as $table=>$file) {
+            $dataSet->addTable($table, $file);
+        }
+        return $dataSet;
+    }
+
+    /**
+     * Creates new ArrayDataSet from given array
+     *
+     * @param array $data array of tables, first row in each table is columns
+     * @return phpunit_ArrayDataSet
+     */
+    protected function createArrayDataSet(array $data) {
+        return new phpunit_ArrayDataSet($data);
+    }
+
+    /**
+     * Load date into moodle database tables from standard PHPUnit data set.
+     *
+     * Note: it is usually better to use data generators
+     *
+     * @param PHPUnit_Extensions_Database_DataSet_IDataSet $dataset
+     * @return void
+     */
+    protected function loadDataSet(PHPUnit_Extensions_Database_DataSet_IDataSet $dataset) {
+        global $DB;
+
+        $structure = phpunit_util::get_tablestructure();
+
+        foreach($dataset->getTableNames() as $tablename) {
+            $table = $dataset->getTable($tablename);
+            $metadata = $dataset->getTableMetaData($tablename);
+            $columns = $metadata->getColumns();
+
+            $doimport = false;
+            if (isset($structure[$tablename]['id']) and $structure[$tablename]['id']->auto_increment) {
+                $doimport = in_array('id', $columns);
+            }
+
+            for($r=0; $r<$table->getRowCount(); $r++) {
+                $record = $table->getRow($r);
+                if ($doimport) {
+                    $DB->import_record($tablename, $record);
+                } else {
+                    $DB->insert_record($tablename, $record);
+                }
+            }
+            if ($doimport) {
+                $DB->get_manager()->reset_sequence(new xmldb_table($tablename));
+            }
+        }
+    }
+
+    /**
      * Call this method from test if you want to make sure that
      * the resetting of database is done the slow way without transaction
      * rollback.
@@ -1230,6 +1315,62 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
                 $this->$callback($filepath);
             }
         }
+    }
+}
+
+
+/**
+ * based on array iterator code from PHPUnit documentation by Sebastian Bergmann
+ * and added new constructor parameter for different array types.
+ */
+class phpunit_ArrayDataSet extends PHPUnit_Extensions_Database_DataSet_AbstractDataSet {
+    /**
+     * @var array
+     */
+    protected $tables = array();
+
+    /**
+     * @param array $data
+     */
+    public function __construct(array $data) {
+        foreach ($data AS $tableName => $rows) {
+            $firstrow = reset($rows);
+
+            if (array_key_exists(0, $firstrow)) {
+                // columns in first row
+                $columnsInFirstRow = true;
+                $columns = $firstrow;
+                $key = key($rows);
+                unset($rows[$key]);
+            } else {
+                // column name is in each row as key
+                $columnsInFirstRow = false;
+                $columns = array_keys($firstrow);
+            }
+
+            $metaData = new PHPUnit_Extensions_Database_DataSet_DefaultTableMetaData($tableName, $columns);
+            $table = new PHPUnit_Extensions_Database_DataSet_DefaultTable($metaData);
+
+            foreach ($rows AS $row) {
+                if ($columnsInFirstRow) {
+                    $row = array_combine($columns, $row);
+                }
+                $table->addRow($row);
+            }
+            $this->tables[$tableName] = $table;
+        }
+    }
+
+    protected function createIterator($reverse = FALSE) {
+        return new PHPUnit_Extensions_Database_DataSet_DefaultTableIterator($this->tables, $reverse);
+    }
+
+    public function getTable($tableName) {
+        if (!isset($this->tables[$tableName])) {
+            throw new InvalidArgumentException("$tableName is not a table in the current database.");
+        }
+
+        return $this->tables[$tableName];
     }
 }
 
