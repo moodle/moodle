@@ -103,6 +103,7 @@
     }
 
     $form = null;
+    $err = array();
 
     switch($action) {
         case 'delete':
@@ -129,23 +130,7 @@
             }
 
             if($form = data_submitted() and confirm_sesskey()) {
-
-                $form->name = clean_param(strip_tags($form->name,'<lang><span>'), PARAM_CLEAN);
-
-                $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
-                if($form->duration == 1) {
-                    $form->timeduration = make_timestamp($form->endyr, $form->endmon, $form->endday, $form->endhr, $form->endmin) - $form->timestart;
-                    if($form->timeduration < 0) {
-                        $form->timeduration = 0;
-                    }
-                }
-                else if($form->duration == 2) {
-                    $form->timeduration = $form->minutes * MINSECS;
-                }
-                else {
-                    $form->timeduration = 0;
-                }
-
+                // validate form and set error if any.
                 validate_form($form, $err);
 
                 if (count($err) == 0) {
@@ -194,27 +179,13 @@
             $title = get_string('newevent', 'calendar');
             $form = data_submitted();
             if(!empty($form) && !empty($form->name) && confirm_sesskey()) {
-
-                $form->name = clean_text(strip_tags($form->name, '<lang><span>'));
-
-                $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
-                if($form->duration == 1) {
-                    $form->timeduration = make_timestamp($form->endyr, $form->endmon, $form->endday, $form->endhr, $form->endmin) - $form->timestart;
-                    if($form->timeduration < 0) {
-                        $form->timeduration = 0;
-                    }
-                }
-                else if ($form->duration == 2) {
-                    $form->timeduration = $form->minutes * MINSECS;
-                }
-                else {
-                    $form->timeduration = 0;
-                }
-                if(!calendar_add_event_allowed($form)) {
-                    error('You are not authorized to do this');
-                }
+                // validate form and set error if any.
                 validate_form($form, $err);
+
                 if (count($err) == 0) {
+                    if (!calendar_add_event_allowed($form)) {
+                        error('You are not authorized to do this');
+                    }
                     $form->timemodified = time();
 
                     /// Get the event id for the log record.
@@ -568,11 +539,44 @@
 
 
 function validate_form(&$form, &$err) {
+    $cleanform = new stdClass();
+    //first clean the form values
+    $cleanform->name = clean_param(strip_tags(trim($form->name), '<lang><span>'),PARAM_CLEAN);
+    $cleanform->description = addslashes(clean_param($form->description, PARAM_CLEANHTML));
+    $cleanform->duration = clean_param($form->duration, PARAM_INT);
+    $cleanform->startmon = clean_param($form->startmon, PARAM_INT);
+    $cleanform->startday = clean_param($form->startday, PARAM_INT);
+    $cleanform->startyr = clean_param($form->startyr, PARAM_INT);
+    $cleanform->starthr = clean_param($form->starthr, PARAM_INT);
+    $cleanform->startmin = clean_param($form->startmin, PARAM_INT);
+    $cleanform->endmon = clean_param($form->endmon, PARAM_INT);
+    $cleanform->endday = clean_param($form->endday, PARAM_INT);
+    $cleanform->endyr = clean_param($form->endyr, PARAM_INT);
+    $cleanform->endhr = clean_param($form->endhr, PARAM_INT);
+    $cleanform->endmin = clean_param($form->endmin, PARAM_INT);
+    $cleanform->minutes = clean_param($form->minutes, PARAM_INT);
+    $cleanform->courseid = clean_param($form->courseid, PARAM_INT);
+    $cleanform->format = clean_param($form->format, PARAM_INT);
+    $cleanform->course = clean_param($form->course, PARAM_INT);
+    $cleanform->action = clean_param($form->action, PARAM_ALPHA);
 
-    $form->name = trim($form->name);
-    $form->description = trim($form->description);
+    // These values are only required for new event.
+    if ($cleanform->action === 'new') {
+        $cleanform->repeat = clean_param($form->repeat, PARAM_INT);
+        $cleanform->repeats = clean_param($form->repeats, PARAM_INT);
+        $cleanform->groupid = clean_param($form->groupid, PARAM_INT);
+        $cleanform->userid = clean_param($form->userid, PARAM_INT);
+        $cleanform->modulename = clean_param($form->modulename, PARAM_SAFEDIR);
+        $cleanform->eventtype = clean_param($form->eventtype, PARAM_ALPHA);
+        $cleanform->instance = clean_param($form->instance, PARAM_INT);
+        $cleanform->type = clean_param($form->type, PARAM_ALPHA);
+    } else {
+        $cleanform->id = clean_param($form->id, PARAM_INT);
+    }
+    // set form with clean and valid values only.
+    $form = $cleanform;
 
-    if(empty($form->name)) {
+    if (empty($form->name)) {
         $err['name'] = get_string('errornoeventname', 'calendar');
     }
 /* Allow events without a description
@@ -580,26 +584,51 @@ function validate_form(&$form, &$err) {
         $err['description'] = get_string('errornodescription', 'calendar');
     }
 */
-    if(!checkdate($form->startmon, $form->startday, $form->startyr)) {
+    if (!checkdate($form->startmon, $form->startday, $form->startyr)) {
         $err['timestart'] = get_string('errorinvaliddate', 'calendar');
     }
-    if($form->duration == 2 and !checkdate($form->endmon, $form->endday, $form->endyr)) {
+    if ($form->duration == 1 and !checkdate($form->endmon, $form->endday, $form->endyr)) {
         $err['timeduration'] = get_string('errorinvaliddate', 'calendar');
     }
-    if($form->duration == 2 and !($form->minutes > 0 and $form->minutes < 1000)) {
+    if ($form->duration == 2 and !($form->minutes > 0 and $form->minutes < 1000)) {
         $err['minutes'] = get_string('errorinvalidminutes', 'calendar');
     }
     if (!empty($form->repeat) and !($form->repeats > 1 and $form->repeats < 100)) {
         $err['repeats'] = get_string('errorinvalidrepeats', 'calendar');
     }
-    if(!empty($form->courseid)) {
+
+    // set start time and duration
+    $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
+    if ($form->duration == 1) {
+        $form->timeduration = make_timestamp($form->endyr, $form->endmon, $form->endday, $form->endhr, $form->endmin) - $form->timestart;
+        // Duration should be set for time in future.
+        if ($form->timeduration <= 0) {
+            $err['timeduration'] = get_string('errorinvaliddate', 'calendar');
+            $form->timeduration = 0;
+        }
+    }
+    else if ($form->duration == 2) {
+        $form->timeduration = $form->minutes * MINSECS;
+    }
+    else {
+        $form->timeduration = 0;
+    }
+
+    if (!empty($form->courseid)) {
         // Timestamps must be >= course startdate
         $course = get_record('course', 'id', $form->courseid);
-        if($course === false) {
+        if ($course === false) {
             error('Event belongs to invalid course');
         }
         else if($form->timestart < $course->startdate) {
             $err['timestart'] = get_string('errorbeforecoursestart', 'calendar');
+        }
+    }
+    if (!empty($form->modulename)) {
+        // Check that passed modulename actually exists (possible SQL Injection route)
+        $module = get_record('modules', 'name', $form->modulename);
+        if ($module === false) {
+            error('Invalid module name');
         }
     }
 }
