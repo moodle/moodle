@@ -87,6 +87,11 @@ EOD;
         }
     }
 
+    /**
+     * Return generator for given plugin
+     * @param string $component
+     * @return mixed plugin data generator
+     */
     public function get_plugin_generator($component) {
         list($type, $plugin) = normalize_component($component);
 
@@ -539,7 +544,7 @@ abstract class phpunit_module_generator {
         context_module::instance($cm->id);
 
         return $cm;
-  }
+    }
 
     /**
      * Create a test module

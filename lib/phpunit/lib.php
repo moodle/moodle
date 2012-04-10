@@ -46,7 +46,7 @@ class phpunit_util {
     protected static $tablestructure = null;
 
     /**
-     * @var array An array of globals cloned from CFG
+     * @var array An array of original globals, restored after each test
      */
     protected static $globals = array();
 
@@ -60,13 +60,17 @@ class phpunit_util {
      */
     protected static $generator = null;
 
+    /**
+     * @var resource used for prevention of parallel test execution
+     */
     protected static $lockhandle = null;
 
     /**
-     * Prevent parallel test execution - this can not work in Moodle because we modify DB and dataroot.
+     * Prevent parallel test execution - this can not work in Moodle because we modify database and dataroot.
      *
      * Note: do not call manually!
      *
+     * @internal
      * @static
      * @return void
      */
@@ -99,6 +103,7 @@ class phpunit_util {
 
     /**
      * Note: do not call manually!
+     * @internal
      * @static
      * @return void
      */
@@ -383,7 +388,7 @@ class phpunit_util {
     }
 
     /**
-     * Purge dataroot
+     * Purge dataroot directory
      * @static
      * @return void
      */
@@ -413,9 +418,9 @@ class phpunit_util {
      *
      * Note: this is relatively slow (cca 2 seconds for pg and 7 for mysql) - please use with care!
      *
+     * @static
      * @param bool $logchanges log changes in global state and database in error log
      * @return void
-     * @static
      */
     public static function reset_all_data($logchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
@@ -462,13 +467,13 @@ class phpunit_util {
             }
         }
 
-        // restore original config
+        // restore original globals
         $_SERVER = self::get_global_backup('_SERVER');
         $CFG = self::get_global_backup('CFG');
         $SITE = self::get_global_backup('SITE');
         $COURSE = $SITE;
 
-        // recreate globals
+        // reinitialise following globals
         $OUTPUT = new bootstrap_renderer();
         $PAGE = new moodle_page();
         $FULLME = null;
@@ -477,7 +482,7 @@ class phpunit_util {
         $SESSION = new stdClass();
         $_SESSION['SESSION'] =& $SESSION;
 
-        // set fresh new user
+        // set fresh new not-logged-in user
         $user = new stdClass();
         $user->id = 0;
         $user->mnethostid = $CFG->mnet_localhost_id;
@@ -489,10 +494,10 @@ class phpunit_util {
         events_get_handlers('reset');
         //TODO: add more resets here and probably refactor them to new core function
 
-        // purge dataroot
+        // purge dataroot directory
         self::reset_dataroot();
 
-        // restore original config once more in case resetting of caches changes CFG
+        // restore original config once more in case resetting of caches changed CFG
         $CFG = self::get_global_backup('CFG');
 
         // inform data generator
@@ -503,7 +508,7 @@ class phpunit_util {
 
         // verify db writes just in case something goes wrong in reset
         if (self::$lastdbwrites != $DB->perf_get_writes()) {
-            error_log('Unexpected DB writes in reset_all_data.');
+            error_log('Unexpected DB writes in phpunit_util::reset_all_data()');
             self::$lastdbwrites = $DB->perf_get_writes();
         }
 
@@ -515,7 +520,9 @@ class phpunit_util {
 
     /**
      * Called during bootstrap only!
+     * @internal
      * @static
+     * @return void
      */
     public static function bootstrap_init() {
         global $CFG, $SITE, $DB;
@@ -732,7 +739,7 @@ class phpunit_util {
     }
 
     /**
-     * Calculate unique version hash for all available plugins and core.
+     * Calculate unique version hash for all plugins and core.
      * @static
      * @return string sha1 hash
      */
@@ -777,7 +784,7 @@ class phpunit_util {
     }
 
     /**
-     * Builds dirroot/phpunit.xml and dataroot/phpunit/webrunner.xml file using defaults from /phpunit.xml.dist
+     * Builds dirroot/phpunit.xml and dataroot/phpunit/webrunner.xml files using defaults from /phpunit.xml.dist
      * @static
      * @return bool true means main config file created, false means only dataroot file created
      */
@@ -852,7 +859,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @return void
      */
     public function expectException($expected, $message = '') {
-        // use phpdocs: @expectedException ExceptionClassName
+        // alternatively use phpdocs: @expectedException ExceptionClassName
         if (!$expected) {
             return;
         }
@@ -976,7 +983,7 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
     /**
      * Constructs a test case with the given name.
      *
-     * Note: use setUp() or setUpBeforeClass() in custom test cases.
+     * Note: use setUp() or setUpBeforeClass() in your test cases.
      *
      * @param string $name
      * @param array  $data
@@ -1033,7 +1040,7 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
     /**
      * Constructs a test case with the given name.
      *
-     * Note: use setUp() or setUpBeforeClass() in custom test cases.
+     * Note: use setUp() or setUpBeforeClass() in your test cases.
      *
      * @param string $name
      * @param array  $data
@@ -1119,6 +1126,9 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
      * Call this method from test if you want to make sure that
      * the resetting of database is done the slow way without transaction
      * rollback.
+     *
+     * This is useful especially when testing stuff that is not compatible with transactions.
+     *
      * @return void
      */
     public function preventResetByRollback() {

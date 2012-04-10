@@ -63,7 +63,7 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
             break;
     }
     if (defined('PHPUNIT_UTIL') and PHPUNIT_UTIL) {
-        // do not write to error stream because we need the error message in PHP exec from web ui
+        // do not write to error stream because we need the error message in PHP exec result from web ui
         echo($text."\n");
     } else {
         fwrite(STDERR, $text."\n");

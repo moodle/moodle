@@ -146,7 +146,7 @@ if (isset($CFG->prefix) and $CFG->prefix === $CFG->phpunit_prefix) {
     phpunit_bootstrap_error(131, '$CFG->prefix and $CFG->phpunit_prefix must not be identical, can not run tests!');
 }
 
-// override CFG settings if necessary nad throw away extra CFG settings
+// override CFG settings if necessary and throw away extra CFG settings
 $CFG->dataroot  = $CFG->phpunit_dataroot;
 $CFG->prefix    = $CFG->phpunit_prefix;
 $CFG->dbtype    = isset($CFG->phpunit_dbtype) ? $CFG->phpunit_dbtype : $CFG->dbtype;
