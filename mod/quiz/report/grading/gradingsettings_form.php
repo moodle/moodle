@@ -53,7 +53,7 @@ class quiz_grading_settings extends moodleform {
     }
 
     protected function definition() {
-        $mform =& $this->_form;
+        $mform = $this->_form;
 
         $mform->addElement('header', 'options', get_string('options', 'quiz_grading'));
 

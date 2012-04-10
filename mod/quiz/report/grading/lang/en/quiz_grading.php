@@ -64,6 +64,7 @@ $string['gradingungraded'] = '{$a} ungraded attempts';
 $string['hideautomaticallygraded'] = 'Hide questions that have been graded automatically';
 $string['inprogress'] = 'In progress';
 $string['noquestionsfound'] = 'No manually graded questions found';
+$string['nothingfound'] = 'Nothing to display';
 $string['options'] = 'Options';
 $string['orderattempts'] = 'Order attempts';
 $string['pluginname'] = 'Manual grading';
