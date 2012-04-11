@@ -4403,7 +4403,7 @@ class dml_testcase extends database_driver_testcase {
 
         // make sure reserved words do not cause fatal problems in query parameters
 
-        $DB->execute("UPDATE {{$tablename}} SET course = 1 WHERE ID = :select", array('select'=>1));
+        $DB->execute("UPDATE {{$tablename}} SET course = 1 WHERE id = :select", array('select'=>1));
         $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE course = :select", array('select'=>1));
         $rs = $DB->get_recordset_sql("SELECT * FROM {{$tablename}} WHERE course = :select", array('select'=>1));
         $rs->close();

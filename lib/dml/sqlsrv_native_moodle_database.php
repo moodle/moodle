@@ -152,7 +152,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
          * Log all Errors.
          */
         sqlsrv_configure("WarningsReturnAsErrors", FALSE);
-        sqlsrv_configure("LogSubsystems", SQLSRV_LOG_SYSTEM_ALL);
+        sqlsrv_configure("LogSubsystems", SQLSRV_LOG_SYSTEM_OFF);
         sqlsrv_configure("LogSeverity", SQLSRV_LOG_SEVERITY_ERROR);
 
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
@@ -392,7 +392,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $this->tables = array ();
         $prefix = str_replace('_', '\\_', $this->prefix);
         $sql = "SELECT table_name
-                  FROM information_schema.tables
+                  FROM INFORMATION_SCHEMA.TABLES
                  WHERE table_name LIKE '$prefix%' ESCAPE '\\' AND table_type = 'BASE TABLE'";
 
         $this->query_start($sql, null, SQL_QUERY_AUX);
@@ -498,7 +498,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
                            is_nullable AS is_nullable,
                            columnproperty(object_id(quotename(table_schema) + '.' + quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
                            column_default AS default_value
-                      FROM information_schema.columns
+                      FROM INFORMATION_SCHEMA.COLUMNS
                      WHERE table_name = '{".$table."}'
                   ORDER BY ordinal_position";
         } else { // temp table, get metadata from tempdb schema
@@ -510,7 +510,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
                            is_nullable AS is_nullable,
                            columnproperty(object_id(quotename(table_schema) + '.' + quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
                            column_default AS default_value
-                      FROM tempdb.information_schema.columns ".
+                      FROM tempdb.INFORMATION_SCHEMA.COLUMNS ".
             // check this statement
             // JOIN tempdb..sysobjects ON name = table_name
             // WHERE id = object_id('tempdb..{".$table."}')
