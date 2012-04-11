@@ -76,7 +76,7 @@ class grade_scale_testcase extends grade_base_testcase {
 
     protected function sub_test_grade_scale_update() {
         global $DB;
-        $grade_scale = new grade_scale($this->scale[1]);
+        $grade_scale = new grade_scale($this->scale[1], false);
         $this->assertTrue(method_exists($grade_scale, 'update'));
 
         $grade_scale->name = 'Updated info for this unittest grade_scale';
@@ -87,7 +87,7 @@ class grade_scale_testcase extends grade_base_testcase {
 
     protected function sub_test_grade_scale_delete() {
         global $DB;
-        $grade_scale = new grade_scale($this->scale[4]);//choose one we're not using elsewhere
+        $grade_scale = new grade_scale($this->scale[4], false);//choose one we're not using elsewhere
         $this->assertTrue(method_exists($grade_scale, 'delete'));
 
         $this->assertTrue($grade_scale->delete());
@@ -107,7 +107,7 @@ class grade_scale_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_scale_load_items() {
-        $scale = new grade_scale($this->scale[0]);
+        $scale = new grade_scale($this->scale[0], false);
         $this->assertTrue(method_exists($scale, 'load_items'));
 
         $scale->load_items();
@@ -117,7 +117,7 @@ class grade_scale_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_scale_compact_items() {
-        $scale = new grade_scale($this->scale[0]);
+        $scale = new grade_scale($this->scale[0], false);
         $this->assertTrue(method_exists($scale, 'compact_items'));
 
         $scale->load_items();

@@ -67,7 +67,7 @@ class grade_outcome_testcase extends grade_base_testcase {
 
     protected function sub_test_grade_outcome_update() {
         global $DB;
-        $grade_outcome = new grade_outcome($this->grade_outcomes[0]);
+        $grade_outcome = new grade_outcome($this->grade_outcomes[0], false);
         $this->assertTrue(method_exists($grade_outcome, 'update'));
         $grade_outcome->shortname = 'Team work';
         $this->assertTrue($grade_outcome->update());
@@ -77,7 +77,7 @@ class grade_outcome_testcase extends grade_base_testcase {
 
     protected function sub_test_grade_outcome_delete() {
         global $DB;
-        $grade_outcome = new grade_outcome($this->grade_outcomes[0]);
+        $grade_outcome = new grade_outcome($this->grade_outcomes[0], false);
         $this->assertTrue(method_exists($grade_outcome, 'delete'));
 
         $this->assertTrue($grade_outcome->delete());

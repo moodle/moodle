@@ -105,7 +105,7 @@ class grade_item_testcase extends grade_base_testcase {
 
     protected function sub_test_grade_item_delete() {
         global $DB;
-        $grade_item = new grade_item($this->grade_items[7]);//use a grade item not touched by previous (or future) tests
+        $grade_item = new grade_item($this->grade_items[7],false);//use a grade item not touched by previous (or future) tests
         $this->assertTrue(method_exists($grade_item, 'delete'));
 
         $this->assertTrue($grade_item->delete());
@@ -118,7 +118,7 @@ class grade_item_testcase extends grade_base_testcase {
 
     protected function sub_test_grade_item_update() {
         global $DB;
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'update'));
 
         $grade_item->iteminfo = 'Updated info for this unittest grade_item';
@@ -134,7 +134,7 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_load_scale() {
-        $grade_item = new grade_item($this->grade_items[2]);
+        $grade_item = new grade_item($this->grade_items[2], false);
         $this->assertTrue(method_exists($grade_item, 'load_scale'));
         $scale = $grade_item->load_scale();
         $this->assertFalse(empty($grade_item->scale));
@@ -142,13 +142,13 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_load_outcome() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'load_outcome'));
         //TODO: add tests
     }
 
     protected function sub_test_grade_item_qualifies_for_regrading() {
-        $grade_item = new grade_item($this->grade_items[1]);//use a grade item not touched by previous tests
+        $grade_item = new grade_item($this->grade_items[3], false);//use a grade item not touched by previous tests
         $this->assertTrue(method_exists($grade_item, 'qualifies_for_regrading'));
 
         $this->assertFalse($grade_item->qualifies_for_regrading());
@@ -163,7 +163,7 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_force_regrading() {
-        $grade_item = new grade_item($this->grade_items[2]);//use a grade item not touched by previous tests
+        $grade_item = new grade_item($this->grade_items[3], false);//use a grade item not touched by previous tests
         $this->assertTrue(method_exists($grade_item, 'force_regrading'));
 
         $this->assertEquals(0, $grade_item->needsupdate);
@@ -198,7 +198,7 @@ class grade_item_testcase extends grade_base_testcase {
 
     // Retrieve all final scores for a given grade_item.
     protected function sub_test_grade_item_get_all_finals() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'get_final'));
 
         $final_grades = $grade_item->get_final();
@@ -208,28 +208,28 @@ class grade_item_testcase extends grade_base_testcase {
 
     // Retrieve all final scores for a specific userid.
     protected function sub_test_grade_item_get_final() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'get_final'));
         $final_grade = $grade_item->get_final($this->user[1]->id);
         $this->assertEquals($this->grade_grades[0]->finalgrade, $final_grade->finalgrade);
     }
 
     protected function sub_test_grade_item_get_sortorder() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'get_sortorder'));
         $sortorder = $grade_item->get_sortorder();
         $this->assertEquals($this->grade_items[0]->sortorder, $sortorder);
     }
 
     protected function sub_test_grade_item_set_sortorder() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'set_sortorder'));
         $grade_item->set_sortorder(999);
         $this->assertEquals($grade_item->sortorder, 999);
     }
 
     protected function sub_test_grade_item_move_after_sortorder() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'move_after_sortorder'));
         $grade_item->move_after_sortorder(5);
         $this->assertEquals($grade_item->sortorder, 6);
@@ -242,7 +242,7 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_get_name() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'get_name'));
 
         $name = $grade_item->get_name();
@@ -250,11 +250,11 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_set_parent() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'set_parent'));
 
         $old = $grade_item->get_parent_category();
-        $new = new grade_category($this->grade_categories[3]);
+        $new = new grade_category($this->grade_categories[3], false);
         $new_item = $new->get_grade_item();
 
         $this->assertTrue($grade_item->set_parent($new->id));
@@ -266,7 +266,7 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_get_parent_category() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'get_parent_category'));
 
         $category = $grade_item->get_parent_category();
@@ -274,7 +274,7 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_load_parent_category() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'load_parent_category'));
 
         $category = $grade_item->load_parent_category();
@@ -283,7 +283,7 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_get_item_category() {
-        $grade_item = new grade_item($this->grade_items[3]);
+        $grade_item = new grade_item($this->grade_items[3], false);
         $this->assertTrue(method_exists($grade_item, 'get_item_category'));
 
         $category = $grade_item->get_item_category();
@@ -291,7 +291,7 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_load_item_category() {
-        $grade_item = new grade_item($this->grade_items[3]);
+        $grade_item = new grade_item($this->grade_items[3], false);
         $this->assertTrue(method_exists($grade_item, 'load_item_category'));
 
         $category = $grade_item->load_item_category();
@@ -301,7 +301,7 @@ class grade_item_testcase extends grade_base_testcase {
 
     // Test update of all final grades
     protected function sub_test_grade_item_regrade_final_grades() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'regrade_final_grades'));
         $this->assertEquals(true, $grade_item->regrade_final_grades());
         //TODO: add more tests
@@ -309,7 +309,7 @@ class grade_item_testcase extends grade_base_testcase {
 
     // Test the adjust_raw_grade method
     protected function sub_test_grade_item_adjust_raw_grade() {
-        $grade_item = new grade_item($this->grade_items[2]); // anything but assignment module!
+        $grade_item = new grade_item($this->grade_items[2], false); // anything but assignment module!
         $this->assertTrue(method_exists($grade_item, 'adjust_raw_grade'));
 
         $grade_raw = new stdClass();
@@ -378,25 +378,25 @@ class grade_item_testcase extends grade_base_testcase {
 
         $this->assertTrue(method_exists($grade_item, 'set_locked'));
 
-        $grade_grade = new grade_grade($grade_item->get_final($this->user[1]->id));
+        $grade_grade = new grade_grade($grade_item->get_final($this->user[1]->id), false);
         $this->assertTrue(empty($grade_item->locked));//not locked
         $this->assertTrue(empty($grade_grade->locked));//not locked
 
         $this->assertTrue($grade_item->set_locked(true, true, false));
-        $grade_grade = new grade_grade($grade_item->get_final($this->user[1]->id));
+        $grade_grade = new grade_grade($grade_item->get_final($this->user[1]->id), false);
 
         $this->assertFalse(empty($grade_item->locked));//locked
         $this->assertFalse(empty($grade_grade->locked)); // individual grades should be locked too
 
         $this->assertTrue($grade_item->set_locked(false, true, false));
-        $grade = new grade_grade($grade_item->get_final($this->user[1]->id));
+        $grade = new grade_grade($grade_item->get_final($this->user[1]->id), false);
 
         $this->assertTrue(empty($grade_item->locked));
         $this->assertTrue(empty($grade->locked)); // individual grades should be unlocked too
     }
 
     protected function sub_test_grade_item_is_locked() {
-        $grade_item = new grade_item($this->grade_items[10]);
+        $grade_item = new grade_item($this->grade_items[10], false);
         $this->assertTrue(method_exists($grade_item, 'is_locked'));
 
         $this->assertFalse($grade_item->is_locked());
@@ -408,22 +408,22 @@ class grade_item_testcase extends grade_base_testcase {
 
     // Test hiding of grade items
     protected function sub_test_grade_item_set_hidden() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'set_hidden'));
 
-        $grade = new grade_grade($grade_item->get_final($this->user[1]->id));
+        $grade = new grade_grade($grade_item->get_final($this->user[1]->id), false);
         $this->assertEquals(0, $grade_item->hidden);
         $this->assertEquals(0, $grade->hidden);
 
         $grade_item->set_hidden(666, true);
-        $grade = new grade_grade($grade_item->get_final($this->user[1]->id));
+        $grade = new grade_grade($grade_item->get_final($this->user[1]->id), false);
 
         $this->assertEquals(666, $grade_item->hidden);
         $this->assertEquals(666, $grade->hidden);
     }
 
     protected function sub_test_grade_item_is_hidden() {
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'is_hidden'));
 
         $this->assertFalse($grade_item->is_hidden());
@@ -443,7 +443,7 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_is_category_item() {
-        $grade_item = new grade_item($this->grade_items[3]);
+        $grade_item = new grade_item($this->grade_items[3], false);
         $this->assertTrue(method_exists($grade_item, 'is_category_item'));
         $this->assertTrue($grade_item->is_category_item());
     }
@@ -461,7 +461,7 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_depends_on() {
-        $grade_item = new grade_item($this->grade_items[1]);
+        $grade_item = new grade_item($this->grade_items[1], false);
 
         // calculated grade dependency
         $deps = $grade_item->depends_on();
@@ -476,7 +476,7 @@ class grade_item_testcase extends grade_base_testcase {
         $this->assertEquals(array(), $deps);
 
         // category dependency
-        $grade_item = new grade_item($this->grade_items[3]);
+        $grade_item = new grade_item($this->grade_items[3], false);
         $deps = $grade_item->depends_on();
         sort($deps, SORT_NUMERIC); // for comparison
         $res = array($this->grade_items[4]->id, $this->grade_items[5]->id);
@@ -484,18 +484,18 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_is_calculated() {
-        $grade_item = new grade_item($this->grade_items[1]);
+        $grade_item = new grade_item($this->grade_items[1], false);
         $this->assertTrue(method_exists($grade_item, 'is_calculated'));
         $this->assertTrue($grade_item->is_calculated());
 
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertFalse($grade_item->is_calculated());
     }
 
     protected function sub_test_grade_item_set_calculation() {
-        $grade_item = new grade_item($this->grade_items[1]);
+        $grade_item = new grade_item($this->grade_items[1], false);
         $this->assertTrue(method_exists($grade_item, 'set_calculation'));
-        $grade_itemsource = new grade_item($this->grade_items[0]);
+        $grade_itemsource = new grade_item($this->grade_items[0], false);
 
         $grade_item->set_calculation('=[['.$grade_itemsource->idnumber.']]');
 
@@ -504,9 +504,9 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_get_calculation() {
-        $grade_item = new grade_item($this->grade_items[1]);
+        $grade_item = new grade_item($this->grade_items[1], false);
         $this->assertTrue(method_exists($grade_item, 'get_calculation'));
-        $grade_itemsource = new grade_item($this->grade_items[0]);
+        $grade_itemsource = new grade_item($this->grade_items[0], false);
 
         $denormalizedformula = str_replace('##gi'.$grade_itemsource->id.'##', '[['.$grade_itemsource->idnumber.']]', $this->grade_items[1]->calculation);
 
