@@ -9,13 +9,12 @@ class Minify_Cache_File {
     public function __construct($path = '', $fileLocking = false)
     {
         if (! $path) {
-            require_once 'Solar/Dir.php';
-            $path = rtrim(Solar_Dir::tmp(), DIRECTORY_SEPARATOR);
+            $path = self::tmp();
         }
         $this->_locking = $fileLocking;
         $this->_path = $path;
     }
-    
+
     /**
      * Write data to cache.
      *
@@ -30,15 +29,14 @@ class Minify_Cache_File {
         $flag = $this->_locking
             ? LOCK_EX
             : null;
-        if (is_file($this->_path . '/' . $id)) {
-            @unlink($this->_path . '/' . $id);
-        }
-        if (! @file_put_contents($this->_path . '/' . $id, $data, $flag)) {
-            return false;
+        $file = $this->_path . '/' . $id;
+        if (! @file_put_contents($file, $data, $flag)) {
+            $this->_log("Minify_Cache_File: Write failed to '$file'");
         }
         // write control
         if ($data !== $this->fetch($id)) {
             @unlink($file);
+            $this->_log("Minify_Cache_File: Post-write read failed for '$file'");
             return false;
         }
         return true;
@@ -118,6 +116,78 @@ class Minify_Cache_File {
     public function getPath()
     {
         return $this->_path;
+    }
+
+    /**
+     * Get a usable temp directory
+     *
+     * Adapted from Solar/Dir.php
+     * @author Paul M. Jones <pmjones@solarphp.com>
+     * @license http://opensource.org/licenses/bsd-license.php BSD
+     * @link http://solarphp.com/trac/core/browser/trunk/Solar/Dir.php
+     *
+     * @return string
+     */
+    public static function tmp()
+    {
+        static $tmp = null;
+        if (! $tmp) {
+            $tmp = function_exists('sys_get_temp_dir')
+                ? sys_get_temp_dir()
+                : self::_tmp();
+            $tmp = rtrim($tmp, DIRECTORY_SEPARATOR);
+        }
+        return $tmp;
+    }
+
+    /**
+     * Returns the OS-specific directory for temporary files
+     *
+     * @author Paul M. Jones <pmjones@solarphp.com>
+     * @license http://opensource.org/licenses/bsd-license.php BSD
+     * @link http://solarphp.com/trac/core/browser/trunk/Solar/Dir.php
+     *
+     * @return string
+     */
+    protected static function _tmp()
+    {
+        // non-Windows system?
+        if (strtolower(substr(PHP_OS, 0, 3)) != 'win') {
+            $tmp = empty($_ENV['TMPDIR']) ? getenv('TMPDIR') : $_ENV['TMPDIR'];
+            if ($tmp) {
+                return $tmp;
+            } else {
+                return '/tmp';
+            }
+        }
+        // Windows 'TEMP'
+        $tmp = empty($_ENV['TEMP']) ? getenv('TEMP') : $_ENV['TEMP'];
+        if ($tmp) {
+            return $tmp;
+        }
+        // Windows 'TMP'
+        $tmp = empty($_ENV['TMP']) ? getenv('TMP') : $_ENV['TMP'];
+        if ($tmp) {
+            return $tmp;
+        }
+        // Windows 'windir'
+        $tmp = empty($_ENV['windir']) ? getenv('windir') : $_ENV['windir'];
+        if ($tmp) {
+            return $tmp;
+        }
+        // final fallback for Windows
+        return getenv('SystemRoot') . '\\temp';
+    }
+
+    /**
+     * Send message to the Minify logger
+     * @param string $msg
+     * @return null
+     */
+    protected function _log($msg)
+    {
+        require_once 'Minify/Logger.php';
+        Minify_Logger::log($msg);
     }
     
     private $_path = null;

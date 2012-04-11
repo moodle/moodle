@@ -61,6 +61,7 @@ class qtype_truefalse_test extends UnitTestCase {
     public function test_get_possible_responses() {
         $q = new stdClass();
         $q->id = 1;
+        $q->options = new stdClass();
         $q->options->trueanswer = 1;
         $q->options->falseanswer = 2;
         $q->options->answers[1] = (object) array('fraction' => 1);

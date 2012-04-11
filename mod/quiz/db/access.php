@@ -40,6 +40,19 @@ $capabilities = array(
         )
     ),
 
+    // Ability to add a new quiz to the course.
+    'mod/quiz:addinstance' => array(
+        'riskbitmask' => RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:manageactivities'
+    ),
+
     // Ability to do the quiz as a 'student'.
     'mod/quiz:attempt' => array(
         'riskbitmask' => RISK_SPAM,

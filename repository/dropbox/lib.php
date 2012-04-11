@@ -258,7 +258,7 @@ class repository_dropbox extends repository {
      * Add Plugin settings input to Moodle form
      * @param object $mform
      */
-    public function type_config_form($mform) {
+    public static function type_config_form($mform, $classname = 'repository') {
         global $CFG;
         parent::type_config_form($mform);
         $key    = get_config('dropbox', 'dropbox_key');

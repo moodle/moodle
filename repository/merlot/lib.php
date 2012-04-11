@@ -57,7 +57,7 @@ class repository_merlot extends repository {
      * @param string $search_text
      * @return array
      */
-    public function search($search_text) {
+    public function search($search_text, $page = 0) {
         $ret  = array();
         $ret['nologin'] = true;
         $ret['list'] = $this->_get_collection($this->keyword, $this->author);
@@ -68,7 +68,7 @@ class repository_merlot extends repository {
      * Get a list of links
      * @return array
      */
-    public function get_listing() {
+    public function get_listing($path = '', $page = '') {
         $ret  = array();
         $ret['nologin'] = true;
         $ret['list'] = $this->_get_collection($this->keyword);
@@ -132,7 +132,7 @@ class repository_merlot extends repository {
      *
      * @param object $mform
      */
-    public function type_config_form($mform) {
+    public static function type_config_form($mform, $classname = 'repository') {
         parent::type_config_form($mform);
         $licensekey = get_config('merlot', 'licensekey');
         if (empty($licensekey)) {

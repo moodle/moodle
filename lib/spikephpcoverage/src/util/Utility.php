@@ -208,13 +208,13 @@
         /*}}}*/
         /*{{{ public function getLogger() */
 
-        public function getLogger($package=false) {
+        public static function getLogger($package=false) {
             global $spc_config;
-            if(!isset($this->logger) || $this->logger == NULL) {
-                $this->logger = new CoverageLogger();
-                $this->logger->setLevel($spc_config["log_level"]);
+            if(!isset(self::$logger) || self::$logger == NULL) {
+                self::$logger = new CoverageLogger();
+                self::$logger->setLevel($spc_config["log_level"]);
             }
-            return $this->logger;
+            return self::$logger;
         }
 
         /*}}}*/

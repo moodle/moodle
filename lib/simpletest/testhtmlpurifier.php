@@ -193,6 +193,63 @@ class htmlpurifier_test extends UnitTestCase {
         $text = 'x<form></form>x';
         $this->assertIdentical('xx', purify_html($text));
     }
-}
 
+    /**
+     * Test internal function used for clean_text() speedup.
+     */
+    function test_is_purify_html_necessary() {
+        // first our shortcuts
+        $text = "";
+        $this->assertFalse(is_purify_html_necessary($text));
+        $this->assertidentical($text, purify_html($text));
+
+        $text = "666";
+        $this->assertFalse(is_purify_html_necessary($text));
+        $this->assertidentical($text, purify_html($text));
+
+        $text = "abc\ndef \" ' ";
+        $this->assertFalse(is_purify_html_necessary($text));
+        $this->assertidentical($text, purify_html($text));
+
+        $text = "abc\n<p>def</p>efg<p>hij</p>";
+        $this->assertFalse(is_purify_html_necessary($text));
+        $this->assertidentical($text, purify_html($text));
+
+        $text = "<br />abc\n<p>def<em>efg</em><strong>hi<br />j</strong></p>";
+        $this->assertFalse(is_purify_html_necessary($text));
+        $this->assertidentical($text, purify_html($text));
+
+        // now failures
+        $text = "&nbsp;";
+        $this->assertTrue(is_purify_html_necessary($text));
+
+        $text = "Gin & Tonic";
+        $this->assertTrue(is_purify_html_necessary($text));
+
+        $text = "Gin > Tonic";
+        $this->assertTrue(is_purify_html_necessary($text));
+
+        $text = "Gin < Tonic";
+        $this->assertTrue(is_purify_html_necessary($text));
+
+        $text = "<div>abc</div>";
+        $this->assertTrue(is_purify_html_necessary($text));
+
+        $text = "<span>abc</span>";
+        $this->assertTrue(is_purify_html_necessary($text));
+
+        $text = "<br>abc";
+        $this->assertTrue(is_purify_html_necessary($text));
+
+        $text = "<p class='xxx'>abc</p>";
+        $this->assertTrue(is_purify_html_necessary($text));
+
+        $text = "<p>abc<em></p></em>";
+        $this->assertTrue(is_purify_html_necessary($text));
+
+        $text = "<p>abc";
+        $this->assertTrue(is_purify_html_necessary($text));
+
+    }
+}
 

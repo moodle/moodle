@@ -3,7 +3,7 @@
  *  Base include file for SimpleTest
  *  @package    SimpleTest
  *  @subpackage WebTester
- *  @version    $Id$
+ *  @version    $Id: authentication.php 2011 2011-04-29 08:22:48Z pp11 $
  */
 /**
  *  include http class
@@ -16,11 +16,11 @@ require_once(dirname(__FILE__) . '/http.php');
  *    @subpackage WebTester
  */
 class SimpleRealm {
-    var $_type;
-    var $_root;
-    var $_username;
-    var $_password;
-    
+    private $type;
+    private $root;
+    private $username;
+    private $password;
+
     /**
      *    Starts with the initial entry directory.
      *    @param string $type      Authentication type for this
@@ -30,21 +30,21 @@ class SimpleRealm {
      *    @access public
      */
     function SimpleRealm($type, $url) {
-        $this->_type = $type;
-        $this->_root = $url->getBasePath();
-        $this->_username = false;
-        $this->_password = false;
+        $this->type = $type;
+        $this->root = $url->getBasePath();
+        $this->username = false;
+        $this->password = false;
     }
-    
+
     /**
      *    Adds another location to the realm.
      *    @param SimpleUrl $url    Somewhere in realm.
      *    @access public
      */
     function stretch($url) {
-        $this->_root = $this->_getCommonPath($this->_root, $url->getPath());
+        $this->root = $this->getCommonPath($this->root, $url->getPath());
     }
-    
+
     /**
      *    Finds the common starting path.
      *    @param string $first        Path to compare.
@@ -52,7 +52,7 @@ class SimpleRealm {
      *    @return string              Common directories.
      *    @access private
      */
-    function _getCommonPath($first, $second) {
+    protected function getCommonPath($first, $second) {
         $first = explode('/', $first);
         $second = explode('/', $second);
         for ($i = 0; $i < min(count($first), count($second)); $i++) {
@@ -62,7 +62,7 @@ class SimpleRealm {
         }
         return implode('/', $first) . '/';
     }
-    
+
     /**
      *    Sets the identity to try within this realm.
      *    @param string $username    Username in authentication dialog.
@@ -70,28 +70,28 @@ class SimpleRealm {
      *    @access public
      */
     function setIdentity($username, $password) {
-        $this->_username = $username;
-        $this->_password = $password;
+        $this->username = $username;
+        $this->password = $password;
     }
-    
+
     /**
      *    Accessor for current identity.
      *    @return string        Last succesful username.
      *    @access public
      */
     function getUsername() {
-        return $this->_username;
+        return $this->username;
     }
-    
+
     /**
      *    Accessor for current identity.
      *    @return string        Last succesful password.
      *    @access public
      */
     function getPassword() {
-        return $this->_password;
+        return $this->password;
     }
-    
+
     /**
      *    Test to see if the URL is within the directory
      *    tree of the realm.
@@ -100,15 +100,15 @@ class SimpleRealm {
      *    @access public
      */
     function isWithin($url) {
-        if ($this->_isIn($this->_root, $url->getBasePath())) {
+        if ($this->isIn($this->root, $url->getBasePath())) {
             return true;
         }
-        if ($this->_isIn($this->_root, $url->getBasePath() . $url->getPage() . '/')) {
+        if ($this->isIn($this->root, $url->getBasePath() . $url->getPage() . '/')) {
             return true;
         }
         return false;
     }
-    
+
     /**
      *    Tests to see if one string is a substring of
      *    another.
@@ -118,7 +118,7 @@ class SimpleRealm {
      *                               in the big bit.
      *    @access private
      */
-    function _isIn($part, $whole) {
+    protected function isIn($part, $whole) {
         return strpos($whole, $part) === 0;
     }
 }
@@ -129,8 +129,8 @@ class SimpleRealm {
  *    @subpackage WebTester
  */
 class SimpleAuthenticator {
-    var $_realms;
-    
+    private $realms;
+
     /**
      *    Clears the realms.
      *    @access public
@@ -138,18 +138,18 @@ class SimpleAuthenticator {
     function SimpleAuthenticator() {
         $this->restartSession();
     }
-    
+
     /**
      *    Starts with no realms set up.
      *    @access public
      */
     function restartSession() {
-        $this->_realms = array();
+        $this->realms = array();
     }
-    
+
     /**
      *    Adds a new realm centered the current URL.
-     *    Browsers vary wildly on their behaviour in this
+     *    Browsers privatey wildly on their behaviour in this
      *    regard. Mozilla ignores the realm and presents
      *    only when challenged, wasting bandwidth. IE
      *    just carries on presenting until a new challenge
@@ -164,9 +164,9 @@ class SimpleAuthenticator {
      *    @access public
      */
     function addRealm($url, $type, $realm) {
-        $this->_realms[$url->getHost()][$realm] = new SimpleRealm($type, $url);
+        $this->realms[$url->getHost()][$realm] = new SimpleRealm($type, $url);
     }
-    
+
     /**
      *    Sets the current identity to be presented
      *    against that realm.
@@ -177,29 +177,29 @@ class SimpleAuthenticator {
      *    @access public
      */
     function setIdentityForRealm($host, $realm, $username, $password) {
-        if (isset($this->_realms[$host][$realm])) {
-            $this->_realms[$host][$realm]->setIdentity($username, $password);
+        if (isset($this->realms[$host][$realm])) {
+            $this->realms[$host][$realm]->setIdentity($username, $password);
         }
     }
-    
+
     /**
      *    Finds the name of the realm by comparing URLs.
      *    @param SimpleUrl $url        URL to test.
      *    @return SimpleRealm          Name of realm.
      *    @access private
      */
-    function _findRealmFromUrl($url) {
-        if (! isset($this->_realms[$url->getHost()])) {
+    protected function findRealmFromUrl($url) {
+        if (! isset($this->realms[$url->getHost()])) {
             return false;
         }
-        foreach ($this->_realms[$url->getHost()] as $name => $realm) {
+        foreach ($this->realms[$url->getHost()] as $name => $realm) {
             if ($realm->isWithin($url)) {
                 return $realm;
             }
         }
         return false;
     }
-    
+
     /**
      *    Presents the appropriate headers for this location.
      *    @param SimpleHttpRequest $request  Request to modify.
@@ -210,7 +210,7 @@ class SimpleAuthenticator {
         if ($url->getUsername() && $url->getPassword()) {
             $username = $url->getUsername();
             $password = $url->getPassword();
-        } elseif ($realm = $this->_findRealmFromUrl($url)) {
+        } elseif ($realm = $this->findRealmFromUrl($url)) {
             $username = $realm->getUsername();
             $password = $realm->getPassword();
         } else {
@@ -218,7 +218,7 @@ class SimpleAuthenticator {
         }
         $this->addBasicHeaders($request, $username, $password);
     }
-    
+
     /**
      *    Presents the appropriate headers for this
      *    location for basic authentication.
@@ -226,12 +226,11 @@ class SimpleAuthenticator {
      *    @param string $username            Username for realm.
      *    @param string $password            Password for realm.
      *    @access public
-     *    @static
      */
-    function addBasicHeaders(&$request, $username, $password) {
+    static function addBasicHeaders(&$request, $username, $password) {
         if ($username && $password) {
             $request->addHeaderLine(
-                    'Authorization: Basic ' . base64_encode("$username:$password"));
+                'Authorization: Basic ' . base64_encode("$username:$password"));
         }
     }
 }

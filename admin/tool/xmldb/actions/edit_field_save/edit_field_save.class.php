@@ -86,7 +86,7 @@ class edit_field_save extends XMLDBAction {
 
         $tableparam = strtolower(required_param('table', PARAM_PATH));
         $fieldparam = strtolower(required_param('field', PARAM_PATH));
-        $name = substr(trim(strtolower(optional_param('name', $fieldparam, PARAM_PATH))),0,30);
+        $name = substr(trim(strtolower(optional_param('name', $fieldparam, PARAM_PATH))),0,xmldb_field::NAME_MAX_LENGTH);
 
         $comment = required_param('comment', PARAM_CLEAN);
         $comment = trim($comment);
@@ -138,7 +138,7 @@ class edit_field_save extends XMLDBAction {
         // Integer checks
         if ($type == XMLDB_TYPE_INTEGER) {
             if (!(is_numeric($length) && !empty($length) && intval($length)==floatval($length) &&
-                  $length > 0 && $length <= 20)) {
+                  $length > 0 && $length <= xmldb_field::INTEGER_MAX_LENGTH)) {
                 $errors[] = $this->str['integerincorrectlength'];
             }
             if (!(empty($default) || (is_numeric($default) &&
@@ -150,7 +150,7 @@ class edit_field_save extends XMLDBAction {
         // Number checks
         if ($type == XMLDB_TYPE_NUMBER) {
             if (!(is_numeric($length) && !empty($length) && intval($length)==floatval($length) &&
-                  $length > 0 && $length <= 20)) {
+                  $length > 0 && $length <= xmldb_field::NUMBER_MAX_LENGTH)) {
                 $errors[] = $this->str['numberincorrectlength'];
             }
             if (!(empty($decimals) || (is_numeric($decimals) &&
@@ -171,7 +171,7 @@ class edit_field_save extends XMLDBAction {
                                      !empty($length) &&
                                      intval($length)==floatval($length) &&
                                      $length > 0 &&
-                                     $length <= 20))) {
+                                     $length <= xmldb_field::FLOAT_MAX_LENGTH))) {
                 $errors[] = $this->str['floatincorrectlength'];
             }
             if (!(empty($decimals) || (is_numeric($decimals) &&

@@ -151,7 +151,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
 
         $newattempts = $this->observer->get_attempts_added();
         $this->assertEqual(1, count($newattempts));
-        $this->assertIdentical($this->quba->get_question_attempt($slot), reset($newattempts));
+        $this->assertTrue($this->quba->get_question_attempt($slot) === reset($newattempts));
         $this->assertIdentical($slot, key($newattempts));
     }
 
@@ -166,8 +166,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         // not need to be tracked separately.
         $newattempts = $this->observer->get_attempts_added();
         $this->assertEqual(1, count($newattempts));
-        $this->assertIdentical($this->quba->get_question_attempt($slot),
-                reset($newattempts));
+        $this->assertTrue($this->quba->get_question_attempt($slot) === reset($newattempts));
         $this->assertIdentical($slot, key($newattempts));
         $this->assertEqual(0, count($this->observer->get_steps_added()));
     }
@@ -183,7 +182,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         $this->assertEqual(1, count($updatedattempts));
 
         $updatedattempt = reset($updatedattempts);
-        $this->assertIdentical($this->quba->get_question_attempt($this->slot), $updatedattempt);
+        $this->assertTrue($this->quba->get_question_attempt($this->slot) === $updatedattempt);
         $this->assertIdentical($this->slot, key($updatedattempts));
 
         $newsteps = $this->observer->get_steps_added();
@@ -196,6 +195,12 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
     public function test_regrade_same_steps() {
 
         // Change the question in a minor way and regrade.
+        if (!isset($this->quba->get_question($this->slot)->answer)) {
+            $this->quba->get_question($this->slot)->answer = array();
+        }
+        if (!isset($this->quba->get_question($this->slot)->answer[14])) {
+            $this->quba->get_question($this->slot)->answer[14] = new stdClass();
+        }
         $this->quba->get_question($this->slot)->answer[14]->fraction = 0.5;
         $this->quba->regrade_all_questions();
 
@@ -209,7 +214,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         $this->assertEqual(1, count($updatedattempts));
 
         $updatedattempt = reset($updatedattempts);
-        $this->assertIdentical($this->quba->get_question_attempt($this->slot), $updatedattempt);
+        $this->assertTrue($this->quba->get_question_attempt($this->slot) === $updatedattempt);
 
         $updatedsteps = $this->observer->get_steps_modified();
         $this->assertEqual($updatedattempt->get_num_steps(), count($updatedsteps));
@@ -235,7 +240,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         $this->assertEqual(1, count($updatedattempts));
 
         $updatedattempt = reset($updatedattempts);
-        $this->assertIdentical($this->quba->get_question_attempt($this->slot), $updatedattempt);
+        $this->assertTrue($this->quba->get_question_attempt($this->slot) === $updatedattempt);
 
         $updatedsteps = $this->observer->get_steps_modified();
         $this->assertEqual($updatedattempt->get_num_steps(), count($updatedsteps));
@@ -279,7 +284,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         $this->assertEqual(1, count($updatedattempts));
 
         $updatedattempt = reset($updatedattempts);
-        $this->assertIdentical($this->quba->get_question_attempt($this->slot), $updatedattempt);
+        $this->assertTrue($this->quba->get_question_attempt($this->slot) === $updatedattempt);
 
         $this->assertEqual(0, count($this->observer->get_steps_added()));
 

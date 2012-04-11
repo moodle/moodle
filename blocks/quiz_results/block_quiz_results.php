@@ -76,7 +76,7 @@ class block_quiz_results extends block_base {
         return $cm->instance;
     }
 
-    function instance_config_save($data) {
+    function instance_config_save($data, $nolongerused = false) {
         if (empty($data->quizid)) {
             $data->quizid = $this->get_owning_quiz();
         }

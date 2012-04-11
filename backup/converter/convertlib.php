@@ -112,7 +112,8 @@ abstract class base_converter implements loggable {
      * @return string the system name of the converter
      */
     public function get_name() {
-        return array_shift(explode('_', get_class($this)));
+        $parts = explode('_', get_class($this));
+        return array_shift($parts);
     }
 
     /**

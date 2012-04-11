@@ -29,12 +29,13 @@ require_once 'Minify/Source.php';
  */
 class Minify {
     
-    const VERSION = '2.1.3';
+    const VERSION = '2.1.5';
     const TYPE_CSS = 'text/css';
     const TYPE_HTML = 'text/html';
     // there is some debate over the ideal JS Content-Type, but this is the
     // Apache default and what Yahoo! uses..
     const TYPE_JS = 'application/x-javascript';
+    const URL_DEBUG = 'http://code.google.com/p/minify/wiki/Debugging';
     
     /**
      * How many hours behind are the file modification times of uploaded files?
@@ -58,7 +59,14 @@ class Minify {
      * @var string $importWarning
      */
     public static $importWarning = "/* See http://code.google.com/p/minify/wiki/CommonProblems#@imports_can_appear_in_invalid_locations_in_combined_CSS_files */\n";
-    
+
+    /**
+     * Has the DOCUMENT_ROOT been set in user code?
+     * 
+     * @var bool
+     */
+    public static $isDocRootSet = false;
+
     /**
      * Specify a cache object (with identical interface as Minify_Cache_File) or
      * a path to use with Minify_Cache_File.
@@ -148,8 +156,8 @@ class Minify {
      * 
      * Any controller options are documented in that controller's setupSources() method.
      * 
-     * @param mixed instance of subclass of Minify_Controller_Base or string name of
-     * controller. E.g. 'Files'
+     * @param mixed $controller instance of subclass of Minify_Controller_Base or string
+     * name of controller. E.g. 'Files'
      * 
      * @param array $options controller/serve options
      * 
@@ -159,6 +167,10 @@ class Minify {
      */
     public static function serve($controller, $options = array())
     {
+        if (! self::$isDocRootSet && 0 === stripos(PHP_OS, 'win')) {
+            self::setDocRoot();
+        }
+
         if (is_string($controller)) {
             // make $controller into object
             $class = 'Minify_Controller_' . $controller;
@@ -167,6 +179,7 @@ class Minify {
                     . str_replace('_', '/', $controller) . ".php";    
             }
             $controller = new $class();
+            /* @var Minify_Controller_Base $controller */
         }
         
         // set up controller sources and mix remaining options with
@@ -179,9 +192,7 @@ class Minify {
         if (! $controller->sources) {
             // invalid request!
             if (! self::$_options['quiet']) {
-                header(self::$_options['badRequestHeader']);
-                echo self::$_options['badRequestHeader'];
-                return;
+                self::_errorExit(self::$_options['badRequestHeader'], self::URL_DEBUG);
             } else {
                 list(,$statusCode) = explode(' ', self::$_options['badRequestHeader']);
                 return array(
@@ -202,6 +213,7 @@ class Minify {
         
         // determine encoding
         if (self::$_options['encodeOutput']) {
+            $sendVary = true;
             if (self::$_options['encodeMethod'] !== null) {
                 // controller specifically requested this
                 $contentEncoding = self::$_options['encodeMethod'];
@@ -212,6 +224,7 @@ class Minify {
                 // 'x-gzip' while our internal encodeMethod is 'gzip'. Calling
                 // getAcceptedEncoding(false, false) leaves out compress and deflate as options.
                 list(self::$_options['encodeMethod'], $contentEncoding) = HTTP_Encoder::getAcceptedEncoding(false, false);
+                $sendVary = ! HTTP_Encoder::isBuggyIe();
             }
         } else {
             self::$_options['encodeMethod'] = ''; // identity (no encoding)
@@ -226,6 +239,8 @@ class Minify {
         );
         if (self::$_options['maxAge'] > 0) {
             $cgOptions['maxAge'] = self::$_options['maxAge'];
+        } elseif (self::$_options['debug']) {
+            $cgOptions['invalidate'] = true;
         }
         $cg = new HTTP_ConditionalGet($cgOptions);
         if ($cg->cacheIsValid) {
@@ -249,8 +264,7 @@ class Minify {
         
         if (self::$_options['contentType'] === self::TYPE_CSS
             && self::$_options['rewriteCssUris']) {
-            reset($controller->sources);
-            while (list($key, $source) = each($controller->sources)) {
+            foreach($controller->sources as $key => $source) {
                 if ($source->filepath 
                     && !isset($source->minifyOptions['currentDir'])
                     && !isset($source->minifyOptions['prependRelativePath'])
@@ -261,12 +275,12 @@ class Minify {
         }
         
         // check server cache
-        if (null !== self::$_cache) {
+        if (null !== self::$_cache && ! self::$_options['debug']) {
             // using cache
             // the goal is to use only the cache methods to sniff the length and 
             // output the content, as they do not require ever loading the file into
             // memory.
-            $cacheId = 'minify_' . self::_getCacheId();
+            $cacheId = self::_getCacheId();
             $fullCacheId = (self::$_options['encodeMethod'])
                 ? $cacheId . '.gz'
                 : $cacheId;
@@ -276,7 +290,15 @@ class Minify {
                 $cacheContentLength = self::$_cache->getSize($fullCacheId);    
             } else {
                 // generate & cache content
-                $content = self::_combineMinify();
+                try {
+                    $content = self::_combineMinify();
+                } catch (Exception $e) {
+                    self::$_controller->log($e->getMessage());
+                    if (! self::$_options['quiet']) {
+                        self::_errorExit(self::$_options['errorHeader'], self::URL_DEBUG);
+                    }
+                    throw $e;
+                }
                 self::$_cache->store($cacheId, $content);
                 if (function_exists('gzencode')) {
                     self::$_cache->store($cacheId . '.gz', gzencode($content, self::$_options['encodeLevel']));
@@ -285,7 +307,15 @@ class Minify {
         } else {
             // no cache
             $cacheIsReady = false;
-            $content = self::_combineMinify();
+            try {
+                $content = self::_combineMinify();
+            } catch (Exception $e) {
+                self::$_controller->log($e->getMessage());
+                if (! self::$_options['quiet']) {
+                    self::_errorExit(self::$_options['errorHeader'], self::URL_DEBUG);
+                }
+                throw $e;
+            }
         }
         if (! $cacheIsReady && self::$_options['encodeMethod']) {
             // still need to encode
@@ -295,14 +325,17 @@ class Minify {
         // add headers
         $headers['Content-Length'] = $cacheIsReady
             ? $cacheContentLength
-            : strlen($content);
+            : ((function_exists('mb_strlen') && ((int)ini_get('mbstring.func_overload') & 2))
+                ? mb_strlen($content, '8bit')
+                : strlen($content)
+            );
         $headers['Content-Type'] = self::$_options['contentTypeCharset']
             ? self::$_options['contentType'] . '; charset=' . self::$_options['contentTypeCharset']
             : self::$_options['contentType'];
         if (self::$_options['encodeMethod'] !== '') {
             $headers['Content-Encoding'] = $contentEncoding;
         }
-        if (self::$_options['encodeOutput']) {
+        if (self::$_options['encodeOutput'] && $sendVary) {
             $headers['Vary'] = 'Accept-Encoding';
         }
 
@@ -356,52 +389,69 @@ class Minify {
     }
     
     /**
-     * On IIS, create $_SERVER['DOCUMENT_ROOT']
+     * Set $_SERVER['DOCUMENT_ROOT']. On IIS, the value is created from SCRIPT_FILENAME and SCRIPT_NAME.
      * 
-     * @param bool $unsetPathInfo (default false) if true, $_SERVER['PATH_INFO']
-     * will be unset (it is inconsistent with Apache's setting)
-     * 
-     * @return null
+     * @param string $docRoot value to use for DOCUMENT_ROOT
      */
-    public static function setDocRoot($unsetPathInfo = false)
+    public static function setDocRoot($docRoot = '')
     {
-        if (isset($_SERVER['SERVER_SOFTWARE'])
-            && 0 === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS/')
-        ) {
-            $_SERVER['DOCUMENT_ROOT'] = rtrim(substr(
-                $_SERVER['PATH_TRANSLATED']
+        self::$isDocRootSet = true;
+        if ($docRoot) {
+            $_SERVER['DOCUMENT_ROOT'] = $docRoot;
+        } elseif (isset($_SERVER['SERVER_SOFTWARE'])
+                  && 0 === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS/')) {
+            $_SERVER['DOCUMENT_ROOT'] = substr(
+                $_SERVER['SCRIPT_FILENAME']
                 ,0
-                ,strlen($_SERVER['PATH_TRANSLATED']) - strlen($_SERVER['SCRIPT_NAME'])
-            ), '\\');
-            if ($unsetPathInfo) {
-                unset($_SERVER['PATH_INFO']);
-            }
-            require_once 'Minify/Logger.php';
-            Minify_Logger::log("setDocRoot() set DOCUMENT_ROOT to \"{$_SERVER['DOCUMENT_ROOT']}\"");
+                ,strlen($_SERVER['SCRIPT_FILENAME']) - strlen($_SERVER['SCRIPT_NAME']));
+            $_SERVER['DOCUMENT_ROOT'] = rtrim($_SERVER['DOCUMENT_ROOT'], '\\');
         }
     }
     
     /**
-     * @var mixed Minify_Cache_* object or null (i.e. no server cache is used)
+     * Any Minify_Cache_* object or null (i.e. no server cache is used)
+     *
+     * @var Minify_Cache_File
      */
     private static $_cache = null;
     
     /**
-     * @var Minify_Controller active controller for current request
+     * Active controller for current request
+     *
+     * @var Minify_Controller_Base
      */
     protected static $_controller = null;
     
     /**
-     * @var array options for current request
+     * Options for current request
+     *
+     * @var array
      */
     protected static $_options = null;
-    
+
+    /**
+     * @param string $header
+     *
+     * @param string $url
+     */
+    protected static function _errorExit($header, $url)
+    {
+        $url = htmlspecialchars($url, ENT_QUOTES);
+        list(,$h1) = explode(' ', $header, 2);
+        $h1 = htmlspecialchars($h1);
+        // FastCGI environments require 3rd arg to header() to be set
+        list(, $code) = explode(' ', $header, 3);
+        header($header, true, $code);
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<h1>$h1</h1>";
+        echo "<p>Please see <a href='$url'>$url</a>.</p>";
+        exit();
+    }
+
     /**
      * Set up sources to use Minify_Lines
      *
      * @param array $sources Minify_Source instances
-     *
-     * @return null
      */
     protected static function _setupDebug($sources)
     {
@@ -439,21 +489,22 @@ class Minify {
         $defaultMinifier = isset(self::$_options['minifiers'][$type])
             ? self::$_options['minifiers'][$type]
             : false;
-       
-        if (Minify_Source::haveNoMinifyPrefs(self::$_controller->sources)) {
-            // all source have same options/minifier, better performance
-            // to combine, then minify once
-            foreach (self::$_controller->sources as $source) {
-                $pieces[] = $source->getContent();
-            }
-            $content = implode($implodeSeparator, $pieces);
-            if ($defaultMinifier) {
-                self::$_controller->loadMinifier($defaultMinifier);
-                $content = call_user_func($defaultMinifier, $content, $defaultOptions);    
-            }
-        } else {
-            // minify each source with its own options and minifier, then combine
-            foreach (self::$_controller->sources as $source) {
+
+        // process groups of sources with identical minifiers/options
+        $content = array();
+        $i = 0;
+        $l = count(self::$_controller->sources);
+        $groupToProcessTogether = array();
+        $lastMinifier = null;
+        $lastOptions = null;
+        do {
+            // get next source
+            $source = null;
+            if ($i < $l) {
+                $source = self::$_controller->sources[$i];
+                /* @var Minify_Source $source */
+                $sourceContent = $source->getContent();
+
                 // allow the source to override our minifier and options
                 $minifier = (null !== $source->minifier)
                     ? $source->minifier
@@ -461,16 +512,40 @@ class Minify {
                 $options = (null !== $source->minifyOptions)
                     ? array_merge($defaultOptions, $source->minifyOptions)
                     : $defaultOptions;
-                if ($minifier) {
-                    self::$_controller->loadMinifier($minifier);
-                    // get source content and minify it
-                    $pieces[] = call_user_func($minifier, $source->getContent(), $options);     
+            }
+            // do we need to process our group right now?
+            if ($i > 0                               // yes, we have at least the first group populated
+                && (
+                    ! $source                        // yes, we ran out of sources
+                    || $type === self::TYPE_CSS      // yes, to process CSS individually (avoiding PCRE bugs/limits)
+                    || $minifier !== $lastMinifier   // yes, minifier changed
+                    || $options !== $lastOptions)    // yes, options changed
+                )
+            {
+                // minify previous sources with last settings
+                $imploded = implode($implodeSeparator, $groupToProcessTogether);
+                $groupToProcessTogether = array();
+                if ($lastMinifier) {
+                    self::$_controller->loadMinifier($lastMinifier);
+                    try {
+                        $content[] = call_user_func($lastMinifier, $imploded, $lastOptions);
+                    } catch (Exception $e) {
+                        throw new Exception("Exception in minifier: " . $e->getMessage());
+                    }
                 } else {
-                    $pieces[] = $source->getContent();     
+                    $content[] = $imploded;
                 }
             }
-            $content = implode($implodeSeparator, $pieces);
-        }
+            // add content to the group
+            if ($source) {
+                $groupToProcessTogether[] = $sourceContent;
+                $lastMinifier = $minifier;
+                $lastOptions = $options;
+            }
+            $i++;
+        } while ($source);
+
+        $content = implode($implodeSeparator, $content);
         
         if ($type === self::TYPE_CSS && false !== strpos($content, '@import')) {
             $content = self::_handleCssImports($content);
@@ -491,22 +566,32 @@ class Minify {
      * 
      * Any settings that could affect output are taken into consideration  
      *
+     * @param string $prefix
+     *
      * @return string
      */
-    protected static function _getCacheId()
+    protected static function _getCacheId($prefix = 'minify')
     {
-        return md5(serialize(array(
+        $name = preg_replace('/[^a-zA-Z0-9\\.=_,]/', '', self::$_controller->selectionId);
+        $name = preg_replace('/\\.+/', '.', $name);
+        $name = substr($name, 0, 200 - 34 - strlen($prefix));
+        $md5 = md5(serialize(array(
             Minify_Source::getDigest(self::$_controller->sources)
             ,self::$_options['minifiers'] 
             ,self::$_options['minifierOptions']
             ,self::$_options['postprocessor']
             ,self::$_options['bubbleCssImports']
+            ,self::VERSION
         )));
+        return "{$prefix}_{$name}_{$md5}";
     }
     
     /**
-     * Bubble CSS @imports to the top or prepend a warning if an
-     * @import is detected not at the top.
+     * Bubble CSS @imports to the top or prepend a warning if an import is detected not at the top.
+     *
+     * @param string $css
+     *
+     * @return string
      */
     protected static function _handleCssImports($css)
     {

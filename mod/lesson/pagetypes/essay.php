@@ -126,7 +126,7 @@ class lesson_page_type_essay extends lesson_page {
         $result->studentanswer = s($studentanswer);
         return $result;
     }
-    public function update($properties) {
+    public function update($properties, $context = null, $maxbytes = null) {
         global $DB, $PAGE;
         $answers  = $this->get_answers();
         $properties->id = $this->properties->id;

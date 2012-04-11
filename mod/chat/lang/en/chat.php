@@ -47,6 +47,7 @@ $string['explaingeneralconfig'] = 'These settings are <strong>always</strong> us
 $string['explainmethoddaemon'] = 'These settings matter <strong>only</strong> if you have selected "Chat server daemon" for chat_method';
 $string['explainmethodnormal'] = 'These settings matter <strong>only</strong> if you have selected "Normal method" for chat_method';
 $string['generalconfig'] = 'General configuration';
+$string['chat:addinstance'] = 'Add a new chat';
 $string['chat:deletelog'] = 'Delete chat logs';
 $string['chat:exportparticipatedsession'] = 'Export chat session which you took part in';
 $string['chat:exportsession'] = 'Export any chat session';

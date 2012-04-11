@@ -57,16 +57,6 @@ class xmldb_index extends xmldb_object {
         return $this->set_attributes($type, $fields);
     }
 
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-    function setAttributes($type, $fields) {
-
-        debugging('XMLDBIndex->setAttributes() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_index->set_attributes() instead.', DEBUG_DEVELOPER);
-
-        return $this->set_attributes($type, $fields);
-    }
-/// Deprecated API ends here
-
     /**
      * Set all the attributes of one xmldb_index
      *
@@ -356,14 +346,3 @@ class xmldb_index extends xmldb_object {
     }
 
 }
-
-/// TODO: Delete for 2.1 (deprecated in 2.0).
-/// Deprecated API starts here
-class XMLDBIndex extends xmldb_index {
-
-    function __construct($name) {
-        parent::__construct($name);
-    }
-
-}
-/// Deprecated API ends here

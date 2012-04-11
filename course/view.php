@@ -226,12 +226,12 @@
     // Course wrapper start.
     echo html_writer::start_tag('div', array('class'=>'course-content'));
 
-    $modinfo =& get_fast_modinfo($COURSE);
+    $modinfo = get_fast_modinfo($COURSE);
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
     foreach($mods as $modid=>$unused) {
         if (!isset($modinfo->cms[$modid])) {
             rebuild_course_cache($course->id);
-            $modinfo =& get_fast_modinfo($COURSE);
+            $modinfo = get_fast_modinfo($COURSE);
             debugging('Rebuilding course cache', DEBUG_DEVELOPER);
             break;
         }

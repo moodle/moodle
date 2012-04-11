@@ -58,6 +58,13 @@ define('QUIZ_ATTEMPTLAST',  '4');
  */
 define('QUIZ_MAX_EVENT_LENGTH', 5*24*60*60); // 5 days
 
+/**#@+
+ * Options for navigation method within quizzes.
+ */
+define('QUIZ_NAVMETHOD_FREE', 'free');
+define('QUIZ_NAVMETHOD_SEQ',  'sequential');
+/**#@-*/
+
 /**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
@@ -442,6 +449,8 @@ function quiz_cron() {
     // Run cron for our sub-plugin types.
     cron_execute_plugin_type('quiz', 'quiz reports');
     cron_execute_plugin_type('quizaccess', 'quiz access rules');
+
+    return true;
 }
 
 /**
@@ -756,7 +765,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
         $course = $DB->get_record('course', array('id' => $courseid));
     }
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
 
     $cm = $modinfo->cms[$cmid];
     $quiz = $DB->get_record('quiz', array('id' => $cm->instance));
@@ -1744,4 +1753,14 @@ function quiz_page_type_list($pagetype, $parentcontext, $currentcontext) {
         'mod-quiz-*'=>get_string('page-mod-quiz-x', 'quiz'),
         'mod-quiz-edit'=>get_string('page-mod-quiz-edit', 'quiz'));
     return $module_pagetype;
+}
+
+/**
+ * @return the options for quiz navigation.
+ */
+function quiz_get_navigation_options() {
+    return array(
+        QUIZ_NAVMETHOD_FREE => get_string('navmethod_free', 'quiz'),
+        QUIZ_NAVMETHOD_SEQ  => get_string('navmethod_seq', 'quiz')
+    );
 }

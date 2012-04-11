@@ -691,6 +691,17 @@ abstract class moodle_database {
     }
 
     /**
+     * Detects object parameters and throws exception if found
+     * @param mixed $value
+     * @return void
+     */
+    protected function detect_objects($value) {
+        if (is_object($value)) {
+            throw new coding_exception('Invalid database query parameter value', 'Objects are are not allowed: '.get_class($value));
+        }
+    }
+
+    /**
      * Normalizes sql query parameters and verifies parameters.
      * @param string $sql The query or part of it.
      * @param array $params The query parameters.
@@ -703,8 +714,9 @@ abstract class moodle_database {
         // convert table names
         $sql = $this->fix_table_names($sql);
 
-        // cast booleans to 1/0 int
+        // cast booleans to 1/0 int and detect forbidden objects
         foreach ($params as $key => $value) {
+            $this->detect_objects($value);
             $params[$key] = is_bool($value) ? (int)$value : $value;
         }
 
@@ -1576,9 +1588,6 @@ abstract class moodle_database {
     /**
      * Test whether a record exists in a table where all the given conditions met.
      *
-     * The record to test is specified by giving up to three fields that must
-     * equal the corresponding values.
-     *
      * @param string $table The table to check.
      * @param array $conditions optional array $fieldname=>requestedvalue with AND in between
      * @return bool true if a matching record exists, else false.
@@ -1849,23 +1858,6 @@ abstract class moodle_database {
         $text = str_replace('_', $escapechar.'_', $text);
         $text = str_replace('%', $escapechar.'%', $text);
         return $text;
-    }
-
-    /**
-     * Returns the proper SQL to do LIKE in a case-insensitive way.
-     *
-     * Note the LIKE are case sensitive for Oracle. Oracle 10g is required to use
-     * the case insensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
-     * See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
-     *
-     * @deprecated since Moodle 2.0 MDL-23925 - please do not use this function any more.
-     * @todo MDL-31280 to remove deprecated functions prior to 2.3 release.
-     * @return string Do not use this function!
-     * @see sql_like()
-     */
-    public function sql_ilike() {
-        debugging('sql_ilike() is deprecated, please use sql_like() instead');
-        return 'LIKE';
     }
 
     /**

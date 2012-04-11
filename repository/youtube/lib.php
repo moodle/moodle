@@ -49,7 +49,7 @@ class repository_youtube extends repository {
      * @param string $search_text
      * @return array
      */
-    public function search($search_text, $page) {
+    public function search($search_text, $page = 0) {
         global $SESSION;
         $sort = optional_param('youtube_sort', '', PARAM_TEXT);
         $sess_keyword = 'youtube_'.$this->id.'_keyword';

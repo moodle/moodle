@@ -226,10 +226,13 @@ class block_manager {
 
         $pageformat = $this->page->pagetype;
         foreach($allblocks as $block) {
+            if (!$bi = block_instance($block->name)) {
+                continue;
+            }
             if ($block->visible &&
-                    (block_method_result($block->name, 'instance_allow_multiple') || !$this->is_block_present($block->name)) &&
+                    ($bi->instance_allow_multiple() || !$this->is_block_present($block->name)) &&
                     blocks_name_allowed_in_format($block->name, $pageformat) &&
-                    block_method_result($block->name, 'user_can_addto', $this->page)) {
+                    $bi->user_can_addto($this->page)) {
                 $this->addableblocks[$block->name] = $block;
             }
         }
@@ -1850,7 +1853,11 @@ function blocks_remove_inappropriate($course) {
 function blocks_name_allowed_in_format($name, $pageformat) {
     $accept = NULL;
     $maxdepth = -1;
-    $formats = block_method_result($name, 'applicable_formats');
+    if (!$bi = block_instance($name)) {
+        return false;
+    }
+
+    $formats = $bi->applicable_formats();
     if (!$formats) {
         $formats = array();
     }

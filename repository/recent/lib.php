@@ -132,8 +132,8 @@ class repository_recent extends repository {
         return array('recentfilesnumber', 'pluginname');
     }
 
-    public function type_config_form($mform) {
-        parent::type_config_form($mform);
+    public static function type_config_form($mform, $classname = 'repository') {
+        parent::type_config_form($mform, $classname);
         $number = get_config('repository_recent', 'recentfilesnumber');
         if (empty($number)) {
             $number = DEFAULT_RECENT_FILES_NUM;

@@ -119,27 +119,18 @@ class mathsslib_test extends UnitTestCase {
      * Tests some slightly more complex expressions
      */
     public function test__error_handling() {
-        if (debugging('', DEBUG_DEVELOPER)) {
-            $this->expectError();
-        }
         $formula = new calc_formula('=pi( + a', array('a'=>10));
         $res = $formula->evaluate();
         $this->assertEqual($res, false);
         $this->assertEqual($formula->get_error(),
                                         get_string('unexpectedoperator', 'mathslib', '+'));
 
-        if (debugging('', DEBUG_DEVELOPER)) {
-            $this->expectError();
-        }
         $formula = new calc_formula('=pi(');
         $res = $formula->evaluate();
         $this->assertEqual($res, false);
         $this->assertEqual($formula->get_error(),
                                         get_string('expectingaclosingbracket', 'mathslib'));
 
-        if (debugging('', DEBUG_DEVELOPER)) {
-            $this->expectError();
-        }
         $formula = new calc_formula('=pi()^');
         $res = $formula->evaluate();
         $this->assertEqual($res, false);

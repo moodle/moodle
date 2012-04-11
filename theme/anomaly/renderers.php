@@ -12,7 +12,7 @@ class theme_anomaly_core_renderer extends core_renderer {
      * @param string $region the region the block is appearing in.
      * @return string the HTML to be output.
      */
-    function block($bc, $region) {
+    function block(block_contents $bc, $region) {
 
         $bc = clone($bc); // Avoid messing up the object passed in.
         if (empty($bc->blockinstanceid) || !strip_tags($bc->title)) {
@@ -35,7 +35,7 @@ class theme_anomaly_core_renderer extends core_renderer {
         }
 
         $output .= html_writer::start_tag('div', $bc->attributes);
-        
+
         /** Rounded corners **/
         $output .= html_writer::start_tag('div', array('class'=>'corner-box'));
         $output .= html_writer::start_tag('div', array('class'=>'rounded-corner top-left')).html_writer::end_tag('div');

@@ -131,12 +131,13 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
             $attributes['size'] = 3;
         }
         $this->_elements = array();
-        $this->_elements[] = MoodleQuickForm::createElement('text', 'number', get_string('time', 'form'), $attributes, true);
+        // E_STRICT creating elements without forms is nasty because it internally uses $this
+        $this->_elements[] = @MoodleQuickForm::createElement('text', 'number', get_string('time', 'form'), $attributes, true);
         unset($attributes['size']);
-        $this->_elements[] = MoodleQuickForm::createElement('select', 'timeunit', get_string('timeunit', 'form'), $this->get_units(), $attributes, true);
+        $this->_elements[] = @MoodleQuickForm::createElement('select', 'timeunit', get_string('timeunit', 'form'), $this->get_units(), $attributes, true);
         // If optional we add a checkbox which the user can use to turn if on
         if($this->_options['optional']) {
-            $this->_elements[] = MoodleQuickForm::createElement('checkbox', 'enabled', null, get_string('enable'), $this->getAttributes(), true);
+            $this->_elements[] = @MoodleQuickForm::createElement('checkbox', 'enabled', null, get_string('enable'), $this->getAttributes(), true);
         }
         foreach ($this->_elements as $element){
             if (method_exists($element, 'setHiddenLabel')){
@@ -153,7 +154,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
      * @param object $caller calling object
      * @return bool
      */
-    function onQuickFormEvent($event, $arg, $caller) {
+    function onQuickFormEvent($event, $arg, &$caller) {
         switch ($event) {
             case 'updateValue':
                 // constant values override both default and submitted ones
@@ -216,7 +217,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
      * @param bool $required Whether a group is required
      * @param string $error An error message associated with a group
      */
-    function accept($renderer, $required = false, $error = null) {
+    function accept(&$renderer, $required = false, $error = null) {
         $renderer->renderElement($this, $required, $error);
     }
 
@@ -228,7 +229,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
      * @param  bool  $notused Not used.
      * @return array field name => value. The value is the time interval in seconds.
      */
-    function exportValue($submitValues, $notused = false) {
+    function exportValue(&$submitValues, $notused = false) {
         // Get the values from all the child elements.
         $valuearray = array();
         foreach ($this->_elements as $element) {

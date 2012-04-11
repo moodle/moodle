@@ -178,6 +178,11 @@ class quiz {
         return $this->quiz->name;
     }
 
+    /** @return int the quiz navigation method. */
+    public function get_navigation_method() {
+        return $this->quiz->navmethod;
+    }
+
     /** @return int the number of attempts allowed at this quiz (0 = infinite). */
     public function get_num_attempts_allowed() {
         return $this->quiz->attempts;
@@ -545,6 +550,11 @@ class quiz_attempt {
         return $this->quizobj->get_quiz_name();
     }
 
+    /** @return int the quiz navigation method. */
+    public function get_navigation_method() {
+        return $this->quizobj->get_navigation_method();
+    }
+
     /** @return object the course_module object. */
     public function get_cm() {
         return $this->quizobj->get_cm();
@@ -706,6 +716,21 @@ class quiz_attempt {
                 $this->require_capability('mod/quiz:reviewmyattempts');
             }
         }
+    }
+
+    /**
+     * Checks whether a user may navigate to a particular slot
+     */
+    public function can_navigate_to($slot) {
+        switch ($this->get_navigation_method()) {
+            case QUIZ_NAVMETHOD_FREE:
+                return true;
+                break;
+            case QUIZ_NAVMETHOD_SEQ:
+                return false;
+                break;
+        }
+        return true;
     }
 
     /**
@@ -1314,6 +1339,7 @@ abstract class quiz_nav_panel_base {
             $button->id          = 'quiznavbutton' . $slot;
             $button->number      = $qa->get_question()->_number;
             $button->stateclass  = $qa->get_state_class($showcorrectness);
+            $button->navmethod   = $this->attemptobj->get_navigation_method();
             if (!$showcorrectness && $button->stateclass == 'notanswered') {
                 $button->stateclass = 'complete';
             }
@@ -1380,7 +1406,11 @@ abstract class quiz_nav_panel_base {
  */
 class quiz_attempt_nav_panel extends quiz_nav_panel_base {
     public function get_question_url($slot) {
-        return $this->attemptobj->attempt_url($slot, -1, $this->page);
+        if ($this->attemptobj->can_navigate_to($slot)) {
+            return $this->attemptobj->attempt_url($slot, -1, $this->page);
+        } else {
+            return null;
+        }
     }
 
     public function render_before_button_bits(mod_quiz_renderer $output) {

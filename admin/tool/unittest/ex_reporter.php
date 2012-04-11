@@ -55,8 +55,8 @@ class ExHtmlReporter extends HtmlReporter {
      *
      * @param bool $showpasses Whether this reporter should output anything for passes.
      */
-    function ExHtmlReporter($showpasses) {
-        $this->HtmlReporter();
+    function __construct($showpasses) {
+        parent::__construct('UTF-8');
         $this->showpasses = $showpasses;
 
         $this->strrunonlyfolder = $this->get_string('runonlyfolder');
@@ -254,7 +254,7 @@ class ExHtmlReporter extends HtmlReporter {
         echo '<div class="performanceinfo">',
                 $this->get_string('runat', userdate($this->timestart)), ' ',
                 $this->get_string('timetakes', format_time(time() - $this->timestart)), ' ',
-                $this->get_string('version', SimpleTestOptions::getVersion()),
+                $this->get_string('version', SimpleTest::getVersion()),
                 '</div>';
     }
 

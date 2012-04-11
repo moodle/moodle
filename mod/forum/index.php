@@ -116,7 +116,7 @@ $forums = $DB->get_records('forum', array('course' => $course->id));
 
 $generalforums  = array();
 $learningforums = array();
-$modinfo =& get_fast_modinfo($course);
+$modinfo = get_fast_modinfo($course);
 
 if (!isset($modinfo->instances['forum'])) {
     $modinfo->instances['forum'] = array();

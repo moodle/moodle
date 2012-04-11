@@ -150,7 +150,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
     function prelogout_hook() {
         global $CFG;
 
-        if ($this->config->logoutcas) {
+        if (!empty($this->config->logoutcas)) {
             $backurl = $CFG->wwwroot;
             $this->connectCAS();
             phpCAS::logoutWithURL($backurl);
@@ -215,7 +215,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
      * @param object object with submitted configuration settings (without system magic quotes)
      * @param array $err array of error messages
      */
-    function validate_form(&$form, &$err) {
+    function validate_form($form, &$err) {
         $certificate_path = trim($form->certificate_path);
         if ($form->certificate_check && empty($certificate_path)) {
             $err['certificate_path'] = get_string('auth_cas_certificate_path_empty', 'auth_cas');

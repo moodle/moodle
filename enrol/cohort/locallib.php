@@ -40,7 +40,7 @@ class enrol_cohort_handler {
      * @param stdClass $ca
      * @return bool
      */
-    public function member_added($ca) {
+    public static function member_added($ca) {
         global $DB;
 
         if (!enrol_is_enabled('cohort')) {
@@ -79,7 +79,7 @@ class enrol_cohort_handler {
      * @param stdClass $ca
      * @return bool
      */
-    public function member_removed($ca) {
+    public static function member_removed($ca) {
         global $DB;
 
         // does anything want to sync with this cohort?
@@ -114,7 +114,7 @@ class enrol_cohort_handler {
      * @param stdClass $cohort
      * @return bool
      */
-    public function deleted($cohort) {
+    public static function deleted($cohort) {
         global $DB;
 
         // does anything want to sync with this cohort?

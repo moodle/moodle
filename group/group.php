@@ -35,9 +35,11 @@ $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
 // This script used to support group delete, but that has been moved. In case
 // anyone still links to it, let's redirect to the new script.
-if($delete) {
-    redirect('delete.php?courseid='.$courseid.'&groups='.$id);
+if ($delete) {
+    debugging('Deleting a group through group/group.php is deprecated and will be removed soon. Please use group/delete.php instead');
+    redirect(new moodle_url('delete.php', array('courseid' => $courseid, 'groups' => $id)));
 }
+
 
 if ($id) {
     if (!$group = $DB->get_record('groups', array('id'=>$id))) {
@@ -73,28 +75,6 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:managegroups', $context);
 
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&group='.$id;
-
-if ($id and $delete) {
-    if (!$confirm) {
-        $PAGE->set_title(get_string('deleteselectedgroup', 'group'));
-        $PAGE->set_heading($course->fullname . ': '. get_string('deleteselectedgroup', 'group'));
-        echo $OUTPUT->header();
-        $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
-        $optionsno  = array('id'=>$courseid);
-        $formcontinue = new single_button(new moodle_url('group.php', $optionsyes), get_string('yes'), 'get');
-        $formcancel = new single_button(new moodle_url($baseurl, $optionsno), get_string('no'), 'get');
-        echo $OUTPUT->confirm(get_string('deletegroupconfirm', 'group', $group->name), $formcontinue, $formcancel);
-        echo $OUTPUT->footer();
-        die;
-
-    } else if (confirm_sesskey()){
-        if (groups_delete_group($id)) {
-            redirect('index.php?id='.$course->id);
-        } else {
-            print_error('erroreditgroup', 'group', $returnurl);
-        }
-    }
-}
 
 // Prepare the description editor: We do support files for group descriptions
 $editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$course->maxbytes, 'trust'=>false, 'context'=>$context, 'noclean'=>true);

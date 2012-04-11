@@ -55,7 +55,7 @@ class dropbox extends oauth_helper {
     /**
      * Download a file
      */
-    public function get_file($filepath, $saveas) {
+    public function get_file($filepath, $saveas = '') {
         $info = pathinfo($filepath);
         $dirname = $info['dirname'];
         $basename = $info['basename'];

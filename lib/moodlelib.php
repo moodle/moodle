@@ -2682,6 +2682,13 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
         }
     }
 
+    // If this is an AJAX request and $setwantsurltome is true then we need to override it and set it to false.
+    // Otherwise the AJAX request URL will be set to $SESSION->wantsurl and events such as self enrolment in the future
+    // risk leading the user back to the AJAX request URL.
+    if ($setwantsurltome && defined('AJAX_SCRIPT') && AJAX_SCRIPT) {
+        $setwantsurltome = false;
+    }
+
     // If the user is not even logged in yet then make sure they are
     if (!isloggedin()) {
         if ($autologinguest and !empty($CFG->guestloginbutton) and !empty($CFG->autologinguests)) {
@@ -2726,7 +2733,9 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
     if (get_user_preferences('auth_forcepasswordchange') && !session_is_loggedinas()) {
         $userauth = get_auth_plugin($USER->auth);
         if ($userauth->can_change_password() and !$preventredirect) {
-            $SESSION->wantsurl = $FULLME;
+            if ($setwantsurltome) {
+                $SESSION->wantsurl = $FULLME;
+            }
             if ($changeurl = $userauth->change_password_url()) {
                 //use plugin custom url
                 redirect($changeurl);
@@ -2749,7 +2758,9 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
         if ($preventredirect) {
             throw new require_login_exception('User not fully set-up');
         }
-        $SESSION->wantsurl = $FULLME;
+        if ($setwantsurltome) {
+            $SESSION->wantsurl = $FULLME;
+        }
         redirect($CFG->wwwroot .'/user/edit.php?id='. $USER->id .'&amp;course='. SITEID);
     }
 
@@ -2769,13 +2780,17 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
             if ($preventredirect) {
                 throw new require_login_exception('Policy not agreed');
             }
-            $SESSION->wantsurl = $FULLME;
+            if ($setwantsurltome) {
+                $SESSION->wantsurl = $FULLME;
+            }
             redirect($CFG->wwwroot .'/user/policy.php');
         } else if (!empty($CFG->sitepolicyguest) and isguestuser()) {
             if ($preventredirect) {
                 throw new require_login_exception('Policy not agreed');
             }
-            $SESSION->wantsurl = $FULLME;
+            if ($setwantsurltome) {
+                $SESSION->wantsurl = $FULLME;
+            }
             redirect($CFG->wwwroot .'/user/policy.php');
         }
     }
@@ -2927,7 +2942,9 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
             if ($preventredirect) {
                 throw new require_login_exception('Not enrolled');
             }
-            $SESSION->wantsurl = $FULLME;
+            if ($setwantsurltome) {
+                $SESSION->wantsurl = $FULLME;
+            }
             redirect($CFG->wwwroot .'/enrol/index.php?id='. $course->id);
         }
     }
@@ -4775,12 +4792,24 @@ function reset_course_userdata($data) {
         }
 
         foreach($data->unenrol_users as $withroleid) {
-            $sql = "SELECT ue.*
-                      FROM {user_enrolments} ue
-                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
-                      JOIN {context} c ON (c.contextlevel = :courselevel AND c.instanceid = e.courseid)
-                      JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = :roleid AND ra.userid = ue.userid)";
-            $params = array('courseid'=>$data->courseid, 'roleid'=>$withroleid, 'courselevel'=>CONTEXT_COURSE);
+            if ($withroleid) {
+                $sql = "SELECT ue.*
+                          FROM {user_enrolments} ue
+                          JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
+                          JOIN {context} c ON (c.contextlevel = :courselevel AND c.instanceid = e.courseid)
+                          JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.roleid = :roleid AND ra.userid = ue.userid)";
+                $params = array('courseid'=>$data->courseid, 'roleid'=>$withroleid, 'courselevel'=>CONTEXT_COURSE);
+
+            } else {
+                // without any role assigned at course context
+                $sql = "SELECT ue.*
+                          FROM {user_enrolments} ue
+                          JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
+                          JOIN {context} c ON (c.contextlevel = :courselevel AND c.instanceid = e.courseid)
+                     LEFT JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.userid = ue.userid)
+                         WHERE ra.id IS NULL";
+                $params = array('courseid'=>$data->courseid, 'courselevel'=>CONTEXT_COURSE);
+            }
 
             $rs = $DB->get_recordset_sql($sql, $params);
             foreach ($rs as $ue) {
@@ -5008,6 +5037,7 @@ function get_mailer($action='get') {
                 $mailer->SMTPDebug = true;
             }
             $mailer->Host          = $CFG->smtphosts;        // specify main and backup servers
+            $mailer->SMTPSecure    = $CFG->smtpsecure;       // specify secure connection protocol
             $mailer->SMTPKeepAlive = $prevkeepalive;         // use previous keepalive
 
             if ($CFG->smtpuser) {                            // Use SMTP authentication
@@ -7763,7 +7793,7 @@ function get_plugin_types($fullpaths=true) {
 function get_plugin_list($plugintype) {
     global $CFG;
 
-    $ignored = array('CVS', '_vti_cnf', 'simpletest', 'db', 'yui', 'phpunit');
+    $ignored = array('CVS', '_vti_cnf', 'simpletest', 'db', 'yui', 'tests');
     if ($plugintype == 'auth') {
         // Historically we have had an auth plugin called 'db', so allow a special case.
         $key = array_search('db', $ignored);
@@ -8365,13 +8395,13 @@ function get_device_type() {
     }
 
     //mobile detection PHP direct copy from open source detectmobilebrowser.com
-    $phonesregex = '/android|avantgo|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i';
+    $phonesregex = '/android .+ mobile|avantgo|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i';
     $modelsregex = '/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|e\-|e\/|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(di|rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|xda(\-|2|g)|yas\-|your|zeto|zte\-/i';
     if (preg_match($phonesregex,$useragent) || preg_match($modelsregex,substr($useragent, 0, 4))){
         return 'mobile';
     }
 
-    $tabletregex = '/Tablet browser|iPad|iProd|GT-P1000|GT-I9000|SHW-M180S|SGH-T849|SCH-I800|Build\/ERE27|sholest/i';
+    $tabletregex = '/Tablet browser|android|iPad|iProd|GT-P1000|GT-I9000|SHW-M180S|SGH-T849|SCH-I800|Build\/ERE27|sholest/i';
     if (preg_match($tabletregex, $useragent)) {
          return 'tablet';
     }
@@ -8578,8 +8608,7 @@ function check_gd_version() {
  * Checks version numbers of main code and all modules to see
  * if there are any mismatches
  *
- * @global object
- * @global object
+ * @global moodle_database $DB
  * @return bool
  */
 function moodle_needs_upgrading() {
@@ -8642,6 +8671,8 @@ function moodle_needs_upgrading() {
     $plugintypes = get_plugin_types();
     unset($plugintypes['mod']);
     unset($plugintypes['block']);
+
+    $versions = $DB->get_records_menu('config_plugins', array('name' => 'version'), 'plugin', 'plugin, value');
     foreach ($plugintypes as $type=>$unused) {
         $plugs = get_plugin_list($type);
         foreach ($plugs as $plug=>$fullplug) {
@@ -8651,7 +8682,11 @@ function moodle_needs_upgrading() {
             }
             $plugin = new stdClass();
             include($fullplug.'/version.php');  // defines $plugin with version etc
-            $installedversion = get_config($component, 'version');
+            if (array_key_exists($component, $versions)) {
+                $installedversion = $versions[$component];
+            } else {
+                $installedversion = get_config($component, 'version');
+            }
             if (empty($installedversion)) { // new installation
                 return true;
             } else if ($installedversion < $plugin->version) { // upgrade
@@ -8664,13 +8699,50 @@ function moodle_needs_upgrading() {
 }
 
 /**
+ * Returns the major version of this site
+ *
+ * Moodle version numbers consist of three numbers separated by a dot, for
+ * example 1.9.11 or 2.0.2. The first two numbers, like 1.9 or 2.0, represent so
+ * called major version. This function extracts the major version from either
+ * $CFG->release (default) or eventually from the $release variable defined in
+ * the main version.php.
+ *
+ * @param bool $fromdisk should the version if source code files be used
+ * @return string|false the major version like '2.3', false if could not be determined
+ */
+function moodle_major_version($fromdisk = false) {
+    global $CFG;
+
+    if ($fromdisk) {
+        $release = null;
+        require($CFG->dirroot.'/version.php');
+        if (empty($release)) {
+            return false;
+        }
+
+    } else {
+        if (empty($CFG->release)) {
+            return false;
+        }
+        $release = $CFG->release;
+    }
+
+    if (preg_match('/^[0-9]+\.[0-9]+/', $release, $matches)) {
+        return $matches[0];
+    } else {
+        return false;
+    }
+}
+
+/**
  * Sets maximum expected time needed for upgrade task.
  * Please always make sure that upgrade will not run longer!
  *
  * The script may be automatically aborted if upgrade times out.
  *
- * @global object
+ * @category upgrade
  * @param int $max_execution_time in seconds (can not be less than 60 s)
+ * @todo MDL-32293 - Move this function to lib/upgradelib.php
  */
 function upgrade_set_timeout($max_execution_time=300) {
     global $CFG;
@@ -10182,6 +10254,40 @@ function object_property_exists( $obj, $property ) {
     return array_key_exists( $property, $properties );
 }
 
+/**
+ * Converts an object into an associative array
+ *
+ * This function converts an object into an associative array by iterating
+ * over its public properties. Because this function uses the foreach
+ * construct, Iterators are respected. It works recursively on arrays of objects.
+ * Arrays and simple values are returned as is.
+ *
+ * If class has magic properties, it can implement IteratorAggregate
+ * and return all available properties in getIterator()
+ *
+ * @param mixed $var
+ * @return array
+ */
+function convert_to_array($var) {
+    $result = array();
+    $references = array();
+
+    // loop over elements/properties
+    foreach ($var as $key => $value) {
+        // recursively convert objects
+        if (is_object($value) || is_array($value)) {
+            // but prevent cycles
+            if (!in_array($value, $references)) {
+                $result[$key] = convert_to_array($value);
+                $references[] = $value;
+            }
+        } else {
+            // simple values are untouched
+            $result[$key] = $value;
+        }
+    }
+    return $result;
+}
 
 /**
  * Detect a custom script replacement in the data directory that will
@@ -10697,17 +10803,22 @@ class lang_string {
                 $this->a = $a;
             } else if ($a instanceof lang_string) {
                 $this->a = $a->out();
-            } else if (is_object($a)) {
-                $this->a = new stdClass;
-                foreach (get_object_vars($a) as $key => $value) {
-                    // Make sure conversion errors don't get displayed (results in '')
-                    $this->a->$key = @(string)$value;
-                }
-            } else if (is_array($a)) {
+            } else if (is_object($a) or is_array($a)) {
+                $a = (array)$a;
                 $this->a = array();
                 foreach ($a as $key => $value) {
                     // Make sure conversion errors don't get displayed (results in '')
-                    $this->a[$key] = @(string)$value;
+                    if (is_array($value)) {
+                        $this->a[$key] = '';
+                    } else if (is_object($value)) {
+                        if (method_exists($value, '__toString')) {
+                            $this->a[$key] = $value->__toString();
+                        } else {
+                            $this->a[$key] = '';
+                        }
+                    } else {
+                        $this->a[$key] = (string)$value;
+                    }
                 }
             }
         }

@@ -200,7 +200,7 @@ class repository_flickr extends repository {
      * @param string $search_text
      * @return array
      */
-    public function search($search_text) {
+    public function search($search_text, $page = 0) {
         $photos = $this->flickr->photos_search(array(
             'user_id'=>$this->nsid,
             'per_page'=>24,
@@ -274,7 +274,7 @@ class repository_flickr extends repository {
      * Add Plugin settings input to Moodle form
      * @param object $mform
      */
-    public function type_config_form($mform) {
+    public static function type_config_form($mform, $classname = 'repository') {
         global $CFG;
         $api_key = get_config('flickr', 'api_key');
         $secret = get_config('flickr', 'secret');

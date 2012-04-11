@@ -50,7 +50,7 @@ class calc_formula {
      */
     function calc_formula($formula, $params=false) {
         $this->_em = new EvalMath();
-        $this->_em->suppress_errors = !debugging('', DEBUG_DEVELOPER);
+        $this->_em->suppress_errors = true; // no PHP errors!
         if (strpos($formula, '=') !== 0) {
             $this->_error = "missing leading '='";
             return;

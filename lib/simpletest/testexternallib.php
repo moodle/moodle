@@ -20,13 +20,16 @@
  * Unit tests for /lib/externallib.php.
  *
  * @package   webservices
- * @copyright 2009 Pwetr Skoda
+ * @copyright 2009 Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
+
+global $CFG;
+
 require_once($CFG->libdir . '/externallib.php');
 
 class externallib_test extends UnitTestCase {

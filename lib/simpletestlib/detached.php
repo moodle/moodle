@@ -3,7 +3,7 @@
  *  base include file for SimpleTest
  *  @package    SimpleTest
  *  @subpackage UnitTester
- *  @version    $Id$
+ *  @version    $Id: detached.php 1784 2008-04-26 13:07:14Z pp11 $
  */
 
 /**#@+
@@ -19,9 +19,9 @@ require_once(dirname(__FILE__) . '/shell_tester.php');
  *    @subpackage UnitTester
  */
 class DetachedTestCase {
-    var $_command;
-    var $_dry_command;
-    var $_size;
+    private $command;
+    private $dry_command;
+    private $size;
 
     /**
      *    Sets the location of the remote test.
@@ -29,10 +29,10 @@ class DetachedTestCase {
      *    @param string $dry_command   Script for dry run.
      *    @access public
      */
-    function DetachedTestCase($command, $dry_command = false) {
-        $this->_command = $command;
-        $this->_dry_command = $dry_command ? $dry_command : $command;
-        $this->_size = false;
+    function __construct($command, $dry_command = false) {
+        $this->command = $command;
+        $this->dry_command = $dry_command ? $dry_command : $command;
+        $this->size = false;
     }
 
     /**
@@ -41,7 +41,7 @@ class DetachedTestCase {
      *    @access public
      */
     function getLabel() {
-        return $this->_command;
+        return $this->command;
     }
 
     /**
@@ -53,11 +53,11 @@ class DetachedTestCase {
      *    @access public
      */
     function run(&$reporter) {
-        $shell = new SimpleShell();
-        $shell->execute($this->_command);
-        $parser = &$this->_createParser($reporter);
+        $shell = &new SimpleShell();
+        $shell->execute($this->command);
+        $parser = &$this->createParser($reporter);
         if (! $parser->parse($shell->getOutput())) {
-            trigger_error('Cannot parse incoming XML from [' . $this->_command . ']');
+            trigger_error('Cannot parse incoming XML from [' . $this->command . ']');
             return false;
         }
         return true;
@@ -69,18 +69,18 @@ class DetachedTestCase {
      *    @access public
      */
     function getSize() {
-        if ($this->_size === false) {
-            $shell = new SimpleShell();
-            $shell->execute($this->_dry_command);
-            $reporter = new SimpleReporter();
-            $parser = &$this->_createParser($reporter);
+        if ($this->size === false) {
+            $shell = &new SimpleShell();
+            $shell->execute($this->dry_command);
+            $reporter = &new SimpleReporter();
+            $parser = &$this->createParser($reporter);
             if (! $parser->parse($shell->getOutput())) {
-                trigger_error('Cannot parse incoming XML from [' . $this->_dry_command . ']');
+                trigger_error('Cannot parse incoming XML from [' . $this->dry_command . ']');
                 return false;
             }
-            $this->_size = $reporter->getTestCaseCount();
+            $this->size = $reporter->getTestCaseCount();
         }
-        return $this->_size;
+        return $this->size;
     }
 
     /**
@@ -89,7 +89,7 @@ class DetachedTestCase {
      *    @return SimpleTestXmlListener      XML reader.
      *    @access protected
      */
-    function &_createParser(&$reporter) {
+    protected function &createParser(&$reporter) {
         return new SimpleTestXmlParser($reporter);
     }
 }

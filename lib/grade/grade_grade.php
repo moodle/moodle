@@ -400,7 +400,7 @@ class grade_grade extends grade_object {
      * @param array $items array of all grade item ids
      * @return void
      */
-    public function check_locktime_all($items) {
+    public static function check_locktime_all($items) {
         global $CFG, $DB;
 
         $now = time(); // no rounding needed, this is not supposed to be called every 10 seconds

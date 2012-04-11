@@ -102,6 +102,7 @@
 
         if (!$section = $DB->get_record('course_sections', array('course'=>$SITE->id, 'section'=>1))) {
             $DB->delete_records('course_sections', array('course'=>$SITE->id, 'section'=>1)); // Just in case
+            $section = new stdClass();
             $section->course = $SITE->id;
             $section->section = 1;
             $section->summary = '';

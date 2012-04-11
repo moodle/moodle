@@ -25,6 +25,10 @@ and documented for Moodle at:
 Such modifications should be carefully each time the Excel PEAR package is updated
 to a new release within Moodle.
 
+5/ static keywords in OLE.php
+* static function Asc2Ucs()
+* static function LocalDate2OLE()
+
 XML/Parser
 =================
 1/ changed ereg_ to preg_

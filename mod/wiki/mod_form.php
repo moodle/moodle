@@ -41,28 +41,24 @@ require_once($CFG->dirroot . '/lib/datalib.php');
 
 class mod_wiki_mod_form extends moodleform_mod {
 
-    function definition() {
-
-        global $COURSE;
-        $mform =& $this->_form;
+    protected function definition() {
+        $mform = $this->_form;
+        $required = get_string('required');
 
         //-------------------------------------------------------------------------------
-        /// Adding the "general" fieldset, where all the common settings are showed
+        // Adding the "general" fieldset, where all the common settings are showed
         $mform->addElement('header', 'general', get_string('general', 'form'));
-        /// Adding the standard "name" field
+
+        // Adding the standard "name" field
         $mform->addElement('text', 'name', get_string('wikiname', 'wiki'), array('size' => '64'));
         $mform->setType('name', PARAM_TEXT);
-        $mform->addRule('name', null, 'required', null, 'client');
-        /// Adding the optional "intro" and "introformat" pair of fields
-        //    	$mform->addElement('htmleditor', 'intro', get_string('wikiintro', 'wiki'));
-        //		$mform->setType('intro', PARAM_RAW);
-        //		$mform->addRule('intro', get_string('required'), 'required', null, 'client');
-        //
-        //        $mform->addElement('format', 'introformat', get_string('format'));
+        $mform->addRule('name', $required, 'required', null, 'client');
+        // Adding the optional "intro" and "introformat" pair of fields
         $this->add_intro_editor(true, get_string('wikiintro', 'wiki'));
+
         //-------------------------------------------------------------------------------
-        /// Adding the rest of wiki settings, spreeading all them into this fieldset
-        /// or adding more fieldsets ('header' elements) if needed for better logic
+        // Adding the rest of wiki settings, spreeading all them into this fieldset
+        // or adding more fieldsets ('header' elements) if needed for better logic
 
         $mform->addElement('header', 'wikifieldset', get_string('wikisettings', 'wiki'));
 
@@ -75,9 +71,9 @@ class mod_wiki_mod_form extends moodleform_mod {
 
         $mform->addElement('text', 'firstpagetitle', get_string('firstpagetitle', 'wiki'), $attr);
         $mform->addHelpButton('firstpagetitle', 'firstpagetitle', 'wiki');
-
+        $mform->setType('firstpagetitle', PARAM_TEXT);
         if (empty($this->_instance)) {
-            $mform->addRule('firstpagetitle', null, 'required', null, 'client');
+            $mform->addRule('firstpagetitle', $required, 'required', null, 'client');
         }
 
         $wikimodeoptions = array ('collaborative' => get_string('wikimodecollaborative', 'wiki'), 'individual' => get_string('wikimodeindividual', 'wiki'));
@@ -96,6 +92,7 @@ class mod_wiki_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'defaultformat', get_string('defaultformat', 'wiki'), $editoroptions);
         $mform->addHelpButton('defaultformat', 'defaultformat', 'wiki');
+
         $mform->addElement('checkbox', 'forceformat', get_string('forceformat', 'wiki'));
         $mform->addHelpButton('forceformat', 'forceformat', 'wiki');
 

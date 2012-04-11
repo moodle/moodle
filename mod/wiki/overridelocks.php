@@ -67,8 +67,6 @@ require_login($course->id, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/wiki:overridelock', $context);
 
-add_to_log($course->id, "wiki", "overridelocks", "overridelocks.php?id=$cm->id", "$wiki->id");
-
 if (!confirm_sesskey()) {
     print_error(get_string('invalidsesskey', 'wiki'));
 }
@@ -79,6 +77,7 @@ $wikipage->set_page($page);
 if (!empty($section)) {
     $wikipage->set_section($sectioncontent, $section);
 }
+add_to_log($course->id, "wiki", "overridelocks", "view.php?pageid=".$pageid, $pageid, $cm->id);
 
 $wikipage->print_header();
 

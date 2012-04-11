@@ -129,9 +129,15 @@ abstract class question_edit_form extends question_wizard_form {
         $mform->addElement('header', 'generalheader', get_string("general", 'form'));
 
         if (!isset($this->question->id)) {
+            if (!empty($this->question->formoptions->mustbeusable)) {
+                $contexts = $this->contexts->having_add_and_use();
+            } else {
+                $contexts = $this->contexts->having_cap('moodle/question:add');
+            }
+
             // Adding question
             $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
-                    array('contexts' => $this->contexts->having_cap('moodle/question:add')));
+                    array('contexts' => $contexts));
         } else if (!($this->question->formoptions->canmove ||
                 $this->question->formoptions->cansaveasnew)) {
             // Editing question with no permission to move from category.
@@ -237,9 +243,7 @@ abstract class question_edit_form extends question_wizard_form {
             if ($this->question->formoptions->movecontext) {
                 $buttonarray[] = $mform->createElement('submit', 'submitbutton',
                         get_string('moveq', 'question'));
-            } else if ($this->question->formoptions->canedit ||
-                    $this->question->formoptions->canmove ||
-                    $this->question->formoptions->movecontext) {
+            } else if ($this->question->formoptions->canedit) {
                 $buttonarray[] = $mform->createElement('submit', 'submitbutton',
                         get_string('savechanges'));
             }
@@ -431,7 +435,8 @@ abstract class question_edit_form extends question_wizard_form {
         if (!empty($question->questiontext)) {
             $questiontext = $question->questiontext;
         } else {
-            $questiontext = '';
+            $questiontext = $this->_form->getElement('questiontext')->getValue();
+            $questiontext = $questiontext['text'];
         }
         $questiontext = file_prepare_draft_area($draftid, $this->context->id,
                 'question', 'questiontext', empty($question->id) ? null : (int) $question->id,
@@ -447,7 +452,8 @@ abstract class question_edit_form extends question_wizard_form {
         $draftid = file_get_submitted_draft_itemid('generalfeedback');
 
         if (empty($question->generalfeedback)) {
-            $question->generalfeedback = '';
+            $generalfeedback = $this->_form->getElement('generalfeedback')->getValue();
+            $question->generalfeedback = $generalfeedback['text'];
         }
 
         $feedback = file_prepare_draft_area($draftid, $this->context->id,
@@ -639,10 +645,10 @@ abstract class question_edit_form extends question_wizard_form {
 
     public function validation($fromform, $files) {
         $errors = parent::validation($fromform, $files);
-        if (empty($fromform->makecopy) && isset($this->question->id)
+        if (empty($fromform['makecopy']) && isset($this->question->id)
                 && ($this->question->formoptions->canedit ||
                         $this->question->formoptions->cansaveasnew)
-                && empty($fromform->usecurrentcat) && !$this->question->formoptions->canmove) {
+                && empty($fromform['usecurrentcat']) && !$this->question->formoptions->canmove) {
             $errors['currentgrp'] = get_string('nopermissionmove', 'question');
         }
         return $errors;

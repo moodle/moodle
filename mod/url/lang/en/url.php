@@ -67,4 +67,5 @@ $string['printintro'] = 'Display URL description';
 $string['printintroexplain'] = 'Display URL description below content? Some display types may not display description even if enabled.';
 $string['rolesinparams'] = 'Include role names in parameters';
 $string['serverurl'] = 'Server URL';
+$string['url:addinstance'] = 'Add a new URL resource';
 $string['url:view'] = 'View URL';

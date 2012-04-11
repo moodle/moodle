@@ -26,6 +26,9 @@
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
+
+global $CFG;
+
 require_once($CFG->libdir . '/csslib.php');
 
 
@@ -108,6 +111,18 @@ class css_optimiser_test extends UnitTestCase {
         $cssin = '.block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty]]);background-position: 0% 5%;background-repeat: no-repeat;}
                   .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed]]);}';
         $cssout = '.block_tree .tree_item.emptybranch{background:url([[pix:t/collapsed_empty]]) no-repeat 0% 5%;} .block_tree .collapsed .tree_item.branch{background-image:url([[pix:t/collapsed]]);}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '#nextLink{background:url(data:image/gif;base64,AAAA);}';
+        $cssout = '#nextLink{background-image:url(data:image/gif;base64,AAAA);}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '#nextLink{background-image:url(data:image/gif;base64,AAAA);}';
+        $cssout = '#nextLink{background-image:url(data:image/gif;base64,AAAA);}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {background: #123456 url(data:image/gif;base64,AAAA) no-repeat top left;}';
+        $cssout = '.test{background:#123456 url(data:image/gif;base64,AAAA) no-repeat top left;}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
     }
 
@@ -498,8 +513,8 @@ class css_optimiser_test extends UnitTestCase {
         $this->assertEqual($cssout, $optimiser->process($cssin));
 
         // Test complex CSS rules that don't really exist but mimic other CSS rules
-        $cssin  = '.one {master-of-destruction: explode(\' \', "What madness";}';
-        $cssout = '.one{master-of-destruction:explode(\' \', "What madness";}';
+        $cssin  = '.one {master-of-destruction: explode(\' \', "What madness");}';
+        $cssout = '.one{master-of-destruction:explode(\' \', "What madness");}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
 
         // Test some complex IE css... I couldn't even think of a more complext solution

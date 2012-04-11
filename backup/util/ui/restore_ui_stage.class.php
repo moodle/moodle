@@ -95,7 +95,7 @@ abstract class restore_ui_stage extends base_ui_stage {
 abstract class restore_ui_independent_stage {
     abstract public function __construct($contextid);
     abstract public function process();
-    abstract public function display($renderer);
+    abstract public function display(core_backup_renderer $renderer);
     abstract public function get_stage();
     /**
      * Gets an array of progress bar items that can be displayed through the restore renderer.
@@ -177,7 +177,7 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage {
      * @param core_backup_renderer $renderer renderer instance to use
      * @return string HTML code
      */
-    public function display($renderer) {
+    public function display(core_backup_renderer $renderer) {
 
         $prevstageurl = new moodle_url('/backup/restorefile.php', array('contextid' => $this->contextid));
         $nextstageurl = new moodle_url('/backup/restore.php', array(
@@ -262,7 +262,7 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
      * @param core_backup_renderer $renderer renderer instance to use
      * @return string HTML code
      */
-    public function display($renderer) {
+    public function display(core_backup_renderer $renderer) {
 
         $format = backup_general_helper::detect_backup_format($this->filepath);
 
@@ -676,7 +676,7 @@ class restore_ui_stage_process extends restore_ui_stage {
      * @param core_backup_renderer $renderer renderer instance to use
      * @return string HTML code
      */
-    public function display($renderer) {
+    public function display(core_backup_renderer $renderer) {
         global $PAGE;
 
         $html = '';
@@ -752,6 +752,7 @@ class restore_ui_stage_complete extends restore_ui_stage_process {
      * appropriate message.
      *
      * @param core_backup_renderer $renderer
+     * @return string HTML code to echo
      */
     public function display(core_backup_renderer $renderer) {
 

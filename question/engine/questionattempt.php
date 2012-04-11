@@ -884,10 +884,10 @@ class question_attempt {
             case self::PARAM_MARK:
                 // Special case to work around PARAM_NUMBER converting '' to 0.
                 $mark = $this->get_submitted_var($name, PARAM_RAW_TRIMMED, $postdata);
-                if ($mark === '') {
+                if ($mark === '' || is_null($mark)) {
                     return $mark;
                 } else {
-                    return $this->get_submitted_var($name, PARAM_NUMBER, $postdata);
+                    return clean_param(str_replace(',', '.', $mark), PARAM_NUMBER);
                 }
 
             case self::PARAM_FILES:
@@ -1277,10 +1277,10 @@ class question_attempt_with_restricted_history extends question_attempt {
     protected function add_step(question_attempt_step $step) {
         coding_exception('Cannot modify a question_attempt_with_restricted_history.');
     }
-    public function process_action($submitteddata, $timestamp = null, $userid = null) {
+    public function process_action($submitteddata, $timestamp = null, $userid = null, $existingstepid = null) {
         coding_exception('Cannot modify a question_attempt_with_restricted_history.');
     }
-    public function start($preferredbehaviour, $variant, $submitteddata = array(), $timestamp = null, $userid = null) {
+    public function start($preferredbehaviour, $variant, $submitteddata = array(), $timestamp = null, $userid = null, $existingstepid = null) {
         coding_exception('Cannot modify a question_attempt_with_restricted_history.');
     }
 

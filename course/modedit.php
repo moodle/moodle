@@ -59,7 +59,7 @@ if (!empty($add)) {
 
     $cw = get_course_section($section, $course->id);
 
-    if (!course_allowed_module($course, $module->id)) {
+    if (!course_allowed_module($course, $module->name)) {
         print_error('moduledisable');
     }
 

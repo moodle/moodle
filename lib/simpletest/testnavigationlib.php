@@ -26,6 +26,9 @@
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
+
+global $CFG;
+
 require_once($CFG->libdir . '/navigationlib.php');
 
 class navigation_node_test extends UnitTestCase {
@@ -52,7 +55,7 @@ class navigation_node_test extends UnitTestCase {
 
         $this->activeurl = $PAGE->url;
         navigation_node::override_active_url($this->activeurl);
-        
+
         $this->inactiveurl = new moodle_url('http://www.moodle.com/');
         $this->fakeproperties['action'] = $this->inactiveurl;
 
@@ -92,10 +95,17 @@ class navigation_node_test extends UnitTestCase {
         $this->assertIsA($node2, 'navigation_node');
         $this->assertIsA($node3, 'navigation_node');
 
-        $this->assertReference($node1, $this->node->get('key'));
-        $this->assertReference($node2, $this->node->get($node2->key));
-        $this->assertReference($node2, $this->node->get($node2->key, $node2->type));
-        $this->assertReference($node3, $this->node->get($node3->key, $node3->type));
+        $ref = $this->node->get('key');
+        $this->assertReference($node1, $ref);
+
+        $ref = $this->node->get($node2->key);
+        $this->assertReference($node2, $ref);
+
+        $ref = $this->node->get($node2->key, $node2->type);
+        $this->assertReference($node2, $ref);
+
+        $ref = $this->node->get($node3->key, $node3->type);
+        $this->assertReference($node3, $ref);
     }
 
     public function test_add_before() {
@@ -165,11 +175,12 @@ class navigation_node_test extends UnitTestCase {
     public function test_find_active_node() {
         $activenode1 = $this->node->find_active_node();
         $activenode2 = $this->node->get('demo1')->find_active_node();
-        
+
         if ($this->assertIsA($activenode1, 'navigation_node')) {
-            $this->assertReference($activenode1, $this->node->get('demo3')->get('demo5')->get('activity1'));
+            $ref = $this->node->get('demo3')->get('demo5')->get('activity1');
+            $this->assertReference($activenode1, $ref);
         }
-        
+
         $this->assertNotA($activenode2, 'navigation_node');
     }
 
@@ -304,7 +315,7 @@ class mock_initialise_global_navigation extends global_navigation {
         return 0;
     }
 
-    public function load_for_user() {
+    public function load_for_user($user=null, $forceforcontext=false) {
         $this->add('load_for_user', null, null, null, 'initcall'.self::$count);
         self::$count++;
         return 0;

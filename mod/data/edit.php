@@ -216,6 +216,7 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
             /// Insert a whole lot of empty records to make sure we have them
             $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
             foreach ($fields as $field) {
+                $content = new stdClass();
                 $content->recordid = $recordid;
                 $content->fieldid = $field->id;
                 $DB->insert_record('data_content',$content);

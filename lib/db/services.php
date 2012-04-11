@@ -18,6 +18,15 @@
 /**
  * Core external functions and service definitions.
  *
+ * The functions and services defined on this file are
+ * processed and registered into the Moodle DB after any
+ * install or upgrade operation. All plugins support this.
+ *
+ * For more information, take a look to the documentation available:
+ *     - Webservices API: {@link http://docs.moodle.org/dev/Web_services_API}
+ *     - External API: {@link http://docs.moodle.org/dev/External_functions_API}
+ *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *
  * @package    core_webservice
  * @category   webservice
  * @copyright  2009 Petr Skodak

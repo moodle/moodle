@@ -133,8 +133,11 @@ class import_ui_stage_confirmation extends backup_ui_stage_confirmation {
      *
      * This function is overriden so that we can manipulate the strings on the
      * buttons.
+     *
+     * @param core_backup_renderer $renderer
+     * @return string HTML code to echo
      */
-    public function display() {
+    public function display(core_backup_renderer $renderer) {
         $form = $this->initialise_stage_form();
         $form->require_definition_after_data();
         if ($e = $form->get_element('submitbutton')) {
@@ -147,7 +150,16 @@ class import_ui_stage_confirmation extends backup_ui_stage_confirmation {
                 }
             }
         }
+
+        // a nasty hack follows to work around the sad fact that moodle quickforms
+        // do not allow to actually return the HTML content, just to echo it
+        flush();
+        ob_start();
         $form->display();
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        return $output;
     }
 }
 /**

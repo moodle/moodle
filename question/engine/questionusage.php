@@ -171,7 +171,8 @@ class question_usage_by_activity {
         } else {
             $this->questionattempts[] = $qa;
         }
-        $qa->set_slot(end(array_keys($this->questionattempts)));
+        $ids = array_keys($this->questionattempts);
+        $qa->set_slot(end($ids));
         $this->observer->notify_attempt_added($qa);
         return $qa->get_slot();
     }
@@ -510,7 +511,14 @@ class question_usage_by_activity {
      * instead of the data from $_POST.
      */
     public function process_all_actions($timestamp = null, $postdata = null) {
-        $slots = question_attempt::get_submitted_var('slots', PARAM_SEQUENCE, $postdata);
+        // note: we must not use "question_attempt::get_submitted_var()" because there is no attempt instance!!!
+        if (is_null($postdata)) {
+            $slots = optional_param('slots', null, PARAM_SEQUENCE);
+        } else if (array_key_exists('slots', $postdata)) {
+            $slots = clean_param($postdata['slots'], PARAM_SEQUENCE);
+        } else {
+            $slots = null;
+        }
         if (is_null($slots)) {
             $slots = $this->get_slots();
         } else if (!$slots) {

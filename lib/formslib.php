@@ -62,7 +62,9 @@ function pear_handle_error($error){
 }
 
 if (!empty($CFG->debug) and $CFG->debug >= DEBUG_ALL){
-    PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pear_handle_error');
+    //TODO: this is a wrong place to init PEAR!
+    $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
+    $GLOBALS['_PEAR_default_error_options'] = 'pear_handle_error';
 }
 
 /**
@@ -1007,7 +1009,7 @@ abstract class moodleform {
 
                     switch ($option){
                         case 'default' :
-                            $mform->setDefault($realelementname, $params);
+                            $mform->setDefault($realelementname, str_replace('{no}', $i + 1, $params));
                             break;
                         case 'helpbutton' :
                             $params = array_merge(array($realelementname), $params);
@@ -1084,7 +1086,8 @@ abstract class moodleform {
         if (!is_null($contollerbutton) || is_null($selectvalue)) {
             foreach ($mform->_elements as $element) {
                 if (($element instanceof MoodleQuickForm_advcheckbox) &&
-                    $element->getAttribute('class') == $checkboxgroupclass) {
+                        $element->getAttribute('class') == $checkboxgroupclass &&
+                        !$element->isFrozen()) {
                     $mform->setConstants(array($element->getName() => $newselectvalue));
                 }
             }
@@ -1638,7 +1641,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             }
             foreach ($elementList as $elementName) {
                 $value = $this->exportValue($elementName);
-                if (PEAR::isError($value)) {
+                if (@PEAR::isError($value)) {
                     return $value;
                 }
                 //oh, stock QuickFOrm was returning array of arrays!

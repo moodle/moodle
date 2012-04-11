@@ -3,11 +3,11 @@
  *  base include file for SimpleTest
  *  @package    SimpleTest
  *  @subpackage UnitTester
- *  @version    $Id$
+ *  @version    $Id: exceptions.php 1882 2009-07-01 14:30:05Z lastcraft $
  */
 
 /**#@+
- * Include required SimpleTest files 
+ * Include required SimpleTest files
  */
 require_once dirname(__FILE__) . '/invoker.php';
 require_once dirname(__FILE__) . '/expectation.php';
@@ -25,8 +25,8 @@ class SimpleExceptionTrappingInvoker extends SimpleInvokerDecorator {
      *    Stores the invoker to be wrapped.
      *    @param SimpleInvoker $invoker   Test method runner.
      */
-    function SimpleExceptionTrappingInvoker($invoker) {
-        $this->SimpleInvokerDecorator($invoker);
+    function __construct($invoker) {
+        parent::__construct($invoker);
     }
 
     /**
@@ -136,6 +136,7 @@ class ExceptionExpectation extends SimpleExpectation {
  */
 class SimpleExceptionTrap {
     private $expected;
+    private $ignored;
     private $message;
 
     /**
@@ -154,14 +155,18 @@ class SimpleExceptionTrap {
      *    @access public
      */
     function expectException($expected = false, $message = '%s') {
-        if ($expected === false) {
-            $expected = new AnythingExpectation();
-        }
-        if (! SimpleExpectation::isExpectation($expected)) {
-            $expected = new ExceptionExpectation($expected);
-        }
-        $this->expected = $expected;
+        $this->expected = $this->coerceToExpectation($expected);
         $this->message = $message;
+    }
+
+    /**
+     *    Adds an exception to the ignore list. This is the list
+     *    of exceptions that when thrown do not affect the test.
+     *    @param SimpleExpectation $ignored    Exception to skip.
+     *    @access public
+     */
+    function ignoreException($ignored) {
+        $this->ignored[] = $this->coerceToExpectation($ignored);
     }
 
     /**
@@ -176,7 +181,29 @@ class SimpleExceptionTrap {
         if ($this->expected) {
             return $test->assert($this->expected, $exception, $this->message);
         }
+        foreach ($this->ignored as $ignored) {
+            if ($ignored->test($exception)) {
+                return true;
+            }
+        }
         return false;
+    }
+
+    /**
+     *    Turns an expected exception into a SimpleExpectation object.
+     *    @param mixed $exception      Exception, expectation or
+     *                                 class name of exception.
+     *    @return SimpleExpectation    Expectation that will match the
+     *                                 exception.
+     */
+    private function coerceToExpectation($exception) {
+        if ($exception === false) {
+            return new AnythingExpectation();
+        }
+        if (! SimpleExpectation::isExpectation($exception)) {
+            return new ExceptionExpectation($exception);
+        }
+        return $exception;
     }
 
     /**
@@ -193,6 +220,7 @@ class SimpleExceptionTrap {
     function clear() {
         $this->expected = false;
         $this->message = false;
+        $this->ignored = array();
     }
 }
 ?>

@@ -27,6 +27,7 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+
 require_once('simpletestlib.php');
 require_once('simpletestcoveragelib.php');
 require_once('ex_simple_test.php');

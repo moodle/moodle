@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -35,20 +34,53 @@
  * Please do not forget to use upgrade_set_timeout()
  * before any action that may take longer time to finish.
  *
- * @package    core
- * @subpackage admin
- * @copyright  2006 onwards Martin Dougiamas  http://dougiamas.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_install
+ * @category  upgrade
+ * @copyright 2006 onwards Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Main upgrade tasks to be executed on Moodle version bump
  *
- * @global stdClass $CFG
- * @global stdClass $USER
- * @global moodle_database $DB
- * @global core_renderer $OUTPUT
+ * This function is automatically executed after one bump in the Moodle core
+ * version is detected. It's in charge of performing the required tasks
+ * to raise core from the previous version to the next one.
+ *
+ * It's a collection of ordered blocks of code, named "upgrade steps",
+ * each one performing one isolated (from the rest of steps) task. Usually
+ * tasks involve creating new DB objects or performing manipulation of the
+ * information for cleanup/fixup purposes.
+ *
+ * Each upgrade step has a fixed structure, that can be summarised as follows:
+ *
+ * if ($oldversion < XXXXXXXXXX.XX) {
+ *     // Explanation of the update step, linking to issue in the Tracker if necessary
+ *     upgrade_set_timeout(XX); // Optional for big tasks
+ *     // Code to execute goes here, usually the XMLDB Editor will
+ *     // help you here. See {@link http://docs.moodle.org/dev/XMLDB_editor}.
+ *     upgrade_main_savepoint(true, XXXXXXXXXX.XX);
+ * }
+ *
+ * All plugins within Moodle (modules, blocks, reports...) support the existence of
+ * their own upgrade.php file, using the "Frankenstyle" component name as
+ * defined at {@link http://docs.moodle.org/dev/Frankenstyle}, for example:
+ *     - {@link xmldb_page_upgrade($oldversion)}. (modules don't require the plugintype ("mod_") to be used.
+ *     - {@link xmldb_auth_manual_upgrade($oldversion)}.
+ *     - {@link xmldb_workshopform_accumulative_upgrade($oldversion)}.
+ *     - ....
+ *
+ * In order to keep the contents of this file reduced, it's allowed to create some helper
+ * functions to be used here in the {@link upgradelib.php} file at the same directory. Note
+ * that such a file must be manually included from upgrade.php, and there are some restrictions
+ * about what can be used within it.
+ *
+ * For more information, take a look to the documentation available:
+ *     - Data definition API: {@link http://docs.moodle.org/dev/Data_definition_API}
+ *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *
  * @param int $oldversion
  * @return bool always true
  */
@@ -67,9 +99,8 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2011120500);
     }
 
-    ////////////////////////////////////////
-    ///upgrade supported only from 2.2.x ///
-    ////////////////////////////////////////
+    // Moodle v2.2.0 release upgrade line
+    // Put any upgrade step following this
 
     if ($oldversion < 2011120500.02) {
 
@@ -212,7 +243,121 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012030900.01);
     }
 
+    if ($oldversion < 2012031500.01) {
+        // Upgrade old course_allowed_modules data to be permission overrides.
+        if ($CFG->restrictmodulesfor === 'all') {
+            $courses = $DB->get_records_menu('course', array(), 'id', 'id, 1');
+        } else if ($CFG->restrictmodulesfor === 'requested') {
+            $courses = $DB->get_records_menu('course', array('retrictmodules' => 1), 'id', 'id, 1');
+        } else {
+            $courses = array();
+        }
+
+        if (!$dbman->table_exists('course_allowed_modules')) {
+            // Upgrade must already have been run on this server. This might happen,
+            // for example, during development of these changes.
+            $courses = array();
+        }
+
+        $modidtoname = $DB->get_records_menu('modules', array(), 'id', 'id, name');
+
+        $coursecount = count($courses);
+        if ($coursecount) {
+            $pbar = new progress_bar('allowedmods', 500, true);
+            $transaction = $DB->start_delegated_transaction();
+        }
+
+        $i = 0;
+        foreach ($courses as $courseid => $notused) {
+            $i += 1;
+            upgrade_set_timeout(60); // 1 minute per course should be fine.
+
+            $allowedmoduleids = $DB->get_records_menu('course_allowed_modules',
+            array('course' => $courseid), 'module', 'module, 1');
+            if (empty($allowedmoduleids)) {
+                // This seems to be the best match for backwards compatibility,
+                // not necessarily with the old code in course_allowed_module function,
+                // but with the code that used to be in the coures settings form.
+                $allowedmoduleids = explode(',', $CFG->defaultallowedmodules);
+                $allowedmoduleids = array_combine($allowedmoduleids, $allowedmoduleids);
+            }
+
+            $context = context_course::instance($courseid);
+
+            list($roleids) = get_roles_with_cap_in_context($context, 'moodle/course:manageactivities');
+            list($managerroleids) = get_roles_with_cap_in_context($context, 'moodle/site:config');
+            foreach ($managerroleids as $roleid) {
+                unset($roleids[$roleid]);
+            }
+
+            foreach ($modidtoname as $modid => $modname) {
+                if (isset($allowedmoduleids[$modid])) {
+                    // Module is allowed, no worries.
+                    continue;
+                }
+
+                $capability = 'mod/' . $modname . ':addinstance';
+                foreach ($roleids as $roleid) {
+                    assign_capability($capability, CAP_PREVENT, $roleid, $context);
+                }
+            }
+
+            $pbar->update($i, $coursecount, "Upgrading legacy course_allowed_modules data - $i/$coursecount.");
+        }
+
+        if ($coursecount) {
+            $transaction->allow_commit();
+        }
+
+        upgrade_main_savepoint(true, 2012031500.01);
+    }
+
+    if ($oldversion < 2012031500.02) {
+
+        // Define field retrictmodules to be dropped from course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('restrictmodules');
+
+        // Conditionally launch drop field requested
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2012031500.02);
+    }
+
+    if ($oldversion < 2012031500.03) {
+
+        // Define table course_allowed_modules to be dropped
+        $table = new xmldb_table('course_allowed_modules');
+
+        // Conditionally launch drop table for course_allowed_modules
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        upgrade_main_savepoint(true, 2012031500.03);
+    }
+
+    if ($oldversion < 2012031500.04) {
+        // Clean up the old admin settings.
+        unset_config('restrictmodulesfor');
+        unset_config('restrictbydefault');
+        unset_config('defaultallowedmodules');
+
+        upgrade_main_savepoint(true, 2012031500.04);
+    }
+
+    if ($oldversion < 2012032300.02) {
+        // Migrate the old admin debug setting.
+        if ($CFG->debug == 38911) {
+            set_config('debug', DEBUG_DEVELOPER);
+        } else if ($CFG->debug == 6143) {
+            set_config('debug', DEBUG_ALL);
+        }
+        upgrade_main_savepoint(true, 2012032300.02);
+    }
+
 
     return true;
 }
-

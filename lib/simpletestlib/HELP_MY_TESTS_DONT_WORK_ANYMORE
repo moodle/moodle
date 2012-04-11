@@ -5,13 +5,64 @@ written with earlier versions will fail with the newest ones. The most
 dramatic changes are in the alpha releases. Here is a list of possible
 problems and their fixes...
 
+assertText() no longer finds a string inside a <script> tag
+-----------------------------------------------------------
+The assertText() method is intended to match only visible,
+human-readable text on the web page. Therefore, the contents of script
+tags should not be matched by this assertion. However there was a bug
+in the text normalisation code of simpletest which meant that <script>
+tags spanning multiple lines would not have their content stripped
+out. If you want to check the content of a <script> tag, use
+assertPattern(), or write a custom expectation.
+
+Overloaded method not working
+-----------------------------
+All protected and private methods had underscores
+removed. This means that any private/protected methods that
+you overloaded with those names need to be updated.
+
+Fatal error: Call to undefined method Classname::classname()
+------------------------------------------------------------
+SimpleTest renamed all of its constructors from 
+Classname to __construct; derived classes invoking
+their parent constructors should replace parent::Classname()
+with parent::__construct().
+
+Custom CSS in HtmlReporter not being applied
+--------------------------------------------
+Batch rename of protected and private methods 
+means that _getCss() was renamed to getCss().
+Please rename your method and it should work again.
+
+setReturnReference() throws errors in E_STRICT
+----------------------------------------------
+Happens when an object is passed by reference.
+This also happens with setReturnReferenceAt().
+If you want to return objects then replace these
+with calls to returns() and returnsAt() with the
+same arguments. This change was forced in the 1.1
+version for E_STRICT compatibility.
+
+assertReference() throws errors in E_STRICT
+-------------------------------------------
+Due to language restrictions you cannot compare
+both variables and objects in E_STRICT mode. Use
+assertSame() in this mode with objects. This change
+was forced the 1.1 version.
+
+Cannot create GroupTest
+-----------------------
+The GroupTest has been renamed TestSuite (see below).
+It was removed completely in 1.1 in favour of this
+name.
+
 No method getRelativeUrls() or getAbsoluteUrls()
 ------------------------------------------------
 These methods were always a bit weird anyway, and
 the new parsing of the base tag makes them more so.
 They have been replaced with getUrls() instead. If
 you want the old functionality then simply chop
-off the current domain from getUrl().
+off the current domain from getUrls().
 
 Method setWildcard() removed in mocks
 -------------------------------------
@@ -48,7 +99,7 @@ getTransferError() call on the web tester to see if
 there was a socket level error in a fetch. This check
 is now always carried out by the WebTestCase unless
 the fetch is prefaced with WebTestCase::ignoreErrors().
-The ignore directive only lasts for test case fetching
+The ignore directive only lasts for the next fetching
 action such as get() and click().
 
 No method SimpleTestOptions::ignore()
@@ -289,13 +340,13 @@ test case expansion against the ease of writing user interfaces.
 
 Code such as...
 
-$test = new MyTestCase();
+$test = &new MyTestCase();
 $test->attachObserver(new TestHtmlDisplay());
 $test->run();
 
 ...should be rewritten as...
 
-$test = new MyTestCase();
+$test = &new MyTestCase();
 $test->run(new HtmlReporter());
 
 If you previously attached multiple observers then the workaround

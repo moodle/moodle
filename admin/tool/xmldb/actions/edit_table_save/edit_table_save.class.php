@@ -77,7 +77,7 @@ class edit_table_save extends XMLDBAction {
         $dirpath = $CFG->dirroot . $dirpath;
 
         $tableparam = strtolower(required_param('table', PARAM_PATH));
-        $name = substr(trim(strtolower(required_param('name', PARAM_PATH))),0,28);
+        $name = substr(trim(strtolower(required_param('name', PARAM_PATH))),0,xmldb_table::NAME_MAX_LENGTH);
         $comment = required_param('comment', PARAM_CLEAN);
         $comment = $comment;
 

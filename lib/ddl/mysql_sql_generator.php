@@ -234,11 +234,12 @@ class mysql_sql_generator extends sql_generator {
         $xmldb_field_clone = clone($xmldb_field);
 
     /// Change the name of the field to perform the change
-        $xmldb_field_clone->setName($xmldb_field_clone->getName() . ' ' . $newname);
+        $xmldb_field_clone->setName($newname);
 
         $fieldsql = $this->getFieldSQL($xmldb_table, $xmldb_field_clone);
 
-        $sql = 'ALTER TABLE ' . $this->getTableName($xmldb_table) . ' CHANGE ' . $fieldsql;
+        $sql = 'ALTER TABLE ' . $this->getTableName($xmldb_table) . ' CHANGE ' .
+               $xmldb_field->getName() . ' ' . $fieldsql;
 
         return array($sql);
     }

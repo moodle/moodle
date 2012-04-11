@@ -42,7 +42,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $quiz = new backup_nested_element('quiz', array('id'), array(
             'name', 'intro', 'introformat', 'timeopen',
             'timeclose', 'preferredbehaviour', 'attempts_number',
-            'attemptonlast', 'grademethod', 'decimalpoints', 'questiondecimalpoints',
+            'attemptonlast', 'grademethod', 'navmethod', 'decimalpoints', 'questiondecimalpoints',
             'reviewattempt', 'reviewcorrectness', 'reviewmarks',
             'reviewspecificfeedback', 'reviewgeneralfeedback',
             'reviewrightanswer', 'reviewoverallfeedback',

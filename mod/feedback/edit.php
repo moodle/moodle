@@ -349,10 +349,10 @@ if ($do_show == 'edit') {
                 echo '<span class="feedback_item_command_toggle">';
                 if ($feedbackitem->required == 1) {
                     $buttontitle = get_string('switch_item_to_not_required', 'feedback');
-                    $buttonimg = 'pics/required.gif';
+                    $buttonimg = $OUTPUT->pix_url('required', 'feedback');
                 } else {
                     $buttontitle = get_string('switch_item_to_required', 'feedback');
-                    $buttonimg = 'pics/notrequired.gif';
+                    $buttonimg = $OUTPUT->pix_url('notrequired', 'feedback');
                 }
                 $urlparams = array('switchitemrequired'=>$feedbackitem->id);
                 $requiredurl = new moodle_url($url, $urlparams);

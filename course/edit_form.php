@@ -256,48 +256,6 @@ class course_edit_form extends moodleform {
             $mform->setDefault('completionstartonenrol',0);
         }
 
-//--------------------------------------------------------------------------------
-        if (has_capability('moodle/site:config', $systemcontext)) {
-            if (((!empty($course->requested) && $CFG->restrictmodulesfor == 'requested') || $CFG->restrictmodulesfor == 'all')) {
-                $mform->addElement('header', '', get_string('restrictmodules'));
-
-                $options = array();
-                $options['0'] = get_string('no');
-                $options['1'] = get_string('yes');
-                $mform->addElement('select', 'restrictmodules', get_string('restrictmodules'), $options);
-                if (!empty($CFG->restrictbydefault)) {
-                    $mform->setDefault('restrictmodules', 1);
-                }
-
-                $mods = array(0=>get_string('allownone'));
-                $allmods = $DB->get_records_menu('modules', array('visible' => 1),
-                        'name', 'id, name');
-                foreach ($allmods as $key => $value) {
-                    // Add module to list unless it cannot be added by users anyway
-                    if (plugin_supports('mod', $value, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER) !==
-                            MOD_ARCHETYPE_SYSTEM) {
-                        $mods[$key] = get_string('pluginname', $value);
-                    }
-                }
-                $mform->addElement('select', 'allowedmods', get_string('to'), $mods, array('multiple'=>'multiple', 'size'=>'10'));
-                $mform->disabledIf('allowedmods', 'restrictmodules', 'eq', 0);
-                // defaults are already in $course
-            } else {
-                // remove any mod restriction
-                $mform->addElement('hidden', 'restrictmodules', 0);
-                $mform->setType('restrictmodules', PARAM_INT);
-            }
-        } else {
-            $mform->addElement('hidden', 'restrictmodules');
-            $mform->setType('restrictmodules', PARAM_INT);
-            if (empty($course->id)) {
-                $mform->setConstant('restrictmodules', (int)($CFG->restrictmodulesfor == 'all'));
-            } else {
-                // keep previous
-                $mform->setConstant('restrictmodules', $course->restrictmodules);
-            }
-        }
-
 /// customizable role names in this course
 //--------------------------------------------------------------------------------
         $mform->addElement('header','rolerenaming', get_string('rolerenaming'));

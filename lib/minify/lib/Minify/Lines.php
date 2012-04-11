@@ -40,10 +40,16 @@ class Minify_Lines {
             ? $options['id']
             : '';
         $content = str_replace("\r\n", "\n", $content);
+
+        // Hackily rewrite strings with XPath expressions that are
+        // likely to throw off our dumb parser (for Prototype 1.6.1).
+        $content = str_replace('"/*"', '"/"+"*"', $content);
+        $content = preg_replace('@([\'"])(\\.?//?)\\*@', '$1$2$1+$1*', $content);
+
         $lines = explode("\n", $content);
         $numLines = count($lines);
         // determine left padding
-        $padTo = strlen($numLines);
+        $padTo = strlen((string) $numLines); // e.g. 103 lines = 3 digits
         $inComment = false;
         $i = 0;
         $newLines = array();
@@ -82,7 +88,7 @@ class Minify_Lines {
      * 
      * @param bool $inComment was the parser in a comment at the
      * beginning of the line?
-     * 
+     *
      * @return bool
      */
     private static function _eolInComment($line, $inComment)

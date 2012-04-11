@@ -30,6 +30,7 @@ $string['contentheader'] = 'Content';
 $string['deploymenterror'] = 'Content package error!';
 $string['keepold'] = 'Archive packages';
 $string['keepoldexplain'] = 'How many packages should be archived?';
+$string['imscp:addinstance'] = 'Add a new IMS content package';
 $string['imscp:view'] = 'View IMS content';
 $string['modulename'] = 'IMS content package';
 $string['modulename_help'] = 'An IMS content package allows for packages created according to the IMS Content Packaging specification to be displayed in the course.';

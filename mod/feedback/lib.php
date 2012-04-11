@@ -98,6 +98,25 @@ function feedback_add_instance($feedback) {
 
     feedback_set_events($feedback);
 
+    if (!isset($feedback->coursemodule)) {
+        $cm = get_coursemodule_from_id('feedback', $feedback->id);
+        $feedback->coursemodule = $cm->id;
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $feedback->coursemodule);
+
+    $editoroptions = feedback_get_editor_options();
+
+    // process the custom wysiwyg editor in page_after_submit
+    if ($draftitemid = $feedback->page_after_submit_editor['itemid']) {
+        $feedback->page_after_submit = file_save_draft_area_files($draftitemid, $context->id,
+                                                    'mod_feedback', 'page_after_submit',
+                                                    0, $editoroptions,
+                                                    $feedback->page_after_submit_editor['text']);
+
+        $feedback->page_after_submitformat = $feedback->page_after_submit_editor['format'];
+    }
+    $DB->update_record('feedback', $feedback);
+
     return $feedbackid;
 }
 
@@ -131,6 +150,21 @@ function feedback_update_instance($feedback) {
     //create or update the new events
     feedback_set_events($feedback);
 
+    $context = get_context_instance(CONTEXT_MODULE, $feedback->coursemodule);
+
+    $editoroptions = feedback_get_editor_options();
+
+    // process the custom wysiwyg editor in page_after_submit
+    if ($draftitemid = $feedback->page_after_submit_editor['itemid']) {
+        $feedback->page_after_submit = file_save_draft_area_files($draftitemid, $context->id,
+                                                    'mod_feedback', 'page_after_submit',
+                                                    0, $editoroptions,
+                                                    $feedback->page_after_submit_editor['text']);
+
+        $feedback->page_after_submitformat = $feedback->page_after_submit_editor['format'];
+    }
+    $DB->update_record('feedback', $feedback);
+
     return true;
 }
 
@@ -153,20 +187,24 @@ function feedback_update_instance($feedback) {
 function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    $itemid = (int)array_shift($args);
-
-    //get the item what includes the file
-    if (!$item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
-        return false;
+    if ($filearea === 'item' or $filearea === 'template') {
+        $itemid = (int)array_shift($args);
+        //get the item what includes the file
+        if (!$item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
+            return false;
+        }
+        $feedbackid = $item->feedback;
+        $templateid = $item->template;
     }
 
-    //if the filearea is "item" so we check the permissions like view/complete the feedback
-    if ($filearea === 'item') {
-        //get the feedback
-        if (!$feedback = $DB->get_record('feedback', array('id'=>$item->feedback))) {
+    if ($filearea === 'page_after_submit' or $filearea === 'item') {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             return false;
         }
 
+        $feedbackid = $feedback->id;
+
+        //if the filearea is "item" so we check the permissions like view/complete the feedback
         $canload = false;
         //first check whether the user has the complete capability
         if (has_capability('mod/feedback:complete', $context)) {
@@ -191,7 +229,7 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
             return false;
         }
     } else if ($filearea === 'template') { //now we check files in templates
-        if (!$template = $DB->get_record('feedback_template', array('id'=>$item->template))) {
+        if (!$template = $DB->get_record('feedback_template', array('id'=>$templateid))) {
             return false;
         }
 
@@ -210,13 +248,7 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     }
 
     if ($context->contextlevel == CONTEXT_MODULE) {
-        if ($filearea !== 'item') {
-            return false;
-        }
-
-        if ($item->feedback == $cm->instance) {
-            $filecontext = $context;
-        } else {
+        if ($filearea !== 'item' and $filearea !== 'page_after_submit') {
             return false;
         }
     }
@@ -228,9 +260,14 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     }
 
     $relativepath = implode('/', $args);
-    $fullpath = "/$context->id/mod_feedback/$filearea/$itemid/$relativepath";
+    if ($filearea === 'page_after_submit') {
+        $fullpath = "/{$context->id}/mod_feedback/$filearea/$relativepath";
+    } else {
+        $fullpath = "/{$context->id}/mod_feedback/$filearea/{$item->id}/$relativepath";
+    }
 
     $fs = get_file_storage();
+
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         return false;
     }
@@ -344,7 +381,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index,
         $course = $DB->get_record('course', array('id'=>$courseid));
     }
 
-    $modinfo =& get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($course);
 
     $cm = $modinfo->cms[$cmid];
 
@@ -689,6 +726,16 @@ function feedback_reset_course_form($course) {
                                 get_string('drop_feedback', 'feedback'));
         echo '</p>';
     }
+}
+
+/**
+ * This gets an array with default options for the editor
+ *
+ * @return array the options
+ */
+function feedback_get_editor_options() {
+    return array('maxfiles' => EDITOR_UNLIMITED_FILES,
+                'trusttext'=>true);
 }
 
 /**

@@ -190,7 +190,7 @@ class qtype_multianswer extends question_type {
         parent::delete_question($questionid, $contextid);
     }
 
-    protected function initialise_question_instance($question, $questiondata) {
+    protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
 
         $bits = preg_split('/\{#(\d+)\}/', $question->questiontext,
@@ -299,6 +299,7 @@ function qtype_multianswer_extract_question($text) {
     $question->generalfeedback['format'] = FORMAT_HTML;
     $question->generalfeedback['itemid'] = '';
 
+    $question->options = new stdClass();
     $question->options->questions = array();
     $question->defaultmark = 0; // Will be increased for each answer norm
 

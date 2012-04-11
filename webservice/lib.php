@@ -175,7 +175,7 @@ class webservice {
      */
     public function add_ws_authorised_user($user) {
         global $DB;
-        $user->timecreated = mktime();
+        $user->timecreated = time();
         $DB->insert_record('external_services_users', $user);
     }
 
@@ -628,7 +628,7 @@ class webservice {
      */
     public function add_external_service($service) {
         global $DB;
-        $service->timecreated = mktime();
+        $service->timecreated = time();
         $serviceid = $DB->insert_record('external_services', $service);
         return $serviceid;
     }
@@ -641,7 +641,7 @@ class webservice {
      */
     public function update_external_service($service) {
         global $DB;
-        $service->timemodified = mktime();
+        $service->timemodified = time();
         $DB->update_record('external_services', $service);
     }
 

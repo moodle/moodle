@@ -355,7 +355,7 @@ class grade_edit_tree {
      * @param string type "extra" or "weight": the type of the column hosting the weight input
      * @return string HTML
      */
-    function get_weight_input($item, $type) {
+    static function get_weight_input($item, $type) {
         global $OUTPUT;
 
         if (!is_object($item) || get_class($item) !== 'grade_item') {
@@ -387,7 +387,7 @@ class grade_edit_tree {
     //Trims trailing zeros
     //Used on the 'categories and items' page for grade items settings like aggregation co-efficient
     //Grader report has its own decimal place settings so they are handled elsewhere
-    function format_number($number) {
+    static function format_number($number) {
         $formatted = rtrim(format_float($number, 4),'0');
         if (substr($formatted, -1)=='.') { //if last char is the decimal point
             $formatted .= '0';

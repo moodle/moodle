@@ -14,6 +14,8 @@ if (!defined('MOODLE_INTERNAL')) {
  * If networking/proxy configuration is wrong these tests will fail..
  */
 
+global $CFG;
+
 require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
 class moodlesimplepie_test extends UnitTestCase {

@@ -77,7 +77,7 @@ if ($token==="$inttoken") {
 
     //find the context id
     if ($course = $DB->get_record('course', array('id' => $courseid))) {
-        $modinfo =& get_fast_modinfo($course);
+        $modinfo = get_fast_modinfo($course);
 
         if (!isset($modinfo->instances[$componentname])) {
             $modinfo->instances[$componentname] = array();

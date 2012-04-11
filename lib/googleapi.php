@@ -376,6 +376,7 @@ class google_picasa {
     const ALBUM_PHOTO_LIST  = 'https://picasaweb.google.com/data/feed/api/user/default/albumid/';
     const PHOTO_SEARCH_URL  = 'https://picasaweb.google.com/data/feed/api/user/default?kind=photo&q=';
     const LIST_ALBUMS_URL   = 'https://picasaweb.google.com/data/feed/api/user/default';
+    const MANAGE_URL        = 'http://picasaweb.google.com/';
 
     private $google_curl = null;
 

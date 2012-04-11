@@ -7,7 +7,7 @@
 require_once 'Minify/Controller/Base.php';
 
 /**
- * Controller class for emulating version 1 of minify.php
+ * Controller class for emulating version 1 of minify.php (mostly a proof-of-concept)
  * 
  * <code>
  * Minify::serve('Version1');

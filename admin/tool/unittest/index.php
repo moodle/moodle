@@ -33,11 +33,6 @@ require_once('simpletestcoveragelib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 
-// Always run the unit tests in developer debug mode.
-$CFG->debug = DEBUG_DEVELOPER;
-error_reporting($CFG->debug);
-raise_memory_limit(MEMORY_EXTRA);
-
 // page parameters
 $path         = optional_param('path', null, PARAM_PATH);
 $showpasses   = optional_param('showpasses', false, PARAM_BOOL);
@@ -45,6 +40,8 @@ $codecoverage = optional_param('codecoverage', false, PARAM_BOOL);
 $showsearch   = optional_param('showsearch', false, PARAM_BOOL);
 
 admin_externalpage_setup('toolsimpletest', '', array('showpasses'=>$showpasses, 'showsearch'=>$showsearch));
+
+raise_memory_limit(MEMORY_EXTRA);
 
 $unittest = true;
 

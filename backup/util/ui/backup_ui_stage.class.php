@@ -410,7 +410,7 @@ class backup_ui_stage_final extends backup_ui_stage {
     /**
      * should NEVER be called... throws an exception
      */
-    public function display() {
+    public function display(core_backup_renderer $renderer) {
         throw new backup_ui_exception('backup_ui_must_execute_first');
     }
 }
@@ -444,13 +444,13 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
     /**
      * Displays the completed backup stage.
      *
-     * Currently this just envolves redirecting to the file browser with an
+     * Currently this just involves redirecting to the file browser with an
      * appropriate message.
      *
-     * @global core_renderer $OUTPUT
+     * @param core_backup_renderer $renderer
+     * @return string HTML code to echo
      */
-    public function display() {
-        global $OUTPUT;
+    public function display(core_backup_renderer $renderer) {
 
         // Get the resulting stored_file record
         $type = $this->get_ui()->get_controller()->get_type();
@@ -468,9 +468,12 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
             $restorerul = new moodle_url('/backup/restorefile.php', array('contextid'=>$coursecontext->id));
         }
 
-        echo $OUTPUT->box_start();
-        echo $OUTPUT->notification(get_string('executionsuccess', 'backup'), 'notifysuccess');
-        echo $OUTPUT->continue_button($restorerul);
-        echo $OUTPUT->box_end();
+        $output = '';
+        $output .= $renderer->box_start();
+        $output .= $renderer->notification(get_string('executionsuccess', 'backup'), 'notifysuccess');
+        $output .= $renderer->continue_button($restorerul);
+        $output .= $renderer->box_end();
+
+        return $output;
     }
 }

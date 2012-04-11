@@ -366,7 +366,7 @@ class auth_plugin_base {
      * @param object object with submitted configuration settings (without system magic quotes)
      * @param array $err array of error messages
      */
-     function validate_form(&$form, &$err) {
+     function validate_form($form, &$err) {
         //override if needed
     }
 

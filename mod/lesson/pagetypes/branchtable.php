@@ -72,13 +72,17 @@ class lesson_page_type_branchtable extends lesson_page {
         return $jumps;
     }
 
-    public static function get_jumptooptions($firstpage, $lesson) {
+    public static function get_jumptooptions($firstpage, lesson $lesson) {
         global $DB, $PAGE;
         $jump = array();
         $jump[0] = get_string("thispage", "lesson");
         $jump[LESSON_NEXTPAGE] = get_string("nextpage", "lesson");
         $jump[LESSON_PREVIOUSPAGE] = get_string("previouspage", "lesson");
         $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
+        $jump[LESSON_UNSEENBRANCHPAGE] = get_string("unseenpageinbranch", "lesson");
+        $jump[LESSON_RANDOMPAGE] = get_string("randompageinbranch", "lesson");
+        $jump[LESSON_RANDOMBRANCH] = get_string("randombranch", "lesson");
+
         if (!$firstpage) {
             if (!$apageid = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "prevpageid" => 0))) {
                 print_error('cannotfindfirstpage', 'lesson');
@@ -199,7 +203,7 @@ class lesson_page_type_branchtable extends lesson_page {
         redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id,'pageid'=>$newpageid)));
     }
 
-    public function display_answers($table) {
+    public function display_answers(html_table $table) {
         $answers = $this->get_answers();
         $options = new stdClass;
         $options->noclean = true;
@@ -243,7 +247,7 @@ class lesson_page_type_branchtable extends lesson_page {
         return $answerpage;
     }
 
-    public function update($properties) {
+    public function update($properties, $context = null, $maxbytes = null) {
         if (empty($properties->display)) {
             $properties->display = '0';
         }

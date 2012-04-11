@@ -65,18 +65,6 @@ if ($id) { // editing course
 // Prepare course and the editor
 $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
 if (!empty($course)) {
-    $allowedmods = array();
-    if ($am = $DB->get_records('course_allowed_modules', array('course'=>$course->id))) {
-        foreach ($am as $m) {
-            $allowedmods[] = $m->module;
-        }
-    } else {
-        // this happens in case we edit course created before enabling module restrictions or somebody disabled everything :-(
-        if (empty($course->restrictmodules) and !empty($CFG->defaultallowedmodules)) {
-            $allowedmods = explode(',', $CFG->defaultallowedmodules);
-        }
-    }
-    $course->allowedmods = $allowedmods;
     //add context for editor
     $editoroptions['context'] = $coursecontext;
     $course = file_prepare_standard_editor($course, 'summary', $editoroptions, $coursecontext, 'course', 'summary', 0);

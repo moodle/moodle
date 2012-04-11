@@ -61,7 +61,7 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 require_login($course->id, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/wiki:viewpage', $context);
-add_to_log($course->id, 'wiki', 'history', 'history.php?id=' . $cm->id, $wiki->id);
+add_to_log($course->id, 'wiki', 'history', "history.php?pageid=".$pageid, $pageid, $cm->id);
 
 /// Print the page header
 $wikipage = new page_wiki_history($wiki, $subwiki, $cm);

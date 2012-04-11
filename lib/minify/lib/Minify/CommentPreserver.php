@@ -30,8 +30,7 @@ class Minify_CommentPreserver {
      * Process a string outside of C-style comments that begin with "/*!"
      *
      * On each non-empty string outside these comments, the given processor 
-     * function will be called. The first "!" will be removed from the 
-     * preserved comments, and the comments will be surrounded by 
+     * function will be called. The comments will be surrounded by 
      * Minify_CommentPreserver::$preprend and Minify_CommentPreserver::$append.
      * 
      * @param string $content
@@ -65,7 +64,7 @@ class Minify_CommentPreserver {
      * @param string $in input
      * 
      * @return array 3 elements are returned. If a YUI comment is found, the
-     * 2nd element is the comment and the 1st and 2nd are the surrounding
+     * 2nd element is the comment and the 1st and 3rd are the surrounding
      * strings. If no comment is found, the entire string is returned as the 
      * 1st element and the other two are false.
      */
@@ -79,7 +78,7 @@ class Minify_CommentPreserver {
         }
         $ret = array(
             substr($in, 0, $start)
-            ,self::$prepend . '/*' . substr($in, $start + 3, $end - $start - 1) . self::$append
+            ,self::$prepend . '/*!' . substr($in, $start + 3, $end - $start - 1) . self::$append
         );
         $endChars = (strlen($in) - $end - 2);
         $ret[] = (0 === $endChars)

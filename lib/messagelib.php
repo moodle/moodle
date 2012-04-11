@@ -31,18 +31,21 @@ require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
  * This functions checks the message recipient's message processor configuration then
  * sends the message to the configured processors
  *
- * Required parameter $eventdata structure:
+ * Required parameters of the $eventdata object:
  *  component string component name. must exist in message_providers
  *  name string message type name. must exist in message_providers
  *  userfrom object|int the user sending the message
  *  userto object|int the message recipient
  *  subject string the message subject
- *  fullmessage - the full message in a given format
- *  fullmessageformat  - the format if the full message (FORMAT_MOODLE, FORMAT_HTML, ..)
- *  fullmessagehtml  - the full version (the message processor will choose with one to use)
- *  smallmessage - the small version of the message
- *  contexturl - if this is a notification then you can specify a url to view the event. For example the forum post the user is being notified of.
- *  contexturlname - the display text for contexturl
+ *  fullmessage string the full message in a given format
+ *  fullmessageformat int the format if the full message (FORMAT_MOODLE, FORMAT_HTML, ..)
+ *  fullmessagehtml string the full version (the message processor will choose with one to use)
+ *  smallmessage string the small version of the message
+ *
+ * Optional parameters of the $eventdata object:
+ *  notification bool should the message be considered as a notification rather than a personal message
+ *  contexturl string if this is a notification then you can specify a url to view the event. For example the forum post the user is being notified of.
+ *  contexturlname string the display text for contexturl
  *
  * @category message
  * @param object $eventdata information about the message (component, userfrom, userto, ...)
@@ -128,7 +131,7 @@ function message_send($eventdata) {
         } else {
             //MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
             //exist in the message_provider table (thus there is no default settings for them)
-            $preferrormsg = get_string('couldnotfindpreference', 'message', $preferencename); //TODO: undefined $preferencename
+            $preferrormsg = get_string('couldnotfindpreference', 'message', $defaultpreference);
             throw new coding_exception($preferrormsg,'blah');
         }
 

@@ -214,8 +214,15 @@ class assignment_online extends assignment_base {
                   return $output;
     }
 
-    function print_user_files($userid, $return=false) {
-        global $OUTPUT, $CFG;
+    function print_user_files($userid=0, $return=false) {
+        global $OUTPUT, $CFG, $USER;
+
+        if (!$userid) {
+            if (!isloggedin()) {
+                return '';
+            }
+            $userid = $USER->id;
+        }
 
         if (!$submission = $this->get_submission($userid)) {
             return '';

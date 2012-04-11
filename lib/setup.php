@@ -45,7 +45,7 @@
 global $CFG; // this should be done much earlier in config.php before creating new $CFG instance
 
 if (!isset($CFG)) {
-    if (defined('PHPUNIT_SCRIPT') and PHPUNIT_SCRIPT) {
+    if (defined('PHPUNIT_TEST') and PHPUNIT_TEST) {
         echo('There is a missing "global $CFG;" at the beginning of the config.php file.'."\n");
         exit(1);
     } else {
@@ -112,7 +112,10 @@ if (!isset($CFG->cachedir)) {
 // directory of the script when run from the command line. The require_once()
 // would fail, so we'll have to chdir()
 if (!isset($_SERVER['REMOTE_ADDR']) && isset($_SERVER['argv'][0])) {
-    chdir(dirname($_SERVER['argv'][0]));
+    // do it only once - skip the second time when continuing after prevous abort
+    if (!defined('ABORT_AFTER_CONFIG') and !defined('ABORT_AFTER_CONFIG_CANCEL')) {
+        chdir(dirname($_SERVER['argv'][0]));
+    }
 }
 
 // sometimes default PHP settings are borked on shared hosting servers, I wonder why they have to do that??
@@ -130,6 +133,11 @@ if (!defined('NO_OUTPUT_BUFFERING')) {
     define('NO_OUTPUT_BUFFERING', false);
 }
 
+// PHPUnit tests need custom init
+if (!defined('PHPUNIT_TEST')) {
+    define('PHPUNIT_TEST', false);
+}
+
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
 // This is a quick hack.  Ideally we should ask the admin for a value.  See MDL-22625 for more on this.
 if (function_exists('date_default_timezone_set') and function_exists('date_default_timezone_get')) {
@@ -137,15 +145,6 @@ if (function_exists('date_default_timezone_set') and function_exists('date_defau
     date_default_timezone_set(date_default_timezone_get());
     error_reporting($olddebug);
     unset($olddebug);
-}
-
-// PHPUnit scripts are a special case, for now we treat them as normal CLI scripts,
-// please note you must install PHPUnit library separately via PEAR
-if (!defined('PHPUNIT_SCRIPT')) {
-    define('PHPUNIT_SCRIPT', false);
-}
-if (PHPUNIT_SCRIPT) {
-    define('CLI_SCRIPT', true);
 }
 
 // Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
@@ -399,11 +398,13 @@ init_performance_info();
 $OUTPUT = new bootstrap_renderer();
 
 // set handler for uncaught exceptions - equivalent to print_error() call
-set_exception_handler('default_exception_handler');
-set_error_handler('default_error_handler', E_ALL | E_STRICT);
+if (!PHPUNIT_TEST or PHPUNIT_UTIL) {
+    set_exception_handler('default_exception_handler');
+    set_error_handler('default_error_handler', E_ALL | E_STRICT);
+}
 
 // If there are any errors in the standard libraries we want to know!
-error_reporting(E_ALL);
+error_reporting(E_ALL | E_STRICT);
 
 // Just say no to link prefetching (Moz prefetching, Google Web Accelerator, others)
 // http://www.google.com/webmasters/faq.html#prefetchblock
@@ -462,12 +463,17 @@ setup_validate_php_configuration();
 // Connect to the database
 setup_DB();
 
+// reset DB tables
+if (PHPUNIT_TEST and !PHPUNIT_UTIL) {
+    phpunit_util::reset_database();
+}
+
 // Disable errors for now - needed for installation when debug enabled in config.php
 if (isset($CFG->debug)) {
     $originalconfigdebug = $CFG->debug;
     unset($CFG->debug);
 } else {
-    $originalconfigdebug = -1;
+    $originalconfigdebug = null;
 }
 
 // Load up any configuration from the config table
@@ -492,7 +498,7 @@ if (isset($CFG->debug)) {
     $originaldatabasedebug = $CFG->debug;
     unset($CFG->debug);
 } else {
-    $originaldatabasedebug = -1;
+    $originaldatabasedebug = null;
 }
 
 // enable circular reference collector in PHP 5.3,
@@ -507,12 +513,12 @@ if (function_exists('register_shutdown_function')) {
 }
 
 // Set error reporting back to normal
-if ($originaldatabasedebug == -1) {
+if ($originaldatabasedebug === null) {
     $CFG->debug = DEBUG_MINIMAL;
 } else {
     $CFG->debug = $originaldatabasedebug;
 }
-if ($originalconfigdebug !== -1) {
+if ($originalconfigdebug !== null) {
     $CFG->debug = $originalconfigdebug;
 }
 unset($originalconfigdebug);
@@ -820,7 +826,9 @@ if (!empty($CFG->customscripts)) {
     }
 }
 
-if (CLI_SCRIPT and !defined('WEB_CRON_EMULATED_CLI') and !PHPUNIT_SCRIPT) {
+if (PHPUNIT_TEST) {
+    // no ip blocking, these are CLI only
+} else if (CLI_SCRIPT and !defined('WEB_CRON_EMULATED_CLI')) {
     // no ip blocking
 } else if (!empty($CFG->allowbeforeblock)) { // allowed list processed before blocked list?
     // in this case, ip in allowed list will be performed first

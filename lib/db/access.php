@@ -42,10 +42,14 @@
  *
  * The variable name for the capability definitions array is $capabilities
  *
- * @package    core_access
- * @category   access
- * @copyright  2006 onwards Martin Dougiamas  http://dougiamas.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * For more information, take a look to the documentation available:
+ *     - Access API: {@link http://docs.moodle.org/dev/Access_API}
+ *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *
+ * @package   core_access
+ * @category  access
+ * @copyright 2006 onwards Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
