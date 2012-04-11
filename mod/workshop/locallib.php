@@ -2283,6 +2283,22 @@ class workshop_user_plan implements renderable {
             $phase->tasks['submit'] = $task;
         }
         if (has_capability('mod/workshop:allocate', $workshop->context, $userid)) {
+            if ($workshop->phaseswitchassessment) {
+                $task = new stdClass();
+                $allocator = $DB->get_record('workshopallocation_scheduled', array('workshopid' => $workshop->id));
+                if (empty($allocator)) {
+                    $task->completed = false;
+                } else if ($allocator->enabled and is_null($allocator->resultstatus)) {
+                    $task->completed = true;
+                } else if ($workshop->submissionend > time()) {
+                    $task->completed = null;
+                } else {
+                    $task->completed = false;
+                }
+                $task->title = get_string('setup', 'workshopallocation_scheduled');
+                $task->link = $workshop->allocation_url('scheduled');
+                $phase->tasks['allocatescheduled'] = $task;
+            }
             $task = new stdclass();
             $task->title = get_string('allocate', 'workshop');
             $task->link = $workshop->allocation_url();
@@ -2318,6 +2334,7 @@ class workshop_user_plan implements renderable {
                 $task->completed = 'info';
                 $phase->tasks['allocateinfo'] = $task;
             }
+
         }
         if ($workshop->submissionstart) {
             $task = new stdclass();
@@ -2354,6 +2371,13 @@ class workshop_user_plan implements renderable {
         $phase->title = get_string('phaseassessment', 'workshop');
         $phase->tasks = array();
         $phase->isreviewer = has_capability('mod/workshop:peerassess', $workshop->context, $userid);
+        if ($workshop->phase == workshop::PHASE_SUBMISSION and $workshop->phaseswitchassessment
+                and has_capability('mod/workshop:switchphase', $workshop->context, $userid)) {
+            $task = new stdClass();
+            $task->title = get_string('switchphase30auto', 'mod_workshop', workshop::timestamp_formats($workshop->submissionend));
+            $task->completed = 'info';
+            $phase->tasks['autoswitchinfo'] = $task;
+        }
         if ($workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_ASSESSMENT
                 and $phase->isreviewer and !has_capability('mod/workshop:manageexamples', $workshop->context, $userid)) {
             $task = new stdclass();

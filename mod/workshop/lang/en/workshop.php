@@ -232,6 +232,7 @@ $string['switchingphase'] = 'Switching phase';
 $string['switchphase'] = 'Switch phase';
 $string['switchphase10info'] = 'You are about to switch the workshop into the <strong>Setup phase</strong>. In this phase, users cannot modify their submissions or their assessments. Teachers may use this phase to change workshop settings, modify the grading strategy of tweak assessment forms.';
 $string['switchphase20info'] = 'You are about to switch the workshop into the <strong>Submission phase</strong>. Students may submit their work during this phase (within the submission access control dates, if set). Teachers may allocate submissions for peer review.';
+$string['switchphase30auto'] = 'Workshop will automatically switch into the assessment phase after {$a->daydatetime} ({$a->distanceday})';
 $string['switchphase30info'] = 'You are about to switch the workshop into the <strong>Assessment phase</strong>. In this phase, reviewers may assess the submissions they have been allocated (within the assessment access control dates, if set).';
 $string['switchphase40info'] = 'You are about to switch the workshop into the <strong>Grading evaluation phase</strong>. In this phase, users cannot modify their submissions or their assessments. Teachers may use the grading evaluation tools to calculate final grades and provide feedback for reviewers.';
 $string['switchphase50info'] = 'You are about to close the workshop. This will result in the calculated grades appearing in the gradebook. Students may view their submissions and their submission assessments.';

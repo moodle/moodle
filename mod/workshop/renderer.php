@@ -292,7 +292,13 @@ class mod_workshop_renderer extends plugin_renderer_base {
             foreach ($phase->actions as $action) {
                 switch ($action->type) {
                 case 'switchphase':
-                    $actions .= $this->output->action_icon($action->url, new pix_icon('i/marker', get_string('switchphase', 'workshop')));
+                    $icon = 'i/marker';
+                    if ($phasecode == workshop::PHASE_ASSESSMENT
+                            and $plan->workshop->phase == workshop::PHASE_SUBMISSION
+                            and $plan->workshop->phaseswitchassessment) {
+                        $icon = 'i/scheduled';
+                    }
+                    $actions .= $this->output->action_icon($action->url, new pix_icon($icon, get_string('switchphase', 'workshop')));
                     break;
                 }
             }
