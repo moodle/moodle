@@ -41,7 +41,7 @@
 
         ?>
     </td>
-    <td><?php print_string("auth_shib_convert_data_description", "auth_shibboleth"); echo $config->alt_login ?></td>
+    <td><?php print_string("auth_shib_convert_data_description", "auth_shibboleth"); echo (isset($config->alt_login) ? $config->alt_login : '') ?></td>
 </tr>
 
 <tr valign="top">

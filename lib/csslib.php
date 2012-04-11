@@ -638,6 +638,13 @@ class css_optimiser {
                     }
                     switch ($char) {
                         case ';':
+                            if ($inparenthesis) {
+                                $buffer .= $char;
+                                // continue 1: The switch processing chars
+                                // continue 2: The switch processing the state
+                                // continue 3: The for loop
+                                continue 3;
+                            }
                             $currentrule->add_style($buffer);
                             $buffer = '';
                             $inquotes = false;
@@ -656,6 +663,21 @@ class css_optimiser {
                             $this->rawrules++;
                             $buffer = '';
                             $inquotes = false;
+                            $inparenthesis = false;
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
+                            continue 3;
+                        case '(':
+                            $inparenthesis = true;
+                            $buffer .= $char;
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
+                            continue 3;
+                        case ')':
+                            $inparenthesis = false;
+                            $buffer .= $char;
                             // continue 1: The switch processing chars
                             // continue 2: The switch processing the state
                             // continue 3: The for loop

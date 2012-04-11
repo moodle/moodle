@@ -3,7 +3,7 @@
  *  base include file for SimpleTest
  *  @package    SimpleTest
  *  @subpackage UnitTester
- *  @version    $Id$
+ *  @version    $Id: unit_tester.php 1882 2009-07-01 14:30:05Z lastcraft $
  */
 
 /**#@+
@@ -29,11 +29,11 @@ class UnitTestCase extends SimpleTestCase {
      *                             the class name if none specified.
      *    @access public
      */
-    function UnitTestCase($label = false) {
+    function __construct($label = false) {
         if (! $label) {
             $label = get_class($this);
         }
-        $this->SimpleTestCase($label);
+        parent::__construct($label);
     }
 
     /**
@@ -45,7 +45,7 @@ class UnitTestCase extends SimpleTestCase {
      *    @return boolean           True on pass
      *    @access public
      */
-    function assertTrue($result, $message = false) {
+    function assertTrue($result, $message = '%s') {
         return $this->assert(new TrueExpectation(), $result, $message);
     }
 
@@ -227,9 +227,12 @@ class UnitTestCase extends SimpleTestCase {
 
     /**
      *    Will trigger a pass if both parameters refer
-     *    to the same object. Fail otherwise.
-     *    @param mixed $first           Object reference to check.
-     *    @param mixed $second          Hopefully the same object.
+     *    to the same object or value. Fail otherwise.
+     *    This will cause problems testing objects under
+     *    E_STRICT.
+     *    TODO: Replace with expectation.
+     *    @param mixed $first           Reference to check.
+     *    @param mixed $second          Hopefully the same variable.
      *    @param string $message        Message to display.
      *    @return boolean               True on pass
      *    @access public
@@ -248,6 +251,29 @@ class UnitTestCase extends SimpleTestCase {
 
     /**
      *    Will trigger a pass if both parameters refer
+     *    to the same object. Fail otherwise. This has
+     *    the same semantics at the PHPUnit assertSame.
+     *    That is, if values are passed in it has roughly
+     *    the same affect as assertIdentical.
+     *    TODO: Replace with expectation.
+     *    @param mixed $first           Object reference to check.
+     *    @param mixed $second          Hopefully the same object.
+     *    @param string $message        Message to display.
+     *    @return boolean               True on pass
+     *    @access public
+     */
+    function assertSame($first, $second, $message = '%s') {
+        $dumper = new SimpleDumper();
+        $message = sprintf(
+                $message,
+                '[' . $dumper->describeValue($first) .
+                        '] and [' . $dumper->describeValue($second) .
+                        '] should reference the same object');
+        return $this->assertTrue($first === $second, $message);
+    }
+
+    /**
+     *    Will trigger a pass if both parameters refer
      *    to different objects. Fail otherwise. The objects
      *    have to be identical though.
      *    @param mixed $first           Object reference to check.
@@ -256,7 +282,7 @@ class UnitTestCase extends SimpleTestCase {
      *    @return boolean               True on pass
      *    @access public
      */
-    function assertClone(&$first, &$second, $message = '%s') {
+    function assertClone($first, $second, $message = '%s') {
         $dumper = new SimpleDumper();
         $message = sprintf(
                 $message,
@@ -265,13 +291,21 @@ class UnitTestCase extends SimpleTestCase {
                         '] should not be the same object');
         $identical = new IdenticalExpectation($first);
         return $this->assertTrue(
-                $identical->test($second) &&
-                        ! SimpleTestCompatibility::isReference($first, $second),
+                $identical->test($second) && ! ($first === $second),
                 $message);
     }
 
     /**
-     *    @deprecated
+     *    Will trigger a pass if both parameters refer
+     *    to different variables. Fail otherwise. The objects
+     *    have to be identical references though.
+     *    This will fail under E_STRICT with objects. Use
+     *    assertClone() for this.
+     *    @param mixed $first           Object reference to check.
+     *    @param mixed $second          Hopefully not the same object.
+     *    @param string $message        Message to display.
+     *    @return boolean               True on pass
+     *    @access public
      */
     function assertCopy(&$first, &$second, $message = "%s") {
         $dumper = new SimpleDumper();
@@ -303,13 +337,6 @@ class UnitTestCase extends SimpleTestCase {
     }
 
     /**
-     *    @deprecated
-     */
-    function assertWantedPattern($pattern, $subject, $message = '%s') {
-        return $this->assertPattern($pattern, $subject, $message);
-    }
-
-    /**
      *    Will trigger a pass if the perl regex pattern
      *    is not present in subject. Fail if found.
      *    @param string $pattern    Perl regex to look for including
@@ -327,40 +354,6 @@ class UnitTestCase extends SimpleTestCase {
     }
 
     /**
-     *    @deprecated
-     */
-    function assertNoUnwantedPattern($pattern, $subject, $message = '%s') {
-        return $this->assertNoPattern($pattern, $subject, $message);
-    }
-
-    /**
-     *    @deprecated
-     */
-    function swallowErrors() {
-        $context = &SimpleTest::getContext();
-        $queue = &$context->get('SimpleErrorQueue');
-        $queue->clear();
-    }
-
-    /**
-     *    @deprecated
-     */
-    function assertNoErrors($message = '%s') {
-        $context = &SimpleTest::getContext();
-        $queue = &$context->get('SimpleErrorQueue');
-        return $queue->assertNoErrors($message);
-    }
-
-    /**
-     *    @deprecated
-     */
-    function assertError($expected = false, $message = '%s') {
-        $context = &SimpleTest::getContext();
-        $queue = &$context->get('SimpleErrorQueue');
-        return $queue->assertError($this->_coerceExpectation($expected), $message);
-    }
-
-    /**
      *    Prepares for an error. If the error mismatches it
      *    passes through, otherwise it is swallowed. Any
      *    left over errors trigger failures.
@@ -369,9 +362,8 @@ class UnitTestCase extends SimpleTestCase {
      *    @access public
      */
     function expectError($expected = false, $message = '%s') {
-        $context = &SimpleTest::getContext();
-        $queue = &$context->get('SimpleErrorQueue');
-        $queue->expectError($this->_coerceExpectation($expected), $message);
+        $queue = SimpleTest::getContext()->get('SimpleErrorQueue');
+        $queue->expectError($this->coerceExpectation($expected), $message);
     }
 
     /**
@@ -383,12 +375,20 @@ class UnitTestCase extends SimpleTestCase {
      *    @access public
      */
     function expectException($expected = false, $message = '%s') {
-        $context = &SimpleTest::getContext();
-        $queue = &$context->get('SimpleExceptionTrap');
-        // :HACK: Directly substituting in seems to cause a segfault with
-        // Zend Optimizer on some systems
+        $queue = SimpleTest::getContext()->get('SimpleExceptionTrap');
         $line = $this->getAssertionLine();
         $queue->expectException($expected, $message . $line);
+    }
+
+    /**
+     *    Tells SimpleTest to ignore an upcoming exception as not relevant
+     *    to the current test. It doesn't affect the test, whether thrown or
+     *    not.
+     *    @param SimpleExpectation/Exception $ignored  The error to ignore.
+     *    @access public
+     */
+    function ignoreException($ignored = false) {
+        SimpleTest::getContext()->get('SimpleExceptionTrap')->ignoreException($ignored);
     }
 
     /**
@@ -399,7 +399,7 @@ class UnitTestCase extends SimpleTestCase {
      *    @return SimpleExpectation   Expectation object.
      *    @access private
      */
-    function _coerceExpectation($expected) {
+    protected function coerceExpectation($expected) {
         if ($expected == false) {
             return new TrueExpectation();
         }
@@ -408,13 +408,6 @@ class UnitTestCase extends SimpleTestCase {
         }
         return new EqualExpectation(
                 is_string($expected) ? str_replace('%', '%%', $expected) : $expected);
-    }
-
-    /**
-     *    @deprecated
-     */
-    function assertErrorPattern($pattern, $message = '%s') {
-        return $this->assertError(new PatternExpectation($pattern), $message);
     }
 }
 ?>

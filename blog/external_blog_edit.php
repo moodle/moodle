@@ -80,7 +80,7 @@ if ($externalblogform->is_cancelled()){
             $newexternal->userid = $USER->id;
             $newexternal->url = $data->url;
             $newexternal->filtertags = $data->filtertags;
-            $newexternal->timemodified = mktime();
+            $newexternal->timemodified = time();
 
             $newexternal->id = $DB->insert_record('blog_external', $newexternal);
             blog_sync_external_entries($newexternal);
@@ -99,7 +99,7 @@ if ($externalblogform->is_cancelled()){
                 $external->userid = $USER->id;
                 $external->url = $data->url;
                 $external->filtertags = $data->filtertags;
-                $external->timemodified = mktime();
+                $external->timemodified = time();
 
                 $DB->update_record('blog_external', $external);
                 tag_set('blog_external', $external->id, explode(',', $data->autotags));

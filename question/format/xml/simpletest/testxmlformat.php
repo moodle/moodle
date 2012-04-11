@@ -116,6 +116,9 @@ class qformat_xml_test extends UnitTestCase {
         $q->name = 'Short answer question';
         $q->questiontext = 'Name an amphibian: __________';
         $q->generalfeedback = 'Generalfeedback: frog or toad would have been OK.';
+        if (!isset($q->options)) {
+            $q->options = new stdClass();
+        }
         $q->options->usecase = false;
         $q->options->answers = array(
             13 => new question_answer(13, 'frog', 1.0, 'Frog is a very good answer.', FORMAT_HTML),
@@ -144,6 +147,9 @@ class qformat_xml_test extends UnitTestCase {
         $q->generalfeedback = 'Frogs and toads are amphibians, the others are mammals.';
         $q->qtype = 'match';
 
+        if (!isset($q->options)) {
+            $q->options = new stdClass();
+        }
         $q->options->shuffleanswers = 1;
         $q->options->correctfeedback = '';
         $q->options->correctfeedbackformat = FORMAT_HTML;
@@ -417,6 +423,7 @@ END;
         $qdata->length = 1;
         $qdata->penalty = 0;
         $qdata->hidden = 0;
+        $qdata->options = new stdClass();
         $qdata->options->id = 456;
         $qdata->options->questionid = 123;
         $qdata->options->responseformat = 'monospaced';
@@ -973,6 +980,7 @@ END;
         $qdata->penalty = 0.1;
         $qdata->hidden = 0;
 
+        $qdata->options = new stdClass();
         $qdata->options->answers = array(
             13 => new qtype_numerical_answer(13, '42', 1, 'Well done!',
                     FORMAT_HTML, 0.001),
@@ -1102,6 +1110,7 @@ END;
         $qdata->penalty = 0.3333333;
         $qdata->hidden = 0;
 
+        $qdata->options = new stdClass();
         $qdata->options->usecase = 0;
 
         $qdata->options->answers = array(
@@ -1222,6 +1231,7 @@ END;
         $qdata->penalty = 1;
         $qdata->hidden = 0;
 
+        $qdata->options = new stdClass();
         $qdata->options->answers = array(
             1 => new question_answer(1, 'True', 1, 'Well done!', FORMAT_HTML),
             2 => new question_answer(2, 'False', 0, 'Doh!', FORMAT_HTML),

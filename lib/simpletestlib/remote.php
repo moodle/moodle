@@ -3,7 +3,7 @@
  *  base include file for SimpleTest
  *  @package    SimpleTest
  *  @subpackage UnitTester
- *  @version    $Id$
+ *  @version    $Id: remote.php 2011 2011-04-29 08:22:48Z pp11 $
  */
 
 /**#@+
@@ -20,29 +20,29 @@ require_once(dirname(__FILE__) . '/test_case.php');
  *    @subpackage UnitTester
  */
 class RemoteTestCase {
-    var $_url;
-    var $_dry_url;
-    var $_size;
-    
+    private $url;
+    private $dry_url;
+    private $size;
+
     /**
      *    Sets the location of the remote test.
      *    @param string $url       Test location.
      *    @param string $dry_url   Location for dry run.
      *    @access public
      */
-    function RemoteTestCase($url, $dry_url = false) {
-        $this->_url = $url;
-        $this->_dry_url = $dry_url ? $dry_url : $url;
-        $this->_size = false;
+    function __construct($url, $dry_url = false) {
+        $this->url = $url;
+        $this->dry_url = $dry_url ? $dry_url : $url;
+        $this->size = false;
     }
-    
+
     /**
      *    Accessor for the test name for subclasses.
      *    @return string           Name of the test.
      *    @access public
      */
     function getLabel() {
-        return $this->_url;
+        return $this->url;
     }
 
     /**
@@ -53,65 +53,63 @@ class RemoteTestCase {
      *    @returns boolean                   True if no failures.
      *    @access public
      */
-    function run(&$reporter) {
-        $browser = &$this->_createBrowser();
-        $xml = $browser->get($this->_url);
+    function run($reporter) {
+        $browser = $this->createBrowser();
+        $xml = $browser->get($this->url);
         if (! $xml) {
-            trigger_error('Cannot read remote test URL [' . $this->_url . ']');
+            trigger_error('Cannot read remote test URL [' . $this->url . ']');
             return false;
         }
-        $parser = &$this->_createParser($reporter);
+        $parser = $this->createParser($reporter);
         if (! $parser->parse($xml)) {
-            trigger_error('Cannot parse incoming XML from [' . $this->_url . ']');
+            trigger_error('Cannot parse incoming XML from [' . $this->url . ']');
             return false;
         }
         return true;
     }
-    
+
     /**
      *    Creates a new web browser object for fetching
      *    the XML report.
      *    @return SimpleBrowser           New browser.
      *    @access protected
      */
-    function &_createBrowser() {
-        $browser = new SimpleBrowser();
-        return $browser;
+    protected function createBrowser() {
+        return new SimpleBrowser();
     }
-    
+
     /**
      *    Creates the XML parser.
      *    @param SimpleReporter $reporter    Target of test results.
      *    @return SimpleTestXmlListener      XML reader.
      *    @access protected
      */
-    function &_createParser(&$reporter) {
-        $parser = new SimpleTestXmlParser($reporter);
-        return $parser;
+    protected function createParser($reporter) {
+        return new SimpleTestXmlParser($reporter);
     }
-    
+
     /**
      *    Accessor for the number of subtests.
      *    @return integer           Number of test cases.
      *    @access public
      */
     function getSize() {
-        if ($this->_size === false) {
-            $browser = &$this->_createBrowser();
-            $xml = $browser->get($this->_dry_url);
+        if ($this->size === false) {
+            $browser = $this->createBrowser();
+            $xml = $browser->get($this->dry_url);
             if (! $xml) {
-                trigger_error('Cannot read remote test URL [' . $this->_dry_url . ']');
+                trigger_error('Cannot read remote test URL [' . $this->dry_url . ']');
                 return false;
             }
             $reporter = new SimpleReporter();
-            $parser = &$this->_createParser($reporter);
+            $parser = $this->createParser($reporter);
             if (! $parser->parse($xml)) {
-                trigger_error('Cannot parse incoming XML from [' . $this->_dry_url . ']');
+                trigger_error('Cannot parse incoming XML from [' . $this->dry_url . ']');
                 return false;
             }
-            $this->_size = $reporter->getTestCaseCount();
+            $this->size = $reporter->getTestCaseCount();
         }
-        return $this->_size;
+        return $this->size;
     }
 }
 ?>

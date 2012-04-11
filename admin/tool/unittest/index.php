@@ -28,13 +28,6 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-
-// Always run the unit tests in developer debug mode.
-// unfortunately outdated SimpleTest is not E_STRICT compatible
-$CFG->debug = (DEBUG_DEVELOPER & ~E_STRICT);
-error_reporting($CFG->debug);
-raise_memory_limit(MEMORY_EXTRA);
-
 require_once('simpletestlib.php');
 require_once('simpletestcoveragelib.php');
 require_once('ex_simple_test.php');
@@ -47,6 +40,8 @@ $codecoverage = optional_param('codecoverage', false, PARAM_BOOL);
 $showsearch   = optional_param('showsearch', false, PARAM_BOOL);
 
 admin_externalpage_setup('toolsimpletest', '', array('showpasses'=>$showpasses, 'showsearch'=>$showsearch));
+
+raise_memory_limit(MEMORY_EXTRA);
 
 $unittest = true;
 

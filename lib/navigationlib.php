@@ -1695,56 +1695,50 @@ class global_navigation extends navigation_node {
         global $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
 
-        if (!$this->cache->cached('course_sections_'.$course->id) || !$this->cache->cached('course_activites_'.$course->id)) {
-            $modinfo = get_fast_modinfo($course);
-            $sections = array_slice(get_all_sections($course->id), 0, $course->numsections+1, true);
+        $modinfo = get_fast_modinfo($course);
 
-            $activities = array();
+        $sections = array_slice(get_all_sections($course->id), 0, $course->numsections+1, true);
+        $activities = array();
 
-            foreach ($sections as $key => $section) {
-                $sections[$key]->hasactivites = false;
-                if (!array_key_exists($section->section, $modinfo->sections)) {
+        foreach ($sections as $key => $section) {
+            $sections[$key]->hasactivites = false;
+            if (!array_key_exists($section->section, $modinfo->sections)) {
+                continue;
+            }
+            foreach ($modinfo->sections[$section->section] as $cmid) {
+                $cm = $modinfo->cms[$cmid];
+                if (!$cm->uservisible) {
                     continue;
                 }
-                foreach ($modinfo->sections[$section->section] as $cmid) {
-                    $cm = $modinfo->cms[$cmid];
-                    if (!$cm->uservisible) {
-                        continue;
-                    }
-                    $activity = new stdClass;
-                    $activity->course = $course->id;
-                    $activity->section = $section->section;
-                    $activity->name = $cm->name;
-                    $activity->icon = $cm->icon;
-                    $activity->iconcomponent = $cm->iconcomponent;
-                    $activity->id = $cm->id;
-                    $activity->hidden = (!$cm->visible);
-                    $activity->modname = $cm->modname;
-                    $activity->nodetype = navigation_node::NODETYPE_LEAF;
-                    $activity->onclick = $cm->get_on_click();
-                    $url = $cm->get_url();
-                    if (!$url) {
-                        $activity->url = null;
-                        $activity->display = false;
-                    } else {
-                        $activity->url = $cm->get_url()->out();
-                        $activity->display = true;
-                        if (self::module_extends_navigation($cm->modname)) {
-                            $activity->nodetype = navigation_node::NODETYPE_BRANCH;
-                        }
-                    }
-                    $activities[$cmid] = $activity;
-                    if ($activity->display) {
-                        $sections[$key]->hasactivites = true;
+                $activity = new stdClass;
+                $activity->id = $cm->id;
+                $activity->course = $course->id;
+                $activity->section = $section->section;
+                $activity->name = $cm->name;
+                $activity->icon = $cm->icon;
+                $activity->iconcomponent = $cm->iconcomponent;
+                $activity->hidden = (!$cm->visible);
+                $activity->modname = $cm->modname;
+                $activity->nodetype = navigation_node::NODETYPE_LEAF;
+                $activity->onclick = $cm->get_on_click();
+                $url = $cm->get_url();
+                if (!$url) {
+                    $activity->url = null;
+                    $activity->display = false;
+                } else {
+                    $activity->url = $cm->get_url()->out();
+                    $activity->display = true;
+                    if (self::module_extends_navigation($cm->modname)) {
+                        $activity->nodetype = navigation_node::NODETYPE_BRANCH;
                     }
                 }
+                $activities[$cmid] = $activity;
+                if ($activity->display) {
+                    $sections[$key]->hasactivites = true;
+                }
             }
-            $this->cache->set('course_sections_'.$course->id, $sections);
-            $this->cache->set('course_activites_'.$course->id, $activities);
-        } else {
-            $sections = $this->cache->{'course_sections_'.$course->id};
-            $activities = $this->cache->{'course_activites_'.$course->id};
         }
+
         return array($sections, $activities);
     }
 
@@ -2643,7 +2637,7 @@ class global_navigation_for_ajax extends global_navigation {
                 break;
             case self::TYPE_COURSE :
                 $course = $DB->get_record('course', array('id' => $this->instanceid), '*', MUST_EXIST);
-                require_course_login($course);
+                require_course_login($course, true, null, false, true);
                 $this->page->set_context(get_context_instance(CONTEXT_COURSE, $course->id));
                 $coursenode = $this->add_course($course);
                 $this->add_course_essentials($coursenode, $course);
@@ -2657,7 +2651,7 @@ class global_navigation_for_ajax extends global_navigation {
                         LEFT JOIN {course_sections} cs ON cs.course = c.id
                         WHERE cs.id = ?';
                 $course = $DB->get_record_sql($sql, array($this->instanceid), MUST_EXIST);
-                require_course_login($course);
+                require_course_login($course, true, null, false, true);
                 $this->page->set_context(get_context_instance(CONTEXT_COURSE, $course->id));
                 $coursenode = $this->add_course($course);
                 $this->add_course_essentials($coursenode, $course);
@@ -2674,7 +2668,7 @@ class global_navigation_for_ajax extends global_navigation {
                 $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
                 $modinfo = get_fast_modinfo($course);
                 $cm = $modinfo->get_cm($this->instanceid);
-                require_course_login($course, true, $cm);
+                require_course_login($course, true, $cm, false, true);
                 $this->page->set_context(get_context_instance(CONTEXT_MODULE, $cm->id));
                 $coursenode = $this->load_course($course);
                 if ($course->id == SITEID) {

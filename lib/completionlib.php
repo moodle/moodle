@@ -573,7 +573,7 @@ class completion_info {
                     $this->internal_systemerror("Unexpected result: multiple grades for
                         item '{$item->id}', user '{$userid}'");
                 }
-                $newstate = $this->internal_get_grade_state($item, reset($grades));
+                $newstate = self::internal_get_grade_state($item, reset($grades));
                 if ($newstate == COMPLETION_INCOMPLETE) {
                     return COMPLETION_INCOMPLETE;
                 }
@@ -1116,7 +1116,7 @@ class completion_info {
             $groupjoin   = "JOIN {groups_members} gm
                               ON gm.userid = u.id";
             $groupselect = " AND gm.groupid = :groupid ";
-            
+
             $return->data['groupid'] = $groupid;
         }
 
@@ -1249,9 +1249,9 @@ class completion_info {
             // Grade being deleted, so only change could be to make it incomplete
             $possibleresult = COMPLETION_INCOMPLETE;
         } else {
-            $possibleresult = $this->internal_get_grade_state($item, $grade);
+            $possibleresult = self::internal_get_grade_state($item, $grade);
         }
-        
+
         // OK, let's update state based on this
         $this->update_state($cm, $possibleresult, $grade->userid);
     }
@@ -1267,7 +1267,7 @@ class completion_info {
      * @param grade_grade $grade an instance of grade_grade
      * @return int Completion state e.g. COMPLETION_INCOMPLETE
      */
-    public function internal_get_grade_state($item, $grade) {
+    public static function internal_get_grade_state($item, $grade) {
         if (!$grade) {
             return COMPLETION_INCOMPLETE;
         }

@@ -420,10 +420,10 @@ $CFG->admin = 'admin';
 //=========================================================================
 //
 // Force a debugging mode regardless the settings in the site administration
-// @error_reporting(1023);  // NOT FOR PRODUCTION SERVERS!
-// @ini_set('display_errors', '1'); // NOT FOR PRODUCTION SERVERS!
-// $CFG->debug = 38911;  // DEBUG_DEVELOPER // NOT FOR PRODUCTION SERVERS!
-// $CFG->debugdisplay = true;   // NOT FOR PRODUCTION SERVERS!
+// @error_reporting(E_ALL | E_STRICT); // NOT FOR PRODUCTION SERVERS!
+// @ini_set('display_errors', '1');    // NOT FOR PRODUCTION SERVERS!
+// $CFG->debug = (E_ALL | E_STRICT);   // === DEBUG_DEVELOPER - NOT FOR PRODUCTION SERVERS!
+// $CFG->debugdisplay = 1;             // NOT FOR PRODUCTION SERVERS!
 //
 // You can specify a comma separated list of user ids that that always see
 // debug messages, this overrides the debug flag in $CFG->debug and $CFG->debugdisplay
@@ -490,6 +490,12 @@ $CFG->admin = 'admin';
 // $CFG->phpunit_prefix = 'phpu_';
 // $CFG->phpunit_dataroot = '/home/example/phpu_moodledata';
 // $CFG->phpunit_directorypermissions = 02777; // optional
+// $CFG->phpunit_extra_drivers = array(
+//      1=>array('dbtype'=>'mysqli', 'dbhost'=>'localhost', 'dbname'=>'moodle', 'dbuser'=>'root', 'dbpass'=>'', 'prefix'=>'phpu2_'),
+//      2=>array('dbtype'=>'pgsql', 'dbhost'=>'localhost', 'dbname'=>'moodle', 'dbuser'=>'postgres', 'dbpass'=>'', 'prefix'=>'phpu2_'),
+//      3=>array('dbtype'=>'sqlsrv', 'dbhost'=>'127.0.0.1', 'dbname'=>'moodle', 'dbuser'=>'sa', 'dbpass'=>'', 'prefix'=>'phpu2_'),
+//      4=>array('dbtype'=>'oci', 'dbhost'=>'127.0.0.1', 'dbname'=>'XE', 'dbuser'=>'sa', 'dbpass'=>'', 'prefix'=>'t_'),
+// ); // for database driver testing only, DB is selected via PHPUNIT_TEST_DRIVER=n
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

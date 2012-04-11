@@ -113,6 +113,7 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
             // use the version of the successor instead of the current mod/resource
             // beware - the version.php declares info via $module object, do not use
             // a variable of such name here
+            $module = new stdClass();
             include $CFG->dirroot.'/mod/'.$successor->get_modname().'/version.php';
             $cminfo['version'] = $module->version;
 

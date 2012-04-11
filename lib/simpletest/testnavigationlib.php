@@ -95,10 +95,17 @@ class navigation_node_test extends UnitTestCase {
         $this->assertIsA($node2, 'navigation_node');
         $this->assertIsA($node3, 'navigation_node');
 
-        $this->assertReference($node1, $this->node->get('key'));
-        $this->assertReference($node2, $this->node->get($node2->key));
-        $this->assertReference($node2, $this->node->get($node2->key, $node2->type));
-        $this->assertReference($node3, $this->node->get($node3->key, $node3->type));
+        $ref = $this->node->get('key');
+        $this->assertReference($node1, $ref);
+
+        $ref = $this->node->get($node2->key);
+        $this->assertReference($node2, $ref);
+
+        $ref = $this->node->get($node2->key, $node2->type);
+        $this->assertReference($node2, $ref);
+
+        $ref = $this->node->get($node3->key, $node3->type);
+        $this->assertReference($node3, $ref);
     }
 
     public function test_add_before() {
@@ -170,7 +177,8 @@ class navigation_node_test extends UnitTestCase {
         $activenode2 = $this->node->get('demo1')->find_active_node();
 
         if ($this->assertIsA($activenode1, 'navigation_node')) {
-            $this->assertReference($activenode1, $this->node->get('demo3')->get('demo5')->get('activity1'));
+            $ref = $this->node->get('demo3')->get('demo5')->get('activity1');
+            $this->assertReference($activenode1, $ref);
         }
 
         $this->assertNotA($activenode2, 'navigation_node');
@@ -307,7 +315,7 @@ class mock_initialise_global_navigation extends global_navigation {
         return 0;
     }
 
-    public function load_for_user() {
+    public function load_for_user($user=null, $forceforcontext=false) {
         $this->add('load_for_user', null, null, null, 'initcall'.self::$count);
         self::$count++;
         return 0;

@@ -571,7 +571,7 @@ class block_base {
         return false;
     }
 
-    function get_extra_capabilities() {
+    static function get_extra_capabilities() {
         return array('moodle/block:view', 'moodle/block:edit');
     }
 

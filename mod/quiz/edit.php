@@ -55,14 +55,15 @@ require_once($CFG->dirroot . '/question/category_class.php');
  */
 function module_specific_buttons($cmid, $cmoptions) {
     global $OUTPUT;
+    $params = array(
+        'type' => 'submit',
+        'name' => 'add',
+        'value' => $OUTPUT->larrow() . ' ' . get_string('addtoquiz', 'quiz'),
+    );
     if ($cmoptions->hasattempts) {
-        $disabled = 'disabled="disabled" ';
-    } else {
-        $disabled = '';
+        $params['disabled'] = 'disabled';
     }
-    $out = '<input type="submit" name="add" value="' . $OUTPUT->larrow() . ' ' .
-            get_string('addtoquiz', 'quiz') . '" ' . $disabled . "/>\n";
-    return $out;
+    return html_writer::empty_tag('input', $params);
 }
 
 /**
@@ -137,7 +138,9 @@ if ($quiz_reordertool > -1) {
     $quiz_reordertool = get_user_preferences('quiz_reordertab', 0);
 }
 
-//will be set further down in the code
+$canaddrandom = $contexts->have_cap('moodle/question:useall');
+$canaddquestion = (bool) $contexts->having_add_and_use();
+
 $quizhasattempts = quiz_has_attempts($quiz->id);
 
 $PAGE->set_url($thispageurl);
@@ -211,6 +214,7 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
 
 if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sesskey()) {
     // Add a single question to the current quiz
+    quiz_require_question_use($addquestion);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     quiz_add_quiz_question($addquestion, $quiz, $addonpage);
     quiz_delete_previews($quiz);
@@ -225,6 +229,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     foreach ($rawdata as $key => $value) { // Parse input for question ids
         if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
             $key = $matches[1];
+            quiz_require_question_use($key);
             quiz_add_quiz_question($key, $quiz);
         }
     }
@@ -273,7 +278,11 @@ if (($deleteemptypage !== false) && confirm_sesskey()) {
 }
 
 $remove = optional_param('remove', false, PARAM_INT);
-if (($remove = optional_param('remove', false, PARAM_INT)) && confirm_sesskey()) {
+if ($remove && confirm_sesskey()) {
+    // Remove a question from the quiz.
+    // We require the user to have the 'use' capability on the question,
+    // so that then can add it back if they remove the wrong one by mistake.
+    quiz_require_question_use($remove);
     quiz_remove_question($quiz, $remove);
     quiz_delete_previews($quiz);
     quiz_update_sumgrades($quiz);
@@ -283,7 +292,9 @@ if (($remove = optional_param('remove', false, PARAM_INT)) && confirm_sesskey())
 if (optional_param('quizdeleteselected', false, PARAM_BOOL) &&
         !empty($selectedquestionids) && confirm_sesskey()) {
     foreach ($selectedquestionids as $questionid) {
-        quiz_remove_question($quiz, $questionid);
+        if (quiz_has_question_use($questionid)) {
+            quiz_remove_question($quiz, $questionid);
+        }
     }
     quiz_delete_previews($quiz);
     quiz_update_sumgrades($quiz);
@@ -548,14 +559,14 @@ if ($quiz_reordertool) {
     echo '<div class="editq">';
 }
 
-quiz_print_question_list($quiz, $thispageurl, true,
-        $quiz_reordertool, $quiz_qbanktool, $quizhasattempts, $defaultcategoryobj);
+quiz_print_question_list($quiz, $thispageurl, true, $quiz_reordertool, $quiz_qbanktool,
+        $quizhasattempts, $defaultcategoryobj, $canaddquestion, $canaddrandom);
 echo '</div>';
 
 // Close <div class="quizcontents">:
 echo '</div>';
 
-if (!$quiz_reordertool) {
+if (!$quiz_reordertool && $canaddrandom) {
     $randomform = new quiz_add_random_form(new moodle_url('/mod/quiz/addrandom.php'), $contexts);
     $randomform->set_data(array(
         'category' => $pagevars['cat'],

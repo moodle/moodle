@@ -181,7 +181,8 @@ class conditionlib_test extends UnitTestCaseUsingDatabase {
         ));
 
         // Okay sweet, now get modinfo
-        $modinfo=get_fast_modinfo($DB->get_record('course',array('id'=>$courseid)));
+        $course = $DB->get_record('course',array('id'=>$courseid));
+        $modinfo=get_fast_modinfo($course);
 
         // Test basic data
         $this->assertEqual(1,$modinfo->cms[$cmid1]->showavailability);

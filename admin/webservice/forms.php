@@ -254,7 +254,7 @@ class web_service_token_form extends moodleform {
         return $data;
     }
 
-    function validation(&$data, $files) {
+    function validation($data, $files) {
         global $DB;
 
         $errors = parent::validation($data, $files);

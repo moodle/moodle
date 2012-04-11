@@ -54,15 +54,11 @@ function get_module_from_cmid($cmid) {
 * @param bool $noparent if true only questions with NO parent will be selected
 * @param bool $recurse include subdirectories
 * @param bool $export set true if this is called by questionbank export
-* @author added by Howard Miller June 2004
 */
 function get_questions_category( $category, $noparent=false, $recurse=true, $export=true ) {
     global $DB;
 
-    // questions will be added to an array
-    $qresults = array();
-
-    // build sql bit for $noparent
+    // Build sql bit for $noparent
     $npsql = '';
     if ($noparent) {
       $npsql = " and parent='0' ";
@@ -75,16 +71,21 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
         $categorylist = array($category->id);
     }
 
-    // get the list of questions for the category
+    // Get the list of questions for the category
     list($usql, $params) = $DB->get_in_or_equal($categorylist);
-    if ($questions = $DB->get_records_select('question', "category $usql $npsql", $params, 'qtype, name')) {
+    $questions = $DB->get_records_select('question', "category $usql $npsql", $params, 'qtype, name');
 
-        // iterate through questions, getting stuff we need
-        foreach($questions as $question) {
-            $question->export_process = $export;
-            question_bank::get_qtype($question->qtype)->get_question_options($question);
-            $qresults[] = $question;
+    // Iterate through questions, getting stuff we need
+    $qresults = array();
+    foreach($questions as $key => $question) {
+        $question->export_process = $export;
+        $qtype = question_bank::get_qtype($question->qtype, false);
+        if ($export && $qtype->name() == 'missingtype') {
+            // Unrecognised question type. Skip this question when exporting.
+            continue;
         }
+        $qtype->get_question_options($question);
+        $qresults[] = $question;
     }
 
     return $qresults;
@@ -406,6 +407,7 @@ class question_bank_checkbox_column extends question_bank_column_base {
         echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
                 $question->id . '" id="checkq' . $question->id . '" value="1"/>';
         if ($this->firstrow) {
+            $PAGE->requires->js('/question/qbank.js');
             $PAGE->requires->js_function_call('question_bank.init_checkbox_column', array(get_string('selectall'),
                     get_string('deselectall'), 'checkq' . $question->id));
             $this->firstrow = false;
@@ -605,7 +607,8 @@ abstract class question_bank_action_column_base extends question_bank_column_bas
     }
 
     public function get_required_fields() {
-        return array('q.id');
+        // createdby is required for permission checks.
+        return array('q.id, q.createdby');
     }
 }
 
@@ -631,10 +634,9 @@ class question_bank_edit_action_column extends question_bank_action_column_base 
     }
 
     protected function display_content($question, $rowclasses) {
-        if (question_has_capability_on($question, 'edit') ||
-                question_has_capability_on($question, 'move')) {
+        if (question_has_capability_on($question, 'edit')) {
             $this->print_icon('t/edit', $this->stredit, $this->qbank->edit_question_url($question->id));
-        } else {
+        } else if (question_has_capability_on($question, 'view')) {
             $this->print_icon('i/info', $this->strview, $this->qbank->edit_question_url($question->id));
         }
     }

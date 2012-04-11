@@ -149,7 +149,7 @@ class data_field_file extends data_field_base {
 
 
     // content: "a##b" where a is the file name, b is the display name
-    function update_content($recordid, $value, $name) {
+    function update_content($recordid, $value, $name='') {
         global $CFG, $DB, $USER;
         $fs = get_file_storage();
 

@@ -22,7 +22,8 @@
  *  1   - general error
  *  130 - coding error
  *  131 - configuration problem
- *  132 - drop data, then install new test database
+ *  132 - install new test database
+ *  133 - drop old data, then install new test database
  *
  * @package    core
  * @category   phpunit
@@ -36,13 +37,19 @@ ini_set('display_errors', '1');
 ini_set('log_errors', '1');
 
 if (isset($_SERVER['REMOTE_ADDR'])) {
-    phpunit_bootstrap_error('Unit tests can be executed only from commandline!', 1);
+    phpunit_bootstrap_error('Unit tests can be executed only from command line!', 1);
 }
 
-if (defined('PHPUNITTEST')) {
-    phpunit_bootstrap_error("PHPUNITTEST constant must not be manually defined anywhere!", 130);
+if (defined('PHPUNIT_TEST')) {
+    phpunit_bootstrap_error("PHPUNIT_TEST constant must not be manually defined anywhere!", 130);
 }
-define('PHPUNITTEST', true);
+/** PHPUnit testing framework active */
+define('PHPUNIT_TEST', true);
+
+if (!defined('PHPUNIT_UTIL')) {
+    /** Identifies utility scripts */
+    define('PHPUNIT_UTIL', false);
+}
 
 if (defined('CLI_SCRIPT')) {
     phpunit_bootstrap_error('CLI_SCRIPT must not be manually defined in any PHPUnit test scripts', 130);
@@ -55,10 +62,16 @@ define('NO_OUTPUT_BUFFERING', true);
 define('ABORT_AFTER_CONFIG', true);
 require(__DIR__ . '/../../config.php');
 
+if (!defined('PHPUNIT_LONGTEST')) {
+    /** Execute longer version of tests */
+    define('PHPUNIT_LONGTEST', false);
+}
+
 // remove error handling overrides done in config.php
-error_reporting(E_ALL);
+error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', '1');
 ini_set('log_errors', '1');
+set_time_limit(0); // no time limit in CLI scripts, user may cancel execution
 
 // prepare dataroot
 umask(0);
@@ -113,7 +126,10 @@ if (!file_exists("$CFG->phpunit_dataroot/phpunittestdir.txt")) {
 
 // verify db prefix
 if (!isset($CFG->phpunit_prefix)) {
-    phpunit_bootstrap_error('Missing $CFG->phpunit_dataroot in config.php, can not run tests!', 131);
+    phpunit_bootstrap_error('Missing $CFG->phpunit_prefix in config.php, can not run tests!', 131);
+}
+if ($CFG->phpunit_prefix === '') {
+    phpunit_bootstrap_error('$CFG->phpunit_prefix can not be empty, can not run tests!', 131);
 }
 if (isset($CFG->prefix) and $CFG->prefix === $CFG->phpunit_prefix) {
     phpunit_bootstrap_error('$CFG->prefix and $CFG->phpunit_prefix must not be identical, can not run tests!', 131);
@@ -141,11 +157,13 @@ unset($allowed);
 unset($productioncfg);
 
 // force the same CFG settings in all sites
-$CFG->debug = (E_ALL | E_STRICT | 38911); // can not use DEBUG_DEVELOPER here
+$CFG->debug = (E_ALL | E_STRICT); // can not use DEBUG_DEVELOPER yet
 $CFG->debugdisplay = 1;
 error_reporting($CFG->debug);
 ini_set('display_errors', '1');
 ini_set('log_errors', '0');
+
+$CFG->passwordsaltmain = 'phpunit'; // makes login via normal UI impossible
 
 $CFG->noemailever = true; // better not mail anybody from tests, override temporarily if necessary
 $CFG->cachetext = 0; // disable this very nasty setting
@@ -163,20 +181,27 @@ require("$CFG->dirroot/lib/setup.php");
 
 raise_memory_limit(MEMORY_EXTRA);
 
-if (defined('PHPUNIT_CLI_UTIL')) {
-    // all other tests are done in the CLI scripts...
+if (PHPUNIT_UTIL) {
+    // we are not going to do testing, this is 'true' in utility scripts that init database usually
     return;
 }
 
-if (!phpunit_util::is_testing_ready()) {
-    phpunit_bootstrap_error('Database is not initialised to run unit tests, please use "php admin/tool/phpunit/cli/util.php --install"', 132);
+// is database and dataroot ready for testing?
+$problem = phpunit_util::testing_ready_problem();
+
+if ($problem) {
+    switch ($problem) {
+        case 132:
+            phpunit_bootstrap_error('Database was not initialised to run unit tests, please use "php admin/tool/phpunit/cli/util.php --install"', $problem);
+        case 133:
+            phpunit_bootstrap_error('Database was initialised for different version, please use "php admin/tool/phpunit/cli/util.php --drop; php admin/tool/phpunit/cli/util.php --install"', $problem);
+        default:
+            phpunit_bootstrap_error('Unknown problem initialising test database', $problem);
+    }
 }
 
-// refresh data in all tables, clear caches, etc.
-phpunit_util::reset_all_data();
-
-// store fresh globals
-phpunit_util::init_globals();
+// prepare for the first test run - store fresh globals, reset dataroot, etc.
+phpunit_util::bootstrap_init();
 
 
 //=========================================================
@@ -200,7 +225,9 @@ function phpunit_bootstrap_error($text, $errorcode = 1) {
 function phpunit_bootstrap_initdataroot($dataroot) {
     global $CFG;
 
-    file_put_contents("$dataroot/phpunittestdir.txt", 'Contents of this directory are used during tests only, do not delete this file!');
+    if (!file_exists("$dataroot/phpunittestdir.txt")) {
+        file_put_contents("$dataroot/phpunittestdir.txt", 'Contents of this directory are used during tests only, do not delete this file!');
+    }
     chmod("$dataroot/phpunittestdir.txt", $CFG->filepermissions);
     if (!file_exists("$CFG->phpunit_dataroot/phpunit")) {
         mkdir("$CFG->phpunit_dataroot/phpunit", $CFG->directorypermissions);

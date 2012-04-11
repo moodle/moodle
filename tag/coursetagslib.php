@@ -433,6 +433,7 @@ function coursetag_delete_keyword($tagid, $userid, $courseid) {
 /**
  * Get courses tagged with a tag
  *
+ * @global moodle_database $DB
  * @package  core_tag
  * @category tag
  * @param int $tagid
@@ -442,17 +443,26 @@ function coursetag_get_tagged_courses($tagid) {
     global $DB;
 
     $courses = array();
-    if ($crs = $DB->get_records_select('tag_instance', "tagid=:tagid AND itemtype='course'", array('tagid'=>$tagid))) {
-        foreach ($crs as $c) {
-            $course = $DB->get_record('course', array('id'=>$c->itemid));
-            // check if the course is hidden
-            if ($course->visible == 1 || has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
-                $courses[$c->itemid] = $course;
-            }
+
+    $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+
+    $sql = "SELECT c.*, $ctxselect
+            FROM {course} c
+            JOIN {tag_instance} t ON t.itemid = c.id
+            JOIN {context} ctx ON ctx.instanceid = c.id
+            WHERE t.tagid = :tagid AND
+            t.itemtype = 'course' AND
+            ctx.contextlevel = :contextlevel
+            ORDER BY c.sortorder ASC";
+    $params = array('tagid' => $tagid, 'contextlevel' => CONTEXT_COURSE);
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $course) {
+        context_helper::preload_from_record($course);
+        if ($course->visible == 1 || has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
+            $courses[$course->id] = $course;
         }
     }
     return $courses;
-
 }
 
 /**

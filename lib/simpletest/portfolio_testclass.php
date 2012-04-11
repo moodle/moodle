@@ -115,7 +115,7 @@ class portfolio_caller_test extends portfolio_caller_base {
 class portfolio_exporter_test extends portfolio_exporter {
     private $files;
 
-    public function write_new_file($content, $name) {
+    public function write_new_file($content, $name, $manifest=true) {
         if (empty($this->files)) {
             $this->files = array();
         }
@@ -126,11 +126,11 @@ class portfolio_exporter_test extends portfolio_exporter {
         throw new portfolio_exception('notimplemented', 'portfolio', 'files api test');
     }
 
-    public function get_tempfiles() {
+    public function get_tempfiles($skipfile='portfolio-export.zip') {
         return $this->files;
     }
 
-    public function zip_tempfiles() {
+    public function zip_tempfiles($filename='portfolio-export.zip', $filepath='/final/') {
         return new portfolio_fake_file('fake content zipfile', 'portfolio-export.zip');
     }
 }
@@ -196,19 +196,19 @@ class portfoliolib_test extends UnitTestCaseUsingDatabase {
 
     protected $testtables = array(
                 'lib' => array(
-                    'portfolio_instance', 'portfolio_instance_user', 'portfolio_instance_config', 
+                    'portfolio_instance', 'portfolio_instance_user', 'portfolio_instance_config',
                         'user', 'course', 'course_categories'));
 
     function setup() {
         global $USER;
         parent::setup();
-        
+
         $this->switch_to_test_db(); // Switch to test DB for all the execution
 
         foreach ($this->testtables as $dir => $tables) {
             $this->create_test_tables($tables, $dir); // Create tables
         }
-        
+
         // It is necessary to store $USER object because some subclasses use generator
         // stuff which breaks $USER
         $this->olduser = $USER;

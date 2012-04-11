@@ -82,8 +82,8 @@ function recurseFolders($path, $callback, $fileregexp = '/.*/', $exclude = false
 class IgnoreWhitespaceExpectation extends SimpleExpectation {
     var $expect;
 
-    function IgnoreWhitespaceExpectation($content, $message = '%s') {
-        $this->SimpleExpectation($message);
+    function __construct($content, $message = '%s') {
+        parent::__construct($message);
         $this->expect=$this->normalise($content);
     }
 
@@ -111,8 +111,8 @@ class IgnoreWhitespaceExpectation extends SimpleExpectation {
 class ArraysHaveSameValuesExpectation extends SimpleExpectation {
     var $expect;
 
-    function ArraysHaveSameValuesExpectation($expected, $message = '%s') {
-        $this->SimpleExpectation($message);
+    function __construct($expected, $message = '%s') {
+        parent::__construct($message);
         if (!is_array($expected)) {
             trigger_error('Attempt to create an ArraysHaveSameValuesExpectation ' .
                     'with an expected value that is not an array.');
@@ -149,8 +149,8 @@ class ArraysHaveSameValuesExpectation extends SimpleExpectation {
 class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
     var $expect;
 
-    function CheckSpecifiedFieldsExpectation($expected, $message = '%s') {
-        $this->SimpleExpectation($message);
+    function __construct($expected, $message = '%s') {
+        parent::__construct($message);
         if (!is_object($expected)) {
             trigger_error('Attempt to create a CheckSpecifiedFieldsExpectation ' .
                     'with an expected value that is not an object.');
@@ -651,7 +651,7 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
         }
 
         // Only do this after the above text.
-        parent::UnitTestCase($label);
+        parent::__construct($label);
 
         // Create the test DB instance.
         $this->realdb = $DB;
@@ -974,7 +974,7 @@ class FakeDBUnitTestCase extends UnitTestCase {
             return;
         }
 
-        parent::UnitTestCase($label);
+        parent::__construct($label);
         // MDL-16483 Get PKs and save data to text file
 
         $this->pkfile = $CFG->dataroot.'/testtablespks.csv';

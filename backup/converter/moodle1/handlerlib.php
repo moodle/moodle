@@ -863,6 +863,7 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
         // host...
         $versionfile = $CFG->dirroot.'/mod/'.$data['modulename'].'/version.php';
         if (file_exists($versionfile)) {
+            $module = new stdClass();
             include($versionfile);
             $data['version'] = $module->version;
         } else {
@@ -1852,7 +1853,7 @@ abstract class moodle1_qtype_handler extends moodle1_plugin_handler {
     /**
      * Question type handlers cannot open the xml_writer
      */
-    final protected function open_xml_writer() {
+    final protected function open_xml_writer($filename) {
         throw new moodle1_convert_exception('opening_xml_writer_forbidden');
     }
 
@@ -1971,7 +1972,7 @@ abstract class moodle1_resource_successor_handler extends moodle1_mod_handler {
      * @param array $data pre-cooked legacy resource data
      * @param array $raw raw legacy resource data
      */
-    public function process_legacy_resource(array $data, array $raw) {
+    public function process_legacy_resource(array $data, array $raw = null) {
     }
 
     /**

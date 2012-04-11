@@ -179,7 +179,7 @@
     <location>simpletestlib</location>
     <name>Simpletest</name>
     <license>LGPL</license>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <licenseversion>2.1</licenseversion>
   </library>
   <library>

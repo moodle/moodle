@@ -38,7 +38,7 @@ class grade_category_test extends grade_test {
     public function __destruct() {
         $this->endtime = time();
         //var_dump($this->endtime-$this->starttime);
-        
+
         parent::__destruct();
     }
 
@@ -118,7 +118,7 @@ class grade_category_test extends grade_test {
         $grade_category = new grade_category($params, false);
         $grade_category->insert();
         $this->grade_categories[50] = $grade_category;//going to delete this one later hence the special index
-        
+
         $this->assertEqual(4, $grade_category->depth);
         $this->assertEqual($parentpath.$grade_category->id."/", $grade_category->path);
     }
@@ -251,7 +251,7 @@ class grade_category_test extends grade_test {
     /**
      * Tests the calculation of grades using the various aggregation methods with and without hidden grades
      * This will not work entirely until MDL-11837 is done
-     * @global type $DB 
+     * @global type $DB
      */
     function sub_test_grade_category_generate_grades() {
         global $DB;
@@ -286,13 +286,13 @@ class grade_category_test extends grade_test {
             $grade_items[$i]->grademin = 0;
             $grade_items[$i]->grademax = 10;
             $grade_items[$i]->iteminfo = 'Manual grade item used for unit testing';
-            $grade_items[$i]->timecreated = mktime();
-            $grade_items[$i]->timemodified = mktime();
-            
+            $grade_items[$i]->timecreated = time();
+            $grade_items[$i]->timemodified = time();
+
             //used as the weight by weighted mean and as extra credit by mean with extra credit
             //Will be 0, 1 and 2
             $grade_items[$i]->aggregationcoef = $i;
-            
+
             $grade_items[$i]->insert();
         }
 
@@ -304,8 +304,8 @@ class grade_category_test extends grade_test {
             $grade_grades[$i]->userid = $this->userid;
             $grade_grades[$i]->rawgrade = ($i+1)*2;//produce grade grades of 2, 4 and 6
             $grade_grades[$i]->finalgrade = ($i+1)*2;
-            $grade_grades[$i]->timecreated = mktime();
-            $grade_grades[$i]->timemodified = mktime();
+            $grade_grades[$i]->timecreated = time();
+            $grade_grades[$i]->timemodified = time();
             $grade_grades[$i]->information = '1 of 2 grade_grades';
             $grade_grades[$i]->informationformat = FORMAT_PLAIN;
             $grade_grades[$i]->feedback = 'Good, but not good enough..';
@@ -316,14 +316,14 @@ class grade_category_test extends grade_test {
 
         //3 grade items with 1 grade_grade each.
         //grade grades have the values 2, 4 and 6
-        
+
         //First correct answer is the aggregate with all 3 grades
         //Second correct answer is with the first grade (value 2) hidden
-        
+
         $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_MEDIAN, 'GRADE_AGGREGATE_MEDIAN', 8, 8);
         $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_MAX, 'GRADE_AGGREGATE_MAX', 12, 12);
         $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_MODE, 'GRADE_AGGREGATE_MODE', 12, 12);
-        
+
         //weighted mean. note grade totals are rounded to an int to prevent rounding discrepancies. correct final grade isnt actually exactly 10
         //3 items with grades 2, 4 and 6 with weights 0, 1 and 2 and all out of 10. then doubled to be out of 20.
         $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_WEIGHTED_MEAN, 'GRADE_AGGREGATE_WEIGHTED_MEAN', 10, 10);
@@ -335,16 +335,16 @@ class grade_category_test extends grade_test {
         //mean of grades with extra credit
         //3 items with grades 2, 4 and 6 with extra credit 0, 1 and 2 equally weighted and all out of 10. then doubled to be out of 20.
         $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_EXTRACREDIT_MEAN, 'GRADE_AGGREGATE_EXTRACREDIT_MEAN', 10, 13);
-        
+
         //aggregation tests the are affected by a hidden grade currently dont work as we dont store the altered grade in the database
         //instead an in memory recalculation is done. This should be remedied by MDL-11837
 
         //fails with 1 grade hidden. still reports 8 as being correct
         $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_MEAN, 'GRADE_AGGREGATE_MEAN', 8, 10);
-        
+
         //fails with 1 grade hidden. still reports 4 as being correct
         $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_MIN, 'GRADE_AGGREGATE_MIN', 4, 8);
-        
+
         //fails with 1 grade hidden. still reports 12 as being correct
         $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_SUM, 'GRADE_AGGREGATE_SUM', 12, 10);
     }
@@ -384,27 +384,27 @@ class grade_category_test extends grade_test {
      */
     function helper_test_grade_aggregation_result($grade_category, $correctgrade, $msg) {
         global $DB;
-        
+
         $category_grade_item = $grade_category->get_grade_item();
-        
+
         //this creates all the grade_grades we need
         grade_regrade_final_grades($this->courseid);
-        
+
         $grade = $DB->get_record('grade_grades', array('itemid'=>$category_grade_item->id, 'userid'=>$this->userid));
         $this->assertWithinMargin($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
         $this->assertEqual(intval($correctgrade), intval($grade->finalgrade), $msg);
-        
+
         /*
          * TODO this doesnt work as the grade_grades created by $grade_category->generate_grades(); dont
          * observe the category's max grade
         //delete the grade_grades for the category itself and check they get recreated correctly
         $DB->delete_records('grade_grades', array('itemid'=>$category_grade_item->id));
         $grade_category->generate_grades();
-        
+
         $grade = $DB->get_record('grade_grades', array('itemid'=>$category_grade_item->id, 'userid'=>$this->userid));
         $this->assertWithinMargin($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
         $this->assertEqual(intval($correctgrade), intval($grade->finalgrade), $msg);
-         * 
+         *
          */
     }
 

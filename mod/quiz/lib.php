@@ -449,6 +449,8 @@ function quiz_cron() {
     // Run cron for our sub-plugin types.
     cron_execute_plugin_type('quiz', 'quiz reports');
     cron_execute_plugin_type('quizaccess', 'quiz access rules');
+
+    return true;
 }
 
 /**
