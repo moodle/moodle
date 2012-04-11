@@ -210,6 +210,28 @@ class phpunit_util {
             $rs->close();
             return $empties;
 
+        } else if ($dbfamily === 'mssql') {
+            $empties = array();
+            $prefix = $DB->get_prefix();
+            $sql = "SELECT t.name
+                      FROM sys.identity_columns i
+                      JOIN sys.tables t ON t.object_id = i.object_id
+                     WHERE t.name LIKE ?
+                       AND i.name = 'id'
+                       AND i.last_value IS NULL";
+            $rs = $DB->get_recordset_sql($sql, array($prefix.'%'));
+            foreach ($rs as $info) {
+                $table = strtolower($info->name);
+                if (strpos($table, $prefix) !== 0) {
+                    // incorrect table match caused by _
+                    continue;
+                }
+                $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
+                $empties[$table] = $table;
+            }
+            $rs->close();
+            return $empties;
+
         } else {
             return array();
         }
@@ -1066,7 +1088,7 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
             // this happens when previous test does not reset, we can not use transactions
             $this->testdbtransaction = null;
 
-        } else if ($DB->get_dbfamily() === 'postgres') {
+        } else if ($DB->get_dbfamily() === 'postgres' or $DB->get_dbfamily() === 'mssql') {
             // database must allow rollback of DDL, so no mysql here
             $this->testdbtransaction = $DB->start_delegated_transaction();
         }
