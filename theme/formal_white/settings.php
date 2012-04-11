@@ -85,7 +85,7 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
 
-    // Block region width
+    // Block padding
     $name = 'theme_formal_white/blockpadding';
     $title = get_string('blockpadding','theme_formal_white');
     $description = get_string('blockpaddingdesc', 'theme_formal_white');
