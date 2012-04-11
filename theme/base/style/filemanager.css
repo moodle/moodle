@@ -59,6 +59,9 @@
 .file-picker .fp-select {width:550px;height:430px;text-align:center;overflow:auto;}
 .file-picker .fp-select .uneditable {display:none;}
 .file-picker .fp-select p {margin: 1em;}
+.file-picker .fp-select .fp-select-loading {display:none;}
+.file-picker .fp-select.loading .fp-select-loading {display:block;}
+.file-picker .fp-select.loading form {display:none;}
 .file-picker .fp-upload-form {margin: 2em 0;text-align:center;}
 .file-picker .fp-upload-btn {clear:both;margin-top: 2em;}
 .file-picker .fp-paging {margin:1em .5em;clear:both;text-align:center;line-height: 2.5em;}

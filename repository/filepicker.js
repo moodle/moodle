@@ -99,17 +99,9 @@ M.core_filepicker.init = function(Y, options) {
         },
 
         request: function(args, redraw) {
-            var client_id = args.client_id;
-            if (!args.api) {
-                var api = this.api + '?action='+args.action;
-            } else {
-                var api = args.api + '?action='+args.action;
-            }
+            var api = (args.api?args.api:this.api) + '?action='+args.action;
             var params = {};
-            var scope = this;
-            if (args['scope']) {
-                scope = args['scope'];
-            }
+            var scope = args['scope']?args['scope']:this;
             params['repo_id']=args.repository_id;
             params['p'] = args.path?args.path:'';
             params['page'] = args.page?args.page:'';
@@ -167,7 +159,7 @@ M.core_filepicker.init = function(Y, options) {
                             if (args.onerror) {
                                 args.onerror(id,data,p);
                             } else {
-                                Y.one(panel_id).set('innerHTML', '');
+                                this.fpnode.one('.fp-content').setContent('');
                             }
                             return;
                         } else if (data && data.event) {
@@ -313,6 +305,7 @@ M.core_filepicker.init = function(Y, options) {
                     node.one('.fp-dlg-text').setContent(M.str.repository.fileexistsdialog_filemanager);
                 }
             }
+            this.fpnode.one('.fp-select').removeClass('loading');
             this.process_dlg.dialogdata = data;
             this.fpnode.one('.fp-dlg .fp-dlg-butrename').setContent(M.util.get_string('renameto', 'repository', data.newfile.filename));
             this.process_dlg.show();
@@ -509,9 +502,7 @@ M.core_filepicker.init = function(Y, options) {
                 set_width(filenamediv, width)
                 set_width(imgdiv, width)
                 set_height(imgdiv, height);
-                var img = Y.Node.create('<img/>').
-                    set('src', node.thumbnail).
-                    set('title', node.title);
+                var img = Y.Node.create('<img/>').setAttrs({src:node.thumbnail,title:node.title});
                 if(node.thumbnail_alt) {
                     img.set('alt', node.thumbnail_alt);
                 }
@@ -552,6 +543,7 @@ M.core_filepicker.init = function(Y, options) {
             this.selectui.show();
             var client_id = this.options.client_id;
             var selectnode = this.fpnode.one('.fp-select');
+            selectnode.removeClass('loading');
             selectnode.one('#newname-'+client_id).set('value', args.title);
             selectnode.one('#text-author-'+client_id).set('value', this.options.author);
 
@@ -633,16 +625,18 @@ M.core_filepicker.init = function(Y, options) {
                     params['linkexternal'] = 'yes';
                 }
 
-                // TODO show some waiting process here
+                selectnode.addClass('loading');
                 this.request({
                     action:'download',
                     client_id: client_id,
                     repository_id: repository_id,
                     'params': params,
                     onerror: function(id, obj, args) {
+                        selectnode.removeClass('loading');
                         scope.selectui.hide();
                     },
                     callback: function(id, obj, args) {
+                        selectnode.removeClass('loading');
                         if (scope.options.editor_target && scope.options.env=='editor') {
                             scope.options.editor_target.value=obj.url;
                             scope.options.editor_target.onchange();
@@ -660,7 +654,8 @@ M.core_filepicker.init = function(Y, options) {
                 }, false);
             }, this);
             var elform = selectnode.one('form');
-            elform.appendChild(Y.Node.create('<input type="hidden"/>').set('id', 'filesource-'+client_id));
+            elform.appendChild(Y.Node.create('<input/>').
+                setAttrs({type:'hidden',id:'filesource-'+client_id}));
             elform.on('keydown', function(e) {
                 if (e.keyCode == 13) {
                     getfile.simulate('click');
@@ -715,8 +710,7 @@ M.core_filepicker.init = function(Y, options) {
                 replace(/\{TOOLLOGOUTID}/g, 'fp-tb-logout-'+client_id).
                 replace(/\{TOOLMANAGEID}/g, 'fp-tb-manage-'+client_id).
                 replace(/\{TOOLHELPID}/g, 'fp-tb-help-'+client_id);
-            this.fpnode = Y.Node.create(nodecontent);
-            this.fpnode.set('id', 'filepicker-'+client_id);
+            this.fpnode = Y.Node.create(nodecontent).set('id', 'filepicker-'+client_id);
             var fpselectnode = Y.Node.create(M.core_filepicker.templates.selectlayout.
                 replace(/\{IMGID}/g, 'img-'+client_id).
                 replace(/\{NEWNAMEID}/g, 'newname-'+client_id).
@@ -760,6 +754,7 @@ M.core_filepicker.init = function(Y, options) {
             // assign callbacks for toolbar links
             this.setup_toolbar();
             this.setup_select_file();
+            this.hide_header();
 
             // processing repository listing
             // Resort the repositories by sortorder
@@ -795,11 +790,7 @@ M.core_filepicker.init = function(Y, options) {
             }
             // display error if no repositories found
             if (sorted_repositories.length==0) {
-                if (this.options.externallink) {
-                    list.set('innerHTML', M.str.repository.norepositoriesexternalavailable); // TODO as error
-                } else {
-                    list.set('innerHTML', M.str.repository.norepositoriesavailable); // TODO as error
-                }
+                this.display_error(M.str.repository.norepositoriesavailable, 'norepositoriesavailable')
             }
             // display repository that was used last time
             this.show_recent_repository();
@@ -822,22 +813,13 @@ M.core_filepicker.init = function(Y, options) {
             this.print_header();
         },
         print_login: function(data) {
-            // TODO !!!!
             this.parse_repository_options(data);
             var client_id = this.options.client_id;
             var repository_id = data.repo_id;
             var l = this.logindata = data.login;
             var loginurl = '';
-            var panel = this.fpnode.one('.fp-content');
-            var action = 'login';
-            if (data['login_btn_action']) {
-                action=data['login_btn_action'];
-            }
+            var action = data['login_btn_action'] ? data['login_btn_action'] : 'login';
             var form_id = 'fp-form-'+client_id;
-            var download_button_id = 'fp-form-download-button-'+client_id;
-            var search_button_id   = 'fp-form-search-button-'+client_id;
-            var login_button_id    = 'fp-form-login-button-'+client_id;
-            var popup_button_id    = 'fp-form-popup-button-'+client_id;
 
             var loginform_node = Y.Node.create(M.core_filepicker.templates.loginform);
             loginform_node.one('form').set('id', form_id);
@@ -847,7 +829,7 @@ M.core_filepicker.init = function(Y, options) {
                 'textarea' : loginform_node.one('.fp-login-textarea'),
                 'select' : loginform_node.one('.fp-login-select'),
                 'text' : loginform_node.one('.fp-login-text'),
-                'radio' : loginform_node.one('.fp-login-radio'),
+                'radio' : loginform_node.one('.fp-login-radiogroup'),
                 'checkbox' : loginform_node.one('.fp-login-checkbox'),
                 'input' : loginform_node.one('.fp-login-input')
             };
@@ -866,17 +848,29 @@ M.core_filepicker.init = function(Y, options) {
                     node = templates['input'].cloneNode(true);
                 }
                 if (l[k].type == 'popup') {
-                    node.one('button').set('id', popup_button_id);
+                    // submit button
+                    var popupbutton = node.one('button');
+                    popupbutton.on('click', function(e){
+                        M.core_filepicker.active_filepicker = this;
+                        window.open(loginurl, 'repo_auth', 'location=0,status=0,width=500,height=300,scrollbars=yes');
+                        e.preventDefault();
+                    }, this);
+                    loginform_node.one('form').on('keydown', function(e) {
+                        if (e.keyCode == 13) {
+                            popupbutton.simulate('click');
+                            e.preventDefault();
+                        }
+                    }, this);
                     loginform_node.all('.fp-login-submit').remove();
                     action = 'popup';
                 }else if(l[k].type=='textarea') {
                     // textarea element
                     if (node.one('label')) { node.one('label').set('for', l[k].id).setContent(l[k].label) }
-                    node.one('textarea').set('id', l[k].id).set('name', l[k].name);
+                    node.one('textarea').setAttrs({id:l[k].id, name:l[k].name});
                 }else if(l[k].type=='select') {
                     // select element
                     if (node.one('label')) { node.one('label').set('for', l[k].id).setContent(l[k].label) }
-                    node.one('select').set('id', l[k].id).set('name', l[k].name).setContent('');
+                    node.one('select').setAttrs({id:l[k].id, name:l[k].name}).setContent('');
                     for (i in l[k].options) {
                         node.one('select').appendChild(
                             Y.Node.create('<option/>').
@@ -885,9 +879,27 @@ M.core_filepicker.init = function(Y, options) {
                     }
                 }else if(l[k].type=='radio') {
                     // radio input element
-                    //node.one('label').set('for', l[k].id).setContent(l[k].label)
-                    //node.one('input').set('id', l[k].id).set('name', l[k].name).set('value', l[k].value)
-                    // TODO
+                    node.all('label').setContent(l[k].label);
+                    var list = l[k].value.split('|');
+                    var labels = l[k].value_label.split('|');
+                    var radionode = null;
+                    for(var item in list) {
+                        if (radionode == null) {
+                            radionode = node.one('.fp-login-radio');
+                            radionode.one('input').set('checked', 'checked');
+                        } else {
+                            var x = radionode.cloneNode(true);
+                            radionode.insert(x, 'after');
+                            radionode = x;
+                            radionode.one('input').set('checked', '');
+                        }
+                        radionode.one('input').setAttrs({id:''+l[k].id+item, name:l[k].name,
+                            type:l[k].type, value:list[item]});
+                        radionode.all('label').setContent(labels[item]).set('for', ''+l[k].id+item)
+                    }
+                    if (radionode == null) {
+                        node.one('.fp-login-radio').remove();
+                    }
                 }else {
                     // input element
                     if (node.one('label')) { node.one('label').set('for', l[k].id).setContent(l[k].label) }
@@ -899,188 +911,35 @@ M.core_filepicker.init = function(Y, options) {
                 }
                 container.appendChild(node);
             }
-
-/*            var str = '<div class="fp-login-form">';
-            str += '<form id="'+form_id+'">';
-            var has_pop = false;
-            str +='<table width="100%">';
-            for(var k in l) {
-                str +='<tr>';
-                if(l[k].type=='popup') {
-                    // pop element
-                    loginurl = l[k].url;
-                    str += '<td colspan="2"><p class="fp-popup">'+M.str.repository.popup+'</p>';
-                    str += '<p class="fp-popup"><button id="'+popup_button_id+'">'+M.str.repository.login+'</button>';
-                    str += '</p></td>';
-                    action = 'popup';
-                }else if(l[k].type=='textarea') {
-                    // textarea element
-                    str += '<td colspan="2"><p><textarea id="'+l[k].id+'" name="'+l[k].name+'"></textarea></p></td>';
-                }else if(l[k].type=='select') {
-                    // select element
-                    str += '<td align="right"><label>'+l[k].label+':</label></td>';
-                    str += '<td align="left"><select id="'+l[k].id+'" name="'+l[k].name+'">';
-                    for (i in l[k].options) {
-                        str += '<option value="'+l[k].options[i].value+'">'+l[k].options[i].label+'</option>';
-                    }
-                    str += '</select></td>';
-                }else{
-                    // input element
-                    var label_id = '';
-                    var field_id = '';
-                    var field_value = '';
-                    if(l[k].id) {
-                        label_id = ' for="'+l[k].id+'"';
-                        field_id = ' id="'+l[k].id+'"';
-                    }
-                    if (l[k].label) {
-                        str += '<td align="right" width="30%" valign="center">';
-                        str += '<label'+label_id+'>'+l[k].label+'</label> </td>';
-                    } else {
-                        str += '<td width="30%"></td>';
-                    }
-                    if(l[k].value) {
-                        field_value = ' value="'+l[k].value+'"';
-                    }
-                    if(l[k].type=='radio'){
-                        var list = l[k].value.split('|');
-                        var labels = l[k].value_label.split('|');
-                        str += '<td align="left">';
-                        for(var item in list) {
-                            str +='<input type="'+l[k].type+'"'+' name="'+l[k].name+'"'+
-                                field_id+' value="'+list[item]+'" />'+labels[item]+'<br />';
-                        }
-                        str += '</td>';
-                    }else{
-                        str += '<td align="left">';
-                        str += '<input type="'+l[k].type+'"'+' name="'+l[k].name+'"'+field_value+' '+field_id+' />';
-                        str += '</td>';
-                    }
-                }
-                str +='</tr>';
+            // custom label text for submit button
+            if (data['login_btn_label']) {
+                loginform_node.all('.fp-login-submit').setContent(data['login_btn_label'])
             }
-            str +='</table>';
-            str += '</form>';
-*/
-            // custom lable text
-            if (action != 'popup') {
-                if (data['login_btn_label']) {
-                    loginform_node.one('.fp-login-submit').setContent(data['login_btn_label'])
-                }
-                var button_id = login_button_id;
-                switch (action) {
-                    case 'search':
-                        button_id = search_button_id;
-                        break;
-                    case 'download':
-                        button_id = download_button_id;
-                        break;
-                }
-                loginform_node.one('.fp-login-submit').set('id', button_id);
-            }
-
-            // register buttons
-            // process login action
-            var login_button = Y.one('#'+login_button_id);
-            var scope = this;
-            if (login_button) {
-                login_button.on('click', function(e){
+            // register button action for login and search
+            if (action == 'login' || action == 'search') {
+                loginform_node.one('.fp-login-submit').on('click', function(e){
                     e.preventDefault();
-                    // collect form data
-                    var data = this.logindata;
-                    var scope = this;
-                    var params = {};
-                    for (var k in data) {
-                        if(data[k].type!='popup') {
-                            var el = Y.one('[name='+data[k].name+']');
-                            var type = el.get('type');
-                            params[data[k].name] = '';
-                            if(type == 'checkbox') {
-                                params[data[k].name] = el.get('checked');
-                            } else {
-                                params[data[k].name] = el.get('value');
-                            }
-                        }
-                    }
-                    // start ajax request
                     this.hide_header();
                     this.request({
-                        'params': params,
-                        'scope': scope,
-                        'action':'signin',
+                        'scope': this,
+                        'action':(action == 'search') ? 'search' : 'signin',
                         'path': '',
                         'client_id': client_id,
                         'repository_id': repository_id,
+                        'form': {id:form_id, upload:false, useDisabled:true},
                         'callback': this.display_response
                     }, true);
                 }, this);
             }
-            var search_button = Y.one('#'+search_button_id);
-            if (search_button) {
-                search_button.on('click', function(e){
-                    e.preventDefault();
-                    var data = this.logindata;
-                    var params = {};
-
-                    for (var k in data) {
-                        if(data[k].type!='popup') {
-                            var el = document.getElementsByName(data[k].name)[0];
-                            params[data[k].name] = '';
-                            if(el.type == 'checkbox') {
-                                params[data[k].name] = el.checked;
-                            } else if(el.type == 'radio') {
-                                var tmp = document.getElementsByName(data[k].name);
-                                for(var i in tmp) {
-                                    if (tmp[i].checked) {
-                                        params[data[k].name] = tmp[i].value;
-                                    }
-                                }
-                            } else {
-                                params[data[k].name] = el.value;
-                            }
-                        }
+            // if 'Enter' is pressed in the form, simulate the button click
+            if (loginform_node.one('.fp-login-submit')) {
+                loginform_node.one('form').on('keydown', function(e) {
+                    if (e.keyCode == 13) {
+                        loginform_node.one('.fp-login-submit').simulate('click')
+                        e.preventDefault();
                     }
-                    this.hide_header();
-                    this.request({
-                            scope: scope,
-                            action:'search',
-                            client_id: client_id,
-                            repository_id: repository_id,
-                            form: {id: 'fp-form-'+scope.options.client_id,upload:false,useDisabled:true},
-                            callback: scope.display_response
-                    }, true);
                 }, this);
             }
-            // TODO not used code?
-            var download_button = Y.one('#'+download_button_id);
-            if (download_button) {
-                download_button.on('click', function(){
-                    alert('download');
-                });
-            }
-            var popup_button = Y.one('#'+popup_button_id);
-            if (popup_button) {
-                popup_button.on('click', function(e){
-                    M.core_filepicker.active_filepicker = this;
-                    window.open(loginurl, 'repo_auth', 'location=0,status=0,width=500,height=300,scrollbars=yes');
-                    e.preventDefault();
-                }, this);
-            }
-            var elform = loginform_node.one('form');
-            elform.on('keydown', function(e) {
-                if (e.keyCode == 13) {
-                    switch (action) {
-                        case 'search':
-                            search_button.simulate('click');
-                            break;
-                        default:
-                            login_button.simulate('click');
-                            break;
-                    }
-                    e.preventDefault();
-                }
-            }, this);
-
         },
         display_response: function(id, obj, args) {
             var scope = args.scope
@@ -1163,10 +1022,12 @@ M.core_filepicker.init = function(Y, options) {
             Y.all('#'+'author-'+client_id).set('value', this.options.author);
             Y.all('#'+'license-'+client_id).set('name', 'license');
             this.populate_licenses_select(Y.one('#'+'license-'+client_id))
-            Y.one('#'+id).append('<input type="hidden" name="itemid" value="'+this.options.itemid+'" />'); // TODO nicer!
+            Y.one('#'+id).appendChild(Y.Node.create('<input/>').
+                setAttrs({type:'hidden',name:'itemid',value:this.options.itemid}));
             var types = this.options.accepted_types;
             for (var i in types) {
-                Y.one('#'+id).append('<input type="hidden" name="accepted_types[]" value="'+types[i]+'" />'); // TODO nicer!
+                Y.one('#'+id).appendChild(Y.Node.create('<input/>').
+                    setAttrs({type:'hidden',name:'accepted_types[]',value:types[i]}));
             }
 
             var scope = this;
@@ -1247,8 +1108,9 @@ M.core_filepicker.init = function(Y, options) {
 
             // it does not matter what kind of element is {TOOLMANAGEID}, we create a dummy <a>
             // element and use it to open url on click event
-            var managelnk = Y.Node.create('<a/>');
-            managelnk.set('id', 'fp-tb-manage-'+client_id+'-link').set('target', '_blank').setStyle('display', 'none');
+            var managelnk = Y.Node.create('<a/>').
+                setAttrs({id:'fp-tb-manage-'+client_id+'-link', target:'_blank'}).
+                setStyle('display', 'none');
             Y.one('#fp-tb-'+client_id).append(managelnk);
             Y.one('#fp-tb-manage-'+client_id).on('click', function(e) {
                 e.preventDefault();
@@ -1256,8 +1118,9 @@ M.core_filepicker.init = function(Y, options) {
             });
 
             // same with {TOOLHELPID}
-            var helplnk = Y.Node.create('<a/>');
-            helplnk.set('id', 'fp-tb-help-'+client_id+'-link').set('target', '_blank').setStyle('display', 'none');
+            var helplnk = Y.Node.create('<a/>').
+                setAttrs({id:'fp-tb-help-'+client_id+'-link', target:'_blank'}).
+                setStyle('display', 'none');
             Y.one('#fp-tb-'+client_id).append(helplnk);
             Y.one('#fp-tb-help-'+client_id).on('click', function(e) {
                 e.preventDefault();
@@ -1268,6 +1131,12 @@ M.core_filepicker.init = function(Y, options) {
             var client_id = this.options.client_id;
             if (Y.one('#fp-tb-'+client_id)) {
                 Y.one('#fp-tb-'+client_id).addClass('empty');
+            }
+            if (this.pathbar) {
+                this.pathbar.setContent('').addClass('empty');
+            }
+            if (this.fpnode.one('.fp-paging')) {
+                this.fpnode.one('.fp-paging').setContent('').addClass('empty');
             }
         },
         print_header: function() {
@@ -1415,7 +1284,7 @@ M.core_filepicker.init = function(Y, options) {
         },
         print_path: function() {
             if (!this.pathbar) { return; }
-            this.pathbar.setContent('');
+            this.pathbar.setContent('').addClass('empty');
             var p = this.filepath;
             if (p && p.length!=0) {
                 for(var i = 0; i < p.length; i++) {
@@ -1433,8 +1302,6 @@ M.core_filepicker.init = function(Y, options) {
                         this, p[i].path);
                 }
                 this.pathbar.removeClass('empty');
-            } else {
-                this.pathbar.addClass('empty');
             }
         },
         hide: function() {

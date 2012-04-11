@@ -57,6 +57,7 @@ class core_repository_renderer extends plugin_renderer_base {
      * Element with class 'fp-path-folder' will contain template for one folder in path toolbar.
      * It will hold mouse click event and will be assigned classes first/last/even/odd respectfully.
      * The content of element with class 'fp-path-folder-name' will be substituted with folder name;
+     * Parent element will receive class 'empty' when there are no folders to be displayed;
      *
      * Element with id {TOOLBARID} will have class 'empty' if all 'Search', 'Login', 'Refresh' and
      * 'Logout' are unavailable for this repo;
@@ -162,10 +163,18 @@ class core_repository_renderer extends plugin_renderer_base {
      * Elements with ids 'wrap-{LINKEXTID}', 'wrap-{AUTHORID}' and 'wrap-{LICENSEID}' may be
      * assigned with class 'uneditable' if not applicable for particular repository;
      *
+     * When confirm button is pressed and file is being selected, the top element receives
+     * additional class 'loading'. It is removed when response from server is received.
+     *
      * @return string
      */
     public function js_template_selectlayout() {
-        $rv = '<div class="{!}fp-select"><form>
+        $rv = '<div class="{!}fp-select">
+<div class="fp-select-loading">
+<img src="'.$this->pix_url('i/loading').'" />
+<p>'.get_string('loading', 'repository').'</p>
+</div>
+<form>
 <p id="{IMGID}"></p>
 <table width="100%">
 <tr><td class="mdl-right"><label for="{NEWNAMEID}">'.get_string('saveas', 'repository').'</label>:</td>
@@ -242,7 +251,7 @@ class core_repository_renderer extends plugin_renderer_base {
      *
      * must have element with class 'fp-error', its content will be replaced with error text
      * and the error code will be assigned as additional class to this element
-     * used errors: invalidjson, nofilesavailable
+     * used errors: invalidjson, nofilesavailable, norepositoriesavailable
      *
      * @return string
      */
@@ -299,6 +308,7 @@ class core_repository_renderer extends plugin_renderer_base {
     /**
      * Template for repository login form including templates for each element type
      *
+     * Must contain one <form> element with templates for different input types inside:
      * Elements with classes 'fp-login-popup', 'fp-login-textarea', 'fp-login-select' and
      * 'fp-login-input' are templates for displaying respective login form elements. Inside
      * there must be exactly one element with type <button>, <textarea>, <select> or <input>
@@ -306,8 +316,11 @@ class core_repository_renderer extends plugin_renderer_base {
      * They may also contain the <label> element and it's content will be substituted with
      * label;
      *
-     * You can also define elements with classes 'fp-login-checkbox', 'fp-login-text',
-     * 'fp-login-radio' but if they are not found, 'fp-login-input' will be used;
+     * You can also define elements with classes 'fp-login-checkbox', 'fp-login-text'
+     * but if they are not found, 'fp-login-input' will be used;
+     *
+     * Element with class 'fp-login-radiogroup' will be used for group of radio inputs. Inside
+     * it should hava a template for one radio input (with class 'fp-login-radio');
      *
      * Element with class 'fp-login-submit' will hold on click mouse event (form submission). It
      * will be removed if at least one popup element is present;
@@ -335,6 +348,12 @@ class core_repository_renderer extends plugin_renderer_base {
       <tr class="{!}fp-login-input">
         <td align="right" width="30%" valign="center"><label /></td>
         <td align="left"><input/></td>
+      </tr>
+      <tr class="{!}fp-login-radiogroup">
+        <td align="right" width="30%" valign="top"><label /></td>
+        <td align="left" valign="top">
+          <p class="{!}fp-login-radio"><input /> <label /></p>
+        </td>
       </tr>
     </table>
     <p><button class="{!}fp-login-submit">'.get_string('submit', 'repository').'</button></p>
