@@ -58,8 +58,9 @@ class completion_criteria_grade extends completion_criteria {
      */
     public function config_form_display(&$mform, $data = null) {
         $mform->addElement('checkbox', 'criteria_grade', get_string('enable'));
-        $mform->addElement('text', 'criteria_grade_value', get_string('passinggrade', 'completion'));
+        $mform->addElement('text', 'criteria_grade_value', get_string('graderequired', 'completion'));
         $mform->setDefault('criteria_grade_value', $data);
+        $mform->addElement('static', 'criteria_grade_value_note', '', get_string('criteriagradenote', 'completion'));
 
         if ($this->id) {
             $mform->setDefault('criteria_grade', 1);
@@ -126,7 +127,7 @@ class completion_criteria_grade extends completion_criteria {
      * @return  string
      */
     public function get_title() {
-        return get_string('grade');
+        return get_string('coursegrade', 'completion');
     }
 
     /**
@@ -135,7 +136,8 @@ class completion_criteria_grade extends completion_criteria {
      * @return  string
      */
     public function get_title_detailed() {
-        return (float) $this->gradepass . '% required';
+        $graderequired = round($this->gradepass, 2).'%';
+        return get_string('gradexrequired', 'completion', $graderequired);
     }
 
     /**
@@ -154,15 +156,16 @@ class completion_criteria_grade extends completion_criteria {
      * @return  string
      */
     public function get_status($completion) {
-        // Cast as floats to get rid of excess decimal places
-        $grade = (float) $this->get_grade($completion);
-        $gradepass = (float) $this->gradepass;
+        $grade = $this->get_grade($completion);
+        $graderequired = $this->get_title_detailed();
 
         if ($grade) {
-            return $grade.'% ('.$gradepass.'% to pass)';
+            $grade = round($grade, 2).'%';
         } else {
-            return $gradepass.'% to pass';
+            $grade = get_string('nograde');
         }
+
+        return $grade.' ('.$graderequired.')';
     }
 
     /**
@@ -230,11 +233,11 @@ class completion_criteria_grade extends completion_criteria {
     public function get_details($completion) {
         $details = array();
         $details['type'] = get_string('coursegrade', 'completion');
-        $details['criteria'] = get_string('passinggrade', 'completion');
-        $details['requirement'] = ((float)$this->gradepass).'%';
+        $details['criteria'] = get_string('graderequired', 'completion');
+        $details['requirement'] = round($this->gradepass, 2).'%';
         $details['status'] = '';
 
-        $grade = (float)$this->get_grade($completion);
+        $grade = round($this->get_grade($completion), 2);
         if ($grade) {
             $details['status'] = $grade.'%';
         }
