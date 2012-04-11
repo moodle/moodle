@@ -78,9 +78,7 @@ class data_field_radiobutton extends data_field_base {
                 $options[$rec->content] = $rec->content;  //Build following indicies from the sql.
             }
         }
-        $return = html_writer::label(get_string('nameradiobutton', 'data'), 'menuf_'. $this->field->id, false, array('class' => 'accesshide'));
-        $return .= html_writer::select($options, 'f_'.$this->field->id, $value);
-        return $return;
+        return html_writer::select($options, 'f_'.$this->field->id, $value);
     }
 
     function parse_search_field() {

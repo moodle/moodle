@@ -203,18 +203,17 @@ echo get_string('username') . ":\n";
 if (!empty($formerror['username'])) {
     echo '<span class="error"> * </span>';
 }
-echo html_writer::label(get_string('username'), 'menuusername', false, array('class' =>'accesshide'));
-echo '<input id="menuusername" type="text" name="username" size="20" maxlength="100" />';
+echo '<input type="text" name="username" size="20" maxlength="100" />';
 
 // choose a remote host
-echo html_writer::label(get_string('remotehost', 'mnet'), 'menumnet_host_id');
+echo " " . get_string('remotehost', 'mnet') . ":\n";
 if (!empty($formerror['mnet_host_id'])) {
     echo '<span class="error"> * </span>';
 }
 echo html_writer::select($mnethosts, 'mnet_host_id');
 
 // choose an access level
-echo html_writer::label(get_string('accesslevel', 'mnet'), 'menuaccessctrl');
+echo " " . get_string('accesslevel', 'mnet') . ":\n";
 if (!empty($formerror['accessctrl'])) {
     echo '<span class="error"> * </span>';
 }

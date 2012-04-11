@@ -399,7 +399,7 @@ if (!$courses) {
             echo '<input type="checkbox" name="c'.$acourse->id.'" />';
             echo '</td>';
         } else {
-            echo '<td align="right">';$movetocategories[$category->id] = get_string('moveselectedcoursesto');
+            echo '<td align="right">';
             // print enrol info
             if ($icons = enrol_get_course_info_icons($acourse)) {
                 foreach ($icons as $pix_icon) {
@@ -422,7 +422,6 @@ if (!$courses) {
         make_categories_list($movetocategories, $notused, 'moodle/category:manage');
         $movetocategories[$category->id] = get_string('moveselectedcoursesto');
         echo '<tr><td colspan="3" align="right">';
-        echo html_writer::label(get_string('moveselectedcoursesto'), 'movetoid', false, array('class' => 'accesshide'));
         echo html_writer::select($movetocategories, 'moveto', $category->id, null, array('id'=>'movetoid'));
         $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('movecourses', 'movetoid', false));
         echo '<input type="hidden" name="id" value="'.$category->id.'" />';

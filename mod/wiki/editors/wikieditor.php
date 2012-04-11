@@ -120,8 +120,7 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
             $html .= html_writer::empty_tag('img', array('alt' => $button[1], 'src' => $CFG->wwwroot . '/mod/wiki/editors/wiki/images/' . $button[0]));
             $html .= "</a>";
         }
-        $html .= "<label class='accesshide' for='addtags'>" . get_string('add') . ' ' . get_string('tags')  . "</label>";
-        $html .= "<select id='addtags' onchange=\"insertTags('{$imagetag[0]}', '{$imagetag[1]}', this.value)\">";
+        $html .= "<select onchange=\"insertTags('{$imagetag[0]}', '{$imagetag[1]}', this.value)\">";
         $html .= "<option value='" . s(get_string('wikiimage', 'wiki')) . "'>" . get_string('insertimage', 'wiki') . '</option>';
         foreach ($this->files as $filename) {
             $html .= "<option value='".s($filename)."'>";

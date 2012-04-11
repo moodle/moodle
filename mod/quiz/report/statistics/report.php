@@ -974,8 +974,7 @@ class quiz_statistics_report extends quiz_default_report {
         $output .= '<input type="hidden" name="everything" value="1"/>';
         $output .= '<input type="submit" value="' .
                 get_string('downloadeverything', 'quiz_statistics') . '"/>';
-        $output .= html_writer('action', 'menudownload', false, array('class' => 'accesshide'));
-        $output .= html_writer::select($this->table->defaultdownloadformat, 'download',
+        $output .= html_writer::select($downloadoptions, 'download',
                 $this->table->defaultdownloadformat, false);
         $output .= '</div></form>';
 

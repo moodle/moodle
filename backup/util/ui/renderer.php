@@ -343,16 +343,7 @@ class core_backup_renderer extends plugin_renderer_base {
         } else {
             $description = '';
         }
-
-        if ($type == 'text') {
-            if (empty($attributes['id'])) {
-                $attributes['id'] = $name;
-            }
-            $label = html_writer::label($name, $attibutes['id'], false, array('class' => 'accesshide'));
-        } else {
-            $label = '';
-        }
-        return $this->backup_detail_pair($label, $label . html_writer::empty_tag('input', $attributes+array('name'=>$name, 'type'=>$type, 'value'=>$value)).$description);
+        return $this->backup_detail_pair($label, html_writer::empty_tag('input', $attributes+array('name'=>$name, 'type'=>$type, 'value'=>$value)).$description);
     }
 
     /**
