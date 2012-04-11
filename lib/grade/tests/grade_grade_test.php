@@ -85,7 +85,7 @@ class grade_grade_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_grade_update() {
-        $grade_grade = new grade_grade($this->grade_grades[0]);
+        $grade_grade = new grade_grade($this->grade_grades[0], false);
         $this->assertTrue(method_exists($grade_grade, 'update'));
     }
 
@@ -107,7 +107,7 @@ class grade_grade_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_grade_load_grade_item() {
-        $grade_grade = new grade_grade($this->grade_grades[0]);
+        $grade_grade = new grade_grade($this->grade_grades[0], false);
         $this->assertTrue(method_exists($grade_grade, 'load_grade_item'));
         $this->assertNull($grade_grade->grade_item);
         $this->assertNotEmpty($grade_grade->itemid);
@@ -153,7 +153,7 @@ class grade_grade_testcase extends grade_base_testcase {
     */
 
     protected function sub_test_grade_grade_is_locked() {
-        $grade = new grade_grade($this->grade_grades[0]);
+        $grade = new grade_grade($this->grade_grades[0], false);
         $this->assertTrue(method_exists($grade, 'is_locked'));
 
         $this->assertFalse($grade->is_locked());
@@ -162,8 +162,8 @@ class grade_grade_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_grade_set_hidden() {
-        $grade = new grade_grade($this->grade_grades[0]);
-        $grade_item = new grade_item($this->grade_items[0]);
+        $grade = new grade_grade($this->grade_grades[0], false);
+        $grade_item = new grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade, 'set_hidden'));
 
         $this->assertEquals(0, $grade_item->hidden);
@@ -180,7 +180,7 @@ class grade_grade_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_grade_is_hidden() {
-        $grade = new grade_grade($this->grade_grades[0]);
+        $grade = new grade_grade($this->grade_grades[0], false);
         $this->assertTrue(method_exists($grade, 'is_hidden'));
 
         $this->assertFalse($grade->is_hidden());
