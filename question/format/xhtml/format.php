@@ -114,8 +114,7 @@ class qformat_xhtml extends qformat_default {
             shuffle( $ans_list ); // random display order
 
             // build drop down for answers
-            $dropdown = '<label class="accesshide" for="quest_' . $id . '">' . get_string('options', 'question') . '</label>';
-            $dropdown .= "<select name=\"quest_$id\">\n";
+            $dropdown = "<select name=\"quest_$id\">\n";
             foreach($ans_list as $ans) {
                 $dropdown .= "<option value=\"" . s($ans) . "\">" . s($ans) . "</option>\n";
             }
