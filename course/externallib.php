@@ -1140,6 +1140,100 @@ class core_course_external extends external_api {
     public static function delete_categories_returns() {
         return null;
     }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     * @since Moodle 2.3
+     */
+    public static function update_categories_parameters() {
+        return new external_function_parameters(
+            array(
+                'categories' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id'       => new external_value(PARAM_INT, 'course id'),
+                            'name' => new external_value(PARAM_TEXT, 'category name', VALUE_OPTIONAL),
+                            'idnumber' => new external_value(PARAM_RAW, 'category id number', VALUE_OPTIONAL),
+                            'parent' => new external_value(PARAM_INT, 'parent category id', VALUE_OPTIONAL),
+                            'description' => new external_value(PARAM_RAW, 'category description', VALUE_OPTIONAL),
+                            'theme' => new external_value(PARAM_THEME,
+                                    'the category theme. This option must be enabled on moodle', VALUE_OPTIONAL),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Update categories
+     * @param array $categories The list of categories to update
+     * @return null
+     * @since Moodle 2.3
+     */
+    public static function update_categories($categories) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/course/lib.php");
+
+        // Validate parameters.
+        $params = self::validate_parameters(self::update_categories_parameters(), array('categories' => $categories));
+
+        $transaction = $DB->start_delegated_transaction();
+
+        foreach ($params['categories'] as $cat) {
+            if (!$category = $DB->get_record('course_categories', array('id' => $cat['id']))) {
+                throw new moodle_exception('unknowcategory');
+            }
+
+            $categorycontext = context_coursecat::instance($cat['id']);
+            self::validate_context($categorycontext);
+            require_capability('moodle/category:manage', $categorycontext);
+
+            if (!empty($cat['name'])) {
+                if (textlib::strlen($cat['name'])>30) {
+                     throw new moodle_exception('categorytoolong');
+                }
+                $category->name = $cat['name'];
+            }
+            if (!empty($cat['idnumber'])) {
+                if (textlib::strlen($cat['idnumber'])>100) {
+                    throw new moodle_exception('idnumbertoolong');
+                }
+                $category->idnumber = $cat['idnumber'];
+            }
+            if (!empty($cat['description'])) {
+                $category->description = $cat['description'];
+                $category->descriptionformat = FORMAT_HTML;
+            }
+            if (!empty($cat['theme'])) {
+                $category->theme = $cat['theme'];
+            }
+            if (!empty($cat['parent']) && ($category->parent != $cat['parent'])) {
+                // First check if parent exists.
+                if (!$parent_cat = $DB->get_record('course_categories', array('id' => $cat['parent']))) {
+                    throw new moodle_exception('unknowcategory');
+                }
+                // Then check if we have capability.
+                self::validate_context(get_category_or_system_context((int)$cat['parent']));
+                require_capability('moodle/category:manage', get_category_or_system_context((int)$cat['parent']));
+                // Finally move the category.
+                move_category($category, $parent_cat);
+                $category->parent = $cat['parent'];
+            }
+            $DB->update_record('course_categories', $category);
+        }
+
+        $transaction->allow_commit();
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function update_categories_returns() {
+        return null;
+    }
 }
 
 /**

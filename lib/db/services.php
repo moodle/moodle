@@ -386,6 +386,15 @@ $functions = array(
         'capabilities'=> 'moodle/category:viewhiddencategories',
     ),
 
+    'core_course_update_categories' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'update_categories',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Update categories',
+        'type'        => 'write',
+        'capabilities'=> 'moodle:category/manage',
+    ),
+    
     'moodle_course_get_courses' => array(
         'classname'   => 'core_course_external',
         'methodname'  => 'get_courses',
