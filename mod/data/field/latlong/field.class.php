@@ -82,9 +82,7 @@ class data_field_latlong extends data_field_base {
         }
         $latlongsrs->close();
 
-        $return = html_writer::label(get_string('latlong', 'data'), 'menuf_'.$this->field->id, false, array('class' => 'accesshide'));
-        $return .= html_writer::select($options, 'f_'.$this->field->id, $value);
-       return $return;
+       return html_writer::select($options, 'f_'.$this->field->id, $value);
     }
 
     function parse_search_field() {
@@ -152,9 +150,7 @@ class data_field_latlong extends data_field_base {
                           . str_replace(array_keys($urlreplacements), array_values($urlreplacements), $this->linkoutservices[$servicesshown[0]])
                           ."' title='$servicesshown[0]'>$compasslat, $compasslong</a>";
             } elseif (sizeof($servicesshown)>1) {
-                $str .= "$compasslat, $compasslong\n";
-                $str .= "<label class='accesshide' for='jumpto'>". get_string('jumpto') ."</label>";
-                $str .= "<select id='jumpto' name='jumpto'>";
+                $str .= "$compasslat, $compasslong\n<select name='jumpto'>";
                 foreach($servicesshown as $servicename){
                     // Add a link to a service
                     $str .= "\n  <option value='"

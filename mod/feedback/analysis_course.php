@@ -136,9 +136,9 @@ if ($courseitemfilter > 0) {
          echo '<tr><td>'.get_string('noresults').'</td></tr>';
     }
 } else {
-    echo html_writer::label(get_string('search_course', 'feedback') . ': ', 'searchcourse');
-    echo '<input id="searchcourse" type="text" name="searchcourse" value="'.s($searchcourse).'"/> ';
-    echo '<input type="submit" value="'.get_string('search').'"/>';
+
+    echo get_string('search_course', 'feedback') . ': ';
+    echo '<input type="text" name="searchcourse" value="'.s($searchcourse).'"/> <input type="submit" value="'.get_string('search').'"/>';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="id" value="'.$id.'" />';
     echo '<input type="hidden" name="courseitemfilter" value="'.$courseitemfilter.'" />';
@@ -157,7 +157,7 @@ if ($courseitemfilter > 0) {
     if ($courses = $DB->get_records_sql_menu($sql, $params)) {
 
          echo ' ' . get_string('filter_by_course', 'feedback') . ': ';
-         echo html_writer::label(get_string('filter_by_course', 'feedback'), 'coursefilterid');
+
          echo html_writer::select($courses, 'coursefilter', $coursefilter, null, array('id'=>'coursefilterid'));
          $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('analysis-form', 'coursefilterid', false));
     }

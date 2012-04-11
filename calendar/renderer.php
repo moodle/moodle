@@ -708,9 +708,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $select = new single_select(new moodle_url(CALENDAR_URL.'set.php', array('return' => base64_encode($returnurl->out(false)), 'var' => 'setcourse', 'sesskey'=>sesskey())), 'id', $courseoptions, $selected, null);
         $select->class = 'cal_courses_flt';
         if ($label !== null) {
-            $select->set_label($label);
-        } else {
-            $select->set_label(get_accesshide(get_string('course')));
+            $select->label = $label;
         }
         return $this->output->render($select);
     }
