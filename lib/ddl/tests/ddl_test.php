@@ -31,10 +31,8 @@ class ddl_testcase extends database_driver_testcase {
     private $records= array();
 
     protected function setUp() {
-        //global $CFG;
-        //require_once($CFG->libdir . '/adminlib.php');
-
         parent::setUp();
+        $dbman = $this->tdb->get_manager(); // loads DDL libs
 
         $table = new xmldb_table('test_table0');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
@@ -131,6 +129,8 @@ class ddl_testcase extends database_driver_testcase {
      * Fill the given test table with some records, as far as
      * DDL behaviour must be tested both with real data and
      * with empty tables
+     * @param string $tablename
+     * @return int count of records
      */
     private function fill_deftable($tablename) {
         $DB = $this->tdb; // do not use global $DB!

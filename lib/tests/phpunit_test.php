@@ -136,6 +136,21 @@ class core_phpunit_basic_testcase extends basic_testcase {
         global $COURSE;
         $COURSE->id = 10;
     }
+
+    public function test_all_modifications() {
+        global $DB, $CFG, $USER, $COURSE;
+        $DB->set_field('user', 'confirmed', 1, array('id'=>-1));
+        $CFG->xx = 'yy';
+        unset($CFG->admin);
+        $CFG->rolesactive = 0;
+        $USER->id = 10;
+        $COURSE->id = 10;
+    }
+
+    public function test_transaction_problem() {
+        global $DB;
+        $DB->start_delegated_transaction();
+    }
 */
 }
 
@@ -180,5 +195,261 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->setUser(null);
         $this->assertEquals(0, $USER->id);
         $this->assertSame($_SESSION['USER'], $USER);
+    }
+
+    public function test_database_reset() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $this->preventResetByRollback();
+
+        $this->assertEquals(1, $DB->count_records('course')); // only frontpage in new site
+
+        // this is weird table - id is NOT a sequence here
+        $this->assertEquals(0, $DB->count_records('context_temp'));
+        $DB->import_record('context_temp', array('id'=>5, 'path'=>'/1/2', 'depth'=>2));
+        $record = $DB->get_record('context_temp', array());
+        $this->assertEquals(5, $record->id);
+
+        $this->assertEquals(0, $DB->count_records('course_display'));
+        $originaldisplayid = $DB->insert_record('course_display', array('userid'=>2, 'course'=>1, 'display'=>1));
+        $this->assertEquals(1, $originaldisplayid);
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->assertEquals(2, $course->id);
+
+        $this->assertEquals(2, $DB->count_records('user'));
+        $DB->delete_records('user', array('id'=>1));
+        $this->assertEquals(1, $DB->count_records('user'));
+
+        //=========
+
+        $this->resetAllData();
+
+        $this->assertEquals(1, $DB->count_records('course')); // only frontpage in new site
+        $this->assertEquals(0, $DB->count_records('context_temp')); // only frontpage in new site
+        $course = $this->getDataGenerator()->create_course();
+        $this->assertEquals(2, $course->id);
+
+        $displayid = $DB->insert_record('course_display', array('userid'=>2, 'course'=>1, 'display'=>1));
+        $this->assertEquals($originaldisplayid, $displayid);
+
+        $this->assertEquals(2, $DB->count_records('user'));
+        $DB->delete_records('user', array('id'=>2));
+        $user = $this->getDataGenerator()->create_user();
+        $this->assertEquals(3, $user->id);
+
+        // =========
+
+        $this->resetAllData();
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->assertEquals(2, $course->id);
+
+        $this->assertEquals(2, $DB->count_records('user'));
+        $DB->delete_records('user', array('id'=>2));
+
+        //==========
+
+        $this->resetAllData();
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->assertEquals(2, $course->id);
+
+        $this->assertEquals(2, $DB->count_records('user'));
+    }
+
+    public function test_change_detection() {
+        global $DB, $CFG, $COURSE, $SITE, $USER;
+
+        $this->preventResetByRollback();
+        phpunit_util::reset_all_data(true);
+
+        // database change
+        $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
+        $DB->set_field('user', 'confirmed', 0, array('id'=>2));
+        try {
+            phpunit_util::reset_all_data(true);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+        }
+        $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
+
+        // config change
+        $CFG->xx = 'yy';
+        unset($CFG->admin);
+        $CFG->rolesactive = 0;
+        try {
+            phpunit_util::reset_all_data(true);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertContains('xx', $e->getMessage());
+            $this->assertContains('admin', $e->getMessage());
+            $this->assertContains('rolesactive', $e->getMessage());
+        }
+        $this->assertFalse(isset($CFG->xx));
+        $this->assertTrue(isset($CFG->admin));
+        $this->assertEquals(1, $CFG->rolesactive);
+
+        //silent changes
+        $_SERVER['xx'] = 'yy';
+        phpunit_util::reset_all_data(true);
+        $this->assertFalse(isset($_SERVER['xx']));
+
+        // COURSE
+        $SITE->id = 10;
+        $COURSE = new stdClass();
+        $COURSE->id = 7;
+        try {
+            phpunit_util::reset_all_data(true);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertEquals(1, $SITE->id);
+            $this->assertSame($SITE, $COURSE);
+            $this->assertSame($SITE, $COURSE);
+        }
+
+        // USER change
+        $this->setUser(2);
+        try {
+            phpunit_util::reset_all_data(true);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertEquals(0, $USER->id);
+        }
+    }
+
+    public function test_getDataGenerator() {
+        $generator = $this->getDataGenerator();
+        $this->assertInstanceOf('phpunit_data_generator', $generator);
+    }
+
+    public function test_database_mock1() {
+        global $DB;
+
+        try {
+            $DB->get_record('pokus', array());
+            $this->fail('Exception expected when accessing non existent table');
+        } catch (dml_exception $e) {
+            $this->assertTrue(true);
+        }
+        $DB = $this->getMock(get_class($DB));
+        $this->assertNull($DB->get_record('pokus', array()));
+        // test continues after reset
+    }
+
+    public function test_database_mock2() {
+        global $DB;
+
+        // now the database should be back to normal
+        $this->assertFalse($DB->get_record('user', array('id'=>9999)));
+    }
+
+    public function test_load_dataset() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $this->assertFalse($DB->record_exists('user', array('id'=>5)));
+        $this->assertFalse($DB->record_exists('user', array('id'=>7)));
+        $dataset = $this->createXMLDataSet(__DIR__.'/fixtures/sample_dataset.xml');
+        $this->loadDataSet($dataset);
+        $this->assertTrue($DB->record_exists('user', array('id'=>5)));
+        $this->assertTrue($DB->record_exists('user', array('id'=>7)));
+        $user5 = $DB->get_record('user', array('id'=>5));
+        $user7 = $DB->get_record('user', array('id'=>7));
+        $this->assertEquals('john.doe', $user5->username);
+        $this->assertEquals('jane.doe', $user7->username);
+
+        $dataset = $this->createCsvDataSet(array('user'=>__DIR__.'/fixtures/sample_dataset.csv'));
+        $this->loadDataSet($dataset);
+        $this->assertEquals(8, $DB->get_field('user', 'id', array('username'=>'pepa.novak')));
+        $this->assertEquals(9, $DB->get_field('user', 'id', array('username'=>'bozka.novakova')));
+
+        $data = array(
+            'user' => array(
+                array('username', 'email'),
+                array('top.secret', 'top@example.com'),
+                array('low.secret', 'low@example.com'),
+            ),
+        );
+        $dataset = $this->createArrayDataSet($data);
+        $this->loadDataSet($dataset);
+        $this->assertTrue($DB->record_exists('user', array('email'=>'top@example.com')));
+        $this->assertTrue($DB->record_exists('user', array('email'=>'low@example.com')));
+
+        $data = array(
+            'user' => array(
+                array('username'=>'noidea', 'email'=>'noidea@example.com'),
+                array('username'=>'onemore', 'email'=>'onemore@example.com'),
+            ),
+        );
+        $dataset = $this->createArrayDataSet($data);
+        $this->loadDataSet($dataset);
+        $this->assertTrue($DB->record_exists('user', array('username'=>'noidea')));
+        $this->assertTrue($DB->record_exists('user', array('username'=>'onemore')));
+    }
+}
+
+
+/**
+ * Test data generator
+ *
+ * @package    core
+ * @category   phpunit
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class core_phpunit_generator_testcase extends advanced_testcase {
+    public function test_create() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        $count = $DB->count_records('user');
+        $user = $generator->create_user();
+        $this->assertEquals($count+1, $DB->count_records('user'));
+
+        $count = $DB->count_records('course_categories');
+        $category = $generator->create_category();
+        $this->assertEquals($count+1, $DB->count_records('course_categories'));
+
+        $count = $DB->count_records('course');
+        $course = $generator->create_course();
+        $this->assertEquals($count+1, $DB->count_records('course'));
+
+        $section = $generator->create_course_section(array('course'=>$course->id, 'section'=>3));
+        $this->assertEquals($course->id, $section->course);
+
+        $scale = $generator->create_scale();
+        $this->assertNotEmpty($scale);
+    }
+
+    public function test_create_module() {
+        global $CFG, $SITE;
+        if (!file_exists("$CFG->dirroot/mod/page/")) {
+            $this->markTestSkipped('Can not find standard Page module');
+        }
+
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        $page = $generator->create_module('page', array('course'=>$SITE->id));
+        $this->assertNotEmpty($page);
+    }
+
+    public function test_create_block() {
+        global $CFG;
+        if (!file_exists("$CFG->dirroot/blocks/online_users/")) {
+            $this->markTestSkipped('Can not find standard Online users block');
+        }
+
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        $page = $generator->create_block('online_users');
+        $this->assertNotEmpty($page);
     }
 }
