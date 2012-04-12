@@ -287,6 +287,13 @@ class mssql_native_moodle_database extends moodle_database {
         return $info;
     }
 
+    /**
+     * Returns if the RDBMS server fulfills the required version
+     *
+     * @param string $version version to check against
+     * @return bool returns if the version is fulfilled (true) or no (false)
+     * @todo Delete this unused and protected method. MDL-32392
+     */
     protected function is_min_version($version) {
         $server = $this->get_server_info();
         $server = $server['version'];
@@ -805,6 +812,7 @@ class mssql_native_moodle_database extends moodle_database {
         }
 
         $returning = "";
+        $isidentity = false;
 
         if ($customsequence) {
             if (!isset($params['id'])) {
@@ -812,13 +820,21 @@ class mssql_native_moodle_database extends moodle_database {
             }
             $returnid = false;
 
-            // Disable IDENTITY column before inserting record with id
-            $sql = 'SET IDENTITY_INSERT {' . $table . '} ON'; // Yes, it' ON!!
-            list($sql, $xparams, $xtype) = $this->fix_sql_params($sql, null);
-            $this->query_start($sql, null, SQL_QUERY_AUX);
-            $result = mssql_query($sql, $this->mssql);
-            $this->query_end($result);
-            $this->free_result($result);
+            $columns = $this->get_columns($table);
+            if (isset($columns['id']) and $columns['id']->auto_increment) {
+                $isidentity = true;
+            }
+
+            // Disable IDENTITY column before inserting record with id, only if the
+            // column is identity, from meta information.
+            if ($isidentity) {
+                $sql = 'SET IDENTITY_INSERT {' . $table . '} ON'; // Yes, it' ON!!
+                list($sql, $xparams, $xtype) = $this->fix_sql_params($sql, null);
+                $this->query_start($sql, null, SQL_QUERY_AUX);
+                $result = mssql_query($sql, $this->mssql);
+                $this->query_end($result);
+                $this->free_result($result);
+            }
 
         } else {
             unset($params['id']);
@@ -851,13 +867,16 @@ class mssql_native_moodle_database extends moodle_database {
         $this->free_result($result);
 
         if ($customsequence) {
-            // Enable IDENTITY column after inserting record with id
-            $sql = 'SET IDENTITY_INSERT {' . $table . '} OFF'; // Yes, it' OFF!!
-            list($sql, $xparams, $xtype) = $this->fix_sql_params($sql, null);
-            $this->query_start($sql, null, SQL_QUERY_AUX);
-            $result = mssql_query($sql, $this->mssql);
-            $this->query_end($result);
-            $this->free_result($result);
+            // Enable IDENTITY column after inserting record with id, only if the
+            // column is identity, from meta information.
+            if ($isidentity) {
+                $sql = 'SET IDENTITY_INSERT {' . $table . '} OFF'; // Yes, it' OFF!!
+                list($sql, $xparams, $xtype) = $this->fix_sql_params($sql, null);
+                $this->query_start($sql, null, SQL_QUERY_AUX);
+                $result = mssql_query($sql, $this->mssql);
+                $this->query_end($result);
+                $this->free_result($result);
+            }
         }
 
         if (!$returnid) {

@@ -42,13 +42,13 @@ class mod_quiz_mod_form extends moodleform_mod {
 
     public function __construct($current, $section, $cm, $course) {
         self::$reviewfields = array(
-            'attempt' => get_string('theattempt', 'quiz'),
-            'correctness' => get_string('whethercorrect', 'question'),
-            'marks' => get_string('marks', 'question'),
-            'specificfeedback' => get_string('specificfeedback', 'question'),
-            'generalfeedback' => get_string('generalfeedback', 'question'),
-            'rightanswer' => get_string('rightanswer', 'question'),
-            'overallfeedback' => get_string('overallfeedback', 'quiz'),
+            'attempt'          => array('theattempt', 'quiz'),
+            'correctness'      => array('whethercorrect', 'question'),
+            'marks'            => array('marks', 'quiz'),
+            'specificfeedback' => array('specificfeedback', 'question'),
+            'generalfeedback'  => array('generalfeedback', 'question'),
+            'rightanswer'      => array('rightanswer', 'question'),
+            'overallfeedback'  => array('reviewoverallfeedback', 'quiz'),
         );
         parent::__construct($current, $section, $cm, $course);
     }
@@ -197,7 +197,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         // Review options.
         $this->add_review_options_group($mform, $quizconfig, 'during',
-                mod_quiz_display_options::DURING);
+                mod_quiz_display_options::DURING, true);
         $this->add_review_options_group($mform, $quizconfig, 'immediately',
                 mod_quiz_display_options::IMMEDIATELY_AFTER);
         $this->add_review_options_group($mform, $quizconfig, 'open',
@@ -362,9 +362,19 @@ class mod_quiz_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
-    protected function add_review_options_group($mform, $quizconfig, $whenname, $when) {
+    protected function add_review_options_group($mform, $quizconfig, $whenname,
+            $when, $withhelp = false) {
+        global $OUTPUT;
+
         $group = array();
-        foreach (self::$reviewfields as $field => $label) {
+        foreach (self::$reviewfields as $field => $string) {
+            list($identifier, $component) = $string;
+
+            $label = get_string($identifier, $component);
+            if ($withhelp) {
+                $label .= ' ' . $OUTPUT->help_icon($identifier, $component);
+            }
+
             $group[] = $mform->createElement('checkbox', $field . $whenname, '', $label);
         }
         $mform->addGroup($group, $whenname . 'optionsgrp',

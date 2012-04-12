@@ -81,7 +81,7 @@ class quizaccess_delaybetweenattempts extends quiz_access_rule_base {
         $lastattemptfinish = $lastattempt->timefinish;
         if ($this->quiz->timelimit > 0) {
             $lastattemptfinish = min($lastattemptfinish,
-            $lastattempt->timestart + $this->quiz->timelimit);
+                    $lastattempt->timestart + $this->quiz->timelimit);
         }
 
         if ($numprevattempts == 1 && $this->quiz->delay1) {

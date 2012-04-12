@@ -179,8 +179,14 @@ class pgsql_native_moodle_database extends moodle_database {
         pg_set_client_encoding($this->pgsql, 'utf8');
         $this->query_end(true);
 
-        // find out the bytea oid
-        $sql = "SELECT oid FROM pg_type WHERE typname = 'bytea'";
+        $sql = '';
+        // Only for 9.0 and upwards, set bytea encoding to old format.
+        if ($this->is_min_version('9.0')) {
+            $sql = "SET bytea_output = 'escape'; ";
+        }
+
+        // Find out the bytea oid.
+        $sql .= "SELECT oid FROM pg_type WHERE typname = 'bytea'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
@@ -251,6 +257,13 @@ class pgsql_native_moodle_database extends moodle_database {
         return array('description'=>$info['server'], 'version'=>$info['server']);
     }
 
+    /**
+     * Returns if the RDBMS server fulfills the required version
+     *
+     * @param string $version version to check against
+     * @return bool returns if the version is fulfilled (true) or no (false)
+     * @todo Make this method private. MDL-32392
+     */
     protected function is_min_version($version) {
         $server = $this->get_server_info();
         $server = $server['version'];

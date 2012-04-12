@@ -171,8 +171,8 @@ class question_usage_by_activity {
         } else {
             $this->questionattempts[] = $qa;
         }
-        $ids = array_keys($this->questionattempts);
-        $qa->set_slot(end($ids));
+        end($this->questionattempts); // Ready to get the last key on the next line.
+        $qa->set_slot(key($this->questionattempts));
         $this->observer->notify_attempt_added($qa);
         return $qa->get_slot();
     }

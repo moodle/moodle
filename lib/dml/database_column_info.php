@@ -152,7 +152,6 @@ class database_column_info {
 
         switch ($this->meta_type) {
             case 'R': // normalise counters (usually 'id')
-                $this->auto_increment = true;
                 $this->binary         = false;
                 $this->has_default    = false;
                 $this->default_value  = null;

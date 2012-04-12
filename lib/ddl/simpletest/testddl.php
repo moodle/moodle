@@ -1626,7 +1626,14 @@ class ddl_test extends UnitTestCase {
 
         $record = (object)array('id'=>666, 'course'=>10);
         $DB->import_record('testtable', $record);
-        $DB->delete_records('testtable');
+        $DB->delete_records('testtable'); // This delete performs one TRUNCATE
+
+        $dbman->reset_sequence($table); // using xmldb object
+        $this->assertEqual(1, $DB->insert_record('testtable', (object)array('course'=>13)));
+
+        $record = (object)array('id'=>666, 'course'=>10);
+        $DB->import_record('testtable', $record);
+        $DB->delete_records('testtable', array()); // This delete performs one DELETE
 
         $dbman->reset_sequence($table); // using xmldb object
         $this->assertEqual(1, $DB->insert_record('testtable', (object)array('course'=>13)));

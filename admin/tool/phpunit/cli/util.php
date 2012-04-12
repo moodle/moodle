@@ -20,24 +20,23 @@
  * Exit codes:
  *  0   - success
  *  1   - general error
- *  130 - coding error
+ *  130 - missing PHPUnit library error
  *  131 - configuration problem
+ *  132 - install new test database
  *  133 - drop existing data before installing
+ *  134 - can not create main phpunit.xml
  *
  * @package    tool_phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('PHPUNIT_UTIL', true);
+if (isset($_SERVER['REMOTE_ADDR'])) {
+    die; // no access from web!
+}
 
-require(__DIR__ . '/../../../../lib/phpunit/bootstrap.php');
-require_once($CFG->libdir.'/phpunit/lib.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/upgradelib.php');
-require_once($CFG->libdir.'/clilib.php');
-require_once($CFG->libdir.'/pluginlib.php');
-require_once($CFG->libdir.'/installlib.php');
+require_once(__DIR__.'/../../../../lib/clilib.php');
+require_once(__DIR__.'/../../../../lib/phpunit/bootstraplib.php');
 
 // now get cli options
 list($options, $unrecognized) = cli_get_params(
@@ -45,6 +44,9 @@ list($options, $unrecognized) = cli_get_params(
         'drop'        => false,
         'install'     => false,
         'buildconfig' => false,
+        'diag'        => false,
+        'phpunitdir'  => false,
+        'run'         => false,
         'help'        => false,
     ),
     array(
@@ -52,37 +54,105 @@ list($options, $unrecognized) = cli_get_params(
     )
 );
 
+if ($options['phpunitdir']) {
+    // nasty skodak's hack for testing of future PHPUnit versions - intentionally not documented
+    if (!file_exists($options['phpunitdir'])) {
+        cli_error('Invalid custom PHPUnit lib location');
+    }
+    $files = scandir($options['phpunitdir']);
+    foreach ($files as $file) {
+        $path = $options['phpunitdir'].'/'.$file;
+        if (!is_dir($path) or strpos($file, '.') === 0) {
+            continue;
+        }
+        ini_set('include_path', $path . PATH_SEPARATOR . ini_get('include_path'));
+    }
+    unset($files);
+    unset($file);
+}
+
+// verify PHPUnit libs are loaded
+if (!@include_once('PHPUnit/Autoload.php')) {
+    phpunit_bootstrap_error(130);
+}
+
+if (!@include_once('PHPUnit/Extensions/Database/Autoload.php')) {
+    phpunit_bootstrap_error(130);
+}
+
+if ($options['run']) {
+    unset($options);
+    unset($unrecognized);
+
+    foreach ($_SERVER['argv'] as $k=>$v) {
+        if (strpos($v, '--run') === 0 or strpos($v, '--phpunitdir') === 0) {
+            unset($_SERVER['argv'][$k]);
+            $_SERVER['argc'] = $_SERVER['argc'] - 1;
+        }
+    }
+    $_SERVER['argv'] = array_values($_SERVER['argv']);
+    PHPUnit_TextUI_Command::main();
+    exit(0);
+}
+
+define('PHPUNIT_UTIL', true);
+
+require(__DIR__ . '/../../../../lib/phpunit/bootstrap.php');
+
+// from now on this is a regular moodle CLI_SCRIPT
+
+require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/upgradelib.php');
+require_once($CFG->libdir.'/clilib.php');
+require_once($CFG->libdir.'/pluginlib.php');
+require_once($CFG->libdir.'/installlib.php');
+
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
+$diag = $options['diag'];
 $drop = $options['drop'];
 $install = $options['install'];
 $buildconfig = $options['buildconfig'];
 
-if ($options['help'] or (!$drop and !$install and !$buildconfig)) {
+if ($options['help'] or (!$drop and !$install and !$buildconfig and !$diag)) {
     $help = "Various PHPUnit utility functions
 
 Options:
 --drop                Drop database and dataroot
 --install             Install database
 --buildconfig         Build /phpunit.xml from /phpunit.xml.dist that includes suites for all plugins and core
+--diag                Diagnose installation and return error code only
+--run                 Execute PHPUnit tests (alternative for standard phpunit binary)
 
 -h, --help            Print out this help
 
 Example:
-\$/usr/bin/php lib/phpunit/tool.php
+\$/usr/bin/php lib/phpunit/tool.php --install
 ";
     echo $help;
-    die;
+    exit(0);
 }
 
-if ($buildconfig) {
-    phpunit_util::build_config_file();
+if ($diag) {
+    list($errorcode, $message) = phpunit_util::testing_ready_problem();
+    if ($errorcode) {
+        phpunit_bootstrap_error($errorcode, $message);
+    }
     exit(0);
 
+} else if ($buildconfig) {
+    if (phpunit_util::build_config_file()) {
+        exit(0);
+    } else {
+        phpunit_bootstrap_error(134);
+    }
+
 } else if ($drop) {
+    // make sure tests do not run in parallel
+    phpunit_util::acquire_test_lock();
     phpunit_util::drop_site();
     // note: we must stop here because $CFG is messed up and we can not reinstall, sorry
     exit(0);

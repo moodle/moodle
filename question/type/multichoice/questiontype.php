@@ -26,6 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->libdir . '/questionlib.php');
+
 
 /**
  * The multiple choice question type.

@@ -453,8 +453,8 @@ class question_engine_attempt_upgrader {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_engine_upgrade_question_loader {
-    private $cache = array();
-    private $datasetcache = array();
+    protected $cache = array();
+    protected $datasetcache = array();
 
     public function __construct($logger) {
         $this->logger = $logger;
