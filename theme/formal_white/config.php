@@ -39,7 +39,7 @@ $THEME->name = 'formal_white';
 ////////////////////////////////////////////////////
 
 
-$THEME->parents = array('base','canvas');
+$THEME->parents = array('canvas','base');
 /////////////////////////////////////////////////////
 // Which existing theme(s) in the /theme/ directory
 // do you want this theme to extend. A theme can
