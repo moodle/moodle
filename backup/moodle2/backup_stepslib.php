@@ -341,6 +341,9 @@ class backup_module_structure_step extends backup_structure_step {
         // many plagiarism plugins storing information about this course
         $this->add_plugin_structure('plagiarism', $module, true);
 
+        // attach local plugin structure to $module, multiple allowed
+        $this->add_plugin_structure('local', $module, true);
+
         // Define the tree
         $module->add_child($availinfo);
         $availinfo->add_child($availability);
@@ -385,6 +388,9 @@ class backup_section_structure_step extends backup_structure_step {
 
         // attach format plugin structure to $section element, only one allowed
         $this->add_plugin_structure('format', $section, false);
+
+        // attach local plugin structure to $section element, multiple allowed
+        $this->add_plugin_structure('local', $section, true);
 
         // Add nested elements for _availability table
         $avail = new backup_nested_element('availability', array('id'), array(
@@ -463,6 +469,10 @@ class backup_course_structure_step extends backup_structure_step {
         // attach plagiarism plugin structure to $course element, there can be potentially
         // many plagiarism plugins storing information about this course
         $this->add_plugin_structure('plagiarism', $course, true);
+
+        // attach local plugin structure to $course element; multiple local plugins
+        // can save course data if required
+        $this->add_plugin_structure('local', $course, true);
 
         // Build the tree
 
@@ -1785,6 +1795,9 @@ class backup_questions_structure_step extends backup_structure_step {
         // attach qtype plugin structure to $question element, only one allowed
         $this->add_plugin_structure('qtype', $question, false);
 
+        // attach local plugin stucture to $question element, multiple allowed
+        $this->add_plugin_structure('local', $question, true);
+
         $qhints = new backup_nested_element('question_hints');
 
         $qhint = new backup_nested_element('question_hint', array('id'), array(
@@ -1904,12 +1917,18 @@ class backup_activity_grading_structure_step extends backup_structure_step {
         // Build the tree including the method specific structures
         // (beware - the order of how gradingform plugins structures are attached is important)
         $areas->add_child($area);
+        // attach local plugin stucture to $area element, multiple allowed
+        $this->add_plugin_structure('local', $area, true);
         $area->add_child($definitions);
         $definitions->add_child($definition);
         $this->add_plugin_structure('gradingform', $definition, true);
+        // attach local plugin stucture to $definition element, multiple allowed
+        $this->add_plugin_structure('local', $definition, true);
         $definition->add_child($instances);
         $instances->add_child($instance);
         $this->add_plugin_structure('gradingform', $instance, false);
+        // attach local plugin stucture to $instance element, multiple allowed
+        $this->add_plugin_structure('local', $instance, true);
 
         // Define data sources
 

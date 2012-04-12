@@ -1104,6 +1104,9 @@ class restore_section_structure_step extends restore_structure_step {
         // Apply for 'format' plugins optional paths at section level
         $this->add_plugin_structure('format', $section);
 
+        // Apply for 'local' plugins optional paths at section level
+        $this->add_plugin_structure('local', $section);
+
         return $paths;
     }
 
@@ -1316,6 +1319,9 @@ class restore_course_structure_step extends restore_structure_step {
 
         // Apply for plagiarism plugins optional paths at course level
         $this->add_plugin_structure('plagiarism', $course);
+
+        // Apply for local plugins optional paths at course level
+        $this->add_plugin_structure('local', $course);
 
         return array($course, $category, $tag, $allowed_module);
     }
@@ -2305,17 +2311,25 @@ class restore_activity_grading_structure_step extends restore_structure_step {
         $paths = array();
         $userinfo = $this->get_setting_value('userinfo');
 
-        $paths[] = new restore_path_element('grading_area', '/areas/area');
+        $area = new restore_path_element('grading_area', '/areas/area');
+        $paths[] = $area;
+        // attach local plugin stucture to $area element
+        $this->add_plugin_structure('local', $area);
 
         $definition = new restore_path_element('grading_definition', '/areas/area/definitions/definition');
         $paths[] = $definition;
         $this->add_plugin_structure('gradingform', $definition);
+        // attach local plugin stucture to $definition element
+        $this->add_plugin_structure('local', $definition);
+
 
         if ($userinfo) {
             $instance = new restore_path_element('grading_instance',
                 '/areas/area/definitions/definition/instances/instance');
             $paths[] = $instance;
             $this->add_plugin_structure('gradingform', $instance);
+            // attach local plugin stucture to $intance element
+            $this->add_plugin_structure('local', $instance);
         }
 
         return $paths;
@@ -2678,6 +2692,9 @@ class restore_module_structure_step extends restore_structure_step {
         // Apply for 'plagiarism' plugins optional paths at module level
         $this->add_plugin_structure('plagiarism', $module);
 
+        // Apply for 'local' plugins optional paths at module level
+        $this->add_plugin_structure('local', $module);
+
         return $paths;
     }
 
@@ -2973,6 +2990,9 @@ class restore_create_categories_and_questions extends restore_structure_step {
 
         // Apply for 'qtype' plugins optional paths at question level
         $this->add_plugin_structure('qtype', $question);
+
+        // Apply for 'local' plugins optional paths at question level
+        $this->add_plugin_structure('local', $question);
 
         return array($category, $question, $hint);
     }
