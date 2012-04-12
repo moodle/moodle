@@ -39,6 +39,8 @@ class phpunit_data_generator {
     protected $categorycount = 0;
     protected $coursecount = 0;
     protected $scalecount = 0;
+    protected $groupcount = 0;
+    protected $groupingcount = 0;
 
     /** @var array list of plugin generators */
     protected $generators = array();
@@ -401,6 +403,80 @@ EOD;
     public function create_module($modulename, $record=null, array $options=null) {
         $generator = $this->get_plugin_generator('mod_'.$modulename);
         return $generator->create_instance($record, $options);
+    }
+
+    /**
+     * Create a test group for the specified course
+     *
+     * @param array|stdClass $recrd
+     * @return stdClass group record
+     */
+    public function create_group($record) {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/group/lib.php');
+
+        $this->groupcount++;
+        $i = $this->groupcount;
+
+        $record = (array)$record;
+
+        if (empty($record['courseid'])) {
+            throw new coding_exception('courseid must be present in phpunit_util::create_group() $record');
+        }
+
+        if (!isset($record['name'])) {
+            $record['name'] = 'group-' . $i;
+        }
+
+        if (!isset($record['description'])) {
+            $record['description'] = "Test Group $i\n{$this->loremipsum}";
+        }
+
+        if (!isset($record['descriptionformat'])) {
+            $record['descriptionformat'] = FORMAT_MOODLE;
+        }
+
+        $id = groups_create_group((object)$record);
+
+        return $DB->get_record('groups', array('id'=>$id));
+    }
+
+    /**
+     * Create a test grouping for the specified course
+     *
+     * @param array|stdClass $recrd
+     * @return stdClass grouping record
+     */
+    public function create_grouping($record) {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/group/lib.php');
+
+        $this->groupingcount++;
+        $i = $this->groupingcount;
+
+        $record = (array)$record;
+
+        if (empty($record['courseid'])) {
+            throw new coding_exception('courseid must be present in phpunit_util::create_grouping() $record');
+        }
+
+        if (!isset($record['name'])) {
+            $record['name'] = 'grouping-' . $i;
+        }
+
+        if (!isset($record['description'])) {
+            $record['description'] = "Test Grouping $i\n{$this->loremipsum}";
+        }
+
+        if (!isset($record['descriptionformat'])) {
+            $record['descriptionformat'] = FORMAT_MOODLE;
+        }
+
+        $id = groups_create_grouping((object)$record);
+
+        return $DB->get_record('groupings', array('id'=>$id));
     }
 
     /**
