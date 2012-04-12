@@ -889,8 +889,35 @@ function workshop_print_recent_mod_activity($activity, $courseid, $detail, $modn
  * @return boolean true on success, false otherwise
  */
 function workshop_cron() {
+    global $CFG, $DB;
+
+    $now = time();
+
     mtrace(' processing workshop subplugins ...');
     cron_execute_plugin_type('workshopallocation', 'workshop allocation methods');
+
+    // now when the scheduled allocator had a chance to do its job, check if there
+    // are some workshops to switch into the assessment phase
+    $workshops = $DB->get_records_select("workshop",
+        "phase = 20 AND phaseswitchassessment = 1 AND submissionend > 0 AND submissionend < ?", array($now));
+
+    if (!empty($workshops)) {
+        mtrace('Processing automatic assessment phase switch in '.count($workshops).' workshop(s) ... ', '');
+        require_once($CFG->dirroot.'/mod/workshop/locallib.php');
+        foreach ($workshops as $workshop) {
+            $cm = get_coursemodule_from_instance('workshop', $workshop->id, $workshop->course, false, MUST_EXIST);
+            $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+            $workshop = new workshop($workshop, $cm, $course);
+            $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
+            $workshop->log('update switch phase', $workshop->view_url(), $workshop->phase);
+            // disable the automatic switching now so that it is not executed again by accident
+            // if the teacher changes the phase back to the submission one
+            $DB->set_field('workshop', 'phaseswitchassessment', 0, array('id' => $workshop->id));
+
+            // todo inform the teachers
+        }
+        mtrace('done');
+    }
 
     return true;
 }

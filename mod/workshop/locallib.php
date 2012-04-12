@@ -1393,6 +1393,7 @@ class workshop {
         }
 
         $DB->set_field('workshop', 'phase', $newphase, array('id' => $this->id));
+        $this->phase = $newphase;
         return true;
     }
 
