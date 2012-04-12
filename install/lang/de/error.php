@@ -30,13 +30,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatelangdir'] = 'Verzeichnis "lang" kann nicht angelegt werden';
-$string['cannotcreatetempdir'] = 'Das Verzeichnis "temp" kann nicht angelegt werden.';
-$string['cannotdownloadcomponents'] = 'Einige Komponenten können nicht heruntergeladen werden.';
+$string['cannotcreatelangdir'] = 'Verzeichnis \'lang\' wurde nicht angelegt';
+$string['cannotcreatetempdir'] = 'Das Verzeichnis \'temp\' wurde nicht angelegt';
+$string['cannotdownloadcomponents'] = 'Einige Komponenten können nicht geladen werden.';
 $string['cannotdownloadzipfile'] = 'ZIP-Datei kann nicht heruntergeladen werden.';
-$string['cannotfindcomponent'] = 'Eine Komponente kann nicht gefunden werden';
-$string['cannotsavemd5file'] = 'Die md5-Datei kann nicht gespeichert werden';
-$string['cannotsavezipfile'] = 'Die ZIP-Datei kann nicht gespeichert werden';
+$string['cannotfindcomponent'] = 'Komponente wurde nicht gefunden';
+$string['cannotsavemd5file'] = 'Die md5-Datei wurde nicht gespeichert';
+$string['cannotsavezipfile'] = 'Die ZIP-Datei wurde nicht gespeichert';
 $string['cannotunzipfile'] = 'Die Datei kann nicht entpackt werden';
 $string['componentisuptodate'] = 'Die Komponente ist aktuell.';
 $string['downloadedfilecheckfailed'] = 'Die Überprüfung der heruntergeladenen Datei ist gescheitert';
