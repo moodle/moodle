@@ -355,33 +355,26 @@ M.core_filepicker.init = function(Y, options) {
                 filename:node.title,
                 source:node.source?node.source:'',
                 thumbnail:node.thumbnail,
-                path:node.path?node.path:[]
+                path:node.path?node.path:''
             };
-            var tmpNode = new YAHOO.widget.TextNode(info, level, false);
-            if(node.repo_id) {
-                tmpNode.repo_id=node.repo_id;
-            }else{
-                tmpNode.repo_id=this.active_repo.id;
+            if (node.dynamicLoadComplete) {
+                info.dynamicLoadComplete = true;
             }
-            if(node.children) {
+            var tmpNode = new YAHOO.widget.TextNode(info, level, false);
+            tmpNode.repo_id = node.repo_id ? node.repo_id : this.active_repo.id;
+            tmpNode.isLeaf = node.children ? false : true;
+            if (!tmpNode.isLeaf) {
                 if(node.expanded) {
                     tmpNode.expand();
                 }
                 if (dynload) {
                     tmpNode.scope = this;
                 }
-                tmpNode.isLeaf = false;
                 tmpNode.client_id = client_id;
-                if (node.path) {
-                    tmpNode.path = node.path;
-                } else {
-                    tmpNode.path = '';
-                }
+                tmpNode.path = info.path;
                 for(var c in node.children) {
                     this.build_tree(node.children[c], tmpNode);
                 }
-            } else {
-                tmpNode.isLeaf = true;
             }
         },
         view_files: function() {
@@ -391,6 +384,7 @@ M.core_filepicker.init = function(Y, options) {
                 this.view_as_icons();
             } else {
                 this.viewbar_set_enabled(true);
+                this.print_path();
                 if (this.viewmode == 1) {
                     this.view_as_icons();
                 } else if (this.viewmode == 2) {
@@ -404,6 +398,12 @@ M.core_filepicker.init = function(Y, options) {
             var scope = node.scope;
             var client_id = scope.options.client_id;
             var repository_id = scope.active_repo.id;
+            var retrieved_children = {};
+            if (node.children) {
+                for (var i in node.children) {
+                    retrieved_children[node.children[i].path] = node.children[i];
+                }
+            }
             scope.request({
                 action:'list',
                 client_id: client_id,
@@ -412,37 +412,89 @@ M.core_filepicker.init = function(Y, options) {
                 page:node.page?args.page:'',
                 callback: function(id, obj, args) {
                     var list = obj.list;
-                    scope.viewbar_set_enabled(true);
-                    scope.parse_repository_options(obj);
-                    for(k in list) {
-                        scope.build_tree(list[k], node);
+                    // check that user did not leave the view mode before recieving this response
+                    if (!(scope.active_repo.id == obj.repo_id && scope.viewmode == 2 && node && node.getChildrenEl())) {
+                        return;
                     }
-                    cb();
+                    if (cb != null) { // (in manual mode do not update current path)
+                        scope.viewbar_set_enabled(true);
+                        scope.parse_repository_options(obj);
+                    }
+                    node.origlist = obj.list?obj.list:null;
+                    node.origpath = obj.path?obj.path:null;
+                    node.children = [];
+                    for(k in list) {
+                        if (list[k].children && retrieved_children[list[k].path]) {
+                            // if this child is a folder and has already been retrieved
+                            node.children[node.children.length] = retrieved_children[list[k].path];
+                        } else {
+                            scope.build_tree(list[k], node);
+                        }
+                    }
+                    if (cb == null) {
+                        node.refresh();
+                    } else {
+                        // invoke callback requested by TreeView
+                        cb();
+                    }
                 }
             }, false);
         },
         view_as_list: function() {
-            // TODO !!!!!!!!!!
             var scope = this;
             var client_id = scope.options.client_id;
             var dynload = scope.active_repo.dynload;
             var list = this.filelist;
             scope.viewmode = 2;
-            if (list && list.length==0) {
+            if (list && list.length==0 && (!this.filepath || !this.filepath.length)) {
                 this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
                 return;
             }
 
-            var html = '<div class="fp-tree-panel" id="treeview-'+client_id+'"></div>';
-            this.fpnode.one('.fp-content').setContent(html);
+            var treeviewnode = Y.Node.create('<div/>').
+                    setAttrs({'class':'fp-treeview', id:'treeview-'+client_id});
+            this.fpnode.one('.fp-content').setContent('').appendChild(treeviewnode);
 
             scope.treeview = new YAHOO.widget.TreeView('treeview-'+client_id);
             if (dynload) {
                 scope.treeview.setDynamicLoad(scope.treeview_dynload, 1);
             }
-
-            for(k in list) {
-                scope.build_tree(list[k], scope.treeview.getRoot());
+            if (scope.filepath && scope.filepath.length) {
+                // we just jumped from icon/details view, we need to show all parents
+                // we extract as much information as possible from filepath and filelist
+                // and send additional requests to retrieve siblings for parent folders
+                var mytree = {};
+                var mytreeel = null;
+                for (var i in scope.filepath) {
+                    if (mytreeel == null) {
+                        mytreeel = mytree;
+                    } else {
+                        mytreeel.children = [{}];
+                        mytreeel = mytreeel.children[0];
+                    }
+                    var parent = scope.filepath[i];
+                    mytreeel.path = parent.path;
+                    mytreeel.title = parent.name;
+                    mytreeel.dynamicLoadComplete = true; // we will call it manually
+                    mytreeel.expanded = true;
+                }
+                mytreeel.children = scope.filelist
+                scope.build_tree(mytree, scope.treeview.getRoot());
+                // manually call dynload for parent elements in the tree so we can load other siblings
+                if (dynload) {
+                    var root = scope.treeview.getRoot();
+                    while (root && root.children && root.children.length) {
+                        root = root.children[0];
+                        if (!root.isLeaf && root.expanded && root.path != mytreeel.path) {
+                            scope.treeview_dynload(root, null);
+                        }
+                    }
+                }
+            } else {
+                // there is no path information, just display all elements as a list, without hierarchy
+                for(k in list) {
+                    scope.build_tree(list[k], scope.treeview.getRoot());
+                }
             }
             scope.treeview.subscribe('clickEvent', function(e){
                 if(e.node.isLeaf){
@@ -450,14 +502,25 @@ M.core_filepicker.init = function(Y, options) {
                     fileinfo['title'] = e.node.data.filename;
                     fileinfo['source'] = e.node.data.source;
                     fileinfo['thumbnail'] = e.node.data.thumbnail;
+                    if (e.node.parent && e.node.parent.origpath) {
+                        // set the current path
+                        scope.filepath = e.node.parent.origpath;
+                        scope.filelist = e.node.parent.origlist;
+                        scope.print_path();
+                    }
+                    e.node.highlight(false)
                     scope.select_file(fileinfo);
+                } else {
+                    // save current path and filelist (in case we want to jump to other viewmode)
+                    scope.filepath = e.node.origpath;
+                    scope.filelist = e.node.origlist;
+                    scope.print_path();
                 }
             });
             scope.treeview.draw();
         },
         view_as_icons: function() {
             var scope = this;
-            var client_id = this.options.client_id;
             var list = this.filelist;
             this.viewmode = 1;
 
@@ -475,10 +538,6 @@ M.core_filepicker.init = function(Y, options) {
                 var node = list[k];
                 var element = element_template.cloneNode(true);
                 container.appendChild(element);
-                /*html = M.core_filepicker.templates.gridelementtemplate.
-                    replace(/\{GRIDELEMENTID\}/g, 'fp-grid-'+client_id+'-'+count).
-                    replace(/\{IMGID\}/g, 'fp-img-'+client_id+'-'+count).
-                    replace(/\{FILENAMEID\}/g, 'fp-filename-'+client_id+'-'+count);*/
                 var filename = node.shorttitle ? node.shorttitle : node.title;
                 var filenamediv = element.one('.fp-filename');
                 filenamediv.setContent(filename);
@@ -849,6 +908,7 @@ M.core_filepicker.init = function(Y, options) {
                 }
                 if (l[k].type == 'popup') {
                     // submit button
+                    loginurl = l[k].url;
                     var popupbutton = node.one('button');
                     popupbutton.on('click', function(e){
                         M.core_filepicker.active_filepicker = this;
@@ -1143,9 +1203,9 @@ M.core_filepicker.init = function(Y, options) {
             var r = this.active_repo;
             var scope = this;
             var client_id = this.options.client_id;
+            this.hide_header();
             this.print_paging();
 
-            this.hide_header();
             var enable_tb_control = function(elementid, enabled) {
                 if (!enabled) {
                     Y.all('#'+elementid+',#wrap-'+elementid).addClass('disabled').removeClass('enabled')
@@ -1286,7 +1346,7 @@ M.core_filepicker.init = function(Y, options) {
             if (!this.pathbar) { return; }
             this.pathbar.setContent('').addClass('empty');
             var p = this.filepath;
-            if (p && p.length!=0) {
+            if (p && p.length!=0 && this.viewmode != 2) {
                 for(var i = 0; i < p.length; i++) {
                     var el = this.pathnode.cloneNode(true);
                     this.pathbar.appendChild(el);
