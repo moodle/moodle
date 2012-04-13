@@ -39,6 +39,15 @@ function user_create_user($user) {
             $user = (object)$user;
     }
 
+    //check username
+    if ($user->username !== textlib::strtolower($user->username)) {
+        throw new moodle_exception('usernamelowercase');
+    } else {
+        if ($user->username !== clean_param($user->username, PARAM_USERNAME)) {
+            throw new moodle_exception('invalidusername');
+        }
+    }
+
     // save the password in a temp value for later
     if (isset($user->password)) {
         $userpassword = $user->password;
@@ -78,6 +87,17 @@ function user_update_user($user) {
     // set the timecreate field to the current time
     if (!is_object($user)) {
             $user = (object)$user;
+    }
+
+    //check username
+    if (isset($user->username)) {
+        if ($user->username !== textlib::strtolower($user->username)) {
+            throw new moodle_exception('usernamelowercase');
+        } else {
+            if ($user->username !== clean_param($user->username, PARAM_USERNAME)) {
+                throw new moodle_exception('invalidusername');
+            }
+        }
     }
 
     // unset password here, for updating later
