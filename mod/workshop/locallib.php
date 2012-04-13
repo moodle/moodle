@@ -380,40 +380,45 @@ class workshop {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Fetches all users with the capability mod/workshop:submit in the current context
+     * Fetches all enrolled users with the capability mod/workshop:submit in the current workshop
      *
-     * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
+     * The returned objects contain properties required by user_picture and are ordered by lastname, firstname.
+     * Only users with the active enrolment are returned.
      *
-     * @todo handle with limits and groups
-     * @param bool $musthavesubmission If true, return only users who have already submitted. All possible authors otherwise.
-     * @return array array[userid] => stdclass{->id ->lastname ->firstname}
+     * @param bool $musthavesubmission if true, return only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set)
+     * @param int $limitnum return a subset containing this number of records (optional, required if $limitfrom is set)
+     * @return array array[userid] => stdClass
      */
-    public function get_potential_authors($musthavesubmission=true) {
-        $users = get_users_by_capability($this->context, 'mod/workshop:submit',
-                    'u.id,u.lastname,u.firstname', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
-        if ($musthavesubmission) {
-            $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
-        }
-        return $users;
+    public function get_potential_authors($musthavesubmission=true, $groupid=0, $limitfrom=0, $limitnum=0) {
+        global $DB;
+
+        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:submit', $musthavesubmission, $groupid);
+        $sql .= " ORDER BY u.lastname ASC, u.firstname ASC, u.id";
+
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
 
     /**
-     * Fetches all users with the capability mod/workshop:peerassess in the current context
+     * Fetches all enrolled users with the capability mod/workshop:peerassess in the current workshop
      *
-     * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
+     * The returned objects contain properties required by user_picture and are ordered by lastname, firstname.
+     * Only users with the active enrolment are returned.
      *
-     * @todo handle with limits and groups
-     * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
-     * @return array array[userid] => stdclass{->id ->lastname ->firstname}
+     * @param bool $musthavesubmission if true, return only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set)
+     * @param int $limitnum return a subset containing this number of records (optional, required if $limitfrom is set)
+     * @return array array[userid] => stdClass
      */
-    public function get_potential_reviewers($musthavesubmission=false) {
-        $users = get_users_by_capability($this->context, 'mod/workshop:peerassess',
-                    'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
-        if ($musthavesubmission) {
-            // users without their own submission can not be reviewers
-            $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
-        }
-        return $users;
+    public function get_potential_reviewers($musthavesubmission=false, $groupid=0, $limitfrom=0, $limitnum=0) {
+        global $DB;
+
+        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:peerassess', $musthavesubmission, $groupid);
+        $sql .= " ORDER BY u.lastname ASC, u.firstname ASC, u.id";
+
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
 
     /**
@@ -2087,32 +2092,30 @@ class workshop {
     }
 
     /**
-     * Given a list of user ids, returns the filtered one containing just ids of users with own submission
+     * Returns SQL to fetch all enrolled users with the given capability in the current workshop
      *
-     * Example submissions are ignored.
-     *
-     * @param array $userids
-     * @return array
+     * @param string $capability the name of the capability
+     * @param bool $musthavesubmission ff true, return only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @return array of (string)sql, (array)params
      */
-    protected function users_with_submission(array $userids) {
+    protected function get_users_with_capability_sql($capability, $musthavesubmission, $groupid) {
         global $DB;
 
-        if (empty($userids)) {
-            return array();
-        }
-        $userswithsubmission = array();
-        list($usql, $uparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-        $sql = "SELECT id,authorid
-                  FROM {workshop_submissions}
-                 WHERE example = 0 AND workshopid = :workshopid AND authorid $usql";
-        $params = array('workshopid' => $this->id);
-        $params = array_merge($params, $uparams);
-        $submissions = $DB->get_records_sql($sql, $params);
-        foreach ($submissions as $submission) {
-            $userswithsubmission[$submission->authorid] = true;
+        list($esql, $params) = get_enrolled_sql($this->context, $capability, $groupid, true);
+
+        $userfields = user_picture::fields('u');
+
+        $sql = "SELECT $userfields
+                  FROM {user} u
+                  JOIN ($esql) je ON (je.id = u.id AND u.deleted = 0)";
+
+        if ($musthavesubmission) {
+            $sql .= " JOIN {workshop_submissions} ws ON (ws.authorid = u.id AND ws.example = 0 AND ws.workshopid = :workshopid)";
+            $params['workshopid'] = $this->id;
         }
 
-        return $userswithsubmission;
+        return array($sql, $params);
     }
 
     /**
