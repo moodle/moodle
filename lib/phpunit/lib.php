@@ -640,31 +640,31 @@ class phpunit_util {
 
         if (!self::is_test_site()) {
             // dataroot was verified in bootstrap, so it must be DB
-            return array(131, 'Can not use database for testing, try different prefix');
+            return array(PHPUNIT_EXITCODE_CONFIGERROR, 'Can not use database for testing, try different prefix');
         }
 
         if (empty($tables)) {
-            return array(132, '');
+            return array(PHPUNIT_EXITCODE_INSTALL, '');
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser") or !file_exists("$CFG->dataroot/phpunit/tablestructure.ser")) {
-            return array(133, '');
+            return array(PHPUNIT_EXITCODE_REINSTALL, '');
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/versionshash.txt")) {
-            return array(133, '');
+            return array(PHPUNIT_EXITCODE_REINSTALL, '');
         }
 
         $hash = phpunit_util::get_version_hash();
         $oldhash = file_get_contents("$CFG->dataroot/phpunit/versionshash.txt");
 
         if ($hash !== $oldhash) {
-            return array(133, '');
+            return array(PHPUNIT_EXITCODE_REINSTALL, '');
         }
 
         $dbhash = get_config('core', 'phpunittest');
         if ($hash !== $dbhash) {
-            return array(133, '');
+            return array(PHPUNIT_EXITCODE_REINSTALL, '');
         }
 
         return array(0, '');
@@ -682,7 +682,7 @@ class phpunit_util {
         global $DB, $CFG;
 
         if (!self::is_test_site()) {
-            phpunit_bootstrap_error(131, 'Can not drop non-test site!!');
+            phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, 'Can not drop non-test site!!');
         }
 
         // purge dataroot
@@ -727,13 +727,13 @@ class phpunit_util {
         global $DB, $CFG;
 
         if (!self::is_test_site()) {
-            phpunit_bootstrap_error(131, 'Can not install on non-test site!!');
+            phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, 'Can not install on non-test site!!');
         }
 
         if ($DB->get_tables()) {
             list($errorcode, $message) = phpunit_util::testing_ready_problem();
             if ($errorcode) {
-                phpunit_bootstrap_error(133, 'Database tables already present, Moodle PHPUnit test environment can not be initialised');
+                phpunit_bootstrap_error(PHPUNIT_EXITCODE_REINSTALL, 'Database tables already present, Moodle PHPUnit test environment can not be initialised');
             } else {
                 phpunit_bootstrap_error(0, 'Moodle PHPUnit test environment is already initialised');
             }

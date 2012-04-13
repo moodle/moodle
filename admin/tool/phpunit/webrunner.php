@@ -67,7 +67,7 @@ if ($execute) {
     if ($code == 0) {
         // everything is ready
 
-    } else if ($code == 132) {
+    } else if ($code == PHPUNIT_EXITCODE_INSTALL) {
         tool_phpunit_header();
         echo $OUTPUT->box_start('generalbox');
         echo '<pre>';
@@ -87,7 +87,7 @@ if ($execute) {
         echo $OUTPUT->footer();
         die();
 
-    } else if ($code == 133) {
+    } else if ($code == PHPUNIT_EXITCODE_REINSTALL) {
         tool_phpunit_header();
         echo $OUTPUT->box_start('generalbox');
         echo '<pre>';
