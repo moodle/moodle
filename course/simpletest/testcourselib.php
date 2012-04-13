@@ -44,6 +44,7 @@ class courselib_test extends UnitTestCase {
     function setUp() {
         global $DB;
         Mock::generate(get_class($DB), 'mockDB');
+        Mock::generate('moodle_transaction', 'mock_transaction');
         $this->realDB = $DB;
         $DB = new mockDB();
     }
@@ -61,21 +62,25 @@ class courselib_test extends UnitTestCase {
         $sections = array(20 => 0, 21 => 1, 22 => 2, 23 => 3, 24 => 4, 25 => 5);
 
         $DB->setReturnValueAt(0, 'get_records_menu', $sections);
-        $DB->expectAt(0, 'set_field', array('course_sections', 'section', 0, array('id' => 20)));
-        $DB->expectAt(1, 'set_field', array('course_sections', 'section', 1, array('id' => 21)));
-        $DB->expectAt(2, 'set_field', array('course_sections', 'section', 2, array('id' => 23)));
-        $DB->expectAt(3, 'set_field', array('course_sections', 'section', 3, array('id' => 24)));
-        $DB->expectAt(4, 'set_field', array('course_sections', 'section', 4, array('id' => 22)));
-        $DB->expectAt(5, 'set_field', array('course_sections', 'section', 5, array('id' => 25)));
+        $DB->setReturnValueAt(0, 'start_delegated_transaction', new mock_transaction());
+        $DB->expectAt(0, 'set_field', array('course_sections', 'section', 100002, array('id' => 23)));
+        $DB->expectAt(1, 'set_field', array('course_sections', 'section', 100003, array('id' => 24)));
+        $DB->expectAt(2, 'set_field', array('course_sections', 'section', 100004, array('id' => 22)));
+        $DB->expectAt(3, 'set_field', array('course_sections', 'section', 2, array('id' => 23)));
+        $DB->expectAt(4, 'set_field', array('course_sections', 'section', 3, array('id' => 24)));
+        $DB->expectAt(5, 'set_field', array('course_sections', 'section', 4, array('id' => 22)));
         move_section_to($course, 2, 4);
 
         $DB->setReturnValueAt(1, 'get_records_menu', $sections);
-        $DB->expectAt(6, 'set_field', array('course_sections', 'section', 0, array('id' => 20)));
-        $DB->expectAt(7, 'set_field', array('course_sections', 'section', 1, array('id' => 24)));
-        $DB->expectAt(8, 'set_field', array('course_sections', 'section', 2, array('id' => 21)));
-        $DB->expectAt(9, 'set_field', array('course_sections', 'section', 3, array('id' => 22)));
-        $DB->expectAt(10, 'set_field', array('course_sections', 'section', 4, array('id' => 23)));
-        $DB->expectAt(11, 'set_field', array('course_sections', 'section', 5, array('id' => 25)));
+        $DB->setReturnValueAt(1, 'start_delegated_transaction', new mock_transaction());
+        $DB->expectAt(6, 'set_field', array('course_sections', 'section', 100001, array('id' => 24)));
+        $DB->expectAt(7, 'set_field', array('course_sections', 'section', 100002, array('id' => 21)));
+        $DB->expectAt(8, 'set_field', array('course_sections', 'section', 100003, array('id' => 22)));
+        $DB->expectAt(9, 'set_field', array('course_sections', 'section', 100004, array('id' => 23)));
+        $DB->expectAt(10, 'set_field', array('course_sections', 'section', 1, array('id' => 24)));
+        $DB->expectAt(11, 'set_field', array('course_sections', 'section', 2, array('id' => 21)));
+        $DB->expectAt(12, 'set_field', array('course_sections', 'section', 3, array('id' => 22)));
+        $DB->expectAt(13, 'set_field', array('course_sections', 'section', 4, array('id' => 23)));
         move_section_to($course, 4, 0);
     }
 
