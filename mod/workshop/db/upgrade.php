@@ -319,5 +319,42 @@ function xmldb_workshop_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2011061001, 'workshop');
     }
 
+    /**
+     * Remove all workshop calendar events
+     */
+    if ($oldversion < 2011061002) {
+        require_once($CFG->dirroot . '/calendar/lib.php');
+        $events = $DB->get_records('event', array('modulename' => 'workshop'));
+        foreach ($events as $event) {
+            $event = calendar_event::load($event);
+            $event->delete();
+        }
+        upgrade_mod_savepoint(true, 2011061002, 'workshop');
+    }
+
+    /**
+     * Recreate all workshop calendar events
+     */
+    if ($oldversion < 2011061003) {
+        require_once(dirname(dirname(__FILE__)) . '/lib.php');
+
+        $sql = "SELECT w.id, w.course, w.name, w.intro, w.introformat, w.submissionstart,
+                       w.submissionend, w.assessmentstart, w.assessmentend,
+                       cm.id AS cmid
+                  FROM {workshop} w
+                  JOIN {modules} m ON m.name = 'workshop'
+                  JOIN {course_modules} cm ON (cm.module = m.id AND cm.course = w.course AND cm.instance = w.id)";
+
+        $rs = $DB->get_recordset_sql($sql);
+
+        foreach ($rs as $workshop) {
+            $cmid = $workshop->cmid;
+            unset($workshop->cmid);
+            workshop_calendar_update($workshop, $cmid);
+        }
+        $rs->close();
+        upgrade_mod_savepoint(true, 2011061003, 'workshop');
+    }
+
     return true;
 }
