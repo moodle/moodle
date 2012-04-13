@@ -65,7 +65,7 @@ if ($options['phpunitdir']) {
 }
 
 // verify PHPUnit libs are loaded
-if (!@include_once('PHPUnit/Autoload.php')) {
+if (!include_once('PHPUnit/Autoload.php')) {
     phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITMISSING);
 }
 

@@ -61,7 +61,7 @@ if ($phpunitversion === '@package_version@') {
 }
 unset($phpunitversion);
 
-if (!@include_once('PHPUnit/Extensions/Database/Autoload.php')) {
+if (!include_once('PHPUnit/Extensions/Database/Autoload.php')) {
     phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITEXTMISSING, 'phpunit/DbUnit');
 }
 
