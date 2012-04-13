@@ -44,8 +44,7 @@ class core_files_external extends external_api {
                 'filearea'  => new external_value(PARAM_TEXT, 'file area'),
                 'itemid'    => new external_value(PARAM_INT, 'associated id'),
                 'filepath'  => new external_value(PARAM_PATH, 'file path'),
-                'filename'  => new external_value(PARAM_FILE, 'file name'),
-                'modifiedsince'  => new external_value(PARAM_TEXT, 'modified since', VALUE_DEFAULT, '')
+                'filename'  => new external_value(PARAM_FILE, 'file name')
             )
         );
     }
@@ -60,9 +59,9 @@ class core_files_external extends external_api {
      * @param string $filename
      * @return array
      */
-    public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename, $modifiedsince) {
+    public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename) {
         global $CFG, $USER, $OUTPUT;
-        $fileinfo = self::validate_parameters(self::get_files_parameters(), array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename, 'modifiedsince'=>$modifiedsince));
+        $fileinfo = self::validate_parameters(self::get_files_parameters(), array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename));
 
         $browser = get_file_browser();
 
@@ -86,11 +85,6 @@ class core_files_external extends external_api {
         if (empty($fileinfo['filepath'])) {
             $fileinfo['filepath'] = null;
         }
-        if (empty($fileinfo['modifiedsince'])) {
-            $modifiedsince = null;
-        } else {
-        	$modifiedsince = intval($modifiedsince);
-        }
 
         $return = array();
         $return['parents'] = array();
@@ -108,10 +102,8 @@ class core_files_external extends external_api {
             foreach ($children as $child) {
 
                 $params = $child->get_params();
-				$timemodified = intval($child->get_timemodified());
 
                 if ($child->is_directory()) {
-                	if ((is_null($modifiedsince)) or ($modifiedsince <= $timemodified)){
                     $node = array(
                         'contextid' => $params['contextid'],
                         'component' => $params['component'],
@@ -120,13 +112,10 @@ class core_files_external extends external_api {
                         'filepath'  => $params['filepath'],
                         'filename'  => $child->get_visible_name(),
                         'url'       => null,
-                        'isdir'     => true,
-                        'timemodified' => $timemodified
+                        'isdir'     => true
                     );
                     $list[] = $node;
-                    }
                 } else {
-                	if ((is_null($modifiedsince)) or ($modifiedsince <= $timemodified)){
                     $node = array(
                         'contextid' => $params['contextid'],
                         'component' => $params['component'],
@@ -135,11 +124,9 @@ class core_files_external extends external_api {
                         'filepath'  => $params['filepath'],
                         'filename'  => $child->get_visible_name(),
                         'url'       => $child->get_url(),
-                        'isdir'     => false,
-                        'timemodified' => $timemodified
+                        'isdir'     => false
                     );
                     $list[] = $node;
-                	}
                 }
             }
         }
@@ -177,7 +164,6 @@ class core_files_external extends external_api {
                             'filename' => new external_value(PARAM_FILE, ''),
                             'isdir'    => new external_value(PARAM_BOOL, ''),
                             'url'      => new external_value(PARAM_TEXT, ''),
-                            'timemodified' => new external_value(PARAM_TEXT, '', VALUE_OPTIONAL),
                         )
                     )
                 )
