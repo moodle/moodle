@@ -395,7 +395,12 @@ class workshop {
         global $DB;
 
         list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:submit', $musthavesubmission, $groupid);
-        $sql .= " ORDER BY u.lastname ASC, u.firstname ASC, u.id";
+
+        if (empty($sql)) {
+            return array();
+        }
+
+        $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
 
         return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
@@ -416,7 +421,12 @@ class workshop {
         global $DB;
 
         list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:peerassess', $musthavesubmission, $groupid);
-        $sql .= " ORDER BY u.lastname ASC, u.firstname ASC, u.id";
+
+        if (empty($sql)) {
+            return array();
+        }
+
+        $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
 
         return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
@@ -2094,13 +2104,37 @@ class workshop {
     /**
      * Returns SQL to fetch all enrolled users with the given capability in the current workshop
      *
+     * The returned array consists of string $sql and the $params array. Note that the $sql can be
+     * empty if groupmembersonly is enabled and the associated grouping is empty.
+     *
      * @param string $capability the name of the capability
      * @param bool $musthavesubmission ff true, return only users who have already submitted
      * @param int $groupid 0 means ignore groups, any other value limits the result by group id
      * @return array of (string)sql, (array)params
      */
     protected function get_users_with_capability_sql($capability, $musthavesubmission, $groupid) {
-        global $DB;
+        global $DB, $CFG;
+        /** @var int static counter used to generate unique parameter holders */
+        static $inc = 0;
+        $inc++;
+
+        // if the caller requests all groups and we are in groupmembersonly mode, use the
+        // recursive call of itself to get users from all groups in the grouping
+        if (empty($groupid) and !empty($CFG->enablegroupmembersonly) and $this->cm->groupmembersonly) {
+            $groupingid = $this->cm->groupingid;
+            $groupinggroupids = array_keys(groups_get_all_groups($this->cm->course, 0, $this->cm->groupingid, 'g.id'));
+            $sql = array();
+            $params = array();
+            foreach ($groupinggroupids as $groupinggroupid) {
+                if ($groupinggroupid > 0) { // just in case in order not to fall into the endless loop
+                    list($gsql, $gparams) = $this->get_users_with_capability_sql($capability, $musthavesubmission, $groupinggroupid);
+                    $sql[] = $gsql;
+                    $params = array_merge($params, $gparams);
+                }
+            }
+            $sql = implode(PHP_EOL." UNION ".PHP_EOL, $sql);
+            return array($sql, $params);
+        }
 
         list($esql, $params) = get_enrolled_sql($this->context, $capability, $groupid, true);
 
@@ -2108,11 +2142,11 @@ class workshop {
 
         $sql = "SELECT $userfields
                   FROM {user} u
-                  JOIN ($esql) je ON (je.id = u.id AND u.deleted = 0)";
+                  JOIN ($esql) je ON (je.id = u.id AND u.deleted = 0) ";
 
         if ($musthavesubmission) {
-            $sql .= " JOIN {workshop_submissions} ws ON (ws.authorid = u.id AND ws.example = 0 AND ws.workshopid = :workshopid)";
-            $params['workshopid'] = $this->id;
+            $sql .= " JOIN {workshop_submissions} ws ON (ws.authorid = u.id AND ws.example = 0 AND ws.workshopid = :workshopid{$inc}) ";
+            $params['workshopid'.$inc] = $this->id;
         }
 
         return array($sql, $params);
