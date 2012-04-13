@@ -1533,6 +1533,15 @@ class ddl_testcase extends database_driver_testcase {
         $dbman->drop_temp_table($table0);
         $this->assertFalse($dbman->table_exists('test_table0'));
 
+        // Create another temp table1
+        $table1 = $this->tables['test_table1'];
+        $dbman->create_temp_table($table1);
+        $this->assertTrue($dbman->table_exists('test_table1'));
+
+        // make sure it can be dropped using normal drop_table() - since 2.3
+        $dbman->drop_table($table1);
+        $this->assertFalse($dbman->table_exists('test_table1'));
+
         // Have dropped all these temp tables here, to avoid conflicts with other (normal tables) tests!
     }
 
