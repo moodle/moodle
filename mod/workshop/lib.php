@@ -219,6 +219,13 @@ function workshop_delete_instance($id) {
         call_user_func($classname.'::delete_instance', $workshop->id);
     }
 
+    // delete the calendar events
+    $events = $DB->get_records('event', array('modulename' => 'workshop', 'instance' => $workshop->id));
+    foreach ($events as $event) {
+        $event = calendar_event::load($event);
+        $event->delete();
+    }
+
     // finally remove the workshop record itself
     $DB->delete_records('workshop', array('id' => $workshop->id));
 
