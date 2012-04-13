@@ -855,7 +855,7 @@ class phpunit_util {
                 if (!file_exists("$fullplug/tests/")) {
                     continue;
                 }
-                $dir = preg_replace("|$CFG->dirroot/|", '', $fullplug, 1);
+                $dir = substr($fullplug, strlen($CFG->dirroot)+1);
                 $dir .= '/tests';
                 $component = $type.'_'.$plug;
 
@@ -874,9 +874,12 @@ class phpunit_util {
                 phpunit_boostrap_fix_file_permissions("$CFG->dirroot/phpunit.xml");
             }
         }
+
         // relink - it seems that xml:base does not work in phpunit xml files, remove this nasty hack if you find a way to set xml base for relative refs
-        $data = str_replace('lib/phpunit/', "$CFG->dirroot/lib/phpunit/", $data);
-        $data = preg_replace('|<directory suffix="_test.php">([^<]+)</directory>|', '<directory suffix="_test.php">'.$CFG->dirroot.'/$1</directory>', $data);
+        $data = str_replace('lib/phpunit/', $CFG->dirroot.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'phpunit'.DIRECTORY_SEPARATOR, $data);
+        $data = preg_replace('|<directory suffix="_test.php">([^<]+)</directory>|',
+            '<directory suffix="_test.php">'.$CFG->dirroot.(DIRECTORY_SEPARATOR === '\\' ? '\\\\' : DIRECTORY_SEPARATOR).'$1</directory>',
+            $data);
         file_put_contents("$CFG->dataroot/phpunit/webrunner.xml", $data);
         phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/webrunner.xml");
 
