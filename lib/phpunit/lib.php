@@ -625,7 +625,7 @@ class phpunit_util {
 
         if (!self::is_test_site()) {
             // dataroot was verified in bootstrap, so it must be DB
-            return array(131, 'Can not use test database, try changing prefix');
+            return array(131, 'Can not use database for testing, try different prefix');
         }
 
         if (empty($tables)) {
@@ -644,6 +644,11 @@ class phpunit_util {
         $oldhash = file_get_contents("$CFG->dataroot/phpunit/versionshash.txt");
 
         if ($hash !== $oldhash) {
+            return array(133, '');
+        }
+
+        $dbhash = get_config('core', 'phpunittest');
+        if ($hash !== $dbhash) {
             return array(133, '');
         }
 
@@ -731,7 +736,8 @@ class phpunit_util {
         update_timezone_records($timezones);
 
         // add test db flag
-        set_config('phpunittest', 'phpunittest');
+        $hash = phpunit_util::get_version_hash();
+        set_config('phpunittest', $hash);
 
         // store data for all tables
         $data = array();
@@ -756,7 +762,6 @@ class phpunit_util {
         phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/tablestructure.ser");
 
         // hash all plugin versions - helps with very fast detection of db structure changes
-        $hash = phpunit_util::get_version_hash();
         file_put_contents("$CFG->dataroot/phpunit/versionshash.txt", $hash);
         phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/versionshash.txt", $hash);
     }
