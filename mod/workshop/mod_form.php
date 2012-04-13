@@ -297,7 +297,7 @@ class mod_workshop_mod_form extends moodleform_mod {
      * @param array $files submitted files
      * @return array eventual errors indexed by the field name
      */
-    public function validation(array $data, array $files) {
+    public function validation($data, $files) {
         $errors = array();
 
         // check the phases borders are valid
