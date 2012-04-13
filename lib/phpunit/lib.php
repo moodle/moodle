@@ -36,34 +36,25 @@ require_once 'PHPUnit/Extensions/Database/Autoload.php';
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class phpunit_util {
-    /**
-     * @var array original content of all database tables
-     */
+    /** @var string current version hash from php files */
+    protected static $versionhash = null;
+
+    /** @var array original content of all database tables*/
     protected static $tabledata = null;
 
-    /**
-     * @var array original structure of all database tables
-     */
+    /** @var array original structure of all database tables */
     protected static $tablestructure = null;
 
-    /**
-     * @var array An array of original globals, restored after each test
-     */
+    /** @var array An array of original globals, restored after each test */
     protected static $globals = array();
 
-    /**
-     * @var int last value of db writes counter, used for db resetting
-     */
+    /** @var int last value of db writes counter, used for db resetting */
     public static $lastdbwrites = null;
 
-    /**
-     * @var phpunit_data_generator
-     */
+    /** @var phpunit_data_generator */
     protected static $generator = null;
 
-    /**
-     * @var resource used for prevention of parallel test execution
-     */
+    /** @var resource used for prevention of parallel test execution */
     protected static $lockhandle = null;
 
     /**
@@ -114,6 +105,30 @@ class phpunit_util {
             fclose(self::$lockhandle);
             self::$lockhandle = null;
         }
+    }
+
+    /**
+     * Load global $CFG;
+     * @internal
+     * @static
+     * @return void
+     */
+    public static function initialise_cfg() {
+        global $DB;
+        $dbhash = false;
+        try {
+            $dbhash = $DB->get_field('config', 'value', array('name'=>'phpunittest'));
+        } catch (Exception $e) {
+            // not installed yet
+            initialise_cfg();
+            return;
+        }
+        if ($dbhash !== phpunit_util::get_version_hash()) {
+            // do not set CFG - the only way forward is to drop and reinstall
+            return;
+        }
+        // standard CFG init
+        initialise_cfg();
     }
 
     /**
@@ -774,6 +789,10 @@ class phpunit_util {
     public static function get_version_hash() {
         global $CFG;
 
+        if (self::$versionhash) {
+            return self::$versionhash;
+        }
+
         $versions = array();
 
         // main version first
@@ -806,9 +825,9 @@ class phpunit_util {
             }
         }
 
-        $hash = sha1(serialize($versions));
+        self::$versionhash = sha1(serialize($versions));
 
-        return $hash;
+        return self::$versionhash;
     }
 
     /**
