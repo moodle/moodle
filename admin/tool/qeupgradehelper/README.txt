@@ -5,7 +5,7 @@ With a lot of question attempts, doing the whole conversion on upgrade is very
 slow. The plugin can help with that in various ways.
 
 
-1. It provies a report of how much data there is to upgrade.
+1. It provides a report of how much data there is to upgrade.
 
 2. It can extract test-cases from the database. This can help you report bugs
 in the upgrade process to the developers.
@@ -35,3 +35,9 @@ subsequently been modified) so you can re-upgrade them. This may allow you to
 recover from a buggy upgrade.
 
 9. Finally, you can still use the extract test-cases script to help report bugs.
+
+
+Manual upgrades can be processed via the web interface or the command line tool
+cliupgrade.php. To run cliupgrade.php, use a command similar to:
+sudo -u www-data /usr/bin/php admin/tool/qeupgradehelper/cli/convert.php -h
+The -h flag will show the options for running the tool.
