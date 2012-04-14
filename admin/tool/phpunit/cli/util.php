@@ -34,13 +34,14 @@ require_once(__DIR__.'/../../../../lib/phpunit/bootstraplib.php');
 // now get cli options
 list($options, $unrecognized) = cli_get_params(
     array(
-        'drop'        => false,
-        'install'     => false,
-        'buildconfig' => false,
-        'diag'        => false,
-        'phpunitdir'  => false,
-        'run'         => false,
-        'help'        => false,
+        'drop'            => false,
+        'install'         => false,
+        'buildconfig'     => false,
+        'buildconfigdist' => false,
+        'diag'            => false,
+        'phpunitdir'      => false,
+        'run'             => false,
+        'help'            => false,
     ),
     array(
         'h' => 'help'
@@ -105,14 +106,16 @@ $diag = $options['diag'];
 $drop = $options['drop'];
 $install = $options['install'];
 $buildconfig = $options['buildconfig'];
+$buildconfigdist = $options['buildconfigdist'];
 
-if ($options['help'] or (!$drop and !$install and !$buildconfig and !$diag)) {
+if ($options['help'] or (!$drop and !$install and !$buildconfig and !$buildconfigdist and !$diag)) {
     $help = "Various PHPUnit utility functions
 
 Options:
 --drop                Drop database and dataroot
 --install             Install database
 --buildconfig         Build /phpunit.xml from /phpunit.xml.dist that includes suites for all plugins and core
+--buildconfigdist     Build distributed phpunit.xml files for each plugin and subsystem
 --diag                Diagnose installation and return error code only
 --run                 Execute PHPUnit tests (alternative for standard phpunit binary)
 
@@ -136,7 +139,14 @@ if ($diag) {
     if (phpunit_util::build_config_file()) {
         exit(0);
     } else {
-        phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGWARNING, 'Can not create phpunit.xml configuration file, verify dirroot permissions');
+        phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGWARNING, 'Can not create main phpunit.xml configuration file, verify dirroot permissions');
+    }
+
+} else if ($buildconfigdist) {
+    if (phpunit_util::build_distributed_config_files()) {
+        exit(0);
+    } else {
+        phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGWARNING, 'Can not create main phpunit.xml configuration file, verify dirroot permissions');
     }
 
 } else if ($drop) {
