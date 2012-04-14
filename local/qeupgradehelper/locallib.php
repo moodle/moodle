@@ -669,5 +669,5 @@ function local_qeupgradehelper_get_quiz_for_upgrade() {
             JOIN {course} c ON c.id = quiz.course
             WHERE quiza.preview = 0 AND quiza.needsupgradetonewqe = 1
             GROUP BY quiz.id, quiz.name, c.shortname, c.id
-            ORDER BY quiza.timemodified DESC", array(), IGNORE_MULTIPLE);
+            ORDER BY MAX(quiza.timemodified) DESC", array(), IGNORE_MULTIPLE);
 }
