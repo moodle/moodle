@@ -1540,13 +1540,13 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($records[2]->intro, $this->records['test_table1'][1]->intro);
 
         // Drop table1
-        $dbman->drop_temp_table($table1);
+        $dbman->drop_table($table1);
         $this->assertFalse($dbman->table_exists('test_table1'));
 
         // Try to drop non-existing temp table, must throw exception
         $noetable = $this->tables['test_table1'];
         try {
-            $dbman->drop_temp_table($noetable);
+            $dbman->drop_table($noetable);
             $this->assertTrue(false);
         } catch (Exception $e) {
             $this->assertTrue($e instanceof ddl_table_missing_exception);
@@ -1556,7 +1556,7 @@ class ddl_test extends UnitTestCase {
         // TODO: that's
 
         // Drop table0
-        $dbman->drop_temp_table($table0);
+        $dbman->drop_table($table0);
         $this->assertFalse($dbman->table_exists('test_table0'));
 
         // Have dropped all these temp tables here, to avoid conflicts with other (normal tables) tests!
@@ -1598,12 +1598,12 @@ class ddl_test extends UnitTestCase {
         $this->assertTrue($dbman2->table_exists('test_table1'));
         $inserted = $DB2->insert_record('test_table1', $record2);
 
-        $dbman2->drop_temp_table($table); // Drop temp table before closing DB2
+        $dbman2->drop_table($table); // Drop temp table before closing DB2
         $this->assertFalse($dbman2->table_exists('test_table1'));
         $DB2->dispose(); // Close DB2
 
         $this->assertTrue($dbman->table_exists('test_table1')); // Check table continues existing for DB
-        $dbman->drop_temp_table($table); // Drop temp table
+        $dbman->drop_table($table); // Drop temp table
         $this->assertFalse($dbman->table_exists('test_table1'));
     }
 

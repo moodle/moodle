@@ -138,17 +138,6 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one correct xmldb_table, returns the SQL statements
-     * to drop it (inside one array)
-     *
-     * @param xmldb_table $xmldb_table The table to drop.
-     * @return array SQL statement(s) for dropping the specified table.
-     */
-    public function getDropTempTableSQL($xmldb_table) {
-        return $this->getDropTableSQL($xmldb_table);
-    }
-
-    /**
      * Given one XMLDB Type, length and decimals, returns the DB proper SQL type
      */
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {

@@ -242,7 +242,7 @@ class backup_dbops_test extends UnitTestCase {
         // backup_ids_temp table tests
         // If, for any reason table exists, drop it
         if ($dbman->table_exists('backup_ids_temp')) {
-            $dbman->drop_temp_table(new xmldb_table('backup_ids_temp'));
+            $dbman->drop_table(new xmldb_table('backup_ids_temp'));
         }
         // Check backup_ids_temp table doesn't exist
         $this->assertFalse($dbman->table_exists('backup_ids_temp'));
