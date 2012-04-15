@@ -2,7 +2,7 @@
 
 class profile_field_textarea extends profile_field_base {
 
-    function edit_field_add(&$mform) {
+    function edit_field_add($mform) {
         $cols = $this->field->param1;
         $rows = $this->field->param2;
 
@@ -17,7 +17,7 @@ class profile_field_textarea extends profile_field_base {
         return false;
     }
 
-    function edit_save_data_preprocess($data, &$datarecord) {
+    function edit_save_data_preprocess($data, $datarecord) {
         if (is_array($data)) {
             $datarecord->dataformat = $data['format'];
             $data = $data['text'];
@@ -25,7 +25,7 @@ class profile_field_textarea extends profile_field_base {
         return $data;
     }
 
-    function edit_load_user_data(&$user) {
+    function edit_load_user_data($user) {
         if ($this->data !== NULL) {
             $this->data = clean_text($this->data, $this->dataformat);
             $user->{$this->inputname} = array('text'=>$this->data, 'format'=>$this->dataformat);
