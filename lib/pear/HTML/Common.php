@@ -89,6 +89,17 @@ class HTML_Common {
         $this->setTabOffset($tabOffset);
     } // end constructor
 
+    public static function raiseError($message = null,
+                                       $code = null,
+                                       $mode = null,
+                                       $options = null,
+                                       $userinfo = null,
+                                       $error_class = null,
+                                       $skipmsg = false) {
+        $pear = new PEAR();
+        return $pear->raiseError($message, $code, $mode, $options, $userinfo, $error_class, $skipmsg);
+    }
+
     /**
      * Returns the current API version
      * @access   public
