@@ -29,7 +29,7 @@ class feedback_label_form extends feedback_item_form {
         
         $mform->addElement('header', 'general', get_string($this->type, 'feedback'));
         $mform->addElement('editor', 'presentation_editor', '', null, $presentationoptions);
-        $mform->setType('presentation_editor', PARAM_CLEANHTML);
+        $mform->setType('presentation_editor', PARAM_RAW);
     
         parent::definition();
         $this->set_data($item);
