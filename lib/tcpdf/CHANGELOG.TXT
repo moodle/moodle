@@ -1,3 +1,98 @@
+5.9.156 (2012-04-10)
+	- Bug item #3515885 "TOC and booklet: left and right page exchanged".
+	- SetAutoPageBreak(false) now works also in multicolumn mode.
+
+5.9.155 (2012-04-02)
+	- Bug item #3512596 "font import problems" was fixed.
+	- Method addTTFfont() was modified to extract only specified Platform ID and Encoding ID (check the source code documentation).
+	- All fonts were updated.
+	- Bug item #3513867 "booklet and setHeaderTemplateAutoreset: header shifted left" was fixed.
+	- Bug item #3513749 "TCPDF Superscript/Subscript" was fixed.
+
+5.9.154 (2012-03-29)
+	- A debug echo was removed.
+
+5.9.153 (2012-03-28)
+	- A bug on font conversion was fixed.
+	- All fonts were updated.
+	- Method isCharDefined() was added to find if a character is defined on the selected font.
+	- Method replaceMissingChars() was added to automatically replace missing chars on selected font.
+	- SetFont() method was fixed.
+
+5.9.152 (2012-03-23)
+	- The following overprint methods were added: setOverprint(), getOverprint().
+	- Signature of setAlpha() method was changed and method getAlpha() was added.
+	- stroke-opacity support was added on SVG.
+	- The following date methods were added: setDocCreationTimestamp(), setDocModificationTimestamp(), getDocCreationTimestamp(), getDocModificationTimestamp(), getFormattedDate(), getTimestamp().
+	- Signature of _datestring() method was changed.
+	- Method getFontBBox() was added.
+	- Method setPageBoxTypes() was aded.
+
+5.9.151 (2012-03-22)
+	- Bug item #3509889 "Transform() distorts PDF" was fixed.
+	- Precision of real number were extended.
+	- ComboBox and ListBox methods were fixed.
+	- Bulgarian language file was added.
+	- addTOC() method was improved to include bookmark color and font style.
+
+5.9.150 (2012-03-16)
+	- A bug related to form fields in PDF/A mode was fixed.
+
+5.9.149 (2012-02-21)
+	- Bug item #3489933 "SVG Parser treats tspan like text" was fixed.
+
+5.9.148 (2012-02-17)
+	- Bug item #3488600 "Multiple radiobutton sets get first set value" was fixed.
+
+5.9.147 (2012-02-14)
+	- A problem with SVG gradients has been fixed.
+
+5.9.146 (2012-02-12)
+	- Bug item #3486880 "$filehash undefine error" was fixed.
+	- The default font is now the one specified at PDF_FONT_NAME_MAIN constant.
+
+5.9.145 (2012-01-28)
+	- Japanese language file was added.
+	- TCPDF license and README.TXT files were updated.
+
+5.9.144 (2012-01-12)
+	- HTML output on barcode classes was improved.
+
+5.9.143 (2012-01-08)
+	- Bug item #3471057 "setCreator() has no effect" was fixed.
+
+5.9.142 (2011-12-23)
+	- Source code documentation was updated.
+
+5.9.141 (2011-12-14)
+	- Some minor bugs were fixed.
+
+5.9.140 (2011-12-13)
+	- SVG now supports embedded images encoded as base64.
+
+5.9.139 (2011-12-11)
+	- Spot color methods were fixed.
+
+5.9.138 (2011-12-10)
+	- cropMark() method was improved (check source code documentation).
+	- Example n. 56 was updated.
+	- Bug item #3452390 "Check Box still not ticked when set to true" was fixed.
+
+5.9.137 (2011-12-01)
+	- Bug item #3447005 "Background color and border of Form Elements is printed" was fixed.
+	- Color support for Form elements was improved.
+
+5.9.136 (2011-11-27)
+	- Bug item #3443387 "SetMargins with keep option does not work for top margin" was fixed.
+
+5.9.135 (2011-11-04)
+	- Bug item #3433406 "Double keywords in description" was fixed.
+
+5.9.134 (2011-10-29)
+	- The default value for $defcol parameter on convertHTMLColorToDec() method was fixed.
+	- Deafult HTTP headers were changed to avoid browser caching.
+	- Some deprecated syntax were replaced.
+
 5.9.133 (2011-10-26)
 	- Bug item #3428446 "copyPage method not working when diskcache enabled" was fixed.
 

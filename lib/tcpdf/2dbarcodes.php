@@ -1,13 +1,13 @@
 <?php
 //============================================================+
 // File name   : 2dbarcodes.php
-// Version     : 1.0.012
+// Version     : 1.0.013
 // Begin       : 2009-04-07
-// Last Update : 2011-09-15
-// Author      : Nicola Asuni - Tecnick.com S.r.l - Via Della Pace, 11 - 09044 - Quartucciu (CA) - ITALY - www.tecnick.com - info@tecnick.com
+// Last Update : 2012-01-12
+// Author      : Nicola Asuni - Tecnick.com LTD - Manor Coach House, Church Hill, Aldershot, Hants, GU12 4RQ, UK - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2009-2011  Nicola Asuni - Tecnick.com S.r.l.
+// Copyright (C) 2009-2012  Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -37,14 +37,14 @@
  * PHP class to creates array representations for 2D barcodes to be used with TCPDF.
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 1.0.012
+ * @version 1.0.013
  */
 
 /**
  * @class TCPDF2DBarcode
  * PHP class to creates array representations for 2D barcodes to be used with TCPDF (http://www.tcpdf.org).
  * @package com.tecnick.tcpdf
- * @version 1.0.012
+ * @version 1.0.013
  * @author Nicola Asuni
  */
 class TCPDF2DBarcode {
@@ -142,8 +142,7 @@ class TCPDF2DBarcode {
  	 * @public
 	 */
 	public function getBarcodeHTML($w=10, $h=10, $color='black') {
-		// replace table for special characters
-		$html = '<div style="font-size:0;position:relative;">'."\n";
+		$html = '<div style="font-size:0;position:relative;width:'.($w * $this->barcode_array['num_cols']).'px;height:'.($h * $this->barcode_array['num_rows']).'px;">'."\n";
 		// print barcode elements
 		$y = 0;
 		// for each row

@@ -4,10 +4,10 @@
 // Version     : 1.0.001
 // Begin       : 2010-06-07
 // Last Update : 2011-09-14
-// Author      : Nicola Asuni - Tecnick.com S.r.l - Via Della Pace, 11 - 09044 - Quartucciu (CA) - ITALY - www.tecnick.com - info@tecnick.com
+// Author      : Nicola Asuni - Tecnick.com LTD - Manor Coach House, Church Hill, Aldershot, Hants, GU12 4RQ, UK - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2010-2011  Nicola Asuni - Tecnick.com S.r.l.
+// Copyright (C) 2010-2012  Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -941,7 +941,7 @@ class Datamatrix {
 	/**
 	 * Places "chr+bit" with appropriate wrapping within array[].
 	 * (Annex F - ECC 200 symbol character placement)
-	 * @param $marr array Array of symbols.
+	 * @param $marr (array) Array of symbols.
 	 * @param $nrow (int) Number of rows.
 	 * @param $ncol (int) Number of columns.
 	 * @param $row (int) Row number.
@@ -967,7 +967,7 @@ class Datamatrix {
 	/**
 	 * Places the 8 bits of a utah-shaped symbol character.
 	 * (Annex F - ECC 200 symbol character placement)
-	 * @param $marr array Array of symbols.
+	 * @param $marr (array) Array of symbols.
 	 * @param $nrow (int) Number of rows.
 	 * @param $ncol (int) Number of columns.
 	 * @param $row (int) Row number.
@@ -991,7 +991,7 @@ class Datamatrix {
 	/**
 	 * Places the 8 bits of the first special corner case.
 	 * (Annex F - ECC 200 symbol character placement)
-	 * @param $marr array Array of symbols.
+	 * @param $marr (array) Array of symbols.
 	 * @param $nrow (int) Number of rows.
 	 * @param $ncol (int) Number of columns.
 	 * @param $chr (int) Char byte.
@@ -1013,7 +1013,7 @@ class Datamatrix {
 	/**
 	 * Places the 8 bits of the second special corner case.
 	 * (Annex F - ECC 200 symbol character placement)
-	 * @param $marr array Array of symbols.
+	 * @param $marr (array) Array of symbols.
 	 * @param $nrow (int) Number of rows.
 	 * @param $ncol (int) Number of columns.
 	 * @param $chr (int) Char byte.
@@ -1035,7 +1035,7 @@ class Datamatrix {
 	/**
 	 * Places the 8 bits of the third special corner case.
 	 * (Annex F - ECC 200 symbol character placement)
-	 * @param $marr array Array of symbols.
+	 * @param $marr (array) Array of symbols.
 	 * @param $nrow (int) Number of rows.
 	 * @param $ncol (int) Number of columns.
 	 * @param $chr (int) Char byte.
@@ -1057,7 +1057,7 @@ class Datamatrix {
 	/**
 	 * Places the 8 bits of the fourth special corner case.
 	 * (Annex F - ECC 200 symbol character placement)
-	 * @param $marr array Array of symbols.
+	 * @param $marr (array) Array of symbols.
 	 * @param $nrow (int) Number of rows.
 	 * @param $ncol (int) Number of columns.
 	 * @param $chr (int) Char byte.

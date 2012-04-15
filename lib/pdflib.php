@@ -67,7 +67,7 @@ define('K_PATH_URL', $CFG->wwwroot . '/lib/tcpdf/');
 define('K_PATH_FONTS', K_PATH_MAIN . 'fonts/');
 
 /** cache directory for temporary files (full path) */
-define('K_PATH_CACHE', $CFG->cachedir . '/');
+define('K_PATH_CACHE', $CFG->cachedir . '/tcpdf/');
 
 /** images directory */
 define('K_PATH_IMAGES', $CFG->dirroot . '/');
@@ -99,6 +99,7 @@ class pdf extends TCPDF {
      * See the parent class documentation for the parameters info.
      */
     public function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {
+        make_cache_directory('tcpdf');
 
         parent::__construct($orientation, $unit, $format, $unicode, $encoding);
 
