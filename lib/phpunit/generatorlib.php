@@ -505,20 +505,20 @@ abstract class phpunit_module_generator {
 
     /**
      * Create course module and link it to course
-     * @param stdClass $instance
+     * @param int $courseid
      * @param array $options: section, visible
-     * @return stdClass $cm instance
+     * @return int $cm instance id
      */
-    protected function create_course_module(stdClass $instance, array $options) {
+    protected function precreate_course_module($courseid, array $options) {
         global $DB, $CFG;
         require_once("$CFG->dirroot/course/lib.php");
 
         $modulename = $this->get_modulename();
 
         $cm = new stdClass();
-        $cm->course             = $instance->course;
+        $cm->course             = $courseid;
         $cm->module             = $DB->get_field('modules', 'id', array('name'=>$modulename));
-        $cm->instance           = $instance->id;
+        $cm->instance           = 0;
         $cm->section            = isset($options['section']) ? $options['section'] : 0;
         $cm->idnumber           = isset($options['idnumber']) ? $options['idnumber'] : 0;
         $cm->added              = time();
@@ -539,11 +539,28 @@ abstract class phpunit_module_generator {
 
         add_mod_to_section($cm);
 
-        $cm = get_coursemodule_from_id($modulename, $cm->id, $cm->course, true, MUST_EXIST);
+        return $cm->id;
+    }
 
+    /**
+     * Called after *_add_instance()
+     * @param int $id
+     * @param int $cmid
+     * @return stdClass module instance
+     */
+    protected function post_add_instance($id, $cmid) {
+        global $DB;
+
+        $DB->set_field('course_modules', 'instance', $id, array('id'=>$cmid));
+
+        $instance = $DB->get_record($this->get_modulename(), array('id'=>$id), '*', MUST_EXIST);
+
+        $cm = get_coursemodule_from_id($this->get_modulename(), $cmid, $instance->course, true, MUST_EXIST);
         context_module::instance($cm->id);
 
-        return $cm;
+        $instance->cmid = $cm->id;
+
+        return $instance;
     }
 
     /**
