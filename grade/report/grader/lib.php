@@ -782,7 +782,7 @@ class grade_report_grader extends grade_report {
                     $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);
 
                     $itemcell = new html_table_cell();
-                    $itemcell->attributes['class'] = $type . ' ' . $catlevel . 'highlightable';
+                    $itemcell->attributes['class'] = $type . ' ' . $catlevel . ' highlightable';
 
                     if ($element['object']->is_hidden()) {
                         $itemcell->attributes['class'] .= ' hidden';
