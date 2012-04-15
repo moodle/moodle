@@ -408,7 +408,13 @@ EOD;
     /**
      * Create a test group for the specified course
      *
-     * @param array|stdClass $recrd
+     * $record should be either an array or a stdClass containing infomation about the group to create.
+     * At the very least it needs to contain courseid.
+     * Default values are added for name, description, and descriptionformat if they are not present.
+     *
+     * This function calls {@see groups_create_group()} to create the group within the database.
+     *
+     * @param array|stdClass $record
      * @return stdClass group record
      */
     public function create_group($record) {
@@ -445,7 +451,13 @@ EOD;
     /**
      * Create a test grouping for the specified course
      *
-     * @param array|stdClass $recrd
+     * $record should be either an array or a stdClass containing infomation about the grouping to create.
+     * At the very least it needs to contain courseid.
+     * Default values are added for name, description, and descriptionformat if they are not present.
+     *
+     * This function calls {@see groups_create_grouping()} to create the grouping within the database.
+     *
+     * @param array|stdClass $record
      * @return stdClass grouping record
      */
     public function create_grouping($record) {
