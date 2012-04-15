@@ -614,7 +614,7 @@ OET;
     // note: no need to print "this is flv link" because it is printed automatically if JS or Flash not available
 
     $output = html_writer::tag('span', $printlink, array('id'=>$id, 'class'=>'mediaplugin mediaplugin_flv'));
-    $output .= html_writer::script(js_writer::function_call('M.util.add_video_player', array($id, rawurlencode($flashurl), $width, $height, $autosize))); // we can not use standard JS init because this may be cached
+    $output .= html_writer::script(js_writer::function_call('M.util.add_video_player', array($id, addslashes_js($flashurl), $width, $height, $autosize))); // we can not use standard JS init because this may be cached
 
     return $output;
 }
