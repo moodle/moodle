@@ -249,6 +249,10 @@ function uninstall_plugin($type, $name) {
 
     // perform clean-up task common for all the plugin/subplugin types
 
+    //delete the web service functions and pre-built services
+    require_once($CFG->dirroot.'/lib/externallib.php');
+    external_delete_descriptions($component);
+
     // delete calendar events
     $DB->delete_records('event', array('modulename' => $pluginname));
 
