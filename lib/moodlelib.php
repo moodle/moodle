@@ -6471,8 +6471,11 @@ class core_string_manager implements string_manager {
                 return 'en';
             }
             if ($this->usediskcache) {
-                // maybe the on-disk cache is dirty - let the last attempt be to find the string in original sources
+                // maybe the on-disk cache is dirty - let the last attempt be to find the string in original sources,
+                // do NOT write the results to disk cache because it may end up in race conditions see MDL-31904
+                $this->usediskcache = false;
                 $string = $this->load_component_strings($component, $lang, true);
+                $this->usediskcache = true;
             }
             if (!isset($string[$identifier])) {
                 // the string is still missing - should be fixed by developer
