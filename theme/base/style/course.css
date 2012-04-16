@@ -19,6 +19,7 @@
 .path-course-view .block.drag .header {cursor: move;}
 .path-course-view .completionprogress {float:right;}
 .path-course-view .completionprogress img.iconhelp {vertical-align:top;}
+.path-course-view .section .summary {line-height:normal;}
 
 .path-course-view li.activity {margin-right:20px; position:relative;}
 .path-course-view li.activity span.autocompletion,
