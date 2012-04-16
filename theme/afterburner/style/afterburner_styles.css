@@ -200,9 +200,15 @@ select, input, button {
     background-color: #34637f;
     color: #fff;
 }
-#loginbtn, input, button, select { cursor: pointer;}
-input#username, input#password,
-input[type="text"], input[type="password"], textarea {
+#loginbtn, input, button, select {
+    cursor: pointer;
+    margin-left: 5px;
+}
+input#username,
+input#password,
+input[type="text"],
+input[type="password"],
+textarea {
     background-color: white;
     border: 2px inset threedface;
     color: #4b4b4b;
