@@ -193,7 +193,7 @@
     <location>tcpdf</location>
     <name>TCPDF</name>
     <license>LGPL</license>
-    <version>5.9.133</version>
+    <version>5.9.156</version>
     <licenseversion>3</licenseversion>
   </library>
   <library>
