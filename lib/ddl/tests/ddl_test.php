@@ -1466,6 +1466,8 @@ class ddl_testcase extends database_driver_testcase {
     }
 
     public function test_temp_tables() {
+        global $CFG;
+
         $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();
 
@@ -1514,13 +1516,13 @@ class ddl_testcase extends database_driver_testcase {
         $this->assertEquals($records[2]->intro, $this->records['test_table1'][1]->intro);
 
         // Drop table1
-        $dbman->drop_temp_table($table1);
+        $dbman->drop_table($table1);
         $this->assertFalse($dbman->table_exists('test_table1'));
 
         // Try to drop non-existing temp table, must throw exception
         $noetable = $this->tables['test_table1'];
         try {
-            $dbman->drop_temp_table($noetable);
+            $dbman->drop_table($noetable);
             $this->assertTrue(false);
         } catch (Exception $e) {
             $this->assertTrue($e instanceof ddl_table_missing_exception);
@@ -1530,10 +1532,19 @@ class ddl_testcase extends database_driver_testcase {
         // TODO: that's
 
         // Drop table0
-        $dbman->drop_temp_table($table0);
+        $dbman->drop_table($table0);
         $this->assertFalse($dbman->table_exists('test_table0'));
 
-        // Have dropped all these temp tables here, to avoid conflicts with other (normal tables) tests!
+        // Create another temp table1
+        $table1 = $this->tables['test_table1'];
+        $dbman->create_temp_table($table1);
+        $this->assertTrue($dbman->table_exists('test_table1'));
+
+        // Make sure it can be dropped using deprecated drop_temp_table()
+        $CFG->debug = 0;
+        $dbman->drop_temp_table($table1);
+        $this->assertFalse($dbman->table_exists('test_table1'));
+        $CFG->debug = DEBUG_DEVELOPER;
     }
 
     public function test_concurrent_temp_tables() {
@@ -1572,12 +1583,12 @@ class ddl_testcase extends database_driver_testcase {
         $this->assertTrue($dbman2->table_exists('test_table1'));
         $inserted = $DB2->insert_record('test_table1', $record2);
 
-        $dbman2->drop_temp_table($table); // Drop temp table before closing DB2
+        $dbman2->drop_table($table); // Drop temp table before closing DB2
         $this->assertFalse($dbman2->table_exists('test_table1'));
         $DB2->dispose(); // Close DB2
 
         $this->assertTrue($dbman->table_exists('test_table1')); // Check table continues existing for DB
-        $dbman->drop_temp_table($table); // Drop temp table
+        $dbman->drop_table($table); // Drop temp table
         $this->assertFalse($dbman->table_exists('test_table1'));
     }
 

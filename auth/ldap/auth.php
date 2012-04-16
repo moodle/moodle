@@ -862,7 +862,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             print_string('nouserstobeadded', 'auth_ldap');
         }
 
-        $dbman->drop_temp_table($table);
+        $dbman->drop_table($table);
         $this->ldap_close();
 
         return true;

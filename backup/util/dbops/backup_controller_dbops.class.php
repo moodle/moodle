@@ -147,7 +147,7 @@ abstract class backup_controller_dbops extends backup_dbops {
 
         $targettablename = 'backup_ids_temp';
         $table = new xmldb_table($targettablename);
-        $dbman->drop_temp_table($table); // And drop it
+        $dbman->drop_table($table); // And drop it
     }
 
     /**
