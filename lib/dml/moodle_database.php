@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -423,7 +422,7 @@ abstract class moodle_database {
 
     /**
      * This logs the last query based on 'logall', 'logslow' and 'logerrors' options configured via $CFG->dboptions .
-     * @param mixed string error or false if not error
+     * @param string $error or false if not error
      * @return void
      */
     public function query_log($error=false) {
@@ -1040,7 +1039,7 @@ abstract class moodle_database {
     public function get_recordset_list($table, $field, array $values, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
         list($select, $params) = $this->where_clause_list($field, $values);
         if (empty($select)) {
-            $select = '1 = 2'; /// Fake condition, won't return rows ever. MDL-17645
+            $select = '1 = 2'; // Fake condition, won't return rows ever. MDL-17645
             $params = array();
         }
         return $this->get_recordset_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
@@ -1130,6 +1129,8 @@ abstract class moodle_database {
      * @param string $fields A comma separated list of fields to be returned from the chosen table. If specified,
      *   the first field should be a unique one such as 'id' since it will be used as a key in the associative
      *   array.
+     * @param int $limitfrom return a subset of records, starting at this point (optional).
+     * @param int $limitnum return a subset comprising this many records in total (optional).
      * @return array An array of objects indexed by first column
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
@@ -1297,10 +1298,11 @@ abstract class moodle_database {
      * @param string $table The database table to be checked against.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
      * @param array $params array of sql parameters
+     * @param string $fields A comma separated list of fields to be returned from the chosen table.
      * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
      *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
      *                        MUST_EXIST means throw exception if no record or multiple records found
-     * @return mixed a fieldset object containing the first matching record, false or exception if error not found depending on mode
+     * @return stdClass|false a fieldset object containing the first matching record, false or exception if error not found depending on mode
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function get_record_select($table, $select, array $params=null, $fields='*', $strictness=IGNORE_MISSING) {
@@ -1400,8 +1402,6 @@ abstract class moodle_database {
     /**
      * Get a single field value (first field) using a SQL statement.
      *
-     * @param string $table the table to query.
-     * @param string $return the field to return the value of.
      * @param string $sql The SQL query returning one row with one column
      * @param array $params array of sql parameters
      * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
@@ -1465,8 +1465,9 @@ abstract class moodle_database {
      * If the return ID isn't required, then this just reports success as true/false.
      * $data is an object containing needed data
      * @param string $table The database table to be inserted into
-     * @param object $data A data object with values for one or more fields in the record
+     * @param object $dataobject A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
+     * @param bool $bulk Set to true is multiple inserts are expected
      * @return bool|int true or new id
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
@@ -1686,7 +1687,7 @@ abstract class moodle_database {
 
 
 
-/// sql constructs
+// sql constructs
     /**
      * Returns the FROM clause required by some DBs in all SELECT statements.
      *
@@ -2049,7 +2050,7 @@ abstract class moodle_database {
         return '';
     }
 
-/// transactions
+// transactions
 
     /**
      * Checks and returns true if transactions are supported.
@@ -2122,6 +2123,7 @@ abstract class moodle_database {
      * Indicates delegated transaction finished successfully.
      * The real database transaction is committed only if
      * all delegated transactions committed.
+     * @param moodle_transaction $transaction The transaction to commit
      * @return void
      * @throws dml_transaction_exception Creates and throws transaction related exceptions.
      */
@@ -2230,7 +2232,7 @@ abstract class moodle_database {
         $this->force_rollback = false;
     }
 
-/// session locking
+// session locking
     /**
      * Is session lock supported in this driver?
      * @return bool
@@ -2259,7 +2261,7 @@ abstract class moodle_database {
     public function release_session_lock($rowid) {
     }
 
-/// performance and logging
+// performance and logging
     /**
      * Returns the number of reads done by this database.
      * @return int Number of reads.
