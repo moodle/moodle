@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,17 +16,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version of the subplugin
+ * Scheduled allocator that internally executes the random one
  *
- * @package    workshopallocation_random
- * @subpackage mod_workshop
- * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     workshopallocation_scheduled
+ * @subpackage  mod_workshop
+ * @copyright   2012 David Mudrak <david@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component  = 'workshopallocation_random';
-$plugin->version    = 2012032800;
+$plugin->component  = 'workshopallocation_scheduled';
+$plugin->version    = 2012033000;
 $plugin->requires   = 2012032300;
-$plugin->maturity   = MATURITY_STABLE;
+$plugin->dependencies = array(
+    'workshopallocation_random'  => 2012032800,
+);
+$plugin->maturity   = MATURITY_ALPHA;
+$plugin->cron       = 60;

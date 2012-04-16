@@ -516,7 +516,7 @@ class plugin_manager {
             ),
 
             'workshopallocation' => array(
-                'manual', 'random'
+                'manual', 'random', 'scheduled'
             ),
 
             'workshopeval' => array(

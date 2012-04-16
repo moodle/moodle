@@ -18,8 +18,8 @@
 /**
  * Allocates the submissions randomly
  *
- * @package    workshopallocation
- * @subpackage random
+ * @package    workshopallocation_random
+ * @subpackage mod_workshop
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,10 +40,6 @@ class workshop_random_allocator implements workshop_allocator {
     /** constants used to pass status messages between init() and ui() */
     const MSG_SUCCESS       = 1;
 
-    /** constants used in allocation settings form */
-    const USERTYPE_AUTHOR   = 1;
-    const USERTYPE_REVIEWER = 2;
-
     /** workshop instance */
     protected $workshop;
 
@@ -59,128 +55,132 @@ class workshop_random_allocator implements workshop_allocator {
 
     /**
      * Allocate submissions as requested by user
+     *
+     * @return workshop_allocation_result
      */
     public function init() {
         global $PAGE;
 
+        $result = new workshop_allocation_result($this);
         $customdata = array();
         $customdata['workshop'] = $this->workshop;
         $this->mform = new workshop_random_allocator_form($PAGE->url, $customdata);
         if ($this->mform->is_cancelled()) {
-            redirect($PAGE->url->out(false));
+            redirect($this->workshop->view_url());
         } else if ($settings = $this->mform->get_data()) {
-            // process validated data
-            if (!confirm_sesskey()) {
-                throw new moodle_exception('confirmsesskeybad');
-            }
-            $o                  = array();      // list of output messages
-            $numofreviews       = required_param('numofreviews', PARAM_INT);
-            $numper             = required_param('numper', PARAM_INT);
-            $excludesamegroup   = optional_param('excludesamegroup', false, PARAM_BOOL);
-            $removecurrent      = optional_param('removecurrent', false, PARAM_BOOL);
-            $assesswosubmission = optional_param('assesswosubmission', false, PARAM_BOOL);
-            $addselfassessment  = optional_param('addselfassessment', false, PARAM_BOOL);
-            $musthavesubmission = empty($assesswosubmission);
-
-            $authors            = $this->workshop->get_potential_authors();
-            $authors            = $this->workshop->get_grouped($authors);
-            $reviewers          = $this->workshop->get_potential_reviewers($musthavesubmission);
-            $reviewers          = $this->workshop->get_grouped($reviewers);
-            $assessments        = $this->workshop->get_all_assessments();
-
-            $newallocations     = array();      // array of array(reviewer => reviewee)
-
-            if ($numofreviews) {
-                if ($removecurrent) {
-                    // behave as if there were no current assessments
-                    $curassessments = array();
-                } else {
-                    $curassessments = $assessments;
-                }
-                $options                     = array();
-                $options['numofreviews']     = $numofreviews;
-                $options['numper']           = $numper;
-                $options['excludesamegroup'] = $excludesamegroup;
-                $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $o, $options);
-                $newallocations     = array_merge($newallocations, $randomallocations);
-                $o[] = 'ok::' . get_string('numofrandomlyallocatedsubmissions', 'workshopallocation_random', count($randomallocations));
-                unset($randomallocations);
-            }
-            if ($addselfassessment) {
-                $selfallocations    = $this->self_allocation($authors, $reviewers, $assessments);
-                $newallocations     = array_merge($newallocations, $selfallocations);
-                $o[] = 'ok::' . get_string('numofselfallocatedsubmissions', 'workshopallocation_random', count($selfallocations));
-                unset($selfallocations);
-            }
-            if (empty($newallocations)) {
-                $o[] = 'info::' . get_string('noallocationtoadd', 'workshopallocation_random');
-            } else {
-                $newnonexistingallocations = $newallocations;
-                $this->filter_current_assessments($newnonexistingallocations, $assessments);
-                $this->add_new_allocations($newnonexistingallocations, $authors, $reviewers);
-                $allreviewers = $reviewers[0];
-                $allreviewersreloaded = false;
-                foreach ($newallocations as $newallocation) {
-                    list($reviewerid, $authorid) = each($newallocation);
-                    $a = new stdClass();
-                    if (isset($allreviewers[$reviewerid])) {
-                        $a->reviewername = fullname($allreviewers[$reviewerid]);
-                    } else {
-                        // this may happen if $musthavesubmission is true but the reviewer
-                        // of the re-used assessment has not submitted anything. let us reload
-                        // the list of reviewers name including those without their submission
-                        if (!$allreviewersreloaded) {
-                            $allreviewers = $this->workshop->get_potential_reviewers(false);
-                            $allreviewersreloaded = true;
-                        }
-                        if (isset($allreviewers[$reviewerid])) {
-                            $a->reviewername = fullname($allreviewers[$reviewerid]);
-                        } else {
-                            // this should not happen usually unless the list of participants was changed
-                            // in between two cycles of allocations
-                            $a->reviewername = '#'.$reviewerid;
-                        }
-                    }
-                    if (isset($authors[0][$authorid])) {
-                        $a->authorname = fullname($authors[0][$authorid]);
-                    } else {
-                        $a->authorname = '#'.$authorid;
-                    }
-                    if (in_array($newallocation, $newnonexistingallocations)) {
-                        $o[] = 'ok::indent::' . get_string('allocationaddeddetail', 'workshopallocation_random', $a);
-                    } else {
-                        $o[] = 'ok::indent::' . get_string('allocationreuseddetail', 'workshopallocation_random', $a);
-                    }
-                }
-            }
-            if ($removecurrent) {
-                $delassessments = $this->get_unkept_assessments($assessments, $newallocations, $addselfassessment);
-                // random allocator should not be able to delete assessments that have already been graded
-                // by reviewer
-                $o[] = 'info::' . get_string('numofdeallocatedassessment', 'workshopallocation_random', count($delassessments));
-                foreach ($delassessments as $delassessmentkey => $delassessmentid) {
-                    $a = new stdclass();
-                    $a->authorname      = fullname((object)array(
-                            'lastname'  => $assessments[$delassessmentid]->authorlastname,
-                            'firstname' => $assessments[$delassessmentid]->authorfirstname));
-                    $a->reviewername    = fullname((object)array(
-                            'lastname'  => $assessments[$delassessmentid]->reviewerlastname,
-                            'firstname' => $assessments[$delassessmentid]->reviewerfirstname));
-                    if (!is_null($assessments[$delassessmentid]->grade)) {
-                        $o[] = 'error::indent::' . get_string('allocationdeallocategraded', 'workshopallocation_random', $a);
-                        unset($delassessments[$delassessmentkey]);
-                    } else {
-                        $o[] = 'info::indent::' . get_string('assessmentdeleteddetail', 'workshopallocation_random', $a);
-                    }
-                }
-                $this->workshop->delete_assessment($delassessments);
-            }
-            return $o;
+            $settings = workshop_random_allocator_setting::instance_from_object($settings);
+            $this->execute($settings, $result);
+            return $result;
         } else {
             // this branch is executed if the form is submitted but the data
             // doesn't validate and the form should be redisplayed
             // or on the first display of the form.
+            $result->set_status(workshop_allocation_result::STATUS_VOID);
+            return $result;
         }
+    }
+
+    /**
+     * Executes the allocation based on the given settings
+     *
+     * @param workshop_random_allocator_setting $setting
+     * @param workshop_allocation_result allocation result logger
+     */
+    public function execute(workshop_random_allocator_setting $settings, workshop_allocation_result $result) {
+
+        $authors        = $this->workshop->get_potential_authors();
+        $authors        = $this->workshop->get_grouped($authors);
+        $reviewers      = $this->workshop->get_potential_reviewers(!$settings->assesswosubmission);
+        $reviewers      = $this->workshop->get_grouped($reviewers);
+        $assessments    = $this->workshop->get_all_assessments();
+        $newallocations = array();      // array of array(reviewer => reviewee)
+
+        if ($settings->numofreviews) {
+            if ($settings->removecurrent) {
+                // behave as if there were no current assessments
+                $curassessments = array();
+            } else {
+                $curassessments = $assessments;
+            }
+            $options                     = array();
+            $options['numofreviews']     = $settings->numofreviews;
+            $options['numper']           = $settings->numper;
+            $options['excludesamegroup'] = $settings->excludesamegroup;
+            $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $result, $options);
+            $newallocations     = array_merge($newallocations, $randomallocations);
+            $result->log(get_string('numofrandomlyallocatedsubmissions', 'workshopallocation_random', count($randomallocations)));
+            unset($randomallocations);
+        }
+        if ($settings->addselfassessment) {
+            $selfallocations    = $this->self_allocation($authors, $reviewers, $assessments);
+            $newallocations     = array_merge($newallocations, $selfallocations);
+            $result->log(get_string('numofselfallocatedsubmissions', 'workshopallocation_random', count($selfallocations)));
+            unset($selfallocations);
+        }
+        if (empty($newallocations)) {
+            $result->log(get_string('noallocationtoadd', 'workshopallocation_random'), 'info');
+        } else {
+            $newnonexistingallocations = $newallocations;
+            $this->filter_current_assessments($newnonexistingallocations, $assessments);
+            $this->add_new_allocations($newnonexistingallocations, $authors, $reviewers);
+            $allreviewers = $reviewers[0];
+            $allreviewersreloaded = false;
+            foreach ($newallocations as $newallocation) {
+                list($reviewerid, $authorid) = each($newallocation);
+                $a = new stdClass();
+                if (isset($allreviewers[$reviewerid])) {
+                    $a->reviewername = fullname($allreviewers[$reviewerid]);
+                } else {
+                    // this may happen if $settings->assesswosubmission is false but the reviewer
+                    // of the re-used assessment has not submitted anything. let us reload
+                    // the list of reviewers name including those without their submission
+                    if (!$allreviewersreloaded) {
+                        $allreviewers = $this->workshop->get_potential_reviewers(false);
+                        $allreviewersreloaded = true;
+                    }
+                    if (isset($allreviewers[$reviewerid])) {
+                        $a->reviewername = fullname($allreviewers[$reviewerid]);
+                    } else {
+                        // this should not happen usually unless the list of participants was changed
+                        // in between two cycles of allocations
+                        $a->reviewername = '#'.$reviewerid;
+                    }
+                }
+                if (isset($authors[0][$authorid])) {
+                    $a->authorname = fullname($authors[0][$authorid]);
+                } else {
+                    $a->authorname = '#'.$authorid;
+                }
+                if (in_array($newallocation, $newnonexistingallocations)) {
+                    $result->log(get_string('allocationaddeddetail', 'workshopallocation_random', $a), 'ok', 1);
+                } else {
+                    $result->log(get_string('allocationreuseddetail', 'workshopallocation_random', $a), 'ok', 1);
+                }
+            }
+        }
+        if ($settings->removecurrent) {
+            $delassessments = $this->get_unkept_assessments($assessments, $newallocations, $settings->addselfassessment);
+            // random allocator should not be able to delete assessments that have already been graded
+            // by reviewer
+            $result->log(get_string('numofdeallocatedassessment', 'workshopallocation_random', count($delassessments)), 'info');
+            foreach ($delassessments as $delassessmentkey => $delassessmentid) {
+                $a = new stdclass();
+                $a->authorname      = fullname((object)array(
+                        'lastname'  => $assessments[$delassessmentid]->authorlastname,
+                        'firstname' => $assessments[$delassessmentid]->authorfirstname));
+                $a->reviewername    = fullname((object)array(
+                        'lastname'  => $assessments[$delassessmentid]->reviewerlastname,
+                        'firstname' => $assessments[$delassessmentid]->reviewerfirstname));
+                if (!is_null($assessments[$delassessmentid]->grade)) {
+                    $result->log(get_string('allocationdeallocategraded', 'workshopallocation_random', $a), 'error', 1);
+                    unset($delassessments[$delassessmentkey]);
+                } else {
+                    $result->log(get_string('assessmentdeleteddetail', 'workshopallocation_random', $a), 'info', 1);
+                }
+            }
+            $this->workshop->delete_assessment($delassessments);
+        }
+        $result->set_status(workshop_allocation_result::STATUS_EXECUTED);
     }
 
     /**
@@ -434,11 +434,11 @@ class workshop_random_allocator implements workshop_allocator {
      * @param array    $authors      structure of grouped authors
      * @param array    $reviewers    structure of grouped reviewers
      * @param array    $assessments  currently assigned assessments to be kept
-     * @param array    $o            reference to an array of log messages
+     * @param workshop_allocation_result $result allocation result logger
      * @param array    $options      allocation options
      * @return array                 array of (reviewerid => authorid) pairs
      */
-    protected function random_allocation($authors, $reviewers, $assessments, &$o, array $options) {
+    protected function random_allocation($authors, $reviewers, $assessments, $result, array $options) {
         if (empty($authors) || empty($reviewers)) {
             // nothing to be done
             return array();
@@ -447,16 +447,16 @@ class workshop_random_allocator implements workshop_allocator {
         $numofreviews = $options['numofreviews'];
         $numper       = $options['numper'];
 
-        if (self::USERTYPE_AUTHOR == $numper) {
+        if (workshop_random_allocator_setting::NUMPER_SUBMISSION == $numper) {
             // circles are authors, squares are reviewers
-            $o[] = 'info::'.get_string('resultnumperauthor', 'workshopallocation_random', $numofreviews);
+            $result->log(get_string('resultnumperauthor', 'workshopallocation_random', $numofreviews), 'info');
             $allcircles = $authors;
             $allsquares = $reviewers;
             // get current workload
             list($circlelinks, $squarelinks) = $this->convert_assessments_to_links($assessments);
-        } elseif (self::USERTYPE_REVIEWER == $numper) {
+        } elseif (workshop_random_allocator_setting::NUMPER_REVIEWER == $numper) {
             // circles are reviewers, squares are authors
-            $o[] = 'info::'.get_string('resultnumperreviewer', 'workshopallocation_random', $numofreviews);
+            $result->log(get_string('resultnumperreviewer', 'workshopallocation_random', $numofreviews), 'info');
             $allcircles = $reviewers;
             $allsquares = $authors;
             // get current workload
@@ -480,8 +480,8 @@ class workshop_random_allocator implements workshop_allocator {
                 unset($nogroupcircles[$circleid]);
             }
         }
-        // $o[] = 'debug::circle links = ' . json_encode($circlelinks);
-        // $o[] = 'debug::square links = ' . json_encode($squarelinks);
+        // $result->log('circle links = ' . json_encode($circlelinks), 'debug');
+        // $result->log('square links = ' . json_encode($squarelinks), 'debug');
         $squareworkload         = array();  // individual workload indexed by squareid
         $squaregroupsworkload   = array();    // group workload indexed by squaregroupid
         foreach ($allsquares as $squaregroupid => $squares) {
@@ -496,8 +496,8 @@ class workshop_random_allocator implements workshop_allocator {
             $squaregroupsworkload[$squaregroupid] /= count($squares);
         }
         unset($squaregroupsworkload[0]);    // [0] is not real group, it contains all users
-        // $o[] = 'debug::square workload = ' . json_encode($squareworkload);
-        // $o[] = 'debug::square group workload = ' . json_encode($squaregroupsworkload);
+        // $result->log('square workload = ' . json_encode($squareworkload), 'debug');
+        // $result->log('square group workload = ' . json_encode($squaregroupsworkload), 'debug');
         $gmode = groups_get_activity_groupmode($this->workshop->cm, $this->workshop->course);
         if (SEPARATEGROUPS == $gmode) {
             // shuffle all groups but [0] which means "all users"
@@ -507,9 +507,9 @@ class workshop_random_allocator implements workshop_allocator {
             // all users will be processed at once
             $circlegroups = array(0);
         }
-        // $o[] = 'debug::circle groups = ' . json_encode($circlegroups);
+        // $result->log('circle groups = ' . json_encode($circlegroups), 'debug');
         foreach ($circlegroups as $circlegroupid) {
-            $o[] = 'debug::processing circle group id ' . $circlegroupid;
+            $result->log('processing circle group id ' . $circlegroupid, 'debug');
             $circles = $allcircles[$circlegroupid];
             // iterate over all circles in the group until the requested number of links per circle exists
             // or it is not possible to fulfill that requirment
@@ -517,13 +517,13 @@ class workshop_random_allocator implements workshop_allocator {
             // second iteration, we try to allocate two, etc.
             for ($requiredreviews = 1; $requiredreviews <= $numofreviews; $requiredreviews++) {
                 $this->shuffle_assoc($circles);
-                $o[] = 'debug::iteration ' . $requiredreviews;
+                $result->log('iteration ' . $requiredreviews, 'debug');
                 foreach ($circles as $circleid => $circle) {
                     if (VISIBLEGROUPS == $gmode and isset($nogroupcircles[$circleid])) {
-                        $o[] = 'debug::skipping circle id ' . $circleid;
+                        $result->log('skipping circle id ' . $circleid, 'debug');
                         continue;
                     }
-                    $o[] = 'debug::processing circle id ' . $circleid;
+                    $result->log('processing circle id ' . $circleid, 'debug');
                     if (!isset($circlelinks[$circleid])) {
                         $circlelinks[$circleid] = array();
                     }
@@ -536,14 +536,14 @@ class workshop_random_allocator implements workshop_allocator {
                         if (NOGROUPS == $gmode) {
                             if (in_array(0, $failedgroups)) {
                                 $keeptrying = false;
-                                $o[] = 'error::indent::'.get_string('resultnomorepeers', 'workshopallocation_random');
+                                $result->log(get_string('resultnomorepeers', 'workshopallocation_random'), 'error', 1);
                                 break;
                             }
                             $targetgroup = 0;
                         } elseif (SEPARATEGROUPS == $gmode) {
                             if (in_array($circlegroupid, $failedgroups)) {
                                 $keeptrying = false;
-                                $o[] = 'error::indent::'.get_string('resultnomorepeersingroup', 'workshopallocation_random');
+                                $result->log(get_string('resultnomorepeersingroup', 'workshopallocation_random'), 'error', 1);
                                 break;
                             }
                             $targetgroup = $circlegroupid;
@@ -564,27 +564,27 @@ class workshop_random_allocator implements workshop_allocator {
                         }
                         if ($targetgroup === false) {
                             $keeptrying = false;
-                            $o[] = 'error::indent::'.get_string('resultnotenoughpeers', 'workshopallocation_random');
+                            $result->log(get_string('resultnotenoughpeers', 'workshopallocation_random'), 'error', 1);
                             break;
                         }
-                        $o[] = 'debug::indent::next square should be from group id ' . $targetgroup;
+                        $result->log('next square should be from group id ' . $targetgroup, 'debug', 1);
                         // now, choose a square from the target group
                         $trysquares = array_intersect_key($squareworkload, $allsquares[$targetgroup]);
-                        // $o[] = 'debug::indent::individual workloads in this group are ' . json_encode($trysquares);
+                        // $result->log('individual workloads in this group are ' . json_encode($trysquares), 'debug', 1);
                         unset($trysquares[$circleid]);  // can't allocate to self
                         $trysquares = array_diff_key($trysquares, array_flip($circlelinks[$circleid])); // can't re-allocate the same
                         $targetsquare = $this->get_element_with_lowest_workload($trysquares);
                         if (false === $targetsquare) {
-                            $o[] = 'debug::indent::unable to find an available square. trying another group';
+                            $result->log('unable to find an available square. trying another group', 'debug', 1);
                             $failedgroups[] = $targetgroup;
                             continue;
                         }
-                        $o[] = 'debug::indent::target square = ' . $targetsquare;
+                        $result->log('target square = ' . $targetsquare, 'debug', 1);
                         // ok - we have found the square
                         $circlelinks[$circleid][]       = $targetsquare;
                         $squarelinks[$targetsquare][]   = $circleid;
                         $squareworkload[$targetsquare]++;
-                        $o[] = 'debug::indent::increasing square workload to ' . $squareworkload[$targetsquare];
+                        $result->log('increasing square workload to ' . $squareworkload[$targetsquare], 'debug', 1);
                         if ($targetgroup) {
                             // recalculate the group workload
                             $squaregroupsworkload[$targetgroup] = 0;
@@ -592,14 +592,14 @@ class workshop_random_allocator implements workshop_allocator {
                                 $squaregroupsworkload[$targetgroup] += $squareworkload[$squareid];
                             }
                             $squaregroupsworkload[$targetgroup] /= count($allsquares[$targetgroup]);
-                            $o[] = 'debug::indent::increasing group workload to ' . $squaregroupsworkload[$targetgroup];
+                            $result->log('increasing group workload to ' . $squaregroupsworkload[$targetgroup], 'debug', 1);
                         }
                     } // end of processing this circle
                 } // end of one iteration of processing circles in the group
             } // end of all iterations over circles in the group
         } // end of processing circle groups
         $returned = array();
-        if (self::USERTYPE_AUTHOR == $numper) {
+        if (workshop_random_allocator_setting::NUMPER_SUBMISSION == $numper) {
             // circles are authors, squares are reviewers
             foreach ($circlelinks as $circleid => $squares) {
                 foreach ($squares as $squareid) {
@@ -607,7 +607,7 @@ class workshop_random_allocator implements workshop_allocator {
                 }
             }
         }
-        if (self::USERTYPE_REVIEWER == $numper) {
+        if (workshop_random_allocator_setting::NUMPER_REVIEWER == $numper) {
             // circles are reviewers, squares are authors
             foreach ($circlelinks as $circleid => $squares) {
                 foreach ($squares as $squareid) {
@@ -697,5 +697,94 @@ class workshop_random_allocator implements workshop_allocator {
             $foundat        = array_keys($newallocations, $allocation);
             $newallocations = array_diff_key($newallocations, array_flip($foundat));
         }
+    }
+}
+
+
+/**
+ * Data object defining the settings structure for the random allocator
+ */
+class workshop_random_allocator_setting {
+
+    /** aim to a number of reviews per one submission {@see self::$numper} */
+    const NUMPER_SUBMISSION = 1;
+    /** aim to a number of reviews per one reviewer {@see self::$numper} */
+    const NUMPER_REVIEWER   = 2;
+
+    /** @var int number of reviews */
+    public $numofreviews;
+    /** @var int either {@link self::NUMPER_SUBMISSION} or {@link self::NUMPER_REVIEWER} */
+    public $numper;
+    /** @var bool prevent reviews by peers from the same group */
+    public $excludesamegroup;
+    /** @var bool remove current allocations */
+    public $removecurrent;
+    /** @var bool participants can assess without having submitted anything */
+    public $assesswosubmission;
+    /** @var bool add self-assessments */
+    public $addselfassessment;
+
+    /**
+     * Use the factory method {@link self::instance_from_object()}
+     */
+    protected function __construct() {
+    }
+
+    /**
+     * Factory method making the instance from data in the passed object
+     *
+     * @param stdClass $data an object holding the values for our public properties
+     * @return workshop_random_allocator_setting
+     */
+    public static function instance_from_object(stdClass $data) {
+        $i = new self();
+
+        if (!isset($data->numofreviews)) {
+            throw new coding_exception('Missing value of the numofreviews property');
+        } else {
+            $i->numofreviews = (int)$data->numofreviews;
+        }
+
+        if (!isset($data->numper)) {
+            throw new coding_exception('Missing value of the numper property');
+        } else {
+            $i->numper = (int)$data->numper;
+            if ($i->numper !== self::NUMPER_SUBMISSION and $i->numper !== self::NUMPER_REVIEWER) {
+                throw new coding_exception('Invalid value of the numper property');
+            }
+        }
+
+        foreach (array('excludesamegroup', 'removecurrent', 'assesswosubmission', 'addselfassessment') as $k) {
+            if (isset($data->$k)) {
+                $i->$k = (bool)$data->$k;
+            } else {
+                $i->$k = false;
+            }
+        }
+
+        return $i;
+    }
+
+    /**
+     * Factory method making the instance from data in the passed text
+     *
+     * @param string $text as returned by {@link self::export_text()}
+     * @return workshop_random_allocator_setting
+     */
+    public static function instance_from_text($text) {
+        return self::instance_from_object(json_decode($text));
+    }
+
+    /**
+     * Exports the instance data as a text for persistant storage
+     *
+     * The returned data can be later used by {@self::instance_from_text()} factory method
+     * to restore the instance data. The current implementation uses JSON export format.
+     *
+     * @return string JSON representation of our public properties
+     */
+    public function export_text() {
+        $getvars = function($obj) { return get_object_vars($obj); };
+        return json_encode($getvars($this));
     }
 }

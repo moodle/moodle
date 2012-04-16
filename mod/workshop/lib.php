@@ -70,14 +70,15 @@ function workshop_add_instance(stdclass $workshop) {
     global $CFG, $DB;
     require_once(dirname(__FILE__) . '/locallib.php');
 
-    $workshop->phase                = workshop::PHASE_SETUP;
-    $workshop->timecreated          = time();
-    $workshop->timemodified         = $workshop->timecreated;
-    $workshop->useexamples          = (int)!empty($workshop->useexamples);          // unticked checkbox hack
-    $workshop->usepeerassessment    = (int)!empty($workshop->usepeerassessment);    // unticked checkbox hack
-    $workshop->useselfassessment    = (int)!empty($workshop->useselfassessment);    // unticked checkbox hack
-    $workshop->latesubmissions      = (int)!empty($workshop->latesubmissions);      // unticked checkbox hack
-    $workshop->evaluation           = 'best';
+    $workshop->phase                 = workshop::PHASE_SETUP;
+    $workshop->timecreated           = time();
+    $workshop->timemodified          = $workshop->timecreated;
+    $workshop->useexamples           = (int)!empty($workshop->useexamples);
+    $workshop->usepeerassessment     = (int)!empty($workshop->usepeerassessment);
+    $workshop->useselfassessment     = (int)!empty($workshop->useselfassessment);
+    $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
+    $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
+    $workshop->evaluation            = 'best';
 
     // insert the new record so we get the id
     $workshop->id = $DB->insert_record('workshop', $workshop);
@@ -122,13 +123,14 @@ function workshop_update_instance(stdclass $workshop) {
     global $CFG, $DB;
     require_once(dirname(__FILE__) . '/locallib.php');
 
-    $workshop->timemodified         = time();
-    $workshop->id                   = $workshop->instance;
-    $workshop->useexamples          = (int)!empty($workshop->useexamples);          // unticked checkbox hack
-    $workshop->usepeerassessment    = (int)!empty($workshop->usepeerassessment);    // unticked checkbox hack
-    $workshop->useselfassessment    = (int)!empty($workshop->useselfassessment);    // unticked checkbox hack
-    $workshop->latesubmissions      = (int)!empty($workshop->latesubmissions);      // unticked checkbox hack
-    $workshop->evaluation           = 'best';
+    $workshop->timemodified          = time();
+    $workshop->id                    = $workshop->instance;
+    $workshop->useexamples           = (int)!empty($workshop->useexamples);
+    $workshop->usepeerassessment     = (int)!empty($workshop->usepeerassessment);
+    $workshop->useselfassessment     = (int)!empty($workshop->useselfassessment);
+    $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
+    $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
+    $workshop->evaluation            = 'best';
 
     // todo - if the grading strategy is being changed, we must replace all aggregated peer grades with nulls
     // todo - if maximum grades are being changed, we should probably recalculate or invalidate them
@@ -882,14 +884,41 @@ function workshop_print_recent_mod_activity($activity, $courseid, $detail, $modn
 }
 
 /**
- * Function to be run periodically according to the moodle cron
- * This function searches for things that need to be done, such
- * as sending out mail, toggling flags etc ...
+ * Regular jobs to execute via cron
  *
- * @return boolean
- * @todo Finish documenting this function
- **/
-function workshop_cron () {
+ * @return boolean true on success, false otherwise
+ */
+function workshop_cron() {
+    global $CFG, $DB;
+
+    $now = time();
+
+    mtrace(' processing workshop subplugins ...');
+    cron_execute_plugin_type('workshopallocation', 'workshop allocation methods');
+
+    // now when the scheduled allocator had a chance to do its job, check if there
+    // are some workshops to switch into the assessment phase
+    $workshops = $DB->get_records_select("workshop",
+        "phase = 20 AND phaseswitchassessment = 1 AND submissionend > 0 AND submissionend < ?", array($now));
+
+    if (!empty($workshops)) {
+        mtrace('Processing automatic assessment phase switch in '.count($workshops).' workshop(s) ... ', '');
+        require_once($CFG->dirroot.'/mod/workshop/locallib.php');
+        foreach ($workshops as $workshop) {
+            $cm = get_coursemodule_from_instance('workshop', $workshop->id, $workshop->course, false, MUST_EXIST);
+            $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+            $workshop = new workshop($workshop, $cm, $course);
+            $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
+            $workshop->log('update switch phase', $workshop->view_url(), $workshop->phase);
+            // disable the automatic switching now so that it is not executed again by accident
+            // if the teacher changes the phase back to the submission one
+            $DB->set_field('workshop', 'phaseswitchassessment', 0, array('id' => $workshop->id));
+
+            // todo inform the teachers
+        }
+        mtrace('done');
+    }
+
     return true;
 }
 

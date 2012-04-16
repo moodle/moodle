@@ -43,11 +43,10 @@ interface workshop_allocator {
      *
      * This method is called soon after the allocator is constructed and before any output
      * is generated. Therefore it may process any data submitted and do other tasks.
-     * It must not produce any output. The returned value is processed by
-     * {@see workshop_allocation_init_result} class and rendered.
+     * It must not produce any output.
      *
      * @throws moodle_exception
-     * @return void|string
+     * @return workshop_allocation_result
      */
     public function init();
 
@@ -70,4 +69,115 @@ interface workshop_allocator {
      * @return void
      */
     public static function delete_instance($workshopid);
+}
+
+
+/**
+ * Stores the information about the allocation process
+ *
+ * Allocator's method init() returns instance of this class.
+ */
+class workshop_allocation_result implements renderable {
+
+    /** the init() called successfully but no actual allocation was done */
+    const STATUS_VOID           = 0;
+    /** allocation was successfully executed */
+    const STATUS_EXECUTED       = 1;
+    /** a serious error has occurred during the allocation (as a hole) */
+    const STATUS_FAILED         = 2;
+    /** scheduled allocation was configured (to be executed later, for example) */
+    const STATUS_CONFIGURED     = 3;
+
+    /** @var workshop_allocator the instance of the allocator that produced this result */
+    protected $allocator;
+    /** @var null|int the status of the init() call */
+    protected $status = null;
+    /** @var null|string optional result message to display */
+    protected $message = null;
+    /** @var int the timestamp of when the allocation process started */
+    protected $timestart = null;
+    /** @var int the timestamp of when the final status was set */
+    protected $timeend = null;
+    /** @var array of log message objects, {@see self::log()} */
+    protected $logs = array();
+
+    /**
+     * Creates new instance of the object
+     *
+     * @param workshop_allocator $allocator
+     */
+    public function __construct(workshop_allocator $allocator) {
+        $this->allocator = $allocator;
+        $this->timestart = time();
+    }
+
+    /**
+     * Sets the result status of the allocation
+     *
+     * @param int $status the status code, eg {@link self::STATUS_OK}
+     * @param string $message optional status message
+     */
+    public function set_status($status, $message = null) {
+        $this->status = $status;
+        $this->message = is_null($message) ? $this->message : $message;
+        $this->timeend = time();
+    }
+
+    /**
+     * @return int|null the result status
+     */
+    public function get_status() {
+        return $this->status;
+    }
+
+    /**
+     * @return string|null status message
+     */
+    public function get_message() {
+        return $this->message;
+    }
+
+    /**
+     * @return int|null the timestamp of when the final status was set
+     */
+    public function get_timeend() {
+        return $this->timeend;
+    }
+
+    /**
+     * Appends a new message to the log
+     *
+     * The available levels are
+     *  ok - success, eg. new allocation was created
+     *  info - informational message
+     *  error - error message, eg. no more peers available
+     *  debug - debugging info
+     *
+     * @param string $message message text to display
+     * @param string $type the type of the message
+     * @param int $indent eventual indentation level (the message is related to the previous one with the lower indent)
+     */
+    public function log($message, $type = 'ok', $indent = 0) {
+        $log = new stdClass();
+        $log->message = $message;
+        $log->type = $type;
+        $log->indent = $indent;
+
+        $this->logs[] = $log;
+    }
+
+    /**
+     * Returns list of logged messages
+     *
+     * Each object in the list has public properties
+     *  message string, text to display
+     *  type string, the type of the message
+     *  indent int, indentation level
+     *
+     * @see self::log()
+     * @return array of log objects
+     */
+    public function get_logs() {
+        return $this->logs;
+    }
 }
