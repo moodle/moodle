@@ -181,7 +181,7 @@ abstract class backup_check {
                 // If it is already false, we don't want to try and set it again, because if it is
                 // already locked, and exception will occur. The side benifit is if it is true and locked
                 // we will get an exception...
-                if ($prevvalue) { 
+                if ($prevvalue) {
                     $userssetting->set_value(false);                              // Set the value to false
                 }
                 $userssetting->set_status(base_setting::LOCKED_BY_PERMISSION);// Set the status to locked by perm
