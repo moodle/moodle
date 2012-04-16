@@ -71,7 +71,7 @@ if (!tool_qeupgradehelper_is_upgraded()) {
     return;
 }
 
-require_once(dirname(__FILE__) . '/afterupgradelib.php');
+require_once(dirname(dirname(__FILE__)) . '/afterupgradelib.php');
 
 
 $starttime = time();
@@ -107,7 +107,7 @@ while ((!$stoptime || (time() < $stoptime)) && (!$options['countlimit'] || ($cou
             mtrace('qeupgradehelper: No more quizzes to process.');
             break; // No more to do.
         }
-        
+
         $quizid = $quiz->id;
     }
     $quizsummary = tool_qeupgradehelper_get_quiz($quizid);
@@ -120,7 +120,7 @@ while ((!$stoptime || (time() < $stoptime)) && (!$options['countlimit'] || ($cou
     } else {
         mtrace('quiz ' . $quizid . ' not found or already upgraded.');
     }
-    
+
     $count++;
 }
 
