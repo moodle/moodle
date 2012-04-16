@@ -85,6 +85,15 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
 
+    // Block padding
+    $name = 'theme_formal_white/blockpadding';
+    $title = get_string('blockpadding','theme_formal_white');
+    $description = get_string('blockpaddingdesc', 'theme_formal_white');
+    $default = '8';
+    $choices = array(1=>'1px', 2=>'2px', 4=>'4px', 8=>'8px', 12=>'12px', 16=>'16px');
+    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $settings->add($setting);
+
     // Block content background colour setting
     $name = 'theme_formal_white/blockcontentbgc';
     $title = get_string('blockcontentbgc','theme_formal_white');

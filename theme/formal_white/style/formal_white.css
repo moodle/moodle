@@ -22,6 +22,8 @@ h4 {font-weight:bold;}
 h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
 h2.main, h3.main, h4.main {margin:1em;padding:0;text-align:center;}
 
+p {margin:0}
+
 /* page-header */
 #page-header{line-height:0;overflow:hidden;}
 
@@ -33,7 +35,7 @@ h2.main, h3.main, h4.main {margin:1em;padding:0;text-align:center;}
 /* headermenu */
 .headermenu {position:absolute;text-align:right;line-height:1.7em;font-size:90%;margin:0.3em;right:[[setting:headermenuright]];top:15px;}
 
-#dock {background-color:[[setting:blockcontentbgc]];border-right:1px #000 dashed;}
+#dock {background-color:[[setting:blockcontentbgc]];border-right:1px dashed #000;}
 #dock .dockeditem_container {margin-top: 10px;}
 #dock #dockeditempanel .dockeditempanel_hd {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;text-align:left;height:1.8em;background-color:#E3DFD4;}
 #dock #dockeditempanel .dockeditempanel_hd h2 {display:block;padding-left:0.3em;margin-top:0;text-align:left;}
@@ -131,7 +133,7 @@ h2.main, h3.main, h4.main {margin:1em;padding:0;text-align:center;}
 th.header,
 .formtable tbody th,
 .generalbox th,
-.generaltable th.header {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px #C6BDA8 solid;background-color:#E3DFD4;}
+.generaltable th.header {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px solid #C6BDA8;background-color:#E3DFD4;}
 /*#modules, .compatibleblockstable {margin-left:auto; margin-right:auto;} waiting for MDL-26760*/
 table.flexible .r0, table.generaltable .r0 {background-color: #F0F0F0;}
 table.flexible .r1, table.generaltable .r1 {background-color: #FAFAFA;}
@@ -143,8 +145,8 @@ table.groupmanagementtable tr,
 table.groupmanagementtable td {border-width:0px;}
 table.groupmanagementtable td#buttonscell {vertical-align:middle;text-align:center;}
 table#defineroletable tr.rolecapheading {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;background-color:#E3DFD4;}
-/*table#defineroletable tr.rolecap {border-top:1px #F30 dashed;}*/
-tr.rolecap {border-top:1px #F30 dashed;}
+/*table#defineroletable tr.rolecap {border-top:1px dashed #F30;}*/
+tr.rolecap {border-top:1px dashed #F30;}
 tr.rolecapheading + tr.rolecap {border-top:none;}
 
 /* course categories */
@@ -154,7 +156,7 @@ tr.rolecapheading + tr.rolecap {border-top:none;}
 /* ul.topics .section span.commands {float:right;} /* distanza dei comandi dagli elementi del corso */
 ul.topics .section span.commands {position:absolute;right:1em;}
 
-.mform fieldset {border:1px #DDD solid;}
+.mform fieldset {border:1px solid #DDD;}
 .mform .fitem .fitemtitle {width:25%;}
 .mform .fitem .fitemtitle label {padding-right:5px;}
 .mform .fitem .felement {margin-left:26%;width:73%;min-height: 0.8em;}
@@ -164,7 +166,7 @@ ul.topics .section span.commands {position:absolute;right:1em;}
 table td.cell p {margin:0;}
 
 /* block */
-.block {border:1px #C6BDA8 solid;margin-bottom:0.5em;}
+.block {border:1px solid #C6BDA8;margin-bottom:[[setting:blockpadding]];}
 .block .header h2 {margin:0;padding-left:0.3em;}
 .block .header .title {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;clear:both;line-height:2em;background-color:#E3DFD4;}
 .block .header .title .commands {padding-left:0.3em;text-align:right;}
@@ -183,7 +185,7 @@ table td.cell p {margin:0;}
 /* page-footer */
 #page-footer {text-align:center;width:100%;padding:0;}
 .noframefooter {background-color:#FFF;clear: both;float: left;width:100%;}
-#page-footer-content {text-align:center;border:7px #E3DFD4 double;margin:0;padding:0.5em;}
+#page-footer-content {text-align:center;border:7px double #E3DFD4;margin:0;padding:0.5em;}
 #page-footer .logininfo {padding:0.3em 0 0.7em 0;}
 #page-footer .moodledocs {text-align:center;background-color:#EFEFEF;padding:0.7em 0 0.8em 0;}
 
