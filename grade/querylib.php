@@ -325,7 +325,7 @@ function grade_get_gradable_activities($courseid, $modulename='') {
 
     $params = array($courseid, $modulename, GRADE_TYPE_NONE, $modulename);
     $sql = "SELECT cm.*, m.name, md.name as modname
-              FROM {grade_items} gi, {course_modules} cm, {modules} md, {$modulename} m
+              FROM {grade_items} gi, {course_modules} cm, {modules} md, {{$modulename}} m
              WHERE gi.courseid = ? AND
                    gi.itemtype = 'mod' AND
                    gi.itemmodule = ? AND
