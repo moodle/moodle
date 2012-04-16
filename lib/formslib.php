@@ -61,7 +61,7 @@ function pear_handle_error($error){
     print_object($error->backtrace);
 }
 
-if (!empty($CFG->debug) and $CFG->debug >= DEBUG_ALL){
+if (!empty($CFG->debug) and ($CFG->debug >= DEBUG_ALL or $CFG->debug == -1)){
     //TODO: this is a wrong place to init PEAR!
     $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
     $GLOBALS['_PEAR_default_error_options'] = 'pear_handle_error';
@@ -2117,7 +2117,7 @@ function validate_' . $this->_formName . '(frm) {
         }
 
         if (!empty($elementList)) {
-            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Nonexistant element(s): '" . implode("', '", array_keys($elementList)) . "' in HTML_QuickForm::freeze()", 'HTML_QuickForm_Error', true);
+            return self::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Nonexistant element(s): '" . implode("', '", array_keys($elementList)) . "' in HTML_QuickForm::freeze()", 'HTML_QuickForm_Error', true);
         }
         return true;
     }

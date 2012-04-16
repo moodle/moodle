@@ -210,7 +210,7 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
     function loadArrayOptGroups($arr, $values=null)
     {
         if (!is_array($arr)) {
-            return PEAR::raiseError('Argument 1 of HTML_Select::loadArrayOptGroups is not a valid array');
+            return self::raiseError('Argument 1 of HTML_Select::loadArrayOptGroups is not a valid array');
         }
         if (isset($values)) {
             $this->setSelected($values);
@@ -255,7 +255,7 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
     function loadArrayOptions($optgroup, $arr, $values=null)
     {
         if (!is_array($arr)) {
-            return PEAR::raiseError('Argument 1 of HTML_Select::loadArray is not a valid array');
+            return self::raiseError('Argument 1 of HTML_Select::loadArray is not a valid array');
         }
         if (isset($values)) {
             $this->setSelected($values);

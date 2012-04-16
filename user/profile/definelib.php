@@ -58,7 +58,7 @@ class profile_define_base {
      * editing a profile field specific to the current data type
      * @param   object   instance of the moodleform class
      */
-    function define_form_specific(&$form) {
+    function define_form_specific($form) {
         /// do nothing - overwrite if necessary
     }
 
@@ -115,6 +115,7 @@ class profile_define_base {
      * Validate the data from the add/edit profile field form
      * that is specific to the current data type
      * @param   object   data from the add/edit profile field form
+     * @param   array    files
      * @return  array    associative array of error messages
      */
     function define_validate_specific($data, $files) {
