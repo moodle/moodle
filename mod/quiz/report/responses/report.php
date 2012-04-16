@@ -124,21 +124,21 @@ class quiz_responses_report extends quiz_attempts_report {
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
-        if ($hasquestions && ($hasstudents || $attemptsmode == self::ALL_ATTEMPTS)) {
-            // Print information on the grading method and whether we are displaying.
-            if (!$table->is_downloading()) {
-                // Do not print notices when downloading.
-                if ($strattempthighlight = quiz_report_highlighting_grading_method(
-                        $quiz, $this->qmsubselect, $options->onlygraded)) {
-                    echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
-                }
-            }
+        if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_ATTEMPTS)) {
 
             list($fields, $from, $where, $params) = $table->base_sql($allowed);
 
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
 
             $table->set_sql($fields, $from, $where, $params);
+
+            if (!$table->is_downloading()) {
+                // Print information on the grading method.
+                if ($strattempthighlight = quiz_report_highlighting_grading_method(
+                        $quiz, $this->qmsubselect, $options->onlygraded)) {
+                    echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
+                }
+            }
 
             // Define table columns.
             $columns = array();
