@@ -2708,8 +2708,12 @@ function assignment_update_instance($assignment){
  * Adds an assignment instance
  *
  * This is done by calling the add_instance() method of the assignment type class
+ *
+ * @param stdClass $assignment
+ * @param mod_assignment_mod_form $mform
+ * @return int intance id
  */
-function assignment_add_instance($assignment) {
+function assignment_add_instance($assignment, $mform = null) {
     global $CFG;
 
     $assignment->assignmenttype = clean_param($assignment->assignmenttype, PARAM_PLUGIN);

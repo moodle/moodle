@@ -36,28 +36,42 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_assignment_generator_testcase extends advanced_testcase {
     public function test_generator() {
-        global $DB, $SITE;
+        global $DB;
 
         $this->resetAfterTest(true);
 
         $this->assertEquals(0, $DB->count_records('assignment'));
+
+        $course = $this->getDataGenerator()->create_course();
 
         /** @var mod_assignment_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
         $this->assertInstanceOf('mod_assignment_generator', $generator);
         $this->assertEquals('assignment', $generator->get_modulename());
 
-        $generator->create_instance(array('course'=>$SITE->id));
-        $generator->create_instance(array('course'=>$SITE->id));
-        $assignment = $generator->create_instance(array('course'=>$SITE->id));
+        $generator->create_instance(array('course'=>$course->id, 'grade'=>0));
+        $generator->create_instance(array('course'=>$course->id, 'grade'=>0));
+        $assignment = $generator->create_instance(array('course'=>$course->id, 'grade'=>100));
         $this->assertEquals(3, $DB->count_records('assignment'));
 
         $cm = get_coursemodule_from_instance('assignment', $assignment->id);
         $this->assertEquals($assignment->id, $cm->instance);
         $this->assertEquals('assignment', $cm->modname);
-        $this->assertEquals($SITE->id, $cm->course);
+        $this->assertEquals($course->id, $cm->course);
 
         $context = context_module::instance($cm->id);
         $this->assertEquals($assignment->cmid, $context->instanceid);
+
+        // test gradebook integration using low level DB access - DO NOT USE IN PLUGIN CODE!
+        $gitem = $DB->get_record('grade_items', array('courseid'=>$course->id, 'itemtype'=>'mod', 'itemmodule'=>'assignment', 'iteminstance'=>$assignment->id));
+        $this->assertNotEmpty($gitem);
+        $this->assertEquals(100, $gitem->grademax);
+        $this->assertEquals(0, $gitem->grademin);
+        $this->assertEquals(GRADE_TYPE_VALUE, $gitem->gradetype);
+
+        // test eventslib integration
+        $this->setUser(2); // admin
+        $generator->create_instance(array('course'=>$course->id, 'timedue'=>(time()+60*60+24)));
+        $this->setUser(0);
     }
 }

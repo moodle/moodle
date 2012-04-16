@@ -479,7 +479,12 @@ if (isset($CFG->debug)) {
 }
 
 // Load up any configuration from the config table
-initialise_cfg();
+
+if (PHPUNIT_TEST) {
+    phpunit_util::initialise_cfg();
+} else {
+    initialise_cfg();
+}
 
 // Verify upgrade is not running unless we are in a script that needs to execute in any case
 if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {

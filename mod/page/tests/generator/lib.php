@@ -43,7 +43,7 @@ class mod_page_generator extends phpunit_module_generator {
      * @return stdClass activity record with extra cmid field
      */
     public function create_instance($record = null, array $options = null) {
-        global $DB, $CFG;
+        global $CFG;
         require_once("$CFG->dirroot/mod/page/locallib.php");
 
         $this->instancecount++;
@@ -52,6 +52,9 @@ class mod_page_generator extends phpunit_module_generator {
         $record = (object)(array)$record;
         $options = (array)$options;
 
+        if (empty($record->course)) {
+            throw new coding_exception('module generator requires $record->course');
+        }
         if (!isset($record->name)) {
             $record->name = get_string('pluginname', 'page').' '.$i;
         }
@@ -70,15 +73,20 @@ class mod_page_generator extends phpunit_module_generator {
         if (!isset($record->display)) {
             $record->display = RESOURCELIB_DISPLAY_AUTO;
         }
-        $record->timemodified = time();
+        if (isset($options['idnumber'])) {
+            $record->cmidnumber = $options['idnumber'];
+        } else {
+            $record->cmidnumber = '';
+        }
+        if (!isset($record->printheading)) {
+            $record->printheading = 1;
+        }
+        if (!isset($record->printintro)) {
+            $record->printintro = 0;
+        }
 
-        $id = $DB->insert_record('page', $record);
-        $instance = $DB->get_record('page', array('id'=>$id), '*', MUST_EXIST);
-
-        $cm = $this->create_course_module($instance, $options);
-
-        $instance->cmid = $cm->id;
-
-        return $instance;
+        $record->coursemodule = $this->precreate_course_module($record->course, $options);
+        $id = page_add_instance($record, null);
+        return $this->post_add_instance($id, $record->coursemodule);
     }
 }

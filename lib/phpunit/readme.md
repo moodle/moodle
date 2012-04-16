@@ -13,7 +13,7 @@ Installation
 1. install PEAR package manager - see [PEAR Manual](http://pear.php.net/manual/en/installation.php)
 2. install PHPUnit package and phpunit/DbUnit extension - see [PHPUnit installation documentation](http://www.phpunit.de/manual/current/en/installation.html)
 3. edit main config.php - add `$CFG->phpunit_prefix` and `$CFG->phpunit_dataroot` - see config-dist.php
-4. execute `admin/tool/phpunit/cli/init.sh` to initialise the test environemnt, repeat it after every upgrade or installation of plugins
+4. execute `php admin/tool/phpunit/cli/init.php` to initialise the test environemnt, repeat it after every upgrade or installation of plugins
 
 
 Test execution
@@ -29,7 +29,7 @@ How to add more tests?
 2. add `local/mytest/tests/my_test.php` file with `local_my_testcase` class that extends `basic_testcase` or `advanced_testcase`
 3. add some test_*() methods
 4. execute your new test case `phpunit local_my_testcase local/mytest/tests/my_test.php`
-5. execute `admin/tool/phpunit/cli/init.sh` to get the plugin tests included in main phpunit.xml configuration file
+5. execute `php admin/tool/phpunit/cli/init.php` to get the plugin tests included in main phpunit.xml configuration file
 
 
 How to convert existing tests?

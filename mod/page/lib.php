@@ -81,16 +81,15 @@ function page_get_post_actions() {
 
 /**
  * Add page instance.
- * @param object $data
- * @param object $mform
+ * @param stdClass $data
+ * @param mod_page_mod_form $mform
  * @return int new page instance id
  */
-function page_add_instance($data, $mform) {
+function page_add_instance($data, $mform = null) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
-    $cmid        = $data->coursemodule;
-    $draftitemid = $data->page['itemid'];
+    $cmid = $data->coursemodule;
 
     $data->timemodified = time();
     $displayoptions = array();
@@ -102,8 +101,10 @@ function page_add_instance($data, $mform) {
     $displayoptions['printintro']   = $data->printintro;
     $data->displayoptions = serialize($displayoptions);
 
-    $data->content       = $data->page['text'];
-    $data->contentformat = $data->page['format'];
+    if ($mform) {
+        $data->content       = $data->page['text'];
+        $data->contentformat = $data->page['format'];
+    }
 
     $data->id = $DB->insert_record('page', $data);
 
@@ -111,7 +112,8 @@ function page_add_instance($data, $mform) {
     $DB->set_field('course_modules', 'instance', $data->id, array('id'=>$cmid));
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
 
-    if ($draftitemid) {
+    if ($mform and !empty($data->page['itemid'])) {
+        $draftitemid = $data->page['itemid'];
         $data->content = file_save_draft_area_files($draftitemid, $context->id, 'mod_page', 'content', 0, page_get_editor_options($context), $data->content);
         $DB->update_record('page', $data);
     }

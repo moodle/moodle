@@ -829,11 +829,11 @@ function data_tags_check($dataid, $template) {
 /**
  * Adds an instance of a data
  *
- * @global object
- * @param object $data
- * @return $int
+ * @param stdClass $data
+ * @param mod_data_mod_form $mform
+ * @return int intance id
  */
-function data_add_instance($data) {
+function data_add_instance($data, $mform = null) {
     global $DB;
 
     if (empty($data->assessed)) {

@@ -52,12 +52,11 @@ define('FORUM_TRACKING_ON', 2);
  * will create a new instance and return the id number
  * of the new instance.
  *
- * @global object
- * @global object
- * @param object $forum add forum instance (with magic quotes)
+ * @param stdClass $forum add forum instance
+ * @param mod_forum_mod_form $mform
  * @return int intance id
  */
-function forum_add_instance($forum, $mform) {
+function forum_add_instance($forum, $mform = null) {
     global $CFG, $DB;
 
     $forum->timemodified = time();
