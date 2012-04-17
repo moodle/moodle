@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['configintrotimezones'] = 'This page will search for new information about world timezones (including daylight savings time rules) and update your local database with this information.  These locations will be checked, in order: {$a} This procedure is generally very safe and can not break normal installations.  Do you wish to update your timezones now?';
+$string['configintrotimezones'] = 'This page will search for new information about world timezones (including daylight savings time rules) and update your local database with this information.  These locations will be checked, in order: {$a} Do you wish to update your timezones now?';
 $string['importtimezones'] = 'Update complete list of timezones';
 $string['importtimezonescount'] = '{$a->count} entries imported from {$a->source}';
 $string['importtimezonesfailed'] = 'No sources found! (Bad news)';
