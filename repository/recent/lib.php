@@ -115,14 +115,20 @@ class repository_recent extends repository {
 
         try {
             foreach ($files as $file) {
-                $params = base64_encode(serialize($file));
-                // Check that file exists and accessible
-                $filesize = $this->get_file_size($params);
-                if (!empty($filesize)) {
+                // Check that file exists and accessible, retrieve size/date info
+                $browser = get_file_browser();
+                $context = get_context_instance_by_id($file['contextid']);
+                $fileinfo = $browser->get_file_info($context, $file['component'],
+                        $file['filearea'], $file['itemid'], $file['filepath'], $file['filename']);
+                if ($fileinfo) {
+                    $params = base64_encode(serialize($file));
                     $node = array(
                         'title' => $file['filename'],
-                        'size' => $filesize,
-                        'date' => '',
+                        'size' => $fileinfo->get_filesize(),
+                        'datemodified' => $fileinfo->get_timemodified(),
+                        'datecreated' => $fileinfo->get_timecreated(),
+                        'author' => $fileinfo->get_author(),
+                        'license' => $fileinfo->get_license(),
                         'source'=> $params,
                         'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file['filename'], 32))->out(false),
                     );

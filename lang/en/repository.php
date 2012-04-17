@@ -179,6 +179,7 @@ $string['submit'] = 'Submit';
 $string['sync'] = 'Sync';
 $string['thumbview'] = 'View as icons';
 $string['title'] = 'Choose a file...';
+$string['type'] = 'Type';
 $string['typenotvisible'] = 'Type not visible';
 $string['upload'] = 'Upload this file';
 $string['uploading'] = 'Uploading...';

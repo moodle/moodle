@@ -208,13 +208,17 @@ class repository_local_file {
         $encodedpath = base64_encode(serialize($this->fileinfo->get_params()));
         $node = array(
             'title' => $this->fileinfo->get_visible_name(),
-            'size' => 0,
-            'date' => '');
+            'datemodified' => $this->fileinfo->get_timemodified(),
+            'datecreated' => $this->fileinfo->get_timecreated()
+        );
         if ($this->isdir) {
             $node['path'] = $encodedpath;
             $node['thumbnail'] = $OUTPUT->pix_url('f/folder-32')->out(false);
             $node['children'] = array();
         } else {
+            $node['size'] = $this->fileinfo->get_filesize();
+            $node['author'] = $this->fileinfo->get_author();
+            $node['license'] = $this->fileinfo->get_license();
             $node['source'] = $encodedpath;
             $node['thumbnail'] = $OUTPUT->pix_url(file_extension_icon($node['title'], 32))->out(false);
         }

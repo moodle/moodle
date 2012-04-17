@@ -70,7 +70,7 @@ class repository_filesystem extends repository {
         $list['list'] = array();
         // process breacrumb trail
         $list['path'] = array(
-            array('name'=>'Root', 'path'=>'')
+            array('name'=>get_string('root', 'repository_filesystem'), 'path'=>'')
         );
         $trail = '';
         if (!empty($path)) {
@@ -99,7 +99,8 @@ class repository_filesystem extends repository {
                             'title' => $file,
                             'source' => $path.'/'.$file,
                             'size' => filesize($this->root_path.$file),
-                            'date' => time(),
+                            'datecreated' => filectime($this->root_path.$file),
+                            'datemodified' => filemtime($this->root_path.$file),
                             'thumbnail' => $OUTPUT->pix_url(file_extension_icon($this->root_path.$file, 32))->out(false)
                         );
                     } else {
@@ -111,6 +112,8 @@ class repository_filesystem extends repository {
                         $list['list'][] = array(
                             'title' => $file,
                             'children' => array(),
+                            'datecreated' => filectime($this->root_path.$file),
+                            'datemodified' => filemtime($this->root_path.$file),
                             'thumbnail' => $OUTPUT->pix_url('f/folder-32')->out(false),
                             'path' => $current_path
                             );

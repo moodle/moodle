@@ -439,7 +439,7 @@ class page_requirements_manager {
                 case 'core_filepicker':
                     $module = array('name'     => 'core_filepicker',
                                     'fullpath' => '/repository/filepicker.js',
-                                    'requires' => array('base', 'node', 'node-event-simulate', 'json', 'async-queue', 'io-base', 'io-upload-iframe', 'io-form', 'yui2-menu', 'yui2-treeview', 'yui2-dragdrop', 'panel', 'cookie'),
+                                    'requires' => array('base', 'node', 'node-event-simulate', 'json', 'async-queue', 'io-base', 'io-upload-iframe', 'io-form', 'yui2-menu', 'yui2-treeview', 'yui2-dragdrop', 'panel', 'cookie', 'datatable', 'datatable-sort'),
                                     // TODO check if those all are really required
                                     'strings'  => array(array('add', 'repository'), array('back', 'repository'), array('cancel', 'moodle'), array('close', 'repository'),
                                                         array('cleancache', 'repository'), array('copying', 'repository'), array('date', 'repository'), array('downloadsucc', 'repository'),
@@ -459,6 +459,7 @@ class page_requirements_manager {
                                                         array('renameto', 'repository'), array('fileexists', 'repository'),
                                                         array('fileexistsdialogheader', 'repository'), array('fileexistsdialog_editor', 'repository'),
                                                         array('fileexistsdialog_filemanager', 'repository'), array('uselatestfile', 'repository')
+                                                        array('lastmodified', 'moodle'), array('name', 'moodle'), array('type', 'repository')
                                                     ));
                     break;
                 case 'core_comment':

@@ -145,6 +145,25 @@ class core_repository_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Template for displaying file name in 'table view' and 'tree view' modes.
+     *
+     * content of the element with class 'fp-icon' will be replaced with an appropriate img;
+     *
+     * content of element with class 'fp-filename' will be replaced with filename supplied by
+     * repository;
+     *
+     * Note that tree view and table view are the YUI widgets and therefore there are no
+     * other templates. The widgets will be wrapped in <div> with class fp-treeview or
+     * fp-tableview (respectfully).
+     *
+     * @return string
+     */
+    public function js_template_listfilename() {
+        $rv = '<span class="{!}fp-icon"></span> <span class="{!}fp-filename"></span>';
+        return preg_replace('/\{\!\}/', '', $rv);
+    }
+
+    /**
      * Template for window appearing to select a file.
      *
      * All content must be enclosed in an element with class 'fp-select', CSS for this class

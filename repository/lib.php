@@ -1780,7 +1780,60 @@ abstract class repository {
     }
 
     /**
-     * Search files in repository.
+     * Prepares list of files before passing it to AJAX, makes sure data is in the correct
+     * format and stores formatted dates.
+     *
+     * @param array $listing result of get_listing() or search()
+     * @return array
+     */
+    public static function prepare_listing($listing) {
+        global $OUTPUT;
+        if (!is_array($listing) || !isset($listing['list'])) {
+            return $listing;
+        }
+        $len = count($listing['list']);
+        for ($i=0; $i<$len; $i++) {
+            if (isset($listing['list'][$i]['size'])) {
+                $listing['list'][$i]['size'] = (int)$listing['list'][$i]['size'];
+                $listing['list'][$i]['size_f'] = display_size($listing['list'][$i]['size']);
+            }
+            foreach (array('date', 'datemodified', 'datecreated') as $key) {
+                if (!isset($listing['list'][$i][$key]) && isset($listing['list'][$i]['date'])) {
+                    $listing['list'][$i][$key] = $listing['list'][$i]['date'];
+                }
+                if (isset($listing['list'][$i][$key])) {
+                    // must be UNIX timestamp
+                    $listing['list'][$i][$key] = (int)$listing['list'][$i][$key];
+                    if (!$listing['list'][$i][$key]) {
+                        unset($listing['list'][$i][$key]);
+                    } else {
+                        $listing['list'][$i][$key.'_f'] = userdate($listing['list'][$i][$key], get_string('strftimedatetime', 'langconfig'));
+                        $listing['list'][$i][$key.'_f_s'] = userdate($listing['list'][$i][$key], get_string('strftimedatetimeshort', 'langconfig'));
+                    }
+                }
+            }
+            if (!isset($listing['list'][$i]['type']) && !array_key_exists('children', $listing['list'][$i]) && isset($listing['list'][$i]['title'])) {
+                $mimetype = mimeinfo('type', $listing['list'][$i]['title']);
+                if (get_string_manager()->string_exists($mimetype, 'mimetypes')) {
+                    $mimetype = get_string($mimetype, 'mimetypes');
+                }
+                $listing['list'][$i]['type'] = $mimetype;
+            }
+            if (!isset($listing['list'][$i]['icon']) && isset($listing['list'][$i]['title'])) {
+                if (array_key_exists('children', $listing['list'][$i])) {
+                    $listing['list'][$i]['icon'] = $OUTPUT->pix_url('f/folder')->out(false);
+                } else {
+                    $listing['list'][$i]['icon'] = $OUTPUT->pix_url('f/'.mimeinfo('icon', $listing['list'][$i]['title']))->out(false);
+                }
+            }
+        }
+        return $listing;
+    }
+
+    /**
+     * Search files in repository
+     * When doing global search, $search_text will be used as
+     * keyword.
      *
      * @param string $search_text search key word
      * @param int $page page

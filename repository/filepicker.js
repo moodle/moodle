@@ -350,18 +350,18 @@ M.core_filepicker.init = function(Y, options) {
         build_tree: function(node, level) {
             var client_id = this.options.client_id;
             var dynload = this.active_repo.dynload;
-            var info = {
-                label:node.title,
-                filename:node.title,
-                source:node.source?node.source:'',
-                thumbnail:node.thumbnail,
-                path:node.path?node.path:''
-            };
-            if (node.dynamicLoadComplete) {
-                info.dynamicLoadComplete = true;
+            // prepare file name with icon
+            var el = Y.Node.create('<div/>').setContent(M.core_filepicker.templates.listfilename);
+            el.one('.fp-filename').setContent(node.title);
+            if (node.icon && !node.children) {
+                el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', node.icon));
             }
-            var tmpNode = new YAHOO.widget.TextNode(info, level, false);
-            tmpNode.repo_id = node.repo_id ? node.repo_id : this.active_repo.id;
+            // create node
+            var tmpNode = new YAHOO.widget.HTMLNode(el.getContent(), level, false);
+            if (node.dynamicLoadComplete) {
+                tmpNode.dynamicLoadComplete = true;
+            }
+            tmpNode.fileinfo = node;
             tmpNode.isLeaf = node.children ? false : true;
             if (!tmpNode.isLeaf) {
                 if(node.expanded) {
@@ -370,8 +370,7 @@ M.core_filepicker.init = function(Y, options) {
                 if (dynload) {
                     tmpNode.scope = this;
                 }
-                tmpNode.client_id = client_id;
-                tmpNode.path = info.path;
+                tmpNode.path = node.path ? node.path : '';
                 for(var c in node.children) {
                     this.build_tree(node.children[c], tmpNode);
                 }
@@ -385,10 +384,10 @@ M.core_filepicker.init = function(Y, options) {
             } else {
                 this.viewbar_set_enabled(true);
                 this.print_path();
-                if (this.viewmode == 1) {
-                    this.view_as_icons();
-                } else if (this.viewmode == 2) {
+                if (this.viewmode == 2) {
                     this.view_as_list();
+                } else if (this.viewmode == 3) {
+                    this.view_as_table();
                 } else {
                     this.view_as_icons();
                 }
@@ -446,7 +445,7 @@ M.core_filepicker.init = function(Y, options) {
             var dynload = scope.active_repo.dynload;
             var list = this.filelist;
             scope.viewmode = 2;
-            if (list && list.length==0 && (!this.filepath || !this.filepath.length)) {
+            if (!list || list.length==0 && (!this.filepath || !this.filepath.length)) {
                 this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
                 return;
             }
@@ -485,7 +484,10 @@ M.core_filepicker.init = function(Y, options) {
                     var root = scope.treeview.getRoot();
                     while (root && root.children && root.children.length) {
                         root = root.children[0];
-                        if (!root.isLeaf && root.expanded && root.path != mytreeel.path) {
+                        if (root.path == mytreeel.path) {
+                            root.origpath = scope.filepath;
+                            root.origlist = scope.filelist;
+                        } else if (!root.isLeaf && root.expanded) {
                             scope.treeview_dynload(root, null);
                         }
                     }
@@ -498,18 +500,14 @@ M.core_filepicker.init = function(Y, options) {
             }
             scope.treeview.subscribe('clickEvent', function(e){
                 if(e.node.isLeaf){
-                    var fileinfo = {};
-                    fileinfo['title'] = e.node.data.filename;
-                    fileinfo['source'] = e.node.data.source;
-                    fileinfo['thumbnail'] = e.node.data.thumbnail;
                     if (e.node.parent && e.node.parent.origpath) {
                         // set the current path
                         scope.filepath = e.node.parent.origpath;
                         scope.filelist = e.node.parent.origlist;
                         scope.print_path();
                     }
-                    e.node.highlight(false)
-                    scope.select_file(fileinfo);
+                    e.node.highlight(false);
+                    scope.select_file(e.node.fileinfo);
                 } else {
                     // save current path and filelist (in case we want to jump to other viewmode)
                     scope.filepath = e.node.origpath;
@@ -524,7 +522,7 @@ M.core_filepicker.init = function(Y, options) {
             var list = this.filelist;
             this.viewmode = 1;
 
-            if (list && list.length==0) {
+            if (!list || list.length==0) {
                 this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
                 return;
             }
@@ -576,27 +574,83 @@ M.core_filepicker.init = function(Y, options) {
                     element.on('click', function(e, p) {
                         e.preventDefault();
                         if(dynload) {
-                            var params = {'path':p.path};
-                            scope.list(params);
+                            scope.list({'path':p.path});
                         }else{
+                            this.filepath = p.path;
                             this.filelist = p.children;
                             this.view_files();
                         }
                     }, this, node);
                 } else {
-                    var fileinfo = {};
-                    fileinfo['title'] = list[k].title;
-                    fileinfo['source'] = list[k].source;
-                    fileinfo['thumbnail'] = list[k].thumbnail;
-                    fileinfo['haslicense'] = list[k].haslicense?true:false;
-                    fileinfo['hasauthor'] = list[k].hasauthor?true:false;
                     element.on('click', function(e, args) {
                         e.preventDefault();
                         this.select_file(args);
-                    }, this, fileinfo);
+                    }, this, list[k]);
                 }
                 count++;
             }
+        },
+        view_as_table: function() {
+            var list = this.filelist;
+            var client_id = this.options.client_id;
+            this.viewmode = 3;
+
+            if (!list || list.length==0) {
+                this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
+                return;
+            }
+            var treeviewnode = Y.Node.create('<div/>').
+                    setAttrs({'class':'fp-tableview', id:'tableview-'+client_id});
+            this.fpnode.one('.fp-content').setContent('').appendChild(treeviewnode);
+                var formatValue = function (o){
+                    if (o.data[''+o.field+'_f_s']) { return o.data[''+o.field+'_f_s']; }
+                    else if (o.data[''+o.field+'_f']) { return o.data[''+o.field+'_f']; }
+                    else if (o.value) { return o.value; }
+                    else { return ''; }
+                };
+                var formatTitle = function(o) {
+                    var el = Y.Node.create('<div/>').setContent(M.core_filepicker.templates.listfilename);
+                    el.one('.fp-filename').setContent(o.value);
+                    el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', o.data['icon']));
+                    return el.getContent();
+                }
+
+                var cols = [
+                    {key: "title", label: M.str.moodle.name, sortable: true, formatter: formatTitle},
+                    {key: "datemodified", label: M.str.moodle.lastmodified, sortable: true, formatter: formatValue},
+                    {key: "size", label: M.str.repository.size, sortable: true, formatter: formatValue},
+                    {key: "type", label: M.str.repository.type, sortable: true}
+                ];
+                var table = new Y.DataTable.Base({
+                    columnset: cols,
+                    recordset: list
+                });
+                // TODO allow sorting only if repository allows it, remember last sort order
+                table.plug(Y.Plugin.DataTableSort/*, { lastSortedBy: {key: "title", dir: "asc"} }*/);
+
+                table.render('#tableview-'+client_id);
+                table.delegate('click', function (e) {
+                    var rs = table.get('recordset');
+                    var id = e.currentTarget.get('id'), len = rs.size(), i;
+                    for (i = 0; i < len; ++i) {
+                        var record = rs.item(i);
+                        if (record.get('id') == id) {
+                            // we found the clicked record
+                            var data = record.getValue();
+                            if (data.children) {
+                                if (this.active_repo.dynload) {
+                                    this.list({'path':data.path});
+                                } else {
+                                    this.filepath = data.path;
+                                    this.filelist = data.children;
+                                    this.view_files();
+                                }
+                            } else {
+                                this.select_file(data);
+                            }
+                        }
+                    }
+                }, 'tr', this);
         },
         select_file: function(args) {
             this.selectui.show();
@@ -1391,7 +1445,7 @@ M.core_filepicker.init = function(Y, options) {
             this.viewbar_set_enabled(false);
             var repository_id = Y.Cookie.get('recentrepository');
             this.viewmode = Y.Cookie.get('recentviewmode', Number);
-            if (this.viewmode != 1 && this.viewmode != 2 && this.viewmode != 3) {
+            if (this.viewmode != 2 && this.viewmode != 3) {
                 this.viewmode = 1;
             }
             if (this.options.repositories[repository_id]) {

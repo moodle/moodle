@@ -96,8 +96,8 @@ class repository_user extends repository {
                         $encodedpath = base64_encode(serialize($child->get_params()));
                         $node = array(
                             'title' => $child->get_visible_name(),
-                            'size' => 0,
-                            'date' => '',
+                            'datemodified' => $child->get_timemodified(),
+                            'datecreated' => $child->get_timecreated(),
                             'path' => $encodedpath,
                             'children'=>array(),
                             'thumbnail' => $OUTPUT->pix_url('f/folder-32')->out(false)
@@ -107,8 +107,11 @@ class repository_user extends repository {
                         $encodedpath = base64_encode(serialize($child->get_params()));
                         $node = array(
                             'title' => $child->get_visible_name(),
-                            'size' => 0,
-                            'date' => '',
+                            'size' => $child->get_filesize(),
+                            'datemodified' => $child->get_timemodified(),
+                            'datecreated' => $child->get_timecreated(),
+                            'author' => $child->get_author(),
+                            'license' => $child->get_license(),
                             'source'=> $encodedpath,
                             'thumbnail' => $OUTPUT->pix_url(file_extension_icon($child->get_visible_name(), 32))->out(false)
                         );
