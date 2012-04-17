@@ -147,9 +147,9 @@ class backup_ui_stage_initial extends backup_ui_stage {
                     }
                 }
             }
-            // Add all settings at once
+            // Add all settings at once.
             $form->add_settings($add_settings);
-            // Add dependencies
+            // Add dependencies.
             foreach ($dependencies as $depsetting) {
                 $form->add_dependencies($depsetting);
             }
@@ -265,8 +265,8 @@ class backup_ui_stage_schema extends backup_ui_stage {
                 }
             }
             $form->add_settings($add_settings);
-            foreach($dependencies as $depsetting) {
-              $form->add_dependencies($depsetting);
+            foreach ($dependencies as $depsetting) {
+                $form->add_dependencies($depsetting);
             }
             $this->stageform = $form;
         }

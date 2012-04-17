@@ -27,17 +27,18 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Cache for storing link encoders, so that we don't need to call
+// register_link_encoders each time backup_xml_transformer is constructed
+// TODO MDL-25290 replace global with MUC code.
+global $LINKS_ENCODERS_CACHE;
+
+$LINKS_ENCODERS_CACHE = array();
+
 /**
  * Class implementing the @xml_contenttrasnformed logic to be applied in moodle2 backups
  *
  * TODO: Finish phpdocs
  */
-
-// cache for storing link encoders, so that we don't need to call
-// register_link_encoders each time backup_xml_transformer is constructed
-global $LINKS_ENCODERS_CACHE;
-$LINKS_ENCODERS_CACHE = array();
-
 class backup_xml_transformer extends xml_contenttransformer {
 
     private $absolute_links_encoders; // array of static methods to be called in order to
@@ -47,18 +48,13 @@ class backup_xml_transformer extends xml_contenttransformer {
     private $unicoderegexp;           // to know if the site supports unicode regexp
 
     public function __construct($courseid) {
-        global $LINKS_ENCODERS_CACHE;
-
         $this->absolute_links_encoders = array();
         $this->courseid = $courseid;
         // Check if we support unicode modifiers in regular expressions
         $this->unicoderegexp = @preg_match('/\pL/u', 'a'); // This will fail silently, returning false,
                                                            // if regexp libraries don't support unicode
         // Register all the available content link encoders
-        if (empty($LINKS_ENCODERS_CACHE)) {
-            $LINKS_ENCODERS_CACHE = $this->register_link_encoders();
-        }
-        $this->absolute_links_encoders = $LINKS_ENCODERS_CACHE;
+        $this->absolute_links_encoders = $this->register_link_encoders();
     }
 
     public function process($content) {
@@ -142,7 +138,19 @@ class backup_xml_transformer extends xml_contenttransformer {
         return $result;
     }
 
+    /**
+     * Register all available content link encoders
+     *
+     * @return array encoder
+     * @todo MDL-25290 replace LINKS_ENCODERS_CACHE global with MUC code
+     */
     private function register_link_encoders() {
+        global $LINKS_ENCODERS_CACHE;
+        // If encoder is linked, then return cached encoder.
+        if (!empty($LINKS_ENCODERS_CACHE)) {
+            return $LINKS_ENCODERS_CACHE;
+        }
+
         $encoders = array();
 
         // Add the course encoder
@@ -171,6 +179,7 @@ class backup_xml_transformer extends xml_contenttransformer {
         // Add local encodes
         // TODO: Any interest? 1.9 never had that.
 
+        $LINKS_ENCODERS_CACHE = $encoders;
         return $encoders;
     }
 }
