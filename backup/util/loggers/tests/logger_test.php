@@ -267,6 +267,7 @@ class backup_logger_testcase extends basic_testcase {
         unlink($file); // delete file
 
         // Try one html file
+        check_dir_exists($CFG->tempdir . '/test');
         $file = $CFG->tempdir . '/test/test_file_logger.html';
         $options = array('depth' => 1);
         $lo = new file_logger(backup::LOG_ERROR, true, true, $file);
@@ -281,9 +282,11 @@ class backup_logger_testcase extends basic_testcase {
         $this->assertTrue(strpos($fcontents, '[error]') !== false);
         $this->assertTrue(strpos($fcontents, '&nbsp;&nbsp;') !== false);
         $this->assertTrue(substr_count($fcontents , '] ') >= 2);
+        $lo->__destruct(); // closes file handle
         unlink($file); // delete file
 
         // Instantiate, write something, force deletion, try to write again
+        check_dir_exists($CFG->tempdir . '/test');
         $file = $CFG->tempdir . '/test/test_file_logger.html';
         $lo = new mock_file_logger(backup::LOG_ERROR, true, true, $file);
         $this->assertTrue(file_exists($file));

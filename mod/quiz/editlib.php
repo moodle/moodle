@@ -373,7 +373,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
     global $CFG, $DB, $OUTPUT;
     $strorder = get_string('order');
     $strquestionname = get_string('questionname', 'quiz');
-    $strgrade = get_string('grade');
+    $strmaxmark = get_string('markedoutof', 'question');
     $strremove = get_string('remove', 'quiz');
     $stredit = get_string('edit');
     $strview = get_string('view');
@@ -621,7 +621,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
 <div class="points">
 <form method="post" action="edit.php" class="quizsavegradesform"><div>
     <fieldset class="invisiblefieldset" style="display: block;">
-    <label for="<?php echo "inputq$question->id" ?>"><?php echo $strgrade; ?></label>:<br />
+    <label for="<?php echo "inputq$question->id" ?>"><?php echo $strmaxmark; ?></label>:<br />
     <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
     <?php echo html_writer::input_hidden_params($pageurl); ?>
     <input type="hidden" name="savechanges" value="save" />
@@ -1277,7 +1277,7 @@ function quiz_print_status_bar($quiz) {
     $bits = array();
 
     $bits[] = html_writer::tag('span',
-            get_string('totalpointsx', 'quiz', quiz_format_grade($quiz, $quiz->sumgrades)),
+            get_string('totalmarksx', 'quiz', quiz_format_grade($quiz, $quiz->sumgrades)),
             array('class' => 'totalpoints'));
 
     $bits[] = html_writer::tag('span',

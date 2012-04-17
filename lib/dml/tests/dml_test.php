@@ -28,6 +28,11 @@ defined('MOODLE_INTERNAL') || die();
 
 class dml_testcase extends database_driver_testcase {
 
+    protected function setUp() {
+        parent::setUp();
+        $dbman = $this->tdb->get_manager(); // loads DDL libs
+    }
+
     /**
      * Get a xmldb_table object for testing, deleting any existing table
      * of the same name, for example if one was left over from a previous test
@@ -778,6 +783,18 @@ class dml_testcase extends database_driver_testcase {
         // Test get_columns for non-existing table returns empty array. MDL-30147
         $columns = $DB->get_columns('xxxx');
         $this->assertEquals(array(), $columns);
+
+        // create something similar to "context_temp" with id column without sequence
+        $dbman->drop_table($table);
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $columns = $DB->get_columns($tablename);
+        $this->assertFalse($columns['id']->auto_increment);
     }
 
     public function test_get_manager() {
@@ -1801,6 +1818,20 @@ class dml_testcase extends database_driver_testcase {
         } catch (dml_exception $ex) {
             $this->assertTrue(true);
         }
+
+        // create something similar to "context_temp" with id column without sequence
+        $dbman->drop_table($table);
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $record = (object)array('id'=>5, 'course' => 1);
+        $DB->insert_record_raw($tablename, $record, false, false, true);
+        $record = $DB->get_record($tablename, array());
+        $this->assertEquals(5, $record->id);
     }
 
     public function test_insert_record() {
@@ -4372,7 +4403,7 @@ class dml_testcase extends database_driver_testcase {
 
         // make sure reserved words do not cause fatal problems in query parameters
 
-        $DB->execute("UPDATE {{$tablename}} SET course = 1 WHERE ID = :select", array('select'=>1));
+        $DB->execute("UPDATE {{$tablename}} SET course = 1 WHERE id = :select", array('select'=>1));
         $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE course = :select", array('select'=>1));
         $rs = $DB->get_recordset_sql("SELECT * FROM {{$tablename}} WHERE course = :select", array('select'=>1));
         $rs->close();

@@ -45,8 +45,6 @@ class quiz_grading_report extends quiz_default_report {
 
     protected $viewoptions = array();
     protected $questions;
-    protected $currentgroup;
-    protected $users;
     protected $cm;
     protected $quiz;
     protected $context;
@@ -168,11 +166,19 @@ class quiz_grading_report extends quiz_default_report {
                 quiza.timefinish <> 0";
         $params = array('mangrquizid' => $this->cm->instance);
 
-        if ($this->currentgroup) {
-            list($usql, $uparam) = $DB->get_in_or_equal(array_keys($this->users),
-                    SQL_PARAMS_NAMED, 'mangru');
-            $where .= ' AND quiza.userid ' . $usql;
-            $params += $uparam;
+        $currentgroup = groups_get_activity_group($this->cm, true);
+        if ($currentgroup) {
+            $users = get_users_by_capability($this->context,
+                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), 'u.id, u.id', '', '', '',
+                    $currentgroup, '', false);
+            if (empty($users)) {
+                $where .= ' AND quiza.userid = 0';
+            } else {
+                list($usql, $uparam) = $DB->get_in_or_equal(array_keys($users),
+                        SQL_PARAMS_NAMED, 'mangru');
+                $where .= ' AND quiza.userid ' . $usql;
+                $params += $uparam;
+            }
         }
 
         return new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
@@ -308,7 +314,7 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         if (empty($data)) {
-            echo $OUTPUT->heading(get_string('noquestionsfound', 'quiz_grading'));
+            echo $OUTPUT->heading(get_string('nothingfound', 'quiz_grading'));
             return;
         }
 

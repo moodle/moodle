@@ -82,12 +82,22 @@ class mssql_sql_generator extends sql_generator {
             $table = new xmldb_table($table);
         }
 
-        // From http://msdn.microsoft.com/en-us/library/ms176057.aspx
         $value = (int)$this->mdb->get_field_sql('SELECT MAX(id) FROM {'. $table->getName() . '}');
+        $sqls = array();
+
+        // MSSQL has one non-consistent behavior to create the first identity value, depending
+        // if the table has been truncated or no. If you are really interested, you can find the
+        // whole description of the problem at:
+        //     http://www.justinneff.com/archive/tag/dbcc-checkident
         if ($value == 0) {
+            // truncate to get consistent result from reseed
+            $sqls[] = "TRUNCATE TABLE " . $this->getTableName($table);
             $value = 1;
         }
-        return array("DBCC CHECKIDENT ('" . $this->getTableName($table) . "', RESEED, $value)");
+
+        // From http://msdn.microsoft.com/en-us/library/ms176057.aspx
+        $sqls[] = "DBCC CHECKIDENT ('" . $this->getTableName($table) . "', RESEED, $value)";
+        return $sqls;
     }
 
     /**

@@ -23,10 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// necessary when loaded from cli/util.php script
-// If this is missing then PHPUnit is not in your PHP include path. This normally
-// happens if installation didn't complete correctly. Check your environment.
 require_once 'PHPUnit/Autoload.php';
+require_once 'PHPUnit/Extensions/Database/Autoload.php';
 
 
 /**
@@ -44,19 +42,79 @@ class phpunit_util {
     protected static $tabledata = null;
 
     /**
-     * @var array An array of globals cloned from CFG
+     * @var array original structure of all database tables
+     */
+    protected static $tablestructure = null;
+
+    /**
+     * @var array An array of original globals, restored after each test
      */
     protected static $globals = array();
 
     /**
      * @var int last value of db writes counter, used for db resetting
      */
-    protected static $lastdbwrites = null;
+    public static $lastdbwrites = null;
 
     /**
      * @var phpunit_data_generator
      */
     protected static $generator = null;
+
+    /**
+     * @var resource used for prevention of parallel test execution
+     */
+    protected static $lockhandle = null;
+
+    /**
+     * Prevent parallel test execution - this can not work in Moodle because we modify database and dataroot.
+     *
+     * Note: do not call manually!
+     *
+     * @internal
+     * @static
+     * @return void
+     */
+    public static function acquire_test_lock() {
+        global $CFG;
+        if (!file_exists("$CFG->phpunit_dataroot/phpunit")) {
+            // dataroot not initialised yet
+            return;
+        }
+        if (!file_exists("$CFG->phpunit_dataroot/phpunit/lock")) {
+            file_put_contents("$CFG->phpunit_dataroot/phpunit/lock", 'This file prevents concurrent execution of Moodle PHPUnit tests');
+            phpunit_boostrap_fix_file_permissions("$CFG->phpunit_dataroot/phpunit/lock");
+        }
+        if (self::$lockhandle = fopen("$CFG->phpunit_dataroot/phpunit/lock", 'r')) {
+            $wouldblock = null;
+            $locked = flock(self::$lockhandle, (LOCK_EX | LOCK_NB), $wouldblock);
+            if (!$locked) {
+                if ($wouldblock) {
+                    echo "Waiting for other test execution to complete...\n";
+                }
+                $locked = flock(self::$lockhandle, LOCK_EX);
+            }
+            if (!$locked) {
+                fclose(self::$lockhandle);
+                self::$lockhandle = null;
+            }
+        }
+        register_shutdown_function(array('phpunit_util', 'release_test_lock'));
+    }
+
+    /**
+     * Note: do not call manually!
+     * @internal
+     * @static
+     * @return void
+     */
+    public static function release_test_lock() {
+        if (self::$lockhandle) {
+            flock(self::$lockhandle, LOCK_UN);
+            fclose(self::$lockhandle);
+            self::$lockhandle = null;
+        }
+    }
 
     /**
      * Get data generator
@@ -90,118 +148,270 @@ class phpunit_util {
         }
 
         if (!is_array(self::$tabledata)) {
-            phpunit_bootstrap_error('Can not read dataroot/phpunit/tabledata.ser or invalid format!');
+            phpunit_bootstrap_error(1, 'Can not read dataroot/phpunit/tabledata.ser or invalid format, reinitialize test database.');
         }
 
         return self::$tabledata;
     }
 
     /**
-     * Reset all database tables to default values.
+     * Returns structure of all tables right after installation.
      * @static
-     * @param bool $logchanges
-     * @param null|PHPUnit_Framework_TestCase $caller
-     * @return bool true if reset done, false if skipped
+     * @return array $table=>$records
      */
-    public static function reset_database($logchanges = false, PHPUnit_Framework_TestCase $caller = null) {
+    public static function get_tablestructure() {
+        global $CFG;
+
+        if (!file_exists("$CFG->dataroot/phpunit/tablestructure.ser")) {
+            // not initialised yet
+            return array();
+        }
+
+        if (!isset(self::$tablestructure)) {
+            $data = file_get_contents("$CFG->dataroot/phpunit/tablestructure.ser");
+            self::$tablestructure = unserialize($data);
+        }
+
+        if (!is_array(self::$tablestructure)) {
+            phpunit_bootstrap_error(1, 'Can not read dataroot/phpunit/tablestructure.ser or invalid format, reinitialize test database.');
+        }
+
+        return self::$tablestructure;
+    }
+
+    /**
+     * Returns list of tables that are unmodified and empty.
+     *
+     * @static
+     * @return array of table names, empty if unknown
+     */
+    protected static function guess_unmodified_empty_tables() {
         global $DB;
 
-        if ($logchanges) {
-            if (self::$lastdbwrites != $DB->perf_get_writes()) {
-                if ($caller) {
-                    $where = ' in testcase: '.get_class($caller).'->'.$caller->getName(true);
-                } else {
-                    $where = '';
+        $dbfamily = $DB->get_dbfamily();
+
+        if ($dbfamily === 'mysql') {
+            $empties = array();
+            $prefix = $DB->get_prefix();
+            $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
+            foreach ($rs as $info) {
+                $table = strtolower($info->name);
+                if (strpos($table, $prefix) !== 0) {
+                    // incorrect table match caused by _
+                    continue;
                 }
-                error_log('warning: unexpected database modification, resetting DB state'.$where);
+                if (!is_null($info->auto_increment)) {
+                    $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
+                    if ($info->auto_increment == 1) {
+                        $empties[$table] = $table;
+                    }
+                }
+            }
+            $rs->close();
+            return $empties;
+
+        } else if ($dbfamily === 'mssql') {
+            $empties = array();
+            $prefix = $DB->get_prefix();
+            $sql = "SELECT t.name
+                      FROM sys.identity_columns i
+                      JOIN sys.tables t ON t.object_id = i.object_id
+                     WHERE t.name LIKE ?
+                       AND i.name = 'id'
+                       AND i.last_value IS NULL";
+            $rs = $DB->get_recordset_sql($sql, array($prefix.'%'));
+            foreach ($rs as $info) {
+                $table = strtolower($info->name);
+                if (strpos($table, $prefix) !== 0) {
+                    // incorrect table match caused by _
+                    continue;
+                }
+                $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
+                $empties[$table] = $table;
+            }
+            $rs->close();
+            return $empties;
+
+        } else {
+            return array();
+        }
+    }
+
+    /**
+     * Reset all database sequences to initial values.
+     *
+     * @static
+     * @param array $empties tables that are known to be unmodified and empty
+     * @return void
+     */
+    public static function reset_all_database_sequences(array $empties = null) {
+        global $DB;
+
+        if (!$data = self::get_tabledata()) {
+            // not initialised yet
+            return;
+        }
+        if (!$structure = self::get_tablestructure()) {
+            // not initialised yet
+            return;
+        }
+
+        $dbfamily = $DB->get_dbfamily();
+        if ($dbfamily === 'postgres') {
+            $queries = array();
+            $prefix = $DB->get_prefix();
+            foreach ($data as $table=>$records) {
+                if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
+                    if (empty($records)) {
+                        $nextid = 1;
+                    } else {
+                        $lastrecord = end($records);
+                        $nextid = $lastrecord->id + 1;
+                    }
+                    $queries[] = "ALTER SEQUENCE {$prefix}{$table}_id_seq RESTART WITH $nextid";
+                }
+            }
+            if ($queries) {
+                $DB->change_database_structure(implode(';', $queries));
+            }
+
+        } else if ($dbfamily === 'mysql') {
+            $sequences = array();
+            $prefix = $DB->get_prefix();
+            $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
+            foreach ($rs as $info) {
+                $table = strtolower($info->name);
+                if (strpos($table, $prefix) !== 0) {
+                    // incorrect table match caused by _
+                    continue;
+                }
+                if (!is_null($info->auto_increment)) {
+                    $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
+                    $sequences[$table] = $info->auto_increment;
+                }
+            }
+            $rs->close();
+            foreach ($data as $table=>$records) {
+                if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
+                    if (isset($sequences[$table])) {
+                        if (empty($records)) {
+                            $lastid = 0;
+                        } else {
+                            $lastrecord = end($records);
+                            $lastid = $lastrecord->id;
+                        }
+                        if ($sequences[$table] != $lastid +1) {
+                            $DB->get_manager()->reset_sequence($table);
+                        }
+
+                    } else {
+                        $DB->get_manager()->reset_sequence($table);
+                    }
+                }
+            }
+
+        } else {
+            // note: does mssql and oracle support any kind of faster reset?
+            if (is_null($empties)) {
+                $empties = self::guess_unmodified_empty_tables();
+            }
+            foreach ($data as $table=>$records) {
+                if (isset($empties[$table])) {
+                    continue;
+                }
+                if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
+                    $DB->get_manager()->reset_sequence($table);
+                }
             }
         }
+    }
+
+    /**
+     * Reset all database tables to default values.
+     * @static
+     * @return bool true if reset done, false if skipped
+     */
+    public static function reset_database() {
+        global $DB;
 
         $tables = $DB->get_tables(false);
         if (!$tables or empty($tables['config'])) {
             // not installed yet
-            return;
+            return false;
         }
 
-        $dbreset = false;
-        if (is_null(self::$lastdbwrites) or self::$lastdbwrites != $DB->perf_get_writes()) {
-            if ($data = self::get_tabledata()) {
-                $trans = $DB->start_delegated_transaction(); // faster and safer
+        if (!is_null(self::$lastdbwrites) and self::$lastdbwrites == $DB->perf_get_writes()) {
+            return false;
+        }
+        if (!$data = self::get_tabledata()) {
+            // not initialised yet
+            return false;
+        }
+        if (!$structure = self::get_tablestructure()) {
+            // not initialised yet
+            return false;
+        }
 
-                $resetseq = array();
-                foreach ($data as $table=>$records) {
-                    if (empty($records)) {
-                        if ($DB->count_records($table)) {
-                            $DB->delete_records($table, array());
-                            $resetseq[$table] = $table;
-                        }
+        $empties = self::guess_unmodified_empty_tables();
+
+        foreach ($data as $table=>$records) {
+            if (empty($records)) {
+                if (isset($empties[$table])) {
+                    // table was not modified and is empty
+                } else {
+                    $DB->delete_records($table, array());
+                }
+                continue;
+            }
+
+            if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
+                $currentrecords = $DB->get_records($table, array(), 'id ASC');
+                $changed = false;
+                foreach ($records as $id=>$record) {
+                    if (!isset($currentrecords[$id])) {
+                        $changed = true;
+                        break;
+                    }
+                    if ((array)$record != (array)$currentrecords[$id]) {
+                        $changed = true;
+                        break;
+                    }
+                    unset($currentrecords[$id]);
+                }
+                if (!$changed) {
+                    if ($currentrecords) {
+                        $lastrecord = end($records);
+                        $DB->delete_records_select($table, "id > ?", array($lastrecord->id));
+                        continue;
+                    } else {
                         continue;
                     }
-
-                    $firstrecord = reset($records);
-                    if (property_exists($firstrecord, 'id')) {
-                        if ($DB->count_records($table) >= count($records)) {
-                            $currentrecords = $DB->get_records($table, array(), 'id ASC');
-                            $changed = false;
-                            foreach ($records as $id=>$record) {
-                                if (!isset($currentrecords[$id])) {
-                                    $changed = true;
-                                    break;
-                                }
-                                if ((array)$record != (array)$currentrecords[$id]) {
-                                    $changed = true;
-                                    break;
-                                }
-                                unset($currentrecords[$id]);
-                            }
-                            if (!$changed) {
-                                if ($currentrecords) {
-                                    $remainingfirst = reset($currentrecords);
-                                    $lastrecord = end($records);
-                                    if ($remainingfirst->id > $lastrecord->id) {
-                                        $DB->delete_records_select($table, "id >= ?", array($remainingfirst->id));
-                                        $resetseq[$table] = $table;
-                                        continue;
-                                    }
-                                } else {
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-
-                    $DB->delete_records($table, array());
-                    if (property_exists($firstrecord, 'id')) {
-                        $resetseq[$table] = $table;
-                    }
-                    foreach ($records as $record) {
-                        $DB->import_record($table, $record, false, true);
-                    }
                 }
-                // reset all sequences
-                foreach ($resetseq as $table) {
-                    $DB->get_manager()->reset_sequence($table, true);
-                }
+            }
 
-                $trans->allow_commit();
+            $DB->delete_records($table, array());
+            foreach ($records as $record) {
+                $DB->import_record($table, $record, false, true);
+            }
+        }
 
-                // remove extra tables
-                foreach ($tables as $tablename) {
-                    if (!isset($data[$tablename])) {
-                        $DB->get_manager()->drop_table(new xmldb_table($tablename));
-                    }
-                }
-                $dbreset = true;
+        // reset all next record ids - aka sequences
+        self::reset_all_database_sequences($empties);
+
+        // remove extra tables
+        foreach ($tables as $table) {
+            if (!isset($data[$table])) {
+                $DB->get_manager()->drop_table(new xmldb_table($table));
             }
         }
 
         self::$lastdbwrites = $DB->perf_get_writes();
 
-        return $dbreset;
+        return true;
     }
 
     /**
-     * Purge dataroot
+     * Purge dataroot directory
      * @static
      * @return void
      */
@@ -231,58 +441,62 @@ class phpunit_util {
      *
      * Note: this is relatively slow (cca 2 seconds for pg and 7 for mysql) - please use with care!
      *
-     * @param bool $logchanges log changes in global state and database in error log
-     * @param PHPUnit_Framework_TestCase $caller caller object, used for logging only
-     * @return void
      * @static
+     * @param bool $logchanges log changes in global state and database in error log
+     * @return void
      */
-    public static function reset_all_data($logchanges = false, PHPUnit_Framework_TestCase $caller = null) {
+    public static function reset_all_data($logchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
 
-        $dbreset = self::reset_database($logchanges, $caller);
+        // reset global $DB in case somebody mocked it
+        $DB = self::get_global_backup('DB');
+
+        if ($DB->is_transaction_started()) {
+            // we can not reset inside transaction
+            $DB->force_transaction_rollback();
+        }
+
+        $resetdb = self::reset_database();
+        $warnings = array();
 
         if ($logchanges) {
-            if ($caller) {
-                $where = ' in testcase: '.get_class($caller).'->'.$caller->getName(true);
-            } else {
-                $where = '';
+            if ($resetdb) {
+                $warnings[] = 'Warning: unexpected database modification, resetting DB state';
             }
 
             $oldcfg = self::get_global_backup('CFG');
             $oldsite = self::get_global_backup('SITE');
             foreach($CFG as $k=>$v) {
                 if (!property_exists($oldcfg, $k)) {
-                    error_log('warning: unexpected new $CFG->'.$k.' value'.$where);
+                    $warnings[] = 'Warning: unexpected new $CFG->'.$k.' value';
                 } else if ($oldcfg->$k !== $CFG->$k) {
-                    error_log('warning: unexpected change of $CFG->'.$k.' value'.$where);
+                    $warnings[] = 'Warning: unexpected change of $CFG->'.$k.' value';
                 }
                 unset($oldcfg->$k);
 
             }
             if ($oldcfg) {
                 foreach($oldcfg as $k=>$v) {
-                    error_log('warning: unexpected removal of $CFG->'.$k.$where);
+                    $warnings[] = 'Warning: unexpected removal of $CFG->'.$k;
                 }
             }
 
             if ($USER->id != 0) {
-                error_log('warning: unexpected change of $USER'.$where);
+                $warnings[] = 'Warning: unexpected change of $USER';
             }
 
             if ($COURSE->id != $oldsite->id) {
-                error_log('warning: unexpected change of $COURSE'.$where);
+                $warnings[] = 'Warning: unexpected change of $COURSE';
             }
         }
 
-        // restore _SERVER
-        unset($_SERVER['HTTP_USER_AGENT']);
-
-        // restore original config
+        // restore original globals
+        $_SERVER = self::get_global_backup('_SERVER');
         $CFG = self::get_global_backup('CFG');
         $SITE = self::get_global_backup('SITE');
         $COURSE = $SITE;
 
-        // recreate globals
+        // reinitialise following globals
         $OUTPUT = new bootstrap_renderer();
         $PAGE = new moodle_page();
         $FULLME = null;
@@ -291,7 +505,7 @@ class phpunit_util {
         $SESSION = new stdClass();
         $_SESSION['SESSION'] =& $SESSION;
 
-        // set fresh new user
+        // set fresh new not-logged-in user
         $user = new stdClass();
         $user->id = 0;
         $user->mnethostid = $CFG->mnet_localhost_id;
@@ -300,34 +514,47 @@ class phpunit_util {
         // reset all static caches
         accesslib_clear_all_caches(true);
         get_string_manager()->reset_caches();
+        events_get_handlers('reset');
         //TODO: add more resets here and probably refactor them to new core function
 
-        // purge dataroot
+        // purge dataroot directory
         self::reset_dataroot();
 
-        // restore original config once more in case resetting of caches changes CFG
+        // restore original config once more in case resetting of caches changed CFG
         $CFG = self::get_global_backup('CFG');
-
-        // remember db writes
-        self::$lastdbwrites = $DB->perf_get_writes();
 
         // inform data generator
         self::get_data_generator()->reset();
 
         // fix PHP settings
         error_reporting($CFG->debug);
+
+        // verify db writes just in case something goes wrong in reset
+        if (self::$lastdbwrites != $DB->perf_get_writes()) {
+            error_log('Unexpected DB writes in phpunit_util::reset_all_data()');
+            self::$lastdbwrites = $DB->perf_get_writes();
+        }
+
+        if ($warnings) {
+            $warnings = implode("\n", $warnings);
+            trigger_error($warnings, E_USER_WARNING);
+        }
     }
 
     /**
      * Called during bootstrap only!
+     * @internal
      * @static
+     * @return void
      */
     public static function bootstrap_init() {
-        global $CFG, $SITE;
+        global $CFG, $SITE, $DB;
 
         // backup the globals
+        self::$globals['_SERVER'] = $_SERVER;
         self::$globals['CFG'] = clone($CFG);
         self::$globals['SITE'] = clone($SITE);
+        self::$globals['DB'] = $DB;
 
         // refresh data in all tables, clear caches, etc.
         phpunit_util::reset_all_data();
@@ -340,6 +567,11 @@ class phpunit_util {
      * @return mixed
      */
     public static function get_global_backup($name) {
+        if ($name === 'DB') {
+            // no cloning of database object,
+            // we just need the original reference, not original state
+            return self::$globals['DB'];
+        }
         if (isset(self::$globals[$name])) {
             if (is_object(self::$globals[$name])) {
                 $return = clone(self::$globals[$name]);
@@ -384,41 +616,38 @@ class phpunit_util {
      * Is this site initialised to run unit tests?
      *
      * @static
-     * @return int error code, 0 means ok
+     * @return int array errorcode=>message, 0 means ok
      */
     public static function testing_ready_problem() {
-        global $DB, $CFG;
+        global $CFG, $DB;
+
+        $tables = $DB->get_tables(false);
 
         if (!self::is_test_site()) {
-            return 131;
+            // dataroot was verified in bootstrap, so it must be DB
+            return array(131, 'Can not use test database, try changing prefix');
         }
 
-        $tables = $DB->get_tables(true);
-
-        if (!$tables) {
-            return 132;
+        if (empty($tables)) {
+            return array(132, '');
         }
 
-        if (!get_config('core', 'phpunittest')) {
-             return 131;
-        }
-
-        if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser")) {
-            return 131;
+        if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser") or !file_exists("$CFG->dataroot/phpunit/tablestructure.ser")) {
+            return array(133, '');
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/versionshash.txt")) {
-            return 131;
+            return array(133, '');
         }
 
         $hash = phpunit_util::get_version_hash();
         $oldhash = file_get_contents("$CFG->dataroot/phpunit/versionshash.txt");
 
         if ($hash !== $oldhash) {
-            return 133;
+            return array(133, '');
         }
 
-        return 0;
+        return array(0, '');
     }
 
     /**
@@ -433,13 +662,25 @@ class phpunit_util {
         global $DB, $CFG;
 
         if (!self::is_test_site()) {
-            cli_error('Can not drop non-test sites!!', 131);
+            phpunit_bootstrap_error(131, 'Can not drop non-test site!!');
         }
 
-        // drop dataroot
+        // purge dataroot
         self::reset_dataroot();
         phpunit_bootstrap_initdataroot($CFG->dataroot);
-        remove_dir("$CFG->dataroot/phpunit", true);
+        $keep = array('.', '..', 'lock', 'webrunner.xml');
+        $files = scandir("$CFG->dataroot/phpunit");
+        foreach ($files as $file) {
+            if (in_array($file, $keep)) {
+                continue;
+            }
+            $path = "$CFG->dataroot/phpunit/$file";
+            if (is_dir($path)) {
+                remove_dir($path, false);
+            } else {
+                unlink($path);
+            }
+        }
 
         // drop all tables
         $tables = $DB->get_tables(false);
@@ -466,15 +707,20 @@ class phpunit_util {
         global $DB, $CFG;
 
         if (!self::is_test_site()) {
-            cli_error('Can not install non-test sites!!', 131);
+            phpunit_bootstrap_error(131, 'Can not install on non-test site!!');
         }
 
         if ($DB->get_tables()) {
-            cli_error('Database tables already installed, drop the site first.', 133);
+            list($errorcode, $message) = phpunit_util::testing_ready_problem();
+            if ($errorcode) {
+                phpunit_bootstrap_error(133, 'Database tables already present, Moodle PHPUnit test environment can not be initialised');
+            } else {
+                phpunit_bootstrap_error(0, 'Moodle PHPUnit test environment is already initialised');
+            }
         }
 
         $options = array();
-        $options['adminpass'] = 'admin'; // removed later
+        $options['adminpass'] = 'admin';
         $options['shortname'] = 'phpunit';
         $options['fullname'] = 'PHPUnit test site';
 
@@ -489,10 +735,12 @@ class phpunit_util {
 
         // store data for all tables
         $data = array();
+        $structure = array();
         $tables = $DB->get_tables();
         foreach ($tables as $table) {
             $columns = $DB->get_columns($table);
-            if (isset($columns['id'])) {
+            $structure[$table] = $columns;
+            if (isset($columns['id']) and $columns['id']->auto_increment) {
                 $data[$table] = $DB->get_records($table, array(), 'id ASC');
             } else {
                 // there should not be many of these
@@ -500,17 +748,21 @@ class phpunit_util {
             }
         }
         $data = serialize($data);
-        @unlink("$CFG->dataroot/phpunit/tabledata.ser");
         file_put_contents("$CFG->dataroot/phpunit/tabledata.ser", $data);
+        phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/tabledata.ser");
+
+        $structure = serialize($structure);
+        file_put_contents("$CFG->dataroot/phpunit/tablestructure.ser", $structure);
+        phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/tablestructure.ser");
 
         // hash all plugin versions - helps with very fast detection of db structure changes
         $hash = phpunit_util::get_version_hash();
-        @unlink("$CFG->dataroot/phpunit/versionshash.txt");
         file_put_contents("$CFG->dataroot/phpunit/versionshash.txt", $hash);
+        phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/versionshash.txt", $hash);
     }
 
     /**
-     * Calculate unique version hash for all available plugins and core.
+     * Calculate unique version hash for all plugins and core.
      * @static
      * @return string sha1 hash
      */
@@ -555,9 +807,9 @@ class phpunit_util {
     }
 
     /**
-     * Builds /phpunit.xml file using defaults from /phpunit.xml.dist
+     * Builds dirroot/phpunit.xml and dataroot/phpunit/webrunner.xml files using defaults from /phpunit.xml.dist
      * @static
-     * @return void
+     * @return bool true means main config file created, false means only dataroot file created
      */
     public static function build_config_file() {
         global $CFG;
@@ -592,8 +844,19 @@ class phpunit_util {
 
         $data = preg_replace('|<!--@plugin_suites_start@-->.*<!--@plugin_suites_end@-->|s', $suites, $data, 1);
 
-        @unlink("$CFG->dirroot/phpunit.xml");
-        file_put_contents("$CFG->dirroot/phpunit.xml", $data);
+        $result = false;
+        if (is_writable($CFG->dirroot)) {
+            if ($result = file_put_contents("$CFG->dirroot/phpunit.xml", $data)) {
+                phpunit_boostrap_fix_file_permissions("$CFG->dirroot/phpunit.xml");
+            }
+        }
+        // relink - it seems that xml:base does not work in phpunit xml files, remove this nasty hack if you find a way to set xml base for relative refs
+        $data = str_replace('lib/phpunit/', "$CFG->dirroot/lib/phpunit/", $data);
+        $data = preg_replace('|<directory suffix="_test.php">([^<]+)</directory>|', '<directory suffix="_test.php">'.$CFG->dirroot.'/$1</directory>', $data);
+        file_put_contents("$CFG->dataroot/phpunit/webrunner.xml", $data);
+        phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/webrunner.xml");
+
+        return (bool)$result;
     }
 }
 
@@ -610,7 +873,7 @@ class phpunit_util {
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class UnitTestCase extends PHPUnit_Framework_TestCase {
+abstract class UnitTestCase extends PHPUnit_Framework_TestCase {
 
     /**
      * @deprecated since 2.3
@@ -619,7 +882,7 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @return void
      */
     public function expectException($expected, $message = '') {
-        // use phpdocs: @expectedException ExceptionClassName
+        // alternatively use phpdocs: @expectedException ExceptionClassName
         if (!$expected) {
             return;
         }
@@ -719,7 +982,11 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @return void
      */
     public static function assertIsA($actual, $expected, $message = '') {
-        parent::assertInstanceOf($expected, $actual, $message);
+        if ($expected === 'array') {
+            parent::assertEquals(gettype($actual), 'array', $message);
+        } else {
+            parent::assertInstanceOf($expected, $actual, $message);
+        }
     }
 }
 
@@ -734,12 +1001,12 @@ class UnitTestCase extends PHPUnit_Framework_TestCase {
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class basic_testcase extends PHPUnit_Framework_TestCase {
+abstract class basic_testcase extends PHPUnit_Framework_TestCase {
 
     /**
      * Constructs a test case with the given name.
      *
-     * Note: use setUp() or setUpBeforeClass() in custom test cases.
+     * Note: use setUp() or setUpBeforeClass() in your test cases.
      *
      * @param string $name
      * @param array  $data
@@ -757,9 +1024,23 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
      * Runs the bare test sequence and log any changes in global state or database.
      * @return void
      */
-    public function runBare() {
-        parent::runBare();
-        phpunit_util::reset_all_data(true, $this);
+    final public function runBare() {
+        global $DB;
+
+        try {
+            parent::runBare();
+        } catch (Exception $e) {
+            // cleanup after failed expectation
+            phpunit_util::reset_all_data();
+            throw $e;
+        }
+
+        if ($DB->is_transaction_started()) {
+            phpunit_util::reset_all_data();
+            throw new coding_exception('basic_testcase '.$this->getName().' is not supposed to use database transactions!');
+        }
+
+        phpunit_util::reset_all_data(true);
     }
 }
 
@@ -772,14 +1053,17 @@ class basic_testcase extends PHPUnit_Framework_TestCase {
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class advanced_testcase extends PHPUnit_Framework_TestCase {
+abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     /** @var bool automatically reset everything? null means log changes */
-    protected $resetAfterTest;
+    private $resetAfterTest;
+
+    /** @var moodle_transaction */
+    private $testdbtransaction;
 
     /**
      * Constructs a test case with the given name.
      *
-     * Note: use setUp() or setUpBeforeClass() in custom test cases.
+     * Note: use setUp() or setUpBeforeClass() in your test cases.
      *
      * @param string $name
      * @param array  $data
@@ -797,21 +1081,168 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
      * Runs the bare test sequence.
      * @return void
      */
-    public function runBare() {
-        $this->resetAfterTest = null;
+    final public function runBare() {
+        global $DB;
 
-        parent::runBare();
+        if (phpunit_util::$lastdbwrites != $DB->perf_get_writes()) {
+            // this happens when previous test does not reset, we can not use transactions
+            $this->testdbtransaction = null;
 
-        if ($this->resetAfterTest === true) {
-            self::resetAllData();
-        } else if ($this->resetAfterTest === false) {
-            // keep all data untouched for other tests
-        } else {
-            // reset but log what changed
-            phpunit_util::reset_all_data(true, $this);
+        } else if ($DB->get_dbfamily() === 'postgres' or $DB->get_dbfamily() === 'mssql') {
+            // database must allow rollback of DDL, so no mysql here
+            $this->testdbtransaction = $DB->start_delegated_transaction();
         }
 
-        $this->resetAfterTest = null;
+        try {
+            parent::runBare();
+            // set DB reference in case somebody mocked it in test
+            $DB = phpunit_util::get_global_backup('DB');
+        } catch (Exception $e) {
+            // cleanup after failed expectation
+            phpunit_util::reset_all_data();
+            throw $e;
+        }
+
+        if (!$this->testdbtransaction or $this->testdbtransaction->is_disposed()) {
+            $this->testdbtransaction = null;
+        }
+
+        if ($this->resetAfterTest === true) {
+            if ($this->testdbtransaction) {
+                $DB->force_transaction_rollback();
+                phpunit_util::reset_all_database_sequences();
+                phpunit_util::$lastdbwrites = $DB->perf_get_writes(); // no db reset necessary
+            }
+            phpunit_util::reset_all_data();
+
+        } else if ($this->resetAfterTest === false) {
+            if ($this->testdbtransaction) {
+                $this->testdbtransaction->allow_commit();
+            }
+            // keep all data untouched for other tests
+
+        } else {
+            // reset but log what changed
+            if ($this->testdbtransaction) {
+                try {
+                    $this->testdbtransaction->allow_commit();
+                } catch (dml_transaction_exception $e) {
+                    phpunit_util::reset_all_data();
+                    throw new coding_exception('Invalid transaction state detected in test '.$this->getName());
+                }
+            }
+            phpunit_util::reset_all_data(true);
+        }
+
+        // make sure test did not forget to close transaction
+        if ($DB->is_transaction_started()) {
+            phpunit_util::reset_all_data();
+            if ($this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_PASSED
+                    or $this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED
+                    or $this->getStatus() == PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE) {
+                throw new coding_exception('Test '.$this->getName().' did not close database transaction');
+            }
+        }
+    }
+
+    /**
+     * Creates a new FlatXmlDataSet with the given $xmlFile. (absolute path.)
+     *
+     * @param string $xmlFile
+     * @return PHPUnit_Extensions_Database_DataSet_FlatXmlDataSet
+     */
+    protected function createFlatXMLDataSet($xmlFile) {
+        return new PHPUnit_Extensions_Database_DataSet_FlatXmlDataSet($xmlFile);
+    }
+
+    /**
+     * Creates a new XMLDataSet with the given $xmlFile. (absolute path.)
+     *
+     * @param string $xmlFile
+     * @return PHPUnit_Extensions_Database_DataSet_XmlDataSet
+     */
+    protected function createXMLDataSet($xmlFile) {
+        return new PHPUnit_Extensions_Database_DataSet_XmlDataSet($xmlFile);
+    }
+
+    /**
+     * Creates a new CsvDataSet from the given array of csv files. (absolute paths.)
+     *
+     * @param array $files array tablename=>cvsfile
+     * @param string $delimiter
+     * @param string $enclosure
+     * @param string $escape
+     * @return PHPUnit_Extensions_Database_DataSet_CsvDataSet
+     */
+    protected function createCsvDataSet($files, $delimiter = ',', $enclosure = '"', $escape = '"') {
+        $dataSet = new PHPUnit_Extensions_Database_DataSet_CsvDataSet($delimiter, $enclosure, $escape);
+        foreach($files as $table=>$file) {
+            $dataSet->addTable($table, $file);
+        }
+        return $dataSet;
+    }
+
+    /**
+     * Creates new ArrayDataSet from given array
+     *
+     * @param array $data array of tables, first row in each table is columns
+     * @return phpunit_ArrayDataSet
+     */
+    protected function createArrayDataSet(array $data) {
+        return new phpunit_ArrayDataSet($data);
+    }
+
+    /**
+     * Load date into moodle database tables from standard PHPUnit data set.
+     *
+     * Note: it is usually better to use data generators
+     *
+     * @param PHPUnit_Extensions_Database_DataSet_IDataSet $dataset
+     * @return void
+     */
+    protected function loadDataSet(PHPUnit_Extensions_Database_DataSet_IDataSet $dataset) {
+        global $DB;
+
+        $structure = phpunit_util::get_tablestructure();
+
+        foreach($dataset->getTableNames() as $tablename) {
+            $table = $dataset->getTable($tablename);
+            $metadata = $dataset->getTableMetaData($tablename);
+            $columns = $metadata->getColumns();
+
+            $doimport = false;
+            if (isset($structure[$tablename]['id']) and $structure[$tablename]['id']->auto_increment) {
+                $doimport = in_array('id', $columns);
+            }
+
+            for($r=0; $r<$table->getRowCount(); $r++) {
+                $record = $table->getRow($r);
+                if ($doimport) {
+                    $DB->import_record($tablename, $record);
+                } else {
+                    $DB->insert_record($tablename, $record);
+                }
+            }
+            if ($doimport) {
+                $DB->get_manager()->reset_sequence(new xmldb_table($tablename));
+            }
+        }
+    }
+
+    /**
+     * Call this method from test if you want to make sure that
+     * the resetting of database is done the slow way without transaction
+     * rollback.
+     *
+     * This is useful especially when testing stuff that is not compatible with transactions.
+     *
+     * @return void
+     */
+    public function preventResetByRollback() {
+        if ($this->testdbtransaction and !$this->testdbtransaction->is_disposed()) {
+            $this->testdbtransaction->allow_commit();
+            $this->testdbtransaction = null;
+        }
     }
 
     /**
@@ -882,10 +1313,10 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
      * Recursively visit all the files in the source tree. Calls the callback
      * function with the pathname of each file found.
      *
-     * @param $path the folder to start searching from.
-     * @param $callback the method of this class to call with the name of each file found.
-     * @param $fileregexp a regexp used to filter the search (optional).
-     * @param $exclude If true, pathnames that match the regexp will be ignored. If false,
+     * @param string $path the folder to start searching from.
+     * @param string $callback the method of this class to call with the name of each file found.
+     * @param string $fileregexp a regexp used to filter the search (optional).
+     * @param bool $exclude If true, pathnames that match the regexp will be ignored. If false,
      *     only files that match the regexp will be included. (default false).
      * @param array $ignorefolders will not go into any of these folders (optional).
      * @return void
@@ -911,19 +1342,87 @@ class advanced_testcase extends PHPUnit_Framework_TestCase {
 
 
 /**
+ * based on array iterator code from PHPUnit documentation by Sebastian Bergmann
+ * and added new constructor parameter for different array types.
+ */
+class phpunit_ArrayDataSet extends PHPUnit_Extensions_Database_DataSet_AbstractDataSet {
+    /**
+     * @var array
+     */
+    protected $tables = array();
+
+    /**
+     * @param array $data
+     */
+    public function __construct(array $data) {
+        foreach ($data AS $tableName => $rows) {
+            $firstrow = reset($rows);
+
+            if (array_key_exists(0, $firstrow)) {
+                // columns in first row
+                $columnsInFirstRow = true;
+                $columns = $firstrow;
+                $key = key($rows);
+                unset($rows[$key]);
+            } else {
+                // column name is in each row as key
+                $columnsInFirstRow = false;
+                $columns = array_keys($firstrow);
+            }
+
+            $metaData = new PHPUnit_Extensions_Database_DataSet_DefaultTableMetaData($tableName, $columns);
+            $table = new PHPUnit_Extensions_Database_DataSet_DefaultTable($metaData);
+
+            foreach ($rows AS $row) {
+                if ($columnsInFirstRow) {
+                    $row = array_combine($columns, $row);
+                }
+                $table->addRow($row);
+            }
+            $this->tables[$tableName] = $table;
+        }
+    }
+
+    protected function createIterator($reverse = FALSE) {
+        return new PHPUnit_Extensions_Database_DataSet_DefaultTableIterator($this->tables, $reverse);
+    }
+
+    public function getTable($tableName) {
+        if (!isset($this->tables[$tableName])) {
+            throw new InvalidArgumentException("$tableName is not a table in the current database.");
+        }
+
+        return $this->tables[$tableName];
+    }
+}
+
+
+/**
  * Special test case for testing of DML drivers and DDL layer.
  *
- * Note: Use only 'test_table*' when creating new tables.
+ * Note: Use only 'test_table*' names when creating new tables.
+ *
+ * For DML/DDL developers: you can add following settings to config.php if you want to test different driver than the main one,
+ *                         the reason is to allow testing of incomplete drivers that do not allow full PHPUnit environment
+ *                         initialisation (the database can be empty).
+ * $CFG->phpunit_extra_drivers = array(
+ *      1=>array('dbtype'=>'mysqli', 'dbhost'=>'localhost', 'dbname'=>'moodle', 'dbuser'=>'root', 'dbpass'=>'', 'prefix'=>'phpu2_'),
+ *      2=>array('dbtype'=>'pgsql', 'dbhost'=>'localhost', 'dbname'=>'moodle', 'dbuser'=>'postgres', 'dbpass'=>'', 'prefix'=>'phpu2_'),
+ *      3=>array('dbtype'=>'sqlsrv', 'dbhost'=>'127.0.0.1', 'dbname'=>'moodle', 'dbuser'=>'sa', 'dbpass'=>'', 'prefix'=>'phpu2_'),
+ *      4=>array('dbtype'=>'oci', 'dbhost'=>'127.0.0.1', 'dbname'=>'XE', 'dbuser'=>'sa', 'dbpass'=>'', 'prefix'=>'t_'),
+ * );
+ * define('PHPUNIT_TEST_DRIVER')=1; //number is index in the previous array
  *
  * @package    core
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class database_driver_testcase extends PHPUnit_Framework_TestCase {
-    protected static $extradb = null;
+abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
+    /** @var moodle_database connection to extra database */
+    private static $extradb = null;
 
-    /** @var moodle_database */
+    /** @var moodle_database used in these tests*/
     protected $tdb;
 
     /**
@@ -943,6 +1442,7 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
 
     public static function setUpBeforeClass() {
         global $CFG;
+        parent::setUpBeforeClass();
 
         if (!defined('PHPUNIT_TEST_DRIVER')) {
             // use normal $DB
@@ -976,6 +1476,7 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
 
     protected function setUp() {
         global $DB;
+        parent::setUp();
 
         if (self::$extradb) {
             $this->tdb = self::$extradb;
@@ -994,6 +1495,7 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
                 $dbman->drop_table($table);
             }
         }
+        parent::tearDown();
     }
 
     public static function tearDownAfterClass() {
@@ -1002,5 +1504,6 @@ class database_driver_testcase extends PHPUnit_Framework_TestCase {
             self::$extradb = null;
         }
         phpunit_util::reset_all_data();
+        parent::tearDownAfterClass();
     }
 }

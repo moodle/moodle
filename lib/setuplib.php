@@ -141,7 +141,7 @@ class moodle_exception extends Exception {
             $message = $module . '/' . $errorcode;
         }
 
-        if (PHPUNIT_TEST and $debuginfo) {
+        if (defined('PHPUNIT_TEST') and PHPUNIT_TEST and $debuginfo) {
             $message = "$message ($debuginfo)";
         }
 

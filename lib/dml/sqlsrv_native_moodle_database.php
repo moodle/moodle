@@ -152,7 +152,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
          * Log all Errors.
          */
         sqlsrv_configure("WarningsReturnAsErrors", FALSE);
-        sqlsrv_configure("LogSubsystems", SQLSRV_LOG_SYSTEM_ALL);
+        sqlsrv_configure("LogSubsystems", SQLSRV_LOG_SYSTEM_OFF);
         sqlsrv_configure("LogSeverity", SQLSRV_LOG_SEVERITY_ERROR);
 
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
@@ -277,10 +277,11 @@ class sqlsrv_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Get the minimum SQL allowed
+     * Returns if the RDBMS server fulfills the required version
      *
-     * @param mixed $version
-     * @return mixed
+     * @param string $version version to check against
+     * @return bool returns if the version is fulfilled (true) or no (false)
+     * @todo Delete this unused and protected method. MDL-32392
      */
     protected function is_min_version($version) {
         $server = $this->get_server_info();
@@ -391,7 +392,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $this->tables = array ();
         $prefix = str_replace('_', '\\_', $this->prefix);
         $sql = "SELECT table_name
-                  FROM information_schema.tables
+                  FROM INFORMATION_SCHEMA.TABLES
                  WHERE table_name LIKE '$prefix%' ESCAPE '\\' AND table_type = 'BASE TABLE'";
 
         $this->query_start($sql, null, SQL_QUERY_AUX);
@@ -497,7 +498,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
                            is_nullable AS is_nullable,
                            columnproperty(object_id(quotename(table_schema) + '.' + quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
                            column_default AS default_value
-                      FROM information_schema.columns
+                      FROM INFORMATION_SCHEMA.COLUMNS
                      WHERE table_name = '{".$table."}'
                   ORDER BY ordinal_position";
         } else { // temp table, get metadata from tempdb schema
@@ -509,7 +510,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
                            is_nullable AS is_nullable,
                            columnproperty(object_id(quotename(table_schema) + '.' + quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
                            column_default AS default_value
-                      FROM tempdb.information_schema.columns ".
+                      FROM tempdb.INFORMATION_SCHEMA.COLUMNS ".
             // check this statement
             // JOIN tempdb..sysobjects ON name = table_name
             // WHERE id = object_id('tempdb..{".$table."}')
@@ -871,14 +872,26 @@ class sqlsrv_native_moodle_database extends moodle_database {
         if (!is_array($params)) {
             $params = (array)$params;
         }
+
+        $isidentity = false;
+
         if ($customsequence) {
             if (!isset($params['id'])) {
                 throw new coding_exception('moodle_database::insert_record_raw() id field must be specified if custom sequences used.');
             }
+
             $returnid = false;
-            // Disable IDENTITY column before inserting record with id
-            $sql = 'SET IDENTITY_INSERT {'.$table.'} ON'; // Yes, it' ON!!
-            $this->do_query($sql, null, SQL_QUERY_AUX);
+            $columns = $this->get_columns($table);
+            if (isset($columns['id']) and $columns['id']->auto_increment) {
+                $isidentity = true;
+            }
+
+            // Disable IDENTITY column before inserting record with id, only if the
+            // column is identity, from meta information.
+            if ($isidentity) {
+                $sql = 'SET IDENTITY_INSERT {'.$table.'} ON'; // Yes, it' ON!!
+                $this->do_query($sql, null, SQL_QUERY_AUX);
+            }
 
         } else {
             unset($params['id']);
@@ -894,9 +907,12 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $query_id = $this->do_query($sql, $params, SQL_QUERY_INSERT);
 
         if ($customsequence) {
-            // Enable IDENTITY column after inserting record with id
-            $sql = 'SET IDENTITY_INSERT {'.$table.'} OFF'; // Yes, it' OFF!!
-            $this->do_query($sql, null, SQL_QUERY_AUX);
+            // Enable IDENTITY column after inserting record with id, only if the
+            // column is identity, from meta information.
+            if ($isidentity) {
+                $sql = 'SET IDENTITY_INSERT {'.$table.'} OFF'; // Yes, it' OFF!!
+                $this->do_query($sql, null, SQL_QUERY_AUX);
+            }
         }
 
         if ($returnid) {
