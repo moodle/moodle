@@ -31,3 +31,8 @@
  **/
 #page-mod-lesson-view .password-form .submitbutton {display: inline;}
 .path-mod-lesson .reviewessay {width:40%; border:1px solid #DDDDDD; background-color: #EEEEEE;}
+
+.path-mod-lesson.dir-rtl .contents,
+.path-mod-lesson.dir-rtl .standardtable,
+.path-mod-lesson.dir-rtl .mform .box.contents,
+.path-mod-lesson.dir-rtl .invisiblefieldset.fieldsetfix tr {text-align: right;}
