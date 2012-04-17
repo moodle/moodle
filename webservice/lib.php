@@ -475,9 +475,9 @@ class webservice {
     public function get_user_capabilities($userid) {
         global $DB;
         //retrieve the user capabilities
-        $sql = "SELECT rc.id, rc.capability FROM {role_capabilities} rc, {role_assignments} ra
-            WHERE rc.roleid=ra.roleid AND ra.userid= ?";
-        $dbusercaps = $DB->get_records_sql($sql, array($userid));
+        $sql = "SELECT DISTINCT rc.id, rc.capability FROM {role_capabilities} rc, {role_assignments} ra
+            WHERE rc.roleid=ra.roleid AND ra.userid= ? AND rc.permission = ?";
+        $dbusercaps = $DB->get_records_sql($sql, array($userid, CAP_ALLOW));
         $usercaps = array();
         foreach ($dbusercaps as $usercap) {
             $usercaps[$usercap->capability] = true;
