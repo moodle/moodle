@@ -11,6 +11,10 @@ class assignment_offline extends assignment_base {
         $this->type = 'offline';
     }
 
+    function supports_lateness() {
+        return false;
+    }
+
     function display_lateness($timesubmitted) {
         return '';
     }

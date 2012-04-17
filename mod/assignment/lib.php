@@ -415,6 +415,12 @@ class assignment_base {
         return $submitted;
     }
 
+    /**
+     * @return Whether this assignment type supports lateness information - true by default
+     */
+    function supports_lateness() {
+        return true;
+    }
 
     /**
      * @todo Document this function
@@ -1445,8 +1451,8 @@ class assignment_base {
                             if ($auser->timemodified > 0) {
                                 $studentmodifiedcontent = $this->print_student_answer($auser->id)
                                         . userdate($auser->timemodified);
-                                if ($assignment->timedue && $auser->timemodified > $assignment->timedue) {
-                                    $studentmodifiedcontent .= assignment_display_lateness($auser->timemodified, $assignment->timedue);
+                                if ($assignment->timedue && $auser->timemodified > $assignment->timedue && $this->supports_lateness()) {
+                                    $studentmodifiedcontent .= $this->display_lateness($auser->timemodified);
                                     $rowclass = 'late';
                                 }
                             } else {
