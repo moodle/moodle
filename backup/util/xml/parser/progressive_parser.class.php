@@ -149,15 +149,7 @@ class progressive_parser {
      * handling parser paths, see MDL-24381
      */
     public static function dirname($path) {
-        static $cache = array();
-
-        if (!isset($cache[$path])) {
-            if (count($cache) > 4096)
-                $cache = array();
-            $cache[$path] = str_replace('\\', '/', dirname($path));
-        }
-
-        return $cache[$path];
+        return str_replace('\\', '/', dirname($path));
     }
 
 // Protected API starts here

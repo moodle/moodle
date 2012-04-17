@@ -28,8 +28,38 @@
  * TODO: Finish phpdocs
  */
 abstract class restore_dbops {
-    static $BACKUP_IDS_CACHE = array();
-    static $BACKUP_IDS_EXIST = array();
+    /**
+     * Keep cache of backup records.
+     * @var array
+     * @todo MDL-25290 static should be replaced with MUC code.
+     */
+    private static $backupidscache = array();
+    /**
+     * Keep track of backup ids which are cached.
+     * @var array
+     * @todo MDL-25290 static should be replaced with MUC code.
+     */
+    private static $backupidsexist = array();
+    /**
+     * Count is expensive, so manually keeping track of
+     * backupidscache, to avoid memory issues.
+     * @var int
+     * @todo MDL-25290 static should be replaced with MUC code.
+     */
+    private static $backupidscachesize = 2048;
+    /**
+     * Count is expensive, so manually keeping track of
+     * backupidsexist, to avoid memory issues.
+     * @var int
+     * @todo MDL-25290 static should be replaced with MUC code.
+     */
+    private static $backupidsexistsize = 10240;
+    /**
+     * Slice backupids cache to add more data.
+     * @var int
+     * @todo MDL-25290 static should be replaced with MUC code.
+     */
+    private static $backupidsslice = 512;
 
     /**
      * Return one array containing all the tasks that have been included
@@ -153,61 +183,130 @@ abstract class restore_dbops {
         return $problems;
     }
 
+    /**
+     * Return cached backup id's
+     *
+     * @param int $restoreid id of backup
+     * @param string $itemname name of the item
+     * @param int $itemid id of item
+     * @return array backup id's
+     * @todo MDL-25290 replace static backupids* with MUC code
+     */
     protected static function get_backup_ids_cached($restoreid, $itemname, $itemid) {
         global $DB;
 
         $key = "$itemid $itemname $restoreid";
 
-        if (!isset(self::$BACKUP_IDS_EXIST[$key])) {
-            return false;
+        // If record exists in cache then return.
+        if (isset(self::$backupidsexist[$key]) && isset(self::$backupidscache[$key])) {
+            return self::$backupidscache[$key];
         }
 
-        if (isset(self::$BACKUP_IDS_CACHE[$key])) {
-            return self::$BACKUP_IDS_CACHE[$key];
+        // Clean cache, if it's full.
+        if (self::$backupidscachesize <= 0) {
+            // Remove some records, to keep memory in limit.
+            self::$backupidscache = array_slice(self::$backupidscache, self::$backupidsslice, null, true);
+            self::$backupidscachesize = self::$backupidscachesize + self::$backupidsslice;
+        }
+        if (self::$backupidsexistsize <= 0) {
+            self::$backupidsexist = array_slice(self::$backupidsexist, self::$backupidsslice, null, true);
+            self::$backupidsexistsize = self::$backupidsexistsize + self::$backupidsslice;
         }
 
+        // Retrive record from database.
         $record = array(
             'backupid' => $restoreid,
             'itemname' => $itemname,
             'itemid'   => $itemid
         );
-
-        if (count(self::$BACKUP_IDS_CACHE) > 2048) {
-            $BACKUP_IDS_CACHE = array();
+        if ($dbrec = $DB->get_record('backup_ids_temp', $record)) {
+            self::$backupidsexist[$key] = $dbrec->id;
+            self::$backupidscache[$key] = $dbrec;
+            self::$backupidscachesize--;
+            self::$backupidsexistsize--;
+            return self::$backupidscache[$key];
+        } else {
+            return false;
         }
-
-        return self::$BACKUP_IDS_CACHE[$key] = $DB->get_record('backup_ids_temp', $record);
     }
 
+    /**
+     * Cache backup ids'
+     *
+     * @param int $restoreid id of backup
+     * @param string $itemname name of the item
+     * @param int $itemid id of item
+     * @param array $extrarecord extra record which needs to be updated
+     * @return void
+     * @todo MDL-25290 replace static BACKUP_IDS_* with MUC code
+     */
     protected static function set_backup_ids_cached($restoreid, $itemname, $itemid, $extrarecord) {
         global $DB;
 
         $key = "$itemid $itemname $restoreid";
 
-        if (!isset(self::$BACKUP_IDS_EXIST[$key])) {
-            $record = array(
-                'backupid' => $restoreid,
-                'itemname' => $itemname,
-                'itemid'   => $itemid,
-                'newitemid' => 0,
-                'parentitemid' => null,
-                'info' => null
-            );
-            $record = array_merge($record, $extrarecord);
-            $record['id'] = $DB->insert_record_raw('backup_ids_temp', $record);
-            self::$BACKUP_IDS_EXIST[$key] = $record['id'];
-            if (count(self::$BACKUP_IDS_CACHE) < 2048) {
-                // cache new records if we haven't got many yet
-                self::$BACKUP_IDS_CACHE[$key] = (object) $record;
+        $record = array(
+            'backupid' => $restoreid,
+            'itemname' => $itemname,
+            'itemid'   => $itemid,
+        );
+
+        // If record is not cached then add one.
+        if (!isset(self::$backupidsexist[$key])) {
+            // If we have this record in db, then just update this.
+            if ($existingrecord = $DB->get_record('backup_ids_temp', $record)) {
+                self::$backupidsexist[$key] = $existingrecord->id;
+                self::$backupidsexistsize--;
+                self::update_backup_cached_record($record, $extrarecord, $key, $existingrecord);
+            } else {
+                // Add new record to cache and db.
+                $recorddefault = array (
+                    'newitemid' => 0,
+                    'parentitemid' => null,
+                    'info' => null);
+                $record = array_merge($record, $recorddefault, $extrarecord);
+                $record['id'] = $DB->insert_record('backup_ids_temp', $record);
+                self::$backupidsexist[$key] = $record['id'];
+                self::$backupidsexistsize--;
+                if (self::$backupidscachesize > 0) {
+                    // Cache new records if we haven't got many yet.
+                    self::$backupidscache[$key] = (object) $record;
+                    self::$backupidscachesize--;
+                }
             }
         } else {
-            if (!empty($extrarecord)) {
-                $extrarecord['id'] = self::$BACKUP_IDS_EXIST[$key];
-                $DB->update_record('backup_ids_temp', $extrarecord);
-                if (isset(self::$BACKUP_IDS_CACHE[$key])) {
-                    $record = array_merge((array)self::$BACKUP_IDS_CACHE[$key], $extrarecord);
-                    self::$BACKUP_IDS_CACHE[$key] = (object) $record;
+            self::update_backup_cached_record($record, $extrarecord, $key);
+        }
+    }
+
+    /**
+     * Updates existing backup record
+     *
+     * @param array $record record which needs to be updated
+     * @param array $extrarecord extra record which needs to be updated
+     * @param string $key unique key which is used to identify cached record
+     * @param stdClass $existingrecord (optional) existing record
+     */
+    protected static function update_backup_cached_record($record, $extrarecord, $key, $existingrecord = null) {
+        global $DB;
+        // Update only if extrarecord is not empty.
+        if (!empty($extrarecord)) {
+            $extrarecord['id'] = self::$backupidsexist[$key];
+            $DB->update_record('backup_ids_temp', $extrarecord);
+            // Update existing cache or add new record to cache.
+            if (isset(self::$backupidscache[$key])) {
+                $record = array_merge((array)self::$backupidscache[$key], $extrarecord);
+                self::$backupidscache[$key] = (object) $record;
+            } else if (self::$backupidscachesize > 0) {
+                if ($existingrecord) {
+                    self::$backupidscache[$key] = $existingrecord;
+                } else {
+                    // Retrive record from database and cache updated records.
+                    self::$backupidscache[$key] = $DB->get_record('backup_ids_temp', $record);
                 }
+                $record = array_merge((array)self::$backupidscache[$key], $extrarecord);
+                self::$backupidscache[$key] = (object) $record;
+                self::$backupidscachesize--;
             }
         }
     }

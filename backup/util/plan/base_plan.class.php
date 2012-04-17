@@ -62,7 +62,7 @@ abstract class base_plan implements checksumable, executable {
         foreach ($task->get_settings() as $key => $setting) {
             if (!in_array($setting, $this->settings)) {
                 $name = $setting->get_name();
-                if(!isset($this->settings[$name])) {
+                if (!isset($this->settings[$name])) {
                     $this->settings[$name] = $setting;
                 } else {
                     throw new base_plan_exception('multiple_settings_by_name_found', $name);
@@ -89,17 +89,17 @@ abstract class base_plan implements checksumable, executable {
 
     /**
      * return one setting by name, useful to request root/course settings
-     * that are, by definition, unique by name. Throws exception if multiple
-     * are found
+     * that are, by definition, unique by name.
      *
-     * TODO: Change this to string indexed array for quicker lookup. Not critical
+     * @param string $name name of the setting
+     * @throws base_plan_exception if setting name is not found.
      */
     public function get_setting($name) {
         $result = null;
-        if(isset($this->settings[$name])) {
-           $result = $this->settings[$name];
+        if (isset($this->settings[$name])) {
+            $result = $this->settings[$name];
         } else {
-           throw new base_plan_exception('setting_by_name_not_found', $name);
+            throw new base_plan_exception('setting_by_name_not_found', $name);
         }
         return $result;
     }
