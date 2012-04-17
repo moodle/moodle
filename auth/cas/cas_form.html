@@ -1,11 +1,11 @@
 <div class="loginbox clearfix">
 <div class="loginpanel">
 <div>
-<a href="<?php echo $CFG->wwwroot.'/login/index.php?authCAS=CAS';?>"><?php print_string('accesCAS', 'auth_cas');?></a>
+<a href="<?php echo get_login_url() . '?authCAS=CAS';?>"><?php print_string('accesCAS', 'auth_cas');?></a>
 </div>
 <br/>
 <div>
-<a href="<?php echo $CFG->wwwroot.'/login/index.php?authCAS=NOCAS';?>"><?php print_string('accesNOCAS', 'auth_cas');?></a>
+<a href="<?php echo get_login_url() . '?authCAS=NOCAS';?>"><?php print_string('accesNOCAS', 'auth_cas');?></a>
 </div>
 </div>
 </div>
