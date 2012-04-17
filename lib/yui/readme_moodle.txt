@@ -4,7 +4,7 @@ Description of import of various YAHOO libraries into Moodle:
 * full copy of the "build" directory without any changes
 * exact version specified in lib/setup.php
 
-2/ YUI3 version 3.4.1:
+2/ YUI3 version 3.5.0:
 * full copy of the "build" directory without any changes
 * exact version specified in lib/setup.php
 
