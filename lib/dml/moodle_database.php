@@ -2204,9 +2204,10 @@ abstract class moodle_database {
     /**
      * Obtain session lock
      * @param int $rowid id of the row with session record
+     * @param int $timeout max allowed time to wait for the lock in seconds
      * @return bool success
      */
-    public function get_session_lock($rowid) {
+    public function get_session_lock($rowid, $timeout) {
         $this->used_for_db_sessions = true;
     }
 
