@@ -3211,9 +3211,10 @@ class filetype_parser {
  *
  * @param string $relativepath
  * @param bool $forcedownload
+ * @param null|string $preview the preview mode, defaults to serving the original file
  * @todo MDL-31088 file serving improments
  */
-function file_pluginfile($relativepath, $forcedownload) {
+function file_pluginfile($relativepath, $forcedownload, $preview = null) {
     global $DB, $CFG, $USER;
     // relative path must start with '/'
     if (!$relativepath) {
