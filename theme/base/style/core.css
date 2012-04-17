@@ -805,6 +805,7 @@ sup {vertical-align: super;}
 #page-admin-setting-enrolsettingsflatfile.dir-rtl .informationbox {direction: ltr;text-align: left;}
 
 #page-admin-grade-edit-scale-edit.dir-rtl .error input#id_name {margin-right: 170px;}
+<<<<<<< HEAD
 
 /**
  * Chooser Dialogue
@@ -961,3 +962,4 @@ sup {vertical-align: super;}
     -moz-box-shadow: 0px 0px 10px 0px #CCCCCC;
 }
 
+.initialbar a {padding-right: 2px;}

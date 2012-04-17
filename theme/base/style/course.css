@@ -41,7 +41,8 @@
 .path-course-view li.activity form.togglecompletion .ajaxworking {position:absolute;top:0; left:20px;width: 20px; height: 20px;background: url([[pix:i/ajaxloader]]) no-repeat;}
 .dir-rtl.path-course-view li.activity {margin-right:0px;margin-left:20px;}
 .dir-rtl.path-course-view li.activity form.togglecompletion,
-.dir-rtl.path-course-view li.activity span.autocompletion {right:auto;left:-20px;}
+.dir-rtl.path-course-view li.activity span.autocompletion {right:-20px;left:auto;padding:0px;}
+.dir-rtl.path-course-view .completionprogress {float: none;}
 
 .section img.movetarget {height:16px;width:80px;}
 
@@ -164,3 +165,5 @@ input.titleeditor {
 .dndupload-progress-outer {width:70px;border:solid black 1px;height:10px;display:inline-block;margin:0;padding:0;overflow:hidden;position:relative;}
 .dndupload-progress-inner {width:0%;height:100%;background-color:green;display:inline-block;margin:0;padding:0;float:left;}
 .dndupload-hidden {display:none;}
+
+.dir-rtl.path-course-view li.activity form.togglecompletion, .dir-rtl.path-course-view li.activity span.autocompletion
