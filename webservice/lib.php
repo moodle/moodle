@@ -508,6 +508,10 @@ class webservice {
     /**
      * Get user capabilities (with context)
      * Only useful for documentation purpose
+     * WARNING: do not use this "broken" function. It was created in the goal to display some capabilities
+     * required by users. In theory we should not need to display this kind of information
+     * as the front end does not display it itself. In pratice,
+     * admins would like the info, for more info you can follow: MDL-29962
      *
      * @param int $userid user id
      * @return array
@@ -527,6 +531,10 @@ class webservice {
 
     /**
      * Get missing user capabilities for a given service
+     * WARNING: do not use this "broken" function. It was created in the goal to display some capabilities
+     * required by users. In theory we should not need to display this kind of information
+     * as the front end does not display it itself. In pratice,
+     * admins would like the info, for more info you can follow: MDL-29962
      *
      * @param array $users users
      * @param int $serviceid service id
