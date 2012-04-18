@@ -1056,6 +1056,11 @@ class global_navigation extends navigation_node {
         $this->rootnodes['courses']   = $this->add(get_string('courses'), new moodle_url('/course/index.php'), self::TYPE_ROOTNODE, null, 'courses');
         $this->rootnodes['users']     = $this->add(get_string('users'), null, self::TYPE_ROOTNODE, null, 'users');
 
+        // We always load the frontpage course to ensure it is available without
+        // JavaScript enabled.
+        $this->add_front_page_course_essentials($this->rootnodes['site'], $SITE);
+        $this->load_course_sections($SITE, $this->rootnodes['site']);
+
         // Fetch all of the users courses.
         $mycourses = enrol_get_my_courses();
         // We need to show categories if we can show categories and the user isn't enrolled in any courses or we're not showing all courses
@@ -1063,7 +1068,7 @@ class global_navigation extends navigation_node {
         // $issite gets set to true if the current pages course is the sites frontpage course
         $issite = ($this->page->course->id == SITEID);
         // $ismycourse gets set to true if the user is enrolled in the current pages course.
-        $ismycourse = (array_key_exists($this->page->course->id, $mycourses));
+        $ismycourse = !$issite && (array_key_exists($this->page->course->id, $mycourses));
 
         // Check if any courses were returned.
         if (count($mycourses) > 0) {
@@ -1176,26 +1181,20 @@ class global_navigation extends navigation_node {
             $this->load_all_courses();
         }
 
-        // We always load the frontpage course to ensure it is available without
-        // JavaScript enabled.
-        $frontpagecourse = $this->load_course($SITE);
-        $this->add_front_page_course_essentials($frontpagecourse, $SITE);
-        $this->load_course_sections($SITE, $frontpagecourse);
-
         $canviewcourseprofile = true;
 
         // Next load context specific content into the navigation
         switch ($this->page->context->contextlevel) {
             case CONTEXT_SYSTEM :
                 // This has already been loaded we just need to map the variable
-                if ($this->show_categories()) {
-                    $this->load_all_categories(self::LOAD_ROOT_CATEGORIES, $showcategories);
+                if ($showcategories) {
+                    $this->load_all_categories(self::LOAD_ROOT_CATEGORIES, true);
                 }
                 break;
             case CONTEXT_COURSECAT :
                 // This has already been loaded we just need to map the variable
-                if ($this->show_categories()) {
-                    $this->load_all_categories($this->page->context->instanceid, $showcategories);
+                if ($showcategories) {
+                    $this->load_all_categories($this->page->context->instanceid, true);
                 }
                 break;
             case CONTEXT_BLOCK :
@@ -1203,14 +1202,16 @@ class global_navigation extends navigation_node {
                 if ($issite) {
                     // If it is the front page course, or a block on it then
                     // all we need to do is load the root categories if required
-                    if ($this->show_categories()) {
-                        $this->load_all_categories(self::LOAD_ROOT_CATEGORIES, $showcategories);
+                    if ($showcategories) {
+                        $this->load_all_categories(self::LOAD_ROOT_CATEGORIES, true);
                     }
                     break;
                 }
                 // Load the course associated with the page into the navigation
                 $course = $this->page->course;
                 if ($this->show_categories() && !$ismycourse) {
+                    // The user isn't enrolled in the course and we need to show categories in which case we need
+                    // to load the category relating to the course and depending up $showcategories all of the root categories as well.
                     $this->load_all_categories($course->category, $showcategories);
                 }
                 $coursenode = $this->load_course($course);
@@ -1383,6 +1384,7 @@ class global_navigation extends navigation_node {
                 break;
         }
 
+        // Look for all categories which have been loaded
         if ($showcategories) {
             $categories = $this->find_all_of_type(self::TYPE_CATEGORY);
             if (count($categories) !== 0) {
@@ -1842,10 +1844,13 @@ class global_navigation extends navigation_node {
      */
     protected function load_course(stdClass $course) {
         if ($course->id == SITEID) {
+            // This is always loaded during initialisation
             return $this->rootnodes['site'];
         } else if (array_key_exists($course->id, $this->addedcourses)) {
+            // The course has already been loaded so return a reference
             return $this->addedcourses[$course->id];
         } else {
+            // Add the course
             return $this->add_course($course);
         }
     }
@@ -2502,7 +2507,7 @@ class global_navigation extends navigation_node {
             if (!empty($course->category) && $this->show_categories()) {
                 if ($this->show_categories() && !$this->is_category_fully_loaded($course->category)) {
                     // We need to load the category structure for this course
-                    $this->load_all_categories($course->category);
+                    $this->load_all_categories($course->category, false);
                 }
                 if (array_key_exists($course->category, $this->addedcategories)) {
                     $parent = $this->addedcategories[$course->category];
