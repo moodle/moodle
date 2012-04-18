@@ -46,6 +46,24 @@
  */
 class backup_anonymizer_helper {
 
+    /**
+     * Determine if the given user is an 'anonymous' user, based on their username, firstname, lastname
+     * and email address.
+     * @param stdClass $user the user record to test
+     * @return bool true if this is an 'anonymous' user
+     */
+    public static function is_anonymous_user($user) {
+        if (preg_match('/^anon\d*$/', $user->username)) {
+            $match = preg_match('/^anonfirstname\d*$/', $user->firstname);
+            $match = $match && preg_match('/^anonlastname\d*$/', $user->lastname);
+            $match = $match && preg_match('/^anon\d*@doesntexist\.com$/', $user->email);
+            if ($match) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function process_user_auth($value) {
         return 'manual'; // Set them to manual always
     }
