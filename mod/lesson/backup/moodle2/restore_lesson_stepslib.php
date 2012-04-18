@@ -103,6 +103,10 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->timecreated = $this->apply_date_offset($data->timecreated);
 
+        // Set a dummy mapping to get the old ID so that it can be used by get_old_parentid when
+        // processing attempts. It will be corrected in after_execute
+        $this->set_mapping('lesson_answer', $data->id, 0);
+
         // Answers need to be processed in order, so we store them in an
         // instance variable and insert them in the after_execute stage
         $this->answers[$data->id] = $data;
@@ -115,7 +119,9 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $oldid = $data->id;
         $data->lessonid = $this->get_new_parentid('lesson');
         $data->pageid = $this->get_new_parentid('lesson_page');
-        $data->answerid = $this->get_new_parentid('lesson_answer');
+
+        // We use the old answerid here as the answer isn't created until after_execute
+        $data->answerid = $this->get_old_parentid('lesson_answer');
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->timeseen = $this->apply_date_offset($data->timeseen);
 
@@ -181,6 +187,12 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         foreach ($this->answers as $answer) {
             $newitemid = $DB->insert_record('lesson_answers', $answer);
             $this->set_mapping('lesson_answer', $answer->id, $newitemid);
+
+            // Update the lesson attempts to use the newly created answerid
+            $DB->set_field('lesson_attempts', 'answerid', $newitemid, array(
+                    'lessonid' => $answer->lessonid,
+                    'pageid' => $answer->pageid,
+                    'answerid' => $answer->id));
         }
 
         // Add lesson mediafile, no need to match by itemname (just internally handled context)
