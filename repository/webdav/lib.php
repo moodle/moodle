@@ -69,7 +69,8 @@ class repository_webdav extends repository {
         if (!$this->dav->open()) {
             return false;
         }
-        $this->dav->get($url, $buffer);
+        $webdavpath = rtrim('/'.ltrim($this->options['webdav_path'], '/ '), '/ '); // without slash in the end
+        $this->dav->get($webdavpath. $url, $buffer);
         $fp = fopen($path, 'wb');
         fwrite($fp, $buffer);
         return array('path'=>$path);
@@ -84,72 +85,61 @@ class repository_webdav extends repository {
         $ret['dynload'] = true;
         $ret['nosearch'] = true;
         $ret['nologin'] = true;
-        $ret['path'] = array(array('name'=>get_string('webdav', 'repository_webdav'), 'path'=>0));
+        $ret['path'] = array(array('name'=>get_string('webdav', 'repository_webdav'), 'path'=>''));
         $ret['list'] = array();
         if (!$this->dav->open()) {
             return $ret;
         }
-        if (empty($path)) {
-            if ($this->options['webdav_path'] == '/') {
-                $path = '/';
-            } else {
-                $path = '/' . trim($this->options['webdav_path'], './@#$ ') . '/';
-            }
-            $dir = $this->dav->ls($path);
+        $webdavpath = rtrim('/'.ltrim($this->options['webdav_path'], '/ '), '/ '); // without slash in the end
+        if (empty($path) || $path =='/') {
+            $path = '/';
         } else {
-            $path = urldecode($path);
-            if (empty($this->webdav_type)) {
-                $partern = '#http://'.$this->webdav_host.'/#';
-            } else {
-                $partern = '#https://'.$this->webdav_host.'/#';
+            $chunks = preg_split('|/|', trim($path, '/'));
+            for ($i = 0; $i < count($chunks); $i++) {
+                $ret['path'][] = array(
+                    'name' => urldecode($chunks[$i]),
+                    'path' => '/'. join('/', array_slice($chunks, 0, $i+1)). '/'
+                );
             }
-            $path = '/'.preg_replace($partern, '', $path);
-            $dir = $this->dav->ls($path);
         }
+        $dir = $this->dav->ls($webdavpath. urldecode($path));
         if (!is_array($dir)) {
             return $ret;
         }
+        $folders = array();
+        $files = array();
         foreach ($dir as $v) {
-            if (!empty($v['creationdate'])) {
-                $ts = $this->dav->iso8601totime($v['creationdate']);
-                $filedate = userdate($ts);
+            if (!empty($v['lastmodified'])) {
+                $v['lastmodified'] = strtotime($v['lastmodified']);
             } else {
-                $filedate = '';
+                $v['lastmodified'] = null;
             }
+            $v['href'] = substr($v['href'], strlen(urlencode($webdavpath)));
+            $title = urldecode(substr($v['href'], strlen($path)));
             if (!empty($v['resourcetype']) && $v['resourcetype'] == 'collection') {
                 // a folder
-                if (ltrim($path, '/') != ltrim($v['href'], '/')) {
-                    $matches = array();
-                    preg_match('#(\w+)$#i', $v['href'], $matches);
-                    if (!empty($matches[1])) {
-                        $title = urldecode($matches[1]);
-                    } else {
-                        $title = urldecode($v['href']);
-                    }
-                    $ret['list'][] = array(
-                        'title'=>urldecode(basename($title)),
+                if ($path != $v['href']) {
+                    $folders[] = array(
+                        'title'=>$title,
                         'thumbnail'=>$OUTPUT->pix_url('f/folder-32')->out(false),
                         'children'=>array(),
-                        'date'=>$filedate,
-                        'size'=>0,
+                        'datemodified'=>$v['lastmodified'],
                         'path'=>$v['href']
                     );
                 }
             }else{
                 // a file
-                $path = rtrim($path,'/');
-                $title = urldecode(substr($v['href'], strpos($v['href'], $path)+strlen($path)));
-                $title = basename($title);
                 $size = !empty($v['getcontentlength'])? $v['getcontentlength']:'';
-                $ret['list'][] = array(
+                $files[] = array(
                     'title'=>$title,
                     'thumbnail' => $OUTPUT->pix_url(file_extension_icon($title, 32))->out(false),
                     'size'=>$size,
-                    'date'=>$filedate,
+                    'datemodified'=>$v['lastmodified'],
                     'source'=>$v['href']
                 );
             }
         }
+        $ret['list'] = array_merge($folders, $files);
         return $ret;
     }
     public static function get_instance_option_names() {
