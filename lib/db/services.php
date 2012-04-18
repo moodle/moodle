@@ -422,6 +422,15 @@ $functions = array(
         'capabilities'=> 'moodle/course:update,moodle/course:viewhiddencourses',
     ),
 
+    'core_course_delete_courses' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'delete_courses',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Deletes all specified courses',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/course:delete',
+    ),
+
     // === message related functions ===
 
     'moodle_message_send_instantmessages' => array(

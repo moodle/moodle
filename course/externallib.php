@@ -593,6 +593,59 @@ class core_course_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function delete_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'course ID')),
+            )
+        );
+    }
+
+    /**
+     * Delete courses
+     * @param array $courseids A list of course ids
+     */
+    public static function delete_courses($courseids) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot."/course/lib.php");
+
+        // Parameter validation.
+        $params = self::validate_parameters(self::delete_courses_parameters(), array('courseids'=>$courseids));
+
+        $transaction = $DB->start_delegated_transaction();
+
+        foreach ($params['courseids'] as $courseid) {
+            $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+
+            // Check if the context is valid.
+            $coursecontext = context_course::instance($course->id);
+            self::validate_context($coursecontext);
+
+            // Check if the current user has enought permissions.
+            if (!can_delete_course($courseid)) {
+                throw new moodle_exception('cannotdeletecategorycourse', 'error', '', format_string($course->fullname)." (id: $courseid)");
+            }
+
+            delete_course($course, false);
+        }
+
+        $transaction->allow_commit();
+
+        return null;
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function delete_courses_returns() {
+        return null;
+    }
+
 }
 
 /**
