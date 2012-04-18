@@ -198,13 +198,13 @@ class mod_quiz_admin_setting_browsersecurity extends admin_setting_configselect_
 
 
 /**
-* Admin settings class for the quiz overdue attempt handling method.
-*
-* Just so we can lazy-load the choices.
-*
-* @copyright  2011 The Open University
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Admin settings class for the quiz overdue attempt handling method.
+ *
+ * Just so we can lazy-load the choices.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mod_quiz_admin_setting_overduehandling extends admin_setting_configselect_with_advanced {
     public function load_choices() {
         global $CFG;

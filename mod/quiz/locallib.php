@@ -48,6 +48,14 @@ require_once($CFG->libdir . '/filelib.php');
  */
 define('QUIZ_SHOW_TIME_BEFORE_DEADLINE', '3600');
 
+/**
+ * @var int If there are fewer than this many seconds left when the student submits
+ * a page of the quiz, then do not take them to the next page of the quiz. Instead
+ * close the quiz immediately.
+ */
+define('QUIZ_MIN_TIME_TO_CONTINUE', '2');
+
+
 /// Functions related to attempts /////////////////////////////////////////
 
 /**

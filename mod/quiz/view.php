@@ -89,7 +89,16 @@ $lastfinishedattempt = end($attempts);
 $unfinished = false;
 if ($unfinishedattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
     $attempts[] = $unfinishedattempt;
-    $unfinished = true;
+
+    // If the attempt is now overdue, deal with that.
+    $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time());
+
+    $unfinished = $unfinishedattempt->state == quiz_attempt::IN_PROGRESS ||
+            $unfinishedattempt->state == quiz_attempt::OVERDUE;
+    if (!$unfinished) {
+        $lastfinishedattempt = $unfinishedattempt;
+    }
+    $unfinishedattempt = null; // To make it clear we do not use this again.
 }
 $numattempts = count($attempts);
 

@@ -463,18 +463,36 @@ function quiz_cron() {
  */
 function quiz_get_user_attempts($quizid, $userid, $status = 'finished', $includepreviews = false) {
     global $DB;
-    $status_condition = array(
-        'all' => '',
-        'finished' => ' AND timefinish > 0',
-        'unfinished' => ' AND timefinish = 0'
-    );
+
+    $params = array();
+    switch ($status) {
+        case 'all':
+            $statuscondition = '';
+            break;
+
+        case 'finished':
+            $statuscondition = ' AND state IN (:state1, :state2)';
+            $params['state1'] = quiz_attempt::FINISHED;
+            $params['state2'] = quiz_attempt::ABANDONED;
+            break;
+
+        case 'unfinished':
+            $statuscondition = ' AND state IN (:state1, :state2)';
+            $params['state1'] = quiz_attempt::IN_PROGRESS;
+            $params['state2'] = quiz_attempt::OVERDUE;
+            break;
+    }
+
     $previewclause = '';
     if (!$includepreviews) {
         $previewclause = ' AND preview = 0';
     }
+
+    $params['quizid'] = $quizid;
+    $params['userid'] = $userid;
     return $DB->get_records_select('quiz_attempts',
-            'quiz = ? AND userid = ?' . $previewclause . $status_condition[$status],
-            array($quizid, $userid), 'attempt ASC');
+            'quiz = :quizid AND userid = :userid' . $previewclause . $statuscondition,
+            $params, 'attempt ASC');
 }
 
 /**

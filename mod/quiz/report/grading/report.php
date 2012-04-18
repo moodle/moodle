@@ -489,7 +489,7 @@ class quiz_grading_report extends quiz_default_report {
             $attempt = $attempts[$qubaid];
             $quba = question_engine::load_questions_usage_by_activity($qubaid);
             $attemptobj = new quiz_attempt($attempt, $this->quiz, $this->cm, $this->course);
-            $attemptobj->process_all_actions(time());
+            $attemptobj->process_submitted_actions(time());
         }
         $transaction->allow_commit();
     }

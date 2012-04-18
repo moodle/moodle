@@ -20,10 +20,9 @@
  * There are classes for loading all the information about a quiz and attempts,
  * and for displaying the navigation panel.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2008 onwards Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2008 onwards Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -34,9 +33,9 @@ defined('MOODLE_INTERNAL') || die();
  * Class for quiz exceptions. Just saves a couple of arguments on the
  * constructor for a moodle_exception.
  *
- * @copyright  2008 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 2.0
+ * @copyright 2008 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
  */
 class moodle_quiz_exception extends moodle_exception {
     public function __construct($quizobj, $errorcode, $a = null, $link = '', $debuginfo = null) {
@@ -116,6 +115,15 @@ class quiz {
         $quiz = quiz_update_effective_access($quiz, $userid);
 
         return new quiz($quiz, $cm, $course);
+    }
+
+    /**
+     * Create a {@link quiz_attempt} for an attempt at this quiz.
+     * @param object $attemptdata row from the quiz_attempts table.
+     * @return quiz_attempt the new quiz_attempt object.
+     */
+    public function create_attempt_object($attemptdata) {
+        return new quiz_attempt($attemptdata, $this->quiz, $this->cm, $this->course);
     }
 
     // Functions for loading more data =====================================================
@@ -322,6 +330,14 @@ class quiz {
      */
     public function review_url($attemptid) {
         return new moodle_url('/mod/quiz/review.php', array('attempt' => $attemptid));
+    }
+
+    /**
+     * @param int $attemptid the id of an attempt.
+     * @return string the URL of the review of that attempt.
+     */
+    public function summary_url($attemptid) {
+        return new moodle_url('/mod/quiz/summary.php', array('attempt' => $attemptid));
     }
 
     // Bits of content =====================================================================
@@ -659,10 +675,11 @@ class quiz_attempt {
 
     /**
      * @return bool whether this attempt has been finished (true) or is still
-     *     in progress (false).
+     *     in progress (false). Be warned that this is not just state == self::FINISHED,
+     *     it also includes self::ABANDONED.
      */
     public function is_finished() {
-        return $this->attempt->state == self::FINISHED;
+        return $this->attempt->state == self::FINISHED || $this->attempt->state == self::ABANDONED;
     }
 
     /** @return bool whether this attempt is a preview attempt. */
@@ -1235,25 +1252,79 @@ class quiz_attempt {
     // Methods for processing ==================================================
 
     /**
+     * Check this attempt, to see if there are any state transitions that should
+     * happen automatically.
+     * @param int $timestamp the timestamp that should be stored as the modifed
+     */
+    public function handle_if_time_expired($timestamp) {
+        global $DB;
+
+        if ($this->get_time_left($timestamp) > 0) {
+            return; // Time has not yet expired.
+        }
+
+        // If the attempt is already overdue, look to see if it should be abandoned ...
+        if ($this->attempt->state == quiz_attempt::OVERDUE) {
+            $timeover = -$this->get_access_manager($timestamp)->get_time_left($this->attempt, $timestamp);
+            if ($timeover > $this->quizobj->get_quiz()->graceperiod) {
+                $this->process_abandon($timestamp);
+            }
+
+            return; // ... and we are done.
+        }
+
+        if ($this->attempt->state != quiz_attempt::IN_PROGRESS) {
+            return; // Attempt is already in a final state.
+        }
+
+        // Otherwise, we were in quiz_attempt::IN_PROGRESS, and time has now expired.
+        // Transition to the appropriate state.
+        switch ($this->quizobj->get_quiz()->overduehandling) {
+            case 'autosubmit':
+                $this->process_finish($timestamp, false);
+                return;
+
+            case 'graceperiod':
+                $this->process_going_overdue($timestamp);
+                return;
+
+            case 'autoabandon':
+                $this->process_abandon($timestamp);
+                return;
+        }
+    }
+
+    /**
      * Process all the actions that were submitted as part of the current request.
      *
      * @param int $timestamp the timestamp that should be stored as the modifed
      * time in the database for these actions. If null, will use the current time.
      */
-    public function process_all_actions($timestamp) {
+    public function process_submitted_actions($timestamp, $becomingoverdue = false) {
         global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
         $this->quba->process_all_actions($timestamp);
         question_engine::save_questions_usage_by_activity($this->quba);
 
         $this->attempt->timemodified = $timestamp;
-        if ($this->attempt->timefinish) {
+        if ($this->attempt->state == self::FINISHED) {
             $this->attempt->sumgrades = $this->quba->get_total_mark();
+        }
+        if ($becomingoverdue) {
+            // We do not trigger a full becoming overdue transition, because we
+            // don't want an email if the student is actively doing the quiz when
+            // time expires - I think.
+            $this->attempt->state == self::OVERDUE;
         }
         $DB->update_record('quiz_attempts', $this->attempt);
 
         if (!$this->is_preview() && $this->attempt->timefinish) {
             quiz_save_best_grade($this->get_quiz(), $this->get_userid());
         }
+
+        $transaction->allow_commit();
     }
 
     /**
@@ -1261,13 +1332,20 @@ class quiz_attempt {
      * flagged state was changed in the request.
      */
     public function save_question_flags() {
+        $transaction = $DB->start_delegated_transaction();
         $this->quba->update_question_flags();
         question_engine::save_questions_usage_by_activity($this->quba);
+        $transaction->allow_commit();
     }
 
-    public function finish_attempt($timestamp) {
+    public function process_finish($timestamp, $processsubmitted) {
         global $DB, $USER;
-        $this->quba->process_all_actions($timestamp);
+
+        $transaction = $DB->start_delegated_transaction();
+
+        if ($processsubmitted) {
+            $this->quba->process_all_actions($timestamp);
+        }
         $this->quba->finish_all_questions($timestamp);
 
         question_engine::save_questions_usage_by_activity($this->quba);
@@ -1295,6 +1373,26 @@ class quiz_attempt {
             // Tell any access rules that care that the attempt is over.
             $this->get_access_manager($timestamp)->current_attempt_finished();
         }
+
+        $transaction->allow_commit();
+    }
+
+    /**
+     * Mark this attempt as now overdue.
+     * @param int $timestamp the time to deem as now.
+     */
+    public function process_going_overdue($timestamp) {
+        // TODO update DB.
+        // TODO raise event.
+    }
+
+    /**
+     * Mark this attempt as abandoned.
+     * @param int $timestamp the time to deem as now.
+     */
+    public function process_abandon($timestamp) {
+        // TODO update DB.
+        // TODO raise event.
     }
 
     /**
