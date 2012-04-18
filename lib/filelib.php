@@ -3946,10 +3946,10 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
         $filefunctionold = $modname.'_pluginfile';
         if (function_exists($filefunction)) {
             // if the function exists, it must send the file and terminate. Whatever it returns leads to "not found"
-            $filefunction($course, $cm, $context, $filearea, $args, $forcedownload);
+            $filefunction($course, $cm, $context, $filearea, $args, $forcedownload, array('preview' => $preview));
         } else if (function_exists($filefunctionold)) {
             // if the function exists, it must send the file and terminate. Whatever it returns leads to "not found"
-            $filefunctionold($course, $cm, $context, $filearea, $args, $forcedownload);
+            $filefunctionold($course, $cm, $context, $filearea, $args, $forcedownload, array('preview' => $preview));
         }
 
         send_file_not_found();

@@ -876,9 +876,10 @@ function lesson_get_import_export_formats($type) {
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -917,7 +918,7 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
     }
 
     // finally send the file
-    send_stored_file($file, 0, 0, $forcedownload); // download MUST be forced - security!
+    send_stored_file($file, 0, 0, $forcedownload, $options); // download MUST be forced - security!
 }
 
 /**
