@@ -61,12 +61,6 @@ abstract class quiz_attempts_report_table extends table_sql {
     /** @var object mod_quiz_attempts_report_options the options affecting this report. */
     protected $options;
 
-    /** @var bool whether to only display the first/best/last attempt for each student. */
-    protected $qmfilter;
-
-    /** @var int which attempts/students to include in the report.. */
-    protected $attemptsmode;
-
     /** @var object the ids of the students in the currently selected group, if applicable. */
     protected $groupstudents;
 
@@ -98,8 +92,6 @@ abstract class quiz_attempts_report_table extends table_sql {
         $this->quiz = $quiz;
         $this->context = $context;
         $this->qmsubselect = $qmsubselect;
-        $this->qmfilter = $options->onlygraded;
-        $this->attemptsmode = $options->attempts;
         $this->groupstudents = $groupstudents;
         $this->students = $students;
         $this->questions = $questions;
@@ -392,35 +384,43 @@ abstract class quiz_attempts_report_table extends table_sql {
                                     quiza.userid = u.id AND quiza.quiz = :quizid";
         $params = array('quizid' => $this->quiz->id);
 
-        if ($this->qmsubselect && $this->qmfilter) {
+        if ($this->qmsubselect && $this->options->onlygraded) {
             $from .= " AND $this->qmsubselect";
         }
-        switch ($this->attemptsmode) {
-            case quiz_attempts_report::ALL_ATTEMPTS:
+
+        switch ($this->options->attempts) {
+            case quiz_attempts_report::ALL_WITH:
                 // Show all attempts, including students who are no longer in the course.
                 $where = 'quiza.id IS NOT NULL AND quiza.preview = 0';
                 break;
-            case quiz_attempts_report::STUDENTS_WITH:
+            case quiz_attempts_report::ENROLLED_WITH:
                 // Show only students with attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND quiza.preview = 0 AND quiza.id IS NOT NULL";
                 break;
-            case quiz_attempts_report::STUDENTS_WITH_NO:
+            case quiz_attempts_report::ENROLLED_WITHOUT:
                 // Show only students without attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND quiza.id IS NULL";
                 break;
-            case quiz_attempts_report::ALL_STUDENTS:
+            case quiz_attempts_report::ENROLLED_ALL:
                 // Show all students with or without attempts.
                 list($usql, $uparams) = $DB->get_in_or_equal(
                         $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND (quiza.preview = 0 OR quiza.preview IS NULL)";
                 break;
+        }
+
+        if ($this->options->states) {
+            list($statesql, $stateparams) = $DB->get_in_or_equal($this->options->states,
+                    SQL_PARAMS_NAMED, 'state');
+            $params += $stateparams;
+            $where .= " AND (quiza.state $statesql OR quiza.state IS NULL)";
         }
 
         return array($fields, $from, $where, $params);

@@ -55,7 +55,7 @@ class quiz_overview_report extends quiz_attempts_report {
 
         $this->form->set_data($options->get_initial_form_data());
 
-        if ($options->attempts == self::ALL_ATTEMPTS) {
+        if ($options->attempts == self::ALL_WITH) {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
             // are accessible, is not a security porblem.
@@ -116,7 +116,7 @@ class quiz_overview_report extends quiz_attempts_report {
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
-        if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_ATTEMPTS)) {
+        if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_WITH)) {
             // Construct the SQL.
             $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
                     ' AS uniqueid, ';
