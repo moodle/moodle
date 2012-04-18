@@ -1148,14 +1148,16 @@ abstract class restore_dbops {
     *
     *  If restoring users from same site backup:
     *      1A - Normal check: If match by id and username and mnethost  => ok, return target user
-    *      1B - Handle users deleted in DB and "alive" in backup file:
+    *      1B - If restoring an 'anonymous' user (created via the 'Anonymize user information' option) try to find a
+    *           match by username only => ok, return target user MDL-31484
+    *      1C - Handle users deleted in DB and "alive" in backup file:
     *           If match by id and mnethost and user is deleted in DB and
     *           (match by username LIKE 'backup_email.%' or by non empty email = md5(username)) => ok, return target user
-    *      1C - Handle users deleted in backup file and "alive" in DB:
+    *      1D - Handle users deleted in backup file and "alive" in DB:
     *           If match by id and mnethost and user is deleted in backup file
     *           and match by email = email_without_time(backup_email) => ok, return target user
-    *      1D - Conflict: If match by username and mnethost and doesn't match by id => conflict, return false
-    *      1E - None of the above, return true => User needs to be created
+    *      1E - Conflict: If match by username and mnethost and doesn't match by id => conflict, return false
+    *      1F - None of the above, return true => User needs to be created
     *
     *  if restoring from another site backup (cannot match by id here, replace it by email/firstaccess combination):
     *      2A - Normal check: If match by username and mnethost and (email or non-zero firstaccess) => ok, return target user
@@ -1187,7 +1189,16 @@ abstract class restore_dbops {
                 return $rec; // Matching user found, return it
             }
 
-            // 1B - Handle users deleted in DB and "alive" in backup file
+            // 1B - If restoring an 'anonymous' user (created via the 'Anonymize user information' option) try to find a
+            // match by username only => ok, return target user MDL-31484
+            // This avoids username / id mis-match problems when restoring subsequent anonymized backups.
+            if (backup_anonymizer_helper::is_anonymous_user($user)) {
+                if ($rec = $DB->get_record('user', array('username' => $user->username))) {
+                    return $rec; // Matching anonymous user found - return it
+                }
+            }
+
+            // 1C - Handle users deleted in DB and "alive" in backup file
             // Note: for DB deleted users email is stored in username field, hence we
             //       are looking there for emails. See delete_user()
             // Note: for DB deleted users md5(username) is stored *sometimes* in the email field,
@@ -1210,7 +1221,7 @@ abstract class restore_dbops {
                 return $rec; // Matching user, deleted in DB found, return it
             }
 
-            // 1C - Handle users deleted in backup file and "alive" in DB
+            // 1D - Handle users deleted in backup file and "alive" in DB
             // If match by id and mnethost and user is deleted in backup file
             // and match by email = email_without_time(backup_email) => ok, return target user
             if ($user->deleted) {
@@ -1228,7 +1239,7 @@ abstract class restore_dbops {
                 }
             }
 
-            // 1D - If match by username and mnethost and doesn't match by id => conflict, return false
+            // 1E - If match by username and mnethost and doesn't match by id => conflict, return false
             if ($rec = $DB->get_record('user', array('username'=>$user->username, 'mnethostid'=>$user->mnethostid))) {
                 if ($user->id != $rec->id) {
                     return false; // Conflict, username already exists and belongs to another id
