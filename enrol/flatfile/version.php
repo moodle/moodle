@@ -27,5 +27,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2010091400;
+$plugin->version = 2010091401;
 $plugin->cron = 60;

@@ -54,6 +54,7 @@ $string['location'] = 'File location';
 $string['logtolocation'] = 'Log file output location (blank for no logging)';
 $string['mailadmins'] = 'Notify admin by email';
 $string['mailusers'] = 'Notify users by email';
+$string['messageprovider:imsenterprise_enrolment'] = 'IMS Enterprise enrolment messages';
 $string['miscsettings'] = 'Miscellaneous';
 $string['processphoto'] = 'Add user photo data to profile';
 $string['processphotowarning'] = 'Warning: Image processing is likely to add a significant burden to the server. You are recommended not to activate this option if large numbers of students are expected to be processed.';

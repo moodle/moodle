@@ -15,16 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Paypal enrolment plugin version specification.
+ * Defines message providers (types of message sent) for the PayPal enrolment plugin.
  *
- * @package    enrol
- * @subpackage paypal
- * @copyright  2010 Eugene Venter
- * @author     Eugene Venter
+ * @package    enrol_flatfile
+ * @copyright  2012 Andrew Davis
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2010073101;
-$plugin->requires = 2010090501;   // Requires this Moodle version
+$messageproviders = array(
+    'flatfile_enrolment' => array(),
+);
