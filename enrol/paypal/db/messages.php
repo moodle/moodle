@@ -15,18 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Authorize.Net enrolment plugin version specification.
+ * Defines message providers (types of message sent) for the PayPal enrolment plugin.
  *
- * @package    enrol
- * @subpackage authorize
- * @copyright  2010 Eugene Venter
- * @author     Eugene Venter
+ * @package    enrol_paypal
+ * @copyright  2012 Chris Follin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2011112901;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011112900;        // Requires this Moodle version
-$plugin->component = 'enrol_authorize'; // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 180;
+$messageproviders = array(
+    'paypal_enrolment' => array(),
+);

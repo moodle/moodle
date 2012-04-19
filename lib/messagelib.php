@@ -395,11 +395,23 @@ function message_get_providers_for_user($userid) {
         if (!empty($provider->capability)) {
             if (!has_capability($provider->capability, $systemcontext, $userid)) {
                 unset($providers[$providerid]);   // Not allowed to see this
+                continue;
             }
         }
+
         // Ensure user is not allowed to configure instantmessage if it is globally disabled.
         if (!$CFG->messaging && $provider->name == 'instantmessage') {
             unset($providers[$providerid]);
+            continue;
+        }
+
+        // If the component is an enrolment plugin, check it is enabled
+        list($type, $name) = normalize_component($provider->component);
+        if ($type == 'enrol') {
+            if (!enrol_is_enabled($name)) {
+                unset($providers[$providerid]);
+                continue;
+            }
         }
     }
 

@@ -30,6 +30,7 @@ $string['location'] = 'File location';
 $string['mailadmin'] = 'Notify admin by email';
 $string['mailstudents'] = 'Notify students by email';
 $string['mailteachers'] = 'Notify teachers by email';
+$string['messageprovider:flatfile_enrolment'] = 'Flat file enrolment messages';
 $string['mapping'] = 'Flat file mapping';
 $string['pluginname'] = 'Flat file (CSV)';
 $string['pluginname_desc'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.
