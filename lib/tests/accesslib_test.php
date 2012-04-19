@@ -981,5 +981,87 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertTrue(is_array($caps));
         unset($caps);
     }
+
+    public function test_update_capabilities() {
+        global $DB, $SITE;
+
+        $this->resetAfterTest(true);
+
+        $froncontext = context_course::instance($SITE->id);
+        $student = $DB->get_record('role', array('archetype'=>'student'));
+        $teacher = $DB->get_record('role', array('archetype'=>'teacher'));
+
+        $existingcaps = $DB->get_records('capabilities', array(), 'id', 'name, captype, contextlevel, component, riskbitmask');
+
+        $this->assertFalse(isset($existingcaps['moodle/site:restore']));         // moved to new 'moodle/restore:restorecourse'
+        $this->assertTrue(isset($existingcaps['moodle/restore:restorecourse'])); // new cap from 'moodle/site:restore'
+        $this->assertTrue(isset($existingcaps['moodle/site:sendmessage']));      // new capability
+        $this->assertTrue(isset($existingcaps['moodle/backup:backupcourse']));
+        $this->assertTrue(isset($existingcaps['moodle/backup:backupsection']));  // cloned from 'moodle/backup:backupcourse'
+        $this->assertTrue(isset($existingcaps['moodle/site:approvecourse']));    // updated bitmask
+        $this->assertTrue(isset($existingcaps['moodle/course:manageactivities']));
+        $this->assertTrue(isset($existingcaps['mod/page:addinstance']));         // cloned from core 'moodle/course:manageactivities'
+
+        // fake state before upgrade
+        $DB->set_field('capabilities', 'name', 'moodle/site:restore', array('name'=>'moodle/restore:restorecourse'));
+        $DB->set_field('role_capabilities', 'capability', 'moodle/site:restore', array('capability'=>'moodle/restore:restorecourse'));
+        assign_capability('moodle/site:restore', CAP_PROHIBIT, $teacher->id, $froncontext->id, true);
+        $perms1 = array_values($DB->get_records('role_capabilities', array('capability'=>'moodle/site:restore', 'roleid'=>$teacher->id), 'contextid, permission', 'contextid, permission'));
+
+        $DB->delete_records('role_capabilities', array('capability'=>'moodle/site:sendmessage'));
+        $DB->delete_records('capabilities', array('name'=>'moodle/site:sendmessage'));
+
+        $DB->delete_records('role_capabilities', array('capability'=>'moodle/backup:backupsection'));
+        $DB->delete_records('capabilities', array('name'=>'moodle/backup:backupsection'));
+        assign_capability('moodle/backup:backupcourse', CAP_PROHIBIT, $student->id, $froncontext->id, true);
+        assign_capability('moodle/backup:backupcourse', CAP_ALLOW, $teacher->id, $froncontext->id, true);
+
+        $DB->set_field('capabilities', 'riskbitmask', 0, array('name'=>'moodle/site:approvecourse'));
+
+        $DB->delete_records('role_capabilities', array('capability'=>'mod/page:addinstance'));
+        $DB->delete_records('capabilities', array('name'=>'mod/page:addinstance'));
+        assign_capability('moodle/course:manageactivities', CAP_PROHIBIT, $student->id, $froncontext->id, true);
+        assign_capability('moodle/course:manageactivities', CAP_ALLOW, $teacher->id, $froncontext->id, true);
+
+        // execute core
+        update_capabilities('moodle');
+
+        // only core should be upgraded
+        $caps = $DB->get_records('capabilities', array(), 'id', 'name, captype, contextlevel, component, riskbitmask');
+
+        $this->assertFalse(isset($existingcaps['moodle/site:restore']));
+        $this->assertTrue(isset($caps['moodle/restore:restorecourse']));
+        $this->assertEquals($existingcaps['moodle/restore:restorecourse'], $caps['moodle/restore:restorecourse']);
+        $perms2 = array_values($DB->get_records('role_capabilities', array('capability'=>'moodle/restore:restorecourse', 'roleid'=>$teacher->id), 'contextid, permission', 'contextid, permission'));
+        $this->assertEquals($perms1, $perms2);
+
+        $this->assertTrue(isset($caps['moodle/site:sendmessage']));
+        $this->assertEquals($existingcaps['moodle/site:sendmessage'], $caps['moodle/site:sendmessage']);
+
+        $this->assertTrue(isset($caps['moodle/backup:backupsection']));
+        $this->assertEquals($existingcaps['moodle/backup:backupsection'], $caps['moodle/backup:backupsection']);
+        $roles = $DB->get_records_sql('SELECT DISTINCT roleid AS id FROM {role_capabilities} WHERE capability=? OR capability=?', array('moodle/backup:backupcourse', 'moodle/backup:backupsection'));
+        foreach ($roles as $role) {
+            $perms1 = array_values($DB->get_records('role_capabilities', array('capability'=>'moodle/backup:backupcourse', 'roleid'=>$role->id), 'contextid, permission', 'contextid, permission'));
+            $perms2 = array_values($DB->get_records('role_capabilities', array('capability'=>'moodle/backup:backupsection', 'roleid'=>$role->id), 'contextid, permission', 'contextid, permission'));
+            $this->assertEquals($perms1, $perms2);
+        }
+
+        $this->assertTrue(isset($caps['moodle/site:approvecourse']));
+        $this->assertEquals($existingcaps['moodle/site:approvecourse'], $caps['moodle/site:approvecourse']);
+
+        $this->assertFalse(isset($caps['mod/page:addinstance']));
+
+        // execute plugin
+        update_capabilities('mod_page');
+        $caps = $DB->get_records('capabilities', array(), 'id', 'name, captype, contextlevel, component, riskbitmask');
+        $this->assertTrue(isset($caps['mod/page:addinstance']));
+        $roles = $DB->get_records_sql('SELECT DISTINCT roleid AS id FROM {role_capabilities} WHERE capability=? OR capability=?', array('moodle/course:manageactivities', 'mod/page:addinstance'));
+        foreach ($roles as $role) {
+            $perms1 = array_values($DB->get_records('role_capabilities', array('capability'=>'moodle/course:manageactivities', 'roleid'=>$role->id), 'contextid, permission', 'contextid, permission'));
+            $perms2 = array_values($DB->get_records('role_capabilities', array('capability'=>'mod/page:addinstance', 'roleid'=>$role->id), 'contextid, permission', 'contextid, permission'));
+        }
+        $this->assertEquals($perms1, $perms2);
+    }
 }
 
