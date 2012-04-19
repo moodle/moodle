@@ -2484,6 +2484,7 @@ function update_capabilities($component = 'moodle') {
         }
     }
     // Add new capabilities to the stored definition.
+    $existingcaps = $DB->get_records_menu('capabilities', array(), 'id', 'id, name');
     foreach ($newcaps as $capname => $capdef) {
         $capability = new stdClass();
         $capability->name         = $capname;
@@ -2494,7 +2495,7 @@ function update_capabilities($component = 'moodle') {
 
         $DB->insert_record('capabilities', $capability, false);
 
-        if (isset($capdef['clonepermissionsfrom']) && in_array($capdef['clonepermissionsfrom'], $storedcaps)){
+        if (isset($capdef['clonepermissionsfrom']) && in_array($capdef['clonepermissionsfrom'], $existingcaps)){
             if ($rolecapabilities = $DB->get_records('role_capabilities', array('capability'=>$capdef['clonepermissionsfrom']))){
                 foreach ($rolecapabilities as $rolecapability){
                     //assign_capability will update rather than insert if capability exists
