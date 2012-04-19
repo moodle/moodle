@@ -40,6 +40,7 @@ $string['databasehost'] = 'Server baze podataka';
 $string['databasename'] = 'Ime baze podataka';
 $string['databasetypehead'] = 'Izaberi drajver baze podataka';
 $string['dataroot'] = 'Direktorijum podataka';
+$string['datarootpermission'] = 'Ovlašćenja nad direktorijumom podataka';
 $string['dbprefix'] = 'Prefiks tabele';
 $string['dirroot'] = 'Moodle direktorijum';
 $string['environmenthead'] = 'Proveravanje Vašeg okruženja...';
