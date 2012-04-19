@@ -1793,37 +1793,45 @@ abstract class repository {
         }
         $len = count($listing['list']);
         for ($i=0; $i<$len; $i++) {
-            if (isset($listing['list'][$i]['size'])) {
-                $listing['list'][$i]['size'] = (int)$listing['list'][$i]['size'];
-                $listing['list'][$i]['size_f'] = display_size($listing['list'][$i]['size']);
+            $file = & $listing['list'][$i];
+            if (isset($file['size'])) {
+                $file['size'] = (int)$file['size'];
+                $file['size_f'] = display_size($file['size']);
+            }
+            if (isset($file['license']) &&
+                    get_string_manager()->string_exists($file['license'], 'license')) {
+                $file['license_f'] = get_string($file['license'], 'license');
+            }
+            if (isset($file['image_width']) && isset($file['image_height'])) {
+                $file['dimensions'] = $file['image_width'].'x'.$file['image_height'];
             }
             foreach (array('date', 'datemodified', 'datecreated') as $key) {
-                if (!isset($listing['list'][$i][$key]) && isset($listing['list'][$i]['date'])) {
-                    $listing['list'][$i][$key] = $listing['list'][$i]['date'];
+                if (!isset($file[$key]) && isset($file['date'])) {
+                    $file[$key] = $file['date'];
                 }
-                if (isset($listing['list'][$i][$key])) {
+                if (isset($file[$key])) {
                     // must be UNIX timestamp
-                    $listing['list'][$i][$key] = (int)$listing['list'][$i][$key];
-                    if (!$listing['list'][$i][$key]) {
-                        unset($listing['list'][$i][$key]);
+                    $file[$key] = (int)$file[$key];
+                    if (!$file[$key]) {
+                        unset($file[$key]);
                     } else {
-                        $listing['list'][$i][$key.'_f'] = userdate($listing['list'][$i][$key], get_string('strftimedatetime', 'langconfig'));
-                        $listing['list'][$i][$key.'_f_s'] = userdate($listing['list'][$i][$key], get_string('strftimedatetimeshort', 'langconfig'));
+                        $file[$key.'_f'] = userdate($file[$key], get_string('strftimedatetime', 'langconfig'));
+                        $file[$key.'_f_s'] = userdate($file[$key], get_string('strftimedatetimeshort', 'langconfig'));
                     }
                 }
             }
-            if (!isset($listing['list'][$i]['type']) && !array_key_exists('children', $listing['list'][$i]) && isset($listing['list'][$i]['title'])) {
-                $mimetype = mimeinfo('type', $listing['list'][$i]['title']);
+            if (!isset($file['type']) && !array_key_exists('children', $file) && isset($file['title'])) {
+                $mimetype = mimeinfo('type', $file['title']);
                 if (get_string_manager()->string_exists($mimetype, 'mimetypes')) {
                     $mimetype = get_string($mimetype, 'mimetypes');
                 }
-                $listing['list'][$i]['type'] = $mimetype;
+                $file['type'] = $mimetype;
             }
-            if (!isset($listing['list'][$i]['icon']) && isset($listing['list'][$i]['title'])) {
-                if (array_key_exists('children', $listing['list'][$i])) {
-                    $listing['list'][$i]['icon'] = $OUTPUT->pix_url('f/folder')->out(false);
+            if (!isset($file['icon']) && isset($file['title'])) {
+                if (array_key_exists('children', $file)) {
+                    $file['icon'] = $OUTPUT->pix_url('f/folder')->out(false);
                 } else {
-                    $listing['list'][$i]['icon'] = $OUTPUT->pix_url('f/'.mimeinfo('icon', $listing['list'][$i]['title']))->out(false);
+                    $file['icon'] = $OUTPUT->pix_url('f/'.mimeinfo('icon', $file['title']))->out(false);
                 }
             }
         }

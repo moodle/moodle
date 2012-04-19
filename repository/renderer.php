@@ -36,7 +36,9 @@ class core_repository_renderer extends plugin_renderer_base {
      * Template for FilePicker with general layout (not QuickUpload).
      *
      * Must have one top element containing everything else (recommended <div class="file-picker">),
-     * CSS for this element must define width and height of the filepicker window;
+     * CSS for this element must define width and height of the filepicker window. Or CSS must
+     * define min-width, max-width, min-height and max-height and in this case the filepicker
+     * window will be resizeable;
      *
      * Element with class 'fp-viewbar' will have the class 'enabled' or 'disabled' when view mode
      * can be changed or not;
@@ -59,23 +61,18 @@ class core_repository_renderer extends plugin_renderer_base {
      * The content of element with class 'fp-path-folder-name' will be substituted with folder name;
      * Parent element will receive class 'empty' when there are no folders to be displayed;
      *
-     * Element with id {TOOLBARID} will have class 'empty' if all 'Search', 'Login', 'Refresh' and
-     * 'Logout' are unavailable for this repo;
-     * Element with id {TOOLBACKID} will hold the click event for going back to Login form;
-     * Element (<form>!) with id {TOOLSEARCHID} is responsible for search inside the repo (if
-     * repository provides this functionality), it must have one input-text field;
-     * Element with id {TOOLREFRESHID} will hold the click event for refreshing current view;
-     * Element with id {TOOLLOGOUTID} will hold the click event for logout (the content of the
-     * element will be substituted with logout string provided by repository or default
-     * M.str.repository.logout if not specified);
-     * Element with id {TOOLMANAGEID} will hold the click event for opening new window to manage
-     * repository files;
-     * Element with id {TOOLHELPID} will hold the click event for opening new window for help;
-     * Elements with ids {TOOLBACKID}, {TOOLSEARCHID}, {TOOLREFRESHID}, {TOOLLOGOUTID},
-     * {TOOLMANAGEID}, {TOOLHELPID} and also optional elements width ids wrap-{TOOLBACKID},
-     * wrap-{TOOLSEARCHID}, wrap-{TOOLREFRESHID}, wrap-{TOOLLOGOUTID}, wrap-{TOOLMANAGEID} and
-     * wrap-{TOOLHELPID} will have class 'enabled' or 'disabled' when applicable or not for
-     * the current repository view;
+     * Element with class 'fp-toolbar' will have class 'empty' if all 'Back', 'Search', 'Refresh',
+     * 'Logout', 'Manage' and 'Help' are unavailable for this repo;
+     *
+     * Inside fp-toolbar there are expected elements with classes fp-tb-back, fp-tb-search,
+     * fp-tb-refresh, fp-tb-logout, fp-tb-manage and fp-tb-help. Each of them will have
+     * class 'enabled' or 'disabled' if particular repository has this functionality.
+     * Element with class 'fp-tb-search' must contain empty form inside, it's contents will
+     * be substituted with the search form returned by repository (in the most cases it
+     * is generated with template core_repository_renderer::repository_default_searchform);
+     * Other elements must have either <a> or <button> element inside, it will hold onclick
+     * event for corresponding action; labels for fp-tb-back and fp-tb-logout may be
+     * replaced with those specified by repository;
      *
      * @return string
      */
@@ -96,16 +93,16 @@ class core_repository_renderer extends plugin_renderer_base {
       </ul>
     </div>
     <div style="width:480px;height:400px;display:inline-block;vertical-align:top;">
-      <div class="fp-toolbar" id="{TOOLBARID}" style="background:yellow">
-        <div id="wrap-{TOOLBACKID}"><a id="{TOOLBACKID}">'.get_string('back', 'repository').'</a></div>
-        <div id="wrap-{TOOLSEARCHID}">
+      <div class="{!}fp-toolbar">
+        <div class="{!}fp-tb-back"><a>'.get_string('back', 'repository').'</a></div>
+        <div class="{!}fp-tb-search">
           <img src="'.$this->pix_url('a/search').'" />
-          <form id="{TOOLSEARCHID}"></form>
+          <form/>
         </div>
-        <div id="wrap-{TOOLREFRESHID}"><a id="{TOOLREFRESHID}"><img src="'.$this->pix_url('a/refresh').'" />'.get_string('refresh', 'repository').'</a></div>
-        <div id="wrap-{TOOLLOGOUTID}"><img src="'.$this->pix_url('a/logout').'" /><a id="{TOOLLOGOUTID}"></a></div>
-        <div id="wrap-{TOOLMANAGEID}"><a id="{TOOLMANAGEID}"><img src="'.$this->pix_url('a/setting').'" /> '.get_string('manageurl', 'repository').'</a></div>
-        <div id="wrap-{TOOLHELPID}"><a id="{TOOLHELPID}"><img src="'.$this->pix_url('a/help').'" /> '.get_string('help').'</a></div>
+        <div class="{!}fp-tb-refresh"><a><img src="'.$this->pix_url('a/refresh').'" />'.get_string('refresh', 'repository').'</a></div>
+        <div class="{!}fp-tb-logout"><img src="'.$this->pix_url('a/logout').'" /><a></a></div>
+        <div class="{!}fp-tb-manage"><a><img src="'.$this->pix_url('a/setting').'" /> '.get_string('manageurl', 'repository').'</a></div>
+        <div class="{!}fp-tb-help"><a><img src="'.$this->pix_url('a/help').'" /> '.get_string('help').'</a></div>
       </div>
       <div class="{!}fp-paging" style="background:pink"></div>
       <div class="fp-pathbar" style="background:#ddffdd">
@@ -169,18 +166,21 @@ class core_repository_renderer extends plugin_renderer_base {
      * All content must be enclosed in an element with class 'fp-select', CSS for this class
      * must define width and height of the window;
      *
-     * Image will be added as content to the element with id {IMGID};
+     * Thumbnail image will be added as content to the element with class 'fp-thumbnail';
      *
-     * Inside the window <form> element must be present and contain followng input fields:
-     *   {NEWNAMEID} (input-text)
-     *   {LINKEXTID} (input-checkbox)
-     *   {AUTHORID} (input-text)
-     *   {LICENSEID} (select, will be populated with available options)
-     *   {BUTCONFIRMID} (will hold onclick event)
-     *   {BUTCANCELID} (will hold onclick event)
+     * Inside the window the elements with the following classnames must be present:
+     * 'fp-saveas', 'fp-linkexternal', 'fp-setauthor', 'fp-setlicense'. Inside each of them must have
+     * one input element (or select in case of fp-setlicense). They may also have labels.
+     * The elements will be assign with class 'uneditable' and input/select element will become
+     * disabled if they are not applicable for the particular file;
      *
-     * Elements with ids 'wrap-{LINKEXTID}', 'wrap-{AUTHORID}' and 'wrap-{LICENSEID}' may be
-     * assigned with class 'uneditable' if not applicable for particular repository;
+     * There may be present elements with classes 'fp-datemodified', 'fp-datecreated', 'fp-size',
+     * 'fp-license', 'fp-author'. They will receive additional class 'fp-unknown' if information
+     * is unavailable. If there is information available, the content of embedded element
+     * with class 'fp-value' will be substituted with the value;
+     *
+     * Elements with classes 'fp-select-confirm' and 'fp-select-cancel' will hold corresponding
+     * onclick events;
      *
      * When confirm button is pressed and file is being selected, the top element receives
      * additional class 'loading'. It is removed when response from server is received.
@@ -194,20 +194,27 @@ class core_repository_renderer extends plugin_renderer_base {
 <p>'.get_string('loading', 'repository').'</p>
 </div>
 <form>
-<p id="{IMGID}"></p>
+<p class="{!}fp-thumbnail"></p>
 <table width="100%">
-<tr><td class="mdl-right"><label for="{NEWNAMEID}">'.get_string('saveas', 'repository').'</label>:</td>
-<td class="mdl-left"><input type="text" id="{NEWNAMEID}" /></td></tr>
-<tr id="wrap-{LINKEXTID}"><td></td>
-<td class="mdl-left"><input type="checkbox" id="{LINKEXTID}" value="" /><label for="{LINKEXTID}">'.get_string('linkexternal', 'repository').'</label></td></tr>
-<tr id="wrap-{AUTHORID}"><td class="mdl-right"><label for="{AUTHORID}">'.get_string('author', 'repository').'</label>:</td>
-<td class="mdl-left"><input id="{AUTHORID}" type="text" /></td></tr>
-<tr id="wrap-{LICENSEID}"><td class="mdl-right"><label for="{LICENSEID}">'.get_string('chooselicense', 'repository').'</label>:</td>
-<td class="mdl-left"><select id="{LICENSEID}"></select></td></tr>
+<tr class="{!}fp-saveas"><td class="mdl-right"><label>'.get_string('saveas', 'repository').'</label>:</td>
+<td class="mdl-left"><input type="text"/></td></tr>
+<tr class="{!}fp-linkexternal"><td></td>
+<td class="mdl-left"><input type="checkbox"/><label>'.get_string('linkexternal', 'repository').'</label></td></tr>
+<tr class="{!}fp-setauthor"><td class="mdl-right"><label>'.get_string('author', 'repository').'</label>:</td>
+<td class="mdl-left"><input type="text" /></td></tr>
+<tr class="{!}fp-setlicense"><td class="mdl-right"><label>'.get_string('chooselicense', 'repository').'</label>:</td>
+<td class="mdl-left"><select></select></td></tr>
 </table>
-<p><button id="{BUTCONFIRMID}" >'.get_string('getfile', 'repository').'</button>
-<button id="{BUTCANCELID}" >'.get_string('cancel').'</button></p>
-</form></div>';
+<p><button class="{!}fp-select-confirm" >'.get_string('getfile', 'repository').'</button>
+<button class="{!}fp-select-cancel" >'.get_string('cancel').'</button></p>
+</form>
+<div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"/></div>
+<div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"/></div>
+<div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"/></div>
+<div class="{!}fp-license">'.get_string('license', 'moodle').': <span class="fp-value"/></div>
+<div class="{!}fp-author">'.get_string('author', 'repository').': <span class="fp-value"/></div>
+<div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"/></div>
+</div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
 
@@ -215,42 +222,43 @@ class core_repository_renderer extends plugin_renderer_base {
      * Content to display when user chooses 'Upload file' repository (will be nested inside
      * element with class 'fp-content').
      *
-     * Must contain form (enctype="multipart/form-data" method="POST") with id {UPLOADFORMID}
-     * The elements with the following ids are obligatory:
-     *   {INPUTFILEID} (input-file)
-     *   {NEWNAMEID} (input-text)
-     *   {AUTHORID} (input-text)
-     *   {LICENSEID} (select, will be populated with available options)
-     *   {BUTUPLOADID} (any element type, will hold onclick event)
+     * Must contain form (enctype="multipart/form-data" method="POST")
+     *
+     * The elements with the following classnames must be present:
+     * 'fp-file', 'fp-saveas', 'fp-setauthor', 'fp-setlicense'. Inside each of them must have
+     * one input element (or select in case of fp-setlicense). They may also have labels.
+     *
+     * Element with class 'fp-upload-btn' will hold onclick event for uploading the file;
      *
      * Please note that some fields may be hidden using CSS if this is part of quickupload form
      *
      * @return string
      */
     public function js_template_uploadform() {
-        return '<div class="fp-upload-form mdl-align">
-<form id="{UPLOADFORMID}" enctype="multipart/form-data" method="POST">
+        $rv = '<div class="fp-upload-form mdl-align">
+<form enctype="multipart/form-data" method="POST">
   <table width="100%">
-    <tr>
-      <td class="mdl-right"><label for="{INPUTFILEID}">'.get_string('attachment', 'repository').'</label>:</td>
-      <td class="mdl-left"><input type="file" id="{INPUTFILEID}" /></td>
+    <tr class="{!}fp-file">
+      <td class="mdl-right"><label>'.get_string('attachment', 'repository').'</label>:</td>
+      <td class="mdl-left"><input type="file"/></td>
     </tr>
-    <tr>
-      <td class="mdl-right"><label for="{NEWNAMEID}">'.get_string('saveas', 'repository').'</label>:</td>
-      <td class="mdl-left"><input type="text" id="{NEWNAMEID}" /></td>
+    <tr class="{!}fp-saveas">
+      <td class="mdl-right"><label>'.get_string('saveas', 'repository').'</label>:</td>
+      <td class="mdl-left"><input type="text"/></td>
     </tr>
-    <tr>
-      <td class="mdl-right"><label for="{AUTHORID}">'.get_string('author', 'repository').'</label>:</td>
-      <td class="mdl-left"><input type="text" id="{AUTHORID}" /></td>
+    <tr class="{!}fp-setauthor">
+      <td class="mdl-right"><label>'.get_string('author', 'repository').'</label>:</td>
+      <td class="mdl-left"><input type="text"/></td>
     </tr>
-    <tr>
-      <td class="mdl-right"><label for="{LICENSEID}">'.get_string('chooselicense', 'repository').'</label>:</td>
-      <td class="mdl-left"><select id="{LICENSEID}" /></td>
+    <tr class="{!}fp-setlicense">
+      <td class="mdl-right"><label>'.get_string('chooselicense', 'repository').'</label>:</td>
+      <td class="mdl-left"><select/></td>
     </tr>
   </table>
 </form>
-<div class="fp-upload-btn"><button id="{BUTUPLOADID}">'.get_string('upload', 'repository').'</button></div>
+<div><button class="{!}fp-upload-btn">'.get_string('upload', 'repository').'</button></div>
 </div> ';
+        return preg_replace('/\{\!\}/', '', $rv);
     }
 
     /**

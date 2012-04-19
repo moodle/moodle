@@ -65,10 +65,34 @@ M.core_filepicker.show = function(Y, options) {
     M.core_filepicker.instances[options.client_id].show();
 };
 
+
 /**
  * Add new file picker to current instances
  */
 M.core_filepicker.init = function(Y, options) {
+    /** help function to extract width/height style as a number, not as a string */
+    Y.Node.prototype.getStylePx = function(attr) {
+        var style = this.getStyle(attr);
+        if (''+style == '0' || ''+style == '0px') {
+            return 0;
+        }
+        var matches = style.match(/^([\d\.]+)px$/)
+        if (matches && parseFloat(matches[1])) {
+            return parseFloat(matches[1]);
+        }
+        return null;
+    }
+
+    /** if condition is met, the class is added to the node, otherwise - removed */
+    Y.Node.prototype.addClassIf = function(className, condition) {
+        if (condition) {
+            this.addClass(className);
+        } else {
+            this.removeClass(className);
+        }
+        return this;
+    }
+
     if (options.templates);
     for (var templid in options.templates) {
         this.templates[templid] = options.templates[templid];
@@ -377,20 +401,14 @@ M.core_filepicker.init = function(Y, options) {
             }
         },
         view_files: function() {
-            if (this.active_repo.issearchresult) {
-                // list view is desiged to display treeview
-                // it is not working well with search result
-                this.view_as_icons();
+            this.viewbar_set_enabled(true);
+            this.print_path();
+            if (this.viewmode == 2) {
+                this.view_as_list();
+            } else if (this.viewmode == 3) {
+                this.view_as_table();
             } else {
-                this.viewbar_set_enabled(true);
-                this.print_path();
-                if (this.viewmode == 2) {
-                    this.view_as_list();
-                } else if (this.viewmode == 3) {
-                    this.view_as_table();
-                } else {
-                    this.view_as_icons();
-                }
+                this.view_as_icons();
             }
         },
         treeview_dynload: function(node, cb) {
@@ -541,18 +559,10 @@ M.core_filepicker.init = function(Y, options) {
                 filenamediv.setContent(filename);
                 var imgdiv = element.one('.fp-thumbnail');
                 var set_width = function(node, width) {
-                    var widthmatches = node.getStyle('minWidth').match(/^(\d+)px$/)
-                    if (widthmatches && parseInt(widthmatches[1])>width) {
-                        width = parseInt(widthmatches[1]);
-                    }
-                    node.setStyle('width', '' + width + 'px')
+                    node.setStyle('width', '' + Math.max(width, node.getStylePx('minWidth')) + 'px')
                 }
                 var set_height = function(node, height) {
-                    var heightmatches = node.getStyle('minHeight').match(/^(\d+)px$/)
-                    if (heightmatches && parseInt(heightmatches[1])>height) {
-                        height = parseInt(heightmatches[1]);
-                    }
-                    node.setStyle('height', '' + height + 'px')
+                    node.setStyle('height', '' + Math.max(height, node.getStylePx('minHeight')) + 'px')
                 }
                 var width = node.thumbnail_width ? node.thumbnail_width : 90;
                 var height = node.thumbnail_height ? node.thumbnail_height : 90;
@@ -656,75 +666,90 @@ M.core_filepicker.init = function(Y, options) {
             this.selectui.show();
             var client_id = this.options.client_id;
             var selectnode = this.fpnode.one('.fp-select');
+            var return_types = this.options.repositories[this.active_repo.id].return_types;
             selectnode.removeClass('loading');
-            selectnode.one('#newname-'+client_id).set('value', args.title);
-            selectnode.one('#text-author-'+client_id).set('value', this.options.author);
+            selectnode.one('.fp-saveas input').set('value', args.title);
+            selectnode.one('.fp-setauthor input').set('value', this.options.author);
 
             var imgnode = Y.Node.create('<img/>').set('src', args.thumbnail)
-            selectnode.one('#img-'+client_id).setContent('').appendChild(imgnode);
+            selectnode.one('.fp-thumbnail').setContent('').appendChild(imgnode);
 
-            selectnode.one('#linkexternal-'+client_id).set('checked', ''); // default to unchecked
-            if ((this.options.externallink && this.options.env == 'editor' && this.options.return_types != 1)) {
-                // enable checkbox 'Link external'
-                selectnode.one('#linkexternal-'+client_id).set('disabled', '');
-                selectnode.all('#linkexternal-'+client_id+',#wrap-linkexternal-'+client_id).removeClass('uneditable')
+            selectnode.one('.fp-linkexternal input').set('checked', ''); // default to unchecked
+            if ((this.options.externallink && this.options.env == 'editor' && return_types == 3)) {
+                // support both internal and external links, enable checkbox 'Link external'
+                selectnode.one('.fp-linkexternal input').set('disabled', '');
+                selectnode.all('.fp-linkexternal').removeClass('uneditable')
             } else {
                 // disable checkbox 'Link external'
-                selectnode.one('#linkexternal-'+client_id).set('disabled', 'disabled');
-                selectnode.all('#linkexternal-'+client_id+',#wrap-linkexternal-'+client_id).addClass('uneditable')
-                if (this.options.return_types == 1) {
+                selectnode.one('.fp-linkexternal input').set('disabled', 'disabled');
+                selectnode.all('.fp-linkexternal').addClass('uneditable')
+                if (return_types == 1) {
                     // support external links only
-                    selectnode.one('#linkexternal-'+client_id).set('checked', 'checked');
+                    selectnode.one('.fp-linkexternal input').set('checked', 'checked');
                 }
             }
 
             if (args.hasauthor) {
-                selectnode.one('#text-author-'+client_id).set('disabled', 'disabled');
-                selectnode.all('#text-author-'+client_id+',#wrap-text-author-'+client_id).addClass('uneditable')
+                selectnode.one('.fp-setauthor input').set('disabled', 'disabled');
+                selectnode.all('.fp-setauthor').addClass('uneditable')
             } else {
-                selectnode.one('#text-author-'+client_id).set('disabled', '');
-                selectnode.all('#text-author-'+client_id+',#wrap-text-author-'+client_id).removeClass('uneditable')
+                selectnode.one('.fp-setauthor input').set('disabled', '');
+                selectnode.all('.fp-setauthor').removeClass('uneditable')
             }
 
             if (!args.haslicense) {
                 // the license of the file
-                this.populate_licenses_select(selectnode.one('#select-license-'+client_id));
-                selectnode.one('#wrap-select-license-'+client_id).set('disabled', '');
-                selectnode.all('#select-license-'+client_id+'#wrap-select-license-'+client_id).removeClass('uneditable');
+                selectnode.one('.fp-setlicense select').set('disabled', '');
+                selectnode.one('.fp-setlicense').removeClass('uneditable');
             } else {
-                selectnode.one('#wrap-select-license-'+client_id).set('disabled', 'disabled');
-                selectnode.all('#select-license-'+client_id+'#wrap-select-license-'+client_id).addClass('uneditable');
+                selectnode.one('.fp-setlicense select').set('disabled', 'disabled');
+                selectnode.one('.fp-setlicense').addClass('uneditable');
             }
+
             selectnode.one('form #filesource-'+client_id).set('value', args.source);
+
+            // display static information about a file (when known)
+            var attrs = ['datemodified','datecreated','size','license','author','dimensions'];
+            for (var i in attrs) {
+                if (selectnode.one('.fp-'+attrs[i])) {
+                    var value = (args[attrs[i]+'_f']) ? args[attrs[i]+'_f'] : (args[attrs[i]] ? args[attrs[i]] : '');
+                    selectnode.one('.fp-'+attrs[i]).addClassIf('fp-unknown', ''+value == '')
+                        .one('.fp-value').setContent(value);
+                }
+            }
         },
         setup_select_file: function() {
             var client_id = this.options.client_id;
             var selectnode = this.fpnode.one('.fp-select');
-            var getfile = selectnode.one('#fp-confirm-'+client_id);
+            var getfile = selectnode.one('.fp-select-confirm');
+            // bind labels with corresponding inputs
+            selectnode.all('.fp-saveas,.fp-linkexternal,.fp-setauthor,.fp-setlicense').each(function (node) {
+                node.all('label').set('for', node.one('input,select').generateID());
+            });
+            this.populate_licenses_select(selectnode.one('.fp-setlicense select'));
+            // register event on clicking submit button
             getfile.on('click', function(e) {
                 e.preventDefault();
                 var client_id = this.options.client_id;
                 var scope = this;
                 var repository_id = this.active_repo.id;
-                var title = selectnode.one('#newname-'+client_id).get('value');
+                var title = selectnode.one('.fp-saveas input').get('value');
                 var filesource = selectnode.one('form #filesource-'+client_id).get('value');
                 var params = {'title':title, 'source':filesource, 'savepath': this.options.savepath};
-                var license = selectnode.one('#select-license-'+client_id);
+                var license = selectnode.one('.fp-setlicense select');
                 if (license) {
                     params['license'] = license.get('value');
                     Y.Cookie.set('recentlicense', license.get('value'));
                 }
-                var author = selectnode.one('#text-author-'+client_id);
-                if (author){
-                    params['author'] = author.get('value');
-                }
+                params['author'] = selectnode.one('.fp-setauthor input').get('value');
 
                 if (this.options.externallink && this.options.env == 'editor') {
                     // in editor, images are stored in '/' only
                     params.savepath = '/';
                     // when image or media button is clicked
-                    if ( this.options.return_types != 1 ) {
-                        var linkexternal = selectnode.one('#linkexternal-'+client_id);
+                    var return_types = this.options.repositories[this.active_repo.id].return_types;
+                    if ( return_types != 1 ) {
+                        var linkexternal = selectnode.one('.fp-linkexternal input');
                         if (linkexternal && linkexternal.get('checked')) {
                             params['linkexternal'] = 'yes';
                         }
@@ -775,7 +800,7 @@ M.core_filepicker.init = function(Y, options) {
                     e.preventDefault();
                 }
             }, this);
-            var cancel = selectnode.one('#fp-cancel-'+client_id);
+            var cancel = selectnode.one('.fp-select-cancel');
             cancel.on('click', function(e) {
                 e.preventDefault();
                 this.selectui.hide();
@@ -815,24 +840,9 @@ M.core_filepicker.init = function(Y, options) {
         },
         render: function() {
             var client_id = this.options.client_id;
-            var nodecontent = M.core_filepicker.templates.generallayout.
-                replace(/\{TOOLBARID}/g, 'fp-tb-'+client_id).
-                replace(/\{TOOLBACKID}/g, 'fp-tb-back-'+client_id).
-                replace(/\{TOOLSEARCHID}/g, 'fp-tb-search-'+client_id).
-                replace(/\{TOOLREFRESHID}/g, 'fp-tb-refresh-'+client_id).
-                replace(/\{TOOLLOGOUTID}/g, 'fp-tb-logout-'+client_id).
-                replace(/\{TOOLMANAGEID}/g, 'fp-tb-manage-'+client_id).
-                replace(/\{TOOLHELPID}/g, 'fp-tb-help-'+client_id);
-            this.fpnode = Y.Node.create(nodecontent).set('id', 'filepicker-'+client_id);
-            var fpselectnode = Y.Node.create(M.core_filepicker.templates.selectlayout.
-                replace(/\{IMGID}/g, 'img-'+client_id).
-                replace(/\{NEWNAMEID}/g, 'newname-'+client_id).
-                replace(/\{LINKEXTID}/g, 'linkexternal-'+client_id).
-                replace(/\{AUTHORID}/g, 'text-author-'+client_id).
-                replace(/\{LICENSEID}/g, 'select-license-'+client_id).
-                replace(/\{BUTCONFIRMID}/g, 'fp-confirm-'+client_id).
-                replace(/\{BUTCANCELID}/g, 'fp-cancel-'+client_id)
-                );
+            this.fpnode = Y.Node.create(M.core_filepicker.templates.generallayout).
+                set('id', 'filepicker-'+client_id);
+            var fpselectnode = Y.Node.create(M.core_filepicker.templates.selectlayout);
             Y.one(document.body).appendChild(this.fpnode);
             this.fpnode.appendChild(fpselectnode);
             this.mainui = new Y.Panel({
@@ -842,10 +852,25 @@ M.core_filepicker.init = function(Y, options) {
                 centered     : true,
                 modal        : true,
                 visible      : false,
-                render       : true,
-                plugins      : [Y.Plugin.Drag]
+                render       : true
             });
+            // allow to move the panel dragging it by it's header:
+            this.mainui.plug(Y.Plugin.Drag,{handles:['.yui3-widget-hd']});
+            // Check if CSS for the node sets min-max width/height and therefore if panel shall be resizable:
+            var resizeconstraints = {
+              minWidth: this.fpnode.getStylePx('minWidth')?this.fpnode.getStylePx('minWidth'):this.fpnode.getStylePx('width'),
+              minHeight: this.fpnode.getStylePx('minHeight')?this.fpnode.getStylePx('minHeight'):this.fpnode.getStylePx('height'),
+              maxWidth: this.fpnode.getStylePx('maxWidth')?this.fpnode.getStylePx('maxWidth'):this.fpnode.getStylePx('width'),
+              maxHeight: this.fpnode.getStylePx('maxHeight')?this.fpnode.getStylePx('maxHeight'):this.fpnode.getStylePx('height'),
+              preserveRatio: false
+            };
+            if (resizeconstraints.minWidth < resizeconstraints.maxWidth ||
+                    resizeconstraints.minHeight < resizeconstraints.maxHeight) {
+                this.mainui.plug(Y.Plugin.Resize)
+                this.mainui.resize.plug(Y.Plugin.ResizeConstrained, resizeconstraints);
+            }
             this.mainui.show();
+            // create panel for selecting a file (initially hidden)
             this.selectui = new Y.Panel({
                 srcNode      : fpselectnode,
                 zIndex       : 600000,
@@ -1121,35 +1146,33 @@ M.core_filepicker.init = function(Y, options) {
         create_upload_form: function(data) {
             var client_id = this.options.client_id;
             var id = data.upload.id+'_'+client_id;
-            var str = M.core_filepicker.templates.uploadform.
-                replace(/\{UPLOADFORMID}/g, id).
-                replace(/\{INPUTFILEID}/g, id+'_file').
-                replace(/\{NEWNAMEID}/g, 'newname-'+client_id).
-                replace(/\{AUTHORID}/g, 'author-'+client_id).
-                replace(/\{LICENSEID}/g, 'license-'+client_id).
-                replace(/\{BUTUPLOADID}/g, id+'_action');
-            this.fpnode.one('.fp-content').setContent(str);
+            var content = this.fpnode.one('.fp-content');
+            content.setContent(M.core_filepicker.templates.uploadform);
 
-            Y.all('#'+id+'_file').set('name', 'repo_upload_file');
-            Y.all('#'+'newname-'+client_id).set('name', 'title');
-            Y.all('#'+'author-'+client_id).set('name', 'author');
-            Y.all('#'+'author-'+client_id).set('value', this.options.author);
-            Y.all('#'+'license-'+client_id).set('name', 'license');
-            this.populate_licenses_select(Y.one('#'+'license-'+client_id))
-            Y.one('#'+id).appendChild(Y.Node.create('<input/>').
+            content.all('.fp-file,.fp-saveas,.fp-setauthor,.fp-setlicense').each(function (node) {
+                node.all('label').set('for', node.one('input,select').generateID());
+            });
+            content.one('form').set('id', id);
+            content.one('.fp-file input').set('name', 'repo_upload_file');
+            content.one('.fp-saveas input').set('name', 'title');
+            content.one('.fp-setauthor input').setAttrs({name:'author', value:this.options.author});
+            content.one('.fp-setlicense select').set('name', 'license');
+            this.populate_licenses_select(content.one('.fp-setlicense select'))
+            // append hidden inputs to the upload form
+            content.one('form').appendChild(Y.Node.create('<input/>').
                 setAttrs({type:'hidden',name:'itemid',value:this.options.itemid}));
             var types = this.options.accepted_types;
             for (var i in types) {
-                Y.one('#'+id).appendChild(Y.Node.create('<input/>').
+                content.one('form').appendChild(Y.Node.create('<input/>').
                     setAttrs({type:'hidden',name:'accepted_types[]',value:types[i]}));
             }
 
             var scope = this;
-            Y.one('#'+id+'_action').on('click', function(e) {
+            content.one('.fp-upload-btn').on('click', function(e) {
                 e.preventDefault();
-                var license = Y.one('#license-'+client_id);
+                var license = content.one('.fp-setlicense select');
                 Y.Cookie.set('recentlicense', license.get('value'));
-                if (!Y.one('#'+id+'_file').get('value')) {
+                if (!content.one('.fp-file input').get('value')) {
                     scope.print_msg(M.str.repository.nofilesattached, 'error');
                     return false;
                 }
@@ -1185,7 +1208,8 @@ M.core_filepicker.init = function(Y, options) {
         /** setting handlers and labels for elements in toolbar. Called once during the initial render of filepicker */
         setup_toolbar: function() {
             var client_id = this.options.client_id;
-            Y.one('#fp-tb-logout-'+client_id).on('click', function(e) {
+            var toolbar = this.fpnode.one('.fp-toolbar');
+            toolbar.one('.fp-tb-logout').one('a,button').on('click', function(e) {
                 e.preventDefault();
                 if (!this.active_repo.nologin) {
                     this.hide_header();
@@ -1198,14 +1222,15 @@ M.core_filepicker.init = function(Y, options) {
                     }, true);
                 }
             }, this);
-            Y.one('#fp-tb-refresh-'+client_id).on('click', function(e) {
+            toolbar.one('.fp-tb-refresh').one('a,button').on('click', function(e) {
                 e.preventDefault();
                 if (!this.active_repo.norefresh) {
                     this.list();
                 }
             }, this);
-            Y.one('#fp-tb-search-'+client_id).
+            toolbar.one('.fp-tb-search form').
                 set('method', 'POST').
+                set('id', 'fp-tb-search-'+client_id).
                 on('submit', function(e) {
                     e.preventDefault();
                     if (!this.active_repo.nosearch) {
@@ -1220,31 +1245,32 @@ M.core_filepicker.init = function(Y, options) {
                     }
                 }, this);
 
-            // it does not matter what kind of element is {TOOLMANAGEID}, we create a dummy <a>
+            // it does not matter what kind of element is .fp-tb-manage, we create a dummy <a>
             // element and use it to open url on click event
             var managelnk = Y.Node.create('<a/>').
                 setAttrs({id:'fp-tb-manage-'+client_id+'-link', target:'_blank'}).
                 setStyle('display', 'none');
-            Y.one('#fp-tb-'+client_id).append(managelnk);
-            Y.one('#fp-tb-manage-'+client_id).on('click', function(e) {
-                e.preventDefault();
-                managelnk.simulate('click')
-            });
+            toolbar.append(managelnk);
+            toolbar.one('.fp-tb-manage').one('a,button').
+                on('click', function(e) {
+                    e.preventDefault();
+                    managelnk.simulate('click')
+                });
 
-            // same with {TOOLHELPID}
+            // same with .fp-tb-help
             var helplnk = Y.Node.create('<a/>').
                 setAttrs({id:'fp-tb-help-'+client_id+'-link', target:'_blank'}).
                 setStyle('display', 'none');
-            Y.one('#fp-tb-'+client_id).append(helplnk);
-            Y.one('#fp-tb-help-'+client_id).on('click', function(e) {
-                e.preventDefault();
-                helplnk.simulate('click')
-            });
+            toolbar.append(helplnk);
+            toolbar.one('.fp-tb-manage').one('a,button').
+                on('click', function(e) {
+                    e.preventDefault();
+                    helplnk.simulate('click')
+                });
         },
         hide_header: function() {
-            var client_id = this.options.client_id;
-            if (Y.one('#fp-tb-'+client_id)) {
-                Y.one('#fp-tb-'+client_id).addClass('empty');
+            if (this.fpnode.one('.fp-toolbar')) {
+                this.fpnode.one('.fp-toolbar').addClass('empty');
             }
             if (this.pathbar) {
                 this.pathbar.setContent('').addClass('empty');
@@ -1259,23 +1285,26 @@ M.core_filepicker.init = function(Y, options) {
             var client_id = this.options.client_id;
             this.hide_header();
             this.print_paging();
+            this.print_path();
+            var toolbar = this.fpnode.one('.fp-toolbar');
+            if (!toolbar) { return; }
 
-            var enable_tb_control = function(elementid, enabled) {
-                if (!enabled) {
-                    Y.all('#'+elementid+',#wrap-'+elementid).addClass('disabled').removeClass('enabled')
-                } else {
-                    Y.all('#'+elementid+',#wrap-'+elementid).removeClass('disabled').addClass('enabled')
-                    Y.one('#fp-tb-'+client_id).removeClass('empty');
+            var enable_tb_control = function(node, enabled) {
+                if (!node) { return; }
+                node.addClassIf('disabled', !enabled).addClassIf('enabled', enabled)
+                if (enabled) {
+                    toolbar.removeClass('empty');
                 }
             }
 
             // TODO 'back' permanently disabled for now. Note, flickr_public uses 'Logout' for it!
-            enable_tb_control('fp-tb-back-'+client_id, false);
+            enable_tb_control(toolbar.one('.fp-tb-back'), false);
 
             // search form
-            enable_tb_control('fp-tb-search-'+client_id, !r.nosearch);
+            enable_tb_control(toolbar.one('.fp-tb-search'), !r.nosearch);
             if(!r.nosearch) {
-                Y.all('#fp-tb-search-'+client_id).setContent('');
+                var searchform = toolbar.one('.fp-tb-search form');
+                searchform.setContent('');
                 this.request({
                     scope: this,
                     action:'searchform',
@@ -1283,7 +1312,7 @@ M.core_filepicker.init = function(Y, options) {
                     callback: function(id, obj, args) {
                         if (obj.repo_id == scope.active_repo.id && obj.form) {
                             // if we did not jump to another repository meanwhile
-                            Y.all('#fp-tb-search-'+scope.options.client_id).setContent(obj.form);
+                            searchform.setContent(obj.form);
                         }
                     }
                 }, false);
@@ -1291,24 +1320,22 @@ M.core_filepicker.init = function(Y, options) {
 
             // refresh button
             // weather we use cache for this instance, this button will reload listing anyway
-            enable_tb_control('fp-tb-refresh-'+client_id, !r.norefresh);
+            enable_tb_control(toolbar.one('.fp-tb-refresh'), !r.norefresh);
 
             // login button
-            enable_tb_control('fp-tb-logout-'+client_id, !r.nologin);
+            enable_tb_control(toolbar.one('.fp-tb-logout'), !r.nologin);
             if(!r.nologin) {
                 var label = r.logouttext?r.logouttext:M.str.repository.logout;
-                Y.one('#fp-tb-logout-'+client_id).setContent(label)
+                toolbar.one('.fp-tb-logout').one('a,button').setContent(label)
             }
 
             // manage url
-            enable_tb_control('fp-tb-manage-'+client_id, r.manage);
+            enable_tb_control(toolbar.one('.fp-tb-manage'), r.manage);
             Y.one('#fp-tb-manage-'+client_id+'-link').set('href', r.manage);
 
             // help url
-            enable_tb_control('fp-tb-help-'+client_id, r.help);
+            enable_tb_control(toolbar.one('.fp-tb-help'), r.help);
             Y.one('#fp-tb-help-'+client_id+'-link').set('href', r.help);
-
-            this.print_path();
         },
         get_page_button: function(page) {
             var r = this.active_repo;
