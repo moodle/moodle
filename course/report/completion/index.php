@@ -601,7 +601,7 @@ foreach ($progress as $user) {
                 ($activity->completion==COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual').
                 '-'.$completiontype;
 
-            $describe=get_string('completion-alt-auto-'.$completiontype,'completion');
+            $describe = get_string('completion-' . $completiontype, 'completion');
             $a=new StdClass;
             $a->state=$describe;
             $a->date=$date;
@@ -630,7 +630,7 @@ foreach ($progress as $user) {
         $completiontype = $is_complete ? 'y' : 'n';
         $completionicon = 'completion-auto-'.$completiontype;
 
-        $describe = get_string('completion-alt-auto-'.$completiontype, 'completion');
+        $describe = get_string('completion-' . $completiontype, 'completion');
 
         $a = new stdClass();
         $a->state    = $describe;
@@ -644,7 +644,7 @@ foreach ($progress as $user) {
         } else {
 
             if ($allow_marking_criteria === $criterion->id) {
-                $describe = get_string('completion-alt-auto-'.$completiontype,'completion');
+                $describe = get_string('completion-' . $completiontype, 'completion');
 
                 print '<td class="completion-progresscell">'.
                     '<a href="'.$CFG->wwwroot.'/course/togglecompletion.php?user='.$user->id.'&amp;course='.$course->id.'&amp;rolec='.$allow_marking_criteria.'&amp;sesskey='.sesskey().'">'.
@@ -669,7 +669,7 @@ foreach ($progress as $user) {
     $ccompletion = new completion_completion($params);
     $completiontype =  $ccompletion->is_complete() ? 'y' : 'n';
 
-    $describe = get_string('completion-alt-auto-'.$completiontype, 'completion');
+    $describe = get_string('completion-' . $completiontype, 'completion');
 
     $a = new StdClass;
     $a->state    = $describe;
