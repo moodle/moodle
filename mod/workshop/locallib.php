@@ -501,21 +501,26 @@ class workshop {
      * tables. Does not return textual fields to prevent possible memory lack issues.
      *
      * @param mixed $authorid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
+     * @param int $groupid If non-zero, return only submissions by authors in the specified group
      * @return array of records or an empty array
      */
-    public function get_submissions($authorid='all') {
+    public function get_submissions($authorid='all', $groupid=0) {
         global $DB;
 
         $authorfields      = user_picture::fields('u', null, 'authoridx', 'author');
         $gradeoverbyfields = user_picture::fields('t', null, 'gradeoverbyx', 'over');
+        $params            = array('workshopid' => $this->id);
         $sql = "SELECT s.id, s.workshopid, s.example, s.authorid, s.timecreated, s.timemodified,
                        s.title, s.grade, s.gradeover, s.gradeoverby, s.published,
                        $authorfields, $gradeoverbyfields
                   FROM {workshop_submissions} s
-            INNER JOIN {user} u ON (s.authorid = u.id)
-             LEFT JOIN {user} t ON (s.gradeoverby = t.id)
+                  JOIN {user} u ON (s.authorid = u.id)";
+        if ($groupid) {
+            $sql .= " JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)";
+            $params['groupid'] = $groupid;
+        }
+        $sql .= " LEFT JOIN {user} t ON (s.gradeoverby = t.id)
                  WHERE s.example = 0 AND s.workshopid = :workshopid";
-        $params = array('workshopid' => $this->id);
 
         if ('all' === $authorid) {
             // no additional conditions
