@@ -63,11 +63,16 @@ if ($page == -1) {
     }
 }
 
-// If there is only a very small amount of time left, there is not point trying
+// If there is only a very small amount of time left, there is no point trying
 // to show the student another page of the quiz. Just finish now.
 $accessmanager = $attemptobj->get_access_manager($timenow);
-if ($accessmanager->get_time_left($attempt, $timenow) < QUIZ_MIN_TIME_TO_CONTINUE) {
+$timeleft = $accessmanager->get_time_left($attemptobj->get_attempt(), $timenow);
+$toolate = false;
+if ($timeleft !== false && $timeleft < QUIZ_MIN_TIME_TO_CONTINUE) {
     $timeup = true;
+    if ($timeleft < -get_config('quiz', 'graceperiodmin')) {
+        $toolate = true;
+    }
 }
 
 // Check login.
@@ -104,22 +109,28 @@ if ($timeup) {
 
 if (!$finishattempt) {
     // Just process the responses for this page and go to the next page.
-    try {
-        $attemptobj->process_submitted_actions($timenow, $becomingoverdue);
+    if (!$toolate) {
+        try {
+            $attemptobj->process_submitted_actions($timenow, $becomingoverdue);
 
-    } catch (question_out_of_sequence_exception $e) {
-        print_error('submissionoutofsequencefriendlymessage', 'question',
-                $attemptobj->attempt_url(null, $thispage));
+        } catch (question_out_of_sequence_exception $e) {
+            print_error('submissionoutofsequencefriendlymessage', 'question',
+                    $attemptobj->attempt_url(null, $thispage));
 
-    } catch (Exception $e) {
-        // This sucks, if we display our own custom error message, there is no way
-        // to display the original stack trace.
-        $debuginfo = '';
-        if (!empty($e->debuginfo)) {
-            $debuginfo = $e->debuginfo;
+        } catch (Exception $e) {
+            // This sucks, if we display our own custom error message, there is no way
+            // to display the original stack trace.
+            $debuginfo = '';
+            if (!empty($e->debuginfo)) {
+                $debuginfo = $e->debuginfo;
+            }
+            print_error('errorprocessingresponses', 'question',
+                    $attemptobj->attempt_url(null, $thispage), $e->getMessage(), $debuginfo);
         }
-        print_error('errorprocessingresponses', 'question',
-                $attemptobj->attempt_url(null, $thispage), $e->getMessage(), $debuginfo);
+
+    } else {
+        // The student is too late.
+        $attemptobj->process_going_overdue($timenow, true);
     }
 
     $transaction->allow_commit();
@@ -139,7 +150,7 @@ add_to_log($attemptobj->get_courseid(), 'quiz', 'close attempt',
 
 // Update the quiz attempt record.
 try {
-    $attemptobj->process_finish($timenow, true);
+    $attemptobj->process_finish($timenow, !$toolate);
 
 } catch (question_out_of_sequence_exception $e) {
     print_error('submissionoutofsequencefriendlymessage', 'question',
