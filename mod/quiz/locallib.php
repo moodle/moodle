@@ -1255,14 +1255,14 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     $a->quizreporturl   = $CFG->wwwroot . '/mod/quiz/report.php?id=' . $cm->id;
     $a->quizreportlink  = '<a href="' . $a->quizreporturl . '">' .
             format_string($quiz->name) . ' report</a>';
-    $a->quizreviewurl   = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id;
-    $a->quizreviewlink  = '<a href="' . $a->quizreviewurl . '">' .
-            format_string($quiz->name) . ' review</a>';
     $a->quizurl         = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
     $a->quizlink        = '<a href="' . $a->quizurl . '">' . format_string($quiz->name) . '</a>';
     // Attempt info
     $a->submissiontime  = userdate($attempt->timefinish);
     $a->timetaken       = format_time($attempt->timefinish - $attempt->timestart);
+    $a->quizreviewurl   = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id;
+    $a->quizreviewlink  = '<a href="' . $a->quizreviewurl . '">' .
+            format_string($quiz->name) . ' review</a>';
     // Student who sat the quiz info
     $a->studentidnumber = $submitter->idnumber;
     $a->studentname     = fullname($submitter);
@@ -1286,6 +1286,80 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     }
 
     return $allok;
+}
+
+/**
+ * Send the notification message when a quiz attempt becomes overdue.
+ *
+ * @param object $course the course
+ * @param object $quiz the quiz
+ * @param object $attempt this attempt just finished
+ * @param object $context the quiz context
+ * @param object $cm the coursemodule for this quiz
+ */
+function quiz_send_overdue_message($course, $quiz, $attempt, $context, $cm) {
+    global $CFG, $DB;
+
+    // Do nothing if required objects not present
+    if (empty($course) or empty($quiz) or empty($attempt) or empty($context)) {
+        throw new coding_exception('$course, $quiz, $attempt, $context and $cm must all be set.');
+    }
+
+    $submitter = $DB->get_record('user', array('id' => $attempt->userid), '*', MUST_EXIST);
+
+    if (!has_capability('mod/quiz:emailwarnoverdue', $context, $submitter, false)) {
+        return; // Message not required.
+    }
+
+    // Prepare lots of useful information that admins might want to include in
+    // the email message.
+    $quizname = format_string($quiz->name);
+
+    $deadlines = array();
+    if ($quiz->timelimit) {
+        $deadlines[] = $attempt->timestart + $quiz->timelimit;
+    }
+    if ($quiz->timeclose) {
+        $deadlines[] = $quiz->timeclose;
+    }
+    $duedate = min($deadlines) + $quiz->graceperiod;
+
+    $a = new stdClass();
+    // Course info.
+    $a->coursename         = $course->fullname;
+    $a->courseshortname    = $course->shortname;
+    // Quiz info.
+    $a->quizname           = $quizname;
+    $a->quizurl            = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
+    $a->quizlink           = '<a href="' . $a->quizurl . '">' . $quizname . '</a>';
+    // Attempt info.
+    $a->attemptgraceend    = format_time($duedate);
+    $a->attemptsummaryurl  = $CFG->wwwroot . '/mod/quiz/summary.php?attempt=' . $attempt->id;
+    $a->attemptsummarylink = '<a href="' . $a->attemptsummaryurl . '">' . $quizname . ' review</a>';
+    // Student's info.
+    $a->studentidnumber    = $submitter->idnumber;
+    $a->studentname        = fullname($submitter);
+    $a->studentusername    = $submitter->username;
+
+    // Prepare the message.
+    $eventdata = new stdClass();
+    $eventdata->component         = 'mod_quiz';
+    $eventdata->name              = 'attempt_overdue';
+    $eventdata->notification      = 1;
+
+    $eventdata->userfrom          = get_admin();
+    $eventdata->userto            = $submitter;
+    $eventdata->subject           = get_string('emailoverduesubject', 'quiz', $a);
+    $eventdata->fullmessage       = get_string('emailoverduebody', 'quiz', $a);
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessagehtml   = '';
+
+    $eventdata->smallmessage      = get_string('emailoverduesmall', 'quiz', $a);
+    $eventdata->contexturl        = $a->quizurl;
+    $eventdata->contexturlname    = $a->quizname;
+
+    // Send the message.
+    return message_send($eventdata);
 }
 
 /**
@@ -1313,6 +1387,36 @@ function quiz_attempt_submitted_handler($event) {
             get_context_instance(CONTEXT_MODULE, $cm->id), $cm);
 }
 
+/**
+ * Handle the quiz_attempt_overdue event.
+ *
+ * For quizzes with applicable settings, this sends a message to the user, reminding
+ * them that they forgot to submit, and that they have another chance to do so.
+ *
+ * @param object $event the event object.
+ */
+function quiz_attempt_overdue_handler($event) {
+    global $DB;
+
+    $course  = $DB->get_record('course', array('id' => $event->courseid));
+    $quiz    = $DB->get_record('quiz', array('id' => $event->quizid));
+    $cm      = get_coursemodule_from_id('quiz', $event->cmid, $event->courseid);
+    $attempt = $DB->get_record('quiz_attempts', array('id' => $event->attemptid));
+
+    if (!($course && $quiz && $cm && $attempt)) {
+        // Something has been deleted since the event was raised. Therefore, the
+        // event is no longer relevant.
+        return true;
+    }
+
+    return quiz_send_overdue_message($course, $quiz, $attempt,
+            get_context_instance(CONTEXT_MODULE, $cm->id), $cm);
+}
+
+/**
+ * Get the information about the standard quiz JavaScript module.
+ * @return array a standard jsmodule structure.
+ */
 function quiz_get_js_module() {
     global $PAGE;
 
