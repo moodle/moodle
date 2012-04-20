@@ -35,6 +35,7 @@ $id         = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $w          = optional_param('w', 0, PARAM_INT);  // workshop instance ID
 $editmode   = optional_param('editmode', null, PARAM_BOOL);
 $page       = optional_param('page', 0, PARAM_INT);
+$perpage    = optional_param('perpage', null, PARAM_INT);
 $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
 $sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
 
@@ -65,6 +66,12 @@ if (!is_null($editmode) && $PAGE->user_allowed_editing()) {
 $PAGE->set_url($workshop->view_url());
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
+
+if ($perpage and $perpage > 0 and $perpage <= 1000) {
+    require_sesskey();
+    set_user_preference('workshop_perpage', $perpage);
+    redirect($PAGE->url);
+}
 
 $output = $PAGE->get_renderer('mod_workshop');
 $userplan = new workshop_user_plan($workshop, $USER->id);
@@ -191,13 +198,12 @@ case workshop::PHASE_SUBMISSION:
         }
 
         $countsubmissions = $workshop->count_submissions('all', $groupid);
-        $perpage = 10;
+        $perpage = get_user_preferences('workshop_perpage', 10);
         $pagingbar = new paging_bar($countsubmissions, $page, $perpage, $PAGE->url, 'page');
 
         print_collapsible_region_start('', 'workshop-viewlet-allsubmissions', get_string('allsubmissions', 'workshop', $countsubmissions));
         echo $output->box_start('generalbox allsubmissions');
         echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
-        echo $output->render($pagingbar);
 
         if ($countsubmissions == 0) {
             echo $output->container(get_string('nosubmissions', 'workshop'), 'nosubmissions');
@@ -205,9 +211,12 @@ case workshop::PHASE_SUBMISSION:
         } else {
             $submissions = $workshop->get_submissions('all', $groupid, $page * $perpage, $perpage);
             $shownames = has_capability('mod/workshop:viewauthornames', $workshop->context);
+            echo $output->render($pagingbar);
             foreach ($submissions as $submission) {
                 echo $output->render($workshop->prepare_submission_summary($submission, $shownames));
             }
+            echo $output->render($pagingbar);
+            echo $output->perpage_selector($perpage);
         }
 
         echo $output->box_end();
@@ -243,7 +252,7 @@ case workshop::PHASE_ASSESSMENT:
     }
 
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
-        $perpage    = 10;           // todo let the user modify this
+        $perpage = get_user_preferences('workshop_perpage', 10);
         $groups     = '';           // todo let the user choose the group
         $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
         $data = $workshop->prepare_grading_report_data($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
@@ -266,6 +275,7 @@ case workshop::PHASE_ASSESSMENT:
             echo $output->render($pagingbar);
             echo $output->render(new workshop_grading_report($data, $reportopts));
             echo $output->render($pagingbar);
+            echo $output->perpage_selector($perpage);
         }
     }
     if (trim($workshop->instructreviewers)) {
@@ -372,7 +382,7 @@ case workshop::PHASE_ASSESSMENT:
     break;
 case workshop::PHASE_EVALUATION:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
-        $perpage    = 10;           // todo let the user modify this
+        $perpage = get_user_preferences('workshop_perpage', 10);
         $groups     = '';           // todo let the user choose the group
         $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
         $data = $workshop->prepare_grading_report_data($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
@@ -403,6 +413,7 @@ case workshop::PHASE_EVALUATION:
             echo $output->render($pagingbar);
             echo $output->render(new workshop_grading_report($data, $reportopts));
             echo $output->render($pagingbar);
+            echo $output->perpage_selector($perpage);
         }
     }
     if (has_capability('mod/workshop:overridegrades', $workshop->context)) {
@@ -477,7 +488,7 @@ case workshop::PHASE_EVALUATION:
     break;
 case workshop::PHASE_CLOSED:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
-        $perpage    = 10;           // todo let the user modify this
+        $perpage = get_user_preferences('workshop_perpage', 10);
         $groups     = '';           // todo let the user choose the group
         $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
         $data = $workshop->prepare_grading_report_data($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
@@ -501,6 +512,7 @@ case workshop::PHASE_CLOSED:
             echo $output->render($pagingbar);
             echo $output->render(new workshop_grading_report($data, $reportopts));
             echo $output->render($pagingbar);
+            echo $output->perpage_selector($perpage);
             print_collapsible_region_end();
         }
     }
