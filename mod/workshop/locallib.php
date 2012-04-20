@@ -1540,14 +1540,14 @@ class workshop {
      * Prepares data object with all workshop grades to be rendered
      *
      * @param int $userid the user we are preparing the report for
-     * @param mixed $groups single group or array of groups - only show users who are in one of these group(s). Defaults to all
+     * @param int $groupid if non-zero, prepare the report for the given group only
      * @param int $page the current page (for the pagination)
      * @param int $perpage participants per page (for the pagination)
      * @param string $sortby lastname|firstname|submissiontitle|submissiongrade|gradinggrade
      * @param string $sorthow ASC|DESC
      * @return stdclass data for the renderer
      */
-    public function prepare_grading_report_data($userid, $groups, $page, $perpage, $sortby, $sorthow) {
+    public function prepare_grading_report_data($userid, $groupid, $page, $perpage, $sortby, $sorthow) {
         global $DB;
 
         $canviewall     = has_capability('mod/workshop:viewallassessments', $this->context, $userid);
@@ -1568,9 +1568,7 @@ class workshop {
 
         // get the list of user ids to be displayed
         if ($canviewall) {
-            // fetch the list of ids of all workshop participants - this may get really long so fetch just id
-            $participants = get_users_by_capability($this->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
-                    'u.id', '', '', '', $groups, '', false, false, true);
+            $participants = $this->get_participants(false, $groupid);
         } else {
             // this is an ordinary workshop participant (aka student) - display the report just for him/her
             $participants = array($userid => (object)array('id' => $userid));

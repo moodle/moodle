@@ -253,15 +253,15 @@ case workshop::PHASE_ASSESSMENT:
 
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
         $perpage = get_user_preferences('workshop_perpage', 10);
-        $groups     = '';           // todo let the user choose the group
-        $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
-        $data = $workshop->prepare_grading_report_data($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
+        $groupid = groups_get_activity_group($workshop->cm, true);
+        $data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
         if ($data) {
             $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
 
             // prepare paging bar
-            $pagingbar              = new paging_bar($data->totalcount, $page, $perpage, $PAGE->url, 'page');
+            $baseurl = new moodle_url($PAGE->url, array('sortby' => $sortby, 'sorthow' => $sorthow));
+            $pagingbar = new paging_bar($data->totalcount, $page, $perpage, $baseurl, 'page');
 
             // grading report display options
             $reportopts                         = new stdclass();
@@ -272,10 +272,15 @@ case workshop::PHASE_ASSESSMENT:
             $reportopts->showsubmissiongrade    = false;
             $reportopts->showgradinggrade       = false;
 
+            print_collapsible_region_start('', 'workshop-viewlet-gradereport', get_string('gradesreport', 'workshop'));
+            echo $output->box_start('generalbox gradesreport');
+            echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
             echo $output->render($pagingbar);
             echo $output->render(new workshop_grading_report($data, $reportopts));
             echo $output->render($pagingbar);
             echo $output->perpage_selector($perpage);
+            echo $output->box_end();
+            print_collapsible_region_end();
         }
     }
     if (trim($workshop->instructreviewers)) {
@@ -383,9 +388,8 @@ case workshop::PHASE_ASSESSMENT:
 case workshop::PHASE_EVALUATION:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
         $perpage = get_user_preferences('workshop_perpage', 10);
-        $groups     = '';           // todo let the user choose the group
-        $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
-        $data = $workshop->prepare_grading_report_data($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
+        $groupid = groups_get_activity_group($workshop->cm, true);
+        $data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
         if ($data) {
             $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
@@ -399,7 +403,8 @@ case workshop::PHASE_EVALUATION:
             }
 
             // prepare paging bar
-            $pagingbar              = new paging_bar($data->totalcount, $page, $perpage, $PAGE->url, 'page');
+            $baseurl = new moodle_url($PAGE->url, array('sortby' => $sortby, 'sorthow' => $sorthow));
+            $pagingbar = new paging_bar($data->totalcount, $page, $perpage, $baseurl, 'page');
 
             // grading report display options
             $reportopts                         = new stdclass();
@@ -410,10 +415,15 @@ case workshop::PHASE_EVALUATION:
             $reportopts->showsubmissiongrade    = true;
             $reportopts->showgradinggrade       = true;
 
+            print_collapsible_region_start('', 'workshop-viewlet-gradereport', get_string('gradesreport', 'workshop'));
+            echo $output->box_start('generalbox gradesreport');
+            echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
             echo $output->render($pagingbar);
             echo $output->render(new workshop_grading_report($data, $reportopts));
             echo $output->render($pagingbar);
             echo $output->perpage_selector($perpage);
+            echo $output->box_end();
+            print_collapsible_region_end();
         }
     }
     if (has_capability('mod/workshop:overridegrades', $workshop->context)) {
@@ -489,15 +499,15 @@ case workshop::PHASE_EVALUATION:
 case workshop::PHASE_CLOSED:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
         $perpage = get_user_preferences('workshop_perpage', 10);
-        $groups     = '';           // todo let the user choose the group
-        $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
-        $data = $workshop->prepare_grading_report_data($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
+        $groupid = groups_get_activity_group($workshop->cm, true);
+        $data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
         if ($data) {
             $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
 
             // prepare paging bar
-            $pagingbar = new paging_bar($data->totalcount, $page, $perpage, $PAGE->url, 'page');
+            $baseurl = new moodle_url($PAGE->url, array('sortby' => $sortby, 'sorthow' => $sorthow));
+            $pagingbar = new paging_bar($data->totalcount, $page, $perpage, $baseurl, 'page');
 
             // grading report display options
             $reportopts                         = new stdclass();
@@ -509,10 +519,13 @@ case workshop::PHASE_CLOSED:
             $reportopts->showgradinggrade       = true;
 
             print_collapsible_region_start('', 'workshop-viewlet-gradereport', get_string('gradesreport', 'workshop'));
+            echo $output->box_start('generalbox gradesreport');
+            echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
             echo $output->render($pagingbar);
             echo $output->render(new workshop_grading_report($data, $reportopts));
             echo $output->render($pagingbar);
             echo $output->perpage_selector($perpage);
+            echo $output->box_end();
             print_collapsible_region_end();
         }
     }
