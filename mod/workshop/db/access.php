@@ -156,8 +156,9 @@ $capabilities = array(
         )
     ),
 
-    // Ability to view a work submitted by an other user. Applies to the user's group only
-    // or - if the user is allowed to access all groups - applies to any submission
+    // Ability to view the work submitted by an other user. In separate groups mode,
+    // the user has to be allowed to access all groups or be the member of the
+    // submission author's group.
     'mod/workshop:viewallsubmissions' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -168,8 +169,9 @@ $capabilities = array(
         )
     ),
 
-    // Ability to view published submission when the workshop is closed. Applies to the user's group only
-    // or - if the user is allowed to access all groups - applies to any submission
+    // Ability to view published submission when the workshop is closed. Group mode
+    // restrictions do not apply here, published submissions are available in all
+    // groups even in the separate groups mode.
     'mod/workshop:viewpublishedsubmissions' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -193,8 +195,11 @@ $capabilities = array(
         )
     ),
 
-    // Ability to always view the assessments of other users' work and the calculated grades, regardless the phase.
-    // Applies to the user's group only or - if the user is allowed to access all groups - applies to any assessment
+    // Ability to always view the assessments of other users' work and the calculated grades,
+    // regardless the phase. The separate groups membership is checked against the submission
+    // author only, not against the reviewer. In other words, if the user has this capability
+    // and is allowed to see some submission, then they are implicitly allowed to see all
+    // assessments of that submissions even if they do not share a group with the reviewer.
     'mod/workshop:viewallassessments' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
