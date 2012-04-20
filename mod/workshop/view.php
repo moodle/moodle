@@ -190,20 +190,26 @@ case workshop::PHASE_SUBMISSION:
             }
         }
 
-        echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
+        $countsubmissions = $workshop->count_submissions('all', $groupid);
+        $perpage = 10;
+        $pagingbar = new paging_bar($countsubmissions, $page, $perpage, $PAGE->url, 'page');
 
-        $submissions = $workshop->get_submissions('all', $groupid);
-
-        print_collapsible_region_start('', 'workshop-viewlet-allsubmissions', get_string('allsubmissions', 'workshop', count($submissions)));
-
+        print_collapsible_region_start('', 'workshop-viewlet-allsubmissions', get_string('allsubmissions', 'workshop', $countsubmissions));
         echo $output->box_start('generalbox allsubmissions');
-        if (empty($submissions)) {
+        echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
+        echo $output->render($pagingbar);
+
+        if ($countsubmissions == 0) {
             echo $output->container(get_string('nosubmissions', 'workshop'), 'nosubmissions');
+
+        } else {
+            $submissions = $workshop->get_submissions('all', $groupid, $page * $perpage, $perpage);
+            $shownames = has_capability('mod/workshop:viewauthornames', $workshop->context);
+            foreach ($submissions as $submission) {
+                echo $output->render($workshop->prepare_submission_summary($submission, $shownames));
+            }
         }
-        $shownames = has_capability('mod/workshop:viewauthornames', $workshop->context);
-        foreach ($submissions as $submission) {
-            echo $output->render($workshop->prepare_submission_summary($submission, $shownames));
-        }
+
         echo $output->box_end();
         print_collapsible_region_end();
     }
