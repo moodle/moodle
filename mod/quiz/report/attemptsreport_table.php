@@ -49,17 +49,48 @@ abstract class quiz_attempts_report_table extends table_sql {
      */
     protected $lateststeps = null;
 
+    /** @var object the quiz settings for the quiz we are reporting on. */
     protected $quiz;
+
+    /** @var context the quiz context. */
     protected $context;
+
+    /** @var string HTML fragment to select the first/best/last attempt, if appropriate. */
     protected $qmsubselect;
+
+    /** @var object mod_quiz_attempts_report_options the options affecting this report. */
     protected $options;
+
+    /** @var bool whether to only display the first/best/last attempt for each student. */
     protected $qmfilter;
+
+    /** @var int which attempts/students to include in the report.. */
     protected $attemptsmode;
+
+    /** @var object the ids of the students in the currently selected group, if applicable. */
     protected $groupstudents;
+
+    /** @var object the ids of the students in the course. */
     protected $students;
+
+    /** @var object the questions that comprise this quiz.. */
     protected $questions;
+
+    /** @var bool whether to include the column with checkboxes to select each attempt. */
     protected $includecheckboxes;
 
+    /**
+     * Constructor
+     * @param string $uniqueid
+     * @param object $quiz
+     * @param context $context
+     * @param string $qmsubselect
+     * @param mod_quiz_attempts_report_options $options
+     * @param array $groupstudents
+     * @param array $students
+     * @param array $questions
+     * @param moodle_url $reporturl
+     */
     public function __construct($uniqueid, $quiz, $context, $qmsubselect,
             mod_quiz_attempts_report_options $options, $groupstudents, $students,
             $questions, $reporturl) {
@@ -77,6 +108,11 @@ abstract class quiz_attempts_report_table extends table_sql {
         $this->options = $options;
     }
 
+    /**
+     * Generate the display of the checkbox column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
     public function col_checkbox($attempt) {
         if ($attempt->attempt) {
             return '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
@@ -85,6 +121,11 @@ abstract class quiz_attempts_report_table extends table_sql {
         }
     }
 
+    /**
+     * Generate the display of the user's picture column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
     public function col_picture($attempt) {
         global $OUTPUT;
         $user = new stdClass();
@@ -97,6 +138,11 @@ abstract class quiz_attempts_report_table extends table_sql {
         return $OUTPUT->user_picture($user);
     }
 
+    /**
+     * Generate the display of the user's full name column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
     public function col_fullname($attempt) {
         $html = parent::col_fullname($attempt);
         if ($this->is_downloading()) {
@@ -108,6 +154,11 @@ abstract class quiz_attempts_report_table extends table_sql {
                 get_string('reviewattempt', 'quiz'), array('class' => 'reviewlink'));
     }
 
+    /**
+     * Generate the display of the start time column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
     public function col_timestart($attempt) {
         if ($attempt->attempt) {
             return userdate($attempt->timestart, $this->strtimeformat);
@@ -116,6 +167,11 @@ abstract class quiz_attempts_report_table extends table_sql {
         }
     }
 
+    /**
+     * Generate the display of the finish time column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
     public function col_timefinish($attempt) {
         if ($attempt->attempt && $attempt->timefinish) {
             return userdate($attempt->timefinish, $this->strtimeformat);
@@ -124,6 +180,11 @@ abstract class quiz_attempts_report_table extends table_sql {
         }
     }
 
+    /**
+     * Generate the display of the time taken column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
     public function col_duration($attempt) {
         if ($attempt->timefinish) {
             return format_time($attempt->timefinish - $attempt->timestart);
@@ -134,6 +195,11 @@ abstract class quiz_attempts_report_table extends table_sql {
         }
     }
 
+    /**
+     * Generate the display of the feedback column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
     public function col_feedbacktext($attempt) {
         if (!$attempt->timefinish) {
             return '-';
@@ -224,7 +290,6 @@ abstract class quiz_attempts_report_table extends table_sql {
      *
      * @param qubaid_condition $qubaids used to restrict which usages are included
      * in the query. See {@link qubaid_condition}.
-     * @param array $slots A list of slots for the questions you want to konw about.
      * @return array of records. See the SQL in this function to see the fields available.
      */
     protected function load_question_latest_steps(qubaid_condition $qubaids) {
@@ -241,6 +306,8 @@ abstract class quiz_attempts_report_table extends table_sql {
     }
 
     /**
+     * Does this report require the detailed information for each question from the
+     * question_attempts_steps table?
      * @return bool should {@link query_db()} call {@link load_question_latest_steps}?
      */
     protected function requires_latest_steps_loaded() {

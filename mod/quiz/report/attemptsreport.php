@@ -91,7 +91,8 @@ abstract class quiz_attempts_report extends quiz_default_report {
     }
 
     /**
-     * @return moodle_url the base URL for this report.
+     * Get the base URL for this report.
+     * @return moodle_url the URL.
      */
     protected function get_base_url() {
         return new moodle_url('/mod/quiz/report.php',

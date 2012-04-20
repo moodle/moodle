@@ -38,6 +38,17 @@ class quiz_overview_table extends quiz_attempts_report_table {
 
     protected $regradedqs = array();
 
+    /**
+     * Constructor
+     * @param object $quiz
+     * @param context $context
+     * @param string $qmsubselect
+     * @param quiz_overview_options $options
+     * @param array $groupstudents
+     * @param array $students
+     * @param array $questions
+     * @param moodle_url $reporturl
+     */
     public function __construct($quiz, $context, $qmsubselect,
             quiz_overview_options $options, $groupstudents, $students, $questions, $reporturl) {
         parent::__construct('mod-quiz-report-overview-report', $quiz , $context,

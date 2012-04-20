@@ -74,8 +74,10 @@ class mod_quiz_attempts_report_options {
 
     /**
      * Constructor.
+     * @param string $mode which report these options are for.
      * @param object $quiz the settings for the quiz being reported on.
      * @param object $cm the course module objects for the quiz being reported on.
+     * @param object $coures the course settings for the coures this quiz is in.
      */
     public function __construct($mode, $quiz, $cm, $course) {
         $this->mode   = $mode;
@@ -87,7 +89,8 @@ class mod_quiz_attempts_report_options {
     }
 
     /**
-     * @return array the URL parameters required to show the report with these options.
+     * Get the URL parameters required to show the report with these options.
+     * @return array URL parameter name => value.
      */
     protected function get_url_params() {
         return array(
@@ -99,7 +102,8 @@ class mod_quiz_attempts_report_options {
     }
 
     /**
-     * @return moodle_url the URL to show the report with these options.
+     * Get the URL to show the report with these options.
+     * @return moodle_url the URL.
      */
     public function get_url() {
         return new moodle_url('/mod/quiz/report.php', $this->get_url_params());
