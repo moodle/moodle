@@ -495,16 +495,54 @@ class workshop {
     }
 
     /**
+     * Returns the total number of records that would be returned by {@link self::get_submissions()}
+     *
+     * @param mixed $authorid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
+     * @param int $groupid If non-zero, return only submissions by authors in the specified group
+     * @return int number of records
+     */
+    public function count_submissions($authorid='all', $groupid=0) {
+        global $DB;
+
+        $params = array('workshopid' => $this->id);
+        $sql = "SELECT COUNT(s.id)
+                  FROM {workshop_submissions} s
+                  JOIN {user} u ON (s.authorid = u.id)";
+        if ($groupid) {
+            $sql .= " JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)";
+            $params['groupid'] = $groupid;
+        }
+        $sql .= " WHERE s.example = 0 AND s.workshopid = :workshopid";
+
+        if ('all' === $authorid) {
+            // no additional conditions
+        } elseif (!empty($authorid)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($authorid, SQL_PARAMS_NAMED);
+            $sql .= " AND authorid $usql";
+            $params = array_merge($params, $uparams);
+        } else {
+            // $authorid is empty
+            return 0;
+        }
+
+        return $DB->count_records_sql($sql, $params);
+    }
+
+
+    /**
      * Returns submissions from this workshop
      *
      * Fetches data from {workshop_submissions} and adds some useful information from other
      * tables. Does not return textual fields to prevent possible memory lack issues.
      *
+     * @see self::count_submissions()
      * @param mixed $authorid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
      * @param int $groupid If non-zero, return only submissions by authors in the specified group
+     * @param int $limitfrom Return a subset of records, starting at this point (optional)
+     * @param int $limitnum Return a subset containing this many records in total (optional, required if $limitfrom is set)
      * @return array of records or an empty array
      */
-    public function get_submissions($authorid='all', $groupid=0) {
+    public function get_submissions($authorid='all', $groupid=0, $limitfrom=0, $limitnum=0) {
         global $DB;
 
         $authorfields      = user_picture::fields('u', null, 'authoridx', 'author');
@@ -534,7 +572,7 @@ class workshop {
         }
         $sql .= " ORDER BY u.lastname, u.firstname";
 
-        return $DB->get_records_sql($sql, $params);
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
 
     /**
