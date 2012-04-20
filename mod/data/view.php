@@ -507,7 +507,7 @@
                 $sortcontent = sql_compare_text('c.' . $sortfield->get_sort_field());
                 $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
 
-                $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, '.$sortcontentfull.' AS _order ';
+                $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, '.$sortcontentfull.' AS sortorder ';
                 $count = ' COUNT(DISTINCT c.recordid) ';
                 $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content cs, '.$CFG->prefix.'user u ';
                 $where =  'WHERE c.recordid = r.id
@@ -515,7 +515,7 @@
                              AND r.dataid = '.$data->id.'
                              AND r.userid = u.id
                              AND cs.recordid = r.id ';
-                $sortorder = ' ORDER BY _order '.$order.' , r.id ASC ';
+                $sortorder = ' ORDER BY sortorder '.$order.' , r.id ASC ';
                 $searchselect = '';
 
                 // If requiredentries is not reached, only show current user's entries
@@ -543,13 +543,20 @@
         /// To actually fetch the records
 
             $fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
-            $sqlselect  = "SELECT $what $fromsql $sortorder";
-            $sqlcount   = "SELECT $count $fromsql";   // Total number of records when searching
             $sqlmax     = "SELECT $count FROM $tables $where $groupselect $approveselect"; // number of all recoirds user may see
 
         /// Work out the paging numbers and counts
 
-            $totalcount = count_records_sql($sqlcount);
+            $recordids = data_get_all_recordids($data->id);
+            $newrecordids = data_get_advance_search_ids($recordids, $search_array, $data->id);
+            $totalcount = count($newrecordids);
+            $selectdata = $groupselect . $approveselect;
+            if (!empty($advanced)) {
+                $sqlselect = data_get_advanced_search_sql($sort, $data, $newrecordids, $selectdata, $sortorder);
+            } else {
+                $sqlselect  = "SELECT $what $fromsql $sortorder";
+            }
+
             if (empty($searchselect) && empty($advsearchselect)) {
                 $maxcount = $totalcount;
             } else {
@@ -560,12 +567,8 @@
                 $nowperpage = 1;
                 $mode = 'single';
 
-                $page = 0;
-                // TODO: Improve this because we are executing $sqlselect twice (here and some lines below)!
-                if ($allrecordids = get_fieldset_sql($sqlselect)) {
-                    $page = (int)array_search($record->id, $allrecordids);
-                    unset($allrecordids);
-                }
+                $page = (int)array_search($record->id, $recordids);
+                unset($recordids);
 
             } else if ($mode == 'single') {  // We rely on ambient $page settings
                 $nowperpage = 1;
