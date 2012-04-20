@@ -61,6 +61,13 @@ class workshop_manual_allocator implements workshop_allocator {
         global $PAGE;
 
         $mode = optional_param('mode', 'display', PARAM_ALPHA);
+        $perpage = optional_param('perpage', null, PARAM_INT);
+
+        if ($perpage and $perpage > 0 and $perpage <= 1000) {
+            require_sesskey();
+            set_user_preference('workshopallocation_manual_perpage', $perpage);
+            redirect($PAGE->url);
+        }
 
         $result = new workshop_allocation_result($this);
 
@@ -141,9 +148,8 @@ class workshop_manual_allocator implements workshop_allocator {
 
         $output     = $PAGE->get_renderer('workshopallocation_manual');
 
-        $pagingvar  = 'page';
-        $page       = optional_param($pagingvar, 0, PARAM_INT);
-        $perpage    = 10;   // todo let the user modify this
+        $page       = optional_param('page', 0, PARAM_INT);
+        $perpage    = get_user_preferences('workshopallocation_manual_perpage', 10);
 
         $hlauthorid     = -1;           // highlight this author
         $hlreviewerid   = -1;           // highlight this reviewer
@@ -324,10 +330,11 @@ class workshop_manual_allocator implements workshop_allocator {
         $data->selfassessment   = $this->workshop->useselfassessment;
 
         // prepare paging bar
-        $pagingbar              = new paging_bar($numofparticipants, $page, $perpage, $PAGE->url, $pagingvar);
+        $pagingbar              = new paging_bar($numofparticipants, $page, $perpage, $PAGE->url, 'page');
         $pagingbarout           = $output->render($pagingbar);
+        $perpageselector        = $output->perpage_selector($perpage);
 
-        return $pagingbarout . $output->render($message) . $output->render($data) . $button . $pagingbarout;
+        return $pagingbarout . $output->render($message) . $output->render($data) . $button . $pagingbarout . $perpageselector;
     }
 
     /**
