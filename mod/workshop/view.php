@@ -34,6 +34,9 @@ require_once($CFG->libdir.'/completionlib.php');
 $id         = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $w          = optional_param('w', 0, PARAM_INT);  // workshop instance ID
 $editmode   = optional_param('editmode', null, PARAM_BOOL);
+$page       = optional_param('page', 0, PARAM_INT);
+$sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
+$sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
 
 if ($id) {
     $cm         = get_coursemodule_from_id('workshop', $id, 0, false, MUST_EXIST);
@@ -234,9 +237,6 @@ case workshop::PHASE_ASSESSMENT:
     }
 
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
-        $page       = optional_param('page', 0, PARAM_INT);
-        $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
-        $sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
         $perpage    = 10;           // todo let the user modify this
         $groups     = '';           // todo let the user choose the group
         $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
@@ -366,9 +366,6 @@ case workshop::PHASE_ASSESSMENT:
     break;
 case workshop::PHASE_EVALUATION:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
-        $page       = optional_param('page', 0, PARAM_INT);
-        $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
-        $sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
         $perpage    = 10;           // todo let the user modify this
         $groups     = '';           // todo let the user choose the group
         $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
@@ -474,9 +471,6 @@ case workshop::PHASE_EVALUATION:
     break;
 case workshop::PHASE_CLOSED:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
-        $page       = optional_param('page', 0, PARAM_INT);
-        $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
-        $sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
         $perpage    = 10;           // todo let the user modify this
         $groups     = '';           // todo let the user choose the group
         $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
