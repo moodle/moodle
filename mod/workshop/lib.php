@@ -306,7 +306,19 @@ function workshop_user_complete($course, $user, $mod, $workshop) {
     }
 
     if (has_capability('mod/workshop:viewallsubmissions', $workshop->context)) {
-        if ($submission = $workshop->get_submission_by_author($user->id)) {
+        $canviewsubmission = true;
+        if (groups_get_activity_groupmode($workshop->cm) == SEPARATEGROUPS) {
+            // user must have accessallgroups or share at least one group with the submission author
+            if (!has_capability('moodle/site:accessallgroups', $workshop->context)) {
+                $usersgroups = groups_get_activity_allowed_groups($workshop->cm);
+                $authorsgroups = groups_get_all_groups($workshop->course->id, $user->id, $workshop->cm->groupingid, 'g.id');
+                $sharedgroups = array_intersect_key($usersgroups, $authorsgroups);
+                if (empty($sharedgroups)) {
+                    $canviewsubmission = false;
+                }
+            }
+        }
+        if ($canviewsubmission and $submission = $workshop->get_submission_by_author($user->id)) {
             $title      = format_string($submission->title);
             $url        = $workshop->submission_url($submission->id);
             $link       = html_writer::link($url, $title);
