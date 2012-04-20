@@ -4488,21 +4488,30 @@ function include_course_ajax($course, $modules = array(), $config = null) {
     );
 
     // Include course dragdrop
-    $PAGE->requires->yui_module('moodle-course-dragdrop',
-            'M.core_course.init_resource_dragdrop',
-            array(array(
-                'courseid' => $course->id,
-                'ajaxurl' => $config->resourceurl,
-                'config' => $config,
-            )), null, true);
-
-    $PAGE->requires->yui_module('moodle-course-dragdrop',
-            'M.core_course.init_section_dragdrop',
+    if ($course->id != SITEID) {
+        $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.core_course.init_section_dragdrop',
             array(array(
                 'courseid' => $course->id,
                 'ajaxurl' => $config->sectionurl,
                 'config' => $config,
             )), null, true);
+
+        $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.core_course.init_resource_dragdrop',
+            array(array(
+                'courseid' => $course->id,
+                'ajaxurl' => $config->resourceurl,
+                'config' => $config,
+            )), null, true);
+    }
+
+    // Include blocks dragdrop
+    $params = array(
+        'courseid' => $course->id,
+        'pagetype' => $PAGE->pagetype,
+        'pagelayout' => $PAGE->pagelayout,
+        'regions' => $PAGE->blocks->get_regions(),
+    );
+    $PAGE->requires->yui_module('moodle-core-blocks', 'M.core_blocks.init_dragdrop', array($params), null, true);
 
     // Require various strings for the command toolbox
     $PAGE->requires->strings_for_js(array(
