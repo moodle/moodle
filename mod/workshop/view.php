@@ -172,12 +172,32 @@ case workshop::PHASE_SUBMISSION:
     }
 
     if (has_capability('mod/workshop:viewallsubmissions', $PAGE->context)) {
-        $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
-        print_collapsible_region_start('', 'workshop-viewlet-allsubmissions', get_string('allsubmissions', 'workshop'));
+        $groupmode = groups_get_activity_groupmode($workshop->cm);
+        $groupid = groups_get_activity_group($workshop->cm, true);
+
+        if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $workshop->context)) {
+            $allowedgroups = groups_get_activity_allowed_groups($workshop->cm);
+            if (empty($allowedgroups)) {
+                echo $output->container(get_string('groupnoallowed', 'mod_workshop'), 'groupwidget error');
+                break;
+            }
+            if (! in_array($groupid, array_keys($allowedgroups))) {
+                echo $output->container(get_string('groupnotamember', 'core_group'), 'groupwidget error');
+                break;
+            }
+        }
+
+        echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
+
+        $submissions = $workshop->get_submissions('all', $groupid);
+
+        print_collapsible_region_start('', 'workshop-viewlet-allsubmissions', get_string('allsubmissions', 'workshop', count($submissions)));
+
         echo $output->box_start('generalbox allsubmissions');
-        if (! $submissions = $workshop->get_submissions('all')) {
+        if (empty($submissions)) {
             echo $output->container(get_string('nosubmissions', 'workshop'), 'nosubmissions');
         }
+        $shownames = has_capability('mod/workshop:viewauthornames', $workshop->context);
         foreach ($submissions as $submission) {
             echo $output->render($workshop->prepare_submission_summary($submission, $shownames));
         }
