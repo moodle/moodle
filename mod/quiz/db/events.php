@@ -43,6 +43,7 @@ quiz_attempt_started
     ->component   = 'mod_quiz';
     ->attemptid   = // The id of the new quiz attempt.
     ->timestart   = // The timestamp of when the attempt was started.
+    ->timestamp   = // The timestamp of when the attempt was started.
     ->userid      = // The user id that the attempt belongs to.
     ->quizid      = // The quiz id of the quiz the attempt belongs to.
     ->cmid        = // The course_module id of the quiz the attempt belongs to.
@@ -52,8 +53,29 @@ quiz_attempt_submitted
     ->component   = 'mod_quiz';
     ->attemptid   = // The id of the quiz attempt that was submitted.
     ->timefinish  = // The timestamp of when the attempt was submitted.
+    ->timestamp   = // The timestamp of when the attempt was submitted.
     ->userid      = // The user id that the attempt belongs to.
     ->submitterid = // The user id of the user who sumitted the attempt.
+    ->quizid      = // The quiz id of the quiz the attempt belongs to.
+    ->cmid        = // The course_module id of the quiz the attempt belongs to.
+    ->courseid    = // The course id of the course the quiz belongs to.
+
+quiz_attempt_overdue
+    ->component   = 'mod_quiz';
+    ->attemptid   = // The id of the quiz attempt that has become overdue.
+    ->timestamp   = // The timestamp of when the attempt become overdue.
+    ->userid      = // The user id that the attempt belongs to.
+    ->submitterid = // The user id of the user who triggered this transition (may be null, e.g. on cron.).
+    ->quizid      = // The quiz id of the quiz the attempt belongs to.
+    ->cmid        = // The course_module id of the quiz the attempt belongs to.
+    ->courseid    = // The course id of the course the quiz belongs to.
+
+quiz_attempt_abandoned
+    ->component   = 'mod_quiz';
+    ->attemptid   = // The id of the quiz attempt that was submitted.
+    ->timestamp   = // The timestamp of when the attempt was submitted.
+    ->userid      = // The user id that the attempt belongs to.
+    ->submitterid = // The user id of the user who triggered this transition (may be null, e.g. on cron.).
     ->quizid      = // The quiz id of the quiz the attempt belongs to.
     ->cmid        = // The course_module id of the quiz the attempt belongs to.
     ->courseid    = // The course id of the course the quiz belongs to.

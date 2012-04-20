@@ -90,8 +90,9 @@ $unfinished = false;
 if ($unfinishedattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
     $attempts[] = $unfinishedattempt;
 
-    // If the attempt is now overdue, deal with that.
-    $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time());
+    // If the attempt is now overdue, deal with that - and pass isonline = false.
+    // We want the student notified in this case.
+    $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time(), false);
 
     $unfinished = $unfinishedattempt->state == quiz_attempt::IN_PROGRESS ||
             $unfinishedattempt->state == quiz_attempt::OVERDUE;

@@ -89,7 +89,7 @@ if ($lastattempt && ($lastattempt->state == quiz_attempt::IN_PROGRESS ||
     $messages = $accessmanager->prevent_access();
 
     // If the attempt is now overdue, deal with that.
-    $quizobj->create_attempt_object($lastattempt)->handle_if_time_expired($timenow);
+    $quizobj->create_attempt_object($lastattempt)->handle_if_time_expired($timenow, true);
 
     // And, if the attempt is now no longer in progress, redirect to the appropriate place.
     if ($lastattempt->state == quiz_attempt::OVERDUE) {
@@ -264,6 +264,7 @@ $eventdata = new stdClass();
 $eventdata->component = 'mod_quiz';
 $eventdata->attemptid = $attempt->id;
 $eventdata->timestart = $attempt->timestart;
+$eventdata->timestamp = $attempt->timestart;
 $eventdata->userid    = $attempt->userid;
 $eventdata->quizid    = $quizobj->get_quizid();
 $eventdata->cmid      = $quizobj->get_cmid();

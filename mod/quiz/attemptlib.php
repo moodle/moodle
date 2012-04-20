@@ -1255,19 +1255,22 @@ class quiz_attempt {
      * Check this attempt, to see if there are any state transitions that should
      * happen automatically.
      * @param int $timestamp the timestamp that should be stored as the modifed
+     * @param bool $studentisonline is the student currently interacting with Moodle?
      */
-    public function handle_if_time_expired($timestamp) {
+    public function handle_if_time_expired($timestamp, $studentisonline) {
         global $DB;
 
-        if ($this->get_time_left($timestamp) > 0) {
+        $timeleft = $this->get_access_manager($timestamp)->get_time_left($this->attempt, $timestamp);
+
+        if ($timeleft === false || $timeleft > 0) {
             return; // Time has not yet expired.
         }
 
         // If the attempt is already overdue, look to see if it should be abandoned ...
         if ($this->attempt->state == quiz_attempt::OVERDUE) {
-            $timeover = -$this->get_access_manager($timestamp)->get_time_left($this->attempt, $timestamp);
-            if ($timeover > $this->quizobj->get_quiz()->graceperiod) {
-                $this->process_abandon($timestamp);
+            $timeoverdue = -$timeleft;
+            if ($timeoverdue > $this->quizobj->get_quiz()->graceperiod) {
+                $this->process_abandon($timestamp, $studentisonline);
             }
 
             return; // ... and we are done.
@@ -1285,11 +1288,11 @@ class quiz_attempt {
                 return;
 
             case 'graceperiod':
-                $this->process_going_overdue($timestamp);
+                $this->process_going_overdue($timestamp, $studentisonline);
                 return;
 
             case 'autoabandon':
-                $this->process_abandon($timestamp);
+                $this->process_abandon($timestamp, $studentisonline);
                 return;
         }
     }
@@ -1313,12 +1316,10 @@ class quiz_attempt {
             $this->attempt->sumgrades = $this->quba->get_total_mark();
         }
         if ($becomingoverdue) {
-            // We do not trigger a full becoming overdue transition, because we
-            // don't want an email if the student is actively doing the quiz when
-            // time expires - I think.
-            $this->attempt->state == self::OVERDUE;
+            $this->process_going_overdue($timestamp, true);
+        } else {
+            $DB->update_record('quiz_attempts', $this->attempt);
         }
-        $DB->update_record('quiz_attempts', $this->attempt);
 
         if (!$this->is_preview() && $this->attempt->timefinish) {
             quiz_save_best_grade($this->get_quiz(), $this->get_userid());
@@ -1339,7 +1340,7 @@ class quiz_attempt {
     }
 
     public function process_finish($timestamp, $processsubmitted) {
-        global $DB, $USER;
+        global $DB;
 
         $transaction = $DB->start_delegated_transaction();
 
@@ -1353,22 +1354,14 @@ class quiz_attempt {
         $this->attempt->timemodified = $timestamp;
         $this->attempt->timefinish = $timestamp;
         $this->attempt->sumgrades = $this->quba->get_total_mark();
+        $this->attempt->state = self::FINISHED;
         $DB->update_record('quiz_attempts', $this->attempt);
 
         if (!$this->is_preview()) {
             quiz_save_best_grade($this->get_quiz(), $this->attempt->userid);
 
             // Trigger event
-            $eventdata = new stdClass();
-            $eventdata->component   = 'mod_quiz';
-            $eventdata->attemptid   = $this->attempt->id;
-            $eventdata->timefinish  = $this->attempt->timefinish;
-            $eventdata->userid      = $this->attempt->userid;
-            $eventdata->submitterid = $USER->id;
-            $eventdata->quizid      = $this->get_quizid();
-            $eventdata->cmid        = $this->get_cmid();
-            $eventdata->courseid    = $this->get_courseid();
-            events_trigger('quiz_attempt_submitted', $eventdata);
+            $this->fire_state_transition_event('quiz_attempt_submitted', $timestamp);
 
             // Tell any access rules that care that the attempt is over.
             $this->get_access_manager($timestamp)->current_attempt_finished();
@@ -1380,19 +1373,72 @@ class quiz_attempt {
     /**
      * Mark this attempt as now overdue.
      * @param int $timestamp the time to deem as now.
+     * @param bool $studentisonline is the student currently interacting with Moodle?
      */
-    public function process_going_overdue($timestamp) {
-        // TODO update DB.
-        // TODO raise event.
+    public function process_going_overdue($timestamp, $studentisonline) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+        $this->attempt->timemodified = $timestamp;
+        $this->attempt->state = self::OVERDUE;
+        $DB->update_record('quiz_attempts', $this->attempt);
+
+        $this->fire_state_transition_event('quiz_attempt_overdue', $timestamp);
+
+        $transaction->allow_commit();
     }
 
     /**
      * Mark this attempt as abandoned.
      * @param int $timestamp the time to deem as now.
+     * @param bool $studentisonline is the student currently interacting with Moodle?
      */
-    public function process_abandon($timestamp) {
-        // TODO update DB.
-        // TODO raise event.
+    public function process_abandon($timestamp, $studentisonline) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+        $this->attempt->timemodified = $timestamp;
+        $this->attempt->state = self::ABANDONED;
+        $DB->update_record('quiz_attempts', $this->attempt);
+
+        $this->fire_state_transition_event('quiz_attempt_abandoned', $timestamp);
+
+        $transaction->allow_commit();
+    }
+
+    /**
+     * Fire a state transition event.
+     * @param string $event the type of event. Should be listed in db/events.php.
+     * @param int $timestamp the timestamp to include in the event.
+     */
+    protected function fire_state_transition_event($event, $timestamp) {
+        global $USER;
+
+        // Trigger event
+        $eventdata = new stdClass();
+        $eventdata->component   = 'mod_quiz';
+        $eventdata->attemptid   = $this->attempt->id;
+        $eventdata->timestamp   = $timestamp;
+        $eventdata->userid      = $this->attempt->userid;
+        $eventdata->quizid      = $this->get_quizid();
+        $eventdata->cmid        = $this->get_cmid();
+        $eventdata->courseid    = $this->get_courseid();
+
+        // I don't think if (CLI_SCRIPT) is really the right logic here. The
+        // question is really 'is $USER currently set to a real user', but I cannot
+        // see standard Moodle function to answer that question. For example,
+        // cron fakes $USER.
+        if (CLI_SCRIPT) {
+            $eventdata->submitterid = null;
+        } else {
+            $eventdata->submitterid = $USER->id;
+        }
+
+        if ($event == 'quiz_attempt_submitted') {
+            $eventdata->timefinish = $timestamp; // Backwards compatibility.
+        }
+
+        events_trigger($event, $eventdata);
     }
 
     /**
