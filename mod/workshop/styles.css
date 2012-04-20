@@ -12,15 +12,20 @@
     margin: 0.75em auto;
 }
 
+.path-mod-workshop #workshop-viewlet-assignedassessments div.singlebutton,
+.path-mod-workshop #workshop-viewlet-allexamples div.singlebutton,
+.path-mod-workshop #workshop-viewlet-examples div.singlebutton {
+    text-align: left;
+}
+
 .path-mod-workshop .groupwidget {
     text-align:center;
     margin: 0.75 auto;
 }
 
-.path-mod-workshop #workshop-viewlet-assignedassessments div.singlebutton,
-.path-mod-workshop #workshop-viewlet-allexamples div.singlebutton,
-.path-mod-workshop #workshop-viewlet-examples div.singlebutton {
-    text-align: left;
+.path-mod-workshop .perpagewidget {
+    text-align:center;
+    margin: 0.75 auto;
 }
 
 /**
