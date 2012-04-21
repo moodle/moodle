@@ -1271,17 +1271,6 @@ class table_sql extends flexible_table {
     }
 
     /**
-     * Backwards-compatible constructor, so that legacy code subclassing
-     * table_sql does not break.
-     * @deprecated since Moodle 2.0. Will be removed in Moodle 2.1.
-     */
-    function table_sql($uniqueid) {
-        debugging('Please update your code to user PHP5-style parent::__construct(...), ' .
-                'not parent::table_sql(...).');
-        $this->__construct($uniqueid);
-    }
-
-    /**
      * Take the data returned from the db_query and go through all the rows
      * processing each col using either col_{columnname} method or other_cols
      * method or if other_cols returns NULL then put the data straight into the
