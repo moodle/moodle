@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,19 +17,284 @@
 /**
  * Unit tests for the lib/pluginlib.php library
  *
- * @package     core
- * @category    test
- * @copyright   2012 David Mudrak <david@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core
+ * @category  phpunit
+ * @copyright 2012 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-if (empty($CFG->unittestprefix)) {
-    die('You must define $CFG->unittestprefix to run these unit tests.');
+global $CFG;
+require_once($CFG->libdir.'/pluginlib.php');
+
+
+/**
+ * Tests of the basic API of the plugin manager
+ */
+class plugin_manager_test extends advanced_testcase {
+
+    public function test_plugin_manager_instance() {
+        $pluginman = testable_plugin_manager::instance();
+        $this->assertTrue($pluginman instanceof testable_plugin_manager);
+    }
+
+    public function test_get_plugins() {
+        $pluginman = testable_plugin_manager::instance();
+        $plugins = $pluginman->get_plugins();
+        $this->assertTrue(isset($plugins['mod']['foo']));
+        $this->assertTrue($plugins['mod']['foo'] instanceof testable_plugininfo_mod);
+    }
+
+    public function test_get_status() {
+        $pluginman = testable_plugin_manager::instance();
+        $plugins = $pluginman->get_plugins();
+        $modfoo = $plugins['mod']['foo'];
+        $this->assertEquals($modfoo->get_status(), plugin_manager::PLUGIN_STATUS_UPGRADE);
+    }
+
+    public function test_available_update() {
+        $pluginman = testable_plugin_manager::instance();
+        $plugins = $pluginman->get_plugins();
+        $this->assertNull($plugins['mod']['bar']->available_updates());
+        $this->assertEquals('array', gettype($plugins['mod']['foo']->available_updates()));
+        foreach ($plugins['mod']['foo']->available_updates() as $availableupdate) {
+            $this->assertInstanceOf('available_update_info', $availableupdate);
+        }
+    }
 }
 
-require_once($CFG->libdir.'/pluginlib.php');
+
+/**
+ * Tests of the basic API of the available update checker
+ */
+class available_update_checker_test extends advanced_testcase {
+
+    public function test_core_available_update() {
+        $provider = testable_available_update_checker::instance();
+        $this->assertTrue($provider instanceof available_update_checker);
+
+        $provider->fake_current_environment(2012060102.00, '2.3.2 (Build: 20121012)', '2.3', array());
+        $updates = $provider->get_update_info('core');
+        $this->assertEquals(count($updates), 2);
+
+        $provider->fake_current_environment(2012060103.00, '2.3.3 (Build: 20121212)', '2.3', array());
+        $updates = $provider->get_update_info('core');
+        $this->assertEquals(count($updates), 1);
+
+        $provider->fake_current_environment(2012060103.00, '2.3.3 (Build: 20121212)', '2.3', array());
+        $updates = $provider->get_update_info('core', array('minmaturity' => MATURITY_STABLE));
+        $this->assertNull($updates);
+    }
+
+    /**
+     * If there are no fetched data yet, the first cron should fetch them
+     */
+    public function test_cron_initial_fetch() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fakerecentfetch = null;
+        $provider->fakecurrenttimestamp = -1;
+        $this->setExpectedException('testable_available_update_checker_cron_executed');
+        $provider->cron();
+    }
+
+    /**
+     * If there is a fresh fetch available, no cron execution is expected
+     */
+    public function test_cron_has_fresh_fetch() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fakerecentfetch = time() - 59 * MINSECS; // fetched an hour ago
+        $provider->fakecurrenttimestamp = -1;
+        $provider->cron();
+        $this->assertTrue(true); // we should get here with no exception thrown
+    }
+
+    /**
+     * If there is an outdated fetch, the cron execution is expected
+     */
+    public function test_cron_has_outdated_fetch() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fakerecentfetch = time() - 49 * HOURSECS; // fetched 49 hours ago
+        $provider->fakecurrenttimestamp = -1;
+        $this->setExpectedException('testable_available_update_checker_cron_executed');
+        $provider->cron();
+    }
+
+    /**
+     * The first cron after 01:42 AM today should fetch the data
+     *
+     * @see testable_available_update_checker::cron_execution_offset()
+     */
+    public function test_cron_offset_execution_not_yet() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fakerecentfetch = time() - 24 * HOURSECS;
+        $provider->fakecurrenttimestamp = mktime(1, 40, 02); // 01:40:02 AM
+        $provider->cron();
+        $this->assertTrue(true); // we should get here with no exception thrown
+    }
+
+    /**
+     * The first cron after 01:42 AM today should fetch the data
+     *
+     * @see testable_available_update_checker::cron_execution_offset()
+     */
+    public function test_cron_offset_execution() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fakerecentfetch = time() - 24 * HOURSECS;
+        $provider->fakecurrenttimestamp = mktime(1, 45, 02); // 01:45:02 AM
+        $this->setExpectedException('testable_available_update_checker_cron_executed');
+        $provider->cron();
+    }
+
+    public function test_compare_responses_both_empty() {
+        $provider = testable_available_update_checker::instance();
+        $old = array();
+        $new = array();
+        $cmp = $provider->compare_responses($old, $new);
+        $this->assertEquals('array', gettype($cmp));
+        $this->assertTrue(empty($cmp));
+    }
+
+    public function test_compare_responses_old_empty() {
+        $provider = testable_available_update_checker::instance();
+        $old = array();
+        $new = array(
+            'updates' => array(
+                'core' => array(
+                    array(
+                        'version' => 2012060103
+                    )
+                )
+            )
+        );
+        $cmp = $provider->compare_responses($old, $new);
+        $this->assertEquals('array', gettype($cmp));
+        $this->assertFalse(empty($cmp));
+        $this->assertTrue(isset($cmp['core'][0]['version']));
+        $this->assertEquals($cmp['core'][0]['version'], 2012060103);
+    }
+
+    public function test_compare_responses_no_change() {
+        $provider = testable_available_update_checker::instance();
+        $old = $new = array(
+            'updates' => array(
+                'core' => array(
+                    array(
+                        'version' => 2012060104
+                    ),
+                    array(
+                        'version' => 2012120100
+                    )
+                ),
+                'mod_foo' => array(
+                    array(
+                        'version' => 2011010101
+                    )
+                )
+            )
+        );
+        $cmp = $provider->compare_responses($old, $new);
+        $this->assertEquals('array', gettype($cmp));
+        $this->assertTrue(empty($cmp));
+    }
+
+    public function test_compare_responses_new_and_missing_update() {
+        $provider = testable_available_update_checker::instance();
+        $old = array(
+            'updates' => array(
+                'core' => array(
+                    array(
+                        'version' => 2012060104
+                    )
+                ),
+                'mod_foo' => array(
+                    array(
+                        'version' => 2011010101
+                    )
+                )
+            )
+        );
+        $new = array(
+            'updates' => array(
+                'core' => array(
+                    array(
+                        'version' => 2012060104
+                    ),
+                    array(
+                        'version' => 2012120100
+                    )
+                )
+            )
+        );
+        $cmp = $provider->compare_responses($old, $new);
+        $this->assertEquals('array', gettype($cmp));
+        $this->assertFalse(empty($cmp));
+        $this->assertEquals(count($cmp), 1);
+        $this->assertEquals(count($cmp['core']), 1);
+        $this->assertEquals($cmp['core'][0]['version'], 2012120100);
+    }
+
+    public function test_compare_responses_modified_update() {
+        $provider = testable_available_update_checker::instance();
+        $old = array(
+            'updates' => array(
+                'mod_foo' => array(
+                    array(
+                        'version' => 2011010101
+                    )
+                )
+            )
+        );
+        $new = array(
+            'updates' => array(
+                'mod_foo' => array(
+                    array(
+                        'version' => 2011010102
+                    )
+                )
+            )
+        );
+        $cmp = $provider->compare_responses($old, $new);
+        $this->assertEquals('array', gettype($cmp));
+        $this->assertFalse(empty($cmp));
+        $this->assertEquals(count($cmp), 1);
+        $this->assertEquals(count($cmp['mod_foo']), 1);
+        $this->assertEquals($cmp['mod_foo'][0]['version'], 2011010102);
+    }
+
+    public function test_compare_responses_invalid_format() {
+        $provider = testable_available_update_checker::instance();
+        $broken = array(
+            'status' => 'ERROR' // no 'updates' key here
+        );
+        $this->setExpectedException('available_update_checker_exception');
+        $cmp = $provider->compare_responses($broken, $broken);
+    }
+
+    public function test_is_same_release_explicit() {
+        $provider = testable_available_update_checker::instance();
+        $this->assertTrue($provider->is_same_release('2.3dev (Build: 20120323)', '2.3dev (Build: 20120323)'));
+        $this->assertTrue($provider->is_same_release('2.3dev (Build: 20120323)', '2.3dev (Build: 20120330)'));
+        $this->assertFalse($provider->is_same_release('2.3dev (Build: 20120529)', '2.3 (Build: 20120601)'));
+        $this->assertFalse($provider->is_same_release('2.3dev', '2.3 dev'));
+        $this->assertFalse($provider->is_same_release('2.3.1', '2.3'));
+        $this->assertFalse($provider->is_same_release('2.3.1', '2.3.2'));
+        $this->assertTrue($provider->is_same_release('2.3.2+', '2.3.2')); // yes, really
+        $this->assertTrue($provider->is_same_release('2.3.2 (Build: 123456)', '2.3.2+ (Build: 123457)'));
+        $this->assertFalse($provider->is_same_release('3.0 Community Edition', '3.0 Enterprise Edition'));
+        $this->assertTrue($provider->is_same_release('3.0 Community Edition', '3.0 Community Edition (Build: 20290101)'));
+    }
+
+    public function test_is_same_release_implicit() {
+        $provider = testable_available_update_checker::instance();
+        $provider->fake_current_environment(2012060102.00, '2.3.2 (Build: 20121012)', '2.3', array());
+        $this->assertTrue($provider->is_same_release('2.3.2'));
+        $this->assertTrue($provider->is_same_release('2.3.2+'));
+        $this->assertTrue($provider->is_same_release('2.3.2+ (Build: 20121013)'));
+        $this->assertFalse($provider->is_same_release('2.4dev (Build: 20121012)'));
+    }
+}
+
 
 /**
  * Modified {@link plugininfo_mod} suitable for testing purposes
@@ -131,7 +395,7 @@ class testable_available_update_checker extends available_update_checker {
         return self::$singletoninstance;
     }
 
-    protected function validate_response() {
+    protected function validate_response($response) {
     }
 
     protected function store_response($response) {
@@ -143,7 +407,7 @@ class testable_available_update_checker extends available_update_checker {
         $this->recentresponse = $this->decode_response($this->get_fake_response());
     }
 
-    public function compare_responses($old, $new) {
+    public function compare_responses(array $old, array $new) {
         return parent::compare_responses($old, $new);
     }
 
@@ -243,275 +507,10 @@ class testable_available_update_checker extends available_update_checker {
     }
 }
 
+
 /**
  * Exception used to detect {@link available_update_checker::cron_execute()} calls
  */
 class testable_available_update_checker_cron_executed extends Exception {
 
-}
-
-/**
- * Tests of the basic API of the plugin manager
- */
-class plugin_manager_test extends UnitTestCase {
-
-    public function test_plugin_manager_instance() {
-        $pluginman = testable_plugin_manager::instance();
-        $this->assertTrue($pluginman instanceof testable_plugin_manager);
-    }
-
-    public function test_get_plugins() {
-        $pluginman = testable_plugin_manager::instance();
-        $plugins = $pluginman->get_plugins();
-        $this->assertTrue(isset($plugins['mod']['foo']));
-        $this->assertTrue($plugins['mod']['foo'] instanceof testable_plugininfo_mod);
-    }
-
-    public function test_get_status() {
-        $pluginman = testable_plugin_manager::instance();
-        $plugins = $pluginman->get_plugins();
-        $modfoo = $plugins['mod']['foo'];
-        $this->assertEqual($modfoo->get_status(), plugin_manager::PLUGIN_STATUS_UPGRADE);
-    }
-
-    public function test_available_update() {
-        $pluginman = testable_plugin_manager::instance();
-        $plugins = $pluginman->get_plugins();
-        $this->assertNull($plugins['mod']['bar']->available_updates());
-        $this->assertIsA($plugins['mod']['foo']->available_updates(), 'array');
-        foreach ($plugins['mod']['foo']->available_updates() as $availableupdate) {
-            $this->assertIsA($availableupdate, 'available_update_info');
-        }
-    }
-}
-
-
-/**
- * Tests of the basic API of the available update checker
- */
-class available_update_checker_test extends UnitTestCase {
-
-    public function test_core_available_update() {
-        $provider = testable_available_update_checker::instance();
-        $this->assertTrue($provider instanceof available_update_checker);
-
-        $provider->fake_current_environment(2012060102.00, '2.3.2 (Build: 20121012)', '2.3', array());
-        $updates = $provider->get_update_info('core');
-        $this->assertEqual(count($updates), 2);
-
-        $provider->fake_current_environment(2012060103.00, '2.3.3 (Build: 20121212)', '2.3', array());
-        $updates = $provider->get_update_info('core');
-        $this->assertEqual(count($updates), 1);
-
-        $provider->fake_current_environment(2012060103.00, '2.3.3 (Build: 20121212)', '2.3', array());
-        $updates = $provider->get_update_info('core', array('minmaturity' => MATURITY_STABLE));
-        $this->assertNull($updates);
-    }
-
-    /**
-     * If there are no fetched data yet, the first cron should fetch them
-     */
-    public function test_cron_initial_fetch() {
-        $provider = testable_available_update_checker::instance();
-        $provider->fakerecentfetch = null;
-        $provider->fakecurrenttimestamp = -1;
-        $this->expectException('testable_available_update_checker_cron_executed');
-        $provider->cron();
-    }
-
-    /**
-     * If there is a fresh fetch available, no cron execution is expected
-     */
-    public function test_cron_has_fresh_fetch() {
-        $provider = testable_available_update_checker::instance();
-        $provider->fakerecentfetch = time() - 59 * MINSECS; // fetched an hour ago
-        $provider->fakecurrenttimestamp = -1;
-        $provider->cron();
-        $this->assertTrue(true); // we should get here with no exception thrown
-    }
-
-    /**
-     * If there is an outdated fetch, the cron execution is expected
-     */
-    public function test_cron_has_outdated_fetch() {
-        $provider = testable_available_update_checker::instance();
-        $provider->fakerecentfetch = time() - 49 * HOURSECS; // fetched 49 hours ago
-        $provider->fakecurrenttimestamp = -1;
-        $this->expectException('testable_available_update_checker_cron_executed');
-        $provider->cron();
-    }
-
-    /**
-     * The first cron after 01:42 AM today should fetch the data
-     *
-     * @see testable_available_update_checker::cron_execution_offset()
-     */
-    public function test_cron_offset_execution_not_yet() {
-        $provider = testable_available_update_checker::instance();
-        $provider->fakerecentfetch = time() - 24 * HOURSECS;
-        $provider->fakecurrenttimestamp = mktime(1, 40, 02); // 01:40:02 AM
-        $provider->cron();
-        $this->assertTrue(true); // we should get here with no exception thrown
-    }
-
-    /**
-     * The first cron after 01:42 AM today should fetch the data
-     *
-     * @see testable_available_update_checker::cron_execution_offset()
-     */
-    public function test_cron_offset_execution() {
-        $provider = testable_available_update_checker::instance();
-        $provider->fakerecentfetch = time() - 24 * HOURSECS;
-        $provider->fakecurrenttimestamp = mktime(1, 45, 02); // 01:45:02 AM
-        $this->expectException('testable_available_update_checker_cron_executed');
-        $provider->cron();
-    }
-
-    public function test_compare_responses_both_empty() {
-        $provider = testable_available_update_checker::instance();
-        $old = array();
-        $new = array();
-        $cmp = $provider->compare_responses($old, $new);
-        $this->assertIsA($cmp, 'array');
-        $this->assertTrue(empty($cmp));
-    }
-
-    public function test_compare_responses_old_empty() {
-        $provider = testable_available_update_checker::instance();
-        $old = array();
-        $new = array(
-            'updates' => array(
-                'core' => array(
-                    array(
-                        'version' => 2012060103
-                    )
-                )
-            )
-        );
-        $cmp = $provider->compare_responses($old, $new);
-        $this->assertIsA($cmp, 'array');
-        $this->assertFalse(empty($cmp));
-        $this->assertTrue(isset($cmp['core'][0]['version']));
-        $this->assertEqual($cmp['core'][0]['version'], 2012060103);
-    }
-
-    public function test_compare_responses_no_change() {
-        $provider = testable_available_update_checker::instance();
-        $old = $new = array(
-            'updates' => array(
-                'core' => array(
-                    array(
-                        'version' => 2012060104
-                    ),
-                    array(
-                        'version' => 2012120100
-                    )
-                ),
-                'mod_foo' => array(
-                    array(
-                        'version' => 2011010101
-                    )
-                )
-            )
-        );
-        $cmp = $provider->compare_responses($old, $new);
-        $this->assertIsA($cmp, 'array');
-        $this->assertTrue(empty($cmp));
-    }
-
-    public function test_compare_responses_new_and_missing_update() {
-        $provider = testable_available_update_checker::instance();
-        $old = array(
-            'updates' => array(
-                'core' => array(
-                    array(
-                        'version' => 2012060104
-                    )
-                ),
-                'mod_foo' => array(
-                    array(
-                        'version' => 2011010101
-                    )
-                )
-            )
-        );
-        $new = array(
-            'updates' => array(
-                'core' => array(
-                    array(
-                        'version' => 2012060104
-                    ),
-                    array(
-                        'version' => 2012120100
-                    )
-                )
-            )
-        );
-        $cmp = $provider->compare_responses($old, $new);
-        $this->assertIsA($cmp, 'array');
-        $this->assertFalse(empty($cmp));
-        $this->assertEqual(count($cmp), 1);
-        $this->assertEqual(count($cmp['core']), 1);
-        $this->assertEqual($cmp['core'][0]['version'], 2012120100);
-    }
-
-    public function test_compare_responses_modified_update() {
-        $provider = testable_available_update_checker::instance();
-        $old = array(
-            'updates' => array(
-                'mod_foo' => array(
-                    array(
-                        'version' => 2011010101
-                    )
-                )
-            )
-        );
-        $new = array(
-            'updates' => array(
-                'mod_foo' => array(
-                    array(
-                        'version' => 2011010102
-                    )
-                )
-            )
-        );
-        $cmp = $provider->compare_responses($old, $new);
-        $this->assertIsA($cmp, 'array');
-        $this->assertFalse(empty($cmp));
-        $this->assertEqual(count($cmp), 1);
-        $this->assertEqual(count($cmp['mod_foo']), 1);
-        $this->assertEqual($cmp['mod_foo'][0]['version'], 2011010102);
-    }
-
-    public function test_compare_responses_invalid_format() {
-        $provider = testable_available_update_checker::instance();
-        $broken = array(
-            'status' => 'ERROR' // no 'updates' key here
-        );
-        $this->expectException('available_update_checker_exception');
-        $cmp = $provider->compare_responses($broken, $broken);
-    }
-
-    public function test_is_same_release_explicit() {
-        $provider = testable_available_update_checker::instance();
-        $this->assertTrue($provider->is_same_release('2.3dev (Build: 20120323)', '2.3dev (Build: 20120323)'));
-        $this->assertTrue($provider->is_same_release('2.3dev (Build: 20120323)', '2.3dev (Build: 20120330)'));
-        $this->assertFalse($provider->is_same_release('2.3dev (Build: 20120529)', '2.3 (Build: 20120601)'));
-        $this->assertFalse($provider->is_same_release('2.3dev', '2.3 dev'));
-        $this->assertFalse($provider->is_same_release('2.3.1', '2.3'));
-        $this->assertFalse($provider->is_same_release('2.3.1', '2.3.2'));
-        $this->assertTrue($provider->is_same_release('2.3.2+', '2.3.2')); // yes, really
-        $this->assertTrue($provider->is_same_release('2.3.2 (Build: 123456)', '2.3.2+ (Build: 123457)'));
-        $this->assertFalse($provider->is_same_release('3.0 Community Edition', '3.0 Enterprise Edition'));
-        $this->assertTrue($provider->is_same_release('3.0 Community Edition', '3.0 Community Edition (Build: 20290101)'));
-    }
-
-    public function test_is_same_release_implicit() {
-        $provider = testable_available_update_checker::instance();
-        $provider->fake_current_environment(2012060102.00, '2.3.2 (Build: 20121012)', '2.3', array());
-        $this->assertTrue($provider->is_same_release('2.3.2'));
-        $this->assertTrue($provider->is_same_release('2.3.2+'));
-        $this->assertTrue($provider->is_same_release('2.3.2+ (Build: 20121013)'));
-        $this->assertFalse($provider->is_same_release('2.4dev (Build: 20121012)'));
-    }
 }
