@@ -443,10 +443,6 @@ $CFG->admin = 'admin';
 // Divert all outgoing emails to this address to test and debug emailing features
 // $CFG->divertallemailsto = 'root@localhost.local'; // NOT FOR PRODUCTION SERVERS!
 //
-// Specify prefix for fake unit test tables. If not specified only tests
-// that do not need fake tables will be executed.
-// $CFG->unittestprefix = 'tst_';   // NOT FOR PRODUCTION SERVERS!
-//
 // special magic evil developer only wanting to edit the xmldb files manually
 // AND don't use the XMLDBEditor nor the prev/next stuff at all (Mahara and others)
 // Uncomment these if you're lazy like Penny
