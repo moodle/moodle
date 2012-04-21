@@ -19,20 +19,18 @@
  *
  * As required by http://docs.moodle.org/dev/Coding_style.
  *
- * @package    tool
- * @subpackage unittest
+ * @package    core
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(__FILE__) . '/../../../../config.php');
-require_once('../simpletestlib.php');
+require(dirname(__FILE__) . '/../../../config.php');
 
 require_login();
 $context = get_context_instance(CONTEXT_SYSTEM);
-require_capability('tool/unittest:execute', $context);
+require_capability('moodle/site:config', $context);
 
-$PAGE->set_url('/admin/tool/todochecker.php');
+$PAGE->set_url('/lib/tests/other/todochecker.php');
 $PAGE->set_context($context);
 $PAGE->set_title('To-do checker');
 $PAGE->set_heading('To-do checker');
@@ -151,4 +149,22 @@ function load_third_party_lib_list() {
         $libs[$CFG->libdir . '/' . $libobject->location] = 1;
     }
     return $libs;
+}
+
+function recurseFolders($path, $callback, $fileregexp = '/.*/', $exclude = false, $ignorefolders = array()) {
+    $files = scandir($path);
+
+    foreach ($files as $file) {
+        $filepath = $path .'/'. $file;
+        if (strpos($file, '.') === 0) {
+            /// Don't check hidden files.
+            continue;
+        } else if (is_dir($filepath)) {
+            if (!in_array($filepath, $ignorefolders)) {
+                recurseFolders($filepath, $callback, $fileregexp, $exclude, $ignorefolders);
+            }
+        } else if ($exclude xor preg_match($fileregexp, $filepath)) {
+            call_user_func($callback, $filepath);
+        }
+    }
 }

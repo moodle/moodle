@@ -25,14 +25,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(__FILE__) . '/../../../../config.php');
+die(); //TODO: this needs to be rewritten as standard advanced_testcase
+
+require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/ddllib.php');
 
 require_login();
 $syscontext = get_context_instance(CONTEXT_SYSTEM);
-require_capability('tool/unittest:execute', $syscontext);
+require_capability('moodle/site:config', $syscontext);
 
-$baseurl = new moodle_url('/admin/tool/unittest/other/filtersettingsperformancetester.php');
+$baseurl = new moodle_url('/lib/tests/performance/filtersettingsperformancetester.php');
 
 $title = 'filter_get_active_in_context performance test';
 $PAGE->set_url($baseurl);
