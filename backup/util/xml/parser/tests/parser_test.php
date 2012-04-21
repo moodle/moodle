@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,18 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-tests
+ * @package   core_backup
+ * @category  phpunit
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Prevent direct access to this file
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die();
 
 // Include all the needed stuff
+global $CFG;
 require_once($CFG->dirroot . '/backup/util/xml/parser/progressive_parser.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/parser/processors/progressive_parser_processor.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/parser/processors/simplified_parser_processor.class.php');
@@ -36,10 +33,7 @@ require_once($CFG->dirroot . '/backup/util/xml/parser/processors/grouped_parser_
 /*
  * progressive_parser and progressive_parser_processor tests
  */
-class progressive_parser_test extends UnitTestCase {
-
-    public static $includecoverage = array('backup/util/xml/parser');
-    public static $excludecoverage = array('backup/util/xml/parser/simpletest');
+class progressive_parser_test extends advanced_testcase {
 
     /*
      * test progressive_parser public methods
@@ -58,7 +52,7 @@ class progressive_parser_test extends UnitTestCase {
             $this->assertTrue(false);
         } catch (exception $e) {
             $this->assertTrue($e instanceof progressive_parser_exception);
-            $this->assertEqual($e->errorcode, 'undefined_parser_processor');
+            $this->assertEquals($e->errorcode, 'undefined_parser_processor');
         }
 
         // Assign processor to parser
@@ -70,7 +64,7 @@ class progressive_parser_test extends UnitTestCase {
             $this->assertTrue(false);
         } catch (exception $e) {
             $this->assertTrue($e instanceof progressive_parser_exception);
-            $this->assertEqual($e->errorcode, 'undefined_xml_to_parse');
+            $this->assertEquals($e->errorcode, 'undefined_xml_to_parse');
         }
 
         // Assign *invalid* processor to parser
@@ -79,30 +73,30 @@ class progressive_parser_test extends UnitTestCase {
             $this->assertTrue(false);
         } catch (exception $e) {
             $this->assertTrue($e instanceof progressive_parser_exception);
-            $this->assertEqual($e->errorcode, 'invalid_parser_processor');
+            $this->assertEquals($e->errorcode, 'invalid_parser_processor');
         }
 
         // Set file from fixtures (test1.xml) and process it
         $pp = new progressive_parser();
         $pr = new mock_parser_processor();
         $pp->set_processor($pr);
-        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test1.xml');
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test1.xml');
         $pp->process();
         $serfromfile = serialize($pr->get_chunks()); // Get serialized results (to compare later)
         // Set *unexisting* file from fixtures
         try {
-            $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test0.xml');
+            $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test0.xml');
             $this->assertTrue(false);
         } catch (exception $e) {
             $this->assertTrue($e instanceof progressive_parser_exception);
-            $this->assertEqual($e->errorcode, 'invalid_file_to_parse');
+            $this->assertEquals($e->errorcode, 'invalid_file_to_parse');
         }
 
         // Set contents from fixtures (test1.xml) and process it
         $pp = new progressive_parser();
         $pr = new mock_parser_processor();
         $pp->set_processor($pr);
-        $pp->set_contents(file_get_contents($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test1.xml'));
+        $pp->set_contents(file_get_contents($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test1.xml'));
         $pp->process();
         $serfrommemory = serialize($pr->get_chunks()); // Get serialized results (to compare later)
         // Set *empty* contents
@@ -111,17 +105,17 @@ class progressive_parser_test extends UnitTestCase {
             $this->assertTrue(false);
         } catch (exception $e) {
             $this->assertTrue($e instanceof progressive_parser_exception);
-            $this->assertEqual($e->errorcode, 'invalid_contents_to_parse');
+            $this->assertEquals($e->errorcode, 'invalid_contents_to_parse');
         }
 
         // Check that both results from file processing and content processing are equal
-        $this->assertEqual($serfromfile, $serfrommemory);
+        $this->assertEquals($serfromfile, $serfrommemory);
 
         // Check case_folding is working ok
         $pp = new progressive_parser(true);
         $pr = new mock_parser_processor();
         $pp->set_processor($pr);
-        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test1.xml');
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test1.xml');
         $pp->process();
         $chunks = $pr->get_chunks();
         $this->assertTrue($chunks[0]['path'] === '/FIRSTTAG');
@@ -132,26 +126,26 @@ class progressive_parser_test extends UnitTestCase {
         $pp = new progressive_parser(true);
         $pr = new mock_parser_processor();
         $pp->set_processor($pr);
-        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test2.xml');
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test2.xml');
         try {
             $pp->process();
         } catch (exception $e) {
             $this->assertTrue($e instanceof progressive_parser_exception);
-            $this->assertEqual($e->errorcode, 'xml_parsing_error');
+            $this->assertEquals($e->errorcode, 'xml_parsing_error');
         }
 
         // Check double process throws exception
         $pp = new progressive_parser(true);
         $pr = new mock_parser_processor();
         $pp->set_processor($pr);
-        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test1.xml');
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test1.xml');
         $pp->process();
         try { // Second process, will throw exception
             $pp->process();
             $this->assertTrue(false);
         } catch (exception $e) {
             $this->assertTrue($e instanceof progressive_parser_exception);
-            $this->assertEqual($e->errorcode, 'progressive_parser_already_used');
+            $this->assertEquals($e->errorcode, 'progressive_parser_already_used');
         }
     }
 
@@ -169,7 +163,7 @@ class progressive_parser_test extends UnitTestCase {
         // Assign processor to parser
         $pp->set_processor($pr);
         // Set file from fixtures
-        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test3.xml');
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test3.xml');
         // Process the file, the autotest processor will perform a bunch of automatic tests
         $pp->process();
         // Get processor debug info
@@ -177,7 +171,7 @@ class progressive_parser_test extends UnitTestCase {
         $this->assertTrue(is_array($debug));
         $this->assertTrue(array_key_exists('chunks', $debug));
         // Check the number of chunks is correct for the file
-        $this->assertEqual($debug['chunks'], 10);
+        $this->assertEquals($debug['chunks'], 10);
     }
 
     /*
@@ -202,7 +196,7 @@ class progressive_parser_test extends UnitTestCase {
         // Assign processor to parser
         $pp->set_processor($pr);
         // Set file from fixtures
-        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test4.xml');
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test4.xml');
         // Process the file
         $pp->process();
         // Get processor debug info
@@ -211,132 +205,132 @@ class progressive_parser_test extends UnitTestCase {
         $this->assertTrue(array_key_exists('chunks', $debug));
 
         // Check the number of chunks is correct for the file
-        $this->assertEqual($debug['chunks'], 12);
+        $this->assertEquals($debug['chunks'], 12);
         // Get all the simplified chunks and perform various validations
         $chunks = $pr->get_chunks();
         // Check we have received the correct number of chunks
-        $this->assertEqual(count($chunks), 12);
+        $this->assertEquals(count($chunks), 12);
 
         // chunk[0] (/activity) tests
-        $this->assertEqual(count($chunks[0]), 3);
-        $this->assertEqual($chunks[0]['path'], '/activity');
-        $this->assertEqual($chunks[0]['level'],'2');
+        $this->assertEquals(count($chunks[0]), 3);
+        $this->assertEquals($chunks[0]['path'], '/activity');
+        $this->assertEquals($chunks[0]['level'],'2');
         $tags = $chunks[0]['tags'];
-        $this->assertEqual(count($tags), 4);
-        $this->assertEqual($tags['id'], 1);
-        $this->assertEqual($tags['moduleid'], 5);
-        $this->assertEqual($tags['modulename'], 'glossary');
-        $this->assertEqual($tags['contextid'], 26);
-        $this->assertEqual($chunks[0]['level'],'2');
+        $this->assertEquals(count($tags), 4);
+        $this->assertEquals($tags['id'], 1);
+        $this->assertEquals($tags['moduleid'], 5);
+        $this->assertEquals($tags['modulename'], 'glossary');
+        $this->assertEquals($tags['contextid'], 26);
+        $this->assertEquals($chunks[0]['level'],'2');
 
         // chunk[1] (/activity/glossary) tests
-        $this->assertEqual(count($chunks[1]), 3);
-        $this->assertEqual($chunks[1]['path'], '/activity/glossary');
-        $this->assertEqual($chunks[1]['level'],'3');
+        $this->assertEquals(count($chunks[1]), 3);
+        $this->assertEquals($chunks[1]['path'], '/activity/glossary');
+        $this->assertEquals($chunks[1]['level'],'3');
         $tags = $chunks[1]['tags'];
-        $this->assertEqual(count($tags), 24);
-        $this->assertEqual($tags['id'], 1);
-        $this->assertEqual($tags['intro'], '<p>One simple glossary to test backup &amp; restore. Here it\'s the standard image:</p>'.
+        $this->assertEquals(count($tags), 24);
+        $this->assertEquals($tags['id'], 1);
+        $this->assertEquals($tags['intro'], '<p>One simple glossary to test backup &amp; restore. Here it\'s the standard image:</p>'.
                                            "\n".
                                            '<p><img src="@@PLUGINFILE@@/88_31.png" alt="pwd by moodle" width="88" height="31" /></p>');
-        $this->assertEqual($tags['timemodified'], 1275639747);
+        $this->assertEquals($tags['timemodified'], 1275639747);
         $this->assertTrue(!isset($tags['categories']));
 
         // chunk[5] (second /activity/glossary/entries/entry) tests
-        $this->assertEqual(count($chunks[5]), 3);
-        $this->assertEqual($chunks[5]['path'], '/activity/glossary/entries/entry');
-        $this->assertEqual($chunks[5]['level'],'5');
+        $this->assertEquals(count($chunks[5]), 3);
+        $this->assertEquals($chunks[5]['path'], '/activity/glossary/entries/entry');
+        $this->assertEquals($chunks[5]['level'],'5');
         $tags = $chunks[5]['tags'];
-        $this->assertEqual(count($tags), 15);
-        $this->assertEqual($tags['id'], 2);
-        $this->assertEqual($tags['concept'], 'cat');
+        $this->assertEquals(count($tags), 15);
+        $this->assertEquals($tags['id'], 2);
+        $this->assertEquals($tags['concept'], 'cat');
         $this->assertTrue(!isset($tags['aliases']));
         $this->assertTrue(!isset($tags['entries']));
 
         // chunk[6] (second /activity/glossary/entries/entry/aliases/alias) tests
-        $this->assertEqual(count($chunks[6]), 3);
-        $this->assertEqual($chunks[6]['path'], '/activity/glossary/entries/entry/aliases/alias');
-        $this->assertEqual($chunks[6]['level'],'7');
+        $this->assertEquals(count($chunks[6]), 3);
+        $this->assertEquals($chunks[6]['path'], '/activity/glossary/entries/entry/aliases/alias');
+        $this->assertEquals($chunks[6]['level'],'7');
         $tags = $chunks[6]['tags'];
-        $this->assertEqual(count($tags), 2);
-        $this->assertEqual($tags['id'], 2);
-        $this->assertEqual($tags['alias_text'], 'cats');
+        $this->assertEquals(count($tags), 2);
+        $this->assertEquals($tags['id'], 2);
+        $this->assertEquals($tags['alias_text'], 'cats');
 
         // chunk[7] (second /activity/glossary/entries/entry/aliases/alias) tests
-        $this->assertEqual(count($chunks[7]), 3);
-        $this->assertEqual($chunks[7]['path'], '/activity/glossary/entries/entry/aliases/alias');
-        $this->assertEqual($chunks[7]['level'],'7');
+        $this->assertEquals(count($chunks[7]), 3);
+        $this->assertEquals($chunks[7]['path'], '/activity/glossary/entries/entry/aliases/alias');
+        $this->assertEquals($chunks[7]['level'],'7');
         $tags = $chunks[7]['tags'];
-        $this->assertEqual(count($tags), 2);
-        $this->assertEqual($tags['id'], 3);
-        $this->assertEqual($tags['alias_text'], 'felines');
+        $this->assertEquals(count($tags), 2);
+        $this->assertEquals($tags['id'], 3);
+        $this->assertEquals($tags['alias_text'], 'felines');
 
         // chunk[8] (second /activity/glossary/entries/entry/ratings/rating) tests
-        $this->assertEqual(count($chunks[8]), 3);
-        $this->assertEqual($chunks[8]['path'], '/activity/glossary/entries/entry/ratings/rating');
-        $this->assertEqual($chunks[8]['level'],'7');
+        $this->assertEquals(count($chunks[8]), 3);
+        $this->assertEquals($chunks[8]['path'], '/activity/glossary/entries/entry/ratings/rating');
+        $this->assertEquals($chunks[8]['level'],'7');
         $tags = $chunks[8]['tags'];
-        $this->assertEqual(count($tags), 6);
-        $this->assertEqual($tags['id'], 1);
-        $this->assertEqual($tags['timemodified'], '1275639779');
+        $this->assertEquals(count($tags), 6);
+        $this->assertEquals($tags['id'], 1);
+        $this->assertEquals($tags['timemodified'], '1275639779');
 
         // chunk[9] (first /activity/glossary/onetest) tests
-        $this->assertEqual(count($chunks[9]), 3);
-        $this->assertEqual($chunks[9]['path'], '/activity/glossary/onetest');
-        $this->assertEqual($chunks[9]['level'],'4');
+        $this->assertEquals(count($chunks[9]), 3);
+        $this->assertEquals($chunks[9]['path'], '/activity/glossary/onetest');
+        $this->assertEquals($chunks[9]['level'],'4');
         $tags = $chunks[9]['tags'];
-        $this->assertEqual(count($tags), 2);
-        $this->assertEqual($tags['name'], 1);
-        $this->assertEqual($tags['value'], 1);
+        $this->assertEquals(count($tags), 2);
+        $this->assertEquals($tags['name'], 1);
+        $this->assertEquals($tags['value'], 1);
 
         // chunk[10] (second /activity/glossary/onetest) tests
-        $this->assertEqual(count($chunks[10]), 3);
-        $this->assertEqual($chunks[10]['path'], '/activity/glossary/onetest');
-        $this->assertEqual($chunks[10]['level'],'4');
+        $this->assertEquals(count($chunks[10]), 3);
+        $this->assertEquals($chunks[10]['path'], '/activity/glossary/onetest');
+        $this->assertEquals($chunks[10]['level'],'4');
         $tags = $chunks[10]['tags'];
-        $this->assertEqual(count($tags), 2);
-        $this->assertEqual($tags['name'], 2);
-        $this->assertEqual($tags['value'], 2);
+        $this->assertEquals(count($tags), 2);
+        $this->assertEquals($tags['name'], 2);
+        $this->assertEquals($tags['value'], 2);
 
         // chunk[11] (first /activity/glossary/othertest) tests
         // note we don't allow repeated "final" element, so we only return the last one
-        $this->assertEqual(count($chunks[11]), 3);
-        $this->assertEqual($chunks[11]['path'], '/activity/glossary/othertest');
-        $this->assertEqual($chunks[11]['level'],'4');
+        $this->assertEquals(count($chunks[11]), 3);
+        $this->assertEquals($chunks[11]['path'], '/activity/glossary/othertest');
+        $this->assertEquals($chunks[11]['level'],'4');
         $tags = $chunks[11]['tags'];
-        $this->assertEqual(count($tags), 2);
-        $this->assertEqual($tags['name'], 4);
-        $this->assertEqual($tags['value'], 5);
+        $this->assertEquals(count($tags), 2);
+        $this->assertEquals($tags['name'], 4);
+        $this->assertEquals($tags['value'], 5);
 
         // Now check start notifications
         $snotifs = $pr->get_start_notifications();
         // Check we have received the correct number of notifications
-        $this->assertEqual(count($snotifs), 12);
+        $this->assertEquals(count($snotifs), 12);
         // Check first, sixth and last notifications
-        $this->assertEqual($snotifs[0], '/activity');
-        $this->assertEqual($snotifs[5], '/activity/glossary/entries/entry');
-        $this->assertEqual($snotifs[11], '/activity/glossary/othertest');
+        $this->assertEquals($snotifs[0], '/activity');
+        $this->assertEquals($snotifs[5], '/activity/glossary/entries/entry');
+        $this->assertEquals($snotifs[11], '/activity/glossary/othertest');
 
         // Now check end notifications
         $enotifs = $pr->get_end_notifications();
         // Check we have received the correct number of notifications
-        $this->assertEqual(count($snotifs), 12);
+        $this->assertEquals(count($snotifs), 12);
         // Check first, sixth and last notifications
-        $this->assertEqual($enotifs[0], '/activity/glossary/entries/entry/aliases/alias');
-        $this->assertEqual($enotifs[5], '/activity/glossary/entries/entry/ratings/rating');
-        $this->assertEqual($enotifs[11], '/activity');
+        $this->assertEquals($enotifs[0], '/activity/glossary/entries/entry/aliases/alias');
+        $this->assertEquals($enotifs[5], '/activity/glossary/entries/entry/ratings/rating');
+        $this->assertEquals($enotifs[11], '/activity');
 
         // Check start and end notifications are balanced
         sort($snotifs);
         sort($enotifs);
-        $this->assertEqual($snotifs, $enotifs);
+        $this->assertEquals($snotifs, $enotifs);
 
         // Now verify that the start/process/end order is correct
         $allnotifs = $pr->get_all_notifications();
-        $this->assertEqual(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
+        $this->assertEquals(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
         // Check integrity of the notifications
         $errcount = $this->helper_check_notifications_order_integrity($allnotifs);
-        $this->assertEqual($errcount, 0); // No errors found, plz
+        $this->assertEquals($errcount, 0); // No errors found, plz
     }
 
     /**
@@ -359,51 +353,51 @@ class progressive_parser_test extends UnitTestCase {
         // Assign processor to parser
         $pp->set_processor($pr);
         // Set file from fixtures
-        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test5.xml');
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test5.xml');
         // Process the file
         $pp->process();
 
         // Get all the simplified chunks and perform various validations
         $chunks = $pr->get_chunks();
-        $this->assertEqual(count($chunks), 3); // Only 3, because 7 (COURSE, ROLES_OVERRIDES and 5 MOD) are empty, aka no chunk
+        $this->assertEquals(count($chunks), 3); // Only 3, because 7 (COURSE, ROLES_OVERRIDES and 5 MOD) are empty, aka no chunk
 
         // Now check start notifications
         $snotifs = $pr->get_start_notifications();
         // Check we have received the correct number of notifications
-        $this->assertEqual(count($snotifs), 10); // Start tags are dispatched for empties (ROLES_OVERRIDES)
+        $this->assertEquals(count($snotifs), 10); // Start tags are dispatched for empties (ROLES_OVERRIDES)
         // Check first and last notifications
-        $this->assertEqual($snotifs[0], '/MOODLE_BACKUP/COURSE');
-        $this->assertEqual($snotifs[1], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
-        $this->assertEqual($snotifs[2], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
-        $this->assertEqual($snotifs[3], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_OVERRIDES');
-        $this->assertEqual($snotifs[7], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
-        $this->assertEqual($snotifs[8], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
-        $this->assertEqual($snotifs[9], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEquals($snotifs[0], '/MOODLE_BACKUP/COURSE');
+        $this->assertEquals($snotifs[1], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
+        $this->assertEquals($snotifs[2], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEquals($snotifs[3], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_OVERRIDES');
+        $this->assertEquals($snotifs[7], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEquals($snotifs[8], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEquals($snotifs[9], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
 
         // Now check end notifications
         $enotifs = $pr->get_end_notifications();
         // Check we have received the correct number of notifications
-        $this->assertEqual(count($snotifs), 10); // End tags are dispatched for empties (ROLES_OVERRIDES)
+        $this->assertEquals(count($snotifs), 10); // End tags are dispatched for empties (ROLES_OVERRIDES)
         // Check first, and last notifications
-        $this->assertEqual($enotifs[0], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_OVERRIDES');
-        $this->assertEqual($enotifs[1], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
-        $this->assertEqual($enotifs[2], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
-        $this->assertEqual($enotifs[3], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
-        $this->assertEqual($enotifs[7], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
-        $this->assertEqual($enotifs[8], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
-        $this->assertEqual($enotifs[9], '/MOODLE_BACKUP/COURSE');
+        $this->assertEquals($enotifs[0], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_OVERRIDES');
+        $this->assertEquals($enotifs[1], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEquals($enotifs[2], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEquals($enotifs[3], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEquals($enotifs[7], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEquals($enotifs[8], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
+        $this->assertEquals($enotifs[9], '/MOODLE_BACKUP/COURSE');
 
         // Check start and end notifications are balanced
         sort($snotifs);
         sort($enotifs);
-        $this->assertEqual($snotifs, $enotifs);
+        $this->assertEquals($snotifs, $enotifs);
 
         // Now verify that the start/process/end order is correct
         $allnotifs = $pr->get_all_notifications();
-        $this->assertEqual(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
+        $this->assertEquals(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
         // Check integrity of the notifications
         $errcount = $this->helper_check_notifications_order_integrity($allnotifs);
-        $this->assertEqual($errcount, 0); // No errors found, plz
+        $this->assertEquals($errcount, 0); // No errors found, plz
     }
 
     /*
@@ -429,7 +423,7 @@ class progressive_parser_test extends UnitTestCase {
         // Assign processor to parser
         $pp->set_processor($pr);
         // Set file from fixtures
-        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test4.xml');
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test4.xml');
         // Process the file
         $pp->process();
         // Get processor debug info
@@ -438,35 +432,35 @@ class progressive_parser_test extends UnitTestCase {
         $this->assertTrue(array_key_exists('chunks', $debug));
 
         // Check the number of chunks is correct for the file
-        $this->assertEqual($debug['chunks'], 2);
+        $this->assertEquals($debug['chunks'], 2);
         // Get all the simplified chunks and perform various validations
         $chunks = $pr->get_chunks();
         // Check we have received the correct number of chunks
-        $this->assertEqual(count($chunks), 2);
+        $this->assertEquals(count($chunks), 2);
 
         // chunk[0] (/activity) tests
-        $this->assertEqual(count($chunks[0]), 3);
-        $this->assertEqual($chunks[0]['path'], '/activity');
-        $this->assertEqual($chunks[0]['level'],'2');
+        $this->assertEquals(count($chunks[0]), 3);
+        $this->assertEquals($chunks[0]['path'], '/activity');
+        $this->assertEquals($chunks[0]['level'],'2');
         $tags = $chunks[0]['tags'];
-        $this->assertEqual(count($tags), 4);
-        $this->assertEqual($tags['id'], 1);
-        $this->assertEqual($tags['moduleid'], 5);
-        $this->assertEqual($tags['modulename'], 'glossary');
-        $this->assertEqual($tags['contextid'], 26);
-        $this->assertEqual($chunks[0]['level'],'2');
+        $this->assertEquals(count($tags), 4);
+        $this->assertEquals($tags['id'], 1);
+        $this->assertEquals($tags['moduleid'], 5);
+        $this->assertEquals($tags['modulename'], 'glossary');
+        $this->assertEquals($tags['contextid'], 26);
+        $this->assertEquals($chunks[0]['level'],'2');
 
         // chunk[1] (grouped /activity/glossary tests)
-        $this->assertEqual(count($chunks[1]), 3);
-        $this->assertEqual($chunks[1]['path'], '/activity/glossary');
-        $this->assertEqual($chunks[1]['level'],'3');
+        $this->assertEquals(count($chunks[1]), 3);
+        $this->assertEquals($chunks[1]['path'], '/activity/glossary');
+        $this->assertEquals($chunks[1]['level'],'3');
         $tags = $chunks[1]['tags'];
-        $this->assertEqual(count($tags), 27);
-        $this->assertEqual($tags['id'], 1);
-        $this->assertEqual($tags['intro'], '<p>One simple glossary to test backup &amp; restore. Here it\'s the standard image:</p>'.
+        $this->assertEquals(count($tags), 27);
+        $this->assertEquals($tags['id'], 1);
+        $this->assertEquals($tags['intro'], '<p>One simple glossary to test backup &amp; restore. Here it\'s the standard image:</p>'.
                                            "\n".
                                            '<p><img src="@@PLUGINFILE@@/88_31.png" alt="pwd by moodle" width="88" height="31" /></p>');
-        $this->assertEqual($tags['timemodified'], 1275639747);
+        $this->assertEquals($tags['timemodified'], 1275639747);
         $this->assertTrue(!isset($tags['categories']));
         $this->assertTrue(isset($tags['entries']));
         $this->assertTrue(isset($tags['onetest']));
@@ -474,111 +468,111 @@ class progressive_parser_test extends UnitTestCase {
 
         // Various tests under the entries
         $entries = $chunks[1]['tags']['entries']['entry'];
-        $this->assertEqual(count($entries), 2);
+        $this->assertEquals(count($entries), 2);
 
         // First entry
         $entry1 = $entries[0];
-        $this->assertEqual(count($entry1), 17);
-        $this->assertEqual($entry1['id'], 1);
-        $this->assertEqual($entry1['userid'], 2);
-        $this->assertEqual($entry1['concept'], 'dog');
-        $this->assertEqual($entry1['definition'], '<p>Traditional enemies of cats</p>');
+        $this->assertEquals(count($entry1), 17);
+        $this->assertEquals($entry1['id'], 1);
+        $this->assertEquals($entry1['userid'], 2);
+        $this->assertEquals($entry1['concept'], 'dog');
+        $this->assertEquals($entry1['definition'], '<p>Traditional enemies of cats</p>');
         $this->assertTrue(isset($entry1['aliases']));
         $this->assertTrue(isset($entry1['ratings']));
         // aliases of first entry
         $aliases = $entry1['aliases']['alias'];
-        $this->assertEqual(count($aliases), 1);
+        $this->assertEquals(count($aliases), 1);
         // first alias
         $alias1 = $aliases[0];
-        $this->assertEqual(count($alias1), 2);
-        $this->assertEqual($alias1['id'], 1);
-        $this->assertEqual($alias1['alias_text'], 'dogs');
+        $this->assertEquals(count($alias1), 2);
+        $this->assertEquals($alias1['id'], 1);
+        $this->assertEquals($alias1['alias_text'], 'dogs');
         // ratings of first entry
         $ratings = $entry1['ratings']['rating'];
-        $this->assertEqual(count($ratings), 1);
+        $this->assertEquals(count($ratings), 1);
         // first rating
         $rating1 = $ratings[0];
-        $this->assertEqual(count($rating1), 6);
-        $this->assertEqual($rating1['id'], 2);
-        $this->assertEqual($rating1['value'], 6);
-        $this->assertEqual($rating1['timemodified'], '1275639797');
+        $this->assertEquals(count($rating1), 6);
+        $this->assertEquals($rating1['id'], 2);
+        $this->assertEquals($rating1['value'], 6);
+        $this->assertEquals($rating1['timemodified'], '1275639797');
 
         // Second entry
         $entry2 = $entries[1];
-        $this->assertEqual(count($entry2), 17);
-        $this->assertEqual($entry2['id'], 2);
-        $this->assertEqual($entry2['userid'], 2);
-        $this->assertEqual($entry2['concept'], 'cat');
-        $this->assertEqual($entry2['definition'], '<p>traditional enemies of dogs</p>');
+        $this->assertEquals(count($entry2), 17);
+        $this->assertEquals($entry2['id'], 2);
+        $this->assertEquals($entry2['userid'], 2);
+        $this->assertEquals($entry2['concept'], 'cat');
+        $this->assertEquals($entry2['definition'], '<p>traditional enemies of dogs</p>');
         $this->assertTrue(isset($entry2['aliases']));
         $this->assertTrue(isset($entry2['ratings']));
         // aliases of first entry
         $aliases = $entry2['aliases']['alias'];
-        $this->assertEqual(count($aliases), 2);
+        $this->assertEquals(count($aliases), 2);
         // first alias
         $alias1 = $aliases[0];
-        $this->assertEqual(count($alias1), 2);
-        $this->assertEqual($alias1['id'], 2);
-        $this->assertEqual($alias1['alias_text'], 'cats');
+        $this->assertEquals(count($alias1), 2);
+        $this->assertEquals($alias1['id'], 2);
+        $this->assertEquals($alias1['alias_text'], 'cats');
         // second alias
         $alias2 = $aliases[1];
-        $this->assertEqual(count($alias2), 2);
-        $this->assertEqual($alias2['id'], 3);
-        $this->assertEqual($alias2['alias_text'], 'felines');
+        $this->assertEquals(count($alias2), 2);
+        $this->assertEquals($alias2['id'], 3);
+        $this->assertEquals($alias2['alias_text'], 'felines');
         // ratings of first entry
         $ratings = $entry2['ratings']['rating'];
-        $this->assertEqual(count($ratings), 1);
+        $this->assertEquals(count($ratings), 1);
         // first rating
         $rating1 = $ratings[0];
-        $this->assertEqual(count($rating1), 6);
-        $this->assertEqual($rating1['id'], 1);
-        $this->assertEqual($rating1['value'], 5);
-        $this->assertEqual($rating1['scaleid'], 10);
+        $this->assertEquals(count($rating1), 6);
+        $this->assertEquals($rating1['id'], 1);
+        $this->assertEquals($rating1['value'], 5);
+        $this->assertEquals($rating1['scaleid'], 10);
 
         // Onetest test (only 1 level nested)
         $onetest = $tags['onetest'];
-        $this->assertEqual(count($onetest), 2);
-        $this->assertEqual(count($onetest[0]), 2);
-        $this->assertEqual($onetest[0]['name'], 1);
-        $this->assertEqual($onetest[0]['value'], 1);
-        $this->assertEqual(count($onetest[1]), 2);
-        $this->assertEqual($onetest[1]['name'], 2);
-        $this->assertEqual($onetest[1]['value'], 2);
+        $this->assertEquals(count($onetest), 2);
+        $this->assertEquals(count($onetest[0]), 2);
+        $this->assertEquals($onetest[0]['name'], 1);
+        $this->assertEquals($onetest[0]['value'], 1);
+        $this->assertEquals(count($onetest[1]), 2);
+        $this->assertEquals($onetest[1]['name'], 2);
+        $this->assertEquals($onetest[1]['value'], 2);
 
         // Other test (0 level nested, only last one is retrieved)
         $othertest = $tags['othertest'];
-        $this->assertEqual(count($othertest), 1);
-        $this->assertEqual(count($othertest[0]), 2);
-        $this->assertEqual($othertest[0]['name'], 4);
-        $this->assertEqual($othertest[0]['value'], 5);
+        $this->assertEquals(count($othertest), 1);
+        $this->assertEquals(count($othertest[0]), 2);
+        $this->assertEquals($othertest[0]['name'], 4);
+        $this->assertEquals($othertest[0]['value'], 5);
 
         // Now check start notifications
         $snotifs = $pr->get_start_notifications();
         // Check we have received the correct number of notifications
-        $this->assertEqual(count($snotifs), 2);
+        $this->assertEquals(count($snotifs), 2);
         // Check first and last notifications
-        $this->assertEqual($snotifs[0], '/activity');
-        $this->assertEqual($snotifs[1], '/activity/glossary');
+        $this->assertEquals($snotifs[0], '/activity');
+        $this->assertEquals($snotifs[1], '/activity/glossary');
 
         // Now check end notifications
         $enotifs = $pr->get_end_notifications();
         // Check we have received the correct number of notifications
-        $this->assertEqual(count($snotifs), 2);
+        $this->assertEquals(count($snotifs), 2);
         // Check first, and last notifications
-        $this->assertEqual($enotifs[0], '/activity/glossary');
-        $this->assertEqual($enotifs[1], '/activity');
+        $this->assertEquals($enotifs[0], '/activity/glossary');
+        $this->assertEquals($enotifs[1], '/activity');
 
         // Check start and end notifications are balanced
         sort($snotifs);
         sort($enotifs);
-        $this->assertEqual($snotifs, $enotifs);
+        $this->assertEquals($snotifs, $enotifs);
 
         // Now verify that the start/process/end order is correct
         $allnotifs = $pr->get_all_notifications();
-        $this->assertEqual(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
+        $this->assertEquals(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
         // Check integrity of the notifications
         $errcount = $this->helper_check_notifications_order_integrity($allnotifs);
-        $this->assertEqual($errcount, 0); // No errors found, plz
+        $this->assertEquals($errcount, 0); // No errors found, plz
     }
 
     /**
@@ -601,41 +595,41 @@ class progressive_parser_test extends UnitTestCase {
         // Assign processor to parser
         $pp->set_processor($pr);
         // Set file from fixtures
-        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test5.xml');
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/tests/fixtures/test5.xml');
         // Process the file
         $pp->process();
 
         // Get all the simplified chunks and perform various validations
         $chunks = $pr->get_chunks();
-        $this->assertEqual(count($chunks), 1); // Only 1, the SECTION one
+        $this->assertEquals(count($chunks), 1); // Only 1, the SECTION one
 
         // Now check start notifications
         $snotifs = $pr->get_start_notifications();
         // Check we have received the correct number of notifications
-        $this->assertEqual(count($snotifs), 2);
+        $this->assertEquals(count($snotifs), 2);
         // Check first and last notifications
-        $this->assertEqual($snotifs[0], '/MOODLE_BACKUP/COURSE');
-        $this->assertEqual($snotifs[1], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
+        $this->assertEquals($snotifs[0], '/MOODLE_BACKUP/COURSE');
+        $this->assertEquals($snotifs[1], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
 
         // Now check end notifications
         $enotifs = $pr->get_end_notifications();
         // Check we have received the correct number of notifications
-        $this->assertEqual(count($snotifs), 2); // End tags are dispatched for empties (ROLES_OVERRIDES)
+        $this->assertEquals(count($snotifs), 2); // End tags are dispatched for empties (ROLES_OVERRIDES)
         // Check first, and last notifications
-        $this->assertEqual($enotifs[0], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
-        $this->assertEqual($enotifs[1], '/MOODLE_BACKUP/COURSE');
+        $this->assertEquals($enotifs[0], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
+        $this->assertEquals($enotifs[1], '/MOODLE_BACKUP/COURSE');
 
         // Check start and end notifications are balanced
         sort($snotifs);
         sort($enotifs);
-        $this->assertEqual($snotifs, $enotifs);
+        $this->assertEquals($snotifs, $enotifs);
 
         // Now verify that the start/process/end order is correct
         $allnotifs = $pr->get_all_notifications();
-        $this->assertEqual(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
+        $this->assertEquals(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
         // Check integrity of the notifications
         $errcount = $this->helper_check_notifications_order_integrity($allnotifs);
-        $this->assertEqual($errcount, 0); // No errors found, plz
+        $this->assertEquals($errcount, 0); // No errors found, plz
     }
 
 
@@ -723,19 +717,19 @@ class mock_auto_parser_processor extends progressive_parser_processor {
         if (isset($data['tags'])) {
             foreach ($data['tags'] as $tag) {
                 if (isset($tag['attrs']['name'])) { // name tests
-                    $this->utc->assertEqual($tag['name'], $tag['attrs']['name']);
+                    $this->utc->assertEquals($tag['name'], $tag['attrs']['name']);
                 }
                 if (isset($tag['attrs']['level'])) { // level tests
-                    $this->utc->assertEqual($data['level'], $tag['attrs']['level']);
+                    $this->utc->assertEquals($data['level'], $tag['attrs']['level']);
                 }
                 if (isset($tag['attrs']['path'])) { // path tests
-                    $this->utc->assertEqual(rtrim($data['path'], '/') . '/' . $tag['name'], $tag['attrs']['path']);
+                    $this->utc->assertEquals(rtrim($data['path'], '/') . '/' . $tag['name'], $tag['attrs']['path']);
                 }
                 if (!empty($tag['cdata'])) { // cdata tests
                     if (isset($tag['attrs']['value'])) {
-                        $this->utc->assertEqual($tag['cdata'], $tag['attrs']['value']);
+                        $this->utc->assertEquals($tag['cdata'], $tag['attrs']['value']);
                     } else {
-                        $this->utc->assertEqual($tag['cdata'], $tag['name']);
+                        $this->utc->assertEquals($tag['cdata'], $tag['name']);
                     }
                 }
             }
