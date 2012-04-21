@@ -1,6 +1,6 @@
 <?php
 /*
-V5.14 8 Sept 2011  (c) 2000-2011 John Lim. All rights reserved.
+V5.16 26 Mar 2012  (c) 2000-2012 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -34,7 +34,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 		# oci8po does not support adodb extension: adodb_movenext()
 	}
 	
-	function Param($name)
+	function Param($name,$type='C')
 	{
 		return '?';
 	}

@@ -1,6 +1,6 @@
 <?php
 /* 
-V5.14 8 Sept 2011  (c) 2000-2011 John Lim (jlim#natsoft.com). All rights reserved.
+V5.16 26 Mar 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -585,7 +585,7 @@ class ADODB_mssqlnative extends ADOConnection {
 
 	// "Stein-Aksel Basma" <basma@accelero.no>
 	// tested with MSSQL 2000
-	function &MetaPrimaryKeys($table)
+	function MetaPrimaryKeys($table, $owner=false)
 	{
     	global $ADODB_FETCH_MODE;
 	
@@ -699,7 +699,7 @@ class ADORecordset_mssqlnative extends ADORecordSet {
 	{
         if ($this->connection->debug) error_log("<hr>fetchfield: $fieldOffset, fetch array: <pre>".print_r($this->fields,true)."</pre> backtrace: ".adodb_backtrace(false));
 		if ($fieldOffset != -1) $this->fieldOffset = $fieldOffset;
-		$arrKeys = array_keys($this->fields);
+		/*$arrKeys = array_keys($this->fields);
 		if(array_key_exists($this->fieldOffset,$arrKeys) && !array_key_exists($arrKeys[$this->fieldOffset],$this->fields)) {
 			$f = false;
 		} else {
@@ -710,7 +710,13 @@ class ADORecordset_mssqlnative extends ADORecordSet {
 
         if (empty($f)) {
             $f = false;//PHP Notice: Only variable references should be returned by reference
-        }
+        }*/
+		$fieldMeta = @sqlsrv_field_metadata($this->_queryID);
+		$f = new ADOFieldObject();
+		$f->name = $fieldMeta[$this->fieldOffset]['Name'];
+		$f->type = $fieldMeta[$this->fieldOffset]['Type'];
+		$f->max_length = $fieldMeta[$this->fieldOffset]['Size'];
+
 		return $f;
 	}
 	
@@ -751,13 +757,15 @@ class ADORecordset_mssqlnative extends ADORecordSet {
 				$this->fields = @sqlsrv_fetch_array($this->_queryID,SQLSRV_FETCH_ASSOC);
 			}
 			
-			if (ADODB_ASSOC_CASE == 0) {
-				foreach($this->fields as $k=>$v) {
-					$this->fields[strtolower($k)] = $v;
-				}
-			} else if (ADODB_ASSOC_CASE == 1) {
-				foreach($this->fields as $k=>$v) {
-					$this->fields[strtoupper($k)] = $v;
+			if (is_array($this->fields)) {
+				if (ADODB_ASSOC_CASE == 0) {
+					foreach($this->fields as $k=>$v) {
+						$this->fields[strtolower($k)] = $v;
+					}
+				} else if (ADODB_ASSOC_CASE == 1) {
+					foreach($this->fields as $k=>$v) {
+						$this->fields[strtoupper($k)] = $v;
+					}
 				}
 			}
 		} else {
@@ -845,7 +853,7 @@ class ADORecordSet_array_mssqlnative extends ADORecordSet_array {
 		$themth = $ADODB_mssql_mths[$themth];
 		if ($themth <= 0) return false;
 		// h-m-s-MM-DD-YY
-		return  mktime(0,0,0,$themth,$theday,$rr[3]);
+		return  adodb_mktime(0,0,0,$themth,$theday,$rr[3]);
 	}
 	
 	static function UnixTimeStamp($v)
@@ -886,7 +894,7 @@ class ADORecordSet_array_mssqlnative extends ADORecordSet_array {
 			break;
 		}
 		// h-m-s-MM-DD-YY
-		return  mktime($rr[4],$rr[5],0,$themth,$theday,$rr[3]);
+		return  adodb_mktime($rr[4],$rr[5],0,$themth,$theday,$rr[3]);
 	}
 }
 

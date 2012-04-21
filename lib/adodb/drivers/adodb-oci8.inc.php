@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V5.14 8 Sept 2011 (c) 2000-2011 John Lim. All rights reserved.
+  version V5.16 26 Mar 2012 (c) 2000-2012 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -298,7 +298,11 @@ NATSOFT.DOMAIN =
 	function DBDate($d,$isfld=false)
 	{
 		if (empty($d) && $d !== 0) return 'null';
-		if ($isfld) return 'TO_DATE('.$d.",'".$this->dateformat."')";
+		
+		if ($isfld) {
+			$d = _adodb_safedate($d);
+			return 'TO_DATE('.$d.",'".$this->dateformat."')";
+		}
 		
 		if (is_string($d)) $d = ADORecordSet::UnixDate($d);
 		
@@ -1011,7 +1015,7 @@ NATSOFT.DOMAIN =
 		return $rez;
 	}
 	
-	function Param($name,$type=false)
+	function Param($name,$type='C')
 	{
 		return ':'.$name;
 	}
