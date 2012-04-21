@@ -19,7 +19,7 @@
  *
  * @package    mod
  * @subpackage book
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2004-2012 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -94,6 +94,7 @@ $string['navprev'] = 'Previous';
 $string['navnext'] = 'Next';
 $string['navexit'] = 'Exit book';
 
+$string['book:addinstance'] = 'Add a new book';
 $string['book:read'] = 'Read book';
 $string['book:edit'] = 'Edit book chapters';
 $string['book:viewhiddenchapters'] = 'View hidden book chapters';

@@ -19,11 +19,23 @@
  *
  * @package    mod
  * @subpackage book
- * @copyright  2009-2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2009-2012 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $capabilities = array(
+
+    'mod/book:addinstance' => array(
+        'riskbitmask' => RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:manageactivities'
+    ),
 
     'mod/book:read' => array(
         'captype' => 'read',
