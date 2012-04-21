@@ -42,7 +42,6 @@ class mod_wiki_edit_form extends moodleform {
 
         $version = $this->_customdata['version'];
         $format = $this->_customdata['format'];
-        $pagetitle = $this->_customdata['pagetitle'];
 
         if (empty($this->_customdata['contextid'])) {
             // Hack alert
@@ -57,7 +56,7 @@ class mod_wiki_edit_form extends moodleform {
 
         if (isset($this->_customdata['pagetitle'])) {
             // Page title must be formatted properly here as this is output and not an element.
-            $pagetitle = get_string('editingpage', 'wiki', format_string($pagetitle, true, array('context' => get_context_instance_by_id($contextid, MUST_EXIST))));
+            $pagetitle = get_string('editingpage', 'wiki', format_string($this->_customdata['pagetitle'], true, array('context' => get_context_instance_by_id($contextid, MUST_EXIST))));
         } else {
             $pagetitle = get_string('editing', 'wiki');
         }
