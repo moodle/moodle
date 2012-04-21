@@ -530,6 +530,7 @@ input[type="radio"] {
 .path-grade-report-grader form {
     text-align: left;
 }
+.path-grade-report-grader.dir-rtl form { text-align: right; }
 
 /* Footer
 -----------------------*/
@@ -654,3 +655,5 @@ input[type="radio"] {
     text-align: center;
     margin: 10% auto;
 }
+
+.path-grade-report.dir-rtl #graded_users_selector .singleselect {margin: 0px;}
