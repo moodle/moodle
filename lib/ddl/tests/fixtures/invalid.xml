@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/ddl/simpletest/fixtures" VERSION="20120122" COMMENT="This is an invalid xml file used for testing.">
+<XMLDB PATH="lib/ddl/tests/fixtures" VERSION="20120122" COMMENT="This is an invalid xml file used for testing.">
   <TABLES>
     <TABLE NAME="test_table1" COMMENT="Just a test table">
       <FIELDS>

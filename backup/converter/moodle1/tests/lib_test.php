@@ -38,7 +38,7 @@ class moodle1_converter_testcase extends advanced_testcase {
     protected function setUp() {
         global $CFG;
 
-        $this->tempdir = convert_helper::generate_id('simpletest');
+        $this->tempdir = convert_helper::generate_id('unittest');
         check_dir_exists("$CFG->tempdir/backup/$this->tempdir/course_files/sub1");
         check_dir_exists("$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/7");
         copy(

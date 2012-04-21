@@ -278,7 +278,7 @@ class exposed_global_navigation extends global_navigation {
             $page = $PAGE;
         }
         parent::__construct($page);
-        $this->cache = new navigation_cache('simpletest_nav');
+        $this->cache = new navigation_cache('unittest_nav');
     }
     public function __call($method, $arguments) {
         if (strpos($method,$this->exposedkey) !== false) {
@@ -373,7 +373,7 @@ class exposed_navbar extends navbar {
     protected $exposedkey = 'exposed_';
     public function __construct(moodle_page $page) {
         parent::__construct($page);
-        $this->cache = new navigation_cache('simpletest_nav');
+        $this->cache = new navigation_cache('unittest_nav');
     }
     function __call($method, $arguments) {
         if (strpos($method,$this->exposedkey) !== false) {
@@ -436,7 +436,7 @@ class navbar_testcase extends advanced_testcase {
         $navigation->set_initialised();
         $page->set_navigation($navigation);
 
-        $this->cache = new navigation_cache('simpletest_nav');
+        $this->cache = new navigation_cache('unittest_nav');
         $this->node = new exposed_navbar($page);
     }
     public function test_add() {
@@ -458,7 +458,7 @@ class navigation_cache_testcase extends basic_testcase {
     protected function setUp() {
         parent::setUp();
 
-        $this->cache = new navigation_cache('simpletest_nav');
+        $this->cache = new navigation_cache('unittest_nav');
         $this->cache->anysetvariable = true;
     }
     public function test___get() {
@@ -496,7 +496,7 @@ class exposed_settings_navigation extends settings_navigation {
     function __construct() {
         global $PAGE;
         parent::__construct($PAGE);
-        $this->cache = new navigation_cache('simpletest_nav');
+        $this->cache = new navigation_cache('unittest_nav');
     }
     function __call($method, $arguments) {
         if (strpos($method,$this->exposedkey) !== false) {
@@ -522,7 +522,7 @@ class settings_navigation_testcase extends advanced_testcase {
         $PAGE->set_url('/');
         $PAGE->set_course($SITE);
 
-        $this->cache = new navigation_cache('simpletest_nav');
+        $this->cache = new navigation_cache('unittest_nav');
         $this->node = new exposed_settings_navigation();
     }
     public function test___construct() {

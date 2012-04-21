@@ -29,7 +29,7 @@ require_once $CFG->dirroot.'/lib/evalmath/evalmath.class.php';
 
 /**
  * This class abstracts evaluation of spreadsheet formulas.
- * See unit tests in lib/simpletest/testmathslib.php for sample usage.
+ * See unit tests in lib/tests/mathslib_test.php for sample usage.
  *
  * @package moodlecore
  * @copyright Petr Skoda (skodak)
