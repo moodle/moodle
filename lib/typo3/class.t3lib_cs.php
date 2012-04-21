@@ -24,68 +24,8 @@
 /**
  * Class for conversion between charsets.
  *
- * $Id$
- *
  * @author	Kasper Skårhøj <kasperYYYY@typo3.com>
  * @author	Martin Kutschker <martin.t.kutschker@blackbox.net>
- */
-/**
- * [CLASS/FUNCTION INDEX of SCRIPT]
- *
- *
- *
- *  136: class t3lib_cs
- *  488:	 function parse_charset($charset)
- *  507:	 function get_locale_charset($locale)
- *
- *			  SECTION: Charset Conversion functions
- *  560:	 function conv($str,$fromCS,$toCS,$useEntityForNoChar=0)
- *  600:	 function convArray(&$array,$fromCS,$toCS,$useEntityForNoChar=0)
- *  617:	 function utf8_encode($str,$charset)
- *  663:	 function utf8_decode($str,$charset,$useEntityForNoChar=0)
- *  706:	 function utf8_to_entities($str)
- *  739:	 function entities_to_utf8($str,$alsoStdHtmlEnt=0)
- *  773:	 function utf8_to_numberarray($str,$convEntities=0,$retChar=0)
- *  823:	 function UnumberToChar($cbyte)
- *  868:	 function utf8CharToUnumber($str,$hex=0)
- *
- *			  SECTION: Init functions
- *  911:	 function initCharset($charset)
- *  973:	 function initUnicodeData($mode=null)
- * 1198:	 function initCaseFolding($charset)
- * 1260:	 function initToASCII($charset)
- *
- *			  SECTION: String operation functions
- * 1331:	 function substr($charset,$string,$start,$len=null)
- * 1384:	 function strlen($charset,$string)
- * 1414:	 function crop($charset,$string,$len,$crop='')
- * 1467:	 function strtrunc($charset,$string,$len)
- * 1501:	 function conv_case($charset,$string,$case)
- * 1527:	 function specCharsToASCII($charset,$string)
- *
- *			  SECTION: Internal string operation functions
- * 1567:	 function sb_char_mapping($str,$charset,$mode,$opt='')
- *
- *			  SECTION: Internal UTF-8 string operation functions
- * 1622:	 function utf8_substr($str,$start,$len=null)
- * 1655:	 function utf8_strlen($str)
- * 1676:	 function utf8_strtrunc($str,$len)
- * 1698:	 function utf8_strpos($haystack,$needle,$offset=0)
- * 1723:	 function utf8_strrpos($haystack,$needle)
- * 1745:	 function utf8_char2byte_pos($str,$pos)
- * 1786:	 function utf8_byte2char_pos($str,$pos)
- * 1809:	 function utf8_char_mapping($str,$mode,$opt='')
- *
- *			  SECTION: Internal EUC string operation functions
- * 1885:	 function euc_strtrunc($str,$len,$charset)
- * 1914:	 function euc_substr($str,$start,$charset,$len=null)
- * 1939:	 function euc_strlen($str,$charset)
- * 1966:	 function euc_char2byte_pos($str,$pos,$charset)
- * 2007:	 function euc_char_mapping($str,$charset,$mode,$opt='')
- *
- * TOTAL FUNCTIONS: 35
- * (This index is automatically created/updated by the extension "extdeveval")
- *
  */
 
 
@@ -127,6 +67,12 @@
  * @subpackage t3lib
  */
 class t3lib_cs {
+
+	/**
+	 * @var t3lib_l10n_Locales
+	 */
+	protected $locales;
+
 	var $noCharByteVal = 63; // ASCII Value for chars with no equivalent.
 
 		// This is the array where parsed conversion tables are stored (cached)
@@ -466,60 +412,76 @@ class t3lib_cs {
 		// TYPO3 specific: Array with the system charsets used for each system language in TYPO3:
 		// Empty values means "iso-8859-1"
 	var $charSetArray = array(
-		'dk' => '',
-		'de' => '',
-		'no' => '',
-		'it' => '',
-		'fr' => '',
-		'es' => '',
-		'nl' => '',
-		'cz' => 'windows-1250',
-		'pl' => 'iso-8859-2',
-		'si' => 'windows-1250',
-		'fi' => '',
-		'tr' => 'iso-8859-9',
-		'se' => '',
-		'pt' => '',
-		'ru' => 'windows-1251',
-		'ro' => 'iso-8859-2',
-		'ch' => 'gb2312',
-		'sk' => 'windows-1250',
-		'lt' => 'windows-1257',
-		'is' => 'utf-8',
-		'hr' => 'windows-1250',
-		'hu' => 'iso-8859-2',
-		'gl' => '',
-		'th' => 'iso-8859-11',
-		'gr' => 'iso-8859-7',
-		'hk' => 'big5',
-		'eu' => '',
+		'ar' => 'iso-8859-6',
+		'ba' => 'iso-8859-2',
 		'bg' => 'windows-1251',
 		'br' => '',
-		'et' => 'iso-8859-4',
-		'ar' => 'iso-8859-6',
-		'he' => 'utf-8',
-		'ua' => 'windows-1251',
-		'jp' => 'shift_jis',
-		'lv' => 'utf-8',
-		'vn' => 'utf-8',
 		'ca' => 'iso-8859-15',
-		'ba' => 'iso-8859-2',
-		'kr' => 'euc-kr',
+		'ch' => 'gb2312',
+		'cs' => 'windows-1250',
+		'cz' => 'windows-1250',
+		'da' => '',
+		'de' => '',
+		'dk' => '',
+		'el' => 'iso-8859-7',
 		'eo' => 'utf-8',
-		'my' => '',
-		'hi' => 'utf-8',
-		'fo' => 'utf-8',
+		'es' => '',
+		'et' => 'iso-8859-4',
+		'eu' => '',
 		'fa' => 'utf-8',
-		'sr' => 'utf-8',
-		'sq' => 'utf-8',
-		'ge' => 'utf-8',
+		'fi' => '',
+		'fo' => 'utf-8',
+		'fr' => '',
+		'fr_CA' => '',
 		'ga' => '',
+		'ge' => 'utf-8',
+		'gl' => '',
+		'gr' => 'iso-8859-7',
+		'he' => 'utf-8',
+		'hi' => 'utf-8',
+		'hk' => 'big5',
+		'hr' => 'windows-1250',
+		'hu' => 'iso-8859-2',
+		'is' => 'utf-8',
+		'it' => '',
+		'ja' => 'shift_jis',
+		'jp' => 'shift_jis',
+		'ka' => 'utf-8',
+		'kl' => 'utf-8',
 		'km' => 'utf-8',
+		'ko' => 'euc-kr',
+		'kr' => 'euc-kr',
+		'lt' => 'windows-1257',
+		'lv' => 'utf-8',
+		'ms' => '',
+		'my' => '',
+		'nl' => '',
+		'no' => '',
+		'pl' => 'iso-8859-2',
+		'pt' => '',
+		'pt_BR' => '',
 		'qc' => '',
+		'ro' => 'iso-8859-2',
+		'ru' => 'windows-1251',
+		'se' => '',
+		'si' => 'windows-1250',
+		'sk' => 'windows-1250',
+		'sl' => 'windows-1250',
+		'sq' => 'utf-8',
+		'sr' => 'utf-8',
+		'sv' => '',
+		'th' => 'iso-8859-11',
+		'tr' => 'iso-8859-9',
+		'ua' => 'windows-1251',
+		'uk' => 'windows-1251',
+		'vi' => 'utf-8',
+		'vn' => 'utf-8',
+		'zh' => 'big5',
 	);
 
 		// TYPO3 specific: Array with the iso names used for each system language in TYPO3:
-		// Missing keys means: same as Typo3
+		// Missing keys means: same as TYPO3
+		// @deprecated since TYPO3 4.6, will be removed in TYPO3 4.8 - use t3lib_l10n_Locales::getIsoMapping()
 	var $isoArray = array(
 		'ba' => 'bs',
 		'br' => 'pt_BR',
@@ -539,6 +501,13 @@ class t3lib_cs {
 		'ge' => 'ka',
 		'ga' => 'gl',
 	);
+
+	/**
+	 * Default constructor.
+	 */
+	public function __construct() {
+		$this->locales = t3lib_div::makeInstance('t3lib_l10n_Locales');
+	}
 
 	/**
 	 * Normalize - changes input character set to lowercase letters.
@@ -634,7 +603,7 @@ class t3lib_cs {
 					$conv_str = mb_convert_encoding($str, $toCS, $fromCS);
 					if (FALSE !== $conv_str) {
 						return $conv_str;
-					} // returns false for unsupported charsets
+					} // returns FALSE for unsupported charsets
 					break;
 
 				case 'iconv':
@@ -1028,7 +997,7 @@ class t3lib_cs {
 	 */
 	function initCharset($charset) {
 			// Only process if the charset is not yet loaded:
-		if (empty($this->parsedCharsets[$charset]) || !is_array($this->parsedCharsets[$charset])) {
+		if (!is_array($this->parsedCharsets[$charset])) {
 
 				// Conversion table filename:
 			$charsetConvTableFile = PATH_t3lib . 'csconvtbl/' . $charset . '.tbl';
@@ -1240,17 +1209,23 @@ class t3lib_cs {
 							$utf8_char = $this->UnumberToChar(hexdec($char));
 							if ($char != $lower) {
 								$arr = explode(' ', $lower);
-								for ($i = 0; isset($arr[$i]); $i++) $arr[$i] = $this->UnumberToChar(hexdec($arr[$i]));
+								for ($i = 0; isset($arr[$i]); $i++) {
+									$arr[$i] = $this->UnumberToChar(hexdec($arr[$i]));
+								}
 								$utf8CaseFolding['toLower'][$utf8_char] = implode('', $arr);
 							}
 							if ($char != $title && $title != $upper) {
 								$arr = explode(' ', $title);
-								for ($i = 0; isset($arr[$i]); $i++) $arr[$i] = $this->UnumberToChar(hexdec($arr[$i]));
+								for ($i = 0; isset($arr[$i]); $i++) {
+									$arr[$i] = $this->UnumberToChar(hexdec($arr[$i]));
+								}
 								$utf8CaseFolding['toTitle'][$utf8_char] = implode('', $arr);
 							}
 							if ($char != $upper) {
 								$arr = explode(' ', $upper);
-								for ($i = 0; isset($arr[$i]); $i++) $arr[$i] = $this->UnumberToChar(hexdec($arr[$i]));
+								for ($i = 0; isset($arr[$i]); $i++) {
+									$arr[$i] = $this->UnumberToChar(hexdec($arr[$i]));
+								}
 								$utf8CaseFolding['toUpper'][$utf8_char] = implode('', $arr);
 							}
 						}
@@ -1623,7 +1598,7 @@ class t3lib_cs {
 			}
 
 			/*
-			   if (abs($len)<$this->strlen($charset,$string))	{	// Has to use ->strlen() - otherwise multibyte strings ending with a multibyte char will return true here (which is not a catastrophe, but...)
+			   if (abs($len)<$this->strlen($charset,$string))	{	// Has to use ->strlen() - otherwise multibyte strings ending with a multibyte char will return TRUE here (which is not a catastrophe, but...)
 				   if ($len > 0)	{
 					   return substr($string,0,$i).$crop;
 				   } else {
@@ -1703,6 +1678,22 @@ class t3lib_cs {
 	}
 
 	/**
+	 * Equivalent of lcfirst/ucfirst but using character set.
+	 *
+	 * @param string $charset
+	 * @param string $string
+	 * @param string $case
+	 * @return string
+	 * @see t3lib_cs::conv_case()
+	 */
+	public function convCaseFirst($charset, $string, $case) {
+		$firstChar = $this->substr($charset, $string, 0, 1);
+		$firstChar = $this->conv_case($charset, $firstChar, $case);
+		$remainder = $this->substr($charset, $string, 1);
+		return $firstChar . $remainder;
+	}
+
+	/**
 	 * Converts special chars (like æøåÆØÅ, umlauts etc) to ascii equivalents (usually double-bytes, like æ => ae etc.)
 	 *
 	 * @param	string		Character set of string
@@ -1743,7 +1734,7 @@ class t3lib_cs {
 			// get all languages where TYPO3 code differs from ISO code
 			// or needs the country part
 			// the iso codes will here overwrite the default typo3 language in the key
-		foreach ($this->isoArray as $typo3Lang => $isoLang) {
+		foreach ($this->locales->getIsoMapping() as $typo3Lang => $isoLang) {
 			$isoLang = join('-', explode('_', $isoLang));
 			$allLanguageCodes[$typo3Lang] = $isoLang;
 		}
@@ -1921,11 +1912,17 @@ class t3lib_cs {
 	function utf8_strtrunc($str, $len) {
 		$i = $len - 1;
 		if (ord($str{$i}) & 0x80) { // part of a multibyte sequence
-			for (; $i > 0 && !(ord($str{$i}) & 0x40); $i--) ; // find the first byte
+			for (; $i > 0 && !(ord($str{$i}) & 0x40); $i--) {
+				// find the first byte
+				;
+			}
 			if ($i <= 0) {
 				return '';
 			} // sanity check
-			for ($bc = 0, $mbs = ord($str{$i}); $mbs & 0x80; $mbs = $mbs << 1) $bc++; // calculate number of bytes
+			for ($bc = 0, $mbs = ord($str{$i}); $mbs & 0x80; $mbs = $mbs << 1) {
+				// calculate number of bytes
+				$bc++;
+			}
 			if ($bc + $i > $len) {
 				return substr($str, 0, $i);
 			}

@@ -51,10 +51,16 @@ class textlib {
     /**
      * Return t3lib helper class, which is used for conversion between charsets
      *
+     * @param bool $reset
      * @return t3lib_cs
      */
-    protected static function typo3() {
+    protected static function typo3($reset = false) {
         static $typo3cs = null;
+
+        if ($reset) {
+            $typo3cs = null;
+            return null;
+        }
 
         if (isset($typo3cs)) {
             return $typo3cs;
@@ -65,6 +71,8 @@ class textlib {
         // Required files
         require_once($CFG->libdir.'/typo3/class.t3lib_cs.php');
         require_once($CFG->libdir.'/typo3/class.t3lib_div.php');
+        require_once($CFG->libdir.'/typo3/interface.t3lib_singleton.php');
+        require_once($CFG->libdir.'/typo3/class.t3lib_l10n_locales.php');
 
         // do not use mbstring or recode because it may return invalid results in some corner cases
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = 'iconv';
@@ -85,14 +93,24 @@ class textlib {
 
         // This full path constants must be defined too, transforming backslashes
         // to forward slashed because Typo3 requires it.
-        define ('PATH_t3lib', str_replace('\\','/',$CFG->libdir.'/typo3/'));
-        define ('PATH_typo3', str_replace('\\','/',$CFG->libdir.'/typo3/'));
-        define ('PATH_site', str_replace('\\','/',$CFG->tempdir.'/'));
-        define ('TYPO3_OS', stristr(PHP_OS,'win')&&!stristr(PHP_OS,'darwin')?'WIN':'');
+        if (!defined('PATH_t3lib')) {
+            define('PATH_t3lib', str_replace('\\','/',$CFG->libdir.'/typo3/'));
+            define('PATH_typo3', str_replace('\\','/',$CFG->libdir.'/typo3/'));
+            define('PATH_site', str_replace('\\','/',$CFG->tempdir.'/'));
+            define('TYPO3_OS', stristr(PHP_OS,'win')&&!stristr(PHP_OS,'darwin')?'WIN':'');
+        }
 
         $typo3cs = new t3lib_cs();
 
         return $typo3cs;
+    }
+
+    /**
+     * Reset internal textlib caches.
+     * @static
+     */
+    public static function reset_caches() {
+        self::typo3(true);
     }
 
     /**
@@ -252,6 +270,10 @@ class textlib {
     public static function strtolower($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
 
+        if (is_int($text)) {
+            return (string)$text;
+        }
+
         if ($charset === 'utf-8' and function_exists('mb_strtolower')) {
             return mb_strtolower($text, 'UTF-8');
         }
@@ -272,6 +294,10 @@ class textlib {
      */
     public static function strtoupper($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
+
+        if (is_int($text)) {
+            return (string)$text;
+        }
 
         if ($charset === 'utf-8' and function_exists('mb_strtoupper')) {
             return mb_strtoupper($text, 'UTF-8');

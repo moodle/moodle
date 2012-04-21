@@ -1427,6 +1427,7 @@ function purge_all_caches() {
     js_reset_all_caches();
     theme_reset_all_caches();
     get_string_manager()->reset_caches();
+    textlib::reset_caches();
 
     // purge all other caches: rss, simplepie, etc.
     remove_dir($CFG->cachedir.'', true);
