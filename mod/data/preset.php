@@ -45,7 +45,7 @@ if ($id) {
     $cm = get_coursemodule_from_instance('data', $data->id, $course->id, null, MUST_EXIST);
 }
 $context = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 require_capability('mod/data:managetemplates', $context);
 $PAGE->set_url(new moodle_url('/mod/data/preset.php', array('d'=>$data->id)));
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);

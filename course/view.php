@@ -60,7 +60,7 @@
         if (is_array($aroles) && isset($aroles[$switchrole])) {
             role_switch($switchrole, $context);
             // Double check that this role is allowed here
-            require_login($course->id);
+            require_login($course);
         }
         // reset course page state - this prevents some weird problems ;-)
         $USER->activitycopy = false;

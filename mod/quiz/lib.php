@@ -1712,7 +1712,7 @@ function mod_quiz_question_pluginfile($course, $context, $component,
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
     $attemptobj = quiz_attempt::create_from_usage_id($qubaid);
-    require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
+    require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 
     if ($attemptobj->is_own_attempt() && !$attemptobj->is_finished()) {
         // In the middle of an attempt.

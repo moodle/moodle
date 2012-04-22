@@ -17,7 +17,7 @@ $course = $DB->get_record('course', array('id'=>$chat->course), '*', MUST_EXIST)
 $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id, false, MUST_EXIST);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 require_capability('mod/chat:chat', $context);
 
 /// Check to see if groups are being used here

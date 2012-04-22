@@ -52,7 +52,7 @@ if (!empty($id)) {
 
 $PAGE->set_url('/mod/scorm/prereqs.php', array('scoid'=>$scoid, 'attempt'=>$attempt, 'id'=>$cm->id));
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
 if (!file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php')) {

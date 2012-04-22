@@ -53,9 +53,9 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 }
 
 if ($course->id == SITEID) {
-    require_login($course->id, true);
+    require_login($course, true);
 } else {
-    require_login($course->id, true, $cm);
+    require_login($course, true, $cm);
 }
 
 //check whether the given courseid exists

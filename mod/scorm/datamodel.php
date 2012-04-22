@@ -48,7 +48,7 @@ if (!empty($id)) {
 
 $PAGE->set_url('/mod/scorm/datamodel.php', array('scoid'=>$scoid, 'attempt'=>$attempt, 'id'=>$cm->id));
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 if (confirm_sesskey() && (!empty($scoid))) {
     $result = true;

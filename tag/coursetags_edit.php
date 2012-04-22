@@ -60,7 +60,7 @@ if ($courseid != SITEID) {
 
 // Permissions
 $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-require_login($course->id);
+require_login($course);
 $canedit = has_capability('moodle/tag:create', $sitecontext);
 
 // Language strings

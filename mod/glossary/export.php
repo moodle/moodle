@@ -31,7 +31,7 @@ if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
     print_error('invalidid', 'glossary');
 }
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/glossary:export', $context);

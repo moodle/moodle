@@ -68,7 +68,7 @@ if ($id) {
     }
 }
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 if (isguestuser()) {
     redirect('view.php?d='.$data->id);

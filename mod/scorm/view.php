@@ -56,7 +56,7 @@ if (!empty($forcejs)) {
     $PAGE->add_body_class('forcejavascript');
 }
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);

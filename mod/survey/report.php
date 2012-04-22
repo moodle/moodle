@@ -61,7 +61,7 @@
     }
     $PAGE->set_url($url);
 
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 

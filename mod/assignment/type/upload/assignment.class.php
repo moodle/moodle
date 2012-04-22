@@ -842,7 +842,7 @@ class assignment_upload extends assignment_base {
         $mode     = optional_param('mode', '', PARAM_ALPHA);
         $offset   = optional_param('offset', 0, PARAM_INT);
 
-        require_login($this->course->id, false, $this->cm);
+        require_login($this->course, false, $this->cm);
 
         if (empty($mode)) {
             $urlreturn = 'view.php';
