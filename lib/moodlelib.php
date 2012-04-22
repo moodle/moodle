@@ -2646,7 +2646,7 @@ function get_login_url() {
  * @return mixed Void, exit, and die depending on path
  */
 function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $setwantsurltome = true, $preventredirect = false) {
-    global $CFG, $SESSION, $USER, $FULLME, $PAGE, $SITE, $DB, $OUTPUT;
+    global $CFG, $SESSION, $USER, $PAGE, $SITE, $DB, $OUTPUT;
 
     // setup global $COURSE, themes, language and locale
     if (!empty($courseorid)) {
@@ -2710,8 +2710,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
             }
 
             if ($setwantsurltome) {
-                // TODO: switch to PAGE->url
-                $SESSION->wantsurl = $FULLME;
+                $SESSION->wantsurl = qualified_me();
             }
             if (!empty($_SERVER['HTTP_REFERER'])) {
                 $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
@@ -2735,7 +2734,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
         $userauth = get_auth_plugin($USER->auth);
         if ($userauth->can_change_password() and !$preventredirect) {
             if ($setwantsurltome) {
-                $SESSION->wantsurl = $FULLME;
+                $SESSION->wantsurl = qualified_me();
             }
             if ($changeurl = $userauth->change_password_url()) {
                 //use plugin custom url
@@ -2760,7 +2759,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
             throw new require_login_exception('User not fully set-up');
         }
         if ($setwantsurltome) {
-            $SESSION->wantsurl = $FULLME;
+            $SESSION->wantsurl = qualified_me();
         }
         redirect($CFG->wwwroot .'/user/edit.php?id='. $USER->id .'&amp;course='. SITEID);
     }
@@ -2782,7 +2781,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                 throw new require_login_exception('Policy not agreed');
             }
             if ($setwantsurltome) {
-                $SESSION->wantsurl = $FULLME;
+                $SESSION->wantsurl = qualified_me();
             }
             redirect($CFG->wwwroot .'/user/policy.php');
         } else if (!empty($CFG->sitepolicyguest) and isguestuser()) {
@@ -2790,7 +2789,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                 throw new require_login_exception('Policy not agreed');
             }
             if ($setwantsurltome) {
-                $SESSION->wantsurl = $FULLME;
+                $SESSION->wantsurl = qualified_me();
             }
             redirect($CFG->wwwroot .'/user/policy.php');
         }
@@ -2944,7 +2943,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                 throw new require_login_exception('Not enrolled');
             }
             if ($setwantsurltome) {
-                $SESSION->wantsurl = $FULLME;
+                $SESSION->wantsurl = qualified_me();
             }
             redirect($CFG->wwwroot .'/enrol/index.php?id='. $course->id);
         }
@@ -5113,7 +5112,7 @@ function get_mailer($action='get') {
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $replyto='', $replytoname='', $wordwrapwidth=79) {
 
-    global $CFG, $FULLME;
+    global $CFG;
 
     if (empty($user) || empty($user->email)) {
         $nulluser = 'User is null or has no email';
@@ -5313,7 +5312,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         }
         return true;
     } else {
-        add_to_log(SITEID, 'library', 'mailer', $FULLME, 'ERROR: '. $mail->ErrorInfo);
+        add_to_log(SITEID, 'library', 'mailer', qualified_me(), 'ERROR: '. $mail->ErrorInfo);
         if (CLI_SCRIPT) {
             mtrace('Error: lib/moodlelib.php email_to_user(): '.$mail->ErrorInfo);
         }

@@ -3622,7 +3622,7 @@ class settings_navigation extends navigation_node {
      * @return navigation_node|false
      */
     protected function load_user_settings($courseid=SITEID) {
-        global $USER, $FULLME, $CFG;
+        global $USER, $CFG;
 
         if (isguestuser() || !isloggedin()) {
             return false;

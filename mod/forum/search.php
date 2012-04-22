@@ -64,7 +64,7 @@ if ($timetorestrict) {
 }
 
 $PAGE->set_pagelayout('standard');
-$PAGE->set_url($FULLME);
+$PAGE->set_url($FULLME); //TODO: this is very sloppy --skodak
 
 if (empty($search)) {   // Check the other parameters instead
     if (!empty($words)) {

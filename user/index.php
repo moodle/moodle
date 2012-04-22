@@ -525,7 +525,7 @@
         echo '<form action="action_redir.php" method="post" id="participantsform">';
         echo '<div>';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<input type="hidden" name="returnto" value="'.s(me()).'" />';
+        echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
     }
 
     if ($mode === MODE_USERDETAILS) {    // Print simple listing

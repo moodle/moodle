@@ -133,7 +133,7 @@
         add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
     }
 
-    $SESSION->fromdiscussion = $FULLME;   // Return here if we post or set subscription etc
+    $SESSION->fromdiscussion = qualified_me();   // Return here if we post or set subscription etc
 
 
 /// Print settings and things across the top
