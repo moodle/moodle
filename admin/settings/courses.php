@@ -92,8 +92,29 @@ if ($hassiteconfig
     // Add a category for backups
     $ADMIN->add('courses', new admin_category('backups', get_string('backups','admin')));
 
-    // Create a page for general backup defaults
+    // Create a page for general backups configuration and defaults.
     $temp = new admin_settingpage('backupgeneralsettings', get_string('generalbackdefaults', 'backup'), 'moodle/backup:backupcourse');
+
+    // General configuration section.
+    $temp->add(new admin_setting_configselect('backup/loglifetime', get_string('loglifetime', 'backup'), get_string('configloglifetime', 'backup'), 30, array(
+        1   => get_string('numdays', '', 1),
+        2   => get_string('numdays', '', 2),
+        3   => get_string('numdays', '', 3),
+        5   => get_string('numdays', '', 5),
+        7   => get_string('numdays', '', 7),
+        10  => get_string('numdays', '', 10),
+        14  => get_string('numdays', '', 14),
+        20  => get_string('numdays', '', 20),
+        30  => get_string('numdays', '', 30),
+        60  => get_string('numdays', '', 60),
+        90  => get_string('numdays', '', 90),
+        120 => get_string('numdays', '', 120),
+        180 => get_string('numdays', '', 180),
+        365 => get_string('numdays', '', 365)
+    )));
+
+    // General defaults section.
+    $temp->add(new admin_setting_heading('generalsettings', get_string('generalsettings', 'backup'), ''));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_users', get_string('generalusers','backup'), get_string('configgeneralusers','backup'), array('value'=>1, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_anonymize', get_string('generalanonymize','backup'), get_string('configgeneralanonymize','backup'), array('value'=>0, 'locked'=>0)));
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_role_assignments', get_string('generalroleassignments','backup'), get_string('configgeneralroleassignments','backup'), array('value'=>1, 'locked'=>0)));
@@ -106,8 +127,10 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configcheckbox_with_lock('backup/backup_general_histories', get_string('generalhistories','backup'), get_string('configgeneralhistories','backup'), array('value'=>0, 'locked'=>0)));
     $ADMIN->add('backups', $temp);
 
-/// "backups" settingpage
+    // Create a page for automated backups configuration and defaults.
     $temp = new admin_settingpage('automated', get_string('automatedsetup','backup'), 'moodle/backup:backupcourse');
+
+    // Automated configuration section.
     $temp->add(new admin_setting_configselect('backup/backup_auto_active', get_string('active'),  get_string('autoactivedescription', 'backup'), 0, array(
         0 => get_string('autoactivedisabled', 'backup'),
         1 => get_string('autoactiveenabled', 'backup'),
@@ -139,7 +162,7 @@ if ($hassiteconfig
         500 => '500');
     $temp->add(new admin_setting_configselect('backup/backup_auto_keep', get_string('keep'), get_string('backupkeephelp'), 1, $keepoptoins));
 
-
+    // Automated defaults section.
     $temp->add(new admin_setting_heading('automatedsettings', get_string('automatedsettings','backup'), ''));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_users', get_string('generalusers', 'backup'), get_string('configgeneralusers', 'backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_role_assignments', get_string('generalroleassignments','backup'), get_string('configgeneralroleassignments','backup'), 1));

@@ -245,18 +245,18 @@ function cron_run() {
         }
         flush();
 
-        // Delete old backup_controllers and logs
-
-        if (!empty($CFG->loglifetime)) {  // value in days
-            $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
-            // Delete child records from backup_logs
+        // Delete old backup_controllers and logs.
+        $loglifetime = get_config('backup', 'loglifetime');
+        if (!empty($loglifetime)) {  // Value in days.
+            $loglifetime = $timenow - ($loglifetime * 3600 * 24);
+            // Delete child records from backup_logs.
             $DB->execute("DELETE FROM {backup_logs}
                            WHERE EXISTS (
                                SELECT 'x'
                                  FROM {backup_controllers} bc
                                 WHERE bc.backupid = {backup_logs}.backupid
                                   AND bc.timecreated < ?)", array($loglifetime));
-            // Delete records from backup_controllers
+            // Delete records from backup_controllers.
             $DB->execute("DELETE FROM {backup_controllers}
                           WHERE timecreated < ?", array($loglifetime));
             mtrace("Deleted old backup records");
