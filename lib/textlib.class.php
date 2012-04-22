@@ -184,7 +184,7 @@ class textlib {
         if ($result === false or $result === '') {
             // note: iconv is prone to return empty string when invalid char encountered, or false if encoding unsupported
             $oldlevel = error_reporting(E_PARSE);
-            $result = self::typo3()->conv($text, $fromCS, $toCS);
+            $result = self::typo3()->conv((string)$text, $fromCS, $toCS);
             error_reporting($oldlevel);
         }
 
@@ -226,9 +226,9 @@ class textlib {
 
         $oldlevel = error_reporting(E_PARSE);
         if ($len === null) {
-            $result = self::typo3()->substr($charset, $text, $start);
+            $result = self::typo3()->substr($charset, (string)$text, $start);
         } else {
-            $result = self::typo3()->substr($charset, $text, $start, $len);
+            $result = self::typo3()->substr($charset, (string)$text, $start, $len);
         }
         error_reporting($oldlevel);
 
@@ -254,7 +254,7 @@ class textlib {
         }
 
         $oldlevel = error_reporting(E_PARSE);
-        $result = self::typo3()->strlen($charset, $text);
+        $result = self::typo3()->strlen($charset, (string)$text);
         error_reporting($oldlevel);
 
         return $result;
@@ -270,16 +270,12 @@ class textlib {
     public static function strtolower($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
 
-        if (is_int($text)) {
-            return (string)$text;
-        }
-
         if ($charset === 'utf-8' and function_exists('mb_strtolower')) {
             return mb_strtolower($text, 'UTF-8');
         }
 
         $oldlevel = error_reporting(E_PARSE);
-        $result = self::typo3()->conv_case($charset, $text, 'toLower');
+        $result = self::typo3()->conv_case($charset, (string)$text, 'toLower');
         error_reporting($oldlevel);
 
         return $result;
@@ -295,16 +291,12 @@ class textlib {
     public static function strtoupper($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
 
-        if (is_int($text)) {
-            return (string)$text;
-        }
-
         if ($charset === 'utf-8' and function_exists('mb_strtoupper')) {
             return mb_strtoupper($text, 'UTF-8');
         }
 
         $oldlevel = error_reporting(E_PARSE);
-        $result = self::typo3()->conv_case($charset, $text, 'toUpper');
+        $result = self::typo3()->conv_case($charset, (string)$text, 'toUpper');
         error_reporting($oldlevel);
 
         return $result;
@@ -354,7 +346,7 @@ class textlib {
     public static function specialtoascii($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
         $oldlevel = error_reporting(E_PARSE);
-        $result = self::typo3()->specCharsToASCII($charset, $text);
+        $result = self::typo3()->specCharsToASCII($charset, (string)$text);
         error_reporting($oldlevel);
         return $result;
     }
@@ -495,9 +487,9 @@ class textlib {
         // Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
         if ($nonnum) {
-            $str = self::typo3()->entities_to_utf8($str, true);
+            $str = self::typo3()->entities_to_utf8((string)$str, true);
         }
-        $result = self::typo3()->utf8_to_entities($str);
+        $result = self::typo3()->utf8_to_entities((string)$str);
         if ($dec) {
             $result = preg_replace('/&#x([0-9a-f]+);/ie', "'&#'.hexdec('$1').';'", $result);
         }
