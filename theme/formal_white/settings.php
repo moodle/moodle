@@ -27,7 +27,7 @@ if ($ADMIN->fulltree) {
     // Frame margin
     $name = 'theme_formal_white/framemargin';
     $title = get_string('framemargin','theme_formal_white');
-    $description = get_string('framemargindesc', 'theme_formal_white');
+    $description = get_string('framemargindesc', 'theme_formal_white', get_string('noframe','theme_formal_white'));
     $default = '15';
     $choices = array(0=>'0px', 5=>'5px', 10=>'10px', 15=>'15px', 20=>'20px', 25=>'25px', 30=>'30px', 35=>'35px', 40=>'40px', 45=>'45px', 50=>'50px');
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
