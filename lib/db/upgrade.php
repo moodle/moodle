@@ -456,5 +456,27 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012050300.03);
     }
 
+    if ($oldversion < 2012050300.04) {
+
+        // Define table course_display to be dropped
+        $table = new xmldb_table('course_display');
+
+        // Conditionally launch drop table for course_display
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012050300.04);
+    }
+
+    if ($oldversion < 2012050300.05) {
+
+        // Clean up removed admin setting.
+        unset_config('navlinkcoursesections');
+
+        upgrade_main_savepoint(true, 2012050300.05);
+    }
+
     return true;
 }

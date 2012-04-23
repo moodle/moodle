@@ -30,13 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/completionlib.php');
 
-$topic = optional_param('topic', -1, PARAM_INT);
-
-if ($topic != -1) {
-    $displaysection = course_set_display($course->id, $topic);
-} else {
-    $displaysection = course_get_display($course->id);
-}
+$displaysection = optional_param('topic', 0, PARAM_INT);
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 

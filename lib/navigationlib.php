@@ -1762,12 +1762,12 @@ class global_navigation extends navigation_node {
         $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
 
         $urlfunction = 'callback_'.$courseformat.'_get_section_url';
-        if (empty($CFG->navlinkcoursesections) || !function_exists($urlfunction)) {
+        if ($course->coursedisplay == COURSE_DISPLAY_SINGLEPAGE || !function_exists($urlfunction)) {
             $urlfunction = null;
         }
 
         $keyfunction = 'callback_'.$courseformat.'_request_key';
-        $key = course_get_display($course->id);
+        $key = 0;
         if (defined('AJAX_SCRIPT') && AJAX_SCRIPT == '0' && function_exists($keyfunction) && $this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
             $key = optional_param($keyfunction(), $key, PARAM_INT);
         }

@@ -1277,73 +1277,6 @@ function get_all_sections($courseid) {
 }
 
 /**
- * Returns the course section to display or 0 meaning show all sections. Returns 0 for guests.
- * It also sets the $USER->display cache to array($courseid=>return value)
- *
- * @param int $courseid The course id
- * @return int Course section to display, 0 means all
- */
-function course_get_display($courseid) {
-    global $USER, $DB;
-
-    if (!isloggedin() or isguestuser()) {
-        //do not get settings in db for guests
-        return 0; //return the implicit setting
-    }
-
-    if (!isset($USER->display[$courseid])) {
-        if (!$display = $DB->get_field('course_display', 'display', array('userid' => $USER->id, 'course'=>$courseid))) {
-            $display = 0; // all sections option is not stored in DB, this makes the table much smaller
-        }
-        //use display cache for one course only - we need to keep session small
-        $USER->display = array($courseid => $display);
-    }
-
-    return $USER->display[$courseid];
-}
-
-/**
- * Show one section only or all sections.
- *
- * @param int $courseid The course id
- * @param mixed $display show only this section, 0 or 'all' means show all sections
- * @return int Course section to display, 0 means all
- */
-function course_set_display($courseid, $display) {
-    global $USER, $DB;
-
-    if ($display === 'all' or empty($display)) {
-        $display = 0;
-    }
-
-    if (!isloggedin() or isguestuser()) {
-        //do not store settings in db for guests
-        return 0;
-    }
-
-    if ($display == 0) {
-        //show all, do not store anything in database
-        $DB->delete_records('course_display', array('userid' => $USER->id, 'course' => $courseid));
-
-    } else {
-        if ($DB->record_exists('course_display', array('userid' => $USER->id, 'course' => $courseid))) {
-            $DB->set_field('course_display', 'display', $display, array('userid' => $USER->id, 'course' => $courseid));
-        } else {
-            $record = new stdClass();
-            $record->userid = $USER->id;
-            $record->course = $courseid;
-            $record->display = $display;
-            $DB->insert_record('course_display', $record);
-        }
-    }
-
-    //use display cache for one course only - we need to keep session small
-    $USER->display = array($courseid => $display);
-
-    return $display;
-}
-
-/**
  * Set highlighted section. Only one section can be highlighted at the time.
  *
  * @param int $courseid course id
@@ -3020,10 +2953,6 @@ function move_section($course, $section, $move) {
         course_set_marker($course->id, $section);
     }
 
-    // if the focus is on the section that is being moved, then move the focus along
-    if (course_get_display($course->id) == $section) {
-        course_set_display($course->id, $sectiondest);
-    }
 
     // Fix order if needed. The database prevents duplicate sections, but it is
     // possible there could be a gap in the numbering.
@@ -3099,10 +3028,6 @@ function move_section_to($course, $section, $destination) {
         course_set_marker($course, $course->marker-1);
     }
 
-    // if the focus is on the section that is being moved, then move the focus along
-    if (course_get_display($course->id) == $section) {
-        course_set_display($course->id, $destination);
-    }
     $transaction->allow_commit();
     return true;
 }

@@ -4641,9 +4641,8 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     }
     $DB->update_record('course', $oldcourse);
 
-    // Delete course sections and user selections
+    // Delete course sections.
     $DB->delete_records('course_sections', array('course'=>$course->id));
-    $DB->delete_records('course_display', array('course'=>$course->id));
 
     // delete legacy, section and any other course files
     $fs->delete_area_files($coursecontext->id, 'course'); // files from summary and section

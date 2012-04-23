@@ -29,13 +29,7 @@ defined('MOODLE_INTERNAL') || die();
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/completionlib.php');
 
-    $week = optional_param('week', -1, PARAM_INT);
-
-    if ($week != -1) {
-        $displaysection = course_set_display($course->id, $week);
-    } else {
-        $displaysection = course_get_display($course->id);
-    }
+    $displaysection = optional_param('week', 0, PARAM_INT);
 
     $streditsummary  = get_string('editsummary');
     $stradd          = get_string('add');
