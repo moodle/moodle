@@ -8581,7 +8581,12 @@ function upgrade_set_timeout($max_execution_time=300) {
         return;
     }
 
-    set_time_limit($max_execution_time);
+    if (CLI_SCRIPT) {
+        // there is no point in timing out of CLI scripts, admins can stop them if necessary
+        set_time_limit(0);
+    } else {
+        set_time_limit($max_execution_time);
+    }
     set_config('upgraderunning', $expected_end); // keep upgrade locked until this time
 }
 
