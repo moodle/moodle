@@ -785,7 +785,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
     if ($scorm->lastattemptlock == 0 || $result->attemptleft > 0) {
         ?>
             <div class="scorm-center">
-               <form id="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php">
+               <form id="scormviewform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php">
         <?php
         if ($scorm->hidebrowse == 0) {
             print_string('mode', 'scorm');
@@ -804,6 +804,9 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
                       <input type="checkbox" id="a" name="newattempt" />
                       <label for="a"><?php print_string('newattempt', 'scorm') ?></label>
             <?php
+        }
+        if (!empty($scorm->popup)) {
+            echo '<input type="hidden" name="display" value="popup" />'."\n";
         }
         ?>
               <br />
