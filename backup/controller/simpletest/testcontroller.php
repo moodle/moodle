@@ -161,7 +161,7 @@ class backup_controller_test extends UnitTestCase {
  */
 class mock_backup_controller extends backup_controller {
 
-    public function save_controller() {
-        parent::save_controller();
+    public function save_controller($includeobj = true, $cleanobj = false) {
+        parent::save_controller($includeobj, $cleanobj);
     }
 }
