@@ -888,24 +888,23 @@ class phpunit_util {
     }
 
     /**
-     * Builds distributed phpunit.xml and dataroot/phpunit/webrunner.xml files using defaults from /phpunit.xml.dist
+     * Builds phpunit.xml files for all components using defaults from /phpunit.xml.dist
      *
      * @static
-     * @return bool true means all config files created, false means only dataroot file created
+     * @return void, stops if can not write files
      */
-    public static function build_distributed_config_files() {
+    public static function build_component_config_files() {
         global $CFG;
 
         $template = '
         <testsuites>
             <testsuite name="@component@">
-                <directory suffix="_test.php">@dir@</directory>
+                <directory suffix="_test.php">.</directory>
             </testsuite>
         </testsuites>';
 
         // Use the upstream file as source for the distributed configurations
         $ftemplate = file_get_contents("$CFG->dirroot/phpunit.xml.dist");
-        $ftemplate = preg_replace('|lib/phpunit/bootstrap.php|', $CFG->dirroot . '/lib/phpunit/bootstrap.php', $ftemplate);
         $ftemplate = preg_replace('|<!--All core suites.*</testsuites>|s', '<!--@component_suite@-->', $ftemplate);
 
         // Get all the components
@@ -925,10 +924,14 @@ class phpunit_util {
             // Calculate the component suite
             $ctemplate = $template;
             $ctemplate = str_replace('@component@', $cname, $ctemplate);
-            $ctemplate = str_replace('@dir@', $cpath, $ctemplate);
 
             // Apply it to the file template
             $fcontents = str_replace('<!--@component_suite@-->', $ctemplate, $ftemplate);
+
+            // fix link to schema
+            $level = substr_count(str_replace('\\', '/', $cpath), '/') - substr_count(str_replace('\\', '/', $CFG->dirroot), '/');
+            $fcontents = str_replace('lib/phpunit/phpunit.xsd', str_repeat('../', $level).'lib/phpunit/phpunit.xsd', $fcontents);
+            $fcontents = str_replace('lib/phpunit/bootstrap.php', str_repeat('../', $level).'lib/phpunit/bootstrap.php', $fcontents);
 
             // Write the file
             $result = false;
@@ -942,15 +945,12 @@ class phpunit_util {
                 phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGWARNING, "Can not create $cpath/phpunit.xml configuration file, verify dir permissions");
             }
         }
-
-        // Finally, build the main config file too
-        return self::build_config_file();
     }
 
     /**
-     * Returns all the plugins having phpunit tests
+     * Returns all the plugins having PHPUnit tests
      *
-     * @return array all the plugins having phpunit tests
+     * @return array all the plugins having PHPUnit tests
      *
      */
     private static function get_all_plugins_with_tests() {
@@ -972,13 +972,13 @@ class phpunit_util {
     }
 
     /**
-     * Returns all the subsystems having phpunit tests
+     * Returns all the subsystems having PHPUnit tests
      *
      * Note we are hacking here the list of subsystems
      * to cover some well-known subsystems that are not properly
      * returned by the {@link get_core_subsystems()} function.
      *
-     * @return array all the subsystems having phpunit tests
+     * @return array all the subsystems having PHPUnit tests
      */
     private static function get_all_subsystems_with_tests() {
         global $CFG;
