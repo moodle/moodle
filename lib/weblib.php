@@ -1522,6 +1522,7 @@ function purify_html($text, $options = array()) {
         check_dir_exists($cachedir);
 
         require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.safe-includes.php';
+        require_once $CFG->libdir.'/htmlpurifier/locallib.php';
         $config = HTMLPurifier_Config::createDefault();
 
         $config->set('HTML.DefinitionID', 'moodlehtml');
