@@ -441,5 +441,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012050300.02);
     }
 
+    if ($oldversion < 2012050300.03) {
+
+        // Define field coursedisplay to be added to course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('coursedisplay', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'completionnotify');
+
+        // Conditionally launch add field coursedisplay
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012050300.03);
+    }
+
     return true;
 }
