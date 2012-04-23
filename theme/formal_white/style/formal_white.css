@@ -33,7 +33,7 @@ p {margin:0}
   /* if I use: position:relative; z-index doesn't work*/
 
 /* headermenu */
-.headermenu {position:absolute;text-align:right;line-height:1.7em;font-size:90%;margin:0.3em;right:[[setting:headermenuright]];top:15px;}
+.headermenu {position:absolute;text-align:right;line-height:1.7em;font-size:90%;margin:0.3em;right:[[calculated:headermenuright]];top:15px;}
 
 #dock {background-color:[[setting:blockcontentbgc]];border-right:1px dashed #000;}
 #dock .dockeditem_container {margin-top: 10px;}
@@ -56,29 +56,6 @@ p {margin:0}
 /* navbutton */
 .navbutton {padding-right:0.5em;}
 .navbutton table td {padding:0;}
-
-/*.block_navigation .block_tree li.type_category.contains_branch>p span {
-    padding-left: 20px;
-    background-image: url([[pix:theme|folderopen]]);
-    background-repeat: no-repeat;
-    background-position: 0 -1px;
-}
-
-.block_navigation .block_tree li.type_category.contains_branch.collapsed>p span {
-    padding-left: 20px;
-    background-image: url([[pix:theme|folderclose]]);
-    background-repeat: no-repeat;
-    background-position: 0 -1px;
-}*/
-
-.block_settings .block_tree .tree_item a:link,
-.block_settings .block_tree .tree_item a:visited,
-.block_settings .block_tree .tree_item a:active,
-.block_navigation .block_tree .tree_item a:link,
-.block_navigation .block_tree .tree_item a:visited,
-.block_navigation .block_tree .tree_item a:active {
-    color:#000;
-}
 
 /* breadcrumb */
 .breadcrumb {margin-left:0.8em;}
@@ -165,16 +142,6 @@ ul.topics .section span.commands {position:absolute;right:1em;}
 .mform .fsubmit {text-align:left}
 table td.cell p {margin:0;}
 
-/* block */
-.block {border:1px solid #C6BDA8;margin-bottom:[[setting:blockpadding]];}
-.block .header h2 {margin:0;padding-left:0.3em;}
-.block .header .title {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;clear:both;line-height:2em;background-color:#E3DFD4;}
-.block .header .title .commands {padding-left:0.3em;text-align:right;}
-.block .content {background-color:[[setting:blockcontentbgc]];}
-
-/* block login */
-.block_login .btn {margin-top:0.5em;text-align:center;}
-
 /* pagelayout-report */
 .pagelayout-report #page-header {float:left;}
 .pagelayout-report #page-content {overflow:hidden;}
@@ -231,8 +198,12 @@ pre, code, tt {
 table#defineroletable th {border-top:none;}
 
 form.loginform .rememberusername {
-    padding-left:0.3em;
+    padding-left:13px;
     width: auto;
+}
+
+form.loginform #rememberusername {
+    margin-right:0;
 }
 
 /* RSS - MDL-29367 */
