@@ -46,11 +46,17 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
 
     echo $OUTPUT->notification('Please be patient and wait for this to complete...', 'notifysuccess');
 
+    set_time_limit(0);
+
     if ($tables = $DB->get_tables()) {
         $DB->set_debug(true);
         foreach ($tables as $table) {
             $fulltable = $DB->get_prefix().$table;
-            $DB->change_database_structure("ALTER TABLE $fulltable ENGINE=INNODB");
+            try {
+                $DB->change_database_structure("ALTER TABLE $fulltable ENGINE=INNODB");
+            } catch (moodle_exception $e) {
+                echo $OUTPUT->notification(s($e->getMessage()).'<br />'.s($e->debuginfo));
+            }
         }
         $DB->set_debug(false);
     }
