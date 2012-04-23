@@ -2984,8 +2984,11 @@ function move_section($course, $section, $move) {
         return false;
     }
 
-    $DB->set_field("course_sections", "section", $sectiondest, array("id"=>$sectionrecord->id));
+    // Three-step change ensures that the section always remains unique (there is
+    // a unique index now)
+    $DB->set_field("course_sections", "section", -$sectiondest, array("id"=>$sectionrecord->id));
     $DB->set_field("course_sections", "section", $section, array("id"=>$sectiondestrecord->id));
+    $DB->set_field("course_sections", "section", $sectiondest, array("id"=>$sectionrecord->id));
 
     // Update highlighting if the move affects highlighted section
     if ($course->marker == $section) {
@@ -2999,8 +3002,8 @@ function move_section($course, $section, $move) {
         course_set_display($course->id, $sectiondest);
     }
 
-    // Check for duplicates and fix order if needed.
-    // There is a very rare case that some sections in the same course have the same section id.
+    // Fix order if needed. The database prevents duplicate sections, but it is
+    // possible there could be a gap in the numbering.
     $sections = $DB->get_records('course_sections', array('course'=>$course->id), 'section ASC');
     $n = 0;
     foreach ($sections as $section) {
@@ -3040,17 +3043,27 @@ function move_section_to($course, $section, $destination) {
         return false;
     }
 
-    $sections = reorder_sections($sections, $section, $destination);
+    $movedsections = reorder_sections($sections, $section, $destination);
 
-    // Update all sections
-    foreach ($sections as $id => $position) {
-        $DB->set_field('course_sections', 'section', $position, array('id' => $id));
+    // Update all sections. Do this in 2 steps to avoid breaking database
+    // uniqueness constraint
+    $transaction = $DB->start_delegated_transaction();
+    foreach ($movedsections as $id => $position) {
+        if ($sections[$id] !== $position) {
+            $DB->set_field('course_sections', 'section', -$position, array('id' => $id));
+        }
+    }
+    foreach ($movedsections as $id => $position) {
+        if ($sections[$id] !== $position) {
+            $DB->set_field('course_sections', 'section', $position, array('id' => $id));
+        }
     }
 
     // if the focus is on the section that is being moved, then move the focus along
     if (course_get_display($course->id) == $section) {
         course_set_display($course->id, $destination);
     }
+    $transaction->allow_commit();
     return true;
 }
 
