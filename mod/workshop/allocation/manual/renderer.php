@@ -31,6 +31,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class workshopallocation_manual_renderer extends mod_workshop_renderer  {
 
+    /** @var workshop module instance */
+    protected $workshop;
+
     ////////////////////////////////////////////////////////////////////////////
     // External rendering API
     ////////////////////////////////////////////////////////////////////////////
@@ -42,6 +45,9 @@ class workshopallocation_manual_renderer extends mod_workshop_renderer  {
      * @return string html code
      */
     protected function render_workshopallocation_manual_allocations(workshopallocation_manual_allocations $data) {
+
+        $this->workshop     = $data->workshop;
+
         $allocations        = $data->allocations;       // array prepared array of all allocations data
         $userinfo           = $data->userinfo;          // names and pictures of all required users
         $authors            = $data->authors;           // array potential reviewees
@@ -101,7 +107,8 @@ class workshopallocation_manual_renderer extends mod_workshop_renderer  {
         if (is_null($allocation->submissionid)) {
             $o .= $this->output->container(get_string('nosubmissionfound', 'workshop'), 'info');
         } else {
-            $o .= $this->output->container(format_string($allocation->submissiontitle), 'title');
+            $link = $this->workshop->submission_url($allocation->submissionid);
+            $o .= $this->output->container(html_writer::link($link, format_string($allocation->submissiontitle)), 'title');
             if (is_null($allocation->submissiongrade)) {
                 $o .= $this->output->container(get_string('nogradeyet', 'workshop'), array('grade', 'missing'));
             } else {

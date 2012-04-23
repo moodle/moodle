@@ -318,6 +318,7 @@ class workshop_manual_allocator implements workshop_allocator {
 
         // prepare data to be rendered
         $data                   = new workshopallocation_manual_allocations();
+        $data->workshop         = $this->workshop;
         $data->allocations      = $allocations;
         $data->userinfo         = $userinfo;
         $data->authors          = $this->workshop->get_potential_authors();
@@ -357,6 +358,9 @@ class workshop_manual_allocator implements workshop_allocator {
  * @see workshop_manual_allocator::ui()
  */
 class workshopallocation_manual_allocations implements renderable {
+
+    /** @var workshop module instance */
+    public $workshop;
 
     /** @var array of stdClass, indexed by userid, properties userid, submissionid, (array)reviewedby, (array)reviewerof */
     public $allocations;
