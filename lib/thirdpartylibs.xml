@@ -242,7 +242,7 @@
     <location>markdown.php</location>
     <name>Markdown original+extra</name>
     <license>BSD</license>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     <licenseversion></licenseversion>
   </library>
   <library>
