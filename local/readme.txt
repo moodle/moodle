@@ -56,7 +56,7 @@ Local plugins are used in cases when no standard plugin fits, examples are:
 * custom admin settings
 
 Standard plugin features:
-* /local/pluginname/db/version.php - version of script (must be incremented after changes)
+* /local/pluginname/version.php - version of script (must be incremented after changes)
 * /local/pluginname/db/install.xml - executed during install (new version.php found)
 * /local/pluginname/db/install.php - executed right after install.xml
 * /local/pluginname/db/uninstall.php - executed during uninstallation
