@@ -90,7 +90,7 @@ class backup_controller_testcase extends advanced_testcase {
  */
 class mock_backup_controller extends backup_controller {
 
-    public function save_controller() {
-        parent::save_controller();
+    public function save_controller($includeobj = true, $cleanobj = false) {
+        parent::save_controller($includeobj, $cleanobj);
     }
 }
