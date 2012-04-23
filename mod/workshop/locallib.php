@@ -460,6 +460,28 @@ class workshop {
     }
 
     /**
+     * Returns the total number of records that would be returned by {@link self::get_participants()}
+     *
+     * @param bool $musthavesubmission if true, return only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @return int
+     */
+    public function count_participants($musthavesubmission=false, $groupid=0) {
+        global $DB;
+
+        list($sql, $params) = $this->get_participants_sql($musthavesubmission, $groupid);
+
+        if (empty($sql)) {
+            return 0;
+        }
+
+        $sql = "SELECT COUNT(*)
+                  FROM ($sql) tmp";
+
+        return $DB->count_records_sql($sql, $params);
+    }
+
+    /**
      * Checks if the given user is an actively enrolled participant in the workshop
      *
      * @param int $userid, defaults to the current $USER
