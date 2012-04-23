@@ -530,6 +530,7 @@ class phpunit_util {
         accesslib_clear_all_caches(true);
         get_string_manager()->reset_caches();
         events_get_handlers('reset');
+        textlib::reset_caches();
         //TODO: add more resets here and probably refactor them to new core function
 
         // purge dataroot directory
