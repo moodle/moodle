@@ -185,7 +185,7 @@ class web_testcase extends advanced_testcase {
         $this->assertEquals('lala xx', clean_text($text, FORMAT_HTML));
     }
 
-    public function test_quolified_me() {
+    public function test_qualified_me() {
         global $PAGE, $FULLME, $CFG;
         $this->resetAfterTest();
 
