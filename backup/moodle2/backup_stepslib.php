@@ -764,6 +764,48 @@ class backup_comments_structure_step extends backup_structure_step {
 }
 
 /**
+ * structure step in charge of constructing the calender.xml file for all the events found
+ * in a given context
+ */
+class backup_calendarevents_structure_step extends backup_structure_step {
+
+    protected function define_structure() {
+
+        // Define each element separated
+
+        $events = new backup_nested_element('events');
+
+        $event = new backup_nested_element('event', array('id'), array(
+                'name', 'description', 'format', 'courseid', 'groupid', 'userid',
+                'repeatid', 'modulename', 'instance', 'eventtype', 'timestart',
+                'timeduration', 'visible', 'uuid', 'sequence', 'timemodified'));
+
+        // Build the tree
+        $events->add_child($event);
+
+        // Define sources
+        if ($this->name == 'course_calendar') {
+            $calendar_items_sql ="SELECT * FROM {event}
+                        WHERE courseid = :courseid
+                        AND (eventtype = 'course' OR eventtype = 'group')";
+            $calendar_items_params = array('courseid'=>backup::VAR_COURSEID);
+            $event->set_source_sql($calendar_items_sql, $calendar_items_params);
+        } else {
+            $event->set_source_table('event', array('courseid' => backup::VAR_COURSEID, 'instance' => backup::VAR_ACTIVITYID, 'modulename' => backup::VAR_MODNAME));
+        }
+
+        // Define id annotations
+
+        $event->annotate_ids('user', 'userid');
+        $event->annotate_ids('group', 'groupid');
+        $event->annotate_files('calendar', 'event_description', 'id');
+
+        // Return the root element (events)
+        return $events;
+    }
+}
+
+/**
  * structure step in charge of constructing the gradebook.xml file for all the gradebook config in the course
  * NOTE: the backup of the grade items themselves is handled by backup_activity_grades_structure_step
  */
