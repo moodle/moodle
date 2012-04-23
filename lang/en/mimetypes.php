@@ -34,5 +34,6 @@ $string['document/unknown'] = 'file';
 $string['image/bmp'] = 'uncompressed BMP image';
 $string['image/gif'] = 'GIF image';
 $string['image/jpeg'] = 'JPEG image';
+$string['image/png'] = 'PNG image';
 $string['text/plain'] = 'text file';
 $string['text/rtf'] = 'RTF document';
