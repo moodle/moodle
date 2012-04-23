@@ -406,6 +406,28 @@ class workshop {
     }
 
     /**
+     * Returns the total number of users that would be fetched by {@link self::get_potential_authors()}
+     *
+     * @param bool $musthavesubmission if true, count only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @return int
+     */
+    public function count_potential_authors($musthavesubmission=true, $groupid=0) {
+        global $DB;
+
+        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:submit', $musthavesubmission, $groupid);
+
+        if (empty($sql)) {
+            return 0;
+        }
+
+        $sql = "SELECT COUNT(*)
+                  FROM ($sql) tmp";
+
+        return $DB->count_records_sql($sql, $params);
+    }
+
+    /**
      * Fetches all enrolled users with the capability mod/workshop:peerassess in the current workshop
      *
      * The returned objects contain properties required by user_picture and are ordered by lastname, firstname.
@@ -429,6 +451,28 @@ class workshop {
         $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
 
         return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    }
+
+    /**
+     * Returns the total number of users that would be fetched by {@link self::get_potential_reviewers()}
+     *
+     * @param bool $musthavesubmission if true, count only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @return int
+     */
+    public function count_potential_reviewers($musthavesubmission=false, $groupid=0) {
+        global $DB;
+
+        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:peerassess', $musthavesubmission, $groupid);
+
+        if (empty($sql)) {
+            return 0;
+        }
+
+        $sql = "SELECT COUNT(*)
+                  FROM ($sql) tmp";
+
+        return $DB->count_records_sql($sql, $params);
     }
 
     /**
@@ -2493,8 +2537,7 @@ class workshop_user_plan implements renderable {
             $task = new stdclass();
             $task->title = get_string('allocate', 'workshop');
             $task->link = $workshop->allocation_url();
-            $numofauthors = count(get_users_by_capability($workshop->context, 'mod/workshop:submit', 'u.id', '', '', '',
-                    '', '', false, true));
+            $numofauthors = $workshop->count_potential_authors(false);
             $numofsubmissions = $DB->count_records('workshop_submissions', array('workshopid'=>$workshop->id, 'example'=>0));
             $sql = 'SELECT COUNT(s.id) AS nonallocated
                       FROM {workshop_submissions} s
@@ -2665,7 +2708,7 @@ class workshop_user_plan implements renderable {
         $phase->title = get_string('phaseevaluation', 'workshop');
         $phase->tasks = array();
         if (has_capability('mod/workshop:overridegrades', $workshop->context)) {
-            $expected = count($workshop->get_potential_authors(false));
+            $expected = $workshop->count_potential_authors(false);
             $calculated = $DB->count_records_select('workshop_submissions',
                     'workshopid = ? AND (grade IS NOT NULL OR gradeover IS NOT NULL)', array($workshop->id));
             $task = new stdclass();
@@ -2681,7 +2724,7 @@ class workshop_user_plan implements renderable {
             }
             $phase->tasks['calculatesubmissiongrade'] = $task;
 
-            $expected = count($workshop->get_potential_reviewers(false));
+            $expected = $workshop->count_potential_reviewers(false);
             $calculated = $DB->count_records_select('workshop_aggregations',
                     'workshopid = ? AND gradinggrade IS NOT NULL', array($workshop->id));
             $task = new stdclass();
