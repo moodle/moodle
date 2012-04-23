@@ -357,11 +357,25 @@ class workshop_manual_allocator implements workshop_allocator {
  * @see workshop_manual_allocator::ui()
  */
 class workshopallocation_manual_allocations implements renderable {
+
+    /** @var array of stdClass, indexed by userid, properties userid, submissionid, (array)reviewedby, (array)reviewerof */
     public $allocations;
+
+    /** @var array of stdClass contains the data needed to display the user name and picture */
     public $userinfo;
+
+    /* var array of stdClass potential authors */
     public $authors;
+
+    /* var array of stdClass potential reviewers */
     public $reviewers;
+
+    /* var int the id of the user to highlight as the author */
     public $hlauthorid;
+
+    /* var int the id of the user to highlight as the reviewer */
     public $hlreviewerid;
+
+    /* var bool should the selfassessment be allowed */
     public $selfassessment;
 }
