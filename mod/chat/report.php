@@ -40,7 +40,7 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $PAGE->set_context($context);
 
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
 
     if (empty($chat->studentlogs) && !has_capability('mod/chat:readlog', $context)) {
         notice(get_string('nopermissiontoseethechatlog', 'chat'));

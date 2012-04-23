@@ -56,7 +56,7 @@ if (!empty($forcejs)) {
     $PAGE->add_body_class('forcejavascript');
 }
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 if (!empty($scorm->popup)) {
     $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,

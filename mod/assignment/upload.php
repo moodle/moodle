@@ -34,7 +34,7 @@ if ($id) {
 }
 
 $PAGE->set_url($url);
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 /// Load up the required assignment code
 require_once($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');

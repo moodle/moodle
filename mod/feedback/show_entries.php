@@ -65,7 +65,7 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
         print_error('badcontext');
 }
 
-require_login($course->id, true, $cm);
+require_login($course, true, $cm);
 
 if (($formdata = data_submitted()) AND !confirm_sesskey()) {
     print_error('invalidsesskey');

@@ -53,7 +53,7 @@ if (! $context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
     print_error('invalidcontext', '');
 }
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 require_capability(DATA_CAP_EXPORT, $context);
 
 // get fields for this database
