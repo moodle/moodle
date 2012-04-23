@@ -34,7 +34,6 @@ defined('MOODLE_INTERNAL') || die();
     $streditsummary  = get_string('editsummary');
     $stradd          = get_string('add');
     $stractivities   = get_string('activities');
-    $strshowallweeks = get_string('showallweeks');
     $strweek         = get_string('week');
     $strgroups       = get_string('groups');
     $strgroupmy      = get_string('groupmy');
@@ -176,15 +175,6 @@ defined('MOODLE_INTERNAL') || die();
 
             // Note, 'right side' is BEFORE content.
             echo '<div class="right side">';
-
-            if ($displaysection == $section) {
-                echo '<a href="view.php?id='.$course->id.'&amp;week=0#section-'.$section.'" title="'.$strshowallweeks.'">'.
-                     '<img src="'.$OUTPUT->pix_url('i/all') . '" class="icon wkall" alt="'.$strshowallweeks.'" /></a><br />';
-            } else {
-                $strshowonlyweek = get_string("showonlyweek", "", $section);
-                echo '<a href="view.php?id='.$course->id.'&amp;week='.$section.'" title="'.$strshowonlyweek.'">'.
-                     '<img src="'.$OUTPUT->pix_url('i/one') . '" class="icon wkone" alt="'.$strshowonlyweek.'" /></a><br />';
-            }
 
             if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 if ($thissection->visible) {        // Show the hide/show eye

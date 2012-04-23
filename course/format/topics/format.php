@@ -42,7 +42,6 @@ if (($marker >=0) && has_capability('moodle/course:setcurrentsection', $context)
 $streditsummary  = get_string('editsummary');
 $stradd          = get_string('add');
 $stractivities   = get_string('activities');
-$strshowalltopics = get_string('showalltopics');
 $strtopic         = get_string('topic');
 $strgroups       = get_string('groups');
 $strgroupmy      = get_string('groupmy');
@@ -170,15 +169,6 @@ while ($section <= $course->numsections) {
             echo '<div class="left side">'.$currenttext.$section.'</div>';
         // Note, 'right side' is BEFORE content.
         echo '<div class="right side">';
-
-        if ($displaysection == $section) {    // Show the zoom boxes
-            echo '<a href="view.php?id='.$course->id.'&amp;topic=0#section-'.$section.'" title="'.$strshowalltopics.'">'.
-                 '<img src="'.$OUTPUT->pix_url('i/all') . '" class="icon" alt="'.$strshowalltopics.'" /></a><br />';
-        } else {
-            $strshowonlytopic = get_string("showonlytopic", "", $section);
-            echo '<a href="view.php?id='.$course->id.'&amp;topic='.$section.'" title="'.$strshowonlytopic.'">'.
-                 '<img src="'.$OUTPUT->pix_url('i/one') . '" class="icon" alt="'.$strshowonlytopic.'" /></a><br />';
-        }
 
         if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
 
