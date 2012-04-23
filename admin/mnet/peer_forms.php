@@ -50,7 +50,7 @@ class mnet_simple_host_form extends moodleform {
         $this->add_action_buttons(false, get_string('addhost', 'mnet'));
     }
 
-    function validation($data) {
+    function validation($data, $files) {
         global $DB;
 
         $wwwroot = $data['wwwroot'];
@@ -154,7 +154,7 @@ class mnet_review_host_form extends moodleform {
         $this->add_action_buttons(false);
     }
 
-    function validation($data) {
+    function validation($data, $files) {
         $errors = array();
         if ($data['oldpublickey'] == $data['public_key']) {
             return;
