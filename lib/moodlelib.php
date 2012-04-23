@@ -1127,7 +1127,16 @@ function fix_utf8($value) {
             // shortcut
             return $value;
         }
-        return iconv('UTF-8', 'UTF-8//IGNORE', $value);
+        // lower error reporting because glibc throws bogus notices
+        $olderror = error_reporting();
+        if ($olderror & E_NOTICE) {
+            error_reporting($olderror ^ E_NOTICE);
+        }
+        $result = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+        if ($olderror & E_NOTICE) {
+            error_reporting($olderror);
+        }
+        return $result;
 
     } else if (is_array($value)) {
         foreach ($value as $k=>$v) {
