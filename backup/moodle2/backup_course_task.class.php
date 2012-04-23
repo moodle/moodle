@@ -103,6 +103,11 @@ class backup_course_task extends backup_task {
             $this->add_step(new backup_comments_structure_step('course_comments', 'comments.xml'));
         }
 
+        // Generate the calender events file (conditionally)
+        if ($this->get_setting_value('calendarevents')) {
+            $this->add_step(new backup_calendarevents_structure_step('course_calendar', 'calendar.xml'));
+        }
+
         // Generate the logs file (conditionally)
         if ($this->get_setting_value('logs')) {
             $this->add_step(new backup_course_logs_structure_step('course_logs', 'logs.xml'));

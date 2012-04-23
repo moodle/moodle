@@ -206,6 +206,7 @@ $string['rootsettingactivities'] = 'Include activities';
 $string['rootsettingblocks'] = 'Include blocks';
 $string['rootsettingfilters'] = 'Include filters';
 $string['rootsettingcomments'] = 'Include comments';
+$string['rootsettingcalendarevents'] = 'Include calendar events';
 $string['rootsettinguserscompletion'] = 'Include user completion details';
 $string['rootsettinglogs'] = 'Include course logs';
 $string['rootsettinggradehistories'] = 'Include grade history';
