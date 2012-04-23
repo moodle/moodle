@@ -172,7 +172,8 @@ class block_edit_form extends moodleform {
 
             $mform->addElement('select', 'bui_pagetypepattern', get_string('restrictpagetypes', 'block'), $pagetypelist);
         } else {
-            $value = array_pop(array_keys($pagetypelist));
+            $values = array_keys($pagetypelist);
+            $value = array_pop($values);
             $mform->addElement('hidden', 'bui_pagetypepattern', $value);
             // Now we are really hiding a lot (both page-contexts and page-type-patterns),
             // specially in some systemcontext pages having only one option (my/user...)
