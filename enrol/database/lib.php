@@ -784,9 +784,12 @@ class enrol_database_plugin extends enrol_plugin {
             ob_start(); //start output buffer to allow later use of the page headers
         }
 
-        $result = $extdb->Connect($this->get_config('dbhost'), $this->get_config('dbuser'), $this->get_config('dbpass'), $this->get_config('dbname'), true);
-        if (!$result) {
-            return null;
+        // the dbtype my contain the new connection URL, so make sure we are not connected yet
+        if (!$extdb->IsConnected()) {
+            $result = $extdb->Connect($this->get_config('dbhost'), $this->get_config('dbuser'), $this->get_config('dbpass'), $this->get_config('dbname'), true);
+            if (!$result) {
+                return null;
+            }
         }
 
         $extdb->SetFetchMode(ADODB_FETCH_ASSOC);
