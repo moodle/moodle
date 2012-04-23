@@ -400,15 +400,32 @@ M.core_filepicker.init = function(Y, options) {
                 }
             }
         },
-        view_files: function() {
+        view_files: function(appenditems) {
             this.viewbar_set_enabled(true);
             this.print_path();
             if (this.viewmode == 2) {
-                this.view_as_list();
+                this.view_as_list(appenditems);
             } else if (this.viewmode == 3) {
-                this.view_as_table();
+                this.view_as_table(appenditems);
             } else {
-                this.view_as_icons();
+                this.view_as_icons(appenditems);
+            }
+            // display/hide the link for requesting next page
+            if (!appenditems && this.active_repo.hasmorepages) {
+                if (!this.fpnode.one('.fp-content .fp-nextpage')) {
+                    this.fpnode.one('.fp-content').append(M.core_filepicker.templates.nextpage);
+                }
+                this.fpnode.one('.fp-content .fp-nextpage').one('a,button').on('click', function(e) {
+                    e.preventDefault();
+                    this.fpnode.one('.fp-content .fp-nextpage').addClass('loading');
+                    this.request_next_page();
+                }, this);
+            }
+            if (!this.active_repo.hasmorepages && this.fpnode.one('.fp-content .fp-nextpage')) {
+                this.fpnode.one('.fp-content .fp-nextpage').remove();
+            }
+            if (this.fpnode.one('.fp-content .fp-nextpage')) {
+                this.fpnode.one('.fp-content .fp-nextpage').removeClass('loading');
             }
         },
         treeview_dynload: function(node, cb) {
@@ -457,19 +474,30 @@ M.core_filepicker.init = function(Y, options) {
                 }
             }, false);
         },
-        view_as_list: function() {
+        /** displays list of files in tree (list) view mode. If param appenditems is specified,
+         * appends those items to the end of the list. Otherwise (default behaviour)
+         * clears the contents and displays the items from this.filelist */
+        view_as_list: function(appenditems) {
             var scope = this;
             var client_id = scope.options.client_id;
             var dynload = scope.active_repo.dynload;
             var list = this.filelist;
             scope.viewmode = 2;
+            if (appenditems) {
+                var parentnode = scope.treeview.getRoot(); // TODO !
+                for (var k in appenditems) {
+                    scope.build_tree(appenditems[k], parentnode);
+                }
+                scope.treeview.draw();
+                return;
+            }
             if (!list || list.length==0 && (!this.filepath || !this.filepath.length)) {
                 this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
                 return;
             }
 
             var treeviewnode = Y.Node.create('<div/>').
-                    setAttrs({'class':'fp-treeview', id:'treeview-'+client_id});
+                setAttrs({'class':'fp-treeview', id:'treeview-'+client_id});
             this.fpnode.one('.fp-content').setContent('').appendChild(treeviewnode);
 
             scope.treeview = new YAHOO.widget.TreeView('treeview-'+client_id);
@@ -535,20 +563,28 @@ M.core_filepicker.init = function(Y, options) {
             });
             scope.treeview.draw();
         },
-        view_as_icons: function() {
+        /** displays list of files in icon view mode. If param appenditems is specified,
+         * appends those items to the end of the list. Otherwise (default behaviour)
+         * clears the contents and displays the items from this.filelist */
+        view_as_icons: function(appenditems) {
             var scope = this;
-            var list = this.filelist;
             this.viewmode = 1;
-
-            if (!list || list.length==0) {
-                this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
-                return;
+            var list = this.filelist, container, element_template;
+            if (!appenditems || !this.filelist || !this.filelist.length) {
+                if (!list || list.length==0) {
+                    this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
+                    return;
+                }
+                this.fpnode.one('.fp-content').setContent(M.core_filepicker.templates.iconview);
+                element_template = this.fpnode.one('.fp-content').one('.fp-file');
+                container = element_template.get('parentNode');
+                container.removeChild(element_template);
+            } else {
+                list = appenditems;
+                element_template = Y.Node.create(M.core_filepicker.templates.iconview).one('.fp-file');
+                container = this.fpnode.one('.fp-content').one('.fp-file').get('parentNode')
             }
-            this.fpnode.one('.fp-content').setContent(M.core_filepicker.templates.iconview);
 
-            var element_template = this.fpnode.one('.fp-content').one('.fp-file');
-            var container = element_template.get('parentNode');
-            container.removeChild(element_template);
             var count = 0;
             for(var k in list) {
                 var node = list[k];
@@ -600,10 +636,18 @@ M.core_filepicker.init = function(Y, options) {
                 count++;
             }
         },
-        view_as_table: function() {
+        /** displays list of files in table view mode. If param appenditems is specified,
+         * appends those items to the end of the list. Otherwise (default behaviour)
+         * clears the contents and displays the items from this.filelist */
+        view_as_table: function(appenditems) {
             var list = this.filelist;
             var client_id = this.options.client_id;
             this.viewmode = 3;
+            if (appenditems) {
+                this.tableview.addRows(appenditems);
+                this.tableview.sortable = !this.active_repo.hasmorepages;
+                return;
+            }
 
             if (!list || list.length==0) {
                 this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
@@ -612,55 +656,87 @@ M.core_filepicker.init = function(Y, options) {
             var treeviewnode = Y.Node.create('<div/>').
                     setAttrs({'class':'fp-tableview', id:'tableview-'+client_id});
             this.fpnode.one('.fp-content').setContent('').appendChild(treeviewnode);
-                var formatValue = function (o){
-                    if (o.data[''+o.field+'_f_s']) { return o.data[''+o.field+'_f_s']; }
-                    else if (o.data[''+o.field+'_f']) { return o.data[''+o.field+'_f']; }
-                    else if (o.value) { return o.value; }
-                    else { return ''; }
-                };
-                var formatTitle = function(o) {
-                    var el = Y.Node.create('<div/>').setContent(M.core_filepicker.templates.listfilename);
-                    el.one('.fp-filename').setContent(o.value);
-                    el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', o.data['icon']));
-                    return el.getContent();
-                }
+            var formatValue = function (o){
+                if (o.data[''+o.column.key+'_f_s']) { return o.data[''+o.column.key+'_f_s']; }
+                else if (o.data[''+o.column.key+'_f']) { return o.data[''+o.column.key+'_f']; }
+                else if (o.value) { return o.value; }
+                else { return ''; }
+            };
+            var formatTitle = function(o) {
+                var el = Y.Node.create('<div/>').setContent(M.core_filepicker.templates.listfilename);
+                el.one('.fp-filename').setContent(o.value);
+                el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', o.data['icon']));
+                return el.getContent();
+            }
+            var sortFoldersFirst = function(a, b, desc) {
+                if (a.get('children') && !b.get('children')) {return -1;}
+                if (!a.get('children') && b.get('children')) {return 1;}
+                var aa = a.get(this.key), bb = b.get(this.key), dir = desc?-1:1;
+                return (aa > bb) ? dir : ((aa < bb) ? -dir : 0);
+            }
 
-                var cols = [
-                    {key: "title", label: M.str.moodle.name, sortable: true, formatter: formatTitle},
-                    {key: "datemodified", label: M.str.moodle.lastmodified, sortable: true, formatter: formatValue},
-                    {key: "size", label: M.str.repository.size, sortable: true, formatter: formatValue},
-                    {key: "type", label: M.str.repository.type, sortable: true}
-                ];
-                var table = new Y.DataTable.Base({
-                    columnset: cols,
-                    recordset: list
-                });
-                // TODO allow sorting only if repository allows it, remember last sort order
-                table.plug(Y.Plugin.DataTableSort/*, { lastSortedBy: {key: "title", dir: "asc"} }*/);
+            var cols = [
+                {key: "title", label: M.str.moodle.name, allowHTML: true, formatter: formatTitle,
+                    sortable: true, sortFn: sortFoldersFirst},
+                {key: "datemodified", label: M.str.moodle.lastmodified, allowHTML: true, formatter: formatValue,
+                    sortable: true, sortFn: sortFoldersFirst},
+                {key: "size", label: M.str.repository.size, allowHTML: true, formatter: formatValue,
+                    sortable: true, sortFn: sortFoldersFirst},
+                {key: "type", label: M.str.repository.type, allowHTML: true,
+                    sortable: true, sortFn: sortFoldersFirst}
+            ];
+            this.tableview = new Y.DataTable({
+                columns: cols,
+                data: list,
+                sortable: !this.active_repo.hasmorepages // allow sorting only if there are no more pages to load
+            });
 
-                table.render('#tableview-'+client_id);
-                table.delegate('click', function (e) {
-                    var rs = table.get('recordset');
-                    var id = e.currentTarget.get('id'), len = rs.size(), i;
-                    for (i = 0; i < len; ++i) {
-                        var record = rs.item(i);
-                        if (record.get('id') == id) {
-                            // we found the clicked record
-                            var data = record.getValue();
-                            if (data.children) {
-                                if (this.active_repo.dynload) {
-                                    this.list({'path':data.path});
-                                } else {
-                                    this.filepath = data.path;
-                                    this.filelist = data.children;
-                                    this.view_files();
-                                }
-                            } else {
-                                this.select_file(data);
-                            }
+            this.tableview.render('#tableview-'+client_id);
+            this.tableview.delegate('click', function (e) {
+                var record = this.tableview.getRecord(e.currentTarget.get('id'));
+                if (record) {
+                    var data = record.getAttrs();
+                    if (data.children) {
+                        if (this.active_repo.dynload) {
+                            this.list({'path':data.path});
+                        } else {
+                            this.filepath = data.path;
+                            this.filelist = data.children;
+                            this.view_files();
                         }
+                    } else {
+                        this.select_file(data);
                     }
-                }, 'tr', this);
+                }
+            }, 'tr', this);
+        },
+        /** If more than one page available, requests and displays the files from the next page */
+        request_next_page: function() {
+            if (!this.active_repo.hasmorepages || this.active_repo.nextpagerequested) {
+                // nothing to load
+                return;
+            }
+            this.active_repo.nextpagerequested = true;
+            var nextpage = this.active_repo.page+1;
+            var args = {page:nextpage, repo_id:this.active_repo.id, path:this.active_repo.path};
+            var action = this.active_repo.issearchresult ? 'search' : 'list';
+            this.request({
+                scope: this,
+                action: action,
+                client_id: this.options.client_id,
+                repository_id: args.repo_id,
+                params: args,
+                callback: function(id, obj, args) {
+                    var scope = args.scope;
+                    // check that we are still in the same repository and are expecting this page
+                    if (scope.active_repo.hasmorepages && obj.list && obj.page &&
+                            obj.repo_id == scope.active_repo.id &&
+                            obj.page == scope.active_repo.page+1 && obj.path == scope.path) {
+                        scope.parse_repository_options(obj, true);
+                        scope.view_files(obj.list)
+                    }
+                }
+            }, false);
         },
         select_file: function(args) {
             this.selectui.show();
@@ -933,14 +1009,24 @@ M.core_filepicker.init = function(Y, options) {
             // display repository that was used last time
             this.show_recent_repository();
         },
-        parse_repository_options: function(data) {
-            this.filelist = data.list?data.list:null;
+        parse_repository_options: function(data, appendtolist) {
+            if (appendtolist) {
+                if (data.list) {
+                    if (!this.filelist) { this.filelist = []; }
+                    for (var i in data.list) {
+                        this.filelist[this.filelist.length] = data.list[i];
+                    }
+                }
+            } else {
+                this.filelist = data.list?data.list:null;
+            }
             this.filepath = data.path?data.path:null;
             this.active_repo = {};
             this.active_repo.issearchresult = data.issearchresult?true:false;
             this.active_repo.dynload = data.dynload?data.dynload:false;
             this.active_repo.pages = Number(data.pages?data.pages:null);
             this.active_repo.page = Number(data.page?data.page:null);
+            this.active_repo.hasmorepages = (this.active_repo.pages && this.active_repo.page && (this.active_repo.page < this.active_repo.pages || this.active_repo.pages == -1))
             this.active_repo.id = data.repo_id?data.repo_id:null;
             this.active_repo.nosearch = (data.login || data.nosearch); // this is either login form or 'nosearch' attribute set
             this.active_repo.norefresh = (data.login || data.norefresh); // this is either login form or 'norefresh' attribute set
@@ -1275,16 +1361,12 @@ M.core_filepicker.init = function(Y, options) {
             if (this.pathbar) {
                 this.pathbar.setContent('').addClass('empty');
             }
-            if (this.fpnode.one('.fp-paging')) {
-                this.fpnode.one('.fp-paging').setContent('').addClass('empty');
-            }
         },
         print_header: function() {
             var r = this.active_repo;
             var scope = this;
             var client_id = this.options.client_id;
             this.hide_header();
-            this.print_paging();
             this.print_path();
             var toolbar = this.fpnode.one('.fp-toolbar');
             if (!toolbar) { return; }
@@ -1336,92 +1418,6 @@ M.core_filepicker.init = function(Y, options) {
             // help url
             enable_tb_control(toolbar.one('.fp-tb-help'), r.help);
             Y.one('#fp-tb-help-'+client_id+'-link').set('href', r.help);
-        },
-        get_page_button: function(page) {
-            var r = this.active_repo;
-            var css = '';
-            if (page == r.page) {
-                css = 'class="cur_page" ';
-            }
-            var str = '<a '+css+'href="###" id="repo-page-'+page+'">';
-            return str;
-        },
-        print_paging: function(html_id) {
-            // TODO !!!
-            var client_id = this.options.client_id;
-            var scope = this;
-            var r = this.active_repo;
-            var str = '';
-            var action = '';
-            var lastpage = r.pages;
-            var lastpagetext = r.pages;
-            if (r.pages == -1) {
-                lastpage = r.page + 1;
-                lastpagetext = M.str.moodle.next;
-            }
-            if (lastpage > 1) {
-                str += this.get_page_button(1)+'1</a> ';
-
-                var span = 5;
-                var ex = (span-1)/2;
-
-                if (r.page+ex>=lastpage) {
-                    var max = lastpage;
-                } else {
-                    if (r.page<span) {
-                        var max = span;
-                    } else {
-                        var max = r.page+ex;
-                    }
-                }
-
-                // won't display upper boundary
-                if (r.page >= span) {
-                    str += ' ... ';
-                    for(var i=r.page-ex; i<max; i++) {
-                        str += this.get_page_button(i);
-                        str += String(i);
-                        str += '</a> ';
-                    }
-                } else {
-                    // this very first elements
-                    for(var i = 2; i < max; i++) {
-                        str += this.get_page_button(i);
-                        str += String(i);
-                        str += '</a> ';
-                    }
-                }
-
-                // won't display upper boundary
-                if (max==lastpage) {
-                    str += this.get_page_button(lastpage)+lastpagetext+'</a>';
-                } else {
-                    str += this.get_page_button(max)+max+'</a>';
-                    str += ' ... '+this.get_page_button(lastpage)+lastpagetext+'</a>';
-                }
-            }
-            this.fpnode.one('.fp-paging').setContent(str);
-            this.fpnode.all('.fp-paging a').on('click', function(e) {
-                            e.preventDefault();
-                            var id = e.currentTarget.get('id');
-                            var re = new RegExp("repo-page-(\\d+)", "i");
-                            var result = id.match(re);
-                            var args = {};
-                            args.page = result[1];
-                            if (scope.active_repo.issearchresult) {
-                                scope.request({
-                                        scope: scope,
-                                        action:'search',
-                                        client_id: client_id,
-                                        repository_id: r.id,
-                                        params: {'page':result[1]},
-                                        callback: scope.display_response
-                                }, true);
-
-                            } else {
-                                scope.list(args);
-                            }
-                        });
         },
         print_path: function() {
             if (!this.pathbar) { return; }

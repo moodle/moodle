@@ -104,7 +104,6 @@ class core_repository_renderer extends plugin_renderer_base {
         <div class="{!}fp-tb-manage"><a><img src="'.$this->pix_url('a/setting').'" /> '.get_string('manageurl', 'repository').'</a></div>
         <div class="{!}fp-tb-help"><a><img src="'.$this->pix_url('a/help').'" /> '.get_string('help').'</a></div>
       </div>
-      <div class="{!}fp-paging" style="background:pink"></div>
       <div class="fp-pathbar" style="background:#ddffdd">
         <span class="{!}fp-path-folder"><a class="{!}fp-path-folder-name"></a><span>/</span></span>
       </div>
@@ -157,6 +156,30 @@ class core_repository_renderer extends plugin_renderer_base {
      */
     public function js_template_listfilename() {
         $rv = '<span class="{!}fp-icon"></span> <span class="{!}fp-filename"></span>';
+        return preg_replace('/\{\!\}/', '', $rv);
+    }
+
+    /**
+     * Template for displaying link/loading progress for fetching of the next page
+     *
+     * This text is added to .fp-content AFTER .fp-iconview/.fp-treeview/.fp-tableview
+     *
+     * Must have one parent element with class 'fp-nextpage'. It will be assigned additional
+     * class 'loading' during loading of the next page (it is recommended that in this case the link
+     * becomes unavailable). Also must contain one element <a> or <button> that will hold
+     * onclick event for displaying of the next page. The event will be triggered automatically
+     * when user scrolls to this link.
+     *
+     * @return string
+     */
+    public function js_template_nextpage() {
+        $rv = '<div class="{!}fp-nextpage">
+  <div class="fp-nextpage-link"><a href="#">'.get_string('more').'</a></div>
+  <div class="fp-nextpage-loading">
+    <img src="'.$this->pix_url('i/loading').'" />
+    <p>'.get_string('loading', 'repository').'</p>
+  </div>
+</div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
 

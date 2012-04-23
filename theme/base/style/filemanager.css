@@ -54,6 +54,11 @@
 .dir-rtl .file-picker .fp-list {text-align:right;}
 .file-picker .fp-list .fp-repo {display:block;border-bottom:1px dotted gray;padding: .5em;}
 .file-picker .fp-list .fp-repo.active {background:#AACCEE;}
+.file-picker .fp-nextpage {clear:both;align:center;}
+.file-picker .fp-nextpage .fp-nextpage-link {align:center;}
+.file-picker .fp-nextpage .fp-nextpage-loading {display:none;}
+.file-picker .fp-nextpage.loading .fp-nextpage-link {display:none;}
+.file-picker .fp-nextpage.loading .fp-nextpage-loading {display:block;}
 .file-picker .fp-pathbar {margin: .4em;border-bottom: 1px dotted gray;}
 .file-picker .fp-pathbar a {padding: .4em;}
 .file-picker .fp-select {width:550px;height:430px;text-align:center;overflow:auto;}
@@ -64,9 +69,6 @@
 .file-picker .fp-select.loading form {display:none;}
 .file-picker .fp-upload-form {margin: 2em 0;text-align:center;}
 .file-picker .fp-upload-btn {clear:both;margin-top: 2em;}
-.file-picker .fp-paging {margin:1em .5em;clear:both;text-align:center;line-height: 2.5em;}
-.file-picker .fp-paging a {padding: .5em;border: 1px solid #CCC;}
-.file-picker .fp-paging a.cur_page {border: 1px solid blue;}
 .file-picker .fp-popup {text-align:center;}
 .file-picker .fp-iconview .fp-file {float:left;text-align:center;}
 .file-picker .fp-iconview .fp-file div {overflow: hidden;}
