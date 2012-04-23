@@ -173,7 +173,7 @@ class web_testcase extends basic_testcase {
      * @return void
      */
     function test_out_as_local_url_error() {
-        $url2 = new moodle_url('http://www.google.com/lib/simpletest/testweblib.php');
+        $url2 = new moodle_url('http://www.google.com/lib/tests/weblib_test.php');
         $url2->out_as_local_url();
     }
 

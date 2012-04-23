@@ -26,73 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// test handler function
-function sample_function_handler($eventdata) {
-    static $called = 0;
-    static $ignorefail = false;
-
-    if ($eventdata == 'status') {
-        return $called;
-
-    } else if ($eventdata == 'reset') {
-        $called = 0;
-        $ignorefail = false;
-        return;
-
-    } else if ($eventdata == 'fail') {
-        if ($ignorefail) {
-            $called++;
-            return true;
-        } else {
-            return false;
-        }
-
-    } else if ($eventdata == 'ignorefail') {
-        $ignorefail = true;
-        return;
-
-    } else if ($eventdata == 'ok') {
-        $called++;
-        return true;
-    }
-
-    print_error('invalideventdata', '', '', $eventdata);
-}
-
-// test handler class with static method
-class sample_handler_class {
-    static function static_method($eventdata) {
-        static $called = 0;
-        static $ignorefail = false;
-
-        if ($eventdata == 'status') {
-            return $called;
-
-        } else if ($eventdata == 'reset') {
-            $called = 0;
-            $ignorefail = false;
-            return;
-
-        } else if ($eventdata == 'fail') {
-            if ($ignorefail) {
-                $called++;
-                return true;
-            } else {
-                return false;
-            }
-
-        } else if ($eventdata == 'ignorefail') {
-            $ignorefail = true;
-            return;
-
-        } else if ($eventdata == 'ok') {
-            $called++;
-            return true;
-        }
-
-        print_error('invalideventdata', '', '', $eventdata);
-    }
-}
 
 class eventslib_testcase extends advanced_testcase {
 
@@ -106,20 +39,11 @@ class eventslib_testcase extends advanced_testcase {
     protected function setUp() {
         parent::setUp();
         // Set global category settings to -1 (not force)
-        sample_function_handler('reset');
-        sample_handler_class::static_method('reset');
+        eventslib_sample_function_handler('reset');
+        eventslib_sample_handler_class::static_method('reset');
         events_update_definition('unittest');
 
         $this->resetAfterTest(true);
-    }
-
-    /**
-     * Delete temporary entries from the database
-     * @return void
-     */
-    protected function tearDown() {
-        events_uninstall('unittest');
-        parent::tearDown();
     }
 
     /**
@@ -182,7 +106,7 @@ class eventslib_testcase extends advanced_testcase {
     public function test_events_trigger__instant() {
         $this->assertEquals(0, events_trigger('test_instant', 'ok'));
         $this->assertEquals(0, events_trigger('test_instant', 'ok'));
-        $this->assertEquals(2, sample_function_handler('status'));
+        $this->assertEquals(2, eventslib_sample_function_handler('status'));
     }
 
     /**
@@ -191,9 +115,9 @@ class eventslib_testcase extends advanced_testcase {
      */
     public function test_events_trigger__cron() {
         $this->assertEquals(0, events_trigger('test_cron', 'ok'));
-        $this->assertEquals(0, sample_handler_class::static_method('status'));
+        $this->assertEquals(0, eventslib_sample_handler_class::static_method('status'));
         events_cron('test_cron');
-        $this->assertEquals(1, sample_handler_class::static_method('status'));
+        $this->assertEquals(1, eventslib_sample_handler_class::static_method('status'));
     }
 
     /**
@@ -216,18 +140,86 @@ class eventslib_testcase extends advanced_testcase {
         $this->assertEquals(1, events_trigger('test_instant', 'ok'), 'this one should fail too: %s');
         $this->assertEquals(0, events_cron('test_instant'), 'all events should stay in queue: %s');
         $this->assertEquals(2, events_pending_count('test_instant'), 'two events should in queue: %s');
-        $this->assertEquals(0, sample_function_handler('status'), 'verify no event dispatched yet: %s');
-        sample_function_handler('ignorefail'); //ignore "fail" eventdata from now on
+        $this->assertEquals(0, eventslib_sample_function_handler('status'), 'verify no event dispatched yet: %s');
+        eventslib_sample_function_handler('ignorefail'); //ignore "fail" eventdata from now on
         $this->assertEquals(1, events_trigger('test_instant', 'ok'), 'this one should go to queue directly: %s');
         $this->assertEquals(3, events_pending_count('test_instant'), 'three events should in queue: %s');
-        $this->assertEquals(0, sample_function_handler('status'), 'verify previous event was not dispatched: %s');
+        $this->assertEquals(0, eventslib_sample_function_handler('status'), 'verify previous event was not dispatched: %s');
         $this->assertEquals(3, events_cron('test_instant'), 'all events should be dispatched: %s');
-        $this->assertEquals(3, sample_function_handler('status'), 'verify three events were dispatched: %s');
+        $this->assertEquals(3, eventslib_sample_function_handler('status'), 'verify three events were dispatched: %s');
         $this->assertEquals(0, events_pending_count('test_instant'), 'no events should in queue: %s');
         $this->assertEquals(0, events_trigger('test_instant', 'ok'), 'this event should be dispatched immediately: %s');
-        $this->assertEquals(4, sample_function_handler('status'), 'verify event was dispatched: %s');
+        $this->assertEquals(4, eventslib_sample_function_handler('status'), 'verify event was dispatched: %s');
         $this->assertEquals(0, events_pending_count('test_instant'), 'no events should in queue: %s');
     }
 }
 
 
+// test handler function
+function eventslib_sample_function_handler($eventdata) {
+    static $called = 0;
+    static $ignorefail = false;
+
+    if ($eventdata == 'status') {
+        return $called;
+
+    } else if ($eventdata == 'reset') {
+        $called = 0;
+        $ignorefail = false;
+        return;
+
+    } else if ($eventdata == 'fail') {
+        if ($ignorefail) {
+            $called++;
+            return true;
+        } else {
+            return false;
+        }
+
+    } else if ($eventdata == 'ignorefail') {
+        $ignorefail = true;
+        return;
+
+    } else if ($eventdata == 'ok') {
+        $called++;
+        return true;
+    }
+
+    print_error('invalideventdata', '', '', $eventdata);
+}
+
+
+// test handler class with static method
+class eventslib_sample_handler_class {
+    static function static_method($eventdata) {
+        static $called = 0;
+        static $ignorefail = false;
+
+        if ($eventdata == 'status') {
+            return $called;
+
+        } else if ($eventdata == 'reset') {
+            $called = 0;
+            $ignorefail = false;
+            return;
+
+        } else if ($eventdata == 'fail') {
+            if ($ignorefail) {
+                $called++;
+                return true;
+            } else {
+                return false;
+            }
+
+        } else if ($eventdata == 'ignorefail') {
+            $ignorefail = true;
+            return;
+
+        } else if ($eventdata == 'ok') {
+            $called++;
+            return true;
+        }
+
+        print_error('invalideventdata', '', '', $eventdata);
+    }
+}

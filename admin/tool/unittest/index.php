@@ -141,26 +141,6 @@ echo '</fieldset>';
 echo '</form>';
 echo $OUTPUT->box_end();
 
-$otherpages = array();
-$otherpages['PDF lib test'] = new moodle_url('/admin/tool/unittest/other/pdflibtestpage.php');
-if (debugging('', DEBUG_DEVELOPER)) {
-    $otherpages['TODO checker'] = new moodle_url('/admin/tool/unittest/other/todochecker.php');
-}
-
-// print list of extra test pages that are not simpletests,
-// not everything there is good enough to show to our users
-if ($otherpages) {
-    echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
-    echo $OUTPUT->heading(get_string('othertestpages', 'tool_unittest'));
-    echo '<ul>';
-    foreach ($otherpages as $name=>$url) {
-        echo '<li>'.html_writer::link($url, $name).'</li>';
-    }
-    echo '</ul>';
-    echo $OUTPUT->box_end();
-}
-
-
 // Print link to latest code coverage for this report type
 if (is_null($path) || !$codecoverage) {
     moodle_coverage_reporter::print_link_to_latest('unittest');

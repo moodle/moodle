@@ -7570,22 +7570,14 @@ function get_plugin_directory($plugintype, $name) {
 }
 
 /**
- * Return exact absolute path to a plugin directory,
- * this method support "simpletest_" prefix designed for unit testing.
+ * Return exact absolute path to a plugin directory.
  *
- * @param string $component name such as 'moodle', 'mod_forum' or special simpletest value
+ * @param string $component name such as 'moodle', 'mod_forum'
  * @return string full path to component directory; NULL if not found
  */
 function get_component_directory($component) {
     global $CFG;
-/*
-    $simpletest = false;
-    if (strpos($component, 'simpletest_') === 0) {
-        $subdir = substr($component, strlen('simpletest_'));
-        //TODO: this looks borked, where is it used actually?
-        return $subdir;
-    }
-*/
+
     list($type, $plugin) = normalize_component($component);
 
     if ($type === 'core') {
