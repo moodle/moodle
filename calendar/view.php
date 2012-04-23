@@ -127,7 +127,7 @@ switch($view) {
         echo $renderer->show_day($calendar);
     break;
     case 'month':
-        echo $renderer->show_month_detailed($calendar);
+        echo $renderer->show_month_detailed($calendar, $url);
     break;
     case 'upcoming':
         $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
