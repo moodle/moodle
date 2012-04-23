@@ -137,7 +137,7 @@ h1.headermain {
 }
 
 .course-content .section.main .content {
-    margin: 0 30px 10px 30px;
+    padding: 5px 5px 10px;
     background-color: #FFF;
 }
 
