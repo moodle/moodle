@@ -162,17 +162,17 @@ function lti_view($instance) {
 
     if (empty($key) || empty($secret)) {
         $returnurlparams['unsigned'] = '1';
-
-        //Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
-        $url = new moodle_url('/mod/lti/return.php', $returnurlparams);
-        $returnurl = $url->out(false);
-
-        if ($typeconfig['forcessl'] == '1') {
-            $returnurl = lti_ensure_url_is_https($returnurl);
-        }
-
-        $requestparams['launch_presentation_return_url'] = $returnurl;
     }
+    
+    //Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
+    $url = new moodle_url('/mod/lti/return.php', $returnurlparams);
+    $returnurl = $url->out(false);
+
+    if ($typeconfig['forcessl'] == '1') {
+        $returnurl = lti_ensure_url_is_https($returnurl);
+    }
+    
+    $requestparams['launch_presentation_return_url'] = $returnurl;
 
     if (!empty($key) && !empty($secret)) {
         $parms = lti_sign_parameters($requestparams, $endpoint, "POST", $key, $secret);
