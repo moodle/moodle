@@ -6762,7 +6762,7 @@ FROM
         upgrade_main_savepoint(true, 2011070104.12);
     }
 
-    if ($oldversion < 2011070105.07) {
+    if ($oldversion < 2011070105.08) {
         require_once($CFG->libdir . '/completion/completion_criteria.php');
         // Delete orphaned criteria which were left when modules were removed
         if ($DB->get_dbfamily() === 'mysql') {
@@ -6779,7 +6779,7 @@ FROM
         $DB->execute($sql);
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2011070105.07);
+        upgrade_main_savepoint(true, 2011070105.08);
     }
 
     return true;
