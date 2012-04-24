@@ -98,7 +98,7 @@ function mod_book_migrate_moddata_dir_to_legacy($book, $context, $path) {
             $oldpathname = $base.$item->getFilename().'/';
             $subpath     = $path.$item->getFilename().'/';
             unset($item);  // release file handle
-            book_migrate_moddata_dir_to_legacy($book, $context, $subpath);
+            mod_book_migrate_moddata_dir_to_legacy($book, $context, $subpath);
             @rmdir($oldpathname); // deletes dir if empty
         }
     }
