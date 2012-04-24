@@ -156,14 +156,14 @@ class completion_criteria_grade extends completion_criteria {
      * @return string
      */
     public function get_status($completion) {
-        // Cast as floats to get rid of excess decimal places
-        $grade = (float) $this->get_grade($completion);
-        $gradepass = (float) $this->gradepass;
+        $grade = $this->get_grade($completion);
+        $gradepass = round($this->gradepass, 2).'%';
 
         if ($grade) {
-            return $grade.'% ('.$gradepass.'% to pass)';
+            $grade = round($grade, 2);
+            return $grade.'% ('.get_string('gradetopass', 'completion', $gradepass).')';
         } else {
-            return $gradepass.'% to pass';
+            return get_string('gradetopass', 'completion', $gradetopass);
         }
     }
 
@@ -232,10 +232,10 @@ class completion_criteria_grade extends completion_criteria {
         $details = array();
         $details['type'] = get_string('coursegrade', 'completion');
         $details['criteria'] = get_string('passinggrade', 'completion');
-        $details['requirement'] = ((float)$this->gradepass).'%';
+        $details['requirement'] = round($this->gradepass, 2).'%';
         $details['status'] = '';
 
-        $grade = (float)$this->get_grade($completion);
+        $grade = round($this->get_grade($completion), 2);
         if ($grade) {
             $details['status'] = $grade.'%';
         }
