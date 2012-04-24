@@ -414,7 +414,7 @@ function xmldb_main_upgrade($oldversion) {
                     WHERE NOT EXISTS (
                         SELECT 'x' FROM {course_modules}
                         WHERE {course_modules}.id = {course_completion_criteria}.moduleinstance)
-                    AND cc.criteriatype = ".COMPLETION_CRITERIA_TYPE_ACTIVITY;
+                    AND {course_completion_criteria}.criteriatype = ".COMPLETION_CRITERIA_TYPE_ACTIVITY;
         }
         $DB->execute($sql);
 
