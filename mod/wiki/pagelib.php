@@ -862,6 +862,7 @@ class page_wiki_create extends page_wiki {
     private $wid;
     private $action;
     private $mform;
+    private $groups;
 
     function print_header() {
         $this->set_url();
@@ -897,14 +898,18 @@ class page_wiki_create extends page_wiki {
         $this->swid = $swid;
     }
 
+    function set_availablegroups($group) {
+        $this->groups = $group;
+    }
+
     function set_action($action) {
         global $PAGE;
         $this->action = $action;
 
         require_once(dirname(__FILE__) . '/create_form.php');
-        $url = new moodle_url('/mod/wiki/create.php', array('action' => 'create', 'wid' => $PAGE->activityrecord->id, 'gid' => $this->gid, 'uid' => $this->uid));
+        $url = new moodle_url('/mod/wiki/create.php', array('action' => 'create', 'wid' => $PAGE->activityrecord->id, 'group' => $this->gid, 'uid' => $this->uid));
         $formats = wiki_get_formats();
-        $options = array('formats' => $formats, 'defaultformat' => $PAGE->activityrecord->defaultformat, 'forceformat' => $PAGE->activityrecord->forceformat);
+        $options = array('formats' => $formats, 'defaultformat' => $PAGE->activityrecord->defaultformat, 'forceformat' => $PAGE->activityrecord->forceformat, 'groups' => $this->groups);
         if ($this->title != get_string('newpage', 'wiki')) {
             $options['disable_pagetitle'] = true;
         }
@@ -933,10 +938,16 @@ class page_wiki_create extends page_wiki {
     }
 
     function create_page($pagetitle) {
-        global $USER, $CFG, $PAGE;
+        global $USER, $PAGE;
+
         $data = $this->mform->get_data();
-        if (empty($this->subwiki)) {
-            $swid = wiki_add_subwiki($PAGE->activityrecord->id, $this->gid, $this->uid);
+        if (isset($data->groupinfo)) {
+            $groupid = $data->groupinfo;
+        } else {
+            $groupid = '0';
+        }
+        if (!$this->subwiki = wiki_get_subwiki_by_group($this->wid, $groupid)) {
+            $swid = wiki_add_subwiki($PAGE->activityrecord->id, $groupid, $this->uid);
             $this->subwiki = wiki_get_subwiki($swid);
         }
         if ($data) {
@@ -2054,8 +2065,8 @@ class page_wiki_save extends page_wiki_edit {
 
             //deleting old locks
             wiki_delete_locks($this->page->id, $USER->id, $this->section);
-
-            redirect($CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $this->page->id);
+            $url = new moodle_url('view.php', array('pageid' => $this->page->id, 'group' => $this->subwiki->groupid));
+            redirect($url);
         } else {
             print_error('savingerror', 'wiki');
         }
