@@ -1736,9 +1736,11 @@ function require_login_in_context($contextorid = null){
  * Print a form to let the user choose which question type to add.
  * When the form is submitted, it goes to the question.php script.
  * @param $hiddenparams hidden parameters to add to the form, in addition to
- * the qtype radio buttons.
+ *      the qtype radio buttons.
+ * @param $allowedqtypes optional list of qtypes that are allowed. If given, only
+ *      those qtypes will be shown. Example value array('description', 'multichoice').
  */
-function print_choose_qtype_to_add_form($hiddenparams) {
+function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null) {
     global $CFG, $PAGE, $OUTPUT;
     $PAGE->requires->js('/question/qbank.js');
     echo '<div id="chooseqtypehead" class="hd">' . "\n";
@@ -1754,7 +1756,10 @@ function print_choose_qtype_to_add_form($hiddenparams) {
     echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
     echo '<div class="realqtypes">' . "\n";
     $fakeqtypes = array();
-    foreach (question_bank::get_creatable_qtypes() as $qtype) {
+    foreach (question_bank::get_creatable_qtypes() as $qtypename => $qtype) {
+        if ($allowedqtypes && !in_array($qtypename, $allowedqtypes)) {
+            continue;
+        }
         if ($qtype->is_real_question_type()) {
             print_qtype_to_add_option($qtype);
         } else {
