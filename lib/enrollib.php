@@ -674,6 +674,7 @@ function enrol_get_course_description_texts($course) {
 
 /**
  * Returns list of courses user is enrolled into.
+ * (Note: use enrol_get_all_users_courses if you want to use the list wihtout any cap checks )
  *
  * - $fields is an array of fieldnames to ADD
  *   so name the fields you really need, which will
@@ -688,15 +689,53 @@ function enrol_get_course_description_texts($course) {
 function enrol_get_users_courses($userid, $onlyactive = false, $fields = NULL, $sort = 'visible DESC,sortorder ASC') {
     global $DB;
 
+    $courses = enrol_get_all_users_courses($userid, $onlyactive, $fields, $sort);
+
+    // preload contexts and check visibility
+    if ($onlyactive) {
+        foreach ($courses as $id=>$course) {
+            context_instance_preload($course);
+            if (!$course->visible) {
+                if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
+                    unset($courses[$id]);
+                    continue;
+                }
+                if (!has_capability('moodle/course:viewhiddencourses', $context, $userid)) {
+                    unset($courses[$id]);
+                    continue;
+                }
+            }
+        }
+    }
+
+    return $courses;
+
+}
+
+/**
+ * Returns list of courses user is enrolled into without any capability checks
+ * - $fields is an array of fieldnames to ADD
+ *   so name the fields you really need, which will
+ *   be added and uniq'd
+ *
+ * @param int $userid
+ * @param bool $onlyactive return only active enrolments in courses user may see
+ * @param string|array $fields
+ * @param string $sort
+ * @return array
+ */
+function enrol_get_all_users_courses($userid, $onlyactive = false, $fields = NULL, $sort = 'visible DESC,sortorder ASC') {
+    global $DB;
+
     // Guest account does not have any courses
     if (isguestuser($userid) or empty($userid)) {
         return(array());
     }
 
     $basefields = array('id', 'category', 'sortorder',
-                        'shortname', 'fullname', 'idnumber',
-                        'startdate', 'visible',
-                        'groupmode', 'groupmodeforce');
+            'shortname', 'fullname', 'idnumber',
+            'startdate', 'visible',
+            'groupmode', 'groupmodeforce');
 
     if (empty($fields)) {
         $fields = $basefields;
@@ -760,29 +799,10 @@ function enrol_get_users_courses($userid, $onlyactive = false, $fields = NULL, $
 
     $courses = $DB->get_records_sql($sql, $params);
 
-    // preload contexts and check visibility
-    foreach ($courses as $id=>$course) {
-        context_instance_preload($course);
-        if ($onlyactive) {
-            if (!$course->visible) {
-                if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
-                    unset($courses[$id]);
-                    continue;
-                }
-                if (!has_capability('moodle/course:viewhiddencourses', $context, $userid)) {
-                    unset($courses[$id]);
-                    continue;
-                }
-            }
-        }
-        $courses[$id] = $course;
-    }
-
-    //wow! Is that really all? :-D
-
     return $courses;
-
 }
+
+
 
 /**
  * Called when user is about to be deleted.
