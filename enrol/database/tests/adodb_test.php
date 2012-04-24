@@ -75,7 +75,7 @@ class core_adodb_testcase extends advanced_testcase {
                 break;
 
             case 'sqlsrv_native_moodle_database':
-                set_config('dbtype', 'sqlsrv', 'enrol_database');
+                set_config('dbtype', 'mssqlnative', 'enrol_database');
                 set_config('dbsybasequoting', '1', 'enrol_database');
                 break;
 
