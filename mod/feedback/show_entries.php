@@ -214,9 +214,7 @@ if ($do_show == 'showentries') {
         echo '<div class="clearer"></div>';
         echo $OUTPUT->box_start('mdl-align');
         if (!$students) {
-            if ($courseid != SITEID) {
-                echo $OUTPUT->notification(get_string('noexistingparticipants', 'enrol'));
-            }
+            $table->print_html();
         } else {
             echo print_string('non_anonymous_entries', 'feedback');
             echo ' ('.count($students).')<hr />';
