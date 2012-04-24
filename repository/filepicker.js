@@ -93,6 +93,13 @@ M.core_filepicker.init = function(Y, options) {
         return this;
     }
 
+    /** sets the width(height) of the node considering existing minWidth(minHeight) */
+    Y.Node.prototype.setStyleAdv = function(stylename, value) {
+        var stylenameCap = stylename.substr(0,1).toUpperCase() + stylename.substr(1, stylename.length-1).toLowerCase();
+        this.setStyle(stylename, '' + Math.max(value, this.getStylePx('min'+stylenameCap)) + 'px')
+        return this;
+    }
+
     if (options.templates);
     for (var templid in options.templates) {
         this.templates[templid] = options.templates[templid];
@@ -379,6 +386,9 @@ M.core_filepicker.init = function(Y, options) {
             el.one('.fp-filename').setContent(node.title);
             if (node.icon && !node.children) {
                 el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', node.icon));
+                if (node.realicon) {
+                    this.lazyloading[el.one('.fp-icon img').generateID()] = node.realicon;
+                }
             }
             // create node
             var tmpNode = new YAHOO.widget.HTMLNode(el.getContent(), level, false);
@@ -427,6 +437,39 @@ M.core_filepicker.init = function(Y, options) {
             if (this.fpnode.one('.fp-content .fp-nextpage')) {
                 this.fpnode.one('.fp-content .fp-nextpage').removeClass('loading');
             }
+            this.content_scrolled();
+        },
+        content_scrolled: function(e) {
+            setTimeout(Y.bind(function() {
+                if (this.processingimages) {return;}
+                this.processingimages = true;
+                var scope = this,
+                    fpcontent = this.fpnode.one('.fp-content'),
+                    fpcontenty = fpcontent.getY(),
+                    fpcontentheight = fpcontent.getStylePx('height'),
+                    nextpage = fpcontent.one('.fp-nextpage'),
+                    is_node_visible = function(node) {
+                        var offset = node.getY()-fpcontenty;
+                        if (offset <= fpcontentheight && (offset >=0 || offset+node.getStylePx('height')>=0)) {
+                            return true;
+                        }
+                        return false;
+                    };
+                // automatically load next page when 'more' link becomes visible
+                if (nextpage && !nextpage.hasClass('loading') && is_node_visible(nextpage)) {
+                    nextpage.one('a,button').simulate('click');
+                }
+                // replace src for visible images that need to be lazy-loaded
+                if (scope.lazyloading) {
+                    fpcontent.all('img').each( function(node) {
+                        if (node.get('id') && scope.lazyloading[node.get('id')] && is_node_visible(node)) {
+                            node.set('src', scope.lazyloading[node.get('id')]);
+                            delete scope.lazyloading[node.get('id')];
+                        }
+                    });
+                }
+                this.processingimages = false;
+            }, this), 200)
         },
         treeview_dynload: function(node, cb) {
             var scope = node.scope;
@@ -453,6 +496,7 @@ M.core_filepicker.init = function(Y, options) {
                     if (cb != null) { // (in manual mode do not update current path)
                         scope.viewbar_set_enabled(true);
                         scope.parse_repository_options(obj);
+                        node.highlight(false);
                     }
                     node.origlist = obj.list?obj.list:null;
                     node.origpath = obj.path?obj.path:null;
@@ -471,6 +515,7 @@ M.core_filepicker.init = function(Y, options) {
                         // invoke callback requested by TreeView
                         cb();
                     }
+                    scope.content_scrolled();
                 }
             }, false);
         },
@@ -484,7 +529,11 @@ M.core_filepicker.init = function(Y, options) {
             var list = this.filelist;
             scope.viewmode = 2;
             if (appenditems) {
-                var parentnode = scope.treeview.getRoot(); // TODO !
+                var parentnode = scope.treeview.getRoot();
+                if (scope.treeview.getHighlightedNode()) {
+                    parentnode = scope.treeview.getHighlightedNode();
+                    if (parentnode.isLeaf) {parentnode = parentnode.parent;}
+                }
                 for (var k in appenditems) {
                     scope.build_tree(appenditems[k], parentnode);
                 }
@@ -504,6 +553,7 @@ M.core_filepicker.init = function(Y, options) {
             if (dynload) {
                 scope.treeview.setDynamicLoad(scope.treeview_dynload, 1);
             }
+            scope.treeview.singleNodeHighlight = true;
             if (scope.filepath && scope.filepath.length) {
                 // we just jumped from icon/details view, we need to show all parents
                 // we extract as much information as possible from filepath and filelist
@@ -545,6 +595,7 @@ M.core_filepicker.init = function(Y, options) {
                 }
             }
             scope.treeview.subscribe('clickEvent', function(e){
+                e.node.highlight(false);
                 if(e.node.isLeaf){
                     if (e.node.parent && e.node.parent.origpath) {
                         // set the current path
@@ -552,13 +603,13 @@ M.core_filepicker.init = function(Y, options) {
                         scope.filelist = e.node.parent.origlist;
                         scope.print_path();
                     }
-                    e.node.highlight(false);
                     scope.select_file(e.node.fileinfo);
                 } else {
                     // save current path and filelist (in case we want to jump to other viewmode)
                     scope.filepath = e.node.origpath;
                     scope.filelist = e.node.origlist;
                     scope.print_path();
+                    scope.content_scrolled();
                 }
             });
             scope.treeview.draw();
@@ -594,17 +645,10 @@ M.core_filepicker.init = function(Y, options) {
                 var filenamediv = element.one('.fp-filename');
                 filenamediv.setContent(filename);
                 var imgdiv = element.one('.fp-thumbnail');
-                var set_width = function(node, width) {
-                    node.setStyle('width', '' + Math.max(width, node.getStylePx('minWidth')) + 'px')
-                }
-                var set_height = function(node, height) {
-                    node.setStyle('height', '' + Math.max(height, node.getStylePx('minHeight')) + 'px')
-                }
                 var width = node.thumbnail_width ? node.thumbnail_width : 90;
                 var height = node.thumbnail_height ? node.thumbnail_height : 90;
-                set_width(filenamediv, width)
-                set_width(imgdiv, width)
-                set_height(imgdiv, height);
+                filenamediv.setStyleAdv('width', width);
+                imgdiv.setStyleAdv('width', width).setStyleAdv('height', height);
                 var img = Y.Node.create('<img/>').setAttrs({src:node.thumbnail,title:node.title});
                 if(node.thumbnail_alt) {
                     img.set('alt', node.thumbnail_alt);
@@ -613,6 +657,9 @@ M.core_filepicker.init = function(Y, options) {
                     img.set('title', node.thumbnail_title);
                 }
                 img.setStyle('maxWidth', ''+width+'px').setStyle('maxHeight', ''+height+'px');
+                if (node.realthumbnail) {
+                    this.lazyloading[img.generateID()] = node.realthumbnail;
+                }
                 imgdiv.appendChild(img)
 
                 var dynload = this.active_repo.dynload;
@@ -640,10 +687,10 @@ M.core_filepicker.init = function(Y, options) {
          * appends those items to the end of the list. Otherwise (default behaviour)
          * clears the contents and displays the items from this.filelist */
         view_as_table: function(appenditems) {
-            var list = this.filelist;
+            var list = this.filelist, scope = this;
             var client_id = this.options.client_id;
             this.viewmode = 3;
-            if (appenditems) {
+            if (appenditems != null) {
                 this.tableview.addRows(appenditems);
                 this.tableview.sortable = !this.active_repo.hasmorepages;
                 return;
@@ -666,6 +713,9 @@ M.core_filepicker.init = function(Y, options) {
                 var el = Y.Node.create('<div/>').setContent(M.core_filepicker.templates.listfilename);
                 el.one('.fp-filename').setContent(o.value);
                 el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', o.data['icon']));
+                if (o.data['realicon']) {
+                    scope.lazyloading[el.one('.fp-icon img').generateID()] = o.data['realicon'];
+                }
                 return el.getContent();
             }
             var sortFoldersFirst = function(a, b, desc) {
@@ -747,7 +797,10 @@ M.core_filepicker.init = function(Y, options) {
             selectnode.one('.fp-saveas input').set('value', args.title);
             selectnode.one('.fp-setauthor input').set('value', this.options.author);
 
-            var imgnode = Y.Node.create('<img/>').set('src', args.thumbnail)
+            var imgnode = Y.Node.create('<img/>').
+                set('src', args.realthumbnail ? args.realthumbnail : args.thumbnail).
+                setStyle('maxHeight', ''+(args.thumbnail_height ? args.thumbnail_height : 90)+'px').
+                setStyle('maxWidth', ''+(args.thumbnail_width ? args.thumbnail_width : 90)+'px');
             selectnode.one('.fp-thumbnail').setContent('').appendChild(imgnode);
 
             selectnode.one('.fp-linkexternal input').set('checked', ''); // default to unchecked
@@ -956,6 +1009,8 @@ M.core_filepicker.init = function(Y, options) {
                 render       : true
             });
             this.selectui.hide();
+            // event handler for lazy loading of thumbnails and next page
+            this.fpnode.one('.fp-content').on(['scroll','resize'], this.content_scrolled, this);
             // save template for one path element and location of path bar
             if (this.fpnode.one('.fp-path-folder')) {
                 this.pathnode = this.fpnode.one('.fp-path-folder');
@@ -1019,6 +1074,7 @@ M.core_filepicker.init = function(Y, options) {
                 }
             } else {
                 this.filelist = data.list?data.list:null;
+                this.lazyloading = {};
             }
             this.filepath = data.path?data.path:null;
             this.active_repo = {};
