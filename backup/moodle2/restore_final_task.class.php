@@ -55,8 +55,11 @@ class restore_final_task extends restore_task {
             $this->add_step(new restore_gradebook_structure_step('gradebook_step','gradebook.xml'));
         }
 
-        // Course completion
-        $this->add_step(new restore_course_completion_structure_step('course_completion', 'completion.xml'));
+        // Course completion, executed conditionally if restoring to new course
+        if ($this->get_target() !== backup::TARGET_CURRENT_ADDING &&
+            $this->get_target() !== backup::TARGET_EXISTING_ADDING) {
+            $this->add_step(new restore_course_completion_structure_step('course_completion', 'completion.xml'));
+        }
 
         // Review all the module_availability records in backup_ids in order
         // to match them with existing modules / grade items.
