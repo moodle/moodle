@@ -2416,3 +2416,25 @@ function translate_message_default_setting($plugindefault, $processorname) {
 function message_page_type_list($pagetype, $parentcontext, $currentcontext) {
     return array('messages-*'=>get_string('page-message-x', 'message'));
 }
+
+/**
+ * Is $USER one of the supplied users?
+ *
+ * $user2 will be null if viewing a user's recent conversations
+ *
+ * @param stdClass the first user
+ * @param stdClass the second user or null
+ * @return bool True if the current user is one of either $user1 or $user2
+ */
+function message_current_user_is_involved($user1, $user2) {
+    global $USER;
+
+    if (empty($user1->id) || (!empty($user2) && empty($user2->id))) {
+        throw new coding_exception('Invalid user object detected. Missing id.');
+    }
+
+    if ($user1->id != $USER->id && (empty($user2) || $user2->id != $USER->id)) {
+        return false;
+    }
+    return true;
+}
