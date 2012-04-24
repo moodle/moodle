@@ -1413,6 +1413,22 @@ class file_storage {
         $rs->close();
         mtrace('done.');
 
+        // remove orphaned preview files (that is files in the core preview filearea without
+        // the existing original file)
+        mtrace('Deleting orphaned preview files... ', '');
+        $sql = "SELECT p.*
+                  FROM {files} p
+             LEFT JOIN {files} o ON (p.filename = o.contenthash)
+                 WHERE p.contextid = ? AND p.component = 'core' AND p.filearea = 'preview' AND p.itemid = 0
+                       AND p.filename <> '.' AND o.id IS NULL";
+        $syscontext = context_system::instance();
+        $rs = $DB->get_recordset_sql($sql, array($syscontext->id));
+        foreach ($rs as $orphan) {
+            $this->get_file_instance($orphan)->delete();
+        }
+        $rs->close();
+        mtrace('done.');
+
         // remove trash pool files once a day
         // if you want to disable purging of trash put $CFG->fileslastcleanup=time(); into config.php
         if (empty($CFG->fileslastcleanup) or $CFG->fileslastcleanup < time() - 60*60*24) {
