@@ -462,8 +462,8 @@ class quiz_access_manager {
      */
     public function make_review_link($attempt, $reviewoptions, $output) {
 
-        // If review of responses is not allowed, or the attempt is still open, don't link.
-        if (!$attempt->timefinish) {
+        // If the attempt is still open, don't link.
+        if (in_array($attempt->state, array(quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE))) {
             return $output->no_review_message('');
         }
 

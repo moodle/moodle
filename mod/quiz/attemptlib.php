@@ -513,16 +513,7 @@ class quiz_attempt {
      * @return string the human-readable state name.
      */
     public static function state_name($state) {
-        switch ($state) {
-            case quiz_attempt::IN_PROGRESS:
-                return get_string('stateinprogress', 'quiz');
-            case quiz_attempt::OVERDUE:
-                return get_string('stateoverdue', 'quiz');
-            case quiz_attempt::FINISHED:
-                return get_string('statefinished', 'quiz');
-            case quiz_attempt::ABANDONED:
-                return get_string('stateabandoned', 'quiz');
-        }
+        return quiz_attempt_state_name($state);
     }
 
     private function determine_layout() {
@@ -1321,7 +1312,7 @@ class quiz_attempt {
             $DB->update_record('quiz_attempts', $this->attempt);
         }
 
-        if (!$this->is_preview() && $this->attempt->timefinish) {
+        if (!$this->is_preview() && $this->attempt->state == quiz_attempt::FINISHED) {
             quiz_save_best_grade($this->get_quiz(), $this->get_userid());
         }
 
@@ -1435,7 +1426,8 @@ class quiz_attempt {
         }
 
         if ($event == 'quiz_attempt_submitted') {
-            $eventdata->timefinish = $timestamp; // Backwards compatibility.
+            // Backwards compatibility for this event type. $eventdata->timestamp is now preferred.
+            $eventdata->timefinish = $timestamp;
         }
 
         events_trigger($event, $eventdata);

@@ -321,7 +321,7 @@ class quiz_overview_report extends quiz_attempts_report {
             $slots = $quba->get_slots();
         }
 
-        $finished = $attempt->timefinish > 0;
+        $finished = $attempt->state == quiz_attempt::FINISHED;
         foreach ($slots as $slot) {
             $qqr = new stdClass();
             $qqr->oldfraction = $quba->get_question_fraction($slot);

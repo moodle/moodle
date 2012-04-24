@@ -402,7 +402,6 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
  * Print a detailed representation of what a  user has done with
  * a given particular instance of this module, for user activity reports.
  *
- * @global object
  * @param object $course
  * @param object $user
  * @param object $mod
@@ -411,7 +410,8 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
  */
 function quiz_user_complete($course, $user, $mod, $quiz) {
     global $DB, $CFG, $OUTPUT;
-    require_once("$CFG->libdir/gradelib.php");
+    require_once($CFG->libdir . '/gradelib.php');
+    require_once($CFG->libdir . '/mod/quiz/locallib.php');
 
     $grades = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $user->id);
     if (!empty($grades->items[0]->grades)) {
@@ -426,8 +426,8 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
             array('userid' => $user->id, 'quiz' => $quiz->id), 'attempt')) {
         foreach ($attempts as $attempt) {
             echo get_string('attempt', 'quiz').' '.$attempt->attempt.': ';
-            if ($attempt->timefinish == 0) {
-                print_string('unfinished');
+            if ($attempt->state != quiz_attempt::FINISHED) {
+                echo quiz_attempt_state_name($attempt->state);
             } else {
                 echo quiz_format_grade($quiz, $attempt->sumgrades) . '/' .
                         quiz_format_grade($quiz, $quiz->sumgrades);
@@ -445,6 +445,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
  * Quiz periodic clean-up tasks.
  */
 function quiz_cron() {
+    global $CFG;
 
     // Run cron for our sub-plugin types.
     cron_execute_plugin_type('quiz', 'quiz reports');

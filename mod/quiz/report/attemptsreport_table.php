@@ -202,7 +202,7 @@ abstract class quiz_attempts_report_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_feedbacktext($attempt) {
-        if (!$attempt->timefinish) {
+        if ($attempt->state != quiz_attempt::FINISHED) {
             return '-';
         }
 
@@ -371,10 +371,7 @@ abstract class quiz_attempts_report_table extends table_sql {
                 CASE WHEN quiza.timefinish = 0 THEN null
                      WHEN quiza.timefinish > quiza.timestart THEN quiza.timefinish - quiza.timestart
                      ELSE 0 END AS duration';
-            // To explain that last bit, in MySQL, qa.timestart and qa.timefinish
-            // are unsigned. Since MySQL 5.5.5, when they introduced strict mode,
-            // subtracting a larger unsigned int from a smaller one gave an error.
-            // Therefore, we avoid doing that. timefinish can be non-zero and less
+            // To explain that last bit, timefinish can be non-zero and less
             // than timestart when you have two load-balanced servers with very
             // badly synchronised clocks, and a student does a really quick attempt.
 

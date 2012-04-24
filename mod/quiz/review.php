@@ -184,7 +184,7 @@ if (!empty($overtime)) {
 $grade = quiz_rescale_grade($attempt->sumgrades, $quiz, false);
 if ($options->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades($quiz)) {
 
-    if (!$attempt->timefinish) {
+    if ($attempt->state != quiz_attempt::FINISHED) {
         $summarydata['grade'] = array(
             'title'   => get_string('grade', 'quiz'),
             'content' => get_string('attemptstillinprogress', 'quiz'),

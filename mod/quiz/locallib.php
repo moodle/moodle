@@ -105,6 +105,7 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
     $attempt->timestart = $timenow;
     $attempt->timefinish = 0;
     $attempt->timemodified = $timenow;
+    $attempt->state = quiz_attempt::IN_PROGRESS;
 
     // If this is a preview, mark it as such.
     if ($ispreview) {
@@ -445,8 +446,9 @@ function quiz_update_all_attempt_sumgrades($quiz) {
                 sumgrades = (
                     {$dm->sum_usage_marks_subquery('uniqueid')}
                 )
-            WHERE quiz = :quizid AND timefinish <> 0";
-    $DB->execute($sql, array('timenow' => $timenow, 'quizid' => $quiz->id));
+            WHERE quiz = :quizid AND state = :finishedstate";
+    $DB->execute($sql, array('timenow' => $timenow, 'quizid' => $quiz->id,
+            'finishedstate' => quiz_attempt::FINISHED));
 }
 
 /**
@@ -613,7 +615,7 @@ function quiz_update_all_final_grades($quiz) {
         return;
     }
 
-    $param = array('iquizid' => $quiz->id);
+    $param = array('iquizid' => $quiz->id, 'istatefinished' => quiz_attempt::FINISHED);
     $firstlastattemptjoin = "JOIN (
             SELECT
                 iquiza.userid,
@@ -623,7 +625,7 @@ function quiz_update_all_final_grades($quiz) {
             FROM {quiz_attempts} iquiza
 
             WHERE
-                iquiza.timefinish <> 0 AND
+                iquiza.state = :istatefinished
                 iquiza.preview = 0 AND
                 iquiza.quiz = :iquizid
 
@@ -670,13 +672,15 @@ function quiz_update_all_final_grades($quiz) {
     $param['quizid2'] = $quiz->id;
     $param['quizid3'] = $quiz->id;
     $param['quizid4'] = $quiz->id;
+    $param['statefinished'] = quiz_attempt::FINISHED;
+    $param['statefinished2'] = quiz_attempt::FINISHED;
     $finalgradesubquery = "
             SELECT quiza.userid, $finalgrade AS newgrade
             FROM {quiz_attempts} quiza
             $join
             WHERE
                 $where
-                quiza.timefinish <> 0 AND
+                quiza.quiza.state = :statefinished AND
                 quiza.preview = 0 AND
                 quiza.quiz = :quizid3
             GROUP BY quiza.userid";
@@ -692,7 +696,7 @@ function quiz_update_all_final_grades($quiz) {
                 SELECT DISTINCT userid
                 FROM {quiz_attempts} quiza2
                 WHERE
-                    quiza2.timefinish <> 0 AND
+                    quiza2.quiza.state = :statefinished2 AND
                     quiza2.preview = 0 AND
                     quiza2.quiz = :quizid2
             ) users
@@ -816,6 +820,25 @@ function quiz_get_overdue_handling_options() {
         'graceperiod' => get_string('overduehandlinggraceperiod', 'quiz'),
         'autoabandon' => get_string('overduehandlingautoabandon', 'quiz'),
     );
+}
+
+/**
+ * @param string $state one of the state constants like IN_PROGRESS.
+ * @return string the human-readable state name.
+ */
+function quiz_attempt_state_name($state) {
+    switch ($state) {
+        case quiz_attempt::IN_PROGRESS:
+            return get_string('stateinprogress', 'quiz');
+        case quiz_attempt::OVERDUE:
+            return get_string('stateoverdue', 'quiz');
+        case quiz_attempt::FINISHED:
+            return get_string('statefinished', 'quiz');
+        case quiz_attempt::ABANDONED:
+            return get_string('stateabandoned', 'quiz');
+        default:
+            throw new coding_exception('Unknown quiz attempt state.');
+    }
 }
 
 /// Other quiz functions ////////////////////////////////////////////////////
@@ -950,14 +973,15 @@ function quiz_get_flag_option($attempt, $context) {
 }
 
 /**
- * Work out what state this quiz attempt is in.
+ * Work out what state this quiz attempt is in - in the sense used by
+ * quiz_get_review_options, not in the sense of $attempt->state.
  * @param object $quiz the quiz settings
  * @param object $attempt the quiz_attempt database row.
  * @return int one of the mod_quiz_display_options::DURING,
  *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
  */
 function quiz_attempt_state($quiz, $attempt) {
-    if ($attempt->timefinish == 0) {
+    if ($attempt->state != quiz_attempt::FINISHED) {
         return mod_quiz_display_options::DURING;
     } else if (time() < $attempt->timefinish + 120) {
         return mod_quiz_display_options::IMMEDIATELY_AFTER;
@@ -989,7 +1013,7 @@ function quiz_get_review_options($quiz, $attempt, $context) {
     }
 
     // Show a link to the comment box only for closed attempts
-    if (!empty($attempt->id) && $attempt->timefinish && !$attempt->preview &&
+    if (!empty($attempt->id) && $attempt->state == quiz_attempt::FINISHED && !$attempt->preview &&
             !is_null($context) && has_capability('mod/quiz:grade', $context)) {
         $options->manualcomment = question_display_options::VISIBLE;
         $options->manualcommentlink = new moodle_url('/mod/quiz/comment.php',
@@ -1517,14 +1541,17 @@ class mod_quiz_display_options extends question_display_options {
 class qubaids_for_quiz extends qubaid_join {
     public function __construct($quizid, $includepreviews = true, $onlyfinished = false) {
         $where = 'quiza.quiz = :quizaquiz';
+        $params = array('quizaquiz' => $quizid);
+
         if (!$includepreviews) {
             $where .= ' AND preview = 0';
         }
+
         if ($onlyfinished) {
-            $where .= ' AND timefinish <> 0';
+            $where .= ' AND state == :statefinished';
+            $params['statefinished'] = quiz_attempt::FINISHED;
         }
 
-        parent::__construct('{quiz_attempts} quiza', 'quiza.uniqueid', $where,
-                array('quizaquiz' => $quizid));
+        parent::__construct('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
     }
 }

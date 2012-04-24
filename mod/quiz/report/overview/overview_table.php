@@ -180,7 +180,7 @@ class quiz_overview_table extends quiz_attempts_report_table {
     }
 
     public function col_sumgrades($attempt) {
-        if (!$attempt->timefinish) {
+        if ($attempt->state != quiz_attempt::FINISHED) {
             return '-';
         }
 
