@@ -131,10 +131,8 @@ if ($editingon && $sesskeyprovided) {
         if ($course) {
             $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
             require_capability('moodle/course:visibility', $coursecontext);
-            // Set the visibility of the course
-            $DB->set_field('course', 'visible', $visible, array('id' => $course->id));
-            // we set the old flag when user manually changes visibility of course
-            $DB->set_field('course', 'visibleold', $visible, array('id' => $course->id));
+            // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
+            $DB->update_record('course', array('id' => $course->id, 'visible' => $visible, 'visibleold' => $visible, 'timemodified' => time()));
         }
     }
 
