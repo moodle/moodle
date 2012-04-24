@@ -379,11 +379,11 @@ M.core_filepicker.init = function(Y, options) {
             this.msg_dlg.show();
         },
         build_tree: function(node, level) {
-            var client_id = this.options.client_id;
             var dynload = this.active_repo.dynload;
             // prepare file name with icon
             var el = Y.Node.create('<div/>').setContent(M.core_filepicker.templates.listfilename);
-            el.one('.fp-filename').setContent(node.title);
+            el.one('.fp-filename').setContent(node.shorttitle ? node.shorttitle : node.title);
+            // TODO add tooltip with node.title or node.thumbnail_title
             if (node.icon && !node.children) {
                 el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', node.icon));
                 if (node.realicon) {
@@ -711,17 +711,20 @@ M.core_filepicker.init = function(Y, options) {
             };
             var formatTitle = function(o) {
                 var el = Y.Node.create('<div/>').setContent(M.core_filepicker.templates.listfilename);
-                el.one('.fp-filename').setContent(o.value);
+                el.one('.fp-filename').setContent(o.data['shorttitle'] ? o.data['shorttitle'] : o.value);
                 el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', o.data['icon']));
                 if (o.data['realicon']) {
                     scope.lazyloading[el.one('.fp-icon img').generateID()] = o.data['realicon'];
                 }
+                // TODO add tooltip with o.data['title'] (o.value) or o.data['thumbnail_title']
                 return el.getContent();
             }
             var sortFoldersFirst = function(a, b, desc) {
                 if (a.get('children') && !b.get('children')) {return -1;}
                 if (!a.get('children') && b.get('children')) {return 1;}
                 var aa = a.get(this.key), bb = b.get(this.key), dir = desc?-1:1;
+                if (this.key == 'title' && a.get('shorttitle')) {aa=a.get('shorttitle');}
+                if (this.key == 'title' && b.get('shorttitle')) {bb=b.get('shorttitle');}
                 return (aa > bb) ? dir : ((aa < bb) ? -dir : 0);
             }
 
