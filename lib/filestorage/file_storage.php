@@ -190,7 +190,7 @@ class file_storage {
 
         $mimetype = $file->get_mimetype();
 
-        if ($mimetype == 'image/gif' or $mimetype == 'image/jpeg' or $mimetype == 'image/png') {
+        if ($mimetype === 'image/gif' or $mimetype === 'image/jpeg' or $mimetype === 'image/png') {
             // make a preview of the image
             $data = $this->create_imagefile_preview($file, $mode);
 
@@ -244,10 +244,10 @@ class file_storage {
         $tmpfilepath = $tmproot.'/'.$file->get_contenthash();
         $file->copy_content_to($tmpfilepath);
 
-        if ($mode == 'tinyicon') {
+        if ($mode === 'tinyicon') {
             $data = generate_image_thumbnail($tmpfilepath, 16, 16);
 
-        } else if ($mode == 'thumb') {
+        } else if ($mode === 'thumb') {
             $data = generate_image_thumbnail($tmpfilepath, 90, 90);
 
         } else {
