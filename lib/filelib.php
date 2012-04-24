@@ -3981,6 +3981,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
 
         send_file_not_found();
 
+    // ========================================================================================================================
     } else if (strpos($component, '_') === false) {
         // all core subsystems have to be specified above, no more guessing here!
         send_file_not_found();
@@ -3996,7 +3997,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
         $filefunction = $component.'_pluginfile';
         if (function_exists($filefunction)) {
             // if the function exists, it must send the file and terminate. Whatever it returns leads to "not found"
-            $filefunction($course, $cm, $context, $filearea, $args, $forcedownload);
+            $filefunction($course, $cm, $context, $filearea, $args, $forcedownload, array('preview' => $preview));
         }
 
         send_file_not_found();
