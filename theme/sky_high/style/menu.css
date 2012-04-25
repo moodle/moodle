@@ -1,37 +1,37 @@
 
-.yui3-skin-sam .yui3-menu-content,
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content,
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content{
-	border: 0px none;
+#custommenu .yui3-menu-content,
+#custommenu .yui3-menu-label,
+#custommenu .yui3-menuitem-content {
+    border-width: 0;
 }
 
-.yui3-menu ul{
+#custommenu .yui3-menu ul{
 	background:url([[pix:theme|sprite]]) repeat-x 0 0;
 }
 
-.yui3-menu ul li ul{
+#custommenu .yui3-menu ul li ul{
 	background:#fff;
 }
 
-.yui3-menu ul li{
+#custommenu .yui3-menu ul li{
 	border-right: 1px solid #ccc;
 }
 
-.yui3-menu ul li ul li{
+#custommenu .yui3-menu ul li ul li{
 	border-right: none;
 	border-bottom: 1px dashed #ccc;
 	padding: 3px;
 }
-div.yui3-menu-content {
+#custommenu .yui3-menu-content {
 	border: none !important;
 }
 
-ul.first-of-type li a {
-	border-top: none !important;
-	border-bottom: none !important;
+#custommenu ul.first-of-type li a {
+    border-top-width: 0;
+    border-bottom-width: 0;
 }
 
-ul.first-of-type li a:hover {
+#custommenu ul.first-of-type li a:hover {
 	color: #003466;
 
 }

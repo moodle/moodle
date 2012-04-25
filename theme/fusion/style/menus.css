@@ -1,197 +1,40 @@
-#custommenu {
-	font-size: 1.2em;
-	line-height: 1.2;
-	float: left;
-	width:60%;
-}
-
-.yui3-skin-sam .yui3-menu-content, 
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content {
-	border: none;
-	padding: 0 !important;
-}
-
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content {
-	background: #fff;
-	filter:alpha(opacity=95);
-	-moz-opacity:0.95;
-	-khtml-opacity: 0.95;
-	opacity: 0.95;
-    padding: 5px 0;
-}
-
-
-/* Horizontal menus */
-
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-content {
-
-
-}
-
-
-.yui3-skin-sam .yui3-menu ul,
-.yui3-skin-sam .yui3-menu ul ul {
-
-}
-
-.yui3-skin-sam .yui3-menu ul.first-of-type {
-}
-
-.yui3-skin-sam .yui3-menu-horizontal ul {
-}
-
-
-.yui3-skin-sam .yui3-menu li,
-.yui3-skin-sam .yui3-menu .yui3-menu li {
-
-}
-
-.yui3-skin-sam .yui3-menu-horizontal li {
-
-}
-
-.yui3-skin-sam .yui3-menubuttonnav li {
-
-}
-
-.yui3-skin-sam .yui3-splitbuttonnav li {
-
-}
-
-.yui3-skin-sam .yui3-menubuttonnav li li,
-.yui3-skin-sam .yui3-splitbuttonnav li li {
-
-}
-
-
-/* Menuitems and menu labels */
-.yui3-skin-sam .yui3-menu .yui3-menu {
-	padding-top: 5px;
-	background: url([[pix:theme|menu-top]]) no-repeat 20px 0;
-	filter:alpha(opacity=95);
-	-moz-opacity:0.95;
-	-khtml-opacity: 0.95;
-	opacity: 0.95;	
-}
-
-.custom_menu_submenu .custom_menu_submenu {
-	
-	filter:alpha(opacity=100);
-	-moz-opacity:1 !important;
-	-khtml-opacity: 1 !important;
-	opacity: 1 !important;
-}
-
-
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu {
-	padding-top: 0;
-	background: none;
-}
-
-.yui3-skin-sam .yui3-menuitem-content,
-.yui3-skin-sam .yui3-menu-label {
-	color: #a2a3a6;
-}
-
-.yui3-skin-sam .yui3-menuitem-content,
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menuitem-content {
-	padding-top: 3px;
-	padding-bottom: 4px;
-}
-
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {
-	border: none;
-	padding: 0 20px 0 0;
-}
-
-.yui3-skin-sam .yui3-menu-label,
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label {
-	padding-top: 3px;
-	padding-bottom: 4px;
-
-}
-
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label {
-
-
-}
-
-.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label,
-.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label {
-
-
-}
-
-.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label {
-
-
-}
-
-.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label em {
-
-
-}
-
-
-.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label {
-
-
-}
-
-.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label a {
-
-
-}
-
-.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle {
-	
-	
-}
-
-
-/* Selected menuitem */
-
-.yui3-skin-sam .yui3-menu-label-active,
-.yui3-skin-sam .yui3-menu-label-menuvisible,
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-active,
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
- color: #fff;
-	background-color: #2d83d5;
-}
-
-.yui3-skin-sam .yui3-menuitem-active .yui3-menuitem-content,
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content {
-	color: #fff;
-	background-color: #2d83d5;
-
-}
-
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-active,
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content,
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-menuvisible {
-}
-
-.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label-active,
-.yui3-skin-sam .yui3-menubuttonnav .yui3-menuitem-active .yui3-menuitem-content,
-.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label-menuvisible,
-.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-active,
-.yui3-skin-sam .yui3-splitbuttonnav .yui3-menuitem-active .yui3-menuitem-content,
-.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible {
-
-
-}
-
-.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible {
-
-
-}
-
-.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {
-
-
-}
-
-#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
-#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {border:none !important;}
-#custommenu .yui3-menu-horizontal.javascript-disabled li a {padding:0 20px 0 0;}
+#custommenu {font-size: 1.2em;line-height: 1.2;float: left;width:60%;}
+
+#custommenu .yui3-menu .yui3-menuitem {padding-right:20px;}
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem {padding-right:0;}
+#custommenu .yui3-menu .yui3-menu .yui3-menu-content {border-width: 0;background-color: #fff;padding: 5px 0;}
+
+#custommenu .yui3-menu .yui3-menu {padding-top: 5px;background-image: url([[pix:theme|menu-top]]);background-repeat: no-repeat;background-position: 20px 0;}
+#custommenu .yui3-menu .yui3-menu .yui3-menu {padding-top: 0;background-image: none;}
+
+#custommenu .yui3-menuitem-content,
+#custommenu .yui3-menu-label {color: #a2a3a6;}
+
+#custommenu .yui3-menu-label,
+#custommenu .yui3-menuitem-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem-content {padding-top: 3px;padding-bottom: 4px;}
+
+#custommenu .yui3-menu-content,
+#custommenu .yui3-menu-horizontal .yui3-menu-label,
+#custommenu .yui3-menu-horizontal .yui3-menuitem-content {border-width: 0;}
+
+#custommenu .yui3-menuitem-active {background-color: transparent;}
+
+#custommenu .yui3-menu-label-active,
+#custommenu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menuitem-active .yui3-menuitem-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content {color: #fff;background-color: #2d83d5;}
+
+/**
+ * Don't set opacity in IE it prevents level 3+ submenu's from displaying due to
+ * a bug with the way IE applies opacity to children
+ */
+#custommenu .yui3-menu .yui3-menu {-moz-opacity:0.95;-khtml-opacity: 0.95;opacity: 0.95;}
+#custommenu .yui3-menu .yui3-menu .yui3-menu {-moz-opacity:1;-khtml-opacity: 1;opacity: 1;}
+
+#custommenu .yui3-menu.javascript-disabled .yui3-menu-content,
+#custommenu .yui3-menu.javascript-disabled .yui3-menu-content .ul {border:none;}
+#custommenu .yui3-menu.javascript-disabled .yui3-menuitem {padding-right:20px;}
+#custommenu .yui3-menu.javascript-disabled .yui3-menu .yui3-menuitem {padding-right:0;}

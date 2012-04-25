@@ -55,38 +55,63 @@ body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea { font-family: "Trebuchet MS", 
 #page-footer .logininfo  { margin: 1em 0; }
 
 /* custum menu */
-#custommenu { margin:0 50px; }
+#custommenu {
+    margin:0 50px;
+}
 
-#custommenu, div.yui3-menu, div.yui3-menu-content {
-	border: none !important;
+#custommenu,
+#custommenu .yui3-menu,
+#custommenu .yui3-menu-content {
+    border-width:0;
 }
 
 #custommenu {
-	background:url([[pix:theme|gradient-sb]]) repeat-x 0 30%;
-	padding-top: 4px;
-	padding-bottom: 4px;
-	border-bottom: 1px solid #ccc !important;
-	border-left: 1px solid #eee !important;
-	border-right: 1px solid #eee !important;
-	
+    background:url([[pix:theme|gradient-sb]]) repeat-x 0 30%;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #ccc;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #eee;
 }
 
-a.yui3-menu-label {
-	border: none !important;
+#custommenu .yui3-menu-label,
+#custommenu .yui3-menuitem-content {
+    border-width:0;
 }
 
-div.yui3-menu-content .yui3-menu-content {
-	border: 1px solid #ccc !important;
-	border-top: none !important;
-	margin-top: 3px;
-	padding: 10px;
+#custommenu .yui3-menu-content .yui3-menu-content {
+    border: 1px solid #ccc;
+    border-top-width: 0;
+    margin-top: 3px;
 }
 
-div.yui3-menu-content .yui3-menu-content .yui3-menu-content {
-	border-top: 1px solid #ccc !important;
+#custommenu .yui3-menu-content .yui3-menu-content .yui3-menu-content {
+    border-top: 1px solid #ccc;
 }
 
-div.yui3-menu-content .yui3-menu-content .yui3-menuitem-content, div.yui3-menu-content .yui3-menu-content .yui3-menu-label{
-	padding-top: 5px !important;
-	
+#custommenu .yui3-menu-content .yui3-menu-content .yui3-menuitem-content,
+#custommenu .yui3-menu-content .yui3-menu-content .yui3-menu-label {
+    padding-top: 5px;
+}
+
+#custommenu .yui3-menu-label,
+#custommenu .yui3-menuitem-content {
+    color:#BF3503;
+}
+
+#custommenu .yui3-menu .yui3-menuitem-active,
+#custommenu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menu-label-active,
+#custommenu .yui3-menuitem-active .yui3-menuitem-content {
+    background-color: #BF3503;
+}
+
+#custommenu .yui3-menu-label-active,
+#custommenu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menuitem-active .yui3-menuitem-content {
+    color:#FFF;
+}
+
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content {
+    border-width:0;
 }

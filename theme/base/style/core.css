@@ -581,6 +581,7 @@ body.tag .managelink {padding: 5px;}
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {border:1px solid #000;}
 #custommenu .yui3-menu-horizontal.javascript-disabled ul {margin:0;padding:0;}
 #custommenu .yui3-menu-horizontal.javascript-disabled li {margin:0;padding:0;list-style:none;width:auto;position:relative;}
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu .yui3-menu-label {padding-right:20px;}
 #custommenu .yui3-menu-horizontal.javascript-disabled>.yui3-menu-content>ul>li {float:left;}
 #custommenu .yui3-menu-horizontal.javascript-disabled li a {padding:0 10px;}
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu {position:absolute;top:-10000px;left:-10000px;visibility:hidden;white-space: nowrap;max-width: 250px;background-color:#FFF;}
@@ -589,6 +590,20 @@ body.tag .managelink {padding: 5px;}
 #custommenu .yui3-menu-horizontal.javascript-disabled>.yui3-menu-content>ul:after {content:"";display:block;clear:both;line-height:0;font-size:0;visibility:hidden;}
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content {font-size:93%;line-height:2;padding:0;}
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .yui3-menu-content {font-size:100%;}
+
+/**
+ * Fix for broken YUI images in the menunav component
+ */
+#custommenu .yui3-menu-label,
+#custommenu .yui3-menuitem-content {cursor:pointer;}
+#custommenu .yui3-menuitem-active {background-color:#B3D4FF;}
+#custommenu .yui3-menuitem-active,
+#custommenu .yui3-menuitem-active .yui3-menuitem-content,
+#custommenu .yui3-menu-horizontal .yui3-menu-label,
+#custommenu .yui3-menu-horizontal .yui3-menu-content {background-image:none;background-position:right center;background-repeat:no-repeat;}
+#custommenu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label {background-image:url([[pix:theme|vertical-menu-submenu-indicator]]);}
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {background-image:url([[pix:theme|horizontal-menu-submenu-indicator]]);}
 
 /**
  * Smart Select Element
@@ -706,12 +721,6 @@ body.tag .managelink {padding: 5px;}
  * IE - Overide for RTL layout
  */
 .ie.dir-rtl .mform .fitem .felement {margin-right:0;text-align:right;float:right;}
-
-/**
- * Fix for broken YUI images in the menunav component
- */
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-content {background-image:none;}
 
 .mod-indent-1 {margin-left:20px;}
 .mod-indent-2 {margin-left:40px;}

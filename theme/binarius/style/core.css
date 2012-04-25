@@ -275,66 +275,48 @@ body.has_dock {
 #custommenu .yui3-menu-horizontal .yui3-menu-content ul,
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul,
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li li:hover > a,
-#custommenu .yui3-menu-horizontal .yui3-menu-label, .yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {
-    border-width:0;
+#custommenu .yui3-menu-horizontal .yui3-menu-label,
+#custommenu .yui3-menuitem,
+#custommenu .yui3-menuitem .yui3-menuitem-content {
+    border-width: 0;
 }
 
-/*YUI Reset */
-/*full menu bar */
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-content {
-    background: none !important;
+
+#custommenu .yui3-menu .yui3-menu {background-color:#F9F9F9;border:1px solid #F14E16;}
+
+#custommenu .yui3-menu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menuitem-content {
+    color: #FFF;
 }
-/*single items */
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label {
-    background: none !important;
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem-content {
+    color: #000;
 }
-/*active items */
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-active, .yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content, .yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-menuvisible {
-    background: none !important;
-    border-color:inherit;
+#custommenu .yui3-menuitem-active .yui3-menuitem-content {
+    color: #F14E16
 }
 
-.yui3-menuitem, .yui3-menuitem .yui3-menuitem-content {
-    border: none !important;
-}
-
-#custommenu .yui3-menu-horizontal .yui3-menu-content ul ul,
-#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul ul {
-    background-color:#F9F9F9;
-    border:1px solid #F14E16;
-    border-top-width:0;
-}
-
-#custommenu .yui3-menu-horizontal .yui3-menu-content .yui3-menu-label, .yui3-menuitem .yui3-menuitem-content, .yui3-menuitem {
-    color:#FFF !important;
-}
-
-.yui3-skin-sam #custommenu .yui3-menu-content,
-.yui3-skin-sam #custommenu .yui3-menu .yui3-menu .yui3-menu-content {
+#custommenu .yui3-menu-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-content {
     padding:0;
 }
 
-#custommenu .custom_menu_submenu .yui3-menu-content .yui3-menu-label, .custom_menu_submenu .yui3-menuitem .yui3-menuitem-content {
-    color: #000 !important;
+#custommenu .yui3-menu-label-active,
+#custommenu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content {
+    background-color:#F14E16;
+    color:#FFF;
 }
+
+#custommenu .yui3-menuitem-active .yui3-menuitem-content {
+    background-color: #F9F9F9;
+}
+
 
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li li:hover,
-#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li li:hover a,
-.yui3-skin-sam #custommenu .yui3-menu .custom_menu_submenu .yui3-menuitem.yui3-menuitem-active .yui3-menuitem-content {
-    background-color:#F14E16 !important;
-    color:#FFF !important;
-}
-
-.yui3-skin-sam .yui3-menu-label-active,
-.yui3-skin-sam .yui3-menu-label-menuvisible,
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-active,
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-menuvisible, #custommenu .custom_menu_submenu .yui3-menu-content .yui3-menu-label-active, #custommenu .custom_menu_submenu .yui3-menu-content .yui3-menu-label-menuvisible {
-    background-color:#F14E16 !important;
-    color:#FFF !important;
-}
-
-#custommenu .yui3-menu-horizontal .yui3-menu-content li a {
-    cursor:pointer;
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li li:hover a {
+    background-color:#F14E16;
+    color:#FFF;
 }
 
 .pagelayout-redirect #content p,

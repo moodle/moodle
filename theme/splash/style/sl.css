@@ -277,37 +277,37 @@ a:active {
     padding-left: 6px;
     height: 33px;
     font-size: 1.2em;
-    margin-top: 0px !important;
-    padding-top: 0px !important;
-
+    margin-top: 0;
+    padding-top: 0;
 }
 
-#custommenu * { 
-    border:none;
-}
-
-#custommenu a:link, #custommenu a:visited { 
+#custommenu .yui3-menu-label,
+#custommenu .yui3-menuitem-content {
     text-decoration:none;
-    color: #666;
 }
 
-#custommenu a:active, #custommenu a:hover { 
+#custommenu .yui3-menu-label-active,
+#custommenu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menuitem-active .yui3-menuitem-content {
     text-decoration:underline;
-    color: #666;
-    background: none;
+    background-color: transparent;
 }
+
+#custommenu .yui3-menu-content,
+#custommenu .yui3-menu-horizontal .yui3-menu-label,
+#custommenu .yui3-menu-horizontal .yui3-menuitem-content {border-width: 0;}
 
 #custommenu .yui3-menu-content ul.first-of-type li {
     border-right: 1px solid #e6d0d4;
 }
 
-#custommenu div.yui3-menu.custom_menu_submenu .yui3-menu-content {
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu-content {
     background:#6d1523;
     border:1px solid #fff;
     color: #fff;
 }
 
-#custommenu div.yui3-menu.custom_menu_submenu .yui3-menu-content a {
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu-content a {
     color: #fff;
 }
 
@@ -316,11 +316,11 @@ a:active {
     border-width:0;
 }
 
-.yui3-skin-sam .yui3-menu-label-active, 
-.yui3-skin-sam .yui3-menu-label-menuvisible, 
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-active, 
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
+#custommenu .yui3-menu-label-active,
+#custommenu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menuitem-active .yui3-menuitem-content {
     background-color: #605f5f;
+    color: #FFF;
 }
 
 /* Breadcrumb Navbar
