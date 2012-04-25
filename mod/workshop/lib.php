@@ -1480,8 +1480,9 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             // should not be set but just in case
             unset($event->id);
         }
-        // calendar_event::create will reuse a db record if the id field is set
-        calendar_event::create($event);
+        // update() will reuse a db record if the id field is set
+        $eventobj = new calendar_event($event);
+        $eventobj->update($event, false);
     }
 
     if ($workshop->submissionend) {
@@ -1494,8 +1495,9 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             // should not be set but just in case
             unset($event->id);
         }
-        // calendar_event::create will reuse a db record if the id field is set
-        calendar_event::create($event);
+        // update() will reuse a db record if the id field is set
+        $eventobj = new calendar_event($event);
+        $eventobj->update($event, false);
     }
 
     if ($workshop->assessmentstart) {
@@ -1508,8 +1510,9 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             // should not be set but just in case
             unset($event->id);
         }
-        // calendar_event::create will reuse a db record if the id field is set
-        calendar_event::create($event);
+        // update() will reuse a db record if the id field is set
+        $eventobj = new calendar_event($event);
+        $eventobj->update($event, false);
     }
 
     if ($workshop->assessmentend) {
@@ -1522,8 +1525,9 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             // should not be set but just in case
             unset($event->id);
         }
-        // calendar_event::create will reuse a db record if the id field is set
-        calendar_event::create($event);
+        // update() will reuse a db record if the id field is set
+        $eventobj = new calendar_event($event);
+        $eventobj->update($event, false);
     }
 
     // delete any leftover events
