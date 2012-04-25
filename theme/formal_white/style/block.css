@@ -1,0 +1,43 @@
+/***
+ *** block
+ ***/
+
+.block {border:[[static:lb_blockborderwidth]] solid #C6BDA8;margin-bottom:[[setting:blockpadding]];}
+.block .header h2 {margin:0;padding-left:0.3em;}
+.block .header .title {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;clear:both;line-height:2em;background-color:#E3DFD4;}
+.block .header .title .commands {padding-left:0.3em;text-align:right;}
+.block .content {background-color:[[setting:blockcontentbgc]];}
+.block img.icon {padding-right:0}
+
+/* block login */
+.block_login .btn {margin-top:0.5em;text-align:center;}
+.block_login .content {padding:[[static:lb_contentpadding]];} /* to overwrite canvas->blocks->padding: 5px 10% 5px 0; */
+.block_login label {margin-left:0;}
+.block_login #login_username, .block_login #login_password {margin:4px 0 4px [[static:lb_fieldsmargin]];}
+.block_login #login_username, .block_login #login_password {width:[[static:lb_fieldswidth]];}
+
+/* block_settings */
+.block_settings .block_tree .tree_item a:link,
+.block_settings .block_tree .tree_item a:visited,
+.block_settings .block_tree .tree_item a:active,
+
+/* block_navigation */
+/*.block_navigation .block_tree li.type_category.contains_branch>p span {
+    padding-left: 20px;
+    background-image: url([[pix:theme|folderopen]]);
+    background-repeat: no-repeat;
+    background-position: 0 -1px;
+}
+
+.block_navigation .block_tree li.type_category.contains_branch.collapsed>p span {
+    padding-left: 20px;
+    background-image: url([[pix:theme|folderclose]]);
+    background-repeat: no-repeat;
+    background-position: 0 -1px;
+}*/
+.block_navigation .block_tree .tree_item a:link,
+.block_navigation .block_tree .tree_item a:visited,
+.block_navigation .block_tree .tree_item a:active {
+    color:#000;
+}
+.block_navigation .block_tree .tree_item {padding-left:19px}

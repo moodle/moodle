@@ -58,7 +58,7 @@
     margin:[[setting:framemargin]] [[setting:framemargin]] 0;
     background-position:0 0;
     background-repeat:repeat-x;
-    min-width:[[setting:minwidth]];
+    min-width:[[calculated:minwidth]];
 }
 
 #frametopright,

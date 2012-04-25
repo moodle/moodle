@@ -67,7 +67,7 @@ $THEME->parents_exclude_sheets = array(
 $THEME->sheets = array('frame'     ,'menu', 'course',
                        'pagelayout','core', 'calendar',
                        'tabs'      ,'quiz', 'forum',
-                       'formal_white');
+                       'block'     ,'formal_white');
 ////////////////////////////////////////////////////
 // Name of the stylesheet(s) you've including in
 // this theme's /styles/ directory.
