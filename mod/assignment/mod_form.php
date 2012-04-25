@@ -55,7 +55,7 @@ class mod_assignment_mod_form extends moodleform_mod {
 
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
 
-        if ($assignmentinstance->supports_lateness()) {            
+        if ($assignmentinstance->supports_lateness()) {
             $mform->addElement('select', 'preventlate', get_string('preventlate', 'assignment'), $ynoptions);
             $mform->setDefault('preventlate', 0);
         }
