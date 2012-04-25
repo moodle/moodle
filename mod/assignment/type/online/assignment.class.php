@@ -375,7 +375,7 @@ class assignment_online extends assignment_base {
         }
     }
 
-    public function send_file($filearea, $args, $forcedownload, $options) {
+    public function send_file($filearea, $args, $forcedownload, array $options=array()) {
         global $USER;
         require_capability('mod/assignment:view', $this->context);
 

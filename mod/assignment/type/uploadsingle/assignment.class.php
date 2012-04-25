@@ -300,7 +300,7 @@ class assignment_uploadsingle extends assignment_base {
         return true;
     }
 
-    function send_file($filearea, $args, $forcedownload, $options) {
+    function send_file($filearea, $args, $forcedownload, array $options=array()) {
         global $CFG, $DB, $USER;
         require_once($CFG->libdir.'/filelib.php');
 
