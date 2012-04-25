@@ -17,10 +17,9 @@
 /**
  * Helper functions for the quiz reports.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -28,14 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 require_once($CFG->libdir . '/filelib.php');
-
-define('QUIZ_REPORT_DEFAULT_PAGE_SIZE', 30);
-define('QUIZ_REPORT_DEFAULT_GRADING_PAGE_SIZE', 10);
-
-define('QUIZ_REPORT_ATTEMPTS_ALL', 0);
-define('QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO', 1);
-define('QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH', 2);
-define('QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS', 3);
 
 /**
  * Takes an array of objects and constructs a multidimensional array keyed by
@@ -142,7 +133,8 @@ WHERE
  * empty string if all attempts contribute to final grade.
  */
 function quiz_report_qm_filter_select($quiz, $quizattemptsalias = 'quiza') {
-    if ($quiz->attempts == 1) { // Only one attempt allowed on this quiz
+    if ($quiz->attempts == 1) {
+        // This quiz only allows one attempt.
         return '';
     }
 
@@ -218,13 +210,13 @@ ORDER BY
 
     $data = $DB->get_records_sql_menu($sql, $params);
 
-    //need to create array elements with values 0 at indexes where there is no element
+    // We need to create array elements with values 0 at indexes where there is no element.
     $data =  $data + array_fill(0, $bands+1, 0);
     ksort($data);
 
-    //place the maximum (prefect grade) into the last band i.e. make last
-    //band for example 9 <= g <=10 (where 10 is the perfect grade) rather than
-    //just 9 <= g <10.
+    // Place the maximum (prefect grade) into the last band i.e. make last
+    // band for example 9 <= g <=10 (where 10 is the perfect grade) rather than
+    // just 9 <= g <10.
     $data[$bands - 1] += $data[$bands];
     unset($data[$bands]);
 
@@ -327,7 +319,7 @@ function quiz_report_list($context) {
     $reports = $DB->get_records('quiz_reports', null, 'displayorder DESC', 'name, capability');
     $reportdirs = get_plugin_list('quiz');
 
-    // Order the reports tab in descending order of displayorder
+    // Order the reports tab in descending order of displayorder.
     $reportcaps = array();
     foreach ($reports as $key => $report) {
         if (array_key_exists($report->name, $reportdirs)) {
@@ -335,7 +327,7 @@ function quiz_report_list($context) {
         }
     }
 
-    // Add any other reports, which are on disc but not in the DB, on the end
+    // Add any other reports, which are on disc but not in the DB, on the end.
     foreach ($reportdirs as $reportname => $notused) {
         if (!isset($reportcaps[$reportname])) {
             $reportcaps[$reportname] = null;
@@ -371,7 +363,8 @@ function quiz_report_download_filename($report, $courseshortname, $quizname) {
  * @param object $context the quiz context.
  */
 function quiz_report_default_report($context) {
-    return reset(quiz_report_list($context));
+    $reports = quiz_report_list($context);
+    return reset($reports);
 }
 
 /**
@@ -393,4 +386,23 @@ function quiz_no_questions_message($quiz, $cm, $context) {
     }
 
     return $output;
+}
+
+/**
+ * Should the grades be displayed in this report. That depends on the quiz
+ * display options, and whether the quiz is graded.
+ * @param object $quiz the quiz settings.
+ * @return bool
+ */
+function quiz_report_should_show_grades($quiz) {
+    if ($quiz->timeclose && time() > $quiz->timeclose) {
+        $when = mod_quiz_display_options::AFTER_CLOSE;
+    } else {
+        $when = mod_quiz_display_options::LATER_WHILE_OPEN;
+    }
+    $reviewoptions = mod_quiz_display_options::make_from_quiz($quiz, $when);
+
+    return quiz_has_grades($quiz) &&
+            ($reviewoptions->marks >= question_display_options::MARK_AND_MAX ||
+            has_capability('moodle/grade:viewhidden', $this->context));
 }

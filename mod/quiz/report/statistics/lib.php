@@ -17,10 +17,9 @@
 /**
  * Standard plugin entry points of the quiz statistics report.
  *
- * @package    quiz
- * @subpackage statistics
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_statistics
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 

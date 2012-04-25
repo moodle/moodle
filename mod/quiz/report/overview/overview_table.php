@@ -17,33 +17,43 @@
 /**
  * This file defines the quiz grades table.
  *
- * @package    quiz
- * @subpackage overview
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_overview
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_table.php');
+
 
 /**
  * This is a table subclass for displaying the quiz grades report.
  *
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_overview_table extends quiz_attempt_report_table {
+class quiz_overview_table extends quiz_attempts_report_table {
 
     protected $regradedqs = array();
 
-    public function __construct($quiz, $context, $qmsubselect, $qmfilter,
-            $attemptsmode, $groupstudents, $students, $detailedmarks,
-            $questions, $includecheckboxes, $reporturl, $displayoptions) {
+    /**
+     * Constructor
+     * @param object $quiz
+     * @param context $context
+     * @param string $qmsubselect
+     * @param quiz_overview_options $options
+     * @param array $groupstudents
+     * @param array $students
+     * @param array $questions
+     * @param moodle_url $reporturl
+     */
+    public function __construct($quiz, $context, $qmsubselect,
+            quiz_overview_options $options, $groupstudents, $students, $questions, $reporturl) {
         parent::__construct('mod-quiz-report-overview-report', $quiz , $context,
-                $qmsubselect, $qmfilter, $attemptsmode, $groupstudents, $students,
-                $questions, $includecheckboxes, $reporturl, $displayoptions);
-        $this->detailedmarks = $detailedmarks;
+                $qmsubselect, $options, $groupstudents, $students, $questions, $reporturl);
+        $this->detailedmarks = $options->slotmarks;
     }
 
     public function build_table() {
@@ -53,7 +63,7 @@ class quiz_overview_table extends quiz_attempt_report_table {
             return;
         }
 
-        $this->strtimeformat = str_replace(',', '', get_string('strftimedatetime'));
+        $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetime'));
         parent::build_table();
 
         // End of adding the data from attempts. Now add averages at bottom.
@@ -218,6 +228,7 @@ class quiz_overview_table extends quiz_attempt_report_table {
             return null;
         }
         $slot = $matches[1];
+
         $question = $this->questions[$slot];
         if (!isset($this->lateststeps[$attempt->usageid][$slot])) {
             return '-';

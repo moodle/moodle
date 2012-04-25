@@ -17,10 +17,9 @@
 /**
  * Quiz statistics report, table for showing statistics about a particular question.
  *
- * @package    quiz
- * @subpackage statistics
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_statistics
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -37,8 +36,8 @@ require_once($CFG->libdir . '/tablelib.php');
  * The responses may be grouped, either by subpart of the question, or by the
  * answer they match.
  *
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_question_table extends flexible_table {
     /** @var object this question with a _stats field. */
@@ -54,14 +53,14 @@ class quiz_statistics_question_table extends flexible_table {
     }
 
     /**
-     * Setup the columns and headers and other properties of the table and then
+     * Set up the columns and headers and other properties of the table and then
      * call flexible_table::setup() method.
      *
      * @param moodle_url $reporturl the URL to redisplay this report.
      * @param object $question a question with a _stats field
      * @param bool $hassubqs
      */
-    public function setup($reporturl, $questiondata,
+    public function question_setup($reporturl, $questiondata,
             quiz_statistics_response_analyser $responesstats) {
         $this->questiondata = $questiondata;
 
@@ -69,7 +68,7 @@ class quiz_statistics_question_table extends flexible_table {
         $this->collapsible(false);
         $this->set_attribute('class', 'generaltable generalbox boxaligncenter');
 
-        // Define table columns
+        // Define the table columns.
         $columns = array();
         $headers = array();
 

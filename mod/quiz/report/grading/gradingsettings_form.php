@@ -17,10 +17,9 @@
 /**
  * This file defines the setting form for the quiz grading report.
  *
- * @package    quiz
- * @subpackage grading
- * @copyright  2010 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_grading
+ * @copyright 2010 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,10 +31,10 @@ require_once($CFG->libdir . '/formslib.php');
 /**
  * Quiz grading report settings form.
  *
- * @copyright  2010 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2010 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_grading_settings extends moodleform {
+class quiz_grading_settings_form extends moodleform {
     protected $includeauto;
     protected $hidden = array();
     protected $counts;

@@ -17,10 +17,9 @@
 /**
  * This file defines the quiz manual grading report class.
  *
- * @package    quiz
- * @subpackage grading
- * @copyright  2006 Gustav Delius
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_grading
+ * @copyright 2006 Gustav Delius
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -36,8 +35,8 @@ require_once($CFG->dirroot . '/mod/quiz/report/grading/gradingsettings_form.php'
  * - List question that might need manual grading (or optionally all questions).
  * - Provide an efficient UI to grade all attempts at a particular question.
  *
- * @copyright  2006 Gustav Delius
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2006 Gustav Delius
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_grading_report extends quiz_default_report {
     const DEFAULT_PAGE_SIZE = 5;
@@ -83,8 +82,8 @@ class quiz_grading_report extends quiz_default_report {
             $this->viewoptions['order'] = $order;
         }
 
-        // Check permissions
-        $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        // Check permissions.
+        $this->context = context_module::instance($cm->id);
         require_capability('mod/quiz:grade', $this->context);
         $shownames = has_capability('quiz/grading:viewstudentnames', $this->context);
         $showidnumbers = has_capability('quiz/grading:viewidnumber', $this->context);
@@ -270,7 +269,7 @@ class quiz_grading_report extends quiz_default_report {
         global $OUTPUT;
 
         if ($groupmode = groups_get_activity_groupmode($this->cm)) {
-            // Groups are being used
+            // Groups is being used.
             groups_print_activity_menu($this->cm, $this->list_questions_url());
         }
 
@@ -358,7 +357,7 @@ class quiz_grading_report extends quiz_default_report {
         if (array_key_exists('includeauto', $this->viewoptions)) {
             $hidden['includeauto'] = $this->viewoptions['includeauto'];
         }
-        $mform = new quiz_grading_settings($hidden, $counts, $shownames, $showidnumbers);
+        $mform = new quiz_grading_settings_form($hidden, $counts, $shownames, $showidnumbers);
 
         // Tell the form the current settings.
         $settings = new stdClass();

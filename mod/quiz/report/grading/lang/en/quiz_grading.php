@@ -17,10 +17,9 @@
 /**
  * Strings for component 'quiz_grading', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    quiz
- * @subpackage grading
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_grading
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['alldoneredirecting'] = 'All selected attempts have been graded. Returning to the list of questions.';
