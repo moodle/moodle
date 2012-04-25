@@ -206,7 +206,7 @@ class file_storage {
         // getimagesizefromstring() is available from PHP 5.4 but we need to support
         // lower versions, so...
         $tmproot = make_temp_directory('thumbnails');
-        $tmpfilepath = $tmproot.'/'.$file->get_contenthash().'_thumb';
+        $tmpfilepath = $tmproot.'/'.$file->get_contenthash().'_'.$mode;
         file_put_contents($tmpfilepath, $data);
         $imageinfo = getimagesize($tmpfilepath);
         unlink($tmpfilepath);
