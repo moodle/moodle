@@ -46,7 +46,7 @@ switch ($action) {
         if (!empty($userid) && !empty($itemid) && $newvalue !== false && !empty($type)) {
             // Save the grade or feedback
             if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid))) { // we must verify course id here!
-                print_error('invalidgradeitmeid');
+                print_error('invalidgradeitemid');
             }
 
             /**

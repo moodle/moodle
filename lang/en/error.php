@@ -287,6 +287,7 @@ $string['invalidfiletype'] = '"{$a}" is not a valid file type';
 $string['invalidformatpara'] = 'Incorrect format for choose parameter';
 $string['invalidformdata'] = 'Incorrect form data';
 $string['invalidfunction'] = 'Incorrect function';
+$string['invalidgradeitemid'] = 'Incorrect grade item id';
 $string['invalidgradeitmeid'] = 'Incorrect grade item id';
 $string['invalidgroupid'] = 'Incorrect group id specified';
 $string['invalidipformat'] = 'Invalid IP address format';
