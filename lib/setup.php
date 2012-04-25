@@ -234,7 +234,11 @@ if (defined('ABORT_AFTER_CONFIG')) {
         } else {
             error_reporting(0);
         }
-        if (empty($CFG->debugdisplay)) {
+        if (NO_DEBUG_DISPLAY) {
+            // Some parts of Moodle cannot display errors and debug at all.
+            ini_set('display_errors', '0');
+            ini_set('log_errors', '1');
+        } else if (empty($CFG->debugdisplay)) {
             ini_set('display_errors', '0');
             ini_set('log_errors', '1');
         } else {
