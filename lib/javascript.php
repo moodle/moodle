@@ -24,6 +24,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// disable moodle specific debug messages and any errors in output,
+// comment out when debugging or better look into error log!
+define('NO_DEBUG_DISPLAY', true);
+
 // we need just the values from config.php and minlib.php
 define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
