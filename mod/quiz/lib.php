@@ -447,6 +447,26 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
 function quiz_cron() {
     global $CFG;
 
+    // Since the quiz specifies $module->cron = 60, so that the subplugins can
+    // have frequent cron if they need it, we now need to do our own scheduling.
+    $quizconfig = get_config('quiz');
+    if (!isset($quizconfig->overduelastrun)) {
+        $quizconfig->overduelastrun = 0;
+        $quizconfig->overduedoneto  = 0;
+    }
+
+    $timenow = time();
+    if ($timenow > $quizconfig->overduelastrun + 3600) {
+        require_once($CFG->dirroot . '/mod/quiz/cronlib.php');
+        $overduehander = new mod_quiz_overdue_attempt_updater();
+
+        $processto = $timenow - $quizconfig->graceperiodmin;
+        $overduehander->update_overdue_attempts($timenow, $quizconfig->overduedoneto, $processto);
+
+        set_config('overduelastrun', $timenow, 'quiz');
+        set_config('overduedoneto', $processto, 'quiz');
+    }
+
     // Run cron for our sub-plugin types.
     cron_execute_plugin_type('quiz', 'quiz reports');
     cron_execute_plugin_type('quizaccess', 'quiz access rules');
