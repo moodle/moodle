@@ -1420,11 +1420,14 @@ class file_storage {
                   FROM {files} p
              LEFT JOIN {files} o ON (p.filename = o.contenthash)
                  WHERE p.contextid = ? AND p.component = 'core' AND p.filearea = 'preview' AND p.itemid = 0
-                       AND p.filename <> '.' AND o.id IS NULL";
+                       AND o.id IS NULL";
         $syscontext = context_system::instance();
         $rs = $DB->get_recordset_sql($sql, array($syscontext->id));
         foreach ($rs as $orphan) {
-            $this->get_file_instance($orphan)->delete();
+            $file = $this->get_file_instance($orphan);
+            if (!$file->is_directory()) {
+                $file->delete();
+            }
         }
         $rs->close();
         mtrace('done.');
