@@ -39,12 +39,13 @@ defined('MOODLE_INTERNAL') || die();
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
+ * @param array $options additional options affecting the file serving
  * @return bool
  */
 function qtype_calculatedsimple_pluginfile($course, $cm, $context, $filearea,
-        $args, $forcedownload) {
+        $args, $forcedownload, array $options=array()) {
     global $CFG;
     require_once($CFG->libdir . '/questionlib.php');
     question_pluginfile($course, $context, 'qtype_calculatedsimple', $filearea,
-            $args, $forcedownload);
+            $args, $forcedownload, $options);
 }

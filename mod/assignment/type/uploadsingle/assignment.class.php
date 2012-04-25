@@ -300,7 +300,7 @@ class assignment_uploadsingle extends assignment_base {
         return true;
     }
 
-    function send_file($filearea, $args) {
+    function send_file($filearea, $args, $forcedownload, array $options=array()) {
         global $CFG, $DB, $USER;
         require_once($CFG->libdir.'/filelib.php');
 
@@ -329,7 +329,7 @@ class assignment_uploadsingle extends assignment_base {
             return false;
         }
 
-        send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+        send_stored_file($file, 0, 0, true, $options); // download MUST be forced - security!
     }
 
     function extend_settings_navigation($node) {

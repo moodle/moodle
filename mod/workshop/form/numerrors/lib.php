@@ -38,9 +38,10 @@ require_once($CFG->libdir . '/gradelib.php');           // to handle float vs de
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool
  */
-function workshopform_numerrors_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload) {
+function workshopform_numerrors_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
     global $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -72,7 +73,7 @@ function workshopform_numerrors_pluginfile($course, $cm, $context, $filearea, ar
     }
 
     // finally send the file
-    send_stored_file($file);
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**

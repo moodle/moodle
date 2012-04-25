@@ -224,10 +224,11 @@ class question_preview_options extends question_display_options {
  * @param int $slot the relevant slot within the usage.
  * @param array $args the remaining bits of the file path.
  * @param bool $forcedownload whether the user must be forced to download the file.
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - justsend the file
  */
 function question_preview_question_pluginfile($course, $context, $component,
-        $filearea, $qubaid, $slot, $args, $forcedownload) {
+        $filearea, $qubaid, $slot, $args, $forcedownload, $options) {
     global $USER, $DB, $CFG;
 
     $quba = question_engine::load_questions_usage_by_activity($qubaid);
@@ -255,7 +256,7 @@ function question_preview_question_pluginfile($course, $context, $component,
         send_file_not_found();
     }
 
-    send_stored_file($file, 0, 0, $forcedownload);
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**

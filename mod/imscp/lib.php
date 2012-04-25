@@ -337,9 +337,10 @@ function imscp_get_file_info($browser, $areas, $course, $cm, $context, $filearea
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function imscp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function imscp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -367,7 +368,7 @@ function imscp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
         }
 
         // finally send the file
-        send_stored_file($file, 86400, 0, $forcedownload);
+        send_stored_file($file, 86400, 0, $forcedownload, $options);
 
     } else if ($filearea === 'backup') {
         if (!has_capability('moodle/course:managefiles', $context)) {
@@ -383,7 +384,7 @@ function imscp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
         }
 
         // finally send the file
-        send_stored_file($file, 86400, 0, $forcedownload);
+        send_stored_file($file, 86400, 0, $forcedownload, $options);
 
     } else {
         return false;

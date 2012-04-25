@@ -153,6 +153,113 @@ class file_storage {
     }
 
     /**
+     * Returns an image file that represent the given stored file as a preview
+     *
+     * At the moment, only GIF, JPEG and PNG files are supported to have previews. In the
+     * future, the support for other mimetypes can be added, too (eg. generate an image
+     * preview of PDF, text documents etc).
+     *
+     * @param stored_file $file the file we want to preview
+     * @param string $mode preview mode, eg. 'thumb'
+     * @return stored_file|bool false if unable to create the preview, stored file otherwise
+     */
+    public function get_file_preview(stored_file $file, $mode) {
+
+        $context = context_system::instance();
+        $path = '/' . trim($mode, '/') . '/';
+        $preview = $this->get_file($context->id, 'core', 'preview', 0, $path, $file->get_contenthash());
+
+        if (!$preview) {
+            $preview = $this->create_file_preview($file, $mode);
+            if (!$preview) {
+                return false;
+            }
+        }
+
+        return $preview;
+    }
+
+    /**
+     * Generates a preview image for the stored file
+     *
+     * @param stored_file $file the file we want to preview
+     * @param string $mode preview mode, eg. 'thumb'
+     * @return stored_file|bool the newly created preview file or false
+     */
+    protected function create_file_preview(stored_file $file, $mode) {
+
+        $mimetype = $file->get_mimetype();
+
+        if ($mimetype === 'image/gif' or $mimetype === 'image/jpeg' or $mimetype === 'image/png') {
+            // make a preview of the image
+            $data = $this->create_imagefile_preview($file, $mode);
+
+        } else {
+            // unable to create the preview of this mimetype yet
+            return false;
+        }
+
+        if (empty($data)) {
+            return false;
+        }
+
+        // getimagesizefromstring() is available from PHP 5.4 but we need to support
+        // lower versions, so...
+        $tmproot = make_temp_directory('thumbnails');
+        $tmpfilepath = $tmproot.'/'.$file->get_contenthash().'_'.$mode;
+        file_put_contents($tmpfilepath, $data);
+        $imageinfo = getimagesize($tmpfilepath);
+        unlink($tmpfilepath);
+
+        $context = context_system::instance();
+
+        $record = array(
+            'contextid' => $context->id,
+            'component' => 'core',
+            'filearea'  => 'preview',
+            'itemid'    => 0,
+            'filepath'  => '/' . trim($mode, '/') . '/',
+            'filename'  => $file->get_contenthash(),
+        );
+
+        if ($imageinfo) {
+            $record['mimetype'] = $imageinfo['mime'];
+        }
+
+        return $this->create_file_from_string($record, $data);
+    }
+
+    /**
+     * Generates a preview for the stored image file
+     *
+     * @param stored_file $file the image we want to preview
+     * @param string $mode preview mode, eg. 'thumb'
+     * @return string|bool false if a problem occurs, the thumbnail image data otherwise
+     */
+    protected function create_imagefile_preview(stored_file $file, $mode) {
+        global $CFG;
+        require_once($CFG->libdir.'/gdlib.php');
+
+        $tmproot = make_temp_directory('thumbnails');
+        $tmpfilepath = $tmproot.'/'.$file->get_contenthash();
+        $file->copy_content_to($tmpfilepath);
+
+        if ($mode === 'tinyicon') {
+            $data = generate_image_thumbnail($tmpfilepath, 16, 16);
+
+        } else if ($mode === 'thumb') {
+            $data = generate_image_thumbnail($tmpfilepath, 90, 90);
+
+        } else {
+            throw new file_exception('storedfileproblem', 'Invalid preview mode requested');
+        }
+
+        unlink($tmpfilepath);
+
+        return $data;
+    }
+
+    /**
      * Fetch file using local file id.
      *
      * Please do not rely on file ids, it is usually easier to use
@@ -1302,6 +1409,25 @@ class file_storage {
         $rs = $DB->get_recordset_sql($sql, array('old'=>$old));
         foreach ($rs as $dir) {
             $this->delete_area_files($dir->contextid, $dir->component, $dir->filearea, $dir->itemid);
+        }
+        $rs->close();
+        mtrace('done.');
+
+        // remove orphaned preview files (that is files in the core preview filearea without
+        // the existing original file)
+        mtrace('Deleting orphaned preview files... ', '');
+        $sql = "SELECT p.*
+                  FROM {files} p
+             LEFT JOIN {files} o ON (p.filename = o.contenthash)
+                 WHERE p.contextid = ? AND p.component = 'core' AND p.filearea = 'preview' AND p.itemid = 0
+                       AND o.id IS NULL";
+        $syscontext = context_system::instance();
+        $rs = $DB->get_recordset_sql($sql, array($syscontext->id));
+        foreach ($rs as $orphan) {
+            $file = $this->get_file_instance($orphan);
+            if (!$file->is_directory()) {
+                $file->delete();
+            }
         }
         $rs->close();
         mtrace('done.');

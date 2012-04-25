@@ -822,8 +822,8 @@ abstract class portfolio_plugin_pull_base extends portfolio_plugin_base {
         if (!($file instanceof stored_file)) {
             throw new portfolio_export_exception($this->get('exporter'), 'filenotfound', 'portfolio');
         }
-        // the last 'true' on the end of this means don't die(); afterwards, so we can clean up.
-        send_stored_file($file, 0, 0, true, null, true);
+        // don't die(); afterwards, so we can clean up.
+        send_stored_file($file, 0, 0, true, array('dontdie' => true));
         $this->get('exporter')->log_transfer();
     }
 

@@ -1979,11 +1979,15 @@ class assignment_base {
     }
 
     /**
+     * Sends a file
+     *
      * @param string $filearea
      * @param array $args
+     * @param bool $forcedownload whether or not force download
+     * @param array $options additional options affecting the file serving
      * @return bool
      */
-    function send_file($filearea, $args) {
+    function send_file($filearea, $args, $forcedownload, array $options=array()) {
         debugging('plugin does not implement file sending', DEBUG_DEVELOPER);
         return false;
     }
@@ -3087,9 +3091,10 @@ function assignment_get_participants($assignmentid) {
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function assignment_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function assignment_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -3106,7 +3111,7 @@ function assignment_pluginfile($course, $cm, $context, $filearea, $args, $forced
     $assignmentclass = 'assignment_'.$assignment->assignmenttype;
     $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
 
-    return $assignmentinstance->send_file($filearea, $args);
+    return $assignmentinstance->send_file($filearea, $args, $forcedownload, $options);
 }
 /**
  * Checks if a scale is being used by an assignment

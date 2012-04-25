@@ -293,9 +293,10 @@ function folder_get_file_info($browser, $areas, $course, $cm, $context, $fileare
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -323,7 +324,7 @@ function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 
     // finally send the file
     // for folder module, we force download file all the time
-    send_stored_file($file, 86400, 0, true);
+    send_stored_file($file, 86400, 0, true, $options);
 }
 
 /**

@@ -927,9 +927,10 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -968,7 +969,7 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
     }
 
     // finally send the file
-    send_stored_file($file, $lifetime, 0, false);
+    send_stored_file($file, $lifetime, 0, false, $options);
 }
 
 /**

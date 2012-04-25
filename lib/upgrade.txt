@@ -11,6 +11,9 @@ Note:
 * DDL and DML methods which were deprecated in 2.0 have now been removed, they will no longer produce
 debug messages and will produce fatal errors
 
+API changes:
+* send_stored_file() has changed its interface
+
 === 2.2 ===
 
 removed unused libraries:
