@@ -416,7 +416,9 @@ class assignment_base {
     }
 
     /**
-     * @return Whether this assignment type supports lateness information - true by default
+     * Returns whether the assigment supports lateness information
+     *
+     * @return bool This assignment type supports lateness (true, default) or no (false)
      */
     function supports_lateness() {
         return true;
