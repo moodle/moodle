@@ -90,7 +90,8 @@
 .filemanager-toolbar a:hover {background: #FFFFFF;}
 .filemanager-toolbar .helplink a {border: 0px; background: transparent;}
 .fm-breadcrumb {margin:0;}
-.filemanager-container {padding: 5px;margin: 6px 0;background: #E9F4FF;border: #AACCEE 1px solid}
+.filemanager .fm-breadcrumb.fm-empty {display:none;}
+.filemanager-container {padding: 5px;margin: 6px 0;background: #E9F4FF;border: #AACCEE 1px solid;position: relative;}
 .filemanager-container ul{margin:0;padding:0;}
 .filemanager-container ul li{white-space:nowrap;list-style-type:none;}
 .filemanager-container ul li a{padding:0}
@@ -104,8 +105,40 @@
 
 .filemanager-container,
 .filepicker-filelist {overflow:hidden;}
+
+.filemanager.fm-loading .fm-breadcrumb,
+.filemanager.fm-loading .filemanager-toolbar,
+.filemanager.fm-loading .filemanager-updating,
+.filemanager.fm-loading .filemanager-container {display:none;}
+
+.filemanager.fm-loaded .filemanager-loading {display:none;}
+
+.filemanager.fm-nofiles .fm-btn-download {display:none;}
+
+.filemanager.fm-nomkdir .fm-btn-mkdir {display:none;}
+
+.filemanager.fm-maxfiles .fm-btn-add {display:none;}
+.filemanager.fm-maxfiles .dndupload-message {display:none;}
+
+.filemanager .fm-empty-container {display:none;}
+.filemanager.fm-noitems .fm-empty-container {display:block;}
+.filemanager.fm-noitems .filemanager-container .fm-filelist {display:none;}
+
+.filemanager .filemanager-updating {display:none;text-align:center;}
+.filemanager.fm-updating .filemanager-updating {display:block;}
+.filemanager.fm-updating .filemanager-container {display:none;}
+
+/*
+ * Drag and drop support
+ */
 .filemanager-container .dndupload-target,
 .filepicker-filelist .dndupload-target {background:#f7f998;position:absolute;height:100%;width:100%;top:0;left:0;text-align:center;padding:5px;z-index:1000}
 .filemanager-container.dndupload-over .dndupload-target,
 .filepicker-filelist.dndupload-over .dndupload-target {background:#8EF947;font-weight:bold}
+.dndupload-message {display:none;}
+.dndsupported .dndupload-message {display:inline;}
+.dndupload-target {display:none;}
+.dndsupported .dndupload-ready .dndupload-target {display:block;}
+.dndupload-uploadinprogress {display:none;text-align:center;}
+.dndupload-uploading .dndupload-uploadinprogress {display:block;}
 

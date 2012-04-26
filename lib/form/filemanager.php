@@ -252,7 +252,9 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $options->context = $PAGE->context;
 
         $html = $this->_getTabs();
-        $html .= form_filemanager_render($options);
+        $fm = new form_filemanager($options);
+        $output = $PAGE->get_renderer('core', 'files');
+        $html .= $output->render($fm);
 
         $html .= '<input value="'.$draftitemid.'" name="'.$elname.'" type="hidden" />';
         // label element needs 'for' attribute work
@@ -272,7 +274,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @todo      do not use this abstraction (skodak)
  */
-class form_filemanaer_x {
+class form_filemanager implements renderable {
     /** @var stdClass $options options for filemanager */
     public $options;
 
@@ -280,6 +282,15 @@ class form_filemanaer_x {
      * Constructor
      *
      * @param stdClass $options options for filemanager
+     *   default options are:
+     *       maxbytes=>-1,
+     *       maxfiles=>-1,
+     *       itemid=>0,
+     *       subdirs=>false,
+     *       client_id=>uniqid(),
+     *       acepted_types=>'*',
+     *       return_types=>FILE_INTERNAL,
+     *       context=>$PAGE->context
      */
     public function __construct(stdClass $options) {
         global $CFG, $USER, $PAGE;
@@ -316,6 +327,18 @@ class form_filemanaer_x {
             $this->options->$name = $value;
         }
 
+        // calculate the maximum file size as minimum from what is specified in filepicker options,
+        // course options, global configuration and php settings
+        $coursebytes = $maxbytes = 0;
+        list($context, $course, $cm) = get_context_info_array($this->options->context->id);
+        if (is_object($course)) {
+            $coursebytes = $course->maxbytes;
+        }
+        if (!empty($this->options->maxbytes) && $this->options->maxbytes > 0) {
+            $maxbytes = $this->options->maxbytes;
+        }
+        $this->options->maxbytes = get_max_upload_file_size($CFG->maxbytes, $coursebytes, $maxbytes);
+
         // building file picker options
         $params = new stdClass();
         $params->accepted_types = $options->accepted_types;
@@ -326,134 +349,19 @@ class form_filemanaer_x {
         $filepicker_options = initialise_filepicker($params);
         $this->options->filepicker = $filepicker_options;
     }
-}
 
-/**
- * Print the file manager
- *
- * <pre>
- * $OUTPUT->file_manager($options);
- * </pre>
- *
- * @param array $options associative array with file manager options
- *   options are:
- *       maxbytes=>-1,
- *       maxfiles=>-1,
- *       itemid=>0,
- *       subdirs=>false,
- *       client_id=>uniqid(),
- *       acepted_types=>'*',
- *       return_types=>FILE_INTERNAL,
- *       context=>$PAGE->context
- * @return string HTML fragment
- */
-function form_filemanager_render($options) {
-    global $CFG, $OUTPUT, $PAGE;
-
-    $fm = new form_filemanaer_x($options); //TODO: this is unnecessary here, the nested options are getting too complex
-
-    static $filemanagertemplateloaded;
-
-    $html = '';
-    $options = $fm->options;
-    $straddfile  = get_string('addfile', 'repository');
-    $strmakedir  = get_string('makeafolder', 'moodle');
-    $strdownload = get_string('downloadfolder', 'repository');
-    $strloading  = get_string('loading', 'repository');
-
-    $icon_progress = $OUTPUT->pix_icon('i/loading_small', $strloading).'';
-
-    $client_id = $options->client_id;
-    $itemid    = $options->itemid;
-    list($context, $course, $cm) = get_context_info_array($options->context->id);
-    if (is_object($course)) {
-        $course_maxbytes = $course->maxbytes;
-    } else {
-        $course_maxbytes = $CFG->maxbytes;
+    public function get_nonjsurl() {
+        global $PAGE;
+        return new moodle_url('/repository/draftfiles_manager.php', array(
+            'env'=>'filemanager',
+            'action'=>'browse',
+            'itemid'=>$this->options->itemid,
+            'subdirs'=>$this->options->subdirs,
+            'maxbytes'=>$this->options->maxbytes,
+            'maxfiles'=>$this->options->maxfiles,
+            'ctx_id'=>$PAGE->context->id, // TODO ?
+            'course'=>$PAGE->course->id, // TODO ?
+            'sesskey'=>sesskey(),
+            ));
     }
-
-    if ($options->maxbytes == -1 || empty($options->maxbytes)) {
-        $options->maxbytes = $CFG->maxbytes;
-    }
-
-    if (empty($options->filecount)) {
-        $extra = ' style="display:none"';
-    } else {
-        $extra = '';
-    }
-
-    $maxbytes = display_size(get_max_upload_file_size($CFG->maxbytes, $course_maxbytes, $options->maxbytes));
-    if (empty($options->maxfiles) || $options->maxfiles == -1) {
-        $maxsize = get_string('maxfilesize', 'moodle', $maxbytes);
-    } else {
-        $strparam = (object)array('size' => $maxbytes, 'attachments' => $options->maxfiles);
-        $maxsize = get_string('maxsizeandattachments', 'moodle', $strparam);
-    }
-    $strdndenabled = get_string('dndenabled_insentence', 'moodle').$OUTPUT->help_icon('dndenabled');
-    $loading = get_string('loading', 'repository');
-    $html .= <<<FMHTML
-<div class="filemanager-loading mdl-align" id='filemanager-loading-{$client_id}'>
-$icon_progress
-</div>
-<div id="filemanager-wrapper-{$client_id}" style="display:none">
-    <div class="fm-breadcrumb" id="fm-path-{$client_id}"></div>
-    <div class="filemanager-toolbar">
-        <input type="button" class="fm-btn-add" id="btnadd-{$client_id}" onclick="return false" value="{$straddfile}" />
-        <input type="button" class="fm-btn-mkdir" id="btncrt-{$client_id}" onclick="return false" value="{$strmakedir}" />
-        <input type="button" class="fm-btn-download" id="btndwn-{$client_id}" onclick="return false" {$extra} value="{$strdownload}" />
-        <span> $maxsize </span>
-        <span id="dndenabled-{$client_id}" style="display: none"> - $strdndenabled </span>
-    </div>
-    <div class="filemanager-container" id="filemanager-{$client_id}" style="position: relative" >
-        <ul id="draftfiles-{$client_id}" class="fm-filelist">
-            <li>{$loading}</li>
-        </ul>
-    </div>
-</div>
-<div class='clearer'></div>
-FMHTML;
-    if (empty($filemanagertemplateloaded)) {
-        $filemanagertemplateloaded = true;
-        $html .= <<<FMHTML
-<div id="fm-template" style="display:none">___fullname___ ___action___</div>
-FMHTML;
-    }
-
-    $module = array(
-        'name'=>'form_filemanager',
-        'fullpath'=>'/lib/form/filemanager.js',
-        'requires' => array('core_filepicker', 'base', 'io-base', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview', 'core_dndupload'),
-        'strings' => array(array('loading', 'repository'), array('nomorefiles', 'repository'), array('confirmdeletefile', 'repository'),
-             array('add', 'repository'), array('accessiblefilepicker', 'repository'), array('move', 'moodle'),
-             array('cancel', 'moodle'), array('download', 'moodle'), array('ok', 'moodle'),
-             array('emptylist', 'repository'), array('nofilesattached', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
-             array('zip', 'editor'), array('unzip', 'moodle'), array('rename', 'moodle'), array('delete', 'moodle'),
-             array('cannotdeletefile', 'error'), array('confirmdeletefile', 'repository'),
-             array('nopathselected', 'repository'), array('popupblockeddownload', 'repository'),
-             array('draftareanofiles', 'repository'), array('path', 'moodle'), array('setmainfile', 'repository'),
-             array('moving', 'repository'), array('files', 'moodle'), array('serverconnection', 'error')
-        )
-    );
-    $PAGE->requires->js_module($module);
-    $PAGE->requires->js_init_call('M.form_filemanager.init', array($options), true, $module);
-
-    // non javascript file manager
-    $filemanagerurl = new moodle_url('/repository/draftfiles_manager.php', array(
-        'env'=>'filemanager',
-        'action'=>'browse',
-        'itemid'=>$itemid,
-        'subdirs'=>$options->subdirs,
-        'maxbytes'=>$options->maxbytes,
-        'maxfiles'=>$options->maxfiles,
-        'ctx_id'=>$PAGE->context->id,
-        'course'=>$PAGE->course->id,
-        'sesskey'=>sesskey(),
-        ));
-
-    $html .= '<noscript>';
-    $html .= "<div><object type='text/html' data='$filemanagerurl' height='160' width='600' style='border:1px solid #000'></object></div>";
-    $html .= '</noscript>';
-
-
-    return $html;
 }
