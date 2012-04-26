@@ -58,16 +58,6 @@ function callback_weeks_definition() {
 }
 
 /**
- * The GET argument variable that is used to identify the section being
- * viewed by the user (if there is one)
- *
- * @return string
- */
-function callback_weeks_request_key() {
-    return 'week';
-}
-
-/**
  * Gets the name for the provided section.
  *
  * @param stdClass $course

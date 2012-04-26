@@ -57,16 +57,6 @@ function callback_topics_definition() {
     return get_string('topic');
 }
 
-/**
- * The GET argument variable that is used to identify the section being
- * viewed by the user (if there is one)
- *
- * @return string
- */
-function callback_topics_request_key() {
-    return 'topic';
-}
-
 function callback_topics_get_section_name($course, $section) {
     // We can't add a node without any text
     if (!empty($section->name)) {

@@ -1766,10 +1766,9 @@ class global_navigation extends navigation_node {
             $urlfunction = null;
         }
 
-        $keyfunction = 'callback_'.$courseformat.'_request_key';
         $key = 0;
-        if (defined('AJAX_SCRIPT') && AJAX_SCRIPT == '0' && function_exists($keyfunction) && $this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
-            $key = optional_param($keyfunction(), $key, PARAM_INT);
+        if (defined('AJAX_SCRIPT') && AJAX_SCRIPT == '0' && $this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
+            $key = optional_param('section', $key, PARAM_INT);
         }
 
         $navigationsections = array();
