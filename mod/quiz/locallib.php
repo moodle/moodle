@@ -545,6 +545,7 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
         $DB->update_record('quiz_grades', $grade);
 
     } else {
+        $grade = new stdClass();
         $grade->quiz = $quiz->id;
         $grade->userid = $userid;
         $grade->grade = $bestgrade;
