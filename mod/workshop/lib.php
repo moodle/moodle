@@ -1240,12 +1240,7 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
     require_login($course, true, $cm);
 
     if ($filearea === 'instructauthors') {
-        // submission instructions may contain sensitive data
-        if (!has_any_capability(array('moodle/course:manageactivities', 'mod/workshop:submit'), $context)) {
-            send_file_not_found();
-        }
-
-        array_shift($args); // we do not use itemids here
+        array_shift($args); // itemid is ignored here
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
 
@@ -1261,12 +1256,7 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
     }
 
     if ($filearea === 'instructreviewers') {
-        // submission instructions may contain sensitive data
-        if (!has_any_capability(array('moodle/course:manageactivities', 'mod/workshop:peerassess'), $context)) {
-            send_file_not_found();
-        }
-
-        array_shift($args); // we do not use itemids here
+        array_shift($args); // itemid is ignored here
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
 
