@@ -4512,3 +4512,24 @@ function include_course_ajax($course, $modules = array(), $config = null) {
         $PAGE->requires->string_for_js('pluginname', $module);
     }
 }
+
+/**
+ * The URL to use for the specified course (with section)
+ *
+ * @param stdClass $course The course to get the section name for
+ * @param int $sectionno The section number to return a link to
+ * @return moodle_url The url of course
+ */
+function course_get_url($course, $sectionno = null) {
+    $url = new moodle_url('/course/view.php', array('id' => $course->id));
+
+    if (!is_null($sectionno)) {
+        if ($course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+            $url->param('section', $sectionno);
+        } else {
+            $url->set_anchor('section-'.$sectionno);
+        }
+    }
+
+    return $url;
+}

@@ -47,7 +47,7 @@ $mform->set_data($section); // set current value
 
 /// If data submitted, then process and store.
 if ($mform->is_cancelled()){
-    redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
+    redirect(course_get_url($course, $section->section));
 
 } else if ($data = $mform->get_data()) {
     if (empty($data->usedefaultname)) {
@@ -61,7 +61,7 @@ if ($mform->is_cancelled()){
     $DB->update_record('course_sections', $section);
     add_to_log($course->id, "course", "editsection", "editsection.php?id=$section->id", "$section->section");
     $PAGE->navigation->clear_cache();
-    redirect("view.php?id=$course->id");
+    redirect(course_get_url($course, $section->section));
 }
 
 $sectionname  = get_section_name($course, $section);
