@@ -860,7 +860,7 @@ class core_renderer extends renderer_base {
         foreach ($controls as $control) {
             $controlshtml[] = html_writer::tag('a',
                     html_writer::empty_tag('img',  array('src' => $this->pix_url($control['icon'])->out(false), 'alt' => $control['caption'])),
-                    array('class' => 'icon','title' => $control['caption'], 'href' => $control['url']));
+                    array('class' => 'icon ' . $control['class'],'title' => $control['caption'], 'href' => $control['url']));
         }
         return html_writer::tag('div', implode('', $controlshtml), array('class' => 'commands'));
     }
