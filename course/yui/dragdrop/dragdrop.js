@@ -2,6 +2,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
 
     var CSS = {
         ACTIVITY : 'activity',
+        COMMANDSPAN : 'span.commands',
         CONTENT : 'content',
         COURSECONTENT : 'course-content',
         EDITINGMOVE : 'editing_move',
@@ -313,6 +314,9 @@ YUI.add('moodle-course-dragdrop', function(Y) {
 
             var sectionselector = M.course.format.get_section_selector(Y);
 
+            // Add spinner if it not there
+            var spinner = M.util.add_spinner(Y, dragnode.one(CSS.COMMANDSPAN));
+
             var params = {};
 
             // Handle any variables which we must pass back through to
@@ -342,13 +346,18 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                 on: {
                     start : function(tid) {
                         this.lock_drag_handle(drag, CSS.EDITINGMOVE);
+                        spinner.show();
                     },
                     success: function(tid, response) {
                         this.unlock_drag_handle(drag, CSS.EDITINGMOVE);
+                        window.setTimeout(function(e) {
+                            spinner.hide();
+                        }, 250);
                     },
                     failure: function(tid, response) {
                         this.ajax_failure(response);
                         this.unlock_drag_handle(drag, CSS.SECTIONHANDLE);
+                        spinner.hide();
                         // TODO: revert nodes location
                     }
                 },

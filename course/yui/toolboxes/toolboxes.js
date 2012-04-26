@@ -117,12 +117,11 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          * Send a request using the REST API
          *
          * @param data The data to submit
-         * @param loadingiconat (optional) Show the loading icon spinner at the specified location (replaces text)
-         * @param lightbox (optional) A lightbox which may contain a section loader
+         * @param statusspinner (optional) A statusspinner which may contain a section loader
          * @param optionalconfig (optional) Any additional configuration to submit
          * @return response responseText field from responce
          */
-        send_request : function(data, loadingiconat, lightbox, optionalconfig) {
+        send_request : function(data, statusspinner, optionalconfig) {
             // Default data structure
             if (!data) {
                 data = {};
@@ -131,12 +130,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var pageparams = this.get('config').pageparams;
             for (varname in pageparams) {
                 data[varname] = pageparams[varname];
-            }
-
-            // Make a note of the icon for displaying the loadingicon spinner
-            var originalicon;
-            if (loadingiconat) {
-                originalicon = loadingiconat.getAttribute('src');
             }
 
             data.sesskey = M.cfg.sesskey;
@@ -157,25 +150,15 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                                 new M.core.ajaxException(responsetext);
                             }
                         } catch (e) {}
-                        if (originalicon) {
-                            // Replace the spinner with the original icon We use a pause to give
-                            // positive feedback that something is happening
+                        if (statusspinner) {
                             window.setTimeout(function(e) {
-                                loadingiconat.setAttribute('src', originalicon);
-                            }, 250);
-                        }
-                        if (lightbox) {
-                            window.setTimeout(function(e) {
-                                lightbox.hide();
-                            }, 250);
+                                statusspinner.hide();
+                            }, 400);
                         }
                     },
                     failure : function(tid, response) {
-                        if (originalicon) {
-                            loadingiconat.setAttribute('src', originalicon);
-                        }
-                        if (lightbox) {
-                            lightbox.hide();
+                        if (statusspinner) {
+                            statusspinner.hide();
                         }
                         new M.core.ajaxException(response);
                     }
@@ -191,9 +174,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 }
             }
 
-            if (loadingiconat) {
-                loadingiconat.removeAttribute('innerHTML');
-                loadingiconat.set('src', M.util.image_url(WAITICON.pix, WAITICON.component));
+            if (statusspinner) {
+                statusspinner.show();
             }
 
             // Send the request
@@ -306,12 +288,12 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             groups.setAttribute('groupmode', this.GROUPS_VISIBLE);
         },
         move_left : function(e) {
-            this.move_leftright(e, -1, CSS.MOVELEFT);
+            this.move_leftright(e, -1);
         },
         move_right : function(e) {
-            this.move_leftright(e, 1, CSS.MOVERIGHT);
+            this.move_leftright(e, 1);
         },
-        move_leftright : function(e, direction, buttonselector) {
+        move_leftright : function(e, direction) {
             // Get the element we're working on
             var element = e.target.ancestor(CSS.ACTIVITYLI);
 
@@ -336,14 +318,12 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'value' : newindent,
                 'id'    : this.get_element_id(element)
             };
-            var editbutton = element.one(buttonselector + ' img');
-            this.send_request(data, editbutton);
+            var spinner = M.util.add_spinner(Y, element.one(CSS.COMMANDSPAN));
+            this.send_request(data, spinner);
 
             // Handle removal/addition of the moveleft button
             if (newindent == 0) {
-                window.setTimeout(function(e) {
-                    element.one(CSS.MOVELEFT).remove();
-                }, 250);
+                element.one(CSS.MOVELEFT).remove();
             } else if (newindent == 1 && oldindent == 0) {
                 this.add_moveleft(element);
             }
@@ -410,7 +390,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'value' : value,
                 'id'    : this.get_element_id(element)
             };
-            this.send_request(data, button.one('img'));
+            var spinner = M.util.add_spinner(Y, element.one(CSS.COMMANDSPAN));
+            this.send_request(data, spinner);
         },
         toggle_groupmode : function(e) {
             // Get the element we're working on
@@ -461,7 +442,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'value' : groupmode,
                 'id'    : this.get_element_id(element)
             };
-            this.send_request(data, icon);
+            var spinner = M.util.add_spinner(Y, element.one(CSS.COMMANDSPAN));
+            this.send_request(data, spinner);
         },
         /**
          * Add the moveleft button
@@ -574,7 +556,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var lightbox = M.util.add_lightbox(Y, section);
             lightbox.show();
 
-            var response = this.send_request(data, null, lightbox);
+            var response = this.send_request(data, lightbox);
 
             var activities = section.all(CSS.ACTIVITYLI);
             activities.each(function(node) {
@@ -642,7 +624,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             };
             var lightbox = M.util.add_lightbox(Y, section);
             lightbox.show();
-            this.send_request(data, null, lightbox);
+            this.send_request(data, lightbox);
         }
     }, {
         NAME : 'course-section-toolbox',
