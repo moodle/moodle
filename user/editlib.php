@@ -206,7 +206,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $choices['0'] = get_string('ajaxno');
         $choices['1'] = get_string('ajaxyes');
         $mform->addElement('select', 'ajax', get_string('ajaxuse'), $choices);
-        $mform->setDefault('ajax', 0);
+        $mform->setDefault('ajax', 1);
     }
 
     $choices = array();
