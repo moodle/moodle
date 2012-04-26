@@ -9111,20 +9111,32 @@ function generate_password($maxlen=10) {
  * Given a float, prints it nicely.
  * Localized floats must not be used in calculations!
  *
+ * The stripzeros feature is intended for making numbers look nicer in small
+ * areas where it is not necessary to indicate the degree of accuracy by showing
+ * ending zeros. If you turn it on with $decimalpoints set to 3, for example,
+ * then it will display '5.4' instead of '5.400' or '5' instead of '5.000'.
+ *
  * @param float $float The float to print
  * @param int $decimalpoints The number of decimal places to print.
  * @param bool $localized use localized decimal separator
+ * @param bool $stripzeros If true, removes final zeros after decimal point
  * @return string locale float
  */
-function format_float($float, $decimalpoints=1, $localized=true) {
+function format_float($float, $decimalpoints=1, $localized=true, $stripzeros=false) {
     if (is_null($float)) {
         return '';
     }
     if ($localized) {
-        return number_format($float, $decimalpoints, get_string('decsep', 'langconfig'), '');
+        $separator = get_string('decsep', 'langconfig');
     } else {
-        return number_format($float, $decimalpoints, '.', '');
+        $separator = '.';
     }
+    $result = number_format($float, $decimalpoints, $separator, '');
+    if ($stripzeros) {
+        // Remove zeros and final dot if not needed
+        $result = preg_replace('~(' . preg_quote($separator) . ')?0+$~', '', $result);
+    }
+    return $result;
 }
 
 /**
