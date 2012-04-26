@@ -1889,7 +1889,7 @@ abstract class repository {
      */
     public function print_search() {
         global $PAGE;
-        $renderer = $PAGE->get_renderer('core', 'repository');
+        $renderer = $PAGE->get_renderer('core', 'files');
         return $renderer->repository_default_searchform();
     }
 
@@ -2408,6 +2408,7 @@ final class repository_type_form extends moodleform {
  */
 function initialise_filepicker($args) {
     global $CFG, $USER, $PAGE, $OUTPUT;
+    static $templatesinitialized;
     require_once($CFG->libdir . '/licenselib.php');
 
     $return = new stdClass();
@@ -2474,8 +2475,13 @@ function initialise_filepicker($args) {
         // JavaScript a lot, the key NEEDS to be the repository id.
         $return->repositories[$repository->id] = $meta;
     }
-    $fprenderer = $PAGE->get_renderer('core', 'repository');
-    $return->templates = $fprenderer->filepicker_templates();
+    if (!$templatesinitialized) {
+        // we need to send filepicker templates to the browser just once
+        $fprenderer = $PAGE->get_renderer('core', 'files');
+        $templates = $fprenderer->filepicker_js_templates();
+        $PAGE->requires->js_init_call('M.core_filepicker.set_templates', array($templates), true);
+        $templatesinitialized = true;
+    }
     return $return;
 }
 /**

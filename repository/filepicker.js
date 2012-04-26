@@ -65,6 +65,11 @@ M.core_filepicker.show = function(Y, options) {
     M.core_filepicker.instances[options.client_id].show();
 };
 
+M.core_filepicker.set_templates = function(Y, templates) {
+    for (var templid in templates) {
+        M.core_filepicker.templates[templid] = templates[templid];
+    }
+}
 
 /**
  * Add new file picker to current instances
@@ -98,11 +103,6 @@ M.core_filepicker.init = function(Y, options) {
         var stylenameCap = stylename.substr(0,1).toUpperCase() + stylename.substr(1, stylename.length-1).toLowerCase();
         this.setStyle(stylename, '' + Math.max(value, this.getStylePx('min'+stylenameCap)) + 'px')
         return this;
-    }
-
-    if (options.templates);
-    for (var templid in options.templates) {
-        this.templates[templid] = options.templates[templid];
     }
 
     var FilePickerHelper = function(options) {
