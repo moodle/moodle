@@ -29,8 +29,6 @@ defined('MOODLE_INTERNAL') || die();
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/completionlib.php');
 
-    $displaysection = optional_param('week', 0, PARAM_INT);
-
     $streditsummary  = get_string('editsummary');
     $stradd          = get_string('add');
     $stractivities   = get_string('activities');
@@ -45,6 +43,15 @@ defined('MOODLE_INTERNAL') || die();
         $strmoveup   = get_string('moveup');
         $strmovedown = get_string('movedown');
     }
+
+   // Horrible backwards compatible parameter aliasing
+    if ($week = optional_param('week', 0, PARAM_INT)) {
+        $url = $PAGE->url;
+        $url->param('section', $week);
+        debugging('Outdated week param passed to course/view.php', DEBUG_DEVELOPER);
+        redirect($url);
+    }
+    // End backwards-compatible aliasing..
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 

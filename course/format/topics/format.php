@@ -30,7 +30,14 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/completionlib.php');
 
-$displaysection = optional_param('topic', 0, PARAM_INT);
+// Horrible backwards compatible parameter aliasing
+if ($topic = optional_param('topic', 0, PARAM_INT)) {
+    $url = $PAGE->url;
+    $url->param('section', $topic);
+    debugging('Outdated topic param passed to course/view.php', DEBUG_DEVELOPER);
+    redirect($url);
+}
+// End backwards-compatible aliasing..
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 

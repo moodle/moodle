@@ -31,7 +31,12 @@
 
     $course = $DB->get_record('course', $params, '*', MUST_EXIST);
 
-    $PAGE->set_url('/course/view.php', array('id' => $course->id)); // Defined here to avoid notices on errors etc
+    $urlparams = array('id' => $course->id);
+    if ($section) {
+        $urlparams['section'] = $section;
+    }
+
+    $PAGE->set_url('/course/view.php', $urlparams); // Defined here to avoid notices on errors etc
 
     preload_course_contexts($course->id);
     $context = context_course::instance($course->id, MUST_EXIST);
@@ -78,6 +83,7 @@
 
     require_once($CFG->dirroot.'/calendar/lib.php');    /// This is after login because it needs $USER
 
+    //TODO: danp do we need different urls?
     add_to_log($course->id, 'course', 'view', "view.php?id=$course->id", "$course->id");
 
     $course->format = clean_param($course->format, PARAM_ALPHA);
@@ -149,7 +155,7 @@
         $USER->editing = 0;
     }
 
-    $SESSION->fromdiscussion = $CFG->wwwroot .'/course/view.php?id='. $course->id;
+    $SESSION->fromdiscussion = $PAGE->url->out(false);
 
 
     if ($course->id == SITEID) {
@@ -219,6 +225,11 @@
             print_error('cannotcreateorfindstructs', 'error');
         }
     }
+
+    // CAUTION, hacky fundamental variable defintion to follow!
+    // Note that because of the way course fromats are constructed though
+    // inclusion we pass parameters around this way..
+    $displaysection = $section;
 
     // Include the actual course format.
     require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
