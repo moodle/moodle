@@ -43,7 +43,6 @@ $summary    = optional_param('summary', '', PARAM_RAW);
 $sequence   = optional_param('sequence', '', PARAM_SEQUENCE);
 $visible    = optional_param('visible', 0, PARAM_INT);
 $pageaction = optional_param('action', '', PARAM_ALPHA); // Used to simulate a DELETE command
-$title      = optional_param('title', '', PARAM_TEXT);
 
 $PAGE->set_url('/course/rest.php', array('courseId'=>$courseid,'class'=>$class));
 
@@ -136,14 +135,6 @@ switch($requestmethod) {
                         }
 
                         moveto_module($cm, $section, $beforemod);
-                        break;
-                    case 'updatetitle':
-                        require_capability('moodle/course:manageactivities', $modcontext);
-                        $cm = get_coursemodule_from_id('', $id, 0, false, MUST_EXIST);
-                        $module = new stdClass();
-                        $module->id = $cm->instance;
-                        $module->name = $title;
-                        $DB->update_record($cm->modname, $module);
                         break;
                 }
                 rebuild_course_cache($course->id);

@@ -504,7 +504,6 @@ $string['editorsettings'] = 'Editor settings';
 $string['editorshortcutkeys'] = 'Editor shortcut keys';
 $string['editsettings'] = 'Edit settings';
 $string['editsummary'] = 'Edit summary';
-$string['edittitle'] = 'Edit title';
 $string['editthisactivity'] = 'Edit this activity';
 $string['editthiscategory'] = 'Edit this category';
 $string['edituser'] = 'Edit user accounts';

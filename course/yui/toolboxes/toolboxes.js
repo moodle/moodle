@@ -300,13 +300,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
 
             groups = this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.GROUPSVISIBLE, this.toggle_groupmode);
             groups.setAttribute('groupmode', this.GROUPS_VISIBLE);
-
-            // Add the edit title button
-            Y.one(toolboxtarget).all(CSS.ACTIVITYLI).each(function (target) {
-                if (!target.hasClass(CSS.HASLABEL)) {
-                    this.add_edittitlebutton(target.one(CSS.COMMANDSPAN));
-                }
-            }, this);
         },
         move_left : function(e) {
             this.move_leftright(e, -1, CSS.MOVELEFT);
@@ -480,113 +473,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             anchor.appendChild(newicon);
             anchor.on('click', this.move_left, this);
             target.one(CSS.MOVERIGHT).insert(anchor, 'before');
-        },
-        /**
-         * Add the edittitlebutton button
-         *
-         * @param target The encapsulating <li> element
-         */
-        add_edittitlebutton : function(target) {
-            var edit_string = M.util.get_string('edittitle', 'moodle');
-            var newicon = Y.Node.create('<img />')
-                .addClass(CSS.GENERICICONCLASS)
-                .setAttrs({
-                    'src'   : M.util.image_url('t/editstring', 'moodle'),
-                    'title' : edit_string,
-                    'alt'   : edit_string
-                });
-            var anchor = new Y.Node.create('<a />')
-                .setStyle('cursor', 'pointer')
-                .addClass(CSS.EDITTITLECLASS)
-                .set('title', edit_string);
-            anchor.appendChild(newicon);
-            anchor.on('click', this.edit_resource_title, this);
-            target.get('firstChild').insert(anchor, 'before');
-        },
-        /**
-         * Edit the title for the resource
-         */
-        edit_resource_title : function(e) {
-            // Get the element we're working on
-            var element = e.target.ancestor(CSS.ACTIVITYLI);
-            var instancename  = element.one(CSS.INSTANCENAME);
-            var currenttitle = instancename.get('firstChild');
-            var oldtitle = currenttitle.get('data');
-            var editbutton = element.one('a.' + CSS.EDITTITLECLASS + ' img');
-
-            // Disable the current href to prevent redirections when editing
-            var anchor = instancename.ancestor('a');
-            anchor.setAttribute('oldhref', anchor.getAttribute('href'));
-            anchor.removeAttribute('href');
-
-            // Create the editor and submit button
-            var editor = Y.Node.create('<input />')
-                .setAttrs({
-                    'name'  : 'title',
-                    'value' : oldtitle,
-                    'autocomplete' : 'off'
-                });
-            var editform = Y.Node.create('<form />')
-                .setStyle('padding', '0')
-                .setStyle('display', 'inline')
-                .setAttribute('action', '#');
-
-            // Clear the existing content and put the editor in
-            currenttitle.set('data', '');
-            editform.appendChild(editor);
-            instancename.appendChild(editform);
-
-            // Focus and select the editor text
-            editor.focus().select();
-
-            // Handle cancellation of the editor
-            editor.on('blur', function(e) {
-                // Detach the blur event before removing as some actions trigger multiple blurs in
-                // some browser
-                editor.detach('blur');
-                editform.remove();
-
-                // Set the title and anchor back to their previous settings
-                currenttitle.set('data', oldtitle);
-                anchor.setAttribute('href', anchor.getAttribute('oldhref'));
-                anchor.removeAttribute('oldhref');
-            });
-
-            // Handle form submission
-            editform.on('submit', function(e) {
-                // We don't actually want to submit anything
-                e.preventDefault();
-
-                // Detach the handlers to prevent multiple submissions
-                editform.detach('submit');
-                editor.detach('blur');
-
-                // We only accept strings which have valid content
-                var newtitle = Y.Lang.trim(editor.get('value'));
-                if (newtitle != null && newtitle != "" && newtitle != oldtitle) {
-                    var data = {
-                        'class'   : 'resource',
-                        'field'   : 'updatetitle',
-                        'title'   : newtitle,
-                        'id'      : this.get_element_id(element)
-                    };
-                    this.send_request(data, editbutton);
-                    currenttitle.set('data', newtitle);
-                } else {
-                    // Invalid content. Set the title back to it's original contents
-                    currenttitle.set('data', oldtitle);
-                }
-
-                // Add the anchor back
-                editform.remove();
-
-                // We need a timeout here otherwise hitting return to save in some browsers triggers
-                // the anchor
-                setTimeout(function(e) {
-                    anchor.setAttribute('href', anchor.getAttribute('oldhref'));
-                    anchor.removeAttribute('oldhref');
-                }, 500);
-            }, this);
         }
     }, {
         NAME : 'course-resource-toolbox',
