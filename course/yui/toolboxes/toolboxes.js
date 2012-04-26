@@ -4,9 +4,10 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     var CSS = {
         ACTIVITYLI : 'li.activity',
         COMMANDSPAN : 'span.commands',
+        CONTENTAFTERLINK : 'div.contentafterlink',
         DELETE : 'a.editing_delete',
         DIMCLASS : 'dimmed',
-        DIMMEDLABELCLASS : 'dimmed_text',
+        DIMMEDTEXT : 'dimmed_text',
         EDITTITLECLASS : 'edittitle',
         GENERICICONCLASS : 'iconsmall',
         GROUPSNONE : 'a.editing_groupsnone',
@@ -79,7 +80,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var dimarea;
             var toggle_class;
             if (this.is_label(element)) {
-                toggle_class = CSS.DIMMEDLABELCLASS;
+                toggle_class = CSS.DIMMEDTEXT;
                 dimarea = element.one(CSS.MODINDENTDIV + ' div');
             } else {
                 toggle_class = CSS.DIMCLASS;
@@ -98,6 +99,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
 
             // Change the UI
             dimarea.toggleClass(toggle_class);
+            // We need to toggle dimming on the description too
+            element.all(CSS.CONTENTAFTERLINK).toggleClass(CSS.DIMMEDTEXT);
             var newstring = M.util.get_string(status, 'moodle');
             hideicon.setAttrs({
                 'alt' : newstring,
