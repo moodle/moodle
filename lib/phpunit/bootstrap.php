@@ -196,7 +196,7 @@ require_once("$CFG->dirroot/lib/phpunit/lib.php");
 define('ABORT_AFTER_CONFIG_CANCEL', true);
 require("$CFG->dirroot/lib/setup.php");
 
-raise_memory_limit(MEMORY_EXTRA);
+raise_memory_limit(MEMORY_HUGE);
 
 if (PHPUNIT_UTIL) {
     // we are not going to do testing, this is 'true' in utility scripts that only init database
