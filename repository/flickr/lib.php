@@ -198,7 +198,7 @@ class repository_flickr extends repository {
      * @param int $page
      * @return array
      */
-    public function search($search_text) {
+    public function search($search_text, $page = 0) {
         $photos = $this->flickr->photos_search(array(
             'user_id'=>$this->nsid,
             'per_page'=>24,
