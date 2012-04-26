@@ -20,6 +20,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         LIGHTBOX : 'lightbox',
         MODINDENTCOUNT : 'mod-indent-',
         MODINDENTDIV : 'div.mod-indent',
+        MODINDENTHUGE : 'mod-indent-huge',
         MODULEIDPREFIX : 'module-',
         MOVELEFT : 'a.editing_moveleft',
         MOVELEFTCLASS : 'editing_moveleft',
@@ -345,6 +346,14 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 }, 250);
             } else if (newindent == 1 && oldindent == 0) {
                 this.add_moveleft(element);
+            }
+
+            // Handle massive indentation to match non-ajax display
+            var hashugeclass = indentdiv.hasClass(CSS.MODINDENTHUGE);
+            if (newindent > 15 && !hashugeclass) {
+                indentdiv.addClass(CSS.MODINDENTHUGE);
+            } else if (newindent <= 15 && hashugeclass) {
+                indentdiv.removeClass(CSS.MODINDENTHUGE);
             }
         },
         delete_resource : function(e) {
