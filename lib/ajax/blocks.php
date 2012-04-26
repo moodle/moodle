@@ -39,7 +39,7 @@ $bui_beforeid = optional_param('bui_beforeid', 0, PARAM_INT);
 
 // Setting pagetype and URL
 $PAGE->set_pagetype($pagetype);
-$PAGE->set_url($CFG->libdir.'/ajax/blocks.php', array('courseid' => $courseid, 'pagelayout' => $pagelayout, 'pagetype' => $pagetype));
+$PAGE->set_url('/lib/ajax/blocks.php', array('courseid' => $courseid, 'pagelayout' => $pagelayout, 'pagetype' => $pagetype));
 
 // Verifying login and session
 $cm = null;
