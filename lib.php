@@ -262,7 +262,7 @@ function book_get_post_actions() {
         }
         $function = 'booktool_'.$plugin.'_get_post_actions';
         if (function_exists($function)) {
-            if ($actions = $function($settingsnav, $booknode)) {
+            if ($actions = $function()) {
                 $return = array_merge($return, $actions);
             }
         }
