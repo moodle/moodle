@@ -2275,6 +2275,14 @@ class calendar_event {
         // Delete the event
         $DB->delete_records('event', array('id'=>$this->properties->id));
 
+        // If we are deleting parent of a repeated event series, promote the next event in the series as parent
+        if (($this->properties->id == $this->properties->repeatid) && !$deleterepeated) {
+            $newparent = $DB->get_field_sql("SELECT id from {event} where repeatid = ? order by id ASC", array($this->properties->id), IGNORE_MULTIPLE);
+            if (!empty($newparent)) {
+                $DB->execute("UPDATE {event} SET repeatid = ? WHERE repeatid = ?", array($newparent, $this->properties->id));
+            }
+        }
+
         // If the editor context hasn't already been set then set it now
         if ($this->editorcontext === null) {
             $this->editorcontext = $this->properties->context;
