@@ -204,7 +204,7 @@ function booktool_exportimscp_prepare_files($book, $context) {
 
 function booktool_exportimscp_chapter_content($chapter, $context) {
 
-    $options = new object();
+    $options = new stdClass();
     $options->noclean = true;
     $options->context = $context;
 
