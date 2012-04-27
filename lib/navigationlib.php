@@ -1762,7 +1762,10 @@ class global_navigation extends navigation_node {
         $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
 
         $urlfunction = 'callback_'.$courseformat.'_get_section_url';
-        if ($course->coursedisplay == COURSE_DISPLAY_SINGLEPAGE || !function_exists($urlfunction)) {
+        if (function_exists($urlfunction)) {
+            debugging('Depricated callback_'.$courseformat.'_get_section_url in use.
+                Please switch your code to use the standard section url param');
+        } else {
             $urlfunction = null;
         }
 
@@ -1788,8 +1791,13 @@ class global_navigation extends navigation_node {
                 }
 
                 $url = null;
-                if (!empty($urlfunction)) {
+                if ($urlfunction) {
+                    // pre 2.3 style format url
                     $url = $urlfunction($course->id, $section->section);
+                }else{
+                    if ($course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+                        $url = course_get_url($course, $section->section);
+                    }
                 }
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
