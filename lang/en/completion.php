@@ -118,7 +118,6 @@ $string['datepassed']='Date passed';
 $string['daysafterenrolment']='Days after enrolment';
 $string['durationafterenrolment']='Duration after enrolment';
 $string['fraction']='Fraction';
-$string['gradetopass']='{$a} to pass';
 $string['inprogress']='In progress';
 $string['manualcompletionby']='Manual completion by';
 $string['manualselfcompletion']='Manual self completion';
