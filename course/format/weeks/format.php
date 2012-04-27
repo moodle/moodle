@@ -286,3 +286,6 @@ defined('MOODLE_INTERNAL') || die();
         $select->formid = 'sectionmenu';
         echo $OUTPUT->render($select);
     }
+
+    // Include course format js module
+    $PAGE->requires->js('/course/format/weeks/format.js');

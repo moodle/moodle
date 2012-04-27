@@ -4504,14 +4504,14 @@ function include_course_ajax($course, $modules = array(), $config = null) {
 
     // Include course dragdrop
     if ($course->id != SITEID) {
-        $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.core_course.init_section_dragdrop',
+        $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.course.init_section_dragdrop',
             array(array(
                 'courseid' => $course->id,
                 'ajaxurl' => $config->sectionurl,
                 'config' => $config,
             )), null, true);
 
-        $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.core_course.init_resource_dragdrop',
+        $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.course.init_resource_dragdrop',
             array(array(
                 'courseid' => $course->id,
                 'ajaxurl' => $config->resourceurl,
