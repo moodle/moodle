@@ -34,6 +34,7 @@ $string['admindirname'] = 'Administratorski direktorijum';
 $string['availablelangs'] = 'Spisak dostupnih jezika';
 $string['chooselanguagehead'] = 'Izaberite jezik';
 $string['chooselanguagesub'] = 'Molimo izaberite jezik koji će se koristiti samo tokom instalacije. Kasnije ćete moći da izaberete jezička podešavanja na nivou sajta i korisnika.';
+$string['clialreadyconfigured'] = 'Datoteka config.php već postoji. Molimo, koristite admin/cli/install_database.php ako želite da instalirate ovaj sajt.';
 $string['clialreadyinstalled'] = 'Datoteka config.php već postoji. Upotrebite komandu admin/cli/upgrade.php ako želite da ažurirate svoj sajt.';
 $string['cliinstallheader'] = 'Moodle {$a} program za instalaciju iz komandne linije';
 $string['databasehost'] = 'Server baze podataka :';
