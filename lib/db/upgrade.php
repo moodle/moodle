@@ -422,5 +422,11 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012042300.02);
     }
 
+    if ($oldversion < 2012042700.01) {
+        // Make sure deleted users do not have picture flag.
+        $DB->set_field('user', 'picture', 0, array('deleted'=>1, 'picture'=>1));
+        upgrade_main_savepoint(true, 2012042700.01);
+    }
+
     return true;
 }
