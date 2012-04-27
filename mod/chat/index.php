@@ -27,6 +27,7 @@ $strchat  = get_string('modulename', 'chat');
 /// Print the header
 $PAGE->navbar->add($strchats);
 $PAGE->set_title($strchats);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 /// Get all the appropriate data
