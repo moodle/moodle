@@ -103,7 +103,7 @@ class qtype_calculatedmulti_multi_question extends qtype_multichoice_multi_quest
     public $synchronised;
 
     public function start_attempt(question_attempt_step $step, $variant) {
-        qtype_calculated_question_helper::start_attempt($this, $step);
+        qtype_calculated_question_helper::start_attempt($this, $step, $variant);
         parent::start_attempt($step, $variant);
     }
 
