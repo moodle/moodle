@@ -577,6 +577,11 @@
     </DATABASE>
     <PHP version="5.3.2" level="required">
     </PHP>
+    <PCREUNICODE level="optional">
+      <FEEDBACK>
+        <ON_CHECK message="pcreunicodewarning" />
+      </FEEDBACK>
+    </PCREUNICODE>
     <PHP_EXTENSIONS>
       <PHP_EXTENSION name="iconv" level="required">
         <FEEDBACK>
@@ -670,5 +675,5 @@
         </FEEDBACK>
       </PHP_SETTING>
     </PHP_SETTINGS>
-  </MOODLE>
+</MOODLE>
 </COMPATIBILITY_MATRIX>
