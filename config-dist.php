@@ -220,6 +220,12 @@ $CFG->admin = 'admin';
 // about students being served outdated versions of uploaded files.
 //     $CFG->filelifetime = 86400;
 //
+// Some web servers can offload the file serving from PHP process,
+// comment out one the following options to enable it in Moodle:
+//     $CFG->xsendfile = 'X-Sendfile';           // Apache {@see https://tn123.org/mod_xsendfile/}
+//     $CFG->xsendfile = 'X-LIGHTTPD-send-file'; // Lighttpd {@see http://redmine.lighttpd.net/projects/lighttpd/wiki/X-LIGHTTPD-send-file}
+//     $CFG->xsendfile = 'X-Accel-Redirect';     // Nginx {@see http://wiki.nginx.org/XSendfile}
+//
 // This setting will prevent the 'My Courses' page being displayed when a student
 // logs in. The site front page will always show the same (logged-out) view.
 //     $CFG->disablemycourses = true;
