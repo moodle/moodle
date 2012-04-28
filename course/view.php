@@ -123,10 +123,12 @@
         if (has_capability('moodle/course:update', $context)) {
             if ($hide && confirm_sesskey()) {
                 set_section_visible($course->id, $hide, '0');
+                redirect($PAGE->url);
             }
 
             if ($show && confirm_sesskey()) {
                 set_section_visible($course->id, $show, '1');
+                redirect($PAGE->url);
             }
 
             if (!empty($section)) {
@@ -135,7 +137,7 @@
                         if ($course->id == SITEID) {
                             redirect($CFG->wwwroot . '/?redirect=0');
                         } else {
-                            redirect($PAGE->url);
+                            redirect(course_get_url($course));
                         }
                     } else {
                         echo $OUTPUT->notification('An error occurred while moving a section');
