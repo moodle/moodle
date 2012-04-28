@@ -128,6 +128,41 @@ class webservice_rest_server extends webservice_base_server {
         $this->send_headers();
         echo $response;
     }
+    
+    /**
+     * Send the result file as HTTP binary stream.
+     */
+    protected function send_download_file() {
+        error_log('--> send_download_file()');
+        // Check that the returned values are valid
+        try {
+            if ($this->function->returns_desc != null) {
+                error_log('--> send_download_file() - returns: ' . print_r($this->returns, true));
+                $validatedvalues = external_api::clean_returnvalue($this->function->returns_desc, $this->returns);
+            } else {
+                $validatedvalues = null;
+            }
+        } catch (Exception $ex) {
+            $exception = $ex;
+        }
+
+        if (!empty($exception)) {
+            $response =  $this->generate_error($exception);
+            $this->send_headers();
+            echo $response;
+        } else {   
+            error_log("--> send_download_file() - " . print_r($validatedvalues, true));
+            global $CFG;
+            require_once($CFG->libdir . '/filelib.php');
+            if ($validatedvalues['tempfile'] == true) {
+                error_log('--> calling send_temp_file()');
+                send_temp_file($validatedvalues['path'], $validatedvalues['filename']);
+            } else {;
+                error_log('--> calling send_file()');
+                send_file($validatedvalues['path'], $validatedvalues['filename']);
+            }
+        }
+    }
 
     /**
      * Send the error information to the WS client

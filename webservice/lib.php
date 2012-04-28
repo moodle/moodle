@@ -1481,6 +1481,11 @@ abstract class webservice_base_server extends webservice_server {
      * Send the result of function call to the WS client.
      */
     abstract protected function send_response();
+    
+    /**
+     * Send the result file as HTTP binary stream.
+     */
+    abstract protected function send_download_file();
 
     /**
      * Send the error information to the WS client.
@@ -1525,7 +1530,11 @@ abstract class webservice_base_server extends webservice_server {
         $this->execute();
 
         // send the results back in correct format
-        $this->send_response();
+        if ($this->function->returns_desc instanceof external_file) {
+            $this->send_download_file();
+        } else {
+            $this->send_response();
+        }
 
         // session cleanup
         $this->session_cleanup();
