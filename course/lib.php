@@ -1372,7 +1372,7 @@ function get_print_section_cm_text(cm_info $cm, $course) {
 /**
  * Prints a section full of activity modules
  */
-function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false) {
+function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false, $sectionreturn = false) {
     global $CFG, $USER, $DB, $PAGE, $OUTPUT;
 
     static $initialised;
@@ -1643,7 +1643,12 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $mod->groupmode = false;
                 }
                 echo '&nbsp;&nbsp;';
-                echo make_editing_buttons($mod, $absolute, true, $mod->indent, $section->section);
+
+                if ($sectionreturn) {
+                    echo make_editing_buttons($mod, $absolute, true, $mod->indent, $section->section);
+                } else {
+                    echo make_editing_buttons($mod, $absolute, true, $mod->indent, 0);
+                }
                 echo $mod->get_after_edit_icons();
             }
 
