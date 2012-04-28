@@ -23,13 +23,6 @@ $scoid = required_param('scoid', PARAM_INT);     // sco ID
 $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
 $attempt = required_param('attempt', PARAM_INT); // new attempt
 
-//IE 6 Bug workaround
-if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false) {
-    @ini_set('zlib.output_compression', 'Off');
-    @apache_setenv('no-gzip', 1);
-    header( 'Content-Type: application/javascript' );
-}
-
 if (!empty($id)) {
     if (! $cm = get_coursemodule_from_id('scorm', $id)) {
         print_error('invalidcoursemodule');
@@ -96,6 +89,9 @@ if (!$sco = scorm_get_sco($scoid)) {
 if (scorm_version_check($scorm->version, SCORM_13)) {
     $userdata->{'cmi.scaled_passing_score'} = $DB->get_field('scorm_seq_objective', 'minnormalizedmeasure', array('scoid'=>$scoid));
 }
+
+header('Content-Type: text/javascript; charset=UTF-8');
+
 $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
 if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php')) {
     include_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php');

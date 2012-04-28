@@ -89,19 +89,12 @@ function min_enable_zlib_compression() {
     }
 
     // zlib.output_compression is preferred over ob_gzhandler()
-    if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-        $agent = $_SERVER['HTTP_USER_AGENT'];
-        // try to detect IE6 and prevent gzip because it is extremely buggy browser
-        $parts = explode(';', $agent);
-        if (isset($parts[1])) {
-            $parts = explode(' ', trim($parts[1]));
-            if (count($parts) > 1) {
-                if ($parts[0] === 'MSIE' and (float)$parts[1] < 7) {
-                    @ini_set('zlib.output_compression', '0');
-                    return false;
-                }
-            }
+    if (!empty($_SERVER['HTTP_USER_AGENT']) and strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false) {
+        @ini_set('zlib.output_compression', 'Off');
+        if (function_exists('apache_setenv')) {
+            @apache_setenv('no-gzip', 1);
         }
+        return false;
     }
 
     @ini_set('output_handler', '');

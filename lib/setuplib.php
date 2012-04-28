@@ -1079,6 +1079,9 @@ function disable_output_buffering() {
         }
     }
 
+    // disable any other output handlers
+    ini_set('output_handler', '');
+
     error_reporting($olddebug);
 }
 

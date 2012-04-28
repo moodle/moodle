@@ -1624,12 +1624,6 @@ function prepare_file_content_sending() {
 
     $olddebug = error_reporting(0);
 
-    // IE compatibility HACK - it does not like zlib compression much
-    // there is also a problem with the length header in older PHP versions
-    if (ini_get_bool('zlib.output_compression')) {
-        ini_set('zlib.output_compression', 'Off');
-    }
-
     // flush and close all buffers if possible
     while(ob_get_level()) {
         if (!ob_end_flush()) {
