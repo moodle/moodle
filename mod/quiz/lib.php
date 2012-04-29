@@ -1655,9 +1655,10 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -1687,7 +1688,7 @@ function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         return false;
     }
-    send_stored_file($file, 0, 0, true);
+    send_stored_file($file, 0, 0, true, $options);
 }
 
 /**
@@ -1704,15 +1705,16 @@ function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
  * @param int $slot the id of a question in this quiz attempt.
  * @param array $args the remaining bits of the file path.
  * @param bool $forcedownload whether the user must be forced to download the file.
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - justsend the file
  */
 function mod_quiz_question_pluginfile($course, $context, $component,
-        $filearea, $qubaid, $slot, $args, $forcedownload) {
+        $filearea, $qubaid, $slot, $args, $forcedownload, array $options=array()) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
     $attemptobj = quiz_attempt::create_from_usage_id($qubaid);
-    require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
+    require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 
     if ($attemptobj->is_own_attempt() && !$attemptobj->is_finished()) {
         // In the middle of an attempt.
@@ -1739,7 +1741,7 @@ function mod_quiz_question_pluginfile($course, $context, $component,
         send_file_not_found();
     }
 
-    send_stored_file($file, 0, 0, $forcedownload);
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**

@@ -6,6 +6,6 @@ Our changes:
 * no splashscreens
 
 TODO:
-* switch to git repo once flowplayer decides to use real vesion control system
+* switch to git repo once flowplayer decides to use better version control system
 
 skodak

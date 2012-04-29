@@ -1,7 +1,7 @@
 <?php
 /*
 
-@version V5.14 8 Sept 2011   (c) 2000-2011 John Lim (jlim#natsoft.com). All rights reserved.
+@version V5.16 26 Mar 2012   (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
   Latest version is available at http://adodb.sourceforge.net
  
   Released under both BSD license and Lesser GPL library license. 
@@ -87,6 +87,8 @@ class ADODB_Active_Record {
 
 	var $foreignName; // CFR: class name when in a relationship
 
+	var $lockMode = ' for update '; // you might want to change to 
+	
 	static function UseDefaultValues($bool=null)
 	{
 	global $ADODB_ACTIVE_DEFVALS;
@@ -641,7 +643,7 @@ class ADODB_Active_Record {
 		case 'X':
 			if (is_null($val)) return 'null';
 			
-			if (strlen($val)>1 && 
+			if (strlen($val)>0 && 
 				(strncmp($val,"'",1) != 0 || substr($val,strlen($val)-1,1) != "'")) { 
 				return $db->qstr($val);
 				break;
@@ -677,7 +679,7 @@ class ADODB_Active_Record {
 	
 	//------------------------------------------------------------ Public functions below
 	
-	function Load($where=null,$bindarr=false)
+	function Load($where=null,$bindarr=false, $lock = false)
 	{
 	global $ADODB_FETCH_MODE;
 	
@@ -689,16 +691,23 @@ class ADODB_Active_Record {
 		if ($db->fetchMode !== false) $savem = $db->SetFetchMode(false);
 		
 		$qry = "select * from ".$this->_table;
-
+		
 		if($where) {
 			$qry .= ' WHERE '.$where;
 		}
+		if ($lock) $qry .= $this->lockMode;
+		
 		$row = $db->GetRow($qry,$bindarr);
 		
 		if (isset($savem)) $db->SetFetchMode($savem);
 		$ADODB_FETCH_MODE = $save;
 		
 		return $this->Set($row);
+	}
+	
+	function LoadLocked($where=null, $bindarr=false)
+	{
+		$this->Load($where,$bindarr,true);
 	}
 	
 	# useful for multiple record inserts
@@ -900,9 +909,10 @@ class ADODB_Active_Record {
 				}
 			}
 
-			if (isset($this->_original[$i]) && strcmp($val,$this->_original[$i]) == 0) {
-				continue;
-			}
+			if (isset($this->_original[$i]) && strcmp($val,$this->_original[$i]) == 0) continue;
+			
+			if (is_null($this->_original[$i]) && is_null($val)) continue;
+			
 			$valarr[] = $val;
 			$pairs[] = $this->_QName($name,$db).'='.$db->Param($cnt);
 			$cnt += 1;

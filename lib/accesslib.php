@@ -2522,6 +2522,7 @@ function update_capabilities($component = 'moodle') {
         }
     }
     // Add new capabilities to the stored definition.
+    $existingcaps = $DB->get_records_menu('capabilities', array(), 'id', 'id, name');
     foreach ($newcaps as $capname => $capdef) {
         $capability = new stdClass();
         $capability->name         = $capname;
@@ -2532,7 +2533,7 @@ function update_capabilities($component = 'moodle') {
 
         $DB->insert_record('capabilities', $capability, false);
 
-        if (isset($capdef['clonepermissionsfrom']) && in_array($capdef['clonepermissionsfrom'], $storedcaps)){
+        if (isset($capdef['clonepermissionsfrom']) && in_array($capdef['clonepermissionsfrom'], $existingcaps)){
             if ($rolecapabilities = $DB->get_records('role_capabilities', array('capability'=>$capdef['clonepermissionsfrom']))){
                 foreach ($rolecapabilities as $rolecapability){
                     //assign_capability will update rather than insert if capability exists
@@ -5959,12 +5960,24 @@ class context_user extends context {
     protected static function build_paths($force) {
         global $DB;
 
-        // first update normal users
+        // First update normal users.
+        $path = $DB->sql_concat('?', 'id');
+        $pathstart = '/' . SYSCONTEXTID . '/';
+        $params = array($pathstart);
+
+        if ($force) {
+            $where = "depth <> 2 OR path IS NULL OR path <> ({$path})";
+            $params[] = $pathstart;
+        } else {
+            $where = "depth = 0 OR path IS NULL";
+        }
+
         $sql = "UPDATE {context}
                    SET depth = 2,
-                       path = ".$DB->sql_concat("'/".SYSCONTEXTID."/'", 'id')."
-                 WHERE contextlevel=".CONTEXT_USER;
-        $DB->execute($sql);
+                       path = {$path}
+                 WHERE contextlevel = " . CONTEXT_USER . "
+                   AND ($where)";
+        $DB->execute($sql, $params);
     }
 }
 

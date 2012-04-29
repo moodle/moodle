@@ -45,7 +45,7 @@
     }
 
     $PAGE->set_url('/mod/survey/save.php', array('id'=>$id));
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/survey:participate', $context);

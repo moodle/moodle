@@ -47,7 +47,7 @@ $quizobj = quiz::create($cm->instance, $USER->id);
 $PAGE->set_url($quizobj->view_url());
 
 // Check login and sesskey.
-require_login($quizobj->get_courseid(), false, $quizobj->get_cm());
+require_login($quizobj->get_course(), false, $quizobj->get_cm());
 require_sesskey();
 
 // if no questions have been set up yet redirect to edit.php or display an error.

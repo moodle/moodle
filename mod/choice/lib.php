@@ -295,7 +295,7 @@ WHERE
             $DB->update_record("choice_answers", $newanswer);
             add_to_log($course->id, "choice", "choose again", "view.php?id=$cm->id", $choice->id, $cm->id);
         } else {
-            $newanswer = stdClass();
+            $newanswer = new stdClass();
             $newanswer->choiceid = $choice->id;
             $newanswer->userid = $userid;
             $newanswer->optionid = $formanswer;

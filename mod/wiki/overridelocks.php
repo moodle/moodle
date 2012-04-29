@@ -62,7 +62,7 @@ if (!empty($section) && !$sectioncontent = wiki_get_section_page($page, $section
     print_error('invalidsection', 'wiki');
 }
 
-require_login($course->id, true, $cm);
+require_login($course, true, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/wiki:overridelock', $context);

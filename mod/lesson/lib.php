@@ -789,26 +789,6 @@ function lesson_supports($feature) {
 }
 
 /**
- * This function extends the global navigation for the site.
- * It is important to note that you should not rely on PAGE objects within this
- * body of code as there is no guarantee that during an AJAX request they are
- * available
- *
- * @param navigation_node $navigation The lesson node within the global navigation
- * @param stdClass $course The course object returned from the DB
- * @param stdClass $module The module object returned from the DB
- * @param stdClass $cm The course module instance returned from the DB
- */
-function lesson_extend_navigation($navigation, $course, $module, $cm) {
-    /**
-     * This is currently just a stub so  that it can be easily expanded upon.
-     * When expanding just remove this comment and the line below and then add
-     * you content.
-     */
-    $navigation->nodetype = navigation_node::NODETYPE_LEAF;
-}
-
-/**
  * This function extends the settings navigation block for the site.
  *
  * It is safe to rely on PAGE here as we will only ever be within the module
@@ -896,9 +876,10 @@ function lesson_get_import_export_formats($type) {
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -937,7 +918,7 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
     }
 
     // finally send the file
-    send_stored_file($file, 0, 0, $forcedownload); // download MUST be forced - security!
+    send_stored_file($file, 0, 0, $forcedownload, $options); // download MUST be forced - security!
 }
 
 /**

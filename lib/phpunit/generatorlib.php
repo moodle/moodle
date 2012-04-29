@@ -39,6 +39,8 @@ class phpunit_data_generator {
     protected $categorycount = 0;
     protected $coursecount = 0;
     protected $scalecount = 0;
+    protected $groupcount = 0;
+    protected $groupingcount = 0;
 
     /** @var array list of plugin generators */
     protected $generators = array();
@@ -404,6 +406,92 @@ EOD;
     }
 
     /**
+     * Create a test group for the specified course
+     *
+     * $record should be either an array or a stdClass containing infomation about the group to create.
+     * At the very least it needs to contain courseid.
+     * Default values are added for name, description, and descriptionformat if they are not present.
+     *
+     * This function calls {@see groups_create_group()} to create the group within the database.
+     *
+     * @param array|stdClass $record
+     * @return stdClass group record
+     */
+    public function create_group($record) {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/group/lib.php');
+
+        $this->groupcount++;
+        $i = $this->groupcount;
+
+        $record = (array)$record;
+
+        if (empty($record['courseid'])) {
+            throw new coding_exception('courseid must be present in phpunit_util::create_group() $record');
+        }
+
+        if (!isset($record['name'])) {
+            $record['name'] = 'group-' . $i;
+        }
+
+        if (!isset($record['description'])) {
+            $record['description'] = "Test Group $i\n{$this->loremipsum}";
+        }
+
+        if (!isset($record['descriptionformat'])) {
+            $record['descriptionformat'] = FORMAT_MOODLE;
+        }
+
+        $id = groups_create_group((object)$record);
+
+        return $DB->get_record('groups', array('id'=>$id));
+    }
+
+    /**
+     * Create a test grouping for the specified course
+     *
+     * $record should be either an array or a stdClass containing infomation about the grouping to create.
+     * At the very least it needs to contain courseid.
+     * Default values are added for name, description, and descriptionformat if they are not present.
+     *
+     * This function calls {@see groups_create_grouping()} to create the grouping within the database.
+     *
+     * @param array|stdClass $record
+     * @return stdClass grouping record
+     */
+    public function create_grouping($record) {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/group/lib.php');
+
+        $this->groupingcount++;
+        $i = $this->groupingcount;
+
+        $record = (array)$record;
+
+        if (empty($record['courseid'])) {
+            throw new coding_exception('courseid must be present in phpunit_util::create_grouping() $record');
+        }
+
+        if (!isset($record['name'])) {
+            $record['name'] = 'grouping-' . $i;
+        }
+
+        if (!isset($record['description'])) {
+            $record['description'] = "Test Grouping $i\n{$this->loremipsum}";
+        }
+
+        if (!isset($record['descriptionformat'])) {
+            $record['descriptionformat'] = FORMAT_MOODLE;
+        }
+
+        $id = groups_create_grouping((object)$record);
+
+        return $DB->get_record('groupings', array('id'=>$id));
+    }
+
+    /**
      * Create a test scale
      * @param array|stdClass $record
      * @param array $options
@@ -505,20 +593,20 @@ abstract class phpunit_module_generator {
 
     /**
      * Create course module and link it to course
-     * @param stdClass $instance
+     * @param int $courseid
      * @param array $options: section, visible
-     * @return stdClass $cm instance
+     * @return int $cm instance id
      */
-    protected function create_course_module(stdClass $instance, array $options) {
+    protected function precreate_course_module($courseid, array $options) {
         global $DB, $CFG;
         require_once("$CFG->dirroot/course/lib.php");
 
         $modulename = $this->get_modulename();
 
         $cm = new stdClass();
-        $cm->course             = $instance->course;
+        $cm->course             = $courseid;
         $cm->module             = $DB->get_field('modules', 'id', array('name'=>$modulename));
-        $cm->instance           = $instance->id;
+        $cm->instance           = 0;
         $cm->section            = isset($options['section']) ? $options['section'] : 0;
         $cm->idnumber           = isset($options['idnumber']) ? $options['idnumber'] : 0;
         $cm->added              = time();
@@ -539,11 +627,28 @@ abstract class phpunit_module_generator {
 
         add_mod_to_section($cm);
 
-        $cm = get_coursemodule_from_id($modulename, $cm->id, $cm->course, true, MUST_EXIST);
+        return $cm->id;
+    }
 
+    /**
+     * Called after *_add_instance()
+     * @param int $id
+     * @param int $cmid
+     * @return stdClass module instance
+     */
+    protected function post_add_instance($id, $cmid) {
+        global $DB;
+
+        $DB->set_field('course_modules', 'instance', $id, array('id'=>$cmid));
+
+        $instance = $DB->get_record($this->get_modulename(), array('id'=>$id), '*', MUST_EXIST);
+
+        $cm = get_coursemodule_from_id($this->get_modulename(), $cmid, $instance->course, true, MUST_EXIST);
         context_module::instance($cm->id);
 
-        return $cm;
+        $instance->cmid = $cm->id;
+
+        return $instance;
     }
 
     /**

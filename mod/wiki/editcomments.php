@@ -52,7 +52,7 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
     print_error('incorrectwikiid', 'wiki');
 }
-require_login($course->id, true, $cm);
+require_login($course, true, $cm);
 
 $editcomments = new page_wiki_editcomment($wiki, $subwiki, $cm);
 $comment = new stdClass();

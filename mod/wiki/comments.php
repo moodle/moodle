@@ -57,7 +57,7 @@ if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-require_login($course->id, true, $cm);
+require_login($course, true, $cm);
 
 add_to_log($course->id, 'wiki', 'comments', "comments.php?pageid=".$pageid, $pageid, $cm->id);
 

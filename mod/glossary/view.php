@@ -118,7 +118,7 @@ if ( $show ) {
 }
 /// Processing standard security processes
 if ($course->id != SITEID) {
-    require_login($course->id);
+    require_login($course);
 }
 if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
     echo $OUTPUT->header();

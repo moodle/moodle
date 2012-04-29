@@ -7,6 +7,9 @@ This files describes API changes for question type plugins.
   import and export, then you will probably get PHP strict syntax notices in developer
   debug mode until you change the method signature to include qformat_xml $format.
   That is, you need to specify the argument type.
+* qtype_xxx_pluginfile() is now given the 7th parameter (hopefully the last
+  one) that contains additional options for the file serving. The array should
+  be re-passed to question_pluginfile() as is.
 
 
 === 2.2 ===

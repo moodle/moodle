@@ -44,7 +44,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 $PAGE->set_url('/mod/survey/download.php', array('id'=>$id, 'type'=>$type, 'group'=>$group));
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 require_capability('mod/survey:download', $context) ;
 
 if (! $survey = $DB->get_record("survey", array("id"=>$cm->instance))) {

@@ -74,13 +74,14 @@ if (!empty($allocators)) {
 $tabs[] = $row;
 print_tabs($tabs, $currenttab, $inactive, $activated);
 
-if (!empty($initresult)) {
-    echo $output->container_start('allocator-init-results');
-    echo $output->render(new workshop_allocation_init_result($initresult, $workshop->allocation_url($method)));
-    echo $output->container_end();
-} else {
+if (is_null($initresult->get_status()) or $initresult->get_status() == workshop_allocation_result::STATUS_VOID) {
     echo $output->container_start('allocator-ui');
     echo $allocator->ui();
+    echo $output->container_end();
+} else {
+    echo $output->container_start('allocator-init-results');
+    echo $output->render($initresult);
+    echo $output->continue_button($workshop->allocation_url($method));
     echo $output->container_end();
 }
 echo $output->footer();

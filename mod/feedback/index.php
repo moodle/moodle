@@ -39,7 +39,7 @@ if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
         print_error('badcontext');
 }
 
-require_login($course->id);
+require_login($course);
 $PAGE->set_pagelayout('incourse');
 
 add_to_log($course->id, 'feedback', 'view all', $url->out(false), $course->id);

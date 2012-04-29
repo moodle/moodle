@@ -84,6 +84,8 @@
 /** Styles for search.php */
 #page-mod-forum-search .introcontent {padding: 15px;font-weight:bold;}
 
+#page-mod-forum-index .unread a:first-child,
+#page-mod-forum-view .unread a:first-child {padding-right: 10px;}
 #page-mod-forum-index .unread img,
 #page-mod-forum-view .unread img {margin-left: 5px;}
 

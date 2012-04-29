@@ -36,6 +36,10 @@
  *
  ****/
 
+#page {
+    font-size: 100%;
+}
+
 #page-header {
     background-color:[[setting:headerbgc]];
     /* arrotonadamento angoli in alto dell'header */
@@ -59,7 +63,7 @@
 }
 
 #page-content #region-post-box {
-    margin-left:[[setting:minusdoubleblockcolumnwidth]]; /*-2*[[setting:blockcolumnwidth]]*/
+    margin-left:[[calculated:minusdoubleblockcolumnwidth]];
     /* arrotonadamento angolo in basso a dx */
     /* -moz-border-radius:0px 0px 6px 0px;    /* Firefox */
     /* -webkit-border-radius:0px 0px 6px 0px; /* Safari, Chrome */
@@ -68,7 +72,7 @@
 }
 
 #page-content #region-main {
-    margin-left:[[setting:doubleblockcolumnwidth]];/*2*[[setting:blockcolumnwidth]]*/
+    margin-left:[[calculated:doubleblockcolumnwidth]];
     background-color:white; /* questo serve a togliere la curvatura dagli angoli della zona centrale */
 }
 
@@ -88,7 +92,11 @@
 }
 
 #page-content .region-content {
-    padding:0.6em 8px 0.1em 8px; /* definisco lo spazio sopra e sotto ai blocchi */
+    padding:[[setting:blockpadding]] [[setting:blockpadding]] 0 [[setting:blockpadding]];
+}
+
+#maincontent {
+    margin-top:0;
 }
 
 .pagelayout-report #page-content .region-content {

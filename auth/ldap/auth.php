@@ -862,7 +862,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             print_string('nouserstobeadded', 'auth_ldap');
         }
 
-        $dbman->drop_temp_table($table);
+        $dbman->drop_table($table);
         $this->ldap_close();
 
         return true;
@@ -1778,10 +1778,16 @@ class auth_plugin_ldap extends auth_plugin_base {
             $config->ntlmsso_type = 'ntlm';
         }
 
+        // Try to remove duplicates before storing the contexts (to avoid problems in sync_users()).
+        $config->contexts = explode(';', $config->contexts);
+        $config->contexts = array_map(create_function('$x', 'return textlib::strtolower(trim($x));'),
+                                      $config->contexts);
+        $config->contexts = implode(';', array_unique($config->contexts));
+
         // Save settings
         set_config('host_url', trim($config->host_url), $this->pluginconfig);
         set_config('ldapencoding', trim($config->ldapencoding), $this->pluginconfig);
-        set_config('contexts', trim($config->contexts), $this->pluginconfig);
+        set_config('contexts', $config->contexts, $this->pluginconfig);
         set_config('user_type', textlib::strtolower(trim($config->user_type)), $this->pluginconfig);
         set_config('user_attribute', textlib::strtolower(trim($config->user_attribute)), $this->pluginconfig);
         set_config('search_sub', $config->search_sub, $this->pluginconfig);

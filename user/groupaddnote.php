@@ -45,7 +45,7 @@ if (! $course = $DB->get_record('course', array('id'=>$id))) {
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $id);
-require_login($course->id);
+require_login($course);
 
 // to create notes the current user needs a capability
 require_capability('moodle/notes:manage', $context);

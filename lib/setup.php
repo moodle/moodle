@@ -222,7 +222,7 @@ umask(0000);
 
 // exact version of currently used yui2 and 3 library
 $CFG->yui2version = '2.9.0';
-$CFG->yui3version = '3.4.1';
+$CFG->yui3version = '3.5.0';
 
 
 // special support for highly optimised scripts that do not need libraries and DB connection
@@ -479,7 +479,12 @@ if (isset($CFG->debug)) {
 }
 
 // Load up any configuration from the config table
-initialise_cfg();
+
+if (PHPUNIT_TEST) {
+    phpunit_util::initialise_cfg();
+} else {
+    initialise_cfg();
+}
 
 // Verify upgrade is not running unless we are in a script that needs to execute in any case
 if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {

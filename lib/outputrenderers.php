@@ -860,7 +860,7 @@ class core_renderer extends renderer_base {
         foreach ($controls as $control) {
             $controlshtml[] = html_writer::tag('a',
                     html_writer::empty_tag('img',  array('src' => $this->pix_url($control['icon'])->out(false), 'alt' => $control['caption'])),
-                    array('class' => 'icon','title' => $control['caption'], 'href' => $control['url']));
+                    array('class' => 'icon ' . $control['class'],'title' => $control['caption'], 'href' => $control['url']));
         }
         return html_writer::tag('div', implode('', $controlshtml), array('class' => 'commands'));
     }
@@ -2511,7 +2511,10 @@ EOD;
             if ($item->hidden) {
                 $link->add_class('dimmed');
             }
-            $link->text = $content.$link->text; // add help icon
+            if (!empty($content)) {
+                // Providing there is content we will use that for the link content.
+                $link->text = $content;
+            }
             $content = $this->render($link);
         } else if ($item->action instanceof moodle_url) {
             $attributes = array();

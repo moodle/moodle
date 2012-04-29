@@ -1,9 +1,80 @@
 Version history:
 
+3.2.9
+-----
+- Fixed #490, controlbar background, buffer bar and progress bar colors were all reset to white
+
+3.2.8
+-----
+- Added new property clip.backBufferLength, to be used with FMS 3.5
+- Adds support for StageVideo. To enable it set clip.accelerated to true.
+- Tries to reload two times if the stream is not initially found. Also does 3 connection attempts if the connection fails with RTMP.
+- Support for FMS slow motion
+- Support for thumbnails in RSS files
+- Added onPlayStatus clip event handler on NetStreamClient.
+- Added new clip events for stream switching onSwitchFailed and onSwitchComplete
+- made it possible to replay a clip using play(<current_clip's_index>)
+
+Fixes:
+- fixed to dispatch onStart also when replaying the previous clip, now the JS controlbar again works when replaying
+- cuepoints were fired multiple times when there is a playlist with several clips. Issue #150.
+- fixed XML parsing error when metadata's keys contains dashes
+- backgroundImage css property can now be set to "none" to be removed
+- fixed the facts that clips in a playlist were cut off by a fraction in the end
+- fullScreenOnly now works in conjunction with displayTime
+- JS plugins now handles grouped syntax like flowplayer("a.player" /*...*/ )
+- JS function setClip can now be used to add listeners on the new Clip
+- different players with the same configuration stored in a variable can now use JS plugins
+- using linkUrl now works when calling JS function setClip
+- zIndex for plugins works fine now, issue #302
+- onLastSecond was fired twice, issue #300
+- fixed license key verification on subdomains, issue #318
+- fixed XSS vulnerability with linkUrls. Thank you Szymon Gruszecki for discovering and reporting this to us. Issue #329.
+- fixed switch stream api support in paused state. #279.
+- added switching state properties. #339
+- fixed the stopBuffering() API method to close the NetConnection and to clear the screen
+- Issue #355 setup targeting for Flash 10.0 and 10.1 to provide support for Flash 10.0 without Stagevideo requirements.
+- fixed #364, NetConnection unnecessary closed/reconnected when the netConnection does not change from clip to clip
+- xss fix for flashembed #357
+- Issue #384 added links support in context menus with configuration { url: "domain.com", target: "_blank"} which will work in embedded players.
+- #378, javascript method loadPluginWithConfig is unavailable and non existant. Documentation updated required to remove this and updates for loadPlugin like so
+this.loadPlugin("content","../flowplayer.content.swf", { html: "test", top: 30  }); or
+this.loadPlugin("content","../flowplayer.content.swf", { html: "test"  }, function() {
+                        this.css({ top: 30 });
+                    });
+- #191 send the resume event, and no stop event first before reconnecting due to a connection timeout so the player comes out of a paused state correctly.
+- #363 pause stream after metadata not beforehand or else no metadata is sent for rtmp clips .
+- #363 silent seek and force to seek to a keyframe or else video frame will not display initially when paused.
+- #375 clearing the event listeners when adding new video displays prevents new events being added when the playlist is replaced.
+- #391 add message argument to connection failure callback required by some connection providers.
+- #363 add overridable pause to frame for different seek functionality between http and rtmp.
+- #392 possible fix for extensions with no filetypes like rtmp flv clips, require positive index check.
+- #395 apply buffer animation status to VOD streams only.
+- #375 possible fix when replacing the playlist in onBeforeFinish, move replay button to onFinish.
+- #390 correct seek back to a valid time on invalid seeking while seeking in the buffer.
+- #404 implement netstreamplayoptions for http streams, resets the stream or start loading a new stream.
+- fixed an issue in parsing JSON config that contains several comments separated by whitespace
+- new clip property 'stopLiveOnPause'
+- #415 regression issue with #395, stop the buffering animation correctly.
+- #414 problem appears again for very short clips with invalid seek times, make it step back 1 second from the invalid seek time to seek the buffer correctly.
+- #416 enable seekableOnBegin to enable the scrubbar correctly when autobuffering.
+- #423 add the . to clip type extension checks or else files with known extension postfixes within them will be chosen instead.
+- #426 when a plugin width is set to a percentage, x/y is required to be floored or else it will affect the animation engine. specifically for the autohide function.
+- #430 adding event listeners for netconnection to obtain certain events.
+- #430 clear buffering status on connection failure.
+- #430 clear buffering status on stream failure.
+- #412 check for empty baseurl or else player url is appended and affects the url parsing.
+- #439 check for all rtmp streaming protocols when checking for rtmp urls.
+- #442 fix for code error in the javascript api.
+- #461 when we have a clip base url set, we need the complete clip url sent to play2 for http streams.
+- #470 check for a playlist when replacing the playlist with an rss feed.
+- #494 regression issued caused by #412, enable base url correctly.
+
 3.2.7
 -----
-
-- Loads the new controlbar plugin version 3.2.5. No other functional changes.
+- Loads the new controlbar plugin version 3.2.5.
+Fixes:
+- Fixed 'orig' scaling in fullscreen: http://flowplayer.org/forum/2/10274#post-52646
 
 3.2.6
 -----

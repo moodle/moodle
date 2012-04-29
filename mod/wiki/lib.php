@@ -445,8 +445,10 @@ function wiki_scale_used_anywhere($scaleid) {
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
+ * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
-function wiki_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function wiki_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -477,7 +479,7 @@ function wiki_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
 
         $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
 
-        send_stored_file($file, $lifetime, 0);
+        send_stored_file($file, $lifetime, 0, $options);
     }
 }
 

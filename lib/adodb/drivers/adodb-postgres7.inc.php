@@ -1,6 +1,6 @@
 <?php
 /*
- V5.14 8 Sept 2011  (c) 2000-2011 John Lim (jlim#natsoft.com). All rights reserved.
+ V5.16 26 Mar 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -21,7 +21,59 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	var $hasLimit = true;	// set to true for pgsql 6.5+ only. support pgsql/mysql SELECT * FROM TABLE LIMIT 10
 	var $ansiOuter = true;
 	var $charSet = true; //set to true for Postgres 7 and above - PG client supports encodings
-	
+	   // Richard 3/18/2012 - Modified SQL to return SERIAL type correctly AS old driver no longer return SERIAL as data type. 
+	var $metaColumnsSQL =
+						 "SELECT a.attname, 
+									CASE 
+											   WHEN x.sequence_name != '' THEN 'SERIAL'
+											   ELSE t.typname
+									END AS typname,
+									a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum
+						 FROM pg_class c, pg_attribute a
+						 JOIN pg_type t ON a.atttypid = t.oid 
+						 LEFT JOIN 
+									(SELECT c.relname as sequence_name,  
+												  c1.relname as related_table, 
+												  a.attname as related_column
+									FROM pg_class c 
+									   JOIN pg_depend d ON d.objid = c.oid 
+									   LEFT JOIN pg_class c1 ON d.refobjid = c1.oid 
+									   LEFT JOIN pg_attribute a ON (d.refobjid, d.refobjsubid) = (a.attrelid, a.attnum) 
+									WHERE c.relkind = 'S' AND c1.relname = '%s') x 
+									ON x.related_column= a.attname
+						 WHERE c.relkind in ('r','v') AND 
+									(c.relname='%s' or c.relname = lower('%s')) AND 
+									a.attname not like '....%%' AND 
+									a.attnum > 0 AND 
+									a.attrelid = c.oid 
+						 ORDER BY a.attnum";
+
+   // used when schema defined
+	var $metaColumnsSQL1 = "
+						 SELECT a.attname, 
+									CASE 
+											   WHEN x.sequence_name != '' THEN 'SERIAL'
+											   ELSE t.typname
+									END AS typname,
+									a.attlen, a.atttypmod, a.attnotnull, a.atthasdef, a.attnum
+						 FROM pg_class c, pg_namespace n, pg_attribute a 
+						 JOIN pg_type t ON a.atttypid = t.oid 
+						 LEFT JOIN 
+									(SELECT c.relname as sequence_name,  
+												  c1.relname as related_table, 
+												  a.attname as related_column
+									FROM pg_class c 
+									   JOIN pg_depend d ON d.objid = c.oid 
+									   LEFT JOIN pg_class c1 ON d.refobjid = c1.oid 
+									   LEFT JOIN pg_attribute a ON (d.refobjid, d.refobjsubid) = (a.attrelid, a.attnum) 
+									WHERE c.relkind = 'S' AND c1.relname = '%s') x 
+									ON x.related_column= a.attname
+						 WHERE c.relkind in ('r','v') AND (c.relname='%s' or c.relname = lower('%s'))
+									AND c.relnamespace=n.oid and n.nspname='%s' 
+									AND a.attname not like '....%%' AND a.attnum > 0 
+									AND a.atttypid = t.oid AND a.attrelid = c.oid  
+						 ORDER BY a.attnum";
+
 	
 	function ADODB_postgres7() 
 	{

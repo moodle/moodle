@@ -1,6 +1,12 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 2.3 ===
+
+required changes in code:
+* block_xxx_pluginfile() is now given the 7th parameter (hopefully the last one) that
+  contains additional options for the file serving. The array should be re-passed
+  to send_stored_file().
 
 === 2.0 ===
 

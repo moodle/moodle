@@ -1,6 +1,6 @@
 <?php
 /* 
-V5.14 8 Sept 2011  (c) 2000-2011 John Lim (jlim#natsoft.com). All rights reserved.
+V5.16 26 Mar 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -84,9 +84,9 @@ class ADODB_mssql extends ADOConnection {
 	var $metaDatabasesSQL = "select name from sysdatabases where name <> 'master'";
 	var $metaTablesSQL="select name,case when type='U' then 'T' else 'V' end from sysobjects where (type='U' or type='V') and (name not in ('sysallocations','syscolumns','syscomments','sysdepends','sysfilegroups','sysfiles','sysfiles1','sysforeignkeys','sysfulltextcatalogs','sysindexes','sysindexkeys','sysmembers','sysobjects','syspermissions','sysprotects','sysreferences','systypes','sysusers','sysalternates','sysconstraints','syssegments','REFERENTIAL_CONSTRAINTS','CHECK_CONSTRAINTS','CONSTRAINT_TABLE_USAGE','CONSTRAINT_COLUMN_USAGE','VIEWS','VIEW_TABLE_USAGE','VIEW_COLUMN_USAGE','SCHEMATA','TABLES','TABLE_CONSTRAINTS','TABLE_PRIVILEGES','COLUMNS','COLUMN_DOMAIN_USAGE','COLUMN_PRIVILEGES','DOMAINS','DOMAIN_CONSTRAINTS','KEY_COLUMN_USAGE','dtproperties'))";
 	var $metaColumnsSQL = # xtype==61 is datetime
-"select c.name,t.name,c.length,
-	(case when c.xusertype=61 then 0 else c.xprec end),
-	(case when c.xusertype=61 then 0 else c.xscale end) 
+	"select c.name,t.name,c.length,c.isnullable, c.status,
+		(case when c.xusertype=61 then 0 else c.xprec end),
+		(case when c.xusertype=61 then 0 else c.xscale end) 
 	from syscolumns c join systypes t on t.xusertype=c.xusertype join sysobjects o on o.id=c.id where o.name='%s'";
 	var $hasTop = 'top';		// support mssql SELECT TOP 10 * FROM TABLE
 	var $hasGenID = true;
@@ -371,6 +371,64 @@ class ADODB_mssql extends ADOConnection {
 		if ($col == '1 as adodbignore') $col = 'top 1 null as ignore';
 		if (!$this->transCnt) $this->BeginTrans();
 		return $this->GetOne("select $col from $tables with (ROWLOCK,HOLDLOCK) where $where");
+	}
+	
+	
+	function MetaColumns($table, $normalize=true)
+	{
+//		$arr = ADOConnection::MetaColumns($table);
+//		return $arr;
+
+		$this->_findschema($table,$schema);
+		if ($schema) {
+			$dbName = $this->database;
+			$this->SelectDB($schema);
+		}
+		global $ADODB_FETCH_MODE;
+		$save = $ADODB_FETCH_MODE;
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		
+		if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
+		$rs = $this->Execute(sprintf($this->metaColumnsSQL,$table));
+		
+		if ($schema) {
+			$this->SelectDB($dbName);
+		}
+		
+		if (isset($savem)) $this->SetFetchMode($savem);
+		$ADODB_FETCH_MODE = $save;
+		if (!is_object($rs)) {
+			$false = false;
+			return $false;
+		}
+			
+		$retarr = array();
+		while (!$rs->EOF){
+			$fld = new ADOFieldObject();
+			$fld->name = $rs->fields[0];
+			$fld->type = $rs->fields[1];		
+		
+			$fld->not_null = (!$rs->fields[3]);
+			$fld->auto_increment = ($rs->fields[4] == 128);		// sys.syscolumns status field. 0x80 = 128 ref: http://msdn.microsoft.com/en-us/library/ms186816.aspx 
+		
+			if (isset($rs->fields[5]) && $rs->fields[5]) {
+				if ($rs->fields[5]>0) $fld->max_length = $rs->fields[5];
+				$fld->scale = $rs->fields[6];
+				if ($fld->scale>0) $fld->max_length += 1;
+			} else
+				$fld->max_length = $rs->fields[2];
+
+			if ($save == ADODB_FETCH_NUM) {
+				$retarr[] = $fld;
+			} else {
+				$retarr[strtoupper($fld->name)] = $fld;
+			}
+				$rs->MoveNext();
+			}
+		
+			$rs->Close();
+			return $retarr;	
+			
 	}
 	
 	

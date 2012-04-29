@@ -122,13 +122,18 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one correct xmldb_table and the new name, returns the SQL statements
-     * to drop it (inside one array)
+     * Given one correct xmldb_table, returns the SQL statements
+     * to drop it (inside one array).
+     *
+     * @param xmldb_table $xmldb_table The table to drop.
+     * @return array SQL statement(s) for dropping the specified table.
      */
-    public function getDropTempTableSQL($xmldb_table) {
-        $sqlarr = $this->getDropTableSQL($xmldb_table);
-        array_unshift($sqlarr, "TRUNCATE TABLE ". $this->getTableName($xmldb_table)); // oracle requires truncate before being able to drop a temp table
-        $this->temptables->delete_temptable($xmldb_table->getName());
+    public function getDropTableSQL($xmldb_table) {
+        $sqlarr = parent::getDropTableSQL($xmldb_table);
+        if ($this->temptables->is_temptable($xmldb_table->getName())) {
+            array_unshift($sqlarr, "TRUNCATE TABLE ". $this->getTableName($xmldb_table)); // oracle requires truncate before being able to drop a temp table
+            $this->temptables->delete_temptable($xmldb_table->getName());
+        }
         return $sqlarr;
     }
 

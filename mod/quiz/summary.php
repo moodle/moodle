@@ -80,8 +80,8 @@ if (empty($attemptobj->get_quiz()->showblocks)) {
 }
 
 $navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', -1);
-$firstregion = reset($PAGE->blocks->get_regions());
-$PAGE->blocks->add_fake_block($navbc, $firstregion);
+$regions = $PAGE->blocks->get_regions();
+$PAGE->blocks->add_fake_block($navbc, reset($regions));
 
 $PAGE->navbar->add(get_string('summaryofattempt', 'quiz'));
 $PAGE->set_title(format_string($attemptobj->get_quiz_name()));

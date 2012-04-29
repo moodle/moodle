@@ -339,7 +339,7 @@ class ouwiki_line {
      * @param array $lines Array of ouwiki_line
      * @return array Array of strings
      */
-    function get_as_strings($lines) {
+    static function get_as_strings($lines) {
         $strings=array();
         foreach($lines as $key=>$value) {
             $strings[$key]=$value->get_as_string();        

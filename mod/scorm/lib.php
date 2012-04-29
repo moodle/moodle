@@ -927,9 +927,10 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -968,7 +969,7 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
     }
 
     // finally send the file
-    send_stored_file($file, $lifetime, 0, false);
+    send_stored_file($file, $lifetime, 0, false, $options);
 }
 
 /**
@@ -998,26 +999,6 @@ function scorm_supports($feature) {
 
         default: return null;
     }
-}
-
-/**
- * This function extends the global navigation for the site.
- * It is important to note that you should not rely on PAGE objects within this
- * body of code as there is no guarantee that during an AJAX request they are
- * available
- *
- * @param navigation_node $navigation The scorm node within the global navigation
- * @param stdClass $course The course object returned from the DB
- * @param stdClass $module The module object returned from the DB
- * @param stdClass $cm The course module instance returned from the DB
- */
-function scorm_extend_navigation($navigation, $course, $module, $cm) {
-    /**
-     * This is currently just a stub so that it can be easily expanded upon.
-     * When expanding just remove this comment and the line below and then add
-     * you content.
-     */
-    $navigation->nodetype = navigation_node::NODETYPE_LEAF;
 }
 
 /**

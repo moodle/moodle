@@ -111,7 +111,7 @@ class restore_forum_activity_task extends restore_activity_task {
                                         null, 'delete discussion');
         $rules[] = new restore_log_rule('forum', 'delete discussion', 'view.php?id={course_module}', '{forum}');
         $rules[] = new restore_log_rule('forum', 'add post', 'discuss.php?d={forum_discussion}&parent={forum_post}', '{forum_post}');
-        $rules[] = new restore_log_rule('forum', 'update post', 'discuss.php?d={forum_discussion}&parent={forum_post}', '{forum_post}');
+        $rules[] = new restore_log_rule('forum', 'update post', 'discuss.php?d={forum_discussion}#p{forum_post}&parent={forum_post}', '{forum_post}');
         $rules[] = new restore_log_rule('forum', 'prune post', 'discuss.php?d={forum_discussion}', '{forum_post}');
         $rules[] = new restore_log_rule('forum', 'delete post', 'discuss.php?d={forum_discussion}', '[post]');
 

@@ -44,17 +44,16 @@
 
         $glossaryid  = clean_param($args[3], PARAM_INT);
         $cm = get_coursemodule_from_instance('glossary', $glossaryid, 0, false, MUST_EXIST);
-        if ($cm) {
-            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-            if ($COURSE->id == $cm->course) {
-                $course = $COURSE;
-            } else {
-                $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-            }
-            //context id from db should match the submitted one
-            if ($context->id != $modcontext->id || !has_capability('mod/glossary:view', $modcontext)) {
-                return null;
-            }
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        if ($COURSE->id == $cm->course) {
+            $course = $COURSE;
+        } else {
+            $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+        }
+        //context id from db should match the submitted one
+        if ($context->id != $modcontext->id || !has_capability('mod/glossary:view', $modcontext)) {
+            return null;
         }
 
         $glossary = $DB->get_record('glossary', array('id' => $glossaryid), '*', MUST_EXIST);
@@ -99,7 +98,10 @@
 
                 $item->pubdate = $rec->entrytimecreated;
                 $item->link = $CFG->wwwroot."/mod/glossary/showentry.php?courseid=".$glossary->course."&eid=".$rec->entryid;
-                $item->description = format_text($rec->entrydefinition,$rec->entryformat,$formatoptions,$glossary->course);
+
+                $definition = file_rewrite_pluginfile_urls($rec->entrydefinition, 'pluginfile.php',
+                    $modcontext->id, 'mod_glossary', 'entry', $rec->entryid);
+                $item->description = format_text($definition, $rec->entryformat, $formatoptions, $glossary->course);
                 $items[] = $item;
             }
 

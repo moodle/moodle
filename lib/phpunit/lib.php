@@ -36,34 +36,25 @@ require_once 'PHPUnit/Extensions/Database/Autoload.php';
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class phpunit_util {
-    /**
-     * @var array original content of all database tables
-     */
+    /** @var string current version hash from php files */
+    protected static $versionhash = null;
+
+    /** @var array original content of all database tables*/
     protected static $tabledata = null;
 
-    /**
-     * @var array original structure of all database tables
-     */
+    /** @var array original structure of all database tables */
     protected static $tablestructure = null;
 
-    /**
-     * @var array An array of original globals, restored after each test
-     */
+    /** @var array An array of original globals, restored after each test */
     protected static $globals = array();
 
-    /**
-     * @var int last value of db writes counter, used for db resetting
-     */
+    /** @var int last value of db writes counter, used for db resetting */
     public static $lastdbwrites = null;
 
-    /**
-     * @var phpunit_data_generator
-     */
+    /** @var phpunit_data_generator */
     protected static $generator = null;
 
-    /**
-     * @var resource used for prevention of parallel test execution
-     */
+    /** @var resource used for prevention of parallel test execution */
     protected static $lockhandle = null;
 
     /**
@@ -114,6 +105,30 @@ class phpunit_util {
             fclose(self::$lockhandle);
             self::$lockhandle = null;
         }
+    }
+
+    /**
+     * Load global $CFG;
+     * @internal
+     * @static
+     * @return void
+     */
+    public static function initialise_cfg() {
+        global $DB;
+        $dbhash = false;
+        try {
+            $dbhash = $DB->get_field('config', 'value', array('name'=>'phpunittest'));
+        } catch (Exception $e) {
+            // not installed yet
+            initialise_cfg();
+            return;
+        }
+        if ($dbhash !== phpunit_util::get_version_hash()) {
+            // do not set CFG - the only way forward is to drop and reinstall
+            return;
+        }
+        // standard CFG init
+        initialise_cfg();
     }
 
     /**
@@ -515,6 +530,7 @@ class phpunit_util {
         accesslib_clear_all_caches(true);
         get_string_manager()->reset_caches();
         events_get_handlers('reset');
+        textlib::reset_caches();
         //TODO: add more resets here and probably refactor them to new core function
 
         // purge dataroot directory
@@ -625,26 +641,31 @@ class phpunit_util {
 
         if (!self::is_test_site()) {
             // dataroot was verified in bootstrap, so it must be DB
-            return array(131, 'Can not use test database, try changing prefix');
+            return array(PHPUNIT_EXITCODE_CONFIGERROR, 'Can not use database for testing, try different prefix');
         }
 
         if (empty($tables)) {
-            return array(132, '');
+            return array(PHPUNIT_EXITCODE_INSTALL, '');
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/tabledata.ser") or !file_exists("$CFG->dataroot/phpunit/tablestructure.ser")) {
-            return array(133, '');
+            return array(PHPUNIT_EXITCODE_REINSTALL, '');
         }
 
         if (!file_exists("$CFG->dataroot/phpunit/versionshash.txt")) {
-            return array(133, '');
+            return array(PHPUNIT_EXITCODE_REINSTALL, '');
         }
 
         $hash = phpunit_util::get_version_hash();
         $oldhash = file_get_contents("$CFG->dataroot/phpunit/versionshash.txt");
 
         if ($hash !== $oldhash) {
-            return array(133, '');
+            return array(PHPUNIT_EXITCODE_REINSTALL, '');
+        }
+
+        $dbhash = get_config('core', 'phpunittest');
+        if ($hash !== $dbhash) {
+            return array(PHPUNIT_EXITCODE_REINSTALL, '');
         }
 
         return array(0, '');
@@ -662,7 +683,7 @@ class phpunit_util {
         global $DB, $CFG;
 
         if (!self::is_test_site()) {
-            phpunit_bootstrap_error(131, 'Can not drop non-test site!!');
+            phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, 'Can not drop non-test site!!');
         }
 
         // purge dataroot
@@ -707,13 +728,13 @@ class phpunit_util {
         global $DB, $CFG;
 
         if (!self::is_test_site()) {
-            phpunit_bootstrap_error(131, 'Can not install on non-test site!!');
+            phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, 'Can not install on non-test site!!');
         }
 
         if ($DB->get_tables()) {
             list($errorcode, $message) = phpunit_util::testing_ready_problem();
             if ($errorcode) {
-                phpunit_bootstrap_error(133, 'Database tables already present, Moodle PHPUnit test environment can not be initialised');
+                phpunit_bootstrap_error(PHPUNIT_EXITCODE_REINSTALL, 'Database tables already present, Moodle PHPUnit test environment can not be initialised');
             } else {
                 phpunit_bootstrap_error(0, 'Moodle PHPUnit test environment is already initialised');
             }
@@ -731,7 +752,8 @@ class phpunit_util {
         update_timezone_records($timezones);
 
         // add test db flag
-        set_config('phpunittest', 'phpunittest');
+        $hash = phpunit_util::get_version_hash();
+        set_config('phpunittest', $hash);
 
         // store data for all tables
         $data = array();
@@ -756,7 +778,6 @@ class phpunit_util {
         phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/tablestructure.ser");
 
         // hash all plugin versions - helps with very fast detection of db structure changes
-        $hash = phpunit_util::get_version_hash();
         file_put_contents("$CFG->dataroot/phpunit/versionshash.txt", $hash);
         phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/versionshash.txt", $hash);
     }
@@ -768,6 +789,10 @@ class phpunit_util {
      */
     public static function get_version_hash() {
         global $CFG;
+
+        if (self::$versionhash) {
+            return self::$versionhash;
+        }
 
         $versions = array();
 
@@ -801,9 +826,9 @@ class phpunit_util {
             }
         }
 
-        $hash = sha1(serialize($versions));
+        self::$versionhash = sha1(serialize($versions));
 
-        return $hash;
+        return self::$versionhash;
     }
 
     /**
@@ -831,7 +856,7 @@ class phpunit_util {
                 if (!file_exists("$fullplug/tests/")) {
                     continue;
                 }
-                $dir = preg_replace("|$CFG->dirroot/|", '', $fullplug, 1);
+                $dir = substr($fullplug, strlen($CFG->dirroot)+1);
                 $dir .= '/tests';
                 $component = $type.'_'.$plug;
 
@@ -850,9 +875,12 @@ class phpunit_util {
                 phpunit_boostrap_fix_file_permissions("$CFG->dirroot/phpunit.xml");
             }
         }
+
         // relink - it seems that xml:base does not work in phpunit xml files, remove this nasty hack if you find a way to set xml base for relative refs
-        $data = str_replace('lib/phpunit/', "$CFG->dirroot/lib/phpunit/", $data);
-        $data = preg_replace('|<directory suffix="_test.php">([^<]+)</directory>|', '<directory suffix="_test.php">'.$CFG->dirroot.'/$1</directory>', $data);
+        $data = str_replace('lib/phpunit/', $CFG->dirroot.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'phpunit'.DIRECTORY_SEPARATOR, $data);
+        $data = preg_replace('|<directory suffix="_test.php">([^<]+)</directory>|',
+            '<directory suffix="_test.php">'.$CFG->dirroot.(DIRECTORY_SEPARATOR === '\\' ? '\\\\' : DIRECTORY_SEPARATOR).'$1</directory>',
+            $data);
         file_put_contents("$CFG->dataroot/phpunit/webrunner.xml", $data);
         phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/webrunner.xml");
 
@@ -895,12 +923,12 @@ abstract class UnitTestCase extends PHPUnit_Framework_TestCase {
      * @param string $message
      * @return void
      */
-    public static function expectError($expected = false, $message = '') {
-        // not available in PHPUnit
+    public function expectError($expected = false, $message = '') {
+        // alternatively use phpdocs: @expectedException PHPUnit_Framework_Error
         if (!$expected) {
             return;
         }
-        self::skipIf(true);
+        $this->setExpectedException('PHPUnit_Framework_Error', $message);
     }
 
     /**
@@ -935,6 +963,19 @@ abstract class UnitTestCase extends PHPUnit_Framework_TestCase {
      */
     public static function assertEqual($expected, $actual, $message = '') {
         parent::assertEquals($expected, $actual, $message);
+    }
+
+    /**
+     * @deprecated since 2.3
+     * @static
+     * @param mixed $expected
+     * @param mixed $actual
+     * @param float|int $margin
+     * @param string $message
+     * @return void
+     */
+    public static function assertWithinMargin($expected, $actual, $margin, $message = '') {
+        parent::assertEquals($expected, $actual, '', $margin, $message);
     }
 
     /**
@@ -983,10 +1024,34 @@ abstract class UnitTestCase extends PHPUnit_Framework_TestCase {
      */
     public static function assertIsA($actual, $expected, $message = '') {
         if ($expected === 'array') {
-            parent::assertEquals(gettype($actual), 'array', $message);
+            parent::assertEquals('array', gettype($actual), $message);
         } else {
             parent::assertInstanceOf($expected, $actual, $message);
         }
+    }
+
+    /**
+     * @deprecated since 2.3
+     * @static
+     * @param mixed $pattern
+     * @param mixed $string
+     * @param string $message
+     * @return void
+     */
+    public static function assertPattern($pattern, $string, $message = '') {
+        parent::assertRegExp($pattern, $string, $message);
+    }
+
+    /**
+     * @deprecated since 2.3
+     * @static
+     * @param mixed $pattern
+     * @param mixed $string
+     * @param string $message
+     * @return void
+     */
+    public static function assertNotPattern($pattern, $string, $message = '') {
+        parent::assertNotRegExp($pattern, $string, $message);
     }
 }
 

@@ -58,7 +58,7 @@ if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-require_login($course->id, true, $cm);
+require_login($course, true, $cm);
 
 if ($confirm) {
     if (!confirm_sesskey()) {

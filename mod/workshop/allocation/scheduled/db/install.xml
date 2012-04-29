@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/workshop/allocation/scheduled/db" VERSION="20120330" COMMENT="XMLDB file for Moodle mod/workshop/allocation/scheduled"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="workshopallocation_scheduled" COMMENT="Stores the allocation settings for the scheduled allocator">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="workshop id we are part of" PREVIOUS="id" NEXT="enabled"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Is the scheduled allocation enabled" PREVIOUS="workshopid" NEXT="submissionend"/>
+        <FIELD NAME="submissionend" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="What was the workshop's submissionend when this record was created or modified" PREVIOUS="enabled" NEXT="timeallocated"/>
+        <FIELD NAME="timeallocated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="When was the last scheduled allocation executed" PREVIOUS="submissionend" NEXT="settings"/>
+        <FIELD NAME="settings" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The pre-defined settings for the underlying random allocation to run it with" PREVIOUS="timeallocated" NEXT="resultstatus"/>
+        <FIELD NAME="resultstatus" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The resulting status of the most recent execution" PREVIOUS="settings" NEXT="resultmessage"/>
+        <FIELD NAME="resultmessage" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="Optional short message describing the resulting status" PREVIOUS="resultstatus" NEXT="resultlog"/>
+        <FIELD NAME="resultlog" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The log of the most recent execution" PREVIOUS="resultmessage"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fkuq_workshopid"/>
+        <KEY NAME="fkuq_workshopid" TYPE="foreign-unique" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" COMMENT="Max one record for each workshop" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

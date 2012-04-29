@@ -43,7 +43,7 @@ $PAGE->set_url($currenturl);
 $attemptobj = quiz_attempt::create($attemptid);
 
 // Check login.
-require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
+require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 $attemptobj->check_review_capability();
 
 $accessmanager = $attemptobj->get_access_manager(time());

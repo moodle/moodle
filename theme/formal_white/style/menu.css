@@ -103,9 +103,9 @@ div.yui3-menu-content {
 .yui3-skin-sam .yui3-menu .yui3-menu {
     border-top:none;
     padding-left:-1px;
-    border-right:1px #CCC solid;
-    border-bottom:1px #CCC solid;
-    border-left:1px #CCC solid;
+    border-right:1px solid #CCC;
+    border-bottom:1px solid #CCC;
+    border-left:1px solid #CCC;
 }
 
 /* color of selected item in FF */

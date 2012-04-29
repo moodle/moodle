@@ -697,7 +697,7 @@ abstract class repository {
      * @param string $filename
      * @return string
      */
-    function append_suffix($filename) {
+    public static function append_suffix($filename) {
         $pathinfo = pathinfo($filename);
         if (empty($pathinfo['extension'])) {
             return $filename . RENAME_SUFFIX;
@@ -1824,7 +1824,7 @@ abstract class repository {
      * @param string $newfilename
      * @return boolean
      */
-    function overwrite_existing_draftfile($itemid, $filepath, $filename, $newfilepath, $newfilename) {
+    public static function overwrite_existing_draftfile($itemid, $filepath, $filename, $newfilepath, $newfilename) {
         global $USER;
         $fs = get_file_storage();
         $user_context = get_context_instance(CONTEXT_USER, $USER->id);
@@ -1850,7 +1850,7 @@ abstract class repository {
      * @param string $filename
      * @return boolean
      */
-    function delete_tempfile_from_draft($draftitemid, $filepath, $filename) {
+    public static function delete_tempfile_from_draft($draftitemid, $filepath, $filename) {
         global $USER;
         $fs = get_file_storage();
         $user_context = get_context_instance(CONTEXT_USER, $USER->id);

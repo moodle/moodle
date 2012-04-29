@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
 function events_load_def($component) {
     global $CFG;
     if ($component === 'unittest') {
-        $defpath = $CFG->dirroot.'/lib/simpletest/fixtures/events.php';
+        $defpath = $CFG->dirroot.'/lib/tests/fixtures/events.php';
     } else {
         $defpath = get_component_directory($component).'/db/events.php';
     }

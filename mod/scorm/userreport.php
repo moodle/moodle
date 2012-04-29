@@ -63,7 +63,7 @@ $PAGE->set_url($url);
 //END of url setting + data buildup
 
 // checking login +logging +getting context
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/scorm:viewreport', $contextmodule);
 

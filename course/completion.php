@@ -52,7 +52,7 @@ if ($id) { // editing course
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error('invalidcourseid');
     }
-    require_login($course->id);
+    require_login($course);
     require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));
 
 } else {

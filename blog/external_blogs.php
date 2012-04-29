@@ -68,7 +68,7 @@ if (!empty($blogs)) {
     $table = new html_table();
     $table->cellpadding = 4;
     $table->attributes['class'] = 'generaltable boxaligncenter';
-    $table->head = array(get_string('name'), get_string('url'), get_string('timefetched', 'blog'), get_string('valid', 'blog'), get_string('actions'));
+    $table->head = array(get_string('name'), get_string('url', 'blog'), get_string('timefetched', 'blog'), get_string('valid', 'blog'), get_string('actions'));
 
     foreach ($blogs as $blog) {
         if ($blog->failedlastsync) {

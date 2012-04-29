@@ -205,6 +205,10 @@ class core_textlib_testcase extends basic_testcase {
 
         $str = pack("H*", "bcf2cce5d6d0cec4"); //GB18030
         $this->assertSame(textlib::strtolower($str, 'GB18030'), $str);
+
+        // typo3 has problems with integers
+        $str = 1309528800;
+        $this->assertSame((string)$str, textlib::strtolower($str));
     }
 
     /**

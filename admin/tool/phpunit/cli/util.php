@@ -17,14 +17,7 @@
 /**
  * PHPUnit related utilities.
  *
- * Exit codes:
- *  0   - success
- *  1   - general error
- *  130 - missing PHPUnit library error
- *  131 - configuration problem
- *  132 - install new test database
- *  133 - drop existing data before installing
- *  134 - can not create main phpunit.xml
+ * Exit codes: {@see phpunit_bootstrap_error()}
  *
  * @package    tool_phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
@@ -72,12 +65,8 @@ if ($options['phpunitdir']) {
 }
 
 // verify PHPUnit libs are loaded
-if (!@include_once('PHPUnit/Autoload.php')) {
-    phpunit_bootstrap_error(130);
-}
-
-if (!@include_once('PHPUnit/Extensions/Database/Autoload.php')) {
-    phpunit_bootstrap_error(130);
+if (!include_once('PHPUnit/Autoload.php')) {
+    phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITMISSING);
 }
 
 if ($options['run']) {
@@ -147,7 +136,7 @@ if ($diag) {
     if (phpunit_util::build_config_file()) {
         exit(0);
     } else {
-        phpunit_bootstrap_error(134);
+        phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGWARNING, 'Can not create phpunit.xml configuration file, verify dirroot permissions');
     }
 
 } else if ($drop) {

@@ -126,7 +126,7 @@ class qtype_numerical_renderer extends qtype_renderer {
 
         if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',
-                    $question->get_validation_error(array('answer' => $currentanswer)),
+                    $question->get_validation_error(array('answer' => $currentanswer, 'unit' => $selectedunit)),
                     array('class' => 'validationerror'));
         }
 

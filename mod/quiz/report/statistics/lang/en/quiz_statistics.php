@@ -17,12 +17,10 @@
 /**
  * Strings for component 'quiz_statistics', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    quiz
- * @subpackage statistics
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_statistics
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 $string['actualresponse'] = 'Actual response';
 $string['allattempts'] = 'all attempts';

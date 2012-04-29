@@ -508,6 +508,10 @@ class webservice {
     /**
      * Get user capabilities (with context)
      * Only useful for documentation purpose
+     * WARNING: do not use this "broken" function. It was created in the goal to display some capabilities
+     * required by users. In theory we should not need to display this kind of information
+     * as the front end does not display it itself. In pratice,
+     * admins would like the info, for more info you can follow: MDL-29962
      *
      * @param int $userid user id
      * @return array
@@ -515,9 +519,9 @@ class webservice {
     public function get_user_capabilities($userid) {
         global $DB;
         //retrieve the user capabilities
-        $sql = "SELECT rc.id, rc.capability FROM {role_capabilities} rc, {role_assignments} ra
-            WHERE rc.roleid=ra.roleid AND ra.userid= ?";
-        $dbusercaps = $DB->get_records_sql($sql, array($userid));
+        $sql = "SELECT DISTINCT rc.id, rc.capability FROM {role_capabilities} rc, {role_assignments} ra
+            WHERE rc.roleid=ra.roleid AND ra.userid= ? AND rc.permission = ?";
+        $dbusercaps = $DB->get_records_sql($sql, array($userid, CAP_ALLOW));
         $usercaps = array();
         foreach ($dbusercaps as $usercap) {
             $usercaps[$usercap->capability] = true;
@@ -527,6 +531,10 @@ class webservice {
 
     /**
      * Get missing user capabilities for a given service
+     * WARNING: do not use this "broken" function. It was created in the goal to display some capabilities
+     * required by users. In theory we should not need to display this kind of information
+     * as the front end does not display it itself. In pratice,
+     * admins would like the info, for more info you can follow: MDL-29962
      *
      * @param array $users users
      * @param int $serviceid service id

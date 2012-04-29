@@ -326,7 +326,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     function loadArray($arr, $values=null)
     {
         if (!is_array($arr)) {
-            return PEAR::raiseError('Argument 1 of HTML_Select::loadArray is not a valid array');
+            return self::raiseError('Argument 1 of HTML_Select::loadArray is not a valid array');
         }
         if (isset($values)) {
             $this->setSelected($values);
@@ -358,7 +358,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
     function loadDbResult(&$result, $textCol=null, $valueCol=null, $values=null)
     {
         if (!is_object($result) || !is_a($result, 'db_result')) {
-            return PEAR::raiseError('Argument 1 of HTML_Select::loadDbResult is not a valid DB_result');
+            return self::raiseError('Argument 1 of HTML_Select::loadDbResult is not a valid DB_result');
         }
         if (isset($values)) {
             $this->setValue($values);
@@ -401,7 +401,7 @@ class HTML_QuickForm_select extends HTML_QuickForm_element {
         } elseif (is_subclass_of($conn, "db_common")) {
             $dbConn = &$conn;
         } else {
-            return PEAR::raiseError('Argument 1 of HTML_Select::loadQuery is not a valid type');
+            return self::raiseError('Argument 1 of HTML_Select::loadQuery is not a valid type');
         }
         $result = $dbConn->query($sql);
         if (DB::isError($result)) {

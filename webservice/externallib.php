@@ -164,7 +164,11 @@ class core_webservice_external extends external_api {
                 'fullname'       => new external_value(PARAM_TEXT, 'user full name'),
                 'userid'         => new external_value(PARAM_INT, 'user id'),
                 'siteurl'        => new external_value(PARAM_RAW, 'site url'),
-                'userpictureurl' => new external_value(PARAM_URL, 'the user profile picture'),
+                'userpictureurl' => new external_value(PARAM_URL, 'the user profile picture.
+                    Warning: this url is the public URL that only works when forcelogin is set to NO and guestaccess is set to YES.
+                    In order to retrieve user profile pictures independently of the Moodle config, replace "pluginfile.php" by
+                    "webservice/pluginfile.php?token=WSTOKEN&file=". Of course the user can only see profile picture depending on his/her permissions.
+                    Moreover it is recommended to use HTTPS too.'),
                 'functions'      => new external_multiple_structure(
                     new external_single_structure(
                         array(

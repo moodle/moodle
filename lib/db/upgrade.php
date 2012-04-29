@@ -358,6 +358,69 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012032300.02);
     }
 
+    if ($oldversion < 2012042300.00) {
+        // This change makes the course_section index unique.
+
+        // xmldb does not allow changing index uniqueness - instead we must drop
+        // index then add it again
+        $table = new xmldb_table('course_sections');
+        $index = new xmldb_index('course_section', XMLDB_INDEX_NOTUNIQUE, array('course', 'section'));
+
+        // Conditionally launch drop index course_section
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Look for any duplicate course_sections entries. There should not be
+        // any but on some busy systems we found a few, maybe due to previous
+        // bugs.
+        $transaction = $DB->start_delegated_transaction();
+        $rs = $DB->get_recordset_sql('
+                SELECT DISTINCT
+                    cs.id, cs.course
+                FROM
+                    {course_sections} cs
+                    INNER JOIN {course_sections} older
+                        ON cs.course = older.course AND cs.section = older.section
+                        AND older.id < cs.id');
+        foreach ($rs as $rec) {
+            $DB->delete_records('course_sections', array('id' => $rec->id));
+            rebuild_course_cache($rec->course, true);
+        }
+        $rs->close();
+        $transaction->allow_commit();
+
+        // Define index course_section (unique) to be added to course_sections
+        $index = new xmldb_index('course_section', XMLDB_INDEX_UNIQUE, array('course', 'section'));
+
+        // Conditionally launch add index course_section
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012042300.00);
+    }
+
+    if ($oldversion < 2012042300.02) {
+        require_once($CFG->libdir . '/completion/completion_criteria.php');
+        // Delete orphaned criteria which were left when modules were removed
+        if ($DB->get_dbfamily() === 'mysql') {
+            $sql = "DELETE cc FROM {course_completion_criteria} cc
+                    LEFT JOIN {course_modules} cm ON cm.id = cc.moduleinstance
+                    WHERE cm.id IS NULL AND cc.criteriatype = ".COMPLETION_CRITERIA_TYPE_ACTIVITY;
+        } else {
+            $sql = "DELETE FROM {course_completion_criteria}
+                    WHERE NOT EXISTS (
+                        SELECT 'x' FROM {course_modules}
+                        WHERE {course_modules}.id = {course_completion_criteria}.moduleinstance)
+                    AND {course_completion_criteria}.criteriatype = ".COMPLETION_CRITERIA_TYPE_ACTIVITY;
+        }
+        $DB->execute($sql);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012042300.02);
+    }
 
     return true;
 }

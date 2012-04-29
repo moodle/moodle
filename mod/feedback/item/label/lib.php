@@ -167,7 +167,8 @@ class feedback_item_label extends feedback_item_base {
                                                $filearea,
                                                $item->id);
 
-        echo format_text($output, FORMAT_HTML, array('overflowdiv'=>true));
+        $formatoptions = array('overflowdiv'=>true, 'trusted'=>$CFG->enabletrusttext);
+        echo format_text($output, FORMAT_HTML, $formatoptions);
     }
 
     /**

@@ -614,7 +614,7 @@ class assignment_upload extends assignment_base {
         die;
     }
 
-    function send_file($filearea, $args) {
+    function send_file($filearea, $args, $forcedownload, array $options=array()) {
         global $CFG, $DB, $USER;
         require_once($CFG->libdir.'/filelib.php');
 
@@ -638,7 +638,8 @@ class assignment_upload extends assignment_base {
             if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
                 return false;
             }
-            send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+
+            send_stored_file($file, 0, 0, true, $options); // download MUST be forced - security!
 
         } else if ($filearea === 'response') {
             $submissionid = (int)array_shift($args);
@@ -658,7 +659,7 @@ class assignment_upload extends assignment_base {
             if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
                 return false;
             }
-            send_stored_file($file, 0, 0, true);
+            send_stored_file($file, 0, 0, true, $options);
         }
 
         return false;
@@ -842,7 +843,7 @@ class assignment_upload extends assignment_base {
         $mode     = optional_param('mode', '', PARAM_ALPHA);
         $offset   = optional_param('offset', 0, PARAM_INT);
 
-        require_login($this->course->id, false, $this->cm);
+        require_login($this->course, false, $this->cm);
 
         if (empty($mode)) {
             $urlreturn = 'view.php';

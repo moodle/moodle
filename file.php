@@ -71,7 +71,7 @@ if ($course->legacyfiles != 2) {
 }
 
 if ($course->id != SITEID) {
-    require_login($course->id, true, null, false);
+    require_login($course, true, null, false);
 
 } else if ($CFG->forcelogin) {
     if (!empty($CFG->sitepolicy)

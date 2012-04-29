@@ -51,10 +51,16 @@ class textlib {
     /**
      * Return t3lib helper class, which is used for conversion between charsets
      *
+     * @param bool $reset
      * @return t3lib_cs
      */
-    protected static function typo3() {
+    protected static function typo3($reset = false) {
         static $typo3cs = null;
+
+        if ($reset) {
+            $typo3cs = null;
+            return null;
+        }
 
         if (isset($typo3cs)) {
             return $typo3cs;
@@ -65,6 +71,8 @@ class textlib {
         // Required files
         require_once($CFG->libdir.'/typo3/class.t3lib_cs.php');
         require_once($CFG->libdir.'/typo3/class.t3lib_div.php');
+        require_once($CFG->libdir.'/typo3/interface.t3lib_singleton.php');
+        require_once($CFG->libdir.'/typo3/class.t3lib_l10n_locales.php');
 
         // do not use mbstring or recode because it may return invalid results in some corner cases
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = 'iconv';
@@ -85,14 +93,24 @@ class textlib {
 
         // This full path constants must be defined too, transforming backslashes
         // to forward slashed because Typo3 requires it.
-        define ('PATH_t3lib', str_replace('\\','/',$CFG->libdir.'/typo3/'));
-        define ('PATH_typo3', str_replace('\\','/',$CFG->libdir.'/typo3/'));
-        define ('PATH_site', str_replace('\\','/',$CFG->tempdir.'/'));
-        define ('TYPO3_OS', stristr(PHP_OS,'win')&&!stristr(PHP_OS,'darwin')?'WIN':'');
+        if (!defined('PATH_t3lib')) {
+            define('PATH_t3lib', str_replace('\\','/',$CFG->libdir.'/typo3/'));
+            define('PATH_typo3', str_replace('\\','/',$CFG->libdir.'/typo3/'));
+            define('PATH_site', str_replace('\\','/',$CFG->tempdir.'/'));
+            define('TYPO3_OS', stristr(PHP_OS,'win')&&!stristr(PHP_OS,'darwin')?'WIN':'');
+        }
 
         $typo3cs = new t3lib_cs();
 
         return $typo3cs;
+    }
+
+    /**
+     * Reset internal textlib caches.
+     * @static
+     */
+    public static function reset_caches() {
+        self::typo3(true);
     }
 
     /**
@@ -166,7 +184,7 @@ class textlib {
         if ($result === false or $result === '') {
             // note: iconv is prone to return empty string when invalid char encountered, or false if encoding unsupported
             $oldlevel = error_reporting(E_PARSE);
-            $result = self::typo3()->conv($text, $fromCS, $toCS);
+            $result = self::typo3()->conv((string)$text, $fromCS, $toCS);
             error_reporting($oldlevel);
         }
 
@@ -208,9 +226,9 @@ class textlib {
 
         $oldlevel = error_reporting(E_PARSE);
         if ($len === null) {
-            $result = self::typo3()->substr($charset, $text, $start);
+            $result = self::typo3()->substr($charset, (string)$text, $start);
         } else {
-            $result = self::typo3()->substr($charset, $text, $start, $len);
+            $result = self::typo3()->substr($charset, (string)$text, $start, $len);
         }
         error_reporting($oldlevel);
 
@@ -236,7 +254,7 @@ class textlib {
         }
 
         $oldlevel = error_reporting(E_PARSE);
-        $result = self::typo3()->strlen($charset, $text);
+        $result = self::typo3()->strlen($charset, (string)$text);
         error_reporting($oldlevel);
 
         return $result;
@@ -257,7 +275,7 @@ class textlib {
         }
 
         $oldlevel = error_reporting(E_PARSE);
-        $result = self::typo3()->conv_case($charset, $text, 'toLower');
+        $result = self::typo3()->conv_case($charset, (string)$text, 'toLower');
         error_reporting($oldlevel);
 
         return $result;
@@ -278,7 +296,7 @@ class textlib {
         }
 
         $oldlevel = error_reporting(E_PARSE);
-        $result = self::typo3()->conv_case($charset, $text, 'toUpper');
+        $result = self::typo3()->conv_case($charset, (string)$text, 'toUpper');
         error_reporting($oldlevel);
 
         return $result;
@@ -328,7 +346,7 @@ class textlib {
     public static function specialtoascii($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
         $oldlevel = error_reporting(E_PARSE);
-        $result = self::typo3()->specCharsToASCII($charset, $text);
+        $result = self::typo3()->specCharsToASCII($charset, (string)$text);
         error_reporting($oldlevel);
         return $result;
     }
@@ -469,9 +487,9 @@ class textlib {
         // Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
         if ($nonnum) {
-            $str = self::typo3()->entities_to_utf8($str, true);
+            $str = self::typo3()->entities_to_utf8((string)$str, true);
         }
-        $result = self::typo3()->utf8_to_entities($str);
+        $result = self::typo3()->utf8_to_entities((string)$str);
         if ($dec) {
             $result = preg_replace('/&#x([0-9a-f]+);/ie', "'&#'.hexdec('$1').';'", $result);
         }

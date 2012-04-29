@@ -194,7 +194,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
      * Test internal function used for clean_text() speedup.
      * @return void
      */
-    function test_is_purify_html_necessary() {
+    public function test_is_purify_html_necessary() {
         // first our shortcuts
         $text = "";
         $this->assertFalse(is_purify_html_necessary($text));
@@ -246,6 +246,50 @@ class core_htmlpurifier_testcase extends basic_testcase {
 
         $text = "<p>abc";
         $this->assertTrue(is_purify_html_necessary($text));
+    }
+
+    public function test_allowed_schemes() {
+        // first standard schemes
+        $text = '<a href="http://www.example.com/course/view.php?id=5">link</a>';
+        $this->assertSame($text, purify_html($text));
+
+        $text = '<a href="https://www.example.com/course/view.php?id=5">link</a>';
+        $this->assertSame($text, purify_html($text));
+
+        $text = '<a href="ftp://user@ftp.example.com/some/file.txt">link</a>';
+        $this->assertSame($text, purify_html($text));
+
+        $text = '<a href="nntp://example.com/group/123">link</a>';
+        $this->assertSame($text, purify_html($text));
+
+        $text = '<a href="news:groupname">link</a>';
+        $this->assertSame($text, purify_html($text));
+
+        $text = '<a href="mailto:user@example.com">link</a>';
+        $this->assertSame($text, purify_html($text));
+
+        // extra schemes allowed in moodle
+        $text = '<a href="irc://irc.example.com/3213?pass">link</a>';
+        $this->assertSame($text, purify_html($text));
+
+        $text = '<a href="rtsp://www.example.com/movie.mov">link</a>';
+        $this->assertSame($text, purify_html($text));
+
+        $text = '<a href="teamspeak://speak.example.com/?par=val?par2=val2">link</a>';
+        $this->assertSame($text, purify_html($text));
+
+        $text = '<a href="gopher://gopher.example.com/resource">link</a>';
+        $this->assertSame($text, purify_html($text));
+
+        $text = '<a href="mms://www.example.com/movie.mms">link</a>';
+        $this->assertSame($text, purify_html($text));
+
+        // now some borked or dangerous schemes
+        $text = '<a href="javascript://www.example.com">link</a>';
+        $this->assertSame('<a>link</a>', purify_html($text));
+
+        $text = '<a href="hmmm://www.example.com">link</a>';
+        $this->assertSame('<a>link</a>', purify_html($text));
     }
 }
 

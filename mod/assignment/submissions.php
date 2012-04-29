@@ -40,7 +40,7 @@ if ($mode !== 'all') {
     $url->param('mode', $mode);
 }
 $PAGE->set_url($url);
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 require_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id));
 

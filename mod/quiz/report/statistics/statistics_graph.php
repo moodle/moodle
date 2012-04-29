@@ -23,10 +23,9 @@
  * It plots a bar graph showing certain question statistics plotted against
  * question number.
  *
- * @package    quiz
- * @subpackage statistics
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_statistics
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -62,7 +61,7 @@ $cm = get_coursemodule_from_instance('quiz', $quiz->id);
 
 // Check access.
 require_login($quiz->course, false, $cm);
-$modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+$modcontext = context_module::instance($cm->id);
 require_capability('quiz/statistics:view', $modcontext);
 
 if (groups_get_activity_groupmode($cm)) {

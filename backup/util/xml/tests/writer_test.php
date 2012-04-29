@@ -296,7 +296,7 @@ class xml_writer_testcase extends basic_testcase {
         $xw->end_tag('toptag');
         $xw->stop();
         $result = $xo->get_allcontents();
-        $fcontents = file_get_contents($CFG->dirroot . '/backup/util/xml/simpletest/fixtures/test1.xml');
+        $fcontents = file_get_contents($CFG->dirroot . '/backup/util/xml/tests/fixtures/test1.xml');
 
         // Normalise carriage return characters.
         $fcontents = str_replace("\r\n", "\n", $fcontents);

@@ -262,6 +262,9 @@ class grade_base_testcase extends advanced_testcase {
     protected function load_grade_items() {
         global $DB;
 
+        // purge all items created by module generators
+        $DB->delete_records('grade_items', array('itemtype'=>'mod'));
+
         $course_category = grade_category::fetch_course_category($this->course->id);
 
         // id = 0

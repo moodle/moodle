@@ -26,5 +26,4 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$ADMIN->add('development', new admin_externalpage('toolsimpletest', get_string('pluginname', 'tool_unittest'), "$CFG->wwwroot/$CFG->admin/tool/unittest/index.php", 'tool/unittest:execute'));
-$ADMIN->add('development', new admin_externalpage('tooldbtest', get_string('dbtest', 'tool_unittest'), "$CFG->wwwroot/$CFG->admin/tool/unittest/dbtest.php", 'tool/unittest:execute'));
+$ADMIN->add('development', new admin_externalpage('toolsimpletest', get_string('pluginname', 'tool_unittest'), "$CFG->wwwroot/$CFG->admin/tool/unittest/index.php", 'tool/unittest:execute', true));

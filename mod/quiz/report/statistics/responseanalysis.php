@@ -18,10 +18,9 @@
  * This file contains the code to analyse all the responses to a particular
  * question.
  *
- * @package    quiz
- * @subpackage statistics
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_statistics
+ * @copyright 2010 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,8 +31,8 @@ defined('MOODLE_INTERNAL') || die();
  * This class can store and compute the analysis of the responses to a particular
  * question.
  *
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2010 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_response_analyser {
     /** @var object the data from the database that defines the question. */

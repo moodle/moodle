@@ -76,7 +76,13 @@ if (!empty($options['engine'])) {
         }
         echo str_pad($table->name, 40). " - ";
 
-        $DB->change_database_structure("ALTER TABLE {$table->name} ENGINE = $engine");
+        try {
+            $DB->change_database_structure("ALTER TABLE {$table->name} ENGINE = $engine");
+        } catch (moodle_exception $e) {
+            echo $e->getMessage()."\n";
+            $skipped++;
+            continue;
+        }
         echo "DONE\n";
         $converted++;
     }

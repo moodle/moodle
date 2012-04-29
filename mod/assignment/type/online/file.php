@@ -25,7 +25,7 @@ if (! $user = $DB->get_record("user", array("id"=>$userid))) {
     print_error('usermisconf', 'assignment');
 }
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 if (($USER->id != $user->id) && !has_capability('mod/assignment:grade', $context)) {

@@ -27,14 +27,14 @@
 $handlers = array (
     'test_instant' => array (
         'handlerfile'      => '/lib/tests/eventslib_test.php',
-        'handlerfunction'  => 'sample_function_handler',
+        'handlerfunction'  => 'eventslib_sample_function_handler',
         'schedule'         => 'instant',
         'internal'         => 1,
     ),
 
     'test_cron' => array (
         'handlerfile'      => '/lib/tests/eventslib_test.php',
-        'handlerfunction'  => array('sample_handler_class', 'static_method'),
+        'handlerfunction'  => array('eventslib_sample_handler_class', 'static_method'),
         'schedule'         => 'cron',
         'internal'         => 1,
     )

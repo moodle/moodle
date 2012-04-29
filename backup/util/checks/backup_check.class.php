@@ -168,9 +168,9 @@ abstract class backup_check {
         $hasusercap   = has_capability('moodle/backup:userinfo', $coursectx, $userid);
 
         // If setting is enabled but user lacks permission
-        if (!$hasusercap && $prevvalue) { // If user has not the capability and setting is enabled
+        if (!$hasusercap) { // If user has not the capability
             // Now analyse if we are allowed to apply changes or must stop with exception
-            if (!$apply) { // Cannot apply changes, throw exception
+            if (!$apply && $prevvalue) { // Cannot apply changes and the value is set, throw exception
                 $a = new stdclass();
                 $a->setting = 'users';
                 $a->value = $prevvalue;
@@ -178,7 +178,12 @@ abstract class backup_check {
                 throw new backup_controller_exception('backup_setting_value_wrong_for_capability', $a);
 
             } else { // Can apply changes
-                $userssetting->set_value(false);                              // Set the value to false
+                // If it is already false, we don't want to try and set it again, because if it is
+                // already locked, and exception will occur. The side benifit is if it is true and locked
+                // we will get an exception...
+                if ($prevvalue) {
+                    $userssetting->set_value(false);                              // Set the value to false
+                }
                 $userssetting->set_status(base_setting::LOCKED_BY_PERMISSION);// Set the status to locked by perm
             }
         }
@@ -191,9 +196,9 @@ abstract class backup_check {
         $hasanoncap  = has_capability('moodle/backup:anonymise', $coursectx, $userid);
 
         // If setting is enabled but user lacks permission
-        if (!$hasanoncap && $prevvalue) { // If user has not the capability and setting is enabled
+        if (!$hasanoncap) { // If user has not the capability
             // Now analyse if we are allowed to apply changes or must stop with exception
-            if (!$apply) { // Cannot apply changes, throw exception
+            if (!$apply && $prevvalue) { // Cannot apply changes and the value is set, throw exception
                 $a = new stdclass();
                 $a->setting = 'anonymize';
                 $a->value = $prevvalue;
@@ -201,7 +206,9 @@ abstract class backup_check {
                 throw new backup_controller_exception('backup_setting_value_wrong_for_capability', $a);
 
             } else { // Can apply changes
-                $anonsetting->set_value(false);                              // Set the value to false
+                if ($prevvalue) { // If we try and set it back to false and it has already been locked, error will occur
+                    $anonsetting->set_value(false);                              // Set the value to false
+                }
                 $anonsetting->set_status(base_setting::LOCKED_BY_PERMISSION);// Set the status to locked by perm
             }
         }

@@ -60,7 +60,7 @@
         if (is_array($aroles) && isset($aroles[$switchrole])) {
             role_switch($switchrole, $context);
             // Double check that this role is allowed here
-            require_login($course->id);
+            require_login($course);
         }
         // reset course page state - this prevents some weird problems ;-)
         $USER->activitycopy = false;
@@ -162,32 +162,6 @@
         redirect($CFG->wwwroot .'/');
     }
 
-    // AJAX-capable course format?
-    $useajax = false;
-    $formatajax = course_format_ajax_support($course->format);
-
-    if (!empty($CFG->enablecourseajax)
-            and $formatajax->capable
-            and !empty($USER->editing)
-            and ajaxenabled($formatajax->testedbrowsers)
-            and $PAGE->theme->enablecourseajax
-            and has_capability('moodle/course:manageactivities', $context)) {
-        $PAGE->requires->yui2_lib('dragdrop');
-        $PAGE->requires->yui2_lib('connection');
-        $PAGE->requires->yui2_lib('selector');
-        $PAGE->requires->js('/lib/ajax/block_classes.js', true);
-        $PAGE->requires->js('/lib/ajax/section_classes.js', true);
-
-        // Okay, global variable alert. VERY UGLY. We need to create
-        // this object here before the <blockname>_print_block()
-        // function is called, since that function needs to set some
-        // stuff in the javascriptportal object.
-        $COURSE->javascriptportal = new jsportal();
-        $useajax = true;
-    }
-
-    $CFG->blocksdrag = $useajax;   // this will add a new class to the header so we can style differently
-
     $completion = new completion_info($course);
     if ($completion->is_enabled() && ajaxenabled()) {
         $PAGE->requires->string_for_js('completion-title-manual-y', 'completion');
@@ -257,16 +231,7 @@
 
     echo html_writer::end_tag('div');
 
-    // Use AJAX?
-    if ($useajax && has_capability('moodle/course:manageactivities', $context)) {
-        // At the bottom because we want to process sections and activities
-        // after the relevant html has been generated. We're forced to do this
-        // because of the way in which lib/ajax/ajaxcourse.js is written.
-        echo html_writer::script(false, new moodle_url('/lib/ajax/ajaxcourse.js'));
-        $COURSE->javascriptportal->print_javascript($course->id);
-    }
-
+    // Include the command toolbox YUI module
+    include_course_ajax($course, $modnamesused);
 
     echo $OUTPUT->footer();
-
-

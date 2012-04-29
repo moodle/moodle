@@ -262,9 +262,8 @@ class pgsql_native_moodle_database extends moodle_database {
      *
      * @param string $version version to check against
      * @return bool returns if the version is fulfilled (true) or no (false)
-     * @todo Make this method private. MDL-32392
      */
-    protected function is_min_version($version) {
+    private function is_min_version($version) {
         $server = $this->get_server_info();
         $server = $server['version'];
         return version_compare($server, $version, '>=');

@@ -40,7 +40,7 @@ if (!$attemptobj->is_finished()) {
 }
 
 // Check login and permissions.
-require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
+require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 $attemptobj->require_capability('mod/quiz:grade');
 
 // Log this action.

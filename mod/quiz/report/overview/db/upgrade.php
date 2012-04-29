@@ -17,10 +17,9 @@
 /**
  * Quiz overview report upgrade script.
  *
- * @package    quiz
- * @subpackage overview
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_overview
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -36,9 +35,8 @@ function xmldb_quiz_overview_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
+    // Moodle v2.2.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

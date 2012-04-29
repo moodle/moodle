@@ -25,6 +25,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('PHPUNIT_EXITCODE_PHPUNITMISSING', 129);
+define('PHPUNIT_EXITCODE_PHPUNITWRONG', 130);
+define('PHPUNIT_EXITCODE_PHPUNITEXTMISSING', 131);
+define('PHPUNIT_EXITCODE_CONFIGERROR', 135);
+define('PHPUNIT_EXITCODE_CONFIGWARNING', 136);
+define('PHPUNIT_EXITCODE_INSTALL', 140);
+define('PHPUNIT_EXITCODE_REINSTALL', 141);
+
 /**
  * Print error and stop execution
  * @param int $errorcode The exit error code
@@ -39,35 +47,35 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
         case 1:
             $text = 'Error: '.$text;
             break;
-        case 129:
+        case PHPUNIT_EXITCODE_PHPUNITMISSING:
+            $text = "Moodle can not find PHPUnit PEAR library";
+            break;
+        case PHPUNIT_EXITCODE_PHPUNITWRONG:
             $text = 'Moodle requires PHPUnit 3.6.x, '.$text.' is not compatible';
             break;
-        case 130:
-            $text = 'Moodle can not find PHPUnit PEAR library or necessary PHPUnit extension';
+        case PHPUNIT_EXITCODE_PHPUNITEXTMISSING:
+            $text = 'Moodle can not find required PHPUnit extension '.$text;
             break;
-        case 131:
-            $text = 'Moodle configuration problem: '.$text;
+        case PHPUNIT_EXITCODE_CONFIGERROR:
+            $text = "Moodle PHPUnit environment configuration error:\n".$text;
             break;
-        case 132:
-            $text = "Moodle PHPUnit environment is not initialised, please use:\n php admin/tool/phpunit/cli/util.php --install";
+        case PHPUNIT_EXITCODE_CONFIGWARNING:
+            $text = "Moodle PHPUnit environment configuration warning:\n".$text;
             break;
-        case 133:
-            $text = "Moodle PHPUnit environment was initialised for different version, please use:\n php admin/tool/phpunit/cli/util.php --drop\n php admin/tool/phpunit/cli/util.php --install";
+        case PHPUNIT_EXITCODE_INSTALL:
+            $text = "Moodle PHPUnit environment is not initialised, please use:\n php admin/tool/phpunit/cli/init.php";
             break;
-        case 134:
-            $text = 'Moodle can not create PHPUnit configuration file, please verify dirroot permissions';
+        case PHPUNIT_EXITCODE_REINSTALL:
+            $text = "Moodle PHPUnit environment was initialised for different version, please use:\n php admin/tool/phpunit/cli/init.php";
             break;
         default:
             $text = empty($text) ? '' : ': '.$text;
             $text = 'Unknown error '.$errorcode.$text;
             break;
     }
-    if (defined('PHPUNIT_UTIL') and PHPUNIT_UTIL) {
-        // do not write to error stream because we need the error message in PHP exec result from web ui
-        echo($text."\n");
-    } else {
-        fwrite(STDERR, $text."\n");
-    }
+
+    // do not write to error stream because we need the error message in PHP exec result from web ui
+    echo($text."\n");
     exit($errorcode);
 }
 

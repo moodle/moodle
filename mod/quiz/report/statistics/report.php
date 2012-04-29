@@ -17,10 +17,9 @@
 /**
  * Quiz statistics report class.
  *
- * @package    quiz
- * @subpackage statistics
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   quiz_statistics
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -38,12 +37,12 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/responseanalysis.php')
  * a quiz, compared to the whole quiz. It also provides a drill-down to more
  * detailed information about each question.
  *
- * @copyright  2008 Jamie Pratt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_report extends quiz_default_report {
     /** @var integer Time after which statistics are automatically recomputed. */
-    const TIME_TO_CACHE_STATS = 900; // 15 minutes
+    const TIME_TO_CACHE_STATS = 900; // 15 minutes.
 
     /** @var object instance of table class used for main questions stats table. */
     protected $table;
@@ -54,7 +53,7 @@ class quiz_statistics_report extends quiz_default_report {
     public function display($quiz, $cm, $course) {
         global $CFG, $DB, $OUTPUT, $PAGE;
 
-        $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $this->context = context_module::instance($cm->id);
 
         // Work out the display options.
         $download = optional_param('download', '', PARAM_ALPHA);
@@ -70,7 +69,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);
 
-        $mform = new quiz_statistics_statistics_settings_form($reporturl);
+        $mform = new quiz_statistics_settings_form($reporturl);
         if ($fromform = $mform->get_data()) {
             $useallattempts = $fromform->useallattempts;
             if ($fromform->useallattempts) {
@@ -84,7 +83,7 @@ class quiz_statistics_report extends quiz_default_report {
             $useallattempts = get_user_preferences('quiz_report_statistics_useallattempts', 0);
         }
 
-        // Find out current groups mode
+        // Find out current groups mode.
         $currentgroup = $this->get_current_group($cm, $course, $this->context);
         $nostudentsingroup = false; // True if a group is selected and there is no one in it.
         if (empty($currentgroup)) {
@@ -96,7 +95,7 @@ class quiz_statistics_report extends quiz_default_report {
             $nostudentsingroup = true;
 
         } else {
-            // All users who can attempt quizzes and who are in the currently selected group
+            // All users who can attempt quizzes and who are in the currently selected group.
             $groupstudents = get_users_by_capability($this->context,
                     array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
                     '', '', '', '', $currentgroup, '', false);
@@ -118,9 +117,8 @@ class quiz_statistics_report extends quiz_default_report {
         } else {
             $report = get_string('questionstatsfilename', 'quiz_statistics');
         }
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $courseshortname = format_string($course->shortname, true,
-                array('context' => $coursecontext));
+                array('context' => context_course::instance($course->id)));
         $filename = quiz_report_download_filename($report, $courseshortname, $quiz->name);
         $this->table->is_downloading($download, $filename,
                 get_string('quizstructureanalysis', 'quiz_statistics'));
@@ -148,7 +146,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         // Set up the table, if there is data.
         if ($s) {
-            $this->table->setup($quiz, $cm->id, $reporturl, $s);
+            $this->table->statistics_setup($quiz, $cm->id, $reporturl, $s);
         }
 
         // Print the page header stuff (if not downloading.
@@ -393,7 +391,7 @@ class quiz_statistics_report extends quiz_default_report {
         $responesstats = new quiz_statistics_response_analyser($question);
         $responesstats->load_cached($quizstats->id);
 
-        $qtable->setup($reporturl, $question, $responesstats);
+        $qtable->question_setup($reporturl, $question, $responesstats);
         if ($this->table->is_downloading()) {
             $exportclass->output_headers($qtable->headers);
         }
@@ -507,7 +505,7 @@ class quiz_statistics_report extends quiz_default_report {
                     $formattedvalue = quiz_format_grade($quiz, $value) . '%';
                     break;
                 case 'number_format':
-                    // + 2 decimal places, since not a percentage,
+                    // 2 extra decimal places, since not a percentage,
                     // and we want the same number of sig figs.
                     $formattedvalue = format_float($value, $quiz->decimalpoints + 2);
                     break;
@@ -640,7 +638,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         // Calculating MEAN of marks for all attempts by students
         // http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise
-        //        #Calculating_MEAN_of_grades_for_all_attempts_by_students
+        //     #Calculating_MEAN_of_grades_for_all_attempts_by_students.
         if ($nostudentsingroup) {
             return $this->get_emtpy_stats($questions);
         }
@@ -706,9 +704,9 @@ class quiz_statistics_report extends quiz_default_report {
         list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql(
                 $quizid, $currentgroup, $groupstudents, $useallattempts);
 
-        // Median
+        // Median ...
         if ($s % 2 == 0) {
-            //even number of attempts
+            // An even number of attempts.
             $limitoffset = $s/2 - 1;
             $limit = 2;
         } else {
@@ -724,8 +722,8 @@ class quiz_statistics_report extends quiz_default_report {
 
         $quizstats->median = array_sum($medianmarks) / count($medianmarks);
         if ($s > 1) {
-            //fetch sum of squared, cubed and power 4d
-            //differences between marks and mean mark
+            // Fetch the sum of squared, cubed and power 4d
+            // differences between marks and mean mark.
             $mean = $usingattempts->total / $s;
             $sql = "SELECT
                     SUM(POWER((quiza.sumgrades - $mean), 2)) AS power2,
@@ -737,16 +735,16 @@ class quiz_statistics_report extends quiz_default_report {
 
             $powers = $DB->get_record_sql($sql, $params, MUST_EXIST);
 
-            // Standard_Deviation
+            // Standard_Deviation:
             // see http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise
-            //         #Standard_Deviation
+            //         #Standard_Deviation.
 
             $quizstats->standarddeviation = sqrt($powers->power2 / ($s - 1));
 
-            // Skewness
+            // Skewness.
             if ($s > 2) {
-                // see http://docs.moodle.org/dev/
-                //      Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis
+                // See http://docs.moodle.org/dev/
+                //      Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis.
                 $m2= $powers->power2 / $s;
                 $m3= $powers->power3 / $s;
                 $m4= $powers->power4 / $s;
@@ -758,7 +756,7 @@ class quiz_statistics_report extends quiz_default_report {
                 }
             }
 
-            // Kurtosis
+            // Kurtosis.
             if ($s > 3) {
                 $k4= $s*$s*((($s+1)*$m4)-(3*($s-1)*$m2*$m2))/(($s-1)*($s-2)*($s-3));
                 if ($k2) {
@@ -772,7 +770,7 @@ class quiz_statistics_report extends quiz_default_report {
         $qstats->compute_statistics();
 
         if ($s > 1) {
-            $p = count($qstats->questions); // No of positions
+            $p = count($qstats->questions); // Number of positions.
             if ($p > 1 && isset($k2)) {
                 $quizstats->cic = (100 * $p / ($p -1)) *
                         (1 - ($qstats->get_sum_of_mark_variance()) / $k2);

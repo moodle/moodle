@@ -660,7 +660,7 @@ abstract class sql_generator {
 
     /**
      * Given one correct xmldb_table and the new name, returns the SQL statements
-     * to drop it (inside one array).
+     * to drop it (inside one array). Works also for temporary tables.
      *
      * @param xmldb_table $xmldb_table The table to drop.
      * @return array SQL statement(s) for dropping the specified table.
@@ -1289,15 +1289,6 @@ abstract class sql_generator {
      * @return array SQL statements.
      */
     abstract public function getCreateTempTableSQL($xmldb_table);
-
-    /**
-     * Given one correct xmldb_table and the new name, returns the SQL statements.
-     * to drop it (inside one array).
-     *
-     * @param xmldb_table $xmldb_table The xmldb_table object instance.
-     * @return array SQL statements.
-     */
-    abstract public function getDropTempTableSQL($xmldb_table);
 
     /**
      * Given one XMLDB Type, length and decimals, returns the DB proper SQL type.

@@ -55,8 +55,10 @@ class mod_assignment_mod_form extends moodleform_mod {
 
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
 
-        $mform->addElement('select', 'preventlate', get_string('preventlate', 'assignment'), $ynoptions);
-        $mform->setDefault('preventlate', 0);
+        if ($assignmentinstance->supports_lateness()) {
+            $mform->addElement('select', 'preventlate', get_string('preventlate', 'assignment'), $ynoptions);
+            $mform->setDefault('preventlate', 0);
+        }
 
         // hack to support pluggable assignment type titles
         if (get_string_manager()->string_exists('type'.$type, 'assignment')) {

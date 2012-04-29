@@ -23,7 +23,10 @@
  * @package course
  */
 
-require_once('../config.php');
+if (!defined('AJAX_SCRIPT')) {
+    define('AJAX_SCRIPT', true);
+}
+require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
 // Initialise ALL the incoming parameters here, up front.
@@ -45,20 +48,23 @@ $PAGE->set_url('/course/rest.php', array('courseId'=>$courseid,'class'=>$class))
 
 //NOTE: when making any changes here please make sure it is using the same access control as course/mod.php !!
 
-require_login();
-
-// Authorise the user and verify some incoming data
-if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-    error_log('AJAX commands.php: Course does not exist');
-    die;
-}
-
 if (empty($CFG->enablecourseajax)) {
-    error_log('Course AJAX not allowed');
-    die;
+    throw new moodle_exception('Course AJAX not allowed');
 }
 
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+// Check user is logged in and set contexts if we are dealing with resource
+if (in_array($class, array('resource'))) {
+    $cm = get_coursemodule_from_id(null, $id, $course->id, false, MUST_EXIST);
+    require_login($course, false, $cm);
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+} else {
+    require_login($course);
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+}
 require_sesskey();
+
+echo $OUTPUT->header(); // send headers
 
 // OK, now let's process the parameters and do stuff
 // MDL-10221 the DELETE method is not allowed on some web servers, so we simulate it with the action URL param
@@ -71,23 +77,17 @@ switch($requestmethod) {
     case 'POST':
 
         switch ($class) {
-            case 'block':
-                // not used any more
-                break;
-
             case 'section':
-                require_login($course);
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 require_capability('moodle/course:update', $coursecontext);
 
                 if (!$DB->record_exists('course_sections', array('course'=>$course->id, 'section'=>$id))) {
-                    error_log('AJAX commands.php: Bad Section ID '.$id);
-                    die;
+                    throw new moodle_exception('AJAX commands.php: Bad Section ID '.$id);
                 }
 
                 switch ($field) {
                     case 'visible':
-                        set_section_visible($course->id, $id, $value);
+                        $resourcestotoggle = set_section_visible($course->id, $id, $value);
+                        echo json_encode(array('resourcestotoggle' => $resourcestotoggle));
                         break;
 
                     case 'move':
@@ -98,12 +98,6 @@ switch($requestmethod) {
                 break;
 
             case 'resource':
-                if (!$cm = get_coursemodule_from_id('', $id, $course->id)) {
-                    error_log('AJAX commands.php: Bad course module ID '.$id);
-                    die;
-                }
-                require_login($course, false, $cm);
-                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
                 switch ($field) {
                     case 'visible':
                         require_capability('moodle/course:activityvisibility', $modcontext);
@@ -115,25 +109,18 @@ switch($requestmethod) {
                         set_coursemodule_groupmode($cm->id, $value);
                         break;
 
-                    case 'indentleft':
+                    case 'indent':
                         require_capability('moodle/course:manageactivities', $modcontext);
-                        if ($cm->indent > 0) {
-                            $cm->indent--;
+                        $cm->indent = $value;
+                        if ($cm->indent >= 0) {
                             $DB->update_record('course_modules', $cm);
                         }
-                        break;
-
-                    case 'indentright':
-                        require_capability('moodle/course:manageactivities', $modcontext);
-                        $cm->indent++;
-                        $DB->update_record('course_modules', $cm);
                         break;
 
                     case 'move':
                         require_capability('moodle/course:manageactivities', $modcontext);
                         if (!$section = $DB->get_record('course_sections', array('course'=>$course->id, 'section'=>$sectionid))) {
-                            error_log('AJAX commands.php: Bad section ID '.$sectionid);
-                            die;
+                            throw new moodle_exception('AJAX commands.php: Bad section ID '.$sectionid);
                         }
 
                         if ($beforeid > 0){
@@ -156,8 +143,6 @@ switch($requestmethod) {
             case 'course':
                 switch($field) {
                     case 'marker':
-                        require_login($course);
-                        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                         require_capability('moodle/course:update', $coursecontext);
                         course_set_marker($course->id, $value);
                         break;
@@ -168,31 +153,20 @@ switch($requestmethod) {
 
     case 'DELETE':
         switch ($class) {
-            case 'block':
-                // not used any more
-                break;
-
             case 'resource':
-                if (!$cm = get_coursemodule_from_id('', $id, $course->id)) {
-                    error_log('AJAX rest.php: Bad course module ID '.$id);
-                    die;
-                }
-                require_login($course, false, $cm);
-                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
                 require_capability('moodle/course:manageactivities', $modcontext);
                 $modlib = "$CFG->dirroot/mod/$cm->modname/lib.php";
 
                 if (file_exists($modlib)) {
                     include_once($modlib);
                 } else {
-                    error_log("Ajax rest.php: This module is missing mod/$cm->modname/lib.php");
-                    die;
+                    throw new moodle_exception("Ajax rest.php: This module is missing mod/$cm->modname/lib.php");
                 }
                 $deleteinstancefunction = $cm->modname."_delete_instance";
 
                 // Run the module's cleanup funtion.
                 if (!$deleteinstancefunction($cm->instance)) {
-                    error_log("Ajax rest.php: Could not delete the $cm->modname $cm->name (instance)");
+                    throw new moodle_exception("Ajax rest.php: Could not delete the $cm->modname $cm->name (instance)");
                     die;
                 }
 
@@ -201,11 +175,11 @@ switch($requestmethod) {
                 $fs->delete_area_files($modcontext->id);
 
                 if (!delete_course_module($cm->id)) {
-                    error_log("Ajax rest.php: Could not delete the $cm->modname $cm->name (coursemodule)");
+                    throw new moodle_exception("Ajax rest.php: Could not delete the $cm->modname $cm->name (coursemodule)");
                 }
                 // Remove the course_modules entry.
                 if (!delete_mod_from_section($cm->id, $cm->section)) {
-                    error_log("Ajax rest.php: Could not delete the $cm->modname $cm->name from section");
+                    throw new moodle_exception("Ajax rest.php: Could not delete the $cm->modname $cm->name from section");
                 }
 
                 // Trigger a mod_deleted event with information about this module.
@@ -225,5 +199,3 @@ switch($requestmethod) {
         }
         break;
 }
-
-

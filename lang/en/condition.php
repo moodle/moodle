@@ -41,7 +41,7 @@ Multiple activity completion conditions may be set if desired.  If so, access to
 $string['completion_fail'] = 'must be complete with fail grade';
 $string['completion_incomplete'] = 'must not be marked complete';
 $string['completion_pass'] = 'must be complete with pass grade';
-$string['configenableavailability'] = 'When enabled, this lets you set conditions (based on date, grade, or completion) that control whether an activity can be accessed.';
+$string['configenableavailability'] = 'When enabled, this lets you set conditions (based on date, grade, or completion) that control whether an activity or resource can be accessed.';
 $string['enableavailability'] = 'Enable conditional access';
 $string['grade_atleast'] = 'must be at least';
 $string['gradecondition'] = 'Grade condition';

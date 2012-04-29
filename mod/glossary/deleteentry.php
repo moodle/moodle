@@ -39,7 +39,7 @@ if (! $entry = $DB->get_record("glossary_entries", array("id"=>$entry))) {
     print_error('invalidentry');
 }
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 $manageentries = has_capability('mod/glossary:manageentries', $context);
 

@@ -39,11 +39,12 @@ class mod_data_generator extends phpunit_module_generator {
     /**
      * Create new data module instance
      * @param array|stdClass $record
-     * @param array $options
+     * @param array $options (mostly course_module properties)
      * @return stdClass activity record with extra cmid field
      */
     public function create_instance($record = null, array $options = null) {
-        global $DB;
+        global $CFG;
+        require_once("$CFG->dirroot/mod/data/locallib.php");
 
         $this->instancecount++;
         $i = $this->instancecount;
@@ -51,6 +52,9 @@ class mod_data_generator extends phpunit_module_generator {
         $record = (object)(array)$record;
         $options = (array)$options;
 
+        if (empty($record->course)) {
+            throw new coding_exception('module generator requires $record->course');
+        }
         if (!isset($record->name)) {
             $record->name = get_string('pluginname', 'data').' '.$i;
         }
@@ -60,15 +64,20 @@ class mod_data_generator extends phpunit_module_generator {
         if (!isset($record->introformat)) {
             $record->introformat = FORMAT_MOODLE;
         }
-        $record->timemodified = time();
+        if (!isset($record->assessed)) {
+            $record->assessed = 0;
+        }
+        if (!isset($record->scale)) {
+            $record->scale = 0;
+        }
+        if (isset($options['idnumber'])) {
+            $record->cmidnumber = $options['idnumber'];
+        } else {
+            $record->cmidnumber = '';
+        }
 
-        $id = $DB->insert_record('data', $record);
-        $instance = $DB->get_record('data', array('id'=>$id), '*', MUST_EXIST);
-
-        $cm = $this->create_course_module($instance, $options);
-
-        $instance->cmid = $cm->id;
-
-        return $instance;
+        $record->coursemodule = $this->precreate_course_module($record->course, $options);
+        $id = data_add_instance($record, null);
+        return $this->post_add_instance($id, $record->coursemodule);
     }
 }

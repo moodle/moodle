@@ -375,7 +375,7 @@ class assignment_online extends assignment_base {
         }
     }
 
-    public function send_file($filearea, $args) {
+    public function send_file($filearea, $args, $forcedownload, array $options=array()) {
         global $USER;
         require_capability('mod/assignment:view', $this->context);
 
@@ -391,7 +391,8 @@ class assignment_online extends assignment_base {
         }
 
         session_get_instance()->write_close(); // unlock session during fileserving
-        send_stored_file($file, 60*60, 0, true);
+
+        send_stored_file($file, 60*60, 0, true, $options);
     }
 
     /**

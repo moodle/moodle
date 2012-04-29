@@ -1,4 +1,6 @@
-Description of Typo3 libraries (v 4.5.0) import into Moodle
+Description of Typo3 libraries (v 4.6.8) import into Moodle
+
+Changes: none
 
 skodak, stronk7
 

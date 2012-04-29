@@ -24,9 +24,11 @@
  */
 
 $string['blockcolumnwidth'] = 'Blocks column width';
-$string['blockcolumnwidthdesc'] = 'This sets the blocks column width for the theme. <strong>Using widths lower than 200px, the calendar block is not supposed to fit.</strong>';
+$string['blockcolumnwidthdesc'] = 'This sets the blocks column width for the theme. <strong>If width is lower than 200px (blockcolumnwidth-2*blockpadding), the calendar block is not able to fit.</strong>';
 $string['blockcontentbgc'] = 'Blocks content background colour';
 $string['blockcontentbgcdesc'] = 'This sets the blocks content background colour for the theme.';
+$string['blockpadding'] = 'Margin around blocks';
+$string['blockpaddingdesc'] = 'This sets the margin between each block and the containing column.';
 $string['choosereadme'] = '
 <div class="clearfix">
     <div class="theme_screenshot">
@@ -71,7 +73,7 @@ $string['fontsizereferencedesc'] = 'This allows you to set the default font size
 $string['footnote'] = 'Footnote';
 $string['footnotedesc'] = 'The content from this textarea will be displayed in the footer of every page.';
 $string['framemargin'] = 'Frame margin';
-$string['framemargindesc'] = 'Room between the frame and the edge of the browser window. (This setting will be ignored whether "Formal white 1.9 look" is requested).';
+$string['framemargindesc'] = 'Room between the frame and the edge of the browser window. (This setting will be ignored if "{$a}" is requested).';
 $string['frontpagelogo'] = 'Custom front page logo';
 $string['frontpagelogodesc'] = 'Change the logo that is displayed on the front page of your site by entering the URL to the image you wish to use (i.e. http://www.yoursite.local/myfrontpagelogo.png). This setting overrides the custom logo setting. As a reference the default logo is 300px wide, 80px high and a transparent png will work best.';
 $string['headerbgc'] = 'Header background colour';

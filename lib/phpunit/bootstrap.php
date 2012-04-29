@@ -18,13 +18,7 @@
  * Prepares PHPUnit environment, the phpunit.xml configuration
  * must specify this file as bootstrap.
  *
- * Exit codes:
- *  0   - success
- *  1   - general error
- *  130 - missing PHPUnit library error
- *  131 - configuration problem
- *  132 - install new test database
- *  133 - drop existing data before installing
+ * Exit codes: {@see phpunit_bootstrap_error()}
  *
  * @package    core
  * @category   phpunit
@@ -63,9 +57,13 @@ $phpunitversion = PHPUnit_Runner_Version::id();
 if ($phpunitversion === '@package_version@') {
     // library checked out from git, let's hope dev knows that 3.6.0 is required
 } else if (version_compare($phpunitversion, '3.6.0', 'lt')) {
-    phpunit_bootstrap_error(129, $phpunitversion);
+    phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITWRONG, $phpunitversion);
 }
 unset($phpunitversion);
+
+if (!include_once('PHPUnit/Extensions/Database/Autoload.php')) {
+    phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITEXTMISSING, 'phpunit/DbUnit');
+}
 
 define('NO_OUTPUT_BUFFERING', true);
 
@@ -93,16 +91,16 @@ if (isset($CFG->phpunit_directorypermissions)) {
 }
 $CFG->filepermissions = ($CFG->directorypermissions & 0666);
 if (!isset($CFG->phpunit_dataroot)) {
-    phpunit_bootstrap_error(131, 'Missing $CFG->phpunit_dataroot in config.php, can not run tests!');
+    phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, 'Missing $CFG->phpunit_dataroot in config.php, can not run tests!');
 }
 if (isset($CFG->dataroot) and $CFG->phpunit_dataroot === $CFG->dataroot) {
-    phpunit_bootstrap_error(131, '$CFG->dataroot and $CFG->phpunit_dataroot must not be identical, can not run tests!');
+    phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, '$CFG->dataroot and $CFG->phpunit_dataroot must not be identical, can not run tests!');
 }
 if (!file_exists($CFG->phpunit_dataroot)) {
     mkdir($CFG->phpunit_dataroot, $CFG->directorypermissions);
 }
 if (!is_dir($CFG->phpunit_dataroot)) {
-    phpunit_bootstrap_error(131, '$CFG->phpunit_dataroot directory can not be created, can not run tests!');
+    phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, '$CFG->phpunit_dataroot directory can not be created, can not run tests!');
 }
 
 if (!is_writable($CFG->phpunit_dataroot)) {
@@ -115,7 +113,7 @@ if (!is_writable($CFG->phpunit_dataroot)) {
         }
     }
     if (!is_writable($CFG->phpunit_dataroot)) {
-        phpunit_bootstrap_error(131, '$CFG->phpunit_dataroot directory is not writable, can not run tests!');
+        phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, '$CFG->phpunit_dataroot directory is not writable, can not run tests!');
     }
 }
 if (!file_exists("$CFG->phpunit_dataroot/phpunittestdir.txt")) {
@@ -124,7 +122,7 @@ if (!file_exists("$CFG->phpunit_dataroot/phpunittestdir.txt")) {
             if ($file === 'phpunit' or $file === '.' or $file === '..' or $file === '.DS_Store') {
                 continue;
             }
-            phpunit_bootstrap_error(131, '$CFG->phpunit_dataroot directory is not empty, can not run tests! Is it used for anything else?');
+            phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, '$CFG->phpunit_dataroot directory is not empty, can not run tests! Is it used for anything else?');
         }
         closedir($dh);
         unset($dh);
@@ -137,16 +135,17 @@ if (!file_exists("$CFG->phpunit_dataroot/phpunittestdir.txt")) {
 
 // verify db prefix
 if (!isset($CFG->phpunit_prefix)) {
-    phpunit_bootstrap_error(131, 'Missing $CFG->phpunit_prefix in config.php, can not run tests!');
+    phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, 'Missing $CFG->phpunit_prefix in config.php, can not run tests!');
 }
 if ($CFG->phpunit_prefix === '') {
-    phpunit_bootstrap_error(131, '$CFG->phpunit_prefix can not be empty, can not run tests!');
+    phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, '$CFG->phpunit_prefix can not be empty, can not run tests!');
 }
 if (isset($CFG->prefix) and $CFG->prefix === $CFG->phpunit_prefix) {
-    phpunit_bootstrap_error(131, '$CFG->prefix and $CFG->phpunit_prefix must not be identical, can not run tests!');
+    phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, '$CFG->prefix and $CFG->phpunit_prefix must not be identical, can not run tests!');
 }
 
 // override CFG settings if necessary and throw away extra CFG settings
+$CFG->wwwroot   = 'http://www.example.com/moodle';
 $CFG->dataroot  = $CFG->phpunit_dataroot;
 $CFG->prefix    = $CFG->phpunit_prefix;
 $CFG->dbtype    = isset($CFG->phpunit_dbtype) ? $CFG->phpunit_dbtype : $CFG->dbtype;

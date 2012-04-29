@@ -292,7 +292,13 @@ class mod_workshop_renderer extends plugin_renderer_base {
             foreach ($phase->actions as $action) {
                 switch ($action->type) {
                 case 'switchphase':
-                    $actions .= $this->output->action_icon($action->url, new pix_icon('i/marker', get_string('switchphase', 'workshop')));
+                    $icon = 'i/marker';
+                    if ($phasecode == workshop::PHASE_ASSESSMENT
+                            and $plan->workshop->phase == workshop::PHASE_SUBMISSION
+                            and $plan->workshop->phaseswitchassessment) {
+                        $icon = 'i/scheduled';
+                    }
+                    $actions .= $this->output->action_icon($action->url, new pix_icon($icon, get_string('switchphase', 'workshop')));
                     break;
                 }
             }
@@ -319,32 +325,67 @@ class mod_workshop_renderer extends plugin_renderer_base {
     /**
      * Renders the result of the submissions allocation process
      *
-     * @param workshop_allocation_init_result
-     * @return string html to be echoed
+     * @param workshop_allocation_result $result as returned by the allocator's init() method
+     * @return string HTML to be echoed
      */
-    protected function render_workshop_allocation_init_result(workshop_allocation_init_result $result) {
+    protected function render_workshop_allocation_result(workshop_allocation_result $result) {
+
+        $status = $result->get_status();
+
+        if (is_null($status) or $status == workshop_allocation_result::STATUS_VOID) {
+            debugging('Attempt to render workshop_allocation_result with empty status', DEBUG_DEVELOPER);
+            return '';
+        }
+
+        switch ($status) {
+        case workshop_allocation_result::STATUS_FAILED:
+            if ($message = $result->get_message()) {
+                $message = new workshop_message($message, workshop_message::TYPE_ERROR);
+            } else {
+                $message = new workshop_message(get_string('allocationerror', 'workshop'), workshop_message::TYPE_ERROR);
+            }
+            break;
+
+        case workshop_allocation_result::STATUS_CONFIGURED:
+            if ($message = $result->get_message()) {
+                $message = new workshop_message($message, workshop_message::TYPE_INFO);
+            } else {
+                $message = new workshop_message(get_string('allocationconfigured', 'workshop'), workshop_message::TYPE_INFO);
+            }
+            break;
+
+        case workshop_allocation_result::STATUS_EXECUTED:
+            if ($message = $result->get_message()) {
+                $message = new workshop_message($message, workshop_message::TYPE_OK);
+            } else {
+                $message = new workshop_message(get_string('allocationdone', 'workshop'), workshop_message::TYPE_OK);
+            }
+            break;
+
+        default:
+            throw new coding_exception('Unknown allocation result status', $status);
+        }
 
         // start with the message
-        $o = $this->render($result->get_message());
+        $o = $this->render($message);
 
         // display the details about the process if available
-        $info = $result->get_info();
-        if (is_array($info) and !empty($info)) {
+        $logs = $result->get_logs();
+        if (is_array($logs) and !empty($logs)) {
             $o .= html_writer::start_tag('ul', array('class' => 'allocation-init-results'));
-            foreach ($info as $message) {
-                $parts  = explode('::', $message);
-                $text   = array_pop($parts);
-                $class  = implode(' ', $parts);
-                if (in_array('debug', $parts) && !debugging('', DEBUG_DEVELOPER)) {
-                    // do not display allocation debugging messages
+            foreach ($logs as $log) {
+                if ($log->type == 'debug' and !debugging('', DEBUG_DEVELOPER)) {
+                    // display allocation debugging messages for developers only
                     continue;
                 }
-                $o .= html_writer::tag('li', $text, array('class' => $class)) . "\n";
+                $class = $log->type;
+                if ($log->indent) {
+                    $class .= ' indent';
+                }
+                $o .= html_writer::tag('li', $log->message, array('class' => $class)).PHP_EOL;
             }
             $o .= html_writer::end_tag('ul');
         }
-
-        $o .= $this->output->continue_button($result->get_continue_url());
 
         return $o;
     }

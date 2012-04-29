@@ -54,11 +54,15 @@ class workshop_manual_allocator implements workshop_allocator {
 
     /**
      * Allocate submissions as requested by user
+     *
+     * @return workshop_allocation_result
      */
     public function init() {
         global $PAGE;
 
         $mode = optional_param('mode', 'display', PARAM_ALPHA);
+
+        $result = new workshop_allocation_result($this);
 
         switch ($mode) {
         case 'new':
@@ -124,6 +128,9 @@ class workshop_manual_allocator implements workshop_allocator {
             }
             break;
         }
+
+        $result->set_status(workshop_allocation_result::STATUS_VOID);
+        return $result;
     }
 
     /**

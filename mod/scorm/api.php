@@ -56,7 +56,7 @@ if (!empty($id)) {
 
 $PAGE->set_url('/mod/scorm/api.php', array('scoid'=>$scoid, 'id'=>$cm->id));
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 if ($usertrack = scorm_get_tracks($scoid, $USER->id, $attempt)) {
     //according to SCORM 2004 spec(RTE V1, 4.2.8), only cmi.exit==suspend should allow previous datamodel elements on re-launch

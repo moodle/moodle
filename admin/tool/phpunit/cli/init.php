@@ -43,13 +43,13 @@ exec("php util.php --diag", $output, $code);
 if ($code == 0) {
     // everything is ready
 
-} else if ($code == 132) {
+} else if ($code == PHPUNIT_EXITCODE_INSTALL) {
     passthru("php util.php --install", $code);
     if ($code != 0) {
         exit($code);
     }
 
-} else if ($code == 133) {
+} else if ($code == PHPUNIT_EXITCODE_REINSTALL) {
     passthru("php util.php --drop", $code);
     passthru("php util.php --install", $code);
     if ($code != 0) {

@@ -45,7 +45,7 @@ if (! $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
     $cm->id = 0;
 }
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 if (!has_capability('mod/forum:viewsubscribers', $context)) {

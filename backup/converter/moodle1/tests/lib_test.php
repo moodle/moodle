@@ -38,31 +38,31 @@ class moodle1_converter_testcase extends advanced_testcase {
     protected function setUp() {
         global $CFG;
 
-        $this->tempdir = convert_helper::generate_id('simpletest');
+        $this->tempdir = convert_helper::generate_id('unittest');
         check_dir_exists("$CFG->tempdir/backup/$this->tempdir/course_files/sub1");
         check_dir_exists("$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/7");
         copy(
-            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/moodle.xml",
+            "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/moodle.xml",
             "$CFG->tempdir/backup/$this->tempdir/moodle.xml"
         );
         copy(
-            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
+            "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/icon.gif",
             "$CFG->tempdir/backup/$this->tempdir/course_files/file1.gif"
         );
         copy(
-            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
+            "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/icon.gif",
             "$CFG->tempdir/backup/$this->tempdir/course_files/sub1/file2.gif"
         );
         copy(
-            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
+            "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/icon.gif",
             "$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/file1.gif"
         );
         copy(
-            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
+            "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/icon.gif",
             "$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/icon.gif"
         );
         copy(
-            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
+            "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/icon.gif",
             "$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/7/icon.gif"
         );
     }
@@ -450,7 +450,7 @@ as it is parsed from the backup file. <br /><br /><img border="0" width="110" vs
         $this->resetAfterTest(true);
 
         copy(
-            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/questions.xml",
+            "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/questions.xml",
             "$CFG->tempdir/backup/$this->tempdir/moodle.xml"
         );
         $converter = convert_factory::get_converter('moodle1', $this->tempdir);

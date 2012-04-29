@@ -36,7 +36,7 @@ class mnet_services_form extends moodleform {
     function definition() {
         $mform =& $this->_form;
         $mnet_peer =& $this->_customdata['peer'];
-        $myservices =& mnet_get_service_info($mnet_peer);
+        $myservices = mnet_get_service_info($mnet_peer);
 
         $mform->addElement('hidden', 'hostid', $mnet_peer->id);
 

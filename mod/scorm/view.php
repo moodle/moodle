@@ -56,7 +56,14 @@ if (!empty($forcejs)) {
     $PAGE->add_body_class('forcejavascript');
 }
 
-require_login($course->id, false, $cm);
+require_login($course, false, $cm);
+
+if (!empty($scorm->popup)) {
+    $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,
+        'cheight'=>$scorm->height,
+        'popupoptions' => $scorm->options), true);
+    $PAGE->requires->js('/mod/scorm/view.js', true);
+}
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -125,4 +132,9 @@ if ($scormopen) {
 if (!empty($forcejs)) {
     echo $OUTPUT->box(get_string("forcejavascriptmessage", "scorm"), "generalbox boxaligncenter forcejavascriptmessage");
 }
+
+if (!empty($scorm->popup)) {
+    $PAGE->requires->js_init_call('M.mod_scormform.init');
+}
+
 echo $OUTPUT->footer();

@@ -27,7 +27,7 @@ if ($ADMIN->fulltree) {
     // Frame margin
     $name = 'theme_formal_white/framemargin';
     $title = get_string('framemargin','theme_formal_white');
-    $description = get_string('framemargindesc', 'theme_formal_white');
+    $description = get_string('framemargindesc', 'theme_formal_white', get_string('noframe','theme_formal_white'));
     $default = '15';
     $choices = array(0=>'0px', 5=>'5px', 10=>'10px', 15=>'15px', 20=>'20px', 25=>'25px', 30=>'30px', 35=>'35px', 40=>'40px', 45=>'45px', 50=>'50px');
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
@@ -82,6 +82,15 @@ if ($ADMIN->fulltree) {
     $description = get_string('blockcolumnwidthdesc', 'theme_formal_white');
     $default = '200';
     $choices = array(150=>'150px', 170=>'170px', 200=>'200px', 240=>'240px', 290=>'290px', 350=>'350px', 420=>'420px');
+    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $settings->add($setting);
+
+    // Block padding
+    $name = 'theme_formal_white/blockpadding';
+    $title = get_string('blockpadding','theme_formal_white');
+    $description = get_string('blockpaddingdesc', 'theme_formal_white');
+    $default = '8';
+    $choices = array(1=>'1px', 2=>'2px', 4=>'4px', 8=>'8px', 12=>'12px', 16=>'16px');
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
 

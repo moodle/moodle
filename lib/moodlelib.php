@@ -1427,6 +1427,7 @@ function purge_all_caches() {
     js_reset_all_caches();
     theme_reset_all_caches();
     get_string_manager()->reset_caches();
+    textlib::reset_caches();
 
     // purge all other caches: rss, simplepie, etc.
     remove_dir($CFG->cachedir.'', true);
@@ -6293,7 +6294,7 @@ class core_string_manager implements string_manager {
             $component = $plugintype . '_' . $pluginname;
         }
 
-        if (!$disablecache) {
+        if (!$disablecache and !$disablelocal) {
             // try in-memory cache first
             if (isset($this->cache[$lang][$component])) {
                 $this->countmemcache++;
@@ -6384,12 +6385,14 @@ class core_string_manager implements string_manager {
         // we do not want any extra strings from other languages - everything must be in en lang pack
         $string = array_intersect_key($string, $originalkeys);
 
-        // now we have a list of strings from all possible sources. put it into both in-memory and on-disk
-        // caches so we do not need to do all this merging and dependencies resolving again
-        $this->cache[$lang][$component] = $string;
-        if ($this->usediskcache) {
-            check_dir_exists("$this->cacheroot/$lang");
-            file_put_contents("$this->cacheroot/$lang/$component.php", "<?php \$this->cache['$lang']['$component'] = ".var_export($string, true).";");
+        if (!$disablelocal) {
+            // now we have a list of strings from all possible sources. put it into both in-memory and on-disk
+            // caches so we do not need to do all this merging and dependencies resolving again
+            $this->cache[$lang][$component] = $string;
+            if ($this->usediskcache) {
+                check_dir_exists("$this->cacheroot/$lang");
+                file_put_contents("$this->cacheroot/$lang/$component.php", "<?php \$this->cache['$lang']['$component'] = ".var_export($string, true).";");
+            }
         }
         return $string;
     }
@@ -6469,8 +6472,11 @@ class core_string_manager implements string_manager {
                 return 'en';
             }
             if ($this->usediskcache) {
-                // maybe the on-disk cache is dirty - let the last attempt be to find the string in original sources
+                // maybe the on-disk cache is dirty - let the last attempt be to find the string in original sources,
+                // do NOT write the results to disk cache because it may end up in race conditions see MDL-31904
+                $this->usediskcache = false;
                 $string = $this->load_component_strings($component, $lang, true);
+                $this->usediskcache = true;
             }
             if (!isset($string[$identifier])) {
                 // the string is still missing - should be fixed by developer
@@ -7564,22 +7570,14 @@ function get_plugin_directory($plugintype, $name) {
 }
 
 /**
- * Return exact absolute path to a plugin directory,
- * this method support "simpletest_" prefix designed for unit testing.
+ * Return exact absolute path to a plugin directory.
  *
- * @param string $component name such as 'moodle', 'mod_forum' or special simpletest value
+ * @param string $component name such as 'moodle', 'mod_forum'
  * @return string full path to component directory; NULL if not found
  */
 function get_component_directory($component) {
     global $CFG;
-/*
-    $simpletest = false;
-    if (strpos($component, 'simpletest_') === 0) {
-        $subdir = substr($component, strlen('simpletest_'));
-        //TODO: this looks borked, where is it used actually?
-        return $subdir;
-    }
-*/
+
     list($type, $plugin) = normalize_component($component);
 
     if ($type === 'core') {

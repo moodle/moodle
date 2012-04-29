@@ -387,7 +387,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="course_section" UNIQUE="false" FIELDS="course, section"/>
+        <INDEX NAME="course_section" UNIQUE="true" FIELDS="course, section"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_request" COMMENT="course requests" PREVIOUS="course_sections" NEXT="filter_active">

@@ -114,9 +114,9 @@ if ($course->id == SITEID AND !has_capability('mod/feedback:edititems', $context
 
 if ($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
     if ($course->id == SITEID) {
-        require_login($course->id, true);
+        require_login($course, true);
     } else {
-        require_login($course->id, true, $cm);
+        require_login($course, true, $cm);
     }
 } else {
     if ($course->id == SITEID) {

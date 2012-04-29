@@ -81,16 +81,15 @@ function page_get_post_actions() {
 
 /**
  * Add page instance.
- * @param object $data
- * @param object $mform
+ * @param stdClass $data
+ * @param mod_page_mod_form $mform
  * @return int new page instance id
  */
-function page_add_instance($data, $mform) {
+function page_add_instance($data, $mform = null) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
-    $cmid        = $data->coursemodule;
-    $draftitemid = $data->page['itemid'];
+    $cmid = $data->coursemodule;
 
     $data->timemodified = time();
     $displayoptions = array();
@@ -102,8 +101,10 @@ function page_add_instance($data, $mform) {
     $displayoptions['printintro']   = $data->printintro;
     $data->displayoptions = serialize($displayoptions);
 
-    $data->content       = $data->page['text'];
-    $data->contentformat = $data->page['format'];
+    if ($mform) {
+        $data->content       = $data->page['text'];
+        $data->contentformat = $data->page['format'];
+    }
 
     $data->id = $DB->insert_record('page', $data);
 
@@ -111,7 +112,8 @@ function page_add_instance($data, $mform) {
     $DB->set_field('course_modules', 'instance', $data->id, array('id'=>$cmid));
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
 
-    if ($draftitemid) {
+    if ($mform and !empty($data->page['itemid'])) {
+        $draftitemid = $data->page['itemid'];
         $data->content = file_save_draft_area_files($draftitemid, $context->id, 'mod_page', 'content', 0, page_get_editor_options($context), $data->content);
         $DB->update_record('page', $data);
     }
@@ -358,9 +360,10 @@ function page_get_file_info($browser, $areas, $course, $cm, $context, $filearea,
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
@@ -416,29 +419,8 @@ function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
         }
 
         // finally send the file
-        send_stored_file($file, 86400, 0, $forcedownload);
+        send_stored_file($file, 86400, 0, $forcedownload, $options);
     }
-}
-
-
-/**
- * This function extends the global navigation for the site.
- * It is important to note that you should not rely on PAGE objects within this
- * body of code as there is no guarantee that during an AJAX request they are
- * available
- *
- * @param navigation_node $navigation The page node within the global navigation
- * @param stdClass $course The course object returned from the DB
- * @param stdClass $module The module object returned from the DB
- * @param stdClass $cm The course module instance returned from the DB
- */
-function page_extend_navigation($navigation, $course, $module, $cm) {
-    /**
-     * This is currently just a stub so that it can be easily expanded upon.
-     * When expanding just remove this comment and the line below and then add
-     * you content.
-     */
-    $navigation->nodetype = navigation_node::NODETYPE_LEAF;
 }
 
 /**

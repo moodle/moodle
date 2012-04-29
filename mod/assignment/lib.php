@@ -415,6 +415,14 @@ class assignment_base {
         return $submitted;
     }
 
+    /**
+     * Returns whether the assigment supports lateness information
+     *
+     * @return bool This assignment type supports lateness (true, default) or no (false)
+     */
+    function supports_lateness() {
+        return true;
+    }
 
     /**
      * @todo Document this function
@@ -1445,8 +1453,8 @@ class assignment_base {
                             if ($auser->timemodified > 0) {
                                 $studentmodifiedcontent = $this->print_student_answer($auser->id)
                                         . userdate($auser->timemodified);
-                                if ($assignment->timedue && $auser->timemodified > $assignment->timedue) {
-                                    $studentmodifiedcontent .= assignment_display_lateness($auser->timemodified, $assignment->timedue);
+                                if ($assignment->timedue && $auser->timemodified > $assignment->timedue && $this->supports_lateness()) {
+                                    $studentmodifiedcontent .= $this->display_lateness($auser->timemodified);
                                     $rowclass = 'late';
                                 }
                             } else {
@@ -1971,11 +1979,15 @@ class assignment_base {
     }
 
     /**
+     * Sends a file
+     *
      * @param string $filearea
      * @param array $args
+     * @param bool $forcedownload whether or not force download
+     * @param array $options additional options affecting the file serving
      * @return bool
      */
-    function send_file($filearea, $args) {
+    function send_file($filearea, $args, $forcedownload, array $options=array()) {
         debugging('plugin does not implement file sending', DEBUG_DEVELOPER);
         return false;
     }
@@ -1987,8 +1999,14 @@ class assignment_base {
      * @return array
      */
     function get_graders($user) {
+        global $DB;
+
         //potential graders
-        $potgraders = get_users_by_capability($this->context, 'mod/assignment:grade', '', '', '', '', '', '', false, false);
+        list($enrolledsql, $params) = get_enrolled_sql($this->context, 'mod/assignment:grade', 0, true);
+        $sql = "SELECT u.*
+                  FROM {user} u
+                  JOIN ($enrolledsql) je ON je.id = u.id";
+        $potgraders = $DB->get_records_sql($sql, $params);
 
         $graders = array();
         if (groups_get_activity_groupmode($this->cm) == SEPARATEGROUPS) {   // Separate groups are being used
@@ -2708,8 +2726,12 @@ function assignment_update_instance($assignment){
  * Adds an assignment instance
  *
  * This is done by calling the add_instance() method of the assignment type class
+ *
+ * @param stdClass $assignment
+ * @param mod_assignment_mod_form $mform
+ * @return int intance id
  */
-function assignment_add_instance($assignment) {
+function assignment_add_instance($assignment, $mform = null) {
     global $CFG;
 
     $assignment->assignmenttype = clean_param($assignment->assignmenttype, PARAM_PLUGIN);
@@ -3075,9 +3097,10 @@ function assignment_get_participants($assignmentid) {
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function assignment_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function assignment_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -3094,7 +3117,7 @@ function assignment_pluginfile($course, $cm, $context, $filearea, $args, $forced
     $assignmentclass = 'assignment_'.$assignment->assignmenttype;
     $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
 
-    return $assignmentinstance->send_file($filearea, $args);
+    return $assignmentinstance->send_file($filearea, $args, $forcedownload, $options);
 }
 /**
  * Checks if a scale is being used by an assignment

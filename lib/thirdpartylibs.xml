@@ -4,7 +4,7 @@
     <location>adodb</location>
     <name>AdoDB</name>
     <license>GPL/BSD</license>
-    <version>5.14</version>
+    <version>5.16</version>
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
@@ -88,7 +88,7 @@
     <location>flowplayer</location>
     <name>Flowplayer</name>
     <license>GPL</license>
-    <version>3.2.7</version>
+    <version>3.2.9</version>
     <licenseversion>3</licenseversion>
   </library>
   <library>
@@ -193,21 +193,21 @@
     <location>tcpdf</location>
     <name>TCPDF</name>
     <license>LGPL</license>
-    <version>5.9.133</version>
+    <version>5.9.156</version>
     <licenseversion>3</licenseversion>
   </library>
   <library>
     <location>typo3</location>
     <name>Typo3</name>
     <license>GPL</license>
-    <version>4.5.0</version>
+    <version>4.6.8</version>
     <licenseversion>2.0+</licenseversion>
   </library>
   <library>
     <location>yui</location>
     <name>YUI</name>
     <license>BSD</license>
-    <version>3.4.1</version>
+    <version>3.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
@@ -242,7 +242,7 @@
     <location>markdown.php</location>
     <name>Markdown original+extra</name>
     <license>BSD</license>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     <licenseversion></licenseversion>
   </library>
   <library>

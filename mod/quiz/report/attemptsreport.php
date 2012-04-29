@@ -15,14 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The file defines some subclasses that can be used when you are building
- * a report like the overview or responses report, that basically has one
- * row per attempt.
+ * The file defines a base class that can be used to build a report like the
+ * overview or responses report, that has one row per attempt.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2010 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -34,39 +32,71 @@ require_once($CFG->libdir.'/tablelib.php');
 /**
  * Base class for quiz reports that are basically a table with one row for each attempt.
  *
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2010 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class quiz_attempt_report extends quiz_default_report {
+abstract class quiz_attempts_report extends quiz_default_report {
+    /** @var int default page size for reports. */
+    const DEFAULT_PAGE_SIZE = 30;
+
+    /** @var int include all attempts. */
+    const ALL_ATTEMPTS = 0;
+    /** @var int include just enroled users who have not attempted the quiz. */
+    const STUDENTS_WITH_NO = 1;
+    /** @var int include just enroled users who have attempted the quiz. */
+    const STUDENTS_WITH = 2;
+    /** @var int include all enroled users. */
+    const ALL_STUDENTS = 3;
+
+    /** @var string the mode this report is. */
+    protected $mode;
+
     /** @var object the quiz context. */
     protected $context;
+
+    /** @var mod_quiz_attempts_report_form The settings form to use. */
+    protected $form;
+
+    /** @var string SQL fragment for selecting the attempt that gave the final grade,
+     * if applicable. */
+    protected $qmsubselect;
 
     /** @var boolean caches the results of {@link should_show_grades()}. */
     protected $showgrades = null;
 
     /**
-     * Should the grades be displayed in this report. That depends on the quiz
-     * display options, and whether the quiz is graded.
-     * @param object $quiz the quiz settings.
-     * @return bool
+     *  Initialise various aspects of this report.
+     *
+     * @param string $mode
+     * @param string $formclass
+     * @param object $quiz
+     * @param object $cm
+     * @param object $course
      */
-    protected function should_show_grades($quiz) {
-        if (!is_null($this->showgrades)) {
-            return $this->showgrades;
-        }
+    protected function init($mode, $formclass, $quiz, $cm, $course) {
+        $this->mode = $mode;
 
-        if ($quiz->timeclose && time() > $quiz->timeclose) {
-            $when = mod_quiz_display_options::AFTER_CLOSE;
-        } else {
-            $when = mod_quiz_display_options::LATER_WHILE_OPEN;
-        }
-        $reviewoptions = mod_quiz_display_options::make_from_quiz($quiz, $when);
+        $this->context = context_module::instance($cm->id);
 
-        $this->showgrades = quiz_has_grades($quiz) &&
-                ($reviewoptions->marks >= question_display_options::MARK_AND_MAX ||
-                has_capability('moodle/grade:viewhidden', $this->context));
+        list($currentgroup, $students, $groupstudents, $allowed) =
+                $this->load_relevant_students($cm, $course);
 
-        return $this->showgrades;
+        $this->qmsubselect = quiz_report_qm_filter_select($quiz);
+
+        $this->form = new $formclass($this->get_base_url(),
+                array('qmsubselect' => $this->qmsubselect, 'quiz' => $quiz,
+                'currentgroup' => $currentgroup, 'context' => $this->context));
+
+        return array($currentgroup, $students, $groupstudents, $allowed);
+    }
+
+    /**
+     * Get the base URL for this report.
+     * @return moodle_url the URL.
+     */
+    protected function get_base_url() {
+        return new moodle_url('/mod/quiz/report.php',
+                array('id' => $this->context->instanceid, 'mode' => $this->mode));
     }
 
     /**
@@ -112,32 +142,6 @@ abstract class quiz_attempt_report extends quiz_default_report {
     }
 
     /**
-     * Alters $attemptsmode and $pagesize if the current values are inappropriate.
-     * @param int $attemptsmode what sort of attempts to display (may be updated)
-     * @param int $pagesize number of records to display per page (may be updated)
-     * @param object $course the course settings.
-     * @param int $currentgroup the currently selected group. 0 for none.
-     */
-    protected function validate_common_options(&$attemptsmode, &$pagesize, $course, $currentgroup) {
-        if ($currentgroup) {
-            //default for when a group is selected
-            if ($attemptsmode === null || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL) {
-                $attemptsmode = QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH;
-            }
-        } else if (!$currentgroup && $course->id == SITEID) {
-            //force report on front page to show all, unless a group is selected.
-            $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
-        } else if ($attemptsmode === null) {
-            //default
-            $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
-        }
-
-        if ($pagesize < 1) {
-            $pagesize = QUIZ_REPORT_DEFAULT_PAGE_SIZE;
-        }
-    }
-
-    /**
      * Add all the user-related columns to the $columns and $headers arrays.
      * @param table_sql $table the table being constructed.
      * @param array $columns the list of columns. Added to.
@@ -160,7 +164,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
         }
 
         // When downloading, some extra fields are always displayed (because
-        // there's no space constraint) so do not include in extra-field list
+        // there's no space constraint) so do not include in extra-field list.
         $extrafields = get_extra_user_fields($this->context,
                 $table->is_downloading() ? array('institution', 'department', 'email') : array());
         foreach ($extrafields as $field) {
@@ -215,12 +219,13 @@ abstract class quiz_attempt_report extends quiz_default_report {
      * Add all the grade and feedback columns, if applicable, to the $columns
      * and $headers arrays.
      * @param object $quiz the quiz settings.
+     * @param bool $usercanseegrades whether the user is allowed to see grades for this quiz.
      * @param array $columns the list of columns. Added to.
      * @param array $headers the columns headings. Added to.
      * @param bool $includefeedback whether to include the feedbacktext columns
      */
-    protected function add_grade_columns($quiz, &$columns, &$headers, $includefeedback = true) {
-        if ($this->should_show_grades($quiz)) {
+    protected function add_grade_columns($quiz, $usercanseegrades, &$columns, &$headers, $includefeedback = true) {
+        if ($usercanseegrades) {
             $columns[] = 'sumgrades';
             $headers[] = get_string('grade', 'quiz') . '/' .
                     quiz_format_grade($quiz, $quiz->grade);
@@ -238,16 +243,16 @@ abstract class quiz_attempt_report extends quiz_default_report {
      * @param array $columns the list of columns.
      * @param array $headers the columns headings.
      * @param moodle_url $reporturl the URL of this report.
-     * @param array $displayoptions the display options.
+     * @param mod_quiz_attempts_report_options $options the display options.
      * @param bool $collapsible whether to allow columns in the report to be collapsed.
      */
     protected function set_up_table_columns($table, $columns, $headers, $reporturl,
-            $displayoptions, $collapsible) {
+            mod_quiz_attempts_report_options $options, $collapsible) {
         $table->define_columns($columns);
         $table->define_headers($headers);
         $table->sortable(true, 'uniqueid');
 
-        $table->define_baseurl($reporturl->out(false, $displayoptions));
+        $table->define_baseurl($options->get_url());
 
         $this->configure_user_columns($table);
 
@@ -257,6 +262,25 @@ abstract class quiz_attempt_report extends quiz_default_report {
         $table->set_attribute('id', 'attempts');
 
         $table->collapsible($collapsible);
+    }
+
+    /**
+     * Process any submitted actions.
+     * @param object $quiz the quiz settings.
+     * @param int $currentgroup the currently selected group.
+     * @param array $groupstudents the students in the current group.
+     * @param array $allowed the users whose attempt this user is allowed to modify.
+     */
+    protected function process_actions($quiz, $currentgroup, $groupstudents, $allowed) {
+        if (empty($currentgroup) || $groupstudents) {
+            if (optional_param('delete', 0, PARAM_BOOL) && confirm_sesskey()) {
+                if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
+                    require_capability('mod/quiz:deleteattempts', $this->context);
+                    $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowed);
+                    redirect($options->get_url());
+                }
+            }
+        }
     }
 
     /**
@@ -285,461 +309,6 @@ abstract class quiz_attempt_report extends quiz_default_report {
             add_to_log($quiz->course, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id,
                     $attemptid, $cm->id);
             quiz_delete_attempt($attempt, $quiz);
-        }
-    }
-}
-
-/**
- * Base class for the table used by {@link quiz_attempt_report}s.
- *
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-abstract class quiz_attempt_report_table extends table_sql {
-    public $useridfield = 'userid';
-
-    /** @var moodle_url the URL of this report. */
-    protected $reporturl;
-
-    /** @var array the display options. */
-    protected $displayoptions;
-
-    /**
-     * @var array information about the latest step of each question.
-     * Loaded by {@link load_question_latest_steps()}, if applicable.
-     */
-    protected $lateststeps = null;
-
-    protected $quiz;
-    protected $context;
-    protected $qmsubselect;
-    protected $qmfilter;
-    protected $attemptsmode;
-    protected $groupstudents;
-    protected $students;
-    protected $questions;
-    protected $includecheckboxes;
-
-    public function __construct($uniqueid, $quiz, $context, $qmsubselect, $qmfilter,
-            $attemptsmode, $groupstudents, $students, $questions, $includecheckboxes,
-            $reporturl, $displayoptions) {
-        parent::__construct($uniqueid);
-        $this->quiz = $quiz;
-        $this->context = $context;
-        $this->qmsubselect = $qmsubselect;
-        $this->qmfilter = $qmfilter;
-        $this->attemptsmode = $attemptsmode;
-        $this->groupstudents = $groupstudents;
-        $this->students = $students;
-        $this->questions = $questions;
-        $this->includecheckboxes = $includecheckboxes;
-        $this->reporturl = $reporturl;
-        $this->displayoptions = $displayoptions;
-    }
-
-    public function col_checkbox($attempt) {
-        if ($attempt->attempt) {
-            return '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
-        } else {
-            return '';
-        }
-    }
-
-    public function col_picture($attempt) {
-        global $COURSE, $OUTPUT;
-        $user = new stdClass();
-        $user->id = $attempt->userid;
-        $user->lastname = $attempt->lastname;
-        $user->firstname = $attempt->firstname;
-        $user->imagealt = $attempt->imagealt;
-        $user->picture = $attempt->picture;
-        $user->email = $attempt->email;
-        return $OUTPUT->user_picture($user);
-    }
-
-    public function col_fullname($attempt) {
-        $html = parent::col_fullname($attempt);
-        if ($this->is_downloading()) {
-            return $html;
-        }
-
-        return $html . html_writer::empty_tag('br') . html_writer::link(
-                new moodle_url('/mod/quiz/review.php', array('attempt' => $attempt->attempt)),
-                get_string('reviewattempt', 'quiz'), array('class' => 'reviewlink'));
-    }
-
-    public function col_timestart($attempt) {
-        if ($attempt->attempt) {
-            return userdate($attempt->timestart, $this->strtimeformat);
-        } else {
-            return  '-';
-        }
-    }
-
-    public function col_timefinish($attempt) {
-        if ($attempt->attempt && $attempt->timefinish) {
-            return userdate($attempt->timefinish, $this->strtimeformat);
-        } else {
-            return  '-';
-        }
-    }
-
-    public function col_duration($attempt) {
-        if ($attempt->timefinish) {
-            return format_time($attempt->timefinish - $attempt->timestart);
-        } else if ($attempt->timestart) {
-            return get_string('unfinished', 'quiz');
-        } else {
-            return '-';
-        }
-    }
-
-    public function col_feedbacktext($attempt) {
-        if (!$attempt->timefinish) {
-            return '-';
-        }
-
-        $feedback = quiz_report_feedback_for_grade(
-                quiz_rescale_grade($attempt->sumgrades, $this->quiz, false),
-                $this->quiz->id, $this->context);
-
-        if ($this->is_downloading()) {
-            $feedback = strip_tags($feedback);
-        }
-
-        return $feedback;
-    }
-
-    public function get_row_class($attempt) {
-        if ($this->qmsubselect && $attempt->gradedattempt) {
-            return 'gradedattempt';
-        } else {
-            return '';
-        }
-    }
-
-    /**
-     * Make a link to review an individual question in a popup window.
-     *
-     * @param string $data HTML fragment. The text to make into the link.
-     * @param object $attempt data for the row of the table being output.
-     * @param int $slot the number used to identify this question within this usage.
-     */
-    public function make_review_link($data, $attempt, $slot) {
-        global $OUTPUT;
-
-        $stepdata = $this->lateststeps[$attempt->usageid][$slot];
-        $state = question_state::get($stepdata->state);
-
-        $flag = '';
-        if ($stepdata->flagged) {
-            $flag = ' ' . $OUTPUT->pix_icon('i/flagged', get_string('flagged', 'question'),
-                    'moodle', array('class' => 'questionflag'));
-        }
-
-        $feedbackimg = '';
-        if ($state->is_finished() && $state != question_state::$needsgrading) {
-            $feedbackimg = ' ' . $this->icon_for_fraction($stepdata->fraction);
-        }
-
-        $output = html_writer::tag('span', html_writer::tag('span',
-                $data . $feedbackimg . $flag,
-                array('class' => $state->get_state_class(true))), array('class' => 'que'));
-
-        $url = new moodle_url('/mod/quiz/reviewquestion.php',
-                array('attempt' => $attempt->attempt, 'slot' => $slot));
-        $output = $OUTPUT->action_link($url, $output,
-                new popup_action('click', $url, 'reviewquestion',
-                        array('height' => 450, 'width' => 650)),
-                array('title' => get_string('reviewresponse', 'quiz')));
-
-        return $output;
-    }
-
-    /**
-     * Return an appropriate icon (green tick, red cross, etc.) for a grade.
-     * @param float $fraction grade on a scale 0..1.
-     * @return string html fragment.
-     */
-    protected function icon_for_fraction($fraction) {
-        global $OUTPUT;
-
-        $state = question_state::graded_state_for_fraction($fraction);
-        if ($state == question_state::$gradedright) {
-            $icon = 'i/tick_green_big';
-        } else if ($state == question_state::$gradedpartial) {
-            $icon = 'i/tick_amber_big';
-        } else {
-            $icon = 'i/cross_red_big';
-        }
-
-        return $OUTPUT->pix_icon($icon, get_string($state->get_feedback_class(), 'question'),
-                'moodle', array('class' => 'icon'));
-    }
-
-    /**
-     * Load information about the latest state of selected questions in selected attempts.
-     *
-     * The results are returned as an two dimensional array $qubaid => $slot => $dataobject
-     *
-     * @param qubaid_condition $qubaids used to restrict which usages are included
-     * in the query. See {@link qubaid_condition}.
-     * @param array $slots A list of slots for the questions you want to konw about.
-     * @return array of records. See the SQL in this function to see the fields available.
-     */
-    protected function load_question_latest_steps(qubaid_condition $qubaids) {
-        $dm = new question_engine_data_mapper();
-        $latesstepdata = $dm->load_questions_usages_latest_steps(
-                $qubaids, array_keys($this->questions));
-
-        $lateststeps = array();
-        foreach ($latesstepdata as $step) {
-            $lateststeps[$step->questionusageid][$step->slot] = $step;
-        }
-
-        return $lateststeps;
-    }
-
-    /**
-     * @return bool should {@link query_db()} call {@link load_question_latest_steps}?
-     */
-    protected function requires_latest_steps_loaded() {
-        return false;
-    }
-
-    /**
-     * Is this a column that depends on joining to the latest state information?
-     * If so, return the corresponding slot. If not, return false.
-     * @param string $column a column name
-     * @return int false if no, else a slot.
-     */
-    protected function is_latest_step_column($column) {
-        return false;
-    }
-
-    /**
-     * Get any fields that might be needed when sorting on date for a particular slot.
-     * @param int $slot the slot for the column we want.
-     * @param string $alias the table alias for latest state information relating to that slot.
-     */
-    protected function get_required_latest_state_fields($slot, $alias) {
-        return '';
-    }
-
-    /**
-     * Contruct all the parts of the main database query.
-     * @param array $reportstudents list if userids of users to include in the report.
-     * @return array with 4 elements ($fields, $from, $where, $params) that can be used to
-     *      build the actual database query.
-     */
-    public function base_sql($reportstudents) {
-        global $DB;
-
-        $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') . ' AS uniqueid,';
-
-        if ($this->qmsubselect) {
-            $fields .= "\n(CASE WHEN $this->qmsubselect THEN 1 ELSE 0 END) AS gradedattempt,";
-        }
-
-        $extrafields = get_extra_user_fields_sql($this->context, 'u', '',
-                array('id', 'idnumber', 'firstname', 'lastname', 'picture',
-                'imagealt', 'institution', 'department', 'email'));
-        $fields .= '
-                quiza.uniqueid AS usageid,
-                quiza.id AS attempt,
-                u.id AS userid,
-                u.idnumber,
-                u.firstname,
-                u.lastname,
-                u.picture,
-                u.imagealt,
-                u.institution,
-                u.department,
-                u.email' . $extrafields . ',
-                quiza.sumgrades,
-                quiza.timefinish,
-                quiza.timestart,
-                CASE WHEN quiza.timefinish = 0 THEN null
-                     WHEN quiza.timefinish > quiza.timestart THEN quiza.timefinish - quiza.timestart
-                     ELSE 0 END AS duration';
-            // To explain that last bit, in MySQL, qa.timestart and qa.timefinish
-            // are unsigned. Since MySQL 5.5.5, when they introduced strict mode,
-            // subtracting a larger unsigned int from a smaller one gave an error.
-            // Therefore, we avoid doing that. timefinish can be non-zero and less
-            // than timestart when you have two load-balanced servers with very
-            // badly synchronised clocks, and a student does a really quick attempt.';
-
-        // This part is the same for all cases - join users and quiz_attempts tables
-        $from = "\n{user} u";
-        $from .= "\nLEFT JOIN {quiz_attempts} quiza ON
-                                    quiza.userid = u.id AND quiza.quiz = :quizid";
-        $params = array('quizid' => $this->quiz->id);
-
-        if ($this->qmsubselect && $this->qmfilter) {
-            $from .= " AND $this->qmsubselect";
-        }
-        switch ($this->attemptsmode) {
-            case QUIZ_REPORT_ATTEMPTS_ALL:
-                // Show all attempts, including students who are no longer in the course
-                $where = 'quiza.id IS NOT NULL AND quiza.preview = 0';
-                break;
-            case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
-                // Show only students with attempts
-                list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u');
-                $params += $uparams;
-                $where = "u.id $usql AND quiza.preview = 0 AND quiza.id IS NOT NULL";
-                break;
-            case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
-                // Show only students without attempts
-                list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u');
-                $params += $uparams;
-                $where = "u.id $usql AND quiza.id IS NULL";
-                break;
-            case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
-                // Show all students with or without attempts
-                list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u');
-                $params += $uparams;
-                $where = "u.id $usql AND (quiza.preview = 0 OR quiza.preview IS NULL)";
-                break;
-        }
-
-        return array($fields, $from, $where, $params);
-    }
-
-    /**
-     * Add the information about the latest state of the question with slot
-     * $slot to the query.
-     *
-     * The extra information is added as a join to a
-     * 'table' with alias qa$slot, with columns that are a union of
-     * the columns of the question_attempts and question_attempts_states tables.
-     *
-     * @param int $slot the question to add information for.
-     */
-    protected function add_latest_state_join($slot) {
-        $alias = 'qa' . $slot;
-
-        $fields = $this->get_required_latest_state_fields($slot, $alias);
-        if (!$fields) {
-            return;
-        }
-
-        // This condition roughly filters the list of attempts to be considered.
-        // It is only used in a subselect to help crappy databases (see MDL-30122)
-        // therefore, it is better to use a very simple join, which may include
-        // too many records, than to do a super-accurate join.
-        $qubaids = new qubaid_join("{quiz_attempts} {$alias}quiza", "{$alias}quiza.uniqueid",
-                "{$alias}quiza.quiz = :{$alias}quizid", array("{$alias}quizid" => $this->sql->params['quizid']));
-
-        $dm = new question_engine_data_mapper();
-        list($inlineview, $viewparams) = $dm->question_attempt_latest_state_view($alias, $qubaids);
-
-        $this->sql->fields .= ",\n$fields";
-        $this->sql->from .= "\nLEFT JOIN $inlineview ON " .
-                "$alias.questionusageid = quiza.uniqueid AND $alias.slot = :{$alias}slot";
-        $this->sql->params[$alias . 'slot'] = $slot;
-        $this->sql->params = array_merge($this->sql->params, $viewparams);
-    }
-
-    /**
-     * Get an appropriate qubaid_condition for loading more data about the
-     * attempts we are displaying.
-     * @return qubaid_condition
-     */
-    protected function get_qubaids_condition() {
-        if (is_null($this->rawdata)) {
-            throw new coding_exception(
-                    'Cannot call get_qubaids_condition until the main data has been loaded.');
-        }
-
-        if ($this->is_downloading()) {
-            // We want usages for all attempts.
-            return new qubaid_join($this->sql->from, 'quiza.uniqueid',
-                    $this->sql->where, $this->sql->params);
-        }
-
-        $qubaids = array();
-        foreach ($this->rawdata as $attempt) {
-            if ($attempt->usageid > 0) {
-                $qubaids[] = $attempt->usageid;
-            }
-        }
-
-        return new qubaid_list($qubaids);
-    }
-
-    public function query_db($pagesize, $useinitialsbar = true) {
-        $doneslots = array();
-        foreach ($this->get_sort_columns() as $column => $notused) {
-            $slot = $this->is_latest_step_column($column);
-            if ($slot && !in_array($slot, $doneslots)) {
-                $this->add_latest_state_join($slot);
-                $doneslots[] = $slot;
-            }
-        }
-
-        parent::query_db($pagesize, $useinitialsbar);
-
-        if ($this->requires_latest_steps_loaded()) {
-            $qubaids = $this->get_qubaids_condition();
-            $this->lateststeps = $this->load_question_latest_steps($qubaids);
-        }
-    }
-
-    public function get_sort_columns() {
-        // Add attemptid as a final tie-break to the sort. This ensures that
-        // Attempts by the same student appear in order when just sorting by name.
-        $sortcolumns = parent::get_sort_columns();
-        $sortcolumns['quiza.id'] = SORT_ASC;
-        return $sortcolumns;
-    }
-
-    public function wrap_html_start() {
-        if ($this->is_downloading() || !$this->includecheckboxes) {
-            return;
-        }
-
-        $url = new moodle_url($this->reporturl, $this->displayoptions);
-        $url->param('sesskey', sesskey());
-
-        echo '<div id="tablecontainer">';
-        echo '<form id="attemptsform" method="post" action="' . $url->out_omit_querystring() . '">';
-
-        echo html_writer::input_hidden_params($url);
-        echo '<div>';
-    }
-
-    public function wrap_html_finish() {
-        if ($this->is_downloading() || !$this->includecheckboxes) {
-            return;
-        }
-
-        echo '<div id="commands">';
-        echo '<a href="javascript:select_all_in(\'DIV\', null, \'tablecontainer\');">' .
-                get_string('selectall', 'quiz') . '</a> / ';
-        echo '<a href="javascript:deselect_all_in(\'DIV\', null, \'tablecontainer\');">' .
-                get_string('selectnone', 'quiz') . '</a> ';
-        echo '&nbsp;&nbsp;';
-        $this->submit_buttons();
-        echo '</div>';
-        // Close form
-        echo '</div>';
-        echo '</form></div>';
-    }
-
-    /**
-     * Output any submit buttons required by the $this->includecheckboxes form.
-     */
-    protected function submit_buttons() {
-        global $PAGE;
-        if (has_capability('mod/quiz:deleteattempts', $this->context)) {
-            echo '<input type="submit" id="deleteattemptsbutton" name="delete" value="' .
-                    get_string('deleteselected', 'quiz_overview') . '"/>';
-            $PAGE->requires->event_handler('#deleteattemptsbutton', 'click', 'M.util.show_confirm_dialog',
-                    array('message' => get_string('deleteattemptcheck', 'quiz')));
         }
     }
 }

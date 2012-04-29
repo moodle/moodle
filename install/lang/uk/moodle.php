@@ -30,5 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Мова';
+$string['language'] = 'Мова інтерфейсу';
 $string['next'] = 'Далі';
+$string['previous'] = 'Назад';
+$string['reload'] = 'Оновити';

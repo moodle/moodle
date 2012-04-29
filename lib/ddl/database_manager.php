@@ -459,21 +459,13 @@ class database_manager {
      *
      * It is recommended to drop temp table when not used anymore.
      *
+     * @deprecated since 2.3, use drop_table() for all table types
      * @param xmldb_table $xmldb_table Table object.
      * @return void
      */
     public function drop_temp_table(xmldb_table $xmldb_table) {
-
-    /// Check table doesn't exist
-        if (!$this->table_exists($xmldb_table)) {
-            throw new ddl_table_missing_exception($xmldb_table->getName());
-        }
-
-        if (!$sqlarr = $this->generator->getDropTempTableSQL($xmldb_table)) {
-            throw new ddl_exception('ddlunknownerror', null, 'temp table drop sql not generated');
-        }
-
-        $this->execute_sql_arr($sqlarr);
+        debugging('database_manager::drop_temp_table() is deprecated, use database_manager::drop_table() instead');
+        $this->drop_table($xmldb_table);
     }
 
     /**

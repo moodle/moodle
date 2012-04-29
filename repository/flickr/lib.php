@@ -154,12 +154,12 @@ class repository_flickr extends repository {
     }
 
     /**
+     * Converts result received from phpFlickr::photo_search to Filepicker/repository format
      *
      * @param mixed $photos
-     * @param int $page
      * @return array
      */
-    private function build_list($photos, $page = 1) {
+    private function build_list($photos) {
         $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
         $ret = array();
         $ret['manage'] = $photos_url;
@@ -167,11 +167,7 @@ class repository_flickr extends repository {
         $ret['pages'] = $photos['pages'];
         $ret['total'] = $photos['total'];
         $ret['perpage'] = $photos['perpage'];
-        if($page <= $ret['pages']) {
-            $ret['page'] = $page;
-        } else {
-            $ret['page'] = 1;
-        }
+        $ret['page'] = $photos['page'];
         if (!empty($photos['photo'])) {
             foreach ($photos['photo'] as $p) {
                 if(empty($p['title'])) {
@@ -189,6 +185,7 @@ class repository_flickr extends repository {
                 }
                 $ret['list'][] = array('title'=>$p['title'],'source'=>$p['id'],
                     'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'),
+                    'thumbnail_width'=>75, 'thumbnail_height'=>75,
                     'date'=>'', 'size'=>'unknown', 'url'=>$photos_url.$p['id']);
             }
         }
@@ -198,6 +195,7 @@ class repository_flickr extends repository {
     /**
      *
      * @param string $search_text
+     * @param int $page
      * @return array
      */
     public function search($search_text, $page = 0) {
@@ -205,10 +203,11 @@ class repository_flickr extends repository {
             'user_id'=>$this->nsid,
             'per_page'=>24,
             'extras'=>'original_format',
+            'page'=>$page,
             'text'=>$search_text
             ));
         $ret = $this->build_list($photos);
-        $ret['list'] = array_filter($ret['list'], array($this, 'filter'));
+        $ret['list'] = array_filter($ret['list'], array($this, 'filter')); // TODO this breaks pagination
         return $ret;
     }
 
@@ -218,16 +217,8 @@ class repository_flickr extends repository {
      * @param int $page
      * @return array
      */
-    public function get_listing($path = '', $page = '1') {
-        $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
-
-        $photos = $this->flickr->photos_search(array(
-            'user_id'=>$this->nsid,
-            'per_page'=>24,
-            'page'=>$page,
-            'extras'=>'original_format'
-            ));
-        return $this->build_list($photos, $page);
+    public function get_listing($path = '', $page = '') {
+        return $this->search('', $page);
     }
 
     public function get_link($photo_id) {

@@ -1,4 +1,4 @@
-Description of TCPDF library import
+Description of TCPDF library import 5.9.156
 ===================================
 * delete cache/ doc/ examples/ config/tcpdf_config_alt.php config/lang/ images/
 * remove all fonts but the core ones (courier.php, helveticabi.php,
