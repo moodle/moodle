@@ -138,6 +138,9 @@ if ($rev > -1) {
 // parameters to get the best performance.
 
 function send_cached_image($imagepath, $rev) {
+    global $CFG;
+    require("$CFG->dirroot/lib/xsendfilelib.php");
+
     $lifetime = 60*60*24*30; // 30 days
     $pathinfo = pathinfo($imagepath);
     $imagename = $pathinfo['filename'].'.'.$pathinfo['extension'];
@@ -153,6 +156,10 @@ function send_cached_image($imagepath, $rev) {
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));
+
+    if (xsendfile($imagepath)) {
+        die;
+    }
 
     // no need to gzip already compressed images ;-)
 

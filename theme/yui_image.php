@@ -66,6 +66,9 @@ yui_image_cached($imagepath);
 
 
 function yui_image_cached($imagepath) {
+    global $CFG;
+    require("$CFG->dirroot/lib/xsendfilelib.php");
+
     $lifetime = 60*60*24*300; // 300 days === forever
     $pathinfo = pathinfo($imagepath);
     $imagename = $pathinfo['filename'].'.'.$pathinfo['extension'];
@@ -87,6 +90,10 @@ function yui_image_cached($imagepath) {
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));
+
+    if (xsendfile($imagepath)) {
+        die;
+    }
 
     // no need to gzip already compressed images ;-)
 
