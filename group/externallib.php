@@ -550,6 +550,93 @@ class core_group_external extends external_api {
         return null;
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function create_groupings_parameters() {
+        return new external_function_parameters(
+            array(
+                'groupings' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course'),
+                            'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                            'description' => new external_value(PARAM_RAW, 'grouping description text')
+                        )
+                    ), 'List of grouping object. A grouping has a courseid, a name and a description.'
+                )
+            )
+        );
+    }
+
+    /**
+     * Create groupings
+     * @param array $groupings array of grouping description arrays (with keys groupname and courseid)
+     * @return array of newly created groupings
+     */
+    public static function create_groupings($groupings) {
+        global $CFG, $DB;
+        require_once("$CFG->dirroot/group/lib.php");
+
+        $params = self::validate_parameters(self::create_groupings_parameters(), array('groupings'=>$groupings));
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $groupings = array();
+
+        foreach ($params['groupings'] as $grouping) {
+            $grouping = (object)$grouping;
+
+            if (trim($grouping->name) == '') {
+                throw new invalid_parameter_exception('Invalid grouping name');
+            }
+            if ($DB->get_record('groupings', array('courseid'=>$grouping->courseid, 'name'=>$grouping->name))) {
+                throw new invalid_parameter_exception('Grouping with the same name already exists in the course');
+            }
+
+            // Now security checks            .
+            $context = context_course::instance($grouping->courseid);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $grouping->courseid;
+                throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
+            }
+            require_capability('moodle/course:managegroups', $context);
+
+            // We must force allways FORMAT_HTML.
+            $grouping->descriptionformat = FORMAT_HTML;
+
+            // Finally create the grouping.
+            $grouping->id = groups_create_grouping($grouping);
+            $groupings[] = (array)$grouping;
+        }
+
+        $transaction->allow_commit();
+
+        return $groupings;
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function create_groupings_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'grouping record id'),
+                    'courseid' => new external_value(PARAM_INT, 'id of course'),
+                    'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                    'description' => new external_value(PARAM_CLEANHTML, 'grouping description text')
+                )
+            ), 'List of grouping object. A grouping has an id, a courseid, a name and a description.'
+        );
+    }
+
 }
 
 /**
