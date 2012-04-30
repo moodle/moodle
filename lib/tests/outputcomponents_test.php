@@ -132,7 +132,7 @@ class user_picture_testcase extends advanced_testcase {
         $page->set_context(context_system::instance());
         $renderer = $page->get_renderer('core');
 
-        $user1 = $this->getDataGenerator()->create_user(array('picture'=>1, 'email'=>'user1@example.com'));
+        $user1 = $this->getDataGenerator()->create_user(array('picture'=>11, 'email'=>'user1@example.com'));
         $context1 = context_user::instance($user1->id);
         $user2 = $this->getDataGenerator()->create_user(array('picture'=>0, 'email'=>'user2@example.com'));
         $context2 = context_user::instance($user2->id);
@@ -143,12 +143,18 @@ class user_picture_testcase extends advanced_testcase {
         $this->assertNotEquals($user3->email, 'user3@example.com');
         $this->assertFalse($context3);
 
+        // try legacy picture == 1
+        $user1->picture = 1;
+        $up1 = new user_picture($user1);
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=1', $up1->get_url($page, $renderer)->out(false));
+        $user1->picture = 11;
+
         // try valid user with picture when user context is not cached - 1 query expected
         context_helper::reset_caches();
         $reads = $DB->perf_get_reads();
         $up1 = new user_picture($user1);
         $this->assertEquals($reads, $DB->perf_get_reads());
-        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
         $this->assertEquals($reads+1, $DB->perf_get_reads());
 
         // try valid user with contextid hint - no queries expected
@@ -157,7 +163,7 @@ class user_picture_testcase extends advanced_testcase {
         $reads = $DB->perf_get_reads();
         $up1 = new user_picture($user1);
         $this->assertEquals($reads, $DB->perf_get_reads());
-        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
         $this->assertEquals($reads, $DB->perf_get_reads());
 
         // try valid user without image - no queries expected
@@ -195,7 +201,7 @@ class user_picture_testcase extends advanced_testcase {
 
         // uploaded image takes precedence before gravatar
         $up1 = new user_picture($user1);
-        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
 
         // deleted user can not have gravatar
         $user3->email = 'deleted';
@@ -208,7 +214,7 @@ class user_picture_testcase extends advanced_testcase {
         $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
 
         $up1 = new user_picture($user1);
-        $this->assertEquals($CFG->httpswwwroot.'/pluginfile.php/15/user/icon/standard/f2', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->httpswwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
 
         $up3 = new user_picture($user3);
         $this->assertEquals($CFG->httpswwwroot.'/theme/image.php?theme=standard&image=u%2Ff2&rev=1', $up3->get_url($page, $renderer)->out(false));
@@ -228,7 +234,7 @@ class user_picture_testcase extends advanced_testcase {
         $renderer = $page->get_renderer('core');
 
         $up1 = new user_picture($user1);
-        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/formal_white/f2', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/formal_white/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
 
         $up2 = new user_picture($user2);
         $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=formal_white&image=u%2Ff2&rev=1', $up2->get_url($page, $renderer)->out(false));

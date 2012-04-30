@@ -428,5 +428,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012042700.01);
     }
 
+    if ($oldversion < 2012042700.02) {
+
+        // Changing precision of field picture on table user to (10)
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('picture', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'secret');
+
+        // Launch change of precision for field picture
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012042700.02);
+    }
+
     return true;
 }

@@ -347,7 +347,7 @@ class user_picture implements renderable {
         }
 
         // Did the user upload a picture?
-        if ($this->user->picture == 1) {
+        if ($this->user->picture > 0) {
             if (!empty($this->user->contextid)) {
                 $contextid = $this->user->contextid;
             } else {
@@ -368,11 +368,12 @@ class user_picture implements renderable {
                 $path .= $page->theme->name.'/';
             }
             // Set the image URL to the URL for the uploaded file and return.
-            return moodle_url::make_pluginfile_url($contextid, 'user', 'icon', NULL, $path, $filename);
+            $url = moodle_url::make_pluginfile_url($contextid, 'user', 'icon', NULL, $path, $filename);
+            $url->param('rev', $this->user->picture);
+            return $url;
         }
 
-        // Gravatar is the last chance if enabled.
-        if (!empty($CFG->enablegravatar)) {
+        if ($this->user->picture == 0 and !empty($CFG->enablegravatar)) {
             // Normalise the size variable to acceptable bounds
             if ($size < 1 || $size > 512) {
                 $size = 35;

@@ -90,11 +90,12 @@ function imagecopybicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $d
 /**
  * Stores optimised icon images in icon file area
  *
- * @param $context
- * @param component
- * @param $itemid
- * @param $originalfile
- * @return success
+ * @param context $context
+ * @param string $component
+ * @param string filearea
+ * @param int $itemid
+ * @param string $originalfile
+ * @return mixed new unique revision number or false if not saved
  */
 function process_new_icon($context, $component, $filearea, $itemid, $originalfile) {
     global $CFG;
@@ -206,7 +207,7 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
     imagedestroy($im1);
     $icon['filename'] = 'f1'.$imageext;
     $fs->delete_area_files($context->id, $component, $filearea, $itemid);
-    $fs->create_file_from_string($icon, $data);
+    $file1 = $fs->create_file_from_string($icon, $data);
 
     ob_start();
     if (!$imagefnc($im2, NULL, $quality, $filters)) {
@@ -219,7 +220,7 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
     $icon['filename'] = 'f2'.$imageext;
     $fs->create_file_from_string($icon, $data);
 
-    return true;
+    return $file1->get_id();
 }
 
 /**
