@@ -45,8 +45,13 @@ require_sesskey();
 
 $var = required_param('var', PARAM_ALPHA);
 $return = clean_param(base64_decode(required_param('return', PARAM_RAW)), PARAM_URL);
-
-$url = new moodle_url('/calendar/set.php', array('return'=>base64_encode($return),'var'=>$var, 'sesskey'=>sesskey()));
+$courseid = optional_param('id', -1, PARAM_INT);
+if ($courseid != -1) {
+    $return = new moodle_url($return, array('course' => $courseid));
+} else {
+    $return = new moodle_url($return);
+}
+$url = new moodle_url('/calendar/set.php', array('return'=>base64_encode($return->out(false)), 'course' => $courseid, 'var'=>$var, 'sesskey'=>sesskey()));
 $PAGE->set_url($url);
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
