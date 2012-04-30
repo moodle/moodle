@@ -135,7 +135,9 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @return string
      */
     public function fake_block_filters($courseid, $day, $month, $year, $view, $courses) {
-        return html_writer::tag('div', calendar_filter_controls($this->page->url), array('class'=>'calendar_filters filters'));
+        $returnurl = $this->page->url;
+        $returnurl->param('course', $courseid);
+        return html_writer::tag('div', calendar_filter_controls($returnurl), array('class'=>'calendar_filters filters'));
     }
 
     /**
