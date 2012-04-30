@@ -1005,14 +1005,15 @@ class page_requirements_manager {
                      .$CFG->yui3version.'/build/cssfonts/fonts-min.css&amp;'
                      .$CFG->yui3version.'/build/cssgrids/grids-min.css&amp;'
                      .$CFG->yui3version.'/build/cssbase/base-min.css" />';
+            $code .= '<script type="text/javascript" src="'.$this->yui3loader->comboBase.$CFG->yui3version.'/build/yui/yui-min.js"></script>';
         } else {
             $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssreset/reset-min.css" />';
             $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssfonts/fonts-min.css" />';
             $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssgrids/grids-min.css" />';
             $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssbase/base-min.css" />';
+            $code .= '<script type="text/javascript" src="'.$this->yui3loader->base.'yui/yui-min.js"></script>';
         }
 
-        $code .= '<script type="text/javascript" src="'.$this->yui3loader->base.'yui/yui-min.js"></script>';
 
         if ($this->yui3loader->filter === YUI_RAW) {
             $code = str_replace('-min.css', '.css', $code);
