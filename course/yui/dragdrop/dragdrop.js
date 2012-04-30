@@ -55,35 +55,40 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                 if (sectionid > 0) {
                     // Remove move icons
                     var movedown = sectionnode.one('.'+CSS.RIGHT+' a.'+CSS.MOVEDOWN);
-                    if (movedown) {
-                        movedown.remove();
-                    }
                     var moveup = sectionnode.one('.'+CSS.RIGHT+' a.'+CSS.MOVEUP);
-                    if (moveup) {
-                        moveup.remove();
-                    }
+
                     // Add dragger icon
                     var title = M.util.get_string('movesection', 'moodle', sectionid);
                     var cssleft = sectionnode.one('.'+CSS.LEFT);
-                    cssleft.setStyle('cursor', 'move');
-                    cssleft.appendChild(Y.Node.create('<br />'));
-                    cssleft.appendChild(this.get_drag_handle(title, CSS.SECTIONHANDLE));
 
-                    // Make each li element in the lists of sections draggable
-                    var dd = new Y.DD.Drag({
-                        node: sectionnode,
-                        // Make each li a Drop target too
-                        groups: this.groups,
-                        target: true,
-                        handles: ['.'+CSS.LEFT]
-                    }).plug(Y.Plugin.DDProxy, {
-                        // Don't move the node at the end of the drag
-                        moveOnEnd: false
-                    }).plug(Y.Plugin.DDConstrained, {
-                        // Keep it inside the .course-content
-                        constrain: '#'+CSS.PAGECONTENT,
-                        stickY: true
-                    });
+                    if ((movedown || moveup) && cssleft) {
+                        cssleft.setStyle('cursor', 'move');
+                        cssleft.appendChild(Y.Node.create('<br />'));
+                        cssleft.appendChild(this.get_drag_handle(title, CSS.SECTIONHANDLE));
+
+                        if (moveup) {
+                            moveup.remove();
+                        }
+                        if (movedown) {
+                            movedown.remove();
+                        }
+
+                        // Make each li element in the lists of sections draggable
+                        var dd = new Y.DD.Drag({
+                            node: sectionnode,
+                            // Make each li a Drop target too
+                            groups: this.groups,
+                            target: true,
+                            handles: ['.'+CSS.LEFT]
+                        }).plug(Y.Plugin.DDProxy, {
+                            // Don't move the node at the end of the drag
+                            moveOnEnd: false
+                        }).plug(Y.Plugin.DDConstrained, {
+                            // Keep it inside the .course-content
+                            constrain: '#'+CSS.PAGECONTENT,
+                            stickY: true
+                        });
+                    }
                 }
             }, this);
         },
