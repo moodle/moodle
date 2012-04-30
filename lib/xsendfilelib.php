@@ -52,7 +52,14 @@ function xsendfile($filepath) {
     $aliased = false;
     if (!empty($CFG->xsendfilealiases) and is_array($CFG->xsendfilealiases)) {
         foreach ($CFG->xsendfilealiases as $alias=>$dir) {
-            $dir = realpath($dir).PATH_SEPARATOR;
+            $dir = realpath($dir);
+            if ($dir === false) {
+                continue;
+            }
+            if (substr($dir, -1) !== DIRECTORY_SEPARATOR) {
+                // add trailing dir separator
+                $dir .= DIRECTORY_SEPARATOR;
+            }
             if (strpos($filepath, $dir) === 0) {
                 $filepath = $alias.substr($filepath, strlen($dir));
                 $aliased = true;
