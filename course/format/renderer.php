@@ -55,6 +55,50 @@ abstract class format_renderer_base extends plugin_renderer_base {
     abstract public function page_title();
 
     /**
+     * Generate the content to displayed on the right part of a section
+     *
+     * before course modules are included
+     * @param stdClass $section The course_section entry from DB
+     * @param stdClass $course The course entry from DB
+     * @param bool $onsectionpage true if being printed on a section page
+     * @return string HTML to output.
+     */
+    public function section_right_content($section, $course, $onsectionpage) {
+        $o = $this->output->spacer();
+
+        if ($section->section != 0) {
+            $controls = $this->section_edit_controls($course, $section, $onsectionpage);
+            if (!empty($controls)) {
+                $o = implode('<br />', $controls);
+            }
+        }
+
+        return $o;
+    }
+
+    /**
+     * Generate the content to displayed on the left part of a section
+     *
+     * before course modules are included
+     * @param stdClass $section The course_section entry from DB
+     * @param stdClass $course The course entry from DB
+     * @param bool $onsectionpage true if being printed on a section page
+     * @return string HTML to output.
+     */
+    public function section_left_content($section, $course, $onsectionpage) {
+        $o = $this->output->spacer();
+
+        if ($section->section != 0) {
+            // Only in the non-general sections.
+            if ($course->marker == $section->section) {
+                $o = get_accesshide(get_string('currentsection', 'format_'.$course->format));
+            }
+        }
+
+        return $o;
+    }
+
+    /**
      * Generate the display of the header part of a section before
      * course modules are included
      *
@@ -69,8 +113,6 @@ abstract class format_renderer_base extends plugin_renderer_base {
         $o = '';
         $currenttext = '';
         $sectionstyle = '';
-        $rightcontent = $this->output->spacer();
-        $leftcontent = $this->output->spacer();
         $linktitle = false;
 
         if ($section->section != 0 ) {
@@ -79,19 +121,17 @@ abstract class format_renderer_base extends plugin_renderer_base {
                 $sectionstyle = ' hidden';
             } else if ($course->marker == $section->section) {
                 $sectionstyle = ' current';
-                $currenttext = get_accesshide(get_string('currentsection', 'format_'.$course->format));
-            }
-            $leftcontent = $currenttext.$section->section;
-            $controls = $this->section_edit_controls($course, $section, $onsectionpage);
-            if (!empty($controls)) {
-                $rightcontent = implode('<br />', $controls);
             }
             $linktitle = ($course->coursedisplay == COURSE_DISPLAY_MULTIPAGE);
         }
 
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
             'class' => 'section main clearfix'.$sectionstyle));
+
+        $leftcontent = $this->section_left_content($section, $course, $onsectionpage);
         $o.= html_writer::tag('div', $leftcontent, array('class' => 'left side'));
+
+        $rightcontent = $this->section_right_content($section, $course, $onsectionpage);
         $o.= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
         $o.= html_writer::start_tag('div', array('class' => 'content'));
 
