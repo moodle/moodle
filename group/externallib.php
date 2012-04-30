@@ -726,6 +726,77 @@ class core_group_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function get_groupings_parameters() {
+        return new external_function_parameters(
+            array(
+                'groupingids' => new external_multiple_structure(new external_value(PARAM_INT, 'grouping ID')
+                        ,'List of grouping id. A grouping id is an integer.'),
+            )
+        );
+    }
+
+    /**
+     * Get groupings definition specified by ids
+     * @param array $groupingids arrays of grouping ids
+     * @return array of grouping objects (id, courseid, name)
+     */
+    public static function get_groupings($groupingids) {
+        global $CFG;
+        require_once("$CFG->dirroot/group/lib.php");
+
+        $params = self::validate_parameters(self::get_groupings_parameters(), array('groupingids'=>$groupingids));
+
+        $groupings = array();
+        foreach ($params['groupingids'] as $groupingid) {
+            // Validate params.
+            $grouping = groups_get_grouping($groupingid, '*', MUST_EXIST);
+
+            // Now security checks.
+            $context = context_course::instance($grouping->courseid);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $grouping->courseid;
+                throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
+            }
+            require_capability('moodle/course:managegroups', $context);
+
+            $grouping->description = file_rewrite_pluginfile_urls($grouping->description, 'webservice/pluginfile.php', $context->id, 'grouping', 'description', $grouping->id);
+
+            $options = new stdClass;
+            $options->noclean = true;
+            $options->para = false;
+            $grouping->description = format_text($grouping->description, FORMAT_HTML, $options);
+
+            $groupings[] = (array)$grouping;
+        }
+
+        return $groupings;
+    }
+
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_groupings_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'grouping record id'),
+                    'courseid' => new external_value(PARAM_INT, 'id of course'),
+                    'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                    'description' => new external_value(PARAM_CLEANHTML, 'grouping description text')
+                )
+            )
+        );
+    }
+
 }
 
 /**
