@@ -867,6 +867,65 @@ class core_group_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function delete_groupings_parameters() {
+        return new external_function_parameters(
+            array(
+                'groupingids' => new external_multiple_structure(new external_value(PARAM_INT, 'grouping ID')),
+            )
+        );
+    }
+
+    /**
+     * Delete groupings
+     * @param array $groupingids array of grouping ids
+     * @return void
+     */
+    public static function delete_groupings($groupingids) {
+        global $CFG, $DB;
+        require_once("$CFG->dirroot/group/lib.php");
+
+        $params = self::validate_parameters(self::delete_groupings_parameters(), array('groupingids'=>$groupingids));
+
+        $transaction = $DB->start_delegated_transaction();
+
+        foreach ($params['groupingids'] as $groupingid) {
+            // Validate params.
+            $groupingid = validate_param($groupingid, PARAM_INTEGER);
+            if (!$grouping = groups_get_grouping($groupingid, 'id, courseid', IGNORE_MISSING)) {
+                // Silently ignore attempts to delete nonexisting groupings.
+                continue;
+            }
+
+            // Now security checks.
+            $context = context_course::instance($grouping->courseid);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $grouping->courseid;
+                throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
+            }
+            require_capability('moodle/course:managegroups', $context);
+
+            groups_delete_grouping($grouping);
+        }
+
+        $transaction->allow_commit();
+    }
+
+   /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function delete_groupings_returns() {
+        return null;
+    }
+
 }
 
 /**
