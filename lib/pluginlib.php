@@ -418,7 +418,7 @@ class plugin_manager {
             ),
 
             'gradingform' => array(
-                'rubric'
+                'rubric', 'guide'
             ),
 
             'local' => array(
