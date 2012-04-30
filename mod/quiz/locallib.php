@@ -1347,7 +1347,8 @@ function quiz_send_overdue_message($course, $quiz, $attempt, $context, $cm) {
     if ($quiz->timeclose) {
         $deadlines[] = $quiz->timeclose;
     }
-    $duedate = min($deadlines) + $quiz->graceperiod;
+    $duedate = min($deadlines);
+    $graceend = $duedate + $quiz->graceperiod;
 
     $a = new stdClass();
     // Course info.
@@ -1358,7 +1359,8 @@ function quiz_send_overdue_message($course, $quiz, $attempt, $context, $cm) {
     $a->quizurl            = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
     $a->quizlink           = '<a href="' . $a->quizurl . '">' . $quizname . '</a>';
     // Attempt info.
-    $a->attemptgraceend    = format_time($duedate);
+    $a->attemptduedate    = userdate($duedate);
+    $a->attemptgraceend    = userdate($graceend);
     $a->attemptsummaryurl  = $CFG->wwwroot . '/mod/quiz/summary.php?attempt=' . $attempt->id;
     $a->attemptsummarylink = '<a href="' . $a->attemptsummaryurl . '">' . $quizname . ' review</a>';
     // Student's info.

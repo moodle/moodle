@@ -275,12 +275,13 @@ $string['emailnotifysubject'] = '{$a->studentname} has completed {$a->quizname}'
 $string['emailoverduebody'] = 'Dear {$a->studentname},
 
 You started an attempt at \'{$a->quizname}\'
-in course \'{$a->coursename}\', but you never submitted it.
+in course \'{$a->coursename}\', but you never submitted it. It should have been
+submitted by {$a->attemptduedate}.
 
-If you would would still like to submit this attempt, please go to
+If you would still like to submit this attempt, please go to
 {$a->attemptsummaryurl} and click the submit button.
 You must do this before {$a->attemptgraceend}
-otherwise you attempt will not be counted.';
+otherwise your attempt will not be counted.';
 $string['emailoverduesmall'] = 'You did not submit your attempt at {$a->quizname}. Please go to {$a->attemptsummaryurl} before {$a->attemptgraceend} if you would still like to submit.';
 $string['emailoverduesubject'] = 'Attempt now overdue: {$a->quizname}';
 $string['empty'] = 'Empty';
@@ -508,7 +509,7 @@ $string['overduehandling_desc'] = 'What should happen by default if a student do
 $string['overduehandlingautosubmit'] = 'the attempt is submitted automatically';
 $string['overduehandlinggraceperiod'] = 'there is a grace period in which to submit the attempt, but not answer more questions';
 $string['overduehandlingautoabandon'] = 'that is it. The attempt must be submitted before time expires, or it is not counted';
-$string['overduemustbesubmittedby'] = 'This attempt is now overdue. It should already have been submitted. If you would like this quiz to be graded, you must submit it by {$a}. If you not submit it by then, no marks from this attempt will be counted.';
+$string['overduemustbesubmittedby'] = 'This attempt is now overdue. It should already have been submitted. If you would like this quiz to be graded, you must submit it by {$a}. If you do not submit it by then, no marks from this attempt will be counted.';
 $string['override'] = 'Override';
 $string['overridedeletegroupsure'] = 'Are you sure you want to delete the override for group {$a}?';
 $string['overridedeleteusersure'] = 'Are you sure you want to delete the override for user {$a}?';
