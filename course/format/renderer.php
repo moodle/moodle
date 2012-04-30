@@ -413,10 +413,6 @@ abstract class format_renderer_base extends plugin_renderer_base {
     public function print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
         global $PAGE;
 
-        // Section next/previous links.
-        $sectionnavlinks = $this->get_nav_links($course, $sections, $displaysection);
-        echo $sectionnavlinks;
-
         // Can we view the section in question?
         $context = context_course::instance($course->id);
         $canviewhidden = has_capability('moodle/course:viewhiddensections', $context);
@@ -432,6 +428,24 @@ abstract class format_renderer_base extends plugin_renderer_base {
             return;
         }
 
+        // General section if non-empty.
+        $thissection = $sections[0];
+        if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
+            echo $this->start_section_list();
+            echo $this->section_header($thissection, $course, true);
+            print_section($course, $thissection, $mods, $modnamesused, true);
+            if ($PAGE->user_is_editing()) {
+                print_section_add_menus($course, 0, $modnames);
+            }
+            echo $this->section_footer();
+            echo $this->end_section_list();
+        }
+
+        // Section next/previous links.
+        $sectionnavlinks = $this->get_nav_links($course, $sections, $displaysection);
+        echo $sectionnavlinks;
+
+
         // Title with completion help icon.
         $completioninfo = new completion_info($course);
         echo $completioninfo->display_help_icon();
@@ -443,17 +457,6 @@ abstract class format_renderer_base extends plugin_renderer_base {
 
         // Now the list of sections..
         echo $this->start_section_list();
-
-        // General section if non-empty.
-        $thissection = $sections[0];
-        if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
-            echo $this->section_header($thissection, $course, true);
-            print_section($course, $thissection, $mods, $modnamesused, true);
-            if ($PAGE->user_is_editing()) {
-                print_section_add_menus($course, 0, $modnames);
-            }
-            echo $this->section_footer();
-        }
 
         // The requested section page.
         $thissection = $sections[$displaysection];
