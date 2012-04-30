@@ -17,9 +17,9 @@
 /**
  * Define all the restore steps that will be used by the restore_book_activity_task
  *
- * @package    mod
+ * @package    mod_book
  * @subpackage book
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -39,6 +39,10 @@ class restore_book_activity_structure_step extends restore_activity_structure_st
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Process book tag information
+     * @param array $data information
+     */
     protected function process_book($data) {
         global $DB;
 
@@ -50,6 +54,10 @@ class restore_book_activity_structure_step extends restore_activity_structure_st
         $this->apply_activity_instance($newitemid);
     }
 
+    /**
+     * Process chapter tag information
+     * @param array $data information
+     */
     protected function process_book_chapter($data) {
         global $DB;
 

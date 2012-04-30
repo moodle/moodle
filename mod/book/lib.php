@@ -17,9 +17,8 @@
 /**
  * Book module core interaction API
  *
- * @package    mod
- * @subpackage book
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,10 +32,12 @@ function book_get_numbering_types() {
     global $CFG; // required for the include
     require_once(dirname(__FILE__).'/locallib.php');
 
-    return array (BOOK_NUM_NONE       => get_string('numbering0', 'mod_book'),
-                  BOOK_NUM_NUMBERS    => get_string('numbering1', 'mod_book'),
-                  BOOK_NUM_BULLETS    => get_string('numbering2', 'mod_book'),
-                  BOOK_NUM_INDENTED   => get_string('numbering3', 'mod_book') );
+    return array (
+        BOOK_NUM_NONE       => get_string('numbering0', 'mod_book'),
+        BOOK_NUM_NUMBERS    => get_string('numbering1', 'mod_book'),
+        BOOK_NUM_BULLETS    => get_string('numbering2', 'mod_book'),
+        BOOK_NUM_INDENTED   => get_string('numbering3', 'mod_book')
+    );
 }
 
 /**
@@ -144,10 +145,10 @@ function book_user_outline($course, $user, $mod, $book) {
  * Print a detailed representation of what a  user has done with
  * a given particular instance of this module, for user activity reports.
  *
- * @param $course
- * @param $user
- * @param $mod
- * @param $book
+ * @param stdClass $course
+ * @param stdClass $user
+ * @param stdClass $mod
+ * @param stdClass $book
  * @return bool
  */
 function book_user_complete($course, $user, $mod, $book) {
@@ -157,13 +158,13 @@ function book_user_complete($course, $user, $mod, $book) {
 /**
  * Given a course and a time, this module should find recent activity
  * that has occurred in book activities and print it out.
- * Return true if there was output, or false is there was none.
- * @param $course
- * @param $isteacher
- * @param $timestart
- * @return bool
+ *
+ * @param stdClass $course
+ * @param bool $viewfullnames
+ * @param int $timestart
+ * @return bool true if there was output, or false is there was none
  */
-function book_print_recent_activity($course, $isteacher, $timestart) {
+function book_print_recent_activity($course, $viewfullnames, $timestart) {
     return false;  //  True if anything was printed, otherwise false
 }
 
@@ -179,18 +180,25 @@ function book_cron () {
 /**
  * No grading in book.
  *
- * @param $bookid
+ * @param int $bookid
  * @return null
  */
 function book_grades($bookid) {
     return null;
 }
 
+/**
+ * Returns the users with data in one book
+ *
+ * @todo deprecated - to be deleted in 2.2
+ * @param int $bookid
+ * @return array
+ */
 function book_get_participants($bookid) {
-    //Must return an array of user records (all data) who are participants
-    //for a given instance of book. Must include every user involved
-    //in the instance, independent of his role (student, teacher, admin...)
-    //See other modules as example.
+    // Must return an array of user records (all data) who are participants
+    // for a given instance of book. Must include every user involved
+    // in the instance, independent of his role (student, teacher, admin...)
+    // See other modules as example.
 
     return false;
 }
@@ -201,8 +209,8 @@ function book_get_participants($bookid) {
  * modified if necessary. See book, glossary or journal modules
  * as reference.
  *
- * @param $bookid int
- * @param $scaleid int
+ * @param int $bookid
+ * @param int $scaleid
  * @return boolean True if the scale is used by any journal
  */
 function book_scale_used($bookid,$scaleid) {
@@ -214,8 +222,8 @@ function book_scale_used($bookid,$scaleid) {
  *
  * This is used to find out if scale used anywhere
  *
- * @param $scaleid int
- * @return boolean True if the scale is used by any journal
+ * @param int $scaleid
+ * @return bool true if the scale is used by any book
  */
 function book_scale_used_anywhere($scaleid) {
     return false;
@@ -380,7 +388,7 @@ function book_get_file_info($browser, $areas, $course, $cm, $context, $filearea,
     require_once("$CFG->dirroot/mod/book/locallib.php");
 
     if (is_null($itemid)) {
-        return new book_file_info($browser, $course, $cm, $context, $areas, $filearea, $itemid);
+        return new book_file_info($browser, $course, $cm, $context, $areas, $filearea);
     }
 
     $fs = get_file_storage();

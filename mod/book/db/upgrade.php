@@ -17,14 +17,19 @@
 /**
  * Book module upgrade code
  *
- * @package    mod
- * @subpackage book
- * @copyright  2009-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2009-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
+/**
+ * Book module upgrade task
+ *
+ * @param int $oldversion the version we are upgrading from
+ * @return bool always true
+ */
 function xmldb_book_upgrade($oldversion) {
     global $CFG, $DB;
 
@@ -36,20 +41,20 @@ function xmldb_book_upgrade($oldversion) {
 
     if ($oldversion < 2007052001) {
 
-    /// Changing type of field importsrc on table book_chapters to char
+        // Changing type of field importsrc on table book_chapters to char
         $table = new xmldb_table('book_chapters');
         $field = new xmldb_field('importsrc', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'timemodified');
 
-    /// Launch change of type for field importsrc
+        // Launch change of type for field importsrc
         $dbman->change_field_type($table, $field);
 
         upgrade_mod_savepoint(true, 2007052001, 'book');
     }
 
-//===== 1.9.0 upgrade line ======//
+// 1.9.0 upgrade line.
 
     if ($oldversion < 2010120801) {
-       // Rename field summary on table book to intro
+        // Rename field summary on table book to intro
         $table = new xmldb_table('book');
         $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'name');
 
@@ -63,7 +68,7 @@ function xmldb_book_upgrade($oldversion) {
     }
 
     if ($oldversion < 2010120802) {
-       // Rename field summary on table book to intro
+        // Rename field summary on table book to intro
         $table = new xmldb_table('book');
         $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'big', null, null, null, null, 'name');
 
@@ -84,7 +89,7 @@ function xmldb_book_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // conditionally migrate to html format in intro
+        // Conditionally migrate to html format in intro
         if ($CFG->texteditors !== 'textarea') {
             $rs = $DB->get_recordset('book', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
             foreach ($rs as $b) {

@@ -17,9 +17,8 @@
 /**
  * Chapter edit form
  *
- * @package    mod
- * @subpackage book
- * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2004-2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -57,7 +56,6 @@ class book_chapter_edit_form extends moodleform {
 
         $mform->addElement('hidden', 'pagenum');
         $mform->setType('pagenum', PARAM_INT);
-
 
         $this->add_action_buttons(true);
 

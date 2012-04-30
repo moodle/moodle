@@ -17,9 +17,8 @@
 /**
  * Edit book chapter
  *
- * @package    mod
- * @subpackage book
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -42,7 +41,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:edit', $context);
 
 $PAGE->set_url('/mod/book/edit.php', array('cmid'=>$cmid, 'id'=>$chapterid, 'pagenum'=>$pagenum, 'subchapter'=>$subchapter));
-$PAGE->set_pagelayout('admin'); //this is a bloody hack!
+$PAGE->set_pagelayout('admin'); // TODO: Something. This is a bloody hack!
 
 if ($chapterid) {
     $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
@@ -59,7 +58,7 @@ $chapter = file_prepare_standard_editor($chapter, 'content', $options, $context,
 
 $mform = new book_chapter_edit_form(null, array('chapter'=>$chapter, 'options'=>$options));
 
-/// If data submitted, then process and store.
+// If data submitted, then process and store.
 if ($mform->is_cancelled()) {
     if (empty($chapter->id)) {
         redirect("view.php?id=$cm->id");
@@ -78,7 +77,7 @@ if ($mform->is_cancelled()) {
         add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id.'&chapterid='.$data->id, $book->id, $cm->id);
 
     } else {
-        /// adding new chapter
+        // adding new chapter
         $data->bookid        = $book->id;
         $data->hidden        = 0;
         $data->timecreated   = time();
@@ -108,7 +107,7 @@ if ($mform->is_cancelled()) {
     redirect("view.php?id=$cm->id&chapterid=$data->id");
 }
 
-/// Otherwise fill and print the form.
+// Otherwise fill and print the form.
 $PAGE->set_title(format_string($book->name));
 $PAGE->add_body_class('mod_book');
 $PAGE->set_heading(format_string($course->fullname));

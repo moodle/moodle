@@ -17,9 +17,8 @@
 /**
  * Book module local lib functions
  *
- * @package    mod
- * @subpackage book
- * @copyright  2010-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2010-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -124,6 +123,15 @@ function book_preload_chapters($book) {
     return $chapters;
 }
 
+/**
+ * Returns the title for a given chapter
+ *
+ * @param int $chid
+ * @param array $chapters
+ * @param stdClass $book
+ * @param context_module $context
+ * @return string
+ */
 function book_get_chapter_title($chid, $chapters, $book, $context) {
     $ch = $chapters[$chid];
     $title = trim(format_string($ch->title, true, array('context'=>$context)));
@@ -165,6 +173,15 @@ function book_log($str1, $str2, $level = 0) {
     }
 }
 
+/**
+ * Add the book TOC sticky block to the 1st region available
+ *
+ * @param array $chapters
+ * @param stdClass $chapter
+ * @param stdClass $book
+ * @param stdClass $cm
+ * @param bool $edit
+ */
 function book_add_fake_block($chapters, $chapter, $book, $cm, $edit) {
     global $OUTPUT, $PAGE;
 
@@ -199,9 +216,9 @@ function book_add_fake_block($chapters, $chapter, $book, $cm, $edit) {
 function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
     global $USER, $OUTPUT;
 
-    $toc = '';  //representation of toc (HTML)
-    $nch = 0;   //chapter number
-    $ns = 0;    //subchapter number
+    $toc = '';  // Representation of toc (HTML)
+    $nch = 0;   // Chapter number
+    $ns = 0;    // Subchapter number
     $first = 1;
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -222,7 +239,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
     }
 
 
-    if ($edit) { ///teacher's TOC
+    if ($edit) { // Teacher's TOC
         $toc .= '<ul>';
         $i = 0;
         foreach($chapters as $ch) {
@@ -282,7 +299,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
             $first = 0;
         }
         $toc .= '</ul></li></ul>';
-    } else { //normal students view
+    } else { // Normal students view
         $toc .= '<ul>';
         foreach($chapters as $ch) {
             $title = trim(format_string($ch->title, true, array('context'=>$context)));
@@ -315,7 +332,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
 
     $toc .= '</div>';
 
-    $toc = str_replace('<ul></ul>', '', $toc); //cleanup of invalid structures
+    $toc = str_replace('<ul></ul>', '', $toc); // Cleanup of invalid structures.
 
     return $toc;
 }
@@ -323,13 +340,30 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
 
 /**
  * File browsing support class
+ *
+ * @copyright  2010-2011 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class book_file_info extends file_info {
+    /** @var stdClass Course object */
     protected $course;
+    /** @var stdClass Course module object */
     protected $cm;
+    /** @var array Available file areas */
     protected $areas;
+    /** @var string File area to browse */
     protected $filearea;
 
+    /**
+     * Constructor
+     *
+     * @param file_browser $browser file_browser instance
+     * @param stdClass $course course object
+     * @param stdClass $cm course module object
+     * @param stdClass $context module context
+     * @param array $areas available file areas
+     * @param string $filearea file area to browse
+     */
     public function __construct($browser, $course, $cm, $context, $areas, $filearea) {
         parent::__construct($browser, $context);
         $this->course   = $course;

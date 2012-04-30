@@ -17,10 +17,9 @@
 /**
  * Book imscp export lib
  *
- * @package    booktool
- * @subpackage exportimscp
+ * @package    booktool_exportimscp
  * @copyright  2001-3001 Antonio Vicent          {@link http://ludens.es}
- * @copyright  2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
+ * @copyright  2001-3001 Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @copyright  2011 Petr Skoda                   {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +29,13 @@ defined('MOODLE_INTERNAL') || die;
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
 
-
+/**
+ * Export one book as IMSCP package
+ *
+ * @param stdClass $book book instance
+ * @param context_module $context
+ * @return bool|stored_file
+ */
 function booktool_exportimscp_build_package($book, $context) {
     global $DB;
 
@@ -76,7 +81,12 @@ function booktool_exportimscp_build_package($book, $context) {
     return $packagefile;
 }
 
-
+/**
+ * Prepare temp area with the files used by book html contents
+ *
+ * @param stdClass $book book instance
+ * @param context_module $context
+ */
 function booktool_exportimscp_prepare_files($book, $context) {
     global $CFG, $DB;
 
@@ -202,6 +212,13 @@ function booktool_exportimscp_prepare_files($book, $context) {
     $fs->create_file_from_string($manifest_file_record, $imsmanifest);
 }
 
+/**
+ * Returns the html contents of one book's chapter to be exported as IMSCP
+ *
+ * @param stdClass $chapter the chapter to be exported
+ * @param context_module $context context the chapter belongs to
+ * @return string the contents of the chapter
+ */
 function booktool_exportimscp_chapter_content($chapter, $context) {
 
     $options = new stdClass();

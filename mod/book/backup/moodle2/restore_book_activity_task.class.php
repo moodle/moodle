@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Define all the restore tasks
+ * Description of book restore task
  *
- * @package    mod
- * @subpackage book
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,10 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/book/backup/moodle2/restore_book_stepslib.php'); // Because it exists (must)
 
-/**
- * book restore task that provides all the settings and steps to perform one
- * complete restore of the activity
- */
 class restore_book_activity_task extends restore_activity_task {
 
     /**

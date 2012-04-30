@@ -17,9 +17,8 @@
 /**
  * Book print plugin version info
  *
- * @package    booktool
- * @subpackage print
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    booktool_print
+ * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

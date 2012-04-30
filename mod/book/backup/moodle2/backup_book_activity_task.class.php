@@ -17,9 +17,8 @@
 /**
  * Description of book backup task
  *
- * @package    mod
- * @subpackage book
- * @copyright  2010-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2010-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,10 +27,6 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/mod/book/backup/moodle2/backup_book_stepslib.php');    // Because it exists (must)
 require_once($CFG->dirroot.'/mod/book/backup/moodle2/backup_book_settingslib.php'); // Because it exists (optional)
 
-/**
- * book backup task that provides all the settings and steps to perform one
- * complete backup of the activity
- */
 class backup_book_activity_task extends backup_activity_task {
 
     /**

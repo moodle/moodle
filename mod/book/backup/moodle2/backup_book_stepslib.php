@@ -17,16 +17,15 @@
 /**
  * Define all the backup steps that will be used by the backup_book_activity_task
  *
- * @package    mod
- * @subpackage book
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * Define the complete book structure for backup, with file and id annotations
+ * Structure step to backup one book activity
  */
 class backup_book_activity_structure_step extends backup_activity_structure_step {
 

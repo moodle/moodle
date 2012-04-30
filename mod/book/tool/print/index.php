@@ -17,9 +17,8 @@
 /**
  * Book printing
  *
- * @package    booktool
- * @subpackage print
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    booktool_print
+ * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -43,12 +42,12 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:read', $context);
 require_capability('booktool/print:print', $context);
 
-//check all variables
+// Check all variables.
 if ($chapterid) {
-    //single chapter printing - only visible!
+    // Single chapter printing - only visible!
     $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
 } else {
-    //complete book
+    // Complete book.
     $chapter = false;
 }
 
@@ -56,11 +55,10 @@ $PAGE->set_url('/mod/book/print.php', array('id'=>$id, 'chapterid'=>$chapterid))
 
 unset($id);
 unset($chapterid);
-// =========================================================================
-// security checks END
-// =========================================================================
 
-/// read chapters
+// Security checks END.
+
+// read chapters
 $chapters = book_preload_chapters($book);
 
 $strbooks = get_string('modulenameplural', 'mod_book');
@@ -81,7 +79,7 @@ if ($chapter) {
 
     add_to_log($course->id, 'book', 'print', 'tool/print/index.php?id='.$cm->id.'&chapterid='.$chapter->id, $book->id, $cm->id);
 
-    /// page header
+    // page header
     ?>
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
     <html>
@@ -117,7 +115,7 @@ if ($chapter) {
     add_to_log($course->id, 'book', 'print', 'tool/print/index.php?id='.$cm->id, $book->id, $cm->id);
     $allchapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum');
 
-    /// page header
+    // page header
     ?>
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
     <html>
@@ -170,7 +168,7 @@ if ($chapter) {
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $ch->id);
         echo format_text($content, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
         echo '</div>';
-        //echo '<a href="#toc">'.$strtop.'</a>';
+        // echo '<a href="#toc">'.$strtop.'</a>';
     }
     echo '</body> </html>';
 }

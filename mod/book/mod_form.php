@@ -17,9 +17,8 @@
 /**
  * Instance add/edit form
  *
- * @package    mod
- * @subpackage book
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -37,7 +36,6 @@ class mod_book_mod_form extends moodleform_mod {
 
         $config = get_config('book');
 
-//-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
@@ -48,7 +46,6 @@ class mod_book_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $this->add_intro_editor($config->requiremodintro, get_string('summary'));
-
 
         $alloptions = book_get_numbering_types();
         $allowed = explode(',', $config->numberingoptions);
@@ -73,10 +70,8 @@ class mod_book_mod_form extends moodleform_mod {
         $mform->addHelpButton('customtitles', 'customtitles', 'mod_book');
         $mform->setDefault('customtitles', 0);
 
-//-------------------------------------------------------------------------------
         $this->standard_coursemodule_elements();
 
-//-------------------------------------------------------------------------------
         $this->add_action_buttons();
     }
 

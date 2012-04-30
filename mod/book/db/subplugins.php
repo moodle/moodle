@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book subplugin types declaration
+ * Book module subplugin types declaration
  *
- * @package    mod
- * @subpackage book
+ * @package    mod_book
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,5 +25,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $subplugins = array(
-                    'booktool'       => 'mod/book/tool',
-                    );
+    'booktool'       => 'mod/book/tool',
+);

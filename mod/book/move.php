@@ -17,9 +17,8 @@
 /**
  * Move book chapter
  *
- * @package    mod
- * @subpackage book
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -62,13 +61,13 @@ foreach ($oldchapters as $ch) {
         $chs = $i;
         $che = $chs;
         if ($ch->subchapter) {
-            $found = 1;//subchapter moves alone
+            $found = 1;// Subchapter moves alone.
         }
     } else if ($chs) {
         if ($found) {
-            //nothing
+            // Nothing.
         } else if ($ch->subchapter) {
-            $che = $i; // chapter with subchapter(s)
+            $che = $i; // Chapter with subchapter(s).
         } else {
             $found = 1;
         }
@@ -76,27 +75,27 @@ foreach ($oldchapters as $ch) {
     $i++;
 }
 
-// find target chapter(s)
-if ($chapters[$chs]->subchapter) { //moving single subchapter up or down
+// Find target chapter(s).
+if ($chapters[$chs]->subchapter) { // Moving single subchapter up or down.
     if ($up) {
         if ($chs == 1) {
-            $nothing = 1; //already first
+            $nothing = 1; // Already first.
         } else {
             $ts = $chs - 1;
             $te = $ts;
         }
-    } else { //down
+    } else { // Down.
         if ($che == count($chapters)) {
-            $nothing = 1; //already last
+            $nothing = 1; // Already last.
         } else {
             $ts = $che + 1;
             $te = $ts;
         }
     }
-} else { // moving chapter and looking for next/previous chapter
-    if ($up) { //up
+} else { // Moving chapter and looking for next/previous chapter.
+    if ($up) { // Up.
         if ($chs == 1) {
-            $nothing = 1; //already first
+            $nothing = 1; // Already first.
         } else {
             $te = $chs - 1;
             for($i = $chs-1; $i >= 1; $i--) {
@@ -108,9 +107,9 @@ if ($chapters[$chs]->subchapter) { //moving single subchapter up or down
                 }
             }
         }
-    } else { //down
+    } else { // Down.
         if ($che == count($chapters)) {
-            $nothing = 1; //already last
+            $nothing = 1; // Already last.
         } else {
             $ts = $che + 1;
             $found = 0;
@@ -130,7 +129,7 @@ if ($chapters[$chs]->subchapter) { //moving single subchapter up or down
     }
 }
 
-//recreated newly sorted list of chapters
+// Recreated newly sorted list of chapters.
 if (!$nothing) {
     $newchapters = array();
 
@@ -170,7 +169,7 @@ if (!$nothing) {
         }
     }
 
-    //store chapters in the new order
+    // Store chapters in the new order.
     $i = 1;
     foreach ($newchapters as $ch) {
         $ch->pagenum = $i;

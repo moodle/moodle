@@ -17,9 +17,8 @@
 /**
  * HTML import lib
  *
- * @package    booktool
- * @subpackage print
- * @copyright  2011 Petr Skoda  {@link http://skodak.org}
+ * @package    booktool_print
+ * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -42,7 +41,7 @@ function booktool_print_get_toc($chapters, $book, $cm) {
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $toc = ''; //representation of toc (HTML)
+    $toc = ''; // Representation of toc (HTML).
 
     switch ($book->numbering) {
       case BOOK_NUM_NONE:
@@ -59,7 +58,7 @@ function booktool_print_get_toc($chapters, $book, $cm) {
           break;
     }
 
-    $toc .= '<a name="toc"></a>'; //representation of toc (HTML)
+    $toc .= '<a name="toc"></a>'; // Representation of toc (HTML).
 
     if ($book->customtitles) {
         $toc .= '<h1>'.get_string('toc', 'mod_book').'</h1>';
@@ -83,7 +82,7 @@ function booktool_print_get_toc($chapters, $book, $cm) {
     }
     $toc .= '</ul></li></ul>';
     $toc .= '</div>';
-    $toc = str_replace('<ul></ul>', '', $toc); //cleanup of invalid structures
+    $toc = str_replace('<ul></ul>', '', $toc); // Cleanup of invalid structures.
 
     return array($toc, $titles);
 }

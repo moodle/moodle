@@ -17,10 +17,9 @@
 /**
  * Book IMSCP export plugin
  *
- * @package    booktool
- * @subpackage exportimscp
+ * @package    booktool_exportimscp
  * @copyright  2001-3001 Antonio Vicent          {@link http://ludens.es}
- * @copyright  2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
+ * @copyright  2001-3001 Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @copyright  2011 Petr Skoda                   {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

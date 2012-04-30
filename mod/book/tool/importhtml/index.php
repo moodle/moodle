@@ -17,9 +17,8 @@
 /**
  * Book import
  *
- * @package    booktool
- * @subpackage importhtml
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    booktool_importhtml
+ * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -53,13 +52,13 @@ $PAGE->set_title(format_string($book->name));
 $PAGE->add_body_class('mod_book');
 $PAGE->set_heading(format_string($course->fullname));
 
-///prepare the page header
+// Prepare the page header.
 $strbook = get_string('modulename', 'mod_book');
 $strbooks = get_string('modulenameplural', 'mod_book');
 
 $mform = new booktool_importhtml_form(null, array('id'=>$id, 'chapterid'=>$chapterid));
 
-/// If data submitted, then process and store.
+// If data submitted, then process and store.
 if ($mform->is_cancelled()) {
     if (empty($chapter->id)) {
         redirect("view.php?id=$cm->id");

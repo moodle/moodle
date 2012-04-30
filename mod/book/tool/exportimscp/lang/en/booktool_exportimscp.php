@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book module language strings
+ * exportimscp booktool language strings
  *
- * @package    booktool
- * @subpackage exportimscp
- * @copyright  2011 Petr Skoda  {@link http://skodak.org}
+ * @package    booktool_exportimscp
+ * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

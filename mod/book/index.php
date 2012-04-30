@@ -17,16 +17,15 @@
 /**
  * This page lists all the instances of book in a particular course
  *
- * @package    mod
- * @subpackage book
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require(dirname(__FILE__).'/../../config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
-$id = required_param('id', PARAM_INT);           // Course Module ID
+$id = required_param('id', PARAM_INT); // Course ID.
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
@@ -35,7 +34,7 @@ unset($id);
 require_course_login($course, true);
 $PAGE->set_pagelayout('incourse');
 
-/// Get all required strings
+// Get all required strings
 $strbooks        = get_string('modulenameplural', 'mod_book');
 $strbook         = get_string('modulename', 'mod_book');
 $strsectionname  = get_string('sectionname', 'format_'.$course->format);
@@ -51,7 +50,7 @@ echo $OUTPUT->header();
 
 add_to_log($course->id, 'book', 'view all', 'index.php?id='.$course->id, '');
 
-/// Get all the appropriate data
+// Get all the appropriate data
 if (!$books = get_all_instances_in_course('book', $course)) {
     notice(get_string('thereareno', 'moodle', $strbooks), "$CFG->wwwroot/course/view.php?id=$course->id");
     die;

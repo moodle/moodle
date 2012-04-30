@@ -17,11 +17,12 @@
 /**
  * Book module capability definition
  *
- * @package    mod
- * @subpackage book
- * @copyright  2009-2012 Petr Skoda  {@link http://skodak.org}
+ * @package    mod_book
+ * @copyright  2009-2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
