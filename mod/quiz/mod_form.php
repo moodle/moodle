@@ -96,7 +96,7 @@ class mod_quiz_mod_form extends moodleform_mod {
                 quiz_get_overdue_handling_options());
         $mform->setAdvanced('overduehandling', $quizconfig->overduehandling_adv);
         $mform->setDefault('overduehandling', $quizconfig->overduehandling);
-        // TODO Formslib does OR logic on disableif, and we need AND logic here. 
+        // TODO Formslib does OR logic on disableif, and we need AND logic here.
         // $mform->disabledIf('overduehandling', 'timelimit', 'eq', 0);
         // $mform->disabledIf('overduehandling', 'timeclose', 'eq', 0);
 

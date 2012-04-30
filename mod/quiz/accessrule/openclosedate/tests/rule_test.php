@@ -194,7 +194,7 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $quizobj = new quiz($quiz, $cm, null);
         $attempt = new stdClass();
         $attempt->preview = 0;
-    
+
         $rule = new quizaccess_openclosedate($quizobj, 20000);
         $this->assertFalse($rule->prevent_access());
 
