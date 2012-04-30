@@ -483,7 +483,7 @@ abstract class format_renderer_base extends plugin_renderer_base {
         // Title with completion help icon.
         $completioninfo = new completion_info($course);
         echo $completioninfo->display_help_icon();
-        echo $this->output->heading($this->page_title(), 2, 'headingblock header outline');
+        echo $this->output->heading($this->page_title(), 2, 'accesshide');
 
         // Copy activity clipboard..
         echo $this->course_activity_clipboard($course);
