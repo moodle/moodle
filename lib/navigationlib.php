@@ -934,7 +934,7 @@ class global_navigation extends navigation_node {
     /** @var array An array for containing  root navigation nodes */
     protected $rootnodes = array();
     /** @var bool A switch for whether to show empty sections in the navigation */
-    protected $showemptysections = false;
+    protected $showemptysections = true;
     /** @var bool A switch for whether courses should be shown within categories on the navigation. */
     protected $showcategories = null;
     /** @var array An array of stdClasses for users that the navigation is extended for */
