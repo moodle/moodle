@@ -73,7 +73,7 @@ class edit_grade_form extends moodleform {
             }
 
             $mform->addElement('select', 'finalgrade', get_string('finalgrade', 'grades'), $scaleopt);
-            $mform->addHelpButton('finalgrade', 'finalgrade', 'finalgrade');
+            $mform->addHelpButton('finalgrade', 'finalgrade', 'grades');
             $mform->disabledIf('finalgrade', 'overridden', 'notchecked');
         }
 
