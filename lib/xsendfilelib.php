@@ -47,19 +47,30 @@ function xsendfile($filepath) {
         return false;
     }
 
+    $filepath = realpath($filepath);
+
+    $aliased = false;
+    if (!empty($CFG->xsendfilealiases) and is_array($CFG->xsendfilealiases)) {
+        foreach ($CFG->xsendfilealiases as $alias=>$dir) {
+            $dir = realpath($dir).PATH_SEPARATOR;
+            if (strpos($filepath, $dir) === 0) {
+                $filepath = $alias.substr($filepath, strlen($dir));
+                $aliased = true;
+                break;
+            }
+        }
+    }
+
     if ($CFG->xsendfile === 'X-LIGHTTPD-send-file') {
         // http://redmine.lighttpd.net/projects/lighttpd/wiki/X-LIGHTTPD-send-file says 1.4 it does not support byteserving
         header('Accept-Ranges: none');
 
     } else if ($CFG->xsendfile === 'X-Accel-Redirect') {
         // http://wiki.nginx.org/XSendfile
-        // Nginx is using relative path to protected folder, please note you can not use cache dir, tempdir and file pool outside of dataroot!
-        $filepath = realpath($filepath);
-        $dataroot = realpath($CFG->dataroot);
-        if (strpos($filepath, $dataroot) !== 0) {
+        // Nginx requires paths relative to aliases, you need to specify them in config.php
+        if (!$aliased) {
             return false;
         }
-        $filepath = substr($filepath, strlen($dataroot));
     }
 
     header("$CFG->xsendfile: $filepath");
