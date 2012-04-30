@@ -996,6 +996,76 @@ class core_group_external extends external_api {
         return null;
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function unassign_grouping_parameters() {
+        return new external_function_parameters(
+            array(
+                'unassignments'=> new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'groupingid' => new external_value(PARAM_INT, 'grouping record id'),
+                            'groupid' => new external_value(PARAM_INT, 'group record id'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Unassign a group from a grouping
+     * @param array $unassignments of arrays with keys groupid, groupingid
+     * @return void
+     */
+    public static function unassign_grouping($unassignments) {
+        global $CFG, $DB;
+        require_once("$CFG->dirroot/group/lib.php");
+
+        $params = self::validate_parameters(self::unassign_grouping_parameters(), array('unassignments'=>$unassignments));
+
+        $transaction = $DB->start_delegated_transaction();
+        foreach ($params['unassignments'] as $unassignment) {
+            // Validate params.
+            $groupingid = $unassignment['groupingid'];
+            $groupid = $unassignment['groupid'];
+
+            $grouping = groups_get_grouping($groupingid, 'id, courseid', MUST_EXIST);
+            $group = groups_get_group($groupid, 'id, courseid', MUST_EXIST);
+
+            if (!$DB->record_exists('groupings_groups', array('groupingid'=>$groupingid, 'groupid'=>$groupid))) {
+                // Continue silently if the group is not assigned to the grouping.
+                continue;
+            }
+
+            // now security checks
+            $context = context_course::instance($grouping->courseid);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->courseid = $group->courseid;
+                throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
+            }
+            require_capability('moodle/course:managegroups', $context);
+
+            groups_unassign_grouping($groupingid, $groupid);
+        }
+
+        $transaction->allow_commit();
+    }
+
+   /**
+     * Returns description of method result value
+     * @return null
+     */
+    public static function unassign_grouping_returns() {
+        return null;
+    }
+
 }
 
 /**
