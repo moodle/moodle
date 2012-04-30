@@ -35,19 +35,29 @@ require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_form.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_responses_settings_form extends mod_quiz_attempts_report_form {
-    protected function definition_inner(MoodleQuickForm $mform) {
-        if ($this->_customdata['qmsubselect']) {
-            $mform->addElement($this->create_qmfilter_checkbox($mform));
+
+    protected function other_preference_fields(MoodleQuickForm $mform) {
+        $mform->addGroup(array(
+            $mform->createElement('advcheckbox', 'qtext', '',
+                get_string('questiontext', 'quiz_responses')),
+            $mform->createElement('advcheckbox', 'resp', '',
+                get_string('response', 'quiz_responses')),
+            $mform->createElement('advcheckbox', 'right', '',
+                get_string('rightanswer', 'quiz_responses')),
+        ), 'coloptions', get_string('showthe', 'quiz_responses'), array(' '), false);
+        $mform->disabledIf('qtext', 'attempts', 'eq', quiz_attempts_report::ENROLLED_WITHOUT);
+        $mform->disabledIf('resp',  'attempts', 'eq', quiz_attempts_report::ENROLLED_WITHOUT);
+        $mform->disabledIf('right', 'attempts', 'eq', quiz_attempts_report::ENROLLED_WITHOUT);
+    }
+
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        if ($data['attempts'] != quiz_attempts_report::ENROLLED_WITHOUT && !(
+                $data['qtext'] || $data['resp'] || $data['right'])) {
+            $errors['coloptions'] = get_string('reportmustselectstate', 'quiz');
         }
 
-        $colsgroup = array();
-        $colsgroup[] = $mform->createElement('advcheckbox', 'qtext', '',
-                get_string('summaryofquestiontext', 'quiz_responses'));
-        $colsgroup[] = $mform->createElement('advcheckbox', 'resp', '',
-                get_string('summaryofresponse', 'quiz_responses'));
-        $colsgroup[] = $mform->createElement('advcheckbox', 'right', '',
-                get_string('summaryofrightanswer', 'quiz_responses'));
-        $mform->addGroup($colsgroup, null,
-                get_string('include', 'quiz_responses'), '<br />', false);
+        return $errors;
     }
 }

@@ -21,10 +21,9 @@
  *
  * This code used to be at the top of attempt.php, if you are looking for CVS history.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
@@ -60,7 +59,8 @@ if (!$quizobj->has_questions()) {
 }
 
 // Create an object to manage all the other (non-roles) access rules.
-$accessmanager = $quizobj->get_access_manager(time());
+$timenow = time();
+$accessmanager = $quizobj->get_access_manager($timenow);
 if ($quizobj->is_preview_user() && $forcenew) {
     $accessmanager->current_attempt_finished();
 }
@@ -72,9 +72,9 @@ if (!$quizobj->is_preview_user()) {
 
 // Check to see if a new preview was requested.
 if ($quizobj->is_preview_user() && $forcenew) {
-    // To force the creation of a new preview, we set a finish time on the
-    // current attempt (if any). It will then automatically be deleted below
-    $DB->set_field('quiz_attempts', 'timefinish', time(),
+    // To force the creation of a new preview, we mark the current attempt (if any)
+    // as finished. It will then automatically be deleted below
+    $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED,
             array('quiz' => $quizobj->get_quizid(), 'userid' => $USER->id));
 }
 
@@ -83,10 +83,22 @@ $attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'all', tru
 $lastattempt = end($attempts);
 
 // If an in-progress attempt exists, check password then redirect to it.
-if ($lastattempt && !$lastattempt->timefinish) {
+if ($lastattempt && ($lastattempt->state == quiz_attempt::IN_PROGRESS ||
+        $lastattempt->state == quiz_attempt::OVERDUE)) {
     $currentattemptid = $lastattempt->id;
     $messages = $accessmanager->prevent_access();
 
+    // If the attempt is now overdue, deal with that.
+    $quizobj->create_attempt_object($lastattempt)->handle_if_time_expired($timenow, true);
+
+    // And, if the attempt is now no longer in progress, redirect to the appropriate place.
+    if ($lastattempt->state == quiz_attempt::OVERDUE) {
+         redirect($quizobj->summary_url($lastattempt->id));
+    } else if ($lastattempt->state != quiz_attempt::IN_PROGRESS) {
+        redirect($quizobj->review_url($lastattempt->id));
+    }
+
+    // If the page number was not explicitly in the URL, go to the current page.
     if ($page == -1) {
         $page = $lastattempt->currentpage;
     }
@@ -152,7 +164,8 @@ $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->
 $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
 // Create the new attempt and initialize the question sessions
-$attempt = quiz_create_attempt($quizobj->get_quiz(), $attemptnumber, $lastattempt, time(),
+$timenow = time(); // Update time now, in case the server is running really slowly.
+$attempt = quiz_create_attempt($quizobj->get_quiz(), $attemptnumber, $lastattempt, $timenow,
         $quizobj->is_preview_user());
 
 if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
@@ -192,8 +205,7 @@ if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
         $variantoffset = $attemptnumber;
     }
     $quba->start_all_questions(
-            new question_variant_pseudorandom_no_repeats_strategy($variantoffset),
-            time());
+            new question_variant_pseudorandom_no_repeats_strategy($variantoffset), $timenow);
 
     // Update attempt layout.
     $newlayout = array();
@@ -252,6 +264,7 @@ $eventdata = new stdClass();
 $eventdata->component = 'mod_quiz';
 $eventdata->attemptid = $attempt->id;
 $eventdata->timestart = $attempt->timestart;
+$eventdata->timestamp = $attempt->timestart;
 $eventdata->userid    = $attempt->userid;
 $eventdata->quizid    = $quizobj->get_quizid();
 $eventdata->cmid      = $quizobj->get_cmid();

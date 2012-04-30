@@ -39,14 +39,14 @@ abstract class quiz_attempts_report extends quiz_default_report {
     /** @var int default page size for reports. */
     const DEFAULT_PAGE_SIZE = 30;
 
-    /** @var int include all attempts. */
-    const ALL_ATTEMPTS = 0;
-    /** @var int include just enroled users who have not attempted the quiz. */
-    const STUDENTS_WITH_NO = 1;
-    /** @var int include just enroled users who have attempted the quiz. */
-    const STUDENTS_WITH = 2;
-    /** @var int include all enroled users. */
-    const ALL_STUDENTS = 3;
+    /** @var string constant used for the options, means all users with attempts. */
+    const ALL_WITH = 'all_with';
+    /** @var string constant used for the options, means only enrolled users with attempts. */
+    const ENROLLED_WITH = 'enrolled_with';
+    /** @var string constant used for the options, means only enrolled users without attempts. */
+    const ENROLLED_WITHOUT = 'enrolled_without';
+    /** @var string constant used for the options, means all enrolled users. */
+    const ENROLLED_ALL = 'enrolled_any';
 
     /** @var string the mode this report is. */
     protected $mode;
@@ -197,6 +197,16 @@ abstract class quiz_attempts_report extends quiz_default_report {
         $table->column_class('lastname', 'bold');
         $table->column_class('firstname', 'bold');
         $table->column_class('fullname', 'bold');
+    }
+
+    /**
+     * Add the state column to the $columns and $headers arrays.
+     * @param array $columns the list of columns. Added to.
+     * @param array $headers the columns headings. Added to.
+     */
+    protected function add_state_column(&$columns, &$headers) {
+        $columns[] = 'state';
+        $headers[] = get_string('attemptstate', 'quiz');
     }
 
     /**

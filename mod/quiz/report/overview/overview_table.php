@@ -53,7 +53,6 @@ class quiz_overview_table extends quiz_attempts_report_table {
             quiz_overview_options $options, $groupstudents, $students, $questions, $reporturl) {
         parent::__construct('mod-quiz-report-overview-report', $quiz , $context,
                 $qmsubselect, $options, $groupstudents, $students, $questions, $reporturl);
-        $this->detailedmarks = $options->slotmarks;
     }
 
     public function build_table() {
@@ -105,7 +104,7 @@ class quiz_overview_table extends quiz_attempts_report_table {
                                         $record->grade, $this->quiz->id, $this->context))
         );
 
-        if ($this->detailedmarks) {
+        if ($this->options->slotmarks) {
             $dm = new question_engine_data_mapper();
             $qubaids = new qubaid_join($from, 'quiza.uniqueid', $where, $params);
             $avggradebyq = $dm->load_average_marks($qubaids, array_keys($this->questions));
@@ -181,7 +180,7 @@ class quiz_overview_table extends quiz_attempts_report_table {
     }
 
     public function col_sumgrades($attempt) {
-        if (!$attempt->timefinish) {
+        if ($attempt->state != quiz_attempt::FINISHED) {
             return '-';
         }
 
@@ -281,7 +280,7 @@ class quiz_overview_table extends quiz_attempts_report_table {
     }
 
     protected function requires_latest_steps_loaded() {
-        return $this->detailedmarks;
+        return $this->options->slotmarks;
     }
 
     protected function is_latest_step_column($column) {
@@ -298,7 +297,7 @@ class quiz_overview_table extends quiz_attempts_report_table {
     public function query_db($pagesize, $useinitialsbar = true) {
         parent::query_db($pagesize, $useinitialsbar);
 
-        if ($this->detailedmarks && has_capability('mod/quiz:regrade', $this->context)) {
+        if ($this->options->slotmarks && has_capability('mod/quiz:regrade', $this->context)) {
             $this->regradedqs = $this->get_regraded_questions();
         }
     }

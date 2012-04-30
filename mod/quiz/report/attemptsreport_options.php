@@ -48,11 +48,31 @@ class mod_quiz_attempts_report_options {
     /** @var object the course settings for the course the quiz is in. */
     public $course;
 
-    /** @var string quiz_attempts_report:: constants. */
-    public $attempts = quiz_attempts_report::STUDENTS_WITH;
+    /**
+     * @var array form field name => corresponding quiz_attempt:: state constant.
+     */
+    protected static $statefields = array(
+        'stateinprogress' => quiz_attempt::IN_PROGRESS,
+        'stateoverdue'    => quiz_attempt::OVERDUE,
+        'statefinished'   => quiz_attempt::FINISHED,
+        'stateabandoned'  => quiz_attempt::ABANDONED,
+    );
+
+    /**
+     * @var string quiz_attempts_report::ALL_WITH or quiz_attempts_report::ENROLLED_WITH
+     *      quiz_attempts_report::ENROLLED_WITHOUT or quiz_attempts_report::ENROLLED_ALL
+     */
+    public $attempts = quiz_attempts_report::ENROLLED_WITH;
 
     /** @var int the currently selected group. 0 if no group is selected. */
     public $group = 0;
+
+    /**
+     * @var array|null of quiz_attempt::IN_PROGRESS, etc. constants. null means
+     *      no restriction.
+     */
+    public $states = array(quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE,
+            quiz_attempt::FINISHED, quiz_attempt::ABANDONED);
 
     /**
      * @var bool whether to show all finished attmepts, or just the one that gave
@@ -94,10 +114,10 @@ class mod_quiz_attempts_report_options {
      */
     protected function get_url_params() {
         return array(
-            'id'           => $this->cm->id,
-            'mode'         => $this->mode,
-            'attemptsmode' => $this->attempts,
-            'qmfilter'     => $this->onlygraded,
+            'id'         => $this->cm->id,
+            'mode'       => $this->mode,
+            'attempts'   => $this->attempts,
+            'onlygraded' => $this->onlygraded,
         );
     }
 
@@ -136,9 +156,9 @@ class mod_quiz_attempts_report_options {
      */
     public function get_initial_form_data() {
         $toform = new stdClass();
-        $toform->attemptsmode = $this->attempts;
-        $toform->qmfilter     = $this->onlygraded;
-        $toform->pagesize     = $this->pagesize;
+        $toform->attempts   = $this->attempts;
+        $toform->onlygraded = $this->onlygraded;
+        $toform->pagesize   = $this->pagesize;
 
         return $toform;
     }
@@ -148,20 +168,30 @@ class mod_quiz_attempts_report_options {
      * @param object $fromform The data from $mform->get_data() from the settings form.
      */
     public function setup_from_form_data($fromform) {
-        $this->attempts   = $fromform->attemptsmode;
+        $this->attempts   = $fromform->attempts;
         $this->group      = groups_get_activity_group($this->cm, true);
-        $this->onlygraded = !empty($fromform->qmfilter);
+        $this->onlygraded = !empty($fromform->onlygraded);
         $this->pagesize   = $fromform->pagesize;
+
+        $this->states = array();
+        foreach (self::$statefields as $field => $state) {
+            if (!empty($fromform->$field)) {
+                $this->states[] = $state;
+            }
+        }
     }
 
     /**
      * Set the fields of this object from the user's preferences.
      */
     public function setup_from_params() {
-        $this->attempts   = optional_param('attemptsmode', $this->attempts, PARAM_ALPHAEXT);
+        $this->attempts   = optional_param('attempts', $this->attempts, PARAM_ALPHAEXT);
         $this->group      = groups_get_activity_group($this->cm, true);
-        $this->onlygraded = optional_param('qmfilter', $this->onlygraded, PARAM_BOOL);
+        $this->onlygraded = optional_param('onlygraded', $this->onlygraded, PARAM_BOOL);
         $this->pagesize   = optional_param('pagesize', $this->pagesize, PARAM_INT);
+
+        $this->states = explode('-', optional_param('states',
+                implode('-', $this->states), PARAM_ALPHAEXT));
 
         $this->download   = optional_param('download', $this->download, PARAM_ALPHA);
     }
@@ -188,30 +218,49 @@ class mod_quiz_attempts_report_options {
     public function resolve_dependencies() {
         if ($this->group) {
             // Default for when a group is selected.
-            if ($this->attempts === null || $this->attempts == quiz_attempts_report::ALL_ATTEMPTS) {
-                $this->attempts = quiz_attempts_report::STUDENTS_WITH;
+            if ($this->attempts === null || $this->attempts == quiz_attempts_report::ALL_WITH) {
+                $this->attempts = quiz_attempts_report::ENROLLED_WITH;
             }
 
         } else if (!$this->group && $this->course->id == SITEID) {
             // Force report on front page to show all, unless a group is selected.
-            $this->attempts = quiz_attempts_report::ALL_ATTEMPTS;
+            $this->attempts = quiz_attempts_report::ALL_WITH;
 
-        } else if ($this->attempts === null) {
-            $this->attempts = quiz_attempts_report::ALL_ATTEMPTS;
+        } else if (!in_array($this->attempts, array(quiz_attempts_report::ALL_WITH, quiz_attempts_report::ENROLLED_WITH,
+                quiz_attempts_report::ENROLLED_WITHOUT, quiz_attempts_report::ENROLLED_ALL))) {
+            $this->attempts = quiz_attempts_report::ENROLLED_WITH;
         }
 
-        if ($this->pagesize < 1) {
-            $this->pagesize = quiz_attempts_report::DEFAULT_PAGE_SIZE;
+        $cleanstates = array();
+        foreach (self::$statefields as $state) {
+            if (in_array($state, $this->states)) {
+                $cleanstates[] = $state;
+            }
+        }
+        $this->states = $cleanstates;
+        if (count($this->states) == count(self::$statefields)) {
+            // If all states have been selected, then there is no constraint
+            // required in the SQL, so clear the array.
+            $this->states = null;
         }
 
-        if (!quiz_report_qm_filter_select($this->quiz)) {
+        if (!quiz_report_can_filter_only_graded($this->quiz)) {
             // A grading mode like 'average' has been selected, so we cannot do
             // the show the attempt that gave the final grade thing.
             $this->onlygraded = false;
         }
 
-        if ($this->attempts == quiz_attempts_report::STUDENTS_WITH_NO) {
+        if ($this->attempts == quiz_attempts_report::ENROLLED_WITHOUT) {
+            $this->states = null;
             $this->onlygraded = false;
+        }
+
+        if ($this->onlygraded) {
+            $this->states = array(quiz_attempt::FINISHED);
+        }
+
+        if ($this->pagesize < 1) {
+            $this->pagesize = quiz_attempts_report::DEFAULT_PAGE_SIZE;
         }
     }
 }

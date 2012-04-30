@@ -78,15 +78,36 @@ $completion->set_module_viewed($cm);
 // Initialize $PAGE, compute blocks
 $PAGE->set_url('/mod/quiz/view.php', array('id' => $cm->id));
 
+// Create view object which collects all the information the renderer will need.
+$viewobj = new mod_quiz_view_object();
+$viewobj->accessmanager = $accessmanager;
+$viewobj->canreviewmine = $canreviewmine;
+
 // Get this user's attempts.
 $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'finished', true);
 $lastfinishedattempt = end($attempts);
 $unfinished = false;
 if ($unfinishedattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
     $attempts[] = $unfinishedattempt;
-    $unfinished = true;
+
+    // If the attempt is now overdue, deal with that - and pass isonline = false.
+    // We want the student notified in this case.
+    $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time(), false);
+
+    $unfinished = $unfinishedattempt->state == quiz_attempt::IN_PROGRESS ||
+            $unfinishedattempt->state == quiz_attempt::OVERDUE;
+    if (!$unfinished) {
+        $lastfinishedattempt = $unfinishedattempt;
+    }
+    $unfinishedattempt = null; // To make it clear we do not use this again.
 }
 $numattempts = count($attempts);
+
+$viewobj->attempts = $attempts;
+$viewobj->attemptobjs = array();
+foreach ($attempts as $attempt) {
+    $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false);
+}
 
 // Work out the final grade, checking whether it was overridden in the gradebook.
 if (!$canpreview) {
@@ -123,29 +144,19 @@ $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 $output = $PAGE->get_renderer('mod_quiz');
 
-/*
- * Create view object for use within renderers file
- */
-$viewobj = new mod_quiz_view_object();
-$viewobj->attempts = $attempts;
-$viewobj->accessmanager = $accessmanager;
-$viewobj->canreviewmine = $canreviewmine;
-
 // Print table with existing attempts
 if ($attempts) {
     // Work out which columns we need, taking account what data is available in each attempt.
     list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
 
-    $viewobj->attemptcolumn = $quiz->attempts != 1;
+    $viewobj->attemptcolumn  = $quiz->attempts != 1;
 
-    $viewobj->gradecolumn = $someoptions->marks >= question_display_options::MARK_AND_MAX &&
+    $viewobj->gradecolumn    = $someoptions->marks >= question_display_options::MARK_AND_MAX &&
             quiz_has_grades($quiz);
-    $viewobj->markcolumn = $viewobj->gradecolumn && ($quiz->grade != $quiz->sumgrades);
-    $viewobj->overallstats = $lastfinishedattempt && $alloptions->marks >= question_display_options::MARK_AND_MAX;
+    $viewobj->markcolumn     = $viewobj->gradecolumn && ($quiz->grade != $quiz->sumgrades);
+    $viewobj->overallstats   = $lastfinishedattempt && $alloptions->marks >= question_display_options::MARK_AND_MAX;
 
     $viewobj->feedbackcolumn = quiz_has_feedback($quiz) && $alloptions->overallfeedback;
-} else {
-    $viewobj->attemptcolumn = 1;
 }
 
 $viewobj->timenow = $timenow;

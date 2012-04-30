@@ -64,11 +64,29 @@ class quizaccess_openclosedate extends quiz_access_rule_base {
     }
 
     public function prevent_access() {
-        if ($this->timenow < $this->quiz->timeopen ||
-        ($this->quiz->timeclose && $this->timenow > $this->quiz->timeclose)) {
-            return get_string('notavailable', 'quizaccess_openclosedate');
+        $message = get_string('notavailable', 'quizaccess_openclosedate');
+
+        if ($this->timenow < $this->quiz->timeopen) {
+            return $message;
         }
-        return false;
+
+        if (!$this->quiz->timeclose) {
+            return false;
+        }
+
+        if ($this->timenow <= $this->quiz->timeclose) {
+            return false;
+        }
+
+        if ($this->quiz->overduehandling != 'graceperiod') {
+            return $message;
+        }
+
+        if ($this->timenow <= $this->quiz->timeclose + $this->quiz->graceperiod) {
+            return false;
+        }
+
+        return $message;
     }
 
     public function is_finished($numprevattempts, $lastattempt) {

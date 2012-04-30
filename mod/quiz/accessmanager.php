@@ -392,15 +392,14 @@ class quiz_access_manager {
     }
 
     /**
-     * Will cause the attempt time to start counting down after the page has loaded,
-     * if that is necessary.
+     * Compute how much time is left before this attempt must be submitted.
      *
      * @param object $attempt the data from the relevant quiz_attempts row.
      * @param int $timenow the time to consider as 'now'.
-     * @param mod_quiz_renderer $output the quiz renderer.
+     * @return int|false the number of seconds remaining for this attempt.
+     *      False if there is no limit.
      */
-    public function show_attempt_timer_if_needed($attempt, $timenow, $output) {
-
+    public function get_time_left($attempt, $timenow) {
         $timeleft = false;
         foreach ($this->rules as $rule) {
             $ruletimeleft = $rule->time_left($attempt, $timenow);
@@ -408,13 +407,7 @@ class quiz_access_manager {
                 $timeleft = $ruletimeleft;
             }
         }
-
-        if ($timeleft !== false) {
-            // Make sure the timer starts just above zero. If $timeleft was <= 0, then
-            // this will just have the effect of causing the quiz to be submitted immediately.
-            $timerstartvalue = max($timeleft, 1);
-            $output->initialise_timer($timerstartvalue);
-        }
+        return $timeleft;
     }
 
     /**
@@ -469,8 +462,8 @@ class quiz_access_manager {
      */
     public function make_review_link($attempt, $reviewoptions, $output) {
 
-        // If review of responses is not allowed, or the attempt is still open, don't link.
-        if (!$attempt->timefinish) {
+        // If the attempt is still open, don't link.
+        if (in_array($attempt->state, array(quiz_attempt::IN_PROGRESS, quiz_attempt::OVERDUE))) {
             return $output->no_review_message('');
         }
 

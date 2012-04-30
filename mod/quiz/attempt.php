@@ -17,10 +17,9 @@
 /**
  * This script displays a particular page of a quiz attempt that is in progress.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
@@ -70,6 +69,8 @@ if (!$attemptobj->is_preview_user()) {
 // If the attempt is already closed, send them to the review page.
 if ($attemptobj->is_finished()) {
     redirect($attemptobj->review_url(null, $page));
+} else if ($attemptobj->get_state() == quiz_attempt::OVERDUE) {
+    redirect($attemptobj->summary_url());
 }
 
 // Check the access rules.
@@ -126,5 +127,4 @@ if ($attemptobj->is_last_page($page)) {
     $nextpage = $page + 1;
 }
 
-$accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time(), $output);
 echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage);

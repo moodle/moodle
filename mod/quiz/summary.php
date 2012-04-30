@@ -89,6 +89,4 @@ $PAGE->set_heading($attemptobj->get_course()->fullname);
 $accessmanager->setup_attempt_page($PAGE);
 
 // Display the page.
-
-$accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time(), $output);
 echo $output->summary_page($attemptobj, $displayoptions);

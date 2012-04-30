@@ -55,7 +55,7 @@ class quiz_overview_report extends quiz_attempts_report {
 
         $this->form->set_data($options->get_initial_form_data());
 
-        if ($options->attempts == self::ALL_ATTEMPTS) {
+        if ($options->attempts == self::ALL_WITH) {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
             // are accessible, is not a security porblem.
@@ -116,7 +116,7 @@ class quiz_overview_report extends quiz_attempts_report {
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
-        if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_ATTEMPTS)) {
+        if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_WITH)) {
             // Construct the SQL.
             $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
                     ' AS uniqueid, ';
@@ -204,7 +204,7 @@ class quiz_overview_report extends quiz_attempts_report {
             }
 
             $this->add_user_columns($table, $columns, $headers);
-
+            $this->add_state_column($columns, $headers);
             $this->add_time_columns($columns, $headers);
 
             if ($options->slotmarks) {
@@ -321,7 +321,7 @@ class quiz_overview_report extends quiz_attempts_report {
             $slots = $quba->get_slots();
         }
 
-        $finished = $attempt->timefinish > 0;
+        $finished = $attempt->state == quiz_attempt::FINISHED;
         foreach ($slots as $slot) {
             $qqr = new stdClass();
             $qqr->oldfraction = $quba->get_question_fraction($slot);
