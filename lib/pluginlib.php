@@ -2288,11 +2288,37 @@ class plugininfo_enrol extends plugininfo_base {
 class plugininfo_message extends plugininfo_base {
 
     public function get_settings_url() {
+        $processors = get_message_processors();
+        if (isset($processors[$this->name])) {
+            $processor = $processors[$this->name];
+            if ($processor->available && $processor->hassettings) {
+                return new moodle_url('settings.php', array('section' => 'messagesetting'.$processor->name));
+            }
+        }
+        return parent::get_settings_url();
+    }
 
-        if (file_exists($this->full_path('settings.php')) or file_exists($this->full_path('settingstree.php'))) {
-            return new moodle_url('/admin/settings.php', array('section' => 'messagesetting' . $this->name));
+    /**
+     * @see plugintype_interface::is_enabled()
+     */
+    public function is_enabled() {
+        $processors = get_message_processors();
+        if (isset($processors[$this->name])) {
+            return $processors[$this->name]->configured && $processors[$this->name]->enabled;
         } else {
-            return parent::get_settings_url();
+            return parent::is_enabled();
+        }
+    }
+
+    /**
+     * @see plugintype_interface::get_uninstall_url()
+     */
+    public function get_uninstall_url() {
+        $processors = get_message_processors();
+        if (isset($processors[$this->name])) {
+            return new moodle_url('message.php', array('uninstall' => $processors[$this->name]->id, 'sesskey' => sesskey()));
+        } else {
+            return parent::get_uninstall_url();
         }
     }
 }
