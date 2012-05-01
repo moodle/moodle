@@ -380,40 +380,181 @@ class workshop {
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Fetches all users with the capability mod/workshop:submit in the current context
+     * Fetches all enrolled users with the capability mod/workshop:submit in the current workshop
      *
-     * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
+     * The returned objects contain properties required by user_picture and are ordered by lastname, firstname.
+     * Only users with the active enrolment are returned.
      *
-     * @todo handle with limits and groups
-     * @param bool $musthavesubmission If true, return only users who have already submitted. All possible authors otherwise.
-     * @return array array[userid] => stdclass{->id ->lastname ->firstname}
+     * @param bool $musthavesubmission if true, return only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set)
+     * @param int $limitnum return a subset containing this number of records (optional, required if $limitfrom is set)
+     * @return array array[userid] => stdClass
      */
-    public function get_potential_authors($musthavesubmission=true) {
-        $users = get_users_by_capability($this->context, 'mod/workshop:submit',
-                    'u.id,u.lastname,u.firstname', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
-        if ($musthavesubmission) {
-            $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
+    public function get_potential_authors($musthavesubmission=true, $groupid=0, $limitfrom=0, $limitnum=0) {
+        global $DB;
+
+        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:submit', $musthavesubmission, $groupid);
+
+        if (empty($sql)) {
+            return array();
         }
-        return $users;
+
+        $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
+
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
 
     /**
-     * Fetches all users with the capability mod/workshop:peerassess in the current context
+     * Returns the total number of users that would be fetched by {@link self::get_potential_authors()}
      *
-     * The returned objects contain id, lastname and firstname properties and are ordered by lastname,firstname
-     *
-     * @todo handle with limits and groups
-     * @param bool $musthavesubmission If true, return only users who have already submitted. All possible users otherwise.
-     * @return array array[userid] => stdclass{->id ->lastname ->firstname}
+     * @param bool $musthavesubmission if true, count only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @return int
      */
-    public function get_potential_reviewers($musthavesubmission=false) {
-        $users = get_users_by_capability($this->context, 'mod/workshop:peerassess',
-                    'u.id, u.lastname, u.firstname', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
-        if ($musthavesubmission) {
-            // users without their own submission can not be reviewers
-            $users = array_intersect_key($users, $this->users_with_submission(array_keys($users)));
+    public function count_potential_authors($musthavesubmission=true, $groupid=0) {
+        global $DB;
+
+        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:submit', $musthavesubmission, $groupid);
+
+        if (empty($sql)) {
+            return 0;
         }
-        return $users;
+
+        $sql = "SELECT COUNT(*)
+                  FROM ($sql) tmp";
+
+        return $DB->count_records_sql($sql, $params);
+    }
+
+    /**
+     * Fetches all enrolled users with the capability mod/workshop:peerassess in the current workshop
+     *
+     * The returned objects contain properties required by user_picture and are ordered by lastname, firstname.
+     * Only users with the active enrolment are returned.
+     *
+     * @param bool $musthavesubmission if true, return only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set)
+     * @param int $limitnum return a subset containing this number of records (optional, required if $limitfrom is set)
+     * @return array array[userid] => stdClass
+     */
+    public function get_potential_reviewers($musthavesubmission=false, $groupid=0, $limitfrom=0, $limitnum=0) {
+        global $DB;
+
+        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:peerassess', $musthavesubmission, $groupid);
+
+        if (empty($sql)) {
+            return array();
+        }
+
+        $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
+
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    }
+
+    /**
+     * Returns the total number of users that would be fetched by {@link self::get_potential_reviewers()}
+     *
+     * @param bool $musthavesubmission if true, count only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @return int
+     */
+    public function count_potential_reviewers($musthavesubmission=false, $groupid=0) {
+        global $DB;
+
+        list($sql, $params) = $this->get_users_with_capability_sql('mod/workshop:peerassess', $musthavesubmission, $groupid);
+
+        if (empty($sql)) {
+            return 0;
+        }
+
+        $sql = "SELECT COUNT(*)
+                  FROM ($sql) tmp";
+
+        return $DB->count_records_sql($sql, $params);
+    }
+
+    /**
+     * Fetches all enrolled users that are authors or reviewers (or both) in the current workshop
+     *
+     * The returned objects contain properties required by user_picture and are ordered by lastname, firstname.
+     * Only users with the active enrolment are returned.
+     *
+     * @see self::get_potential_authors()
+     * @see self::get_potential_reviewers()
+     * @param bool $musthavesubmission if true, return only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set)
+     * @param int $limitnum return a subset containing this number of records (optional, required if $limitfrom is set)
+     * @return array array[userid] => stdClass
+     */
+    public function get_participants($musthavesubmission=false, $groupid=0, $limitfrom=0, $limitnum=0) {
+        global $DB;
+
+        list($sql, $params) = $this->get_participants_sql($musthavesubmission, $groupid);
+
+        if (empty($sql)) {
+            return array();
+        }
+
+        $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
+
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    }
+
+    /**
+     * Returns the total number of records that would be returned by {@link self::get_participants()}
+     *
+     * @param bool $musthavesubmission if true, return only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @return int
+     */
+    public function count_participants($musthavesubmission=false, $groupid=0) {
+        global $DB;
+
+        list($sql, $params) = $this->get_participants_sql($musthavesubmission, $groupid);
+
+        if (empty($sql)) {
+            return 0;
+        }
+
+        $sql = "SELECT COUNT(*)
+                  FROM ($sql) tmp";
+
+        return $DB->count_records_sql($sql, $params);
+    }
+
+    /**
+     * Checks if the given user is an actively enrolled participant in the workshop
+     *
+     * @param int $userid, defaults to the current $USER
+     * @return boolean
+     */
+    public function is_participant($userid=null) {
+        global $USER, $DB;
+
+        if (is_null($userid)) {
+            $userid = $USER->id;
+        }
+
+        list($sql, $params) = $this->get_participants_sql();
+
+        if (empty($sql)) {
+            return false;
+        }
+
+        $sql = "SELECT COUNT(*)
+                  FROM {user} uxx
+                  JOIN ({$sql}) pxx ON uxx.id = pxx.id
+                 WHERE uxx.id = :uxxid";
+        $params['uxxid'] = $userid;
+
+        if ($DB->count_records_sql($sql, $params)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -480,27 +621,70 @@ class workshop {
     }
 
     /**
+     * Returns the total number of records that would be returned by {@link self::get_submissions()}
+     *
+     * @param mixed $authorid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
+     * @param int $groupid If non-zero, return only submissions by authors in the specified group
+     * @return int number of records
+     */
+    public function count_submissions($authorid='all', $groupid=0) {
+        global $DB;
+
+        $params = array('workshopid' => $this->id);
+        $sql = "SELECT COUNT(s.id)
+                  FROM {workshop_submissions} s
+                  JOIN {user} u ON (s.authorid = u.id)";
+        if ($groupid) {
+            $sql .= " JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)";
+            $params['groupid'] = $groupid;
+        }
+        $sql .= " WHERE s.example = 0 AND s.workshopid = :workshopid";
+
+        if ('all' === $authorid) {
+            // no additional conditions
+        } elseif (!empty($authorid)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($authorid, SQL_PARAMS_NAMED);
+            $sql .= " AND authorid $usql";
+            $params = array_merge($params, $uparams);
+        } else {
+            // $authorid is empty
+            return 0;
+        }
+
+        return $DB->count_records_sql($sql, $params);
+    }
+
+
+    /**
      * Returns submissions from this workshop
      *
      * Fetches data from {workshop_submissions} and adds some useful information from other
      * tables. Does not return textual fields to prevent possible memory lack issues.
      *
+     * @see self::count_submissions()
      * @param mixed $authorid int|array|'all' If set to [array of] integer, return submission[s] of the given user[s] only
+     * @param int $groupid If non-zero, return only submissions by authors in the specified group
+     * @param int $limitfrom Return a subset of records, starting at this point (optional)
+     * @param int $limitnum Return a subset containing this many records in total (optional, required if $limitfrom is set)
      * @return array of records or an empty array
      */
-    public function get_submissions($authorid='all') {
+    public function get_submissions($authorid='all', $groupid=0, $limitfrom=0, $limitnum=0) {
         global $DB;
 
         $authorfields      = user_picture::fields('u', null, 'authoridx', 'author');
         $gradeoverbyfields = user_picture::fields('t', null, 'gradeoverbyx', 'over');
+        $params            = array('workshopid' => $this->id);
         $sql = "SELECT s.id, s.workshopid, s.example, s.authorid, s.timecreated, s.timemodified,
                        s.title, s.grade, s.gradeover, s.gradeoverby, s.published,
                        $authorfields, $gradeoverbyfields
                   FROM {workshop_submissions} s
-            INNER JOIN {user} u ON (s.authorid = u.id)
-             LEFT JOIN {user} t ON (s.gradeoverby = t.id)
+                  JOIN {user} u ON (s.authorid = u.id)";
+        if ($groupid) {
+            $sql .= " JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)";
+            $params['groupid'] = $groupid;
+        }
+        $sql .= " LEFT JOIN {user} t ON (s.gradeoverby = t.id)
                  WHERE s.example = 0 AND s.workshopid = :workshopid";
-        $params = array('workshopid' => $this->id);
 
         if ('all' === $authorid) {
             // no additional conditions
@@ -514,7 +698,7 @@ class workshop {
         }
         $sql .= " ORDER BY u.lastname, u.firstname";
 
-        return $DB->get_records_sql($sql, $params);
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
 
     /**
@@ -1422,18 +1606,18 @@ class workshop {
      * Prepares data object with all workshop grades to be rendered
      *
      * @param int $userid the user we are preparing the report for
-     * @param mixed $groups single group or array of groups - only show users who are in one of these group(s). Defaults to all
+     * @param int $groupid if non-zero, prepare the report for the given group only
      * @param int $page the current page (for the pagination)
      * @param int $perpage participants per page (for the pagination)
      * @param string $sortby lastname|firstname|submissiontitle|submissiongrade|gradinggrade
      * @param string $sorthow ASC|DESC
      * @return stdclass data for the renderer
      */
-    public function prepare_grading_report_data($userid, $groups, $page, $perpage, $sortby, $sorthow) {
+    public function prepare_grading_report_data($userid, $groupid, $page, $perpage, $sortby, $sorthow) {
         global $DB;
 
         $canviewall     = has_capability('mod/workshop:viewallassessments', $this->context, $userid);
-        $isparticipant  = has_any_capability(array('mod/workshop:submit', 'mod/workshop:peerassess'), $this->context, $userid);
+        $isparticipant  = $this->is_participant($userid);
 
         if (!$canviewall and !$isparticipant) {
             // who the hell is this?
@@ -1450,9 +1634,7 @@ class workshop {
 
         // get the list of user ids to be displayed
         if ($canviewall) {
-            // fetch the list of ids of all workshop participants - this may get really long so fetch just id
-            $participants = get_users_by_capability($this->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
-                    'u.id', '', '', '', $groups, '', false, false, true);
+            $participants = $this->get_participants(false, $groupid);
         } else {
             // this is an ordinary workshop participant (aka student) - display the report just for him/her
             $participants = array($userid => (object)array('id' => $userid));
@@ -2087,32 +2269,84 @@ class workshop {
     }
 
     /**
-     * Given a list of user ids, returns the filtered one containing just ids of users with own submission
+     * Returns SQL to fetch all enrolled users with the given capability in the current workshop
      *
-     * Example submissions are ignored.
+     * The returned array consists of string $sql and the $params array. Note that the $sql can be
+     * empty if groupmembersonly is enabled and the associated grouping is empty.
      *
-     * @param array $userids
-     * @return array
+     * @param string $capability the name of the capability
+     * @param bool $musthavesubmission ff true, return only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @return array of (string)sql, (array)params
      */
-    protected function users_with_submission(array $userids) {
-        global $DB;
+    protected function get_users_with_capability_sql($capability, $musthavesubmission, $groupid) {
+        global $CFG;
+        /** @var int static counter used to generate unique parameter holders */
+        static $inc = 0;
+        $inc++;
 
-        if (empty($userids)) {
-            return array();
-        }
-        $userswithsubmission = array();
-        list($usql, $uparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-        $sql = "SELECT id,authorid
-                  FROM {workshop_submissions}
-                 WHERE example = 0 AND workshopid = :workshopid AND authorid $usql";
-        $params = array('workshopid' => $this->id);
-        $params = array_merge($params, $uparams);
-        $submissions = $DB->get_records_sql($sql, $params);
-        foreach ($submissions as $submission) {
-            $userswithsubmission[$submission->authorid] = true;
+        // if the caller requests all groups and we are in groupmembersonly mode, use the
+        // recursive call of itself to get users from all groups in the grouping
+        if (empty($groupid) and !empty($CFG->enablegroupmembersonly) and $this->cm->groupmembersonly) {
+            $groupingid = $this->cm->groupingid;
+            $groupinggroupids = array_keys(groups_get_all_groups($this->cm->course, 0, $this->cm->groupingid, 'g.id'));
+            $sql = array();
+            $params = array();
+            foreach ($groupinggroupids as $groupinggroupid) {
+                if ($groupinggroupid > 0) { // just in case in order not to fall into the endless loop
+                    list($gsql, $gparams) = $this->get_users_with_capability_sql($capability, $musthavesubmission, $groupinggroupid);
+                    $sql[] = $gsql;
+                    $params = array_merge($params, $gparams);
+                }
+            }
+            $sql = implode(PHP_EOL." UNION ".PHP_EOL, $sql);
+            return array($sql, $params);
         }
 
-        return $userswithsubmission;
+        list($esql, $params) = get_enrolled_sql($this->context, $capability, $groupid, true);
+
+        $userfields = user_picture::fields('u');
+
+        $sql = "SELECT $userfields
+                  FROM {user} u
+                  JOIN ($esql) je ON (je.id = u.id AND u.deleted = 0) ";
+
+        if ($musthavesubmission) {
+            $sql .= " JOIN {workshop_submissions} ws ON (ws.authorid = u.id AND ws.example = 0 AND ws.workshopid = :workshopid{$inc}) ";
+            $params['workshopid'.$inc] = $this->id;
+        }
+
+        return array($sql, $params);
+    }
+
+    /**
+     * Returns SQL statement that can be used to fetch all actively enrolled participants in the workshop
+     *
+     * @param bool $musthavesubmission if true, return only users who have already submitted
+     * @param int $groupid 0 means ignore groups, any other value limits the result by group id
+     * @return array of (string)sql, (array)params
+     */
+    protected function get_participants_sql($musthavesubmission=false, $groupid=0) {
+
+        list($sql1, $params1) = $this->get_users_with_capability_sql('mod/workshop:submit', $musthavesubmission, $groupid);
+        list($sql2, $params2) = $this->get_users_with_capability_sql('mod/workshop:peerassess', $musthavesubmission, $groupid);
+
+        if (empty($sql1) or empty($sql2)) {
+            if (empty($sql1) and empty($sql2)) {
+                return array('', array());
+            } else if (empty($sql1)) {
+                $sql = $sql2;
+                $params = $params2;
+            } else {
+                $sql = $sql1;
+                $params = $params1;
+            }
+        } else {
+            $sql = $sql1.PHP_EOL." UNION ".PHP_EOL.$sql2;
+            $params = array_merge($params1, $params2);
+        }
+
+        return array($sql, $params);
     }
 
     /**
@@ -2303,8 +2537,7 @@ class workshop_user_plan implements renderable {
             $task = new stdclass();
             $task->title = get_string('allocate', 'workshop');
             $task->link = $workshop->allocation_url();
-            $numofauthors = count(get_users_by_capability($workshop->context, 'mod/workshop:submit', 'u.id', '', '', '',
-                    '', '', false, true));
+            $numofauthors = $workshop->count_potential_authors(false);
             $numofsubmissions = $DB->count_records('workshop_submissions', array('workshopid'=>$workshop->id, 'example'=>0));
             $sql = 'SELECT COUNT(s.id) AS nonallocated
                       FROM {workshop_submissions} s
@@ -2475,7 +2708,7 @@ class workshop_user_plan implements renderable {
         $phase->title = get_string('phaseevaluation', 'workshop');
         $phase->tasks = array();
         if (has_capability('mod/workshop:overridegrades', $workshop->context)) {
-            $expected = count($workshop->get_potential_authors(false));
+            $expected = $workshop->count_potential_authors(false);
             $calculated = $DB->count_records_select('workshop_submissions',
                     'workshopid = ? AND (grade IS NOT NULL OR gradeover IS NOT NULL)', array($workshop->id));
             $task = new stdclass();
@@ -2491,7 +2724,7 @@ class workshop_user_plan implements renderable {
             }
             $phase->tasks['calculatesubmissiongrade'] = $task;
 
-            $expected = count($workshop->get_potential_reviewers(false));
+            $expected = $workshop->count_potential_reviewers(false);
             $calculated = $DB->count_records_select('workshop_aggregations',
                     'workshopid = ? AND gradinggrade IS NOT NULL', array($workshop->id));
             $task = new stdclass();
