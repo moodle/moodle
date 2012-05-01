@@ -706,6 +706,7 @@ function quiz_grade_item_update($quiz, $grades = null) {
     if (!empty($gradebook_grades->items)) {
         $grade_item = $gradebook_grades->items[0];
         if ($grade_item->locked) {
+            // NOTE: this is an extremely nasty hack! It is not a bug if this confirmation fails badly.  --skodak
             $confirm_regrade = optional_param('confirm_regrade', 0, PARAM_INT);
             if (!$confirm_regrade) {
                 $message = get_string('gradeitemislocked', 'grades');

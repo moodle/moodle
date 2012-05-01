@@ -113,7 +113,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         if (!isguestuser()) {
             if (!is_enrolled($coursecontext)) {
                 if (enrol_selfenrol_available($course->id)) {
-                    $SESSION->wantsurl = $FULLME;
+                    $SESSION->wantsurl = qualified_me();
                     $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
                     redirect($CFG->wwwroot.'/enrol/index.php?id='.$course->id, get_string('youneedtoenrol'));
                 }
@@ -181,7 +181,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (! forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext)) {
         if (!isguestuser()) {
             if (!is_enrolled($coursecontext)) {  // User is a guest here!
-                $SESSION->wantsurl = $FULLME;
+                $SESSION->wantsurl = qualified_me();
                 $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
                 redirect($CFG->wwwroot.'/enrol/index.php?id='.$course->id, get_string('youneedtoenrol'));
             }

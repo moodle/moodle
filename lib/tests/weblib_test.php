@@ -33,7 +33,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-class web_testcase extends basic_testcase {
+class web_testcase extends advanced_testcase {
 
     function test_format_string() {
         global $CFG;
@@ -183,5 +183,18 @@ class web_testcase extends basic_testcase {
         $this->assertEquals('lala xx', clean_text($text, FORMAT_MARKDOWN));
         $this->assertEquals('lala xx', clean_text($text, FORMAT_MOODLE));
         $this->assertEquals('lala xx', clean_text($text, FORMAT_HTML));
+    }
+
+    public function test_qualified_me() {
+        global $PAGE, $FULLME, $CFG;
+        $this->resetAfterTest();
+
+        $PAGE = new moodle_page();
+
+        $FULLME = $CFG->wwwroot.'/course/view.php?id=1&xx=yy';
+        $this->assertEquals($FULLME, qualified_me());
+
+        $PAGE->set_url('/course/view.php', array('id'=>1));
+        $this->assertEquals($CFG->wwwroot.'/course/view.php?id=1', qualified_me());
     }
 }

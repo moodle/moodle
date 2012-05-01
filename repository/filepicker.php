@@ -316,7 +316,7 @@ case 'download':
 
 case 'confirm':
     echo $OUTPUT->header();
-    echo '<div><a href="'.me().'">'.get_string('back', 'repository').'</a></div>';
+    echo '<div><a href="'.s($PAGE->url(false)).'">'.get_string('back', 'repository').'</a></div>';
     echo '<img src="'.$thumbnail.'" />';
     echo '<form method="post">';
     echo '<table>';

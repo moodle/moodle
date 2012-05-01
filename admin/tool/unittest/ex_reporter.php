@@ -147,11 +147,11 @@ class ExHtmlReporter extends HtmlReporter {
      * Private method. Used by printPass/Fail/Skip/Error.
      */
     function _paintPassFail($passorfail, $message, $stacktrace = null, $debuginfo = null) {
-        global $FULLME, $CFG, $OUTPUT;
+        global $CFG, $OUTPUT;
 
         echo $OUTPUT->box_start($passorfail . ' generalbox ');
 
-        $url = $this->_htmlEntities($this->_stripParameterFromUrl($FULLME, 'path'));
+        $url = $this->_htmlEntities($this->_stripParameterFromUrl(qualified_me(), 'path'));
         echo '<b class="', $passorfail, '">', $this->get_string($passorfail), '</b>: ';
         $breadcrumb = $this->getTestList();
         array_shift($breadcrumb);

@@ -240,12 +240,11 @@ class phpFlickr {
 
     function auth ($perms = "write", $remember_uri = true)
     {
-        global $FULLME;
         // Redirects to Flickr's authentication piece if there is no valid token.
         // If remember_uri is set to false, the callback script (included) will
         // redirect to its default page.
         if ($remember_uri) {
-            $redirect = $FULLME;
+            $redirect = qualified_me(); // TODO: this is not used, why?
         }
         $api_sig = md5($this->secret . "api_key" . $this->api_key . "perms" . $perms);
         $url = 'http://www.flickr.com/services/auth/?api_key=' . $this->api_key . "&perms=" .  $perms . '&api_sig='. $api_sig;
