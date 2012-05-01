@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,15 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * External course participation api.
  *
  * This api is mostly read only, the actual enrol and unenrol
  * support is in each enrol plugin.
  *
- * @package    core
- * @subpackage enrol
- * @copyright  2009 Moodle Pty Ltd (http://moodle.com)
+ * @package    core_enrol
+ * @category   external
+ * @copyright  2010 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,12 +32,19 @@ defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/externallib.php");
 
 /**
- * Enrol functions
+ * Enrol external functions
+ *
+ * @package    core_enrol
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.2
  */
 class core_enrol_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
      */
     public static function get_users_courses_parameters() {
@@ -50,7 +57,6 @@ class core_enrol_external extends external_api {
 
     /**
      * Get list of courses user is enrolled in (only active enrolments are returned).
-     *
      * Please note the current user must be able to access the course, otherwise the course is not included.
      *
      * @param int $userid
@@ -92,6 +98,7 @@ class core_enrol_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @return external_description
      */
     public static function get_users_courses_returns() {
@@ -111,6 +118,7 @@ class core_enrol_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
      */
     public static function get_enrolled_users_parameters() {
@@ -136,11 +144,12 @@ class core_enrol_external extends external_api {
 
     /**
      * Get course participants details
+     *
      * @param int $courseid  course id
      * @param array $options options {
-     *          'name' => option name
-     *          'value' => option value
-     * }
+     *                                'name' => option name
+     *                                'value' => option value
+     *                               }
      * @return array An array of users
      */
     public static function get_enrolled_users($courseid, $options) {
@@ -241,6 +250,7 @@ class core_enrol_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @return external_description
      */
     public static function get_enrolled_users_returns() {
@@ -322,12 +332,19 @@ class core_enrol_external extends external_api {
 }
 
 /**
- * Role functions
+ * Role external functions
+ *
+ * @package    core_role
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.2
  */
 class core_role_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
      */
     public static function assign_roles_parameters() {
@@ -349,8 +366,7 @@ class core_role_external extends external_api {
     /**
      * Manual role assignments to users
      *
-     * @param array $assignment  An array of manual role assignment
-     * @return null
+     * @param array $assignments An array of manual role assignment
      */
     public static function assign_roles($assignments) {
         global $DB;
@@ -382,7 +398,8 @@ class core_role_external extends external_api {
 
     /**
      * Returns description of method result value
-     * @return external_description
+     *
+     * @return null
      */
     public static function assign_roles_returns() {
         return null;
@@ -391,6 +408,7 @@ class core_role_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
      */
     public static function unassign_roles_parameters() {
@@ -412,8 +430,7 @@ class core_role_external extends external_api {
      /**
      * Unassign roles from users
      *
-     * @param array $unassignment  An array of unassignment
-     * @return null
+     * @param array $unassignments An array of unassignment
      */
     public static function unassign_roles($unassignments) {
          global $DB;
@@ -444,6 +461,7 @@ class core_role_external extends external_api {
 
    /**
      * Returns description of method result value
+     *
      * @return null
      */
     public static function unassign_roles_returns() {
@@ -453,16 +471,28 @@ class core_role_external extends external_api {
 
 
 /**
- * Deprecated enroll and role functions
- * @deprecated since Moodle 2.2 please use core_enrol_external or core_role_external instead
+ * Deprecated enrol and role external functions
+ *
+ * @package    core_enrol
+ * @copyright  2010 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
+ * @todo MDL-31194 This will be deleted in Moodle 2.5.
+ * @see core_enrol_external
+ * @see core_role_external
  */
 class moodle_enrol_external extends external_api {
 
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_enrol_external::get_enrolled_users_parameters() instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_enrol_external::get_enrolled_users_parameters()
      */
     public static function get_enrolled_users_parameters() {
         return new external_function_parameters(
@@ -477,12 +507,16 @@ class moodle_enrol_external extends external_api {
 
     /**
      * Get list of course participants.
-     * @deprecated since Moodle 2.2 please use core_enrol_external::get_enrolled_users() instead
+     *
      * @param int $courseid
      * @param text $withcapability
      * @param int $groupid
      * @param bool $onlyactive
      * @return array of course participants
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_enrol_external::get_enrolled_users()
      */
     public static function get_enrolled_users($courseid, $withcapability = null, $groupid = null, $onlyactive = false) {
         global $DB, $CFG, $USER;
@@ -568,8 +602,12 @@ class moodle_enrol_external extends external_api {
 
     /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_enrol_external::get_enrolled_users_returns() instead
+     *
      * @return external_description
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_enrol_external::get_enrolled_users_returns()
      */
     public static function get_enrolled_users_returns() {
         return new external_multiple_structure(
@@ -590,8 +628,12 @@ class moodle_enrol_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_enrol_external::get_users_courses_parameters() instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_enrol_external::get_users_courses_parameters()
      */
     public static function get_users_courses_parameters() {
         return core_enrol_external::get_users_courses_parameters();
@@ -599,11 +641,14 @@ class moodle_enrol_external extends external_api {
 
     /**
      * Get list of courses user is enrolled in (only active enrolments are returned).
-     *
      * Please note the current user must be able to access the course, otherwise the course is not included.
-     * @deprecated since Moodle 2.2 please use core_enrol_external::get_users_courses() instead
+     *
      * @param int $userid
      * @return array of courses
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see use core_enrol_external::get_users_courses()
      */
     public static function get_users_courses($userid) {
         return core_enrol_external::get_users_courses($userid);
@@ -611,8 +656,12 @@ class moodle_enrol_external extends external_api {
 
     /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_enrol_external::get_users_courses_returns() instead
+     *
      * @return external_description
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_enrol_external::get_users_courses_returns()
      */
     public static function get_users_courses_returns() {
         return core_enrol_external::get_users_courses_returns();
@@ -621,8 +670,12 @@ class moodle_enrol_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_role_external::assign_roles_parameters() instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_role_external::assign_roles_parameters()
      */
     public static function role_assign_parameters() {
         return core_role_external::assign_roles_parameters();
@@ -630,9 +683,12 @@ class moodle_enrol_external extends external_api {
 
     /**
      * Manual role assignments to users
-     * @deprecated since Moodle 2.2 please use core_role_external::assign_roles() instead
-     * @param array $assignment  An array of manual role assignment
-     * @return null
+     *
+     * @param array $assignments An array of manual role assignment
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_role_external::assign_roles()
      */
     public static function role_assign($assignments) {
         return core_role_external::assign_roles($assignments);
@@ -640,8 +696,12 @@ class moodle_enrol_external extends external_api {
 
     /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_role_external::assign_roles_returns() instead
-     * @return external_description
+     *
+     * @return null
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_role_external::assign_roles_returns()
      */
     public static function role_assign_returns() {
         return core_role_external::assign_roles_returns();
@@ -650,8 +710,12 @@ class moodle_enrol_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_role_external::unassign_roles_parameters() instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_role_external::unassign_roles_parameters()
      */
     public static function role_unassign_parameters() {
         return core_role_external::unassign_roles_parameters();
@@ -659,9 +723,12 @@ class moodle_enrol_external extends external_api {
 
      /**
      * Unassign roles from users
-     * @deprecated since Moodle 2.2 please use core_role_external::unassign_roles() instead
-     * @param array $unassignment  An array of unassignment
-     * @return null
+     *
+     * @param array $unassignments An array of unassignment
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_role_external::unassign_roles()
      */
     public static function role_unassign($unassignments) {
          return core_role_external::unassign_roles($unassignments);
@@ -669,8 +736,12 @@ class moodle_enrol_external extends external_api {
 
    /**
      * Returns description of method result value
-    * @deprecated since Moodle 2.2 please use core_role_external::unassign_roles_returns() instead
-     * @return external_description
+     *
+     * @return null
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_role_external::unassign_roles_returns()
      */
     public static function role_unassign_returns() {
         return core_role_external::unassign_roles_returns();

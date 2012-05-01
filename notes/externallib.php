@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,24 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * External notes API
  *
- * @package    moodlecore
- * @subpackage notes
- * @copyright  2011 Moodle Pty Ltd (http://moodle.com)
+ * @package    core_notes
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require_once("$CFG->libdir/externallib.php");
 
 /**
- * Notes functions
+ * Notes external functions
+ *
+ * @package    core_notes
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.2
  */
 class core_notes_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function create_notes_parameters() {
         return new external_function_parameters(
@@ -57,8 +66,10 @@ class core_notes_external extends external_api {
      * Create notes about some users
      * Note: code should be matching the /notes/edit.php checks
      * and the /user/addnote.php checks. (they are similar cheks)
+     *
      * @param array $notes  An array of notes to create.
      * @return array (success infos and fail infos)
+     * @since Moodle 2.2
      */
     public static function create_notes($notes = array()) {
         global $CFG, $DB;
@@ -148,7 +159,7 @@ class core_notes_external extends external_api {
                         break;
                 }
 
-                //TODO: performance improvement - if possible create a bulk functions for saving multiple notes at once
+                //TODO MDL-31119 performance improvement - if possible create a bulk functions for saving multiple notes at once
                 if (note_save($dbnote)) { //note_save attribut an id in case of success
                     add_to_log($dbnote->courseid, 'notes', 'add',
                             'index.php?course='.$dbnote->courseid.'&amp;user='.$dbnote->userid
@@ -170,7 +181,9 @@ class core_notes_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.2
      */
     public static function create_notes_returns() {
         return new external_multiple_structure(
@@ -187,15 +200,26 @@ class core_notes_external extends external_api {
 }
 
 /**
- * Deprecated notes functions
- * @deprecated since Moodle 2.2 please use core_notes_external instead
+ * Deprecated notes external functions
+ *
+ * @package    core_notes
+ * @copyright  2011 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.1
+ * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
+ * @todo MDL-31194 This will be deleted in Moodle 2.5.
+ * @see core_notes_external
  */
 class moodle_notes_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_notes_external::create_notes_parameters instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_notes_external::create_notes_parameters()
      */
     public static function create_notes_parameters() {
         return core_notes_external::create_notes_parameters();
@@ -205,9 +229,13 @@ class moodle_notes_external extends external_api {
      * Create notes about some users
      * Note: code should be matching the /notes/edit.php checks
      * and the /user/addnote.php checks. (they are similar cheks)
-     * @deprecated since Moodle 2.2 please use core_notes_external::create_notes instead
+     *
      * @param array $notes  An array of notes to create.
      * @return array (success infos and fail infos)
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_notes_external::create_notes()
      */
     public static function create_notes($notes = array()) {
         return core_notes_external::create_notes($notes);
@@ -215,8 +243,12 @@ class moodle_notes_external extends external_api {
 
     /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_notes_external::create_notes_returns instead
+     *
      * @return external_description
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_notes_external::create_notes_returns()
      */
     public static function create_notes_returns() {
         return core_notes_external::create_notes_returns();
