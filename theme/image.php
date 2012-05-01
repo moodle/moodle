@@ -119,10 +119,11 @@ if ($rev > -1) {
     $pathinfo = pathinfo($imagefile);
     $cacheimage = "$candidatelocation/$image.".$pathinfo['extension'];
     if (!file_exists($cacheimage)) {
-        // note: cache reset might have purged our cache dir structure,
-        //       make sure we do not use stale file stat cache in the next check_dir_exists()
-        clearstatcache();
-        check_dir_exists(dirname($cacheimage));
+        if (!file_exists(dirname($cacheimage))) {
+            // Sometimes there was a race condition in check_dir_exists(),
+            // so let the next copy() log errors instead.
+            @mkdir(dirname($cacheimage), $CFG->directorypermissions, true);
+        }
         copy($imagefile, $cacheimage);
     }
     send_cached_image($cacheimage, $rev);
