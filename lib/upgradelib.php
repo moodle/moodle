@@ -116,9 +116,13 @@ function upgrade_set_timeout($max_execution_time=300) {
     }
 
     if (!$upgraderunning) {
-        // upgrade not running or aborted
-        print_error('upgradetimedout', 'admin', "$CFG->wwwroot/$CFG->admin/");
-        die;
+        if (CLI_SCRIPT) {
+            // never stop CLI upgrades
+            $upgraderunning = 0;
+        } else {
+            // web upgrade not running or aborted
+            print_error('upgradetimedout', 'admin', "$CFG->wwwroot/$CFG->admin/");
+        }
     }
 
     if ($max_execution_time < 60) {
