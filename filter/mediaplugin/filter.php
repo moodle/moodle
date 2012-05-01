@@ -696,7 +696,7 @@ function filter_mediaplugin_youtube_callback($link) {
 
     if (empty($CFG->xmlstrictheaders)) {
         return <<<OET
-<iframe title="$info" width="$width" height="$height" src="$site/embed/$videoid?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe title="$info" width="$width" height="$height" src="$site/embed/$videoid?rel=0&wmode=transparent" frameborder="0" allowfullscreen></iframe>
 OET;
     }
 
