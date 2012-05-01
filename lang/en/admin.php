@@ -741,6 +741,7 @@ $string['pathtopsqldesc'] = 'This is only necessary to enter if you have more th
 $string['pathtopsqlinvalid'] = 'Invalid path to psql - either wrong path or not executable';
 $string['pathtounzip'] = 'Path to unzip';
 $string['pathtozip'] = 'Path to zip';
+$string['pcreunicodewarning'] = 'It is strongly recommended to use PCRE PHP extension that is compatible with Unicode characters.';
 $string['perfdebug'] = 'Performance info';
 $string['performance'] = 'Performance';
 $string['pgcluster'] = 'PostgreSQL Cluster';

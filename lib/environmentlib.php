@@ -438,6 +438,10 @@ function environment_check($version, $env_select) {
     $results[] = environment_check_database($version, $env_select);
     $results[] = environment_check_php($version, $env_select);
 
+    if ($result = environment_check_pcre_unicode($version, $env_select)) {
+        $results[] = $result;
+    }
+
     $phpext_results = environment_check_php_extensions($version, $env_select);
     $results = array_merge($results, $phpext_results);
 
@@ -794,6 +798,46 @@ function environment_check_php($version, $env_select) {
     return $result;
 }
 
+/**
+ * Looks for buggy PCRE implementation, we need unicode support in Moodle...
+ * @param string $version xml version we are going to use to test this server
+ * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
+ * @return stdClass results encapsulated in one environment_result object, null if irrelevant
+ */
+function environment_check_pcre_unicode($version, $env_select) {
+    $result = new environment_results('pcreunicode');
+
+    // Get the environment version we need
+    if (!$data = get_environment_for_version($version, $env_select)) {
+        // Error. No version data found!
+        $result->setStatus(false);
+        $result->setErrorCode(NO_VERSION_DATA_FOUND);
+        return $result;
+    }
+
+    if (!isset($data['#']['PCREUNICODE'])) {
+        return null;
+    }
+
+    $level = get_level($data['#']['PCREUNICODE']['0']);
+    $result->setLevel($level);
+
+    if (!function_exists('preg_match')) {
+        // The extension test fails instead.
+        return null;
+
+    } else if (@preg_match('/\pL/u', 'a') and @preg_match('/á/iu', 'Á')) {
+        $result->setStatus(true);
+
+    } else {
+        $result->setStatus(false);
+    }
+
+    // Do any actions defined in the XML file.
+    process_environment_result($data['#']['PCREUNICODE'][0], $result);
+
+    return $result;
+}
 
 /**
  * This function will check if unicode database requirements are satisfied
