@@ -62,3 +62,11 @@
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {
     border-width:0;
 }
+#custommenu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label {
+    background:url([[pix:theme|vertical-menu-submenu-indicator]]) no-repeat 100% 50%;
+}
+
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
+    background:url([[pix:theme|horizontal-menu-submenu-indicator]]) no-repeat 100% 50%;
+}
