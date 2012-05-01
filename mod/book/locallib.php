@@ -221,7 +221,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
     $ns = 0;    // Subchapter number
     $first = 1;
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     switch ($book->numbering) {
       case BOOK_NUM_NONE:

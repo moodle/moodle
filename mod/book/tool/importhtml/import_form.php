@@ -64,7 +64,7 @@ class booktool_importhtml_form extends moodleform {
             return $errors;
         }
 
-        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+        $usercontext = context_user::instance($USER->id);
         $fs = get_file_storage();
 
         if (!$files = $fs->get_area_files($usercontext->id, 'user', 'draft', $data['importfile'], 'id', false)) {

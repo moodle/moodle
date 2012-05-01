@@ -35,7 +35,7 @@ $book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('booktool/importhtml:import', $context);
 
 $PAGE->set_url('/mod/book/tool/importhtml/index.php', array('id'=>$id, 'chapterid'=>$chapterid));
@@ -73,7 +73,7 @@ if ($mform->is_cancelled()) {
     // this is a bloody hack - children do not try this at home!
     $fs = get_file_storage();
     $draftid = file_get_submitted_draft_itemid('importfile');
-    if (!$files = $fs->get_area_files(get_context_instance(CONTEXT_USER, $USER->id)->id, 'user', 'draft', $draftid, 'id DESC', false)) {
+    if (!$files = $fs->get_area_files(context_user::instance($USER->id)->id, 'user', 'draft', $draftid, 'id DESC', false)) {
         redirect($PAGE->url);
     }
     $file = reset($files);

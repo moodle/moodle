@@ -46,7 +46,6 @@ function mod_book_migrate_moddata_dir_to_legacy($book, $context, $path) {
     }
 
     $fs      = get_file_storage();
-    $textlib = textlib_get_instance();
     $items   = new DirectoryIterator($fulldir);
 
     foreach ($items as $item) {
@@ -77,7 +76,7 @@ function mod_book_migrate_moddata_dir_to_legacy($book, $context, $path) {
                 continue;
             }
 
-            if ($textlib->strlen($filepath) > 255) {
+            if (textlib::strlen($filepath) > 255) {
                 echo $OUTPUT->notification(" File path longer than 255 chars, skipping: ".$fulldir.$item->getFilename());
                 unset($item); // release file handle
                 continue;
@@ -115,7 +114,7 @@ function mod_book_migrate_all_areas() {
     foreach($rsbooks as $book) {
         upgrade_set_timeout(360); // set up timeout, may also abort execution
         $cm = get_coursemodule_from_instance('book', $book->id);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
         mod_book_migrate_area($book, 'intro', 'book', $book->course, $context, 'mod_book', 'intro', 0);
 
         $rschapters = $DB->get_recordset('book_chapters', array('bookid'=>$book->id));
@@ -147,7 +146,7 @@ function mod_book_migrate_area($record, $field, $table, $courseid, $context, $co
 
     foreach(array(get_site()->id, $courseid) as $cid) {
         $matches = null;
-        $ooldcontext = get_context_instance(CONTEXT_COURSE, $cid);
+        $ooldcontext = context_course::instance($cid);
         if (preg_match_all("|$CFG->wwwroot/file.php(\?file=)?/$cid(/[^\s'\"&\?#]+)|", $record->$field, $matches)) {
             $file_record = array('contextid'=>$context->id, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
             foreach ($matches[2] as $i=>$filepath) {

@@ -141,7 +141,7 @@ function xmldb_book_upgrade($oldversion) {
                 upgrade_set_timeout(360); // set up timeout, may also abort execution
                 $pbar->update($i, $count, "Migrating book files - $i/$count.");
 
-                $context = get_context_instance(CONTEXT_MODULE, $book->cmid);
+                $context = context_module::instance($book->cmid);
 
                 mod_book_migrate_moddata_dir_to_legacy($book, $context, '/');
 

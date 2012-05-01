@@ -75,7 +75,7 @@ if ($usesections) {
 $modinfo = get_fast_modinfo($course);
 $currentsection = '';
 foreach ($books as $book) {
-    $cm = $modinfo->cms[$book->coursemodule];
+    $cm = $modinfo->get_cm($book->coursemodule);
     if ($usesections) {
         $printsection = '';
         if ($book->section !== $currentsection) {

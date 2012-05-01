@@ -39,7 +39,7 @@ function booktool_print_get_toc($chapters, $book, $cm) {
     $first = true;
     $titles = array();
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     $toc = ''; // Representation of toc (HTML).
 

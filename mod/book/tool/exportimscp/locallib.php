@@ -159,7 +159,7 @@ function booktool_exportimscp_prepare_files($book, $context) {
         // Update prevlevel
         $prevlevel = $currlevel;
 
-        // Calculate the number of spaces (for visual xml-text formating)
+        // Calculate the number of spaces (for visual xml-text formatting)
         $currspaces = substr('                ', 0, $currlevel * 2);
 
         $chaptertitle = format_string($chapter->title, true, array('context'=>$context));

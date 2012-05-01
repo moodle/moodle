@@ -47,7 +47,7 @@ if ($id) {
 
 require_course_login($course, true, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/book:read', $context);
 
 $allowedit  = has_capability('mod/book:edit', $context);
