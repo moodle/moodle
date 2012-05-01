@@ -2280,6 +2280,12 @@ class calendar_event {
             $newparent = $DB->get_field_sql("SELECT id from {event} where repeatid = ? order by id ASC", array($this->properties->id), IGNORE_MULTIPLE);
             if (!empty($newparent)) {
                 $DB->execute("UPDATE {event} SET repeatid = ? WHERE repeatid = ?", array($newparent, $this->properties->id));
+                // Get all records where the repeatid is the same as the event being removed
+                $events = $DB->get_records('event', array('repeatid' => $newparent));
+                // For each of the returned events trigger the event_update hook.
+                foreach ($events as $event) {
+                    self::calendar_event_hook('update_event', array($event, false));
+                }
             }
         }
 
