@@ -200,17 +200,32 @@ class grade_report_grader extends grade_report {
 
             // Was change requested?
             $oldvalue = $this->grades[$userid][$itemid];
-            if ($datatype == 'grade') {
-                if ($oldvalue->finalgrade == $postedvalue) { // string comparison
-                    continue;
-                }
-                if ($oldvalue->finalgrade == null && $postedvalue == -1) {
+            if ($datatype === 'grade') {
+                // If there was no grade and there still isn't
+                if (is_null($oldvalue->finalgrade) && $postedvalue == -1) {
                     // -1 means no grade
                     continue;
                 }
+
+                // If the grade item uses a custom scale
+                if (!empty($oldvalue->grade_item->scaleid)) {
+
+                    if ((int)$oldvalue->finalgrade === (int)$postedvalue) {
+                        continue;
+                    }
+                } else {
+                    // The grade item uses a numeric scale
+
+                    // Format the finalgrade from the DB so that it matches the grade from the client
+                    if ($postedvalue === format_float($oldvalue->finalgrade, $oldvalue->grade_item->get_decimals())) {
+                        continue;
+                    }
+                }
+
                 $changedgrades = true;
-            } else if ($datatype == 'feedback') {
-                if ($oldvalue->feedback == $postedvalue) {
+
+            } else if ($datatype === 'feedback') {
+                if ($oldvalue->feedback === $postedvalue) {
                     continue;
                 }
             }
@@ -284,7 +299,7 @@ class grade_report_grader extends grade_report {
             $gradeitem->update_final_grade($userid, $finalgrade, 'gradebook', $feedback, FORMAT_MOODLE);
 
             // We can update feedback without reloading the grade item as it doesn't affect grade calculations
-            if ($datatype == 'feedback') {
+            if ($datatype === 'feedback') {
                 $this->grades[$userid][$itemid]->feedback = $feedback;
             }
         }
