@@ -515,6 +515,7 @@ file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_forum', 'attachment'
 //load data into form NOW!
 
 if ($USER->id != $post->userid) {   // Not the original author, so add a message to the end
+    $data = new stdClass();
     $data->date = userdate($post->modified);
     if ($post->messageformat == FORMAT_HTML) {
         $data->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&course='.$post->course.'">'.
@@ -524,6 +525,7 @@ if ($USER->id != $post->userid) {   // Not the original author, so add a message
         $data->name = fullname($USER);
         $post->message .= "\n\n(".get_string('editedby', 'forum', $data).')';
     }
+    unset($data);
 }
 
 if (!empty($parent)) {
