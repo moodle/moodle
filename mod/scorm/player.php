@@ -28,12 +28,6 @@ $currentorg = optional_param('currentorg', '', PARAM_RAW); // selected organizat
 $newattempt = optional_param('newattempt', 'off', PARAM_ALPHA); // the user request to start a new attempt
 $displaymode = optional_param('display','',PARAM_ALPHA);
 
-//IE 6 Bug workaround
-if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false) {
-    @ini_set('zlib.output_compression', 'Off');
-    @apache_setenv('no-gzip', 1);
-}
-
 // IE 9 workaround for Flash bug: MDL-29213
 // Note that it's not clear if appending the meta tag via $CFG->additionalhtmlhead
 // is correct at all, both because of the mechanism itself and because MS says

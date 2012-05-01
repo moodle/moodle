@@ -145,6 +145,9 @@ add_to_log($course->id, 'scorm', 'launch', 'view.php?id='.$cm->id, $result, $cm-
 
 // which API are we looking for
 $LMS_api = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'API' : 'API_1484_11';
+
+header('Content-Type: text/html; charset=UTF-8');
+
 ?>
 <html>
     <head>

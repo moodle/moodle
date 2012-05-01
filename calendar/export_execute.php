@@ -174,11 +174,6 @@ if(empty($serialized)) {
     die('bad serialization');
 }
 
-//IE compatibility HACK!
-if (ini_get_bool('zlib.output_compression')) {
-    ini_set('zlib.output_compression', 'Off');
-}
-
 $filename = 'icalexport.ics';
 
 header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');

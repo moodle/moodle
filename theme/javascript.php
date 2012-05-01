@@ -99,6 +99,9 @@ if ($rev > -1) {
 // parameters to get the best performance.
 
 function send_cached_js($jspath) {
+    global $CFG;
+    require("$CFG->dirroot/lib/xsendfilelib.php");
+
     $lifetime = 60*60*24*30; // 30 days
 
     header('Content-Disposition: inline; filename="javascript.php"');
@@ -108,6 +111,11 @@ function send_cached_js($jspath) {
     header('Cache-Control: max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: application/javascript; charset=utf-8');
+
+    if (xsendfile($jspath)) {
+        die;
+    }
+
     if (!min_enable_zlib_compression()) {
         header('Content-Length: '.filesize($jspath));
     }
