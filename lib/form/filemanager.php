@@ -290,7 +290,10 @@ class form_filemanager implements renderable {
      *       client_id=>uniqid(),
      *       acepted_types=>'*',
      *       return_types=>FILE_INTERNAL,
-     *       context=>$PAGE->context
+     *       context=>$PAGE->context,
+     *       author=>fullname($USER),
+     *       licenses=>array build from $CFG->licenses,
+     *       defaultlicense=>$CFG->sitedefaultlicense
      */
     public function __construct(stdClass $options) {
         global $CFG, $USER, $PAGE;
@@ -303,8 +306,22 @@ class form_filemanager implements renderable {
             'client_id'=>uniqid(),
             'accepted_types'=>'*',
             'return_types'=>FILE_INTERNAL,
-            'context'=>$PAGE->context
+            'context'=>$PAGE->context,
+            'author'=>fullname($USER),
+            'licenses'=>array()
             );
+        if (!empty($CFG->licenses)) {
+            $array = explode(',', $CFG->licenses);
+            foreach ($array as $license) {
+                $l = new stdClass();
+                $l->shortname = $license;
+                $l->fullname = get_string($license, 'license');
+                $defaults['licenses'][] = $l;
+            }
+        }
+        if (!empty($CFG->sitedefaultlicense)) {
+            $defaults['defaultlicense'] = $CFG->sitedefaultlicense;
+        }
         foreach ($defaults as $key=>$value) {
             if (empty($options->$key)) {
                 $options->$key = $value;

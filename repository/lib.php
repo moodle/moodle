@@ -1783,17 +1783,27 @@ abstract class repository {
      * Prepares list of files before passing it to AJAX, makes sure data is in the correct
      * format and stores formatted dates.
      *
-     * @param array $listing result of get_listing() or search()
+     * @param array|stdClass $listing result of get_listing() or search() or file_get_drafarea_files()
      * @return array
      */
     public static function prepare_listing($listing) {
         global $OUTPUT;
-        if (!is_array($listing) || !isset($listing['list'])) {
+        if (is_array($listing) && isset($listing['list'])) {
+            $files = &$listing['list'];
+        } else if (is_object($listing) && isset($listing->list)) {
+            $files = &$listing->list;
+        } else {
             return $listing;
         }
-        $len = count($listing['list']);
+        $len = count($files);
         for ($i=0; $i<$len; $i++) {
-            $file = & $listing['list'][$i];
+            if (is_object($files[$i])) {
+                $file = (array)$files[$i];
+                $converttoobject = true;
+            } else {
+                $file = & $files[$i];
+                $converttoobject = false;
+            }
             if (isset($file['size'])) {
                 $file['size'] = (int)$file['size'];
                 $file['size_f'] = display_size($file['size']);
@@ -1820,19 +1830,30 @@ abstract class repository {
                     }
                 }
             }
-            if (!isset($file['type']) && !array_key_exists('children', $file) && isset($file['title'])) {
-                $mimetype = mimeinfo('type', $file['title']);
+            $isfolder = (array_key_exists('children', $file) || (isset($file['type']) && $file['type'] == 'folder'));
+            $filename = null;
+            if (isset($file['title'])) {
+                $filename = $file['title'];
+            }
+            else if (isset($file['fullname'])) {
+                $filename = $file['fullname'];
+            }
+            if (!isset($file['mimetype']) && !$isfolder && $filename) {
+                $mimetype = mimeinfo('type', $filename);
                 if (get_string_manager()->string_exists($mimetype, 'mimetypes')) {
                     $mimetype = get_string($mimetype, 'mimetypes');
                 }
-                $file['type'] = $mimetype;
+                $file['mimetype'] = $mimetype;
             }
-            if (!isset($file['icon']) && isset($file['title'])) {
-                if (array_key_exists('children', $file)) {
+            if (!isset($file['icon'])) {
+                if ($isfolder) {
                     $file['icon'] = $OUTPUT->pix_url('f/folder')->out(false);
-                } else {
-                    $file['icon'] = $OUTPUT->pix_url('f/'.mimeinfo('icon', $file['title']))->out(false);
+                } else if ($filename) {
+                    $file['icon'] = $OUTPUT->pix_url('f/'.mimeinfo('icon', $filename))->out(false);
                 }
+            }
+            if ($converttoobject) {
+                $files[$i] = (object)$file;
             }
         }
         return $listing;

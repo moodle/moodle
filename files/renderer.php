@@ -116,9 +116,7 @@ class core_files_renderer extends plugin_renderer_base {
         if (empty($filemanagertemplateloaded)) {
             $filemanagertemplateloaded = true;
             $this->page->requires->js_init_call('M.form_filemanager.set_templates',
-                    array(array(
-                        'onefile' => '___fullname___ ___action___'
-                    )), true, $module);
+                    array($this->filemanager_js_templates()), true, $module);
         }
         $this->page->requires->js_init_call('M.form_filemanager.init', array($fm->options), true, $module);
 
@@ -156,11 +154,21 @@ class core_files_renderer extends plugin_renderer_base {
      * If browser supports Drag-and-drop, the body element will have class 'dndsupported',
      * otherwise - 'dndnotsupported';
      *
-     * Element with class 'fm-filelist' will be populated with files list;
-     * Element with class 'fm-breadcrumb' will be populated with the path or have class 'fm-empty' when empty;
-     * Element with class 'fm-btn-add' will hold onclick event for adding a file (opening filepicker);
-     * Element with class 'fm-btn-mkdir' will hold onclick event for adding new folder;
-     * Element with class 'fm-btn-download' will hold onclick event for download action;
+     * Element with class 'fp-content' will be populated with files list;
+     * Element with class 'fp-btn-add' will hold onclick event for adding a file (opening filepicker);
+     * Element with class 'fp-btn-mkdir' will hold onclick event for adding new folder;
+     * Element with class 'fp-btn-download' will hold onclick event for download action;
+     *
+     * Element with class 'fp-path-folder' is a template for one folder in path toolbar.
+     * It will hold mouse click event and will be assigned classes first/last/even/odd respectfully.
+     * Parent element will receive class 'empty' when there are no folders to be displayed;
+     * The content of subelement with class 'fp-path-folder-name' will be substituted with folder name;
+     *
+     * Element with class 'fp-viewbar' will have the class 'enabled' or 'disabled' when view mode
+     * can be changed or not;
+     * Inside element with class 'fp-viewbar' there are expected elements with classes
+     * 'fp-vb-icons', 'fp-vb-tree' and 'fp-vb-details'. They will handle onclick events to switch
+     * between the view modes, the last clicked element will have the class 'checked';
      *
      * @param form_filemanager $fm
      * @return string
@@ -181,30 +189,144 @@ class core_files_renderer extends plugin_renderer_base {
         $strdndenabledinbox = get_string('dndenabled_inbox', 'moodle');
         $loading = get_string('loading', 'repository');
 
-        $html .= <<<FMHTML
-<div id="filemanager-{$client_id}" class="filemanager fm-loading">
-    <div class="filemanager-loading mdl-align">{$icon_progress}</div>
-    <div class="fm-breadcrumb"></div>
+        $html = '
+<div id="filemanager-'.$client_id.'" class="filemanager fm-loading">
+    <div class="filemanager-loading mdl-align">'.$icon_progress.'</div>
+    <div class="fp-pathbar">
+        <span class="{!}fp-path-folder"><a class="{!}fp-path-folder-name"></a><span>/</span></span>
+    </div>
     <div class="filemanager-toolbar">
-        <input type="button" class="fm-btn-add" value="{$straddfile}" />
-        <input type="button" class="fm-btn-mkdir" value="{$strmakedir}" />
-        <input type="button" class="fm-btn-download" value="{$strdownload}" />
-        {$restrictions}
-        <span class="dndupload-message"> - $strdndenabled </span>
+        <input type="button" class="{!}fp-btn-add" value="'.$straddfile.'" />
+        <input type="button" class="{!}fp-btn-mkdir" value="'.$strmakedir.'" />
+        <input type="button" class="{!}fp-btn-download" value="'.$strdownload.'" />
+        '.$restrictions.'
+        <span class="dndupload-message"> - '.$strdndenabled.' </span>
+        <div class="{!}fp-viewbar" style="float:none;">
+           <span class=""><button class="{!}fp-vb-icons">'.get_string('iconview', 'repository').'</button></span>
+           <span class=""><button class="{!}fp-vb-tree">'.get_string('listview', 'repository').'</button></span>
+           <span class=""><button class="{!}fp-vb-details">'.get_string('detailview', 'repository').'</button></span>
+        </div>
     </div>
     <div class="filemanager-container" >
-        <ul class="fm-filelist"></ul>
-        <div class="fm-empty-container mdl-align">{$strnofilesattached}
-            <span class="dndupload-message">{$strdndenabledinbox}</span>
+        <div class="fm-content-wrapper">
+            <ul class="fp-content"></ul>
+            <div class="fm-empty-container mdl-align">'.$strnofilesattached.'
+                <span class="dndupload-message">'.$strdndenabledinbox.'</span>
+            </div>
+            <div class="dndupload-target">'.$strdroptoupload.'</div>
+            <div class="dndupload-uploadinprogress">'.$icon_progress.'</div>
         </div>
-        <div class="dndupload-target">{$strdroptoupload}</div>
-        <div class="dndupload-uploadinprogress">{$icon_progress}</div>
-        <div class="filemanager-updating">{$icon_progress}</div>
+        <div class="filemanager-updating">'.$icon_progress.'</div>
     </div>
 </div>
 <div class="clearer"></div>
-FMHTML;
-        return $html;
+';
+        return preg_replace('/\{\!\}/', '', $html);
+    }
+
+    /**
+     * FileManager JS template for displaying one file in 'icon view' mode.
+     *
+     * @see fp_js_template_iconfilename()
+     * @return string
+     */
+    private function fm_js_template_iconfilename() {
+        return $this->fp_js_template_iconfilename();
+    }
+
+    /**
+     * FileManager JS template for displaying file name in 'table view' and 'tree view' modes.
+     *
+     * @see fp_js_template_listfilename()
+     * @return string
+     */
+    private function fm_js_template_listfilename() {
+        return $this->fp_js_template_listfilename();
+    }
+
+    /**
+     * FileManager JS template for window with file information/actions.
+     *
+     * All content must be enclosed in an element with class 'fp-select', CSS for this class
+     * must define width and height of the window;
+     *
+     * Thumbnail image will be added as content to the element with class 'fp-thumbnail';
+     *
+     * Inside the window the elements with the following classnames must be present:
+     * 'fp-saveas', 'fp-author', 'fp-license', 'fp-path'. Inside each of them must be
+     * one input element (or select in case of fp-license and fp-path). They may also have labels.
+     * The elements will be assign with class 'uneditable' and input/select element will become
+     * disabled if they are not applicable for the particular file;
+     *
+     * There may be present elements with classes 'fp-origpath', 'fp-datemodified', 'fp-datecreated',
+     * 'fp-size', 'fp-dimensions'. They will receive additional class 'fp-unknown' if information
+     * is unavailable. If there is information available, the content of embedded element
+     * with class 'fp-value' will be substituted with the value;
+     *
+     * Elements with classes 'fp-file-update', 'fp-file-download', 'fp-file-delete', 'fp-file-zip',
+     * 'fp-file-unzip', 'fp-file-setmain' and 'fp-file-cancel' will hold corresponding onclick
+     * events (there may be several elements with class 'fp-file-cancel');
+     *
+     * When confirm button is pressed and file is being selected, the top element receives
+     * additional class 'loading'. It is removed when response from server is received.
+     *
+     * When any of the input fields is changed, the top element receives class 'fp-changed';
+     * When current file can be set as main - top element receives class 'fp-cansetmain';
+     * When current file is folder/zip/file - top element receives respectfully class
+     * 'fp-folder'/'fp-zip'/'fp-file';
+     *
+     * @return string
+     */
+    private function fm_js_template_fileselectlayout() {
+        $rv = '<div class="{!}fp-select">
+<div class="fp-select-loading">
+<img src="'.$this->pix_url('i/loading').'" />
+<p>'.get_string('loading', 'repository').'</p>
+</div>
+<form>
+<p class="{!}fp-thumbnail"></p>
+<table width="100%">
+<tr class="{!}fp-saveas"><td class="mdl-right"><label>'.get_string('name', 'moodle').'</label>:</td>
+<td class="mdl-left"><input type="text"/></td></tr>
+<tr class="{!}fp-author"><td class="mdl-right"><label>'.get_string('author', 'repository').'</label>:</td>
+<td class="mdl-left"><input type="text" /></td></tr>
+<tr class="{!}fp-license"><td class="mdl-right"><label>'.get_string('chooselicense', 'repository').'</label>:</td>
+<td class="mdl-left"><select></select></td></tr>
+<tr class="{!}fp-path"><td class="mdl-right"><label>'.get_string('path', 'moodle').'</label>:</td>
+<td class="mdl-left"><select></select></td></tr>
+<tr class="{!}fp-origpath"><td class="mdl-right"><label>'.get_string('originalpath', 'moodle').'</label>:</td>
+<td class="mdl-left"><span class="fp-value"/></td></tr>
+</table>
+<p><button class="{!}fp-file-update" >'.get_string('update', 'moodle').'</button>
+<button class="{!}fp-file-download" >'.get_string('download').'</button>
+<button class="{!}fp-file-delete" >'.get_string('delete').'</button>
+<button class="{!}fp-file-zip" >'.get_string('zip', 'editor').'</button>
+<button class="{!}fp-file-unzip" >'.get_string('unzip').'</button>
+<button class="{!}fp-file-setmain" >'.get_string('setmainfile', 'repository').'</button>
+<button class="{!}fp-file-cancel" >'.get_string('cancel').'</button>
+</p>
+</form>
+<div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"/></div>
+<div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"/></div>
+<div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"/></div>
+<div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"/></div>
+</div>';
+        return preg_replace('/\{\!\}/', '', $rv);
+    }
+
+    /**
+     * Returns all FileManager JavaScript templates as an array.
+     *
+     * @return array
+     */
+    public function filemanager_js_templates() {
+        $class_methods = get_class_methods($this);
+        $templates = array();
+        foreach ($class_methods as $method_name) {
+            if (preg_match('/^fm_js_template_(.*)$/', $method_name, $matches))
+            $templates[$matches[1]] = $this->$method_name();
+        }
+        return $templates;
     }
 
     /**
@@ -251,10 +373,10 @@ FMHTML;
      *
      * Element with class 'fp-paging' will contain page navigation (will be deprecated soon);
      *
-     * Element with class 'fp-path-folder' will contain template for one folder in path toolbar.
+     * Element with class 'fp-path-folder' is a template for one folder in path toolbar.
      * It will hold mouse click event and will be assigned classes first/last/even/odd respectfully.
-     * The content of element with class 'fp-path-folder-name' will be substituted with folder name;
      * Parent element will receive class 'empty' when there are no folders to be displayed;
+     * The content of subelement with class 'fp-path-folder-name' will be substituted with folder name;
      *
      * Element with class 'fp-toolbar' will have class 'empty' if all 'Back', 'Search', 'Refresh',
      * 'Logout', 'Manage' and 'Help' are unavailable for this repo;
@@ -310,10 +432,7 @@ FMHTML;
     }
 
     /**
-     * FilePicker JS template for displaying list of files in 'icon view' mode.
-     *
-     * Element with class 'fp-file' is a template for displaying one file and indicates a place
-     * where files shall be output. It also will hold mouse events (click, over, out, etc.);
+     * FilePicker JS template for displaying one file in 'icon view' mode.
      *
      * the element with class 'fp-thumbnail' will be resized to the repository thumbnail size
      * (both width and height, unless min-width and/or min-height is set in CSS) and the content of
@@ -323,15 +442,17 @@ FMHTML;
      * (unless min-width is set in css) and the content of an element will be replaced with filename
      * supplied by repository;
      *
+     * top element(s) will have class fp-folder if the element is a folder;
+     *
+     * List of files will have parent <div> element with class 'fp-iconview'
+     *
      * @return string
      */
-    private function fp_js_template_iconview() {
-        $rv = '<div class="fp-iconview">
-<div class="{!}fp-file">
+    private function fp_js_template_iconfilename() {
+        $rv = '<div class="fp-file">
     <div class="{!}fp-thumbnail"></div>
     <div class="{!}fp-filename"></div>
-</div>
-            </div>';
+</div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
 
@@ -343,6 +464,8 @@ FMHTML;
      * content of element with class 'fp-filename' will be replaced with filename supplied by
      * repository;
      *
+     * top element(s) will have class fp-folder if the element is a folder;
+     *
      * Note that tree view and table view are the YUI widgets and therefore there are no
      * other templates. The widgets will be wrapped in <div> with class fp-treeview or
      * fp-tableview (respectfully).
@@ -350,7 +473,7 @@ FMHTML;
      * @return string
      */
     private function fp_js_template_listfilename() {
-        $rv = '<span class="{!}fp-icon"></span> <span class="{!}fp-filename"></span>';
+        $rv = '<span><span class="{!}fp-icon"></span> <span class="{!}fp-filename"></span></span>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
 
@@ -379,7 +502,7 @@ FMHTML;
     }
 
     /**
-     * Template for window appearing to select a file.
+     * FilePicker JS template for window appearing to select a file.
      *
      * All content must be enclosed in an element with class 'fp-select', CSS for this class
      * must define width and height of the window;
@@ -393,9 +516,9 @@ FMHTML;
      * disabled if they are not applicable for the particular file;
      *
      * There may be present elements with classes 'fp-datemodified', 'fp-datecreated', 'fp-size',
-     * 'fp-license', 'fp-author'. They will receive additional class 'fp-unknown' if information
-     * is unavailable. If there is information available, the content of embedded element
-     * with class 'fp-value' will be substituted with the value;
+     * 'fp-license', 'fp-author', 'fp-dimensions'. They will receive additional class 'fp-unknown'
+     * if information is unavailable. If there is information available, the content of embedded
+     * element with class 'fp-value' will be substituted with the value;
      *
      * Elements with classes 'fp-select-confirm' and 'fp-select-cancel' will hold corresponding
      * onclick events;

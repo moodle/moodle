@@ -42,6 +42,332 @@
  * this.logindata, cached login form
  */
 
+YUI.add('moodle-core_filepicker', function(Y) {
+    /** help function to extract width/height style as a number, not as a string */
+    Y.Node.prototype.getStylePx = function(attr) {
+        var style = this.getStyle(attr);
+        if (''+style == '0' || ''+style == '0px') {
+            return 0;
+        }
+        var matches = style.match(/^([\d\.]+)px$/)
+        if (matches && parseFloat(matches[1])) {
+            return parseFloat(matches[1]);
+        }
+        return null;
+    }
+
+    /** if condition is met, the class is added to the node, otherwise - removed */
+    Y.Node.prototype.addClassIf = function(className, condition) {
+        if (condition) {
+            this.addClass(className);
+        } else {
+            this.removeClass(className);
+        }
+        return this;
+    }
+
+    /** sets the width(height) of the node considering existing minWidth(minHeight) */
+    Y.Node.prototype.setStyleAdv = function(stylename, value) {
+        var stylenameCap = stylename.substr(0,1).toUpperCase() + stylename.substr(1, stylename.length-1).toLowerCase();
+        this.setStyle(stylename, '' + Math.max(value, this.getStylePx('min'+stylenameCap)) + 'px')
+        return this;
+    }
+
+    /**
+     * Displays a list of files (used by filepicker, filemanager) inside the Node
+     *
+     * @param array options
+     *   viewmode : 1 - icons, 2 - tree, 3 - table
+     *   appendonly : whether fileslist need to be appended instead of replacing the existing content
+     *   filenode : Node element that contains template for displaying one file
+     *   callback : On click callback. The element of the fileslist array will be passed as argument
+     *   rightclickcallback : On right click callback (optional).
+     *   callbackcontext : context where callbacks are executed
+     *   sortable : whether content may be sortable (in table mode)
+     *   dynload : allow dynamic load for tree view
+     *   filepath : for pre-building of tree view - the path to the current directory in filepicker format
+     *   treeview_dynload : callback to ...
+     * @param array fileslist array of files to show, each array element may have attributes:
+     *   title or fullname : file name
+     *   shorttitle (optional) : display file name
+     *   thumbnail : url of image
+     *   icon : url of icon image
+     *   thumbnail_width : width of thumbnail, default 90
+     *   thumbnail_height : height of thumbnail, default 90
+     *   thumbnail_alt : TODO not needed!
+     *   description or thumbnail_title : alt text
+     * @param array lazyloading : reference to the array with lazy loading images
+     */
+    Y.Node.prototype.fp_display_filelist = function(options, fileslist, lazyloading) {
+        var viewmodeclassnames = {1:'fp-iconview', 2:'fp-treeview', 3:'fp-tableview'};
+        var classname = viewmodeclassnames[options.viewmode];
+        var scope = this;
+        /** return whether file is a folder (different attributes in FileManager and FilePicker) */
+        var file_is_folder = function(node) {
+            if (node.children) {return true;}
+            if (node.type && node.type == 'folder') {return true;}
+            return false;
+        };
+        /** return the name of the file (different attributes in FileManager and FilePicker) */
+        var file_get_filename = function(node) {
+            return node.title ? node.title : node.fullname;
+        }
+        /** return display name of the file (different attributes in FileManager and FilePicker) */
+        var file_get_displayname = function(node) {
+            return node.shorttitle ? node.shorttitle : file_get_filename(node);
+        }
+        /** return file description (different attributes in FileManager and FilePicker) */
+        var file_get_description = function(node) {
+            return node.description ? node.description : (node.thumbnail_title ? node.thumbnail_title : file_get_filename(node));
+        }
+        /** help funciton for tree view */
+        var build_tree = function(node, level) {
+            // prepare file name with icon
+            var el = Y.Node.create('<div/>');
+            el.appendChild(options.filenode.cloneNode(true));
+
+            el.one('.fp-filename').setContent(file_get_displayname(node));
+            // TODO add tooltip with node.title or node.thumbnail_title
+            if (file_is_folder(node)) {
+                el.get('children').addClass('fp-folder');
+            }
+            if (node.icon) {
+                el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', node.icon));
+                if (node.realicon) {
+                    lazyloading[el.one('.fp-icon img').generateID()] = node.realicon;
+                }
+            }
+            // create node
+            var tmpNode = new YAHOO.widget.HTMLNode(el.getContent(), level, false);
+            if (node.dynamicLoadComplete) {
+                tmpNode.dynamicLoadComplete = true;
+            }
+            tmpNode.fileinfo = node;
+            tmpNode.isLeaf = !file_is_folder(node);
+            if (!tmpNode.isLeaf) {
+                if(node.expanded) {
+                    tmpNode.expand();
+                }
+                tmpNode.path = node.path ? node.path : (node.filepath ? node.filepath : '');
+                for(var c in node.children) {
+                    build_tree(node.children[c], tmpNode);
+                }
+            }
+        };
+        /** initialize tree view */
+        var initialize_tree_view = function() {
+            var parentid = scope.one('.'+classname).get('id');
+            scope.treeview = new YAHOO.widget.TreeView(parentid);
+            if (options.dynload) {
+                scope.treeview.setDynamicLoad(Y.bind(options.treeview_dynload, options.callbackcontext), 1);
+            }
+            scope.treeview.singleNodeHighlight = true;
+            if (options.filepath && options.filepath.length) {
+                // we just jumped from icon/details view, we need to show all parents
+                // we extract as much information as possible from filepath and filelist
+                // and send additional requests to retrieve siblings for parent folders
+                var mytree = {};
+                var mytreeel = null;
+                for (var i in options.filepath) {
+                    if (mytreeel == null) {
+                        mytreeel = mytree;
+                    } else {
+                        mytreeel.children = [{}];
+                        mytreeel = mytreeel.children[0];
+                    }
+                    var pathelement = options.filepath[i];
+                    mytreeel.path = pathelement.path;
+                    mytreeel.title = pathelement.name;
+                    mytreeel.dynamicLoadComplete = true; // we will call it manually
+                    mytreeel.expanded = true;
+                }
+                mytreeel.children = fileslist;
+                build_tree(mytree, scope.treeview.getRoot());
+                // manually call dynload for parent elements in the tree so we can load other siblings
+                if (options.dynload) {
+                    var root = scope.treeview.getRoot();
+                    while (root && root.children && root.children.length) {
+                        root = root.children[0];
+                        if (root.path == mytreeel.path) {
+                            root.origpath = options.filepath;
+                            root.origlist = fileslist;
+                        } else if (!root.isLeaf && root.expanded) {
+                            Y.bind(options.treeview_dynload, options.callbackcontext)(root, null);
+                        }
+                    }
+                }
+            } else {
+                // there is no path information, just display all elements as a list, without hierarchy
+                for(k in fileslist) {
+                    build_tree(fileslist[k], scope.treeview.getRoot());
+                }
+            }
+            scope.treeview.subscribe('clickEvent', function(e){
+                e.node.highlight(false);
+                Y.bind(options.callback, options.callbackcontext)(e, e.node.fileinfo);
+            });
+            if (options.rightclickcallback) {
+                scope.treeview.subscribe('dblClickEvent', function(e){ // TODO right click!
+                    e.node.highlight(false);
+                    if (e.node.path != '/') {
+                        Y.bind(options.rightclickcallback, options.callbackcontext)(e, e.node.fileinfo);
+                    }
+                });
+            }
+            scope.treeview.draw();
+        };
+        /** formatting function for table view */
+        var formatValue = function (o){
+            if (o.data[''+o.column.key+'_f_s']) {return o.data[''+o.column.key+'_f_s'];}
+            else if (o.data[''+o.column.key+'_f']) {return o.data[''+o.column.key+'_f'];}
+            else if (o.value) {return o.value;}
+            else {return '';}
+        };
+        /** formatting function for table view */
+        var formatTitle = function(o) {
+            var el = Y.Node.create('<div/>');
+            el.appendChild(options.filenode.cloneNode(true)); // TODO not node but string!
+            if (o.data['isfolder']) {
+                el.get('children').addClass('fp-folder');
+            }
+            el.one('.fp-filename').setContent(o.value);
+            if (o.data['icon']) {
+                el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', o.data['icon']));
+                if (o.data['realicon']) {
+                    lazyloading[el.one('.fp-icon img').generateID()] = o.data['realicon'];
+                }
+            }
+            // TODO add tooltip with o.data['title'] (o.value) or o.data['thumbnail_title']
+            return el.getContent();
+        }
+        /** sorting function for table view */
+        var sortFoldersFirst = function(a, b, desc) {
+            if (a.get('isfolder') && !b.get('isfolder')) {return -1;}
+            if (!a.get('isfolder') && b.get('isfolder')) {return 1;}
+            var aa = a.get(this.key), bb = b.get(this.key), dir = desc?-1:1;
+            return (aa > bb) ? dir : ((aa < bb) ? -dir : 0);
+        }
+        /** initialize table view */
+        var initialize_table_view = function() {
+            var parentid = scope.one('.'+classname).get('id');
+            var cols = [
+                {key: "displayname", label: M.str.moodle.name, allowHTML: true, formatter: formatTitle,
+                    sortable: true, sortFn: sortFoldersFirst},
+                {key: "datemodified", label: M.str.moodle.lastmodified, allowHTML: true, formatter: formatValue,
+                    sortable: true, sortFn: sortFoldersFirst},
+                {key: "size", label: M.str.repository.size, allowHTML: true, formatter: formatValue,
+                    sortable: true, sortFn: sortFoldersFirst},
+                {key: "mimetype", label: M.str.repository.type, allowHTML: true,
+                    sortable: true, sortFn: sortFoldersFirst}
+            ];
+            scope.tableview = new Y.DataTable({columns: cols});
+            scope.tableview.render('#'+parentid);
+            scope.tableview.delegate('click', function (e, tableview) {
+                var record = tableview.getRecord(e.currentTarget.get('id'));
+                if (record) { Y.bind(options.callback, this)(e, record.getAttrs()); }
+            }, 'tr', options.callbackcontext, scope.tableview);
+            if (options.rightclickcallback) {
+                scope.tableview.delegate('contextmenu', function (e, tableview) {
+                    var record = tableview.getRecord(e.currentTarget.get('id'));
+                    if (record) { Y.bind(options.rightclickcallback, this)(e, record.getAttrs()); }
+                }, 'tr', options.callbackcontext, scope.tableview);
+            }
+        }
+        /** append items in table view mode */
+        var append_files_table = function() {
+            for (var k in fileslist) {
+                // to speed up sorting and formatting
+                fileslist[k].displayname = file_get_displayname(fileslist[k]);
+                fileslist[k].isfolder = file_is_folder(fileslist[k]);
+            }
+            scope.tableview.addRows(fileslist);
+            scope.tableview.sortable = options.sortable ? true : false;
+        };
+        /** append items in tree view mode */
+        var append_files_tree = function() {
+            if (options.appendonly) {
+                var parentnode = scope.treeview.getRoot();
+                if (scope.treeview.getHighlightedNode()) {
+                    parentnode = scope.treeview.getHighlightedNode();
+                    if (parentnode.isLeaf) {parentnode = parentnode.parent;}
+                }
+                for (var k in fileslist) {
+                    build_tree(fileslist[k], parentnode);
+                }
+                scope.treeview.draw();
+            } else {
+                // otherwise files were already added in initialize_tree_view()
+            }
+        }
+        /** append items in icon view mode */
+        var append_files_icons = function() {
+            parent = scope.one('.'+classname);
+            for (var k in fileslist) {
+                var node = fileslist[k];
+                var element = options.filenode.cloneNode(true);
+                parent.appendChild(element);
+                if (file_is_folder(node)) {
+                    element.addClass('fp-folder');
+                }
+                var filenamediv = element.one('.fp-filename');
+                filenamediv.setContent(file_get_displayname(node));
+                var imgdiv = element.one('.fp-thumbnail'), width, height, src;
+                if (node.thumbnail) {
+                    width = node.thumbnail_width ? node.thumbnail_width : 90;
+                    height = node.thumbnail_height ? node.thumbnail_height : 90;
+                    src = node.thumbnail;
+                } else {
+                    width = 16;
+                    height = 16;
+                    src = node.icon;
+                }
+                filenamediv.setStyleAdv('width', width);
+                imgdiv.setStyleAdv('width', width).setStyleAdv('height', height);
+                var img = Y.Node.create('<img/>').setAttrs({
+                        src: src,
+                        title: file_get_description(node),
+                        alt: node.thumbnail_alt ? node.thumbnail_alt : file_get_filename(node)}).
+                    setStyle('maxWidth', ''+width+'px').
+                    setStyle('maxHeight', ''+height+'px');
+                if (node.realthumbnail) {
+                    lazyloading[img.generateID()] = node.realthumbnail;
+                }
+                imgdiv.appendChild(img);
+                element.on('click', options.callback, options.callbackcontext, node);
+                if (options.rightclickcallback) {
+                    element.on('contextmenu', options.rightclickcallback, options.callbackcontext, node);
+                }
+            }
+        }
+
+        // initialize files view
+        if (!options.appendonly) {
+            var parent = Y.Node.create('<div/>').addClass(classname);
+            this.setContent('').appendChild(parent);
+            parent.generateID();
+            if (options.viewmode == 2) {
+                initialize_tree_view();
+            } else if (options.viewmode == 3) {
+                initialize_table_view();
+            } else {
+                // nothing to initialize for icon view
+            }
+        }
+
+        // append files to the list
+        if (options.viewmode == 2) {
+            append_files_tree();
+        } else if (options.viewmode == 3) {
+            append_files_table();
+        } else {
+            append_files_icons();
+        }
+
+    }
+}, '@VERSION@', {
+    requires:['base','node'] // TODO TreeView, Table, etc.
+});
+
 M.core_filepicker = M.core_filepicker || {};
 
 /**
@@ -75,36 +401,6 @@ M.core_filepicker.set_templates = function(Y, templates) {
  * Add new file picker to current instances
  */
 M.core_filepicker.init = function(Y, options) {
-    /** help function to extract width/height style as a number, not as a string */
-    Y.Node.prototype.getStylePx = function(attr) {
-        var style = this.getStyle(attr);
-        if (''+style == '0' || ''+style == '0px') {
-            return 0;
-        }
-        var matches = style.match(/^([\d\.]+)px$/)
-        if (matches && parseFloat(matches[1])) {
-            return parseFloat(matches[1]);
-        }
-        return null;
-    }
-
-    /** if condition is met, the class is added to the node, otherwise - removed */
-    Y.Node.prototype.addClassIf = function(className, condition) {
-        if (condition) {
-            this.addClass(className);
-        } else {
-            this.removeClass(className);
-        }
-        return this;
-    }
-
-    /** sets the width(height) of the node considering existing minWidth(minHeight) */
-    Y.Node.prototype.setStyleAdv = function(stylename, value) {
-        var stylenameCap = stylename.substr(0,1).toUpperCase() + stylename.substr(1, stylename.length-1).toLowerCase();
-        this.setStyle(stylename, '' + Math.max(value, this.getStylePx('min'+stylenameCap)) + 'px')
-        return this;
-    }
-
     var FilePickerHelper = function(options) {
         FilePickerHelper.superclass.constructor.apply(this, arguments);
     };
@@ -378,41 +674,15 @@ M.core_filepicker.init = function(Y, options) {
             this.fpnode.one('.fp-msg .fp-msg-text').setContent(msg);
             this.msg_dlg.show();
         },
-        build_tree: function(node, level) {
-            var dynload = this.active_repo.dynload;
-            // prepare file name with icon
-            var el = Y.Node.create('<div/>').setContent(M.core_filepicker.templates.listfilename);
-            el.one('.fp-filename').setContent(node.shorttitle ? node.shorttitle : node.title);
-            // TODO add tooltip with node.title or node.thumbnail_title
-            if (node.icon && !node.children) {
-                el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', node.icon));
-                if (node.realicon) {
-                    this.lazyloading[el.one('.fp-icon img').generateID()] = node.realicon;
-                }
-            }
-            // create node
-            var tmpNode = new YAHOO.widget.HTMLNode(el.getContent(), level, false);
-            if (node.dynamicLoadComplete) {
-                tmpNode.dynamicLoadComplete = true;
-            }
-            tmpNode.fileinfo = node;
-            tmpNode.isLeaf = node.children ? false : true;
-            if (!tmpNode.isLeaf) {
-                if(node.expanded) {
-                    tmpNode.expand();
-                }
-                if (dynload) {
-                    tmpNode.scope = this;
-                }
-                tmpNode.path = node.path ? node.path : '';
-                for(var c in node.children) {
-                    this.build_tree(node.children[c], tmpNode);
-                }
-            }
-        },
         view_files: function(appenditems) {
             this.viewbar_set_enabled(true);
             this.print_path();
+            /*if ((appenditems == null) && (!this.filelist || !this.filelist.length) && !this.active_repo.hasmorepages) {
+             // TODO do it via classes and adjust for each view mode!
+                // If there are no items and no next page, just display status message and quit
+                this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
+                return;
+            }*/
             if (this.viewmode == 2) {
                 this.view_as_list(appenditems);
             } else if (this.viewmode == 3) {
@@ -472,23 +742,22 @@ M.core_filepicker.init = function(Y, options) {
             }, this), 200)
         },
         treeview_dynload: function(node, cb) {
-            var scope = node.scope;
-            var client_id = scope.options.client_id;
-            var repository_id = scope.active_repo.id;
             var retrieved_children = {};
             if (node.children) {
                 for (var i in node.children) {
                     retrieved_children[node.children[i].path] = node.children[i];
                 }
             }
-            scope.request({
+            this.request({
                 action:'list',
-                client_id: client_id,
-                repository_id: repository_id,
+                client_id: this.options.client_id,
+                repository_id: this.active_repo.id,
                 path:node.path?node.path:'',
                 page:node.page?args.page:'',
+                scope:this,
                 callback: function(id, obj, args) {
                     var list = obj.list;
+                    var scope = args.scope;
                     // check that user did not leave the view mode before recieving this response
                     if (!(scope.active_repo.id == obj.repo_id && scope.viewmode == 2 && node && node.getChildrenEl())) {
                         return;
@@ -496,8 +765,8 @@ M.core_filepicker.init = function(Y, options) {
                     if (cb != null) { // (in manual mode do not update current path)
                         scope.viewbar_set_enabled(true);
                         scope.parse_repository_options(obj);
-                        node.highlight(false);
                     }
+                    node.highlight(false);
                     node.origlist = obj.list?obj.list:null;
                     node.origpath = obj.path?obj.path:null;
                     node.children = [];
@@ -506,13 +775,14 @@ M.core_filepicker.init = function(Y, options) {
                             // if this child is a folder and has already been retrieved
                             node.children[node.children.length] = retrieved_children[list[k].path];
                         } else {
-                            scope.build_tree(list[k], node);
+                            // append new file to the list
+                            scope.view_as_list([list[k]]);
                         }
                     }
                     if (cb == null) {
                         node.refresh();
                     } else {
-                        // invoke callback requested by TreeView
+                        // invoke callback requested by TreeView component
                         cb();
                     }
                     scope.content_scrolled();
@@ -523,245 +793,108 @@ M.core_filepicker.init = function(Y, options) {
          * appends those items to the end of the list. Otherwise (default behaviour)
          * clears the contents and displays the items from this.filelist */
         view_as_list: function(appenditems) {
-            var scope = this;
-            var client_id = scope.options.client_id;
-            var dynload = scope.active_repo.dynload;
-            var list = this.filelist;
-            scope.viewmode = 2;
-            if (appenditems) {
-                var parentnode = scope.treeview.getRoot();
-                if (scope.treeview.getHighlightedNode()) {
-                    parentnode = scope.treeview.getHighlightedNode();
-                    if (parentnode.isLeaf) {parentnode = parentnode.parent;}
-                }
-                for (var k in appenditems) {
-                    scope.build_tree(appenditems[k], parentnode);
-                }
-                scope.treeview.draw();
-                return;
-            }
-            if (!list || list.length==0 && (!this.filepath || !this.filepath.length)) {
+            var list = (appenditems != null) ? appenditems : this.filelist;
+            this.viewmode = 2;
+            if (!this.filelist || this.filelist.length==0 && (!this.filepath || !this.filepath.length)) {
                 this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
                 return;
             }
 
-            var treeviewnode = Y.Node.create('<div/>').
-                setAttrs({'class':'fp-treeview', id:'treeview-'+client_id});
-            this.fpnode.one('.fp-content').setContent('').appendChild(treeviewnode);
-
-            scope.treeview = new YAHOO.widget.TreeView('treeview-'+client_id);
-            if (dynload) {
-                scope.treeview.setDynamicLoad(scope.treeview_dynload, 1);
-            }
-            scope.treeview.singleNodeHighlight = true;
-            if (scope.filepath && scope.filepath.length) {
-                // we just jumped from icon/details view, we need to show all parents
-                // we extract as much information as possible from filepath and filelist
-                // and send additional requests to retrieve siblings for parent folders
-                var mytree = {};
-                var mytreeel = null;
-                for (var i in scope.filepath) {
-                    if (mytreeel == null) {
-                        mytreeel = mytree;
-                    } else {
-                        mytreeel.children = [{}];
-                        mytreeel = mytreeel.children[0];
-                    }
-                    var parent = scope.filepath[i];
-                    mytreeel.path = parent.path;
-                    mytreeel.title = parent.name;
-                    mytreeel.dynamicLoadComplete = true; // we will call it manually
-                    mytreeel.expanded = true;
-                }
-                mytreeel.children = scope.filelist
-                scope.build_tree(mytree, scope.treeview.getRoot());
-                // manually call dynload for parent elements in the tree so we can load other siblings
-                if (dynload) {
-                    var root = scope.treeview.getRoot();
-                    while (root && root.children && root.children.length) {
-                        root = root.children[0];
-                        if (root.path == mytreeel.path) {
-                            root.origpath = scope.filepath;
-                            root.origlist = scope.filelist;
-                        } else if (!root.isLeaf && root.expanded) {
-                            scope.treeview_dynload(root, null);
+            var element_template = Y.Node.create(M.core_filepicker.templates.listfilename);
+            var options = {
+                viewmode : this.viewmode,
+                appendonly : (appenditems != null),
+                filenode : element_template,
+                callbackcontext : this,
+                callback : function(e, node) {
+                    if (!node.children) {
+                        if (e.node.parent && e.node.parent.origpath) {
+                            // set the current path
+                            this.filepath = e.node.parent.origpath;
+                            this.filelist = e.node.parent.origlist;
+                            this.print_path();
                         }
+                        this.select_file(node);
+                    } else {
+                        // save current path and filelist (in case we want to jump to other viewmode)
+                        this.filepath = e.node.origpath;
+                        this.filelist = e.node.origlist;
+                        this.print_path();
+                        this.content_scrolled();
                     }
-                }
-            } else {
-                // there is no path information, just display all elements as a list, without hierarchy
-                for(k in list) {
-                    scope.build_tree(list[k], scope.treeview.getRoot());
-                }
-            }
-            scope.treeview.subscribe('clickEvent', function(e){
-                e.node.highlight(false);
-                if(e.node.isLeaf){
-                    if (e.node.parent && e.node.parent.origpath) {
-                        // set the current path
-                        scope.filepath = e.node.parent.origpath;
-                        scope.filelist = e.node.parent.origlist;
-                        scope.print_path();
-                    }
-                    scope.select_file(e.node.fileinfo);
-                } else {
-                    // save current path and filelist (in case we want to jump to other viewmode)
-                    scope.filepath = e.node.origpath;
-                    scope.filelist = e.node.origlist;
-                    scope.print_path();
-                    scope.content_scrolled();
-                }
-            });
-            scope.treeview.draw();
+                },
+                dynload : this.active_repo.dynload,
+                filepath : this.filepath,
+                treeview_dynload : this.treeview_dynload
+            };
+            this.fpnode.one('.fp-content').fp_display_filelist(options, list, this.lazyloading);
         },
         /** displays list of files in icon view mode. If param appenditems is specified,
          * appends those items to the end of the list. Otherwise (default behaviour)
          * clears the contents and displays the items from this.filelist */
         view_as_icons: function(appenditems) {
-            var scope = this;
             this.viewmode = 1;
-            var list = this.filelist, container, element_template;
-            if (!appenditems || !this.filelist || !this.filelist.length) {
-                if (!list || list.length==0) {
-                    this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
-                    return;
-                }
-                this.fpnode.one('.fp-content').setContent(M.core_filepicker.templates.iconview);
-                element_template = this.fpnode.one('.fp-content').one('.fp-file');
-                container = element_template.get('parentNode');
-                container.removeChild(element_template);
-            } else {
-                list = appenditems;
-                element_template = Y.Node.create(M.core_filepicker.templates.iconview).one('.fp-file');
-                container = this.fpnode.one('.fp-content').one('.fp-file').get('parentNode')
+            var list = (appenditems != null) ? appenditems : this.filelist;
+            var element_template = Y.Node.create(M.core_filepicker.templates.iconfilename);
+            if ((appenditems == null) && (!this.filelist || !this.filelist.length)) {
+                this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
+                return;
             }
-
-            var count = 0;
-            for(var k in list) {
-                var node = list[k];
-                var element = element_template.cloneNode(true);
-                container.appendChild(element);
-                var filename = node.shorttitle ? node.shorttitle : node.title;
-                var filenamediv = element.one('.fp-filename');
-                filenamediv.setContent(filename);
-                var imgdiv = element.one('.fp-thumbnail');
-                var width = node.thumbnail_width ? node.thumbnail_width : 90;
-                var height = node.thumbnail_height ? node.thumbnail_height : 90;
-                filenamediv.setStyleAdv('width', width);
-                imgdiv.setStyleAdv('width', width).setStyleAdv('height', height);
-                var img = Y.Node.create('<img/>').setAttrs({src:node.thumbnail,title:node.title});
-                if(node.thumbnail_alt) {
-                    img.set('alt', node.thumbnail_alt);
-                }
-                if(node.thumbnail_title) {
-                    img.set('title', node.thumbnail_title);
-                }
-                img.setStyle('maxWidth', ''+width+'px').setStyle('maxHeight', ''+height+'px');
-                if (node.realthumbnail) {
-                    this.lazyloading[img.generateID()] = node.realthumbnail;
-                }
-                imgdiv.appendChild(img)
-
-                var dynload = this.active_repo.dynload;
-                if(node.children) {
-                    element.on('click', function(e, p) {
-                        e.preventDefault();
-                        if(dynload) {
-                            scope.list({'path':p.path});
-                        }else{
-                            this.filepath = p.path;
-                            this.filelist = p.children;
+            var options = {
+                viewmode : this.viewmode,
+                appendonly : (appenditems != null),
+                filenode : element_template,
+                callbackcontext : this,
+                callback : function(e, node) {
+                    e.preventDefault();
+                    if(node.children) {
+                        if (this.active_repo.dynload) {
+                            this.list({'path':node.path});
+                        } else {
+                            this.filepath = node.path;
+                            this.filelist = node.children;
                             this.view_files();
                         }
-                    }, this, node);
-                } else {
-                    element.on('click', function(e, args) {
-                        e.preventDefault();
-                        this.select_file(args);
-                    }, this, list[k]);
+                    } else {
+                        this.select_file(node);
+                    }
                 }
-                count++;
-            }
+            };
+            this.fpnode.one('.fp-content').fp_display_filelist(options, list, this.lazyloading);
         },
         /** displays list of files in table view mode. If param appenditems is specified,
          * appends those items to the end of the list. Otherwise (default behaviour)
          * clears the contents and displays the items from this.filelist */
         view_as_table: function(appenditems) {
-            var list = this.filelist, scope = this;
-            var client_id = this.options.client_id;
             this.viewmode = 3;
-            if (appenditems != null) {
-                this.tableview.addRows(appenditems);
-                this.tableview.sortable = !this.active_repo.hasmorepages;
-                return;
-            }
-
-            if (!list || list.length==0) {
+            var list = (appenditems != null) ? appenditems : this.filelist;
+            if (!appenditems && (!this.filelist || this.filelist.length==0) && !this.active_repo.hasmorepages) {
                 this.display_error(M.str.repository.nofilesavailable, 'nofilesavailable');
                 return;
             }
-            var treeviewnode = Y.Node.create('<div/>').
-                    setAttrs({'class':'fp-tableview', id:'tableview-'+client_id});
-            this.fpnode.one('.fp-content').setContent('').appendChild(treeviewnode);
-            var formatValue = function (o){
-                if (o.data[''+o.column.key+'_f_s']) { return o.data[''+o.column.key+'_f_s']; }
-                else if (o.data[''+o.column.key+'_f']) { return o.data[''+o.column.key+'_f']; }
-                else if (o.value) { return o.value; }
-                else { return ''; }
-            };
-            var formatTitle = function(o) {
-                var el = Y.Node.create('<div/>').setContent(M.core_filepicker.templates.listfilename);
-                el.one('.fp-filename').setContent(o.data['shorttitle'] ? o.data['shorttitle'] : o.value);
-                el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', o.data['icon']));
-                if (o.data['realicon']) {
-                    scope.lazyloading[el.one('.fp-icon img').generateID()] = o.data['realicon'];
-                }
-                // TODO add tooltip with o.data['title'] (o.value) or o.data['thumbnail_title']
-                return el.getContent();
-            }
-            var sortFoldersFirst = function(a, b, desc) {
-                if (a.get('children') && !b.get('children')) {return -1;}
-                if (!a.get('children') && b.get('children')) {return 1;}
-                var aa = a.get(this.key), bb = b.get(this.key), dir = desc?-1:1;
-                if (this.key == 'title' && a.get('shorttitle')) {aa=a.get('shorttitle');}
-                if (this.key == 'title' && b.get('shorttitle')) {bb=b.get('shorttitle');}
-                return (aa > bb) ? dir : ((aa < bb) ? -dir : 0);
-            }
-
-            var cols = [
-                {key: "title", label: M.str.moodle.name, allowHTML: true, formatter: formatTitle,
-                    sortable: true, sortFn: sortFoldersFirst},
-                {key: "datemodified", label: M.str.moodle.lastmodified, allowHTML: true, formatter: formatValue,
-                    sortable: true, sortFn: sortFoldersFirst},
-                {key: "size", label: M.str.repository.size, allowHTML: true, formatter: formatValue,
-                    sortable: true, sortFn: sortFoldersFirst},
-                {key: "type", label: M.str.repository.type, allowHTML: true,
-                    sortable: true, sortFn: sortFoldersFirst}
-            ];
-            this.tableview = new Y.DataTable({
-                columns: cols,
-                data: list,
-                sortable: !this.active_repo.hasmorepages // allow sorting only if there are no more pages to load
-            });
-
-            this.tableview.render('#tableview-'+client_id);
-            this.tableview.delegate('click', function (e) {
-                var record = this.tableview.getRecord(e.currentTarget.get('id'));
-                if (record) {
-                    var data = record.getAttrs();
-                    if (data.children) {
+            var element_template = Y.Node.create(M.core_filepicker.templates.listfilename);
+            var options = {
+                viewmode : this.viewmode,
+                appendonly : (appenditems != null),
+                filenode : element_template,
+                callbackcontext : this,
+                sortable : !this.active_repo.hasmorepages,
+                callback : function(e, node) {
+                    e.preventDefault();
+                    if (node.children) {
                         if (this.active_repo.dynload) {
-                            this.list({'path':data.path});
+                            this.list({'path':node.path});
                         } else {
-                            this.filepath = data.path;
-                            this.filelist = data.children;
+                            this.filepath = node.path;
+                            this.filelist = node.children;
                             this.view_files();
                         }
                     } else {
-                        this.select_file(data);
+                        this.select_file(node);
                     }
                 }
-            }, 'tr', this);
+            };
+            this.fpnode.one('.fp-content').fp_display_filelist(options, list, this.lazyloading);
         },
         /** If more than one page available, requests and displays the files from the next page */
         request_next_page: function() {

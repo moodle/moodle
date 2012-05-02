@@ -29,6 +29,7 @@ define('AJAX_SCRIPT', true);
 require('../config.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->dirroot.'/repository/lib.php');
 $PAGE->set_context(get_system_context());
 require_login();
 if (isguestuser()) {
@@ -58,10 +59,12 @@ switch ($action) {
     case 'list':
         $filepath = optional_param('filepath', '/', PARAM_PATH);
 
-        $data = file_get_drafarea_files($draftid, $filepath);
+        $data = repository::prepare_listing(file_get_drafarea_files($draftid, $filepath));
         $info = file_get_draft_area_info($draftid);
         $data->filecount = $info['filecount'];
         $data->filesize = $info['filesize'];
+        $data->tree = new stdClass();
+        file_get_drafarea_folders($draftid, '/', $data->tree);
         echo json_encode($data);
         die;
 
@@ -73,6 +76,8 @@ switch ($action) {
         $fs->create_directory($user_context->id, 'user', 'draft', $draftid, file_correct_filepath(file_correct_filepath($filepath).$newdirname));
         $return = new stdClass();
         $return->filepath = $filepath;
+        $return->tree = new stdClass();
+        file_get_drafarea_folders($draftid, '/', $return->tree);
         echo json_encode($return);
         die;
 
@@ -190,6 +195,8 @@ switch ($action) {
         } else {
             $return->filepath = $newfilepath;
         }
+        $return->tree = new stdClass();
+        file_get_drafarea_folders($draftid, '/', $return->tree);
         echo json_encode($return);
         die;
 
@@ -277,6 +284,8 @@ switch ($action) {
         if ($newfile = $file->extract_to_storage($zipper, $user_context->id, 'user', 'draft', $draftid, $filepath, $USER->id)) {
             $return = new stdClass();
             $return->filepath = $filepath;
+            $return->tree = new stdClass();
+            file_get_drafarea_folders($draftid, '/', $return->tree);
             echo json_encode($return);
         } else {
             echo json_encode(false);

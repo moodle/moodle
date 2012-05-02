@@ -566,13 +566,13 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
     $data->path[] = array('name'=>get_string('files'), 'path'=>'/');
 
     // will be used to build breadcrumb
-    $trail = '';
+    $trail = '/';
     if ($filepath !== '/') {
         $filepath = file_correct_filepath($filepath);
         $parts = explode('/', $filepath);
         foreach ($parts as $part) {
             if ($part != '' && $part != null) {
-                $trail .= ('/'.$part.'/');
+                $trail .= ($part.'/');
                 $data->path[] = array('name'=>$part, 'path'=>$trail);
             }
         }
@@ -587,11 +587,16 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
             $item->filepath = $file->get_filepath();
             $item->fullname = trim($item->filename, '/');
             $filesize = $file->get_filesize();
+            $item->size = $filesize ? $filesize : null;
             $item->filesize = $filesize ? display_size($filesize) : '';
 
             $icon = mimeinfo_from_type('icon', $file->get_mimetype());
             $item->icon = $OUTPUT->pix_url('f/' . $icon)->out();
             $item->sortorder = $file->get_sortorder();
+            $item->author = $file->get_author();
+            $item->license = $file->get_license();
+            $item->datemodified = $file->get_timemodified();
+            $item->datecreated = $file->get_timecreated();
 
             if ($icon == 'zip') {
                 $item->type = 'zip';
@@ -605,9 +610,11 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
                 $item->type = 'folder';
                 $foldername = explode('/', trim($item->filepath, '/'));
                 $item->fullname = trim(array_pop($foldername), '/');
+                $item->thumbnail = $OUTPUT->pix_url('f/folder-32')->out(false);
             } else {
                 // do NOT use file browser here!
                 $item->url = moodle_url::make_draftfile_url($draftitemid, $item->filepath, $item->filename)->out();
+                $item->thumbnail = $OUTPUT->pix_url(file_extension_icon($item->filename, 32))->out(false);
             }
             $list[] = $item;
         }
