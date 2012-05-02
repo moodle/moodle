@@ -221,7 +221,6 @@ class repository_local_file {
             $node['license'] = $this->fileinfo->get_license();
             $node['source'] = $encodedpath;
             $node['thumbnail'] = $OUTPUT->pix_url(file_extension_icon($node['title'], 32))->out(false);
-            $node['realthumbnail'] = $this->fileinfo->get_url();
         }
         return $node;
     }
