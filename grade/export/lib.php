@@ -39,6 +39,7 @@ abstract class grade_export {
     public $updatedgradesonly; // only export updated grades
     public $displaytype; // display type (e.g. real, percentages, letter) for exports
     public $decimalpoints; // number of decimal points for exports
+    public $onlyactive; // only include users with an active enrolment
     /**
      * Constructor should set up all the private variables ready to be pulled
      * @access public
@@ -49,7 +50,7 @@ abstract class grade_export {
      * @param boolean $export_letters
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
-    public function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2) {
+    public function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2, $onlyactive = false) {
         $this->course = $course;
         $this->groupid = $groupid;
         $this->grade_items = grade_item::fetch_all(array('courseid'=>$this->course->id));
@@ -83,6 +84,7 @@ abstract class grade_export {
 
         $this->displaytype = $displaytype;
         $this->decimalpoints = $decimalpoints;
+        $this->onlyactive = $onlyactive;
     }
 
     /**
@@ -123,6 +125,10 @@ abstract class grade_export {
 
         if (isset($formdata->export_feedback)) {
             $this->export_feedback = $formdata->export_feedback;
+        }
+
+        if (isset($formdata->export_onlyactive)) {
+            $this->onlyactive = $formdata->export_onlyactive;
         }
 
         if (isset($formdata->previewrows)) {
@@ -222,6 +228,7 @@ abstract class grade_export {
 
         $i = 0;
         $gui = new graded_users_iterator($this->course, $this->columns, $this->groupid);
+        $gui->require_active_enrolment($this->onlyactive);
         $gui->init();
         while ($userdata = $gui->next_user()) {
             // number of preview rows
@@ -290,7 +297,8 @@ abstract class grade_export {
                         'export_feedback'   =>$this->export_feedback,
                         'updatedgradesonly' =>$this->updatedgradesonly,
                         'displaytype'       =>$this->displaytype,
-                        'decimalpoints'     =>$this->decimalpoints);
+                        'decimalpoints'     =>$this->decimalpoints,
+                        'export_onlyactive' =>$this->onlyactive);
 
         return $params;
     }
