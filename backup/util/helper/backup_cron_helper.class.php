@@ -356,7 +356,7 @@ abstract class backup_cron_automated_helper {
                 $dir = null;
             }
             if (!empty($dir) && $storage !== 0) {
-                $filename = backup_plan_dbops::get_default_backup_filename($format, $type, $course->id, $users, $anonymised, true);
+                $filename = backup_plan_dbops::get_default_backup_filename($format, $type, $course->id, $users, $anonymised, !$config->backup_shortname);
                 $outcome = $file->copy_content_to($dir.'/'.$filename);
                 if ($outcome && $storage === 1) {
                     $file->delete();
