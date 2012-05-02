@@ -1306,6 +1306,7 @@ class moodle_page {
                     if (!empty($CFG->allowcoursethemes) && !empty($this->_course->theme) && $this->devicetypeinuse == 'default') {
                         return $this->_course->theme;
                     }
+                break;
 
                 case 'category':
                     if (!empty($CFG->allowcategorythemes) && $this->devicetypeinuse == 'default') {
@@ -1316,11 +1317,13 @@ class moodle_page {
                             }
                         }
                     }
+                break;
 
                 case 'session':
                     if (!empty($SESSION->theme)) {
                         return $SESSION->theme;
                     }
+                break;
 
                 case 'user':
                     if (!empty($CFG->allowuserthemes) && !empty($USER->theme) && $this->devicetypeinuse == 'default') {
@@ -1330,6 +1333,7 @@ class moodle_page {
                             return $USER->theme;
                         }
                     }
+                break;
 
                 case 'site':
                     if ($mnetpeertheme) {
