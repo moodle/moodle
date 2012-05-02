@@ -56,6 +56,11 @@
 .questionbank .singleselect { margin: 0; }
 
 /* Question editing forms. */
+#page-question-addquestion #chooserdialogue,
+#page-question-addquestion #choosertitle {
+    display: block;
+}
+
 #combinedfeedbackhdr div.fhtmleditor {padding: 0;}
 #combinedfeedbackhdr div.fcheckbox {margin-bottom: 1em;}
 

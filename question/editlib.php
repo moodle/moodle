@@ -1930,75 +1930,32 @@ function require_login_in_context($contextorid = null){
  * @param $allowedqtypes optional list of qtypes that are allowed. If given, only
  *      those qtypes will be shown. Example value array('description', 'multichoice').
  */
-function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null) {
+function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null, $enablejs = true) {
     global $CFG, $PAGE, $OUTPUT;
 
-    echo '<div id="chooseqtypehead" class="hd">' . "\n";
-    echo $OUTPUT->heading(get_string('chooseqtypetoadd', 'question'), 3);
-    echo "</div>\n";
-    echo '<div id="chooseqtype">' . "\n";
-    echo '<form action="' . $CFG->wwwroot . '/question/question.php" method="get"><div id="qtypeformdiv">' . "\n";
-    foreach ($hiddenparams as $name => $value) {
-        echo '<input type="hidden" name="' . s($name) . '" value="' . s($value) . '" />' . "\n";
+    if ($enablejs) {
+        // Add the chooser.
+        $PAGE->requires->yui_module('moodle-question-chooser',
+            'M.question.init_chooser',
+            array(array('courseid' => $PAGE->course->id))
+        );
     }
-    echo "</div>\n";
-    echo '<div class="qtypes">' . "\n";
-    echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
-    echo '<div class="alloptions">' . "\n";
-    echo '<div class="realqtypes">' . "\n";
+
+    $realqtypes = array();
     $fakeqtypes = array();
     foreach (question_bank::get_creatable_qtypes() as $qtypename => $qtype) {
         if ($allowedqtypes && !in_array($qtypename, $allowedqtypes)) {
             continue;
         }
         if ($qtype->is_real_question_type()) {
-            print_qtype_to_add_option($qtype);
+            $realqtypes[] = $qtype;
         } else {
             $fakeqtypes[] = $qtype;
         }
     }
-    echo "</div>\n";
-    echo '<div class="fakeqtypes">' . "\n";
-    foreach ($fakeqtypes as $qtype) {
-        print_qtype_to_add_option($qtype);
-    }
-    echo "</div>\n";
-    echo "</div>\n";
-    echo "</div>\n";
-    echo '<div class="submitbuttons">' . "\n";
-    echo '<input type="submit" value="' . get_string('next') . '" id="chooseqtype_submit" />' . "\n";
-    echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
-    echo "</div></form>\n";
-    echo "</div>\n";
 
-    $PAGE->requires->js('/question/qengine.js');
-    $module = array(
-        'name'      => 'qbank',
-        'fullpath'  => '/question/qbank.js',
-        'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
-        'strings'   => array(),
-        'async'     => false,
-    );
-    $PAGE->requires->js_init_call('qtype_chooser.init', array('chooseqtype'), false, $module);
-}
-
-/**
- * Private function used by the preceding one.
- * @param question_type $qtype the question type.
- */
-function print_qtype_to_add_option($qtype) {
-    echo '<div class="qtypeoption">' . "\n";
-    echo '<label for="' . $qtype->plugin_name() . '">';
-    echo '<input type="radio" name="qtype" id="' . $qtype->plugin_name() .
-            '" value="' . $qtype->name() . '" />';
-    echo '<span class="qtypename">';
-    $fakequestion = new stdClass();
-    $fakequestion->qtype = $qtype->name();
-    echo print_question_icon($fakequestion);
-    echo $qtype->menu_name() . '</span><span class="qtypesummary">' .
-            get_string('pluginnamesummary', $qtype->plugin_name());
-    echo "</span></label>\n";
-    echo "</div>\n";
+    $renderer = $PAGE->get_renderer('question', 'bank');
+    echo $renderer->qbank_chooser($realqtypes, $fakeqtypes, $PAGE->course, $hiddenparams);
 }
 
 /**
