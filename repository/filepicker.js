@@ -1117,23 +1117,14 @@ M.core_filepicker.init = function(Y, options) {
                 centered     : true,
                 modal        : true,
                 visible      : false,
+                minWidth     : this.fpnode.getStylePx('minWidth'),
+                minHeight    : this.fpnode.getStylePx('minHeight'),
+                maxWidth     : this.fpnode.getStylePx('maxWidth'),
+                maxHeight    : this.fpnode.getStylePx('maxHeight'),
                 render       : true
             });
             // allow to move the panel dragging it by it's header:
             this.mainui.plug(Y.Plugin.Drag,{handles:['.yui3-widget-hd']});
-            // Check if CSS for the node sets min-max width/height and therefore if panel shall be resizable:
-            var resizeconstraints = {
-              minWidth: this.fpnode.getStylePx('minWidth')?this.fpnode.getStylePx('minWidth'):this.fpnode.getStylePx('width'),
-              minHeight: this.fpnode.getStylePx('minHeight')?this.fpnode.getStylePx('minHeight'):this.fpnode.getStylePx('height'),
-              maxWidth: this.fpnode.getStylePx('maxWidth')?this.fpnode.getStylePx('maxWidth'):this.fpnode.getStylePx('width'),
-              maxHeight: this.fpnode.getStylePx('maxHeight')?this.fpnode.getStylePx('maxHeight'):this.fpnode.getStylePx('height'),
-              preserveRatio: false
-            };
-            if (resizeconstraints.minWidth < resizeconstraints.maxWidth ||
-                    resizeconstraints.minHeight < resizeconstraints.maxHeight) {
-                this.mainui.plug(Y.Plugin.Resize)
-                this.mainui.resize.plug(Y.Plugin.ResizeConstrained, resizeconstraints);
-            }
             this.mainui.show();
             // create panel for selecting a file (initially hidden)
             this.selectui = new Y.Panel({
