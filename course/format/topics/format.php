@@ -286,3 +286,6 @@ if (!empty($sectionmenu)) {
     $select->formid = 'sectionmenu';
     echo $OUTPUT->render($select);
 }
+
+    // Include course format js module
+    $PAGE->requires->js('/course/format/topics/format.js');
