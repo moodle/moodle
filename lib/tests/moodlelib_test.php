@@ -1020,10 +1020,9 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertEquals($wday,3);
         $this->assertEquals($mon,12);
         $this->assertEquals($year,2009);
-        $this->assertEquals($yday,357);
+        $this->assertEquals($yday,356);
         $this->assertEquals($weekday, 'Wednesday');
         $this->assertEquals($month, 'December');
-
         $arr = usergetdate($ts);//gets the timezone from the $USER object
         $arr = array_values($arr);
 
@@ -1035,10 +1034,9 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertEquals($wday,3);
         $this->assertEquals($mon,12);
         $this->assertEquals($year,2009);
-        $this->assertEquals($yday,357);
+        $this->assertEquals($yday,356);
         $this->assertEquals($weekday, 'Wednesday');
         $this->assertEquals($month, 'December');
-
         //set the timezone back to what it was
         $USER->timezone = $userstimezone;
 
