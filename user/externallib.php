@@ -51,7 +51,7 @@ class core_user_external extends external_api {
                 'users' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config'),
+                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config. Must be lowercase.'),
                             'password'    => new external_value(PARAM_RAW, 'Plain text password consisting of any characters'),
                             'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user'),
                             'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user'),
@@ -193,7 +193,7 @@ class core_user_external extends external_api {
             new external_single_structure(
                 array(
                     'id'       => new external_value(PARAM_INT, 'user id'),
-                    'username' => new external_value(PARAM_RAW, 'user name'),
+                    'username' => new external_value(PARAM_USERNAME, 'user name'),
                 )
             )
         );
@@ -276,7 +276,7 @@ class core_user_external extends external_api {
                     new external_single_structure(
                         array(
                             'id'    => new external_value(PARAM_NUMBER, 'ID of the user'),
-                            'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
+                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config. Must be lowercase.', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'password'    => new external_value(PARAM_RAW, 'Plain text password consisting of any characters', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
