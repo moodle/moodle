@@ -98,7 +98,7 @@ class workshop_file_info_submissions_container extends file_info {
         $itemids = $DB->get_records('files', array('contextid' => $this->context->id, 'component' => 'mod_workshop', 'filearea' => $this->filearea),
             'itemid', "DISTINCT itemid");
         foreach ($itemids as $itemid => $unused) {
-            if ($child = $this->browser->get_file_info($this->context, $this->filearea, $itemid)) {
+            if ($child = $this->browser->get_file_info($this->context, 'mod_workshop', $this->filearea, $itemid)) {
                 $children[] = $child;
             }
         }

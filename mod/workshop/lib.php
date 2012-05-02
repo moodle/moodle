@@ -1360,7 +1360,7 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
 
     $fs = get_file_storage();
 
-    if ($filearea === 'content' or $filearea === 'attachment') {
+    if ($filearea === 'submission_content' or $filearea === 'submission_attachment') {
 
         if (!has_capability('mod/workshop:viewallsubmissions', $context)) {
             return null;
