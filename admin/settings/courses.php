@@ -161,6 +161,7 @@ if ($hassiteconfig
         400 => '400',
         500 => '500');
     $temp->add(new admin_setting_configselect('backup/backup_auto_keep', new lang_string('keep'), new lang_string('backupkeephelp'), 1, $keepoptoins));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_shortname', new lang_string('backup_shortname', 'admin'), new lang_string('backup_shortnamehelp', 'admin'), 0));
 
     // Automated defaults section.
     $temp->add(new admin_setting_heading('automatedsettings', new lang_string('automatedsettings','backup'), ''));
