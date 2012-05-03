@@ -388,6 +388,7 @@ class gradingform_guide_renderer extends plugin_renderer_base {
         $html = html_writer::start_tag('div', array('class' => 'options'));
         $html .= html_writer::tag('div', get_string('guideoptions', 'gradingform_guide'), array('class' => 'optionsheading'));
         $attrs = array('type' => 'hidden', 'name' => '{NAME}[options][optionsset]', 'value' => 1);
+        $html .= html_writer::empty_tag('input', $attrs);
         foreach ($options as $option => $value) {
             $html .= html_writer::start_tag('div', array('class' => 'option '.$option));
             $attrs = array('name' => '{NAME}[options]['.$option.']', 'id' => '{NAME}-options-'.$option);
