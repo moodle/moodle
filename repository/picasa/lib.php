@@ -86,6 +86,10 @@ class repository_picasa extends repository {
         $ret['dynload'] = true;
         $ret['manage'] = google_picasa::MANAGE_URL;
         $ret['list'] = $picasa->get_file_list($path);
+        $ret['path'] = array((object)array('name'=>get_string('home'), 'path' => ''));
+        if ($path) {
+            $ret['path'][] = (object)array('name'=>$picasa->get_last_album_name(), 'path' => $path);
+        }
         return $ret;
     }
 
