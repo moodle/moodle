@@ -197,6 +197,11 @@ class assignment_base {
 
         echo '<div class="reportlink">'.$this->submittedlink().'</div>';
         echo '<div class="clearer"></div>';
+        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+            echo $OUTPUT->notification(get_string('upgradenotification', 'assignment'));
+            $adminurl = new moodle_url('/admin/tool/assignmentupgrade/listnotupgraded.php');
+            echo $OUTPUT->single_button($adminurl, get_string('viewassignmentupgradetool', 'assignment'));
+        }
     }
 
 

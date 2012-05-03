@@ -1,0 +1,130 @@
+div.gradingnavigation div {
+    float: left;
+    margin-left: 2em;
+}
+
+
+div.submissionstatustable,
+div.submissionfull,
+div.submissionlinks,
+div.usersummary,
+div.feedback,
+div.gradingsummary {
+
+    width: 70%;
+    margin: 0 auto;
+    margin-bottom: 5em;
+}
+
+
+div.submissionstatus .generaltable,
+div.submissionlinks .generaltable,
+div.feedback .generaltable,
+div.gradingsummary .generaltable {
+    width: 100%;
+}
+
+.gradingsummarytable,
+.feedbacktable,
+.lockedsubmission,
+.gradingbatchoperationsform,
+.submissionsummarytable {
+    margin-top: 1em;
+}
+
+
+div.submissionsummarytable table tbody tr td.c0 {
+    width: 30%;
+}
+
+.submittedlate {
+    color: red;
+    font-weight: 900;
+}
+
+.jsenabled .gradingactionsform .hidden {display: none;}
+.jsenabled .gradingoptionsform .hidden {display: none;}
+.jsenabled .gradingtable .c1 select {display: none;}
+
+td.submissionstatus,
+div.submissionstatus,
+a:link.submissionstatus {
+    color: black;
+    background-color: #efefef;
+}
+
+td.submissionstatusdraft,
+div.submissionstatusdraft,
+a:link.submissionstatusdraft {
+    color: black;
+    background-color: #efefcf;
+}
+
+td.submissionstatussubmitted,
+div.submissionstatussubmitted,
+a:link.submissionstatussubmitted {
+    color: black;
+    background-color: #cfefcf;
+}
+
+
+td.submissionlocked,
+div.submissionlocked {
+    color: black;
+    background-color: #efefcf;
+}
+
+td.submissiongraded,
+div.submissiongraded {
+    color: black;
+    background-color: #cfefcf;
+}
+
+td.submissionnotgraded,
+div.submissionnotgraded {
+    color: black;
+    background-color: #efefef;
+}
+
+td.latesubmission,
+a:link.latesubmission,
+div.latesubmission {
+    color: black;
+    background-color: #efcfcf;
+}
+
+td.earlysubmission,
+div.earlysubmission {
+    color: black;
+    background-color: #cfefcf;
+}
+
+.gradingtable .c0 { display: none; }
+.jsenabled .gradingtable .c0 { display: table-cell; }
+.gradingbatchoperationsform { display: none; }
+.jsenabled .gradingbatchoperationsform { display: block; }
+
+.gradingtable tr.selectedrow td { background-color: #ffeecc; }
+.gradingtable tr.unselectedrow td { background-color: white; }
+
+.gradingtable .c0 div.selectall {margin-left: 7px;}
+
+.gradingtable .yui3-menu ul {
+    margin: 0px;
+}
+
+.gradingtable .yui3-menu-label {
+    padding-left: 0px;
+}
+.gradingtable .yui3-menu li {
+    list-style-type: none;
+}
+
+.jsenabled .gradingtable .yui3-loading {
+    display: none;
+}
+
+.gradingtable .yui3-menu .yui3-menu-content {
+    border: 0px;
+}
+
