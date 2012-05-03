@@ -27,14 +27,16 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * This renderer is used by section based formats
+ * This is a convenience renderer which can be used by section based formats
+ * to reduce code duplication. It is not necessary for all course formats to 
+ * use this and its likely to change in future releases.
  *
  * @package core
  * @copyright 2012 Dan Poltawski
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.3
  */
-abstract class format_renderer_base extends plugin_renderer_base {
+abstract class format_section_renderer_base extends plugin_renderer_base {
 
     /**
      * Generate the starting container html for a list of sections
