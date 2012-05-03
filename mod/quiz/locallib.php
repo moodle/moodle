@@ -626,7 +626,7 @@ function quiz_update_all_final_grades($quiz) {
             FROM {quiz_attempts} iquiza
 
             WHERE
-                iquiza.state = :istatefinished
+                iquiza.state = :istatefinished AND
                 iquiza.preview = 0 AND
                 iquiza.quiz = :iquizid
 
