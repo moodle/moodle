@@ -646,6 +646,7 @@ class quiz_attempt {
         return $this->attempt->attempt;
     }
 
+    /** @return string one of the quiz_attempt::IN_PROGRESS, FINISHED, OVERDUE or ABANDONED constants. */
     public function get_state() {
         return $this->attempt->state;
     }

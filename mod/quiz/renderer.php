@@ -615,10 +615,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output = '';
 
         // Return to place button
-        $button = new single_button(
-                new moodle_url($attemptobj->attempt_url(null, $attemptobj->get_currentpage())), get_string('returnattempt', 'quiz'));
-        $output .= $this->container($this->container($this->render($button),
-                'controls'), 'submitbtns mdl-align');
+        if ($attemptobj->get_state() == quiz_attempt::IN_PROGRESS) {
+            $button = new single_button(
+                    new moodle_url($attemptobj->attempt_url(null, $attemptobj->get_currentpage())),
+                    get_string('returnattempt', 'quiz'));
+            $output .= $this->container($this->container($this->render($button),
+                    'controls'), 'submitbtns mdl-align');
+        }
 
         // Finish attempt button.
         $options = array(
