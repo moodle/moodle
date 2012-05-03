@@ -1020,7 +1020,8 @@ class phpunit_util {
         $dirs = array();
         $dirite = new RecursiveDirectoryIterator($CFG->dirroot);
         $iteite = new RecursiveIteratorIterator($dirite);
-        $regite = new RegexIterator($iteite, '|/tests/.*_test\.php$|');
+        $sep = preg_quote(DIRECTORY_SEPARATOR, '|');
+        $regite = new RegexIterator($iteite, '|'.$sep.'tests'.$sep.'.*_test\.php$|');
         foreach ($regite as $path => $element) {
             $key = dirname(dirname($path));
             $value = trim(str_replace('/', '_', str_replace($CFG->dirroot, '', $key)), '_');
@@ -1043,7 +1044,8 @@ class phpunit_util {
 
         $dirite = new RecursiveDirectoryIterator($dir);
         $iteite = new RecursiveIteratorIterator($dirite);
-        $regite = new RegexIterator($iteite, '|/tests/.*_test\.php$|');
+        $sep = preg_quote(DIRECTORY_SEPARATOR, '|');
+        $regite = new RegexIterator($iteite, '|'.$sep.'tests'.$sep.'.*_test\.php$|');
         $regite->rewind();
         if ($regite->valid()) {
             return true;
