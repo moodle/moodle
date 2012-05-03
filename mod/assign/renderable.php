@@ -39,7 +39,7 @@ class assign_submit_for_grading_page implements renderable {
     /**
      * Constructor
      * @param string $notifications - Any mesages to display
-     * @param int $coursemoduleid 
+     * @param int $coursemoduleid
      */
     public function __construct($notifications, $coursemoduleid) {
         $this->notifications = $notifications;

@@ -866,7 +866,7 @@ class assign {
     /**
      * Return a grade in user-friendly form, whether it's a scale or not
      *
-     * @param mixed $grade int|null 
+     * @param mixed $grade int|null
      * @return string User-friendly representation of grade
      */
     public function display_grade($grade) {
@@ -2619,7 +2619,7 @@ class assign {
     /**
      * revert to draft
      * Uses url parameter userid
-     * 
+     *
      * @param int $userid
      * @return void
      */

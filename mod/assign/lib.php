@@ -325,7 +325,7 @@ function assign_print_overview($courses, &$htmlarray) {
  * This is used by the recent activity block
  * @param mixed $course the course to print activity for
  * @param bool $viewfullnames boolean to determine whether to show full names or not
- * @param int $timestart the time the rendering started 
+ * @param int $timestart the time the rendering started
  */
 function assign_print_recent_activity($course, $viewfullnames, $timestart) {
     global $CFG, $USER, $DB, $OUTPUT;
@@ -612,7 +612,7 @@ function assign_print_recent_mod_activity($activity, $courseid, $detail, $modnam
  * Checks if a scale is being used by an assignment
  *
  * This is used by the backup code to decide whether to back up a scale
- * @param int $assignmentid 
+ * @param int $assignmentid
  * @param int $scaleid
  * @return boolean True if the scale is used by the assignment
  */
@@ -633,7 +633,7 @@ function assign_scale_used($assignmentid, $scaleid) {
  * Checks if scale is being used by any instance of assignment
  *
  * This is used to find out if scale used anywhere
- * @param int $scaleid 
+ * @param int $scaleid
  * @return boolean True if the scale is used by any assignment
  */
 function assign_scale_used_anywhere($scaleid) {
@@ -901,7 +901,7 @@ function assign_user_complete($course, $user, $coursemodule, $assign) {
 
 /**
  * Print the grade information for the assignment for this user
- * 
+ *
  * @param stdClass $course
  * @param stdClass $user
  * @param stdClass $coursemodule

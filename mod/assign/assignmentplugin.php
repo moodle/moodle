@@ -235,7 +235,7 @@ abstract class assign_plugin {
     /**
      * Should not output anything - return the result as a string so it can be consumed by webservices.
      *
-     * @param stdClass $submissionorgrade assign_submission or assign_grade 
+     * @param stdClass $submissionorgrade assign_submission or assign_grade
      *                 For submission plugins this is the submission data, for feedback plugins it is the grade data
      * @return string - return a string representation of the submission in full
      */
@@ -339,7 +339,7 @@ abstract class assign_plugin {
     /**
      * Should not output anything - return the result as a string so it can be consumed by webservices.
      *
-     * @param stdClass $submissionorgrade assign_submission or assign_grade 
+     * @param stdClass $submissionorgrade assign_submission or assign_grade
      *                 For submission plugins this is the submission data, for feedback plugins it is the grade data
      * @param bool $showviewlink Modifed to return whether or not to show a link to the full submission/feedback
      * @return string - return a string representation of the submission in full
@@ -363,7 +363,7 @@ abstract class assign_plugin {
     /**
      * Produce a list of files suitable for export that represent this feedback or submission
      *
-     * @param stdClass $submissionorgrade assign_submission or assign_grade 
+     * @param stdClass $submissionorgrade assign_submission or assign_grade
      *                 For submission plugins this is the submission data, for feedback plugins it is the grade data
      * @return array - return an array of files indexed by filename
      */
@@ -425,7 +425,7 @@ abstract class assign_plugin {
 
     /**
      * Formatting for log info
-     * 
+     *
      * @param stdClass $submissionorgrade assign_submission or assign_grade The new submission or grade
      * @return string
      */

@@ -131,7 +131,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
         }
         return '';
     }
-  
+
     /**
      * Return true if this plugin can upgrade an old Moodle 2.2 assignment of this type
      * and version.
@@ -147,7 +147,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
         }
         return false;
     }
-    
+ 
     /**
      * Upgrade the settings from the old assignment to the new plugin based one
      *
