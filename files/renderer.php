@@ -266,6 +266,38 @@ class core_files_renderer extends plugin_renderer_base {
     }
 
     /**
+     * FileManager JS template for displaying 'Make new folder' dialog.
+     *
+     * Must be wrapped in an element, CSS for this element must define width and height of the window;
+     *
+     * Must have one input element with type="text" (for users to enter the new folder name);
+     *
+     * content of element with class 'fp-dlg-curpath' will be replaced with current path where
+     * new folder is about to be created;
+     * elements with classes 'fp-dlg-butcreate' and 'fp-dlg-butcancel' will hold onclick events;
+     *
+     * @return string
+     */
+    private function fm_js_template_mkdir() {
+        $rv = '<div class="fp-mkdir-dlg">
+            <span class="{!}fp-dlg-curpath"></span>
+            <input type="text">
+            <button class="{!}fp-dlg-butcreate">'.get_string('create').'</button><button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
+</div>';
+        return preg_replace('/\{\!\}/', '', $rv);
+    }
+
+    /**
+     * FileManager JS template for error/info message displayed as a separate popup window.
+     *
+     * @see fp_js_template_message()
+     * @return string
+     */
+    private function fm_js_template_message() {
+        return $this->fp_js_template_message();
+    }
+
+    /**
      * FileManager JS template for window with file information/actions.
      *
      * All content must be enclosed in an element with class 'fp-select', CSS for this class
