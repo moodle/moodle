@@ -45,6 +45,9 @@ class phpunit_util {
     /** @var array original structure of all database tables */
     protected static $tablestructure = null;
 
+    /** @var array original structure of all database tables */
+    protected static $sequencenames = null;
+
     /** @var array An array of original globals, restored after each test */
     protected static $globals = array();
 
@@ -195,6 +198,33 @@ class phpunit_util {
     }
 
     /**
+     * Returns the names of sequences for each autoincrementing id field in all standard tables.
+     * @static
+     * @return array $table=>$sequencename
+     */
+    public static function get_sequencenames() {
+        global $DB;
+
+        if (isset(self::$sequencenames)) {
+            return self::$sequencenames;
+        }
+
+        if (!$structure = self::get_tablestructure()) {
+            return array();
+        }
+
+        self::$sequencenames = array();
+        foreach ($structure as $table=>$ignored) {
+            $name = $DB->get_manager()->generator->getSequenceFromDB(new xmldb_table($table));
+            if ($name !== false) {
+                self::$sequencenames[$table] = $name;
+            }
+        }
+
+        return self::$sequencenames;
+    }
+
+    /**
      * Returns list of tables that are unmodified and empty.
      *
      * @static
@@ -242,6 +272,21 @@ class phpunit_util {
                     continue;
                 }
                 $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
+                $empties[$table] = $table;
+            }
+            $rs->close();
+            return $empties;
+
+        } else if ($dbfamily === 'oracle') {
+            $sequences = phpunit_util::get_sequencenames();
+            $sequences = array_map('strtoupper', $sequences);
+            $lookup = array_flip($sequences);
+            $empties = array();
+            list($seqs, $params) = $DB->get_in_or_equal($sequences);
+            $sql = "SELECT sequence_name FROM user_sequences WHERE last_number = 1 AND sequence_name $seqs";
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $seq) {
+                $table = $lookup[$seq->sequence_name];
                 $empties[$table] = $table;
             }
             $rs->close();
@@ -306,27 +351,65 @@ class phpunit_util {
                 }
             }
             $rs->close();
+            $prefix = $DB->get_prefix();
             foreach ($data as $table=>$records) {
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     if (isset($sequences[$table])) {
                         if (empty($records)) {
-                            $lastid = 0;
+                            $nextid = 1;
                         } else {
                             $lastrecord = end($records);
-                            $lastid = $lastrecord->id;
+                            $nextid = $lastrecord->id + 1;
                         }
-                        if ($sequences[$table] != $lastid +1) {
-                            $DB->get_manager()->reset_sequence($table);
+                        if ($sequences[$table] != $nextid) {
+                            $DB->change_database_structure("ALTER TABLE {$prefix}{$table} AUTO_INCREMENT = $nextid");
                         }
 
                     } else {
+                        // some problem exists, fallback to standard code
                         $DB->get_manager()->reset_sequence($table);
                     }
                 }
             }
 
+        } else if ($dbfamily === 'oracle') {
+            $sequences = phpunit_util::get_sequencenames();
+            $sequences = array_map('strtoupper', $sequences);
+            $lookup = array_flip($sequences);
+
+            $current = array();
+            list($seqs, $params) = $DB->get_in_or_equal($sequences);
+            $sql = "SELECT sequence_name, last_number FROM user_sequences WHERE sequence_name $seqs";
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $seq) {
+                $table = $lookup[$seq->sequence_name];
+                $current[$table] = $seq->last_number;
+            }
+            $rs->close();
+
+            foreach ($data as $table=>$records) {
+                if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
+                    $lastrecord = end($records);
+                    if ($lastrecord) {
+                        $nextid = $lastrecord->id + 1;
+                    } else {
+                        $nextid = 1;
+                    }
+                    if (!isset($current[$table])) {
+                        $DB->get_manager()->reset_sequence($table);
+                    } else if ($nextid == $current[$table]) {
+                        continue;
+                    }
+                    // reset as fast as possible - alternatively we could use http://stackoverflow.com/questions/51470/how-do-i-reset-a-sequence-in-oracle
+                    $seqname = $sequences[$table];
+                    $cachesize = $DB->get_manager()->generator->sequence_cache_size;
+                    $DB->change_database_structure("DROP SEQUENCE $seqname");
+                    $DB->change_database_structure("CREATE SEQUENCE $seqname START WITH $nextid INCREMENT BY 1 NOMAXVALUE CACHE $cachesize");
+                }
+            }
+
         } else {
-            // note: does mssql and oracle support any kind of faster reset?
+            // note: does mssql support any kind of faster reset?
             if (is_null($empties)) {
                 $empties = self::guess_unmodified_empty_tables();
             }
