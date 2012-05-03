@@ -352,6 +352,14 @@ class plugin_manager {
                 'offline', 'online', 'upload', 'uploadsingle'
             ),
 
+            'assignsubmission' => array(
+                'comments', 'file', 'onlinetext'
+            ),
+
+            'assignfeedback' => array(
+                'comments', 'file'
+            ),
+
             'auth' => array(
                 'cas', 'db', 'email', 'fc', 'imap', 'ldap', 'manual', 'mnet',
                 'nntp', 'nologin', 'none', 'pam', 'pop3', 'radius',
