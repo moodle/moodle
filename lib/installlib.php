@@ -450,6 +450,7 @@ function install_cli_database(array $options, $interactive) {
     // install core
     install_core($version, true);
     set_config('release', $release);
+    set_config('branch', $branch);
 
     // install all plugins types, local, etc.
     upgrade_noncore(true);

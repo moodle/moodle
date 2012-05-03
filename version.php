@@ -36,4 +36,5 @@ $version  = 2012042700.00;              // YYYYMMDD      = weekly release date o
 
 $release  = '2.3dev (Build: 20120427)'; // Human-friendly version name
 
+$branch = '23';                         // this version's branch
 $maturity = MATURITY_ALPHA;             // this version's maturity level
