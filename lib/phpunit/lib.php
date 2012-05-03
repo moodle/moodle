@@ -283,7 +283,7 @@ class phpunit_util {
             $lookup = array_flip($sequences);
             $empties = array();
             list($seqs, $params) = $DB->get_in_or_equal($sequences);
-            $sql = "SELECT sequence_name FROM dba_sequences WHERE last_number = 1 AND sequence_name $seqs";
+            $sql = "SELECT sequence_name FROM user_sequences WHERE last_number = 1 AND sequence_name $seqs";
             $rs = $DB->get_recordset_sql($sql, $params);
             foreach ($rs as $seq) {
                 $table = $lookup[$seq->sequence_name];
@@ -379,7 +379,7 @@ class phpunit_util {
 
             $current = array();
             list($seqs, $params) = $DB->get_in_or_equal($sequences);
-            $sql = "SELECT sequence_name, last_number FROM dba_sequences WHERE sequence_name $seqs";
+            $sql = "SELECT sequence_name, last_number FROM user_sequences WHERE sequence_name $seqs";
             $rs = $DB->get_recordset_sql($sql, $params);
             foreach ($rs as $seq) {
                 $table = $lookup[$seq->sequence_name];
