@@ -5804,8 +5804,15 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
     $extpage = $adminroot->locate($section, true);
 
     if (empty($extpage) or !($extpage instanceof admin_externalpage)) {
-        print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
-        die;
+        // The requested section isn't in the admin tree
+        // It could be because the user has inadequate capapbilities or because the section doesn't exist
+        if (!has_capability('moodle/site:config', get_system_context())) {
+            // The requested section could depend on a different capability
+            // but most likely the user has inadequate capabilities
+            print_error('accessdenied', 'admin');
+        } else {
+            print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
+        }
     }
 
     // this eliminates our need to authenticate on the actual pages
