@@ -3,7 +3,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     // The CSS selectors we use
     var CSS = {
         ACTIVITYLI : 'li.activity',
-        COMMANDSPAN : 'span.commands',
+        COMMANDSPAN : 'li.activity span.commands',
         CONTENTAFTERLINK : 'div.contentafterlink',
         DELETE : 'a.editing_delete',
         DIMCLASS : 'dimmed',
