@@ -86,7 +86,7 @@ class quiz_responses_report extends quiz_attempts_report {
             raise_memory_limit(MEMORY_EXTRA);
         }
 
-        $this->process_actions($quiz, $currentgroup, $groupstudents, $allowed);
+        $this->process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $options->get_url());
 
         // Start output.
         if (!$table->is_downloading()) {

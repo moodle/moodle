@@ -681,7 +681,7 @@ function quiz_update_all_final_grades($quiz) {
             $join
             WHERE
                 $where
-                quiza.quiza.state = :statefinished AND
+                quiza.state = :statefinished AND
                 quiza.preview = 0 AND
                 quiza.quiz = :quizid3
             GROUP BY quiza.userid";
@@ -697,7 +697,7 @@ function quiz_update_all_final_grades($quiz) {
                 SELECT DISTINCT userid
                 FROM {quiz_attempts} quiza2
                 WHERE
-                    quiza2.quiza.state = :statefinished2 AND
+                    quiza2.state = :statefinished2 AND
                     quiza2.preview = 0 AND
                     quiza2.quiz = :quizid2
             ) users

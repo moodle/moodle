@@ -78,7 +78,7 @@ class quiz_overview_report extends quiz_attempts_report {
             raise_memory_limit(MEMORY_EXTRA);
         }
 
-        $this->process_actions($quiz, $currentgroup, $groupstudents, $allowed);
+        $this->process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $options->get_url());
 
         // Start output.
         if (!$table->is_downloading()) {
@@ -266,15 +266,15 @@ class quiz_overview_report extends quiz_attempts_report {
         return true;
     }
 
-    protected function process_actions($quiz, $currentgroup, $groupstudents, $allowed) {
-        parent::process_actions($quiz, $currentgroup, $groupstudents, $allowed);
+    protected function process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $redirecturl) {
+        parent::process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $redirecturl);
 
         if (empty($currentgroup) || $groupstudents) {
             if (optional_param('regrade', 0, PARAM_BOOL) && confirm_sesskey()) {
                 if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
                     require_capability('mod/quiz:regrade', $this->context);
                     $this->regrade_attempts($quiz, false, $groupstudents, $attemptids);
-                    redirect($options->get_url());
+                    redirect($redirecturl, '', 5);
                 }
             }
         }
@@ -282,17 +282,17 @@ class quiz_overview_report extends quiz_attempts_report {
         if (optional_param('regradeall', 0, PARAM_BOOL) && confirm_sesskey()) {
             require_capability('mod/quiz:regrade', $this->context);
             $this->regrade_attempts($quiz, false, $groupstudents);
-            redirect($options->get_url(), '', 5);
+            redirect($redirecturl, '', 5);
 
         } else if (optional_param('regradealldry', 0, PARAM_BOOL) && confirm_sesskey()) {
             require_capability('mod/quiz:regrade', $this->context);
             $this->regrade_attempts($quiz, true, $groupstudents);
-            redirect($options->get_url(), '', 5);
+            redirect($redirecturl, '', 5);
 
         } else if (optional_param('regradealldrydo', 0, PARAM_BOOL) && confirm_sesskey()) {
             require_capability('mod/quiz:regrade', $this->context);
             $this->regrade_attempts_needing_it($quiz, $groupstudents);
-            redirect($options->get_url(), '', 5);
+            redirect($redirecturl, '', 5);
         }
     }
 
