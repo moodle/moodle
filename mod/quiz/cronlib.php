@@ -87,60 +87,44 @@ class mod_quiz_overdue_attempt_updater {
 
         // This query should have all the quiz_attempts columns.
         return $DB->get_recordset_sql("
-         SELECT quiza.id,
-                quiza.quiz,
-                quiza.userid,
-                quiza.attempt,
-                quiza.uniqueid,
-                quiza.layout,
-                quiza.currentpage,
-                quiza.preview,
-                quiza.state,
-                quiza.timestart,
-                quiza.timefinish,
-                quiza.timemodified,
-                quiza.sumgrades,
+         SELECT quiza.*,
+                group_by_results.usertimeclose,
+                group_by_results.usertimelimit
+
+           FROM (
+
+         SELECT iquiza.id AS attemptid,
+                quiz.course,
+                quiz.graceperiod,
                 COALESCE(quo.timeclose, MAX(qgo.timeclose), quiz.timeclose) AS usertimeclose,
                 COALESCE(quo.timelimit, MAX(qgo.timelimit), quiz.timelimit) AS usertimelimit
 
-           FROM {quiz_attempts} quiza
-           JOIN {quiz} quiz ON quiz.id = quiza.quiz
-      LEFT JOIN {quiz_overrides} quo ON quo.quiz = quiz.id AND quo.userid = quiza.userid
+           FROM {quiz_attempts} iquiza
+           JOIN {quiz} quiz ON quiz.id = iquiza.quiz
+      LEFT JOIN {quiz_overrides} quo ON quo.quiz = quiz.id AND quo.userid = iquiza.userid
       LEFT JOIN {quiz_overrides} qgo ON qgo.quiz = quiz.id
-      LEFT JOIN {groups_members} gm ON gm.userid = quiza.userid AND gm.groupid = qgo.groupid
+      LEFT JOIN {groups_members} gm ON gm.userid = iquiza.userid AND gm.groupid = qgo.groupid
 
-          WHERE quiza.state IN ('inprogress', 'overdue')
-            AND quiza.timemodified >= :processfrom
-            AND quiza.timemodified < :processto
+          WHERE iquiza.state IN ('inprogress', 'overdue')
+            AND iquiza.timemodified >= :processfrom
+            AND iquiza.timemodified < :processto
 
-       GROUP BY quiza.id,
-                quiza.quiz,
-                quiza.userid,
-                quiza.attempt,
-                quiza.uniqueid,
-                quiza.layout,
-                quiza.currentpage,
-                quiza.preview,
-                quiza.state,
-                quiza.timestart,
-                quiza.timefinish,
-                quiza.timemodified,
-                quiza.sumgrades,
+       GROUP BY iquiza.id,
                 quiz.course,
                 quiz.timeclose,
                 quiz.timelimit,
                 quiz.graceperiod,
                 quo.timeclose,
                 quo.timelimit
+        ) group_by_results
+           JOIN {quiz_attempts} quiza ON quiza.id = group_by_results.attemptid
 
-         HAVING (quiza.state = 'inprogress' AND (
-                        :timenow1 > COALESCE(quo.timeclose, MAX(qgo.timeclose), quiz.timeclose)
-                     OR :timenow2 > timestart + COALESCE(quo.timelimit, MAX(qgo.timelimit), quiz.timelimit)))
-             OR (quiza.state = 'overdue' AND (
-                        :timenow3 > graceperiod + COALESCE(quo.timeclose, MAX(qgo.timeclose), quiz.timeclose)
-                     OR :timenow4 > timestart + graceperiod + COALESCE(quo.timelimit, MAX(qgo.timelimit), quiz.timelimit)))
+          WHERE (state = 'inprogress' AND (:timenow1 > usertimeclose OR
+                                           :timenow2 > quiza.timestart + usertimelimit))
+             OR (state = 'overdue'    AND (:timenow3 > graceperiod + usertimeclose OR
+                                           :timenow4 > graceperiod + quiza.timestart + usertimelimit))
 
-       ORDER BY quiz.course, quiza.quiz",
+       ORDER BY course, quiz",
 
                 array('processfrom' => $processfrom, 'processto' => $processto,
                     'timenow1' => $processto, 'timenow2' => $processto,
