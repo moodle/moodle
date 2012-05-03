@@ -553,6 +553,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 echo $this->stealth_section_footer();
             }
 
+            echo $this->end_section_list();
+
+            // Print the add section link
             $straddsection = get_string('addanadditionalsection', 'moodle');
             echo html_writer::start_tag('div', array('class' => 'mdl-align'));
             echo $this->output->action_link(
@@ -562,9 +565,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                     array('class' => 'addsectionlink')
             );
             echo html_writer::end_tag('div');
+        } else {
+            echo $this->end_section_list();
         }
-
-        echo $this->end_section_list();
 
     }
 }
