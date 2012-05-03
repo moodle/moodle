@@ -331,7 +331,6 @@ class gradingform_guide_controller extends gradingform_controller {
             }
         }
         $comments->close();
-
         if (empty($this->moduleinstance)) { // Only set if empty.
             $modulename = $this->get_component();
             $context = $this->get_context();
@@ -339,7 +338,8 @@ class gradingform_guide_controller extends gradingform_controller {
                 $dbman = $DB->get_manager();
                 $modulename = substr($modulename, 4);
                 if ($dbman->table_exists($modulename)) {
-                    $this->moduleinstance = $DB->get_record($modulename, array('id' => $context->instanceid));
+                    $cm = get_coursemodule_from_id('assignment', $context->instanceid);
+                    $this->moduleinstance = $DB->get_record($modulename, array("id"=>$cm->instance));
                 }
             }
         }

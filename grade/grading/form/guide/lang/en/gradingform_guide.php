@@ -55,7 +55,7 @@ $string['err_nomaxscore'] = 'Criterion max score can not be empty';
 $string['err_noshortname'] = 'Criterion name can not be empty';
 $string['err_scoreinvalid'] = 'The score given to {$a->criterianame} is not valid, the max score is: {$a->maxscore}';
 $string['gradingof'] = '{$a} grading';
-$string['guidemappingexplained'] = 'WARNING: Your marking guide has a maximum grade of <b>{$a->maxscore} points</b> but the maximum grade set in your activity is {$a->modulegrade}  The maximum score set in your marking guide will be scaled up to the maximum grade in the module.<br />
+$string['guidemappingexplained'] = 'WARNING: Your marking guide has a maximum grade of <b>{$a->maxscore} points</b> but the maximum grade set in your activity is {$a->modulegrade}  The maximum score set in your marking guide will be scaled to the maximum grade in the module.<br />
     Intermediate scores will be converted respectively and rounded to the nearest available grade.';
 $string['guidenotcompleted'] = 'Please provide a valid grade for each criterion';
 $string['guideoptions'] = 'Marking guide options';
