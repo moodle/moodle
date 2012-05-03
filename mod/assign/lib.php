@@ -419,7 +419,7 @@ function assign_print_recent_activity($course, $viewfullnames, $timestart) {
 
 /**
  * Returns all assignments since a given time
- * 
+ *
  * @param array $activities The activity information is returned in this array
  * @param int $index The current index in the activities array
  * @param int $timestart The earliest activity to show
