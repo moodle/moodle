@@ -42,19 +42,19 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * Generate the starting container html for a list of sections
      * @return string HTML to output.
      */
-    abstract public function start_section_list();
+    abstract protected function start_section_list();
 
     /**
      * Generate the closing container html for a list of sections
      * @return string HTML to output.
      */
-    abstract public function end_section_list();
+    abstract protected function end_section_list();
 
     /**
      * Generate the title for this section page
      * @return string the page title
      */
-    abstract public function page_title();
+    abstract protected function page_title();
 
     /**
      * Generate the content to displayed on the right part of a section
@@ -65,7 +65,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param bool $onsectionpage true if being printed on a section page
      * @return string HTML to output.
      */
-    public function section_right_content($section, $course, $onsectionpage) {
+    protected function section_right_content($section, $course, $onsectionpage) {
         $o = $this->output->spacer();
 
         if ($section->section != 0) {
@@ -87,7 +87,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param bool $onsectionpage true if being printed on a section page
      * @return string HTML to output.
      */
-    public function section_left_content($section, $course, $onsectionpage) {
+    protected function section_left_content($section, $course, $onsectionpage) {
         $o = $this->output->spacer();
 
         if ($section->section != 0) {
@@ -109,7 +109,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param bool $onsectionpage true if being printed on a section page
      * @return string HTML to output.
      */
-    public function section_header($section, $course, $onsectionpage) {
+    protected function section_header($section, $course, $onsectionpage) {
         global $PAGE;
 
         $o = '';
@@ -177,7 +177,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      *
      * @return string HTML to output.
      */
-    public function section_footer() {
+    protected function section_footer() {
         $o = html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
 
@@ -192,7 +192,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param bool $onsectionpage true if being printed on a section page
      * @return array of links with edit controls
      */
-    public function section_edit_controls($course, $section, $onsectionpage = false) {
+    protected function section_edit_controls($course, $section, $onsectionpage = false) {
         global $PAGE;
 
         if (!$PAGE->user_is_editing()) {
@@ -265,7 +265,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param stdClass $course The course entry from DB
      * @return string HTML to output.
      */
-    public function section_summary($section, $course) {
+    protected function section_summary($section, $course) {
 
         $o = '';
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section));
@@ -292,7 +292,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param int $sectionno The section number in the coruse which is being dsiplayed
      * @return string HTML to output.
      */
-    public function course_activity_clipboard($course, $sectionno = 0) {
+    protected function course_activity_clipboard($course, $sectionno = 0) {
         global $USER;
 
         $o = '';
@@ -324,7 +324,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param int $sectionno The section number in the coruse which is being dsiplayed
      * @return string HTML to output.
      */
-    public function get_nav_links($course, $sections, $sectionno) {
+    protected function get_nav_links($course, $sections, $sectionno) {
         // FIXME: This is really evil and should by using the navigation API.
         $canviewhidden = has_capability('moodle/course:viewhiddensections', context_course::instance($course->id))
             or !$course->hiddensections;
@@ -363,7 +363,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param int $sectionno The section number in the coruse which is being dsiplayed
      * @return string HTML to output.
      */
-    public function stealth_section_header($sectionno) {
+    protected function stealth_section_header($sectionno) {
         $o = '';
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix orphaned hidden'));
         $o.= html_writer::tag('div', '', array('class' => 'left side'));
@@ -378,7 +378,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      *
      * @return string HTML to output.
      */
-    public function stealth_section_footer() {
+    protected function stealth_section_footer() {
         $o = html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
         return $o;
@@ -390,7 +390,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param int $sectionno The section number in the coruse which is being dsiplayed
      * @return string HTML to output.
      */
-    public function section_hidden($sectionno) {
+    protected function section_hidden($sectionno) {
         $o = '';
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix hidden'));
         $o.= html_writer::tag('div', '', array('class' => 'left side'));

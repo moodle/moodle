@@ -39,7 +39,7 @@ class format_topics_renderer extends format_section_renderer_base {
      * Generate the starting container html for a list of sections
      * @return string HTML to output.
      */
-    public function start_section_list() {
+    protected function start_section_list() {
         return html_writer::start_tag('ul', array('class' => 'topics'));
     }
 
@@ -47,7 +47,7 @@ class format_topics_renderer extends format_section_renderer_base {
      * Generate the closing container html for a list of sections
      * @return string HTML to output.
      */
-    public function end_section_list() {
+    protected function end_section_list() {
         return html_writer::end_tag('ul');
     }
 
@@ -55,7 +55,7 @@ class format_topics_renderer extends format_section_renderer_base {
      * Generate the title for this section page
      * @return string the page title
      */
-    public function page_title() {
+    protected function page_title() {
         return get_string('topicoutline');
     }
 
@@ -67,7 +67,7 @@ class format_topics_renderer extends format_section_renderer_base {
      * @param bool $onsectionpage true if being printed on a section page
      * @return array of links with edit controls
      */
-    public function section_edit_controls($course, $section, $onsectionpage = false) {
+    protected function section_edit_controls($course, $section, $onsectionpage = false) {
         global $PAGE;
 
         if (!$PAGE->user_is_editing()) {
@@ -112,7 +112,7 @@ class format_topics_renderer extends format_section_renderer_base {
      * @param bool $onsectionpage true if being printed on a section page
      * @return string HTML to output.
      */
-    public function section_left_content($section, $course, $onsectionpage) {
+    protected function section_left_content($section, $course, $onsectionpage) {
         $o = parent::section_left_content($section, $course, $onsectionpage);
 
         if ($section->section > 0) {

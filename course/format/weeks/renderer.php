@@ -39,7 +39,7 @@ class format_weeks_renderer extends format_section_renderer_base {
      * Generate the starting container html for a list of sections
      * @return string HTML to output.
      */
-    public function start_section_list() {
+    protected function start_section_list() {
         return html_writer::start_tag('ul', array('class' => 'weeks'));
     }
 
@@ -47,7 +47,7 @@ class format_weeks_renderer extends format_section_renderer_base {
      * Generate the closing container html for a list of sections
      * @return string HTML to output.
      */
-    public function end_section_list() {
+    protected function end_section_list() {
         return html_writer::end_tag('ul');
     }
 
@@ -55,7 +55,7 @@ class format_weeks_renderer extends format_section_renderer_base {
      * Generate the title for this section page
      * @return string the page title
      */
-    public function page_title() {
+    protected function page_title() {
         return get_string('weeklyoutline');
     }
 }
