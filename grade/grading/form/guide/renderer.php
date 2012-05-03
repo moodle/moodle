@@ -625,7 +625,7 @@ class gradingform_guide_renderer extends plugin_renderer_base {
         if (!$scores) {
             return $html;
         }
-        if (isset($scores['modulegrade']) && $scores['maxscore'] < $scores['modulegrade']) {
+        if (isset($scores['modulegrade']) && $scores['maxscore'] != $scores['modulegrade']) {
             $html .= $this->box(html_writer::tag('div', get_string('guidemappingexplained', 'gradingform_guide', (object)$scores))
                 , 'generalbox gradingform_guide-error');
         }
