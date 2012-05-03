@@ -33,12 +33,12 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Administratorski direktorijum';
 $string['availablelangs'] = 'Spisak dostupnih jezika';
 $string['chooselanguagehead'] = 'Izaberite jezik';
-$string['chooselanguagesub'] = 'Molimo izaberite jezik koji će se koristiti samo tokom instalacije. Kasnije ćete moći da izaberete jezička podešavanja na nivou sajta i korisnika.';
+$string['chooselanguagesub'] = 'Molimo izaberite jezik koji će se koristiti tokom instalacije. Ovaj jezik će, takođe, biti korišćen na nivou sajta kao podrazumevani, mada to naknadno može biti promenjeno.';
 $string['clialreadyconfigured'] = 'Datoteka config.php već postoji. Molimo, koristite admin/cli/install_database.php ako želite da instalirate ovaj sajt.';
-$string['clialreadyinstalled'] = 'Datoteka config.php već postoji. Upotrebite komandu admin/cli/upgrade.php ako želite da ažurirate svoj sajt.';
+$string['clialreadyinstalled'] = 'Datoteka config.php već postoji. Upotrebite komandu admin/cli/upgrade.php ako želite da nadogradite svaj sajt.';
 $string['cliinstallheader'] = 'Moodle {$a} program za instalaciju iz komandne linije';
 $string['databasehost'] = 'Server baze podataka :';
-$string['databasename'] = 'Ima baze podataka :';
+$string['databasename'] = 'Ime baze podataka';
 $string['databasetypehead'] = 'Izaberi drajver baze podataka';
 $string['dataroot'] = 'Direktorijum podataka';
 $string['datarootpermission'] = 'Ovlašćenja nad direktorijumom podataka';
@@ -47,42 +47,45 @@ $string['dirroot'] = 'Moodle direktorijum';
 $string['environmenthead'] = 'Proveravanje Vašeg okruženja...';
 $string['environmentsub2'] = 'Svaka verzija Moodlea ima minimum zahteva po pitanju odgovarajuće PHP verѕije i nekoliko obaveznih PHP ekstenzija.
 Puna provera okruženja se vrši pre svake instalacije ili ažuriranja postojeće verzije. Ukoliko ne znate kako da instalirate novu verziju ili omogućite PHP ektenzije kontaktirajte Vašeg server administratora.';
-$string['errorsinenvironment'] = 'Greške u okruženju';
+$string['errorsinenvironment'] = 'Provera okruženja nije prošla!';
 $string['installation'] = 'Instalacija';
-$string['langdownloaderror'] = 'Nažalost jezik "{$a}" nije instaliran. Proces instalacije biće nastavljen na engleskom jeziku.';
-$string['memorylimithelp'] = '<p>PHP ograničenje memorije za Vaš server je trenutno podešeno na {$a}.</p>
+$string['langdownloaderror'] = 'Nažalost, jezik "{$a}" se ne može preuzeti. Proces instalacije biće nastavljen na engleskom jeziku.';
+$string['memorylimithelp'] = '<p>PHP ograničenje memorije za vaš server je trenutno podešeno na {$a}.</p>
 
-<p>Ovo može da prouzrokuje kasnije memorijske probleme Vašeg Moodle sistema, posebno ako imate mnogo dozvoljenih modula i/ili mnogo korisnika.</p>
+<p>Ovo podešavanje može kasnije da prouzrokuje da Moodle ima problema sa memorijom, posebno ako imate mnogo aktiviranih modula i/ili mnogo korisnika.</p>
 
-<p>Preporučujemo da konfigurišete PHP sa višim ograničenjem ako je moguće, recimo 16M. Postoji nekoliko načina da se to uradi. Pokušajte:</p><ol>
-<li>Ako možete, rekompajlirajte PHP sa <i>--enable-memory-limit</i>. Ovo će dozvoliti Moodle sistemu da postavi memorijsko ograničenje sam za sebe.</li>
-<li>Ako imate pristup Vašoj php.ini datoteci, možete promeniti <b>memory_limit</b> podešavanje u recimo 16M. Ako nemate pristup toj datoteci možete pitati svog administratora da to uradi za Vas.</li>
-<li>Na nekim PHP serverima možete kreirati .htaccess datoteku u Moodle direktorijumu koja sadrži red:
-<p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p>Kakogod, na nekim serverima će to sprečiti prikazivanje <b>svih</b> PHP stranica (biće Vam prikazana poruka o grešci umesto svake stranice), pa ćete sa njih morati ukloniti .htaccess datoteku.</p></li>
+<p>Preporučujemo da konfigurišete PHP sa višim ograničenjem ako je moguće, recimo 40M. Postoji nekoliko načina na koje to može da se to uradi:</p><ol>
+<li>Ako možete, rekompajlirajte PHP sa <i>--enable-memory-limit</i>. Ovo će omogućiti Moodle sistemu da sam postavi memorijsko ograničenje.</li>
+<li>Ako imate pristup svojoj php.ini datoteci, možete promeniti vrednost za <b>memory_limit</b> na, recimo, 40M. Ako nemate pristup toj datoteci možete pitati svog administratora da to uradi umesto vas.</li>
+<li>Na nekim PHP serverima možete da kreirate .htaccess datoteku u Moodle direktorijumu koja sadrži red:
+<blockquote><div>php_value memory_limit 40M</div></blockquote>
+<p>Međutim, na nekim serverima to će sprečiti prikazivanje <b>svih</b> PHP stranica (videćete poruku o grešci kada budete gledali stranice), pa ćete sa tih servera morati da uklonite .htaccess datoteku.</p></li>
 </ol>';
 $string['paths'] = 'Putanje';
-$string['pathserrcreatedataroot'] = 'Instalciona procedura ne može da kreira direktorijum baze podataka ({$a->dataroot})';
+$string['pathserrcreatedataroot'] = 'Instalaciona procedura ne može da kreira direktorijum baze podataka ({$a->dataroot}).';
 $string['pathshead'] = 'Potvrdi putanje';
 $string['pathsrodataroot'] = 'U direktorijum za podatke nije moguć upis';
-$string['pathsroparentdataroot'] = 'U nadređeni direktorijum ({$a->parent}) nije moguć upis. Direktorijum za podatke ({$a->dataroot}) ne može kreirati instalacioni program.';
-$string['pathssubadmindir'] = 'Nekoliko sajtova za Webhosting koristi /admin kao specijalni URL za pristup kontrolnom panelu. Na žalost, to može da da dovede do konflikta sa standardnim direktorijumom u kojem su smešten Moodle administratorske stranice. Ovaj problem možete rešiti tako što ćete tokom instalacije preimenovati admin direktorijum u, na primer <em>moodleadmin</em>.';
+$string['pathsroparentdataroot'] = 'Nije moguć upis u nadređeni direktorijum ({$a->parent}).  Instalacioni program ne može da kreira direktorijum za podatke ({$a->dataroot}).';
+$string['pathssubadmindir'] = 'Vrlo mali broj veb servera koristi /admin kao specijalni URL za pristup raznim podešavanjima (kontrolni panel i sl.). Nažalost, to dovodi do konflikta sa standardnom lokacijom za administratorske stranice u Moodleu. Ovaj problem možete rešiti tako što ćete promeniti ime administratorskog direktorijuma u vašoj instalaciji, i ovde upisati to novo ime. Na primer <em>moodleadmin</em>. Ovo podešavanje će prepraviti administratorske linkove u Moodle sistemu.';
 $string['pathssubdataroot'] = 'Potreban vam je prostor gde će Moodle čuvati postavnjene datoteke. Ovaj direktorijum bi trebalo da bude podešen tako da se može čitati i u njega upisivati od strane korisnika Web servera (obično \'nobody\' ili \'apache\'), ali istovremeno mora biti dostupan direktno preko Weba. Ukoliko ovaj direktorijum ne postoji Moodle će pikušati da ga kreira tokom instalacije,';
-$string['pathssubdirroot'] = 'Puna putanja do direktotijuma za instalaciju Moodlea. Promenite samo ukoliko želite da koristite sinbolične linkove.';
-$string['pathssubwwwroot'] = 'Puna ver adresa preko koje će se pristupati Moodleu. Nije moguće pristupati Moodleu koristeći višnj adresa. Ukoliko Vaš sajt ima više javnih adresa onda na svima morate da podesite permanentnu direkciju ka jednoj adresi. Ukoliko je Vaš sajt dostupam sa Interneta ali i iz Intranet okružeanja koristite javnu adresu i podesite DNS tako da i Intranet korisnici mogu da koriste tu javnu adresu.';
+$string['pathssubdirroot'] = 'Puna putanja do direktotijuma za instalaciju Moodlea.';
+$string['pathssubwwwroot'] = 'Puna veb adresa putem koje će se pristupati Moodleu. Nije moguće pristupati Moodleu koristeći više adresa. 
+Ako vaš sajt ima više javnih adresa onda na svima morate da podesite permanentne redirekcije osim za ovu. 
+Ako je vaš sajt dostupan sa interneta ali i iz intranet okruženja ovde upotrebite javnu adresu i podesite DNS tako da i intranet korisnici mogu da koriste javnu adresu.
+Ako je adresa netačna promenite URL u svom veb čitaču da biste ponovo pokrenuli instalaciju sa drugačijom vrednošću.';
 $string['pathsunsecuredataroot'] = 'Dataroot lokacija nije bezbedna';
 $string['pathswrongadmindir'] = 'Admin direktorijum ne postoji';
 $string['phpextension'] = '{$a} PHP ekstenѕija';
 $string['phpversion'] = 'PHP verzija';
-$string['phpversionhelp'] = '<p>Moodle zahteva najmanje PHP verziju 4.3.0 ili 5.1.0 (5.0.x funkcioniše uz brojne uočene probleme).</p>
-<p>Trenutno imate verziju {$a}</p>
-<p>Morate nadograditi PHP ili premestiti Moodle instalaciju na web server sa novijom verzijom PHP-a!</br>
-(U slučaju verzije 5.0.x bilo bi dobro da je snizite na 4.4.x verziju)</p>';
+$string['phpversionhelp'] = '<p>Moodle zahteva najmanje PHP verziju 4.3.0 ili 5.1.0 (5.0.x ima  brojne uočene probleme).</p>
+<p>Trenutno koristite verziju {$a}</p>
+<p>Morate nadograditi PHP ili premestiti Moodle na veb server sa novijom verzijom PHP-a!</br>
+(U slučaju verzije 5.0.x možete, takođe, da se vratite na 4.4.x verziju)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Prikazana Vam je ova stranica jer ste uspešno instalirali i pokrenuli <strong>{$a->packname} {$a->packversion}</strong> paket na Vašem računaru. Čestitamo!';
-$string['welcomep30'] = 'Ovo izdanje <strong>{$a->installername}</strong> uključuje aplikacije za kreiranje okruženja u kom će <strong>Moodle</strong> uspešno funkcionisati, konkretno:';
+$string['welcomep20'] = 'Ovu stranicu vidite zato što ste uspešno instalirali i pokrenuli <strong>{$a->packname} {$a->packversion}</strong> paket na svom serveru. Čestitamo!';
+$string['welcomep30'] = 'Ovo izdanje <strong>{$a->installername}</strong> uključuje aplikacije za kreiranje okruženja u kojem će <strong>Moodle</strong> uspešno funkcionisati, konkretno:';
 $string['welcomep40'] = 'Ovaj paket obuhvata i <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Korišćenje aplikacija iz ovog paketa je uslovljeno njhovim licencama. Kompletan <strong>{$a->installername}</strong> paket je <a href="http://www.opensource.org/docs/definition_plain.html">otvorenog koda</a> i distribuira se pod <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licencom.';
-$string['welcomep60'] = 'Naredne stranice će Vas provesti kroz nekoliko jednostavnih koraka tokom kojih ćete konfigurisati <strong>Moodle</strong> na Vašem računaru. Možete prihvatiti podrazumevana podešavanja ili ih, opciono, prilagoditi sopstvenim potrebama.';
+$string['welcomep50'] = 'Korišćenje svih aplikacija ovog paketa je uređeno njihovim licencama. Kompletan<strong>{$a->installername}</strong> paket je <a href="http://www.opensource.org/docs/definition_plain.html">otvorenog koda</a> i distribuira se pod <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licencom.';
+$string['welcomep60'] = 'Naredne stranice će vas provesti kroz nekoliko jednostavnih koraka tokom kojih ćete konfigurisati i podesiti <strong>Moodle</strong> na svom računaru. Možete prihvatiti podrazumevana podešavanja ili ih, opciono, prilagoditi sopstvenim potrebama.';
 $string['welcomep70'] = 'Kliknite na dugme za nastavak da biste dalje podešavali <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Web adresa';
