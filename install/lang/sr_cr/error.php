@@ -30,10 +30,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatelangdir'] = 'Није могуће креирање директоријума језика';
-$string['cannotcreatetempdir'] = 'Није могуће креирање привременог директоријума';
+$string['cannotcreatelangdir'] = 'Није могуће креирати директоријум језика';
+$string['cannotcreatetempdir'] = 'Није могуће креирати привремени директоријум';
 $string['cannotdownloadcomponents'] = 'Није могуће преузети компоненте.';
-$string['cannotdownloadzipfile'] = 'Није могуће преузимање архиве';
+$string['cannotdownloadzipfile'] = 'Није могуће преузети архиву';
 $string['cannotfindcomponent'] = 'Није могуће пронаћи компоненту.';
 $string['cannotsavemd5file'] = 'Није могуће сачувати md5 датотеку.';
 $string['cannotsavezipfile'] = 'Није могуће сачувти ZIP архиву.';
