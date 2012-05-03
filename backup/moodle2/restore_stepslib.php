@@ -843,20 +843,9 @@ class restore_groups_structure_step extends restore_structure_step {
     }
 
     public function process_grouping_group($data) {
-        global $DB;
-
-        $data = (object)$data;
-
-        $data->groupingid = $this->get_new_parentid('grouping'); // Use new parentid
-        $data->groupid    = $this->get_mappingid('group', $data->groupid); // Get from mappings
-
-        $params = array();
-        $params['groupingid'] = $data->groupingid;
-        $params['groupid']    = $data->groupid;
-
-        if (!$DB->record_exists('groupings_groups', $params)) {
-            $DB->insert_record('groupings_groups', $data);  // No need to set this mapping (no child info nor files)
-        }
+        global $CFG;
+        require_once($CFG->dirroot.'/group/lib.php');
+        groups_assign_grouping($this->get_new_parentid('grouping'), $this->get_mappingid('group', $data->groupid));
     }
 
     protected function after_execute() {
