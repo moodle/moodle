@@ -419,6 +419,12 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $context = context_course::instance($course->id);
         $canviewhidden = has_capability('moodle/course:viewhiddensections', $context);
 
+        if (!isset($sections[$displaysection])) {
+            // This section doesn't exist
+            print_error('unknowncoursesection', 'error', null, $course->fullname);
+            return;
+        }
+
         if (!$sections[$displaysection]->visible && !$canviewhidden) {
             if (!$course->hiddensections) {
                 echo $this->start_section_list();

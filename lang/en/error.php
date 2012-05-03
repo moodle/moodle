@@ -475,6 +475,7 @@ $string['unknownblockregion'] = 'The block region \'{$a}\' is not recognised on 
 $string['unknowncontext'] = 'This is an unknown context.';
 $string['unknowncourse'] = 'Unknown course named "{$a}"';
 $string['unknowncourseidnumber'] = 'Unknown course ID "{$a}"';
+$string['unknowncoursesection'] = 'Unknown course section in course "{$a}"';
 $string['unknowncourserequest'] = 'Unknown course request';
 $string['unknownfiletype'] = 'Error unknown filtertype';
 $string['unknowngroup'] = 'Unknown group "{$a}"';
