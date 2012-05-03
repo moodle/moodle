@@ -82,6 +82,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
      *   filenode : Node element that contains template for displaying one file
      *   callback : On click callback. The element of the fileslist array will be passed as argument
      *   rightclickcallback : On right click callback (optional).
+     *   norootrightclick : No right click for top element in the tree
      *   callbackcontext : context where callbacks are executed
      *   sortable : whether content may be sortable (in table mode)
      *   dynload : allow dynamic load for tree view
@@ -128,8 +129,13 @@ YUI.add('moodle-core_filepicker', function(Y) {
 
             el.one('.fp-filename').setContent(file_get_displayname(node));
             // TODO add tooltip with node.title or node.thumbnail_title
+            var tmpnodedata = {className:''};
             if (file_is_folder(node)) {
                 el.get('children').addClass('fp-folder');
+                tmpnodedata.className = tmpnodedata.className + ' fp-folder';
+            }
+            if (options.rightclickcallback && !node.nocontextmenu) {
+                tmpnodedata.className = tmpnodedata.className + ' fp-hascontextmenu';
             }
             if (node.icon) {
                 el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', node.icon));
@@ -138,7 +144,8 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 }
             }
             // create node
-            var tmpNode = new YAHOO.widget.HTMLNode(el.getContent(), level, false);
+            tmpnodedata.html = el.getContent();
+            var tmpNode = new YAHOO.widget.HTMLNode(tmpnodedata, level, false);
             if (node.dynamicLoadComplete) {
                 tmpNode.dynamicLoadComplete = true;
             }
@@ -157,6 +164,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
         /** initialize tree view */
         var initialize_tree_view = function() {
             var parentid = scope.one('.'+classname).get('id');
+            // TODO MDL-32736 use YUI3 gallery TreeView
             scope.treeview = new YAHOO.widget.TreeView(parentid);
             if (options.dynload) {
                 scope.treeview.setDynamicLoad(Y.bind(options.treeview_dynload, options.callbackcontext), 1);
@@ -171,6 +179,9 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 for (var i in options.filepath) {
                     if (mytreeel == null) {
                         mytreeel = mytree;
+                        if (options.norootrightclick) {
+                            mytreeel.nocontextmenu = true;
+                        }
                     } else {
                         mytreeel.children = [{}];
                         mytreeel = mytreeel.children[0];
@@ -204,16 +215,21 @@ YUI.add('moodle-core_filepicker', function(Y) {
             }
             scope.treeview.subscribe('clickEvent', function(e){
                 e.node.highlight(false);
-                Y.bind(options.callback, options.callbackcontext)(e, e.node.fileinfo);
+                var callback = options.callback;
+                if (options.rightclickcallback && e.event.target &&
+                        Y.Node(e.event.target).ancestor('.fp-treeview .fp-contextmenu', true)) {
+                    callback = options.rightclickcallback;
+                }
+                Y.bind(callback, options.callbackcontext)(e, e.node.fileinfo);
+                YAHOO.util.Event.stopEvent(e.event)
             });
-            if (options.rightclickcallback) {
-                scope.treeview.subscribe('dblClickEvent', function(e){ // TODO right click!
+            // TODO MDL-32736 support right click
+            /*if (options.rightclickcallback) {
+                scope.treeview.subscribe('dblClickEvent', function(e){
                     e.node.highlight(false);
-                    if (e.node.path != '/') {
-                        Y.bind(options.rightclickcallback, options.callbackcontext)(e, e.node.fileinfo);
-                    }
+                    Y.bind(options.rightclickcallback, options.callbackcontext)(e, e.node.fileinfo);
                 });
-            }
+            }*/
             scope.treeview.draw();
         };
         /** formatting function for table view */
@@ -236,6 +252,9 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 if (o.data['realicon']) {
                     lazyloading[el.one('.fp-icon img').generateID()] = o.data['realicon'];
                 }
+            }
+            if (options.rightclickcallback) {
+                el.get('children').addClass('fp-hascontextmenu');
             }
             // TODO add tooltip with o.data['title'] (o.value) or o.data['thumbnail_title']
             return el.getContent();
@@ -264,7 +283,13 @@ YUI.add('moodle-core_filepicker', function(Y) {
             scope.tableview.render('#'+parentid);
             scope.tableview.delegate('click', function (e, tableview) {
                 var record = tableview.getRecord(e.currentTarget.get('id'));
-                if (record) { Y.bind(options.callback, this)(e, record.getAttrs()); }
+                if (record) {
+                    var callback = options.callback;
+                    if (options.rightclickcallback && e.target.ancestor('.fp-tableview .fp-contextmenu', true)) {
+                        callback = options.rightclickcallback;
+                    }
+                    Y.bind(callback, this)(e, record.getAttrs());
+                }
             }, 'tr', options.callbackcontext, scope.tableview);
             if (options.rightclickcallback) {
                 scope.tableview.delegate('contextmenu', function (e, tableview) {
@@ -309,6 +334,9 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 if (file_is_folder(node)) {
                     element.addClass('fp-folder');
                 }
+                if (options.rightclickcallback) {
+                    element.addClass('fp-hascontextmenu');
+                }
                 var filenamediv = element.one('.fp-filename');
                 filenamediv.setContent(file_get_displayname(node));
                 var imgdiv = element.one('.fp-thumbnail'), width, height, src;
@@ -333,7 +361,13 @@ YUI.add('moodle-core_filepicker', function(Y) {
                     lazyloading[img.generateID()] = node.realthumbnail;
                 }
                 imgdiv.appendChild(img);
-                element.on('click', options.callback, options.callbackcontext, node);
+                element.on('click', function(e, nd) {
+                    if (options.rightclickcallback && e.target.ancestor('.fp-iconview .fp-contextmenu', true)) {
+                        Y.bind(options.rightclickcallback, this)(e, nd);
+                    } else {
+                        Y.bind(options.callback, this)(e, nd);
+                    }
+                }, options.callbackcontext, node);
                 if (options.rightclickcallback) {
                     element.on('contextmenu', options.rightclickcallback, options.callbackcontext, node);
                 }
@@ -807,6 +841,7 @@ M.core_filepicker.init = function(Y, options) {
                 filenode : element_template,
                 callbackcontext : this,
                 callback : function(e, node) {
+                    // TODO MDL-32736 e is not an event here but an object with properties 'event' and 'node'
                     if (!node.children) {
                         if (e.node.parent && e.node.parent.origpath) {
                             // set the current path
@@ -846,7 +881,7 @@ M.core_filepicker.init = function(Y, options) {
                 filenode : element_template,
                 callbackcontext : this,
                 callback : function(e, node) {
-                    e.preventDefault();
+                    if (e.preventDefault) {e.preventDefault();}
                     if(node.children) {
                         if (this.active_repo.dynload) {
                             this.list({'path':node.path});
@@ -880,7 +915,7 @@ M.core_filepicker.init = function(Y, options) {
                 callbackcontext : this,
                 sortable : !this.active_repo.hasmorepages,
                 callback : function(e, node) {
-                    e.preventDefault();
+                    if (e.preventDefault) {e.preventDefault();}
                     if (node.children) {
                         if (this.active_repo.dynload) {
                             this.list({'path':node.path});

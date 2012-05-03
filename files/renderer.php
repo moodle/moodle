@@ -227,21 +227,42 @@ class core_files_renderer extends plugin_renderer_base {
     /**
      * FileManager JS template for displaying one file in 'icon view' mode.
      *
+     * Except for elements described in fp_js_template_iconfilename, this template may also
+     * contain element with class 'fp-contextmenu'. If context menu is available for this
+     * file, the top element will receive the additional class 'fp-hascontextmenu' and
+     * the element with class 'fp-contextmenu' will hold onclick event for displaying
+     * the context menu.
+     *
      * @see fp_js_template_iconfilename()
      * @return string
      */
     private function fm_js_template_iconfilename() {
-        return $this->fp_js_template_iconfilename();
+        $rv = '<div class="fp-file" style="position:relative">
+        <a href="#">
+    <div class="{!}fp-thumbnail"></div>
+    <div class="{!}fp-filename"></div></a>
+    <a class="{!}fp-contextmenu" href="#">'.$this->pix_icon('i/menu', '▶').'</a>
+</div>';
+        return preg_replace('/\{\!\}/', '', $rv);
     }
 
     /**
      * FileManager JS template for displaying file name in 'table view' and 'tree view' modes.
      *
+     * Except for elements described in fp_js_template_listfilename, this template may also
+     * contain element with class 'fp-contextmenu'. If context menu is available for this
+     * file, the top element will receive the additional class 'fp-hascontextmenu' and
+     * the element with class 'fp-contextmenu' will hold onclick event for displaying
+     * the context menu.
+     *
+     * @todo MDL-32736 remove onclick="return false;"
      * @see fp_js_template_listfilename()
      * @return string
      */
     private function fm_js_template_listfilename() {
-        return $this->fp_js_template_listfilename();
+        $rv = '<span><span class="{!}fp-icon"></span> <span class="{!}fp-filename"></span>
+            <a class="{!}fp-contextmenu" href="#" onclick="return false;">'.$this->pix_icon('i/menu', '▶').'</a></span>';
+        return preg_replace('/\{\!\}/', '', $rv);
     }
 
     /**
@@ -444,7 +465,7 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string
      */
     private function fp_js_template_iconfilename() {
-        $rv = '<a class="{!}fp-file" href="#" >
+        $rv = '<a class="fp-file" href="#" >
     <div class="{!}fp-thumbnail"></div>
     <div class="{!}fp-filename"></div>
 </a>';
