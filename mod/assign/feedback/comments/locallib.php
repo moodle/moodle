@@ -147,7 +147,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
         }
         return false;
     }
- 
+
     /**
      * Upgrade the settings from the old assignment to the new plugin based one
      *
