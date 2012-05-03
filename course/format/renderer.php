@@ -56,8 +56,8 @@ abstract class format_renderer_base extends plugin_renderer_base {
 
     /**
      * Generate the content to displayed on the right part of a section
-     *
      * before course modules are included
+     *
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
      * @param bool $onsectionpage true if being printed on a section page
@@ -78,8 +78,8 @@ abstract class format_renderer_base extends plugin_renderer_base {
 
     /**
      * Generate the content to displayed on the left part of a section
-     *
      * before course modules are included
+     *
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
      * @param bool $onsectionpage true if being printed on a section page
@@ -115,7 +115,7 @@ abstract class format_renderer_base extends plugin_renderer_base {
         $sectionstyle = '';
         $linktitle = false;
 
-        if ($section->section != 0 ) {
+        if ($section->section != 0) {
             // Only in the non-general sections.
             if (!$section->visible) {
                 $sectionstyle = ' hidden';
