@@ -346,7 +346,7 @@ class backup_module_structure_step extends backup_structure_step {
              WHERE cm.id = ?', array(backup::VAR_MODID));
 
         $availability->set_source_table('course_modules_availability', array('coursemoduleid' => backup::VAR_MODID));
-        $availability_field->set_source_table('course_modules_availability_field', array('coursemoduleid' => backup::VAR_MODID));
+        $availability_field->set_source_table('course_modules_avail_fields', array('coursemoduleid' => backup::VAR_MODID));
 
         // Define annotations
         $module->annotate_ids('grouping', 'groupingid');

@@ -552,7 +552,7 @@ class restore_process_course_modules_availability extends restore_execution_step
         $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid');
         foreach($rs as $availrec) {
             $availability = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'module_availability_field', $availrec->itemid)->info;
-            $DB->insert_record('course_modules_availability_field', $availability);
+            $DB->insert_record('course_modules_avail_fields', $availability);
         }
         $rs->close();
     }

@@ -4584,7 +4584,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $DB->delete_records_select('course_modules_availability',
            'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
            array($courseid));
-    $DB->delete_records_select('course_modules_availability_field',
+    $DB->delete_records_select('course_modules_avail_fields',
            'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
            array($courseid));
 
@@ -4601,7 +4601,6 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
         $DB->delete_records('course_modules', array('id'=>$cm->id));
     }
-
     if ($showfeedback) {
         echo $OUTPUT->notification($strdeleted.get_string('type_mod_plural', 'plugin'), 'notifysuccess');
     }

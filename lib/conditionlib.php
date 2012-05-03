@@ -478,7 +478,7 @@ abstract class condition_info_base {
 SELECT
     cma.*
 FROM
-    {course_modules_availability_field} cma
+    {course_modules_avail_fields} cma
 WHERE
     coursemoduleid=?",array($cm->id));
             foreach ($conditions as $condition) {
@@ -620,7 +620,7 @@ WHERE
     public function add_user_field_condition($field, $operator, $value) {
         // Add to DB
         global $DB;
-        $DB->insert_record('course_modules_availability_field',
+        $DB->insert_record('course_modules_avail_fields',
             (object)array('coursemoduleid'=>$this->cm->id,
                 'field'=>$field,'operator'=>$operator,
                 'value'=>$value),
@@ -676,7 +676,7 @@ WHERE
         global $DB;
 
         $DB->delete_records($this->availtable, array($this->idfieldname => $this->item->id));
-        $DB->delete_records('course_modules_availability_field',
+        $DB->delete_records('course_modules_avail_fields',
             array('coursemoduleid'=>$this->cm->id));
 
         // And from memory
