@@ -433,7 +433,7 @@ class plugin_manager {
             ),
 
             'mod' => array(
-                'assignment', 'chat', 'choice', 'data', 'feedback', 'folder',
+                'assign', 'assignment', 'chat', 'choice', 'data', 'feedback', 'folder',
                 'forum', 'glossary', 'imscp', 'label', 'lesson', 'lti', 'page',
                 'quiz', 'resource', 'scorm', 'survey', 'url', 'wiki', 'workshop'
             ),
@@ -505,7 +505,7 @@ class plugin_manager {
             ),
 
             'tool' => array(
-                'bloglevelupgrade', 'capability', 'customlang', 'dbtransfer', 'generator',
+                'assignmentupgrade', 'bloglevelupgrade', 'capability', 'customlang', 'dbtransfer', 'generator',
                 'health', 'innodb', 'langimport', 'multilangupgrade', 'phpunit', 'profiling',
                 'qeupgradehelper', 'replace', 'spamcleaner', 'timezoneimport', 'unittest',
                 'uploaduser', 'unsuproles', 'xmldb'
