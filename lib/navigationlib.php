@@ -1763,8 +1763,8 @@ class global_navigation extends navigation_node {
 
         $urlfunction = 'callback_'.$courseformat.'_get_section_url';
         if (function_exists($urlfunction)) {
-            debugging('Depricated callback_'.$courseformat.'_get_section_url in use.
-                Please switch your code to use the standard section url param');
+            // This code path is deprecated but we decided not to warn developers as
+            // major changes are likely to follow in 2.4. See MDL-32504.
         } else {
             $urlfunction = null;
         }
