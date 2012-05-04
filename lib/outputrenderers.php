@@ -1922,7 +1922,7 @@ class core_renderer extends renderer_base {
 
         $class = $userpicture->class;
 
-        if ($user->picture != 1 && $user->picture != 2) {
+        if ($user->picture == 0) {
             $class .= ' defaultuserpic';
         }
 

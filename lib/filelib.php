@@ -3404,7 +3404,6 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
     // ========================================================================================================================
     } else if ($component === 'user') {
         if ($filearea === 'icon' and $context->contextlevel == CONTEXT_USER) {
-            $redirect = false;
             if (count($args) == 1) {
                 $themename = theme_config::DEFAULT_THEME;
                 $filename = array_shift($args);
@@ -3412,27 +3411,37 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 $themename = array_shift($args);
                 $filename = array_shift($args);
             }
+
+            // fix file name automatically
+            if ($filename !== 'f1' and $filename !== 'f2') {
+                $filename = 'f1';
+            }
+
             if ((!empty($CFG->forcelogin) and !isloggedin()) ||
                     (!empty($CFG->forceloginforprofileimage) && (!isloggedin() || isguestuser()))) {
                 // protect images if login required and not logged in;
                 // also if login is required for profile images and is not logged in or guest
                 // do not use require_login() because it is expensive and not suitable here anyway
-                $redirect = true;
+                $theme = theme_config::load($themename);
+                redirect($theme->pix_url('u/'.$filename, 'moodle')); // intentionally not cached
             }
-            if (!$redirect and ($filename !== 'f1' and $filename !== 'f2')) {
-                $filename = 'f1';
-                $redirect = true;
-            }
-            if (!$redirect && !$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.png')) {
+
+            if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.png')) {
                 if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg')) {
-                    $redirect = true;
+                    // bad reference - try to prevent future retries as hard as possible!
+                    if ($user = $DB->get_record('user', array('id'=>$context->instanceid), 'id, picture')) {
+                        if ($user->picture == 1 or $user->picture > 10) {
+                            $DB->set_field('user', 'picture', 0, array('id'=>$user->id));
+                        }
+                    }
+                    // no redirect here because it is not cached
+                    $theme = theme_config::load($themename);
+                    $imagefile = $theme->resolve_image_location('u/'.$filename, 'moodle');
+                    send_file($imagefile, basename($imagefile), 60*60*24*14);
                 }
             }
-            if ($redirect) {
-                $theme = theme_config::load($themename);
-                redirect($theme->pix_url('u/'.$filename, 'moodle'));
-            }
-            send_stored_file($file, 60*60*24, 0, false, array('preview' => $preview)); // enable long caching, there are many images on each page
+
+            send_stored_file($file, 60*60*24*7, 0, false, array('preview' => $preview)); // enable long caching, there are many images on each page
 
         } else if ($filearea === 'private' and $context->contextlevel == CONTEXT_USER) {
             require_login();

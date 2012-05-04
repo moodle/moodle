@@ -177,6 +177,7 @@ class user_picture implements renderable {
      * User picture constructor.
      *
      * @param stdClass $user user record with at least id, picture, imagealt, firstname and lastname set.
+     *                 It is recommended to add also contextid of the user for performance reasons.
      */
     public function __construct(stdClass $user) {
         global $DB;
@@ -312,14 +313,6 @@ class user_picture implements renderable {
             $renderer = $page->get_renderer('core');
         }
 
-        if ((!empty($CFG->forcelogin) and !isloggedin()) ||
-                (!empty($CFG->forceloginforprofileimage) && (!isloggedin() || isguestuser()))) {
-            // protect images if login required and not logged in;
-            // also if login is required for profile images and is not logged in or guest
-            // do not use require_login() because it is expensive and not suitable here anyway
-            return $renderer->pix_url('u/f1');
-        }
-
         // Sort out the filename and size. Size is only required for the gravatar
         // implementation presently.
         if (empty($this->size)) {
@@ -336,17 +329,36 @@ class user_picture implements renderable {
             $size = (int)$this->size;
         }
 
-        // First we need to determine whether the user has uploaded a profile
-        // picture of not.
-        if (!empty($this->user->deleted) or !$context = context_user::instance($this->user->id, IGNORE_MISSING)) {
-            $hasuploadedfile = false;
-        } else {
-            $fs = get_file_storage();
-            $hasuploadedfile = ($fs->file_exists($context->id, 'user', 'icon', 0, '/', $filename.'/.png') || $fs->file_exists($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg'));
+        $defaulturl = $renderer->pix_url('u/'.$filename); // default image
+
+        if ((!empty($CFG->forcelogin) and !isloggedin()) ||
+            (!empty($CFG->forceloginforprofileimage) && (!isloggedin() || isguestuser()))) {
+            // Protect images if login required and not logged in;
+            // also if login is required for profile images and is not logged in or guest
+            // do not use require_login() because it is expensive and not suitable here anyway.
+            return $defaulturl;
         }
 
-        $imageurl = $renderer->pix_url('u/'.$filename);
-        if ($hasuploadedfile && $this->user->picture == 1) {
+        // First try to detect deleted users - but do not read from database for performance reasons!
+        if (!empty($this->user->deleted) or strpos($this->user->email, '@') === false) {
+            // All deleted users should have email replaced by md5 hash,
+            // all active users are expected to have valid email.
+            return $defaulturl;
+        }
+
+        // Did the user upload a picture?
+        if ($this->user->picture > 0) {
+            if (!empty($this->user->contextid)) {
+                $contextid = $this->user->contextid;
+            } else {
+                $context = context_user::instance($this->user->id, IGNORE_MISSING);
+                if (!$context) {
+                    // This must be an incorrectly deleted user, all other users have context.
+                    return $defaulturl;
+                }
+                $contextid = $context->id;
+            }
+
             $path = '/';
             if (clean_param($page->theme->name, PARAM_THEME) == $page->theme->name) {
                 // We append the theme name to the file path if we have it so that
@@ -355,9 +367,13 @@ class user_picture implements renderable {
                 // picture for the correct theme.
                 $path .= $page->theme->name.'/';
             }
-            // Set the image URL to the URL for the uploaded file.
-            $imageurl = moodle_url::make_pluginfile_url($context->id, 'user', 'icon', NULL, $path, $filename);
-        } else if (!empty($CFG->enablegravatar)) {
+            // Set the image URL to the URL for the uploaded file and return.
+            $url = moodle_url::make_pluginfile_url($contextid, 'user', 'icon', NULL, $path, $filename);
+            $url->param('rev', $this->user->picture);
+            return $url;
+        }
+
+        if ($this->user->picture == 0 and !empty($CFG->enablegravatar)) {
             // Normalise the size variable to acceptable bounds
             if ($size < 1 || $size > 512) {
                 $size = 35;
@@ -368,14 +384,13 @@ class user_picture implements renderable {
             // If the currently requested page is https then we'll return an
             // https gravatar page.
             if (strpos($CFG->httpswwwroot, 'https:') === 0) {
-                $imageurl = new moodle_url("https://secure.gravatar.com/avatar/{$md5}", array('s' => $size, 'd' => $imageurl->out(false)));
+                return new moodle_url("https://secure.gravatar.com/avatar/{$md5}", array('s' => $size, 'd' => $defaulturl->out(false)));
             } else {
-                $imageurl = new moodle_url("http://www.gravatar.com/avatar/{$md5}", array('s' => $size, 'd' => $imageurl->out(false)));
+                return new moodle_url("http://www.gravatar.com/avatar/{$md5}", array('s' => $size, 'd' => $defaulturl->out(false)));
             }
         }
 
-        // Return the URL that has been generated.
-        return $imageurl;
+        return $defaulturl;
     }
 }
 

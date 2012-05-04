@@ -32,9 +32,9 @@ require_once($CFG->libdir . '/outputcomponents.php');
 /**
  * Unit tests for the user_picture class
  */
-class user_picture_testcase extends basic_testcase {
+class user_picture_testcase extends advanced_testcase {
 
-    public function test_user_picture_fields_aliasing() {
+    public function test_fields_aliasing() {
         $fields = user_picture::fields();
         $fields = array_map('trim', explode(',', $fields));
         $this->assertTrue(in_array('id', $fields));
@@ -63,7 +63,7 @@ class user_picture_testcase extends basic_testcase {
         $this->assertTrue(in_array("custom1 AS prefixcustom1", $returned), "Expected pattern 'custom1 AS prefixcustom1' not returned");
     }
 
-    public function test_user_picture_fields_unaliasing() {
+    public function test_fields_unaliasing() {
         $fields = user_picture::fields();
         $fields = array_map('trim', explode(',', $fields));
 
@@ -87,7 +87,7 @@ class user_picture_testcase extends basic_testcase {
         $this->assertEquals($returned->custom1, 'Value of custom1');
     }
 
-    public function test_user_picture_fields_unaliasing_null() {
+    public function test_fields_unaliasing_null() {
         $fields = user_picture::fields();
         $fields = array_map('trim', explode(',', $fields));
 
@@ -111,6 +111,133 @@ class user_picture_testcase extends basic_testcase {
             }
         }
         $this->assertEquals($returned->custom1, 'Value of custom1');
+    }
+
+    public function test_get_url() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        // verify new install contains expected defaults
+        $this->assertEquals('standard', $CFG->theme);
+        $this->assertEquals(1, $CFG->themerev);
+        $this->assertEquals(0, $CFG->themedesignermode);
+        $this->assertEquals('http://www.example.com/moodle', $CFG->wwwroot);
+        $this->assertEquals($CFG->wwwroot, $CFG->httpswwwroot);
+        $this->assertEquals(0, $CFG->enablegravatar);
+
+        // create some users
+        $page = new moodle_page();
+        $page->set_url('/user/profile.php');
+        $page->set_context(context_system::instance());
+        $renderer = $page->get_renderer('core');
+
+        $user1 = $this->getDataGenerator()->create_user(array('picture'=>11, 'email'=>'user1@example.com'));
+        $context1 = context_user::instance($user1->id);
+        $user2 = $this->getDataGenerator()->create_user(array('picture'=>0, 'email'=>'user2@example.com'));
+        $context2 = context_user::instance($user2->id);
+
+        $user3 = $this->getDataGenerator()->create_user(array('picture'=>1, 'deleted'=>1, 'email'=>'user3@example.com'));
+        $context3 = context_user::instance($user3->id, IGNORE_MISSING);
+        $this->assertEquals($user3->picture, 0);
+        $this->assertNotEquals($user3->email, 'user3@example.com');
+        $this->assertFalse($context3);
+
+        // try legacy picture == 1
+        $user1->picture = 1;
+        $up1 = new user_picture($user1);
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=1', $up1->get_url($page, $renderer)->out(false));
+        $user1->picture = 11;
+
+        // try valid user with picture when user context is not cached - 1 query expected
+        context_helper::reset_caches();
+        $reads = $DB->perf_get_reads();
+        $up1 = new user_picture($user1);
+        $this->assertEquals($reads, $DB->perf_get_reads());
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($reads+1, $DB->perf_get_reads());
+
+        // try valid user with contextid hint - no queries expected
+        $user1->contextid = $context1->id;
+        context_helper::reset_caches();
+        $reads = $DB->perf_get_reads();
+        $up1 = new user_picture($user1);
+        $this->assertEquals($reads, $DB->perf_get_reads());
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+        $this->assertEquals($reads, $DB->perf_get_reads());
+
+        // try valid user without image - no queries expected
+        context_helper::reset_caches();
+        $reads = $DB->perf_get_reads();
+        $up2 = new user_picture($user2);
+        $this->assertEquals($reads, $DB->perf_get_reads());
+        $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=standard&image=u%2Ff2&rev=1', $up2->get_url($page, $renderer)->out(false));
+        $this->assertEquals($reads, $DB->perf_get_reads());
+
+        // try guessing of deleted users - no queries expected
+        unset($user3->deleted);
+        context_helper::reset_caches();
+        $reads = $DB->perf_get_reads();
+        $up3 = new user_picture($user3);
+        $this->assertEquals($reads, $DB->perf_get_reads());
+        $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=standard&image=u%2Ff2&rev=1', $up3->get_url($page, $renderer)->out(false));
+        $this->assertEquals($reads, $DB->perf_get_reads());
+
+        // try incorrectly deleted users (with valid email and pciture flag) - some DB reads expected
+        $user3->email = 'user3@example.com';
+        $user3->picture = 1;
+        $reads = $DB->perf_get_reads();
+        $up3 = new user_picture($user3);
+        $this->assertEquals($reads, $DB->perf_get_reads());
+        $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=standard&image=u%2Ff2&rev=1', $up3->get_url($page, $renderer)->out(false));
+        $this->assertTrue($reads < $DB->perf_get_reads());
+
+
+        // test gravatar
+        set_config('enablegravatar', 1);
+
+        $up2 = new user_picture($user2);
+        $this->assertEquals('http://www.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=35&d=http%3A%2F%2Fwww.example.com%2Fmoodle%2Ftheme%2Fimage.php%3Ftheme%3Dstandard%26image%3Du%252Ff2%26rev%3D1', $up2->get_url($page, $renderer)->out(false));
+
+        // uploaded image takes precedence before gravatar
+        $up1 = new user_picture($user1);
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+
+        // deleted user can not have gravatar
+        $user3->email = 'deleted';
+        $user3->picture = 0;
+        $up3 = new user_picture($user3);
+        $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=standard&image=u%2Ff2&rev=1', $up3->get_url($page, $renderer)->out(false));
+
+
+        // https versions
+        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
+
+        $up1 = new user_picture($user1);
+        $this->assertEquals($CFG->httpswwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+
+        $up3 = new user_picture($user3);
+        $this->assertEquals($CFG->httpswwwroot.'/theme/image.php?theme=standard&image=u%2Ff2&rev=1', $up3->get_url($page, $renderer)->out(false));
+
+        $up2 = new user_picture($user2);
+        $this->assertEquals('https://secure.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=35&d=https%3A%2F%2Fwww.example.com%2Fmoodle%2Ftheme%2Fimage.php%3Ftheme%3Dstandard%26image%3Du%252Ff2%26rev%3D1', $up2->get_url($page, $renderer)->out(false));
+
+
+        // test themed images
+        set_config('enablegravatar', 0);
+        $this->assertTrue(file_exists("$CFG->dirroot/theme/formal_white/config.php")); // use any other theme
+        set_config('theme', 'formal_white');
+        $CFG->httpswwwroot = $CFG->wwwroot;
+        $page = new moodle_page();
+        $page->set_url('/user/profile.php');
+        $page->set_context(context_system::instance());
+        $renderer = $page->get_renderer('core');
+
+        $up1 = new user_picture($user1);
+        $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/formal_white/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
+
+        $up2 = new user_picture($user2);
+        $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=formal_white&image=u%2Ff2&rev=1', $up2->get_url($page, $renderer)->out(false));
     }
 }
 

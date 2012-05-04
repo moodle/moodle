@@ -3912,6 +3912,7 @@ function delete_user($user) {
     $updateuser->username     = $delname;            // Remember it just in case
     $updateuser->email        = md5($user->username);// Store hash of username, useful importing/restoring users
     $updateuser->idnumber     = '';                  // Clear this field to free it up
+    $updateuser->picture      = 0;
     $updateuser->timemodified = time();
 
     $DB->update_record('user', $updateuser);

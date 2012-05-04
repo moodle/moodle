@@ -422,5 +422,24 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012042300.02);
     }
 
+    if ($oldversion < 2012050300.01) {
+        // Make sure deleted users do not have picture flag.
+        $DB->set_field('user', 'picture', 0, array('deleted'=>1, 'picture'=>1));
+        upgrade_main_savepoint(true, 2012050300.01);
+    }
+
+    if ($oldversion < 2012050300.02) {
+
+        // Changing precision of field picture on table user to (10)
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('picture', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'secret');
+
+        // Launch change of precision for field picture
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012050300.02);
+    }
+
     return true;
 }
