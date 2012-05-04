@@ -49,12 +49,11 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
      *      If not specified, then date is caclulated based on current user timezone.
      *      Note: dst will be calculated for string timezones only
      *      {@link http://docs.moodle.org/dev/Time_API#Timezone}
-     * applydst => apply users daylight savings adjustment?
      * optional => if true, show a checkbox beside the date to turn it on (or off)
      * @var array
      */
     protected $_options = array('startyear' => 1970, 'stopyear' => 2020,
-            'timezone' => 99, 'applydst' => true, 'optional' => false);
+            'timezone' => 99, 'optional' => false);
 
    /** @var array These complement separators, they are appended to the resultant HTML */
     protected $_wrap = array('', '');
@@ -236,7 +235,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
                                    $valuearray['day'],
                                    0, 0, 0,
                                    $this->_options['timezone'],
-                                   $this->_options['applydst']);
+                                   true);
 
             return $value;
         } else {
