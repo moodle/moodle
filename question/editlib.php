@@ -1033,6 +1033,8 @@ class question_bank_view {
     }
 
     protected function default_sort() {
+        $this->requiredcolumns['qtype'] = $this->knowncolumntypes['qtype'];
+        $this->requiredcolumns['questionname'] = $this->knowncolumntypes['questionname'];
         return array('qtype' => 1, 'questionname' => 1);
     }
 

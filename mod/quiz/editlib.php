@@ -1141,6 +1141,8 @@ class quiz_question_bank_view extends question_bank_view {
     }
 
     protected function default_sort() {
+        $this->requiredcolumns['qtype'] = $this->knowncolumntypes['qtype'];
+        $this->requiredcolumns['questionnametext'] = $this->knowncolumntypes['questionnametext'];
         return array('qtype' => 1, 'questionnametext' => 1);
     }
 
