@@ -30,6 +30,7 @@ $string['allowsubmissionsfromdatesummary'] = 'This assignment will accept submis
 $string['allowsubmissionsanddescriptionfromdatesummary'] = 'The assignment details and submission form will be available from <strong>{$a}</strong>';
 $string['alwaysshowdescription'] = 'Always show description';
 $string['alwaysshowdescription_help'] = 'If disabled, the Assignment Description above will only become visible to students at the "Allow submissions from" date.';
+$string['assign:addinstance'] = 'Add a new assignment';
 $string['assign:exportownsubmission'] = 'Export own submission';
 $string['assign:grade'] = 'Grade assignment';
 $string['assign:submit'] = 'Submit assignment';
