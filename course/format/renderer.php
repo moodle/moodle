@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * This is a convenience renderer which can be used by section based formats
- * to reduce code duplication. It is not necessary for all course formats to 
+ * to reduce code duplication. It is not necessary for all course formats to
  * use this and its likely to change in future releases.
  *
  * @package core
