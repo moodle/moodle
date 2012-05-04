@@ -397,7 +397,7 @@ class backup_course_structure_step extends backup_structure_step {
 
         $course = new backup_nested_element('course', array('id', 'contextid'), array(
             'shortname', 'fullname', 'idnumber',
-            'summary', 'summaryformat', 'format', 'showgrades',
+            'summary', 'summaryformat', 'format', 'coursedisplay', 'showgrades',
             'newsitems', 'startdate', 'numsections',
             'marker', 'maxbytes', 'legacyfiles', 'showreports',
             'visible', 'hiddensections', 'groupmode', 'groupmodeforce',
