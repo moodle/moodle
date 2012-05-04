@@ -237,6 +237,7 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
 .filemanager .fp-iconview .fp-file {float:left;text-align:center;}
 .filemanager .fp-iconview .fp-file div {overflow: hidden;}
 .filemanager .fp-iconview .fp-file .fp-filename {height:48px;text-align:center;min-width:50px;}
+.filemanager .fp-mainfile .fp-filename {font-weight:bold;}
 
 .filemanager .fp-contextmenu {display:none;}
 .filemanager .fp-iconview .fp-folder.fp-hascontextmenu .fp-contextmenu {display:block;position:absolute;right:0px;top:0px;}

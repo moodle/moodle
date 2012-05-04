@@ -82,12 +82,12 @@ YUI.add('moodle-core_filepicker', function(Y) {
      *   filenode : Node element that contains template for displaying one file
      *   callback : On click callback. The element of the fileslist array will be passed as argument
      *   rightclickcallback : On right click callback (optional).
-     *   norootrightclick : No right click for top element in the tree
      *   callbackcontext : context where callbacks are executed
      *   sortable : whether content may be sortable (in table mode)
      *   dynload : allow dynamic load for tree view
      *   filepath : for pre-building of tree view - the path to the current directory in filepicker format
-     *   treeview_dynload : callback to ...
+     *   treeview_dynload : callback to function to dynamically load the folder in tree view
+     *   classnamecallback : callback to function that returns the class name for an element
      * @param array fileslist array of files to show, each array element may have attributes:
      *   title or fullname : file name
      *   shorttitle (optional) : display file name
@@ -129,14 +129,8 @@ YUI.add('moodle-core_filepicker', function(Y) {
 
             el.one('.fp-filename').setContent(file_get_displayname(node));
             // TODO add tooltip with node.title or node.thumbnail_title
-            var tmpnodedata = {className:''};
-            if (file_is_folder(node)) {
-                el.get('children').addClass('fp-folder');
-                tmpnodedata.className = tmpnodedata.className + ' fp-folder';
-            }
-            if (options.rightclickcallback && !node.nocontextmenu) {
-                tmpnodedata.className = tmpnodedata.className + ' fp-hascontextmenu';
-            }
+            var tmpnodedata = {className:options.classnamecallback(node)};
+            el.get('children').addClass(tmpnodedata.className);
             if (node.icon) {
                 el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', node.icon));
                 if (node.realicon) {
@@ -179,9 +173,6 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 for (var i in options.filepath) {
                     if (mytreeel == null) {
                         mytreeel = mytree;
-                        if (options.norootrightclick) {
-                            mytreeel.nocontextmenu = true;
-                        }
                     } else {
                         mytreeel.children = [{}];
                         mytreeel = mytreeel.children[0];
@@ -243,9 +234,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
         var formatTitle = function(o) {
             var el = Y.Node.create('<div/>');
             el.appendChild(options.filenode.cloneNode(true)); // TODO not node but string!
-            if (o.data['isfolder']) {
-                el.get('children').addClass('fp-folder');
-            }
+            el.get('children').addClass(o.data['classname']);
             el.one('.fp-filename').setContent(o.value);
             if (o.data['icon']) {
                 el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', o.data['icon']));
@@ -304,6 +293,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 // to speed up sorting and formatting
                 fileslist[k].displayname = file_get_displayname(fileslist[k]);
                 fileslist[k].isfolder = file_is_folder(fileslist[k]);
+                fileslist[k].classname = options.classnamecallback(fileslist[k]);
             }
             scope.tableview.addRows(fileslist);
             scope.tableview.sortable = options.sortable ? true : false;
@@ -331,12 +321,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 var node = fileslist[k];
                 var element = options.filenode.cloneNode(true);
                 parent.appendChild(element);
-                if (file_is_folder(node)) {
-                    element.addClass('fp-folder');
-                }
-                if (options.rightclickcallback) {
-                    element.addClass('fp-hascontextmenu');
-                }
+                element.addClass(options.classnamecallback(node));
                 var filenamediv = element.one('.fp-filename');
                 filenamediv.setContent(file_get_displayname(node));
                 var imgdiv = element.one('.fp-thumbnail'), width, height, src;
@@ -858,6 +843,9 @@ M.core_filepicker.init = function(Y, options) {
                         this.content_scrolled();
                     }
                 },
+                classnamecallback : function(node) {
+                    return node.children ? 'fp-folder' : '';
+                },
                 dynload : this.active_repo.dynload,
                 filepath : this.filepath,
                 treeview_dynload : this.treeview_dynload
@@ -893,6 +881,9 @@ M.core_filepicker.init = function(Y, options) {
                     } else {
                         this.select_file(node);
                     }
+                },
+                classnamecallback : function(node) {
+                    return node.children ? 'fp-folder' : '';
                 }
             };
             this.fpnode.one('.fp-content').fp_display_filelist(options, list, this.lazyloading);
@@ -927,6 +918,9 @@ M.core_filepicker.init = function(Y, options) {
                     } else {
                         this.select_file(node);
                     }
+                },
+                classnamecallback : function(node) {
+                    return node.children ? 'fp-folder' : '';
                 }
             };
             this.fpnode.one('.fp-content').fp_display_filelist(options, list, this.lazyloading);
@@ -1144,7 +1138,6 @@ M.core_filepicker.init = function(Y, options) {
                 set('id', 'filepicker-'+client_id);
             var fpselectnode = Y.Node.create(M.core_filepicker.templates.selectlayout);
             Y.one(document.body).appendChild(this.fpnode);
-            this.fpnode.appendChild(fpselectnode);
             this.mainui = new Y.Panel({
                 srcNode      : this.fpnode,
                 headerContent: M.str.repository.filepicker,
@@ -1161,7 +1154,9 @@ M.core_filepicker.init = function(Y, options) {
             // allow to move the panel dragging it by it's header:
             this.mainui.plug(Y.Plugin.Drag,{handles:['.yui3-widget-hd']});
             this.mainui.show();
+            if (this.mainui.get('y')<0) {this.mainui.set('y', 0);}
             // create panel for selecting a file (initially hidden)
+            this.fpnode.appendChild(fpselectnode);
             this.selectui = new Y.Panel({
                 srcNode      : fpselectnode,
                 zIndex       : 600000,
