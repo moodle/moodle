@@ -3441,7 +3441,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 }
             }
 
-            send_stored_file($file, 60*60*24*7, 0, false, array('preview' => $preview)); // enable long caching, there are many images on each page
+            send_stored_file($file, 60*60*24*365, 0, false, array('preview' => $preview)); // enable long caching, there are many images on each page
 
         } else if ($filearea === 'private' and $context->contextlevel == CONTEXT_USER) {
             require_login();
