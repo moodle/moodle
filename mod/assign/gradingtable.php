@@ -58,7 +58,7 @@ class assign_grading_table extends table_sql implements renderable {
      * @param int $rowoffset For showing a subsequent page of results
      */
     function __construct(assign $assignment, $perpage, $filter, $rowoffset=0) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $DB;
         parent::__construct('mod_assign_grading');
         $this->assignment = $assignment;
         $this->perpage = $perpage;
@@ -81,22 +81,22 @@ class assign_grading_table extends table_sql implements renderable {
         }
 
         $params = array();
-        $params[] = $this->assignment->get_instance()->id;
-        $params[] = $this->assignment->get_instance()->id;
+        $params['assignmentid1'] = (int)$this->assignment->get_instance()->id;
+        $params['assignmentid2'] = (int)$this->assignment->get_instance()->id;
 
         $fields = user_picture::fields('u') . ', u.id as userid, u.firstname as firstname, u.lastname as lastname, ';
         $fields .= 's.status as status, s.id as submissionid, s.timecreated as firstsubmission, s.timemodified as timesubmitted, ';
         $fields .= 'g.id as gradeid, g.grade as grade, g.timemodified as timemarked, g.timecreated as firstmarked, g.mailed as mailed, g.locked as locked';
-        $from = '{user} u LEFT JOIN {assign_submission} s ON u.id = s.userid AND s.assignment = ?' .
-                        ' LEFT JOIN {assign_grades} g ON u.id = g.userid AND g.assignment = ?';
+        $from = '{user} u LEFT JOIN {assign_submission} s ON u.id = s.userid AND s.assignment = :assignmentid1' .
+                        ' LEFT JOIN {assign_grades} g ON u.id = g.userid AND g.assignment = :assignmentid2';
 
         $userparams = array();
-        foreach ($users as $userid) {
-            $userparams[] = '?';
-            $params[] = $userid;
-        }
+        $userindex = 0;
 
-        $where = 'u.id IN (' . implode(',', $userparams) . ')';
+        list($userwhere, $userparams) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
+        $where = 'u.id ' . $userwhere;
+        $params = array_merge($params, $userparams);
+
         if ($filter == ASSIGN_FILTER_SUBMITTED) {
             $where .= ' AND s.timecreated > 0 ';
         }
@@ -105,8 +105,8 @@ class assign_grading_table extends table_sql implements renderable {
         }
         if (strpos($filter, ASSIGN_FILTER_SINGLE_USER) === 0) {
             $userfilter = (int) array_pop(explode('=', $filter));
-            $where .= ' AND (u.id = ?)';
-            $params[] = $userfilter;
+            $where .= ' AND (u.id = :userid)';
+            $params['userid'] = $userfilter;
         }
         $this->set_sql($fields, $from, $where, $params);
 
