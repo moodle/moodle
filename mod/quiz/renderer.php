@@ -435,14 +435,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function attempt_form($attemptobj, $page, $slots, $id, $nextpage) {
         $output = '';
 
-        //Start Form
+        // Start the form.
         $output .= html_writer::start_tag('form',
                 array('action' => $attemptobj->processattempt_url(), 'method' => 'post',
                 'enctype' => 'multipart/form-data', 'accept-charset' => 'utf-8',
                 'id' => 'responseform'));
         $output .= html_writer::start_tag('div');
 
-        // Print all the questions
+        // Print all the questions.
         foreach ($slots as $slot) {
             $output .= $attemptobj->render_question($slot, false,
                     $attemptobj->attempt_url($slot, $page));
@@ -473,7 +473,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'slots',
                 'value' => implode(',', $slots)));
 
-        //Finish form
+        // Finish the form.
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('form');
 
@@ -560,7 +560,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param mod_quiz_display_options $displayoptions
      */
     public function summary_table($attemptobj, $displayoptions) {
-        // Prepare the summary table header
+        // Prepare the summary table header.
         $table = new html_table();
         $table->attributes['class'] = 'generaltable quizsummaryofattempt boxaligncenter';
         $table->head = array(get_string('question', 'quiz'), get_string('status', 'quiz'));
@@ -590,7 +590,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
                         $attemptobj->get_question_number($slot) . $flag),
                         $attemptobj->get_question_status($slot, $displayoptions->correctness));
             } else {
-                $row = array($attemptobj->get_question_number($slot) . $flag, $attemptobj->get_question_status($slot, $displayoptions->correctness));
+                $row = array($attemptobj->get_question_number($slot) . $flag,
+                                $attemptobj->get_question_status($slot, $displayoptions->correctness));
             }
             if ($markscolumn) {
                 $row[] = $attemptobj->get_question_mark($slot);
@@ -614,7 +615,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function summary_page_controls($attemptobj) {
         $output = '';
 
-        // Return to place button
+        // Return to place button.
         if ($attemptobj->get_state() == quiz_attempt::IN_PROGRESS) {
             $button = new single_button(
                     new moodle_url($attemptobj->attempt_url(null, $attemptobj->get_currentpage())),
@@ -827,7 +828,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         global $CFG;
 
         $output = '';
-        // Print quiz name and description
+        // Print quiz name and description.
         $output .= $this->heading(format_string($quiz->name));
         if (trim(strip_tags($quiz->intro))) {
             $output .= $this->box(format_module_intro('quiz', $quiz, $cm->id), 'generalbox',
@@ -882,7 +883,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             return '';
         }
 
-        // Prepare table header
+        // Prepare table header.
         $table = new html_table();
         $table->attributes['class'] = 'generaltable quizattemptsummary';
         $table->head = array();
@@ -919,7 +920,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $table->size[] = '';
         }
 
-        // One row for each attempt
+        // One row for each attempt.
         foreach ($viewobj->attemptobjs as $attemptobj) {
             $attemptoptions = $attemptobj->get_display_options(true);
             $row = array();
@@ -951,7 +952,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 if ($attemptoptions->marks >= question_display_options::MARK_AND_MAX &&
                         $attemptobj->is_finished()) {
 
-                    // Highlight the highest grade if appropriate
+                    // Highlight the highest grade if appropriate.
                     if ($viewobj->overallstats && !$attemptobj->is_preview()
                             && $viewobj->numattempts > 1 && !is_null($viewobj->mygrade)
                             && $attemptgrade == $viewobj->mygrade

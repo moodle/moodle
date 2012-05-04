@@ -85,7 +85,7 @@ $capabilities = array(
         )
     ),
 
-    // Edit the quiz overrides
+    // Edit the quiz overrides.
     'mod/quiz:manageoverrides' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

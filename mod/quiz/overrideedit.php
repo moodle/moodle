@@ -76,19 +76,18 @@ require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-// Add or edit an override
-
+// Add or edit an override.
 require_capability('mod/quiz:manageoverrides', $context);
 
 if ($overrideid) {
-    // editing override
+    // Editing an override.
     $data = clone $override;
 } else {
-    // new override
+    // Creating a new override.
     $data = new stdClass();
 }
 
-// merge quiz defaults with data
+// Merge quiz defaults with data.
 $keys = array('timeopen', 'timeclose', 'timelimit', 'attempts', 'password');
 foreach ($keys as $key) {
     if (!isset($data->{$key}) || $reset) {
@@ -104,7 +103,7 @@ if ($action === 'duplicate') {
     $override->groupid = null;
 }
 
-// true if group-based override
+// True if group-based override.
 $groupmode = !empty($data->groupid) || ($action === 'addgroup' && empty($overrideid));
 
 $overridelisturl = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id));
@@ -117,24 +116,24 @@ $mform = new quiz_override_form($url, $cm, $quiz, $context, $groupmode, $overrid
 $mform->set_data($data);
 
 if ($mform->is_cancelled()) {
-    // redirect back to override list
     redirect($overridelisturl);
+
 } else if (optional_param('resetbutton', 0, PARAM_ALPHA)) {
-    // redirect back to current page and reset the form.
     $url->param('reset', true);
     redirect($url);
+
 } else if ($fromform = $mform->get_data()) {
-    // Process the data
+    // Process the data.
     $fromform->quiz = $quiz->id;
 
-    // Replace unchanged values with null
+    // Replace unchanged values with null.
     foreach ($keys as $key) {
         if ($fromform->{$key} == $quiz->{$key}) {
             $fromform->{$key} = null;
         }
     }
 
-    // See if we are replacing an existing override
+    // See if we are replacing an existing override.
     $userorgroupchanged = false;
     if (empty($override->id)) {
         $userorgroupchanged = true;
@@ -143,6 +142,7 @@ if ($mform->is_cancelled()) {
     } else {
         $userorgroupchanged = $fromform->groupid !== $override->groupid;
     }
+
     if ($userorgroupchanged) {
         $conditions = array(
                 'quiz' => $quiz->id,
@@ -150,13 +150,13 @@ if ($mform->is_cancelled()) {
                 'groupid' => empty($fromform->groupid)? null : $fromform->groupid);
         if ($oldoverride = $DB->get_record('quiz_overrides', $conditions)) {
             // There is an old override, so we merge any new settings on top of
-            // the older override
+            // the older override.
             foreach ($keys as $key) {
                 if (is_null($fromform->{$key})) {
                     $fromform->{$key} = $oldoverride->{$key};
                 }
             }
-            // Delete the old override
+            // Delete the old override.
             $DB->delete_records('quiz_overrides', array('id' => $oldoverride->id));
         }
     }
@@ -175,11 +175,10 @@ if ($mform->is_cancelled()) {
             "overrideedit.php?id=$fromform->id", $quiz->id, $cm->id);
 
     if (!empty($fromform->submitbutton)) {
-        // redirect back to override list
         redirect($overridelisturl);
     }
 
-    // 'again' button pressed, so redirect back to this page
+    // The user pressed the 'again' button, so redirect back to this page.
     $url->remove_params('cmid');
     $url->param('action', 'duplicate');
     $url->param('id', $fromform->id);
@@ -187,8 +186,7 @@ if ($mform->is_cancelled()) {
 
 }
 
-// Print the form
-
+// Print the form.
 $pagetitle = get_string('editoverride', 'quiz');
 $PAGE->navbar->add($pagetitle);
 $PAGE->set_pagelayout('admin');

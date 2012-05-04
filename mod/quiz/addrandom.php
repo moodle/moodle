@@ -34,7 +34,7 @@ list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/addrandom.php', true);
 
 // These params are only passed from page request to request while we stay on
-// this page otherwise they would go in question_edit_setup
+// this page otherwise they would go in question_edit_setup.
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $addonpage = optional_param('addonpage', 0, PARAM_INT);
 $category = optional_param('category', 0, PARAM_INT);

@@ -49,7 +49,7 @@ $PAGE->set_url($quizobj->view_url());
 require_login($quizobj->get_course(), false, $quizobj->get_cm());
 require_sesskey();
 
-// if no questions have been set up yet redirect to edit.php or display an error.
+// If no questions have been set up yet redirect to edit.php or display an error.
 if (!$quizobj->has_questions()) {
     if ($quizobj->has_capability('mod/quiz:manage')) {
         redirect($quizobj->edit_url());
@@ -73,7 +73,7 @@ if (!$quizobj->is_preview_user()) {
 // Check to see if a new preview was requested.
 if ($quizobj->is_preview_user() && $forcenew) {
     // To force the creation of a new preview, we mark the current attempt (if any)
-    // as finished. It will then automatically be deleted below
+    // as finished. It will then automatically be deleted below.
     $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED,
             array('quiz' => $quizobj->get_quizid(), 'userid' => $USER->id));
 }
@@ -104,7 +104,7 @@ if ($lastattempt && ($lastattempt->state == quiz_attempt::IN_PROGRESS ||
     }
 
 } else {
-    // Get number for the next or unfinished attempt
+    // Get number for the next or unfinished attempt.
     if ($lastattempt && !$lastattempt->preview && !$quizobj->is_preview_user()) {
         $attemptnumber = $lastattempt->attempt + 1;
     } else {
@@ -259,7 +259,7 @@ if ($attempt->preview) {
             $quizobj->get_quizid(), $quizobj->get_cmid());
 }
 
-// Trigger event
+// Trigger event.
 $eventdata = new stdClass();
 $eventdata->component = 'mod_quiz';
 $eventdata->attemptid = $attempt->id;

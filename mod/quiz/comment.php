@@ -27,8 +27,8 @@
 require_once('../../config.php');
 require_once('locallib.php');
 
-$attemptid = required_param('attempt', PARAM_INT); // attempt id
-$slot = required_param('slot', PARAM_INT); // question number in attempt
+$attemptid = required_param('attempt', PARAM_INT);
+$slot = required_param('slot', PARAM_INT); // The question number in the attempt.
 
 $PAGE->set_url('/mod/quiz/comment.php', array('attempt' => $attemptid, 'slot' => $slot));
 
@@ -48,7 +48,7 @@ add_to_log($attemptobj->get_courseid(), 'quiz', 'manualgrade', 'comment.php?atte
         $attemptobj->get_attemptid() . '&slot=' . $slot,
         $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
-// Print the page header
+// Print the page header.
 $PAGE->set_pagelayout('popup');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($attemptobj->get_question_name($slot)));

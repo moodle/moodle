@@ -17,8 +17,7 @@
 /**
  * This page handles listing of quiz overrides
  *
- * @package    mod
- * @subpackage quiz
+ * @package    mod_quiz
  * @copyright  2010 Matt Petro
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,8 +29,8 @@ require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->dirroot.'/mod/quiz/override_form.php');
 
 
-$cmid = required_param('cmid', PARAM_INT);  // course module ID, or
-$mode = optional_param('mode', '', PARAM_ALPHA); // one of 'user' or 'group', default is 'group'
+$cmid = required_param('cmid', PARAM_INT);
+$mode = optional_param('mode', '', PARAM_ALPHA); // One of 'user' or 'group', default is 'group'.
 
 if (! $cm = get_coursemodule_from_id('quiz', $cmid)) {
     print_error('invalidcoursemodule');
@@ -41,13 +40,13 @@ if (! $quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
 }
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
-// Get the course groups
+// Get the course groups.
 $groups = groups_get_all_groups($cm->course);
 if ($groups === false) {
     $groups = array();
 }
 
-// Default mode is "group", unless there are no groups
+// Default mode is "group", unless there are no groups.
 if ($mode != "user" and $mode != "group") {
     if (!empty($groups)) {
         $mode = "group";
@@ -65,17 +64,16 @@ require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-// Check the user has the required capabilities to list overrides
+// Check the user has the required capabilities to list overrides.
 require_capability('mod/quiz:manageoverrides', $context);
 
-// Display a list of overrides
-
+// Display a list of overrides.
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('overrides', 'quiz'));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-// Delete orphaned group overrides
+// Delete orphaned group overrides.
 $sql = 'SELECT o.id
             FROM {quiz_overrides} o LEFT JOIN {groups} g
             ON o.groupid = g.id
@@ -88,7 +86,7 @@ if (!empty($orphaned)) {
     $DB->delete_records_list('quiz_overrides', 'id', array_keys($orphaned));
 }
 
-// Fetch all overrides
+// Fetch all overrides.
 if ($groupmode) {
     $colname = get_string('group');
     $sql = 'SELECT o.*, g.name
@@ -108,7 +106,7 @@ if ($groupmode) {
 $params = array($quiz->id);
 $overrides = $DB->get_records_sql($sql, $params);
 
-// Initialise table
+// Initialise table.
 $table = new html_table();
 $table->headspan = array(1, 2, 1);
 $table->colclasses = array('colname', 'colsetting', 'colvalue', 'colaction');
@@ -124,7 +122,7 @@ $groupurl = new moodle_url('/group/overview.php', array('id' => $cm->course));
 $overridedeleteurl = new moodle_url('/mod/quiz/overridedelete.php');
 $overrideediturl = new moodle_url('/mod/quiz/overrideedit.php');
 
-$hasinactive = false;  // are there any inactive overrides
+$hasinactive = false; // Whether there are any inactive overrides.
 
 foreach ($overrides as $override) {
 
@@ -132,71 +130,70 @@ foreach ($overrides as $override) {
     $values = array();
     $active = true;
 
-    // check for inactive overrides
+    // Check for inactive overrides.
     if (!$groupmode) {
         if (!has_capability('mod/quiz:attempt', $context, $override->userid)) {
-            // user not allowed to take the quiz
+            // User not allowed to take the quiz.
             $active = false;
         } else if (!empty($CFG->enablegroupmembersonly) && $cm->groupmembersonly &&
                 !groups_has_membership($cm, $override->userid)) {
-            // user does not belong to the current grouping
+            // User does not belong to the current grouping.
             $active = false;
         }
     }
 
-    // Format timeopen
+    // Format timeopen.
     if (isset($override->timeopen)) {
         $fields[] = get_string('quizopens', 'quiz');
         $values[] = $override->timeopen > 0 ?
                 userdate($override->timeopen) : get_string('noopen', 'quiz');
     }
 
-    // Format timeclose
+    // Format timeclose.
     if (isset($override->timeclose)) {
         $fields[] = get_string('quizcloses', 'quiz');
         $values[] = $override->timeclose > 0 ?
                 userdate($override->timeclose) : get_string('noclose', 'quiz');
     }
 
-    // Format timelimit
+    // Format timelimit.
     if (isset($override->timelimit)) {
         $fields[] = get_string('timelimit', 'quiz');
         $values[] = $override->timelimit > 0 ?
                 format_time($override->timelimit) : get_string('none', 'quiz');
     }
 
-    // Format number of attempts
+    // Format number of attempts.
     if (isset($override->attempts)) {
         $fields[] = get_string('attempts', 'quiz');
         $values[] = $override->attempts > 0 ?
                 $override->attempts : get_string('unlimited');
     }
 
-    // Format password
+    // Format password.
     if (isset($override->password)) {
         $fields[] = get_string('requirepassword', 'quiz');
         $values[] = $override->password !== '' ?
                 get_string('enabled', 'quiz') : get_string('none', 'quiz');
     }
 
-    // Icons:
-
+    // Icons.
     $iconstr = '';
 
     if ($active) {
-        // edit
+        // Edit.
         $editurlstr = $overrideediturl->out(true, array('id' => $override->id));
         $iconstr = '<a title="' . get_string('edit') . '" href="'. $editurlstr . '">' .
                 '<img src="' . $OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="' .
                 get_string('edit') . '" /></a> ';
-        // duplicate
+        // Duplicate.
         $copyurlstr = $overrideediturl->out(true,
                 array('id' => $override->id, 'action' => 'duplicate'));
         $iconstr .= '<a title="' . get_string('copy') . '" href="' . $copyurlstr . '">' .
                 '<img src="' . $OUTPUT->pix_url('t/copy') . '" class="iconsmall" alt="' .
                 get_string('copy') . '" /></a> ';
     }
-    // delete
+    // Delete.
     $deleteurlstr = $overridedeleteurl->out(true,
             array('id' => $override->id, 'sesskey' => sesskey()));
     $iconstr .= '<a title="' . get_string('delete') . '" href="' . $deleteurlstr . '">' .
@@ -244,8 +241,7 @@ foreach ($overrides as $override) {
     }
 }
 
-// Output the table and button
-
+// Output the table and button.
 echo html_writer::start_tag('div', array('id' => 'quizoverrides'));
 if (count($table->data)) {
     echo html_writer::table($table);
@@ -258,7 +254,7 @@ echo html_writer::start_tag('div', array('class' => 'buttons'));
 $options = array();
 if ($groupmode) {
     if (empty($groups)) {
-        // there are no groups
+        // There are no groups.
         echo $OUTPUT->notification(get_string('groupsnone', 'quiz'), 'error');
         $options['disabled'] = true;
     }
@@ -267,13 +263,13 @@ if ($groupmode) {
             get_string('addnewgroupoverride', 'quiz'), 'post', $options);
 } else {
     $users = array();
-    // See if there are any students in the quiz
+    // See if there are any students in the quiz.
     if (!empty($CFG->enablegroupmembersonly) && $cm->groupmembersonly) {
-        // restrict to grouping
+        // Restrict to grouping.
         $limitgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
         if (!empty($limitgroups)) {
             $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id',
-                    '', '', 1, array_keys($limitgroups)); // Limit to one user for speed
+                    '', '', 1, array_keys($limitgroups)); // Limit to one user for speed.
         }
     } else {
         // Limit to one user for speed.
@@ -281,7 +277,7 @@ if ($groupmode) {
     }
 
     if (empty($users)) {
-        // there are no students
+        // There are no students.
         echo $OUTPUT->notification(get_string('usersnone', 'quiz'), 'error');
         $options['disabled'] = true;
     }
@@ -292,5 +288,5 @@ if ($groupmode) {
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 
-// Finish the page
+// Finish the page.
 echo $OUTPUT->footer();

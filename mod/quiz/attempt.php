@@ -25,7 +25,7 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-// Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php
+// Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php.
 if ($id = optional_param('id', 0, PARAM_INTEGER)) {
     redirect($CFG->wwwroot . '/mod/quiz/startattempt.php?cmid=' . $id . '&sesskey=' . sesskey());
 } else if ($qid = optional_param('q', 0, PARAM_INTEGER)) {
@@ -55,7 +55,7 @@ if ($attemptobj->get_userid() != $USER->id) {
     }
 }
 
-// Check capabilities and block settings
+// Check capabilities and block settings.
 if (!$attemptobj->is_preview_user()) {
     $attemptobj->require_capability('mod/quiz:attempt');
     if (empty($attemptobj->get_quiz()->showblocks)) {
@@ -97,10 +97,10 @@ if (empty($slots)) {
     throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noquestionsfound');
 }
 
-// Update attempt page
+// Update attempt page.
 if ($attemptobj->get_currentpage() != $page) {
     if ($attemptobj->get_navigation_method() == QUIZ_NAVMETHOD_SEQ && $attemptobj->get_currentpage() > $page) {
-        // Prevent out of sequence access
+        // Prevent out of sequence access.
         redirect($attemptobj->start_attempt_url(null, $attemptobj->get_currentpage()));
     }
     $DB->set_field('quiz_attempts', 'currentpage', $page);

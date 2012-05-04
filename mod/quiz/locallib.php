@@ -43,7 +43,7 @@ require_once($CFG->libdir . '/filelib.php');
 
 
 /**
- * We show the countdown timer if there is less than this amount of time left before the
+ * @var int We show the countdown timer if there is less than this amount of time left before the
  * the quiz close date. (1 hour)
  */
 define('QUIZ_SHOW_TIME_BEFORE_DEADLINE', '3600');
@@ -56,7 +56,7 @@ define('QUIZ_SHOW_TIME_BEFORE_DEADLINE', '3600');
 define('QUIZ_MIN_TIME_TO_CONTINUE', '2');
 
 
-/// Functions related to attempts /////////////////////////////////////////
+// Functions related to attempts ///////////////////////////////////////////////
 
 /**
  * Creates an object to represent a new attempt at a quiz
@@ -158,7 +158,7 @@ function quiz_delete_attempt($attempt, $quiz) {
 
     // Search quiz_attempts for other instances by this user.
     // If none, then delete record for this quiz, this user from quiz_grades
-    // else recalculate best grade
+    // else recalculate best grade.
     $userid = $attempt->userid;
     if (!$DB->record_exists('quiz_attempts', array('userid' => $userid, 'quiz' => $quiz->id))) {
         $DB->delete_records('quiz_grades', array('userid' => $userid, 'quiz' => $quiz->id));
@@ -196,7 +196,7 @@ function quiz_has_attempts($quizid) {
     return $DB->record_exists('quiz_attempts', array('quiz' => $quizid, 'preview' => 0));
 }
 
-/// Functions to do with quiz layout and pages ////////////////////////////////
+// Functions to do with quiz layout and pages //////////////////////////////////
 
 /**
  * Returns a comma separated list of question ids for the quiz
@@ -277,7 +277,7 @@ function quiz_repaginate($layout, $perpage, $shuffle = false) {
     return implode(',', $layout);
 }
 
-/// Functions to do with quiz grades //////////////////////////////////////////
+// Functions to do with quiz grades ////////////////////////////////////////////
 
 /**
  * Creates an array of maximum grades for a quiz
@@ -500,7 +500,7 @@ function quiz_set_grade($newgrade, $quiz) {
         ", array($factor, $factor, $quiz->id));
     }
 
-    // update grade item and send all grades to gradebook
+    // Update grade item and send all grades to gradebook.
     quiz_grade_item_update($quiz);
     quiz_update_grades($quiz);
 
@@ -526,15 +526,15 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
     }
 
     if (!$attempts) {
-        // Get all the attempts made by the user
+        // Get all the attempts made by the user.
         $attempts = quiz_get_user_attempts($quiz->id, $userid);
     }
 
-    // Calculate the best grade
+    // Calculate the best grade.
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
     $bestgrade = quiz_rescale_grade($bestgrade, $quiz, false);
 
-    // Save the best grade in the database
+    // Save the best grade in the database.
     if (is_null($bestgrade)) {
         $DB->delete_records('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid));
 
@@ -768,7 +768,7 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
             }
             break;
 
-        case QUIZ_GRADEAVERAGE: // need to do something with it :-)
+        case QUIZ_GRADEAVERAGE: // We need to do something with it.
         case QUIZ_ATTEMPTLAST:
             foreach ($attempts as $attempt) {
                 $final = $attempt;
@@ -842,7 +842,7 @@ function quiz_attempt_state_name($state) {
     }
 }
 
-/// Other quiz functions ////////////////////////////////////////////////////
+// Other quiz functions ////////////////////////////////////////////////////////
 
 /**
  * @param object $quiz the quiz.
@@ -1013,7 +1013,7 @@ function quiz_get_review_options($quiz, $attempt, $context) {
                 array('attempt' => $attempt->id));
     }
 
-    // Show a link to the comment box only for closed attempts
+    // Show a link to the comment box only for closed attempts.
     if (!empty($attempt->id) && $attempt->state == quiz_attempt::FINISHED && !$attempt->preview &&
             !is_null($context) && has_capability('mod/quiz:grade', $context)) {
         $options->manualcomment = question_display_options::VISIBLE;
@@ -1096,7 +1096,7 @@ function quiz_clean_layout($layout, $removeemptypages = false) {
     // id to relink to.
     $layout = preg_replace('/,{2,}/', ',', trim($layout, ','));
 
-    // Remove duplicate question ids
+    // Remove duplicate question ids.
     $layout = explode(',', $layout);
     $cleanerlayout = array();
     $seen = array();
@@ -1110,7 +1110,7 @@ function quiz_clean_layout($layout, $removeemptypages = false) {
     }
 
     if ($removeemptypages) {
-        // Avoid duplicate page breaks
+        // Avoid duplicate page breaks.
         $layout = $cleanerlayout;
         $cleanerlayout = array();
         $stripfollowingbreaks = true; // Ensure breaks are stripped from the start.
@@ -1123,7 +1123,7 @@ function quiz_clean_layout($layout, $removeemptypages = false) {
         }
     }
 
-    // Add a page break at the end if there is none
+    // Add a page break at the end if there is none.
     if (end($cleanerlayout) !== '0') {
         $cleanerlayout[] = '0';
     }
@@ -1147,7 +1147,7 @@ function quiz_get_slot_for_question($quiz, $questionid) {
     return null;
 }
 
-/// FUNCTIONS FOR SENDING NOTIFICATION MESSAGES ///////////////////////////////
+// Functions for sending notification messages /////////////////////////////////
 
 /**
  * Sends a confirmation message to the student confirming that the attempt was processed.
@@ -1159,12 +1159,12 @@ function quiz_get_slot_for_question($quiz, $questionid) {
  */
 function quiz_send_confirmation($recipient, $a) {
 
-    // Add information about the recipient to $a
+    // Add information about the recipient to $a.
     // Don't do idnumber. we want idnumber to be the submitter's idnumber.
     $a->username     = fullname($recipient);
     $a->userusername = $recipient->username;
 
-    // Prepare message
+    // Prepare the message.
     $eventdata = new stdClass();
     $eventdata->component         = 'mod_quiz';
     $eventdata->name              = 'confirmation';
@@ -1195,12 +1195,12 @@ function quiz_send_confirmation($recipient, $a) {
  */
 function quiz_send_notification($recipient, $submitter, $a) {
 
-    // Recipient info for template
+    // Recipient info for template.
     $a->useridnumber = $recipient->idnumber;
     $a->username     = fullname($recipient);
     $a->userusername = $recipient->username;
 
-    // Prepare message
+    // Prepare the message.
     $eventdata = new stdClass();
     $eventdata->component         = 'mod_quiz';
     $eventdata->name              = 'submission';
@@ -1235,14 +1235,14 @@ function quiz_send_notification($recipient, $submitter, $a) {
 function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm) {
     global $CFG, $DB;
 
-    // Do nothing if required objects not present
+    // Do nothing if required objects not present.
     if (empty($course) or empty($quiz) or empty($attempt) or empty($context)) {
         throw new coding_exception('$course, $quiz, $attempt, $context and $cm must all be set.');
     }
 
     $submitter = $DB->get_record('user', array('id' => $attempt->userid), '*', MUST_EXIST);
 
-    // Check for confirmation required
+    // Check for confirmation required.
     $sendconfirm = false;
     $notifyexcludeusers = '';
     if (has_capability('mod/quiz:emailconfirmsubmission', $context, $submitter, false)) {
@@ -1250,7 +1250,7 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
         $sendconfirm = true;
     }
 
-    // check for notifications required
+    // Check for notifications required.
     $notifyfields = 'u.id, u.username, u.firstname, u.lastname, u.idnumber, u.email, u.emailstop, ' .
             'u.lang, u.timezone, u.mailformat, u.maildisplay';
     $groups = groups_get_all_groups($course->id, $submitter->id);
@@ -1272,30 +1272,30 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     }
 
     $a = new stdClass();
-    // Course info
+    // Course info.
     $a->coursename      = $course->fullname;
     $a->courseshortname = $course->shortname;
-    // Quiz info
+    // Quiz info.
     $a->quizname        = $quiz->name;
     $a->quizreporturl   = $CFG->wwwroot . '/mod/quiz/report.php?id=' . $cm->id;
     $a->quizreportlink  = '<a href="' . $a->quizreporturl . '">' .
             format_string($quiz->name) . ' report</a>';
     $a->quizurl         = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
     $a->quizlink        = '<a href="' . $a->quizurl . '">' . format_string($quiz->name) . '</a>';
-    // Attempt info
+    // Attempt info.
     $a->submissiontime  = userdate($attempt->timefinish);
     $a->timetaken       = format_time($attempt->timefinish - $attempt->timestart);
     $a->quizreviewurl   = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id;
     $a->quizreviewlink  = '<a href="' . $a->quizreviewurl . '">' .
             format_string($quiz->name) . ' review</a>';
-    // Student who sat the quiz info
+    // Student who sat the quiz info.
     $a->studentidnumber = $submitter->idnumber;
     $a->studentname     = fullname($submitter);
     $a->studentusername = $submitter->username;
 
     $allok = true;
 
-    // Send notifications if required
+    // Send notifications if required.
     if (!empty($userstonotify)) {
         foreach ($userstonotify as $recipient) {
             $allok = $allok && quiz_send_notification($recipient, $submitter, $a);
@@ -1325,7 +1325,7 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
 function quiz_send_overdue_message($course, $quiz, $attempt, $context, $cm) {
     global $CFG, $DB;
 
-    // Do nothing if required objects not present
+    // Do nothing if required objects not present.
     if (empty($course) or empty($quiz) or empty($attempt) or empty($context)) {
         throw new coding_exception('$course, $quiz, $attempt, $context and $cm must all be set.');
     }

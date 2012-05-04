@@ -68,7 +68,7 @@ if ($userid) {
         case QUIZ_GRADEHIGHEST:
             $maxmark = 0;
             foreach ($attempts as $at) {
-                // >=, since we want to most recent relevant attempt.
+                // Operator >=, since we want to most recent relevant attempt.
                 if ((float) $at->sumgrades >= $maxmark) {
                     $maxmark = $at->sumgrades;
                     $attempt = $at;

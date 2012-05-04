@@ -58,7 +58,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $quizconfig = get_config('quiz');
         $mform = $this->_form;
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Name.
@@ -73,7 +73,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         // Introduction.
         $this->add_intro_editor(false, get_string('introduction', 'quiz'));
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform->addElement('header', 'timing', get_string('timing', 'quiz'));
 
         // Open and close dates.
@@ -108,8 +108,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setDefault('graceperiod', $quizconfig->graceperiod);
         $mform->disabledIf('graceperiod', 'overduehandling', 'neq', 'graceperiod');
 
-        //-------------------------------------------------------------------------------
-        // Grade settings
+        // -------------------------------------------------------------------------------
+        // Grade settings.
         $this->standard_grading_coursemodule_elements();
 
         $mform->removeElement('grade');
@@ -134,7 +134,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setDefault('grademethod', $quizconfig->grademethod);
         $mform->disabledIf('grademethod', 'attempts', 'eq', 1);
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform->addElement('header', 'layouthdr', get_string('layout', 'quiz'));
 
         // Shuffle questions.
@@ -174,14 +174,14 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('questionsperpagegrp', 'newpage', 'quiz');
         $mform->setAdvanced('questionsperpagegrp', $quizconfig->questionsperpage_adv);
 
-        // Navigation method
+        // Navigation method.
         $mform->addElement('select', 'navmethod', get_string('navmethod', 'quiz'),
                 quiz_get_navigation_options());
         $mform->addHelpButton('navmethod', 'navmethod', 'quiz');
         $mform->setAdvanced('navmethod', $quizconfig->navmethod_adv);
         $mform->setDefault('navmethod', $quizconfig->navmethod);
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform->addElement('header', 'interactionhdr', get_string('questionbehaviour', 'quiz'));
 
         // Shuffle within questions.
@@ -210,7 +210,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setDefault('attemptonlast', $quizconfig->attemptonlast);
         $mform->disabledIf('attemptonlast', 'attempts', 'eq', 1);
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform->addElement('header', 'reviewoptionshdr',
                 get_string('reviewoptionsheading', 'quiz'));
         $mform->addHelpButton('reviewoptionshdr', 'reviewoptionsheading', 'quiz');
@@ -237,7 +237,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->disabledIf('overallfeedbackduring', 'preferredbehaviour',
                 'neq', 'wontmatch');
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform->addElement('header', 'display', get_string('display', 'form'));
 
         // Show user picture.
@@ -269,13 +269,13 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setAdvanced('questiondecimalpoints', $quizconfig->questiondecimalpoints_adv);
         $mform->setDefault('questiondecimalpoints', $quizconfig->questiondecimalpoints);
 
-        // Show blocks during quiz attempt
+        // Show blocks during quiz attempt.
         $mform->addElement('selectyesno', 'showblocks', get_string('showblocks', 'quiz'));
         $mform->addHelpButton('showblocks', 'showblocks', 'quiz');
         $mform->setAdvanced('showblocks', $quizconfig->showblocks_adv);
         $mform->setDefault('showblocks', $quizconfig->showblocks);
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform->addElement('header', 'security', get_string('extraattemptrestrictions', 'quiz'));
 
         // Require password to begin quiz attempt.
@@ -308,7 +308,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->disabledIf('delay2', 'attempts', 'eq', 1);
         $mform->disabledIf('delay2', 'attempts', 'eq', 2);
 
-        // 'Secure' window.
+        // Browser security choices.
         $mform->addElement('select', 'browsersecurity', get_string('browsersecurity', 'quiz'),
                 quiz_access_manager::get_browser_security_choices());
         $mform->addHelpButton('browsersecurity', 'browsersecurity', 'quiz');
@@ -318,7 +318,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         // Any other rule plugins.
         quiz_access_manager::add_settings_form_fields($this, $mform);
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'quiz'));
         $mform->addHelpButton('overallfeedbackhdr', 'overallfeedback', 'quiz');
 
@@ -357,7 +357,7 @@ class mod_quiz_mod_form extends moodleform_mod {
                 $repeatedoptions, 'boundary_repeats', 'boundary_add_fields', 3,
                 get_string('addmoreoverallfeedbacks', 'quiz'), true);
 
-        // Put some extra elements in before the button
+        // Put some extra elements in before the button.
         $mform->insertElementBefore($mform->createElement('editor',
                 "feedbacktext[$nextel]", get_string('feedback', 'quiz'), null,
                 array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true,
@@ -374,11 +374,10 @@ class mod_quiz_mod_form extends moodleform_mod {
             $mform->disabledIf('feedbacktext[' . ($i + 1) . ']', 'grade', 'eq', 0);
         }
 
-        //-------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------
         $this->standard_coursemodule_elements();
 
-        //-------------------------------------------------------------------------------
-        // buttons
+        // -------------------------------------------------------------------------------
         $this->add_action_buttons();
     }
 
@@ -435,13 +434,13 @@ class mod_quiz_mod_form extends moodleform_mod {
             foreach ($this->_feedbacks as $feedback) {
                 $draftid = file_get_submitted_draft_itemid('feedbacktext['.$key.']');
                 $toform['feedbacktext['.$key.']']['text'] = file_prepare_draft_area(
-                    $draftid,               // draftid
-                    $this->context->id,     // context
-                    'mod_quiz',             // component
-                    'feedback',             // filarea
-                    !empty($feedback->id) ? (int) $feedback->id : null, // itemid
+                    $draftid,               // Draftid.
+                    $this->context->id,     // Context.
+                    'mod_quiz',             // Component.
+                    'feedback',             // Filarea.
+                    !empty($feedback->id) ? (int) $feedback->id : null, // Itemid.
                     null,
-                    $feedback->feedbacktext // text
+                    $feedback->feedbacktext // Text.
                 );
                 $toform['feedbacktext['.$key.']']['format'] = $feedback->feedbacktextformat;
                 $toform['feedbacktext['.$key.']']['itemid'] = $draftid;
