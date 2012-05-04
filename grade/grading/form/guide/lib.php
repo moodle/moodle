@@ -704,7 +704,8 @@ class gradingform_guide_instance extends gradingform_instance {
         foreach ($criteria as $id => $criterion) {
             if (!isset($elementvalue['criteria'][$id]['score'])
                     || $criterion['maxscore'] < $elementvalue['criteria'][$id]['score']
-                    || !is_numeric($elementvalue['criteria'][$id]['score'])) {
+                    || !is_numeric($elementvalue['criteria'][$id]['score'])
+                    || $elementvalue['criteria'][$id]['score'] < 0) {
                 $this->validationerrors[$id]['score'] =  $elementvalue['criteria'][$id]['score'];
             }
         }
