@@ -375,7 +375,7 @@ function folder_export_contents($cm, $baseurl) {
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-function folder_dndupload_register() {
+function mod_folder_dndupload_register() {
     return array('files' => array(
                      array('extension' => 'zip', 'message' => get_string('dnduploadmakefolder', 'mod_folder'))
                  ));
@@ -386,17 +386,19 @@ function folder_dndupload_register() {
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
-function folder_dndupload_handle($uploadinfo) {
+function mod_folder_dndupload_handle($uploadinfo) {
     global $DB, $USER;
 
-    $folder = new stdClass();
-    $folder->course = $uploadinfo->course->id;
-    $folder->name = $uploadinfo->displayname;
-    $folder->intro = '<p>'.$uploadinfo->displayname.'</p>';
-    $folder->introformat = FORMAT_HTML;
-    $folder->timemodified = time();
+    // Gather the required info.
+    $data = new stdClass();
+    $data->course = $uploadinfo->course->id;
+    $data->name = $uploadinfo->displayname;
+    $data->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $data->introformat = FORMAT_HTML;
+    $data->coursemodule = $uploadinfo->coursemodule;
+    $data->files = null; // We will unzip the file and sort out the contents below.
 
-    $folder->id = $DB->insert_record('folder', $folder);
+    $data->id = folder_add_instance($data, null);
 
     // Retrieve the file from the draft file area.
     $context = context_module::instance($uploadinfo->coursemodule);
@@ -410,9 +412,9 @@ function folder_dndupload_handle($uploadinfo) {
     $fs->delete_area_files($context->id, 'mod_folder', 'temp', 0);
 
     if ($success) {
-        return $folder->id;
+        return $data->id;
     }
 
-    $DB->delete_records('folder', array('id' => $folder->id));
+    $DB->delete_records('folder', array('id' => $data->id));
     return false;
 }

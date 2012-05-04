@@ -88,6 +88,7 @@ function resource_get_post_actions() {
 function resource_add_instance($data, $mform) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
+    require_once("$CFG->dirroot/mod/resource/locallib.php");
     $cmid = $data->coursemodule;
     $data->timemodified = time();
 
@@ -495,7 +496,7 @@ function resource_export_contents($cm, $baseurl) {
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-function resource_dndupload_register() {
+function mod_resource_dndupload_register() {
     return array('files' => array(
                      array('extension' => '*', 'message' => get_string('dnduploadresource', 'mod_resource'))
                  ));
@@ -506,44 +507,23 @@ function resource_dndupload_register() {
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
-function resource_dndupload_handle($uploadinfo) {
-    global $DB, $CFG;
-    require_once("$CFG->libdir/resourcelib.php");
+function mod_resource_dndupload_handle($uploadinfo) {
+    // Gather the required info.
+    $data = new stdClass();
+    $data->course = $uploadinfo->course->id;
+    $data->name = $uploadinfo->displayname;
+    $data->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $data->introformat = FORMAT_HTML;
+    $data->coursemodule = $uploadinfo->coursemodule;
+    $data->files = $uploadinfo->draftitemid;
 
-    // Set display options to site defaults.
+    // Set the display options to the site defaults.
     $config = get_config('resource');
-    $display = $config->display;
-    $displayoptions = array();
-    if ($display == RESOURCELIB_DISPLAY_POPUP) {
-        $displayoptions['popupheight'] = $config->popupheight;
-        $displayoptions['popupwidth'] = $config->popupwidth;
-    }
-    if (in_array($display, array(RESOURCELIB_DISPLAY_AUTO, RESOURCELIB_DISPLAY_EMBED, RESOURCELIB_DISPLAY_FRAME))) {
-        $displayoptions['printheading'] = $config->printheading;
-        $displayoptions['printintro'] = $config->printintro;
-    }
-    $displayoptions = serialize($displayoptions);
+    $data->display = $config->display;
+    $data->popupheight = $config->popupheight;
+    $data->popupwidth = $config->popupwidth;
+    $data->printheading = $config->printheading;
+    $data->printintro = $config->printintro;
 
-    // Create the database entry.
-    $resource = new stdClass();
-    $resource->course = $uploadinfo->course->id;
-    $resource->name = $uploadinfo->displayname;
-    $resource->intro = '<p>'.$uploadinfo->displayname.'</p>';
-    $resource->introformat = FORMAT_HTML;
-    $resource->display = $display;
-    $resource->displayoptions = $displayoptions;
-    $resource->timemodified = time();
-
-    $resource->id = $DB->insert_record('resource', $resource);
-
-    // Retrieve the file from the draft file area.
-    $context = context_module::instance($uploadinfo->coursemodule);
-    file_save_draft_area_files($uploadinfo->draftitemid, $context->id, 'mod_resource', 'content', 0, array('subdirs' => false));
-    $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder', false);
-    // Only ever one file - set it as the 'main' file.
-    $file = reset($files);
-    file_set_sortorder($context->id, 'mod_resource', 'content', 0, $file->get_filepath(), $file->get_filename(), 1);
-
-    return $resource->id;
+    return resource_add_instance($data, null);
 }

@@ -348,7 +348,7 @@ function url_export_contents($cm, $baseurl) {
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-function url_dndupload_register() {
+function mod_url_dndupload_register() {
     return array('types' => array(
                      array('identifier' => 'url', 'message' => get_string('createurl', 'url'))
                  ));
@@ -359,33 +359,23 @@ function url_dndupload_register() {
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
-function url_dndupload_handle($uploadinfo) {
-    global $DB, $CFG;
-    require_once("$CFG->libdir/resourcelib.php");
+function mod_url_dndupload_handle($uploadinfo) {
+    // Gather all the required data.
+    $data = new stdClass();
+    $data->course = $uploadinfo->course->id;
+    $data->name = $uploadinfo->displayname;
+    $data->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $data->introformat = FORMAT_HTML;
+    $data->externalurl = clean_param($uploadinfo->content, PARAM_URL);
+    $data->timemodified = time();
 
+    // Set the display options to the site defaults.
     $config = get_config('url');
-    $display = $config->display;
-    if ($display == RESOURCELIB_DISPLAY_POPUP) {
-        $displayoptions['popupwidth'] = $config->popupwidth;
-        $displayoptions['popupheight'] = $config->popupheight;
-    }
-    if (in_array($display, array(RESOURCELIB_DISPLAY_AUTO, RESOURCELIB_DISPLAY_EMBED, RESOURCELIB_DISPLAY_FRAME))) {
-        $displayoptions['printheading'] = $config->printheading;
-        $displayoptions['printintro'] = $config->printintro;
-    }
-    $displayoptions = serialize($displayoptions);
+    $data->display = $config->display;
+    $data->popupwidth = $config->popupwidth;
+    $data->popupheight = $config->popupheight;
+    $data->printheading = $config->printheading;
+    $data->printintro = $config->printintro;
 
-    $url = new stdClass();
-    $url->course = $uploadinfo->course->id;
-    $url->name = $uploadinfo->displayname;
-    $url->intro = '<p>'.$uploadinfo->displayname.'</p>';
-    $url->introformat = FORMAT_HTML;
-    $url->externalurl = clean_param($uploadinfo->content, PARAM_URL);
-    $url->display = $display;
-    $url->displayoptions = $displayoptions;
-    $url->timemodified = time();
-
-    $url->id = $DB->insert_record('url', $url);
-
-    return $url->id;
+    return url_add_instance($data, null);
 }

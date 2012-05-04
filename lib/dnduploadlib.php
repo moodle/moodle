@@ -107,12 +107,13 @@ class dndupload_handler {
                         get_string('nameforpage', 'core_dndupload'), 30);
 
         // Loop through all modules to find handlers.
-        $mods = get_plugin_list('mod');
-        foreach ($mods as $modname => $modpath) {
+        $mods = get_plugin_list_with_function('mod', 'dndupload_register');
+        foreach ($mods as $component => $funcname) {
+            list($modtype, $modname) = normalize_component($component);
             if (!course_allowed_module($course, $modname)) {
                 continue;
             }
-            $resp = plugin_callback('mod', $modname, 'dndupload', 'register', array());
+            $resp = $funcname();
             if (!$resp) {
                 continue;
             }
@@ -167,7 +168,7 @@ class dndupload_handler {
         $add->priority = $priority;
         $add->handlers = array();
 
-        $this->types[] = $add;
+        $this->types[$identifier] = $add;
     }
 
     /**
@@ -180,19 +181,16 @@ class dndupload_handler {
      *                        for a type and the user needs to make a choice between them
      */
     public function add_type_handler($type, $module, $message) {
-        foreach ($this->types as $knowntype) {
-            if ($knowntype->identifier == $type) {
-                $add = new stdClass;
-                $add->type = $type;
-                $add->module = $module;
-                $add->message = $message;
-
-                $knowntype->handlers[] = $add;
-                return;
-            }
+        if (!$this->is_known_type($type)) {
+            throw new coding_exception("Trying to add handler for unknown type $type");
         }
 
-        throw new coding_exception("Trying to add handler for unknown type $type");
+        $add = new stdClass;
+        $add->type = $type;
+        $add->module = $module;
+        $add->message = $message;
+
+        $this->types[$type]->handlers[] = $add;
     }
 
     /**
@@ -205,6 +203,8 @@ class dndupload_handler {
      *                        for a type and the user needs to make a choice between them
      */
     public function add_file_handler($extension, $module, $message) {
+        $extension = strtolower($extension);
+
         $add = new stdClass;
         $add->extension = $extension;
         $add->module = $module;
@@ -220,12 +220,7 @@ class dndupload_handler {
      * @return bool True if the type is registered
      */
     public function is_known_type($type) {
-        foreach ($this->types as $knowntype) {
-            if ($knowntype->identifier == $type) {
-                return true;
-            }
-        }
-        return false;
+        return array_key_exists($type, $this->types);
     }
 
     /**
@@ -237,13 +232,12 @@ class dndupload_handler {
      * @return bool True if the module has registered to handle that type
      */
     public function has_type_handler($module, $type) {
-        foreach ($this->types as $knowntype) {
-            if ($knowntype->identifier == $type) {
-                foreach ($knowntype->handlers as $handler) {
-                    if ($handler->module == $module) {
-                        return true;
-                    }
-                }
+        if (!$this->is_known_type($type)) {
+            throw new coding_exception("Checking for handler for unknown type $type");
+        }
+        foreach ($this->types[$type]->handlers as $handler) {
+            if ($handler->module == $module) {
+                return true;
             }
         }
         return false;
@@ -344,7 +338,7 @@ class dndupload_handler {
  * @copyright  2012 Davo Smith
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dndupload_processor {
+class dndupload_ajax_processor {
 
     /** Returned when no error has occurred */
     const ERROR_OK = 0;
@@ -384,6 +378,10 @@ class dndupload_processor {
     public function __construct($courseid, $section, $type, $modulename) {
         global $DB;
 
+        if (!defined('AJAX_SCRIPT')) {
+            throw new coding_exception('dndupload_ajax_processor should only be used within AJAX requests');
+        }
+
         $this->course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
         require_login($this->course, false);
@@ -422,6 +420,9 @@ class dndupload_processor {
 
         if ($this->is_file_upload()) {
             require_capability('moodle/course:managefiles', $this->context);
+            if ($content != null) {
+                throw new moodle_exception('fileuploadwithcontent', 'core_dndupload');
+            }
         }
 
         require_sesskey();
@@ -477,6 +478,12 @@ class dndupload_processor {
      * @param string $content the content uploaded to the browser
      */
     protected function handle_other_upload($content) {
+        // Check this plugin is registered to handle this type of upload
+        if (!$this->dnduploadhandler->has_type_handler($this->module->name, $this->type)) {
+            $info = (object)array('modname' => $this->module->name, 'type' => $this->type);
+            throw new moodle_exception('moddoesnotsupporttype', 'core_dndupload', $info);
+        }
+
         // Create a course module to hold the new instance.
         $this->create_course_module();
 
@@ -570,10 +577,8 @@ class dndupload_processor {
 
         if (!$instanceid) {
             // Something has gone wrong - undo everything we can.
-            $modcontext = context_module::instance($this->cm->id);
-            delete_context(CONTEXT_MODULE, $this->cm->id);
-            $DB->delete_records('course_modules', array('id' => $this->cm->id));
-            throw new moodle_exception('errorcreatingactivity', 'core_dndupload');
+            delete_course_module($this->cm->id);
+            throw new moodle_exception('errorcreatingactivity', 'core_dndupload', '', $this->module->name);
         }
 
         $DB->set_field('course_modules', 'instance', $instanceid, array('id' => $this->cm->id));
@@ -620,15 +625,18 @@ class dndupload_processor {
      * @param cm_info $mod details of the mod just created
      */
     protected function send_response($mod) {
+        global $OUTPUT;
+
         $resp = new stdClass();
         $resp->error = self::ERROR_OK;
-        $resp->icon = $mod->get_icon_url().'';
+        $resp->icon = $mod->get_icon_url()->out();
         $resp->name = $mod->name;
-        $resp->link = $mod->get_url().'';
+        $resp->link = $mod->get_url()->out();
         $resp->elementid = 'module-'.$mod->id;
         $resp->commands = make_editing_buttons($mod, true, true, 0, $mod->sectionnum);
         $resp->onclick = $mod->get_on_click();
 
+        echo $OUTPUT->header();
         echo json_encode($resp);
         die();
     }
