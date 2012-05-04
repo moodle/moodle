@@ -338,7 +338,7 @@ class gradingform_guide_controller extends gradingform_controller {
                 $dbman = $DB->get_manager();
                 $modulename = substr($modulename, 4);
                 if ($dbman->table_exists($modulename)) {
-                    $cm = get_coursemodule_from_id('assignment', $context->instanceid);
+                    $cm = get_coursemodule_from_id('', $context->instanceid);
                     $this->moduleinstance = $DB->get_record($modulename, array("id"=>$cm->instance));
                 }
             }
