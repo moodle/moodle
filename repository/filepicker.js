@@ -384,7 +384,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
 
     }
 }, '@VERSION@', {
-    requires:['base','node'] // TODO TreeView, Table, etc.
+    requires:['base', 'node', 'yui2-treeview', 'panel', 'cookie', 'datatable', 'datatable-sort']
 });
 
 M.core_filepicker = M.core_filepicker || {};

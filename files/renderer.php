@@ -101,16 +101,11 @@ class core_files_renderer extends plugin_renderer_base {
         $module = array(
             'name'=>'form_filemanager',
             'fullpath'=>'/lib/form/filemanager.js',
-            'requires' => array('core_filepicker', 'base', 'io-base', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview', 'core_dndupload'),
-            'strings' => array(array('loading', 'repository'), array('nomorefiles', 'repository'), array('confirmdeletefile', 'repository'),
-                 array('add', 'repository'), array('accessiblefilepicker', 'repository'), array('move', 'moodle'),
-                 array('cancel', 'moodle'), array('download', 'moodle'), array('ok', 'moodle'),
-                 array('emptylist', 'repository'), array('nofilesattached', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
-                 array('zip', 'editor'), array('unzip', 'moodle'), array('rename', 'moodle'), array('delete', 'moodle'),
-                 array('cannotdeletefile', 'error'), array('confirmdeletefile', 'repository'),
-                 array('nopathselected', 'repository'), array('popupblockeddownload', 'repository'),
-                 array('draftareanofiles', 'repository'), array('path', 'moodle'), array('setmainfile', 'repository'),
-                 array('moving', 'repository'), array('files', 'moodle'), array('serverconnection', 'error')
+            'requires' => array('core_filepicker', 'base', 'io-base', 'node', 'json', 'core_dndupload', 'panel', 'resize-plugin', 'dd-plugin'),
+            'strings' => array(
+                array('error', 'moodle'), array('info', 'moodle'), array('confirmdeletefile', 'repository'),
+                array('draftareanofiles', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
+                array('invalidjson', 'repository'), array('popupblockeddownload', 'repository')
             )
         );
         if (empty($filemanagertemplateloaded)) {
