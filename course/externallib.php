@@ -260,18 +260,19 @@ class core_course_external extends external_api {
                 'criteria' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'key'        => new external_value(PARAM_ALPHA, 'The category column to search, expected keys (value format) are:
-                                                                "id" (int) the category id,
-                                                                "name" (string) the category name,
-                                                                "parent" (int) the parent category id,
-                                                                "idnumber" (string) category idnumber,
-                                                                "visible" (int) whether the category is visible or not,
-                                                                "theme" (string) category theme'),
-                            'value'      => new external_value(PARAM_RAW, 'the value to match')
+                            'key' => new external_value(PARAM_ALPHA, 'The category column to search, expected keys (value format) are:
+                                         "id" (int) the category id,
+                                         "name" (string) the category name,
+                                         "parent" (int) the parent category id,
+                                         "idnumber" (string) category idnumber,
+                                         "visible" (int) whether the category is visible or not,
+                                         "theme" (string) category theme'),
+                            'value' => new external_value(PARAM_RAW, 'the value to match')
                         )
-                    ), VALUE_DEFAULT, array()),
+                    ), VALUE_DEFAULT, array()
+                ),
                 'addsubcategories' => new external_value(PARAM_BOOL, 'return the sub categories infos
-                                                        (1 - default) otherwise only the category info (0)', VALUE_DEFAULT, 1)
+                                          (1 - default) otherwise only the category info (0)', VALUE_DEFAULT, 1)
             )
         );
     }
@@ -280,7 +281,7 @@ class core_course_external extends external_api {
      * Get categories
      *
      * @param array $criteria Criteria to match the results
-     * @param boolean $addsubcategories obtain only the category (false) or its subcategories (true - default)
+     * @param booln $addsubcategories obtain only the category (false) or its subcategories (true - default)
      * @return array list of categories
      * @since Moodle 2.3
      */
@@ -305,36 +306,42 @@ class core_course_external extends external_api {
                 if (!isset($conditions[$key])) {
 
                     $context = context_system::instance();
-                    $value = '';
+                    $value = null;
 
                     switch ($key) {
-                        case 'id':          $value = clean_param($crit['value'], PARAM_INT);
-                                            break;
+                        case 'id':
+                            $value = clean_param($crit['value'], PARAM_INT);
+                            break;
 
-                        case 'idnumber':    if (has_capability('moodle/category:manage', $context)) {
-                                                $value = clean_param($crit['value'], PARAM_RAW);
-                                            }
-                                            break;
+                        case 'idnumber':
+                            if (has_capability('moodle/category:manage', $context)) {
+                                $value = clean_param($crit['value'], PARAM_RAW);
+                            }
+                            break;
 
-                        case 'name':        $value = clean_param($crit['value'], PARAM_TEXT);
-                                            break;
+                        case 'name':
+                            $value = clean_param($crit['value'], PARAM_TEXT);
+                            break;
 
-                        case 'parent':      $value = clean_param($crit['value'], PARAM_INT);
-                                            break;
+                        case 'parent':
+                            $value = clean_param($crit['value'], PARAM_INT);
+                            break;
 
-                        case 'visible':     $value = clean_param($crit['value'], PARAM_INT);
-                                            break;
+                        case 'visible':
+                            $value = clean_param($crit['value'], PARAM_INT);
+                            break;
 
-                        case 'theme':       if (has_capability('moodle/category:manage', $context)) {
-                                                $value = clean_param($crit['value'], PARAM_THEME);
-                                            }
-                                            break;
+                        case 'theme':
+                            if (has_capability('moodle/category:manage', $context)) {
+                                $value = clean_param($crit['value'], PARAM_THEME);
+                            }
+                            break;
 
-                        default:            throw new moodle_exception('invalidextparam', 'webservice', '', $key);
+                        default:
+                            throw new moodle_exception('invalidextparam', 'webservice', '', $key);
                     }
 
-                    // 0 is a valid value. I.e visible = 0. So we check for not empty string.
-                    if ($value != '') {
+                    if (isset($value)) {
                         $conditions[$key] = $crit['value'];
                         $wheres[] = $key . " = :" . $key;
                     }
@@ -344,7 +351,7 @@ class core_course_external extends external_api {
             if (!empty($wheres)) {
                 $wheres = implode(" AND ", $wheres);
 
-                $categories = $DB->get_records_select('course_categories', $wheres, $conditions);
+                $categories = $DB->get_records_select('course_categories', $wheres, $conditions 'path');
 
                 // Retrieve its sub subcategories (all levels).
                 if ($categories and !empty($params['addsubcategories'])) {
@@ -352,7 +359,7 @@ class core_course_external extends external_api {
 
                     foreach ($categories as $category) {
                         $sqllike = $DB->sql_like('path', ':path');
-                        $sqlparams = array('path' => $category->path.'/%'); // It will include the specified category.
+                        $sqlparams = array('path' => $category->path.'/%'); // It will NOT include the specified category.
                         $subcategories = $DB->get_records_select('course_categories', $sqllike, $sqlparams, 'path');
                         $newcategories = array_merge($newcategories, $subcategories);   // Both arrays have integer as keys.
                     }
@@ -362,7 +369,7 @@ class core_course_external extends external_api {
 
         } else {
             // Retrieve all categories in the database.
-            $categories = $DB->get_records('course_categories', array(), 'sortorder ASC');
+            $categories = $DB->get_records('course_categories', array(), 'path');
         }
 
         // The not returned categories. key => category id, value => reason of exclusion.
@@ -479,7 +486,9 @@ class core_course_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function get_courses_parameters() {
         return new external_function_parameters(
