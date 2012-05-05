@@ -33,7 +33,9 @@ define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 
 // get special url parameters
-if (!$parts = combo_params()) {
+
+list($parts, $slasharguments) = combo_params();
+if (!$parts) {
     combo_not_found();
 }
 
@@ -110,13 +112,14 @@ foreach ($parts as $part) {
     $filecontent = file_get_contents($contentfile);
 
     $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
+    $sep = ($slasharguments ? '/' : '?file=');
 
     if ($mimetype === 'text/css') {
         if ($version == 'moodle') {
-            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php?file='.$version.'/'.$frankenstyle.'/'.array_shift($bits).'/$1.$2', $filecontent);
+            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php'.$sep.$version.'/'.$frankenstyle.'/'.array_shift($bits).'/$1.$2', $filecontent);
         } else if ($version == 'gallery') {
             // search for all images in gallery module CSS and serve them through the yui_image.php script
-            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php?file='.$version.'/'.$bits[0].'/'.$bits[1].'/$1.$2', $filecontent);
+            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php'.$sep.$version.'/'.$bits[0].'/'.$bits[1].'/$1.$2', $filecontent);
         } else {
             // First we need to remove relative paths to images. These are used by YUI modules to make use of global assets.
             // I've added this as a separate regex so it can be easily removed once
@@ -124,7 +127,7 @@ foreach ($parts as $part) {
             $filecontent = preg_replace('#(\.\./\.\./\.\./\.\./assets/skins/sam/)?([a-z0-9_-]+)\.(png|gif)#', '$2.$3', $filecontent);
 
             // search for all images in yui2 CSS and serve them through the yui_image.php script
-            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php?file='.$version.'/$1.$2', $filecontent);
+            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php'.$sep.$version.'/$1.$2', $filecontent);
         }
     }
 
@@ -195,14 +198,14 @@ function combo_params() {
     // note: buggy or misconfigured IIS does return the query string in REQUEST_URL
     if (isset($_SERVER['REQUEST_URI']) and strpos($_SERVER['REQUEST_URI'], '?') !== false) {
         $parts = explode('?', $_SERVER['REQUEST_URI'], 2);
-        return $parts[1];
+        return array($parts[1], false);
 
     } else if (isset($_SERVER['QUERY_STRING']) and strpos($_SERVER['QUERY_STRING'], '?') !== false) {
-        return $_SERVER['QUERY_STRING'];
+        return array($_SERVER['QUERY_STRING'], false);
 
     } else if ($slashargument = min_get_slash_argument()) {
         $slashargument = ltrim($slashargument, '/');
-        return $slashargument;
+        return array($slashargument, true);
 
     } else {
         // unsupported server, sorry!

@@ -32,7 +32,11 @@ define('NO_DEBUG_DISPLAY', true);
 define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 
-$path = min_optional_param('file', '', 'SAFEPATH');
+if ($slashargument = min_get_slash_argument()) {
+    $path = ltrim($slashargument, '/');
+} else {
+    $path = min_optional_param('file', '', 'SAFEPATH');
+}
 
 $parts = explode('/', $path);
 $version = array_shift($parts);
