@@ -404,8 +404,14 @@ class page_requirements_manager {
                     throw new coding_exception('Attempt to require a JavaScript file that does not exist.', $url);
                 }
             }
-            if (!empty($CFG->cachejs) and !empty($CFG->jsrev) and strpos($url, '/lib/editor/') !== 0 and substr($url, -3) === '.js') {
-                return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('file'=>$url, 'rev'=>$CFG->jsrev));
+            if (!empty($CFG->cachejs) and !empty($CFG->jsrev) and $CFG->jsrev > 0 and strpos($url, '/lib/editor/') !== 0 and substr($url, -3) === '.js') {
+                if (empty($CFG->slasharguments)) {
+                    return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('rev'=>$CFG->jsrev, 'file'=>$url));
+                } else {
+                    $returnurl = new moodle_url($CFG->httpswwwroot.'/lib/javascript.php');
+                    $returnurl->set_slashargument('/'.$CFG->jsrev.$url);
+                    return $returnurl;
+                }
             } else {
                 return new moodle_url($CFG->httpswwwroot.$url);
             }

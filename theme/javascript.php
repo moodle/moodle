@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * This file is responsible for serving the one huge CSS of each theme.
  *
- * @package   moodlecore
+ * @package   core
  * @copyright 2009 Petr Skoda (skodak)  {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,6 +30,7 @@ define('NO_DEBUG_DISPLAY', true);
 // we need just the values from config.php and minlib.php
 define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
+require_once("$CFG->dirroot/lib/jslib.php");
 
 if ($slashargument = min_get_slash_argument()) {
     $slashargument = ltrim($slashargument, '/');
@@ -70,15 +70,9 @@ if ($rev > -1 and file_exists($candidate)) {
     if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
         // we do not actually need to verify the etag value because our files
         // never change in cache because we increment the rev parameter
-        $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
-        header('HTTP/1.1 304 Not Modified');
-        header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
-        header('Cache-Control: public, max-age='.$lifetime);
-        header('Content-Type: application/javascript; charset=utf-8');
-        header('Etag: '.$etag);
-        die;
+        js_send_unmodified(filemtime($candidate), $etag);
     }
-    send_cached_js($candidate, $etag);
+    js_send_cached($candidate, $etag);
 }
 
 //=================================================================================
@@ -89,9 +83,6 @@ define('NO_MOODLE_COOKIES', true); // Session not used here
 define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
 
 require("$CFG->dirroot/lib/setup.php");
-// setup include path
-set_include_path($CFG->libdir . '/minify/lib' . PATH_SEPARATOR . get_include_path());
-require_once('Minify.php');
 
 $theme = theme_config::load($themename);
 
@@ -104,107 +95,10 @@ if ($rev > -1) {
     clearstatcache();
     check_dir_exists(dirname($candidate));
     $fp = fopen($candidate, 'w');
-    fwrite($fp, minify($theme->javascript_files($type)));
+    fwrite($fp, js_minify($theme->javascript_files($type)));
     fclose($fp);
-    send_cached_js($candidate, $etag);
+    js_send_cached($candidate, $etag);
+
 } else {
-    send_uncached_js($theme->javascript_content($type));
-}
-
-//=================================================================================
-//=== utility functions ==
-// we are not using filelib because we need to fine tune all header
-// parameters to get the best performance.
-
-function send_cached_js($jspath, $etag) {
-    global $CFG;
-    require("$CFG->dirroot/lib/xsendfilelib.php");
-
-    $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
-
-    header('Etag: '.$etag);
-    header('Content-Disposition: inline; filename="javascript.php"');
-    header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($jspath)) .' GMT');
-    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
-    header('Pragma: ');
-    header('Cache-Control: public, max-age='.$lifetime);
-    header('Accept-Ranges: none');
-    header('Content-Type: application/javascript; charset=utf-8');
-
-    if (xsendfile($jspath)) {
-        die;
-    }
-
-    if (!min_enable_zlib_compression()) {
-        header('Content-Length: '.filesize($jspath));
-    }
-
-    readfile($jspath);
-    die;
-}
-
-function send_uncached_js($js) {
-    header('Content-Disposition: inline; filename="javascript.php"');
-    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
-    header('Expires: '. gmdate('D, d M Y H:i:s', time() + 2) .' GMT');
-    header('Pragma: ');
-    header('Accept-Ranges: none');
-    header('Content-Type: application/javascript; charset=utf-8');
-    header('Content-Length: '.strlen($js));
-
-    echo $js;
-    die;
-}
-
-function minify($files) {
-    if (empty($files)) {
-        return '';
-    }
-
-    if (0 === stripos(PHP_OS, 'win')) {
-        Minify::setDocRoot(); // IIS may need help
-    }
-    // disable all caching, we do it in moodle
-    Minify::setCache(null, false);
-
-    $options = array(
-        'bubbleCssImports' => false,
-        // Don't gzip content we just want text for storage
-        'encodeOutput' => false,
-        // Maximum age to cache, not used but required
-        'maxAge' => 1800,
-        // The files to minify
-        'files' => $files,
-        // Turn orr URI rewriting
-        'rewriteCssUris' => false,
-        // This returns the CSS rather than echoing it for display
-        'quiet' => true
-    );
-
-    $error = 'unknown';
-    try {
-        $result = Minify::serve('Files', $options);
-        if ($result['success']) {
-            return $result['content'];
-        }
-    } catch (Exception $e) {
-        $error = $e->getMessage();
-        $error = str_replace("\r", ' ', $error);
-        $error = str_replace("\n", ' ', $error);
-    }
-
-    // minification failed - try to inform the theme developer and include the non-minified version
-    $js = <<<EOD
-try {console.log('Error: Minimisation of theme javascript failed!');} catch (e) {}
-
-// Error: $error
-// Problem detected during javascript minimisation, please review the following code
-// =================================================================================
-
-
-EOD;
-    foreach ($files as $jsfile) {
-        $js .= file_get_contents($jsfile)."\n";
-    }
-    return $js;
+    js_send_uncached($theme->javascript_content($type));
 }
