@@ -65,10 +65,11 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
 }
 
 if ($type === 'ie') {
-    css_send_ie_css($themename, $rev, !empty($slashargument));
+    css_send_ie_css($themename, $rev, $etag, !empty($slashargument));
 }
 
 $candidatesheet = "$CFG->cachedir/theme/$themename/css/$type.css";
+$etag = sha1("$themename/$rev/$type");
 
 if (file_exists($candidatesheet)) {
     if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
@@ -79,9 +80,10 @@ if (file_exists($candidatesheet)) {
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
         header('Cache-Control: public, max-age='.$lifetime);
         header('Content-Type: text/css; charset=utf-8');
+        header('Etag: '.$etag);
         die;
     }
-    css_send_cached_css($candidatesheet, $rev);
+    css_send_cached_css($candidatesheet, $etag);
 }
 
 //=================================================================================
@@ -94,6 +96,9 @@ define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
 require("$CFG->dirroot/lib/setup.php");
 
 $theme = theme_config::load($themename);
+
+$rev = theme_get_revision();
+$etag = sha1("$themename/$rev/$type");
 
 if ($type === 'editor') {
     $cssfiles = $theme->editor_css_files();
@@ -119,4 +124,4 @@ if ($type === 'editor') {
     $cssfile = "$CFG->cachedir/theme/$themename/css/all.css";
     css_store_css($theme, $cssfile, $allfiles);
 }
-css_send_cached_css($candidatesheet, $rev);
+css_send_cached_css($candidatesheet, $etag);
