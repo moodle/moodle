@@ -518,8 +518,14 @@ class theme_config {
         $rev = theme_get_revision();
 
         if ($rev > -1) {
-            $params = array('theme'=>$this->name,'rev'=>$rev, 'type'=>'editor');
-            return new moodle_url($CFG->httpswwwroot.'/theme/styles.php', $params);
+            if (!empty($CFG->slasharguments)) {
+                $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
+                $url->set_slashargument('/'.$this->name.'/'.$rev.'/editor', 'noparam', true);
+                return $url;
+            } else {
+                $params = array('theme'=>$this->name,'rev'=>$rev, 'type'=>'editor');
+                return new moodle_url($CFG->httpswwwroot.'/theme/styles.php', $params);
+            }
         } else {
             $params = array('theme'=>$this->name, 'type'=>'editor');
             return new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', $params);
@@ -589,7 +595,13 @@ class theme_config {
                 $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev, 'type'=>'parents'));
                 $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev, 'type'=>'theme'));
             } else {
-                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev));
+                if (!empty($CFG->slasharguments)) {
+                    $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
+                    $url->set_slashargument('/'.$this->name.'/'.$rev.'/all', 'noparam', true);
+                    $urls[] = $url;
+                } else {
+                    $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev, 'type'=>'all'));
+                }
             }
         } else {
             // find out the current CSS and cache it now for 5 seconds
@@ -872,8 +884,6 @@ class theme_config {
      * @return string The processed CSS.
      */
     public function post_process($css) {
-        global $CFG;
-
         // now resolve all image locations
         if (preg_match_all('/\[\[pix:([a-z_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
             $replaced = array();

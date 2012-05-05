@@ -33,9 +33,22 @@ define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 require_once($CFG->dirroot.'/lib/csslib.php');
 
-$themename = min_optional_param('theme', 'standard', 'SAFEDIR');
-$type      = min_optional_param('type', 'all', 'SAFEDIR');
-$rev       = min_optional_param('rev', 0, 'INT');
+if ($slashargument = min_get_slash_argument()) {
+    $slashargument = ltrim($slashargument, '/');
+    if (substr_count($slashargument, '/') < 2) {
+        image_not_found();
+    }
+    // image must be last because it may contain "/"
+    list($themename, $rev, $type) = explode('/', $slashargument, 3);
+    $themename = min_clean_param($themename, 'SAFEDIR');
+    $rev       = min_clean_param($rev, 'INT');
+    $type      = min_clean_param($type, 'SAFEDIR');
+
+} else {
+    $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
+    $rev       = min_optional_param('rev', 0, 'INT');
+    $type      = min_optional_param('type', 'all', 'SAFEDIR');
+}
 
 if (!in_array($type, array('all', 'ie', 'editor', 'plugins', 'parents', 'theme'))) {
     header('HTTP/1.0 404 not found');
@@ -52,7 +65,7 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
 }
 
 if ($type === 'ie') {
-    css_send_ie_css($themename, $rev);
+    css_send_ie_css($themename, $rev, !empty($slashargument));
 }
 
 $candidatesheet = "$CFG->cachedir/theme/$themename/css/$type.css";

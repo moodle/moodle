@@ -85,14 +85,21 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles) {
  *
  * @param string $themename The name of the theme we are sending CSS for.
  * @param string $rev The revision to ensure we utilise the cache.
+ * @param bool $slasharguments
  */
-function css_send_ie_css($themename, $rev) {
+function css_send_ie_css($themename, $rev, $slasharguments) {
     $lifetime = 60*60*24*30; // 30 days
 
     $css  = "/** Unfortunately IE6/7 does not support more than 4096 selectors in one CSS file, which means we have to use some ugly hacks :-( **/";
-    $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=plugins);";
-    $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=parents);";
-    $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=theme);";
+    if ($slasharguments) {
+        $css .= "\n@import url(styles.php/$themename/$rev/plugins);";
+        $css .= "\n@import url(styles.php/$themename/$rev/parents);";
+        $css .= "\n@import url(styles.php/$themename/$rev/theme);";
+    } else {
+        $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=plugins);";
+        $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=parents);";
+        $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=theme);";
+    }
 
     header('Etag: '.md5($rev));
     header('Content-Disposition: inline; filename="styles.php"');
