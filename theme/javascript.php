@@ -64,19 +64,21 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
 }
 
 $candidate = "$CFG->cachedir/theme/$themename/javascript_$type.js";
+$etag = sha1("$themename/$rev/$type");
 
 if ($rev > -1 and file_exists($candidate)) {
     if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
         // we do not actually need to verify the etag value because our files
         // never change in cache because we increment the rev parameter
-        $lifetime = 60*60*24*30; // 30 days
+        $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
         header('HTTP/1.1 304 Not Modified');
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
         header('Cache-Control: public, max-age='.$lifetime);
         header('Content-Type: application/javascript; charset=utf-8');
+        header('Etag: '.$etag);
         die;
     }
-    send_cached_js($candidate, $rev);
+    send_cached_js($candidate, $etag);
 }
 
 //=================================================================================
@@ -93,6 +95,9 @@ require_once('Minify.php');
 
 $theme = theme_config::load($themename);
 
+$rev = theme_get_revision();
+$etag = sha1("$themename/$rev/$type");
+
 if ($rev > -1) {
     // note: cache reset might have purged our cache dir structure,
     //       make sure we do not use stale file stat cache in the next check_dir_exists()
@@ -101,7 +106,7 @@ if ($rev > -1) {
     $fp = fopen($candidate, 'w');
     fwrite($fp, minify($theme->javascript_files($type)));
     fclose($fp);
-    send_cached_js($candidate);
+    send_cached_js($candidate, $etag);
 } else {
     send_uncached_js($theme->javascript_content($type));
 }
@@ -111,12 +116,13 @@ if ($rev > -1) {
 // we are not using filelib because we need to fine tune all header
 // parameters to get the best performance.
 
-function send_cached_js($jspath) {
+function send_cached_js($jspath, $etag) {
     global $CFG;
     require("$CFG->dirroot/lib/xsendfilelib.php");
 
-    $lifetime = 60*60*24*30; // 30 days
+    $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
 
+    header('Etag: '.$etag);
     header('Content-Disposition: inline; filename="javascript.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($jspath)) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
