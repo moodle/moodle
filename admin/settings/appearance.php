@@ -142,8 +142,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $setting = new admin_setting_configcheckbox('cachejs', new lang_string('cachejs', 'admin'), new lang_string('cachejs_help', 'admin'), 1);
     $setting->set_updatedcallback('js_reset_all_caches');
     $temp->add($setting);
-    $temp->add(new admin_setting_configcheckbox('enablecourseajax', new lang_string('enablecourseajax', 'admin'),
-                                                new lang_string('enablecourseajax_desc', 'admin'), 1));
     $ADMIN->add('appearance', $temp);
 
     // link to tag management interface
