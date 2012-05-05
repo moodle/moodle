@@ -268,17 +268,16 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     protected function section_summary($section, $course) {
 
         $o = '';
-        $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section));
+        $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
+            'class' => 'section-summary clearfix'));
 
         $title = get_section_name($course, $section);
-        $o.= html_writer::start_tag('div', array('class' => 'section-summary'));
         $o.= html_writer::start_tag('a', array('href' => course_get_url($course, $section->section)));
         $o.= $this->output->heading($title, 3, 'header section-title');
         $o.= html_writer::end_tag('a');
 
         $o.= html_writer::start_tag('div', array('class' => 'summarytext'));
         $o.= format_text($section->summary, $section->summaryformat);
-        $o.= html_writer::end_tag('div');
         $o.= html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
 
