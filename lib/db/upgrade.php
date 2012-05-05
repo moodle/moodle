@@ -478,5 +478,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012050300.05);
     }
 
+    if ($oldversion < 2012050400.01) {
+
+        // Define index sortorder (not unique) to be added to course
+        $table = new xmldb_table('course');
+        $index = new xmldb_index('sortorder', XMLDB_INDEX_NOTUNIQUE, array('sortorder'));
+
+        // Conditionally launch add index sortorder
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012050400.01);
+    }
+
     return true;
 }

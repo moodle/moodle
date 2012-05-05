@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20120504" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20120505" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -109,7 +109,8 @@
       <INDEXES>
         <INDEX NAME="category" UNIQUE="false" FIELDS="category" NEXT="idnumber"/>
         <INDEX NAME="idnumber" UNIQUE="false" FIELDS="idnumber" PREVIOUS="category" NEXT="shortname"/>
-        <INDEX NAME="shortname" UNIQUE="false" FIELDS="shortname" PREVIOUS="idnumber"/>
+        <INDEX NAME="shortname" UNIQUE="false" FIELDS="shortname" PREVIOUS="idnumber" NEXT="sortorder"/>
+        <INDEX NAME="sortorder" UNIQUE="false" FIELDS="sortorder" PREVIOUS="shortname"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_categories" COMMENT="Course categories" PREVIOUS="course" NEXT="course_completion_aggr_methd">
