@@ -99,7 +99,7 @@ function css_send_ie_css($themename, $rev) {
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: max-age='.$lifetime);
+    header('Cache-Control: public, max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: text/css; charset=utf-8');
     header('Content-Length: '.strlen($css));
@@ -124,7 +124,7 @@ function css_send_cached_css($csspath, $rev) {
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($csspath)) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: max-age='.$lifetime);
+    header('Cache-Control: public, max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: text/css; charset=utf-8');
     if (!min_enable_zlib_compression()) {

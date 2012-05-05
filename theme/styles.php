@@ -64,7 +64,7 @@ if (file_exists($candidatesheet)) {
         $lifetime = 60*60*24*30; // 30 days
         header('HTTP/1.1 304 Not Modified');
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
-        header('Cache-Control: max-age='.$lifetime);
+        header('Cache-Control: public, max-age='.$lifetime);
         header('Content-Type: text/css; charset=utf-8');
         die;
     }

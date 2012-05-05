@@ -90,7 +90,7 @@ function yui_image_cached($imagepath) {
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($imagepath)) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: max-age=315360000');
+    header('Cache-Control: public, max-age=315360000');
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));
