@@ -152,6 +152,8 @@ class page_requirements_manager {
     public function __construct() {
         global $CFG;
 
+        $sep = empty($CFG->slasharguments) ? '?' : '/';
+
         require_once("$CFG->libdir/yui/phploader/phploader/loader.php");
 
         $this->yui3loader = new stdClass();
@@ -174,8 +176,8 @@ class page_requirements_manager {
         } else {
             $this->yui3loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui3version . '/build/';
             $this->yui2loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version . '/build/';
-            $this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?';
-            $this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?';
+            $this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep;
+            $this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep;
         }
 
         // enable combo loader? this significantly helps with caching and performance!
@@ -201,8 +203,8 @@ class page_requirements_manager {
         $this->M_yui_loader->groups       = array(
             'moodle' => array(
                 'name' => 'moodle',
-                'base' => $CFG->httpswwwroot . '/theme/yui_combo.php?moodle/'.$jsrev.'/',
-                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php?',
+                'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
+                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
                 'combine' => $this->yui3loader->combine,
                 'filter' => '',
                 'ext' => false,
@@ -218,7 +220,7 @@ class page_requirements_manager {
             'local' => array(
                 'name' => 'gallery',
                 'base' => $CFG->wwwroot.'/lib/yui/gallery/',
-                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php?',
+                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
                 'combine' => $this->yui3loader->combine,
                 'filter' => $this->M_yui_loader->filter,
                 'ext' => false,
