@@ -25,6 +25,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+//NOTE: do not verify MOODLE_INTERNAL here, this is used from themes too
+
 /**
  * Stores CSS in a file at the given path.
  *
@@ -186,6 +188,24 @@ function css_send_uncached_css($css) {
 
     echo $css;
 
+    die;
+}
+
+/**
+ * Send file not modified headers
+ * @param int $lastmodified
+ * @param string $etag
+ */
+function css_send_unmodified($lastmodified, $etag) {
+    $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
+    header('HTTP/1.1 304 Not Modified');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+    header('Cache-Control: public, max-age='.$lifetime);
+    header('Content-Type: text/css; charset=utf-8');
+    header('Etag: '.$etag);
+    if ($lastmodified) {
+        header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
+    }
     die;
 }
 

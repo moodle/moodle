@@ -75,13 +75,7 @@ if (file_exists($candidatesheet)) {
     if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
         // we do not actually need to verify the etag value because our files
         // never change in cache because we increment the rev parameter
-        $lifetime = 60*60*24*30; // 30 days
-        header('HTTP/1.1 304 Not Modified');
-        header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
-        header('Cache-Control: public, max-age='.$lifetime);
-        header('Content-Type: text/css; charset=utf-8');
-        header('Etag: '.$etag);
-        die;
+        css_send_unmodified(filemtime($candidatesheet), $etag);
     }
     css_send_cached_css($candidatesheet, $etag);
 }
