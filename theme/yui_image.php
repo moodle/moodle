@@ -69,26 +69,40 @@ if (!file_exists($imagepath)) {
     yui_image_not_found();
 }
 
-yui_image_cached($imagepath);
+$pathinfo = pathinfo($imagepath);
+$imagename = $pathinfo['filename'].'.'.$pathinfo['extension'];
+
+switch($pathinfo['extension']) {
+    case 'gif'  : $mimetype = 'image/gif'; break;
+    case 'png'  : $mimetype = 'image/png'; break;
+    case 'jpg'  : $mimetype = 'image/jpeg'; break;
+    case 'jpeg' : $mimetype = 'image/jpeg'; break;
+    case 'ico'  : $mimetype = 'image/vnd.microsoft.icon'; break;
+    default: $mimetype = 'document/unknown';
+}
+
+// if they are requesting a revision that's not -1, and they have supplied an
+// If-Modified-Since header, we can send back a 304 Not Modified since the
+// content never changes (the rev number is increased any time the content changes)
+if (strpos($parts, '/-1/') === false and (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))) {
+    $lifetime = 60*60*24*360; // 1 year, we do not change YUI versions often, there are a few custom yui modules
+    header('HTTP/1.1 304 Not Modified');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($imagepath)) .' GMT');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+    header('Cache-Control: public, max-age='.$lifetime);
+    header('Content-Type: '.$mimetype);
+    header('Etag: '.$etag);
+    die;
+}
+
+yui_image_cached($imagepath, $imagename, $mimetype, $etag);
 
 
-
-function yui_image_cached($imagepath) {
+function yui_image_cached($imagepath, $imagename, $mimetype, $etag) {
     global $CFG;
     require("$CFG->dirroot/lib/xsendfilelib.php");
 
-    $lifetime = 60*60*24*300; // 300 days === forever
-    $pathinfo = pathinfo($imagepath);
-    $imagename = $pathinfo['filename'].'.'.$pathinfo['extension'];
-
-    switch($pathinfo['extension']) {
-        case 'gif' : $mimetype = 'image/gif'; break;
-        case 'png' : $mimetype = 'image/png'; break;
-        case 'jpg' : $mimetype = 'image/jpeg'; break;
-        case 'jpeg' : $mimetype = 'image/jpeg'; break;
-        case 'ico' : $mimetype = 'image/vnd.microsoft.icon'; break;
-        default: $mimetype = 'document/unknown';
-    }
+    $lifetime = 60*60*24*360; // 1 year, we do not change YUI versions often, there are a few custom yui modules
 
     header('Content-Disposition: inline; filename="'.$imagename.'"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($imagepath)) .' GMT');
@@ -98,6 +112,7 @@ function yui_image_cached($imagepath) {
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));
+    header('Etag: '.$etag);
 
     if (xsendfile($imagepath)) {
         die;

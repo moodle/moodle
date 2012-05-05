@@ -39,6 +39,7 @@ if (!$parts) {
     combo_not_found();
 }
 
+$etag = sha1($parts);
 $parts = trim($parts, '&');
 
 // find out what we are serving - only one type per request
@@ -55,16 +56,18 @@ if (substr($parts, -3) === '.js') {
 // If-Modified-Since header, we can send back a 304 Not Modified since the
 // content never changes (the rev number is increased any time the content changes)
 if (strpos($parts, '/-1/') === false and (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))) {
-    $lifetime = 60*60*24*30; // 30 days
+    $lifetime = 60*60*24*360; // 1 year, we do not change YUI versions often, there are a few custom yui modules
     header('HTTP/1.1 304 Not Modified');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Cache-Control: public, max-age='.$lifetime);
     header('Content-Type: '.$mimetype);
+    header('Etag: '.$etag);
     die;
 }
 
 $parts = explode('&', $parts);
 $cache = true;
+$lastmodified = 0;
 
 foreach ($parts as $part) {
     if (empty($part)) {
@@ -110,6 +113,10 @@ foreach ($parts as $part) {
         continue;
     }
     $filecontent = file_get_contents($contentfile);
+    $fmodified = filemtime($contentfile);
+    if ($fmodified > $lastmodified) {
+        $lastmodified = $fmodified;
+    }
 
     $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
     $sep = ($slasharguments ? '/' : '?file=');
@@ -134,8 +141,12 @@ foreach ($parts as $part) {
     $content .= $filecontent;
 }
 
+if ($lastmodified == 0) {
+    $lastmodified = time();
+}
+
 if ($cache) {
-    combo_send_cached($content, $mimetype);
+    combo_send_cached($content, $mimetype, $etag, $lastmodified);
 } else {
     combo_send_uncached($content, $mimetype);
 }
@@ -145,17 +156,20 @@ if ($cache) {
  * Send the JavaScript cached
  * @param string $content
  * @param string $mimetype
+ * @param string $etag
+ * @param int $lastmodified
  */
-function combo_send_cached($content, $mimetype) {
-    $lifetime = 60*60*24*30; // 30 days
+function combo_send_cached($content, $mimetype, $etag, $lastmodified) {
+    $lifetime = 60*60*24*360; // 1 year, we do not change YUI versions often, there are a few custom yui modules
 
     header('Content-Disposition: inline; filename="combo"');
-    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
     header('Cache-Control: max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
+    header('Etag: '.$etag);
     if (!min_enable_zlib_compression()) {
         header('Content-Length: '.strlen($content));
     }
