@@ -775,7 +775,13 @@ class theme_config {
         $params = array('theme'=>$this->name,'rev'=>$rev);
         $params['type'] = $inhead ? 'head' : 'footer';
 
-        return new moodle_url($CFG->httpswwwroot.'/theme/javascript.php', $params);
+        if (!empty($CFG->slasharguments) and $rev > 0) {
+            $url = new moodle_url("$CFG->httpswwwroot/theme/javascript.php");
+            $url->set_slashargument('/'.$this->name.'/'.$rev.'/'.$params['type'], 'noparam', true);
+            return $url;
+        } else {
+            return new moodle_url($CFG->httpswwwroot.'/theme/javascript.php', $params);
+        }
     }
 
     /**
