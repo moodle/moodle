@@ -886,7 +886,7 @@ class theme_config {
                 $component = rtrim($match[1], '|');
                 $imageurl = $this->pix_url($imagename, $component)->out(false);
                  // we do not need full url because the image.php is always in the same dir
-                $imageurl = str_replace("$CFG->httpswwwroot/theme/", '', $imageurl);
+                $imageurl = preg_replace('|^http.?://[^/]+|', '', $imageurl);
                 $css = str_replace($match[0], $imageurl, $css);
             }
         }
@@ -910,17 +910,29 @@ class theme_config {
     public function pix_url($imagename, $component) {
         global $CFG;
 
-        $params = array('theme'=>$this->name, 'image'=>$imagename);
+        $params = array('theme'=>$this->name);
+
+        if (empty($component) or $component === 'moodle' or $component === 'core') {
+            $params['component'] = 'core';
+        } else {
+            $params['component'] = $component;
+        }
 
         $rev = theme_get_revision();
         if ($rev != -1) {
             $params['rev'] = $rev;
         }
-        if (!empty($component) and $component !== 'moodle'and $component !== 'core') {
-            $params['component'] = $component;
+
+        $params['image'] = $imagename;
+
+        if (!empty($CFG->slasharguments) and $rev > 0) {
+            $url = new moodle_url("$CFG->httpswwwroot/theme/image.php");
+            $url->set_slashargument('/'.$params['theme'].'/'.$params['component'].'/'.$params['rev'].'/'.$params['image'], 'noparam', true);
+        } else {
+            $url = new moodle_url("$CFG->httpswwwroot/theme/image.php", $params);
         }
 
-        return new moodle_url("$CFG->httpswwwroot/theme/image.php", $params);
+        return $url;
     }
 
     /**

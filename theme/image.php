@@ -32,12 +32,30 @@ define('NO_DEBUG_DISPLAY', true);
 define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 
-$themename = min_optional_param('theme', 'standard', 'SAFEDIR');
-$component = min_optional_param('component', 'moodle', 'SAFEDIR');
-$image     = min_optional_param('image', '', 'SAFEPATH');
-$rev       = min_optional_param('rev', -1, 'INT');
+if ($slashargument = min_get_slash_argument()) {
+    $slashargument = ltrim($slashargument, '/');
+    if (substr_count($slashargument, '/') < 3) {
+        image_not_found();
+    }
+    // image must be last because it may contain "/"
+    list($themename, $component, $rev, $image) = explode('/', $slashargument, 4);
+    $themename = min_clean_param($themename, 'SAFEDIR');
+    $component = min_clean_param($component, 'SAFEDIR');
+    $rev       = min_clean_param($rev, 'INT');
+    $image     = min_clean_param($image, 'SAFEPATH');
 
-if (empty($component) or empty($image)) {
+} else {
+    $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
+    $component = min_optional_param('component', 'core', 'SAFEDIR');
+    $rev       = min_optional_param('rev', -1, 'INT');
+    $image     = min_optional_param('image', '', 'SAFEPATH');
+}
+
+if (empty($component) or $component === 'moodle' or $component === 'core') {
+    $component = 'moodle';
+}
+
+if (empty($image)) {
     image_not_found();
 }
 
