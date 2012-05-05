@@ -478,5 +478,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012050300.05);
     }
 
+    if ($oldversion < 2012050400.01) {
+
+        // Clean up removed admin setting.
+        unset_config('enablecourseajax');
+
+        upgrade_main_savepoint(true, 2012050400.01);
+    }
+
     return true;
 }
