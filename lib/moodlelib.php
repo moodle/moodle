@@ -2013,8 +2013,17 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
 
     $timezone = get_user_timezone_offset($timezone);
 
+    // If we are running under Windows convert to windows encoding and then back to UTF-8
+    // (because it's impossible to specify UTF-8 to fetch locale info in Win32)
+
     if (abs($timezone) > 13) {   /// Server time
-        $datestring = strftime($format, $date);
+        if ($CFG->ostype == 'WINDOWS' and ($localewincharset = get_string('localewincharset', 'langconfig'))) {
+            $format = textlib::convert($format, 'utf-8', $localewincharset);
+            $datestring = strftime($format, $date);
+            $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
+        } else {
+            $datestring = strftime($format, $date);
+        }
         if ($fixday) {
             $daystring  = ltrim(str_replace(array(' 0', ' '), '', strftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
@@ -2023,9 +2032,16 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
             $hourstring = ltrim(str_replace(array(' 0', ' '), '', strftime(' %I', $date)));
             $datestring = str_replace('HH', $hourstring, $datestring);
         }
+
     } else {
         $date += (int)($timezone * 3600);
-        $datestring = gmstrftime($format, $date);
+        if ($CFG->ostype == 'WINDOWS' and ($localewincharset = get_string('localewincharset', 'langconfig'))) {
+            $format = textlib::convert($format, 'utf-8', $localewincharset);
+            $datestring = gmstrftime($format, $date);
+            $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
+        } else {
+            $datestring = gmstrftime($format, $date);
+        }
         if ($fixday) {
             $daystring  = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
@@ -2034,15 +2050,6 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
             $hourstring = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %I', $date)));
             $datestring = str_replace('HH', $hourstring, $datestring);
         }
-    }
-
-/// If we are running under Windows convert from windows encoding to UTF-8
-/// (because it's impossible to specify UTF-8 to fetch locale info in Win32)
-
-   if ($CFG->ostype == 'WINDOWS') {
-       if ($localewincharset = get_string('localewincharset', 'langconfig')) {
-           $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
-       }
     }
 
     return $datestring;
