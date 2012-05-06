@@ -144,6 +144,7 @@ $string['invalidacctype'] = 'Invalid account type';
 $string['isbusinesschecking'] = 'Is business checking?';
 $string['logindesc'] = 'This option must be ON. <br /><br />Please ensure that you have turned <a href="{$a->url}">loginhttps ON</a> in Admin >> Variables >> Security.<br /><br />Turning this on will make Moodle use a secure https connection just for the login and payment pages.';
 $string['logininfo'] = 'When configuring your Authorize.Net account, the login name is required and you must enter <strong>either</strong> the transaction key <strong>or</strong> the password in the appropriate box. We recommend you enter the transaction key due to security precautions.';
+$string['messageprovider:authorize_enrolment'] = 'Authorize.Net enrolment messages';
 $string['methodcc'] = 'Credit card';
 $string['methodccdesc'] = 'Select credit card and accepted types below';
 $string['methodecheck'] = 'eCheck (ACH)';
