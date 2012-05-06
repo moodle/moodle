@@ -726,6 +726,19 @@ class enrol_database_plugin extends enrol_plugin {
                 $newcourse->idnumber  = $fields->idnumber;
                 $newcourse->category  = $fields->category ? $fields->category : $defaultcategory;
 
+                // Detect duplicate data once again, above we can not find duplicates
+                // in external data using DB collation rules...
+                if ($DB->record_exists('course', array('shortname' => $newcourse->shortname))) {
+                    if ($verbose) {
+                        mtrace("  can not insert new course, duplicate shortname detected: ".$newcourse->shortname);
+                    }
+                    continue;
+                } else if (!empty($newcourse->idnumber) and $DB->record_exists('course', array('idnumber' => $newcourse->idnumber))) {
+                    if ($verbose) {
+                        mtrace("  can not insert new course, duplicate idnumber detected: ".$newcourse->idnumber);
+                    }
+                    continue;
+                }
                 $c = create_course($newcourse);
                 if ($verbose) {
                     mtrace("  creating course: $c->id, $c->fullname, $c->shortname, $c->idnumber, $c->category");
