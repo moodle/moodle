@@ -758,9 +758,9 @@ class navigation_node_collection implements IteratorAggregate {
             }
         }
         // Add a reference to the node to the progressive collection.
-        $this->collection[$newindex] = &$this->orderedcollection[$type][$key];
+        $this->collection[$newindex] = $this->orderedcollection[$type][$key];
         // Update the last property to a reference to this new node.
-        $this->last = &$this->orderedcollection[$type][$key];
+        $this->last = $this->orderedcollection[$type][$key];
 
         // Reorder the array by index if needed
         if (!$last) {
@@ -1632,7 +1632,7 @@ class global_navigation extends navigation_node {
                 $categorynode->display = false;
             }
         }
-        $this->addedcategories[$category->id] = &$categorynode;
+        $this->addedcategories[$category->id] = $categorynode;
     }
 
     /**
@@ -2322,7 +2322,7 @@ class global_navigation extends navigation_node {
         $coursenode->hidden = (!$course->visible);
         $coursenode->title(format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id))));
         if (!$forcegeneric) {
-            $this->addedcourses[$course->id] = &$coursenode;
+            $this->addedcourses[$course->id] = $coursenode;
         }
         if ($ismycourse && !empty($CFG->navshowallcourses)) {
             // We need to add this course to the general courses node as well as the
@@ -4303,7 +4303,7 @@ class navigation_cache {
             if (!isset($SESSION->navcache->{$this->area})) {
                 $SESSION->navcache->{$this->area} = array();
             }
-            $this->session = &$SESSION->navcache->{$this->area};
+            $this->session = &$SESSION->navcache->{$this->area}; // pointer to array, =& is correct here
         }
     }
 
