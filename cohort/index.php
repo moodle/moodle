@@ -76,7 +76,7 @@ $data = array();
 foreach($cohorts as $cohort) {
     $line = array();
     $line[] = format_string($cohort->name);
-    $line[] = $cohort->idnumber;
+    $line[] = s($cohort->idnumber); // plain text
     $line[] = format_text($cohort->description, $cohort->descriptionformat);
 
     $line[] = $DB->count_records('cohort_members', array('cohortid'=>$cohort->id));
