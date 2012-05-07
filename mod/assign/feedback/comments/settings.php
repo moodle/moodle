@@ -15,17 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'assignfeedback_comments', language 'en'
+ * This file defines the admin settings for this plugin
  *
- * @package   assignfeedback_comments
+ * @package   assignsubmission_comments
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-$string['default'] = 'Enabled by default';
-$string['default_help'] = 'If set, this feedback method will be enabled by default for all new assignments.';
-$string['enabled'] = 'Feedback comments';
-$string['enabled_help'] = 'If enabled, the marker can leave feedback comments for each submission. ';
-$string['pluginname'] = 'Feedback comments';
+$settings->add(new admin_setting_configcheckbox('assignfeedback_comments/default',
+                   new lang_string('default', 'assignfeedback_comments'),
+                   new lang_string('default_help', 'assignfeedback_comments'), 0));
 

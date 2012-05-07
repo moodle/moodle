@@ -86,7 +86,7 @@ class assign_submission_file extends assign_submission_plugin {
         $mform->setDefault('assignsubmission_file_maxfiles', $defaultmaxfilesubmissions);
         $mform->disabledIf('assignsubmission_file_maxfiles', 'assignsubmission_file_enabled', 'eq', 0);
 
-        $choices = get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes, $CFG->assignsubmission_file_maxbytes);
+        $choices = get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes, get_config('assignsubmission_file', 'maxbytes'));
         if ($COURSE->maxbytes == 0) {
             $choices[0] = get_string('siteuploadlimit', 'assignsubmission_file');
         } else {
