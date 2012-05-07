@@ -62,7 +62,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 cursor = 'pointer';
             }
             var button = Y.one(toolboxtarget).all(selector)
-                .removeAttribute('href')
                 .setStyle('cursor', cursor);
 
             // on isn't chainable and will return an event
@@ -312,6 +311,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             this.move_leftright(e, 1, CSS.MOVERIGHT);
         },
         move_leftright : function(e, direction, buttonselector) {
+            // Prevent the default button action
+            e.preventDefault();
+
             // Get the element we're working on
             var element = e.target.ancestor(CSS.ACTIVITYLI);
 
@@ -357,6 +359,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             }
         },
         delete_resource : function(e) {
+            // Prevent the default button action
+            e.preventDefault();
+
             // Get the element we're working on
             var element   = e.target.ancestor(CSS.ACTIVITYLI);
 
@@ -390,6 +395,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             this.send_request(data);
         },
         toggle_hide_resource : function(e) {
+            // Prevent the default button action
+            e.preventDefault();
+
             // Return early if the current section is hidden
             var section = e.target.ancestor(CSS.SECTIONLI);
             if (section && section.hasClass(CSS.SECTIONHIDDENCLASS)) {
@@ -413,6 +421,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             this.send_request(data, button.one('img'));
         },
         toggle_groupmode : function(e) {
+            // Prevent the default button action
+            e.preventDefault();
+
             // Get the element we're working on
             var element = e.target.ancestor(CSS.ACTIVITYLI);
 
@@ -478,13 +489,16 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                     'title' : left_string,
                     'alt'   : left_string
                 });
+            var moveright = target.one(CSS.MOVERIGHT);
+            var newlink = moveright.getAttribute('href').replace('indent=1', 'indent=-1');
             var anchor = new Y.Node.create('<a />')
                 .setStyle('cursor', 'pointer')
                 .addClass(CSS.MOVELEFTCLASS)
-                .set('title', left_string);
+                .setAttribute('href', newlink)
+                .setAttribute('title', left_string);
             anchor.appendChild(newicon);
             anchor.on('click', this.move_left, this);
-            target.one(CSS.MOVERIGHT).insert(anchor, 'before');
+            moveright.insert(anchor, 'before');
         }
     }, {
         NAME : 'course-resource-toolbox',
@@ -534,6 +548,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             this.replace_button(toolboxtarget, CSS.RIGHTDIV + ' ' + CSS.SHOWHIDE, this.toggle_hide_section);
         },
         toggle_hide_section : function(e) {
+            // Prevent the default button action
+            e.preventDefault();
+
             // Get the section we're working on
             var section = e.target.ancestor(CSS.SECTIONLI);
             var button = e.target.ancestor('a', true);
@@ -597,6 +614,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             }, this);
         },
         toggle_highlight : function(e) {
+            // Prevent the default button action
+            e.preventDefault();
+
             // Get the section we're working on
             var section = e.target.ancestor(CSS.SECTIONLI);
             var button = e.target.ancestor('a', true);
