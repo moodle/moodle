@@ -244,7 +244,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     } else {
         $canviewhiddenuserfields = has_capability('moodle/user:viewhiddendetails', $context);
     }
-    $canviewfullnames        = has_capability('moodle/site:viewfullnames', $context);
+    $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
     if (!empty($course)) {
         $canviewuseremail = has_capability('moodle/course:useremail', $context);
     } else {
@@ -482,6 +482,66 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     }
 
     return $userdetails;
+}
+
+/**
+ * Tries to obtain user details, either recurring directly to the user's system profile
+ * or trough one of the user's course enrollments (course profile).
+ *
+ * @param $user The user.
+ * @param $courses The courses that the user is enrolled in.
+ * @param array $userfields The userfields that are to be returned.
+ * @return null if unsuccessful or the allowed user details.
+ */
+function user_get_user_details_courses($user) {
+    global $USER;
+    $userdetails = null;
+
+    //  Get the courses that the user is enrolled in (only active).
+    $courses = enrol_get_users_courses($user->id, true);
+
+    $systemprofile = can_view_user_details_cap($user);
+    $systemprofile |= ($user->id == $USER->id);
+    $systemprofile |= has_coursecontact_role($user->id);
+
+    // Try using system profile
+    if ($systemprofile) {
+        $userdetails = user_get_user_details($user, null);
+    } else {
+        // Try through course profile
+        foreach ($courses as $course) {
+            $courseprofile = can_view_user_details_cap($user, $course);
+            $courseprofile |= ($user->id == $USER->id);
+            $courseprofile |= has_coursecontact_role($user->id);
+
+            if ($courseprofile) {
+                $userdetails = user_get_user_details($user, $course);
+            }
+        }
+    }
+
+    return $userdetails;
+}
+
+/**
+ * Does $USER have the necessary capabilities to obtain user details
+ * using a mdl_user record?
+ * @param $user The mdl_user record
+ * @param null $course Null only to consider system profile or course to also consider that course's profile.
+ * @return bool T if he does, false otherwise
+ */
+function can_view_user_details_cap($user, $course = null) {
+    if (!empty($course)) {
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+        $result = (has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext));
+    }
+    else {
+        $context = get_context_instance(CONTEXT_USER, $user->id);
+        $usercontext = $context;
+        $result = has_capability('moodle/user:viewdetails', $usercontext);
+    }
+    return $result;
 }
 
 /**
