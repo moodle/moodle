@@ -70,6 +70,7 @@ if (!empty($uninstall) && confirm_sesskey()) {
 
     } else {
         message_processor_uninstall($processor->name);
+        $a = new stdClass();
         $a->processor = $processorname;
         $a->directory = $CFG->dirroot.'/message/output/'.$processor->name;
         notice(get_string('processordeletefiles', 'message', $a), 'message.php');
