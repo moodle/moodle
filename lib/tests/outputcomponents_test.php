@@ -171,7 +171,7 @@ class user_picture_testcase extends advanced_testcase {
         $reads = $DB->perf_get_reads();
         $up2 = new user_picture($user2);
         $this->assertEquals($reads, $DB->perf_get_reads());
-        $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=standard&image=u%2Ff2&rev=1', $up2->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/theme/image.php/standard/core/1/u/f2', $up2->get_url($page, $renderer)->out(false));
         $this->assertEquals($reads, $DB->perf_get_reads());
 
         // try guessing of deleted users - no queries expected
@@ -180,7 +180,7 @@ class user_picture_testcase extends advanced_testcase {
         $reads = $DB->perf_get_reads();
         $up3 = new user_picture($user3);
         $this->assertEquals($reads, $DB->perf_get_reads());
-        $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=standard&image=u%2Ff2&rev=1', $up3->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/theme/image.php/standard/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
         $this->assertEquals($reads, $DB->perf_get_reads());
 
         // try incorrectly deleted users (with valid email and pciture flag) - some DB reads expected
@@ -189,7 +189,7 @@ class user_picture_testcase extends advanced_testcase {
         $reads = $DB->perf_get_reads();
         $up3 = new user_picture($user3);
         $this->assertEquals($reads, $DB->perf_get_reads());
-        $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=standard&image=u%2Ff2&rev=1', $up3->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/theme/image.php/standard/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
         $this->assertTrue($reads < $DB->perf_get_reads());
 
 
@@ -197,7 +197,7 @@ class user_picture_testcase extends advanced_testcase {
         set_config('enablegravatar', 1);
 
         $up2 = new user_picture($user2);
-        $this->assertEquals('http://www.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=35&d=http%3A%2F%2Fwww.example.com%2Fmoodle%2Ftheme%2Fimage.php%3Ftheme%3Dstandard%26image%3Du%252Ff2%26rev%3D1', $up2->get_url($page, $renderer)->out(false));
+        $this->assertEquals('http://www.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=35&d=http%3A%2F%2Fwww.example.com%2Fmoodle%2Ftheme%2Fimage.php%2Fstandard%2Fcore%2F1%2Fu%2Ff2', $up2->get_url($page, $renderer)->out(false));
 
         // uploaded image takes precedence before gravatar
         $up1 = new user_picture($user1);
@@ -207,7 +207,7 @@ class user_picture_testcase extends advanced_testcase {
         $user3->email = 'deleted';
         $user3->picture = 0;
         $up3 = new user_picture($user3);
-        $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=standard&image=u%2Ff2&rev=1', $up3->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/theme/image.php/standard/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
 
 
         // https versions
@@ -217,11 +217,10 @@ class user_picture_testcase extends advanced_testcase {
         $this->assertEquals($CFG->httpswwwroot.'/pluginfile.php/15/user/icon/standard/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
 
         $up3 = new user_picture($user3);
-        $this->assertEquals($CFG->httpswwwroot.'/theme/image.php?theme=standard&image=u%2Ff2&rev=1', $up3->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->httpswwwroot.'/theme/image.php/standard/core/1/u/f2', $up3->get_url($page, $renderer)->out(false));
 
         $up2 = new user_picture($user2);
-        $this->assertEquals('https://secure.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=35&d=https%3A%2F%2Fwww.example.com%2Fmoodle%2Ftheme%2Fimage.php%3Ftheme%3Dstandard%26image%3Du%252Ff2%26rev%3D1', $up2->get_url($page, $renderer)->out(false));
-
+        $this->assertEquals('https://secure.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=35&d=https%3A%2F%2Fwww.example.com%2Fmoodle%2Ftheme%2Fimage.php%2Fstandard%2Fcore%2F1%2Fu%2Ff2', $up2->get_url($page, $renderer)->out(false));
 
         // test themed images
         set_config('enablegravatar', 0);
@@ -237,7 +236,19 @@ class user_picture_testcase extends advanced_testcase {
         $this->assertEquals($CFG->wwwroot.'/pluginfile.php/15/user/icon/formal_white/f2?rev=11', $up1->get_url($page, $renderer)->out(false));
 
         $up2 = new user_picture($user2);
-        $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=formal_white&image=u%2Ff2&rev=1', $up2->get_url($page, $renderer)->out(false));
+        $this->assertEquals($CFG->wwwroot.'/theme/image.php/formal_white/core/1/u/f2', $up2->get_url($page, $renderer)->out(false));
+
+        // test non-slashargument images
+        set_config('theme', 'standard');
+        $CFG->httpswwwroot = $CFG->wwwroot;
+        $CFG->slasharguments = 0;
+        $page = new moodle_page();
+        $page->set_url('/user/profile.php');
+        $page->set_context(context_system::instance());
+        $renderer = $page->get_renderer('core');
+
+        $up3 = new user_picture($user3);
+        $this->assertEquals($CFG->wwwroot.'/theme/image.php?theme=standard&component=core&rev=1&image=u%2Ff2', $up3->get_url($page, $renderer)->out(false));
     }
 }
 
