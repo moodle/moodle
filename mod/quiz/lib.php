@@ -1090,8 +1090,8 @@ function quiz_update_events($quiz, $override = null) {
         $addclose = empty($current->id) || !empty($current->timeclose);
 
         $event = new stdClass();
-        $event->description = $quiz->intro;
-        // Events module won't show user events when the courseid is nonzero
+        $event->description = format_module_intro('quiz', $quiz, $quiz->coursemodule);
+        // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $quiz->course;
         $event->groupid     = $groupid;
         $event->userid      = $userid;
