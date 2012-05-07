@@ -1277,13 +1277,16 @@ function forum_print_overview($courses,&$htmlarray) {
             if (isset($SESSION->currentgroup[$track->course])) {
                 $groupid =  $SESSION->currentgroup[$track->course];
             } else {
-                $groupid = groups_get_all_groups($track->course, $USER->id);
-                if (is_array($groupid)) {
-                    $groupid = array_shift(array_keys($groupid));
+                // get first groupid
+                $groupids = groups_get_all_groups($track->course, $USER->id);
+                if ($groupids) {
+                    reset($groupids);
+                    $groupid = key($groupids);
                     $SESSION->currentgroup[$track->course] = $groupid;
                 } else {
                     $groupid = 0;
                 }
+                unset($groupids);
             }
             $params[] = $groupid;
         }
