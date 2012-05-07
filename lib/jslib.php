@@ -154,3 +154,40 @@ EOD;
     }
     return $js;
 }
+
+/**
+ * Create cache file for JS content
+ * @param string $file full file path to cache file
+ * @param string $content JS code
+ */
+function js_write_cache_file_content($file, $content) {
+    global $CFG;
+
+    clearstatcache();
+    if (!file_exists(dirname($file))) {
+        @mkdir(dirname($file), $CFG->directorypermissions, true);
+    }
+
+    // Prevent serving of incomplete file from concurrent request,
+    // the rename() should be more atomic than fwrite().
+    ignore_user_abort(true);
+    if ($fp = fopen($file.'.tmp', 'xb')) {
+        fwrite($fp, $content);
+        fclose($fp);
+        rename($file.'.tmp', $file);
+        @chmod($file, $CFG->filepermissions);
+        @unlink($file.'.tmp'); // just in case anything fails
+    }
+    ignore_user_abort(false);
+    if (connection_aborted()) {
+        die;
+    }
+}
+
+/**
+ * Sends a 404 message about CSS not being found.
+ */
+function js_send_css_not_found() {
+    header('HTTP/1.0 404 not found');
+    die('JS was not found, sorry.');
+}

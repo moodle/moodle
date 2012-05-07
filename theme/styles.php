@@ -118,4 +118,11 @@ if ($type === 'editor') {
     $cssfile = "$CFG->cachedir/theme/$themename/css/all.css";
     css_store_css($theme, $cssfile, $allfiles);
 }
+
+// verify nothing failed in cache file creation
+clearstatcache();
+if (!file_exists($candidatesheet)) {
+    css_send_css_not_found();
+}
+
 css_send_cached_css($candidatesheet, $etag);

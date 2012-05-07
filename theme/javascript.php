@@ -90,15 +90,12 @@ $rev = theme_get_revision();
 $etag = sha1("$themename/$rev/$type");
 
 if ($rev > -1) {
-    // note: cache reset might have purged our cache dir structure,
-    //       make sure we do not use stale file stat cache in the next check_dir_exists()
+    js_write_cache_file_content($candidate, js_minify($theme->javascript_files($type)));
+    // verify nothing failed in cache file creation
     clearstatcache();
-    check_dir_exists(dirname($candidate));
-    $fp = fopen($candidate, 'w');
-    fwrite($fp, js_minify($theme->javascript_files($type)));
-    fclose($fp);
-    js_send_cached($candidate, $etag);
-
-} else {
-    js_send_uncached($theme->javascript_content($type));
+    if (file_exists($candidate)) {
+        js_send_cached($candidate, $etag);
+    }
 }
+
+js_send_uncached($theme->javascript_content($type));
