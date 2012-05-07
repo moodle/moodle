@@ -1067,7 +1067,7 @@ function get_moodle_cookie() {
  * @return void
  */
 function session_set_user($user) {
-    $_SESSION['USER'] = clone $user;
+    $_SESSION['USER'] = $user;
     unset($_SESSION['USER']->description); // conserve memory
     sesskey(); // init session key
 
