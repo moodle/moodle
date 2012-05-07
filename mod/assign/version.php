@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $module->component = 'mod_assign';
-$module->version  = 2012050300;
+$module->version  = 2012051700;
 $module->requires = 2012050300;  // Requires this Moodle version
 $module->cron     = 60;
 

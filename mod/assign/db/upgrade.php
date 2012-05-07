@@ -28,6 +28,9 @@
  * @return bool
  */
 function xmldb_assign_upgrade($oldversion) {
+    if ($oldversion < 2012051700) {
+        message_update_providers('mod_assign');
+    }
     return true;
 }
 
