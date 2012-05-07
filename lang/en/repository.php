@@ -148,6 +148,7 @@ $string['norepositoriesavailable'] = 'Sorry, none of your current repositories c
 $string['norepositoriesexternalavailable'] = 'Sorry, none of your current repositories can return external files.';
 $string['notyourinstances'] = 'You can not view/edit repository instances of another user';
 $string['off'] = 'Enabled but hidden';
+$string['original'] = 'Original';
 $string['openpicker'] = 'Choose a file...';
 $string['operation'] = 'Operation';
 $string['on'] = 'Enabled and visible';

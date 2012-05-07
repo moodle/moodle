@@ -306,7 +306,7 @@ class core_files_renderer extends plugin_renderer_base {
      * The elements will be assign with class 'uneditable' and input/select element will become
      * disabled if they are not applicable for the particular file;
      *
-     * There may be present elements with classes 'fp-origpath', 'fp-datemodified', 'fp-datecreated',
+     * There may be present elements with classes 'fp-original', 'fp-datemodified', 'fp-datecreated',
      * 'fp-size', 'fp-dimensions'. They will receive additional class 'fp-unknown' if information
      * is unavailable. If there is information available, the content of embedded element
      * with class 'fp-value' will be substituted with the value;
@@ -342,7 +342,7 @@ class core_files_renderer extends plugin_renderer_base {
 <td class="mdl-left"><select></select></td></tr>
 <tr class="{!}fp-path"><td class="mdl-right"><label>'.get_string('path', 'moodle').'</label>:</td>
 <td class="mdl-left"><select></select></td></tr>
-<tr class="{!}fp-origpath"><td class="mdl-right"><label>'.get_string('originalpath', 'moodle').'</label>:</td>
+<tr class="{!}fp-original"><td class="mdl-right"><label>'.get_string('original', 'repository').'</label>:</td>
 <td class="mdl-left"><span class="fp-value"/></td></tr>
 </table>
 <p><button class="{!}fp-file-update" >'.get_string('update', 'moodle').'</button>
