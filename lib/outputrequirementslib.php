@@ -152,6 +152,8 @@ class page_requirements_manager {
     public function __construct() {
         global $CFG;
 
+        $sep = empty($CFG->slasharguments) ? '?' : '/';
+
         require_once("$CFG->libdir/yui/phploader/phploader/loader.php");
 
         $this->yui3loader = new stdClass();
@@ -174,8 +176,8 @@ class page_requirements_manager {
         } else {
             $this->yui3loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui3version . '/build/';
             $this->yui2loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version . '/build/';
-            $this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?';
-            $this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php?';
+            $this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep;
+            $this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep;
         }
 
         // enable combo loader? this significantly helps with caching and performance!
@@ -201,8 +203,8 @@ class page_requirements_manager {
         $this->M_yui_loader->groups       = array(
             'moodle' => array(
                 'name' => 'moodle',
-                'base' => $CFG->httpswwwroot . '/theme/yui_combo.php?moodle/'.$jsrev.'/',
-                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php?',
+                'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
+                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
                 'combine' => $this->yui3loader->combine,
                 'filter' => '',
                 'ext' => false,
@@ -218,7 +220,7 @@ class page_requirements_manager {
             'local' => array(
                 'name' => 'gallery',
                 'base' => $CFG->wwwroot.'/lib/yui/gallery/',
-                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php?',
+                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
                 'combine' => $this->yui3loader->combine,
                 'filter' => $this->M_yui_loader->filter,
                 'ext' => false,
@@ -316,6 +318,7 @@ class page_requirements_manager {
             'sesskey'             => sesskey(),
             'loadingicon'         => $renderer->pix_url('i/loading_small', 'moodle')->out(false),
             'themerev'            => theme_get_revision(),
+            'slasharguments'      => (int)(!empty($CFG->slasharguments)),
             'theme'               => $page->theme->name,
             'jsrev'               => ((empty($CFG->cachejs) or empty($CFG->jsrev)) ? -1 : $CFG->jsrev),
         );
@@ -401,8 +404,14 @@ class page_requirements_manager {
                     throw new coding_exception('Attempt to require a JavaScript file that does not exist.', $url);
                 }
             }
-            if (!empty($CFG->cachejs) and !empty($CFG->jsrev) and strpos($url, '/lib/editor/') !== 0 and substr($url, -3) === '.js') {
-                return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('file'=>$url, 'rev'=>$CFG->jsrev));
+            if (!empty($CFG->cachejs) and !empty($CFG->jsrev) and $CFG->jsrev > 0 and strpos($url, '/lib/editor/') !== 0 and substr($url, -3) === '.js') {
+                if (empty($CFG->slasharguments)) {
+                    return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('rev'=>$CFG->jsrev, 'file'=>$url));
+                } else {
+                    $returnurl = new moodle_url($CFG->httpswwwroot.'/lib/javascript.php');
+                    $returnurl->set_slashargument('/'.$CFG->jsrev.$url);
+                    return $returnurl;
+                }
             } else {
                 return new moodle_url($CFG->httpswwwroot.$url);
             }

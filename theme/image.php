@@ -32,12 +32,30 @@ define('NO_DEBUG_DISPLAY', true);
 define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 
-$themename = min_optional_param('theme', 'standard', 'SAFEDIR');
-$component = min_optional_param('component', 'moodle', 'SAFEDIR');
-$image     = min_optional_param('image', '', 'SAFEPATH');
-$rev       = min_optional_param('rev', -1, 'INT');
+if ($slashargument = min_get_slash_argument()) {
+    $slashargument = ltrim($slashargument, '/');
+    if (substr_count($slashargument, '/') < 3) {
+        image_not_found();
+    }
+    // image must be last because it may contain "/"
+    list($themename, $component, $rev, $image) = explode('/', $slashargument, 4);
+    $themename = min_clean_param($themename, 'SAFEDIR');
+    $component = min_clean_param($component, 'SAFEDIR');
+    $rev       = min_clean_param($rev, 'INT');
+    $image     = min_clean_param($image, 'SAFEPATH');
 
-if (empty($component) or empty($image)) {
+} else {
+    $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
+    $component = min_optional_param('component', 'core', 'SAFEDIR');
+    $rev       = min_optional_param('rev', -1, 'INT');
+    $image     = min_optional_param('image', '', 'SAFEPATH');
+}
+
+if (empty($component) or $component === 'moodle' or $component === 'core') {
+    $component = 'moodle';
+}
+
+if (empty($image)) {
     image_not_found();
 }
 
@@ -50,6 +68,7 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
 }
 
 $candidatelocation = "$CFG->cachedir/theme/$themename/pix/$component";
+$etag = sha1("$themename/$component/$rev/$image");
 
 if ($rev > -1) {
     if (file_exists("$candidatelocation/$image.error")) {
@@ -78,15 +97,16 @@ if ($rev > -1) {
         if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
             // we do not actually need to verify the etag value because our files
             // never change in cache because we increment the rev parameter
-            $lifetime = 60*60*24*30; // 30 days
+            $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
             $mimetype = get_contenttype_from_ext($ext);
             header('HTTP/1.1 304 Not Modified');
             header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
-            header('Cache-Control: max-age='.$lifetime);
+            header('Cache-Control: public, max-age='.$lifetime);
             header('Content-Type: '.$mimetype);
+            header('Etag: '.$etag);
             die;
         }
-        send_cached_image($cacheimage, $rev);
+        send_cached_image($cacheimage, $etag);
     }
 }
 
@@ -103,6 +123,7 @@ $theme = theme_config::load($themename);
 $imagefile = $theme->resolve_image_location($image, $component);
 
 $rev = theme_get_revision();
+$etag = sha1("$themename/$component/$rev/$image");
 
 if (empty($imagefile) or !is_readable($imagefile)) {
     if ($rev > -1) {
@@ -126,7 +147,7 @@ if ($rev > -1) {
         }
         copy($imagefile, $cacheimage);
     }
-    send_cached_image($cacheimage, $rev);
+    send_cached_image($cacheimage, $etag);
 
 } else {
     send_uncached_image($imagefile);
@@ -138,22 +159,22 @@ if ($rev > -1) {
 // we are not using filelib because we need to fine tune all header
 // parameters to get the best performance.
 
-function send_cached_image($imagepath, $rev) {
+function send_cached_image($imagepath, $etag) {
     global $CFG;
     require("$CFG->dirroot/lib/xsendfilelib.php");
 
-    $lifetime = 60*60*24*30; // 30 days
+    $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
     $pathinfo = pathinfo($imagepath);
     $imagename = $pathinfo['filename'].'.'.$pathinfo['extension'];
 
     $mimetype = get_contenttype_from_ext($pathinfo['extension']);
 
-    header('Etag: '.md5("$rev/$imagepath"));
+    header('Etag: '.$etag);
     header('Content-Disposition: inline; filename="'.$imagename.'"');
-    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($imagepath)) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: max-age='.$lifetime);
+    header('Cache-Control: public, max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));

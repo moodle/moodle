@@ -25,6 +25,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+//NOTE: do not verify MOODLE_INTERNAL here, this is used from themes too
+
 /**
  * Stores CSS in a file at the given path.
  *
@@ -85,21 +87,33 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles) {
  *
  * @param string $themename The name of the theme we are sending CSS for.
  * @param string $rev The revision to ensure we utilise the cache.
+ * @param string $etag The revision to ensure we utilise the cache.
+ * @param bool $slasharguments
  */
-function css_send_ie_css($themename, $rev) {
-    $lifetime = 60*60*24*30; // 30 days
+function css_send_ie_css($themename, $rev, $etag, $slasharguments) {
+    global $CFG;
+
+    $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
+
+    $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
 
     $css  = "/** Unfortunately IE6/7 does not support more than 4096 selectors in one CSS file, which means we have to use some ugly hacks :-( **/";
-    $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=plugins);";
-    $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=parents);";
-    $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=theme);";
+    if ($slasharguments) {
+        $css .= "\n@import url($relroot/styles.php/$themename/$rev/plugins);";
+        $css .= "\n@import url($relroot/styles.php/$themename/$rev/parents);";
+        $css .= "\n@import url($relroot/styles.php/$themename/$rev/theme);";
+    } else {
+        $css .= "\n@import url($relroot/styles.php?theme=$themename&rev=$rev&type=plugins);";
+        $css .= "\n@import url($relroot/styles.php?theme=$themename&rev=$rev&type=parents);";
+        $css .= "\n@import url($relroot/styles.php?theme=$themename&rev=$rev&type=theme);";
+    }
 
-    header('Etag: '.md5($rev));
+    header('Etag: '.$etag);
     header('Content-Disposition: inline; filename="styles.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: max-age='.$lifetime);
+    header('Cache-Control: public, max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: text/css; charset=utf-8');
     header('Content-Length: '.strlen($css));
@@ -115,16 +129,17 @@ function css_send_ie_css($themename, $rev) {
  * request, then optimised/minified, and finally cached for serving.
  *
  * @param string $csspath The path to the CSS file we want to serve.
- * @param string $rev The revision to make sure we utilise any caches.
+ * @param string $etag The revision to make sure we utilise any caches.
  */
-function css_send_cached_css($csspath, $rev) {
-    $lifetime = 60*60*24*30; // 30 days
+function css_send_cached_css($csspath, $etag) {
+    $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
 
+    header('Etag: '.$etag);
     header('Content-Disposition: inline; filename="styles.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($csspath)) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: max-age='.$lifetime);
+    header('Cache-Control: public, max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: text/css; charset=utf-8');
     if (!min_enable_zlib_compression()) {
@@ -173,6 +188,24 @@ function css_send_uncached_css($css) {
 
     echo $css;
 
+    die;
+}
+
+/**
+ * Send file not modified headers
+ * @param int $lastmodified
+ * @param string $etag
+ */
+function css_send_unmodified($lastmodified, $etag) {
+    $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
+    header('HTTP/1.1 304 Not Modified');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+    header('Cache-Control: public, max-age='.$lifetime);
+    header('Content-Type: text/css; charset=utf-8');
+    header('Etag: '.$etag);
+    if ($lastmodified) {
+        header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
+    }
     die;
 }
 

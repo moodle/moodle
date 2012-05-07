@@ -33,9 +33,22 @@ define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 require_once($CFG->dirroot.'/lib/csslib.php');
 
-$themename = min_optional_param('theme', 'standard', 'SAFEDIR');
-$type      = min_optional_param('type', 'all', 'SAFEDIR');
-$rev       = min_optional_param('rev', 0, 'INT');
+if ($slashargument = min_get_slash_argument()) {
+    $slashargument = ltrim($slashargument, '/');
+    if (substr_count($slashargument, '/') < 2) {
+        image_not_found();
+    }
+    // image must be last because it may contain "/"
+    list($themename, $rev, $type) = explode('/', $slashargument, 3);
+    $themename = min_clean_param($themename, 'SAFEDIR');
+    $rev       = min_clean_param($rev, 'INT');
+    $type      = min_clean_param($type, 'SAFEDIR');
+
+} else {
+    $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
+    $rev       = min_optional_param('rev', 0, 'INT');
+    $type      = min_optional_param('type', 'all', 'SAFEDIR');
+}
 
 if (!in_array($type, array('all', 'ie', 'editor', 'plugins', 'parents', 'theme'))) {
     header('HTTP/1.0 404 not found');
@@ -52,23 +65,19 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
 }
 
 if ($type === 'ie') {
-    css_send_ie_css($themename, $rev);
+    css_send_ie_css($themename, $rev, $etag, !empty($slashargument));
 }
 
 $candidatesheet = "$CFG->cachedir/theme/$themename/css/$type.css";
+$etag = sha1("$themename/$rev/$type");
 
 if (file_exists($candidatesheet)) {
     if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
         // we do not actually need to verify the etag value because our files
         // never change in cache because we increment the rev parameter
-        $lifetime = 60*60*24*30; // 30 days
-        header('HTTP/1.1 304 Not Modified');
-        header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
-        header('Cache-Control: max-age='.$lifetime);
-        header('Content-Type: text/css; charset=utf-8');
-        die;
+        css_send_unmodified(filemtime($candidatesheet), $etag);
     }
-    css_send_cached_css($candidatesheet, $rev);
+    css_send_cached_css($candidatesheet, $etag);
 }
 
 //=================================================================================
@@ -81,6 +90,9 @@ define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
 require("$CFG->dirroot/lib/setup.php");
 
 $theme = theme_config::load($themename);
+
+$rev = theme_get_revision();
+$etag = sha1("$themename/$rev/$type");
 
 if ($type === 'editor') {
     $cssfiles = $theme->editor_css_files();
@@ -106,4 +118,4 @@ if ($type === 'editor') {
     $cssfile = "$CFG->cachedir/theme/$themename/css/all.css";
     css_store_css($theme, $cssfile, $allfiles);
 }
-css_send_cached_css($candidatesheet, $rev);
+css_send_cached_css($candidatesheet, $etag);

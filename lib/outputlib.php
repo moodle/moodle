@@ -518,8 +518,14 @@ class theme_config {
         $rev = theme_get_revision();
 
         if ($rev > -1) {
-            $params = array('theme'=>$this->name,'rev'=>$rev, 'type'=>'editor');
-            return new moodle_url($CFG->httpswwwroot.'/theme/styles.php', $params);
+            if (!empty($CFG->slasharguments)) {
+                $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
+                $url->set_slashargument('/'.$this->name.'/'.$rev.'/editor', 'noparam', true);
+                return $url;
+            } else {
+                $params = array('theme'=>$this->name,'rev'=>$rev, 'type'=>'editor');
+                return new moodle_url($CFG->httpswwwroot.'/theme/styles.php', $params);
+            }
         } else {
             $params = array('theme'=>$this->name, 'type'=>'editor');
             return new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', $params);
@@ -589,7 +595,13 @@ class theme_config {
                 $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev, 'type'=>'parents'));
                 $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev, 'type'=>'theme'));
             } else {
-                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev));
+                if (!empty($CFG->slasharguments)) {
+                    $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
+                    $url->set_slashargument('/'.$this->name.'/'.$rev.'/all', 'noparam', true);
+                    $urls[] = $url;
+                } else {
+                    $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles.php', array('theme'=>$this->name,'rev'=>$rev, 'type'=>'all'));
+                }
             }
         } else {
             // find out the current CSS and cache it now for 5 seconds
@@ -763,7 +775,13 @@ class theme_config {
         $params = array('theme'=>$this->name,'rev'=>$rev);
         $params['type'] = $inhead ? 'head' : 'footer';
 
-        return new moodle_url($CFG->httpswwwroot.'/theme/javascript.php', $params);
+        if (!empty($CFG->slasharguments) and $rev > 0) {
+            $url = new moodle_url("$CFG->httpswwwroot/theme/javascript.php");
+            $url->set_slashargument('/'.$this->name.'/'.$rev.'/'.$params['type'], 'noparam', true);
+            return $url;
+        } else {
+            return new moodle_url($CFG->httpswwwroot.'/theme/javascript.php', $params);
+        }
     }
 
     /**
@@ -872,8 +890,6 @@ class theme_config {
      * @return string The processed CSS.
      */
     public function post_process($css) {
-        global $CFG;
-
         // now resolve all image locations
         if (preg_match_all('/\[\[pix:([a-z_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
             $replaced = array();
@@ -886,7 +902,7 @@ class theme_config {
                 $component = rtrim($match[1], '|');
                 $imageurl = $this->pix_url($imagename, $component)->out(false);
                  // we do not need full url because the image.php is always in the same dir
-                $imageurl = str_replace("$CFG->httpswwwroot/theme/", '', $imageurl);
+                $imageurl = preg_replace('|^http.?://[^/]+|', '', $imageurl);
                 $css = str_replace($match[0], $imageurl, $css);
             }
         }
@@ -910,17 +926,29 @@ class theme_config {
     public function pix_url($imagename, $component) {
         global $CFG;
 
-        $params = array('theme'=>$this->name, 'image'=>$imagename);
+        $params = array('theme'=>$this->name);
+
+        if (empty($component) or $component === 'moodle' or $component === 'core') {
+            $params['component'] = 'core';
+        } else {
+            $params['component'] = $component;
+        }
 
         $rev = theme_get_revision();
         if ($rev != -1) {
             $params['rev'] = $rev;
         }
-        if (!empty($component) and $component !== 'moodle'and $component !== 'core') {
-            $params['component'] = $component;
+
+        $params['image'] = $imagename;
+
+        if (!empty($CFG->slasharguments) and $rev > 0) {
+            $url = new moodle_url("$CFG->httpswwwroot/theme/image.php");
+            $url->set_slashargument('/'.$params['theme'].'/'.$params['component'].'/'.$params['rev'].'/'.$params['image'], 'noparam', true);
+        } else {
+            $url = new moodle_url("$CFG->httpswwwroot/theme/image.php", $params);
         }
 
-        return new moodle_url("$CFG->httpswwwroot/theme/image.php", $params);
+        return $url;
     }
 
     /**

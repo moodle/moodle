@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * This file is serving optimised JS
  *
- * @package    core
- * @subpackage lib
+ * @package    core_lib
  * @copyright  2010 Petr Skoda (skodak)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,15 +29,22 @@ define('NO_DEBUG_DISPLAY', true);
 // we need just the values from config.php and minlib.php
 define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
+require_once("$CFG->dirroot/lib/jslib.php");
 
-ini_set('zlib.output_compression', 'Off');
+if ($slashargument = min_get_slash_argument()) {
+    $slashargument = ltrim($slashargument, '/');
+    if (substr_count($slashargument, '/') < 1) {
+        image_not_found();
+    }
+    // image must be last because it may contain "/"
+    list($rev, $file) = explode('/', $slashargument, 2);
+    $rev  = min_clean_param($rev, 'INT');
+    $file = '/'.min_clean_param($file, 'SAFEPATH');
 
-// setup include path
-set_include_path($CFG->libdir . '/minify/lib' . PATH_SEPARATOR . get_include_path());
-require_once('Minify.php');
-
-$file = min_optional_param('file', '', 'RAW');
-$rev  = min_optional_param('rev', 0, 'INT');
+} else {
+    $rev  = min_optional_param('rev', 0, 'INT');
+    $file = min_optional_param('file', '', 'RAW');
+}
 
 // some security first - pick only files with .js extension in dirroot
 $jsfiles = array();
@@ -70,50 +75,32 @@ if (!$jsfiles) {
     die();
 }
 
-minify($jsfiles);
+$etag = sha1($rev.implode(',', $jsfiles));
+$candidate = $CFG->cachedir.'/js/'.$etag;
 
-function minify($files) {
-    global $CFG;
+if ($rev > -1) {
+    if (file_exists($candidate)) {
+        if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+            // we do not actually need to verify the etag value because our files
+            // never change in cache because we increment the rev parameter
+            js_send_unmodified(filemtime($candidate), $etag);
+        }
+        js_send_cached($candidate, $etag);
 
-    $cachedir = $CFG->cachedir.'/js';
-    // make sure the cache dir exist
-    if (!file_exists($cachedir)) {
-        @mkdir($cachedir, $CFG->directorypermissions, true);
+    } else {
+        if (!file_exists(dirname($candidate))) {
+            @mkdir(dirname($candidate), $CFG->directorypermissions, true);
+        }
+        $fp = fopen($candidate, 'w');
+        fwrite($fp, js_minify($jsfiles));
+        fclose($fp);
+        js_send_cached($candidate, $etag);
     }
 
-    if (0 === stripos(PHP_OS, 'win')) {
-        Minify::setDocRoot(); // IIS may need help
+} else {
+    $content = '';
+    foreach ($jsfiles as $jsfile) {
+        $content .= file_get_contents($jsfile)."\n";
     }
-    Minify::setCache($cachedir, true);
-
-    $options = array(
-        // Maximum age to cache
-        'maxAge' => (60*60*24*20),
-        // The files to minify
-        'files' => $files
-    );
-
-    try {
-        Minify::serve('Files', $options);
-        die();
-    } catch (Exception $e) {
-        $error = $e->getMessage();
-        $error = str_replace("\r", ' ', $error);
-        $error = str_replace("\n", ' ', $error);
-    }
-
-    // minification failed - try to inform the developer and include the non-minified version
-    $js = <<<EOD
-try {console.log('Error: Minimisation of javascript failed!');} catch (e) {}
-
-// Error: $error
-// Problem detected during javascript minimisation, please review the following code
-// =================================================================================
-
-
-EOD;
-    echo $js;
-    foreach ($files as $jsfile) {
-        echo file_get_contents($jsfile)."\n";
-    }
+    js_send_uncached($candidate, $etag);
 }
