@@ -125,7 +125,9 @@ if ($formdata = $mform->get_data()) {
     fwrite($fp,$text);
     fclose($fp);
 
-    $fp = fopen($filename, "r");
+    if (!$fp = fopen($filename, "r")) {
+    	print_error('cannotopenfile');
+    }
 
     // --- get header (field names) ---
     $header = explode($csv_delimiter, fgets($fp, GRADE_CSV_LINE_LENGTH));
