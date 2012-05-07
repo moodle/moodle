@@ -1633,6 +1633,7 @@ function calendar_get_allowed_types(&$allowed) {
     if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID) {
         $course = $DB->get_record('course', array('id'=>$SESSION->cal_course_referer));
         $coursecontext = get_context_instance(CONTEXT_COURSE, $SESSION->cal_course_referer);
+        $allowed->user = has_capability('moodle/calendar:manageownentries', $coursecontext);
 
         if(has_capability('moodle/calendar:manageentries', $coursecontext)) {
             $allowed->courses = array($course->id => 1);
