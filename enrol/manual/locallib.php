@@ -318,7 +318,7 @@ class enrol_manual_deleteselectedusers_operation extends enrol_bulk_enrolment_op
      * @param mixed $defaultcustomdata
      * @return enrol_manual_editselectedusers_form
      */
-    public function get_form($defaultaction = null, array $defaultcustomdata = null) {
+    public function get_form($defaultaction = null, $defaultcustomdata = null) {
         global $CFG;
         require_once($CFG->dirroot.'/enrol/manual/bulkchangeforms.php');
         if (!array($defaultcustomdata)) {
