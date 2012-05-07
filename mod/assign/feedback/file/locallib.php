@@ -27,9 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * File areas for file feedback assignment
  */
-define('ASSIGN_MAX_FEEDBACK_FILES', 20);
-define('ASSIGN_FILEAREA_FEEDBACK_FILES', 'feedback_files');
-define('ASSIGN_FEEDBACK_FILE_MAX_SUMMARY_FILES', 5);
+define('ASSIGNFEEDBACK_FILE_FILEAREA', 'feedback_files');
+define('ASSIGNFEEDBACK_FILE_MAXSUMMARYFILES', 5);
 
 /**
  * library class for file feedback plugin extending feedback plugin base class
@@ -87,7 +86,7 @@ class assign_feedback_file extends assign_feedback_plugin {
         $gradeid = $grade ? $grade->id : 0;
 
 
-        $data = file_prepare_standard_filemanager($data, 'files', $fileoptions, $this->assignment->get_context(), 'assignfeedback_file', ASSIGN_FILEAREA_FEEDBACK_FILES, $gradeid);
+        $data = file_prepare_standard_filemanager($data, 'files', $fileoptions, $this->assignment->get_context(), 'assignfeedback_file', ASSIGNFEEDBACK_FILE_FILEAREA, $gradeid);
 
         $mform->addElement('filemanager', 'files_filemanager', '', null, $fileoptions);
 
@@ -124,16 +123,16 @@ class assign_feedback_file extends assign_feedback_plugin {
         $fileoptions = $this->get_file_options();
 
 
-        $data = file_postupdate_standard_filemanager($data, 'files', $fileoptions, $this->assignment->get_context(), 'assignfeedback_file', ASSIGN_FILEAREA_FEEDBACK_FILES, $grade->id);
+        $data = file_postupdate_standard_filemanager($data, 'files', $fileoptions, $this->assignment->get_context(), 'assignfeedback_file', ASSIGNFEEDBACK_FILE_FILEAREA, $grade->id);
 
 
         $filefeedback = $this->get_file_feedback($grade->id);
         if ($filefeedback) {
-            $filefeedback->numfiles = $this->count_files($grade->id, ASSIGN_FILEAREA_FEEDBACK_FILES);
+            $filefeedback->numfiles = $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA);
             return $DB->update_record('assignfeedback_file', $filefeedback);
         } else {
             $filefeedback = new stdClass();
-            $filefeedback->numfiles = $this->count_files($grade->id, ASSIGN_FILEAREA_FEEDBACK_FILES);
+            $filefeedback->numfiles = $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA);
             $filefeedback->grade = $grade->id;
             $filefeedback->assignment = $this->assignment->get_instance()->id;
             return $DB->insert_record('assignfeedback_file', $filefeedback) > 0;
@@ -148,12 +147,12 @@ class assign_feedback_file extends assign_feedback_plugin {
      * @return string
      */
     public function view_summary(stdClass $grade, $showviewlink) {
-        $count = $this->count_files($grade->id, ASSIGN_FILEAREA_FEEDBACK_FILES);
+        $count = $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA);
         // show a view all link if the number of files is over this limit
-        $showviewlink = $count > ASSIGN_FEEDBACK_FILE_MAX_SUMMARY_FILES;
+        $showviewlink = $count > ASSIGNFEEDBACK_FILE_MAXSUMMARYFILES;
 
-        if ($count <= ASSIGN_FEEDBACK_FILE_MAX_SUMMARY_FILES) {
-            return $this->assignment->render_area_files('assignfeedback_file', ASSIGN_FILEAREA_FEEDBACK_FILES, $grade->id);
+        if ($count <= ASSIGNFEEDBACK_FILE_MAXSUMMARYFILES) {
+            return $this->assignment->render_area_files('assignfeedback_file', ASSIGNFEEDBACK_FILE_FILEAREA, $grade->id);
         } else {
             return get_string('countfiles', 'assignfeedback_file', $count);
         }
@@ -165,7 +164,7 @@ class assign_feedback_file extends assign_feedback_plugin {
      * @return string
      */
     public function view(stdClass $grade) {
-        return $this->assignment->render_area_files('assignfeedback_file', ASSIGN_FILEAREA_FEEDBACK_FILES, $grade->id);
+        return $this->assignment->render_area_files('assignfeedback_file', ASSIGNFEEDBACK_FILE_FILEAREA, $grade->id);
     }
 
     /**
@@ -186,7 +185,7 @@ class assign_feedback_file extends assign_feedback_plugin {
      * @param stdClass $grade
      */
     public function is_empty(stdClass $grade) {
-        return $this->count_files($grade->id, ASSIGN_FILEAREA_FEEDBACK_FILES) == 0;
+        return $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA) == 0;
     }
 
     /**
@@ -194,7 +193,7 @@ class assign_feedback_file extends assign_feedback_plugin {
      * @return array - An array of fileareas (keys) and descriptions (values)
      */
     public function get_file_areas() {
-        return array(ASSIGN_FILEAREA_FEEDBACK_FILES=>$this->get_name());
+        return array(ASSIGNFEEDBACK_FILE_FILEAREA=>$this->get_name());
     }
 
     /**
@@ -247,12 +246,12 @@ class assign_feedback_file extends assign_feedback_plugin {
                                                         // New file area
                                                         $this->assignment->get_context()->id,
                                                         'assignfeedback_file',
-                                                        ASSIGN_FILEAREA_FEEDBACK_FILES,
+                                                        ASSIGNFEEDBACK_FILE_FILEAREA,
                                                         $grade->id);
 
         // now count them!
         $filefeedback = new stdClass();
-        $filefeedback->numfiles = $this->count_files($grade->id, ASSIGN_FILEAREA_FEEDBACK_FILES);
+        $filefeedback->numfiles = $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA);
         $filefeedback->grade = $grade->id;
         $filefeedback->assignment = $this->assignment->get_instance()->id;
         if (!$DB->insert_record('assignfeedback_file', $filefeedback) > 0) {
