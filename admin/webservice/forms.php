@@ -56,7 +56,7 @@ class external_service_form extends moodleform {
 
     function definition() {
         $mform = $this->_form;
-        $service = $this->_customdata;
+        $service = isset($this->_customdata) ? $this->_customdata : new stdClass();
 
         $mform->addElement('header', 'extservice',
                 get_string('externalservice', 'webservice'));
