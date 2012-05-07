@@ -17,8 +17,7 @@
 /**
  * This page handles deleting quiz overrides
  *
- * @package    mod
- * @subpackage quiz
+ * @package    mod_quiz
  * @copyright  2010 Matt Petro
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,8 +28,8 @@ require_once($CFG->dirroot.'/mod/quiz/lib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->dirroot.'/mod/quiz/override_form.php');
 
-$overrideid = required_param('id', PARAM_INT);  // override ID
-$confirm = optional_param('confirm', false, PARAM_BOOL); // already confirmed?
+$overrideid = required_param('id', PARAM_INT);
+$confirm = optional_param('confirm', false, PARAM_BOOL);
 
 if (! $override = $DB->get_record('quiz_overrides', array('id' => $overrideid))) {
     print_error('invalidoverrideid', 'quiz');
@@ -47,7 +46,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 require_login($course, false, $cm);
 
-// Check the user has the required capabilities to modify an override
+// Check the user has the required capabilities to modify an override.
 require_capability('mod/quiz:manageoverrides', $context);
 
 $url = new moodle_url('/mod/quiz/overridedelete.php', array('id'=>$override->id));
@@ -58,22 +57,19 @@ if (!empty($override->userid)) {
     $cancelurl->param('mode', 'user');
 }
 
-// If confirm is set (PARAM_BOOL) then we have confirmation of intention to delete
+// If confirm is set (PARAM_BOOL) then we have confirmation of intention to delete.
 if ($confirm) {
-    // Confirm the session key to stop CSRF
     require_sesskey();
 
-    // Remove the override
     quiz_delete_override($quiz, $override->id);
 
     add_to_log($cm->course, 'quiz', 'delete override',
         "overrides.php?cmid=$cm->id", $quiz->id, $cm->id);
 
-    // And redirect
     redirect($cancelurl);
 }
 
-// Prepare the page to show the confirmation form
+// Prepare the page to show the confirmation form.
 $stroverride = get_string('override', 'quiz');
 $title = get_string('deletecheck', null, $stroverride);
 

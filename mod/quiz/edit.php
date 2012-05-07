@@ -111,8 +111,8 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
     return $out;
 }
 
-//these params are only passed from page request to request while we stay on
-//this page otherwise they would go in question_edit_setup
+// These params are only passed from page request to request while we stay on
+// this page otherwise they would go in question_edit_setup.
 $quiz_reordertool = optional_param('reordertool', -1, PARAM_BOOL);
 $quiz_qbanktool = optional_param('qbanktool', -1, PARAM_BOOL);
 $scrollpos = optional_param('scrollpos', '', PARAM_INT);
@@ -204,7 +204,7 @@ if (($down = optional_param('down', false, PARAM_INT)) && confirm_sesskey()) {
 }
 
 if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
-    // Re-paginate the quiz
+    // Re-paginate the quiz.
     $questionsperpage = optional_param('questionsperpage', $quiz->questionsperpage, PARAM_INT);
     $quiz->questions = quiz_repaginate($quiz->questions, $questionsperpage );
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
@@ -213,7 +213,7 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
 }
 
 if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sesskey()) {
-    // Add a single question to the current quiz
+    // Add a single question to the current quiz.
     quiz_require_question_use($addquestion);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     quiz_add_quiz_question($addquestion, $quiz, $addonpage);
@@ -224,9 +224,9 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
 }
 
 if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
-    // Add selected questions to the current quiz
+    // Add selected questions to the current quiz.
     $rawdata = (array) data_submitted();
-    foreach ($rawdata as $key => $value) { // Parse input for question ids
+    foreach ($rawdata as $key => $value) { // Parse input for question ids.
         if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
             $key = $matches[1];
             quiz_require_question_use($key);
@@ -239,7 +239,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
 }
 
 if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
-    // Add random questions to the quiz
+    // Add random questions to the quiz.
     $recurse = optional_param('recurse', 0, PARAM_BOOL);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     $categoryid = required_param('categoryid', PARAM_INT);
@@ -305,8 +305,8 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     $deletepreviews = false;
     $recomputesummarks = false;
 
-    $oldquestions = explode(',', $quiz->questions); // the questions in the old order
-    $questions = array(); // for questions in the new order
+    $oldquestions = explode(',', $quiz->questions); // The questions in the old order.
+    $questions = array(); // For questions in the new order.
     $rawdata = (array) data_submitted();
     $moveonpagequestions = array();
     $moveselectedonpage = optional_param('moveselectedonpagetop', 0, PARAM_INT);
@@ -316,7 +316,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     foreach ($rawdata as $key => $value) {
         if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
-            // Parse input for question -> grades
+            // Parse input for question -> grades.
             $questionid = $matches[1];
             $quiz->grades[$questionid] = clean_param($value, PARAM_FLOAT);
             quiz_update_question_instance($quiz->grades[$questionid], $questionid, $quiz);
@@ -324,7 +324,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
             $recomputesummarks = true;
 
         } else if (preg_match('!^o(pg)?([0-9]+)$!', $key, $matches)) {
-            // Parse input for ordering info
+            // Parse input for ordering info.
             $questionid = $matches[2];
             // Make sure two questions don't overwrite each other. If we get a second
             // question with the same position, shift the second one along to the next gap.
@@ -342,7 +342,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         }
     }
 
-    // If ordering info was given, reorder the questions
+    // If ordering info was given, reorder the questions.
     if ($questions) {
         ksort($questions);
         $questions[] = 0;
@@ -351,12 +351,12 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         $deletepreviews = true;
     }
 
-    //get a list of questions to move, later to be added in the appropriate
-    //place in the string
+    // Get a list of questions to move, later to be added in the appropriate
+    // place in the string.
     if ($moveselectedonpage) {
         $questions = explode(',', $quiz->questions);
         $newquestions = array();
-        //remove the questions from their original positions first
+        // Remove the questions from their original positions first.
         foreach ($questions as $questionid) {
             if (!in_array($questionid, $selectedquestionids)) {
                 $newquestions[] = $questionid;
@@ -364,7 +364,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         }
         $questions = $newquestions;
 
-        //move to the end of the selected page
+        // Move to the end of the selected page.
         $pagebreakpositions = array_keys($questions, 0);
         $numpages = count($pagebreakpositions);
 
@@ -384,7 +384,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         $deletepreviews = true;
     }
 
-    // If rescaling is required save the new maximum
+    // If rescaling is required save the new maximum.
     $maxgrade = optional_param('maxgrade', -1, PARAM_FLOAT);
     if ($maxgrade >= 0) {
         quiz_set_grade($maxgrade, $quiz);
@@ -539,8 +539,7 @@ if ($quiz_reordertool) {
     echo '<fieldset class="invisiblefieldset">';
     echo html_writer::input_hidden_params($thispageurl);
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    //YUI does not submit the value of the submit button so
-            //we need to add the value:
+    // YUI does not submit the value of the submit button so we need to add the value.
     echo '<input type="hidden" name="repaginate" value="'.$gostring.'" />';
     $attributes = array();
     $attributes['disabled'] = $repaginatingdisabledhtml ? 'disabled' : null;
@@ -563,7 +562,7 @@ quiz_print_question_list($quiz, $thispageurl, true, $quiz_reordertool, $quiz_qba
         $quizhasattempts, $defaultcategoryobj, $canaddquestion, $canaddrandom);
 echo '</div>';
 
-// Close <div class="quizcontents">:
+// Close <div class="quizcontents">.
 echo '</div>';
 
 if (!$quiz_reordertool && $canaddrandom) {

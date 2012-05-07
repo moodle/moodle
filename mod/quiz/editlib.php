@@ -120,9 +120,9 @@ function quiz_add_quiz_question($id, $quiz, $page = 0) {
         return false;
     }
 
-    // remove ending page break if it is not needed
+    // Remove ending page break if it is not needed.
     if ($breaks = array_keys($questions, 0)) {
-        // determine location of the last two page breaks
+        // Determine location of the last two page breaks.
         $end = end($breaks);
         $last = prev($breaks);
         $last = $last ? $last : -1;
@@ -133,19 +133,19 @@ function quiz_add_quiz_question($id, $quiz, $page = 0) {
     if (is_int($page) && $page >= 1) {
         $numofpages = quiz_number_of_pages($quiz->questions);
         if ($numofpages<$page) {
-            //the page specified does not exist in quiz
+            // The page specified does not exist in quiz.
             $page = 0;
         } else {
-            // add ending page break - the following logic requires doing
-            //this at this point
+            // Add ending page break - the following logic requires doing
+            // this at this point.
             $questions[] = 0;
             $currentpage = 1;
             $addnow = false;
             foreach ($questions as $question) {
                 if ($question == 0) {
                     $currentpage++;
-                    //The current page is the one after the one we want to add on,
-                    //so we add the question before adding the current page.
+                    // The current page is the one after the one we want to add on,
+                    // so we add the question before adding the current page.
                     if ($currentpage == $page + 1) {
                         $questions_new[] = $id;
                     }
@@ -156,13 +156,13 @@ function quiz_add_quiz_question($id, $quiz, $page = 0) {
         }
     }
     if ($page == 0) {
-        // add question
+        // Add question.
         $questions[] = $id;
-        // add ending page break
+        // Add ending page break.
         $questions[] = 0;
     }
 
-    // Save new questionslist in database
+    // Save new questionslist in database.
     $quiz->questions = implode(',', $questions);
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
 
@@ -216,7 +216,7 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
         $form->category = $category->id . ',' . $category->contextid;
         $form->defaultmark = 1;
         $form->hidden = 1;
-        $form->stamp = make_unique_id_code(); // Set the unique code (not to be changed)
+        $form->stamp = make_unique_id_code(); // Set the unique code (not to be changed).
         $question = new stdClass();
         $question->qtype = 'random';
         $question = question_bank::get_qtype('random')->save_question($question, $form);
@@ -468,11 +468,11 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         echo $reordercontrolstop;
     }
 
-    //the current question ordinal (no descriptions)
+    // The current question ordinal (no descriptions).
     $qno = 1;
-    //the current question (includes questions and descriptions)
+    // The current question (includes questions and descriptions).
     $questioncount = 0;
-    //the current page number in iteration
+    // The current page number in iteration.
     $pagecount = 0;
 
     $pageopen = false;
@@ -486,7 +486,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         $reordercheckboxlabel = '';
         $reordercheckboxlabelclose = '';
 
-        // If the questiontype is missing change the question type
+        // If the questiontype is missing change the question type.
         if ($qnum && !array_key_exists($qnum, $questions)) {
             $fakequestion = new stdClass();
             $fakequestion->id = $qnum;
@@ -504,10 +504,9 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         }
 
         if ($qnum != 0 || ($qnum == 0 && !$pageopen)) {
-            //this is either a question or a page break after another
-            //        (no page is currently open)
+            // This is either a question or a page break after another (no page is currently open).
             if (!$pageopen) {
-                //if no page is open, start display of a page
+                // If no page is open, start display of a page.
                 $pagecount++;
                 echo  '<div class="quizpage"><span class="pagetitle">' .
                         get_string('page') . '&nbsp;' . $pagecount .
@@ -540,9 +539,8 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 $questionurl = new moodle_url('/question/question.php',
                         $questionparams);
                 $questioncount++;
-                //this is an actual question
 
-                /* Display question start */
+                // This is an actual question.
                 ?>
 <div class="question">
     <div class="questioncontainer <?php echo $question->qtype; ?>">
@@ -604,7 +602,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 }
                 if ($allowdelete && ($question->qtype == 'missingtype' ||
                         question_has_capability_on($question, 'use', $question->category))) {
-                    // remove from quiz, not question delete.
+                    // Remove from quiz, not question delete.
                     if (!$hasattempts) {
                         echo $OUTPUT->action_icon($pageurl->out(true,
                                 array('remove' => $question->id, 'sesskey'=>sesskey())),
@@ -663,13 +661,13 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 ?>
             <div class="questioncontentcontainer">
                 <?php
-                if ($question->qtype == 'random') { // it is a random question
+                if ($question->qtype == 'random') { // It is a random question.
                     if (!$reordertool) {
                         quiz_print_randomquestion($question, $pageurl, $quiz, $quiz_qbanktool);
                     } else {
                         quiz_print_randomquestion_reordertool($question, $pageurl, $quiz);
                     }
-                } else { // it is a single question
+                } else { // It is a single question.
                     if (!$reordertool) {
                         quiz_print_singlequestion($question, $returnurl, $quiz);
                     } else {
@@ -685,7 +683,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 <?php
             }
         }
-        //a page break: end the existing page.
+        // A page break: end the existing page.
         if ($qnum == 0) {
             if ($pageopen) {
                 if (!$reordertool && !($quiz->shufflequestions &&
@@ -693,8 +691,8 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                     quiz_print_pagecontrols($quiz, $pageurl, $pagecount,
                             $hasattempts, $defaultcategoryobj, $canaddquestion, $canaddrandom);
                 } else if ($count < $questiontotalcount - 1) {
-                    //do not include the last page break for reordering
-                    //to avoid creating a new extra page in the end
+                    // Do not include the last page break for reordering
+                    // to avoid creating a new extra page in the end.
                     echo '<input type="hidden" name="opg' . $pagecount . '" size="2" value="' .
                             (10*$count + 10) . '" />';
                 }
@@ -745,7 +743,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts,
     $randombuttoncount++;
     echo '<div class="pagecontrols">';
 
-    // Get the current context
+    // Get the current context.
     $thiscontext = get_context_instance(CONTEXT_COURSE, $quiz->course);
     $contexts = new question_edit_contexts($thiscontext);
 
@@ -756,7 +754,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts,
     }
 
     if ($canaddquestion) {
-        // Create the url the question page will return to
+        // Create the url the question page will return to.
         $returnurladdtoquiz = new moodle_url($pageurl, array('addonpage' => $page));
 
         // Print a button linking to the choose question type page.
@@ -863,33 +861,33 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
 
     echo '<div class="randomquestionqlist">';
     if ($questioncount == 0) {
-        // No questions in category, give an error plus instructions
+        // No questions in category, give an error plus instructions.
         echo '<span class="error">';
         print_string('noquestionsnotinuse', 'quiz');
         echo '</span>';
         echo '<br />';
 
-        // Embed the link into the string with instructions
+        // Embed the link into the string with instructions.
         $a = new stdClass();
         $a->catname = '<strong>' . $category->name . '</strong>';
         $a->link = $linkcategorycontents;
         echo get_string('addnewquestionsqbank', 'quiz', $a);
 
     } else {
-        // Category has questions
+        // Category has questions.
 
-        // Get a sample from the database,
+        // Get a sample from the database.
         $questionidstoshow = array_slice($questionids, 0, NUM_QS_TO_SHOW_IN_RANDOM);
         $questionstoshow = $DB->get_records_list('question', 'id', $questionidstoshow,
                 '', 'id, qtype, name, questiontext, questiontextformat');
 
-        // list them,
+        // Then list them.
         echo '<ul>';
         foreach ($questionstoshow as $question) {
             echo '<li>' . quiz_question_tostring($question, true) . '</li>';
         }
 
-        // and then display the total number.
+        // Finally display the total number.
         echo '<li class="totalquestionsinrandomqcategory">';
         if ($questioncount > NUM_QS_TO_SHOW_IN_RANDOM) {
             echo '... ';
@@ -1058,7 +1056,7 @@ class question_bank_add_to_quiz_action_column extends question_bank_action_colum
         if (!question_has_capability_on($question, 'use')) {
             return;
         }
-        // for RTL languages: switch right and left arrows
+        // For RTL languages: switch right and left arrows.
         if (right_to_left()) {
             $movearrow = 't/removeright';
         } else {
@@ -1187,7 +1185,7 @@ class quiz_question_bank_view extends question_bank_view {
         $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
                 $this->baseurl, $cat);
 
-        // continues with list of questions
+        // Continues with list of questions.
         $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname),
                 $this->baseurl, $cat, $this->cm, $recurse, $page,
                 $perpage, $showhidden, $showquestiontext,

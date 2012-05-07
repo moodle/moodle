@@ -59,7 +59,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
                         '/activity/quiz/attempts/attempt');
                 $paths[] = $quizattempt;
 
-                // Add states and sessions
+                // Add states and sessions.
                 $this->add_question_usages($quizattempt, $paths);
 
                 // A chance for access subplugings to set up their attempt data.
@@ -76,7 +76,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             }
         }
 
-        // Return the paths wrapped into standard activity structure
+        // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
     }
 
@@ -92,19 +92,19 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        // Needed by {@link process_quiz_attempt_legacy}
+        // Needed by {@link process_quiz_attempt_legacy}.
         $this->oldquizlayout = $data->questions;
         $data->questions = $this->questions_recode_layout($data->questions);
 
-        // quiz->attempts can come both in data->attempts and
-        // data->attempts_number, handle both. MDL-26229
+        // The setting quiz->attempts can come both in data->attempts and
+        // data->attempts_number, handle both. MDL-26229.
         if (isset($data->attempts_number)) {
             $data->attempts = $data->attempts_number;
             unset($data->attempts_number);
         }
 
         // The old optionflags and penaltyscheme from 2.0 need to be mapped to
-        // the new preferredbehaviour. MDL-20636
+        // the new preferredbehaviour. See MDL-20636.
         if (!isset($data->preferredbehaviour)) {
             if (empty($data->optionflags)) {
                 $data->preferredbehaviour = 'deferredfeedback';
@@ -118,7 +118,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         }
 
         // The old review column from 2.0 need to be split into the seven new
-        // review columns. MDL-20636
+        // review columns. See MDL-20636.
         if (isset($data->review)) {
             require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
@@ -206,7 +206,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         }
 
         // The old popup column from from <= 2.1 need to be mapped to
-        // the new browsersecurity. MDL-29627
+        // the new browsersecurity. See MDL-29627.
         if (!isset($data->browsersecurity)) {
             if (empty($data->popup)) {
                 $data->browsersecurity = '-';
@@ -220,9 +220,9 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             unset($data->popup);
         }
 
-        // insert the quiz record
+        // Insert the quiz record.
         $newitemid = $DB->insert_record('quiz', $data);
-        // immediately after inserting "activity" record, call this
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
@@ -248,7 +248,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->quizid = $this->get_new_parentid('quiz');
 
         $newitemid = $DB->insert_record('quiz_feedback', $data);
-        $this->set_mapping('quiz_feedback', $oldid, $newitemid, true); // Has related files
+        $this->set_mapping('quiz_feedback', $oldid, $newitemid, true); // Has related files.
     }
 
     protected function process_quiz_override($data) {
@@ -257,10 +257,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Based on userinfo, we'll restore user overides or no
+        // Based on userinfo, we'll restore user overides or no.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Skip user overrides if we are not restoring userinfo
+        // Skip user overrides if we are not restoring userinfo.
         if (!$userinfo && !is_null($data->userid)) {
             return;
         }
@@ -275,7 +275,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $newitemid = $DB->insert_record('quiz_overrides', $data);
 
-        // Add mapping, restore of logs needs it
+        // Add mapping, restore of logs needs it.
         $this->set_mapping('quiz_override', $oldid, $newitemid);
     }
 
@@ -331,15 +331,15 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $newitemid = $DB->insert_record('quiz_attempts', $data);
 
-        // Save quiz_attempt->id mapping, because logs use it
+        // Save quiz_attempt->id mapping, because logs use it.
         $this->set_mapping('quiz_attempt', $oldid, $newitemid, false);
     }
 
     protected function after_execute() {
         parent::after_execute();
-        // Add quiz related files, no need to match by itemname (just internally handled context)
+        // Add quiz related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_quiz', 'intro', null);
-        // Add feedback related files, matching by itemname = 'quiz_feedback'
+        // Add feedback related files, matching by itemname = 'quiz_feedback'.
         $this->add_related_files('mod_quiz', 'feedback', 'quiz_feedback');
     }
 }

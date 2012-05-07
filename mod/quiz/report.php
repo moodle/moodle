@@ -86,7 +86,7 @@ if (!is_readable("report/$mode/report.php")) {
 add_to_log($course->id, 'quiz', 'report', 'report.php?id=' . $cm->id . '&mode=' . $mode,
         $quiz->id, $cm->id);
 
-// Open the selected quiz report and display it
+// Open the selected quiz report and display it.
 $file = $CFG->dirroot . '/mod/quiz/report/' . $mode . '/report.php';
 if (is_readable($file)) {
     include_once($file);
@@ -99,5 +99,5 @@ if (!class_exists($reportclassname)) {
 $report = new $reportclassname();
 $report->display($quiz, $cm, $course);
 
-// Print footer
+// Print footer.
 echo $OUTPUT->footer();
