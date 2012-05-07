@@ -35,22 +35,21 @@ require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_form.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_overview_settings_form extends mod_quiz_attempts_report_form {
-    protected function definition_inner(MoodleQuickForm $mform) {
-        $showattemptsgrp = array();
-        if ($this->_customdata['qmsubselect']) {
-            $showattemptsgrp[] = $this->create_qmfilter_checkbox($mform);
-        }
-        if (has_capability('mod/quiz:regrade', $this->_customdata['context'])) {
-            $showattemptsgrp[] = $mform->createElement('advcheckbox', 'regradefilter',
-                    get_string('showattempts', 'quiz_overview'),
-                    get_string('optonlyregradedattempts', 'quiz_overview'), null, array(0, 1));
-        }
-        if ($showattemptsgrp) {
-            $mform->addGroup($showattemptsgrp, null,
-                    get_string('showattempts', 'quiz_overview'), '<br />', false);
-        }
 
-        $mform->addElement('selectyesno', 'detailedmarks',
-                get_string('showdetailedmarks', 'quiz_overview'));
+    protected function other_attempt_fields(MoodleQuickForm $mform) {
+        if (has_capability('mod/quiz:regrade', $this->_customdata['context'])) {
+            $mform->addElement('advcheckbox', 'onlyregraded', '',
+                    get_string('optonlyregradedattempts', 'quiz_overview'));
+            $mform->disabledIf('onlyregraded', 'attempts', 'eq', quiz_attempts_report::ENROLLED_WITHOUT);
+        }
+    }
+
+    protected function other_preference_fields(MoodleQuickForm $mform) {
+        if (quiz_has_grades($this->_customdata['quiz'])) {
+            $mform->addElement('selectyesno', 'slotmarks',
+                    get_string('showdetailedmarks', 'quiz_overview'));
+        } else {
+            $mform->addElement('hidden', 'slotmarks', 0);
+        }
     }
 }

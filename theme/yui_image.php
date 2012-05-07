@@ -24,6 +24,10 @@
  */
 
 
+// disable moodle specific debug messages and any errors in output,
+// comment out when debugging or better look into error log!
+define('NO_DEBUG_DISPLAY', true);
+
 // we need just the values from config.php and minlib.php
 define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
@@ -66,6 +70,9 @@ yui_image_cached($imagepath);
 
 
 function yui_image_cached($imagepath) {
+    global $CFG;
+    require("$CFG->dirroot/lib/xsendfilelib.php");
+
     $lifetime = 60*60*24*300; // 300 days === forever
     $pathinfo = pathinfo($imagepath);
     $imagename = $pathinfo['filename'].'.'.$pathinfo['extension'];
@@ -87,6 +94,10 @@ function yui_image_cached($imagepath) {
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));
+
+    if (xsendfile($imagepath)) {
+        die;
+    }
 
     // no need to gzip already compressed images ;-)
 

@@ -1127,7 +1127,16 @@ function fix_utf8($value) {
             // shortcut
             return $value;
         }
-        return iconv('UTF-8', 'UTF-8//IGNORE', $value);
+        // lower error reporting because glibc throws bogus notices
+        $olderror = error_reporting();
+        if ($olderror & E_NOTICE) {
+            error_reporting($olderror ^ E_NOTICE);
+        }
+        $result = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+        if ($olderror & E_NOTICE) {
+            error_reporting($olderror);
+        }
+        return $result;
 
     } else if (is_array($value)) {
         foreach ($value as $k=>$v) {
@@ -2086,6 +2095,15 @@ function usergetdate($time, $timezone=99) {
         $getdate['seconds']
     ) = explode('_', $datestring);
 
+    // set correct datatype to match with getdate()
+    $getdate['seconds'] = (int)$getdate['seconds'];
+    $getdate['yday'] = (int)$getdate['yday'] - 1; // gettime returns 0 through 365
+    $getdate['year'] = (int)$getdate['year'];
+    $getdate['mon'] = (int)$getdate['mon'];
+    $getdate['wday'] = (int)$getdate['wday'];
+    $getdate['mday'] = (int)$getdate['mday'];
+    $getdate['hours'] = (int)$getdate['hours'];
+    $getdate['minutes']  = (int)$getdate['minutes'];
     return $getdate;
 }
 
@@ -2646,7 +2664,7 @@ function get_login_url() {
  * @return mixed Void, exit, and die depending on path
  */
 function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $setwantsurltome = true, $preventredirect = false) {
-    global $CFG, $SESSION, $USER, $FULLME, $PAGE, $SITE, $DB, $OUTPUT;
+    global $CFG, $SESSION, $USER, $PAGE, $SITE, $DB, $OUTPUT;
 
     // setup global $COURSE, themes, language and locale
     if (!empty($courseorid)) {
@@ -2710,8 +2728,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
             }
 
             if ($setwantsurltome) {
-                // TODO: switch to PAGE->url
-                $SESSION->wantsurl = $FULLME;
+                $SESSION->wantsurl = qualified_me();
             }
             if (!empty($_SERVER['HTTP_REFERER'])) {
                 $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
@@ -2735,7 +2752,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
         $userauth = get_auth_plugin($USER->auth);
         if ($userauth->can_change_password() and !$preventredirect) {
             if ($setwantsurltome) {
-                $SESSION->wantsurl = $FULLME;
+                $SESSION->wantsurl = qualified_me();
             }
             if ($changeurl = $userauth->change_password_url()) {
                 //use plugin custom url
@@ -2760,7 +2777,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
             throw new require_login_exception('User not fully set-up');
         }
         if ($setwantsurltome) {
-            $SESSION->wantsurl = $FULLME;
+            $SESSION->wantsurl = qualified_me();
         }
         redirect($CFG->wwwroot .'/user/edit.php?id='. $USER->id .'&amp;course='. SITEID);
     }
@@ -2782,7 +2799,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                 throw new require_login_exception('Policy not agreed');
             }
             if ($setwantsurltome) {
-                $SESSION->wantsurl = $FULLME;
+                $SESSION->wantsurl = qualified_me();
             }
             redirect($CFG->wwwroot .'/user/policy.php');
         } else if (!empty($CFG->sitepolicyguest) and isguestuser()) {
@@ -2790,7 +2807,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                 throw new require_login_exception('Policy not agreed');
             }
             if ($setwantsurltome) {
-                $SESSION->wantsurl = $FULLME;
+                $SESSION->wantsurl = qualified_me();
             }
             redirect($CFG->wwwroot .'/user/policy.php');
         }
@@ -2944,7 +2961,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                 throw new require_login_exception('Not enrolled');
             }
             if ($setwantsurltome) {
-                $SESSION->wantsurl = $FULLME;
+                $SESSION->wantsurl = qualified_me();
             }
             redirect($CFG->wwwroot .'/enrol/index.php?id='. $course->id);
         }
@@ -3895,6 +3912,7 @@ function delete_user($user) {
     $updateuser->username     = $delname;            // Remember it just in case
     $updateuser->email        = md5($user->username);// Store hash of username, useful importing/restoring users
     $updateuser->idnumber     = '';                  // Clear this field to free it up
+    $updateuser->picture      = 0;
     $updateuser->timemodified = time();
 
     $DB->update_record('user', $updateuser);
@@ -4623,9 +4641,8 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     }
     $DB->update_record('course', $oldcourse);
 
-    // Delete course sections and user selections
+    // Delete course sections.
     $DB->delete_records('course_sections', array('course'=>$course->id));
-    $DB->delete_records('course_display', array('course'=>$course->id));
 
     // delete legacy, section and any other course files
     $fs->delete_area_files($coursecontext->id, 'course'); // files from summary and section
@@ -5113,7 +5130,7 @@ function get_mailer($action='get') {
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $replyto='', $replytoname='', $wordwrapwidth=79) {
 
-    global $CFG, $FULLME;
+    global $CFG;
 
     if (empty($user) || empty($user->email)) {
         $nulluser = 'User is null or has no email';
@@ -5313,7 +5330,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         }
         return true;
     } else {
-        add_to_log(SITEID, 'library', 'mailer', $FULLME, 'ERROR: '. $mail->ErrorInfo);
+        add_to_log(SITEID, 'library', 'mailer', qualified_me(), 'ERROR: '. $mail->ErrorInfo);
         if (CLI_SCRIPT) {
             mtrace('Error: lib/moodlelib.php email_to_user(): '.$mail->ErrorInfo);
         }

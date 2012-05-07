@@ -16,12 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines workshop_file_info class
+ * Provides code used during file browsing
  *
- * @package    mod
- * @subpackage workshop
- * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @category  files
+ * @package   mod_workshop
+ * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -29,9 +29,10 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Represents virtual root node for all submissions
  *
- * Workshop submission uses two fileareas: workshop_submission_content
- * for editor's embeded media and workshop_submission_attachment for attachments.
- * In both, the itemid represents the submission id.
+ * Workshop submission uses two fileareas: submission_content for editor's embeded media
+ * and submission_attachment for attachments. In both, the itemid represents the submission id.
+ * This container is used to display the list of all submissions in these areas (ie when
+ * these areas are browsed with itemid == null).
  */
 class workshop_file_info_submissions_container extends file_info {
     protected $course;
@@ -97,7 +98,7 @@ class workshop_file_info_submissions_container extends file_info {
         $itemids = $DB->get_records('files', array('contextid' => $this->context->id, 'component' => 'mod_workshop', 'filearea' => $this->filearea),
             'itemid', "DISTINCT itemid");
         foreach ($itemids as $itemid => $unused) {
-            if ($child = $this->browser->get_file_info($this->context, $this->filearea, $itemid)) {
+            if ($child = $this->browser->get_file_info($this->context, 'mod_workshop', $this->filearea, $itemid)) {
                 $children[] = $child;
             }
         }

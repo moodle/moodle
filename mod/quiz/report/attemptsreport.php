@@ -39,14 +39,14 @@ abstract class quiz_attempts_report extends quiz_default_report {
     /** @var int default page size for reports. */
     const DEFAULT_PAGE_SIZE = 30;
 
-    /** @var int include all attempts. */
-    const ALL_ATTEMPTS = 0;
-    /** @var int include just enroled users who have not attempted the quiz. */
-    const STUDENTS_WITH_NO = 1;
-    /** @var int include just enroled users who have attempted the quiz. */
-    const STUDENTS_WITH = 2;
-    /** @var int include all enroled users. */
-    const ALL_STUDENTS = 3;
+    /** @var string constant used for the options, means all users with attempts. */
+    const ALL_WITH = 'all_with';
+    /** @var string constant used for the options, means only enrolled users with attempts. */
+    const ENROLLED_WITH = 'enrolled_with';
+    /** @var string constant used for the options, means only enrolled users without attempts. */
+    const ENROLLED_WITHOUT = 'enrolled_without';
+    /** @var string constant used for the options, means all enrolled users. */
+    const ENROLLED_ALL = 'enrolled_any';
 
     /** @var string the mode this report is. */
     protected $mode;
@@ -200,6 +200,16 @@ abstract class quiz_attempts_report extends quiz_default_report {
     }
 
     /**
+     * Add the state column to the $columns and $headers arrays.
+     * @param array $columns the list of columns. Added to.
+     * @param array $headers the columns headings. Added to.
+     */
+    protected function add_state_column(&$columns, &$headers) {
+        $columns[] = 'state';
+        $headers[] = get_string('attemptstate', 'quiz');
+    }
+
+    /**
      * Add all the time-related columns to the $columns and $headers arrays.
      * @param array $columns the list of columns. Added to.
      * @param array $headers the columns headings. Added to.
@@ -267,17 +277,19 @@ abstract class quiz_attempts_report extends quiz_default_report {
     /**
      * Process any submitted actions.
      * @param object $quiz the quiz settings.
+     * @param object $cm the cm object for the quiz.
      * @param int $currentgroup the currently selected group.
      * @param array $groupstudents the students in the current group.
      * @param array $allowed the users whose attempt this user is allowed to modify.
+     * @param moodle_url $redirecturl where to redircet to after a successful action.
      */
-    protected function process_actions($quiz, $currentgroup, $groupstudents, $allowed) {
+    protected function process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $redirecturl) {
         if (empty($currentgroup) || $groupstudents) {
             if (optional_param('delete', 0, PARAM_BOOL) && confirm_sesskey()) {
                 if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
                     require_capability('mod/quiz:deleteattempts', $this->context);
                     $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowed);
-                    redirect($options->get_url());
+                    redirect($redirecturl);
                 }
             }
         }

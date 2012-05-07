@@ -40,17 +40,16 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
 
         // Define each element separated
         $quiz = new backup_nested_element('quiz', array('id'), array(
-            'name', 'intro', 'introformat', 'timeopen',
-            'timeclose', 'preferredbehaviour', 'attempts_number',
-            'attemptonlast', 'grademethod', 'navmethod', 'decimalpoints', 'questiondecimalpoints',
+            'name', 'intro', 'introformat', 'timeopen', 'timeclose', 'timelimit',
+            'overduehandling', 'graceperiod', 'preferredbehaviour', 'attempts_number',
+            'attemptonlast', 'grademethod', 'decimalpoints', 'questiondecimalpoints',
             'reviewattempt', 'reviewcorrectness', 'reviewmarks',
             'reviewspecificfeedback', 'reviewgeneralfeedback',
             'reviewrightanswer', 'reviewoverallfeedback',
-            'questionsperpage', 'shufflequestions', 'shuffleanswers',
+            'questionsperpage', 'navmethod', 'shufflequestions', 'shuffleanswers',
             'questions', 'sumgrades', 'grade', 'timecreated',
-            'timemodified', 'timelimit', 'password', 'subnet',
-            'browsersecurity', 'delay1', 'delay2', 'showuserpicture',
-            'showblocks'));
+            'timemodified', 'password', 'subnet', 'browsersecurity',
+            'delay1', 'delay2', 'showuserpicture', 'showblocks'));
 
         // Define elements for access rule subplugin settings.
         $this->add_subplugin_structure('quizaccess', $quiz, true);
@@ -79,9 +78,8 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $attempts = new backup_nested_element('attempts');
 
         $attempt = new backup_nested_element('attempt', array('id'), array(
-            'uniqueid', 'userid', 'attemptnum', 'sumgrades',
-            'timestart', 'timefinish', 'timemodified', 'layout',
-            'preview', 'currentpage'));
+            'userid', 'attemptnum', 'uniqueid', 'layout', 'currentpage', 'preview',
+            'state', 'timestart', 'timefinish', 'timemodified', 'sumgrades'));
 
         // This module is using questions, so produce the related question states and sessions
         // attaching them to the $attempt element based in 'uniqueid' matching

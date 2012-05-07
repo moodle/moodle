@@ -306,7 +306,19 @@ function workshop_user_complete($course, $user, $mod, $workshop) {
     }
 
     if (has_capability('mod/workshop:viewallsubmissions', $workshop->context)) {
-        if ($submission = $workshop->get_submission_by_author($user->id)) {
+        $canviewsubmission = true;
+        if (groups_get_activity_groupmode($workshop->cm) == SEPARATEGROUPS) {
+            // user must have accessallgroups or share at least one group with the submission author
+            if (!has_capability('moodle/site:accessallgroups', $workshop->context)) {
+                $usersgroups = groups_get_activity_allowed_groups($workshop->cm);
+                $authorsgroups = groups_get_all_groups($workshop->course->id, $user->id, $workshop->cm->groupingid, 'g.id');
+                $sharedgroups = array_intersect_key($usersgroups, $authorsgroups);
+                if (empty($sharedgroups)) {
+                    $canviewsubmission = false;
+                }
+            }
+        }
+        if ($canviewsubmission and $submission = $workshop->get_submission_by_author($user->id)) {
             $title      = format_string($submission->title);
             $url        = $workshop->submission_url($submission->id);
             $link       = html_writer::link($url, $title);
@@ -1212,10 +1224,8 @@ function workshop_get_file_areas($course, $cm, $context) {
  *
  * Apart from module intro (handled by pluginfile.php automatically), workshop files may be
  * media inserted into submission content (like images) and submission attachments. For these two,
- * the fileareas workshop_submission_content and workshop_submission_attachment are used.
- * The access rights to the files are checked here. The user must be either a peer-reviewer
- * of the submission or have capability ... (todo) to access the submission files.
- * Besides that, areas workshop_instructauthors and mod_workshop instructreviewers contain the media
+ * the fileareas submission_content and submission_attachment are used.
+ * Besides that, areas instructauthors and instructreviewers contain the media
  * embedded using the mod_form.php.
  *
  * @package  mod_workshop
@@ -1231,7 +1241,7 @@ function workshop_get_file_areas($course, $cm, $context) {
  * @return bool false if the file not found, just send the file otherwise and do not return anything
  */
 function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
-    global $DB, $CFG;
+    global $DB, $CFG, $USER;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -1240,12 +1250,7 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
     require_login($course, true, $cm);
 
     if ($filearea === 'instructauthors') {
-        // submission instructions may contain sensitive data
-        if (!has_any_capability(array('moodle/course:manageactivities', 'mod/workshop:submit'), $context)) {
-            send_file_not_found();
-        }
-
-        array_shift($args); // we do not use itemids here
+        array_shift($args); // itemid is ignored here
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
 
@@ -1261,12 +1266,7 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
     }
 
     if ($filearea === 'instructreviewers') {
-        // submission instructions may contain sensitive data
-        if (!has_any_capability(array('moodle/course:manageactivities', 'mod/workshop:peerassess'), $context)) {
-            send_file_not_found();
-        }
-
-        array_shift($args); // we do not use itemids here
+        array_shift($args); // itemid is ignored here
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
 
@@ -1288,7 +1288,35 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
         if (!$submission = $DB->get_record('workshop_submissions', array('id' => $itemid, 'workshopid' => $workshop->id))) {
             return false;
         }
-        // TODO now make sure the user is allowed to see the file
+
+        // make sure the user is allowed to see the file
+        if (empty($submission->example)) {
+            if ($USER->id != $submission->authorid) {
+                if (!$DB->record_exists('workshop_assessments', array('submissionid' => $submission->id, 'reviewerid' => $USER->id))) {
+                    if (!has_capability('mod/workshop:viewallsubmissions', $context)) {
+                        send_file_not_found();
+                    } else {
+                        $gmode = groups_get_activity_groupmode($cm, $course);
+                        if ($gmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                            // check there is at least one common group with both the $USER
+                            // and the submission author
+                            $sql = "SELECT 'x'
+                                      FROM {workshop_submissions} s
+                                      JOIN {user} a ON (a.id = s.authorid)
+                                      JOIN {groups_members} agm ON (a.id = agm.userid)
+                                      JOIN {user} u ON (u.id = ?)
+                                      JOIN {groups_members} ugm ON (u.id = ugm.userid)
+                                     WHERE s.example = 0 AND s.workshopid = ? AND s.id = ? AND agm.groupid = ugm.groupid";
+                            $params = array($USER->id, $workshop->id, $submission->id);
+                            if (!$DB->record_exists_sql($sql, $params)) {
+                                send_file_not_found();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         $fs = get_file_storage();
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_workshop/$filearea/$itemid/$relativepath";
@@ -1321,22 +1349,50 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
  * @return file_info instance or null if not found
  */
 function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
+    /** @var array internal cache for author names */
+    static $submissionauthors = array();
 
+    // this is enforced by {@link file_info_context_course} currently
     if (!has_capability('moodle/course:managefiles', $context)) {
         return null;
     }
 
     $fs = get_file_storage();
 
-    if ($filearea === 'content' or $filearea === 'attachment') {
+    if ($filearea === 'submission_content' or $filearea === 'submission_attachment') {
+
+        if (!has_capability('mod/workshop:viewallsubmissions', $context)) {
+            return null;
+        }
 
         if (is_null($itemid)) {
+            // no itemid (submissionid) passed, display the list of all submissions
             require_once($CFG->dirroot . '/mod/workshop/fileinfolib.php');
             return new workshop_file_info_submissions_container($browser, $course, $cm, $context, $areas, $filearea);
         }
 
-        // we are inside the submission container
+        // make sure the user can see the particular submission in separate groups mode
+        $gmode = groups_get_activity_groupmode($cm, $course);
+
+        if ($gmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+            // check there is at least one common group with both the $USER
+            // and the submission author (this is not expected to be a frequent
+            // usecase so we can live with pretty ineffective one query per submission here...)
+            $sql = "SELECT 'x'
+                      FROM {workshop_submissions} s
+                      JOIN {user} a ON (a.id = s.authorid)
+                      JOIN {groups_members} agm ON (a.id = agm.userid)
+                      JOIN {user} u ON (u.id = ?)
+                      JOIN {groups_members} ugm ON (u.id = ugm.userid)
+                     WHERE s.example = 0 AND s.workshopid = ? AND s.id = ? AND agm.groupid = ugm.groupid";
+            $params = array($USER->id, $cm->instance, $itemid);
+            if (!$DB->record_exists_sql($sql, $params)) {
+                return null;
+            }
+        }
+
+        // we are inside some particular submission container
 
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
@@ -1351,16 +1407,34 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
         }
 
         // let us display the author's name instead of itemid (submission id)
-        // todo some sort of caching should happen here
 
-        $sql = "SELECT s.id, u.lastname, u.firstname
-                  FROM {workshop_submissions} s
-            INNER JOIN {user} u ON (s.authorid = u.id)
-                 WHERE s.workshopid = ?";
-        $params         = array($cm->instance);
-        $authors        = $DB->get_records_sql($sql, $params);
-        $urlbase        = $CFG->wwwroot . '/pluginfile.php';
-        $topvisiblename = fullname($authors[$itemid]);
+        if (isset($submissionauthors[$itemid])) {
+            $topvisiblename = $submissionauthors[$itemid];
+
+        } else {
+
+            $sql = "SELECT s.id, u.lastname, u.firstname
+                      FROM {workshop_submissions} s
+                      JOIN {user} u ON (s.authorid = u.id)
+                     WHERE s.example = 0 AND s.workshopid = ?";
+            $params = array($cm->instance);
+            $rs = $DB->get_recordset_sql($sql, $params);
+
+            foreach ($rs as $submissionauthor) {
+                $title = s(fullname($submissionauthor)); // this is generally not unique...
+                $submissionauthors[$submissionauthor->id] = $title;
+            }
+            $rs->close();
+
+            if (!isset($submissionauthors[$itemid])) {
+                // should not happen
+                return null;
+            } else {
+                $topvisiblename = $submissionauthors[$itemid];
+            }
+        }
+
+        $urlbase = $CFG->wwwroot . '/pluginfile.php';
         // do not allow manual modification of any files!
         return new file_info_stored($browser, $context, $storedfile, $urlbase, $topvisiblename, true, true, false, false);
     }

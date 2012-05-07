@@ -1611,38 +1611,159 @@ function send_header_404() {
 }
 
 /**
- * Check output buffering settings before sending file.
- * Please note you should not send any other headers after calling this function.
- *
- * To be called only from lib/filelib.php !
+ * Enhanced readfile() with optional acceleration.
+ * @param string|stored_file $file
+ * @param string $mimetype
+ * @param bool $accelerate
+ * @return void
  */
-function prepare_file_content_sending() {
-    // We needed to be able to send headers up until now
-    if (headers_sent()) {
-        throw new file_serving_exception('Headers already sent, can not serve file.');
+function readfile_accel($file, $mimetype, $accelerate) {
+    global $CFG;
+
+    if ($mimetype === 'text/plain') {
+        // there is no encoding specified in text files, we need something consistent
+        header('Content-Type: text/plain; charset=utf-8');
+    } else {
+        header('Content-Type: '.$mimetype);
     }
 
-    $olddebug = error_reporting(0);
+    $lastmodified = is_object($file) ? $file->get_timemodified() : filemtime($file);
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
 
-    // IE compatibility HACK - it does not like zlib compression much
-    // there is also a problem with the length header in older PHP versions
-    if (ini_get_bool('zlib.output_compression')) {
-        ini_set('zlib.output_compression', 'Off');
-    }
-
-    // flush and close all buffers if possible
-    while(ob_get_level()) {
-        if (!ob_end_flush()) {
-            // prevent infinite loop when buffer can not be closed
-            break;
+    if (is_object($file)) {
+        header('ETag: ' . $file->get_contenthash());
+        if (isset($_SERVER['HTTP_IF_NONE_MATCH']) and $_SERVER['HTTP_IF_NONE_MATCH'] === $file->get_contenthash()) {
+            header('HTTP/1.1 304 Not Modified');
+            return;
         }
     }
 
-    error_reporting($olddebug);
+    // if etag present for stored file rely on it exclusively
+    if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) and (empty($_SERVER['HTTP_IF_NONE_MATCH']) or !is_object($file))) {
+        // get unixtime of request header; clip extra junk off first
+        $since = strtotime(preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]));
+        if ($since && $since >= $lastmodified) {
+            header('HTTP/1.1 304 Not Modified');
+            return;
+        }
+    }
 
-    //NOTE: we can not reliable test headers_sent() here because
-    //      the headers might be sent which trying to close the buffers,
-    //      this happens especially if browser does not support gzip or deflate
+    if ($accelerate and !empty($CFG->xsendfile)) {
+        if (empty($CFG->disablebyteserving) and $mimetype !== 'text/plain') {
+            header('Accept-Ranges: bytes');
+        } else {
+            header('Accept-Ranges: none');
+        }
+
+        if (is_object($file)) {
+            $fs = get_file_storage();
+            if ($fs->xsendfile($file->get_contenthash())) {
+                return;
+            }
+
+        } else {
+            require_once("$CFG->libdir/xsendfilelib.php");
+            if (xsendfile($file)) {
+                return;
+            }
+        }
+    }
+
+    $filesize = is_object($file) ? $file->get_filesize() : filesize($file);
+
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
+
+    if ($accelerate and empty($CFG->disablebyteserving) and $mimetype !== 'text/plain') {
+        header('Accept-Ranges: bytes');
+
+        if (!empty($_SERVER['HTTP_RANGE']) and strpos($_SERVER['HTTP_RANGE'],'bytes=') !== FALSE) {
+            // byteserving stuff - for acrobat reader and download accelerators
+            // see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35
+            // inspired by: http://www.coneural.org/florian/papers/04_byteserving.php
+            $ranges = false;
+            if (preg_match_all('/(\d*)-(\d*)/', $_SERVER['HTTP_RANGE'], $ranges, PREG_SET_ORDER)) {
+                foreach ($ranges as $key=>$value) {
+                    if ($ranges[$key][1] == '') {
+                        //suffix case
+                        $ranges[$key][1] = $filesize - $ranges[$key][2];
+                        $ranges[$key][2] = $filesize - 1;
+                    } else if ($ranges[$key][2] == '' || $ranges[$key][2] > $filesize - 1) {
+                        //fix range length
+                        $ranges[$key][2] = $filesize - 1;
+                    }
+                    if ($ranges[$key][2] != '' && $ranges[$key][2] < $ranges[$key][1]) {
+                        //invalid byte-range ==> ignore header
+                        $ranges = false;
+                        break;
+                    }
+                    //prepare multipart header
+                    $ranges[$key][0] =  "\r\n--".BYTESERVING_BOUNDARY."\r\nContent-Type: $mimetype\r\n";
+                    $ranges[$key][0] .= "Content-Range: bytes {$ranges[$key][1]}-{$ranges[$key][2]}/$filesize\r\n\r\n";
+                }
+            } else {
+                $ranges = false;
+            }
+            if ($ranges) {
+                if (is_object($file)) {
+                    $handle = $file->get_content_file_handle();
+                } else {
+                    $handle = fopen($file, 'rb');
+                }
+                byteserving_send_file($handle, $mimetype, $ranges, $filesize);
+            }
+        }
+    } else {
+        // Do not byteserve
+        header('Accept-Ranges: none');
+    }
+
+    header('Content-Length: '.$filesize);
+
+    if ($filesize > 10000000) {
+        // for large files try to flush and close all buffers to conserve memory
+        while(@ob_get_level()) {
+            if (!@ob_end_flush()) {
+                break;
+            }
+        }
+    }
+
+    // send the whole file content
+    if (is_object($file)) {
+        $file->readfile();
+    } else {
+        readfile($file);
+    }
+}
+
+/**
+ * Similar to readfile_accel() but designed for strings.
+ * @param string $string
+ * @param string $mimetype
+ * @param bool $accelerate
+ * @return void
+ */
+function readstring_accel($string, $mimetype, $accelerate) {
+    global $CFG;
+
+    if ($mimetype === 'text/plain') {
+        // there is no encoding specified in text files, we need something consistent
+        header('Content-Type: text/plain; charset=utf-8');
+    } else {
+        header('Content-Type: '.$mimetype);
+    }
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    header('Accept-Ranges: none');
+
+    if ($accelerate and !empty($CFG->xsendfile)) {
+        $fs = get_file_storage();
+        if ($fs->xsendfile(sha1($string))) {
+            return;
+        }
+    }
+
+    header('Content-Length: '.strlen($string));
+    echo $string;
 }
 
 /**
@@ -1656,8 +1777,15 @@ function prepare_file_content_sending() {
 function send_temp_file($path, $filename, $pathisstring=false) {
     global $CFG;
 
+    if (check_browser_version('Firefox', '1.5')) {
+        // only FF is known to correctly save to disk before opening...
+        $mimetype = mimeinfo('type', $filename);
+    } else {
+        $mimetype = 'application/x-forcedownload';
+    }
+
     // close session - not needed anymore
-    @session_get_instance()->write_close();
+    session_get_instance()->write_close();
 
     if (!$pathisstring) {
         if (!file_exists($path)) {
@@ -1673,10 +1801,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
         $filename = urlencode($filename);
     }
 
-    $filesize = $pathisstring ? strlen($path) : filesize($path);
-
     header('Content-Disposition: attachment; filename='.$filename);
-    header('Content-Length: '.$filesize);
     if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
         header('Cache-Control: max-age=10');
         header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
@@ -1686,17 +1811,13 @@ function send_temp_file($path, $filename, $pathisstring=false) {
         header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
         header('Pragma: no-cache');
     }
-    header('Accept-Ranges: none'); // Do not allow byteserving
 
-    //flush the buffers - save memory and disable sid rewrite
-    // this also disables zlib compression
-    prepare_file_content_sending();
-
-    // send the contents
+    // send the contents - we can not accelerate this because the file will be deleted asap
     if ($pathisstring) {
-        echo $path;
+        readstring_accel($path, $mimetype, false);
     } else {
-        @readfile($path);
+        readfile_accel($path, $mimetype, false);
+        @unlink($path);
     }
 
     die; //no more chars to output
@@ -1718,9 +1839,6 @@ function send_temp_file_finished($path) {
  * byteranges etc.
  *
  * @category files
- * @global stdClass $CFG
- * @global stdClass $COURSE
- * @global moodle_session $SESSION
  * @param string $path Path of file on disk (including real filename), or actual content of file as string
  * @param string $filename Filename to send
  * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
@@ -1735,7 +1853,7 @@ function send_temp_file_finished($path) {
  * @return null script execution stopped unless $dontdie is true
  */
 function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='', $dontdie=false) {
-    global $CFG, $COURSE, $SESSION;
+    global $CFG, $COURSE;
 
     if ($dontdie) {
         ignore_user_abort(true);
@@ -1759,46 +1877,6 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
     $mimetype     = ($forcedownload and !$isFF) ? 'application/x-forcedownload' :
                          ($mimetype ? $mimetype : mimeinfo('type', $filename));
 
-    $lastmodified = $pathisstring ? time() : filemtime($path);
-    $filesize     = $pathisstring ? strlen($path) : filesize($path);
-
-/* - MDL-13949
-    //Adobe Acrobat Reader XSS prevention
-    if ($mimetype=='application/pdf' or mimeinfo('type', $filename)=='application/pdf') {
-        //please note that it prevents opening of pdfs in browser when http referer disabled
-        //or file linked from another site; browser caching of pdfs is now disabled too
-        if (!empty($_SERVER['HTTP_RANGE'])) {
-            //already byteserving
-            $lifetime = 1; // >0 needed for byteserving
-        } else if (empty($_SERVER['HTTP_REFERER']) or strpos($_SERVER['HTTP_REFERER'], $CFG->wwwroot)!==0) {
-            $mimetype = 'application/x-forcedownload';
-            $forcedownload = true;
-            $lifetime = 0;
-        } else {
-            $lifetime = 1; // >0 needed for byteserving
-        }
-    }
-*/
-
-    if ($lifetime > 0 && !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-        // get unixtime of request header; clip extra junk off first
-        $since = strtotime(preg_replace('/;.*$/','',$_SERVER["HTTP_IF_MODIFIED_SINCE"]));
-        if ($since && $since >= $lastmodified) {
-            header('HTTP/1.1 304 Not Modified');
-            header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
-            header('Cache-Control: max-age='.$lifetime);
-            header('Content-Type: '.$mimetype);
-            if ($dontdie) {
-                return;
-            }
-            die;
-        }
-    }
-
-    //do not put '@' before the next header to detect incorrect moodle configurations,
-    //error should be better than "weird" empty lines for admins/users
-    header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
-
     // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup
     if (check_browser_version('MSIE')) {
         $filename = rawurlencode($filename);
@@ -1811,51 +1889,13 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
     }
 
     if ($lifetime > 0) {
+        $nobyteserving = false;
         header('Cache-Control: max-age='.$lifetime);
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
         header('Pragma: ');
 
-        if (empty($CFG->disablebyteserving) && !$pathisstring && $mimetype != 'text/plain' && $mimetype != 'text/html') {
-
-            header('Accept-Ranges: bytes');
-
-            if (!empty($_SERVER['HTTP_RANGE']) && strpos($_SERVER['HTTP_RANGE'],'bytes=') !== FALSE) {
-                // byteserving stuff - for acrobat reader and download accelerators
-                // see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35
-                // inspired by: http://www.coneural.org/florian/papers/04_byteserving.php
-                $ranges = false;
-                if (preg_match_all('/(\d*)-(\d*)/', $_SERVER['HTTP_RANGE'], $ranges, PREG_SET_ORDER)) {
-                    foreach ($ranges as $key=>$value) {
-                        if ($ranges[$key][1] == '') {
-                            //suffix case
-                            $ranges[$key][1] = $filesize - $ranges[$key][2];
-                            $ranges[$key][2] = $filesize - 1;
-                        } else if ($ranges[$key][2] == '' || $ranges[$key][2] > $filesize - 1) {
-                            //fix range length
-                            $ranges[$key][2] = $filesize - 1;
-                        }
-                        if ($ranges[$key][2] != '' && $ranges[$key][2] < $ranges[$key][1]) {
-                            //invalid byte-range ==> ignore header
-                            $ranges = false;
-                            break;
-                        }
-                        //prepare multipart header
-                        $ranges[$key][0] =  "\r\n--".BYTESERVING_BOUNDARY."\r\nContent-Type: $mimetype\r\n";
-                        $ranges[$key][0] .= "Content-Range: bytes {$ranges[$key][1]}-{$ranges[$key][2]}/$filesize\r\n\r\n";
-                    }
-                } else {
-                    $ranges = false;
-                }
-                if ($ranges) {
-                    $handle = fopen($path, 'rb');
-                    byteserving_send_file($handle, $mimetype, $ranges, $filesize);
-                }
-            }
-        } else {
-            /// Do not byteserve (disabled, strings, text and html files).
-            header('Accept-Ranges: none');
-        }
     } else { // Do not cache files in proxies and browsers
+        $nobyteserving = true;
         if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
             header('Cache-Control: max-age=10');
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
@@ -1865,29 +1905,18 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: no-cache');
         }
-        header('Accept-Ranges: none'); // Do not allow byteserving when caching disabled
     }
 
     if (empty($filter)) {
-        if ($mimetype == 'text/plain') {
-            header('Content-Type: Text/plain; charset=utf-8'); //add encoding
-        } else {
-            header('Content-Type: '.$mimetype);
-        }
-        header('Content-Length: '.$filesize);
-
-        //flush the buffers - save memory and disable sid rewrite
-        //this also disables zlib compression
-        prepare_file_content_sending();
-
         // send the contents
         if ($pathisstring) {
-            echo $path;
+            readstring_accel($path, $mimetype, !$dontdie);
         } else {
-            @readfile($path);
+            readfile_accel($path, $mimetype, !$dontdie);
         }
 
-    } else {     // Try to put the file through filters
+    } else {
+        // Try to put the file through filters
         if ($mimetype == 'text/html') {
             $options = new stdClass();
             $options->noclean = true;
@@ -1897,46 +1926,24 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
             $text = file_modify_html_header($text);
             $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
 
-            header('Content-Length: '.strlen($output));
-            header('Content-Type: text/html');
+            readstring_accel($output, $mimetype, false);
 
-            //flush the buffers - save memory and disable sid rewrite
-            //this also disables zlib compression
-            prepare_file_content_sending();
-
-            // send the contents
-            echo $output;
-        // only filter text if filter all files is selected
         } else if (($mimetype == 'text/plain') and ($filter == 1)) {
+            // only filter text if filter all files is selected
             $options = new stdClass();
             $options->newlines = false;
             $options->noclean = true;
             $text = htmlentities($pathisstring ? $path : implode('', file($path)));
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
 
-            header('Content-Length: '.strlen($output));
-            header('Content-Type: text/html; charset=utf-8'); //add encoding
+            readstring_accel($output, $mimetype, false);
 
-            //flush the buffers - save memory and disable sid rewrite
-            //this also disables zlib compression
-            prepare_file_content_sending();
-
-            // send the contents
-            echo $output;
-
-        } else {    // Just send it out raw
-            header('Content-Length: '.$filesize);
-            header('Content-Type: '.$mimetype);
-
-            //flush the buffers - save memory and disable sid rewrite
-            //this also disables zlib compression
-            prepare_file_content_sending();
-
+        } else {
             // send the contents
             if ($pathisstring) {
-                echo $path;
-            }else {
-                @readfile($path);
+                readstring_accel($path, $mimetype, !$dontdie);
+            } else {
+                readfile_accel($path, $mimetype, !$dontdie);
             }
         }
     }
@@ -1959,9 +1966,6 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
  *      and should not be reopened.
  *
  * @category files
- * @global stdClass $CFG
- * @global stdClass $COURSE
- * @global moodle_session $SESSION
  * @param stored_file $stored_file local file object
  * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
  * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
@@ -1970,7 +1974,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
  * @return null script execution stopped unless $options['dontdie'] is true
  */
 function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, array $options=array()) {
-    global $CFG, $COURSE, $SESSION;
+    global $CFG, $COURSE;
 
     if (empty($options['filename'])) {
         $filename = null;
@@ -2023,28 +2027,6 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     $mimetype     = ($forcedownload and !$isFF) ? 'application/x-forcedownload' :
                          ($stored_file->get_mimetype() ? $stored_file->get_mimetype() : mimeinfo('type', $filename));
 
-    $lastmodified = $stored_file->get_timemodified();
-    $filesize     = $stored_file->get_filesize();
-
-    if ($lifetime > 0 && !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-        // get unixtime of request header; clip extra junk off first
-        $since = strtotime(preg_replace('/;.*$/','',$_SERVER["HTTP_IF_MODIFIED_SINCE"]));
-        if ($since && $since >= $lastmodified) {
-            header('HTTP/1.1 304 Not Modified');
-            header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
-            header('Cache-Control: max-age='.$lifetime);
-            header('Content-Type: '.$mimetype);
-            if ($dontdie) {
-                return;
-            }
-            die;
-        }
-    }
-
-    //do not put '@' before the next header to detect incorrect moodle configurations,
-    //error should be better than "weird" empty lines for admins/users
-    header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
-
     // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup
     if (check_browser_version('MSIE')) {
         $filename = rawurlencode($filename);
@@ -2061,45 +2043,6 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
         header('Pragma: ');
 
-        if (empty($CFG->disablebyteserving) && $mimetype != 'text/plain' && $mimetype != 'text/html') {
-
-            header('Accept-Ranges: bytes');
-
-            if (!empty($_SERVER['HTTP_RANGE']) && strpos($_SERVER['HTTP_RANGE'],'bytes=') !== FALSE) {
-                // byteserving stuff - for acrobat reader and download accelerators
-                // see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35
-                // inspired by: http://www.coneural.org/florian/papers/04_byteserving.php
-                $ranges = false;
-                if (preg_match_all('/(\d*)-(\d*)/', $_SERVER['HTTP_RANGE'], $ranges, PREG_SET_ORDER)) {
-                    foreach ($ranges as $key=>$value) {
-                        if ($ranges[$key][1] == '') {
-                            //suffix case
-                            $ranges[$key][1] = $filesize - $ranges[$key][2];
-                            $ranges[$key][2] = $filesize - 1;
-                        } else if ($ranges[$key][2] == '' || $ranges[$key][2] > $filesize - 1) {
-                            //fix range length
-                            $ranges[$key][2] = $filesize - 1;
-                        }
-                        if ($ranges[$key][2] != '' && $ranges[$key][2] < $ranges[$key][1]) {
-                            //invalid byte-range ==> ignore header
-                            $ranges = false;
-                            break;
-                        }
-                        //prepare multipart header
-                        $ranges[$key][0] =  "\r\n--".BYTESERVING_BOUNDARY."\r\nContent-Type: $mimetype\r\n";
-                        $ranges[$key][0] .= "Content-Range: bytes {$ranges[$key][1]}-{$ranges[$key][2]}/$filesize\r\n\r\n";
-                    }
-                } else {
-                    $ranges = false;
-                }
-                if ($ranges) {
-                    byteserving_send_file($stored_file->get_content_file_handle(), $mimetype, $ranges, $filesize);
-                }
-            }
-        } else {
-            /// Do not byteserve (disabled, strings, text and html files).
-            header('Accept-Ranges: none');
-        }
     } else { // Do not cache files in proxies and browsers
         if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
             header('Cache-Control: max-age=10');
@@ -2110,23 +2053,11 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: no-cache');
         }
-        header('Accept-Ranges: none'); // Do not allow byteserving when caching disabled
     }
 
     if (empty($filter)) {
-        if ($mimetype == 'text/plain') {
-            header('Content-Type: Text/plain; charset=utf-8'); //add encoding
-        } else {
-            header('Content-Type: '.$mimetype);
-        }
-        header('Content-Length: '.$filesize);
-
-        //flush the buffers - save memory and disable sid rewrite
-        //this also disables zlib compression
-        prepare_file_content_sending();
-
         // send the contents
-        $stored_file->readfile();
+        readfile_accel($stored_file, $mimetype, !$dontdie);
 
     } else {     // Try to put the file through filters
         if ($mimetype == 'text/html') {
@@ -2137,15 +2068,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
             $text = file_modify_html_header($text);
             $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
 
-            header('Content-Length: '.strlen($output));
-            header('Content-Type: text/html');
-
-            //flush the buffers - save memory and disable sid rewrite
-            //this also disables zlib compression
-            prepare_file_content_sending();
-
-            // send the contents
-            echo $output;
+            readstring_accel($output, $mimetype, false);
 
         } else if (($mimetype == 'text/plain') and ($filter == 1)) {
             // only filter text if filter all files is selected
@@ -2155,26 +2078,10 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
             $text = $stored_file->get_content();
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
 
-            header('Content-Length: '.strlen($output));
-            header('Content-Type: text/html; charset=utf-8'); //add encoding
-
-            //flush the buffers - save memory and disable sid rewrite
-            //this also disables zlib compression
-            prepare_file_content_sending();
-
-            // send the contents
-            echo $output;
+            readstring_accel($output, $mimetype, false);
 
         } else {    // Just send it out raw
-            header('Content-Length: '.$filesize);
-            header('Content-Type: '.$mimetype);
-
-            //flush the buffers - save memory and disable sid rewrite
-            //this also disables zlib compression
-            prepare_file_content_sending();
-
-            // send the contents
-            $stored_file->readfile();
+            readfile_accel($stored_file, $mimetype, !$dontdie);
         }
     }
     if ($dontdie) {
@@ -2353,9 +2260,11 @@ function fulldelete($location) {
  * @param string $mimetype The mimetype for the output
  * @param array $ranges An array of ranges to send
  * @param string $filesize The size of the content if only one range is used
- * @todo MDL-31088 check if "multipart/x-byteranges" is more compatible with current readers/browsers/servers
  */
 function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
+    // better turn off any kind of compression and buffering
+    @ini_set('zlib.output_compression', 'Off');
+
     $chunksize = 1*(1024*1024); // 1MB chunks - must be less than 2MB!
     if ($handle === false) {
         die;
@@ -2367,11 +2276,12 @@ function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
         header('Content-Range: bytes '.$ranges[0][1].'-'.$ranges[0][2].'/'.$filesize);
         header('Content-Type: '.$mimetype);
 
-        //flush the buffers - save memory and disable sid rewrite
-        //this also disables zlib compression
-        prepare_file_content_sending();
+        while(@ob_get_level()) {
+            if (!@ob_end_flush()) {
+                break;
+            }
+        }
 
-        $buffer = '';
         fseek($handle, $ranges[0][1]);
         while (!feof($handle) && $length > 0) {
             @set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
@@ -2391,16 +2301,16 @@ function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
         header('HTTP/1.1 206 Partial content');
         header('Content-Length: '.$totallength);
         header('Content-Type: multipart/byteranges; boundary='.BYTESERVING_BOUNDARY);
-        //TODO: check if "multipart/x-byteranges" is more compatible with current readers/browsers/servers
 
-        //flush the buffers - save memory and disable sid rewrite
-        //this also disables zlib compression
-        prepare_file_content_sending();
+        while(@ob_get_level()) {
+            if (!@ob_end_flush()) {
+                break;
+            }
+        }
 
         foreach($ranges as $range) {
             $length = $range[2] - $range[1] + 1;
             echo $range[0];
-            $buffer = '';
             fseek($handle, $range[1]);
             while (!feof($handle) && $length > 0) {
                 @set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
@@ -3494,7 +3404,6 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
     // ========================================================================================================================
     } else if ($component === 'user') {
         if ($filearea === 'icon' and $context->contextlevel == CONTEXT_USER) {
-            $redirect = false;
             if (count($args) == 1) {
                 $themename = theme_config::DEFAULT_THEME;
                 $filename = array_shift($args);
@@ -3502,27 +3411,37 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 $themename = array_shift($args);
                 $filename = array_shift($args);
             }
+
+            // fix file name automatically
+            if ($filename !== 'f1' and $filename !== 'f2') {
+                $filename = 'f1';
+            }
+
             if ((!empty($CFG->forcelogin) and !isloggedin()) ||
                     (!empty($CFG->forceloginforprofileimage) && (!isloggedin() || isguestuser()))) {
                 // protect images if login required and not logged in;
                 // also if login is required for profile images and is not logged in or guest
                 // do not use require_login() because it is expensive and not suitable here anyway
-                $redirect = true;
+                $theme = theme_config::load($themename);
+                redirect($theme->pix_url('u/'.$filename, 'moodle')); // intentionally not cached
             }
-            if (!$redirect and ($filename !== 'f1' and $filename !== 'f2')) {
-                $filename = 'f1';
-                $redirect = true;
-            }
-            if (!$redirect && !$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.png')) {
+
+            if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.png')) {
                 if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg')) {
-                    $redirect = true;
+                    // bad reference - try to prevent future retries as hard as possible!
+                    if ($user = $DB->get_record('user', array('id'=>$context->instanceid), 'id, picture')) {
+                        if ($user->picture == 1 or $user->picture > 10) {
+                            $DB->set_field('user', 'picture', 0, array('id'=>$user->id));
+                        }
+                    }
+                    // no redirect here because it is not cached
+                    $theme = theme_config::load($themename);
+                    $imagefile = $theme->resolve_image_location('u/'.$filename, 'moodle');
+                    send_file($imagefile, basename($imagefile), 60*60*24*14);
                 }
             }
-            if ($redirect) {
-                $theme = theme_config::load($themename);
-                redirect($theme->pix_url('u/'.$filename, 'moodle'));
-            }
-            send_stored_file($file, 60*60*24, 0, false, array('preview' => $preview)); // enable long caching, there are many images on each page
+
+            send_stored_file($file, 60*60*24*365, 0, false, array('preview' => $preview)); // enable long caching, there are many images on each page
 
         } else if ($filearea === 'private' and $context->contextlevel == CONTEXT_USER) {
             require_login();

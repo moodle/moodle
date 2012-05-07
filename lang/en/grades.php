@@ -603,6 +603,7 @@ $string['statslink'] = 'Stats';
 $string['student'] = 'Student';
 $string['studentsperpage'] = 'Students per page';
 $string['studentsperpage_help'] = 'This setting determines the number of students displayed per page in the grader report.';
+$string['studentsperpagereduced'] = 'Reduced maximum students per page from {$a->originalstudentsperpage} to {$a->studentsperpage}. Consider increasing the PHP setting max_input_vars from {$a->maxinputvars}.';
 $string['subcategory'] = 'Normal category';
 $string['submissions'] = 'Submissions';
 $string['submittedon'] = 'Submitted: {$a}';

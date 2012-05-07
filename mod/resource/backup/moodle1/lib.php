@@ -192,8 +192,17 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
         }
         $this->fileman->filearea = 'content';
         $this->fileman->itemid   = 0;
+
+        // Rebuild the file path.
+        $curfilepath = '/';
+        if ($reference) {
+            $curfilepath = pathinfo('/'.$reference, PATHINFO_DIRNAME);
+            if ($curfilepath != '/') {
+                $curfilepath .= '/';
+            }
+        }
         try {
-            $this->fileman->migrate_file('course_files/'.$reference, '/', null, 1);
+            $this->fileman->migrate_file('course_files/'.$reference, $curfilepath, null, 1);
         } catch (moodle1_convert_exception $e) {
             // the file probably does not exist
             $this->log('error migrating the resource main file', backup::LOG_WARNING, 'course_files/'.$reference);

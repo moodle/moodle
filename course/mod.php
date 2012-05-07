@@ -26,7 +26,7 @@
 require("../config.php");
 require_once("lib.php");
 
-$sectionreturn = optional_param('sr', '', PARAM_INT);
+$sectionreturn = optional_param('sr', 0, PARAM_INT);
 $add           = optional_param('add', '', PARAM_ALPHA);
 $type          = optional_param('type', '', PARAM_ALPHA);
 $indent        = optional_param('indent', 0, PARAM_INT);
@@ -50,7 +50,7 @@ foreach (compact('indent','update','hide','show','copy','moveto','movetosection'
         $url->param($key, $value);
     }
 }
-if ($sectionreturn !== '') {
+if ($sectionreturn) {
     $url->param('sr', $sectionreturn);
 }
 if ($add !== '') {
@@ -108,7 +108,7 @@ if (!empty($add)) {
                 get_string('continue'),
                 'post'),
             new single_button(
-                new moodle_url('/course/view.php#section-' . $cm->sectionnum, array('id' => $cm->course)),
+                course_get_url($course, $sectionreturn),
                 get_string('cancel'),
                 'get')
         );
@@ -125,7 +125,7 @@ if (!empty($add)) {
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('moodle/course:manageactivities', $modcontext);
 
-    $return = "$CFG->wwwroot/course/view.php?id=$cm->course#section-$cm->sectionnum";
+    $return = course_get_url($course, $sectionreturn);
 
     if (!$confirm or !confirm_sesskey()) {
         $fullmodulename = get_string('modulename', $cm->modname);
@@ -235,7 +235,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     if (SITEID == $section->course) {
         redirect($CFG->wwwroot);
     } else {
-        redirect("view.php?id=$section->course#section-$sectionreturn");
+        redirect(course_get_url($course, $sectionreturn));
     }
 
 } else if (!empty($indent) and confirm_sesskey()) {
@@ -262,7 +262,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     if (SITEID == $cm->course) {
         redirect($CFG->wwwroot);
     } else {
-        redirect("view.php?id=$cm->course#section-$cm->sectionnum");
+        redirect(course_get_url($course, $sectionreturn));
     }
 
 } else if (!empty($hide) and confirm_sesskey()) {
@@ -281,7 +281,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     if (SITEID == $cm->course) {
         redirect($CFG->wwwroot);
     } else {
-        redirect("view.php?id=$cm->course#section-$cm->sectionnum");
+        redirect(course_get_url($course, $sectionreturn));
     }
 
 } else if (!empty($show) and confirm_sesskey()) {
@@ -305,7 +305,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     if (SITEID == $cm->course) {
         redirect($CFG->wwwroot);
     } else {
-        redirect("view.php?id=$cm->course#section-$cm->sectionnum");
+        redirect(course_get_url($course, $sectionreturn));
     }
 
 } else if ($groupmode > -1 and confirm_sesskey()) {
@@ -326,7 +326,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     if (SITEID == $cm->course) {
         redirect($CFG->wwwroot);
     } else {
-        redirect("view.php?id=$cm->course#section-$cm->sectionnum");
+        redirect(course_get_url($course, $sectionreturn));
     }
 
 } else if (!empty($copy) and confirm_sesskey()) { // value = course module
@@ -344,18 +344,18 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     $USER->activitycopycourse = $cm->course;
     $USER->activitycopyname   = $cm->name;
 
-    redirect("view.php?id=$cm->course#section-$sectionreturn");
+    redirect(course_get_url($course, $sectionreturn));
 
 } else if (!empty($cancelcopy) and confirm_sesskey()) { // value = course module
 
     $courseid = $USER->activitycopycourse;
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
     unset($USER->activitycopy);
     unset($USER->activitycopycourse);
     unset($USER->activitycopyname);
 
-    redirect("view.php?id=$courseid");
-
+    redirect(course_get_url($course, $sectionreturn));
 } else {
     print_error('unknowaction');
 }

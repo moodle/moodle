@@ -58,16 +58,6 @@ function callback_weeks_definition() {
 }
 
 /**
- * The GET argument variable that is used to identify the section being
- * viewed by the user (if there is one)
- *
- * @return string
- */
-function callback_weeks_request_key() {
-    return 'week';
-}
-
-/**
  * Gets the name for the provided section.
  *
  * @param stdClass $course
@@ -111,15 +101,4 @@ function callback_weeks_ajax_support() {
     $ajaxsupport->capable = true;
     $ajaxsupport->testedbrowsers = array('MSIE' => 6.0, 'Gecko' => 20061111, 'Safari' => 531, 'Chrome' => 6.0);
     return $ajaxsupport;
-}
-
-/**
- * Returns a URL to arrive directly at a section
- *
- * @param int $courseid The id of the course to get the link for
- * @param int $sectionnum The section number to jump to
- * @return moodle_url
- */
-function callback_weeks_get_section_url($courseid, $sectionnum) {
-    return new moodle_url('/course/view.php', array('id' => $courseid, 'week' => $sectionnum));
 }

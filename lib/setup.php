@@ -234,7 +234,11 @@ if (defined('ABORT_AFTER_CONFIG')) {
         } else {
             error_reporting(0);
         }
-        if (empty($CFG->debugdisplay)) {
+        if (NO_DEBUG_DISPLAY) {
+            // Some parts of Moodle cannot display errors and debug at all.
+            ini_set('display_errors', '0');
+            ini_set('log_errors', '1');
+        } else if (empty($CFG->debugdisplay)) {
             ini_set('display_errors', '0');
             ini_set('log_errors', '1');
         } else {
@@ -886,6 +890,15 @@ if (PHPUNIT_TEST) {
     }
 
 }
+
+// // try to detect IE6 and prevent gzip because it is extremely buggy browser
+if (!empty($_SERVER['HTTP_USER_AGENT']) and strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false) {
+    @ini_set('zlib.output_compression', 'Off');
+    if (function_exists('apache_setenv')) {
+        @apache_setenv('no-gzip', 1);
+    }
+}
+
 
 // note: we can not block non utf-8 installations here, because empty mysql database
 // might be converted to utf-8 in admin/index.php during installation

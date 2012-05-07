@@ -4,21 +4,24 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="quiz" COMMENT="Main information about each quiz" NEXT="quiz_attempts">
+    <TABLE NAME="quiz" COMMENT="The settings for each quiz." NEXT="quiz_attempts">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="timeopen"/>
-        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timeclose"/>
-        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeopen" NEXT="preferredbehaviour"/>
-        <FIELD NAME="preferredbehaviour" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="timeclose" NEXT="attempts"/>
-        <FIELD NAME="attempts" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="preferredbehaviour" NEXT="attemptonlast"/>
-        <FIELD NAME="attemptonlast" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="attempts" NEXT="grademethod"/>
-        <FIELD NAME="grademethod" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="attemptonlast" NEXT="decimalpoints"/>
-        <FIELD NAME="decimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="2" SEQUENCE="false" PREVIOUS="grademethod" NEXT="questiondecimalpoints"/>
-        <FIELD NAME="questiondecimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="-2" SEQUENCE="false" PREVIOUS="decimalpoints" NEXT="reviewattempt"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key reference to the course this quiz is part of." PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Quiz name." PREVIOUS="course" NEXT="intro"/>
+        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="Quiz introduction text." PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Quiz intro text format." PREVIOUS="intro" NEXT="timeopen"/>
+        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time when this quiz opens. (0 = no restriction.)" PREVIOUS="introformat" NEXT="timeclose"/>
+        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time when this quiz closes. (0 = no restriction.)" PREVIOUS="timeopen" NEXT="timelimit"/>
+        <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time limit for quiz attempts, in seconds." PREVIOUS="timeclose" NEXT="overduehandling"/>
+        <FIELD NAME="overduehandling" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="autoabandon" SEQUENCE="false" COMMENT="The method used to handle overdue attempts. 'autosubmit', 'graceperiod' or 'autoabandon'." PREVIOUS="timelimit" NEXT="graceperiod"/>
+        <FIELD NAME="graceperiod" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The amount of time (in seconds) after the time limit runs out during which attempts can still be submitted, if overduehandling is set to allow it." PREVIOUS="overduehandling" NEXT="preferredbehaviour"/>
+        <FIELD NAME="preferredbehaviour" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The behaviour to ask questions to use." PREVIOUS="graceperiod" NEXT="attempts"/>
+        <FIELD NAME="attempts" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The maximum number of attempts a student is allowed." PREVIOUS="preferredbehaviour" NEXT="attemptonlast"/>
+        <FIELD NAME="attemptonlast" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether subsequent attempts start from teh answer to the previous attempt (1) or start blank (0)." PREVIOUS="attempts" NEXT="grademethod"/>
+        <FIELD NAME="grademethod" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="One of the values QUIZ_GRADEHIGHEST, QUIZ_GRADEAVERAGE, QUIZ_ATTEMPTFIRST or QUIZ_ATTEMPTLAST." PREVIOUS="attemptonlast" NEXT="decimalpoints"/>
+        <FIELD NAME="decimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="2" SEQUENCE="false" COMMENT="Number of decimal points to use when displaying grades." PREVIOUS="grademethod" NEXT="questiondecimalpoints"/>
+        <FIELD NAME="questiondecimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="-2" SEQUENCE="false" COMMENT="Number of decimal points to use when displaying question grades. (-2 means use decimalpoints.)" PREVIOUS="decimalpoints" NEXT="reviewattempt"/>
         <FIELD NAME="reviewattempt" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. This is a bit field, decoded by the mod_quiz_display_options class. It is formed by ORing together the constants defined there." PREVIOUS="questiondecimalpoints" NEXT="reviewcorrectness"/>
         <FIELD NAME="reviewcorrectness" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewattempt" NEXT="reviewmarks"/>
         <FIELD NAME="reviewmarks" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewcorrectness" NEXT="reviewspecificfeedback"/>
@@ -26,21 +29,20 @@
         <FIELD NAME="reviewgeneralfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewspecificfeedback" NEXT="reviewrightanswer"/>
         <FIELD NAME="reviewrightanswer" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewgeneralfeedback" NEXT="reviewoverallfeedback"/>
         <FIELD NAME="reviewoverallfeedback" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewrightanswer" NEXT="questionsperpage"/>
-        <FIELD NAME="questionsperpage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="reviewoverallfeedback" NEXT="navmethod"/>
-        <FIELD NAME="navmethod" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="free" SEQUENCE="false" PREVIOUS="questionsperpage" NEXT="shufflequestions"/>
-        <FIELD NAME="shufflequestions" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="navmethod" NEXT="shuffleanswers"/>
-        <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="shufflequestions" NEXT="questions"/>
-        <FIELD NAME="questions" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="shuffleanswers" NEXT="sumgrades"/>
-        <FIELD NAME="sumgrades" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" PREVIOUS="questions" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" PREVIOUS="sumgrades" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="timelimit"/>
-        <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="password"/>
-        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="timelimit" NEXT="subnet"/>
-        <FIELD NAME="subnet" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="password" NEXT="browsersecurity"/>
-        <FIELD NAME="browsersecurity" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="subnet" NEXT="delay1"/>
-        <FIELD NAME="delay1" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="browsersecurity" NEXT="delay2"/>
-        <FIELD NAME="delay2" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="delay1" NEXT="showuserpicture"/>
+        <FIELD NAME="questionsperpage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="How often to insert a page break when editing the quiz, or when shuffling the question order." PREVIOUS="reviewoverallfeedback" NEXT="navmethod"/>
+        <FIELD NAME="navmethod" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="free" SEQUENCE="false" COMMENT="Any constraints on how the user is allowed to navigate around the quiz. Currently recognised values are 'free' and 'seq'." PREVIOUS="questionsperpage" NEXT="shufflequestions"/>
+        <FIELD NAME="shufflequestions" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the question order should be shuffled for each attempt." PREVIOUS="navmethod" NEXT="shuffleanswers"/>
+        <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the parts of the question should be shuffled, in those question types that support it." PREVIOUS="shufflequestions" NEXT="questions"/>
+        <FIELD NAME="questions" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="Comma-separated list of question ids, with 0s for page breaks. The quiz layout. See also the quiz_question_instances table." PREVIOUS="shuffleanswers" NEXT="sumgrades"/>
+        <FIELD NAME="sumgrades" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The total of all the question instance maxmarks." PREVIOUS="questions" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The total that the quiz overall grade is scaled to be out of." PREVIOUS="sumgrades" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time when the quiz was added to the course." PREVIOUS="grade" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Last modified time." PREVIOUS="timecreated" NEXT="password"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="A password that the student must enter before starting or continuing a quiz attempt." PREVIOUS="timemodified" NEXT="subnet"/>
+        <FIELD NAME="subnet" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Used to restrict the IP addresses from which this quiz can be attempted. The format is as requried by the address_in_subnet function." PREVIOUS="password" NEXT="browsersecurity"/>
+        <FIELD NAME="browsersecurity" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="Restriciton on the browser the student must use. E.g. 'securewindow'." PREVIOUS="subnet" NEXT="delay1"/>
+        <FIELD NAME="delay1" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Delay that must be left between the first and second attempt, in seconds." PREVIOUS="browsersecurity" NEXT="delay2"/>
+        <FIELD NAME="delay2" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Delay that must be left between the second and subsequent attempt, in seconds." PREVIOUS="delay1" NEXT="showuserpicture"/>
         <FIELD NAME="showuserpicture" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Option to show the user's picture during the attempt and on the review page." PREVIOUS="delay2" NEXT="showblocks"/>
         <FIELD NAME="showblocks" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether blocks should be shown on the attempt.php and review.php pages." PREVIOUS="showuserpicture"/>
       </FIELDS>
@@ -51,32 +53,34 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="quiz_attempts" COMMENT="Stores various attempts on a quiz" PREVIOUS="quiz" NEXT="quiz_grades">
+    <TABLE NAME="quiz_attempts" COMMENT="Stores users attempts at quizzes." PREVIOUS="quiz" NEXT="quiz_grades">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="uniqueid"/>
-        <FIELD NAME="uniqueid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="quiz"/>
-        <FIELD NAME="quiz" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="uniqueid" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="quiz" NEXT="attempt"/>
-        <FIELD NAME="attempt" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="sumgrades"/>
-        <FIELD NAME="sumgrades" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="attempt" NEXT="timestart"/>
-        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="sumgrades" NEXT="timefinish"/>
-        <FIELD NAME="timefinish" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timestart" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timefinish" NEXT="layout"/>
-        <FIELD NAME="layout" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="currentpage"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Standard Moodle primary key." NEXT="quiz"/>
+        <FIELD NAME="quiz" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key reference to the quiz that was attempted." PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key reference to the user whose attempt this is." PREVIOUS="quiz" NEXT="attempt"/>
+        <FIELD NAME="attempt" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Sequentially numbers this student's attempts at this quiz." PREVIOUS="userid" NEXT="uniqueid"/>
+        <FIELD NAME="uniqueid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key reference to the question_usage that holds the details of the the question_attempts that make up this quiz attempt." PREVIOUS="attempt" NEXT="layout"/>
+        <FIELD NAME="layout" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="uniqueid" NEXT="currentpage"/>
         <FIELD NAME="currentpage" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="layout" NEXT="preview"/>
-        <FIELD NAME="preview" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="currentpage" NEXT="needsupgradetonewqe"/>
-        <FIELD NAME="needsupgradetonewqe" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="preview"/>
+        <FIELD NAME="preview" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="currentpage" NEXT="state"/>
+        <FIELD NAME="state" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="inprogress" SEQUENCE="false" COMMENT="The current state of the attempts. 'inprogress', 'overdue', 'finished' or 'abandoned'." PREVIOUS="preview" NEXT="timestart"/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time when the attempt was started." PREVIOUS="state" NEXT="timefinish"/>
+        <FIELD NAME="timefinish" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time when the attempt was submitted. 0 if the attempt has not been submitted yet." PREVIOUS="timestart" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Last modified time." PREVIOUS="timefinish" NEXT="sumgrades"/>
+        <FIELD NAME="sumgrades" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="Total marks for this attempt." PREVIOUS="timemodified" NEXT="needsupgradetonewqe"/>
+        <FIELD NAME="needsupgradetonewqe" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Used during the upgrade from Moodle 2.0 to 2.1. This will be removed in the future." PREVIOUS="sumgrades"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="uniqueid"/>
-        <KEY NAME="uniqueid" TYPE="foreign-unique" FIELDS="uniqueid" REFTABLE="question_attempts" REFFIELDS="id" PREVIOUS="primary" NEXT="quiz"/>
-        <KEY NAME="quiz" TYPE="foreign" FIELDS="quiz" REFTABLE="quiz" REFFIELDS="id" PREVIOUS="uniqueid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="quiz"/>
+        <KEY NAME="quiz" TYPE="foreign" FIELDS="quiz" REFTABLE="quiz" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="quiz" NEXT="uniqueid"/>
+        <KEY NAME="uniqueid" TYPE="foreign-unique" FIELDS="uniqueid" REFTABLE="question_attempts" REFFIELDS="id" PREVIOUS="userid"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="quiz-userid-attempt" UNIQUE="true" FIELDS="quiz, userid, attempt"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="quiz_grades" COMMENT="The overall grade for each user on the quiz, based on their individual and the quiz.grademethod setting." PREVIOUS="quiz_attempts" NEXT="quiz_question_instances">
+    <TABLE NAME="quiz_grades" COMMENT="Stores the overall grade for each user on the quiz, based on their various attempts and the quiz.grademethod setting." PREVIOUS="quiz_attempts" NEXT="quiz_question_instances">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="quiz"/>
         <FIELD NAME="quiz" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id." PREVIOUS="id" NEXT="userid"/>

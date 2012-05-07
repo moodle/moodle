@@ -42,6 +42,7 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $quiz = new stdClass();
         $quiz->timeopen = 0;
         $quiz->timeclose = 0;
+        $quiz->overduehandling = 'autosubmit';
         $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;
@@ -69,6 +70,7 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $quiz = new stdClass();
         $quiz->timeopen = 10000;
         $quiz->timeclose = 0;
+        $quiz->overduehandling = 'autosubmit';
         $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;
@@ -98,6 +100,7 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $quiz = new stdClass();
         $quiz->timeopen = 0;
         $quiz->timeclose = 20000;
+        $quiz->overduehandling = 'autosubmit';
         $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;
@@ -133,6 +136,7 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $quiz = new stdClass();
         $quiz->timeopen = 10000;
         $quiz->timeclose = 20000;
+        $quiz->overduehandling = 'autosubmit';
         $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;
@@ -176,5 +180,32 @@ class quizaccess_openclosedate_testcase extends basic_testcase {
         $this->assertEquals($rule->time_left($attempt, 19900), 100);
         $this->assertEquals($rule->time_left($attempt, 20000), 0);
         $this->assertEquals($rule->time_left($attempt, 20100), -100);
+    }
+
+    public function test_close_date_with_overdue() {
+        $quiz = new stdClass();
+        $quiz->timeopen = 0;
+        $quiz->timeclose = 20000;
+        $quiz->overduehandling = 'graceperiod';
+        $quiz->graceperiod = 1000;
+        $quiz->questions = '';
+        $cm = new stdClass();
+        $cm->id = 0;
+        $quizobj = new quiz($quiz, $cm, null);
+        $attempt = new stdClass();
+        $attempt->preview = 0;
+
+        $rule = new quizaccess_openclosedate($quizobj, 20000);
+        $this->assertFalse($rule->prevent_access());
+
+        $rule = new quizaccess_openclosedate($quizobj, 20001);
+        $this->assertFalse($rule->prevent_access());
+
+        $rule = new quizaccess_openclosedate($quizobj, 21000);
+        $this->assertFalse($rule->prevent_access());
+
+        $rule = new quizaccess_openclosedate($quizobj, 21001);
+        $this->assertEquals($rule->prevent_access(),
+                get_string('notavailable', 'quizaccess_openclosedate'));
     }
 }

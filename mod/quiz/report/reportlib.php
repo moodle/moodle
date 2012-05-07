@@ -128,6 +128,15 @@ WHERE
 }
 
 /**
+ * @param object $quiz the quiz settings.
+ * @return bool whether, for this quiz, it is possible to filter attempts to show
+ *      only those that gave the final grade.
+ */
+function quiz_report_can_filter_only_graded($quiz) {
+    return $quiz->attempts != 1 && $quiz->grademethod != QUIZ_GRADEAVERAGE;
+}
+
+/**
  * Given the quiz grading method return sub select sql to find the id of the
  * one attempt that will be graded for each user. Or return
  * empty string if all attempts contribute to final grade.

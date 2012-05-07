@@ -1,3 +1,9 @@
+/** Bits that can appear on any page. */
+.path-mod-quiz .statedetails {
+    display: block;
+    font-size: 0.7em;
+}
+
 /** Attempt and review pages **/
 #page-mod-quiz-attempt #page .controls,
 #page-mod-quiz-summary #page .controls,

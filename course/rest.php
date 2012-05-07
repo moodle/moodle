@@ -130,10 +130,6 @@ switch($requestmethod) {
                             $beforemod = NULL;
                         }
 
-                        if (debugging('',DEBUG_DEVELOPER)) {
-                            error_log(serialize($beforemod));
-                        }
-
                         moveto_module($cm, $section, $beforemod);
                         break;
                 }

@@ -1,0 +1,15 @@
+This files describes API changes for course formats
+
+Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
+
+=== 2.3 ===
+
+* The new $course->coursedisplay option was introduced, users can now choose to display
+  a section at a time if the course formats support it:
+ - COURSE_DISPLAY_SINGLEPAGE indicates the teacher has chosen to display all sections on one page
+ - COURSE_DISPLAY_MULTIPAGE indicates the teacher has chose to have seperate pages with each section.
+
+* The parameter for 'currently active section' was standardised in core:
+  - The course format is passed the currently live section through the $displaysection varaible to format.php
+  - A 'section' paramter is the standardised way to pass around the current section in a course
+  - Navigation no longer looks for custom parameters defined in callback_format_request_key

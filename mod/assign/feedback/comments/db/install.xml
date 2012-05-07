@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/assign/feedback/comments/db" VERSION="20120423" COMMENT="XMLDB file for Moodle mod/assign/feedback/comments"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="assignfeedback_comments" COMMENT="Text feedback for submitted assignments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="assignment"/>
+        <FIELD NAME="assignment" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assignment" NEXT="commenttext"/>
+        <FIELD NAME="commenttext" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The feedback text" PREVIOUS="grade" NEXT="commentformat"/>
+        <FIELD NAME="commentformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The feedback text format" PREVIOUS="commenttext"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this feedback" NEXT="assignment"/>
+        <KEY NAME="assignment" TYPE="foreign" FIELDS="assignment" REFTABLE="assign" REFFIELDS="id" COMMENT="The assignment instance this feedback relates to." PREVIOUS="primary" NEXT="grade"/>
+        <KEY NAME="grade" TYPE="foreign" FIELDS="grade" REFTABLE="assign_grade" REFFIELDS="id" COMMENT="The grade instance this feedback relates to." PREVIOUS="assignment"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

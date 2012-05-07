@@ -57,16 +57,6 @@ function callback_topics_definition() {
     return get_string('topic');
 }
 
-/**
- * The GET argument variable that is used to identify the section being
- * viewed by the user (if there is one)
- *
- * @return string
- */
-function callback_topics_request_key() {
-    return 'topic';
-}
-
 function callback_topics_get_section_name($course, $section) {
     // We can't add a node without any text
     if (!empty($section->name)) {
@@ -89,15 +79,4 @@ function callback_topics_ajax_support() {
     $ajaxsupport->capable = true;
     $ajaxsupport->testedbrowsers = array('MSIE' => 6.0, 'Gecko' => 20061111, 'Safari' => 531, 'Chrome' => 6.0);
     return $ajaxsupport;
-}
-
-/**
- * Returns a URL to arrive directly at a section
- *
- * @param int $courseid The id of the course to get the link for
- * @param int $sectionnum The section number to jump to
- * @return moodle_url
- */
-function callback_topics_get_section_url($courseid, $sectionnum) {
-    return new moodle_url('/course/view.php', array('id' => $courseid, 'topic' => $sectionnum));
 }

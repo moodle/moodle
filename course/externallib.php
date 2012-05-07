@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,12 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * External course API
  *
- * @package    core
- * @subpackage course
- * @copyright  2010 Moodle Pty Ltd (http://moodle.com)
+ * @package    core_course
+ * @category   external
+ * @copyright  2009 Petr Skodak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,13 +29,21 @@ defined('MOODLE_INTERNAL') || die;
 require_once("$CFG->libdir/externallib.php");
 
 /**
- * Course functions
+ * Course external functions
+ *
+ * @package    core_course
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.2
  */
 class core_course_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function get_course_contents_parameters() {
         return new external_function_parameters(
@@ -52,9 +60,11 @@ class core_course_external extends external_api {
 
     /**
      * Get course contents
-     * @param int $courseid
-     * @param array $options, not used yet, might be used in later version
+     *
+     * @param int $courseid course id
+     * @param array $options These options are not used yet, might be used in later version
      * @return array
+     * @since Moodle 2.2
      */
     public static function get_course_contents($courseid, $options) {
         global $CFG, $DB;
@@ -183,7 +193,9 @@ class core_course_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.2
      */
     public static function get_course_contents_returns() {
         return new external_multiple_structure(
@@ -238,7 +250,9 @@ class core_course_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function get_courses_parameters() {
         return new external_function_parameters(
@@ -255,8 +269,10 @@ class core_course_external extends external_api {
 
     /**
      * Get courses
-     * @param array $options
+     *
+     * @param array $options It contains an array (list of ids)
      * @return array
+     * @since Moodle 2.2
      */
     public static function get_courses($options) {
         global $CFG, $DB;
@@ -336,7 +352,9 @@ class core_course_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.2
      */
     public static function get_courses_returns() {
         return new external_multiple_structure(
@@ -402,7 +420,9 @@ class core_course_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function create_courses_parameters() {
         $courseconfig = get_config('moodlecourse'); //needed for many default values
@@ -471,8 +491,10 @@ class core_course_external extends external_api {
 
     /**
      * Create  courses
+     *
      * @param array $courses
      * @return array courses (id and shortname only)
+     * @since Moodle 2.2
      */
     public static function create_courses($courses) {
         global $CFG, $DB;
@@ -556,7 +578,9 @@ class core_course_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.2
      */
     public static function create_courses_returns() {
         return new external_multiple_structure(
@@ -569,18 +593,82 @@ class core_course_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function delete_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'course ID')),
+            )
+        );
+    }
+
+    /**
+     * Delete courses
+     * @param array $courseids A list of course ids
+     */
+    public static function delete_courses($courseids) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot."/course/lib.php");
+
+        // Parameter validation.
+        $params = self::validate_parameters(self::delete_courses_parameters(), array('courseids'=>$courseids));
+
+        $transaction = $DB->start_delegated_transaction();
+
+        foreach ($params['courseids'] as $courseid) {
+            $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+
+            // Check if the context is valid.
+            $coursecontext = context_course::instance($course->id);
+            self::validate_context($coursecontext);
+
+            // Check if the current user has enought permissions.
+            if (!can_delete_course($courseid)) {
+                throw new moodle_exception('cannotdeletecategorycourse', 'error', '', format_string($course->fullname)." (id: $courseid)");
+            }
+
+            delete_course($course, false);
+        }
+
+        $transaction->allow_commit();
+
+        return null;
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function delete_courses_returns() {
+        return null;
+    }
+
 }
 
 /**
- * Deprecated course functions
- * @deprecated since Moodle 2.2 please use core_course_external instead
+ * Deprecated course external functions
+ *
+ * @package    core_course
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
+ * @todo MDL-31194 This will be deleted in Moodle 2.5.
+ * @see core_course_external
  */
 class moodle_course_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_course_external::get_courses_parameters instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_course_external::get_courses_parameters()
      */
     public static function get_courses_parameters() {
         return core_course_external::get_courses_parameters();
@@ -588,9 +676,13 @@ class moodle_course_external extends external_api {
 
     /**
      * Get courses
+     *
      * @param array $options
-     * @deprecated since Moodle 2.2 please use core_course_external::get_courses instead
      * @return array
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_course_external::get_courses()
      */
     public static function get_courses($options) {
         return core_course_external::get_courses($options);
@@ -598,8 +690,12 @@ class moodle_course_external extends external_api {
 
     /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_course_external::get_courses_returns instead
+     *
      * @return external_description
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_course_external::get_courses_returns()
      */
     public static function get_courses_returns() {
         return core_course_external::get_courses_returns();
@@ -607,8 +703,12 @@ class moodle_course_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_course_external::create_courses_parameters instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_course_external::create_courses_parameters()
      */
     public static function create_courses_parameters() {
         return core_course_external::create_courses_parameters();
@@ -616,9 +716,13 @@ class moodle_course_external extends external_api {
 
     /**
      * Create  courses
-     * @deprecated since Moodle 2.2 please use core_course_external::create_courses instead
+     *
      * @param array $courses
      * @return array courses (id and shortname only)
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_course_external::create_courses()
      */
     public static function create_courses($courses) {
         return core_course_external::create_courses($courses);
@@ -626,8 +730,12 @@ class moodle_course_external extends external_api {
 
     /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_course_external::create_courses_returns instead
+     *
      * @return external_description
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_course_external::create_courses_returns()
      */
     public static function create_courses_returns() {
         return core_course_external::create_courses_returns();

@@ -471,6 +471,7 @@ class core_renderer extends renderer_base {
             $output .= '<div class="purgecaches"><a href="'.$CFG->wwwroot.'/admin/purgecaches.php?confirm=1&amp;sesskey='.sesskey().'">'.get_string('purgecaches', 'admin').'</a></div>';
         }
         if (!empty($CFG->debugvalidators)) {
+            // NOTE: this is not a nice hack, $PAGE->url is not always accurate and $FULLME neither, it is not a bug if it fails. --skodak
             $output .= '<div class="validators"><ul>
               <li><a href="http://validator.w3.org/check?verbose=1&amp;ss=1&amp;uri=' . urlencode(qualified_me()) . '">Validate HTML</a></li>
               <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=' . urlencode(qualified_me()) . '">Section 508 Check</a></li>
@@ -1921,7 +1922,7 @@ class core_renderer extends renderer_base {
 
         $class = $userpicture->class;
 
-        if ($user->picture != 1 && $user->picture != 2) {
+        if ($user->picture == 0) {
             $class .= ' defaultuserpic';
         }
 

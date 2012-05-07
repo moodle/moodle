@@ -61,6 +61,13 @@ class workshop_manual_allocator implements workshop_allocator {
         global $PAGE;
 
         $mode = optional_param('mode', 'display', PARAM_ALPHA);
+        $perpage = optional_param('perpage', null, PARAM_INT);
+
+        if ($perpage and $perpage > 0 and $perpage <= 1000) {
+            require_sesskey();
+            set_user_preference('workshopallocation_manual_perpage', $perpage);
+            redirect($PAGE->url);
+        }
 
         $result = new workshop_allocation_result($this);
 
@@ -141,9 +148,9 @@ class workshop_manual_allocator implements workshop_allocator {
 
         $output     = $PAGE->get_renderer('workshopallocation_manual');
 
-        $pagingvar  = 'page';
-        $page       = optional_param($pagingvar, 0, PARAM_INT);
-        $perpage    = 10;   // todo let the user modify this
+        $page       = optional_param('page', 0, PARAM_INT);
+        $perpage    = get_user_preferences('workshopallocation_manual_perpage', 10);
+        $groupid    = groups_get_activity_group($this->workshop->cm, true);
 
         $hlauthorid     = -1;           // highlight this author
         $hlreviewerid   = -1;           // highlight this reviewer
@@ -200,24 +207,20 @@ class workshop_manual_allocator implements workshop_allocator {
             }
         }
 
-        // fetch the list of ids of all workshop participants - this may get really long so fetch just id
-        $participants = get_users_by_capability($PAGE->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
-                                            'u.id', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
-
-        $numofparticipants = count($participants);  // we will need later for the pagination
+        // fetch the list of ids of all workshop participants
+        $numofparticipants = $this->workshop->count_participants(false, $groupid);
+        $participants = $this->workshop->get_participants(false, $groupid, $perpage * $page, $perpage);
 
         if ($hlauthorid > 0 and $hlreviewerid > 0) {
             // display just those two users
             $participants = array_intersect_key($participants, array($hlauthorid => null, $hlreviewerid => null));
             $button = $output->single_button($PAGE->url, get_string('showallparticipants', 'workshopallocation_manual'), 'get');
         } else {
-            // slice the list of participants according to the current page
-            $participants = array_slice($participants, $page * $perpage, $perpage, true);
             $button = '';
         }
 
         // this will hold the information needed to display user names and pictures
-        $userinfo = $DB->get_records_list('user', 'id', array_keys($participants), '', user_picture::fields());
+        $userinfo = $participants;
 
         // load the participants' submissions
         $submissions = $this->workshop->get_submissions(array_keys($participants));
@@ -315,6 +318,7 @@ class workshop_manual_allocator implements workshop_allocator {
 
         // prepare data to be rendered
         $data                   = new workshopallocation_manual_allocations();
+        $data->workshop         = $this->workshop;
         $data->allocations      = $allocations;
         $data->userinfo         = $userinfo;
         $data->authors          = $this->workshop->get_potential_authors();
@@ -323,11 +327,15 @@ class workshop_manual_allocator implements workshop_allocator {
         $data->hlreviewerid     = $hlreviewerid;
         $data->selfassessment   = $this->workshop->useselfassessment;
 
-        // prepare paging bar
-        $pagingbar              = new paging_bar($numofparticipants, $page, $perpage, $PAGE->url, $pagingvar);
-        $pagingbarout           = $output->render($pagingbar);
+        // prepare the group selector
+        $groupselector = $output->container(groups_print_activity_menu($this->workshop->cm, $PAGE->url, true), 'groupwidget');
 
-        return $pagingbarout . $output->render($message) . $output->render($data) . $button . $pagingbarout;
+        // prepare paging bar
+        $pagingbar              = new paging_bar($numofparticipants, $page, $perpage, $PAGE->url, 'page');
+        $pagingbarout           = $output->render($pagingbar);
+        $perpageselector        = $output->perpage_selector($perpage);
+
+        return $groupselector . $pagingbarout . $output->render($message) . $output->render($data) . $button . $pagingbarout . $perpageselector;
     }
 
     /**
@@ -350,11 +358,28 @@ class workshop_manual_allocator implements workshop_allocator {
  * @see workshop_manual_allocator::ui()
  */
 class workshopallocation_manual_allocations implements renderable {
+
+    /** @var workshop module instance */
+    public $workshop;
+
+    /** @var array of stdClass, indexed by userid, properties userid, submissionid, (array)reviewedby, (array)reviewerof */
     public $allocations;
+
+    /** @var array of stdClass contains the data needed to display the user name and picture */
     public $userinfo;
+
+    /* var array of stdClass potential authors */
     public $authors;
+
+    /* var array of stdClass potential reviewers */
     public $reviewers;
+
+    /* var int the id of the user to highlight as the author */
     public $hlauthorid;
+
+    /* var int the id of the user to highlight as the reviewer */
     public $hlreviewerid;
+
+    /* var bool should the selfassessment be allowed */
     public $selfassessment;
 }

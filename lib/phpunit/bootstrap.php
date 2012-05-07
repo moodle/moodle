@@ -158,7 +158,9 @@ $CFG->prefix    = isset($CFG->phpunit_prefix) ? $CFG->phpunit_prefix : $CFG->pre
 $CFG->dboptions = isset($CFG->phpunit_dboptions) ? $CFG->phpunit_dboptions : $CFG->dboptions;
 
 $allowed = array('wwwroot', 'dataroot', 'dirroot', 'admin', 'directorypermissions', 'filepermissions',
-                 'dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'prefix', 'dboptions');
+                 'dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'prefix', 'dboptions',
+                 'proxyhost', 'proxyport', 'proxytype', 'proxyuser', 'proxypassword', 'proxybypass', // keep proxy settings from config.php
+                );
 $productioncfg = (array)$CFG;
 $CFG = new stdClass();
 foreach ($productioncfg as $key=>$value) {
@@ -196,7 +198,7 @@ require_once("$CFG->dirroot/lib/phpunit/lib.php");
 define('ABORT_AFTER_CONFIG_CANCEL', true);
 require("$CFG->dirroot/lib/setup.php");
 
-raise_memory_limit(MEMORY_EXTRA);
+raise_memory_limit(MEMORY_HUGE);
 
 if (PHPUNIT_UTIL) {
     // we are not going to do testing, this is 'true' in utility scripts that only init database

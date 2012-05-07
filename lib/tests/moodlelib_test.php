@@ -1013,32 +1013,30 @@ class moodlelib_testcase extends advanced_testcase {
         $arr = array_values($arr);
 
         list($seconds,$minutes,$hours,$mday,$wday,$mon,$year,$yday,$weekday,$month) = $arr;
-        $this->assertEquals($seconds,7);
-        $this->assertEquals($minutes,51);
-        $this->assertEquals($hours,4);
-        $this->assertEquals($mday,23);
-        $this->assertEquals($wday,3);
-        $this->assertEquals($mon,12);
-        $this->assertEquals($year,2009);
-        $this->assertEquals($yday,357);
-        $this->assertEquals($weekday, 'Wednesday');
-        $this->assertEquals($month, 'December');
-
+        $this->assertSame($seconds, 7);
+        $this->assertSame($minutes, 51);
+        $this->assertSame($hours, 4);
+        $this->assertSame($mday, 23);
+        $this->assertSame($wday, 3);
+        $this->assertSame($mon, 12);
+        $this->assertSame($year, 2009);
+        $this->assertSame($yday, 356);
+        $this->assertSame($weekday, 'Wednesday');
+        $this->assertSame($month, 'December');
         $arr = usergetdate($ts);//gets the timezone from the $USER object
         $arr = array_values($arr);
 
         list($seconds,$minutes,$hours,$mday,$wday,$mon,$year,$yday,$weekday,$month) = $arr;
-        $this->assertEquals($seconds,7);
-        $this->assertEquals($minutes,51);
-        $this->assertEquals($hours,5);
-        $this->assertEquals($mday,23);
-        $this->assertEquals($wday,3);
-        $this->assertEquals($mon,12);
-        $this->assertEquals($year,2009);
-        $this->assertEquals($yday,357);
-        $this->assertEquals($weekday, 'Wednesday');
-        $this->assertEquals($month, 'December');
-
+        $this->assertSame($seconds, 7);
+        $this->assertSame($minutes, 51);
+        $this->assertSame($hours, 5);
+        $this->assertSame($mday, 23);
+        $this->assertSame($wday, 3);
+        $this->assertSame($mon, 12);
+        $this->assertSame($year, 2009);
+        $this->assertSame($yday, 356);
+        $this->assertSame($weekday, 'Wednesday');
+        $this->assertSame($month, 'December');
         //set the timezone back to what it was
         $USER->timezone = $userstimezone;
 

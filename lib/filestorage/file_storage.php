@@ -1295,6 +1295,22 @@ class file_storage {
     }
 
     /**
+     * Serve file content using X-Sendfile header.
+     * Please make sure that all headers are already sent
+     * and the all access control checks passed.
+     *
+     * @param string $contenthash sah1 hash of the file content to be served
+     * @return bool success
+     */
+    public function xsendfile($contenthash) {
+        global $CFG;
+        require_once("$CFG->libdir/xsendfilelib.php");
+
+        $hashpath = $this->path_from_hash($contenthash);
+        return xsendfile("$hashpath/$contenthash");
+    }
+
+    /**
      * Return path to file with given hash.
      *
      * NOTE: must not be public, files in pool must not be modified

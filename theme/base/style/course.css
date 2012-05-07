@@ -8,6 +8,11 @@
 
 .course-content .section .activity img.activityicon {vertical-align:middle;height:16px;width:16px;}
 .course-content .section .activity .commands img.iconsmall {vertical-align: baseline;}
+.course-content .section-summary { border: 1px solid #DDD; margin-top: 5px; }
+.course-content .section-summary .section-title  { margin: 2px 5px 2px 5px; }
+.course-content .section-summary .summarytext { margin: 2px 5px 2px 5px; }
+.course-content .section-navigation { display: block; padding: 10px; }
+.course-content .section-navigation .right { float: right; }
 
 #page-site-index .subscribelink {text-align:right;}
 #page-site-index .headingblock {margin-bottom: 9px;}
@@ -23,7 +28,7 @@
 
 .path-course-view li.activity {margin-right:20px; position:relative;}
 .path-course-view li.activity span.autocompletion,
-.path-course-view li.activity form.togglecompletion {display:inline;position:absolute;right:-20px;top:0;z-index:10;padding:0.2em 0;}
+.path-course-view li.activity form.togglecompletion {display:inline;position:absolute;right:-20px;top:0;padding:0.2em 0;}
 .path-course-view li.activity form.togglecompletion div {display:inline;}
 .path-course-view li.activity form.togglecompletion .ajaxworking {position:absolute;top:0; left:20px;width: 20px; height: 20px;background: url([[pix:i/ajaxloader]]) no-repeat;}
 .dir-rtl.path-course-view li.activity {margin-right:0px;margin-left:20px;}

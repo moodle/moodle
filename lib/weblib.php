@@ -187,7 +187,6 @@ function get_referer($stripquery=true) {
  * server, and the way PHP is compiled (ie. as a CGI, module, ISAPI, etc.)
  * <b>NOTE:</b> This function returns false if the global variables needed are not set.
  *
- * @global string
  * @return mixed String, or false if the global variables needed are not set
  */
 function me() {
@@ -196,22 +195,32 @@ function me() {
 }
 
 /**
- * Returns the name of the current script, WITH the full URL.
+ * Guesses the full URL of the current script.
  *
- * This function is necessary because PHP_SELF and REQUEST_URI and SCRIPT_NAME
- * return different things depending on a lot of things like your OS, Web
- * server, and the way PHP is compiled (ie. as a CGI, module, ISAPI, etc.
- * <b>NOTE:</b> This function returns false if the global variables needed are not set.
+ * This function is using $PAGE->url, but may fall back to $FULLME which
+ * is constructed from  PHP_SELF and REQUEST_URI or SCRIPT_NAME
  *
- * Like {@link me()} but returns a full URL
- * @see me()
- *
- * @global string
- * @return mixed String, or false if the global variables needed are not set
+ * @return mixed full page URL string or false if unknown
  */
 function qualified_me() {
-    global $FULLME;
-    return $FULLME;
+    global $FULLME, $PAGE, $CFG;
+
+    if (isset($PAGE) and $PAGE->has_set_url()) {
+        // this is the only recommended way to find out current page
+        return $PAGE->url->out(false);
+
+    } else {
+        if ($FULLME === null) {
+            // CLI script most probably
+            return false;
+        }
+        if (!empty($CFG->sslproxy)) {
+            // return only https links when using SSL proxy
+            return preg_replace('/^http:/', 'https:', $FULLME, 1);
+        } else {
+            return $FULLME;
+        }
+    }
 }
 
 /**

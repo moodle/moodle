@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,25 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * External user API
  *
- * @package    moodlecore
- * @subpackage webservice
- * @copyright  2009 Moodle Pty Ltd (http://moodle.com)
+ * @package    core_user
+ * @category   external
+ * @copyright  2009 Petr Skodak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once("$CFG->libdir/externallib.php");
 
 /**
- * User functions
+ * User external functions
+ *
+ * @package    core_user
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.2
  */
 class core_user_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function create_users_parameters() {
         global $CFG;
@@ -43,7 +51,7 @@ class core_user_external extends external_api {
                 'users' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config'),
+                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config. Must be lowercase.'),
                             'password'    => new external_value(PARAM_RAW, 'Plain text password consisting of any characters'),
                             'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user'),
                             'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user'),
@@ -81,16 +89,15 @@ class core_user_external extends external_api {
     /**
      * Create one or more users
      *
-     * @param array $users  An array of users to create.
+     * @param array $users An array of users to create.
      * @return array An array of arrays
+     * @since Moodle 2.2
      */
     public static function create_users($users) {
         global $CFG, $DB;
         require_once($CFG->dirroot."/lib/weblib.php");
         require_once($CFG->dirroot."/user/lib.php");
         require_once($CFG->dirroot."/user/profile/lib.php"); //required for customfields related function
-                                                             //TODO: move the functions somewhere else as
-                                                             //they are "user" related
 
         // Ensure the current user is allowed to run this function
         $context = get_context_instance(CONTEXT_SYSTEM);
@@ -177,14 +184,16 @@ class core_user_external extends external_api {
 
    /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.2
      */
     public static function create_users_returns() {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
                     'id'       => new external_value(PARAM_INT, 'user id'),
-                    'username' => new external_value(PARAM_RAW, 'user name'),
+                    'username' => new external_value(PARAM_USERNAME, 'user name'),
                 )
             )
         );
@@ -193,7 +202,9 @@ class core_user_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function delete_users_parameters() {
         return new external_function_parameters(
@@ -205,8 +216,10 @@ class core_user_external extends external_api {
 
     /**
      * Delete users
+     *
      * @param array $userids
      * @return null
+     * @since Moodle 2.2
      */
     public static function delete_users($userids) {
         global $CFG, $DB, $USER;
@@ -240,7 +253,9 @@ class core_user_external extends external_api {
 
    /**
      * Returns description of method result value
-     * @return external_description
+     *
+     * @return null
+     * @since Moodle 2.2
      */
     public static function delete_users_returns() {
         return null;
@@ -249,7 +264,9 @@ class core_user_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function update_users_parameters() {
         global $CFG;
@@ -259,7 +276,7 @@ class core_user_external extends external_api {
                     new external_single_structure(
                         array(
                             'id'    => new external_value(PARAM_NUMBER, 'ID of the user'),
-                            'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
+                            'username'    => new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config. Must be lowercase.', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'password'    => new external_value(PARAM_RAW, 'Plain text password consisting of any characters', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL, '',NULL_NOT_ALLOWED),
                             'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
@@ -296,15 +313,15 @@ class core_user_external extends external_api {
 
     /**
      * Update users
+     *
      * @param array $users
      * @return null
+     * @since Moodle 2.2
      */
     public static function update_users($users) {
         global $CFG, $DB;
         require_once($CFG->dirroot."/user/lib.php");
         require_once($CFG->dirroot."/user/profile/lib.php"); //required for customfields related function
-                                                             //TODO: move the functions somewhere else as
-                                                             //they are "user" related
 
         // Ensure the current user is allowed to run this function
         $context = get_context_instance(CONTEXT_SYSTEM);
@@ -343,7 +360,9 @@ class core_user_external extends external_api {
 
    /**
      * Returns description of method result value
-     * @return external_description
+     *
+     * @return null
+     * @since Moodle 2.2
      */
     public static function update_users_returns() {
         return null;
@@ -351,7 +370,9 @@ class core_user_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function get_users_by_id_parameters() {
         return new external_function_parameters(
@@ -366,8 +387,10 @@ class core_user_external extends external_api {
      * - This function is matching the permissions of /user/profil.php
      * - It is also matching some permissions from /user/editadvanced.php for the following fields:
      *   auth, confirmed, idnumber, lang, theme, timezone, mailformat
+     *
      * @param array $userids  array of user ids
      * @return array An array of arrays describing users
+     * @since Moodle 2.2
      */
     public static function get_users_by_id($userids) {
         global $CFG, $USER, $DB;
@@ -415,7 +438,9 @@ class core_user_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.2
      */
     public static function get_users_by_id_returns() {
         return new external_multiple_structure(
@@ -484,7 +509,9 @@ class core_user_external extends external_api {
     }
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function get_course_user_profiles_parameters() {
         return new external_function_parameters(
@@ -503,8 +530,10 @@ class core_user_external extends external_api {
 
     /**
      * Get course participant's details
+     *
      * @param array $userlist  array of user ids and according course ids
      * @return array An array of arrays describing course participants
+     * @since Moodle 2.2
      */
     public static function get_course_user_profiles($userlist) {
         global $CFG, $USER, $DB;
@@ -561,7 +590,9 @@ class core_user_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.2
      */
     public static function get_course_user_profiles_returns() {
         return new external_multiple_structure(
@@ -640,16 +671,27 @@ class core_user_external extends external_api {
     }
 }
 
-/**
- * Deprecated user functions
- * @deprecated since Moodle 2.2 please use core_user_external instead
+ /**
+ * Deprecated user external functions
+ *
+ * @package    core_user
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
+ * @todo MDL-31194 This will be deleted in Moodle 2.5.
+ * @see core_user_external
  */
 class moodle_user_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_user_external::create_users_parameters instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::create_users_parameters()
      */
     public static function create_users_parameters() {
         return core_user_external::create_users_parameters();
@@ -657,9 +699,13 @@ class moodle_user_external extends external_api {
 
     /**
      * Create one or more users
-     * @deprecated since Moodle 2.2 please use core_user_external::create_users instead
+     *
      * @param array $users  An array of users to create.
      * @return array An array of arrays
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::create_users()
      */
     public static function create_users($users) {
         return core_user_external::create_users($users);
@@ -667,8 +713,12 @@ class moodle_user_external extends external_api {
 
    /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_user_external::create_users_returns instead
+     *
      * @return external_description
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::create_users_returns()
      */
     public static function create_users_returns() {
         return core_user_external::create_users_returns();
@@ -677,8 +727,12 @@ class moodle_user_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_user_external::delete_users_parameters instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::delete_users_parameters()
      */
     public static function delete_users_parameters() {
         return core_user_external::delete_users_parameters();
@@ -686,9 +740,13 @@ class moodle_user_external extends external_api {
 
     /**
      * Delete users
-     * @deprecated since Moodle 2.2 please use core_user_external::delete_users instead
+     *
      * @param array $userids
      * @return null
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::delete_users()
      */
     public static function delete_users($userids) {
         return core_user_external::delete_users($userids);
@@ -696,8 +754,12 @@ class moodle_user_external extends external_api {
 
    /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_user_external::delete_users_returns instead
-     * @return external_description
+     *
+     * @return null
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::delete_users_returns()
      */
     public static function delete_users_returns() {
         return core_user_external::delete_users_returns();
@@ -706,8 +768,12 @@ class moodle_user_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_user_external::update_users_parameters instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::update_users_parameters()
      */
     public static function update_users_parameters() {
         return core_user_external::update_users_parameters();
@@ -715,9 +781,13 @@ class moodle_user_external extends external_api {
 
     /**
      * Update users
-     * @deprecated since Moodle 2.2 please use core_user_external::update_users instead
+     *
      * @param array $users
      * @return null
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::update_users()
      */
     public static function update_users($users) {
         return core_user_external::update_users($users);
@@ -725,8 +795,12 @@ class moodle_user_external extends external_api {
 
    /**
      * Returns description of method result value
-    * @deprecated since Moodle 2.2 please use core_user_external::update_users_returns instead
-     * @return external_description
+     *
+     * @return null
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::update_users_returns()
      */
     public static function update_users_returns() {
         return core_user_external::update_users_returns();
@@ -734,8 +808,12 @@ class moodle_user_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_user_external::get_users_by_id_parameters instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::get_users_by_id_parameters()
      */
     public static function get_users_by_id_parameters() {
         return core_user_external::get_users_by_id_parameters();
@@ -746,9 +824,13 @@ class moodle_user_external extends external_api {
      * - This function is matching the permissions of /user/profil.php
      * - It is also matching some permissions from /user/editadvanced.php for the following fields:
      *   auth, confirmed, idnumber, lang, theme, timezone, mailformat
-     * @deprecated since Moodle 2.2 please use core_user_external::get_users_by_id instead
+     *
      * @param array $userids  array of user ids
      * @return array An array of arrays describing users
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::get_users_by_id()
      */
     public static function get_users_by_id($userids) {
         return core_user_external::get_users_by_id($userids);
@@ -756,16 +838,24 @@ class moodle_user_external extends external_api {
 
     /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_user_external::get_users_by_id_returns instead
+     *
      * @return external_description
+     * @since Moodle 2.0
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::get_users_by_id_returns()
      */
     public static function get_users_by_id_returns() {
         return core_user_external::get_users_by_id_returns();
     }
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_user_external::get_course_user_profiles_parameters instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::get_course_user_profiles_parameters()
      */
     public static function get_course_participants_by_id_parameters() {
         return core_user_external::get_course_user_profiles_parameters();
@@ -773,9 +863,13 @@ class moodle_user_external extends external_api {
 
     /**
      * Get course participant's details
-     * @deprecated since Moodle 2.2 please use core_user_external::get_course_user_profiles instead
+     *
      * @param array $userlist  array of user ids and according course ids
      * @return array An array of arrays describing course participants
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::get_course_user_profiles()
      */
     public static function get_course_participants_by_id($userlist) {
         return core_user_external::get_course_user_profiles($userlist);
@@ -783,8 +877,12 @@ class moodle_user_external extends external_api {
 
     /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_user_external::get_course_user_profiles_returns instead
+     *
      * @return external_description
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_user_external::get_course_user_profiles_returns()
      */
     public static function get_course_participants_by_id_returns() {
         return core_user_external::get_course_user_profiles_returns();
@@ -792,8 +890,12 @@ class moodle_user_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_enrol_external::get_enrolled_users_parameters instead
+     *
      * @return external_function_parameters
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_enrol_external::get_enrolled_users_parameters()
      */
     public static function get_users_by_courseid_parameters() {
         global $CFG;
@@ -803,13 +905,17 @@ class moodle_user_external extends external_api {
 
     /**
      * Get course participants details
-     * @deprecated since Moodle 2.2 please use core_enrol_external::get_enrolled_users instead
+     *
      * @param int $courseid  course id
      * @param array $options options {
-     *          'name' => option name
-     *          'value' => option value
-     * }
+     *                                'name' => option name
+     *                                'value' => option value
+     *                               }
      * @return array An array of users
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_enrol_external::get_enrolled_users()
      */
     public static function get_users_by_courseid($courseid, $options) {
         global $CFG;
@@ -818,8 +924,12 @@ class moodle_user_external extends external_api {
     }
     /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_enrol_external::get_enrolled_users_returns instead
+     *
      * @return external_description
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_enrol_external::get_enrolled_users_returns()
      */
     public static function get_users_by_courseid_returns() {
         global $CFG;

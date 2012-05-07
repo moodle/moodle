@@ -44,15 +44,15 @@ class quiz_overview_options extends mod_quiz_attempts_report_options {
 
     protected function get_url_params() {
         $params = parent::get_url_params();
-        $params['regradefilter'] = $this->onlyregraded;
-        $params['detailedmarks'] = $this->slotmarks;
+        $params['onlyregraded'] = $this->onlyregraded;
+        $params['slotmarks']    = $this->slotmarks;
         return $params;
     }
 
     public function get_initial_form_data() {
         $toform = parent::get_initial_form_data();
-        $toform->regradefilter = $this->onlyregraded;
-        $toform->detailedmarks = $this->slotmarks;
+        $toform->onlyregraded = $this->onlyregraded;
+        $toform->slotmarks    = $this->slotmarks;
 
         return $toform;
     }
@@ -60,15 +60,15 @@ class quiz_overview_options extends mod_quiz_attempts_report_options {
     public function setup_from_form_data($fromform) {
         parent::setup_from_form_data($fromform);
 
-        $this->onlyregraded = !empty($fromform->regradefilter);
-        $this->slotmarks    = $fromform->detailedmarks;
+        $this->onlyregraded = !empty($fromform->onlyregraded);
+        $this->slotmarks    = $fromform->slotmarks;
     }
 
     public function setup_from_params() {
         parent::setup_from_params();
 
-        $this->onlyregraded = optional_param('regradefilter', $this->onlyregraded, PARAM_BOOL);
-        $this->slotmarks    = optional_param('detailedmarks', $this->slotmarks, PARAM_BOOL);
+        $this->onlyregraded = optional_param('onlyregraded', $this->onlyregraded, PARAM_BOOL);
+        $this->slotmarks    = optional_param('slotmarks', $this->slotmarks, PARAM_BOOL);
     }
 
     public function setup_from_user_preferences() {
@@ -80,7 +80,9 @@ class quiz_overview_options extends mod_quiz_attempts_report_options {
     public function update_user_preferences() {
         parent::update_user_preferences();
 
-        set_user_preference('quiz_overview_slotmarks', $this->slotmarks);
+        if (quiz_has_grades($this->quiz)) {
+            set_user_preference('quiz_overview_slotmarks', $this->slotmarks);
+        }
     }
 
     public function resolve_dependencies() {
@@ -94,6 +96,6 @@ class quiz_overview_options extends mod_quiz_attempts_report_options {
         // if the user has permissions and if the report mode is showing attempts.
         $this->checkboxcolumn = has_any_capability(
                 array('mod/quiz:regrade', 'mod/quiz:deleteattempts'), context_module::instance($this->cm->id))
-                && ($this->attempts != quiz_attempts_report::STUDENTS_WITH_NO);
+                && ($this->attempts != quiz_attempts_report::ENROLLED_WITHOUT);
     }
 }

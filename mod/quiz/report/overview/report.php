@@ -55,7 +55,7 @@ class quiz_overview_report extends quiz_attempts_report {
 
         $this->form->set_data($options->get_initial_form_data());
 
-        if ($options->attempts == self::ALL_ATTEMPTS) {
+        if ($options->attempts == self::ALL_WITH) {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
             // are accessible, is not a security porblem.
@@ -78,7 +78,7 @@ class quiz_overview_report extends quiz_attempts_report {
             raise_memory_limit(MEMORY_EXTRA);
         }
 
-        $this->process_actions($quiz, $currentgroup, $groupstudents, $allowed);
+        $this->process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $options->get_url());
 
         // Start output.
         if (!$table->is_downloading()) {
@@ -116,7 +116,7 @@ class quiz_overview_report extends quiz_attempts_report {
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
-        if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_ATTEMPTS)) {
+        if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_WITH)) {
             // Construct the SQL.
             $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
                     ' AS uniqueid, ';
@@ -204,7 +204,7 @@ class quiz_overview_report extends quiz_attempts_report {
             }
 
             $this->add_user_columns($table, $columns, $headers);
-
+            $this->add_state_column($columns, $headers);
             $this->add_time_columns($columns, $headers);
 
             if ($options->slotmarks) {
@@ -266,15 +266,15 @@ class quiz_overview_report extends quiz_attempts_report {
         return true;
     }
 
-    protected function process_actions($quiz, $currentgroup, $groupstudents, $allowed) {
-        parent::process_actions($quiz, $currentgroup, $groupstudents, $allowed);
+    protected function process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $redirecturl) {
+        parent::process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $redirecturl);
 
         if (empty($currentgroup) || $groupstudents) {
             if (optional_param('regrade', 0, PARAM_BOOL) && confirm_sesskey()) {
                 if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
                     require_capability('mod/quiz:regrade', $this->context);
                     $this->regrade_attempts($quiz, false, $groupstudents, $attemptids);
-                    redirect($options->get_url());
+                    redirect($redirecturl, '', 5);
                 }
             }
         }
@@ -282,17 +282,17 @@ class quiz_overview_report extends quiz_attempts_report {
         if (optional_param('regradeall', 0, PARAM_BOOL) && confirm_sesskey()) {
             require_capability('mod/quiz:regrade', $this->context);
             $this->regrade_attempts($quiz, false, $groupstudents);
-            redirect($options->get_url(), '', 5);
+            redirect($redirecturl, '', 5);
 
         } else if (optional_param('regradealldry', 0, PARAM_BOOL) && confirm_sesskey()) {
             require_capability('mod/quiz:regrade', $this->context);
             $this->regrade_attempts($quiz, true, $groupstudents);
-            redirect($options->get_url(), '', 5);
+            redirect($redirecturl, '', 5);
 
         } else if (optional_param('regradealldrydo', 0, PARAM_BOOL) && confirm_sesskey()) {
             require_capability('mod/quiz:regrade', $this->context);
             $this->regrade_attempts_needing_it($quiz, $groupstudents);
-            redirect($options->get_url(), '', 5);
+            redirect($redirecturl, '', 5);
         }
     }
 
@@ -321,7 +321,7 @@ class quiz_overview_report extends quiz_attempts_report {
             $slots = $quba->get_slots();
         }
 
-        $finished = $attempt->timefinish > 0;
+        $finished = $attempt->state == quiz_attempt::FINISHED;
         foreach ($slots as $slot) {
             $qqr = new stdClass();
             $qqr->oldfraction = $quba->get_question_fraction($slot);

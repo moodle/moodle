@@ -347,6 +347,17 @@ class grade_report_user extends grade_report {
                     ($this->showhiddenitems == GRADE_REPORT_USER_HIDE_UNTIL && !$grade_grade->is_hiddenuntil()))) {
                 // return false;
             } else {
+                // The grade object can be marked visible but still be hidden
+                // if "enablegroupmembersonly" is on and its an activity assigned to a grouping the user is not in
+                if (!empty($grade_object->itemmodule) && !empty($grade_object->iteminstance)) {
+                    $instances = $this->gtree->modinfo->get_instances();
+                    if (!empty($instances[$grade_object->itemmodule][$grade_object->iteminstance])) {
+                        $cm = $instances[$grade_object->itemmodule][$grade_object->iteminstance];
+                        if (!$cm->uservisible) {
+                            return false;
+                        }
+                    }
+                }
                 /// Excluded Item
                 if ($grade_grade->is_excluded()) {
                     $fullname .= ' ['.get_string('excluded', 'grades').']';

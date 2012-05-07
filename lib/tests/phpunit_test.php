@@ -212,8 +212,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $record = $DB->get_record('context_temp', array());
         $this->assertEquals(5, $record->id);
 
-        $this->assertEquals(0, $DB->count_records('course_display'));
-        $originaldisplayid = $DB->insert_record('course_display', array('userid'=>2, 'course'=>1, 'display'=>1));
+        $this->assertEquals(0, $DB->count_records('user_preferences'));
+        $originaldisplayid = $DB->insert_record('user_preferences', array('userid'=>2, 'name'=> 'phpunittest', 'value'=>'x'));
         $this->assertEquals(1, $originaldisplayid);
 
         $course = $this->getDataGenerator()->create_course();
@@ -232,7 +232,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $this->assertEquals(2, $course->id);
 
-        $displayid = $DB->insert_record('course_display', array('userid'=>2, 'course'=>1, 'display'=>1));
+        $displayid = $DB->insert_record('user_preferences', array('userid'=>2, 'name'=> 'phpunittest', 'value'=>'x'));
         $this->assertEquals($originaldisplayid, $displayid);
 
         $this->assertEquals(2, $DB->count_records('user'));

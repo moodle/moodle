@@ -318,8 +318,8 @@ class auth_plugin_mnet extends auth_plugin_base {
                             $imagefilename = $CFG->tempdir . '/mnet-usericon-' . $localuser->id;
                             $imagecontents = base64_decode($fetchrequest->response['f1']);
                             file_put_contents($imagefilename, $imagecontents);
-                            if (process_new_icon($usercontext, 'user', 'icon', 0, $imagefilename)) {
-                                $localuser->picture = 1;
+                            if ($newrev = process_new_icon($usercontext, 'user', 'icon', 0, $imagefilename)) {
+                                $localuser->picture = $newrev;
                             }
                             unlink($imagefilename);
                         }

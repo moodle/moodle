@@ -396,11 +396,23 @@ function message_get_providers_for_user($userid) {
         if (!empty($provider->capability)) {
             if (!has_capability($provider->capability, $systemcontext, $userid)) {
                 unset($providers[$providerid]);   // Not allowed to see this
+                continue;
             }
         }
+
         // Ensure user is not allowed to configure instantmessage if it is globally disabled.
         if (!$CFG->messaging && $provider->name == 'instantmessage') {
             unset($providers[$providerid]);
+            continue;
+        }
+
+        // If the component is an enrolment plugin, check it is enabled
+        list($type, $name) = normalize_component($provider->component);
+        if ($type == 'enrol') {
+            if (!enrol_is_enabled($name)) {
+                unset($providers[$providerid]);
+                continue;
+            }
         }
     }
 
@@ -480,6 +492,7 @@ function message_processor_uninstall($name) {
 
     $transaction = $DB->start_delegated_transaction();
     $DB->delete_records('message_processors', array('name' => $name));
+    $DB->delete_records_select('config_plugins', "plugin = ?", array("message_{$name}"));
     // delete permission preferences only, we do not care about loggedin/loggedoff
     // defaults, they will be removed on the next attempt to update the preferences
     $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("{$name}_provider_%"));

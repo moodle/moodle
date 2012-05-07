@@ -45,6 +45,9 @@ class phpunit_util {
     /** @var array original structure of all database tables */
     protected static $tablestructure = null;
 
+    /** @var array original structure of all database tables */
+    protected static $sequencenames = null;
+
     /** @var array An array of original globals, restored after each test */
     protected static $globals = array();
 
@@ -195,6 +198,33 @@ class phpunit_util {
     }
 
     /**
+     * Returns the names of sequences for each autoincrementing id field in all standard tables.
+     * @static
+     * @return array $table=>$sequencename
+     */
+    public static function get_sequencenames() {
+        global $DB;
+
+        if (isset(self::$sequencenames)) {
+            return self::$sequencenames;
+        }
+
+        if (!$structure = self::get_tablestructure()) {
+            return array();
+        }
+
+        self::$sequencenames = array();
+        foreach ($structure as $table=>$ignored) {
+            $name = $DB->get_manager()->generator->getSequenceFromDB(new xmldb_table($table));
+            if ($name !== false) {
+                self::$sequencenames[$table] = $name;
+            }
+        }
+
+        return self::$sequencenames;
+    }
+
+    /**
      * Returns list of tables that are unmodified and empty.
      *
      * @static
@@ -242,6 +272,21 @@ class phpunit_util {
                     continue;
                 }
                 $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
+                $empties[$table] = $table;
+            }
+            $rs->close();
+            return $empties;
+
+        } else if ($dbfamily === 'oracle') {
+            $sequences = phpunit_util::get_sequencenames();
+            $sequences = array_map('strtoupper', $sequences);
+            $lookup = array_flip($sequences);
+            $empties = array();
+            list($seqs, $params) = $DB->get_in_or_equal($sequences);
+            $sql = "SELECT sequence_name FROM user_sequences WHERE last_number = 1 AND sequence_name $seqs";
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $seq) {
+                $table = $lookup[$seq->sequence_name];
                 $empties[$table] = $table;
             }
             $rs->close();
@@ -306,27 +351,65 @@ class phpunit_util {
                 }
             }
             $rs->close();
+            $prefix = $DB->get_prefix();
             foreach ($data as $table=>$records) {
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     if (isset($sequences[$table])) {
                         if (empty($records)) {
-                            $lastid = 0;
+                            $nextid = 1;
                         } else {
                             $lastrecord = end($records);
-                            $lastid = $lastrecord->id;
+                            $nextid = $lastrecord->id + 1;
                         }
-                        if ($sequences[$table] != $lastid +1) {
-                            $DB->get_manager()->reset_sequence($table);
+                        if ($sequences[$table] != $nextid) {
+                            $DB->change_database_structure("ALTER TABLE {$prefix}{$table} AUTO_INCREMENT = $nextid");
                         }
 
                     } else {
+                        // some problem exists, fallback to standard code
                         $DB->get_manager()->reset_sequence($table);
                     }
                 }
             }
 
+        } else if ($dbfamily === 'oracle') {
+            $sequences = phpunit_util::get_sequencenames();
+            $sequences = array_map('strtoupper', $sequences);
+            $lookup = array_flip($sequences);
+
+            $current = array();
+            list($seqs, $params) = $DB->get_in_or_equal($sequences);
+            $sql = "SELECT sequence_name, last_number FROM user_sequences WHERE sequence_name $seqs";
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $seq) {
+                $table = $lookup[$seq->sequence_name];
+                $current[$table] = $seq->last_number;
+            }
+            $rs->close();
+
+            foreach ($data as $table=>$records) {
+                if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
+                    $lastrecord = end($records);
+                    if ($lastrecord) {
+                        $nextid = $lastrecord->id + 1;
+                    } else {
+                        $nextid = 1;
+                    }
+                    if (!isset($current[$table])) {
+                        $DB->get_manager()->reset_sequence($table);
+                    } else if ($nextid == $current[$table]) {
+                        continue;
+                    }
+                    // reset as fast as possible - alternatively we could use http://stackoverflow.com/questions/51470/how-do-i-reset-a-sequence-in-oracle
+                    $seqname = $sequences[$table];
+                    $cachesize = $DB->get_manager()->generator->sequence_cache_size;
+                    $DB->change_database_structure("DROP SEQUENCE $seqname");
+                    $DB->change_database_structure("CREATE SEQUENCE $seqname START WITH $nextid INCREMENT BY 1 NOMAXVALUE CACHE $cachesize");
+                }
+            }
+
         } else {
-            // note: does mssql and oracle support any kind of faster reset?
+            // note: does mssql support any kind of faster reset?
             if (is_null($empties)) {
                 $empties = self::guess_unmodified_empty_tables();
             }
@@ -885,6 +968,172 @@ class phpunit_util {
         phpunit_boostrap_fix_file_permissions("$CFG->dataroot/phpunit/webrunner.xml");
 
         return (bool)$result;
+    }
+
+    /**
+     * Builds phpunit.xml files for all components using defaults from /phpunit.xml.dist
+     *
+     * @static
+     * @return void, stops if can not write files
+     */
+    public static function build_component_config_files() {
+        global $CFG;
+
+        $template = '
+        <testsuites>
+            <testsuite name="@component@">
+                <directory suffix="_test.php">.</directory>
+            </testsuite>
+        </testsuites>';
+
+        // Use the upstream file as source for the distributed configurations
+        $ftemplate = file_get_contents("$CFG->dirroot/phpunit.xml.dist");
+        $ftemplate = preg_replace('|<!--All core suites.*</testsuites>|s', '<!--@component_suite@-->', $ftemplate);
+
+        // Get all the components
+        $components = self::get_all_plugins_with_tests() + self::get_all_subsystems_with_tests();
+
+        // Get all the directories having tests
+        $directories = self::get_all_directories_with_tests();
+
+        // Find any directory not covered by proper components
+        $remaining = array_diff($directories, $components);
+
+        // Add them to the list of components
+        $components += $remaining;
+
+        // Create the corresponding phpunit.xml file for each component
+        foreach ($components as $cname => $cpath) {
+            // Calculate the component suite
+            $ctemplate = $template;
+            $ctemplate = str_replace('@component@', $cname, $ctemplate);
+
+            // Apply it to the file template
+            $fcontents = str_replace('<!--@component_suite@-->', $ctemplate, $ftemplate);
+
+            // fix link to schema
+            $level = substr_count(str_replace('\\', '/', $cpath), '/') - substr_count(str_replace('\\', '/', $CFG->dirroot), '/');
+            $fcontents = str_replace('lib/phpunit/phpunit.xsd', str_repeat('../', $level).'lib/phpunit/phpunit.xsd', $fcontents);
+            $fcontents = str_replace('lib/phpunit/bootstrap.php', str_repeat('../', $level).'lib/phpunit/bootstrap.php', $fcontents);
+
+            // Write the file
+            $result = false;
+            if (is_writable($cpath)) {
+                if ($result = (bool)file_put_contents("$cpath/phpunit.xml", $fcontents)) {
+                    phpunit_boostrap_fix_file_permissions("$cpath/phpunit.xml");
+                }
+            }
+            // Problems writing file, throw error
+            if (!$result) {
+                phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGWARNING, "Can not create $cpath/phpunit.xml configuration file, verify dir permissions");
+            }
+        }
+    }
+
+    /**
+     * Returns all the plugins having PHPUnit tests
+     *
+     * @return array all the plugins having PHPUnit tests
+     *
+     */
+    private static function get_all_plugins_with_tests() {
+        $pluginswithtests = array();
+
+        $plugintypes = get_plugin_types();
+        ksort($plugintypes);
+        foreach ($plugintypes as $type => $unused) {
+            $plugs = get_plugin_list($type);
+            ksort($plugs);
+            foreach ($plugs as $plug => $fullplug) {
+                // Look for tests recursively
+                if (self::directory_has_tests($fullplug)) {
+                    $pluginswithtests[$type . '_' . $plug] = $fullplug;
+                }
+            }
+        }
+        return $pluginswithtests;
+    }
+
+    /**
+     * Returns all the subsystems having PHPUnit tests
+     *
+     * Note we are hacking here the list of subsystems
+     * to cover some well-known subsystems that are not properly
+     * returned by the {@link get_core_subsystems()} function.
+     *
+     * @return array all the subsystems having PHPUnit tests
+     */
+    private static function get_all_subsystems_with_tests() {
+        global $CFG;
+
+        $subsystemswithtests = array();
+
+        $subsystems = get_core_subsystems();
+
+        // Hack the list a bit to cover some well-known ones
+        $subsystems['backup'] = 'backup';
+        $subsystems['db-dml'] = 'lib/dml';
+        $subsystems['db-ddl'] = 'lib/ddl';
+
+        ksort($subsystems);
+        foreach ($subsystems as $subsys => $relsubsys) {
+            if ($relsubsys === null) {
+                continue;
+            }
+            $fullsubsys = $CFG->dirroot . '/' . $relsubsys;
+            if (!is_dir($fullsubsys)) {
+                continue;
+            }
+            // Look for tests recursively
+            if (self::directory_has_tests($fullsubsys)) {
+                $subsystemswithtests['core_' . $subsys] = $fullsubsys;
+            }
+        }
+        return $subsystemswithtests;
+    }
+
+    /**
+     * Returns all the directories having tests
+     *
+     * @return array all directories having tests
+     */
+    private static function get_all_directories_with_tests() {
+        global $CFG;
+
+        $dirs = array();
+        $dirite = new RecursiveDirectoryIterator($CFG->dirroot);
+        $iteite = new RecursiveIteratorIterator($dirite);
+        $sep = preg_quote(DIRECTORY_SEPARATOR, '|');
+        $regite = new RegexIterator($iteite, '|'.$sep.'tests'.$sep.'.*_test\.php$|');
+        foreach ($regite as $path => $element) {
+            $key = dirname(dirname($path));
+            $value = trim(str_replace('/', '_', str_replace($CFG->dirroot, '', $key)), '_');
+            $dirs[$key] = $value;
+        }
+        ksort($dirs);
+        return array_flip($dirs);
+    }
+
+    /**
+     * Returns if a given directory has tests (recursively)
+     *
+     * @param $dir string full path to the directory to look for phpunit tests
+     * @return bool if a given directory has tests (true) or no (false)
+     */
+    private static function directory_has_tests($dir) {
+        if (!is_dir($dir)) {
+            return false;
+        }
+
+        $dirite = new RecursiveDirectoryIterator($dir);
+        $iteite = new RecursiveIteratorIterator($dirite);
+        $sep = preg_quote(DIRECTORY_SEPARATOR, '|');
+        $regite = new RegexIterator($iteite, '|'.$sep.'tests'.$sep.'.*_test\.php$|');
+        $regite->rewind();
+        if ($regite->valid()) {
+            return true;
+        }
+        return false;
     }
 }
 

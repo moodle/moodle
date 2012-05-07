@@ -283,7 +283,7 @@ if (!empty($instanceid) && !empty($roleid)) {
     echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform">'."\n";
     echo '<div>'."\n";
     echo '<input type="hidden" name="id" value="'.$id.'" />'."\n";
-    echo '<input type="hidden" name="returnto" value="'. s($FULLME) .'" />'."\n";
+    echo '<input type="hidden" name="returnto" value="'. s($PAGE->url) .'" />'."\n";
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />'."\n";
 
     foreach ($users as $u) {

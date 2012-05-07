@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20120122" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20120504" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -100,7 +100,8 @@
         <FIELD NAME="requested" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="enablecompletion"/>
         <FIELD NAME="enablecompletion" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = allow use of 'completion' progress-tracking on this course. 0 = disable completion tracking on this course." PREVIOUS="requested" NEXT="completionstartonenrol"/>
         <FIELD NAME="completionstartonenrol" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = allow use of 'activty completion' progress-tracking on this course. 0 = disable activity completion tracking on this course." PREVIOUS="enablecompletion" NEXT="completionnotify"/>
-        <FIELD NAME="completionnotify" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Notify users when they complete this course" PREVIOUS="completionstartonenrol"/>
+        <FIELD NAME="completionnotify" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Notify users when they complete this course" PREVIOUS="completionstartonenrol" NEXT="coursedisplay"/>
+        <FIELD NAME="coursedisplay" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="How is the course displayed" PREVIOUS="completionnotify"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -205,7 +206,7 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="course_completions" COMMENT="Course completion records" PREVIOUS="course_completion_notify" NEXT="course_display">
+    <TABLE NAME="course_completions" COMMENT="Course completion records" PREVIOUS="course_completion_notify" NEXT="enrol">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="course"/>
@@ -226,21 +227,7 @@
         <INDEX NAME="timecompleted" UNIQUE="false" FIELDS="timecompleted" PREVIOUS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="course_display" COMMENT="Stores info about how to display the course" PREVIOUS="course_completions" NEXT="enrol">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="display"/>
-        <FIELD NAME="display" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="course_userid" UNIQUE="false" FIELDS="course, userid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="enrol" COMMENT="Instances of enrolment plugins used in courses, fields marked as custom have a plugin defined meaning, core does not touch them. Create a new linked table if you need even more custom fields." PREVIOUS="course_display" NEXT="user_enrolments">
+    <TABLE NAME="enrol" COMMENT="Instances of enrolment plugins used in courses, fields marked as custom have a plugin defined meaning, core does not touch them. Create a new linked table if you need even more custom fields." PREVIOUS="course_completions" NEXT="user_enrolments">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="enrol"/>
         <FIELD NAME="enrol" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="status"/>
@@ -734,7 +721,7 @@
         <FIELD NAME="currentlogin" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="lastlogin" NEXT="lastip"/>
         <FIELD NAME="lastip" TYPE="char" LENGTH="45" NOTNULL="true" SEQUENCE="false" PREVIOUS="currentlogin" NEXT="secret"/>
         <FIELD NAME="secret" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" PREVIOUS="lastip" NEXT="picture"/>
-        <FIELD NAME="picture" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="secret" NEXT="url"/>
+        <FIELD NAME="picture" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 means no image uploaded, positive values are revisions thta prevent caching problems, negative values are reserved for future use" PREVIOUS="secret" NEXT="url"/>
         <FIELD NAME="url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="picture" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="url" NEXT="descriptionformat"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="mailformat"/>

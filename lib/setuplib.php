@@ -338,13 +338,13 @@ class file_serving_exception extends moodle_exception {
  * @return void -does not return. Terminates execution!
  */
 function default_exception_handler($ex) {
-    global $CFG, $DB, $OUTPUT, $USER, $FULLME, $SESSION;
+    global $CFG, $DB, $OUTPUT, $USER, $FULLME, $SESSION, $PAGE;
 
     // detect active db transactions, rollback and log as error
     abort_all_db_transactions();
 
     if (($ex instanceof required_capability_exception) && !CLI_SCRIPT && !AJAX_SCRIPT && !empty($CFG->autologinguests) && !empty($USER->autologinguest)) {
-        $SESSION->wantsurl = $FULLME;
+        $SESSION->wantsurl = qualified_me();
         redirect(get_login_url());
     }
 
@@ -1078,6 +1078,9 @@ function disable_output_buffering() {
             break;
         }
     }
+
+    // disable any other output handlers
+    ini_set('output_handler', '');
 
     error_reporting($olddebug);
 }

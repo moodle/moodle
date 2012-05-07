@@ -70,7 +70,7 @@ function upgrade_mysql_fix_unsigned_columns() {
             if (stripos($column->type, 'unsigned') !== false) {
                 $type = preg_replace('/unsigned/i', 'signed', $column->type);
                 $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
-                $default = !is_null($column->default) ? "DEFAULT '$column->default'" : '';
+                $default = (!is_null($column->default) and $column->default !== '') ? "DEFAULT '$column->default'" : '';
                 $autoinc = (stripos($column->extra, 'auto_increment') !== false) ? 'AUTO_INCREMENT' : '';
                 // primary and unique not necessary here, change_database_structure does not add prefix
                 $sql = "ALTER TABLE `{$prefix}$table` MODIFY COLUMN `$column->field` $type $notnull $default $autoinc";
@@ -118,14 +118,14 @@ function upgrade_mysql_fix_lob_columns() {
             $column = (object)array_change_key_case((array)$column, CASE_LOWER);
             if ($column->type === 'tinytext' or $column->type === 'mediumtext' or $column->type === 'text') {
                 $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
-                $default = !is_null($column->default) ? "DEFAULT '$column->default'" : '';
+                $default = (!is_null($column->default) and $column->default !== '') ? "DEFAULT '$column->default'" : '';
                 // primary, unique and inc are not supported for texts
                 $sql = "ALTER TABLE `{$prefix}$table` MODIFY COLUMN `$column->field` LONGTEXT $notnull $default";
                 $DB->change_database_structure($sql);
             }
             if ($column->type === 'tinyblob' or $column->type === 'mediumblob' or $column->type === 'blob') {
                 $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
-                $default = !is_null($column->default) ? "DEFAULT '$column->default'" : '';
+                $default = (!is_null($column->default) and $column->default !== '') ? "DEFAULT '$column->default'" : '';
                 // primary, unique and inc are not supported for blobs
                 $sql = "ALTER TABLE `{$prefix}$table` MODIFY COLUMN `$column->field` LONGBLOB $notnull $default";
                 $DB->change_database_structure($sql);

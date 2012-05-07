@@ -182,6 +182,7 @@ class quiz_statistics_response_analyser {
         }
 
         foreach ($rows as $row) {
+            $this->responses[$row->subqid][$row->aid][$row->response] = new stdClass();
             $this->responses[$row->subqid][$row->aid][$row->response]->count = $row->rcount;
             $this->responses[$row->subqid][$row->aid][$row->response]->fraction = $row->credit;
         }

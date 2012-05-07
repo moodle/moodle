@@ -141,7 +141,7 @@
                          get_login_url(), new moodle_url('/course/view.php', array('id'=>$course->id)));
         } else if (!is_enrolled($context)) {
             // Only people enrolled can make a choice
-            $SESSION->wantsurl = $FULLME;
+            $SESSION->wantsurl = qualified_me();
             $SESSION->enrolcancel = (!empty($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : '';
 
             $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);

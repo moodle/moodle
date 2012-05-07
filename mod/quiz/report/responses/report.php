@@ -63,7 +63,7 @@ class quiz_responses_report extends quiz_attempts_report {
 
         $this->form->set_data($options->get_initial_form_data());
 
-        if ($options->attempts == self::ALL_ATTEMPTS) {
+        if ($options->attempts == self::ALL_WITH) {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
             // are accessible, is not a security porblem.
@@ -86,7 +86,7 @@ class quiz_responses_report extends quiz_attempts_report {
             raise_memory_limit(MEMORY_EXTRA);
         }
 
-        $this->process_actions($quiz, $currentgroup, $groupstudents, $allowed);
+        $this->process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $options->get_url());
 
         // Start output.
         if (!$table->is_downloading()) {
@@ -124,7 +124,7 @@ class quiz_responses_report extends quiz_attempts_report {
         }
 
         $hasstudents = $students && (!$currentgroup || $groupstudents);
-        if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_ATTEMPTS)) {
+        if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_WITH)) {
 
             list($fields, $from, $where, $params) = $table->base_sql($allowed);
 
@@ -150,6 +150,7 @@ class quiz_responses_report extends quiz_attempts_report {
             }
 
             $this->add_user_columns($table, $columns, $headers);
+            $this->add_state_column($columns, $headers);
 
             if ($table->is_downloading()) {
                 $this->add_time_columns($columns, $headers);

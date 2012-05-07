@@ -25,6 +25,8 @@ YUI.add('moodle-course-dragdrop', function(Y) {
         DRAGSECTION.superclass.constructor.apply(this, arguments);
     };
     Y.extend(DRAGSECTION, M.core.dragdrop, {
+        sectionlistselector : null,
+
         initializer : function(params) {
             // Set group for parent class
             this.groups = ['section'];
@@ -36,8 +38,10 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                 return false;
             }
             // Initialise sections dragging
-            this.setup_for_section('.'+CSS.COURSECONTENT+' li.'+CSS.SECTION);
-            M.course.coursebase.register_module(this);
+            if (M.course.format && M.course.format.get_section_selector && typeof(M.course.format.get_section_selector) == 'function') {
+                this.sectionlistselector = '.'+CSS.COURSECONTENT+' '+M.course.format.get_section_selector(Y);
+                this.setup_for_section(this.sectionlistselector);
+            }
         },
 
          /**
@@ -131,7 +135,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
 
             // Get the list of nodes
             drag.get('dragNode').removeClass(CSS.COURSECONTENT);
-            var sectionlist = Y.Node.all('.'+CSS.COURSECONTENT+' li.'+CSS.SECTION);
+            var sectionlist = Y.Node.all(this.sectionlistselector);
 
             // Add lightbox if it not there
             var lightbox = M.util.add_lightbox(Y, dragnode);
@@ -176,16 +180,9 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                                     var sectionid = sectionlist.item(i-1).get('id');
                                     sectionlist.item(i-1).set('id', sectionlist.item(i).get('id'));
                                     sectionlist.item(i).set('id', sectionid);
-                                    // Swap left block
-                                    sectionlist.item(i-1).one('.'+CSS.LEFT).swap(sectionlist.item(i).one('.'+CSS.LEFT));
-                                    // Swap right block
-                                    sectionlist.item(i-1).one('.'+CSS.RIGHT).swap(sectionlist.item(i).one('.'+CSS.RIGHT));
-                                    // Swap menus
-                                    sectionlist.item(i-1).one('.'+CSS.SECTIONADDMENUS).swap(sectionlist.item(i).one('.'+CSS.SECTIONADDMENUS));
-                                    // Swap week dates if in weekly format
-                                    var weekdates = sectionlist.item(i-1).one('.'+CSS.WEEKDATES);
-                                    if (weekdates) {
-                                        weekdates.swap(sectionlist.item(i).one('.'+CSS.WEEKDATES));
+                                    // See what format needs to be swapped
+                                    if (M.course.format && M.course.format.swap_sections && typeof(M.course.format.swap_sections) == 'function') {
+                                        M.course.format.swap_sections(Y, i-1, i);
                                     }
                                     // Update flag
                                     swapped = true;
@@ -229,9 +226,12 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             this.parentnodeclass = CSS.SECTION;
 
             // Go through all sections
-            this.setup_for_section('.'+CSS.COURSECONTENT+' li.'+CSS.SECTION);
-            M.course.coursebase.register_module(this);
-            M.course.dragres = this;
+            if (M.course.format && M.course.format.get_section_selector && typeof(M.course.format.get_section_selector) == 'function') {
+                var sectionlistselector = '.'+CSS.COURSECONTENT+' '+M.course.format.get_section_selector(Y);
+                this.setup_for_section(sectionlistselector);
+                M.course.coursebase.register_module(this);
+                M.course.dragres = this;
+            }
         },
 
          /**
@@ -311,6 +311,8 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             var dragnode = drag.get('node');
             var dropnode = e.drop.get('node');
 
+            var sectionselector = M.course.format.get_section_selector(Y);
+
             var params = {};
 
             // Handle any variables which we must pass back through to
@@ -325,7 +327,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             params['class'] = 'resource';
             params.field = 'move';
             params.id = Number(this.get_resource_id(dragnode));
-            params.sectionId = this.get_section_id(dropnode.ancestor('li.'+CSS.SECTION));
+            params.sectionId = this.get_section_id(dropnode.ancestor(sectionselector));
 
             if (dragnode.next()) {
                 params.beforeId = Number(this.get_resource_id(dragnode.next()));
@@ -368,11 +370,11 @@ YUI.add('moodle-course-dragdrop', function(Y) {
         }
     });
 
-    M.core_course = M.core_course || {};
-    M.core_course.init_resource_dragdrop = function(params) {
+    M.course = M.course || {};
+    M.course.init_resource_dragdrop = function(params) {
         new DRAGRESOURCE(params);
     }
-    M.core_course.init_section_dragdrop = function(params) {
+    M.course.init_section_dragdrop = function(params) {
         new DRAGSECTION(params);
     }
 }, '@VERSION@', {requires:['base', 'node', 'io', 'dom', 'dd', 'moodle-core-dragdrop', 'moodle-enrol-notification', 'moodle-course-coursebase']});

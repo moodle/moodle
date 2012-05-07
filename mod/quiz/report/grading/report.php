@@ -162,8 +162,8 @@ class quiz_grading_report extends quiz_default_report {
 
         $where = "quiza.quiz = :mangrquizid AND
                 quiza.preview = 0 AND
-                quiza.timefinish <> 0";
-        $params = array('mangrquizid' => $this->cm->instance);
+                quiza.state = :statefinished";
+        $params = array('mangrquizid' => $this->cm->instance, 'statefinished' => quiz_attempt::FINISHED);
 
         $currentgroup = groups_get_activity_group($this->cm, true);
         if ($currentgroup) {
@@ -187,13 +187,14 @@ class quiz_grading_report extends quiz_default_report {
         global $DB;
 
         list($asql, $params) = $DB->get_in_or_equal($qubaids);
+        $params[] = quiz_attempt::FINISHED;
         $params[] = $this->quiz->id;
 
         $attemptsbyid = $DB->get_records_sql("
                 SELECT quiza.*, u.firstname, u.lastname, u.idnumber
                 FROM {quiz_attempts} quiza
                 JOIN {user} u ON u.id = quiza.userid
-                WHERE quiza.uniqueid $asql AND quiza.timefinish <> 0 AND quiza.quiz = ?",
+                WHERE quiza.uniqueid $asql AND quiza.state == ? AND quiza.quiz = ?",
                 $params);
 
         $attempts = array();
@@ -489,7 +490,7 @@ class quiz_grading_report extends quiz_default_report {
             $attempt = $attempts[$qubaid];
             $quba = question_engine::load_questions_usage_by_activity($qubaid);
             $attemptobj = new quiz_attempt($attempt, $this->quiz, $this->cm, $this->course);
-            $attemptobj->process_all_actions(time());
+            $attemptobj->process_submitted_actions(time());
         }
         $transaction->allow_commit();
     }

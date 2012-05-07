@@ -36,7 +36,7 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 admin_externalpage_setup('externalservicefunctions');
 
 //define nav bar
-$PAGE->set_url('/' . $CFG->admin . '/websevice/service_functions.php', array('id' => $serviceid));
+$PAGE->set_url('/' . $CFG->admin . '/webservice/service_functions.php', array('id' => $serviceid));
 $node = $PAGE->settingsnav->find('externalservices', navigation_node::TYPE_SETTING);
 if ($node) {
     $node->make_active();

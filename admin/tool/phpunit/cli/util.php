@@ -34,13 +34,14 @@ require_once(__DIR__.'/../../../../lib/phpunit/bootstraplib.php');
 // now get cli options
 list($options, $unrecognized) = cli_get_params(
     array(
-        'drop'        => false,
-        'install'     => false,
-        'buildconfig' => false,
-        'diag'        => false,
-        'phpunitdir'  => false,
-        'run'         => false,
-        'help'        => false,
+        'drop'                  => false,
+        'install'               => false,
+        'buildconfig'           => false,
+        'buildcomponentconfigs' => false,
+        'diag'                  => false,
+        'phpunitdir'            => false,
+        'run'                   => false,
+        'help'                  => false,
     ),
     array(
         'h' => 'help'
@@ -105,18 +106,21 @@ $diag = $options['diag'];
 $drop = $options['drop'];
 $install = $options['install'];
 $buildconfig = $options['buildconfig'];
+$buildcomponentconfigs = $options['buildcomponentconfigs'];
 
-if ($options['help'] or (!$drop and !$install and !$buildconfig and !$diag)) {
+if ($options['help'] or (!$drop and !$install and !$buildconfig and !$buildcomponentconfigs and !$diag)) {
     $help = "Various PHPUnit utility functions
 
 Options:
---drop                Drop database and dataroot
---install             Install database
---buildconfig         Build /phpunit.xml from /phpunit.xml.dist that includes suites for all plugins and core
---diag                Diagnose installation and return error code only
---run                 Execute PHPUnit tests (alternative for standard phpunit binary)
+--drop         Drop database and dataroot
+--install      Install database
+--diag         Diagnose installation and return error code only
+--run          Execute PHPUnit tests (alternative for standard phpunit binary)
+--buildconfig  Build /phpunit.xml from /phpunit.xml.dist that runs all tests
+--buildcomponentconfigs
+               Build distributed phpunit.xml files for each component
 
--h, --help            Print out this help
+-h, --help     Print out this help
 
 Example:
 \$/usr/bin/php lib/phpunit/tool.php --install
@@ -136,8 +140,12 @@ if ($diag) {
     if (phpunit_util::build_config_file()) {
         exit(0);
     } else {
-        phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGWARNING, 'Can not create phpunit.xml configuration file, verify dirroot permissions');
+        phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGWARNING, 'Can not create main /phpunit.xml configuration file, verify dirroot permissions');
     }
+
+} else if ($buildcomponentconfigs) {
+    phpunit_util::build_component_config_files();
+    exit(0);
 
 } else if ($drop) {
     // make sure tests do not run in parallel

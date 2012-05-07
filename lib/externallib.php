@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * Support for external API
  *
- * @package    core
- * @subpackage webservice
- * @copyright  2009 Moodle Pty Ltd (http://moodle.com)
+ * @package    core_webservice
+ * @copyright  2009 Petr Skodak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,10 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Returns detailed function information
+ *
  * @param string|object $function name of external function or record from external_function
  * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
  *                        MUST_EXIST means throw exception if no record or multiple records found
- * @return object description or false if not found or exception thrown
+ * @return stdClass description or false if not found or exception thrown
+ * @since Moodle 2.0
  */
 function external_function_info($function, $strictness=MUST_EXIST) {
     global $DB, $CFG;
@@ -77,7 +78,7 @@ function external_function_info($function, $strictness=MUST_EXIST) {
     }
 
     //now get the function description
-    //TODO: use localised lang pack descriptions, it would be nice to have
+    //TODO MDL-31115 use localised lang pack descriptions, it would be nice to have
     //      easy to understand descriptions in admin UI,
     //      on the other hand this is still a bit in a flux and we need to find some new naming
     //      conventions for these descriptions in lang packs
@@ -98,12 +99,18 @@ function external_function_info($function, $strictness=MUST_EXIST) {
 }
 
 /**
- * Exception indicating user is not allowed to use external function in
- * the current context.
+ * Exception indicating user is not allowed to use external function in the current context.
+ *
+ * @package    core_webservice
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class restricted_context_exception extends moodle_exception {
     /**
      * Constructor
+     *
+     * @since Moodle 2.0
      */
     function __construct() {
         parent::__construct('restrictedcontextexception', 'error');
@@ -112,14 +119,22 @@ class restricted_context_exception extends moodle_exception {
 
 /**
  * Base class for external api methods.
+ *
+ * @package    core_webservice
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class external_api {
+
+    /** @var stdClass context where the function calls will be restricted */
     private static $contextrestriction;
 
     /**
      * Set context restriction for all following subsequent function calls.
-     * @param stdClass $contex
-     * @return void
+     *
+     * @param stdClass $context the context restriction
+     * @since Moodle 2.0
      */
     public static function set_context_restriction($context) {
         self::$contextrestriction = $context;
@@ -130,7 +145,7 @@ class external_api {
      * that takes a longer time to finish!
      *
      * @param int $seconds max expected time the next operation needs
-     * @return void
+     * @since Moodle 2.0
      */
     public static function set_timeout($seconds=360) {
         $seconds = ($seconds < 300) ? 300 : $seconds;
@@ -142,9 +157,11 @@ class external_api {
      * invalid_parameter_exception is thrown.
      * This is a simple recursive method which is intended to be called from
      * each implementation method of external API.
+     *
      * @param external_description $description description of parameters
      * @param mixed $params the actual parameters
      * @return mixed params with added defaults for optional items, invalid_parameters_exception thrown if any problem found
+     * @since Moodle 2.0
      */
     public static function validate_parameters(external_description $description, $params) {
         if ($description instanceof external_value) {
@@ -220,9 +237,12 @@ class external_api {
      * If a response attribute is incorrect, invalid_response_exception is thrown.
      * Note: this function is similar to validate parameters, however it is distinct because
      * parameters validation must be distinct from cleaning return values.
+     *
      * @param external_description $description description of the return values
      * @param mixed $response the actual response
      * @return mixed response with added defaults for optional items, invalid_response_exception thrown if any problem found
+     * @author 2010 Jerome Mouneyrac
+     * @since Moodle 2.0
      */
     public static function clean_returnvalue(external_description $description, $response) {
         if ($description instanceof external_value) {
@@ -297,8 +317,9 @@ class external_api {
 
     /**
      * Makes sure user may execute functions in this context.
-     * @param object $context
-     * @return void
+     *
+     * @param stdClass $context
+     * @since Moodle 2.0
      */
     protected static function validate_context($context) {
         global $CFG;
@@ -333,20 +354,29 @@ class external_api {
 
 /**
  * Common ancestor of all parameter description classes
+ *
+ * @package    core_webservice
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 abstract class external_description {
-    /** @var string $description description of element */
+    /** @var string Description of element */
     public $desc;
-    /** @var bool $required element value required, null not allowed */
+
+    /** @var bool Element value required, null not allowed */
     public $required;
-    /** @var mixed $default default value */
+
+    /** @var mixed Default value */
     public $default;
 
     /**
      * Contructor
+     *
      * @param string $desc
      * @param bool $required
      * @param mixed $default
+     * @since Moodle 2.0
      */
     public function __construct($desc, $required, $default) {
         $this->desc = $desc;
@@ -356,21 +386,30 @@ abstract class external_description {
 }
 
 /**
- * Scalar alue description class
+ * Scalar value description class
+ *
+ * @package    core_webservice
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class external_value extends external_description {
-    /** @var mixed $type value type PARAM_XX */
+
+    /** @var mixed Value type PARAM_XX */
     public $type;
-    /** @var bool $allownull allow null values */
+
+    /** @var bool Allow null values */
     public $allownull;
 
     /**
      * Constructor
+     *
      * @param mixed $type
      * @param string $desc
      * @param bool $required
      * @param mixed $default
      * @param bool $allownull
+     * @since Moodle 2.0
      */
     public function __construct($type, $desc='', $required=VALUE_REQUIRED,
             $default=null, $allownull=NULL_ALLOWED) {
@@ -382,17 +421,25 @@ class external_value extends external_description {
 
 /**
  * Associative array description class
+ *
+ * @package    core_webservice
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class external_single_structure extends external_description {
-     /** @var array $keys description of array keys key=>external_description */
+
+     /** @var array Description of array keys key=>external_description */
     public $keys;
 
     /**
      * Constructor
+     *
      * @param array $keys
      * @param string $desc
      * @param bool $required
      * @param array $default
+     * @since Moodle 2.0
      */
     public function __construct(array $keys, $desc='',
             $required=VALUE_REQUIRED, $default=null) {
@@ -403,17 +450,25 @@ class external_single_structure extends external_description {
 
 /**
  * Bulk array description class.
+ *
+ * @package    core_webservice
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class external_multiple_structure extends external_description {
-     /** @var external_description $content */
+
+     /** @var external_description content */
     public $content;
 
     /**
      * Constructor
+     *
      * @param external_description $content
      * @param string $desc
      * @param bool $required
      * @param array $default
+     * @since Moodle 2.0
      */
     public function __construct(external_description $content, $desc='',
             $required=VALUE_REQUIRED, $default=null) {
@@ -424,12 +479,28 @@ class external_multiple_structure extends external_description {
 
 /**
  * Description of top level - PHP function parameters.
- * @author skodak
  *
+ * @package    core_webservice
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
  */
 class external_function_parameters extends external_single_structure {
 }
 
+/**
+ * Generate a token
+ *
+ * @param string $tokentype EXTERNAL_TOKEN_EMBEDDED|EXTERNAL_TOKEN_PERMANENT
+ * @param stdClass|int $serviceorid service linked to the token
+ * @param int $userid user linked to the token
+ * @param stdClass|int $contextorid
+ * @param int $validuntil date when the token expired
+ * @param string $iprestriction allowed ip - if 0 or empty then all ips are allowed
+ * @return string generated token
+ * @author  2010 Jamie Pratt
+ * @since Moodle 2.0
+ */
 function external_generate_token($tokentype, $serviceorid, $userid, $contextorid, $validuntil=0, $iprestriction=''){
     global $DB, $USER;
     // make sure the token doesn't exist (even if it should be almost impossible with the random generation)
@@ -474,14 +545,17 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
     $DB->insert_record('external_tokens', $newtoken);
     return $newtoken->token;
 }
+
 /**
  * Create and return a session linked token. Token to be used for html embedded client apps that want to communicate
  * with the Moodle server through web services. The token is linked to the current session for the current page request.
  * It is expected this will be called in the script generating the html page that is embedding the client app and that the
  * returned token will be somehow passed into the client app being embedded in the page.
+ *
  * @param string $servicename name of the web service. Service name as defined in db/services.php
  * @param int $context context within which the web service can operate.
  * @return int returns token id.
+ * @since Moodle 2.0
  */
 function external_create_service_token($servicename, $context){
     global $USER, $DB;

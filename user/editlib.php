@@ -47,34 +47,31 @@ function useredit_update_picture(stdClass $usernew, moodleform $userform) {
     require_once("$CFG->libdir/gdlib.php");
 
     $context = get_context_instance(CONTEXT_USER, $usernew->id, MUST_EXIST);
-    // This will hold the value to set to the user's picture field at the end of
-    // this function
-    $picturetouse = null;
+    $user = $DB->get_record('user', array('id'=>$usernew->id), 'id, picture', MUST_EXIST);
+
+    $newpicture = $user->picture;
+
     if (!empty($usernew->deletepicture)) {
         // The user has chosen to delete the selected users picture
         $fs = get_file_storage();
-        $fs->delete_area_files($context->id, 'user', 'icon'); // drop all areas
-        $picturetouse = 0;
+        $fs->delete_area_files($context->id, 'user', 'icon'); // drop all images in area
+        $newpicture = 0;
+
     } else if ($iconfile = $userform->save_temp_file('imagefile')) {
         // There is a new image that has been uploaded
         // Process the new image and set the user to make use of it.
-        // NOTE: This may be overridden by Gravatar
-        if (process_new_icon($context, 'user', 'icon', 0, $iconfile)) {
-            $picturetouse = 1;
-        }
+        // NOTE: Uploaded images always take over Gravatar
+        $newpicture = (int)process_new_icon($context, 'user', 'icon', 0, $iconfile);
         // Delete the file that has now been processed
         @unlink($iconfile);
     }
 
-    // If we have a picture to set we can now do so. Note this will still be NULL
-    // unless the user has changed their picture or caused a change by selecting
-    // to delete their picture or use gravatar
-    if (!is_null($picturetouse)) {
-        $DB->set_field('user', 'picture', $picturetouse, array('id' => $usernew->id));
+    if ($newpicture != $user->picture) {
+        $DB->set_field('user', 'picture', $newpicture, array('id' => $user->id));
         return true;
+    } else {
+        return false;
     }
-
-    return false;
 }
 
 function useredit_update_bounces($user, $usernew) {
@@ -206,7 +203,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $choices['0'] = get_string('ajaxno');
         $choices['1'] = get_string('ajaxyes');
         $mform->addElement('select', 'ajax', get_string('ajaxuse'), $choices);
-        $mform->setDefault('ajax', 0);
+        $mform->setDefault('ajax', 1);
     }
 
     $choices = array();

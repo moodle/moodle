@@ -201,6 +201,7 @@ EOD;
             $record['idnumber'] = '';
             $record['email']    = md5($record['username']);
             $record['username'] = $delname;
+            $record['picture']  = 0;
         }
 
         $userid = $DB->insert_record('user', $record);

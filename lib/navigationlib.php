@@ -934,7 +934,7 @@ class global_navigation extends navigation_node {
     /** @var array An array for containing  root navigation nodes */
     protected $rootnodes = array();
     /** @var bool A switch for whether to show empty sections in the navigation */
-    protected $showemptysections = false;
+    protected $showemptysections = true;
     /** @var bool A switch for whether courses should be shown within categories on the navigation. */
     protected $showcategories = null;
     /** @var array An array of stdClasses for users that the navigation is extended for */
@@ -1762,14 +1762,16 @@ class global_navigation extends navigation_node {
         $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
 
         $urlfunction = 'callback_'.$courseformat.'_get_section_url';
-        if (empty($CFG->navlinkcoursesections) || !function_exists($urlfunction)) {
+        if (function_exists($urlfunction)) {
+            // This code path is deprecated but we decided not to warn developers as
+            // major changes are likely to follow in 2.4. See MDL-32504.
+        } else {
             $urlfunction = null;
         }
 
-        $keyfunction = 'callback_'.$courseformat.'_request_key';
-        $key = course_get_display($course->id);
-        if (defined('AJAX_SCRIPT') && AJAX_SCRIPT == '0' && function_exists($keyfunction) && $this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
-            $key = optional_param($keyfunction(), $key, PARAM_INT);
+        $key = 0;
+        if (defined('AJAX_SCRIPT') && AJAX_SCRIPT == '0' && $this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
+            $key = optional_param('section', $key, PARAM_INT);
         }
 
         $navigationsections = array();
@@ -1789,8 +1791,13 @@ class global_navigation extends navigation_node {
                 }
 
                 $url = null;
-                if (!empty($urlfunction)) {
+                if ($urlfunction) {
+                    // pre 2.3 style format url
                     $url = $urlfunction($course->id, $section->section);
+                }else{
+                    if ($course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+                        $url = course_get_url($course, $section->section);
+                    }
                 }
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
@@ -3275,7 +3282,15 @@ class settings_navigation extends navigation_node {
 
         if (has_capability('moodle/course:update', $coursecontext)) {
             // Add the turn on/off settings
-            $url = new moodle_url('/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));
+
+            if ($this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
+                // We are on the course page, retain the current page params e.g. section.
+                $url = clone($this->page->url);
+                $url->param('sesskey', sesskey());
+            } else {
+                // Edit on the main course page.
+                $url = new moodle_url('/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));
+            }
             if ($this->page->user_is_editing()) {
                 $url->param('edit', 'off');
                 $editstring = get_string('turneditingoff');
@@ -3622,7 +3637,7 @@ class settings_navigation extends navigation_node {
      * @return navigation_node|false
      */
     protected function load_user_settings($courseid=SITEID) {
-        global $USER, $FULLME, $CFG;
+        global $USER, $CFG;
 
         if (isguestuser() || !isloggedin()) {
             return false;

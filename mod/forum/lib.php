@@ -5455,7 +5455,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
 
                 $discussion->forum = $forum->id;
 
-                forum_print_post($discussion, $discussion, $forum, $cm, $course, $ownpost, 0, $link, false);
+                forum_print_post($discussion, $discussion, $forum, $cm, $course, $ownpost, 0, $link, false,
+                        '', null, true, $forumtracked);
             break;
         }
     }

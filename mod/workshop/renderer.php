@@ -690,6 +690,30 @@ class mod_workshop_renderer extends plugin_renderer_base {
         return $this->render_workshop_assessment($assessment);
     }
 
+    /**
+     * Renders a perpage selector for workshop listings
+     *
+     * The scripts using this have to define the $PAGE->url prior to calling this
+     * and deal with eventually submitted value themselves.
+     *
+     * @param int $current current value of the perpage parameter
+     * @return string HTML
+     */
+    public function perpage_selector($current=10) {
+
+        $options = array();
+        foreach (array(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 1000) as $option) {
+            if ($option != $current) {
+                $options[$option] = $option;
+            }
+        }
+        $select = new single_select($this->page->url, 'perpage', $options, '', array('' => get_string('showingperpagechange', 'mod_workshop')));
+        $select->label = get_string('showingperpage', 'mod_workshop', $current);
+        $select->method = 'post';
+
+        return $this->output->container($this->output->render($select), 'perpagewidget');
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // Internal rendering helper methods
     ////////////////////////////////////////////////////////////////////////////

@@ -46,6 +46,9 @@ define('FIRSTUSEDEXCELROW', 3);
 define('MOD_CLASS_ACTIVITY', 0);
 define('MOD_CLASS_RESOURCE', 1);
 
+define('COURSE_DISPLAY_SINGLEPAGE', 0); // display all sections on one page
+define('COURSE_DISPLAY_MULTIPAGE', 1); // split pages into a page per section
+
 function make_log_url($module, $url) {
     switch ($module) {
         case 'course':
@@ -1274,73 +1277,6 @@ function get_all_sections($courseid) {
 }
 
 /**
- * Returns the course section to display or 0 meaning show all sections. Returns 0 for guests.
- * It also sets the $USER->display cache to array($courseid=>return value)
- *
- * @param int $courseid The course id
- * @return int Course section to display, 0 means all
- */
-function course_get_display($courseid) {
-    global $USER, $DB;
-
-    if (!isloggedin() or isguestuser()) {
-        //do not get settings in db for guests
-        return 0; //return the implicit setting
-    }
-
-    if (!isset($USER->display[$courseid])) {
-        if (!$display = $DB->get_field('course_display', 'display', array('userid' => $USER->id, 'course'=>$courseid))) {
-            $display = 0; // all sections option is not stored in DB, this makes the table much smaller
-        }
-        //use display cache for one course only - we need to keep session small
-        $USER->display = array($courseid => $display);
-    }
-
-    return $USER->display[$courseid];
-}
-
-/**
- * Show one section only or all sections.
- *
- * @param int $courseid The course id
- * @param mixed $display show only this section, 0 or 'all' means show all sections
- * @return int Course section to display, 0 means all
- */
-function course_set_display($courseid, $display) {
-    global $USER, $DB;
-
-    if ($display === 'all' or empty($display)) {
-        $display = 0;
-    }
-
-    if (!isloggedin() or isguestuser()) {
-        //do not store settings in db for guests
-        return 0;
-    }
-
-    if ($display == 0) {
-        //show all, do not store anything in database
-        $DB->delete_records('course_display', array('userid' => $USER->id, 'course' => $courseid));
-
-    } else {
-        if ($DB->record_exists('course_display', array('userid' => $USER->id, 'course' => $courseid))) {
-            $DB->set_field('course_display', 'display', $display, array('userid' => $USER->id, 'course' => $courseid));
-        } else {
-            $record = new stdClass();
-            $record->userid = $USER->id;
-            $record->course = $courseid;
-            $record->display = $display;
-            $DB->insert_record('course_display', $record);
-        }
-    }
-
-    //use display cache for one course only - we need to keep session small
-    $USER->display = array($courseid => $display);
-
-    return $display;
-}
-
-/**
  * Set highlighted section. Only one section can be highlighted at the time.
  *
  * @param int $courseid course id
@@ -1436,7 +1372,7 @@ function get_print_section_cm_text(cm_info $cm, $course) {
 /**
  * Prints a section full of activity modules
  */
-function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false) {
+function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false, $sectionreturn = false) {
     global $CFG, $USER, $DB, $PAGE, $OUTPUT;
 
     static $initialised;
@@ -1707,7 +1643,12 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $mod->groupmode = false;
                 }
                 echo '&nbsp;&nbsp;';
-                echo make_editing_buttons($mod, $absolute, true, $mod->indent, $section->section);
+
+                if ($sectionreturn) {
+                    echo make_editing_buttons($mod, $absolute, true, $mod->indent, $section->section);
+                } else {
+                    echo make_editing_buttons($mod, $absolute, true, $mod->indent, 0);
+                }
                 echo $mod->get_after_edit_icons();
             }
 
@@ -3017,10 +2958,6 @@ function move_section($course, $section, $move) {
         course_set_marker($course->id, $section);
     }
 
-    // if the focus is on the section that is being moved, then move the focus along
-    if (course_get_display($course->id) == $section) {
-        course_set_display($course->id, $sectiondest);
-    }
 
     // Fix order if needed. The database prevents duplicate sections, but it is
     // possible there could be a gap in the numbering.
@@ -3096,10 +3033,6 @@ function move_section_to($course, $section, $destination) {
         course_set_marker($course, $course->marker-1);
     }
 
-    // if the focus is on the section that is being moved, then move the focus along
-    if (course_get_display($course->id) == $section) {
-        course_set_display($course->id, $destination);
-    }
     $transaction->allow_commit();
     return true;
 }
@@ -3958,6 +3891,32 @@ function create_course($data, $editoroptions = NULL) {
 }
 
 /**
+ * Create a new course category and marks the context as dirty
+ *
+ * This function does not set the sortorder for the new category and
+ * @see{fix_course_sortorder} should be called after creating a new course
+ * category
+ *
+ * Please note that this function does not verify access control.
+ *
+ * @param object $category All of the data required for an entry in the course_categories table
+ * @return object new course category
+ */
+function create_course_category($category) {
+    global $DB;
+
+    $category->timemodified = time();
+    $category->id = $DB->insert_record('course_categories', $category);
+    $category = $DB->get_record('course_categories', array('id' => $category->id));
+
+    // We should mark the context as dirty
+    $category->context = context_coursecat::instance($category->id);
+    $category->context->mark_dirty();
+
+    return $category;
+}
+
+/**
  * Update a course.
  *
  * Please note this functions does not verify any access control,
@@ -4504,14 +4463,14 @@ function include_course_ajax($course, $modules = array(), $config = null) {
 
     // Include course dragdrop
     if ($course->id != SITEID) {
-        $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.core_course.init_section_dragdrop',
+        $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.course.init_section_dragdrop',
             array(array(
                 'courseid' => $course->id,
                 'ajaxurl' => $config->sectionurl,
                 'config' => $config,
             )), null, true);
 
-        $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.core_course.init_resource_dragdrop',
+        $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.course.init_resource_dragdrop',
             array(array(
                 'courseid' => $course->id,
                 'ajaxurl' => $config->resourceurl,
@@ -4557,4 +4516,25 @@ function include_course_ajax($course, $modules = array(), $config = null) {
     foreach ($modules as $module => $modname) {
         $PAGE->requires->string_for_js('pluginname', $module);
     }
+}
+
+/**
+ * The URL to use for the specified course (with section)
+ *
+ * @param stdClass $course The course to get the section name for
+ * @param int $sectionno The section number to return a link to
+ * @return moodle_url The url of course
+ */
+function course_get_url($course, $sectionno = null) {
+    $url = new moodle_url('/course/view.php', array('id' => $course->id));
+
+    if (!is_null($sectionno)) {
+        if ($course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+            $url->param('section', $sectionno);
+        } else {
+            $url->set_anchor('section-'.$sectionno);
+        }
+    }
+
+    return $url;
 }

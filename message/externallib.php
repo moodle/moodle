@@ -14,27 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * External message API
  *
  * @package    core_message
- * @copyright  2011 Moodle Pty Ltd (http://moodle.com)
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require_once("$CFG->libdir/externallib.php");
 
 /**
- * Message functions
+ * Message external functions
  *
  * @package    core_message
- * @copyright  2011 Moodle Pty Ltd (http://moodle.com)
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.2
  */
 class core_message_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function send_instant_messages_parameters() {
         return new external_function_parameters(
@@ -55,8 +62,9 @@ class core_message_external extends external_api {
     /**
      * Send private messages from the current USER to other users
      *
-     * @param array $messages An array of message to send
-     * @return boolean
+     * @param array $messages An array of message to send.
+     * @return array
+     * @since Moodle 2.2
      */
     public static function send_instant_messages($messages = array()) {
         global $CFG, $USER, $DB;
@@ -123,7 +131,7 @@ class core_message_external extends external_api {
             }
 
             // Check if the user is a contact
-            //TODO: performance improvement - edit the function so we can pass an array instead userid
+            //TODO MDL-31118 performance improvement - edit the function so we can pass an array instead userid
             $blocknoncontacts = get_user_preferences('message_blocknoncontacts', NULL, $message['touserid']);
             // message_blocknoncontacts option is on and current user is not in contact list
             if ($success && empty($contactlist[$message['touserid']]) && !empty($blocknoncontacts)) {
@@ -134,7 +142,7 @@ class core_message_external extends external_api {
 
             //now we can send the message (at least try)
             if ($success) {
-                //TODO: performance improvement - edit the function so we can pass an array instead one touser object
+                //TODO MDL-31118 performance improvement - edit the function so we can pass an array instead one touser object
                 $success = message_post_message($USER, $tousers[$message['touserid']], $text, FORMAT_MOODLE);
             }
 
@@ -157,7 +165,9 @@ class core_message_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.2
      */
     public static function send_instant_messages_returns() {
         return new external_multiple_structure(
@@ -174,19 +184,26 @@ class core_message_external extends external_api {
 }
 
 /**
- * Deprecated message functions
+ * Deprecated message external functions
  *
- * @deprecated since Moodle 2.2 please use core_message_external instead
- * @copyright 2011 Moodle Pty Ltd (http://moodle.com)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_message
+ * @copyright  2011 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.1
+ * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
+ * @todo MDL-31194 This will be deleted in Moodle 2.5.
+ * @see core_notes_external
  */
 class moodle_message_external extends external_api {
 
     /**
      * Returns description of method parameters
      *
-     * @deprecated since Moodle 2.2 please use core_message_external::send_instant_messages_parameters instead
      * @return external_function_parameters
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_message_external::send_instant_messages_parameters()
      */
     public static function send_instantmessages_parameters() {
         return core_message_external::send_instant_messages_parameters();
@@ -195,9 +212,12 @@ class moodle_message_external extends external_api {
     /**
      * Send private messages from the current USER to other users
      *
-     * @deprecated since Moodle 2.2 please use core_message_external::send_instant_messages instead
-     * @param array $messages  An array of message to send.
-     * @return boolean
+     * @param array $messages An array of message to send.
+     * @return array
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_message_external::send_instant_messages()
      */
     public static function send_instantmessages($messages = array()) {
         return core_message_external::send_instant_messages($messages);
@@ -206,8 +226,11 @@ class moodle_message_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @deprecated since Moodle 2.2 please use core_message_external::send_instant_messages_returns instead
      * @return external_description
+     * @since Moodle 2.1
+     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_message_external::send_instant_messages_returns()
      */
     public static function send_instantmessages_returns() {
         return core_message_external::send_instant_messages_returns();

@@ -147,7 +147,7 @@ foreach($warnings as $warning) {
     echo $OUTPUT->notification($warning);
 }
 
-$studentsperpage = $report->get_pref('studentsperpage');
+$studentsperpage = $report->get_students_per_page();
 // Don't use paging if studentsperpage is empty or 0 at course AND site levels
 if (!empty($studentsperpage)) {
     echo $OUTPUT->paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
@@ -164,7 +164,7 @@ if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback') 
     echo '<input type="hidden" value="grader" name="report"/>';
     echo '<input type="hidden" value="'.$page.'" name="page"/>';
     echo $reporthtml;
-    echo '<div class="submit"><input type="submit" value="'.s(get_string('update')).'" /></div>';
+    echo '<div class="submit"><input type="submit" id="gradersubmit" value="'.s(get_string('update')).'" /></div>';
     echo '</div></form>';
 } else {
     echo $reporthtml;

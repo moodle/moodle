@@ -18,30 +18,28 @@
     $marker      = optional_param('marker',-1 , PARAM_INT);
     $switchrole  = optional_param('switchrole',-1, PARAM_INT);
 
-    if (empty($id) && empty($name) && empty($idnumber)) {
+    $params = array();
+    if (!empty($name)) {
+        $params = array('shortname' => $name);
+    } else if (!empty($idnumber)) {
+        $params = array('idnumber' => $idnumber);
+    } else if (!empty($id)) {
+        $params = array('id' => $id);
+    }else {
         print_error('unspecifycourseid', 'error');
     }
 
-    if (!empty($name)) {
-        if (! ($course = $DB->get_record('course', array('shortname'=>$name)))) {
-            print_error('invalidcoursenameshort', 'error');
-        }
-    } else if (!empty($idnumber)) {
-        if (! ($course = $DB->get_record('course', array('idnumber'=>$idnumber)))) {
-            print_error('invalidcourseid', 'error');
-        }
-    } else {
-        if (! ($course = $DB->get_record('course', array('id'=>$id)))) {
-            print_error('invalidcourseid', 'error');
-        }
+    $course = $DB->get_record('course', $params, '*', MUST_EXIST);
+
+    $urlparams = array('id' => $course->id);
+    if ($section) {
+        $urlparams['section'] = $section;
     }
 
-    $PAGE->set_url('/course/view.php', array('id' => $course->id)); // Defined here to avoid notices on errors etc
+    $PAGE->set_url('/course/view.php', $urlparams); // Defined here to avoid notices on errors etc
 
     preload_course_contexts($course->id);
-    if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
-        print_error('nocontext');
-    }
+    $context = context_course::instance($course->id, MUST_EXIST);
 
     // Remove any switched roles before checking login
     if ($switchrole == 0 && confirm_sesskey()) {
@@ -85,6 +83,7 @@
 
     require_once($CFG->dirroot.'/calendar/lib.php');    /// This is after login because it needs $USER
 
+    //TODO: danp do we need different urls?
     add_to_log($course->id, 'course', 'view', "view.php?id=$course->id", "$course->id");
 
     $course->format = clean_param($course->format, PARAM_ALPHA);
@@ -130,10 +129,12 @@
         if (has_capability('moodle/course:update', $context)) {
             if ($hide && confirm_sesskey()) {
                 set_section_visible($course->id, $hide, '0');
+                redirect($PAGE->url);
             }
 
             if ($show && confirm_sesskey()) {
                 set_section_visible($course->id, $show, '1');
+                redirect($PAGE->url);
             }
 
             if (!empty($section)) {
@@ -142,7 +143,7 @@
                         if ($course->id == SITEID) {
                             redirect($CFG->wwwroot . '/?redirect=0');
                         } else {
-                            redirect($PAGE->url);
+                            redirect(course_get_url($course));
                         }
                     } else {
                         echo $OUTPUT->notification('An error occurred while moving a section');
@@ -154,7 +155,7 @@
         $USER->editing = 0;
     }
 
-    $SESSION->fromdiscussion = $CFG->wwwroot .'/course/view.php?id='. $course->id;
+    $SESSION->fromdiscussion = $PAGE->url->out(false);
 
 
     if ($course->id == SITEID) {
@@ -176,7 +177,7 @@
     // what to do, even though the link also appears in the course admin block.  It also
     // means you can back out of a situation where you removed the admin block. :)
     if ($PAGE->user_allowed_editing()) {
-        $buttons = $OUTPUT->edit_button(new moodle_url('/course/view.php', array('id' => $course->id)));
+        $buttons = $OUTPUT->edit_button($PAGE->url);
         $PAGE->set_button($buttons);
     }
 
@@ -224,6 +225,11 @@
             print_error('cannotcreateorfindstructs', 'error');
         }
     }
+
+    // CAUTION, hacky fundamental variable defintion to follow!
+    // Note that because of the way course fromats are constructed though
+    // inclusion we pass parameters around this way..
+    $displaysection = $section;
 
     // Include the actual course format.
     require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
