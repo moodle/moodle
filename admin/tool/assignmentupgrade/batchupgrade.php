@@ -28,6 +28,8 @@ require_once(dirname(__FILE__) . '/upgradableassignmentstable.php');
 require_once(dirname(__FILE__) . '/upgradableassignmentsbatchform.php');
 require_once($CFG->libdir . '/adminlib.php');
 
+require_sesskey();
+
 // admin_externalpage_setup calls require_login and checks moodle/site:config
 admin_externalpage_setup('assignmentupgrade', '', array(), tool_assignmentupgrade_url('batchupgrade'));
 $PAGE->navbar->add(get_string('batchupgrade', 'tool_assignmentupgrade'));

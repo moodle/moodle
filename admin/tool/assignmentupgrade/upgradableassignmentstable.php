@@ -132,7 +132,7 @@ class tool_assignmentupgrade_assignments_table extends table_sql implements rend
     function col_upgradable(stdClass $row) {
         if ($row->upgradable) {
             return html_writer::link(new moodle_url('/admin/tool/assignmentupgrade/upgradesingleconfirm.php',
-                    array('id' => $row->id)), get_string('supported', 'tool_assignmentupgrade'));
+                    array('id' => $row->id, 'sesskey' => sesskey())), get_string('supported', 'tool_assignmentupgrade'));
         } else {
             return get_string('notsupported', 'tool_assignmentupgrade');
         }
