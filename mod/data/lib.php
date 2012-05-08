@@ -3467,3 +3467,172 @@ function data_user_can_delete_preset($context, $preset) {
         return $candelete;
     }
 }
+
+/**
+ * Get all of the record ids from a database activity.
+ *
+ * @param int $dataid      The dataid of the database module.
+ * @return array $idarray  An array of record ids
+ */
+function data_get_all_recordids($dataid) {
+    global $DB;
+    $initsql = 'SELECT c.recordid
+                  FROM {data_fields} f,
+                       {data_content} c
+                 WHERE f.dataid = :dataid
+                   AND f.id = c.fieldid
+              GROUP BY c.recordid';
+    $initrecord = $DB->get_recordset_sql($initsql, array('dataid' => $dataid));
+    $idarray = array();
+    foreach ($initrecord as $data) {
+        $idarray[] = $data->recordid;
+    }
+    // Close the record set and free up resources.
+    $initrecord->close();
+    return $idarray;
+}
+
+/**
+ * Get the ids of all the records that match that advanced search criteria
+ * This goes and loops through each criterion one at a time until it either
+ * runs out of records or returns a subset of records.
+ *
+ * @param array $recordids    An array of record ids.
+ * @param array $searcharray  Contains information for the advanced search criteria
+ * @param int $dataid         The data id of the database.
+ * @return array $recordids   An array of record ids.
+ */
+function data_get_advance_search_ids($recordids, $searcharray, $dataid) {
+    $searchcriteria = array_keys($searcharray);
+    // Loop through and reduce the IDs one search criteria at a time.
+    foreach ($searchcriteria as $key) {
+        $recordids = data_get_recordids($key, $searcharray, $dataid, $recordids);
+        // If we don't have anymore IDs then stop.
+        if (!$recordids) {
+            break;
+        }
+    }
+    return $recordids;
+}
+
+/**
+ * Gets the record IDs given the search criteria
+ *
+ * @param string $alias       Record alias.
+ * @param array $searcharray  Criteria for the search.
+ * @param int $dataid         Data ID for the database
+ * @param array $recordids    An array of record IDs.
+ * @return array $nestarray   An arry of record IDs
+ */
+function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
+    global $DB;
+
+    $nestsearch = $searcharray[$alias];
+    // searching for content outside of mdl_data_content
+    if ($alias < 0) {
+        $alias = '';
+    }
+    list($insql, $params) = $DB->get_in_or_equal($recordids, SQL_PARAMS_NAMED);
+    $nestselect = 'SELECT c' . $alias . '.recordid
+                     FROM {data_content} c' . $alias . ',
+                          {data_fields} f,
+                          {data_records} r,
+                          {user} u ';
+    $nestwhere = 'WHERE u.id = r.userid
+                    AND f.id = c' . $alias . '.fieldid
+                    AND r.id = c' . $alias . '.recordid
+                    AND r.dataid = :dataid
+                    AND c' . $alias .'.recordid ' . $insql . '
+                    AND ';
+
+    $params['dataid'] = $dataid;
+    if (count($nestsearch->params) != 0) {
+        $params = array_merge($params, $nestsearch->params);
+        $nestsql = $nestselect . $nestwhere . $nestsearch->sql;
+    } else {
+        $thing = $DB->sql_like($nestsearch->field, ':search1', false);
+        $nestsql = $nestselect . $nestwhere . $thing . ' GROUP BY c' . $alias . '.recordid';
+        $params['search1'] = "%$nestsearch->data%";
+    }
+    $nestrecords = $DB->get_recordset_sql($nestsql, $params);
+    $nestarray = array();
+    foreach ($nestrecords as $data) {
+        $nestarray[] = $data->recordid;
+    }
+    // Close the record set and free up resources.
+    $nestrecords->close();
+    return $nestarray;
+}
+
+/**
+ * Returns an array with an sql string for advanced searches and the parameters that go with them.
+ *
+ * @param int $sort            DATA_*
+ * @param stdClass $data       Data module object
+ * @param array $recordids     An array of record IDs.
+ * @param string $selectdata   Information for the select part of the sql statement.
+ * @param string $sortorder    Additional sort parameters
+ * @return array sqlselect     sqlselect['sql] has the sql string, sqlselect['params'] contains an array of parameters.
+ */
+function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $sortorder) {
+    global $DB;
+    if ($sort == 0) {
+        $nestselectsql = 'SELECT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname
+                        FROM {data_content} c,
+                             {data_records} r,
+                             {user} u ';
+        $groupsql = ' GROUP BY r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
+    } else {
+        // Sorting through 'Other' criteria
+        if ($sort <= 0) {
+            switch ($sort) {
+                case DATA_LASTNAME:
+                    $sortcontentfull = "u.lastname";
+                    break;
+                case DATA_FIRSTNAME:
+                    $sortcontentfull = "u.firstname";
+                    break;
+                case DATA_APPROVED:
+                    $sortcontentfull = "r.approved";
+                    break;
+                case DATA_TIMEMODIFIED:
+                    $sortcontentfull = "r.timemodified";
+                    break;
+                case DATA_TIMEADDED:
+                default:
+                    $sortcontentfull = "r.timecreated";
+            }
+        } else {
+            $sortfield = data_get_field_from_id($sort, $data);
+            $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
+            $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
+        }
+
+        $nestselectsql = 'SELECT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' . $sortcontentfull . '
+                              AS _order
+                            FROM {data_content} c,
+                                 {data_records} r,
+                                 {user} u ';
+        $groupsql = ' GROUP BY r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' .$sortcontentfull;
+    }
+    $nestfromsql = 'WHERE c.recordid = r.id
+                      AND r.dataid = :dataid
+                      AND r.userid = u.id';
+
+    // Find the field we are sorting on
+    if ($sort > 0 or data_get_field_from_id($sort, $data)) {
+        $nestfromsql .= ' AND c.fieldid = :sort';
+    }
+
+    // If there are no record IDs then return an sql statment that will return no rows.
+    if (count($recordids) != 0) {
+        list($insql, $inparam) = $DB->get_in_or_equal($recordids, SQL_PARAMS_NAMED);
+    } else {
+        list($insql, $inparam) = $DB->get_in_or_equal(array('-1'), SQL_PARAMS_NAMED);
+    }
+    $nestfromsql .= ' AND c.recordid ' . $insql . $groupsql;
+    $nestfromsql = "$nestfromsql $selectdata";
+    $sqlselect['sql'] = "$nestselectsql $nestfromsql $sortorder";
+    $sqlselect['params'] = $inparam;
+    return $sqlselect;
+}
