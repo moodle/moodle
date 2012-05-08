@@ -447,3 +447,128 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
     }
 }
 
+
+/**
+ * Class representing the virtual node with all itemids in the file browser
+ *
+ * @category  files
+ * @copyright 2012 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class glossary_file_info_container extends file_info {
+    /** @var file_browser */
+    protected $browser;
+    /** @var stdClass */
+    protected $course;
+    /** @var stdClass */
+    protected $cm;
+    /** @var string */
+    protected $component;
+    /** @var stdClass */
+    protected $context;
+    /** @var array */
+    protected $areas;
+    /** @var string */
+    protected $filearea;
+
+    /**
+     * Constructor (in case you did not realize it ;-)
+     *
+     * @param file_browser $browser
+     * @param stdClass $course
+     * @param stdClass $cm
+     * @param stdClass $context
+     * @param array $areas
+     * @param string $filearea
+     */
+    public function __construct($browser, $course, $cm, $context, $areas, $filearea) {
+        parent::__construct($browser, $context);
+        $this->browser = $browser;
+        $this->course = $course;
+        $this->cm = $cm;
+        $this->component = 'mod_glossary';
+        $this->context = $context;
+        $this->areas = $areas;
+        $this->filearea = $filearea;
+    }
+
+    /**
+     * @return array with keys contextid, filearea, itemid, filepath and filename
+     */
+    public function get_params() {
+        return array(
+            'contextid' => $this->context->id,
+            'component' => $this->component,
+            'filearea' => $this->filearea,
+            'itemid' => null,
+            'filepath' => null,
+            'filename' => null,
+        );
+    }
+
+    /**
+     * Can new files or directories be added via the file browser
+     *
+     * @return bool
+     */
+    public function is_writable() {
+        return false;
+    }
+
+    /**
+     * Should this node be considered as a folder in the file browser
+     *
+     * @return bool
+     */
+    public function is_directory() {
+        return true;
+    }
+
+    /**
+     * Returns localised visible name of this node
+     *
+     * @return string
+     */
+    public function get_visible_name() {
+        return $this->areas[$this->filearea];
+    }
+
+    /**
+     * Returns list of children nodes
+     *
+     * @return array of file_info instances
+     */
+    public function get_children() {
+        global $DB;
+
+        $sql = "SELECT DISTINCT f.itemid, ge.concept
+                  FROM {files} f
+                  JOIN {modules} m ON (m.name = 'glossary' AND m.visible = 1)
+                  JOIN {course_modules} cm ON (cm.module = m.id AND cm.id = ?)
+                  JOIN {glossary} g ON g.id = cm.instance
+                  JOIN {glossary_entries} ge ON (ge.glossaryid = g.id AND ge.id = f.itemid)
+                 WHERE f.contextid = ? AND f.component = ? AND f.filearea = ?
+              ORDER BY ge.concept, f.itemid";
+        $params = array($this->context->instanceid, $this->context->id, $this->component, $this->filearea);
+
+        $rs = $DB->get_recordset_sql($sql, $params);
+        $children = array();
+        foreach ($rs as $file) {
+            if ($child = $this->browser->get_file_info($this->context, 'mod_glossary', $this->filearea, $file->itemid)) {
+                $children[] = $child;
+            }
+        }
+        $rs->close();
+
+        return $children;
+    }
+
+    /**
+     * Returns parent file_info instance
+     *
+     * @return file_info or null for root
+     */
+    public function get_parent() {
+        return $this->browser->get_file_info($this->context);
+    }
+}
