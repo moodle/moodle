@@ -32,6 +32,7 @@ $string['advancedsearch'] = 'Advanced search';
 $string['alttext'] = 'Alternative text';
 $string['approve'] = 'Approve';
 $string['approved'] = 'Approved';
+$string['areacontent'] = 'Fields';
 $string['ascending'] = 'Ascending';
 $string['asearchtemplate'] = 'Advanced search template';
 $string['atmaxentry'] = 'You have entered the maximum number of entries allowed!';

@@ -2865,6 +2865,10 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0)
     return $exportdata;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// File API                                                                   //
+////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Lists all browsable file areas
  *
@@ -2876,8 +2880,7 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0)
  * @return array
  */
 function data_get_file_areas($course, $cm, $context) {
-    $areas = array();
-    return $areas;
+    return array('content' => get_string('areacontent', 'mod_data'));
 }
 
 /**
@@ -2901,55 +2904,65 @@ function mod_data_get_file_info($browser, $areas, $course, $cm, $context, $filea
         return null;
     }
 
-    if ($filearea === 'content') {
-        if (!$content = $DB->get_record('data_content', array('id'=>$itemid))) {
-            return null;
-        }
-
-        if (!$field = $DB->get_record('data_fields', array('id'=>$content->fieldid))) {
-            return null;
-        }
-
-        if (!$record = $DB->get_record('data_records', array('id'=>$content->recordid))) {
-            return null;
-        }
-
-        if (!$data = $DB->get_record('data', array('id'=>$field->dataid))) {
-            return null;
-        }
-
-        //check if approved
-        if ($data->approval and !$record->approved and !data_isowner($record) and !has_capability('mod/data:approve', $context)) {
-            return null;
-        }
-
-        // group access
-        if ($record->groupid) {
-            $groupmode = groups_get_activity_groupmode($cm, $course);
-            if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
-                if (!groups_is_member($record->groupid)) {
-                    return null;
-                }
-            }
-        }
-
-        $fieldobj = data_get_field($field, $data, $cm);
-
-        $filepath = is_null($filepath) ? '/' : $filepath;
-        $filename = is_null($filename) ? '.' : $filename;
-        if (!$fieldobj->file_ok($filepath.$filename)) {
-            return null;
-        }
-
-        $fs = get_file_storage();
-        if (!($storedfile = $fs->get_file($context->id, 'mod_data', $filearea, $itemid, $filepath, $filename))) {
-            return null;
-        }
-        $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        return new file_info_stored($browser, $context, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
+    if (!isset($areas[$filearea])) {
+        return null;
     }
 
-    return null;
+    if (!has_capability('moodle/course:managefiles', $context)) {
+        return null;
+    }
+
+    if (is_null($itemid)) {
+        require_once($CFG->dirroot.'/mod/data/locallib.php');
+        return new data_file_info_container($browser, $course, $cm, $context, $areas, $filearea);
+    }
+
+    if (!$content = $DB->get_record('data_content', array('id'=>$itemid))) {
+        return null;
+    }
+
+    if (!$field = $DB->get_record('data_fields', array('id'=>$content->fieldid))) {
+        return null;
+    }
+
+    if (!$record = $DB->get_record('data_records', array('id'=>$content->recordid))) {
+        return null;
+    }
+
+    if (!$data = $DB->get_record('data', array('id'=>$field->dataid))) {
+        return null;
+    }
+
+    //check if approved
+    if ($data->approval and !$record->approved and !data_isowner($record) and !has_capability('mod/data:approve', $context)) {
+        return null;
+    }
+
+    // group access
+    if ($record->groupid) {
+        $groupmode = groups_get_activity_groupmode($cm, $course);
+        if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+            if (!groups_is_member($record->groupid)) {
+                return null;
+            }
+        }
+    }
+
+    $fieldobj = data_get_field($field, $data, $cm);
+
+    $filepath = is_null($filepath) ? '/' : $filepath;
+    $filename = is_null($filename) ? '.' : $filename;
+    if (!$fieldobj->file_ok($filepath.$filename)) {
+        return null;
+    }
+
+    $fs = get_file_storage();
+    if (!($storedfile = $fs->get_file($context->id, 'mod_data', $filearea, $itemid, $filepath, $filename))) {
+        return null;
+    }
+    $urlbase = $CFG->wwwroot.'/pluginfile.php';
+
+    return new file_info_stored($browser, $context, $storedfile, $urlbase, $itemid, true, true, false, false);
 }
 
 /**
