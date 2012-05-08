@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the drag-and-drop words into sentences question type.
+ * Unit tests for the drag-and-drop onto image question type.
  *
- * @package    qtype
- * @subpackage ddimageortext
+ * @package    qtype_ddimageortext
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +30,7 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/simpletest/helper.php
 
 
 /**
- * Unit tests for the drag-and-drop words into sentences question type.
+ * Unit tests for the drag-and-drop onto image question type.
  *
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

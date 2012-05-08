@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question type class for the drag-and-drop images onto images question type.
+ * Question type class for the drag-and-drop onto image question type.
  *
- * @package    qtype
- * @subpackage ddimageortext
+ * @package    qtype_ddimageortext
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +33,7 @@ define('QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXWIDTH', 150);
 define('QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT', 100);
 
 /**
- * The drag-and-drop words into sentences question type class.
+ * The drag-and-drop onto image question type class.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -158,6 +157,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
         }
 
         $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
     }
 
     /**
@@ -179,10 +179,11 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
         }
 
         $this->delete_files_in_combined_feedback($questionid, $contextid);
+        $this->delete_files_in_hints($questionid, $contextid);
     }
 
 
-    public function export_to_xml($question, $format, $extra = null) {
+    public function export_to_xml($question, qformat_xml $format, $extra = null) {
         $fs = get_file_storage();
         $contextid = $question->contextid;
         $output = '';
@@ -222,7 +223,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
         return $output;
     }
 
-    public function import_from_xml($data, $question, $format, $extra=null) {
+    public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
         if (!isset($data['@']['type']) || $data['@']['type'] != 'ddimageortext') {
             return false;
         }
