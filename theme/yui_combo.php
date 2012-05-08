@@ -209,12 +209,17 @@ function combo_not_found($message = '') {
 }
 
 function combo_params() {
-    // note: buggy or misconfigured IIS does return the query string in REQUEST_URL
-    if (isset($_SERVER['REQUEST_URI']) and strpos($_SERVER['REQUEST_URI'], '?') !== false) {
+    if (isset($_SERVER['QUERY_STRING']) and strpos($_SERVER['QUERY_STRING'], 'file=/') === 0) {
+        // url rewriting
+        $slashargument = substr($_SERVER['QUERY_STRING'], 6);
+        return array($slashargument, true);
+
+    } else if (isset($_SERVER['REQUEST_URI']) and strpos($_SERVER['REQUEST_URI'], '?') !== false) {
         $parts = explode('?', $_SERVER['REQUEST_URI'], 2);
         return array($parts[1], false);
 
     } else if (isset($_SERVER['QUERY_STRING']) and strpos($_SERVER['QUERY_STRING'], '?') !== false) {
+        // note: buggy or misconfigured IIS does return the query string in REQUEST_URI
         return array($_SERVER['QUERY_STRING'], false);
 
     } else if ($slashargument = min_get_slash_argument()) {
