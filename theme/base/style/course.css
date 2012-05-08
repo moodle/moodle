@@ -18,6 +18,7 @@
 #page-site-index .headingblock {margin-bottom: 9px;}
 #page-site-index .clearfloat {float: none;clear: both; height:0px;}
 
+.path-course-view a.reduce-sections {padding-left: 0.2em;}
 .path-course-view .headingblock {margin-bottom: 9px;}
 .path-course-view .subscribelink {text-align:right;}
 .path-course-view .unread {margin-left: 3em;}

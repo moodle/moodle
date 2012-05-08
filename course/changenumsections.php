@@ -15,23 +15,43 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This script allows the number of sections in a course to be increased
+ * or decreased, redirecting to the course page.
+ *
+ * @package core_course
+ * @copyright 2012 Dan Poltawski
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.3
+ */
 
 require_once(dirname(__FILE__).'/../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
+$increase = optional_param('increase', true, PARAM_BOOL);
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-$PAGE->set_url('/course/addsection.php', array('courseid' => $courseid));
+$PAGE->set_url('/course/changenumsections.php', array('courseid' => $courseid));
 
 // Authorisation checks.
 require_login($course);
 require_capability('moodle/course:update', context_course::instance($course->id));
 require_sesskey();
 
-// Add an additional section.
-$course->numsections++;
-$DB->update_record('course', $course);
+if ($increase) {
+    // Add an additional section.
+    $course->numsections++;
+} else {
+    // Remove a section.
+    $course->numsections--;
+}
+
+// Don't go less than 0, intentionally redirect silently (for the case of
+// double clicks).
+if ($course->numsections >= 0) {
+    $DB->update_record('course', $course);
+}
 
 // Redirect to where we were..
 redirect(course_get_url($course));
