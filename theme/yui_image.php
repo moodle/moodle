@@ -38,6 +38,7 @@ if ($slashargument = min_get_slash_argument()) {
     $path = min_optional_param('file', '', 'SAFEPATH');
 }
 
+$etag = sha1($path);
 $parts = explode('/', $path);
 $version = array_shift($parts);
 
@@ -84,7 +85,7 @@ switch($pathinfo['extension']) {
 // if they are requesting a revision that's not -1, and they have supplied an
 // If-Modified-Since header, we can send back a 304 Not Modified since the
 // content never changes (the rev number is increased any time the content changes)
-if (strpos($parts, '/-1/') === false and (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))) {
+if (strpos($path, '/-1/') === false and (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))) {
     $lifetime = 60*60*24*360; // 1 year, we do not change YUI versions often, there are a few custom yui modules
     header('HTTP/1.1 304 Not Modified');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($imagepath)) .' GMT');
