@@ -523,10 +523,12 @@ class restore_process_course_modules_availability extends restore_execution_step
         foreach($rs as $availrec) {
             $allmatchesok = true;
             // Get the complete availabilityobject
-            $availability = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'module_availability', $availrec->itemid)->info;
+            $availability = restore_dbops::get_backup_ids_record($this->get_restoreid(),
+                'module_availability', $availrec->itemid)->info;
             // Map the sourcecmid if needed and possible
             if (!empty($availability->sourcecmid)) {
-                $newcm = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'course_module', $availability->sourcecmid);
+                $newcm = restore_dbops::get_backup_ids_record($this->get_restoreid(),
+                    'course_module', $availability->sourcecmid);
                 if ($newcm) {
                     $availability->sourcecmid = $newcm->newitemid;
                 } else {
@@ -535,7 +537,8 @@ class restore_process_course_modules_availability extends restore_execution_step
             }
             // Map the gradeitemid if needed and possible
             if (!empty($availability->gradeitemid)) {
-                $newgi = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'grade_item', $availability->gradeitemid);
+                $newgi = restore_dbops::get_backup_ids_record($this->get_restoreid(),
+                    'grade_item', $availability->gradeitemid);
                 if ($newgi) {
                     $availability->gradeitemid = $newgi->newitemid;
                 } else {
@@ -551,7 +554,8 @@ class restore_process_course_modules_availability extends restore_execution_step
         $params = array('backupid' => $this->get_restoreid(), 'itemname' => 'module_availability_field');
         $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid');
         foreach($rs as $availrec) {
-            $availability = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'module_availability_field', $availrec->itemid)->info;
+            $availability = restore_dbops::get_backup_ids_record($this->get_restoreid(),
+                'module_availability_field', $availrec->itemid)->info;
             $DB->insert_record('course_modules_avail_fields', $availability);
         }
         $rs->close();

@@ -263,8 +263,8 @@ abstract class moodleform_mod extends moodleform {
             foreach($fullcm->conditionsfield as $field=>$details) {
                 $groupelements=$mform->getElement('conditionfieldgroup['.$num.']')->getElements();
                 $groupelements[0]->setValue($field);
-                $groupelements[1]->setValue(is_null($details->operator)?'':$details->operator);
-                $groupelements[2]->setValue(is_null($details->value)?'':($details->value));
+                $groupelements[1]->setValue(is_null($details->operator) ? '' : $details->operator);
+                $groupelements[2]->setValue(is_null($details->value) ? '' : $details->value);
                 $num++;
             }
 
@@ -533,7 +533,7 @@ abstract class moodleform_mod extends moodleform {
                 $ci = new condition_info($this->_cm, CONDITION_MISSING_EXTRATABLE);
                 $this->_cm = $ci->get_full_course_module();
                 $count = count($this->_cm->conditionsgrade)+1;
-                $fieldcount = count($this->_cm->conditionsfield)+1;
+                $fieldcount = count($this->_cm->conditionsfield) + 1;
             } else {
                 $count = 1;
                 $fieldcount = 1;
@@ -575,7 +575,7 @@ abstract class moodleform_mod extends moodleform {
                     }
                 }
                 asort($completionoptions);
-                $completionoptions = array(0=>$strnone)+$completionoptions;
+                $completionoptions = array(0=>$strnone) + $completionoptions;
 
                 $completionvalues=array(
                     COMPLETION_COMPLETE=>get_string('completion_complete','condition'),

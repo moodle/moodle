@@ -50,6 +50,36 @@ define('CONDITION_MISSING_EXTRATABLE', 1);
  */
 define('CONDITION_MISSING_EVERYTHING', 2);
 
+/**
+ * OP_CONTAINS - comparison operator that determines whether a specified user field contains
+ * a provided variable
+ */
+define('OP_CONTAINS', get_string('contains', 'filters'));
+/**
+ * OP_DOES_NOT_CONTAIN - comparison operator that determines whether a specified user field does not
+ * contain a provided variable
+ */
+define('OP_DOES_NOT_CONTAIN', get_string('doesnotcontain', 'filters'));
+/**
+ * OP_IS_EQUAL_TO - comparison operator that determines whether a specified user field is equal to
+ * a provided variable
+ */
+define('OP_IS_EQUAL_TO', get_string('isequalto', 'filters'));
+/**
+ * OP_STARTS_WITH - comparison operator that determines whether a specified user field starts with
+ * a provided variable
+ */
+define('OP_STARTS_WITH', get_string('startswith', 'filters'));
+/**
+ * OP_ENDS_WITH - comparison operator that determines whether a specified user field ends with
+ * a provided variable
+ */
+define('OP_ENDS_WITH', get_string('endswith', 'filters'));
+/**
+ * OP_IS_EMPTY - comparison operator that determines whether a specified user field is empty
+ */
+define('OP_IS_EMPTY', get_string('isempty', 'filters'));
+
 require_once($CFG->libdir.'/completionlib.php');
 
 /**
@@ -474,30 +504,32 @@ abstract class condition_info_base {
                 }
             }
             // For user fields
-            $conditions = $DB->get_records_sql($sql="
-SELECT
-    cma.*
-FROM
-    {course_modules_avail_fields} cma
-WHERE
-    coursemoduleid=?",array($cm->id));
-            foreach ($conditions as $condition) {
-                // If the condition field is numeric, check
-                // the user profile field is available
-                if (is_numeric($condition->field)) {
-                    if ($field = $DB->get_record('user_info_field', array('id'=>$condition->field))) {
-                        $fieldname = $field->name;
+            $sql = "SELECT cma.id as cmaid, cma.*, uf.*
+                        FROM {course_modules_avail_fields} cma
+                        LEFT JOIN {user_info_field} uf
+                        ON cma.customfieldid =  uf.id
+                        WHERE coursemoduleid= :cmid";
+            if ($conditions = $DB->get_records_sql($sql, array('cmid'=>$cm->id))) {
+                foreach ($conditions as $condition) {
+                    // If the condition field is numeric, check
+                    // the user profile field is available
+                    if (!empty($condition->customfieldid)) {
+                        $field = $condition->customfieldid;
+                        if (!empty($condition->name)) {
+                            $fieldname = $condition->name;
+                        } else {
+                            $fieldname = '!missing';
+                        }
                     } else {
-                        $fieldname = '!missing';
+                        $field = $condition->userfield;
+                        $fieldname = $condition->userfield;
                     }
-                } else {
-                    $fieldname = $condition->field;
+                    $details = new stdClass;
+                    $details->fieldname = $fieldname;
+                    $details->operator = $condition->operator;
+                    $details->value = $condition->value;
+                    $cm->conditionsfield[$field] = $details;
                 }
-                $details = new stdClass;
-                $details->fieldname = $fieldname;
-                $details->operator = $condition->operator;
-                $details->value = $condition->value;
-                $cm->conditionsfield[$condition->field] = $details;
             }
         }
     }
@@ -536,48 +568,48 @@ WHERE
      * The operators that provide the relationship
      * between a field and a value.
      *
-     * @return array
+     * @return array Associative array from operator constant to display name
      */
-    public function get_condition_user_field_operators() {
+    public static function get_condition_user_field_operators() {
         return array(
-                0 => get_string('contains', 'filters'),
-                1 => get_string('doesnotcontain','filters'),
-                2 => get_string('isequalto','filters'),
-                3 => get_string('startswith','filters'),
-                4 => get_string('endswith','filters'),
-                5 => get_string('isempty','filters')
-            );
+            OP_CONTAINS => OP_CONTAINS,
+            OP_DOES_NOT_CONTAIN => OP_DOES_NOT_CONTAIN,
+            OP_IS_EQUAL_TO => OP_IS_EQUAL_TO,
+            OP_STARTS_WITH => OP_STARTS_WITH,
+            OP_ENDS_WITH => OP_ENDS_WITH,
+            OP_IS_EMPTY => OP_IS_EMPTY
+        );
     }
 
     /**
      * The user fields we can compare
      *
      * @global $DB
-     * @return array
+     * @return array Associative array from user field constants to display name
      */
-    public function get_condition_user_fields() {
+    public static function get_condition_user_fields() {
         global $DB;
 
         $userfields = array(
-                'firstname' => get_string('firstname'),
-                'lastname' => get_string('lastname'),
-                'email' => get_string('email'),
-                'city' => get_string('city'),
-                'country' => get_string('country'),
-                'interests' => get_string('interests'),
-                'url' => get_string('webpage'),
-                'icq' => get_string('icqnumber'),
-                'skype' => get_string('skypeid'),
-                'aim' => get_string('aimid'),
-                'yahoo' => get_string('yahooid'),
-                'msn' => get_string('msnid'),
-                'idnumber' => get_string('idnumber'),
-                'institution' => get_string('institution'),
-                'department' => get_string('department'),
-                'phone' => get_string('phone'),
-                'phone2' => get_string('phone2'),
-                'address' => get_string('address')
-            );
+            'firstname' => get_user_field_name('firstname'),
+            'lastname' => get_user_field_name('lastname'),
+            'email' => get_user_field_name('email'),
+            'city' => get_user_field_name('city'),
+            'country' => get_user_field_name('country'),
+            'interests' => get_user_field_name('interests'),
+            'url' => get_user_field_name('url'),
+            'icq' => get_user_field_name('icq'),
+            'skype' => get_user_field_name('skype'),
+            'aim' => get_user_field_name('aim'),
+            'yahoo' => get_user_field_name('yahoo'),
+            'msn' => get_user_field_name('msn'),
+            'idnumber' => get_user_field_name('idnumber'),
+            'institution' => get_user_field_name('institution'),
+            'department' => get_user_field_name('department'),
+            'phone' => get_user_field_name('phone'),
+            'phone2' => get_user_field_name('phone2'),
+            'address' => get_user_field_name('address')
+        );
 
         // Go through the custom profile fields now
         if ($user_info_fields = $DB->get_records('user_info_field')) {
@@ -620,11 +652,17 @@ WHERE
     public function add_user_field_condition($field, $operator, $value) {
         // Add to DB
         global $DB;
-        $DB->insert_record('course_modules_avail_fields',
-            (object)array('coursemoduleid'=>$this->cm->id,
-                'field'=>$field,'operator'=>$operator,
-                'value'=>$value),
-            false);
+
+        $objavailfield = new stdClass;
+        $objavailfield->coursemoduleid = $this->cm->id;
+        if (is_numeric($field)) { // If the condition field is numeric then it is a custom profile field
+            $objavailfield->customfieldid = $field;
+        } else {
+            $objavailfield->userfield = $field;
+        }
+        $objavailfield->operator = $operator;
+        $objavailfield->value = $value;
+        $DB->insert_record('course_modules_avail_fields', $objavailfield, false);
 
         // Store in memory too
         $this->cm->conditionsfield[$field] = (object)array(
@@ -746,11 +784,10 @@ WHERE
         // User field conditions
         if (count($this->cm->conditionsfield)>0) {
             // Need the array of operators
-            $arroperators = $this->get_condition_user_field_operators();
             foreach ($this->cm->conditionsfield as $field=>$details) {
                 $a = new stdclass;
                 $a->field = $details->fieldname;
-                $a->operator = $arroperators[$details->operator];
+                $a->operator = $details->operator;
                 $a->value = $details->value;
                 $information .= get_string('requires_user_field_restriction', 'condition', $a);
             }
@@ -950,59 +987,17 @@ WHERE
 
         // Check if user field condition
         if (count($this->cm->conditionsfield)>0) {
-            $arroperators = $this->get_condition_user_field_operators();
             foreach ($this->cm->conditionsfield as $field=>$details) {
                 // Need the array of operators
                 $operator = $details->operator;
                 $value = $details->value;
                 $uservalue = $this->get_cached_user_profile_field($userid, $field, $grabthelot);
-                // Assume that it passed
-                $fieldconditionmet = true;
-                switch($operator) {
-                    case 0: // contains
-                        $pos = strpos($uservalue, $value);
-                        if ($pos === false) {
-                            $fieldconditionmet = false;
-                        }
-                        break;
-                    case 1: // does not contain
-                        if (!empty($value)) {
-                            $pos = strpos($uservalue, $value);
-                            if ($pos !== false) {
-                                $fieldconditionmet = false;
-                            }
-                        }
-                        break;
-                    case 2: // equal to
-                        if ($value !== $uservalue) {
-                            $fieldconditionmet = false;
-                        }
-                        break;
-                    case 3: // starts with
-                        $length = strlen($value);
-                        if ((substr($uservalue, 0, $length) !== $value)) {
-                            $fieldconditionmet = false;
-                        }
-                        break;
-                    case 4: // ends with
-                        $length = strlen($value);
-                        $start  = $length * -1; //negative
-                        if (substr($uservalue, $start) !== $value) {
-                            $fieldconditionmet = false;
-                        }
-                        break;
-                    case 5: // empty
-                        if (!empty($uservalue)) {
-                            $fieldconditionmet = false;
-                        }
-                        break;
-                }
-                if (!$fieldconditionmet) {
+                if (!$fieldconditionmet = $this->field_condition_met($operator, $uservalue, $value)) {
                     // Set available to false
                     $available = false;
                     $a = new stdClass();
                     $a->field = $details->fieldname;
-                    $a->operator = $arroperators[$operator];
+                    $a->operator = $operator;
                     $a->value = $details->value;
                     $information .= get_string('requires_user_field_restriction', 'condition', $a).' ';
                 }
@@ -1171,17 +1166,66 @@ WHERE
     }
 
     /**
+     * Returns true if a field meets the required conditions, false otherwise.
+     *
+     * @param char $operator the requirement/condition
+     * @param char $uservalue the user's value
+     * @param char $value the value required
+     * @return boolean
+     */
+    private function field_condition_met($operator, $uservalue, $value) {
+        $fieldconditionmet = true;
+        switch($operator) {
+            case OP_CONTAINS: // contains
+                $pos = strpos($uservalue, $value);
+                if ($pos === false) {
+                    $fieldconditionmet = false;
+                }
+                break;
+            case OP_DOES_NOT_CONTAIN: // does not contain
+                if (!empty($value)) {
+                    $pos = strpos($uservalue, $value);
+                    if ($pos !== false) {
+                        $fieldconditionmet = false;
+                    }
+                }
+                break;
+            case OP_IS_EQUAL_TO: // equal to
+                if ($value !== $uservalue) {
+                    $fieldconditionmet = false;
+                }
+                break;
+                case OP_STARTS_WITH: // starts with
+                $length = strlen($value);
+                if ((substr($uservalue, 0, $length) !== $value)) {
+                    $fieldconditionmet = false;
+                }
+                break;
+            case OP_ENDS_WITH: // ends with
+                $length = strlen($value);
+                $start  = $length * -1; //negative
+                if (substr($uservalue, $start) !== $value) {
+                    $fieldconditionmet = false;
+                }
+                break;
+            case OP_IS_EMPTY: // is empty
+                if (!empty($uservalue)) {
+                    $fieldconditionmet = false;
+                }
+                break;
+        }
+        return $fieldconditionmet;
+    }
+
+    /**
      * Return the value for a user's profile field
      *
-     * @global object
-     * @global object
-     * @global object
-     * @param int $userid Set if requesting grade for a different user (does
+     * @param int $userid set if requesting grade for a different user (does
      *   not use cache)
      * @param int $fieldid the user profile field id
      * @param bool $grabthelot If true, grabs all the user profile fields for
      *  current user on this course, so that later ones come from cache
-     * @return string the user value
+     * @return string the user value, or false if user does not have a user field value yet
      */
     private function get_cached_user_profile_field($userid, $fieldid, $grabthelot) {
         global $USER, $DB, $SESSION;
@@ -1197,67 +1241,53 @@ WHERE
                 if (!array_key_exists($fieldid, $SESSION->userfieldcache)) {
                     if ($grabthelot) {
                         // Get all custom profile field values for user
-                        $rs = $DB->get_recordset_sql("
-SELECT
-    uf.id, ud.data
-FROM
-    {user_info_field} uf
-    LEFT JOIN {user_info_data} ud
-    ON uf.id = ud.fieldid
-WHERE
-    ud.userid=?", array($USER->id));
-                        foreach ($rs as $record) {
-                            $SESSION->userfieldcache[$record->id] = $record->data;
-                        }
-                        $rs->close();
-                        // And if it's still not set, well it doesn't exist (eg
-                        // the user may have no entry for the profile field)
-                        if (!array_key_exists($fieldid, $SESSION->userfieldcache)) {
-                            $SESSION->userfieldcache[$fieldid] = false;
+                        $sql = "SELECT uf.id, ud.data
+                                    FROM {user_info_field} uf
+                                    LEFT JOIN {user_info_data} ud
+                                    ON uf.id = ud.fieldid
+                                    WHERE ud.userid = :userid";
+                        if ($records = $DB->get_records_sql($sql, array('userid'=>$USER->id))) {
+                            foreach ($records as $r) {
+                                $SESSION->userfieldcache[$r->id] = $r->data;
+                            }
                         }
                     } else {
                         // Just get specified user field
-                        if ($record = $DB->get_record_sql("
-SELECT
-    ud.data
-FROM
-    {user_info_data} ud
-    INNER JOIN {user_info_field} uf
-    ON ud.fieldid = uf.id
-WHERE
-    uf.id = ?
-AND
-    ud.userid = ?", array($fieldid, $USER->id))) {
+                        $sql = "SELECT ud.data
+                                    FROM {user_info_data} ud
+                                    INNER JOIN {user_info_field} uf
+                                    ON ud.fieldid = uf.id
+                                    WHERE uf.id = :fieldid
+                                    AND ud.userid = :userid";
+                        if ($record = $DB->get_record_sql($sql, array('fieldid'=>$fieldid, 'userid'=>$USER->id))) {
                             $field = $record->data;
                         } else {
                             $field = false;
                         }
-                        $SESSION->userfieldcache[$fieldid]=$field;
+                        $SESSION->userfieldcache[$fieldid] = $field;
                     }
                 }
-                return $SESSION->userfieldcache[$fieldid];
+                if (!empty($SESSION->userfieldcache[$fieldid])) {
+                    return $SESSION->userfieldcache[$fieldid];
+                } else {
+                    return false;
+                }
             } else {
                 return $USER->$fieldid;
             }
         } else {
             if ($iscustomprofilefield) {
-                if ($record = $DB->get_record_sql("
-SELECT
-    ud.data
-FROM
-    {user_info_data} ud
-    INNER JOIN {user_info_field} uf
-    ON ud.fieldid = uf.id
-WHERE
-    uf.id = ?
-AND
-    ud.userid = ?", array($fieldid, $userid))) {
-                        return $record->data;
-                    }
-            } else {
-                if ($user = $DB->get_record('user', array('id' => $userid), $fieldid)) {
-                    return $user->$fieldid;
+                $sql = "SELECT ud.data
+                            FROM {user_info_data} ud
+                            INNER JOIN {user_info_field} uf
+                            ON ud.fieldid = uf.id
+                            WHERE uf.id = :fieldid
+                            AND ud.userid = :userid";
+                if ($record = $DB->get_record_sql($sql, array('fieldid'=>$fieldid, 'userid'=>$userid))) {
+                    return $record->data;
                 }
+            } else {
+                return $DB->get_field('user', $fieldid, array('id'=>$userid), MUST_EXIST);
             }
             // If it reaches here, then no matches found
             return false;
