@@ -4,6 +4,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     var CSS = {
         ACTIVITYLI : 'li.activity',
         COMMANDSPAN : 'li.activity span.commands',
+        SPINNERCOMMANDSPAN : 'span.commands',
         CONTENTAFTERLINK : 'div.contentafterlink',
         DELETE : 'a.editing_delete',
         DIMCLASS : 'dimmed',
@@ -320,7 +321,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'value' : newindent,
                 'id'    : this.get_element_id(element)
             };
-            var spinner = M.util.add_spinner(Y, element.one(CSS.COMMANDSPAN));
+            var spinner = M.util.add_spinner(Y, element.one(CSS.SPINNERCOMMANDSPAN));
             this.send_request(data, spinner);
 
             // Handle removal/addition of the moveleft button
@@ -398,7 +399,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'value' : value,
                 'id'    : this.get_element_id(element)
             };
-            var spinner = M.util.add_spinner(Y, element.one(CSS.COMMANDSPAN));
+            var spinner = M.util.add_spinner(Y, element.one(CSS.SPINNERCOMMANDSPAN));
             this.send_request(data, spinner);
         },
         toggle_groupmode : function(e) {
@@ -453,7 +454,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'value' : groupmode,
                 'id'    : this.get_element_id(element)
             };
-            var spinner = M.util.add_spinner(Y, element.one(CSS.COMMANDSPAN));
+            var spinner = M.util.add_spinner(Y, element.one(CSS.SPINNERCOMMANDSPAN));
             this.send_request(data, spinner);
         },
         /**
