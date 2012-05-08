@@ -4014,6 +4014,10 @@ function forum_print_attachments($post, $cm, $type) {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// File API                                                                   //
+////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Lists all browsable file areas
  *
@@ -4025,8 +4029,10 @@ function forum_print_attachments($post, $cm, $type) {
  * @return array
  */
 function forum_get_file_areas($course, $cm, $context) {
-    $areas = array();
-    return $areas;
+    return array(
+        'attachment' => get_string('areaattachment', 'mod_forum'),
+        'post' => get_string('areapost', 'mod_forum'),
+    );
 }
 
 /**
@@ -4052,9 +4058,26 @@ function forum_get_file_info($browser, $areas, $course, $cm, $context, $filearea
         return null;
     }
 
-    $fileareas = array('attachment', 'post');
-    if (!in_array($filearea, $fileareas)) {
+    // filearea must contain a real area
+    if (!isset($areas[$filearea])) {
         return null;
+    }
+
+    // this is enforced by {@link file_info_context_course} currently
+    if (!has_capability('moodle/course:managefiles', $context)) {
+        return null;
+    }
+
+    // Note that forum_user_can_see_post() additionally allows access for parent roles
+    // and it explicitly checks qanda forum type, too. One day, when we stop requiring
+    // course:managefiles, we will need to extend this.
+    if (!has_capability('mod/forum:viewdiscussion', $context)) {
+        return null;
+    }
+
+    if (is_null($itemid)) {
+        require_once($CFG->dirroot.'/mod/forum/locallib.php');
+        return new forum_file_info_container($browser, $course, $cm, $context, $areas, $filearea);
     }
 
     if (!$post = $DB->get_record('forum_posts', array('id' => $itemid))) {
@@ -4092,7 +4115,7 @@ function forum_get_file_info($browser, $areas, $course, $cm, $context, $filearea
     }
 
     $urlbase = $CFG->wwwroot.'/pluginfile.php';
-    return new file_info_stored($browser, $context, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
+    return new file_info_stored($browser, $context, $storedfile, $urlbase, $itemid, true, true, false, false);
 }
 
 /**
@@ -4118,8 +4141,10 @@ function forum_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
 
     require_course_login($course, true, $cm);
 
-    $fileareas = array('attachment', 'post');
-    if (!in_array($filearea, $fileareas)) {
+    $areas = forum_get_file_areas($course, $cm, $context);
+
+    // filearea must contain a real area
+    if (!isset($areas[$filearea])) {
         return false;
     }
 
