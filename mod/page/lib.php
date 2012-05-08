@@ -232,18 +232,6 @@ function page_user_complete($course, $user, $mod, $page) {
 }
 
 /**
- * Returns the users with data in one page
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $pageid
- * @return bool false
- */
-function page_get_participants($pageid) {
-    return false;
-}
-
-/**
  * Given a course_module object, this function returns any
  * "extra" information that may be needed when printing
  * this activity in a course listing.
