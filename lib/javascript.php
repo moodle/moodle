@@ -43,7 +43,7 @@ if ($slashargument = min_get_slash_argument()) {
 
 } else {
     $rev  = min_optional_param('rev', 0, 'INT');
-    $file = min_optional_param('file', '', 'RAW');
+    $file = min_optional_param('jsfile', '', 'RAW'); // 'file' would collide with URL rewriting!
 }
 
 // some security first - pick only files with .js extension in dirroot

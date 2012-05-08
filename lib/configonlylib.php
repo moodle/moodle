@@ -123,10 +123,15 @@ function min_get_slash_argument() {
 
     $relativepath = '';
 
-    if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
+    if (!empty($_GET['file']) and strpos($_GET['file'], '/') === 0) {
+        // server is using url rewriting, most probably IIS
+        return $_GET['file'];
+
+    } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
         if (isset($_SERVER['PATH_INFO']) and $_SERVER['PATH_INFO'] !== '') {
             $relativepath = urldecode($_SERVER['PATH_INFO']);
         }
+
     } else {
         if (isset($_SERVER['PATH_INFO'])) {
             $relativepath = $_SERVER['PATH_INFO'];
