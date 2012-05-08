@@ -135,23 +135,35 @@ if (empty($imagefile) or !is_readable($imagefile)) {
     image_not_found();
 }
 
-
 if ($rev > -1) {
     $pathinfo = pathinfo($imagefile);
     $cacheimage = "$candidatelocation/$image.".$pathinfo['extension'];
-    if (!file_exists($cacheimage)) {
-        if (!file_exists(dirname($cacheimage))) {
-            // Sometimes there was a race condition in check_dir_exists(),
-            // so let the next copy() log errors instead.
-            @mkdir(dirname($cacheimage), $CFG->directorypermissions, true);
-        }
-        copy($imagefile, $cacheimage);
-    }
-    send_cached_image($cacheimage, $etag);
 
-} else {
-    send_uncached_image($imagefile);
+    clearstatcache();
+    if (!file_exists(dirname($cacheimage))) {
+        @mkdir(dirname($cacheimage), $CFG->directorypermissions, true);
+    }
+
+    // Prevent serving of incomplete file from concurrent request,
+    // the rename() should be more atomic than copy().
+    ignore_user_abort(true);
+    if (@copy($imagefile, $cacheimage.'.tmp')) {
+        rename($cacheimage.'.tmp', $cacheimage);
+        @chmod($cacheimage, $CFG->filepermissions);
+        @unlink($cacheimage.'.tmp'); // just in case anything fails
+    }
+    ignore_user_abort(false);
+    if (connection_aborted()) {
+        die;
+    }
+    // make sure nothing failed
+    clearstatcache();
+    if (file_exists($cacheimage)) {
+        send_cached_image($cacheimage, $etag);
+    }
 }
+
+send_uncached_image($imagefile);
 
 
 //=================================================================================

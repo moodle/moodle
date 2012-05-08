@@ -71,10 +71,25 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles) {
         $css = $theme->post_process(css_minify_css($cssfiles));
     }
 
-    check_dir_exists(dirname($csspath));
-    $fp = fopen($csspath, 'w');
-    fwrite($fp, $css);
-    fclose($fp);
+    clearstatcache();
+    if (!file_exists(dirname($csspath))) {
+        @mkdir(dirname($csspath), $CFG->directorypermissions, true);
+    }
+
+    // Prevent serving of incomplete file from concurrent request,
+    // the rename() should be more atomic than fwrite().
+    ignore_user_abort(true);
+    if ($fp = fopen($csspath.'.tmp', 'xb')) {
+        fwrite($fp, $css);
+        fclose($fp);
+        rename($csspath.'.tmp', $csspath);
+        @chmod($csspath, $CFG->filepermissions);
+        @unlink($csspath.'.tmp'); // just in case anything fails
+    }
+    ignore_user_abort(false);
+    if (connection_aborted()) {
+        die;
+    }
 }
 
 /**

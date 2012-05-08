@@ -88,19 +88,17 @@ if ($rev > -1) {
         js_send_cached($candidate, $etag);
 
     } else {
-        if (!file_exists(dirname($candidate))) {
-            @mkdir(dirname($candidate), $CFG->directorypermissions, true);
+        js_write_cache_file_content($candidate, js_minify($jsfiles));
+        // verify nothing failed in cache file creation
+        clearstatcache();
+        if (file_exists($candidate)) {
+            js_send_cached($candidate, $etag);
         }
-        $fp = fopen($candidate, 'w');
-        fwrite($fp, js_minify($jsfiles));
-        fclose($fp);
-        js_send_cached($candidate, $etag);
     }
-
-} else {
-    $content = '';
-    foreach ($jsfiles as $jsfile) {
-        $content .= file_get_contents($jsfile)."\n";
-    }
-    js_send_uncached($candidate, $etag);
 }
+
+$content = '';
+foreach ($jsfiles as $jsfile) {
+    $content .= file_get_contents($jsfile)."\n";
+}
+js_send_uncached($content, $etag);
