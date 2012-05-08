@@ -3057,39 +3057,6 @@ function assignment_grade_item_delete($assignment) {
     return grade_update('mod/assignment', $assignment->courseid, 'mod', 'assignment', $assignment->id, 0, NULL, array('deleted'=>1));
 }
 
-/**
- * Returns the users with data in one assignment (students and teachers)
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param $assignmentid int
- * @return array of user objects
- */
-function assignment_get_participants($assignmentid) {
-    global $CFG, $DB;
-
-    //Get students
-    $students = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                        FROM {user} u,
-                                             {assignment_submissions} a
-                                       WHERE a.assignment = ? and
-                                             u.id = a.userid", array($assignmentid));
-    //Get teachers
-    $teachers = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                        FROM {user} u,
-                                             {assignment_submissions} a
-                                       WHERE a.assignment = ? and
-                                             u.id = a.teacher", array($assignmentid));
-
-    //Add teachers to students
-    if ($teachers) {
-        foreach ($teachers as $teacher) {
-            $students[$teacher->id] = $teacher;
-        }
-    }
-    //Return students array (it contains an array of unique users)
-    return ($students);
-}
 
 /**
  * Serves assignment submissions and other files.
