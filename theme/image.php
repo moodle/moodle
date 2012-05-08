@@ -127,6 +127,9 @@ $etag = sha1("$themename/$component/$rev/$image");
 
 if (empty($imagefile) or !is_readable($imagefile)) {
     if ($rev > -1) {
+        if (!file_exists($candidatelocation)) {
+            @mkdir($candidatelocation, $CFG->directorypermissions, true);
+        }
         // make note we can not find this file
         $cacheimage = "$candidatelocation/$image.error";
         $fp = fopen($cacheimage, 'w');
