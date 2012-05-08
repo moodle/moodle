@@ -272,6 +272,7 @@ class page_requirements_manager {
         }
         foreach ($modules as $name=>$module) {
             $module['fullpath'] = $urlbase.$module['path']; // fix path to point to correct location
+            $module['async'] = false;
             unset($module['path']);
             unset($module['skinnable']); // we load all YUI2 css automatically, this prevents weird missing css loader problems
             foreach(array('requires', 'optional', 'supersedes') as $fixme) {
