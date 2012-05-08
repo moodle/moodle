@@ -1604,65 +1604,6 @@ function forum_grade_item_delete($forum) {
 
 
 /**
- * Returns the users with data in one forum
- * (users with records in forum_subscriptions, forum_posts, students)
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $forumid
- * @return mixed array or false if none
- */
-function forum_get_participants($forumid) {
-
-    global $CFG, $DB;
-
-    $params = array('forumid' => $forumid);
-
-    //Get students from forum_subscriptions
-    $sql = "SELECT DISTINCT u.id, u.id
-              FROM {user} u,
-                   {forum_subscriptions} s
-             WHERE s.forum = :forumid AND
-                   u.id = s.userid";
-    $st_subscriptions = $DB->get_records_sql($sql, $params);
-
-    //Get students from forum_posts
-    $sql = "SELECT DISTINCT u.id, u.id
-              FROM {user} u,
-                   {forum_discussions} d,
-                   {forum_posts} p
-              WHERE d.forum = :forumid AND
-                    p.discussion = d.id AND
-                    u.id = p.userid";
-    $st_posts = $DB->get_records_sql($sql, $params);
-
-    //Get students from the ratings table
-    $sql = "SELECT DISTINCT r.userid, r.userid AS id
-              FROM {forum_discussions} d
-              JOIN {forum_posts} p ON p.discussion = d.id
-              JOIN {rating} r on r.itemid = p.id
-             WHERE d.forum = :forumid AND
-                   r.component = 'mod_forum' AND
-                   r.ratingarea = 'post'";
-    $st_ratings = $DB->get_records_sql($sql, $params);
-
-    //Add st_posts to st_subscriptions
-    if ($st_posts) {
-        foreach ($st_posts as $st_post) {
-            $st_subscriptions[$st_post->id] = $st_post;
-        }
-    }
-    //Add st_ratings to st_subscriptions
-    if ($st_ratings) {
-        foreach ($st_ratings as $st_rating) {
-            $st_subscriptions[$st_rating->id] = $st_rating;
-        }
-    }
-    //Return st_subscriptions array (it contains an array of unique users)
-    return ($st_subscriptions);
-}
-
-/**
  * This function returns if a scale is being used by one forum
  *
  * @global object
