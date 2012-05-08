@@ -204,18 +204,6 @@ function folder_user_complete($course, $user, $mod, $folder) {
 }
 
 /**
- * Returns the users with data in one folder
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $folderid
- * @return bool false
- */
-function folder_get_participants($folderid) {
-    return false;
-}
-
-/**
  * Lists all browsable file areas
  *
  * @package  mod_folder
