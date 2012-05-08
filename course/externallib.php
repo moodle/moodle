@@ -255,18 +255,22 @@ class core_course_external extends external_api {
      * @since Moodle 2.2
      */
     public static function get_categories_parameters() {
-    return new external_function_parameters(
+        return new external_function_parameters(
             array(
                 'criteria' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'key' => new external_value(PARAM_ALPHA, 'The category column to search, expected keys (value format) are:
-                                         "id" (int) the category id,
-                                         "name" (string) the category name,
-                                         "parent" (int) the parent category id,
-                                         "idnumber" (string) category idnumber,
-                                         "visible" (int) whether the category is visible or not,
-                                         "theme" (string) category theme'),
+                            'key' => new external_value(PARAM_ALPHA,
+                                         'The category column to search, expected keys (value format) are:'.
+                                         '"id" (int) the category id,'.
+                                         '"name" (string) the category name,'.
+                                         '"parent" (int) the parent category id,'.
+                                         '"idnumber" (string) category idnumber'.
+                                         ' - user must have \'moodle/category:manage\' to search on idnumber,'.
+                                         '"visible" (int) whether the category is visible or not'.
+                                         ' - user must have \'moodle/category:manage\' or \'moodle/category:viewhiddencategories\' to search on visible,'.
+                                         '"theme" (string) category theme'.
+                                         ' - user must have \'moodle/category:manage\' to search on theme'),
                             'value' => new external_value(PARAM_RAW, 'the value to match')
                         )
                     ), VALUE_DEFAULT, array()
@@ -307,7 +311,8 @@ class core_course_external extends external_api {
 
                     $context = context_system::instance();
                     $value = null;
-
+                    // $criteriaerrormsg is a code error, do not fix typo, do not edit it.
+                    $criteriaerrormsg = 'Missing permissions to search on a criteria.';
                     switch ($key) {
                         case 'id':
                             $value = clean_param($crit['value'], PARAM_INT);
@@ -316,6 +321,12 @@ class core_course_external extends external_api {
                         case 'idnumber':
                             if (has_capability('moodle/category:manage', $context)) {
                                 $value = clean_param($crit['value'], PARAM_RAW);
+                            } else {
+                                // We must throw an exception.
+                                // Otherwise the dev client would think no idnumber exists.
+                                throw new moodle_exception($criteriaerrormsg,
+                                        '', '', null,
+                                        'You don\'t have the permissions to search on the "idnumber" field.');
                             }
                             break;
 
@@ -328,17 +339,31 @@ class core_course_external extends external_api {
                             break;
 
                         case 'visible':
-                            $value = clean_param($crit['value'], PARAM_INT);
+                            if (has_capability('moodle/category:manage', $context)
+                                or has_capability('moodle/category:viewhiddencategories',
+                                        context_system::instance())) {
+                                $value = clean_param($crit['value'], PARAM_INT);
+                            } else {
+                                throw new moodle_exception($criteriaerrormsg,
+                                        '', '', null,
+                                        'You don\'t have the permissions to search on the "visible" field.');
+                            }
                             break;
 
                         case 'theme':
                             if (has_capability('moodle/category:manage', $context)) {
                                 $value = clean_param($crit['value'], PARAM_THEME);
+                            } else {
+                                throw new moodle_exception($criteriaerrormsg,
+                                        '', '', null,
+                                        'You don\'t have the permissions to search on the "theme" field.');
                             }
                             break;
 
                         default:
-                            throw new moodle_exception('invalidextparam', 'webservice', '', $key);
+                            throw new moodle_exception($criteriaerrormsg,
+                                    '', '', null,
+                                    'You can not search on this criteria: ' . $key);
                     }
 
                     if (isset($value)) {
@@ -351,7 +376,7 @@ class core_course_external extends external_api {
             if (!empty($wheres)) {
                 $wheres = implode(" AND ", $wheres);
 
-                $categories = $DB->get_records_select('course_categories', $wheres, $conditions 'path');
+                $categories = $DB->get_records_select('course_categories', $wheres, $conditions);
 
                 // Retrieve its sub subcategories (all levels).
                 if ($categories and !empty($params['addsubcategories'])) {
@@ -360,16 +385,16 @@ class core_course_external extends external_api {
                     foreach ($categories as $category) {
                         $sqllike = $DB->sql_like('path', ':path');
                         $sqlparams = array('path' => $category->path.'/%'); // It will NOT include the specified category.
-                        $subcategories = $DB->get_records_select('course_categories', $sqllike, $sqlparams, 'path');
-                        $newcategories = array_merge($newcategories, $subcategories);   // Both arrays have integer as keys.
+                        $subcategories = $DB->get_records_select('course_categories', $sqllike, $sqlparams);
+                        $newcategories = $newcategories + $subcategories;   // Both arrays have integer as keys.
                     }
-                    $categories = array_merge($categories, $newcategories);
+                    $categories = $categories + $newcategories;
                 }
             }
 
         } else {
             // Retrieve all categories in the database.
-            $categories = $DB->get_records('course_categories', array(), 'path');
+            $categories = $DB->get_records('course_categories');
         }
 
         // The not returned categories. key => category id, value => reason of exclusion.
@@ -377,6 +402,10 @@ class core_course_external extends external_api {
 
         // The returned categories.
         $categoriesinfo = array();
+
+        // We need to sort the categories by path.
+        // The parent cats need to be checked by the algo first.
+        usort($categories, "core_course_external::compare_categories_by_path");
 
         foreach ($categories as $category) {
 
@@ -453,7 +482,36 @@ class core_course_external extends external_api {
             }
         }
 
+        // Sorting the resulting array so it looks a bit better for the client developer.
+        usort($categoriesinfo, "core_course_external::compare_categories_by_sortorder");
+
         return $categoriesinfo;
+    }
+
+    /**
+     * Sort categories array by path
+     * private function: only used by get_categories
+     *
+     * @param array $category1
+     * @param array $category2
+     * @return int result of strcmp
+     * @since Moodle 2.3
+     */
+    public static function compare_categories_by_path($category1, $category2) {
+        return strcmp($category1->path, $category2->path);
+    }
+
+    /**
+     * Sort categories array by sortorder
+     * private function: only used by get_categories
+     *
+     * @param array $category1
+     * @param array $category2
+     * @return int result of strcmp
+     * @since Moodle 2.3
+     */
+    public static function compare_categories_by_sortorder($category1, $category2) {
+        return strcmp($category1['sortorder'], $category2['sortorder']);
     }
 
     /**
