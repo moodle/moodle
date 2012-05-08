@@ -39,6 +39,7 @@
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $PAGE->set_context($context);
+    $PAGE->set_heading($course->fullname);
 
     require_login($course->id, false, $cm);
 
