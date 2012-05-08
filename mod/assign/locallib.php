@@ -2366,25 +2366,6 @@ class assign {
         return false;
     }
 
-    /**
-     * count the number of files in the file area
-     *
-     * @param int $userid
-     * @param string $area
-     * @return int
-     */
-    private function count_files($userid = 0, $area = ASSIGN_FILEAREA_SUBMISSION_FILES) {
-        global $USER;
-
-        if (!$userid) {
-            $userid = $USER->id;
-        }
-
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($this->context->id, 'mod_assign', $area, $userid, "id", false);
-
-        return count($files);
-    }
 
     /**
      * Determine if this users grade is locked or overridden
