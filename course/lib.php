@@ -3155,7 +3155,7 @@ function moveto_module($mod, $section, $beforemod=NULL) {
  * @return string XHTML for the editing buttons
  */
 function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $moveselect = true, $indent=-1, $section=-1) {
-    global $CFG, $OUTPUT;
+    global $CFG, $OUTPUT, $COURSE;
 
     static $str;
 
@@ -3191,6 +3191,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
         $str->forcedgroupsnone     = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsnone"));
         $str->forcedgroupsseparate = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsseparate"));
         $str->forcedgroupsvisible  = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsvisible"));
+        $str->edittitle = get_string('edittitle', 'moodle');
     }
 
     $baseurl = new moodle_url('/course/mod.php', array('sesskey' => sesskey()));
@@ -3199,6 +3200,16 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
         $baseurl->param('sr', $section);
     }
     $actions = array();
+
+    // AJAX edit title
+    if ($mod->modname !== 'label' && $hasmanageactivities && course_ajax_enabled($COURSE)) {
+        $actions[] = new action_link(
+            new moodle_url($baseurl, array('update' => $mod->id)),
+            new pix_icon('t/editstring', $str->edittitle, 'moodle', array('class' => 'iconsmall visibleifjs')),
+            null,
+            array('class' => 'editing_title', 'title' => $str->edittitle)
+        );
+    }
 
     // leftright
     if ($hasmanageactivities) {
@@ -4523,6 +4534,8 @@ function include_course_ajax($course, $modules = array(), $config = null) {
             'moveleft',
             'deletechecktype',
             'deletechecktypename',
+            'edittitle',
+            'edittitleinstructions',
             'show',
             'hide',
             'groupsnone',
