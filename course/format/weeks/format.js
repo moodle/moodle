@@ -5,13 +5,24 @@ M.course = M.course || {};
 M.course.format = M.course.format || {};
 
 /**
- * Get section list for this format
+ * Get sections config for this format
  *
- * @param {YUI} Y YUI3 instance
- * @return {string} section list selector
+ * The section structure is:
+ * <ul class="weeks">
+ *  <li class="section">...</li>
+ *  <li class="section">...</li>
+ *   ...
+ * </ul>
+ *
+ * @return {object} section list configuration
  */
-M.course.format.get_section_selector = function(Y) {
-    return 'li.section';
+M.course.format.get_config = function() {
+    return {
+        container_node : 'ul',
+        container_class : 'weeks',
+        section_node : 'li',
+        section_class : 'section'
+    };
 }
 
 /**
