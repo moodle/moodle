@@ -218,18 +218,6 @@ function resource_user_complete($course, $user, $mod, $resource) {
 }
 
 /**
- * Returns the users with data in one resource
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $resourceid
- * @return bool false
- */
-function resource_get_participants($resourceid) {
-    return false;
-}
-
-/**
  * Given a course_module object, this function returns any
  * "extra" information that may be needed when printing
  * this activity in a course listing.
