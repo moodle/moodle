@@ -94,7 +94,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
                 el_scorm_api.setAttribute('type','text/javascript');
                 var pel_scorm_api = document.getElementById('scormapi-parent');
                 pel_scorm_api.appendChild(el_scorm_api);
-                var api_url = M.cfg.wwwroot + '/mod/scorm/api.php?' + node.title;
+                var api_url = M.cfg.wwwroot + '/mod/scorm/loaddatamodel.php?' + node.title;
                 document.getElementById('external-scormapi').src = api_url;
             }
 
