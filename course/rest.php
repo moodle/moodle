@@ -48,10 +48,6 @@ $PAGE->set_url('/course/rest.php', array('courseId'=>$courseid,'class'=>$class))
 
 //NOTE: when making any changes here please make sure it is using the same access control as course/mod.php !!
 
-if (empty($CFG->enablecourseajax)) {
-    throw new moodle_exception('Course AJAX not allowed');
-}
-
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 // Check user is logged in and set contexts if we are dealing with resource
 if (in_array($class, array('resource'))) {
