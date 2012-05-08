@@ -693,27 +693,6 @@ function glossary_grade_item_delete($glossary) {
 }
 
 /**
- * Returns the users with data in one glossary
- * (users with records in glossary_entries, students)
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $glossaryid
- * @return array
- */
-function glossary_get_participants($glossaryid) {
-    global $DB;
-
-    //Get students
-    $students = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                        FROM {user} u, {glossary_entries} g
-                                 WHERE g.glossaryid = ? AND u.id = g.userid", array($glossaryid));
-
-    //Return students array (it contains an array of unique users)
-    return $students;
-}
-
-/**
  * @global object
  * @param int $gloassryid
  * @param int $scaleid
