@@ -111,19 +111,6 @@ function label_delete_instance($id) {
 }
 
 /**
- * Returns the users with data in one resource
- * (NONE, but must exist on EVERY mod !!)
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $labelid
- */
-function label_get_participants($labelid) {
-
-    return false;
-}
-
-/**
  * Given a course_module object, this function returns any
  * "extra" information that may be needed when printing
  * this activity in a course listing.
