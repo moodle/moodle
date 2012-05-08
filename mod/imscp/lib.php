@@ -248,18 +248,6 @@ function imscp_user_complete($course, $user, $mod, $imscp) {
 }
 
 /**
- * Returns the users with data in one imscp
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $imscpid
- * @return bool false
- */
-function imscp_get_participants($imscpid) {
-    return false;
-}
-
-/**
  * Lists all browsable file areas
  *
  * @package  mod_imscp
