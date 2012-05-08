@@ -4077,14 +4077,12 @@ function forum_get_file_info($browser, $areas, $course, $cm, $context, $filearea
     }
 
     // Make sure groups allow this user to see this file
-    if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   // Groups are being used
-        if (!groups_group_exists($discussion->groupid)) { // Can't find group
-            return null;                           // Be safe and don't send it to anyone
-        }
-
-        if (!groups_is_member($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $context)) {
-            // do not send posts from other groups when in SEPARATEGROUPS or VISIBLEGROUPS
-            return null;
+    if ($discussion->groupid > 0) {
+        $groupmode = groups_get_activity_groupmode($cm, $course);
+        if ($groupmode == SEPARATEGROUPS) {
+            if (!groups_is_member($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $context)) {
+                return null;
+            }
         }
     }
 
@@ -4147,14 +4145,12 @@ function forum_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
     }
 
     // Make sure groups allow this user to see this file
-    if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   // Groups are being used
-        if (!groups_group_exists($discussion->groupid)) { // Can't find group
-            return false;                           // Be safe and don't send it to anyone
-        }
-
-        if (!groups_is_member($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $context)) {
-            // do not send posts from other groups when in SEPARATEGROUPS or VISIBLEGROUPS
-            return false;
+    if ($discussion->groupid > 0) {
+        $groupmode = groups_get_activity_groupmode($cm, $course);
+        if ($groupmode == SEPARATEGROUPS) {
+            if (!groups_is_member($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $context)) {
+                return false;
+            }
         }
     }
 
