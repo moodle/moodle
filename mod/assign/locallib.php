@@ -90,7 +90,7 @@ class assign {
 
     /** @var stdClass the course this assign instance belongs to */
     private $course;
-    
+
     /** @var stdClass the admin config for all assign instances  */
     private $adminconfig;
 
@@ -553,7 +553,7 @@ class assign {
     }
 
     /** Load and cache the admin config for this module
-     * 
+     *
      * @return stdClass the plugin config
      */
     public function get_admin_config() {
