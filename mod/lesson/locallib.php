@@ -741,8 +741,10 @@ abstract class lesson_add_page_form_base extends moodleform {
         if ($this->_customdata['edit'] === true) {
             $mform->addElement('hidden', 'edit', 1);
             $this->add_action_buttons(get_string('cancel'), get_string('savepage', 'lesson'));
-        } else {
+        } else if ($this->qtype === 'questiontype') {
             $this->add_action_buttons(get_string('cancel'), get_string('addaquestionpage', 'lesson'));
+        } else {
+            $this->add_action_buttons(get_string('cancel'), get_string('savepage', 'lesson'));
         }
     }
 
