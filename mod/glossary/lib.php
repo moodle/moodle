@@ -312,7 +312,7 @@ function glossary_user_complete($course, $user, $mod, $glossary) {
 
 /**
  * Returns all glossary entries since a given time for specified glossary
- * 
+ *
  * @param array $activities sequentially indexed array of objects
  * @param int   $index
  * @param int   $timestart
@@ -375,11 +375,11 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
                      $userselect
                      $groupselect
             ORDER BY ge.timemodified ASC", $params);
-    
+
     if (!$entries) {
         return;
     }
-    
+
     foreach ($entries as $entry) {
         $usersgroups = null;
         if ($entry->userid != $USER->id) {
@@ -423,7 +423,7 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
 
 /**
  * Outputs the glossary entry indicated by $activity
- * 
+ *
  * @param object $activity      the activity object the glossary resides in
  * @param int    $courseid      the id of the course the glossary resides in
  * @param bool   $detail        not used, but required for compatibilty with other modules
