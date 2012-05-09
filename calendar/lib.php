@@ -621,23 +621,6 @@ function calendar_add_event_metadata($event) {
 }
 
 /**
- * Prints a calendar event
- *
- * @deprecated Moodle 2.0 - MDL-22887 please do not use this function any more.
- * @todo MDL-31133 - will be removed in Moodle 2.3
- * @see core_calendar_renderer event function
- */
-function calendar_print_event($event, $showactions=true) {
-    global $CFG, $USER, $OUTPUT, $PAGE;
-    debugging('calendar_print_event is deprecated please update your code', DEBUG_DEVELOPER);
-    $renderer = $PAGE->get_renderer('core_calendar');
-    if (!($event instanceof calendar_event)) {
-        $event = new calendar_event($event);
-    }
-    echo $renderer->event($event);
-}
-
-/**
  * Get calendar events
  *
  * @param int $tstart Start time of time range for events
