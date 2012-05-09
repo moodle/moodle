@@ -200,9 +200,10 @@ class assign_submission_file extends assign_submission_plugin {
         $eventdata->courseid = $this->assignment->get_course()->id;
         $eventdata->userid = $USER->id;
         if ($count > 1) {
-            $eventdata->files = $files;
+            $eventdata->files = $files; // This is depreceated - please use pathnamehashes instead!
         }
-            $eventdata->file = $files;
+        $eventdata->file = $files; // This is depreceated - please use pathnamehashes instead!
+        $eventdata->pathnamehashes = array_keys($files);
         events_trigger('assessable_file_uploaded', $eventdata);
 
 

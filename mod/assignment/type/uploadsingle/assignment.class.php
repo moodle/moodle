@@ -237,7 +237,8 @@ class assignment_uploadsingle extends assignment_base {
                     $eventdata->itemid       = $submission->id;
                     $eventdata->courseid     = $this->course->id;
                     $eventdata->userid       = $USER->id;
-                    $eventdata->file         = $file;
+                    $eventdata->file         = $file; // This is depreceated - please use pathnamehashes instead!
+                    $eventdata->pathnamehashes = array($file->get_pathnamehash());
                     events_trigger('assessable_file_uploaded', $eventdata);
                 }
 
