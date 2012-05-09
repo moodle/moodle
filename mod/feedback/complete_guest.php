@@ -72,7 +72,7 @@ if (isset($formdata->sesskey) AND
    !isset($formdata->gonextpage) AND
    !isset($formdata->gopreviouspage)) {
 
-    $gopage = $formdata->lastpage;
+    $gopage = (int) $formdata->lastpage;
 }
 if (isset($formdata->savevalues)) {
     $savevalues = true;
