@@ -107,6 +107,11 @@ p {margin:0}
     border-collapse: collapse;
 }
 
+/* Filter table - MDL-32869 */
+.path-admin .cell .singleselect {
+    margin:0;
+}
+
 th.header,
 .formtable tbody th,
 .generalbox th,
