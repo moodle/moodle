@@ -145,19 +145,19 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
  */
 .file-picker .fp-select {width:420px;min-height:auto;text-align:left;background: #F2F2F2;border-radius: 8px;border: 1px solid #FFF;
 -webkit-box-shadow: 5px 5px 20px 0px #666666;-moz-box-shadow: 5px 5px 20px 0px #666666;box-shadow: 5px 5px 20px 0px #666666;text-align: center;}
-.file-picker .fp-select .uneditable {display:none;}
-.file-picker .fp-select p {}
-.file-picker .fp-select .fp-select-loading {display:none;}
-.file-picker .fp-select.loading .fp-select-loading {display:block;}
-.file-picker .fp-select.loading form {display:none;}
+.file-picker.fp-select .uneditable {display:none;}
+.file-picker.fp-select p {}
+.file-picker.fp-select .fp-select-loading {display:none;}
+.file-picker.fp-select.loading .fp-select-loading {display:block;}
+.file-picker.fp-select.loading form {display:none;}
 .file-picker .fp-select-confirm {background: #FFF;padding: 3px 20px 2px 20px; margin: 5px 0px 10px 20px; border-radius: 10px;float:left;-webkit-box-shadow: 2px 2px 1px .1px #999;-moz-box-shadow: 2px 2px 1px .1px #999;box-shadow: 2px 2px 3px .1px #999;}
 .file-picker .fp-select-cancel {background: #FFF;padding: 3px 20px 2px 20px; margin: 5px 0px 10px 20px; border-radius: 10px;float:left;-webkit-box-shadow: 2px 2px 1px .1px #999;-moz-box-shadow: 2px 2px 1px .1px #999;box-shadow: 2px 2px 3px .1px #999;}
-.file-picker .fp-select .fp-hr {clear: both;height: 1px; background-color: #FFF;border-bottom: 1px solid #BBB;width: auto; margin: 20px;}
-.file-picker .fp-select table {margin: 10px 10px;}
-.file-picker .fp-select .fp-thumbnail {float:left;width:110px;height:110px;line-height: 110px;text-align: center;margin: 10px 0px 10px 20px;background: #FFF;-webkit-box-shadow: inset 0px 0px 10px 0px #BBB;-moz-box-shadow: inset 0px 0px 10px 0px #BBB;box-shadow: inset 0px 0px 10px 0px #BBB;}
-.file-picker .fp-select .fp-thumbnail img {border: 1px solid #CCC;padding:3px;vertical-align: middle;}
-.file-picker .fp-select .fp-fileinfo {display: inline-block;/*margin-left: 10px; */margin: 4px 0px 20px 0px;width:240px;text-align: left;}
-.file-picker .fp-select .fp-fileinfo div {/*paddign-top:5px;padding-bottom:5px;*/padding: 4px 0px;}
+.file-picker.fp-select .fp-hr {clear: both;height: 1px; background-color: #FFF;border-bottom: 1px solid #BBB;width: auto; margin: 20px;}
+.file-picker.fp-select table {margin: 10px 10px;}
+.file-picker.fp-select .fp-thumbnail {float:left;width:110px;height:110px;line-height: 110px;text-align: center;margin: 10px 0px 10px 20px;background: #FFF;-webkit-box-shadow: inset 0px 0px 10px 0px #BBB;-moz-box-shadow: inset 0px 0px 10px 0px #BBB;box-shadow: inset 0px 0px 10px 0px #BBB;}
+.file-picker.fp-select .fp-thumbnail img {border: 1px solid #CCC;padding:3px;vertical-align: middle;}
+.file-picker.fp-select .fp-fileinfo {display: inline-block;/*margin-left: 10px; */margin: 4px 0px 20px 0px;width:240px;text-align: left;}
+.file-picker.fp-select .fp-fileinfo div {/*paddign-top:5px;padding-bottom:5px;*/padding: 4px 0px;}
 
 /*
  * Upload
@@ -245,22 +245,22 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
 .filemanager .fp-treeview .fp-folder.fp-hascontextmenu .fp-contextmenu,
 .filemanager .fp-tableview .fp-folder.fp-hascontextmenu .fp-contextmenu {display:inline;}
 
-.filemanager .fp-select .fp-select-loading {display:none;}
-.filemanager .fp-select.loading .fp-select-loading {display:block;}
-.filemanager .fp-select.loading form {display:none;}
+.filemanager.fp-select .fp-select-loading {display:none;}
+.filemanager.fp-select.loading .fp-select-loading {display:block;}
+.filemanager.fp-select.loading form {display:none;}
 
 /* disable unavailable actions: */
-/*.filemanager .fp-select.fp-zip .fp-license,*/
-.filemanager .fp-select.fp-folder .fp-license,
-/*.filemanager .fp-select.fp-zip .fp-author,*/
-.filemanager .fp-select.fp-folder .fp-author,
-.filemanager .fp-select.fp-file .fp-file-unzip,
-.filemanager .fp-select.fp-folder .fp-file-unzip,
-.filemanager .fp-select.fp-file .fp-file-zip,
-.filemanager .fp-select.fp-zip .fp-file-zip {display:none;}
-.filemanager .fp-select .fp-file-setmain {display:none;}
-.filemanager .fp-select.fp-cansetmain .fp-file-setmain {display:inline-block;}
-.filemanager .fp-select.fp-folder .fp-file-download {display:none;} /* to be implemented */
+/*.filemanager.fp-select.fp-zip .fp-license,*/
+.filemanager.fp-select.fp-folder .fp-license,
+/*.filemanager.fp-select.fp-zip .fp-author,*/
+.filemanager.fp-select.fp-folder .fp-author,
+.filemanager.fp-select.fp-file .fp-file-unzip,
+.filemanager.fp-select.fp-folder .fp-file-unzip,
+.filemanager.fp-select.fp-file .fp-file-zip,
+.filemanager.fp-select.fp-zip .fp-file-zip {display:none;}
+.filemanager.fp-select .fp-file-setmain {display:none;}
+.filemanager.fp-select.fp-cansetmain .fp-file-setmain {display:inline-block;}
+.filemanager.fp-select.fp-folder .fp-file-download {display:none;} /* to be implemented */
 
 /*
  * Drag and drop support

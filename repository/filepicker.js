@@ -8,6 +8,7 @@
  * this.fpnode, contains reference to filepicker Node, non-empty if and only if rendered
  * this.api, stores the URL to make ajax request
  * this.mainui, YUI Panel
+ * this.selectnode, contains reference to select-file Node
  * this.selectui, YUI Panel for selecting particular file
  * this.msg_dlg, YUI Panel for error or info message
  * this.process_dlg, YUI Panel for processing existing filename
@@ -660,7 +661,7 @@ M.core_filepicker.init = function(Y, options) {
                     node.one('.fp-dlg-text').setContent(M.str.repository.fileexistsdialog_filemanager);
                 }
             }
-            this.fpnode.one('.fp-select').removeClass('loading');
+            this.selectnode.removeClass('loading');
             this.process_dlg.dialogdata = data;
             this.fpnode.one('.fp-dlg .fp-dlg-butrename').setContent(M.util.get_string('renameto', 'repository', data.newfile.filename));
             this.process_dlg.show();
@@ -965,7 +966,7 @@ M.core_filepicker.init = function(Y, options) {
         select_file: function(args) {
             this.selectui.show();
             var client_id = this.options.client_id;
-            var selectnode = this.fpnode.one('.fp-select');
+            var selectnode = this.selectnode;
             var return_types = this.options.repositories[this.active_repo.id].return_types;
             selectnode.removeClass('loading');
             selectnode.one('.fp-saveas input').set('value', args.title);
@@ -1017,7 +1018,7 @@ M.core_filepicker.init = function(Y, options) {
         },
         setup_select_file: function() {
             var client_id = this.options.client_id;
-            var selectnode = this.fpnode.one('.fp-select');
+            var selectnode = this.selectnode;
             var getfile = selectnode.one('.fp-select-confirm');
             // bind labels with corresponding inputs
             selectnode.all('.fp-saveas,.fp-linktype-2,.fp-linktype-1,.fp-linktype-4,.fp-setauthor,.fp-setlicense').each(function (node) {
@@ -1155,7 +1156,7 @@ M.core_filepicker.init = function(Y, options) {
             var client_id = this.options.client_id;
             this.fpnode = Y.Node.create(M.core_filepicker.templates.generallayout).
                 set('id', 'filepicker-'+client_id);
-            var fpselectnode = Y.Node.create(M.core_filepicker.templates.selectlayout);
+            this.selectnode = Y.Node.create(M.core_filepicker.templates.selectlayout);
             Y.one(document.body).appendChild(this.fpnode);
             this.mainui = new Y.Panel({
                 srcNode      : this.fpnode,
@@ -1171,19 +1172,23 @@ M.core_filepicker.init = function(Y, options) {
                 render       : true
             });
             // allow to move the panel dragging it by it's header:
-            this.mainui.plug(Y.Plugin.Drag,{handles:['.yui3-widget-hd']});
+            this.mainui.plug(Y.Plugin.Drag,{handles:['#filepicker-'+client_id+' .yui3-widget-hd']});
             this.mainui.show();
             if (this.mainui.get('y')<0) {this.mainui.set('y', 0);}
             // create panel for selecting a file (initially hidden)
-            this.fpnode.appendChild(fpselectnode);
+            this.selectnode = Y.Node.create(M.core_filepicker.templates.selectlayout).
+                set('id', 'filepicker-select-'+client_id);
+            Y.one(document.body).appendChild(this.selectnode);
             this.selectui = new Y.Panel({
-                srcNode      : fpselectnode,
+                srcNode      : this.selectnode,
                 zIndex       : 600000,
                 centered     : true,
                 modal        : true,
                 close        : true,
                 render       : true
             });
+            // allow to move the panel dragging it by it's header:
+            this.selectui.plug(Y.Plugin.Drag,{handles:['#filepicker-select-'+client_id+' .yui3-widget-hd']});
             this.selectui.hide();
             // event handler for lazy loading of thumbnails and next page
             this.fpnode.one('.fp-content').on(['scroll','resize'], this.content_scrolled, this);

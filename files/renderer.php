@@ -295,8 +295,8 @@ class core_files_renderer extends plugin_renderer_base {
     /**
      * FileManager JS template for window with file information/actions.
      *
-     * All content must be enclosed in an element with class 'fp-select', CSS for this class
-     * must define width and height of the window;
+     * All content must be enclosed in one element, CSS for this class must define width and
+     * height of the window;
      *
      * Thumbnail image will be added as content to the element with class 'fp-thumbnail';
      *
@@ -326,7 +326,7 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string
      */
     private function fm_js_template_fileselectlayout() {
-        $rv = '<div class="{!}fp-select">
+        $rv = '<div class="filemanager fp-select">
 <div class="fp-select-loading">
 <img src="'.$this->pix_url('i/loading').'" />
 <p>'.get_string('loading', 'repository').'</p>
@@ -547,14 +547,15 @@ class core_files_renderer extends plugin_renderer_base {
     /**
      * FilePicker JS template for window appearing to select a file.
      *
-     * All content must be enclosed in an element with class 'fp-select', CSS for this class
-     * must define width and height of the window;
+     * All content must be enclosed in one element, CSS for this class must define width and
+     * height of the window;
      *
      * Thumbnail image will be added as content to the element with class 'fp-thumbnail';
      *
      * Inside the window the elements with the following classnames must be present:
-     * 'fp-saveas', 'fp-linkexternal', 'fp-setauthor', 'fp-setlicense'. Inside each of them must have
-     * one input element (or select in case of fp-setlicense). They may also have labels.
+     * 'fp-saveas', 'fp-linktype-2', 'fp-linktype-1', 'fp-linktype-4', 'fp-setauthor',
+     * 'fp-setlicense'. Inside each of them must have one input element (or select in case of
+     * fp-setlicense). They may also have labels.
      * The elements will be assign with class 'uneditable' and input/select element will become
      * disabled if they are not applicable for the particular file;
      *
@@ -572,7 +573,7 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string
      */
     private function fp_js_template_selectlayout() {
-        $rv = '<div class="{!}fp-select">
+        $rv = '<div class="file-picker fp-select">
 <div class="fp-select-loading">
 <img src="'.$this->pix_url('i/loading').'" />
 <p>'.get_string('loading', 'repository').'</p>
