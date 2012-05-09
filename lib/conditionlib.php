@@ -54,31 +54,31 @@ define('CONDITION_MISSING_EVERYTHING', 2);
  * OP_CONTAINS - comparison operator that determines whether a specified user field contains
  * a provided variable
  */
-define('OP_CONTAINS', get_string('contains', 'filters'));
+define('OP_CONTAINS', 'contains');
 /**
  * OP_DOES_NOT_CONTAIN - comparison operator that determines whether a specified user field does not
  * contain a provided variable
  */
-define('OP_DOES_NOT_CONTAIN', get_string('doesnotcontain', 'filters'));
+define('OP_DOES_NOT_CONTAIN', 'doesnotcontain');
 /**
  * OP_IS_EQUAL_TO - comparison operator that determines whether a specified user field is equal to
  * a provided variable
  */
-define('OP_IS_EQUAL_TO', get_string('isequalto', 'filters'));
+define('OP_IS_EQUAL_TO', 'isequalto');
 /**
  * OP_STARTS_WITH - comparison operator that determines whether a specified user field starts with
  * a provided variable
  */
-define('OP_STARTS_WITH', get_string('startswith', 'filters'));
+define('OP_STARTS_WITH', 'startswith');
 /**
  * OP_ENDS_WITH - comparison operator that determines whether a specified user field ends with
  * a provided variable
  */
-define('OP_ENDS_WITH', get_string('endswith', 'filters'));
+define('OP_ENDS_WITH', 'endswith');
 /**
  * OP_IS_EMPTY - comparison operator that determines whether a specified user field is empty
  */
-define('OP_IS_EMPTY', get_string('isempty', 'filters'));
+define('OP_IS_EMPTY', 'isempty');
 
 require_once($CFG->libdir.'/completionlib.php');
 
@@ -572,12 +572,12 @@ abstract class condition_info_base {
      */
     public static function get_condition_user_field_operators() {
         return array(
-            OP_CONTAINS => OP_CONTAINS,
-            OP_DOES_NOT_CONTAIN => OP_DOES_NOT_CONTAIN,
-            OP_IS_EQUAL_TO => OP_IS_EQUAL_TO,
-            OP_STARTS_WITH => OP_STARTS_WITH,
-            OP_ENDS_WITH => OP_ENDS_WITH,
-            OP_IS_EMPTY => OP_IS_EMPTY
+            OP_CONTAINS => get_string('contains', 'filters'),
+            OP_DOES_NOT_CONTAIN => get_string('doesnotcontain', 'filters'),
+            OP_IS_EQUAL_TO => get_string('isequalto', 'filters'),
+            OP_STARTS_WITH => get_string('startswith', 'filters'),
+            OP_ENDS_WITH => get_string('endswith', 'filters'),
+            OP_IS_EMPTY => get_string('isempty', 'filters')
         );
     }
 
@@ -606,7 +606,7 @@ abstract class condition_info_base {
             'idnumber' => get_user_field_name('idnumber'),
             'institution' => get_user_field_name('institution'),
             'department' => get_user_field_name('department'),
-            'phone' => get_user_field_name('phone'),
+            'phone1' => get_user_field_name('phone1'),
             'phone2' => get_user_field_name('phone2'),
             'address' => get_user_field_name('address')
         );
@@ -787,7 +787,7 @@ abstract class condition_info_base {
             foreach ($this->cm->conditionsfield as $field=>$details) {
                 $a = new stdclass;
                 $a->field = $details->fieldname;
-                $a->operator = $details->operator;
+                $a->operator = get_string($details->operator, 'filters');
                 $a->value = $details->value;
                 $information .= get_string('requires_user_field_restriction', 'condition', $a);
             }
@@ -997,8 +997,8 @@ abstract class condition_info_base {
                     $available = false;
                     $a = new stdClass();
                     $a->field = $details->fieldname;
-                    $a->operator = $operator;
-                    $a->value = $details->value;
+                    $a->operator = get_string($operator, 'filters');
+                    $a->value = $value;
                     $information .= get_string('requires_user_field_restriction', 'condition', $a).' ';
                 }
             }
