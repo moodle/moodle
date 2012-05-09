@@ -54,7 +54,7 @@
 
     //if the use hit enter into a textfield so the form should not submit
     if(isset($formdata->sesskey) AND !isset($formdata->savevalues) AND !isset($formdata->gonextpage) AND !isset($formdata->gopreviouspage)) {
-        $gopage = $formdata->lastpage;
+        $gopage = (int)$formdata->lastpage;
     }
     if(isset($formdata->savevalues)) {
         $savevalues = true;
