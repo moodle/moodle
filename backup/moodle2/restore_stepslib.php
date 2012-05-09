@@ -2655,12 +2655,18 @@ class restore_module_structure_step extends restore_structure_step {
     }
 
     protected function process_availability_fields($data) {
+        global $DB;
+
         $data = (object)$data;
-        // Simply going to store the whole availability record now, we'll process
-        // all them later in the final task (once all activities have been restored)
-        // Let's call the low level one to be able to store the whole object
-        $data->coursemoduleid = $this->task->get_moduleid(); // Let add the availability cmid
-        restore_dbops::set_backup_ids_record($this->get_restoreid(), 'module_availability_field', $data->id, 0, null, $data);
+        // Create the object to insert into the database
+        $avail_field = new stdClass();
+        $avail_field->coursemoduleid = $this->task->get_moduleid(); // Lets add the availability cmid
+        $avail_field->userfield = $data->userfield;
+        $avail_field->customfieldid = $data->customfieldid;
+        $avail_field->operator = $data->operator;
+        $avail_field->value = $data->value;
+        // Insert into the database
+        $DB->insert_record('course_modules_avail_fields', $avail_field);
     }
 }
 
