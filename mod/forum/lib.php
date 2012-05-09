@@ -1222,21 +1222,24 @@ function forum_print_overview($courses,&$htmlarray) {
     }
 
 
-    // get all forum logs in ONE query (much better!)
+    // look for new posts since lastaccess
+    $course_tuples = join(
+        ' OR ',
+        array_fill(0, count($visited_courses), '(f.course = ? AND p.created > ?)')
+    );
+
+    $sql = "SELECT f.id, COUNT(*) "
+                .'FROM {forum_posts} p, {forum_discussions} d, {forum} f '
+                .'WHERE p.discussion = d.id AND d.forum = f.id '
+                ."AND ($course_tuples) "
+                ."AND p.userid != ? "
+                ."GROUP BY f.id";
+
     $params = array();
-    $sql = "SELECT instance,cmid,l.course,COUNT(l.id) as count FROM {log} l "
-        ." JOIN {course_modules} cm ON cm.id = cmid "
-        ." WHERE (";
     foreach ($courses as $course) {
-        $sql .= '(l.course = ? AND l.time > ?) OR ';
         $params[] = $course->id;
         $params[] = $course->lastaccess;
     }
-    $sql = substr($sql,0,-3); // take off the last OR
-
-    $sql .= ") AND l.module = 'forum' AND action = 'add post' "
-        ." AND userid != ? GROUP BY cmid,l.course,instance";
-
     $params[] = $USER->id;
 
     if (!$new = $DB->get_records_sql($sql, $params)) {
