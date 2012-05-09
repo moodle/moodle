@@ -1801,7 +1801,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
         $filename = urlencode($filename);
     }
 
-    header('Content-Disposition: attachment; filename='.$filename);
+    header('Content-Disposition: attachment; filename="'.$filename.'"');
     if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
         header('Cache-Control: max-age=10');
         header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
