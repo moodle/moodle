@@ -979,8 +979,8 @@ abstract class moodleform {
             foreach ($options as $elementname => $elementoptions){
                 $pos=strpos($elementname, '[');
                 if ($pos!==FALSE){
-                    $realelementname = substr($elementname, 0, $pos+1)."[$i]";
-                    $realelementname .= substr($elementname, $pos+1);
+                    $realelementname = substr($elementname, 0, $pos)."[$i]";
+                    $realelementname .= substr($elementname, $pos);
                 }else {
                     $realelementname = $elementname."[$i]";
                 }
