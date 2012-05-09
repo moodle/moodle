@@ -401,6 +401,15 @@ M.core_filepicker.active_filepicker = null;
 M.core_filepicker.templates = M.core_filepicker.templates || {};
 
 /**
+* Set selected file info
+*
+* @parma object file info
+*/
+M.core_filepicker.select_file = function(file) {
+    M.core_filepicker.active_filepicker.select_file(file);
+}
+
+/**
  * Init and show file picker
  */
 M.core_filepicker.show = function(Y, options) {
@@ -960,7 +969,6 @@ M.core_filepicker.init = function(Y, options) {
             var return_types = this.options.repositories[this.active_repo.id].return_types;
             selectnode.removeClass('loading');
             selectnode.one('.fp-saveas input').set('value', args.title);
-            selectnode.one('.fp-setauthor input').set('value', this.options.author);
 
             var imgnode = Y.Node.create('<img/>').
                 set('src', args.realthumbnail ? args.realthumbnail : args.thumbnail).
@@ -968,38 +976,33 @@ M.core_filepicker.init = function(Y, options) {
                 setStyle('maxWidth', ''+(args.thumbnail_width ? args.thumbnail_width : 90)+'px');
             selectnode.one('.fp-thumbnail').setContent('').appendChild(imgnode);
 
-            selectnode.one('.fp-linkexternal input').set('checked', ''); // default to unchecked
-            if ((this.options.externallink && this.options.env == 'editor' && return_types == 3)) {
-                // support both internal and external links, enable checkbox 'Link external'
-                selectnode.one('.fp-linkexternal input').set('disabled', '');
-                selectnode.all('.fp-linkexternal').removeClass('uneditable')
-            } else {
-                // disable checkbox 'Link external'
-                selectnode.one('.fp-linkexternal input').set('disabled', 'disabled');
-                selectnode.all('.fp-linkexternal').addClass('uneditable')
-                if (return_types == 1) {
-                    // support external links only
-                    selectnode.one('.fp-linkexternal input').set('checked', 'checked');
+            // filelink is the array of file-link-types available for this repository in this env
+            var filelinktypes = [2/*FILE_INTERNAL*/,1/*FILE_EXTERNAL*/,4/*FILE_REFERENCE*/];
+            var filelink = {}, firstfilelink = null, filelinkcount = 0;
+            for (var i in filelinktypes) {
+                var allowed = (return_types & filelinktypes[i]) &&
+                    (this.options.return_types & filelinktypes[i]);
+                if (filelinktypes[i] == 1/*FILE_EXTERNAL*/ && !this.options.externallink && this.options.env == 'editor') {
+                    // special configuration setting 'repositoryallowexternallinks' may prevent
+                    // using external links in editor environment
+                    allowed = false;
                 }
+                filelink[filelinktypes[i]] = allowed;
+                firstfilelink = (firstfilelink==null && allowed) ? filelinktypes[i] : firstfilelink;
+                filelinkcount += allowed ? 1 : 0;
+            }
+            // make radio buttons enabled if this file-link-type is available and only if there are more than one file-link-type option
+            // check the first available file-link-type option
+            for (var linktype in filelink) {
+                var el = selectnode.one('.fp-linktype-'+linktype);
+                el.addClassIf('uneditable', !(filelink[linktype] && filelinkcount>1));
+                el.one('input').set('disabled', (filelink[linktype] && filelinkcount>1)?'':'disabled').
+                    set('checked', (firstfilelink == linktype) ? 'checked' : '').simulate('change')
             }
 
-            if (args.hasauthor) {
-                selectnode.one('.fp-setauthor input').set('disabled', 'disabled');
-                selectnode.all('.fp-setauthor').addClass('uneditable')
-            } else {
-                selectnode.one('.fp-setauthor input').set('disabled', '');
-                selectnode.all('.fp-setauthor').removeClass('uneditable')
-            }
-
-            if (!args.haslicense) {
-                // the license of the file
-                selectnode.one('.fp-setlicense select').set('disabled', '');
-                selectnode.one('.fp-setlicense').removeClass('uneditable');
-            } else {
-                selectnode.one('.fp-setlicense select').set('disabled', 'disabled');
-                selectnode.one('.fp-setlicense').addClass('uneditable');
-            }
-
+            // TODO MDL-32532: attributes 'hasauthor' and 'haslicense' need to be obsolete,
+            selectnode.one('.fp-setauthor input').set('value', args.author?args.author:this.options.author);
+            this.set_selected_license(selectnode.one('.fp-setlicense'), args.license);
             selectnode.one('form #filesource-'+client_id).set('value', args.source);
 
             // display static information about a file (when known)
@@ -1017,8 +1020,23 @@ M.core_filepicker.init = function(Y, options) {
             var selectnode = this.fpnode.one('.fp-select');
             var getfile = selectnode.one('.fp-select-confirm');
             // bind labels with corresponding inputs
-            selectnode.all('.fp-saveas,.fp-linkexternal,.fp-setauthor,.fp-setlicense').each(function (node) {
+            selectnode.all('.fp-saveas,.fp-linktype-2,.fp-linktype-1,.fp-linktype-4,.fp-setauthor,.fp-setlicense').each(function (node) {
                 node.all('label').set('for', node.one('input,select').generateID());
+            });
+            selectnode.one('.fp-linktype-2 input').setAttrs({value: 2, name: 'linktype'});
+            selectnode.one('.fp-linktype-1 input').setAttrs({value: 1, name: 'linktype'});
+            selectnode.one('.fp-linktype-4 input').setAttrs({value: 4, name: 'linktype'});
+            var changelinktype = function(e) {
+                if (e.currentTarget.get('checked')) {
+                    var allowinputs = e.currentTarget.get('value') != 1/*FILE_EXTERNAL*/;
+                    selectnode.all('.fp-setauthor,.fp-setlicense,.fp-saveas').each(function(node){
+                        node.addClassIf('uneditable', !allowinputs);
+                        node.all('input,select').set('disabled', allowinputs?'':'disabled');
+                    });
+                }
+            };
+            selectnode.all('.fp-linktype-2,.fp-linktype-1,.fp-linktype-4').each(function (node) {
+                node.one('input').on('change', changelinktype, this);
             });
             this.populate_licenses_select(selectnode.one('.fp-setlicense select'));
             // register event on clicking submit button
@@ -1033,28 +1051,29 @@ M.core_filepicker.init = function(Y, options) {
                 var license = selectnode.one('.fp-setlicense select');
                 if (license) {
                     params['license'] = license.get('value');
-                    Y.Cookie.set('recentlicense', license.get('value'));
+                    var origlicense = selectnode.one('.fp-license .fp-value');
+                    if (origlicense) { origlicense = origlicense.getContent(); }
+                    var newlicenseval = license.get('value');
+                    if (newlicenseval && this.options.licenses[newlicenseval] != origlicense) {
+                        Y.Cookie.set('recentlicense', newlicenseval);
+                    }
                 }
                 params['author'] = selectnode.one('.fp-setauthor input').get('value');
 
-                if (this.options.externallink && this.options.env == 'editor') {
+                var return_types = this.options.repositories[this.active_repo.id].return_types;
+                if (this.options.env == 'editor') {
                     // in editor, images are stored in '/' only
                     params.savepath = '/';
-                    // when image or media button is clicked
-                    var return_types = this.options.repositories[this.active_repo.id].return_types;
-                    if ( return_types != 1 ) {
-                        var linkexternal = selectnode.one('.fp-linkexternal input');
-                        if (linkexternal && linkexternal.get('checked')) {
-                            params['linkexternal'] = 'yes';
-                        }
-                    } else {
-                        // when link button in editor clicked
-                        params['linkexternal'] = 'yes';
-                    }
                 }
-
-                if (this.options.env == 'url') {
+                if ((this.options.externallink || this.options.env != 'editor') &&
+                            (return_types & 1/*FILE_EXTERNAL*/) &&
+                            (this.options.return_types & 1/*FILE_EXTERNAL*/) &&
+                            selectnode.one('.fp-linktype-1 input').get('checked')) {
                     params['linkexternal'] = 'yes';
+                } else if ((return_types & 4/*FILE_REFERENCE*/) &&
+                        (this.options.return_types & 4/*FILE_REFERENCE*/) &&
+                        selectnode.one('.fp-linktype-4 input').get('checked')) {
+                    params['usefilereference'] = 'yes';
                 }
 
                 selectnode.addClass('loading');
@@ -1234,6 +1253,7 @@ M.core_filepicker.init = function(Y, options) {
                 this.lazyloading = {};
             }
             this.filepath = data.path?data.path:null;
+            this.objecttag = data.object?data.object:null;
             this.active_repo = {};
             this.active_repo.issearchresult = data.issearchresult?true:false;
             this.active_repo.dynload = data.dynload?data.dynload:false;
@@ -1399,8 +1419,11 @@ M.core_filepicker.init = function(Y, options) {
                 scope.viewbar_set_enabled(false);
                 scope.parse_repository_options(obj);
                 scope.create_upload_form(obj);
-            } else if (obj.iframe) {
-
+            } else if (obj.object) {
+                M.core_filepicker.active_filepicker = scope;
+                scope.viewbar_set_enabled(false);
+                scope.parse_repository_options(obj);
+                scope.create_object_container(obj.object);
             } else if (obj.list) {
                 scope.viewbar_set_enabled(true);
                 scope.parse_repository_options(obj);
@@ -1441,6 +1464,30 @@ M.core_filepicker.init = function(Y, options) {
                     setContent(licenses[i].fullname);
                 node.appendChild(option)
             }
+        },
+        set_selected_license: function(node, value) {
+            var licenseset = false;
+            node.all('option').each(function(el) {
+                if (el.get('value')==value || el.getContent()==value) {
+                    el.set('selected', true);
+                    licenseset = true;
+                }
+            });
+            if (!licenseset) {
+                // we did not find the value in the list
+                var recentlicense = Y.Cookie.get('recentlicense');
+                node.all('option[selected]').set('selected', false);
+                node.all('option[value='+recentlicense+']').set('selected', true);
+            }
+        },
+        create_object_container: function(data) {
+            var content = this.fpnode.one('.fp-content');
+            content.setContent('');
+            //var str = '<object data="'+data.src+'" type="'+data.type+'" width="98%" height="98%" id="container_object" class="fp-object-container mdl-align"></object>';
+            var container = Y.Node.create('<object/>').
+                setAttrs({data:data.src, type:data.type, id:'container_object'}).
+                addClass('fp-object-container');
+            content.setContent('').appendChild(container);
         },
         create_upload_form: function(data) {
             var client_id = this.options.client_id;

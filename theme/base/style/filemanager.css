@@ -69,6 +69,7 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
 .file-picker .fp-navbar {background: #F2F2F2;min-height:27px;border-bottom: 1px solid #BBB;padding: 5px 8px;/*position: absolute;left:182px;right:0px;*/width:527px;}
 .file-picker .fp-content {background: #FFF;clear: both;overflow:auto;/*resize:both;*/width: 543px;min-width: 543px;max-width: 780px;height: 349px;min-height: 349px;max-height: 700px;/*border-bottom-right-radius: 10px;*//*top:100px;position: relative;*/margin-bottom: 6px;}
 .file-picker .fp-repo-items p{width: auto;}
+.file-picker .fp-content .fp-object-container {width:98%;height:98%;}
 
 /*
  * Repositories

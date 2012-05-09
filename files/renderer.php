@@ -584,8 +584,12 @@ class core_files_renderer extends plugin_renderer_base {
 <table width="100%">
 <tr class="{!}fp-saveas"><td class="mdl-right"><label>'.get_string('saveas', 'repository').'</label>:</td>
 <td class="mdl-left"><input type="text"/></td></tr>
-<tr class="{!}fp-linkexternal"><td></td>
-<td class="mdl-left"><input type="checkbox"/><label>'.get_string('linkexternal', 'repository').'</label></td></tr>
+<tr class="{!}fp-linktype-2"><td></td>
+<td class="mdl-left"><input type="radio"/><label>'.get_string('makefileinternal', 'repository').'</label></td></tr>
+<tr class="{!}fp-linktype-1"><td></td>
+<td class="mdl-left"><input type="radio"/><label>'.get_string('makefilelink', 'repository').'</label></td></tr>
+<tr class="{!}fp-linktype-4"><td></td>
+<td class="mdl-left"><input type="radio"/><label>'.get_string('makefilereference', 'repository').'</label></td></tr>
 <tr class="{!}fp-setauthor"><td class="mdl-right"><label>'.get_string('author', 'repository').'</label>:</td>
 <td class="mdl-left"><input type="text" /></td></tr>
 <tr class="{!}fp-setlicense"><td class="mdl-right"><label>'.get_string('chooselicense', 'repository').'</label>:</td>
