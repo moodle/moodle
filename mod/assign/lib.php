@@ -350,6 +350,8 @@ function assign_print_recent_activity($course, $viewfullnames, $timestart) {
     $show    = array();
     $grader  = array();
 
+    $showrecentsubmissions = get_config('mod_assign', 'showrecentsubmissions');
+
     foreach($submissions as $submission) {
         if (!array_key_exists($submission->cmid, $modinfo->get_cms())) {
             continue;
@@ -365,7 +367,7 @@ function assign_print_recent_activity($course, $viewfullnames, $timestart) {
 
         $context = context_module::instance($submission->cmid);
         // the act of sumbitting of assignment may be considered private - only graders will see it if specified
-        if (empty($CFG->assign_showrecentsubmissions)) {
+        if (empty($showrecentsubmissions)) {
             if (!array_key_exists($cm->id, $grader)) {
                 $grader[$cm->id] = has_capability('moodle/grade:viewall',$context);
             }
@@ -485,6 +487,7 @@ function assign_get_recent_mod_activity(&$activities, &$index, $timestart, $cour
         $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
     }
 
+    $showrecentsubmissions = get_config('mod_assign', 'showrecentsubmissions');
     $show = array();
     $usersgroups = groups_get_all_groups($course->id, $USER->id, $cm->groupingid);
     if (is_array($usersgroups)) {
@@ -496,7 +499,7 @@ function assign_get_recent_mod_activity(&$activities, &$index, $timestart, $cour
             continue;
         }
         // the act of submitting of assignment may be considered private - only graders will see it if specified
-        if (empty($CFG->assign_showrecentsubmissions)) {
+        if (empty($showrecentsubmissions)) {
             if (!$grader) {
                 continue;
             }

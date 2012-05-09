@@ -90,6 +90,10 @@ class assign {
 
     /** @var stdClass the course this assign instance belongs to */
     private $course;
+    
+    /** @var stdClass the admin config for all assign instances  */
+    private $adminconfig;
+
 
     /** @var assign_renderer the custom renderer for this module */
     private $output;
@@ -548,6 +552,18 @@ class assign {
         return assign_grade_item_update($assign, $param);
     }
 
+    /** Load and cache the admin config for this module
+     * 
+     * @return stdClass the plugin config
+     */
+    public function get_admin_config() {
+        if ($this->adminconfig) {
+            return $this->adminconfig;
+        }
+        $this->adminconfig = get_config('mod_assign');
+        return $this->adminconfig;
+    }
+
 
     /**
      * Update the calendar entries for this assignment
@@ -694,9 +710,8 @@ class assign {
             $mform->addElement('selectyesno', $plugin->get_subtype() . '_' . $plugin->get_type() . '_enabled', $plugin->get_name());
             $mform->addHelpButton($plugin->get_subtype() . '_' . $plugin->get_type() . '_enabled', 'enabled', $plugin->get_subtype() . '_' . $plugin->get_type());
 
-            $setting = $plugin->get_subtype() . '_' . $plugin->get_type() . '_default';
 
-            $default = $CFG->$setting;
+            $default = get_config($plugin->get_subtype() . '_' . $plugin->get_type(), 'default');
             if ($plugin->get_config('enabled') !== false) {
                 $default = $plugin->is_enabled();
             }
@@ -2731,7 +2746,8 @@ class assign {
             }
             $grade->grader= $USER->id;
 
-            $gradebookplugin = $CFG->assign_feedback_plugin_for_gradebook;
+            $adminconfig = $this->get_admin_config();
+            $gradebookplugin = $adminconfig->feedback_plugin_for_gradebook;
 
             // call save in plugins
             foreach ($this->feedbackplugins as $plugin) {

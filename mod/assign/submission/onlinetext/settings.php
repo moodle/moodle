@@ -15,22 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'assignsubmission_onlinetext', language 'en'
+ * This file defines the admin settings for this plugin
  *
  * @package   assignsubmission_onlinetext
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['allowonlinetextsubmissions'] = 'Enabled';
-$string['default'] = 'Enabled by default';
-$string['default_help'] = 'If set, this submission method will be enabled by default for all new assignments.';
-$string['enabled'] = 'Online text';
-$string['enabled_help'] = 'If enabled, students are able to type rich text directly into an editor field for their submission.';
-$string['nosubmission'] = 'Nothing has been submitted for this assignment';
-$string['onlinetext'] = 'Online text';
-$string['onlinetextfilename'] = 'onlinetext.html';
-$string['onlinetextsubmission'] = 'Allow online text submission';
-$string['pluginname'] = 'Online text submissions';
-$string['numwords'] = '({$a} words)';
-$string['numwordsforlog'] = 'Submission word count: {$a} words';
+$settings->add(new admin_setting_configcheckbox('assignsubmission_onlinetext/default',
+                   new lang_string('default', 'assignsubmission_onlinetext'),
+                   new lang_string('default_help', 'assignsubmission_onlinetext'), 0));
+
