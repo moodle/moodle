@@ -4397,6 +4397,43 @@ function course_page_type_list($pagetype, $parentcontext, $currentcontext) {
 }
 
 /**
+ * Determine whether course ajax should be enabled for the specified course
+ *
+ * @param object $course The course to test against
+ * @return boolean Whether course ajax is enabled or note
+ */
+function course_ajax_enabled($course) {
+    global $CFG, $PAGE, $SITE;
+
+    // Ajax must be enabled globally
+    if (!$CFG->enableajax) {
+        return false;
+    }
+
+    // The user must be editing for AJAX to be included
+    if (!$PAGE->user_is_editing()) {
+        return false;
+    }
+
+    // Check that the theme suports
+    if (!$PAGE->theme->enablecourseajax) {
+        return false;
+    }
+
+    // Check that the course format supports ajax functionality
+    // The site 'format' doesn't have information on course format support
+    if ($SITE->id !== $course->id) {
+        $courseformatajaxsupport = course_format_ajax_support($course->format);
+        if (!$courseformatajaxsupport->capable) {
+            return false;
+        }
+    }
+
+    // All conditions have been met so course ajax should be enabled
+    return true;
+}
+
+/**
  * Include the relevant javascript and language strings for the resource
  * toolbox YUI module
  *
@@ -4410,16 +4447,11 @@ function course_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * @return void
  */
 function include_course_ajax($course, $modules = array(), $config = null) {
-    global $PAGE, $CFG, $USER;
+    global $PAGE, $CFG, $SITE;
 
     // Ensure that ajax should be included
-    $courseformatajaxsupport = course_format_ajax_support($course->format);
-    if (!$PAGE->theme->enablecourseajax
-        || !$CFG->enableajax
-        || empty($USER->editing)
-        || !$PAGE->user_is_editing()
-        || ($course->id != SITEID && !$courseformatajaxsupport->capable)) {
-        return;
+    if (!course_ajax_enabled($course)) {
+        return false;
     }
 
     if (!$config) {
@@ -4461,7 +4493,7 @@ function include_course_ajax($course, $modules = array(), $config = null) {
     );
 
     // Include course dragdrop
-    if ($course->id != SITEID) {
+    if ($course->id != $SITE->id) {
         $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.course.init_section_dragdrop',
             array(array(
                 'courseid' => $course->id,
@@ -4504,7 +4536,7 @@ function include_course_ajax($course, $modules = array(), $config = null) {
         ), 'moodle');
 
     // Include format-specific strings
-    if ($course->id != SITEID) {
+    if ($course->id != $SITE->id) {
         $PAGE->requires->strings_for_js(array(
                 'showfromothers',
                 'hidefromothers',
@@ -4515,6 +4547,8 @@ function include_course_ajax($course, $modules = array(), $config = null) {
     foreach ($modules as $module => $modname) {
         $PAGE->requires->string_for_js('pluginname', $module);
     }
+
+    return true;
 }
 
 /**
