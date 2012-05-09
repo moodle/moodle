@@ -146,16 +146,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         }
 
         $o.= html_writer::start_tag('div', array('class' => 'summary'));
+        $o.= $this->format_summary_text($section);
 
-        $context = context_course::instance($section->course);
-        $summarytext = file_rewrite_pluginfile_urls($section->summary, 'pluginfile.php',
-            $context->id, 'course', 'section', $section->id);
-        $summaryformatoptions = new stdClass();
-        $summaryformatoptions->noclean = true;
-        $summaryformatoptions->overflowdiv = true;
-
-        $o.= format_text($summarytext, $section->summaryformat, $summaryformatoptions);
-
+        $context = context_course::instance($course->id);
         if ($PAGE->user_is_editing() && has_capability('moodle/course:update', $context)) {
             $url = new moodle_url('/course/editsection.php', array('id'=>$section->id));
 
@@ -277,7 +270,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o.= html_writer::end_tag('a');
 
         $o.= html_writer::start_tag('div', array('class' => 'summarytext'));
-        $o.= format_text($section->summary, $section->summaryformat);
+        $o.= $this->format_summary_text($section);
         $o.= html_writer::end_tag('div');
         $o.= html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
@@ -575,5 +568,22 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             echo $this->end_section_list();
         }
 
+    }
+
+    /**
+     * Generate html for a section summary text
+     *
+     * @param stdClass $section The course_section entry from DB
+     * @return string HTML to output.
+     */
+    protected function format_summary_text($section) {
+        $context = context_course::instance($section->course);
+        $summarytext = file_rewrite_pluginfile_urls($section->summary, 'pluginfile.php',
+            $context->id, 'course', 'section', $section->id);
+
+        $options = new stdClass();
+        $options->noclean = true;
+        $options->overflowdiv = true;
+        return format_text($summarytext, $section->summaryformat, $options);
     }
 }
