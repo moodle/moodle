@@ -115,6 +115,7 @@ $string['hidden'] = 'Hidden';
 $string['choosealink'] = 'Choose a link...';
 $string['chooselicense'] = 'Choose license';
 $string['iconview'] = 'View as icons';
+$string['imagesize'] = '{$a->width} x {$a->height} px';
 $string['instance'] = 'instance';
 $string['instancedeleted'] = 'Instance deleted';
 $string['instances'] = 'Repository instances';

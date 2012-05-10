@@ -518,14 +518,6 @@ M.core_filepicker.init = function(Y, options) {
                                 this.fpnode.one('.fp-content').setContent('');
                             }
                             return;
-                        } else if (data && data.event) {
-                            switch (data.event) {
-                                case 'fileexists':
-                                    scope.process_existing_file(data);
-                                    break;
-                                default:
-                                    break;
-                            }
                         } else {
                             if (data.msg) {
                                 scope.print_msg(data.msg, 'info');
@@ -593,7 +585,8 @@ M.core_filepicker.init = function(Y, options) {
                             var fileinfo = {'client_id':scope.options.client_id,
                                     'url':data.existingfile.url,
                                     'file':data.existingfile.filename};
-                            scope.options.formcallback.apply(scope, [fileinfo]);
+                            var formcallback_scope = scope.options.magicscope ? scope.options.magicscope : scope;
+                            scope.options.formcallback.apply(formcallback_scope, [fileinfo]);
                         }
                     }
                 }, true);
@@ -608,12 +601,7 @@ M.core_filepicker.init = function(Y, options) {
                     scope.options.editor_target.onchange();
                 }
                 scope.hide();
-                var formcallback_scope = null;
-                if (scope.options.magicscope) {
-                    formcallback_scope = scope.options.magicscope;
-                } else {
-                    formcallback_scope = scope;
-                }
+                var formcallback_scope = scope.options.magicscope ? scope.options.magicscope : scope;
                 var fileinfo = {'client_id':scope.options.client_id,
                                 'url':data.newfile.url,
                                 'file':data.newfile.filename};
@@ -640,8 +628,10 @@ M.core_filepicker.init = function(Y, options) {
                 this.selectui.hide();
             }
             if (!this.process_dlg) {
-                var node = Y.Node.create(M.core_filepicker.templates.processexistingfile);
-                this.fpnode.appendChild(node);
+                this.process_dlg_node = Y.Node.create(M.core_filepicker.templates.processexistingfile);
+                var node = this.process_dlg_node;
+                node.generateID();
+                Y.one(document.body).appendChild(node);
                 this.process_dlg = new Y.Panel({
                     srcNode      : node,
                     headerContent: M.str.repository.fileexistsdialogheader,
@@ -652,6 +642,7 @@ M.core_filepicker.init = function(Y, options) {
                     render       : true,
                     buttons      : {}
                 });
+                this.process_dlg.plug(Y.Plugin.Drag,{handles:['#'+node.get('id')+' .yui3-widget-hd']});
                 node.one('.fp-dlg-butoverwrite').on('click', handleOverwrite, this);
                 node.one('.fp-dlg-butrename').on('click', handleRename, this);
                 node.one('.fp-dlg-butcancel').on('click', handleCancel, this);
@@ -663,7 +654,7 @@ M.core_filepicker.init = function(Y, options) {
             }
             this.selectnode.removeClass('loading');
             this.process_dlg.dialogdata = data;
-            this.fpnode.one('.fp-dlg .fp-dlg-butrename').setContent(M.util.get_string('renameto', 'repository', data.newfile.filename));
+            this.process_dlg_node.one('.fp-dlg-butrename').setContent(M.util.get_string('renameto', 'repository', data.newfile.filename));
             this.process_dlg.show();
         },
         /** displays error instead of filepicker contents */
@@ -681,26 +672,28 @@ M.core_filepicker.init = function(Y, options) {
                 header = M.str.moodle.info;
             }
             if (!this.msg_dlg) {
-                var node = Y.Node.create(M.core_filepicker.templates.message);
-                this.fpnode.appendChild(node);
+                this.msg_dlg_node = Y.Node.create(M.core_filepicker.templates.message);
+                this.msg_dlg_node.generateID();
+                Y.one(document.body).appendChild(this.msg_dlg_node);
 
                 this.msg_dlg = new Y.Panel({
-                    srcNode      : node,
+                    srcNode      : this.msg_dlg_node,
                     zIndex       : 800000,
                     centered     : true,
                     modal        : true,
                     visible      : false,
                     render       : true
                 });
-                node.one('.fp-msg-butok').on('click', function(e) {
+                this.msg_dlg.plug(Y.Plugin.Drag,{handles:['#'+this.msg_dlg_node.get('id')+' .yui3-widget-hd']});
+                this.msg_dlg_node.one('.fp-msg-butok').on('click', function(e) {
                     e.preventDefault();
                     this.msg_dlg.hide();
                 }, this);
             }
 
             this.msg_dlg.set('headerContent', header);
-            this.fpnode.one('.fp-msg').removeClass('fp-msg-info').removeClass('fp-msg-error').addClass('fp-msg-'+type)
-            this.fpnode.one('.fp-msg .fp-msg-text').setContent(msg);
+            this.msg_dlg_node.removeClass('fp-msg-info').removeClass('fp-msg-error').addClass('fp-msg-'+type)
+            this.msg_dlg_node.one('.fp-msg-text').setContent(msg);
             this.msg_dlg.show();
         },
         view_files: function(appenditems) {
@@ -1095,12 +1088,7 @@ M.core_filepicker.init = function(Y, options) {
                         }
                         scope.hide();
                         obj.client_id = client_id;
-                        var formcallback_scope = null;
-                        if (args.scope.options.magicscope) {
-                            formcallback_scope = args.scope.options.magicscope;
-                        } else {
-                            formcallback_scope = args.scope;
-                        }
+                        var formcallback_scope = args.scope.options.magicscope ? args.scope.options.magicscope : args.scope;
                         scope.options.formcallback.apply(formcallback_scope, [obj]);
                     }
                 }, false);
@@ -1539,18 +1527,18 @@ M.core_filepicker.init = function(Y, options) {
                             scope.create_upload_form(data);
                         },
                         callback: function(id, o, args) {
+                            if (o.event == 'fileexists') {
+                                scope.create_upload_form(data);
+                                scope.process_existing_file(o);
+                                return;
+                            }
                             if (scope.options.editor_target&&scope.options.env=='editor') {
                                 scope.options.editor_target.value=o.url;
                                 scope.options.editor_target.onchange();
                             }
                             scope.hide();
                             o.client_id = client_id;
-                            var formcallback_scope = null;
-                            if (args.scope.options.magicscope) {
-                                formcallback_scope = args.scope.options.magicscope;
-                            } else {
-                                formcallback_scope = args.scope;
-                            }
+                            var formcallback_scope = args.scope.options.magicscope ? args.scope.options.magicscope : args.scope;
                             scope.options.formcallback.apply(formcallback_scope, [o]);
                         }
                 }, true);

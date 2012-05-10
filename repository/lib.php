@@ -1781,16 +1781,18 @@ abstract class repository {
 
     /**
      * Prepares list of files before passing it to AJAX, makes sure data is in the correct
-     * format and stores formatted dates.
+     * format and stores formatted values.
      *
      * @param array|stdClass $listing result of get_listing() or search() or file_get_drafarea_files()
      * @return array
      */
     public static function prepare_listing($listing) {
         global $OUTPUT;
-        if (is_array($listing) && isset($listing['list'])) {
+        if (is_array($listing) && isset($listing['list']) && is_array(($listing['list']))) {
+            $listing['list'] = array_values($listing['list']); // convert to array
             $files = &$listing['list'];
-        } else if (is_object($listing) && isset($listing->list)) {
+        } else if (is_object($listing) && isset($listing->list) && is_array(($listing->list))) {
+            $listing->list = array_values($listing->list); // convert to array
             $files = &$listing->list;
         } else {
             return $listing;
@@ -1813,7 +1815,8 @@ abstract class repository {
                 $file['license_f'] = get_string($file['license'], 'license');
             }
             if (isset($file['image_width']) && isset($file['image_height'])) {
-                $file['dimensions'] = $file['image_width'].'x'.$file['image_height'];
+                $a = array('width' => $file['image_width'], 'height' => $file['image_height']);
+                $file['dimensions'] = get_string('imagesize', 'repository', (object)$a);
             }
             foreach (array('date', 'datemodified', 'datecreated') as $key) {
                 if (!isset($file[$key]) && isset($file['date'])) {
