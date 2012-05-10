@@ -188,6 +188,16 @@ class file_info_stored extends file_info {
     }
 
     /**
+     * Returns width, height and mimetype of the stored image, or false
+     *
+     * @see stored_file::get_imageinfo()
+     * @return array|false
+     */
+    public function get_imageinfo() {
+        return $this->lf->get_imageinfo();
+    }
+
+    /**
      * Returns mimetype
      *
      * @return string mimetype or null if not known
