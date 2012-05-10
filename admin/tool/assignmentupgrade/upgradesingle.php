@@ -23,8 +23,8 @@
  */
 
 require_once(dirname(__FILE__) . '/../../../config.php');
-require_once(dirname(__FILE__) . '/locallib.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/admin/tool/assignmentupgrade/locallib.php');
 
 require_sesskey();
 
@@ -36,13 +36,11 @@ admin_externalpage_setup('assignmentupgrade', '', array(), tool_assignmentupgrad
 $PAGE->navbar->add(get_string('upgradesingle', 'tool_assignmentupgrade'));
 $renderer = $PAGE->get_renderer('tool_assignmentupgrade');
 
-$assignmentinfo = tool_assignmentupgrade_get_assignment($assignmentid);
-if (!$assignmentinfo) {
-    print_error('invalidrequest');
-    die();
-}
-
 $log = '';
-$result = tool_assignmentupgrade_upgrade_assignment($assignmentinfo, $log);
+list($summary, $success, $log) = tool_assignmentupgrade_upgrade_assignment($assignmentid);
 
-echo $renderer->convert_assignment_result($assignmentinfo, $result, $log);
+echo $renderer->header();
+echo $renderer->heading(get_string('conversioncomplete', 'tool_assignmentupgrade'));
+echo $renderer->convert_assignment_result($summary, $success, $log);
+echo $renderer->continue_button(tool_assignmentupgrade_url('listnotupgraded'));
+echo $renderer->footer();

@@ -29,6 +29,12 @@ require_once($CFG->dirroot.'/mod/assign/locallib.php');
 /** Include accesslib.php */
 require_once($CFG->libdir.'/accesslib.php');
 
+/**
+ * The maximum amount of time to spend upgrading a single assignment.
+ * This is intentionally generous (5 mins) as the effect of a timeout
+ * for a legitimate upgrade would be quite harsh (roll back code will not run)
+ */
+define('ASSIGN_MAX_UPGRADE_TIME_SECS', 300);
 
 /**
  * Class to manage upgrades from mod_assignment to mod_assign
@@ -48,9 +54,7 @@ class assign_upgrade_manager {
      * @return bool true or false
      */
     public function upgrade_assignment($oldassignmentid, & $log) {
-        global $DB, $CFG;
         // steps to upgrade an assignment
-
         global $DB, $CFG, $USER;
         // steps to upgrade an assignment
 
@@ -58,6 +62,9 @@ class assign_upgrade_manager {
         if (!is_siteadmin($USER->id)) {
               return false;
         }
+
+        // should we use a shutdown handler to rollback on timeout?
+        @set_time_limit(ASSIGN_MAX_UPGRADE_TIME_SECS);
 
 
         // get the module details
@@ -217,7 +224,7 @@ class assign_upgrade_manager {
 
         } catch (Exception $exception) {
             $rollback = true;
-            $log .= get_string('conversionexception', 'mod_assign', $exception->getMessage());
+            $log .= get_string('conversionexception', 'mod_assign', $exception->error);
         }
 
         if ($rollback) {
