@@ -45,14 +45,16 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
      * startyear => int start of range of years that can be selected
      * stopyear => int last year that can be selected
      * defaulttime => default time value if the field is currently not set
-     * timezone => float/string timezone
-     * applydst => apply users daylight savings adjustment?
+     * timezone => int|float|string (optional) timezone modifier used for edge case only.
+     *      If not specified, then date is caclulated based on current user timezone.
+     *      Note: dst will be calculated for string timezones only
+     *      {@link http://docs.moodle.org/dev/Time_API#Timezone}
      * step => step to increment minutes by
      * optional => if true, show a checkbox beside the date to turn it on (or off)
      * @var array
      */
     var $_options = array('startyear' => 1970, 'stopyear' => 2020, 'defaulttime' => 0,
-                    'timezone' => 99, 'applydst' => true, 'step' => 5, 'optional' => false);
+                    'timezone' => 99, 'step' => 5, 'optional' => false);
 
     /** @var array These complement separators, they are appended to the resultant HTML */
     var $_wrap = array('', '');
@@ -164,7 +166,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                     }
                 }
                 if (!is_array($value)) {
-                    $currentdate = usergetdate($value);
+                    $currentdate = usergetdate($value, $this->_options['timezone']);
                     // Round minutes to the previous multiple of step.
                     $currentdate['minutes'] -= $currentdate['minutes'] % $this->_options['step'];
                     $value = array(
@@ -255,7 +257,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                                    $valuearray['minute'],
                                    0,
                                    $this->_options['timezone'],
-                                   $this->_options['applydst']);
+                                   true);
 
             return $value;
         } else {

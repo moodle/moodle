@@ -45,13 +45,15 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
      * Control the fieldnames for form elements
      * startyear => int start of range of years that can be selected
      * stopyear => int last year that can be selected
-     * timezone => float/string timezone
-     * applydst => apply users daylight savings adjustment?
+     * timezone => int|float|string (optional) timezone modifier used for edge case only.
+     *      If not specified, then date is caclulated based on current user timezone.
+     *      Note: dst will be calculated for string timezones only
+     *      {@link http://docs.moodle.org/dev/Time_API#Timezone}
      * optional => if true, show a checkbox beside the date to turn it on (or off)
      * @var array
      */
     protected $_options = array('startyear' => 1970, 'stopyear' => 2020,
-            'timezone' => 99, 'applydst' => true, 'optional' => false);
+            'timezone' => 99, 'optional' => false);
 
    /** @var array These complement separators, they are appended to the resultant HTML */
     protected $_wrap = array('', '');
@@ -147,7 +149,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
                     $value = time();
                 }
                 if (!is_array($value)) {
-                    $currentdate = usergetdate($value);
+                    $currentdate = usergetdate($value, $this->_options['timezone']);
                     $value = array(
                         'day' => $currentdate['mday'],
                         'month' => $currentdate['mon'],
@@ -233,7 +235,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
                                    $valuearray['day'],
                                    0, 0, 0,
                                    $this->_options['timezone'],
-                                   $this->_options['applydst']);
+                                   true);
 
             return $value;
         } else {
