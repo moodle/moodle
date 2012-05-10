@@ -322,7 +322,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param stdClass $course The course entry from DB
      * @param array $sections The course_sections entries from the DB
      * @param int $sectionno The section number in the coruse which is being dsiplayed
-     * @return string HTML to output.
+     * @return array associative array with previous and next section link
      */
     protected function get_nav_links($course, $sections, $sectionno) {
         // FIXME: This is really evil and should by using the navigation API.
@@ -333,8 +333,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $back = $sectionno - 1;
         while ($back > 0 and empty($links['previous'])) {
             if ($canviewhidden || $sections[$back]->visible) {
-                $links['previous'] = html_writer::link(course_get_url($course, $back),
-                    $this->output->larrow().$this->output->spacer().get_section_name($course, $sections[$back]));
+                $previouslink = html_writer::tag('span', $this->output->larrow(), array('class' => 'larrow'));
+                $previouslink .= get_section_name($course, $sections[$back]);
+                $links['previous'] = html_writer::link(course_get_url($course, $back), $previouslink);
             }
             $back--;
         }
@@ -342,19 +343,14 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $forward = $sectionno + 1;
         while ($forward <= $course->numsections and empty($links['next'])) {
             if ($canviewhidden || $sections[$forward]->visible) {
-                $links['next'] = html_writer::link(course_get_url($course, $forward),
-                    get_section_name($course, $sections[$forward]).$this->output->spacer().$this->output->rarrow());
+                $nextlink = get_section_name($course, $sections[$forward]);
+                $nextlink .= html_writer::tag('span', $this->output->rarrow(), array('class' => 'rarrow'));
+                $links['next'] = html_writer::link(course_get_url($course, $forward), $nextlink);
             }
             $forward++;
         }
 
-        $o = '';
-        $o.= html_writer::start_tag('div', array('class' => 'section-navigation yui3-g'));
-        $o.= html_writer::tag('div', $links['previous'], array('class' => 'yui3-u'));
-        $o.= html_writer::tag('div', $links['next'], array('class' => 'right yui3-u'));
-        $o.= html_writer::end_tag('div');
-
-        return $o;
+        return $links;
     }
 
     /**
@@ -449,16 +445,19 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             echo $this->end_section_list();
         }
 
-        // Section next/previous links.
+        // Title with section navigation links.
         $sectionnavlinks = $this->get_nav_links($course, $sections, $displaysection);
-        echo $sectionnavlinks;
+        $sectiontitle = '';
+        $sectiontitle .= html_writer::start_tag('div', array('class' => 'section-navigation headingblock header'));
+        $sectiontitle .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
+        $sectiontitle .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
+        $sectiontitle .= html_writer::tag('div', get_section_name($course, $sections[$displaysection]), array('class' => 'mdl-align'));
+        $sectiontitle .= html_writer::end_tag('div');
+        echo $sectiontitle;
 
-
-        // Title with completion help icon.
+        // Show completion help icon.
         $completioninfo = new completion_info($course);
         echo $completioninfo->display_help_icon();
-        $title = get_section_name($course, $sections[$displaysection]);
-        echo $this->output->heading($title, 2, 'headingblock header outline');
 
         // Copy activity clipboard..
         echo $this->course_activity_clipboard($course, $displaysection);
@@ -474,8 +473,17 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             print_section_add_menus($course, $displaysection, $modnames);
         }
         echo $this->section_footer();
-        echo $sectionnavlinks;
         echo $this->end_section_list();
+
+        // Display section bottom navigation.
+        $courselink = html_writer::link(course_get_url($course), get_string('returntomaincoursepage'));
+        $sectionbottomnav = '';
+        $sectionbottomnav .= html_writer::start_tag('div', array('class' => 'section-navigation mdl-bottom'));
+        $sectionbottomnav .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
+        $sectionbottomnav .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
+        $sectionbottomnav .= html_writer::tag('div', $courselink, array('class' => 'mdl-align'));
+        $sectionbottomnav .= html_writer::end_tag('div');
+        echo $sectionbottomnav;
     }
 
     /**
