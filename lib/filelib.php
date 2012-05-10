@@ -1617,6 +1617,13 @@ function prepare_file_content_sending() {
 function send_temp_file($path, $filename, $pathisstring=false) {
     global $CFG;
 
+    if (check_browser_version('Firefox', '1.5')) {
+        // only FF is known to correctly save to disk before opening...
+        $mimetype = mimeinfo('type', $filename);
+    } else {
+        $mimetype = 'application/x-forcedownload';
+    }
+
     // close session - not needed anymore
     @session_get_instance()->write_close();
 
@@ -1648,6 +1655,13 @@ function send_temp_file($path, $filename, $pathisstring=false) {
         header('Pragma: no-cache');
     }
     header('Accept-Ranges: none'); // Do not allow byteserving
+
+    if ($mimetype === 'text/plain') {
+        // there is no encoding specified in text files, we need something consistent
+        header('Content-Type: text/plain; charset=utf-8');
+    } else {
+        header('Content-Type: '.$mimetype);
+    }
 
     //flush the buffers - save memory and disable sid rewrite
     // this also disables zlib compression
