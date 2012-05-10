@@ -194,9 +194,6 @@ $string['icon_url'] = 'Icon URL';
 $string['icon_url_help'] = 'The icon URL allows the icon that shows up in the course listing for this activity to be modified. Instead of using the default
 LTI icon, an icon which conveys the type of activity may be specified.';
 $string['id'] = 'id';
-$string['imsroleadmin'] = 'Instructor,Administrator';
-$string['imsroleinstructor'] = 'Instructor';
-$string['imsrolelearner'] = 'Learner';
 $string['invalidid'] = 'LTI ID was incorrect';
 $string['launch_in_moodle'] = 'Launch tool in moodle';
 $string['launch_in_popup'] = 'Launch tool in a pop-up';
@@ -366,8 +363,6 @@ is set to always launch through SSL.
 
 The Launch URL may also be set to an https address to force launching through SSL, and this field may be left blank.';
 $string['send'] = 'Send';
-$string['setdefault'] = 'Set a default value for the professor if delegating';
-$string['setupbox'] = 'LTI Tool Setup Box';
 $string['setupoptions'] = 'Setup Options';
 $string['share_email'] = 'Share launcher\'s email with the tool';
 $string['share_email_admin'] = 'Share launcher\'s email with tool';
