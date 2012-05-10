@@ -188,35 +188,35 @@ $functions = array(
     ),
 
     'core_group_get_course_groupings' => array(
-            'classname'   => 'core_group_external',
-            'methodname'  => 'get_course_groupings',
-            'classpath'   => 'group/externallib.php',
-            'description' => 'Returns all groupings in specified course.',
-            'type'        => 'read',
+        'classname'   => 'core_group_external',
+        'methodname'  => 'get_course_groupings',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Returns all groupings in specified course.',
+        'type'        => 'read',
     ),
 
     'core_group_delete_groupings' => array(
-            'classname'   => 'core_group_external',
-            'methodname'  => 'delete_groupings',
-            'classpath'   => 'group/externallib.php',
-            'description' => 'Deletes all specified groupings.',
-            'type'        => 'write',
+        'classname'   => 'core_group_external',
+        'methodname'  => 'delete_groupings',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Deletes all specified groupings.',
+        'type'        => 'write',
     ),
 
     'core_group_assign_grouping' => array(
-            'classname'   => 'core_group_external',
-            'methodname'  => 'assign_grouping',
-            'classpath'   => 'group/externallib.php',
-            'description' => 'Assing groups from groupings',
-            'type'        => 'write',
+        'classname'   => 'core_group_external',
+        'methodname'  => 'assign_grouping',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Assing groups from groupings',
+        'type'        => 'write',
     ),
 
     'core_group_unassign_grouping' => array(
-            'classname'   => 'core_group_external',
-            'methodname'  => 'unassign_grouping',
-            'classpath'   => 'group/externallib.php',
-            'description' => 'Unassing groups from groupings',
-            'type'        => 'write',
+        'classname'   => 'core_group_external',
+        'methodname'  => 'unassign_grouping',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Unassing groups from groupings',
+        'type'        => 'write',
     ),
 
     // === file related functions ===

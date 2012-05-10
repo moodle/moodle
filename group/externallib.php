@@ -552,7 +552,9 @@ class core_group_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.3
      */
     public static function create_groupings_parameters() {
         return new external_function_parameters(
@@ -572,8 +574,10 @@ class core_group_external extends external_api {
 
     /**
      * Create groupings
+     * 
      * @param array $groupings array of grouping description arrays (with keys groupname and courseid)
      * @return array of newly created groupings
+     * @since Moodle 2.3
      */
     public static function create_groupings($groupings) {
         global $CFG, $DB;
@@ -591,7 +595,7 @@ class core_group_external extends external_api {
             if (trim($grouping->name) == '') {
                 throw new invalid_parameter_exception('Invalid grouping name');
             }
-            if ($DB->get_record('groupings', array('courseid'=>$grouping->courseid, 'name'=>$grouping->name))) {
+            if ($DB->count_records('groupings', array('courseid'=>$grouping->courseid, 'name'=>$grouping->name))) {
                 throw new invalid_parameter_exception('Grouping with the same name already exists in the course');
             }
 
@@ -622,7 +626,9 @@ class core_group_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.3
      */
     public static function create_groupings_returns() {
         return new external_multiple_structure(
@@ -639,7 +645,9 @@ class core_group_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.3
      */
     public static function update_groupings_parameters() {
         return new external_function_parameters(
@@ -659,8 +667,10 @@ class core_group_external extends external_api {
 
     /**
      * Update groupings
+     *
      * @param array $groupings array of grouping description arrays (with keys groupname and courseid)
      * @return array of newly updated groupings
+     * @since Moodle 2.3
      */
     public static function update_groupings($groupings) {
         global $CFG, $DB;
@@ -669,8 +679,6 @@ class core_group_external extends external_api {
         $params = self::validate_parameters(self::update_groupings_parameters(), array('groupings'=>$groupings));
 
         $transaction = $DB->start_delegated_transaction();
-
-        $groupings = array();
 
         foreach ($params['groupings'] as $grouping) {
             $grouping = (object)$grouping;
@@ -701,52 +709,49 @@ class core_group_external extends external_api {
 
             // Finally update the grouping.
             groups_update_grouping($grouping);
-            $groupings[] = (array)$grouping;
         }
 
         $transaction->allow_commit();
 
-        return $groupings;
+        return null;
     }
 
-   /**
+    /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.3
      */
     public static function update_groupings_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'grouping record id'),
-                    'courseid' => new external_value(PARAM_INT, 'id of course'),
-                    'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
-                    'description' => new external_value(PARAM_CLEANHTML, 'grouping description text')
-                )
-            ), 'List of grouping object. A grouping has an id, a courseid, a name and a description.'
-        );
+        return null;
     }
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.3
      */
     public static function get_groupings_parameters() {
         return new external_function_parameters(
             array(
                 'groupingids' => new external_multiple_structure(new external_value(PARAM_INT, 'grouping ID')
-                        ,'List of grouping id. A grouping id is an integer.'),
+                        , 'List of grouping id. A grouping id is an integer.'),
             )
         );
     }
 
     /**
      * Get groupings definition specified by ids
+     *
      * @param array $groupingids arrays of grouping ids
      * @return array of grouping objects (id, courseid, name)
+     * @since Moodle 2.3
      */
     public static function get_groupings($groupingids) {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
+        require_once("$CFG->libdir/filelib.php");
 
         $params = self::validate_parameters(self::get_groupings_parameters(), array('groupingids'=>$groupingids));
 
@@ -780,9 +785,11 @@ class core_group_external extends external_api {
         return $groupings;
     }
 
-   /**
+    /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.3
      */
     public static function get_groupings_returns() {
         return new external_multiple_structure(
@@ -799,7 +806,9 @@ class core_group_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.3
      */
     public static function get_course_groupings_parameters() {
         return new external_function_parameters(
@@ -811,12 +820,15 @@ class core_group_external extends external_api {
 
     /**
      * Get all groupings in the specified course
+     *
      * @param int $courseid id of course
      * @return array of grouping objects (id, courseid, name, enrolmentkey)
+     * @since Moodle 2.3
      */
     public static function get_course_groupings($courseid) {
         global $CFG;
         require_once("$CFG->dirroot/group/lib.php");
+        require_once("$CFG->libdir/filelib.php");
 
         $params = self::validate_parameters(self::get_course_groupings_parameters(), array('courseid'=>$courseid));
 
@@ -850,9 +862,11 @@ class core_group_external extends external_api {
         return $groupings;
     }
 
-   /**
+    /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.3
      */
     public static function get_course_groupings_returns() {
         return new external_multiple_structure(
@@ -869,7 +883,9 @@ class core_group_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.3
      */
     public static function delete_groupings_parameters() {
         return new external_function_parameters(
@@ -881,8 +897,10 @@ class core_group_external extends external_api {
 
     /**
      * Delete groupings
+     *
      * @param array $groupingids array of grouping ids
      * @return void
+     * @since Moodle 2.3
      */
     public static function delete_groupings($groupingids) {
         global $CFG, $DB;
@@ -893,8 +911,7 @@ class core_group_external extends external_api {
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($params['groupingids'] as $groupingid) {
-            // Validate params.
-            $groupingid = validate_param($groupingid, PARAM_INTEGER);
+
             if (!$grouping = groups_get_grouping($groupingid, 'id, courseid', IGNORE_MISSING)) {
                 // Silently ignore attempts to delete nonexisting groupings.
                 continue;
@@ -918,9 +935,11 @@ class core_group_external extends external_api {
         $transaction->allow_commit();
     }
 
-   /**
+    /**
      * Returns description of method result value
+     *
      * @return external_description
+     * @since Moodle 2.3
      */
     public static function delete_groupings_returns() {
         return null;
@@ -928,7 +947,9 @@ class core_group_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.3
      */
     public static function assign_grouping_parameters() {
         return new external_function_parameters(
@@ -947,8 +968,10 @@ class core_group_external extends external_api {
 
     /**
      * Assign a group to a grouping
+     *
      * @param array $assignments of arrays with keys groupid, groupingid
      * @return void
+     * @since Moodle 2.3
      */
     public static function assign_grouping($assignments) {
         global $CFG, $DB;
@@ -970,7 +993,7 @@ class core_group_external extends external_api {
                 continue;
             }
 
-            // now security checks
+            // Now security checks.
             $context = context_course::instance($grouping->courseid);
             try {
                 self::validate_context($context);
@@ -988,9 +1011,11 @@ class core_group_external extends external_api {
         $transaction->allow_commit();
     }
 
-   /**
+    /**
      * Returns description of method result value
+     *
      * @return null
+     * @since Moodle 2.3
      */
     public static function assign_grouping_returns() {
         return null;
@@ -998,7 +1023,9 @@ class core_group_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.3
      */
     public static function unassign_grouping_parameters() {
         return new external_function_parameters(
@@ -1017,8 +1044,10 @@ class core_group_external extends external_api {
 
     /**
      * Unassign a group from a grouping
+     *
      * @param array $unassignments of arrays with keys groupid, groupingid
      * @return void
+     * @since Moodle 2.3
      */
     public static function unassign_grouping($unassignments) {
         global $CFG, $DB;
@@ -1040,7 +1069,7 @@ class core_group_external extends external_api {
                 continue;
             }
 
-            // now security checks
+            // Now security checks.
             $context = context_course::instance($grouping->courseid);
             try {
                 self::validate_context($context);
@@ -1058,9 +1087,11 @@ class core_group_external extends external_api {
         $transaction->allow_commit();
     }
 
-   /**
+    /**
      * Returns description of method result value
+     *
      * @return null
+     * @since Moodle 2.3
      */
     public static function unassign_grouping_returns() {
         return null;
