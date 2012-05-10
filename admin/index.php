@@ -98,7 +98,8 @@ if (!isset($CFG->version)) {
 
 $version = null;
 $release = null;
-require("$CFG->dirroot/version.php");       // defines $version, $release and $maturity
+$branch = null;
+require("$CFG->dirroot/version.php");       // defines $version, $release, $branch and $maturity
 $CFG->target_release = $release;            // used during installation and upgrades
 
 if (!$version or !$release) {
@@ -258,6 +259,10 @@ if ($version > $CFG->version) {  // upgrade
 // Updated human-readable release version if necessary
 if ($release <> $CFG->release) {  // Update the release version
     set_config('release', $release);
+}
+
+if ($branch <> $CFG->branch) {  // Update the branch
+    set_config('branch', $branch);
 }
 
 if (moodle_needs_upgrading()) {
