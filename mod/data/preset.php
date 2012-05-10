@@ -44,7 +44,8 @@ if ($id) {
     $course = $DB->get_record('course', array('id'=>$data->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('data', $data->id, $course->id, null, MUST_EXIST);
 }
-$context = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
+
+$context = context_module::instance($cm->id, MUST_EXIST);
 require_login($course, false, $cm);
 require_capability('mod/data:managetemplates', $context);
 $PAGE->set_url(new moodle_url('/mod/data/preset.php', array('d'=>$data->id)));
@@ -57,7 +58,6 @@ $data->cmidnumber = $cm->idnumber;
 $data->instance   = $cm->instance;
 
 $presets = data_get_available_presets($context);
-$canmanage = has_capability('mod/data:manageuserpresets', $context);
 $strdelete = get_string('deleted', 'data');
 foreach ($presets as &$preset) {
     if (!empty($preset->userid)) {
@@ -66,8 +66,13 @@ foreach ($presets as &$preset) {
     } else {
         $preset->userid = 0;
         $preset->description = $preset->name;
+        if (data_user_can_delete_preset($context, $preset) && $preset->name != 'Image gallery') {
+            $delurl = new moodle_url('/mod/data/preset.php', array('d'=> $data->id, 'action'=>'confirmdelete', 'fullname'=>$preset->userid.'/'.$preset->shortname, 'sesskey'=>sesskey()));
+            $delicon = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'class'=>'iconsmall', 'alt'=>$strdelete.' '.$preset->description));
+            $preset->description .= html_writer::link($delurl, $delicon);
+        }
     }
-    if ($preset->userid > 0 and ($preset->userid == $USER->id || $canmanage)) {
+    if ($preset->userid > 0 && data_user_can_delete_preset($context, $preset)) {
         $delurl = new moodle_url('/mod/data/preset.php', array('d'=> $data->id, 'action'=>'confirmdelete', 'fullname'=>$preset->userid.'/'.$preset->shortname, 'sesskey'=>sesskey()));
         $delicon = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'class'=>'iconsmall', 'alt'=>$strdelete.' '.$preset->description));
         $preset->description .= html_writer::link($delurl, $delicon);
@@ -135,9 +140,18 @@ if (optional_param('sesskey', false, PARAM_BOOL) && confirm_sesskey()) {
         exit(0);
 
     } else if ($formdata = $form_save->get_data()) {
-
         if (!empty($formdata->overwrite)) {
-            data_delete_site_preset($formdata->name);
+            $selectedpreset = new stdClass();
+            foreach ($presets as $preset) {
+                if ($preset->name == $formdata->name) {
+                    $selectedpreset = $preset;
+                }
+            }
+            if (data_user_can_delete_preset($context, $selectedpreset)) {
+                data_delete_site_preset($formdata->name);
+            } else {
+                print_error('cannotdeletepreset', 'data');
+            }
         }
 
         // If the preset exists now then we need to throw an error.
@@ -179,7 +193,13 @@ if (optional_param('sesskey', false, PARAM_BOOL) && confirm_sesskey()) {
             echo $OUTPUT->footer();
             exit(0);
         } else if ($action == 'delete') {
-            if (!$userid || ($userid != $USER->id && !$canmanage)) {
+            $selectedpreset = new stdClass();
+            foreach ($presets as $preset) {
+                if ($preset->shortname == $shortname) {
+                    $selectedpreset = $preset;
+                }
+            }
+            if (!data_user_can_delete_preset($context, $selectedpreset)) {
                print_error('invalidrequest');
             }
 
