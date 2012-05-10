@@ -40,6 +40,7 @@ assign_plugin_manager::add_admin_assign_plugin_settings('assignsubmission', $ADM
 assign_plugin_manager::add_admin_assign_plugin_settings('assignfeedback', $ADMIN, $settings, $module);
 
 if ($ADMIN->fulltree) {
+    $menu = array();
     foreach (get_plugin_list('assignfeedback') as $type => $notused) {
         $visible = !get_config('assignfeedback_' . $type, 'disabled');
         if ($visible) {
@@ -50,7 +51,7 @@ if ($ADMIN->fulltree) {
     // The default here is feedback_comments (if it exists)
     $settings->add(new admin_setting_configselect('assign/feedback_plugin_for_gradebook',
                    new lang_string('feedbackpluginforgradebook', 'mod_assign'),
-                   new lang_string('feedbackplugin', 'mod_assign'), 'feedback_comments', $menu));
+                   new lang_string('feedbackplugin', 'mod_assign'), 'assignfeedback_comments', $menu));
     $settings->add(new admin_setting_configcheckbox('assign/showrecentsubmissions',
                    new lang_string('showrecentsubmissions', 'assign'),
                    new lang_string('configshowrecentsubmissions', 'assign'), 0));
