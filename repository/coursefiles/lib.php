@@ -124,6 +124,13 @@ class repository_coursefiles extends repository {
                         'source'=> $encodedpath,
                         'thumbnail' => $OUTPUT->pix_url(file_extension_icon($child->get_visible_name(), 32))->out(false)
                     );
+                    if ($imageinfo = $child->get_imageinfo()) {
+                        $fileurl = new moodle_url($child->get_url());
+                        $node['realthumbnail'] = $fileurl->out(false, array('preview' => 'thumb'));
+                        $node['realicon'] = $fileurl->out(false, array('preview' => 'tinyicon'));
+                        $node['image_width'] = $imageinfo['width'];
+                        $node['image_height'] = $imageinfo['height'];
+                    }
                     $list[] = $node;
                 }
             }
