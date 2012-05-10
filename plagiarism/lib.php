@@ -44,13 +44,13 @@ class plagiarism_plugin {
      * hook to allow plagiarism specific information to be returned unformatted
      * @param int $cmid
      * @param int $userid
-     * @param object $file moodle file object
+     * @param stored_file $file moodle file object
      * @return array containing at least:
      *   - 'analyzed' - whether the file has been successfully analyzed
      *   - 'score' - similarity score - ('' if not known)
      *   - 'reporturl' - url of originality report - '' if unavailable
      */
-    public function get_file_results($cmid, $userid, $file) {
+    public function get_file_results($cmid, $userid, stored_file $file) {
         return array('analyzed' => '', 'score' => '', 'reporturl' => '');
     }
     /**
