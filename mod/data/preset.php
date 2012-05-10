@@ -78,6 +78,9 @@ foreach ($presets as &$preset) {
         $preset->description .= html_writer::link($delurl, $delicon);
     }
 }
+// This is required because its currently bound to the last element in the array.
+// If someone were to inadvently use it again and this call were not here
+unset($preset);
 
 $form_importexisting = new data_existing_preset_form(null, array('presets'=>$presets));
 $form_importexisting->set_data(array('d' => $data->id));
@@ -145,12 +148,15 @@ if (optional_param('sesskey', false, PARAM_BOOL) && confirm_sesskey()) {
             foreach ($presets as $preset) {
                 if ($preset->name == $formdata->name) {
                     $selectedpreset = $preset;
+                    break;
                 }
             }
-            if (data_user_can_delete_preset($context, $selectedpreset)) {
-                data_delete_site_preset($formdata->name);
-            } else {
-                print_error('cannotdeletepreset', 'data');
+            if (isset($selectedpreset->name)) {
+                if (data_user_can_delete_preset($context, $selectedpreset)) {
+                    data_delete_site_preset($formdata->name);
+                } else {
+                    print_error('cannotoverwritepreset', 'data');
+                }
             }
         }
 
@@ -199,7 +205,7 @@ if (optional_param('sesskey', false, PARAM_BOOL) && confirm_sesskey()) {
                     $selectedpreset = $preset;
                 }
             }
-            if (!data_user_can_delete_preset($context, $selectedpreset)) {
+            if (!isset($selectedpreset->shortname) || !data_user_can_delete_preset($context, $selectedpreset)) {
                print_error('invalidrequest');
             }
 
