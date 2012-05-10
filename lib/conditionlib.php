@@ -1307,6 +1307,7 @@ abstract class condition_info_base {
         unset($SESSION->gradescorecache);
         unset($SESSION->gradescorecacheuserid);
         unset($SESSION->userfieldcache);
+        unset($SESSION->userfieldcacheuserid);
     }
 
     /**
