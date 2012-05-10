@@ -105,7 +105,10 @@ class core_files_renderer extends plugin_renderer_base {
             'strings' => array(
                 array('error', 'moodle'), array('info', 'moodle'), array('confirmdeletefile', 'repository'),
                 array('draftareanofiles', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
-                array('invalidjson', 'repository'), array('popupblockeddownload', 'repository')
+                array('invalidjson', 'repository'), array('popupblockeddownload', 'repository'),
+                array('unknownoriginal', 'repository'), array('confirmdeletefolder', 'repository'),
+                array('confirmdeletefilewithhref', 'repository'), array('confirmrenamefolder', 'repository'),
+                array('confirmrenamefile', 'repository')
             )
         );
         if (empty($filemanagertemplateloaded)) {
@@ -234,7 +237,10 @@ class core_files_renderer extends plugin_renderer_base {
     private function fm_js_template_iconfilename() {
         $rv = '<div class="fp-file" style="position:relative">
         <a href="#">
+    <div style="position:relative;">
     <div class="{!}fp-thumbnail"></div>
+    <div class="fp-reficons"></div>
+    </div>
     <div class="{!}fp-filename"></div></a>
     <a class="{!}fp-contextmenu" href="#">'.$this->pix_icon('i/menu', '▶').'</a>
 </div>';
@@ -311,6 +317,9 @@ class core_files_renderer extends plugin_renderer_base {
      * is unavailable. If there is information available, the content of embedded element
      * with class 'fp-value' will be substituted with the value;
      *
+     * The value of Original ('fp-original') is loaded in separate request. When it is applicable
+     * but not yet loaded the 'fp-original' element receives additional class 'fp-loading';
+     *
      * Elements with classes 'fp-file-update', 'fp-file-download', 'fp-file-delete', 'fp-file-zip',
      * 'fp-file-unzip', 'fp-file-setmain' and 'fp-file-cancel' will hold corresponding onclick
      * events (there may be several elements with class 'fp-file-cancel');
@@ -326,6 +335,8 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string
      */
     private function fm_js_template_fileselectlayout() {
+        $strloading  = get_string('loading', 'repository');
+        $icon_progress = $this->pix_icon('i/loading_small', $strloading).'';
         $rv = '<div class="filemanager fp-select">
 <div class="fp-select-loading">
 <img src="'.$this->pix_url('i/loading').'" />
@@ -343,7 +354,7 @@ class core_files_renderer extends plugin_renderer_base {
 <tr class="{!}fp-path"><td class="mdl-right"><label>'.get_string('path', 'moodle').'</label>:</td>
 <td class="mdl-left"><select></select></td></tr>
 <tr class="{!}fp-original"><td class="mdl-right"><label>'.get_string('original', 'repository').'</label>:</td>
-<td class="mdl-left"><span class="fp-value"/></td></tr>
+<td class="mdl-left"><span class="fp-originloading">'.$icon_progress.' '.$strloading.'</span><span class="fp-value"/></td></tr>
 </table>
 <p><button class="{!}fp-file-update" >'.get_string('update', 'moodle').'</button>
 <button class="{!}fp-file-download" >'.get_string('download').'</button>
@@ -358,6 +369,25 @@ class core_files_renderer extends plugin_renderer_base {
 <div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"/></div>
 <div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"/></div>
 <div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"/></div>
+</div>';
+        return preg_replace('/\{\!\}/', '', $rv);
+    }
+
+    /**
+     * FileManager JS template for popup confirm dialogue window.
+     *
+     * Must have one top element, CSS for this element must define width and height of the window;
+     *
+     * content of element with class 'fp-dlg-text' will be replaced with dialog text;
+     * elements with classes 'fp-dlg-butconfirm' and 'fp-dlg-butcancel' will
+     * hold onclick events;
+     *
+     * @return string
+     */
+    private function fm_js_template_confirmdialog() {
+        $rv = '<div class="fp-dlg"><div class="{!}fp-dlg-text"></div>
+<div class="fp-dlg-but"><button class="{!}fp-dlg-butconfirm" >'.get_string('ok').'</button></div>
+<div class="fp-dlg-but"><button class="{!}fp-dlg-butcancel" >'.get_string('cancel').'</button></div>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
@@ -686,7 +716,7 @@ class core_files_renderer extends plugin_renderer_base {
     /**
      * FilePicker JS template for error/info message displayed as a separate popup window.
      *
-     * Must be wrapped in an element with class 'fp-msg', CSS for this element must define
+     * Must be wrapped in one element, CSS for this element must define
      * width and height of the window. It will be assigned with an additional class 'fp-msg-error'
      * or 'fp-msg-info' depending on message type;
      *
@@ -697,7 +727,7 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string
      */
     private function fp_js_template_message() {
-        $rv = '<div class="{!}fp-msg">
+        $rv = '<div class="fp-msg">
                     <div class="{!}fp-msg-text"></div>
                     <div><button class="{!}fp-msg-butok">'.get_string('ok').'</button></div>
                 </div>';
@@ -707,8 +737,7 @@ class core_files_renderer extends plugin_renderer_base {
     /**
      * FilePicker JS template for popup dialogue window asking for action when file with the same name already exists.
      *
-     * Must be wrapped in an element with class 'fp-dlg', CSS for this element must define width
-     * and height of the window;
+     * Must have one top element, CSS for this element must define width and height of the window;
      *
      * content of element with class 'fp-dlg-text' will be replaced with dialog text;
      * elements with classes 'fp-dlg-butoverwrite', 'fp-dlg-butrename' and 'fp-dlg-butcancel' will
@@ -720,7 +749,7 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string
      */
     private function fp_js_template_processexistingfile() {
-        $rv = '<div class="{!}fp-dlg"><div class="{!}fp-dlg-text"></div>
+        $rv = '<div class="fp-dlg"><div class="{!}fp-dlg-text"></div>
 <div class="fp-dlg-but"><button class="{!}fp-dlg-butoverwrite" >'.get_string('overwrite', 'repository').'</button></div>
 <div class="fp-dlg-but"><button class="{!}fp-dlg-butrename" /></div>
 <div class="fp-dlg-but"><button class="{!}fp-dlg-butcancel" >'.get_string('cancel').'</button></div>

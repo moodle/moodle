@@ -262,6 +262,14 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
 .filemanager.fp-select.fp-cansetmain .fp-file-setmain {display:inline-block;}
 .filemanager.fp-select.fp-folder .fp-file-download {display:none;} /* to be implemented */
 
+.filemanager .fp-iconview .fp-reficons {position:absolute;height:100%;width:100%;top:0;left:0;z-index:1000;}
+.filemanager .fp-iconview .fp-file.fp-hasreferences .fp-reficons {background: url([[pix:moodle|t/lock]]) no-repeat;background-position:bottom left;}
+.filemanager .fp-iconview .fp-file.fp-isreference .fp-reficons {background: url([[pix:moodle|t/right]]) no-repeat;background-position:bottom right;}
+
+.filemanager.fp-select .fp-original.fp-unknown {display:none;}
+.filemanager.fp-select .fp-original .fp-originloading {display:none;}
+.filemanager.fp-select .fp-original.fp-loading .fp-originloading {display:inline;}
+
 /*
  * Drag and drop support
  */

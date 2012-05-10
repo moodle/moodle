@@ -383,6 +383,20 @@ switch ($action) {
         }
         die;
 
+    case 'getoriginal':
+        $filename    = required_param('filename', PARAM_FILE);
+        $filepath    = required_param('filepath', PARAM_PATH);
+
+        $fs = get_file_storage();
+        $file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename);
+        if (!$file) {
+            echo json_encode(false);
+        } else {
+            $return = array('filename' => $filename, 'filepath' => $filepath, 'original' => $file->get_reference_details());
+            echo json_encode((object)$return);
+        }
+        die;
+
     default:
         // no/unknown action?
         echo json_encode(false);
