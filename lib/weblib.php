@@ -754,6 +754,23 @@ class moodle_url {
 
         return str_replace($CFG->wwwroot, '', $url);
     }
+
+    /**
+     * Returns the 'path' portion of a URL. For example, if the URL is
+     * http://www.example.org:447/my/file/is/here.txt?really=1 then this will
+     * return '/my/file/is/here.txt'.
+     *
+     * By default the path includes slash-arguments (for example,
+     * '/myfile.php/extra/arguments') so it is what you would expect from a
+     * URL path. If you don't want this behaviour, you can opt to exclude the
+     * slash arguments.
+     *
+     * @param bool $includeslashargument If true, includes slash arguments
+     * @return string Path of URL
+     */
+    public function get_path($includeslashargument = true) {
+        return $this->path . ($includeslashargument ? $this->slashargument : '');
+    }
 }
 
 /**
