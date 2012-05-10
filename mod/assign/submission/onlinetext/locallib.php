@@ -310,6 +310,15 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
         $onlinetextsubmission->submission = $submission->id;
         $onlinetextsubmission->assignment = $this->assignment->get_instance()->id;
+
+        if ($onlinetextsubmission->onlinetext === null) {
+            $onlinetextsubmission->onlinetext = '';
+        }
+
+        if ($onlinetextsubmission->onlineformat === null) {
+            $onlinetextsubmission->onlineformat = editors_get_preferred_format();
+        }
+
         if (!$DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission) > 0) {
             $log .= get_string('couldnotconvertsubmission', 'mod_assign', $submission->userid);
             return false;
