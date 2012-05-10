@@ -60,6 +60,8 @@ class repository_equella extends repository {
                 . '&courseId='.urlencode($COURSE->id)
                 . '&action='.urlencode($this->get_option('equella_action'))
                 . '&forcePost=true'
+                . '&cancelDisabled=true'
+                . '&attachmentUuidUrls=true'
                 . '&options='.urlencode($this->get_option('equella_options') . '&mimeTypes=' . $mimetypesstr);
         $list = array();
         $list['object'] = array();
