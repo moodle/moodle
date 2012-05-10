@@ -95,6 +95,9 @@ if (!isset($CFG->release)) {
 if (!isset($CFG->version)) {
     $CFG->version = '';
 }
+if (!isset($CFG->branch)) {
+    $CFG->branch = '';
+}
 
 $version = null;
 $release = null;

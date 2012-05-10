@@ -409,8 +409,11 @@ function install_cli_database(array $options, $interactive) {
 
     $CFG->version = '';
     $CFG->release = '';
+    $CFG->branch = '';
+
     $version = null;
     $release = null;
+    $branch = null;
 
     // read $version and $release
     require($CFG->dirroot.'/version.php');
