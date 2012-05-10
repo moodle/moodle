@@ -3448,3 +3448,23 @@ function data_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-data-*'=>get_string('page-mod-data-x', 'data'));
     return $module_pagetype;
 }
+
+/**
+ * Checks to see if the user has permission to delete the preset.
+ * @param stdClass $context  Context object.
+ * @param stdClass $preset  The preset object that we are checking for deletion.
+ * @return bool  Returns true if the user can delete, otherwise false.
+ */
+function data_user_can_delete_preset($context, $preset) {
+    global $USER;
+
+    if (has_capability('mod/data:manageuserpresets', $context)) {
+        return true;
+    } else {
+        $candelete = false;
+        if ($preset->userid == $USER->id) {
+            $candelete = true;
+        }
+        return $candelete;
+    }
+}
