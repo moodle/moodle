@@ -366,7 +366,7 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
 
     $ufields = user_picture::fields('u', array('lastaccess', 'firstname', 'lastname', 'email', 'picture', 'imagealt'));
     $entries = $DB->get_records_sql("
-              SELECT ge.*, $ufields
+              SELECT ge.id AS entryid, ge.*, $ufields
                 FROM {glossary_entries} ge
                 JOIN {user} u ON u.id = ge.userid
                      $groupjoin
@@ -401,10 +401,11 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
         $tmpactivity                       = new stdClass();
         $tmpactivity->type                 = 'glossary';
         $tmpactivity->cmid                 = $cm->id;
+        $tmpactivity->glossaryid           = $entry->glossaryid;
         $tmpactivity->name                 = format_string($cm->name, true);
         $tmpactivity->sectionnum           = $cm->sectionnum;
         $tmpactivity->timestamp            = $entry->timemodified;
-        $tmpactivity->content->entryid     = $entry->id;
+        $tmpactivity->content->entryid     = $entry->entryid;
         $tmpactivity->content->concept     = $entry->concept;
         $tmpactivity->content->definition  = $entry->definition;
         $tmpactivity->user->id             = $entry->userid;
@@ -434,15 +435,18 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
 function glossary_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
     global $OUTPUT;
 
-    echo html_writer::start_tag('div', array('class'=>'glossary-activity', 'style' => 'padding: 7px 0px; clear: both;'));
+    echo html_writer::start_tag('div', array('class'=>'glossary-activity clearfix'));
     if (!empty($activity->user)) {
         echo html_writer::tag('div', $OUTPUT->user_picture($activity->user, array('courseid'=>$courseid)),
-        array('style' => 'float: left; padding: 7px;'));
+            array('class' => 'glossary-activity-picture'));
     }
 
-    echo html_writer::start_tag('div', array('class'=>'glossary-entry'));
-    echo get_string('entry', 'glossary') .': '. strip_tags($activity->content->concept);
-    echo strip_tags($activity->content->definition);
+    echo html_writer::start_tag('div', array('class'=>'glossary-activity-content'));
+    echo html_writer::start_tag('div', array('class'=>'glossary-activity-entry'));
+
+    $urlparams = array('g' => $activity->glossaryid, 'mode' => 'entry', 'hook' => $activity->content->entryid);
+    echo html_writer::tag('a', strip_tags($activity->content->concept),
+        array('href' => new moodle_url('/mod/glossary/view.php', $urlparams)));
     echo html_writer::end_tag('div');
 
     $url = new moodle_url('/user/view.php', array('course'=>$courseid, 'id'=>$activity->user->id));
@@ -451,6 +455,8 @@ function glossary_print_recent_mod_activity($activity, $courseid, $detail, $modn
 
     echo html_writer::start_tag('div', array('class'=>'user'));
     echo $link .' - '. userdate($activity->timestamp);
+    echo html_writer::end_tag('div');
+
     echo html_writer::end_tag('div');
 
     echo html_writer::end_tag('div');
