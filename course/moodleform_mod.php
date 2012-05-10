@@ -358,6 +358,21 @@ abstract class moodleform_mod extends moodleform {
             }
         }
 
+        // Conditions: Verify that the user profile field has not been declared more than one
+        if (array_key_exists('conditionfieldgroup', $data)) {
+            // Array to store the existing fields
+            $arrcurrentfields = array();
+            // Error message displayed if any condition is declared more than once
+            $stralreadydeclaredwarning = get_string('fielddeclaredmultipletimes', 'condition');
+            foreach ($data['conditionfieldgroup'] as $i => $fielddata) {
+                if (in_array($fielddata['conditionfield'], $arrcurrentfields)) {
+                    $errors["conditionfieldgroup[{$i}]"] = $stralreadydeclaredwarning;
+                }
+                // Add the field to the array
+                $arrcurrentfields[] = $fielddata['conditionfield'];
+            }
+        }
+
         return $errors;
     }
 

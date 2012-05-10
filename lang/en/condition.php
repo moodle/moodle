@@ -48,6 +48,7 @@ $string['completion_incomplete'] = 'must not be marked complete';
 $string['completion_pass'] = 'must be complete with pass grade';
 $string['configenableavailability'] = 'When enabled, this lets you set conditions (based on date, grade, or completion) that control whether an activity or resource can be accessed.';
 $string['enableavailability'] = 'Enable conditional access';
+$string['fielddeclaredmultipletimes'] = 'You can not declare the same field more than once per activity.';
 $string['grade_atleast'] = 'must be at least';
 $string['gradecondition'] = 'Grade condition';
 $string['gradecondition_help'] = 'This setting determines any grade conditions which must be met in order to access the activity.
