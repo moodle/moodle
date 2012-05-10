@@ -659,8 +659,12 @@ abstract class condition_info_base {
         $objavailfield = new stdClass;
         $objavailfield->coursemoduleid = $this->cm->id;
         if (is_numeric($field)) { // If the condition field is numeric then it is a custom profile field
+            // Need to get the field name so we can add it to the cache
+            $ufield = $DB->get_field('user_info_field', 'name', array('id' => $field));
+            $objavailfield->fieldname = $ufield;
             $objavailfield->customfieldid = $field;
         } else {
+            $objavailfield->fieldname = $field;
             $objavailfield->userfield = $field;
         }
         $objavailfield->operator = $operator;
@@ -668,8 +672,7 @@ abstract class condition_info_base {
         $DB->insert_record('course_modules_avail_fields', $objavailfield, false);
 
         // Store in memory too
-        $this->cm->conditionsfield[$field] = (object)array(
-                'field'=>$field,'operator'=>$operator,'value'=>$value);
+        $this->cm->conditionsfield[$field] = $objavailfield;
     }
 
     /**
@@ -1234,7 +1237,7 @@ abstract class condition_info_base {
         if ($userid == 0 || $userid == $USER->id) {
             if ($iscustomprofilefield) {
                 // For current user, go via cache in session
-                if (empty($SESSION->userfieldcache) || $SESSION->userfieldcacheuserid!=$USER->id) {
+                if (empty($SESSION->userfieldcache) || $SESSION->userfieldcacheuserid != $USER->id) {
                     $SESSION->userfieldcache = array();
                     $SESSION->userfieldcacheuserid = $USER->id;
                 }
