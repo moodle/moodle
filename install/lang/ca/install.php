@@ -65,7 +65,7 @@ $string['pathshead'] = 'Confirma els camins ';
 $string['pathsrodataroot'] = 'No hi ha permisos d\'escriptura al directori Dataroot.';
 $string['pathsroparentdataroot'] = 'No hi ha permisos d\'escriptura al directori pare ({$a->parent}). L\'instal·lador no pot crear el directori de dades ({$a->dataroot}).';
 $string['pathssubadmindir'] = 'Uns pocs servidors webs utilitzen /admin com una adreça URL per permetre-vos el control del panell o altres coses. Desafortunadament això entra en conflicte amb l\'estàndard de Moodle per situar les pàgines d\'administració. Podeu resoldre això reanomenant el directori d\'administració a la vostra instal·lació, i posant el nou nom aquí. Per exemple: <em>moodleadmin</em>. Això resoldrà els enllaços en Moodle.';
-$string['pathssubdataroot'] = 'us cal un lloc on Moodle pugui desar els fitxers pujats. Aquest directori ha de tindre permisos de lectura I ESCRIPTURA per el servidor web (normalment \'nobody\' o \'apache\' ), però no ha de ser directament accessible via web. L\'instal·lador tractarà de crear-lo si no existeix.';
+$string['pathssubdataroot'] = 'Necessiteu un espai on Moodle pugui desar els fitxers penjats. Aquest directori hauria de tenir permisos de lectura I ESCRIPTURA per a l\'usuari del servidor web (normalment \'nobody\' o \'apache\'), però no cal que sigui accessible directament via web. L\'instal·lador provarà de crear-lo si no existeix.';
 $string['pathssubdirroot'] = 'Camí complet al directori d\'instal·lació de Moodle.';
 $string['pathssubwwwroot'] = 'Adreça web completa des d\'on es pot accedir a Moodle. 
 No és possible accedir a Moodle utilitzant múltiples direccions. 
