@@ -646,6 +646,205 @@ class core_course_external extends external_api {
         return null;
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.3
+     */
+    public static function duplicate_course_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course to duplicate id'),
+                'fullname' => new external_value(PARAM_TEXT, 'duplicated course full name'),
+                'shortname' => new external_value(PARAM_TEXT, 'duplicated course short name'),
+                'categoryid' => new external_value(PARAM_INT, 'duplicated course category parent'),
+                'visible' => new external_value(PARAM_INT, 'duplicated course visible, default to yes', VALUE_DEFAULT, 1),
+                'options' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHA, 'The backup option name:
+                                        "activities" (int) Include course activites (default to 1 that is equal to yes),
+                                        "blocks" (int) Include course blocks (default to 1 that is equal to yes),
+                                        "filters" (int) Include course filters  (default to 1 that is equal to yes),'),
+                            'value' => new external_value(PARAM_RAW, 'the value for the option 1 (yes) or 0 (no)')
+                        )
+                    ), VALUE_DEFAULT, array()
+                ),
+            )
+        );
+    }
+
+    /**
+     * Duplicate a course
+     *
+     * @param int $courseid
+     * @param string $fullname Duplicated course fullname
+     * @param string $shortname Duplicated course shortname
+     * @param int $categoryid Duplicated course parent category id
+     * @param int $visible Duplicated course availability
+     * @param array $options List of backup options
+     * @return array New course info
+     * @since Moodle 2.3
+     */
+    public static function duplicate_course($courseid, $fullname, $shortname, $categoryid, $visible, $options) {
+        global $CFG, $USER, $DB;
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+
+        // Parameter validation.
+        $params = self::validate_parameters(
+                self::duplicate_course_parameters(),
+                array(
+                      'courseid' => $courseid,
+                      'fullname' => $fullname,
+                      'shortname' => $shortname,
+                      'categoryid' => $categoryid,
+                      'visible' => $visible,
+                      'options' => $options
+                )
+        );
+
+        // Context validation.
+
+        if (! ($course = $DB->get_record('course', array('id'=>$params['courseid'])))) {
+            throw new moodle_exception('invalidcourseid', 'error', '', $params['courseid']);
+        }
+
+        // Category where duplicated course is going to be created.
+        $categorycontext = context_coursecat::instance($params['categoryid']);
+        self::validate_context($categorycontext);
+
+        // Course to be duplicated.
+        $coursecontext = context_course::instance($course->id);
+        self::validate_context($coursecontext);
+
+        // Capability checking.
+
+        // The backup controller check for this currently, this may be redundant.
+        require_capability('moodle/course:create', $categorycontext);
+        require_capability('moodle/restore:restorecourse', $categorycontext);
+        require_capability('moodle/restore:restoretargetimport', $categorycontext);
+
+        require_capability('moodle/backup:backupcourse', $coursecontext);
+        require_capability('moodle/backup:backuptargetimport', $coursecontext);
+
+        // Check if the shortname is used.
+        if ($foundcourses = $DB->get_records('course', array('shortname'=>$shortname))) {
+            foreach ($foundcourses as $foundcourse) {
+                $foundcoursenames[] = $foundcourse->fullname;
+            }
+
+            $foundcoursenamestring = implode(',', $foundcoursenames);
+            throw new moodle_exception('shortnametaken', '', '', $foundcoursenamestring);
+        }
+
+        $backupsettings = array();
+        // Check for backup and restore options.
+        if (!empty($params['options'])) {
+            foreach ($params['options'] as $option) {
+
+                // Strict check for a correct value (allways 1 or 0, true or false).
+                $value = clean_param($option['value'], PARAM_INT);
+
+                if ($value !== 0 and $value !== 1) {
+                    throw new moodle_exception('invalidextparam', 'webservice', '', $option['name']);
+                }
+
+                switch ($option['name']) {
+                    case 'activities':
+                    case 'blocks':
+                    case 'filters':
+                        $backupsettings[$option['name']] = $value;
+                        break;
+                    default:
+                        throw new moodle_exception('invalidextparam', 'webservice', '', $option['name']);
+                }
+            }
+        }
+
+        // Backup the course.
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
+        backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id);
+
+        foreach ($backupsettings as $name => $value) {
+            $bc->get_plan()->get_setting($name)->set_value($value);
+        }
+
+        $backupid       = $bc->get_backupid();
+        $backupbasepath = $bc->get_plan()->get_basepath();
+
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // Restore the backup immediately.
+
+        // Create new course.
+        $newcourseid = restore_dbops::create_new_course($params['fullname'], $params['shortname'], $params['categoryid']);
+
+        $rc = new restore_controller($backupid, $newcourseid,
+                backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id, backup::TARGET_NEW_COURSE);
+
+        foreach ($backupsettings as $name => $value) {
+            $rc->get_plan()->get_setting($name)->set_value($value);
+        }
+
+        if (!$rc->execute_precheck()) {
+            $precheckresults = $rc->get_precheck_results();
+            if (is_array($precheckresults) && !empty($precheckresults['errors'])) {
+                if (empty($CFG->keeptempdirectoriesonbackup)) {
+                    fulldelete($backupbasepath);
+                }
+
+                $errorinfo = '';
+
+                foreach ($precheckresults['errors'] as $error) {
+                    $errorinfo .= $error;
+                }
+
+                if (array_key_exists('warnings', $precheckresults)) {
+                    foreach ($precheckresults['warnings'] as $warning) {
+                        $errorinfo .= $warning;
+                    }
+                }
+
+                throw new moodle_exception('backupprecheckerrors', 'webservice', '', $errorinfo);
+            }
+        }
+
+        $rc->execute_plan();
+        $rc->destroy();
+
+        $course = $DB->get_record('course', array('id' => $newcourseid), '*', MUST_EXIST);
+        $course->fullname = $params['fullname'];
+        $course->shortname = $params['shortname'];
+        $course->visible = $params['visible'];
+
+        // Set shortname and fullname back.
+        $DB->update_record('course', $course);
+
+        if (empty($CFG->keeptempdirectoriesonbackup)) {
+            fulldelete($backupbasepath);
+        }
+
+        return array('id' => $course->id, 'shortname' => $course->shortname);
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 2.3
+     */
+    public static function duplicate_course_returns() {
+        return new external_single_structure(
+            array(
+                'id'       => new external_value(PARAM_INT, 'course id'),
+                'shortname' => new external_value(PARAM_TEXT, 'short name'),
+            )
+        );
+    }
+
 }
 
 /**
