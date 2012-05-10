@@ -10,9 +10,6 @@ div.submissionlinks,
 div.usersummary,
 div.feedback,
 div.gradingsummary {
-
-    width: 70%;
-    margin: 0 auto;
     margin-bottom: 5em;
 }
 
