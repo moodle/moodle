@@ -54,6 +54,7 @@ $string['cancel'] = 'Cancel';
 $string['cannotaccesspresentsother'] = 'You are not allowed to access presets from other users';
 $string['cannotadd'] = 'Can not add entries!';
 $string['cannotdeletepreset'] = 'Error deleting a preset!';
+$string['cannotoverwritepreset'] = 'Error overwriting preset';
 $string['cannotunziptopreset'] = 'Cannot unzip to the preset directory';
 $string['columns'] = 'columns';
 $string['comment'] = 'Comment';
