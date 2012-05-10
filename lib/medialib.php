@@ -35,26 +35,18 @@
 defined('MOODLE_INTERNAL') || die();
 
 if (!defined('CORE_MEDIA_VIDEO_WIDTH')) {
-    /**
-     * Default video width if no width is specified; some players may do something
-     * more intelligent such as use real video width.
-     *
-     * May be defined in config.php if required.
-     */
+    // Default video width if no width is specified; some players may do something
+    // more intelligent such as use real video width.
+    // May be defined in config.php if required.
     define('CORE_MEDIA_VIDEO_WIDTH', 400);
 }
 if (!defined('CORE_MEDIA_VIDEO_HEIGHT')) {
-    /**
-     * Default video height. May be defined in config.php if required.
-     */
+    // Default video height. May be defined in config.php if required.
     define('CORE_MEDIA_VIDEO_HEIGHT', 300);
 }
 if (!defined('CORE_MEDIA_AUDIO_WIDTH')) {
-    /**
-     * Default audio width if no width is specified.
-     *
-     * May be defined in config.php if required.
-     */
+    // Default audio width if no width is specified.
+    // May be defined in config.php if required.
     define('CORE_MEDIA_AUDIO_WIDTH', 300);
 }
 

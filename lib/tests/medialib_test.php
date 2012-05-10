@@ -42,7 +42,7 @@ class medialib_testcase extends advanced_testcase {
         global $CFG;
         parent::setUp();
 
-        // Reset CFG
+        // Reset CFG.
         $this->resetAfterTest(true);
 
         // Consistent initial setup: all players disabled.

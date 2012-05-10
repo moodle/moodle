@@ -2942,7 +2942,7 @@ class core_media_renderer extends plugin_renderer_base {
     protected function get_players() {
         global $CFG;
 
-        // Save time by only building the list once
+        // Save time by only building the list once.
         if (!$this->players) {
             // Get raw list of players.
             $players = $this->get_players_raw();
