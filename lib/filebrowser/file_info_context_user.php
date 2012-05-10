@@ -201,7 +201,7 @@ class file_info_context_user extends file_info {
                 return null;
             }
         }
-        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        $urlbase = $CFG->wwwroot.'/draftfile.php';
         return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, get_string('areauserdraft', 'repository'), true, true, true, true);
     }
 
