@@ -663,11 +663,20 @@ class core_course_external extends external_api {
                 'options' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'name' => new external_value(PARAM_ALPHA, 'The backup option name:
-                                        "activities" (int) Include course activites (default to 1 that is equal to yes),
-                                        "blocks" (int) Include course blocks (default to 1 that is equal to yes),
-                                        "filters" (int) Include course filters  (default to 1 that is equal to yes),'),
-                            'value' => new external_value(PARAM_RAW, 'the value for the option 1 (yes) or 0 (no)')
+                                'name' => new external_value(PARAM_ALPHA, 'The backup option name:
+                                            "activities" (int) Include course activites (default to 1 that is equal to yes),
+                                            "blocks" (int) Include course blocks (default to 1 that is equal to yes),
+                                            "filters" (int) Include course filters  (default to 1 that is equal to yes),
+                                            "users" (int) Include users (default to 0 that is equal to no),
+                                            "role_assignments" (int) Include role assignments  (default to 0 that is equal to no),
+                                            "user_files" (int) Include user files  (default to 0 that is equal to no),
+                                            "comments" (int) Include user comments  (default to 0 that is equal to no),
+                                            "completion_information" (int) Include user course completion information  (default to 0 that is equal to no),
+                                            "logs" (int) Include course logs  (default to 0 that is equal to no),
+                                            "histories" (int) Include histories  (default to 0 that is equal to no)'
+                                            ),
+                                'value' => new external_value(PARAM_RAW, 'the value for the option 1 (yes) or 0 (no)'
+                            )
                         )
                     ), VALUE_DEFAULT, array()
                 ),
@@ -719,25 +728,18 @@ class core_course_external extends external_api {
         $coursecontext = context_course::instance($course->id);
         self::validate_context($coursecontext);
 
-        // Capability checking.
-
-        // The backup controller check for this currently, this may be redundant.
-        require_capability('moodle/course:create', $categorycontext);
-        require_capability('moodle/restore:restorecourse', $categorycontext);
-        require_capability('moodle/restore:restoretargetimport', $categorycontext);
-
-        require_capability('moodle/backup:backupcourse', $coursecontext);
-        require_capability('moodle/backup:backuptargetimport', $coursecontext);
-
-        // Check if the shortname is used.
-        if ($foundcourses = $DB->get_records('course', array('shortname'=>$shortname))) {
-            foreach ($foundcourses as $foundcourse) {
-                $foundcoursenames[] = $foundcourse->fullname;
-            }
-
-            $foundcoursenamestring = implode(',', $foundcoursenames);
-            throw new moodle_exception('shortnametaken', '', '', $foundcoursenamestring);
-        }
+        $backupdefaults = array(
+                                'activities' => 1,
+                                'blocks' => 1,
+                                'filters' => 1,
+                                'users' => 0,
+                                'role_assignments' => 0,
+                                'user_files' => 0,
+                                'comments' => 0,
+                                'completion_information' => 0,
+                                'logs' => 0,
+                                'histories' => 0
+        );
 
         $backupsettings = array();
         // Check for backup and restore options.
@@ -751,21 +753,48 @@ class core_course_external extends external_api {
                     throw new moodle_exception('invalidextparam', 'webservice', '', $option['name']);
                 }
 
-                switch ($option['name']) {
-                    case 'activities':
-                    case 'blocks':
-                    case 'filters':
-                        $backupsettings[$option['name']] = $value;
-                        break;
-                    default:
-                        throw new moodle_exception('invalidextparam', 'webservice', '', $option['name']);
+                if (!isset($backupdefaults[$option['name']])) {
+                    throw new moodle_exception('invalidextparam', 'webservice', '', $option['name']);
                 }
+
+                $backupsettings[$option['name']] = $value;
             }
         }
 
+        // Capability checking.
+
+        // The backup controller check for this currently, this may be redundant.
+        require_capability('moodle/course:create', $categorycontext);
+        require_capability('moodle/restore:restorecourse', $categorycontext);
+        require_capability('moodle/restore:restoretargetimport', $categorycontext);
+
+        require_capability('moodle/backup:backupcourse', $coursecontext);
+        require_capability('moodle/backup:backuptargetimport', $coursecontext);
+
+        if (!empty($backupsettings['users'])) {
+            require_capability('moodle/backup:userinfo', $coursecontext);
+            require_capability('moodle/restore:userinfo', $categorycontext);
+        }
+
+        // Check if the shortname is used.
+        if ($foundcourses = $DB->get_records('course', array('shortname'=>$shortname))) {
+            foreach ($foundcourses as $foundcourse) {
+                $foundcoursenames[] = $foundcourse->fullname;
+            }
+
+            $foundcoursenamestring = implode(',', $foundcoursenames);
+            throw new moodle_exception('shortnametaken', '', '', $foundcoursenamestring);
+        }
+
         // Backup the course.
+        if (!empty($backupsettings['users'])) {
+            $mode = backup::MODE_SAMESITE;
+        } else {
+            $mode = backup::MODE_IMPORT;
+        }
+
         $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
-        backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id);
+        backup::INTERACTIVE_NO, $mode, $USER->id);
 
         foreach ($backupsettings as $name => $value) {
             $bc->get_plan()->get_setting($name)->set_value($value);
@@ -775,18 +804,29 @@ class core_course_external extends external_api {
         $backupbasepath = $bc->get_plan()->get_basepath();
 
         $bc->execute_plan();
+        $results = $bc->get_results();
+        $file = $results['backup_destination'];
         $bc->destroy();
 
         // Restore the backup immediately.
+
+        // In a backup mode different than import, we need to unzip the file because the backup temp directory is deleted.
+        if (!empty($backupsettings['users'])) {
+            check_dir_exists($CFG->tempdir . '/backup');
+            $file->extract_to_pathname(get_file_packer(), $CFG->tempdir . '/backup/' . $backupid);
+        }
 
         // Create new course.
         $newcourseid = restore_dbops::create_new_course($params['fullname'], $params['shortname'], $params['categoryid']);
 
         $rc = new restore_controller($backupid, $newcourseid,
-                backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id, backup::TARGET_NEW_COURSE);
+                backup::INTERACTIVE_NO, $mode, $USER->id, backup::TARGET_NEW_COURSE);
 
         foreach ($backupsettings as $name => $value) {
-            $rc->get_plan()->get_setting($name)->set_value($value);
+            $setting = $rc->get_plan()->get_setting($name);
+            if ($setting->get_status() == backup_setting::NOT_LOCKED) {
+                $setting->set_value($value);
+            }
         }
 
         if (!$rc->execute_precheck()) {
