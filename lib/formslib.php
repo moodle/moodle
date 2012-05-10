@@ -402,19 +402,6 @@ abstract class moodleform {
     }
 
     /**
-     * Sets file upload manager
-     *
-     * @deprecated since Moodle 2.0 Please don't used this API
-     * @todo MDL-31300 this api will be removed.
-     * @see MoodleQuickForm_filepicker
-     * @see MoodleQuickForm_filemanager
-     * @param bool $um upload manager
-     */
-    function set_upload_manager($um=false) {
-        debugging('Old file uploads can not be used any more, please use new filepicker element');
-    }
-
-    /**
      * Check that form was submitted. Does not check validity of submitted data.
      *
      * @return bool true if form properly submitted
