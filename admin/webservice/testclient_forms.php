@@ -730,6 +730,10 @@ class moodle_group_delete_groupmembers_form extends moodleform {
 
 /**
  * Form class for create_categories() web service function test.
+ *
+ * @package   core_webservice
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2012 Fabio Souto
  */
 class core_course_create_categories_form extends moodleform {
     /**
@@ -800,9 +804,13 @@ class core_course_create_categories_form extends moodleform {
         return $params;
     }
 }
-        
+
 /**
  * Form class for delete_categories() web service function test.
+ *
+ * @package   core_webservice
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2012 Fabio Souto
  */
 class core_course_delete_categories_form extends moodleform {
     /**
@@ -878,9 +886,13 @@ class core_course_delete_categories_form extends moodleform {
         return $params;
     }
 }
-        
+
 /**
  * Form class for create_categories() web service function test.
+ *
+ * @package   core_webservice
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2012 Fabio Souto
  */
 class core_course_update_categories_form extends moodleform {
     /**

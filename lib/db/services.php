@@ -394,7 +394,7 @@ $functions = array(
         'type'        => 'write',
         'capabilities'=> 'moodle:category/manage',
     ),
-    
+
     'moodle_course_get_courses' => array(
         'classname'   => 'core_course_external',
         'methodname'  => 'get_courses',
@@ -457,7 +457,7 @@ $functions = array(
         'type'        => 'write',
         'capabilities'=> 'moodle/category:manage',
     ),
-    
+
     'core_course_delete_categories' => array(
         'classname'   => 'core_course_external',
         'methodname'  => 'delete_categories',

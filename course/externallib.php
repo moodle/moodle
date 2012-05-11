@@ -912,7 +912,6 @@ class core_course_external extends external_api {
         require_once($CFG->dirroot . "/course/lib.php");
         require_once($CFG->libdir . '/completionlib.php');
 
-
         $params = self::validate_parameters(self::create_courses_parameters(),
                         array('courses' => $courses));
 
@@ -1038,7 +1037,8 @@ class core_course_external extends external_api {
 
             // Check if the current user has enought permissions.
             if (!can_delete_course($courseid)) {
-                throw new moodle_exception('cannotdeletecategorycourse', 'error', '', format_string($course->fullname)." (id: $courseid)");
+                throw new moodle_exception('cannotdeletecategorycourse', 'error',
+                    '', format_string($course->fullname)." (id: $courseid)");
             }
 
             delete_course($course, false);
