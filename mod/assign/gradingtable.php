@@ -171,6 +171,13 @@ class assign_grading_table extends table_sql implements renderable {
         $columns[] = 'finalgrade';
         $headers[] = get_string('finalgrade', 'grades');
 
+        // load the grading info for all users
+        $this->gradinginfo = grade_get_grades($this->assignment->get_course()->id, 'mod', 'assign', $this->assignment->get_instance()->id, $users);
+
+        if (!empty($CFG->enableoutcomes) && !empty($this->gradinginfo->outcomes)) {
+            $columns[] = 'outcomes';
+            $headers[] = get_string('outcomes', 'grades');
+        }
 
 
         // set the columns
@@ -179,6 +186,8 @@ class assign_grading_table extends table_sql implements renderable {
         $this->no_sorting('finalgrade');
         $this->no_sorting('edit');
         $this->no_sorting('select');
+        $this->no_sorting('outcomes');
+
         foreach ($this->assignment->get_submission_plugins() as $plugin) {
             if ($plugin->is_visible() && $plugin->is_enabled()) {
                 $this->no_sorting('assignsubmission_' . $plugin->get_type());
@@ -190,8 +199,6 @@ class assign_grading_table extends table_sql implements renderable {
             }
         }
 
-        // load the grading info for all users
-        $this->gradinginfo = grade_get_grades($this->assignment->get_course()->id, 'mod', 'assign', $this->assignment->get_instance()->id, $users);
     }
 
     /**
@@ -227,6 +234,25 @@ class assign_grading_table extends table_sql implements renderable {
 
         return $o;
     }
+
+    /**
+     * Format a list of outcomes
+     *
+     * @param stdClass $row
+     * @return string
+     */
+    function col_outcomes(stdClass $row) {
+        $outcomes = '';
+        foreach($this->gradinginfo->outcomes as $index=>$outcome) {
+            $options = make_grades_menu(-$outcome->scaleid);
+
+            $options[0] = get_string('nooutcome', 'grades');
+            $outcomes .= $this->output->container($outcome->name . ': ' . $options[$outcome->grades[$row->userid]->grade], 'outcome');
+        }
+
+        return $outcomes;
+    }
+
 
     /**
      * Format a user picture for display (and update rownum as a sideeffect)
