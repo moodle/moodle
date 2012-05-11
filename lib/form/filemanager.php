@@ -45,7 +45,10 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     public $_helpbutton = '';
 
     /** @var array options provided to initalize filemanager */
-    protected $_options    = array('mainfile'=>'', 'subdirs'=>1, 'maxbytes'=>-1, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
+    // PHP doesn't support 'key' => $value1 | $value2 in class definition
+    // We cannot do $_options = array('return_types'=> FILE_INTERNAL | FILE_REFERENCE);
+    // So I have to set null here, and do it in constructor
+    protected $_options    = array('mainfile'=>'', 'subdirs'=>1, 'maxbytes'=>-1, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=> null);
 
     /**
      * Constructor
@@ -67,6 +70,9 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         }
         if (!empty($options['maxbytes'])) {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
+        }
+        if (empty($options['return_types'])) {
+            $this->_options['return_types'] = (FILE_INTERNAL | FILE_REFERENCE);
         }
         $this->_type = 'filemanager';
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
@@ -242,7 +248,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $options->subdirs   = $this->_options['subdirs'];
         $options->target    = $id;
         $options->accepted_types = $accepted_types;
-        $options->return_types = FILE_INTERNAL;
+        $options->return_types = $this->_options['return_types'];
         $options->context = $PAGE->context;
 
         $html = $this->_getTabs();

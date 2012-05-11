@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,9 +19,8 @@
  * The Web service script that is called from the filepicker front end
  *
  * @since 2.0
- * @package    core
- * @subpackage repository
- * @copyright  2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @package    repository
+ * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -34,7 +32,7 @@ require_once(dirname(__FILE__).'/lib.php');
 
 $err = new stdClass();
 
-/// Parameters
+// Parameters
 $action    = optional_param('action', '', PARAM_ALPHA);
 $repo_id   = optional_param('repo_id', 0, PARAM_INT);           // Repository ID
 $contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT); // Context ID
@@ -51,6 +49,7 @@ $saveas_filename = optional_param('title', '', PARAM_FILE);     // save as file 
 $saveas_path   = optional_param('savepath', '/', PARAM_PATH);   // save as file path
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
 $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
+$usefilereference  = optional_param('usefilereference', '', PARAM_ALPHA);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
@@ -59,7 +58,7 @@ $PAGE->set_context($context);
 echo $OUTPUT->header(); // send headers
 @header('Content-type: text/html; charset=utf-8');
 
-// if uploaded file is larger than post_max_size (php.ini) setting, $_POST content will lost
+// If uploaded file is larger than post_max_size (php.ini) setting, $_POST content will be empty.
 if (empty($_POST) && !empty($action)) {
     $err->error = get_string('errorpostmaxsize', 'repository');
     die(json_encode($err));
@@ -70,7 +69,7 @@ if (!confirm_sesskey()) {
     die(json_encode($err));
 }
 
-/// Get repository instance information
+// Get repository instance information
 $sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id=? AND i.typeid=r.id';
 
 if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
@@ -80,7 +79,7 @@ if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
     $type = $repository->type;
 }
 
-/// Check permissions
+// Check permissions
 repository::check_capability($contextid, $repository);
 
 $moodle_maxbytes = get_max_upload_file_size();
@@ -89,7 +88,7 @@ if ($maxbytes == 0 || $maxbytes>=$moodle_maxbytes) {
     $maxbytes = $moodle_maxbytes;
 }
 
-/// Wait as long as it takes for this script to finish
+// Wait as long as it takes for this script to finish
 set_time_limit(0);
 
 // Early actions which need to be done before repository instances initialised
@@ -125,13 +124,19 @@ switch ($action) {
 if (file_exists($CFG->dirroot.'/repository/'.$type.'/lib.php')) {
     require_once($CFG->dirroot.'/repository/'.$type.'/lib.php');
     $classname = 'repository_' . $type;
-    $repo = new $classname($repo_id, $contextid, array('ajax'=>true, 'name'=>$repository->name, 'type'=>$type));
+    $repooptions = array(
+        'ajax' => true,
+        'name' => $repository->name,
+        'type' => $type,
+        'mimetypes' => $accepted_types
+    );
+    $repo = new $classname($repo_id, $contextid, $repooptions);
 } else {
     $err->error = get_string('invalidplugin', 'repository', $type);
     die(json_encode($err));
 }
 
-/// These actions all occur on the currently active repository instance
+// These actions all occur on the currently active repository instance
 switch ($action) {
     case 'sign':
     case 'signin':
@@ -201,45 +206,43 @@ switch ($action) {
             echo json_encode($info);
             die;
         } else {
-            // some repository plugins deal with moodle internal files, so we cannot use get_file
+            $fs = get_file_storage();
+            // Some repository plugins are hosting moodle internal files, we cannot use get_file
             // method, so we use copy_to_area method
             // (local, user, coursefiles, recent)
-            if ($repo->has_moodle_files()) {
+            if ($repo->has_moodle_files() && ($usefilereference != 'yes')) {
                 // check filesize against max allowed size
                 $filesize = $repo->get_file_size($source);
                 if (empty($filesize)) {
-                    $err->error = get_string('filesizenull', 'repository');
-                    die(json_encode($err));
+                    $filesize = 0;
                 }
                 if (($maxbytes !== -1) && ($filesize > $maxbytes)) {
                     throw new file_exception('maxbytes');
                 }
+                // If the moodle file is an alias to a file in external repository
+                // we copy this alias instead of create alias to alias
+                // {@link repository::copy_to_area()}.
                 $fileinfo = $repo->copy_to_area($source, $itemid, $saveas_path, $saveas_filename);
+
                 if (!isset($fileinfo['event'])) {
                     $fileinfo['file'] = $fileinfo['title'];
                 }
+
                 echo json_encode($fileinfo);
                 die;
             }
-            // Download file to moodle
-            $file = $repo->get_file($source, $saveas_filename);
-            if ($file['path'] === false) {
-                $err->error = get_string('cannotdownload', 'repository');
-                die(json_encode($err));
-            }
 
-            // check if exceed maxbytes
-            if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
-                throw new file_exception('maxbytes');
-            }
-
+            // Prepare file record.
             $record = new stdClass();
             $record->filepath = $saveas_path;
             $record->filename = $saveas_filename;
             $record->component = 'user';
             $record->filearea = 'draft';
-            $record->itemid   = $itemid;
-
+            if (!is_numeric($itemid)) {
+                $record->itemid = 0;
+            } else {
+                $record->itemid   = $itemid;
+            }
             if (!empty($file['license'])) {
                 $record->license  = $file['license'];
             } else {
@@ -250,11 +253,78 @@ switch ($action) {
             } else {
                 $record->author   = $author;
             }
-            $record->source = !empty($file['url']) ? $file['url'] : '';
 
-            $info = repository::move_to_filepool($file['path'], $record);
-            if (empty($info)) {
-                $info['e'] = get_string('error', 'moodle');
+            if ($record->filepath !== '/') {
+                $record->filepath = trim($record->filepath, '/');
+                $record->filepath = '/'.$record->filepath.'/';
+            }
+            $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+            $now = time();
+            $record->contextid = $usercontext->id;
+            $record->timecreated  = $now;
+            $record->timemodified = $now;
+            $record->userid       = $USER->id;
+            $record->mimetype     = mimeinfo('type', $record->filename);
+
+
+            if ($usefilereference == 'yes') {
+                $reference = $repo->get_file_reference($source);
+                // get reference life time from repo
+                $record->referencelifetime = $repo->get_reference_file_lifetime($reference);
+                // Check if file exists.
+                if (repository::draftfile_exists($itemid, $saveas_path, $saveas_filename)) {
+                    // File name being used, rename it.
+                    $unused_filename = repository::get_unused_filename($itemid, $saveas_path, $saveas_filename);
+                    $record->filename = $unused_filename;
+                    // Create a file copy using unused filename.
+                    $storedfile = $fs->create_file_from_reference($record, $repo_id, $reference);
+
+                    $event = array();
+                    $event['event'] = 'fileexists';
+                    $event['newfile'] = new stdClass;
+                    $event['newfile']->filepath = $saveas_path;
+                    $event['newfile']->filename = $unused_filename;
+                    $event['newfile']->url = moodle_url::make_draftfile_url($itemid, $saveas_path, $unused_filename)->out();
+
+                    $event['existingfile'] = new stdClass;
+                    $event['existingfile']->filepath = $saveas_path;
+                    $event['existingfile']->filename = $saveas_filename;
+                    $event['existingfile']->url      = moodle_url::make_draftfile_url($itemid, $saveas_path, $saveas_filename)->out();;
+                    echo json_encode($event);
+                    die;
+                }
+                $storedfile = $fs->create_file_from_reference($record, $repo_id, $reference);
+                // Repository plugin callback
+                // You can cache reository file in this callback
+                // or complete other tasks.
+                $repo->cache_file_by_reference($reference, $storedfile);
+                $info = array(
+                    'url'=>moodle_url::make_draftfile_url($storedfile->get_itemid(), $storedfile->get_filepath(), $storedfile->get_filename())->out(),
+                    'id'=>$storedfile->get_itemid(),
+                    'file'=>$storedfile->get_filename(),
+                    'icon' => $OUTPUT->pix_url(file_extension_icon($storedfile->get_filename(), 32))->out(),
+                );
+                echo json_encode($info);
+                die;
+            } else {
+                // Download file to moodle.
+                $downloadedfile = $repo->get_file($source, $saveas_filename);
+                if ($downloadedfile['path'] === false) {
+                    $err->error = get_string('cannotdownload', 'repository');
+                    die(json_encode($err));
+                }
+
+                // Check if exceed maxbytes.
+                if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
+                    throw new file_exception('maxbytes');
+                }
+
+                $record->source = !empty($downloadedfile['url']) ? $downloadedfile['url'] : '';
+
+                $info = repository::move_to_filepool($downloadedfile['path'], $record);
+                if (empty($info)) {
+                    $info['e'] = get_string('error', 'moodle');
+                }
             }
             echo json_encode($info);
             die;

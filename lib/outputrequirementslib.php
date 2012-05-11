@@ -457,7 +457,7 @@ class page_requirements_manager {
                                                         array('nofilesavailable', 'repository'), array('overwrite', 'repository'),
                                                         array('renameto', 'repository'), array('fileexists', 'repository'),
                                                         array('fileexistsdialogheader', 'repository'), array('fileexistsdialog_editor', 'repository'),
-                                                        array('fileexistsdialog_filemanager', 'repository')
+                                                        array('fileexistsdialog_filemanager', 'repository'), array('uselatestfile', 'repository')
                                                     ));
                     break;
                 case 'core_comment':

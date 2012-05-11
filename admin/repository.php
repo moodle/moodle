@@ -1,12 +1,27 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-$repository    = optional_param('repos', '', PARAM_FORMAT);
-$action        = optional_param('action', '', PARAM_ALPHA);
-$sure          = optional_param('sure', '', PARAM_ALPHA);
+$repository       = optional_param('repos', '', PARAM_ALPHANUMEXT);
+$action           = optional_param('action', '', PARAM_ACTION);
+$sure             = optional_param('sure', '', PARAM_ALPHA);
+$downloadcontents = optional_param('downloadcontents', '', PARAM_ALPHA);
 
 $display = true; // fall through to normal display
 
@@ -41,6 +56,10 @@ $baseurl    = $CFG->wwwroot.'/'.$CFG->admin.'/repository.php';
 $configstr  = get_string('manage', 'repository');
 
 $return = true;
+
+if (!empty($action)) {
+    require_sesskey();
+}
 
 /**
  * Helper function that generates a moodle_url object
@@ -152,10 +171,10 @@ if (($action == 'edit') || ($action == 'new')) {
 
         // Display instances list and creation form
         if ($action == 'edit') {
-           $instanceoptionnames = repository::static_function($repository, 'get_instance_option_names');
-           if (!empty($instanceoptionnames)) {
-               repository::display_instances_list(get_context_instance(CONTEXT_SYSTEM), $repository);
-           }
+            $instanceoptionnames = repository::static_function($repository, 'get_instance_option_names');
+            if (!empty($instanceoptionnames)) {
+                repository::display_instances_list(context_system::instance(), $repository);
+            }
         }
     }
 } else if ($action == 'show') {
@@ -185,7 +204,14 @@ if (($action == 'edit') || ($action == 'new')) {
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
         }
-        if ($repositorytype->delete()) {
+
+        if (!empty($downloadcontents) and $downloadcontents == 'yes') {
+            $downloadcontents = true;
+        } else {
+            $downloadcontents = false;
+        }
+
+        if ($repositorytype->delete($downloadcontents)) {
             redirect($baseurl);
         } else {
             print_error('instancenotdeleted', 'repository', $baseurl);
@@ -193,7 +219,34 @@ if (($action == 'edit') || ($action == 'new')) {
         exit;
     } else {
         echo $OUTPUT->header();
-        echo $OUTPUT->confirm(get_string('confirmremove', 'repository', $repositorytype->get_readablename()), $sesskeyurl . '&action=delete&repos=' . $repository . '&sure=yes', $baseurl);
+
+        $message = get_string('confirmremove', 'repository', $repositorytype->get_readablename());
+
+        $output = $OUTPUT->box_start('generalbox', 'notice');
+        $output .= html_writer::tag('p', $message);
+
+        $removeurl = new moodle_url($sesskeyurl);
+        $removeurl->params(array(
+            'action' =>'delete',
+            'repos' => $repository,
+            'sure' => 'yes',
+        ));
+
+        $removeanddownloadurl = new moodle_url($sesskeyurl);
+        $removeanddownloadurl->params(array(
+            'action' =>'delete',
+            'repos'=> $repository,
+            'sure' => 'yes',
+            'downloadcontents' => 'yes',
+        ));
+
+        $output .= $OUTPUT->single_button($removeurl, get_string('continueuninstall', 'repository'));
+        $output .= $OUTPUT->single_button($removeanddownloadurl, get_string('continueuninstallanddownload', 'repository'));
+        $output .= $OUTPUT->single_button($baseurl, get_string('cancel'));
+        $output .= $OUTPUT->box_end();
+
+        echo $output;
+
         $return = false;
     }
 } else if ($action == 'moveup') {
@@ -255,7 +308,7 @@ if (($action == 'edit') || ($action == 'new')) {
                 // Calculate number of instances in order to display them for the Moodle administrator
                 if (!empty($instanceoptionnames)) {
                     $params = array();
-                    $params['context'] = array(get_system_context());
+                    $params['context'] = array(context_system::instance());
                     $params['onlyvisible'] = false;
                     $params['type'] = $typename;
                     $admininstancenumber = count(repository::static_function($typename, 'get_instances', $params));

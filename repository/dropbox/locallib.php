@@ -71,6 +71,26 @@ class dropbox extends oauth_helper {
         return array('path'=>$saveas, 'url'=>$url);
     }
 
+    /**
+     * Get file url
+     *
+     * @param string $filepath file path
+     * @return string file url
+     */
+    public function get_file_url($filepath) {
+        $info = pathinfo($filepath);
+        $dirname = $info['dirname'];
+        $basename = $info['basename'];
+        $filepath = $dirname . rawurlencode($basename);
+        if ($dirname != '/') {
+            $filepath = $dirname . '/' . $basename;
+            $filepath = str_replace("%2F", "/", rawurlencode($filepath));
+        }
+
+        $url = $this->dropbox_content_api.'/files/'.$this->mode.$filepath;
+        return $url;
+    }
+
     public function set_mode($mode) {
         $this->mode = $mode;
     }

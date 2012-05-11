@@ -47,6 +47,19 @@ M.core_filepicker.instances = M.core_filepicker.instances || {};
 M.core_filepicker.active_filepicker = null;
 
 /**
+ * Set selected file info
+ *
+ * @parma object file info
+ */
+M.core_filepicker.select_file = function(file) {
+    var fileinfo = {};
+    fileinfo['title'] = file.title;
+    fileinfo['source'] = file.reference;
+    fileinfo['thumbnail'] = file.thumbnail;
+    M.core_filepicker.active_filepicker.select_file(fileinfo);
+}
+
+/**
  * Init and show file picker
  */
 M.core_filepicker.show = function(Y, options) {
@@ -375,13 +388,18 @@ M.core_filepicker.init = function(Y, options) {
                 // it is not working well with search result
                 this.view_as_icons();
             } else {
-                this.viewbar.set('disabled', false);
-                if (this.viewmode == 1) {
-                    this.view_as_icons();
-                } else if (this.viewmode == 2) {
-                    this.view_as_list(p);
+                if (this.objecttag) {
+                    // handle cancle action for repo using iframe
+                    this.create_object_container(this.objecttag);
                 } else {
-                    this.view_as_icons();
+                    this.viewbar.set('disabled', false);
+                    if (this.viewmode == 1) {
+                        this.view_as_icons();
+                    } else if (this.viewmode == 2) {
+                        this.view_as_list(p);
+                    } else {
+                        this.view_as_icons();
+                    }
                 }
             }
         },
@@ -594,6 +612,7 @@ M.core_filepicker.init = function(Y, options) {
                 path.setStyle('display', 'none');
             }
             var panel = Y.one('#panel-'+client_id);
+            panel.set('innerHTML', '');
             var form_id = 'fp-rename-form-'+client_id;
             var html = '<div class="fp-rename-form" id="'+form_id+'">';
             html += '<p><img src="'+args.thumbnail+'" /></p>';
@@ -603,16 +622,28 @@ M.core_filepicker.init = function(Y, options) {
 
             var le_checked = '';
             var le_style = '';
-            if (this.options.repositories[this.active_repo.id].return_types == 1) {
-                // support external links only
-                le_checked = 'checked';
-                le_style = ' style="display:none;"';
-            } else if(this.options.repositories[this.active_repo.id].return_types == 2) {
-                // support internal files only
-                le_style = ' style="display:none;"';
-            }
-            if ((this.options.externallink && this.options.env == 'editor' && this.options.return_types != 1)) {
-                html += '<tr'+le_style+'><td></td><td class="mdl-left"><input type="checkbox" id="linkexternal-'+client_id+'" value="" '+le_checked+' />'+M.str.repository.linkexternal+'</td></tr>';
+            var returntypes = this.options.repositories[this.active_repo.id].return_types;
+
+            if (returntypes == 1) {
+                // support link only
+                html += '<input type="checkbox" id="linkexternal-'+client_id+'" style="display:none" value="checked" checked />';
+            } else if (returntypes == 4) {
+                html += '<input type="checkbox" id="filereference-'+client_id+'" style="display:none" value="checked" checked />';
+            } else {
+                if (((returntypes & 1) == 1) && ((this.options.return_types & 1) == 1)) {
+                    // support external links
+                    html += '<tr><td></td><td class="mdl-left"><input type="checkbox" id="linkexternal-'+client_id+'" value="" />'+M.str.repository.linkexternal+'</td></tr>';
+                }
+                // form element support file reference and repository support it too
+                if (((returntypes & 4) == 4) && ((this.options.return_types & 4) == 4)) {
+                    // file reference
+                    html += '<tr><td></td><td class="mdl-left"><input type="checkbox" id="filereference-'+client_id+'" value="" />'+M.str.repository.uselatestfile+'</td></tr>';
+                }
+
+                if (((returntypes & 4) != 4) && ((returntypes & 1) != 1)) {
+                    html += '<input type="checkbox" id="linkexternal-'+client_id+'" style="display:none" value="checked" />';
+                    html += '<input type="checkbox" id="filereference-'+client_id+'" style="display:none" value="checked" />';
+                }
             }
 
             if (!args.hasauthor) {
@@ -673,7 +704,7 @@ M.core_filepicker.init = function(Y, options) {
                     // in editor, images are stored in '/' only
                     params.savepath = '/';
                     // when image or media button is clicked
-                    if ( this.options.return_types != 1 ) {
+                    if (this.options.return_types != 1) {
                         var linkexternal = Y.one('#linkexternal-'+client_id);
                         if (linkexternal && linkexternal.get('checked')) {
                             params['linkexternal'] = 'yes';
@@ -686,6 +717,15 @@ M.core_filepicker.init = function(Y, options) {
 
                 if (this.options.env == 'url') {
                     params['linkexternal'] = 'yes';
+                }
+
+                if (this.options.return_types != 4) {
+                    var usefilereference = Y.one('#filereference-'+client_id);
+                    if (usefilereference && usefilereference.get('checked')) {
+                        params['usefilereference'] = 'yes';
+                    }
+                } else {
+                    params['usefilereference'] = 'yes';
                 }
 
                 this.wait('download', title);
@@ -846,6 +886,7 @@ M.core_filepicker.init = function(Y, options) {
         parse_repository_options: function(data) {
             this.filelist = data.list?data.list:null;
             this.filepath = data.path?data.path:null;
+            this.objecttag = data.object?data.object:null;
             this.active_repo = {};
             this.active_repo.issearchresult = Boolean(data.issearchresult);
             this.active_repo.dynload = data.dynload?data.dynload:false;
@@ -1132,7 +1173,11 @@ M.core_filepicker.init = function(Y, options) {
                         scope.parse_repository_options(obj);
                         scope.create_upload_form(obj);
 
-                    } else if (obj.iframe) {
+                    } else if (obj.object) {
+                        M.core_filepicker.active_filepicker = scope;
+                        scope.viewbar.set('disabled', true);
+                        scope.parse_repository_options(obj);
+                        scope.create_object_container(obj.object);
 
                     } else if (obj.list) {
                         obj.issearchresult = false;
@@ -1142,6 +1187,16 @@ M.core_filepicker.init = function(Y, options) {
                     }
                 }
             }, true);
+        },
+        create_object_container: function(data) {
+            var client_id = this.options.client_id;
+            Y.one('#panel-'+client_id).set('innerHTML', '');
+            var types = this.options.accepted_types;
+            var panel = Y.one('#panel-'+client_id);
+            var str = '<object data="'+data.src+'" type="'+data.type+'" width="98%" height="98%" id="container_object" class="fp-object-container mdl-align">';
+            str += '</object>';
+            var container = Y.Node.create(str);
+            Y.one('#panel-'+client_id).appendChild(container);
         },
         create_upload_form: function(data) {
             var client_id = this.options.client_id;

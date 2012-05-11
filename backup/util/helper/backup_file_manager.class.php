@@ -73,6 +73,10 @@ class backup_file_manager {
 
         $fs = get_file_storage();
         $file = $fs->get_file_instance($filerecorid);
+        // If the file is external file, skip copying.
+        if ($file->is_external_file()) {
+            return;
+        }
 
         // Calculate source and target paths (use same subdirs strategy for both)
         $targetfilepath = self::get_backup_storage_base_dir($backupid) . '/' .

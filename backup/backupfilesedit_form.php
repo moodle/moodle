@@ -27,7 +27,7 @@ class backup_files_edit_form extends moodleform {
     function definition() {
         $mform =& $this->_form;
         $contextid = $this->_customdata['contextid'];
-        $options = array('subdirs'=>0, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
+        $options = array('subdirs'=>0, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL | FILE_REFERENCE);
         $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, $options);
         $mform->addElement('hidden', 'contextid', $this->_customdata['contextid']);
         $mform->addElement('hidden', 'currentcontext', $this->_customdata['currentcontext']);

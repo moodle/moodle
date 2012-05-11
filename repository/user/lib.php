@@ -16,19 +16,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * repository_user class is used to browse user private files
+ * This plugin is used to access user's private files
  *
  * @since 2.0
- * @package    repository
- * @subpackage user
- * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
+ * @package    repository_user
+ * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+require_once($CFG->dirroot . '/repository/lib.php');
 
+/**
+ * repository_user class is used to browse user private files
+ *
+ * @since     2.0
+ * @package   repository_user
+ * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class repository_user extends repository {
 
     /**
      * user plugin doesn't require login
+     *
      * @return mixed
      */
     public function print_login() {
@@ -116,20 +125,118 @@ class repository_user extends repository {
     }
 
     /**
-     * User file don't support to link to external links
-     *
-     * @return int
-     */
-    public function supported_returntypes() {
-        return FILE_INTERNAL;
-    }
-
-    /**
      * Does this repository used to browse moodle files?
      *
      * @return boolean
      */
     public function has_moodle_files() {
         return true;
+    }
+
+    /**
+     * User cannot use the external link to dropbox
+     *
+     * @return int
+     */
+    public function supported_returntypes() {
+        return FILE_INTERNAL | FILE_REFERENCE;
+    }
+
+
+    /**
+     * Prepare file reference information
+     *
+     * @param string $source
+     * @return string file referece
+     */
+    public function get_file_reference($source) {
+        global $USER;
+        $params = unserialize(base64_decode($source));
+        if (is_array($params)) {
+            $filepath = clean_param($params['filepath'], PARAM_PATH);;
+            $filename = clean_param($params['filename'], PARAM_FILE);
+            $contextid = clean_param($params['contextid'], PARAM_INT);
+        }
+        // We store all file parameters, so file api could
+        // find the refernces later.
+        $reference = array();
+        $reference['contextid'] = $contextid;
+        $reference['component'] = 'user';
+        $reference['filearea']  = 'private';
+        $reference['itemid']    = 0;
+        $reference['filepath']  = $filepath;
+        $reference['filename']  = $filename;
+
+        return file_storage::pack_reference($reference);
+    }
+
+    /**
+     * Get file from external repository by reference
+     * {@link repository::get_file_reference()}
+     * {@link repository::get_file()}
+     *
+     * @param stdClass $reference file reference db record
+     * @return stdClass|null|false
+     */
+    public function get_file_by_reference($reference) {
+        $fs = get_file_storage();
+        $ref = $reference->reference;
+        $params = unserialize(base64_decode($ref));
+        if (!is_array($params)) {
+            throw new repository_exception('invalidparams', 'repository');
+        }
+        $filename  = is_null($params['filename'])  ? null : clean_param($params['filename'], PARAM_FILE);
+        $filepath  = is_null($params['filepath'])  ? null : clean_param($params['filepath'], PARAM_PATH);;
+        $contextid = is_null($params['contextid']) ? null : clean_param($params['contextid'], PARAM_INT);
+
+        // hard coded component, filearea and item for security
+        $component = 'user';
+        $filearea  = 'private';
+        $itemid    = 0;
+
+        $storedfile = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename);
+
+        $fileinfo = new stdClass;
+        $fileinfo->contenthash = $storedfile->get_contenthash();
+        $fileinfo->filesize    = $storedfile->get_filesize();
+        return $fileinfo;
+    }
+
+    /**
+     * Return human readable reference information
+     * {@link stored_file::get_reference()}
+     *
+     * @param string $reference
+     * @return string|null
+     */
+    public function get_reference_details($reference) {
+        $params = file_storage::unpack_reference($reference);
+        // Indicate this is from user private area
+        return $this->get_name() . ': ' . $params['filepath'] . $params['filename'];
+    }
+
+    /**
+     * Repository method to serve file
+     *
+     * @param stored_file $storedfile
+     * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+     * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
+     * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
+     * @param array $options additional options affecting the file serving
+     */
+    public function send_file($storedfile, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
+        $reference = $storedfile->get_reference();
+        $params = file_storage::unpack_reference($reference);
+        $filepath = clean_param($params['filepath'], PARAM_PATH);;
+        $filename = clean_param($params['filename'], PARAM_FILE);
+        $contextid = clean_param($params['contextid'], PARAM_INT);
+        $filearea  = 'private';
+        $component = 'user';
+        $itemid    = 0;
+
+        $fs = get_file_storage();
+        $storedfile = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename);
+
+        send_stored_file($storedfile, $lifetime, $filter, $forcedownload, $options);
     }
 }

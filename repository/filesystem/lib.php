@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,19 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This plugin is used to access files on server file system
+ *
+ * @since 2.0
+ * @package    repository_filesystem
+ * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+require_once($CFG->dirroot . '/repository/lib.php');
+require_once($CFG->libdir . '/filelib.php');
+
+/**
  * repository_filesystem class
+ *
  * Create a repository from your local filesystem
  * *NOTE* for security issue, we use a fixed repository path
  * which is %moodledata%/repository
  *
- * @since 2.0
  * @package    repository
- * @subpackage filesystem
- * @copyright  2009 Dongsheng Cai
- * @author     Dongsheng Cai <dongsheng@moodle.com>
+ * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_filesystem extends repository {
+
+    /**
+     * Constructor
+     *
+     * @param int $repositoryid repository ID
+     * @param int $context context ID
+     * @param array $options
+     */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         global $CFG;
         parent::__construct($repositoryid, $context, $options);
@@ -114,6 +130,7 @@ class repository_filesystem extends repository {
     public function global_search() {
         return false;
     }
+
     /**
      * Return file path
      * @return array
@@ -176,10 +193,6 @@ class repository_filesystem extends repository {
         }
     }
 
-    public function supported_returntypes() {
-        return FILE_INTERNAL;
-    }
-
     public static function create($type, $userid, $context, $params, $readonly=0) {
         global $PAGE;
         if (has_capability('moodle/site:config', get_system_context())) {
@@ -194,5 +207,53 @@ class repository_filesystem extends repository {
             $errors['fs_path'] = get_string('invalidadminsettingname', 'error', 'fs_path');
         }
         return $errors;
+    }
+
+    /**
+     * User cannot use the external link to dropbox
+     *
+     * @return int
+     */
+    public function supported_returntypes() {
+        return FILE_INTERNAL | FILE_REFERENCE;
+    }
+
+    /**
+     * Get file from external repository by reference
+     * {@link repository::get_file_reference()}
+     * {@link repository::get_file()}
+     *
+     * @param stdClass $reference file reference db record
+     * @return stdClass|null|false
+     */
+    public function get_file_by_reference($reference) {
+        $ref = $reference->reference;
+        if ($ref{0} == '/') {
+            $filepath = $this->root_path.substr($ref, 1, strlen($ref)-1);
+        } else {
+            $filepath = $this->root_path.$ref;
+        }
+        $fileinfo = new stdClass;
+        $fileinfo->filepath = $filepath;
+        return $fileinfo;
+    }
+
+    /**
+     * Repository method to serve file
+     *
+     * @param stored_file $storedfile
+     * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+     * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
+     * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
+     * @param array $options additional options affecting the file serving
+     */
+    public function send_file($storedfile, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
+        $reference = $storedfile->get_reference();
+        if ($reference{0} == '/') {
+            $file = $this->root_path.substr($reference, 1, strlen($reference)-1);
+        } else {
+            $file = $this->root_path.$reference;
+        }
+        send_file($file, $storedfile->get_filename(), 'default' , $filter, false, $forcedownload);
     }
 }

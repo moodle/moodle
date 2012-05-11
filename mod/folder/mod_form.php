@@ -48,7 +48,7 @@ class mod_folder_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'content', get_string('contentheader', 'folder'));
-        $mform->addElement('filemanager', 'files', get_string('files'), null, array('subdirs'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL));
+        $mform->addElement('filemanager', 'files', get_string('files'), null, array('subdirs'=>1, 'accepted_types'=>'*'));
 
         //-------------------------------------------------------
         $this->standard_coursemodule_elements();

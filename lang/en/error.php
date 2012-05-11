@@ -224,6 +224,7 @@ $string['errorsettinguserpref'] = 'Error setting user preference';
 $string['errorunzippingfiles'] = 'Error unzipping files';
 $string['expiredkey'] = 'Expired key';
 $string['externalauthpassworderror'] = 'Non-empty password for external authentication';
+$string['externalfilenolocation'] = 'External file has no location path';
 $string['failtoloadblocks'] = 'One or more blocks are registered in the database, but they all failed to load!';
 $string['fieldrequired'] = '"{$a}" is a required field';
 $string['fileexists'] = 'File exists';

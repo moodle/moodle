@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/filelib.php');
 
-class filelib_testcase extends basic_testcase {
+class filelib_testcase extends advanced_testcase {
     public function test_format_postdata_for_curlcall() {
 
         //POST params with just simple types
@@ -84,5 +84,84 @@ class filelib_testcase extends basic_testcase {
         $testhtml = "http://download.moodle.org/unittest/test.html";
         $contents = download_file_content($testhtml);
         $this->assertEquals('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+    }
+
+    /**
+     * Testing prepare draft area
+     *
+     * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
+     * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+     */
+    public function test_prepare_draft_area() {
+        global $USER, $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $usercontext = context_user::instance($user->id);
+        $USER = $DB->get_record('user', array('id'=>$user->id));
+
+
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+        $component = 'core';
+        $filearea  = 'unittest';
+        $itemid    = 0;
+        $filepath  = '/';
+        $filename  = 'test.txt';
+        $sourcefield = 'Copyright stuff';
+
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => $component,
+            'filearea'  => $filearea,
+            'itemid'    => $itemid,
+            'filepath'  => $filepath,
+            'filename'  => $filename,
+            'source'    => $sourcefield,
+        );
+        $ref = $fs->pack_reference($filerecord);
+
+        $originalfile = $fs->create_file_from_string($filerecord, 'Test content');
+
+        $fileid = $originalfile->get_id();
+        $this->assertInstanceOf('stored_file', $originalfile);
+
+        $draftitemid = 0;
+        file_prepare_draft_area($draftitemid, $syscontext->id, $component, $filearea, $itemid);
+
+        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid);
+        $this->assertEquals(2, count($draftfiles));
+
+        $draftfile = $fs->get_file($usercontext->id, 'user', 'draft', $draftitemid, $filepath, $filename);
+        $source = unserialize($draftfile->get_source());
+        $this->assertEquals($ref, $source->original);
+        $this->assertEquals($sourcefield, $source->source);
+
+
+        // change some information
+        $author = 'Dongsheng Cai';
+        $draftfile->set_author($author);
+        $newsourcefield = 'Get from flickr';
+        $license = 'GPLv3';
+        $draftfile->set_license($license);
+        // if you want to really just change source field, do this:
+        $source = unserialize($draftfile->get_source());
+        $newsourcefield = 'From flickr';
+        $source->source = $newsourcefield;
+        $draftfile->set_source(serialize($source));
+
+        // Save changed file
+        file_save_draft_area_files($draftitemid, $syscontext->id, $component, $filearea, $itemid);
+
+        $file = $fs->get_file($syscontext->id, $component, $filearea, $itemid, $filepath, $filename);
+
+        // Make sure it's the original file id
+        $this->assertEquals($fileid, $file->get_id());
+        $this->assertInstanceOf('stored_file', $file);
+        $this->assertEquals($author, $file->get_author());
+        $this->assertEquals($license, $file->get_license());
+        $this->assertEquals($newsourcefield, $file->get_source());
     }
 }
