@@ -407,7 +407,14 @@ class stored_file {
      * @return mixed array with width, height and mimetype; false if not an image
      */
     public function get_imageinfo() {
-        if (!$imageinfo = getimagesize($this->get_content_file_location())) {
+        $path = $this->get_content_file_location();
+        if (!is_readable($path)) {
+            if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
+                throw new file_exception('storedfilecannotread', '', $path);
+            }
+        }
+        $mimetype = $this->get_mimetype();
+        if (!preg_match('|^image/|', $mimetype) || !filesize($path) || !($imageinfo = getimagesize($path))) {
             return false;
         }
         $image = array('width'=>$imageinfo[0], 'height'=>$imageinfo[1], 'mimetype'=>image_type_to_mime_type($imageinfo[2]));
