@@ -888,6 +888,189 @@ class core_course_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.3
      */
+    public static function import_course_parameters() {
+        return new external_function_parameters(
+            array(
+                'importfrom' => new external_value(PARAM_INT, 'the id of the course we are importing from'),
+                'importto' => new external_value(PARAM_INT, 'the id of the course we are importing to'),
+                'deletecontent' => new external_value(PARAM_INT, 'whether to delete the course content where we are importing to (default to 0 = No)', VALUE_DEFAULT, 0),
+                'options' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                                'name' => new external_value(PARAM_ALPHA, 'The backup option name:
+                                            "activities" (int) Include course activites (default to 1 that is equal to yes),
+                                            "blocks" (int) Include course blocks (default to 1 that is equal to yes),
+                                            "filters" (int) Include course filters  (default to 1 that is equal to yes)'
+                                            ),
+                                'value' => new external_value(PARAM_RAW, 'the value for the option 1 (yes) or 0 (no)'
+                            )
+                        )
+                    ), VALUE_DEFAULT, array()
+                ),
+            )
+        );
+    }
+
+    /**
+     * Imports a course
+     *
+     * @param int $importfrom The id of the course we are importing from
+     * @param int $importto The id of the course we are importing to
+     * @param bool $deletecontent Whether to delete the course we are importing to content
+     * @param array $options List of backup options
+     * @return null
+     * @since Moodle 2.3
+     */
+    public static function import_course($importfrom, $importto, $deletecontent, $options) {
+        global $CFG, $USER, $DB;
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+
+        // Parameter validation.
+        $params = self::validate_parameters(
+                self::import_course_parameters(),
+                array(
+                      'importfrom' => $importfrom,
+                      'importto' => $importto,
+                      'deletecontent' => $deletecontent,
+                      'options' => $options
+                )
+        );
+
+        if ($params['deletecontent'] !== 0 and $params['deletecontent'] !== 1) {
+            throw new moodle_exception('invalidextparam', 'webservice', '', $option['deletecontent']);
+        }
+
+        // Context validation.
+
+        if (! ($importfrom = $DB->get_record('course', array('id'=>$params['importfrom'])))) {
+            throw new moodle_exception('invalidcourseid', 'error', '', $params['importfrom']);
+        }
+
+        if (! ($importto = $DB->get_record('course', array('id'=>$params['importto'])))) {
+            throw new moodle_exception('invalidcourseid', 'error', '', $params['importto']);
+        }
+
+        $importfromcontext = context_course::instance($importfrom->id);
+        self::validate_context($importfromcontext);
+
+        $importtocontext = context_course::instance($importto->id);
+        self::validate_context($importtocontext);
+
+        $backupdefaults = array(
+                                'activities' => 1,
+                                'blocks' => 1,
+                                'filters' => 1
+        );
+
+        $backupsettings = array();
+
+        // Check for backup and restore options.
+        if (!empty($params['options'])) {
+            foreach ($params['options'] as $option) {
+
+                // Strict check for a correct value (allways 1 or 0, true or false).
+                $value = clean_param($option['value'], PARAM_INT);
+
+                if ($value !== 0 and $value !== 1) {
+                    throw new moodle_exception('invalidextparam', 'webservice', '', $option['name']);
+                }
+
+                if (!isset($backupdefaults[$option['name']])) {
+                    throw new moodle_exception('invalidextparam', 'webservice', '', $option['name']);
+                }
+
+                $backupsettings[$option['name']] = $value;
+            }
+        }
+
+        // Capability checking.
+
+        require_capability('moodle/backup:backuptargetimport', $importfromcontext);
+        require_capability('moodle/restore:restoretargetimport', $importtocontext);
+
+        $bc = new backup_controller(backup::TYPE_1COURSE, $importfrom->id, backup::FORMAT_MOODLE,
+                backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id);
+
+        foreach ($backupsettings as $name => $value) {
+            $bc->get_plan()->get_setting($name)->set_value($value);
+        }
+
+        $backupid       = $bc->get_backupid();
+        $backupbasepath = $bc->get_plan()->get_basepath();
+
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // Restore the backup immediately.
+
+        // Check if we must delete the contents of the destination course.
+        if ($params['deletecontent']) {
+            $restoretarget = backup::TARGET_EXISTING_DELETING;
+        } else {
+            $restoretarget = backup::TARGET_EXISTING_ADDING;
+        }
+
+        $rc = new restore_controller($backupid, $importto->id,
+                backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id, $restoretarget);
+
+        foreach ($backupsettings as $name => $value) {
+            $rc->get_plan()->get_setting($name)->set_value($value);
+        }
+
+        if (!$rc->execute_precheck()) {
+            $precheckresults = $rc->get_precheck_results();
+            if (is_array($precheckresults) && !empty($precheckresults['errors'])) {
+                if (empty($CFG->keeptempdirectoriesonbackup)) {
+                    fulldelete($backupbasepath);
+                }
+
+                $errorinfo = '';
+
+                foreach ($precheckresults['errors'] as $error) {
+                    $errorinfo .= $error;
+                }
+
+                if (array_key_exists('warnings', $precheckresults)) {
+                    foreach ($precheckresults['warnings'] as $warning) {
+                        $errorinfo .= $warning;
+                    }
+                }
+
+                throw new moodle_exception('backupprecheckerrors', 'webservice', '', $errorinfo);
+            }
+        } else {
+            if ($restoretarget == backup::TARGET_EXISTING_DELETING) {
+                restore_dbops::delete_course_content($importto->id);
+            }
+        }
+
+        $rc->execute_plan();
+        $rc->destroy();
+
+        if (empty($CFG->keeptempdirectoriesonbackup)) {
+            fulldelete($backupbasepath);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 2.3
+     */
+    public static function import_course_returns() {
+        return null;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.3
+     */
     public static function get_categories_parameters() {
         return new external_function_parameters(
             array(
