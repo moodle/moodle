@@ -782,7 +782,7 @@ class core_course_external extends external_api {
                 }
             }
             // Check name.
-            if (textlib::strlen($category['name'])>30) {
+            if (textlib::strlen($category['name'])>255) {
                 throw new moodle_exception('categorytoolong');
             }
 
@@ -1191,7 +1191,7 @@ class core_course_external extends external_api {
             require_capability('moodle/category:manage', $categorycontext);
 
             if (!empty($cat['name'])) {
-                if (textlib::strlen($cat['name'])>30) {
+                if (textlib::strlen($cat['name'])>255) {
                      throw new moodle_exception('categorytoolong');
                 }
                 $category->name = $cat['name'];
