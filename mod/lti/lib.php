@@ -271,21 +271,6 @@ function lti_grades($basicltiid) {
 }
 
 /**
- * Must return an array of user records (all data) who are participants
- * for a given instance of basiclti. Must include every user involved
- * in the instance, independient of his role (student, teacher, admin...)
- * See other modules as example.
- *
- * @param int $basicltiid ID of an instance of this module
- * @return mixed boolean/array of students
- *
- * @TODO: implement this moodle function
- **/
-function lti_get_participants($basicltiid) {
-    return false;
-}
-
-/**
  * This function returns if a scale is being used by one basiclti
  * it it has support for grading and scales. Commented code should be
  * modified if necessary. See forum, glossary or journal modules

@@ -377,21 +377,6 @@ function wiki_grades($wikiid) {
 }
 
 /**
- * Must return an array of user records (all data) who are participants
- * for a given instance of wiki. Must include every user involved
- * in the instance, independient of his role (student, teacher, admin...)
- * See other modules as example.
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $wikiid ID of an instance of this module
- * @return mixed boolean/array of students
- **/
-function wiki_get_participants($wikiid) {
-    return false;
-}
-
-/**
  * This function returns if a scale is being used by one wiki
  * it it has support for grading and scales. Commented code should be
  * modified if necessary. See forum, glossary or journal modules

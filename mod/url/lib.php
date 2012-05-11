@@ -236,18 +236,6 @@ function url_user_complete($course, $user, $mod, $url) {
 }
 
 /**
- * Returns the users with data in one url
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $urlid
- * @return bool false
- */
-function url_get_participants($urlid) {
-    return false;
-}
-
-/**
  * Given a course_module object, this function returns any
  * "extra" information that may be needed when printing
  * this activity in a course listing.

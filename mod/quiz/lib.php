@@ -745,23 +745,6 @@ function quiz_grade_item_delete($quiz) {
 }
 
 /**
- * Returns an array of users who have data in a given quiz
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $quizid the quiz id.
- * @return array of userids.
- */
-function quiz_get_participants($quizid) {
-    global $CFG, $DB;
-
-    return $DB->get_records_sql('
-            SELECT DISTINCT userid, userid
-            JOIN {quiz_attempts} qa
-            WHERE a.quiz = ?', array($quizid));
-}
-
-/**
  * This standard function will check all instances of this module
  * and make sure there are up-to-date events created for each of them.
  * If courseid = 0, then every quiz event in the site is checked, else
