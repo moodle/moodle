@@ -535,7 +535,7 @@ class core_media_player_youtube extends core_media_player_external {
         if (empty($CFG->xmlstrictheaders)) {
             return <<<OET
 <iframe title="$info" width="$width" height="$height"
-  src="$site/embed/$videoid?rel=0" frameborder="0" allowfullscreen></iframe>
+  src="$site/embed/$videoid?rel=0&wmode=transparent" frameborder="0" allowfullscreen></iframe>
 OET;
         }
 
