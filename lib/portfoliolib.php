@@ -139,7 +139,7 @@ class portfolio_add_button {
      * @param array $argarray This can be an array or hash of arguments to pass
      *                        back to the callback functions (passed by reference)
      *                        these MUST be primatives to be added as hidden form fields.
-     *                        and the values get cleaned to PARAM_ALPHAEXT or PARAM_NUMBER or PARAM_PATH
+     *                        and the values get cleaned to PARAM_ALPHAEXT or PARAM_FLOAT or PARAM_PATH
      * @param string $file    This can be autodetected if it's in the same file as your caller,
      *                        but often, the caller is a script.php and the class in a lib.php
      *                        so you can pass it here if necessary.

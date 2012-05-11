@@ -55,7 +55,7 @@ class qtype_numerical_edit_form extends question_edit_form {
 
         $tolerance = $mform->createElement('text', 'tolerance',
                 get_string('acceptederror', 'qtype_numerical'));
-        $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
+        $repeatedoptions['tolerance']['type'] = PARAM_FLOAT;
         $repeatedoptions['tolerance']['default'] = 0;
         array_splice($repeated, 3, 0, array($tolerance));
         $repeated[1]->setSize(10);
@@ -83,7 +83,7 @@ class qtype_numerical_edit_form extends question_edit_form {
         $penaltygrp = array();
         $penaltygrp[] = $mform->createElement('text', 'unitpenalty',
                 get_string('unitpenalty', 'qtype_numerical'), array('size' => 6));
-        $mform->setType('unitpenalty', PARAM_NUMBER);
+        $mform->setType('unitpenalty', PARAM_FLOAT);
         $mform->setDefault('unitpenalty', 0.1000000);
 
         $unitgradingtypes = array(
@@ -137,7 +137,7 @@ class qtype_numerical_edit_form extends question_edit_form {
         );
 
         $repeatedoptions['unit']['type'] = PARAM_NOTAGS;
-        $repeatedoptions['multiplier']['type'] = PARAM_NUMBER;
+        $repeatedoptions['multiplier']['type'] = PARAM_FLOAT;
         $repeatedoptions['unit']['disabledif'] =
                 array('unitrole', 'eq', qtype_numerical::UNITNONE);
         $repeatedoptions['multiplier']['disabledif'] =
