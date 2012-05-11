@@ -560,7 +560,7 @@ class assign {
         if ($this->adminconfig) {
             return $this->adminconfig;
         }
-        $this->adminconfig = get_config('mod_assign');
+        $this->adminconfig = get_config('assign');
         return $this->adminconfig;
     }
 
@@ -2865,7 +2865,8 @@ class assign {
         $grades = array();
         $assignmentid = $this->get_instance()->id;
 
-        $gradebookpluginname = $CFG->assign_feedback_plugin_for_gradebook;
+        $adminconfig = $this->get_admin_config();
+        $gradebookpluginname = $adminconfig->feedback_plugin_for_gradebook;
         $gradebookplugin = null;
 
         // find the gradebook plugin
