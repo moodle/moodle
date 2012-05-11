@@ -560,7 +560,7 @@ class assign {
         if ($this->adminconfig) {
             return $this->adminconfig;
         }
-        $this->adminconfig = get_config('mod_assign');
+        $this->adminconfig = get_config('assign');
         return $this->adminconfig;
     }
 
@@ -2487,8 +2487,30 @@ class assign {
                 }
             }
         }
-        $mform->addElement('static', 'progress', '', get_string('gradingstudentprogress', 'assign', array('index'=>$rownum+1, 'count'=>count($useridlist))));
 
+        $gradinginfo = grade_get_grades($this->get_course()->id,
+                                        'mod',
+                                        'assign',
+                                        $this->get_instance()->id,
+                                        $userid);
+        if (!empty($CFG->enableoutcomes)) {
+            foreach($gradinginfo->outcomes as $index=>$outcome) {
+                $options = make_grades_menu(-$outcome->scaleid);
+                if ($outcome->grades[$userid]->locked) {
+                    $options[0] = get_string('nooutcome', 'grades');
+                    $mform->addElement('static', 'outcome_'.$index.'['.$userid.']', $outcome->name.':',
+                            $options[$outcome->grades[$userid]->grade]);
+                } else {
+                    $options[''] = get_string('nooutcome', 'grades');
+                    $attributes = array('id' => 'menuoutcome_'.$index );
+                    $mform->addElement('select', 'outcome_'.$index.'['.$userid.']', $outcome->name.':', $options, $attributes );
+                    $mform->setType('outcome_'.$index.'['.$userid.']', PARAM_INT);
+                    $mform->setDefault('outcome_'.$index.'['.$userid.']', $outcome->grades[$userid]->grade );
+                }
+            }
+        }
+
+        $mform->addElement('static', 'progress', '', get_string('gradingstudentprogress', 'assign', array('index'=>$rownum+1, 'count'=>count($useridlist))));
 
         // plugins
         $this->add_plugin_grade_elements($grade, $mform, $data);
@@ -2702,6 +2724,43 @@ class assign {
     }
 
     /**
+     * save outcomes submitted from grading form
+     *
+     * @param int $userid
+     * @param stdClass $formdata
+     */
+    private function process_outcomes($userid, $formdata) {
+        global $CFG, $USER;
+
+        if (empty($CFG->enableoutcomes)) {
+            return;
+        }
+
+        require_once($CFG->libdir.'/gradelib.php');
+
+        $data = array();
+        $gradinginfo = grade_get_grades($this->get_course()->id,
+                                        'mod',
+                                        'assign',
+                                        $this->get_instance()->id,
+                                        $userid);
+
+        if (!empty($gradinginfo->outcomes)) {
+            foreach($gradinginfo->outcomes as $index=>$oldoutcome) {
+                $name = 'outcome_'.$index;
+                if (isset($formdata->{$name}[$userid]) and $oldoutcome->grades[$userid]->grade != $formdata->{$name}[$userid]) {
+                    $data[$index] = $formdata->{$name}[$userid];
+                }
+            }
+        }
+        if (count($data) > 0) {
+            grade_update_outcomes('mod/assign', $this->course->id, 'mod', 'assign', $this->get_instance()->id, $userid, $data);
+        }
+
+    }
+
+
+    /**
      * save grade
      *
      * @param  moodleform $mform
@@ -2763,6 +2822,7 @@ class assign {
                     }
                 }
             }
+            $this->process_outcomes($userid, $formdata);
             $this->update_grade($grade);
 
             $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);

@@ -105,6 +105,7 @@ class assign_upgrade_manager {
         $gradingdefinitions = null;
         $gradeidmap = array();
         $completiondone = false;
+        $gradesdone = false;
 
         // from this point we want to rollback on failure
         $rollback = false;
@@ -213,7 +214,9 @@ class assign_upgrade_manager {
             $newassignment->update_gradebook(false,$newcoursemodule->id);
 
             // copy the grades from the old assignment to the new one
-            $this->copy_grades_for_upgrade($oldassignment, $newassignment);
+            $DB->set_field('grade_items', 'itemmodule', 'assign', array('iteminstance'=>$oldassignment->id));
+            $DB->set_field('grade_items', 'iteminstance', $newassignment->get_instance()->id, array('iteminstance'=>$oldassignment->id));
+            $gradesdone = true;
 
         } catch (Exception $exception) {
             $rollback = true;
@@ -221,6 +224,12 @@ class assign_upgrade_manager {
         }
 
         if ($rollback) {
+            // roll back the grades changes
+            if ($gradesdone) {
+                // copy the grades from the old assignment to the new one
+                $DB->set_field('grade_items', 'itemmodule', 'assignment', array('iteminstance'=>$newassignment->get_instance()->id));
+                $DB->set_field('grade_items', 'iteminstance', $oldassignment->id, array('iteminstance'=>$newassignment->get_instance()->id));
+            }
             // roll back the completion changes
             if ($completiondone) {
                 $DB->set_field('course_modules_completion', 'coursemoduleid', $oldcoursemodule->id, array('coursemoduleid'=>$newcoursemodule->id));
@@ -360,46 +369,6 @@ class assign_upgrade_manager {
                    "view.php?id=$cm->course",
                    "$cm->modname $cm->instance", $cm->id);
 
-        return true;
-    }
-
-    /**
-     * This function copies the grades from the old assignment module to this one.
-     *
-     * @param stdClass $oldassignment old assignment data record
-     * @param assign $newassignment the new assign class
-     * @return bool true or false
-     */
-    public function copy_grades_for_upgrade($oldassignment, $newassignment) {
-        global $CFG;
-
-        require_once($CFG->libdir.'/gradelib.php');
-
-        // get the old and new grade items
-        $oldgradeitems = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>'assignment', 'iteminstance'=>$oldassignment->id));
-        if (!$oldgradeitems) {
-            return false;
-        }
-        $oldgradeitem = array_pop($oldgradeitems);
-        if (!$oldgradeitem) {
-            return false;
-        }
-        $newgradeitems = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>'assign', 'iteminstance'=>$newassignment->get_instance()->id));
-        if (!$newgradeitems) {
-            return false;
-        }
-        $newgradeitem = array_pop($newgradeitems);
-        if (!$newgradeitem) {
-            return false;
-        }
-
-        $gradegrades = grade_grade::fetch_all(array('itemid'=>$oldgradeitem->id));
-        if ($gradegrades) {
-            foreach ($gradegrades as $gradeid=>$grade) {
-                $grade->itemid = $newgradeitem->id;
-                grade_update('mod/assign', $newassignment->get_course()->id, 'mod', 'assign', $newassignment->get_instance()->id, 0, $grade, NULL);
-            }
-        }
         return true;
     }
 
