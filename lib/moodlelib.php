@@ -276,6 +276,7 @@ define('PARAM_FORMAT',   'alphanumext');
 
 /**
  * PARAM_MULTILANG - deprecated alias of PARAM_TEXT.
+ * @deprecated since 2.0
  */
 define('PARAM_MULTILANG',  'text');
 

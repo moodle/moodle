@@ -604,7 +604,7 @@ class define_role_table_advanced extends capability_table_with_risks {
         }
 
         // Role name.
-        $name = optional_param('name', null, PARAM_MULTILANG);
+        $name = optional_param('name', null, PARAM_TEXT);
         if (!is_null($name)) {
             $this->role->name = $name;
             // Hack: short names of standard roles are equal to archetypes, empty name means localised via lang packs.

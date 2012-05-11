@@ -29,7 +29,7 @@ class profile_define_base {
 
         $form->addElement('text', 'name', get_string('profilename', 'admin'), 'size="50"');
         $form->addRule('name', $strrequired, 'required', null, 'client');
-        $form->setType('name', PARAM_MULTILANG);
+        $form->setType('name', PARAM_TEXT);
 
         $form->addElement('editor', 'description', get_string('profiledescription', 'admin'), null, null);
 

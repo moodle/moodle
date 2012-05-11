@@ -23,7 +23,7 @@ class category_form extends moodleform {
         $mform->setType('action', PARAM_ACTION);
 
         $mform->addElement('text', 'name', get_string('profilecategoryname', 'admin'), 'maxlength="255" size="30"');
-        $mform->setType('name', PARAM_MULTILANG);
+        $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', $strrequired, 'required', null, 'client');
 
         $this->add_action_buttons(true);
