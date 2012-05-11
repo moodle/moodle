@@ -377,7 +377,8 @@ class mysqli_native_moodle_database extends moodle_database {
             return $this->tables;
         }
         $this->tables = array();
-        $sql = "SHOW TABLES LIKE '{$this->prefix}%'";
+        $prefix = str_replace('_', '\\_', $this->prefix);
+        $sql = "SHOW TABLES LIKE '$prefix%'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
