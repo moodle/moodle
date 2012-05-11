@@ -44,6 +44,11 @@ define('FORUM_TRACKING_OFF', 0);
 define('FORUM_TRACKING_OPTIONAL', 1);
 define('FORUM_TRACKING_ON', 2);
 
+if (!defined('FORUM_CRON_USER_CACHE')) {
+    /** Defines how many full user records are cached in forum cron. */
+    define('FORUM_CRON_USER_CACHE', 5000);
+}
+
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 
 /**
@@ -379,6 +384,28 @@ function forum_get_email_message_id($postid, $usertoid, $hostname) {
 }
 
 /**
+ * Removes properties from user record that are not necessary
+ * for sending post notifications.
+ * @param stdClass $user
+ * @return void, $user parameter is modified
+ */
+function forum_cron_minimise_user_record(stdClass $user) {
+
+    // We store large amount of users in one huge array,
+    // make sure we do not store info there we do not actually need
+    // in mail generation code or messaging.
+
+    unset($user->institution);
+    unset($user->department);
+    unset($user->address);
+    unset($user->city);
+    unset($user->url);
+    unset($user->currentlogin);
+    unset($user->description);
+    unset($user->descriptionformat);
+}
+
+/**
  * Function to be run periodically according to the moodle cron
  * Finds all posts that have yet to be mailed out, and mails them
  * out to all subscribers
@@ -397,8 +424,11 @@ function forum_cron() {
 
     $site = get_site();
 
-    // all users that are subscribed to any post that needs sending
+    // All users that are subscribed to any post that needs sending,
+    // please increase $CFG->extramemorylimit on large sites that
+    // send notifications to a large number of users.
     $users = array();
+    $userscount = 0; // Cached user counter - count($users) in PHP is horribly slow!!!
 
     // status arrays
     $mailcount  = array();
@@ -479,13 +509,23 @@ function forum_cron() {
                 $modcontext = get_context_instance(CONTEXT_MODULE, $coursemodules[$forumid]->id);
                 if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0, $modcontext, "u.*")) {
                     foreach ($subusers as $postuser) {
-                        unset($postuser->description); // not necessary
                         // this user is subscribed to this forum
                         $subscribedusers[$forumid][$postuser->id] = $postuser->id;
-                        // this user is a user we have to process later
-                        $users[$postuser->id] = $postuser;
+                        $userscount++;
+                        if ($userscount > FORUM_CRON_USER_CACHE) {
+                            // Store minimal user info.
+                            $minuser = new stdClass();
+                            $minuser->id = $postuser->id;
+                            $users[$postuser->id] = $minuser;
+                        } else {
+                            // Cache full user record.
+                            forum_cron_minimise_user_record($postuser);
+                            $users[$postuser->id] = $postuser;
+                        }
                     }
-                    unset($subusers); // release memory
+                    // Release memory.
+                    unset($subusers);
+                    unset($postuser);
                 }
             }
 
@@ -503,15 +543,22 @@ function forum_cron() {
 
             @set_time_limit(120); // terminate if processing of any account takes longer than 2 minutes
 
-            // set this so that the capabilities are cached, and environment matches receiving user
-            cron_setup_user($userto);
-
             mtrace('Processing user '.$userto->id);
 
-            // init caches
+            // Init user caches - we keep the cache for one cycle only,
+            // otherwise it could consume too much memory.
+            if (isset($userto->username)) {
+                $userto = clone($userto);
+            } else {
+                $userto = $DB->get_record('user', array('id' => $userto->id));
+                forum_cron_minimise_user_record($userto);
+            }
             $userto->viewfullnames = array();
             $userto->canpost       = array();
             $userto->markposts     = array();
+
+            // set this so that the capabilities are cached, and environment matches receiving user
+            cron_setup_user($userto);
 
             // reset the caches
             foreach ($coursemodules as $forumid=>$unused) {
@@ -544,9 +591,20 @@ function forum_cron() {
                 // Get info about the sending user
                 if (array_key_exists($post->userid, $users)) { // we might know him/her already
                     $userfrom = $users[$post->userid];
+                    if (!isset($userfrom->idnumber)) {
+                        // Minimalised user info, fetch full record.
+                        $userfrom = $DB->get_record('user', array('id' => $userfrom->id));
+                        forum_cron_minimise_user_record($userfrom);
+                    }
+
                 } else if ($userfrom = $DB->get_record('user', array('id' => $post->userid))) {
-                    unset($userfrom->description); // not necessary
-                    $users[$userfrom->id] = $userfrom; // fetch only once, we can add it to user list, it will be skipped anyway
+                    forum_cron_minimise_user_record($userfrom);
+                    // Fetch only once if possible, we can add it to user list, it will be skipped anyway.
+                    if ($userscount <= FORUM_CRON_USER_CACHE) {
+                        $userscount++;
+                        $users[$userfrom->id] = $userfrom;
+                    }
+
                 } else {
                     mtrace('Could not find user '.$post->userid);
                     continue;
@@ -569,10 +627,14 @@ function forum_cron() {
                 if (!isset($userfrom->groups[$forum->id])) {
                     if (!isset($userfrom->groups)) {
                         $userfrom->groups = array();
-                        $users[$userfrom->id]->groups = array();
+                        if (isset($users[$userfrom->id])) {
+                            $users[$userfrom->id]->groups = array();
+                        }
                     }
                     $userfrom->groups[$forum->id] = groups_get_all_groups($course->id, $userfrom->id, $cm->groupingid);
-                    $users[$userfrom->id]->groups[$forum->id] = $userfrom->groups[$forum->id];
+                    if (isset($users[$userfrom->id])) {
+                        $users[$userfrom->id]->groups[$forum->id] = $userfrom->groups[$forum->id];
+                    }
                 }
 
                 // Make sure groups allow this user to see this email
@@ -678,6 +740,7 @@ function forum_cron() {
 
             // mark processed posts as read
             forum_tp_mark_posts_read($userto, $userto->markposts);
+            unset($userto);
         }
     }
 
@@ -733,15 +796,6 @@ function forum_cron() {
             $userdiscussions = array();
 
             foreach ($digestposts_rs as $digestpost) {
-                if (!isset($users[$digestpost->userid])) {
-                    if ($user = $DB->get_record('user', array('id' => $digestpost->userid))) {
-                        $users[$digestpost->userid] = $user;
-                    } else {
-                        continue;
-                    }
-                }
-                $postuser = $users[$digestpost->userid];
-
                 if (!isset($posts[$digestpost->postid])) {
                     if ($post = $DB->get_record('forum_posts', array('id' => $digestpost->postid))) {
                         $posts[$digestpost->postid] = $post;
@@ -798,16 +852,22 @@ function forum_cron() {
 
                 // First of all delete all the queue entries for this user
                 $DB->delete_records_select('forum_queue', "userid = ? AND timemodified < ?", array($userid, $digesttime));
-                $userto = $users[$userid];
+
+                // Init user caches - we keep the cache for one cycle only,
+                // otherwise it would unnecessarily consume memory.
+                if (array_key_exists($userid, $users) and isset($users[$userid]->username)) {
+                    $userto = clone($users[$userid]);
+                } else {
+                    $userto = $DB->get_record('user', array('id' => $userid));
+                    forum_cron_minimise_user_record($userto);
+                }
+                $userto->viewfullnames = array();
+                $userto->canpost       = array();
+                $userto->markposts     = array();
 
                 // Override the language and timezone of the "current" user, so that
                 // mail is customised for the receiver.
                 cron_setup_user($userto);
-
-                // init caches
-                $userto->viewfullnames = array();
-                $userto->canpost       = array();
-                $userto->markposts     = array();
 
                 $postsubject = get_string('digestmailsubject', 'forum', format_string($site->shortname, true));
 
@@ -881,8 +941,18 @@ function forum_cron() {
 
                         if (array_key_exists($post->userid, $users)) { // we might know him/her already
                             $userfrom = $users[$post->userid];
+                            if (!isset($userfrom->idnumber)) {
+                                $userfrom = $DB->get_record('user', array('id' => $userfrom->id));
+                                forum_cron_minimise_user_record($userfrom);
+                            }
+
                         } else if ($userfrom = $DB->get_record('user', array('id' => $post->userid))) {
-                            $users[$userfrom->id] = $userfrom; // fetch only once, we can add it to user list, it will be skipped anyway
+                            forum_cron_minimise_user_record($userfrom);
+                            if ($userscount <= FORUM_CRON_USER_CACHE) {
+                                $userscount++;
+                                $users[$userfrom->id] = $userfrom;
+                            }
+
                         } else {
                             mtrace('Could not find user '.$post->userid);
                             continue;
@@ -891,10 +961,14 @@ function forum_cron() {
                         if (!isset($userfrom->groups[$forum->id])) {
                             if (!isset($userfrom->groups)) {
                                 $userfrom->groups = array();
-                                $users[$userfrom->id]->groups = array();
+                                if (isset($users[$userfrom->id])) {
+                                    $users[$userfrom->id]->groups = array();
+                                }
                             }
                             $userfrom->groups[$forum->id] = groups_get_all_groups($course->id, $userfrom->id, $cm->groupingid);
-                            $users[$userfrom->id]->groups[$forum->id] = $userfrom->groups[$forum->id];
+                            if (isset($users[$userfrom->id])) {
+                                $users[$userfrom->id]->groups[$forum->id] = $userfrom->groups[$forum->id];
+                            }
                         }
 
                         $userfrom->customheaders = array ("Precedence: Bulk");
