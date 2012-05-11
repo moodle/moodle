@@ -324,7 +324,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
             $questionid = $matches[2];
             // Make sure two questions don't overwrite each other. If we get a second
             // question with the same position, shift the second one along to the next gap.
-            $value = clean_param($value, PARAM_INTEGER);
+            $value = clean_param($value, PARAM_INT);
             while (array_key_exists($value, $questions)) {
                 $value++;
             }

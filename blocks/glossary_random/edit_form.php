@@ -49,7 +49,7 @@ class block_glossary_random_edit_form extends block_edit_form {
 
         $mform->addElement('text', 'config_refresh', get_string('refresh', 'block_glossary_random'), array('size' => 5));
         $mform->setDefault('config_refresh', 0);
-        $mform->setType('config_refresh', PARAM_INTEGER);
+        $mform->setType('config_refresh', PARAM_INT);
 
         // and select quotetypes to put in dropdown box
         $types = array(

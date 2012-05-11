@@ -54,11 +54,11 @@ class block_quiz_results_edit_form extends block_edit_form {
 
         $mform->addElement('text', 'config_showbest', get_string('config_show_best', 'block_quiz_results'), array('size' => 3));
         $mform->setDefault('config_showbest', 3);
-        $mform->setType('config_showbest', PARAM_INTEGER);
+        $mform->setType('config_showbest', PARAM_INT);
 
         $mform->addElement('text', 'config_showworst', get_string('config_show_worst', 'block_quiz_results'), array('size' => 3));
         $mform->setDefault('config_showworst', 0);
-        $mform->setType('config_showworst', PARAM_INTEGER);
+        $mform->setType('config_showworst', PARAM_INT);
 
         $mform->addElement('selectyesno', 'config_usegroups', get_string('config_use_groups', 'block_quiz_results'));
 

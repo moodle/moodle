@@ -1108,7 +1108,7 @@ class block_manager {
      * @return boolean true if anything was done. False if not.
      */
     public function process_url_delete() {
-        $blockid = optional_param('bui_deleteid', null, PARAM_INTEGER);
+        $blockid = optional_param('bui_deleteid', null, PARAM_INT);
         if (!$blockid) {
             return false;
         }
@@ -1134,9 +1134,9 @@ class block_manager {
      * @return boolean true if anything was done. False if not.
      */
     public function process_url_show_hide() {
-        if ($blockid = optional_param('bui_hideid', null, PARAM_INTEGER)) {
+        if ($blockid = optional_param('bui_hideid', null, PARAM_INT)) {
             $newvisibility = 0;
-        } else if ($blockid = optional_param('bui_showid', null, PARAM_INTEGER)) {
+        } else if ($blockid = optional_param('bui_showid', null, PARAM_INT)) {
             $newvisibility = 1;
         } else {
             return false;
@@ -1169,7 +1169,7 @@ class block_manager {
     public function process_url_edit() {
         global $CFG, $DB, $PAGE, $OUTPUT;
 
-        $blockid = optional_param('bui_editid', null, PARAM_INTEGER);
+        $blockid = optional_param('bui_editid', null, PARAM_INT);
         if (!$blockid) {
             return false;
         }
@@ -1367,7 +1367,7 @@ class block_manager {
     public function process_url_move() {
         global $CFG, $DB, $PAGE;
 
-        $blockid = optional_param('bui_moveid', null, PARAM_INTEGER);
+        $blockid = optional_param('bui_moveid', null, PARAM_INT);
         if (!$blockid) {
             return false;
         }

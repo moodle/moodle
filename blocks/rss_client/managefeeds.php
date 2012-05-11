@@ -29,8 +29,8 @@ require_once($CFG->libdir . '/tablelib.php');
 require_login();
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
-$courseid = optional_param('courseid', 0, PARAM_INTEGER);
-$deleterssid = optional_param('deleterssid', 0, PARAM_INTEGER);
+$courseid = optional_param('courseid', 0, PARAM_INT);
+$deleterssid = optional_param('deleterssid', 0, PARAM_INT);
 
 if ($courseid == SITEID) {
     $courseid = 0;

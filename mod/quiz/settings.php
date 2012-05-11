@@ -183,10 +183,10 @@ $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/subnet',
 // Enforced delay between attempts.
 $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/delay1',
         get_string('delay1st2nd', 'quiz'), get_string('configdelay1st2nd', 'quiz'),
-        array('value' => 0, 'fix' => true), PARAM_INTEGER));
+        array('value' => 0, 'fix' => true), PARAM_INT));
 $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/delay2',
         get_string('delaylater', 'quiz'), get_string('configdelaylater', 'quiz'),
-        array('value' => 0, 'fix' => true), PARAM_INTEGER));
+        array('value' => 0, 'fix' => true), PARAM_INT));
 
 // Browser security.
 $quizsettings->add(new mod_quiz_admin_setting_browsersecurity('quiz/browsersecurity',
