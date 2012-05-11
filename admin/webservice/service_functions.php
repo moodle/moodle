@@ -30,7 +30,7 @@ require_once('forms.php');
 
 $serviceid = required_param('id', PARAM_INT);
 $functionid = optional_param('fid', 0, PARAM_INT);
-$action = optional_param('action', '', PARAM_ACTION);
+$action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 admin_externalpage_setup('externalservicefunctions');

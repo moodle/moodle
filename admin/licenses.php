@@ -28,7 +28,7 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=managelicenses";
 
-$action = optional_param('action', '', PARAM_ACTION);
+$action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $license = optional_param('license', '', PARAM_SAFEDIR);
 
 ////////////////////////////////////////////////////////////////////////////////

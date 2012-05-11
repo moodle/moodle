@@ -29,7 +29,7 @@ require_once("$CFG->dirroot/enrol/renderer.php");
 require_once("$CFG->dirroot/group/lib.php");
 
 $id      = required_param('id', PARAM_INT); // course id
-$action  = optional_param('action', '', PARAM_ACTION);
+$action  = optional_param('action', '', PARAM_ALPHANUMEXT);
 $filter  = optional_param('ifilter', 0, PARAM_INT);
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);

@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/group/lib.php');
 
 // Must have the sesskey
 $id      = required_param('id', PARAM_INT); // course id
-$action  = required_param('action', PARAM_ACTION);
+$action  = required_param('action', PARAM_ALPHANUMEXT);
 
 $PAGE->set_url(new moodle_url('/enrol/ajax.php', array('id'=>$id, 'action'=>$action)));
 
