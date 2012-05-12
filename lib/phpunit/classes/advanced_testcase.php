@@ -258,7 +258,7 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     /**
      * Set current $USER, reset access cache.
      * @static
-     * @param null|int|stdClass $user user record, null means non-logged-in, integer means userid
+     * @param null|int|stdClass $user user record, null or 0 means non-logged-in, positive integer means userid
      * @return void
      */
     public static function setUser($user = null) {
@@ -275,8 +275,27 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
         }
         unset($user->description);
         unset($user->access);
+        unset($user->preference);
 
         session_set_user($user);
+    }
+
+    /**
+     * Set current $USER to admin account, reset access cache.
+     * @static
+     * @return void
+     */
+    public static function setAdminUser() {
+        self::setUser(2);
+    }
+
+    /**
+     * Set current $USER to guest account, reset access cache.
+     * @static
+     * @return void
+     */
+    public static function setGuestUser() {
+        self::setUser(1);
     }
 
     /**

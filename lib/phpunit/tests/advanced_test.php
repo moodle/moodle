@@ -43,6 +43,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertSame($_SESSION['USER'], $USER);
 
         $user = $DB->get_record('user', array('id'=>2));
+        $this->assertNotEmpty($user);
         $this->setUser($user);
         $this->assertEquals(2, $USER->id);
         $this->assertEquals(2, $_SESSION['USER']->id);
@@ -59,6 +60,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertSame($_SESSION['USER'], $USER);
 
         $USER = $DB->get_record('user', array('id'=>1));
+        $this->assertNotEmpty($USER);
         $this->assertEquals(1, $USER->id);
         $this->assertEquals(1, $_SESSION['USER']->id);
         $this->assertSame($_SESSION['USER'], $USER);
@@ -66,6 +68,26 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->setUser(null);
         $this->assertEquals(0, $USER->id);
         $this->assertSame($_SESSION['USER'], $USER);
+    }
+
+    public function test_set_admin_user() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $this->assertEquals($USER->id, 2);
+        $this->assertTrue(is_siteadmin());
+    }
+
+    public function test_set_guest_user() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+
+        $this->setGuestUser();
+        $this->assertEquals($USER->id, 1);
+        $this->assertTrue(isguestuser());
     }
 
     public function test_database_reset() {

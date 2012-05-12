@@ -70,8 +70,8 @@ class mod_assignment_generator_testcase extends advanced_testcase {
         $this->assertEquals(GRADE_TYPE_VALUE, $gitem->gradetype);
 
         // test eventslib integration
-        $this->setUser(2); // admin
+        $this->setAdminUser();
         $generator->create_instance(array('course'=>$course->id, 'timedue'=>(time()+60*60+24)));
-        $this->setUser(0);
+        $this->setUser(null);
     }
 }
