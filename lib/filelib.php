@@ -616,8 +616,15 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
                 $item->thumbnail = $OUTPUT->pix_url('f/folder-32')->out(false);
             } else {
                 // do NOT use file browser here!
-                $item->url = moodle_url::make_draftfile_url($draftitemid, $item->filepath, $item->filename)->out();
+                $itemurl = moodle_url::make_draftfile_url($draftitemid, $item->filepath, $item->filename);
+                $item->url = $itemurl->out();
                 $item->thumbnail = $OUTPUT->pix_url(file_extension_icon($item->filename, 32))->out(false);
+                if ($imageinfo = $file->get_imageinfo()) {
+                    $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb'));
+                    $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon'));
+                    $item->image_width = $imageinfo['width'];
+                    $item->image_height = $imageinfo['height'];
+                }
             }
             $list[] = $item;
         }
