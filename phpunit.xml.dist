@@ -20,6 +20,9 @@
 <!--All core suites need to be manually added here-->
 
     <testsuites>
+        <testsuite name="core_phpunit">
+            <directory suffix="_test.php">lib/phpunit/tests</directory>
+        </testsuite>
         <testsuite name="core_db">
             <directory suffix="_test.php">lib/ddl/tests</directory>
             <directory suffix="_test.php">lib/dml/tests</directory>
