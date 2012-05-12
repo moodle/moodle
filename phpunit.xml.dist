@@ -45,6 +45,9 @@
         <testsuite name="core_blog">
             <directory suffix="_test.php">blog/tests</directory>
         </testsuite>
+        <testsuite name="core_iplookup">
+            <directory suffix="_test.php">iplookup/tests</directory>
+        </testsuite>
         <testsuite name="core_course">
             <directory suffix="_test.php">course/tests</directory>
         </testsuite>
