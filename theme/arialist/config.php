@@ -38,8 +38,8 @@ $THEME->name = 'arialist';
 
 
 $THEME->parents = array(
-	'canvas',
-	'base',
+    'canvas',
+    'base',
 );
 
 /////////////////////////////////////////////////////
@@ -55,8 +55,8 @@ $THEME->parents = array(
 
 $THEME->sheets = array(
     'pagelayout',
-	'core',
-	'settings',
+    'core',
+    'settings',
 );
 
 ////////////////////////////////////////////////////
@@ -65,12 +65,12 @@ $THEME->sheets = array(
 ////////////////////////////////////////////////////
 
 $THEME->parents_exclude_sheets = array(
-		'base'=>array(
-			'pagelayout',
-		),
-		'canvas'=>array(
-			'pagelayout',
-		),
+        'base'=>array(
+            'pagelayout',
+        ),
+        'canvas'=>array(
+            'pagelayout',
+        ),
 );
 
 
@@ -92,48 +92,48 @@ $THEME->layouts = array(
     'base' => array(
         'file' => 'general.php',
         'regions' => array('side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'standard' => array(
         'file' => 'general.php',
         'regions' => array('side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'course' => array(
         'file' => 'general.php',
         'regions' => array('side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-pre'
     ),
     'coursecategory' => array(
         'file' => 'general.php',
         'regions' => array('side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'incourse' => array(
         'file' => 'general.php',
         'regions' => array('side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'frontpage' => array(
         'file' => 'frontpage.php',
         'regions' => array('side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'admin' => array(
         'file' => 'general.php',
         'regions' => array('side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'mydashboard' => array(
         'file' => 'general.php',
         'regions' => array('side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
         'options' => array('langmenu'=>true),
     ),
     'mypublic' => array(
         'file' => 'general.php',
         'regions' => array('side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'login' => array(
         'file' => 'general.php',
@@ -156,7 +156,7 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
     ),
     'embedded' => array(
-    	'theme' => 'canvas',
+        'theme' => 'canvas',
         'file' => 'embedded.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
@@ -170,7 +170,7 @@ $THEME->layouts = array(
     'report' => array(
         'file' => 'report.php',
         'regions' => array('side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
 );
 
@@ -209,14 +209,14 @@ $THEME->csspostprocess = 'arialist_process_css';
 // As above but will be included in the page footer.
 ////////////////////////////////////////////////////
 
-$THEME->larrow	= '&lang;';
+$THEME->larrow  = '&lang;';
 
 ////////////////////////////////////////////////////
 // Overrides the left arrow image used throughout
 // Moodle
 ////////////////////////////////////////////////////
 
-$THEME->rarrow	= '&rang;';
+$THEME->rarrow  = '&rang;';
 
 ////////////////////////////////////////////////////
 // Overrides the right arrow image used throughout Moodle
