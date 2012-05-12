@@ -10096,20 +10096,22 @@ function get_performance_info() {
              } else {
                  $othercount += 1;
              }
-             $details .= "<div class='yui-module'><p>$module</p>";
-             foreach ($backtraces as $backtrace) {
-                 $details .= "<div class='backtrace'>$backtrace</div>";
+             if (!empty($CFG->yuimoduledebug)) {
+                 // hidden feature for developers working on YUI module infrastructure
+                 $details .= "<div class='yui-module'><p>$module</p>";
+                 foreach ($backtraces as $backtrace) {
+                     $details .= "<div class='backtrace'>$backtrace</div>";
+                 }
+                 $details .= '</div>';
              }
-             $details .= '</div>';
          }
          $info['html'] .= "<span class='includedyuimodules'>Included YUI modules: $yuicount</span> ";
          $info['txt'] .= "includedyuimodules: $yuicount ";
          $info['html'] .= "<span class='includedjsmodules'>Other JavaScript modules: $othercount</span> ";
          $info['txt'] .= "includedjsmodules: $othercount ";
-         // Slightly odd to output the details in a display: none div. The point
-         // Is that it takes a lot of space, and if you care you can reveal it
-         // using firebug.
-         $info['html'] .= '<div id="yui-module-debug" class="notifytiny">'.$details.'</div>';
+         if ($details) {
+             $info['html'] .= '<div id="yui-module-debug" class="notifytiny">'.$details.'</div>';
+         }
      }
 
     if (!empty($PERF->logwrites)) {
