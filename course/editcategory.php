@@ -127,18 +127,25 @@ if ($mform->is_cancelled()) {
     redirect('category.php?id='.$newcategory->id.'&categoryedit=on');
 }
 
-// Unfortunately the navigation never generates correctly for this page because technically
-// this page doesn't actually exist on the navigation you get here through the course
-// management page.
-try {
-    // First up we'll try to make the course management page active seeing as that is
-    // where the user thinks they are.
-    // The big prolem here is that the course management page is a common page
-    // for both editing users and common users.
-    $PAGE->settingsnav->get('root')->get('courses')->get('coursemgmt')->make_active();
-} catch (Exception $ex) {
+// Unfortunately the navigation never generates correctly for this page because technically this page doesn't actually
+// exist on the navigation; you get here through the course management page.
+// First up we'll try to make the course management page active seeing as that is where the user thinks they are.
+// The big prolem here is that the course management page is a common page for both editing users and common users and
+// is only added to the admin tree if the user has permission to edit at the system level.
+$node = $PAGE->settingsnav->get('root');
+if ($node) {
+    $node = $node->get('courses');
+    if ($node) {
+        $node = $node->get('coursemgmt');
+    }
+}
+if ($node) {
+    // The course management page exists so make that active.
+    $node->make_active();
+} else {
     // Failing that we'll override the URL, not as accurate and chances are things
     // won't be 100% correct all the time but should work most times.
+    // A common reason to arrive here is having the management capability within only a particular category (not at system level).
     navigation_node::override_active_url(new moodle_url('/course/index.php', array('categoryedit' => 'on')));
 }
 
