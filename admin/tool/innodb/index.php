@@ -42,29 +42,40 @@ if ($DB->get_dbfamily() != 'mysql') {
     notice('This function is for MySQL databases only!', new moodle_url('/admin/'));
 }
 
+$prefix = str_replace('_', '\\_', $DB->get_prefix()).'%';
+$sql = "SHOW TABLE STATUS WHERE Name LIKE ? AND Engine <> 'InnoDB'";
+$rs = $DB->get_recordset_sql($sql, array($prefix));
+if (!$rs->valid()) {
+    $rs->close();
+    echo $OUTPUT->box('<p>All tables are already using InnoDB database engine.</p>');
+    echo $OUTPUT->continue_button('/admin/');
+    echo $OUTPUT->footer();
+    die;
+}
+
 if (data_submitted() and $confirm and confirm_sesskey()) {
 
     echo $OUTPUT->notification('Please be patient and wait for this to complete...', 'notifysuccess');
 
     set_time_limit(0);
 
-    if ($tables = $DB->get_tables()) {
+    foreach ($rs as $table) {
         $DB->set_debug(true);
-        foreach ($tables as $table) {
-            $fulltable = $DB->get_prefix().$table;
-            try {
-                $DB->change_database_structure("ALTER TABLE $fulltable ENGINE=INNODB");
-            } catch (moodle_exception $e) {
-                echo $OUTPUT->notification(s($e->getMessage()).'<br />'.s($e->debuginfo));
-            }
+        $fulltable = $table->name;
+        try {
+            $DB->change_database_structure("ALTER TABLE $fulltable ENGINE=INNODB");
+        } catch (moodle_exception $e) {
+            echo $OUTPUT->notification(s($e->getMessage()).'<br />'.s($e->debuginfo));
         }
         $DB->set_debug(false);
     }
+    $rs->close();
     echo $OUTPUT->notification('... done.', 'notifysuccess');
     echo $OUTPUT->continue_button(new moodle_url('/admin/'));
     echo $OUTPUT->footer();
 
 } else {
+    $rs->close();
     $optionsyes = array('confirm'=>'1', 'sesskey'=>sesskey());
     $formcontinue = new single_button(new moodle_url('/admin/tool/innodb/index.php', $optionsyes), get_string('yes'));
     $formcancel = new single_button(new moodle_url('/admin/'), get_string('no'), 'get');
