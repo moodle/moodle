@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,6 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clientid'] = 'Client ID';
+$string['oauthinfo'] = '<p>To use the Picasa portfolio you must be registered with Google. Instructions for registing your installation with Google are described in <a href="{$a->docsurl}">Moodle Docs</a>. The redirect url should be set to:</p><p>{$a->callbackurl}</p>';
 $string['noauthtoken'] = 'An authentication token has not been recieved from google. Please ensure you are allowing moodle to access your google account';
 $string['pluginname'] = 'Picasa';
 $string['sendfailed'] = 'The file {$a} failed to transfer to picasa';
+$string['secret'] = 'Secret';

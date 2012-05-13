@@ -36,58 +36,40 @@ require_once($CFG->libdir.'/googleapi.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_picasa extends repository {
-    private $subauthtoken = '';
+    private $googleoauth = null;
 
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
-        global $USER;
         parent::__construct($repositoryid, $context, $options);
 
-        // TODO: I wish there was somewhere we could explicitly put this outside of constructor..
-        $googletoken = optional_param('token', false, PARAM_RAW);
-        if($googletoken){
-            $gauth = new google_authsub(false, $googletoken); // will throw exception if fails
-            google_picasa::set_sesskey($gauth->get_sessiontoken(), $USER->id);
-        }
+        $returnurl = new moodle_url('/repository/repository_callback.php',
+            array('callback' => 'yes', 'repo_id' =>$this->id));
+
+        $clientid = get_config('picasa', 'clientid');
+        $secret = get_config('picasa', 'secret');
+        $this->googleoauth = new google_oauth($clientid, $secret, $returnurl->out(false), google_picasa::REALM);
+
         $this->check_login();
     }
 
     public function check_login() {
-        global $USER;
-
-        $sesskey = google_picasa::get_sesskey($USER->id);
-
-        if($sesskey){
-            try{
-                $gauth = new google_authsub($sesskey);
-                $this->subauthtoken = $sesskey;
-                return true;
-            }catch(Exception $e){
-                // sesskey is not valid, delete store and re-auth
-                google_picasa::delete_sesskey($USER->id);
-            }
-        }
-
-        return false;
+        return $this->googleoauth->is_logged_in();
     }
 
-    public function print_login(){
-        global $CFG;
-        $returnurl = $CFG->wwwroot.'/repository/repository_callback.php?callback=yes&repo_id='.$this->id;
-        $authurl = google_authsub::login_url($returnurl, google_picasa::REALM);
-        if($this->options['ajax']){
-            $ret = array();
-            $popup_btn = new stdClass();
-            $popup_btn->type = 'popup';
-            $popup_btn->url = $authurl;
-            $ret['login'] = array($popup_btn);
-            return $ret;
+    public function print_login() {
+        $url = $this->googleoauth->get_login_url();
+
+        if ($this->options['ajax']) {
+            $popup = new stdClass();
+            $popup->type = 'popup';
+            $popup->url = $url->out(false);
+            return array('login' => array($popup));
         } else {
-            echo '<a target="_blank" href="'.$authurl.'">Login</a>';
+            echo '<a target="_blank" href="'.$url->out(false).'">'.get_string('login', 'repository').'</a>';
         }
     }
 
     public function get_listing($path='', $page = '') {
-        $picasa = new google_picasa(new google_authsub($this->subauthtoken));
+        $picasa = new google_picasa($this->googleoauth);
 
         $ret = array();
         $ret['dynload'] = true;
@@ -101,7 +83,7 @@ class repository_picasa extends repository {
     }
 
     public function search($search_text, $page = 0) {
-        $picasa = new google_picasa(new google_authsub($this->subauthtoken));
+        $picasa = new google_picasa($this->googleoauth);
 
         $ret = array();
         $ret['manage'] = google_picasa::MANAGE_URL;
@@ -109,22 +91,12 @@ class repository_picasa extends repository {
         return $ret;
     }
 
-    public function logout(){
-        global $USER;
-
-        $token = google_picasa::get_sesskey($USER->id);
-
-        $gauth = new google_authsub($token);
-        // revoke token from google
-        $gauth->revoke_session_token();
-
-        google_picasa::delete_sesskey($USER->id);
-        $this->subauthtoken = '';
-
+    public function logout() {
+        $this->googleoauth->log_out();
         return parent::logout();
     }
 
-    public function get_name(){
+    public function get_name() {
         return get_string('pluginname', 'repository_picasa');
     }
     public function supported_filetypes() {
@@ -133,7 +105,27 @@ class repository_picasa extends repository {
     public function supported_returntypes() {
         return (FILE_INTERNAL | FILE_EXTERNAL);
     }
+
+    public static function get_type_option_names() {
+        return array('clientid', 'secret', 'pluginname');
+    }
+
+    public static function type_config_form($mform, $classname = 'repository') {
+        $a = new stdClass;
+        $a->docsurl = get_docs_url('Google_OAuth2_Setup');
+        $a->callbackurl = google_oauth::callback_url()->out(false);
+
+        $mform->addElement('static', null, '', get_string('oauthinfo', 'repository_picasa', $a));
+
+        parent::type_config_form($mform);
+        $mform->addElement('text', 'clientid', get_string('clientid', 'repository_picasa'));
+        $mform->addElement('text', 'secret', get_string('secret', 'repository_picasa'));
+
+        $strrequired = get_string('required');
+        $mform->addRule('clientid', $strrequired, 'required', null, 'client');
+        $mform->addRule('secret', $strrequired, 'required', null, 'client');
+    }
 }
 
 // Icon for this plugin retrieved from http://www.iconspedia.com/icon/picasa-2711.html
-// Where the license is said documented to be Free
+// Where the license is said documented to be Free.
