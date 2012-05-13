@@ -1011,8 +1011,7 @@ class phpunit_util {
 
             // fix link to schema
             $level = substr_count(str_replace('\\', '/', $cpath), '/') - substr_count(str_replace('\\', '/', $CFG->dirroot), '/');
-            $fcontents = str_replace('lib/phpunit/phpunit.xsd', str_repeat('../', $level).'lib/phpunit/phpunit.xsd', $fcontents);
-            $fcontents = str_replace('lib/phpunit/bootstrap.php', str_repeat('../', $level).'lib/phpunit/bootstrap.php', $fcontents);
+            $fcontents = str_replace('lib/phpunit/', str_repeat('../', $level).'lib/phpunit/', $fcontents);
 
             // Write the file
             $result = false;
