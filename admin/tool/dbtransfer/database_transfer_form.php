@@ -39,7 +39,7 @@ class database_transfer_form extends moodleform {
             'pgsql/native',
             'mssql/native',
             'oci/native',
-            'sqlite3/pdo',
+            'sqlsrv/native',
         );
         $drivers = array();
         foreach($supported as $driver) {
