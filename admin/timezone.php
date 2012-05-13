@@ -9,6 +9,9 @@
          $zone = clean_param($zone, PARAM_PATH);
     }
 
+    $PAGE->set_url('/admin/timezone.php');
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+
     require_login();
 
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
@@ -18,7 +21,6 @@
     $strusers = get_string("users");
     $strall = get_string("all");
 
-    $PAGE->set_url('/admin/timezone.php');
     $PAGE->set_title($strtimezone);
     $PAGE->set_heading($strtimezone);
     $PAGE->navbar->add($strtimezone);
