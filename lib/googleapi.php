@@ -319,6 +319,10 @@ class google_docs {
                     $title  = (string)$gdoc->title;
                     $source = (string)$gdoc->content[0]->attributes()->src;
                     break;
+                case 'file':
+                    $title = (string)$gdoc->title;
+                    $source = (string)$gdoc->content[0]->attributes()->src;
+                    break;
             }
 
             if(!empty($source)){
