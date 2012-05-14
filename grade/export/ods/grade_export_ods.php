@@ -64,6 +64,7 @@ class grade_export_ods extends grade_export {
         $i = 0;
         $geub = new grade_export_update_buffer();
         $gui = new graded_users_iterator($this->course, $this->columns, $this->groupid);
+        $gui->require_active_enrolment($this->onlyactive);
         $gui->init();
         while ($userdata = $gui->next_user()) {
             $i++;
