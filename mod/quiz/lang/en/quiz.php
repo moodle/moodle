@@ -425,7 +425,21 @@ $string['missingcorrectanswer'] = 'Correct answer must be specified';
 $string['missingitemtypename'] = 'Missing name';
 $string['missingquestion'] = 'This question no longer seems to exist';
 $string['modulename'] = 'Quiz';
-$string['modulename_help'] = 'The quiz module enables the teacher to design and set quizzes consisting of multiple choice, true-false, matching and other question types. Each attempt is automatically marked, and the teacher can choose whether to give feedback and/or show correct answers.';
+$string['modulename_help'] = 'The quiz activity module enables a teacher to design and set quizzes consisting of a variety of question types, including multiple choice, true-false, matching, short-answer and calculated.
+
+A teacher can allow the quiz to be attempted multiple times with the order of questions randomly shuffled. A time limit for the quiz may be set if desired.
+
+Each attempt is automatically marked, with the grade recorded in the gradebook. The teacher can choose whether to give feedback and/or show correct answers to the student during the attempt, immediately after the attempt or after the quiz is closed.
+
+A teacher can choose from a variety of question behaviours, including adaptive mode (providing hints before allowing the student to try again) and immediate feedback with certainty-based marking (where the student must indicate how sure they are of the answer).
+
+Quizzes may be used
+
+* As mini tests for reading assignments or at the end of a topic
+* As exam practice using questions from previous years’ exams
+* To provide feedback about performance
+* For self-assessment';
+$string['modulename_link'] = 'mod/quiz/view';
 $string['modulenameplural'] = 'Quizzes';
 $string['moveselectedonpage'] = 'Move selected questions to page: {$a}';
 $string['multichoice'] = 'Multiple choice';

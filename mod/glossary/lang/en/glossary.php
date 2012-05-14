@@ -207,7 +207,22 @@ $string['linking'] = 'Auto-linking';
 $string['mainglossary'] = 'Main glossary';
 $string['maxtimehaspassed'] = 'Sorry, but the maximum time for editing this comment ({$a}) has passed!';
 $string['modulename'] = 'Glossary';
-$string['modulename_help'] = 'The glossary module enables participants to create and maintain a list of definitions, like a dictionary. Glossary entries may be automatically linked wherever the concept words and phrases appear throughout the course.';
+$string['modulename_help'] = 'The glossary activity module enables participants to create and maintain a list of definitions, like a dictionary.
+
+A teacher can allow files to be attached to glossary entries. Attached images are displayed in the entry. Entries can be searched or browsed alphabetically or by category, date or author. Entries can be approved by default or require approving by a teacher before they are viewable by everyone.
+
+If the glossary auto-linking filter is enabled, entries will be automatically linked to where the concept words and/or phrases appear within the course.
+
+A teacher can allow comments on entries. Entries can also be rated by teachers or students (peer evaluation). Ratings are aggregated to form a final grade which is recorded in the gradebook.
+
+Glossaries have many uses, such as
+
+* A collaborative bank of key terms
+* A ‘getting to know you’ space where new students add their name and personal details
+* A ‘handy tips’ resource of best practice in a practical subject
+* A sharing area of useful videos, images or sound files
+* A revision resource of facts to remember';
+$string['modulename_link'] = 'mod/glosssary/view';
 $string['modulenameplural'] = 'Glossaries';
 $string['newentries'] = 'New glossary entries';
 $string['newglossary'] = 'New glossary';

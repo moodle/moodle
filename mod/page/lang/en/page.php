@@ -34,7 +34,15 @@ $string['legacyfiles'] = 'Migration of old course file';
 $string['legacyfilesactive'] = 'Active';
 $string['legacyfilesdone'] = 'Finished';
 $string['modulename'] = 'Page';
-$string['modulename_help'] = 'A page enables a web page to be displayed and edited within the course.';
+$string['modulename_help'] = 'The page module enables a teacher to create a web page resource using the text editor. A page can display text, images, sound, video, web links and embedded code, such as Google maps.
+
+Advantages of using the page module rather than the file module include the resource being more accessible (for example to users of mobile devices) and easier to update.
+
+A page may be used
+
+* To present the terms and conditions of a course or the course syllabus
+* To embed several videos or sound files together with some explanatory text';
+$string['modulename_link'] = 'mod/page/view';
 $string['modulenameplural'] = 'Pages';
 $string['neverseen'] = 'Never seen';
 $string['optionsheader'] = 'Options';

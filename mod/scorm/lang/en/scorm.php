@@ -197,7 +197,15 @@ $string['missingparam'] = 'A required is missing or wrong';
 $string['missing_tag'] = 'Missing tag {$a->tag}';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'SCORM package';
-$string['modulename_help'] = 'SCORM and AICC are a collection of specifications that enable interoperability, accessibility and reusability of web-based learning content. The SCORM/AICC module allows for SCORM/AICC packages to be included in the course.';
+$string['modulename_help'] = 'A SCORM package is a collection of files which are packaged according to an agreed standard for learning objects. The SCORM activity module enables SCORM or AICC packages to be uploaded as a zip file and added to a course.
+
+Content is usually displayed over several pages, with navigation between the pages. There are various options for displaying content in a pop-up window, with a table of contents, with navigation buttons etc. SCORM activities generally include questions, with grades being recorded in the gradebook.
+
+SCORM activities may be used
+
+* For presenting multimedia content and animations
+* As an assessment tool';
+$string['modulename_link'] = 'mod/scorm/view';
 $string['modulenameplural'] = 'SCORM packages';
 $string['newattempt'] = 'Start a new attempt';
 $string['next'] = 'Continue';

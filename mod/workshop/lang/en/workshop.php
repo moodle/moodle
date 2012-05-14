@@ -157,6 +157,14 @@ $string['latesubmissions_help'] = 'If enabled, an author may submit their work a
 $string['latesubmissionsallowed'] = 'Late submissions are allowed';
 $string['maxbytes'] = 'Maximum file size';
 $string['modulename'] = 'Workshop';
+$string['modulename_help'] = 'The workshop activity module enables the collection, review and peer assessment of students\' work.
+
+Students can submit any digital content (files), such as word-processed documents or spreadsheets and can also type text directly into a field using the text editor.
+
+Submissions are assessed using a multi-criteria assessment form defined by the teacher. The process of peer assessment and understanding the assessment form can be practised in advance with example submissions provided by the teacher, together with a reference assessment. Students are given the opportunity to assess one or more of their peers\' submissions. Submissions and reviewers may be anonymous if required.
+
+Students obtain two grades in a workshop activity - a grade for their submission and a grade for their assessment of their peers\' submissions. Both grades are recorded in the gradebook.';
+$string['modulename_link'] = 'mod/workshop/view';
 $string['modulenameplural'] = 'Workshops';
 $string['mysubmission'] = 'My submission';
 $string['nattachments'] = 'Maximum number of submission attachments';
