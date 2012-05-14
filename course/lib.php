@@ -4399,7 +4399,7 @@ function course_page_type_list($pagetype, $parentcontext, $currentcontext) {
 /**
  * Determine whether course ajax should be enabled for the specified course
  *
- * @param object $course The course to test against
+ * @param stdClass $course The course to test against
  * @return boolean Whether course ajax is enabled or note
  */
 function course_ajax_enabled($course) {
@@ -4440,14 +4440,14 @@ function course_ajax_enabled($course) {
  * @param integer $id The ID of the course being applied to
  * @param array $modules An array containing the names of the modules in
  *                       use on the page
- * @param object $config An object containing configuration parameters for ajax modules including:
+ * @param stdClass $config An object containing configuration parameters for ajax modules including:
  *          * resourceurl   The URL to post changes to for resource changes
  *          * sectionurl    The URL to post changes to for section changes
  *          * pageparams    Additional parameters to pass through in the post
  * @return void
  */
 function include_course_ajax($course, $modules = array(), $config = null) {
-    global $PAGE, $CFG, $SITE;
+    global $PAGE, $SITE;
 
     // Ensure that ajax should be included
     if (!course_ajax_enabled($course)) {
