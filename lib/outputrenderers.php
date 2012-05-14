@@ -520,7 +520,7 @@ class core_renderer extends renderer_base {
             return '';
         }
 
-        $loginapge = ((string)$this->page->url === get_login_url());
+        $loginpage = ((string)$this->page->url === get_login_url());
         $course = $this->page->course;
 
         if (session_is_loggedinas()) {
@@ -547,7 +547,7 @@ class core_renderer extends renderer_base {
             }
             if (isguestuser()) {
                 $loggedinas = $realuserinfo.get_string('loggedinasguest');
-                if (!$loginapge) {
+                if (!$loginpage) {
                     $loggedinas .= " (<a href=\"$loginurl\">".get_string('login').'</a>)';
                 }
             } else if (is_role_switched($course->id)) { // Has switched roles
@@ -563,7 +563,7 @@ class core_renderer extends renderer_base {
             }
         } else {
             $loggedinas = get_string('loggedinnot', 'moodle');
-            if (!$loginapge) {
+            if (!$loginpage) {
                 $loggedinas .= " (<a href=\"$loginurl\">".get_string('login').'</a>)';
             }
         }
