@@ -94,6 +94,14 @@ class tinymce_texteditor extends texteditor {
 
         $context = empty($options['context']) ? get_context_instance(CONTEXT_SYSTEM) : $options['context'];
 
+        $config = get_config('editor_tinymce');
+
+        $spelllanguagelist = empty($config->spelllanguagelist) ? '' : $config->spelllanguagelist;
+        $spellbutton = ($spelllanguagelist === '') ? '' : ',spellchecker';
+
+        $fontselectlist = empty($config->fontselectlist) ? '' : $config->fontselectlist;
+        $fontbutton = ($fontselectlist === '') ? '' : 'fontselect,';
+
         $xmedia = 'moodlemedia,'; // HQ thinks it should be always on, so it is no matter if it will actually work or not
         /*
         if (!empty($options['legacy'])) {
@@ -135,20 +143,20 @@ class tinymce_texteditor extends texteditor {
                     'theme_advanced_font_sizes' => "1,2,3,4,5,6,7",
                     'theme_advanced_layout_manager' => "SimpleLayout",
                     'theme_advanced_toolbar_align' => "left",
-                    'theme_advanced_buttons1' => "fontselect,fontsizeselect,formatselect",
+                    'theme_advanced_buttons1' => "{$fontbutton}fontsizeselect,formatselect",
                     'theme_advanced_buttons1_add' => "|,undo,redo,|,search,replace,|,fullscreen",
                     'theme_advanced_buttons2' => "bold,italic,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright",
                     'theme_advanced_buttons2_add' => "|,cleanup,removeformat,pastetext,pasteword,|,forecolor,backcolor,|,ltr,rtl",
                     'theme_advanced_buttons3' => "bullist,numlist,outdent,indent,|,link,unlink,moodlenolink,|,image,{$xemoticon}{$xmedia}{$xdragmath}nonbreaking,charmap",
-                    'theme_advanced_buttons3_add' => "table,|,code,spellchecker",
-                    'theme_advanced_fonts' => "Trebuchet=Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,times new roman,times,serif;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times,serif;Verdana=verdana,arial,helvetica,sans-serif;Impact=impact;Wingdings=wingdings",
+                    'theme_advanced_buttons3_add' => "table,|,code{$spellbutton}",
+                    'theme_advanced_fonts' => $fontselectlist,
                     'theme_advanced_resize_horizontal' => true,
                     'theme_advanced_resizing' => true,
                     'theme_advanced_resizing_min_height' => 30,
                     'theme_advanced_toolbar_location' => "top",
                     'theme_advanced_statusbar_location' => "bottom",
                     'spellchecker_rpc_url' => $CFG->wwwroot."/lib/editor/tinymce/tiny_mce/$this->version/plugins/spellchecker/rpc.php",
-                    'spellchecker_languages' => get_config('editor_tinymce', 'spelllanguagelist')
+                    'spellchecker_languages' => $spelllanguagelist
                   );
 
         if ($xemoticon) {
