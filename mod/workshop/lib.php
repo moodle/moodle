@@ -950,49 +950,6 @@ function workshop_cron() {
 }
 
 /**
- * Returns an array of user ids who are participanting in this workshop
- *
- * Participants are either submission authors or reviewers or both.
- * Authors of the example submissions and their referential assessments
- * are not returned as the example submission is considered non-user
- * data for the purpose of workshop backup.
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $workshopid ID of an instance of this module
- * @return array of user ids, empty if there are no participants
- */
-function workshop_get_participants($workshopid) {
-    global $DB;
-
-    $sql = "SELECT u.id
-              FROM {workshop} w
-              JOIN {workshop_submissions} s ON s.workshopid = w.id
-              JOIN {user} u ON s.authorid = u.id
-             WHERE w.id = ? AND s.example = 0
-
-             UNION
-
-            SELECT u.id
-              FROM {workshop} w
-              JOIN {workshop_submissions} s ON s.workshopid = w.id
-              JOIN {workshop_assessments} a ON a.submissionid = s.id
-              JOIN {user} u ON a.reviewerid = u.id
-             WHERE w.id = ? AND (s.example = 0 OR a.weight = 0)";
-
-    $users = array();
-    $rs = $DB->get_recordset_sql($sql, array($workshopid, $workshopid));
-    foreach ($rs as $user) {
-        if (empty($users[$user->id])) {
-            $users[$user->id] = $user;
-        }
-    }
-    $rs->close();
-
-    return $users;
-}
-
-/**
  * Is a given scale used by the instance of workshop?
  *
  * The function asks all installed grading strategy subplugins. The workshop
