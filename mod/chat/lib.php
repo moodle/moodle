@@ -427,37 +427,6 @@ function chat_cron () {
 }
 
 /**
- * Returns the users with data in one chat
- * (users with records in chat_messages, students)
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $chatid
- * @param int $groupid
- * @return array
- */
-function chat_get_participants($chatid, $groupid=0) {
-    global $DB;
-
-    $params = array('groupid'=>$groupid, 'chatid'=>$chatid);
-
-    if ($groupid) {
-        $groupselect = " AND (c.groupid=:groupid OR c.groupid='0')";
-    } else {
-        $groupselect = "";
-    }
-
-    //Get students
-    $students = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                        FROM {user} u, {chat_messages} c
-                                       WHERE c.chatid = :chatid $groupselect
-                                             AND u.id = c.userid", $params);
-
-    //Return students array (it contains an array of unique users)
-    return ($students);
-}
-
-/**
  * This standard function will check all instances of this module
  * and make sure there are up-to-date events created for each of them.
  * If courseid = 0, then every chat event in the site is checked, else
