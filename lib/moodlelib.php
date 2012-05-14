@@ -4515,6 +4515,19 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         echo $OUTPUT->notification($strdeleted.get_string('completion', 'completion'), 'notifysuccess');
     }
 
+    // Remove all data from availability and completion tables that is associated
+    // with course-modules belonging to this course. Note this is done even if the
+    // features are not enabled now, in case they were enabled previously
+    $DB->delete_records_select('course_modules_completion',
+        'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
+        array($courseid));
+    $DB->delete_records_select('course_modules_availability',
+        'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
+        array($courseid));
+    $DB->delete_records_select('course_modules_avail_fields',
+        'coursemoduleid IN (SELECT id from {course_modules} WHERE course = ?)',
+        array($courseid));
+
     // Remove all data from gradebook - this needs to be done before course modules
     // because while deleting this information, the system may need to reference
     // the course modules that own the grades.
