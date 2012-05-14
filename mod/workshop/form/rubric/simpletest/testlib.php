@@ -49,6 +49,17 @@ class testable_workshop_rubric_strategy extends workshop_rubric_strategy {
     }
 }
 
+/**
+ * Because we are testing with a recordset, implement the bare minimum
+ * mock of a recordset..
+ */
+class moodle_recordset_for_mocked_database {
+    function __construct() {
+        return array();
+    }
+    function close() {}
+}
+
 class workshop_rubric_strategy_test extends UnitTestCase {
 
     /** real database */
@@ -73,8 +84,8 @@ class workshop_rubric_strategy_test extends UnitTestCase {
         $context        = new stdclass();
         $workshop       = (object)array('id' => 42, 'strategy' => 'rubric');
         $this->workshop = new workshop($workshop, $cm, $course, $context);
-        $DB->expectOnce('get_records_sql');
-        $DB->setReturnValue('get_records_sql', array());
+        $DB->expectOnce('get_recordset_sql');
+        $DB->setReturnValue('get_recordset_sql', new moodle_recordset_for_mocked_database());
         $this->strategy = new testable_workshop_rubric_strategy($this->workshop);
 
         // prepare dimensions definition
