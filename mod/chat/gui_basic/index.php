@@ -115,7 +115,6 @@ if (!empty($refresh) and data_submitted()) {
 
 $PAGE->set_title("$strchat: $course->shortname: ".format_string($chat->name,true)."$groupname");
 echo $OUTPUT->header();
-echo '<div id="">';
 echo $OUTPUT->container_start(null, 'page-mod-chat-gui_basic');
 echo $OUTPUT->heading(get_string('participants'), 2, 'mdl-left');
 
