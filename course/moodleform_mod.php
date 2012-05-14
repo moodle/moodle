@@ -365,6 +365,9 @@ abstract class moodleform_mod extends moodleform {
             // Error message displayed if any condition is declared more than once
             $stralreadydeclaredwarning = get_string('fielddeclaredmultipletimes', 'condition');
             foreach ($data['conditionfieldgroup'] as $i => $fielddata) {
+                if ($fielddata['conditionfield'] == 0) { // Don't need to bother if none is selected
+                    continue;
+                }
                 if (in_array($fielddata['conditionfield'], $arrcurrentfields)) {
                     $errors["conditionfieldgroup[{$i}]"] = $stralreadydeclaredwarning;
                 }
