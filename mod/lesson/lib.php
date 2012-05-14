@@ -521,32 +521,6 @@ function lesson_grade_item_delete($lesson) {
 
 }
 
-
-/**
- * Must return an array of user records (all data) who are participants
- * for a given instance of lesson. Must include every user involved
- * in the instance, independent of his role (student, teacher, admin...)
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $lessonid
- * @return array
- */
-function lesson_get_participants($lessonid) {
-    global $CFG, $DB;
-
-    //Get students
-    $params = array ("lessonid" => $lessonid);
-    $students = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                 FROM {user} u,
-                                      {lesson_attempts} a
-                                 WHERE a.lessonid = :lessonid and
-                                       u.id = a.userid", $params);
-
-    //Return students array (it contains an array of unique users)
-    return ($students);
-}
-
 /**
  * @return array
  */
