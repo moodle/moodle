@@ -62,6 +62,6 @@ class Hint_ResultPrinter extends PHPUnit_TextUI_ResultPrinter {
             $file = substr($file, strlen($cwd)+1);
         }
 
-        $this->write("\n  phpunit $testName $file\n");
+        $this->write("\n  To re-run: phpunit $testName $file\n");
     }
 }
