@@ -3026,11 +3026,11 @@ function move_section_to($course, $section, $destination) {
     // If we move the highlighted section itself, then just highlight the destination.
     // Adjust the higlighted section location if we move something over it either direction.
     if ($section == $course->marker) {
-        course_set_marker($course, $destination);
+        course_set_marker($course->id, $destination);
     } elseif ($moveup && $section > $course->marker && $course->marker >= $destination) {
-        course_set_marker($course, $course->marker+1);
+        course_set_marker($course->id, $course->marker+1);
     } elseif (!$moveup && $section < $course->marker && $course->marker <= $destination) {
-        course_set_marker($course, $course->marker-1);
+        course_set_marker($course->id, $course->marker-1);
     }
 
     $transaction->allow_commit();
