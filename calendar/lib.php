@@ -1050,28 +1050,6 @@ function calendar_get_link_href($linkbase, $d, $m, $y) {
 }
 
 /**
- * This function has been deprecated as of Moodle 2.0... DO NOT USE!!!!!
- *
- * @deprecated Moodle 2.0 - MDL-24284 please do not use this function any more.
- * @todo MDL-31134 - will be removed in Moodle 2.3
- * @see calendar_get_link_href()
- *
- * @param string $text
- * @param string|moodle_url $linkbase
- * @param int|null $d The number of the day.
- * @param int|null $m The number of the month.
- * @param int|null $y The number of the year.
- * @return string HTML link
- */
-function calendar_get_link_tag($text, $linkbase, $d, $m, $y) {
-    $url = calendar_get_link_href(new moodle_url($linkbase), $d, $m, $y);
-    if (empty($url)) {
-        return $text;
-    }
-    return html_writer::link($url, $text);
-}
-
-/**
  * Build and return a previous month HTML link, with an arrow.
  *
  * @param string $text The text label.
