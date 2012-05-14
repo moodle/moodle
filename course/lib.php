@@ -4445,13 +4445,15 @@ function course_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * @param integer $id The ID of the course being applied to
  * @param array $modules An array containing the names of the modules in
  *                       use on the page
+ * @param array $allmodules An array containing the names of the enabled (visible)
+ *                       modules on this site
  * @param object $config An object containing configuration parameters for ajax modules including:
  *          * resourceurl   The URL to post changes to for resource changes
  *          * sectionurl    The URL to post changes to for section changes
  *          * pageparams    Additional parameters to pass through in the post
  * @return void
  */
-function include_course_ajax($course, $modules = array(), $config = null) {
+function include_course_ajax($course, $modules = array(), $allmodules = null, $config = null) {
     global $PAGE, $CFG, $USER;
 
     // Ensure that ajax should be included
@@ -4560,5 +4562,5 @@ function include_course_ajax($course, $modules = array(), $config = null) {
     }
 
     // Load drag and drop upload AJAX.
-    dndupload_add_to_course($course);
+    dndupload_add_to_course($course, $allmodules);
 }

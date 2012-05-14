@@ -147,7 +147,7 @@
             echo $OUTPUT->box_end();
         }
     }
-    include_course_ajax($SITE, $modnamesused);
+    include_course_ajax($SITE, $modnamesused, $modnames);
 
 
     if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {

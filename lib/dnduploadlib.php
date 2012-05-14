@@ -33,12 +33,18 @@ require_once($CFG->dirroot.'/course/lib.php');
  * Add the Javascript to enable drag and drop upload to a course page
  *
  * @param object $course The currently displayed course
+ * @param array $modnames The list of enabled (visible) modules on this site
+ * @return void
  */
-function dndupload_add_to_course($course) {
+function dndupload_add_to_course($course, $modnames) {
     global $CFG, $PAGE;
 
     // Get all handlers.
-    $handler = new dndupload_handler($course);
+    $handler = new dndupload_handler($course, $modnames);
+    $jsdata = $handler->get_js_data();
+    if (empty($jsdata->types) && empty($jsdata->filehandlers)) {
+        return; // No valid handlers - don't enable drag and drop.
+    }
 
     // Add the javascript to the page.
     $jsmodule = array(
@@ -93,7 +99,7 @@ class dndupload_handler {
      *
      * @param object $course The course this is being added to (to check course_allowed_module() )
      */
-    public function __construct($course) {
+    public function __construct($course, $modnames = null) {
         global $CFG;
 
         // Add some default types to handle.
@@ -110,8 +116,11 @@ class dndupload_handler {
         $mods = get_plugin_list_with_function('mod', 'dndupload_register');
         foreach ($mods as $component => $funcname) {
             list($modtype, $modname) = normalize_component($component);
+            if ($modnames && !array_key_exists($modname, $modnames)) {
+                continue; // Module is deactivated (hidden) at the site level.
+            }
             if (!course_allowed_module($course, $modname)) {
-                continue;
+                continue; // User does not have permission to add this module to the course.
             }
             $resp = $funcname();
             if (!$resp) {
@@ -387,7 +396,7 @@ class dndupload_ajax_processor {
         require_login($this->course, false);
         $this->context = context_course::instance($this->course->id);
 
-        if (!is_number($section) || $section < 0 || $section > $this->course->numsections) {
+        if (!is_number($section) || $section < 0) {
             throw new coding_exception("Invalid section number $section");
         }
         $this->section = $section;
@@ -592,6 +601,11 @@ class dndupload_ajax_processor {
         rebuild_course_cache($this->course->id, true);
         $this->course->modinfo = null; // Otherwise we will just get the old version back again.
         $info = get_fast_modinfo($this->course);
+        if (!isset($info->cms[$this->cm->id])) {
+            // The course module has not been properly created in the course - undo everything.
+            delete_course_module($this->cm->id);
+            throw new moodle_exception('errorcreatingactivity', 'core_dndupload', '', $this->module->name);
+        }
         $mod = $info->cms[$this->cm->id];
 
         // Trigger mod_created event with information about this module.

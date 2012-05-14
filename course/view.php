@@ -232,6 +232,6 @@
     echo html_writer::end_tag('div');
 
     // Include the command toolbox YUI module
-    include_course_ajax($course, $modnamesused);
+    include_course_ajax($course, $modnamesused, $modnames);
 
     echo $OUTPUT->footer();
