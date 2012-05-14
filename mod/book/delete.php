@@ -55,7 +55,7 @@ if ($confirm) {  // the operation was confirmed.
     if (!$chapter->subchapter) { // Delete all its sub-chapters if any
         $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum', 'id, subchapter');
         $found = false;
-        foreach($chapters as $ch) {
+        foreach ($chapters as $ch) {
             if ($ch->id == $chapter->id) {
                 $found = true;
             } else if ($found and $ch->subchapter) {

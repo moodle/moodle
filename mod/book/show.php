@@ -52,7 +52,7 @@ $DB->update_record('book_chapters', $chapter);
 if (!$chapter->subchapter) {
     $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum', 'id, subchapter, hidden');
     $found = 0;
-    foreach($chapters as $ch) {
+    foreach ($chapters as $ch) {
         if ($ch->id == $chapter->id) {
             $found = 1;
         } else if ($found and $ch->subchapter) {

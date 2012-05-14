@@ -93,10 +93,7 @@ function book_update_instance($data, $mform) {
 }
 
 /**
- *
- * Given an ID of an instance of this module,
- * this function will permanently delete the instance
- * and any data that depends on it.
+ * Delete book instance by activity id
  *
  * @param int $id
  * @return bool success
@@ -138,7 +135,7 @@ function book_user_outline($course, $user, $mod, $book) {
 
         return $result;
     }
-    return NULL;
+    return null;
 }
 
 /**
@@ -188,22 +185,6 @@ function book_grades($bookid) {
 }
 
 /**
- * Returns the users with data in one book
- *
- * @todo deprecated - to be deleted in 2.2
- * @param int $bookid
- * @return array
- */
-function book_get_participants($bookid) {
-    // Must return an array of user records (all data) who are participants
-    // for a given instance of book. Must include every user involved
-    // in the instance, independent of his role (student, teacher, admin...)
-    // See other modules as example.
-
-    return false;
-}
-
-/**
  * This function returns if a scale is being used by one book
  * it it has support for grading and scales. Commented code should be
  * modified if necessary. See book, glossary or journal modules
@@ -213,7 +194,7 @@ function book_get_participants($bookid) {
  * @param int $scaleid
  * @return boolean True if the scale is used by any journal
  */
-function book_scale_used($bookid,$scaleid) {
+function book_scale_used($bookid, $scaleid) {
     return false;
 }
 
@@ -239,7 +220,7 @@ function book_get_view_actions() {
     $return = array('view', 'view all');
 
     $plugins = get_plugin_list('booktool');
-    foreach($plugins as $plugin=>$dir) {
+    foreach ($plugins as $plugin => $dir) {
         if (file_exists("$dir/lib.php")) {
             require_once("$dir/lib.php");
         }
@@ -264,7 +245,7 @@ function book_get_post_actions() {
     $return = array('update');
 
     $plugins = get_plugin_list('booktool');
-    foreach($plugins as $plugin=>$dir) {
+    foreach ($plugins as $plugin => $dir) {
         if (file_exists("$dir/lib.php")) {
             require_once("$dir/lib.php");
         }
@@ -296,6 +277,7 @@ function book_supports($feature) {
         case FEATURE_GRADE_HAS_GRADE:         return false;
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_SHOW_DESCRIPTION:        return true;
 
         default: return null;
     }
@@ -320,7 +302,7 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
     }
 
     $plugins = get_plugin_list('booktool');
-    foreach($plugins as $plugin=>$dir) {
+    foreach ($plugins as $plugin => $dir) {
         if (file_exists("$dir/lib.php")) {
             require_once("$dir/lib.php");
         }
@@ -360,7 +342,7 @@ function book_get_file_areas($course, $cm, $context) {
 }
 
 /**
- * File browsing support for book module ontent area.
+ * File browsing support for book module chapter area.
  * @param object $browser
  * @param object $areas
  * @param object $course
@@ -385,7 +367,7 @@ function book_get_file_info($browser, $areas, $course, $cm, $context, $filearea,
         return null;
     }
 
-    require_once("$CFG->dirroot/mod/book/locallib.php");
+    require_once(dirname(__FILE__).'/locallib.php');
 
     if (is_null($itemid)) {
         return new book_file_info($browser, $course, $cm, $context, $areas, $filearea);
@@ -411,15 +393,16 @@ function book_get_file_info($browser, $areas, $course, $cm, $context, $filearea,
 /**
  * Serves the book attachments. Implements needed access control ;-)
  *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
+ * @param stdClass $course course object
+ * @param cm_info $cm course module object
+ * @param context $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -458,7 +441,7 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
     }
 
     // finally send the file
-    send_stored_file($file, 360, 0, false);
+    send_stored_file($file, 360, 0, $forcedownload, $options);
 }
 
 /**

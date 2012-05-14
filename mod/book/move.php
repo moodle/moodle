@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 require(dirname(__FILE__).'/../../config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
@@ -98,7 +97,7 @@ if ($chapters[$chs]->subchapter) { // Moving single subchapter up or down.
             $nothing = 1; // Already first.
         } else {
             $te = $chs - 1;
-            for($i = $chs-1; $i >= 1; $i--) {
+            for ($i = $chs-1; $i >= 1; $i--) {
                 if ($chapters[$i]->subchapter) {
                     $ts = $i;
                 } else {
@@ -113,7 +112,7 @@ if ($chapters[$chs]->subchapter) { // Moving single subchapter up or down.
         } else {
             $ts = $che + 1;
             $found = 0;
-            for($i = $che+1; $i <= count($chapters); $i++) {
+            for ($i = $che+1; $i <= count($chapters); $i++) {
                 if ($chapters[$i]->subchapter) {
                     $te = $i;
                 } else {

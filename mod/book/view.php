@@ -75,7 +75,7 @@ if ($allowedit and !$chapters) {
 }
 // Check chapterid and read chapter data
 if ($chapterid == '0') { // Go to first chapter if no given.
-    foreach($chapters as $ch) {
+    foreach ($chapters as $ch) {
         if ($edit) {
             $chapterid = $ch->id;
             break;
@@ -140,12 +140,14 @@ foreach ($chapters as $ch) {
 
 $chnavigation = '';
 if ($previd) {
-    $chnavigation .= '<a title="'.get_string('navprev', 'book').'" href="view.php?id='.$cm->id.'&amp;chapterid='.$previd.'"><img src="'.$OUTPUT->pix_url('nav_prev', 'mod_book').'" class="bigicon" alt="'.get_string('navprev', 'book').'"/></a>';
+    $chnavigation .= '<a title="'.get_string('navprev', 'book').'" href="view.php?id='.$cm->id.
+            '&amp;chapterid='.$previd.'"><img src="'.$OUTPUT->pix_url('nav_prev', 'mod_book').'" class="bigicon" alt="'.get_string('navprev', 'book').'"/></a>';
 } else {
     $chnavigation .= '<img src="'.$OUTPUT->pix_url('nav_prev_dis', 'mod_book').'" class="bigicon" alt="" />';
 }
 if ($nextid) {
-    $chnavigation .= '<a title="'.get_string('navnext', 'book').'" href="view.php?id='.$cm->id.'&amp;chapterid='.$nextid.'"><img src="'.$OUTPUT->pix_url('nav_next', 'mod_book').'" class="bigicon" alt="'.get_string('navnext', 'book').'" /></a>';
+    $chnavigation .= '<a title="'.get_string('navnext', 'book').'" href="view.php?id='.$cm->id.
+            '&amp;chapterid='.$nextid.'"><img src="'.$OUTPUT->pix_url('nav_next', 'mod_book').'" class="bigicon" alt="'.get_string('navnext', 'book').'" /></a>';
 } else {
     $sec = '';
     if ($section = $DB->get_record('course_sections', array('id'=>$cm->section))) {
@@ -156,7 +158,8 @@ if ($nextid) {
     } else {
         $returnurl = "$CFG->wwwroot/course/view.php?id=$course->id#section-$sec";
     }
-    $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="'.$returnurl.'"><img src="'.$OUTPUT->pix_url('nav_exit', 'mod_book').'" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
+    $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="'.$returnurl.'"><img src="'.$OUTPUT->pix_url('nav_exit', 'mod_book').
+            '" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
 
     // we are cheating a bit here, viewing the last page means user has viewed the whole book
     $completion = new completion_info($course);
@@ -194,4 +197,3 @@ echo $OUTPUT->box_end();
 echo '<div class="navbottom">'.$chnavigation.'</div>';
 
 echo $OUTPUT->footer();
-

@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    require_once("$CFG->dirroot/mod/book/lib.php");
+    require_once(dirname(__FILE__).'/lib.php');
 
     // General settings
 

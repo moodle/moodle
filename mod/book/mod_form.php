@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/mod/book/locallib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 class mod_book_mod_form extends moodleform_mod {
@@ -74,6 +74,4 @@ class mod_book_mod_form extends moodleform_mod {
 
         $this->add_action_buttons();
     }
-
-
 }

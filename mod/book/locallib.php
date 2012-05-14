@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/mod/book/lib.php');
+require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
 define('BOOK_NUM_NONE',     '0');
@@ -58,7 +58,7 @@ function book_preload_chapters($book) {
     $pagenum = 0; // chapter sort
     $i = 0;       // main chapter num
     $j = 0;       // subchapter num
-    foreach($chapters as $id=>$ch) {
+    foreach ($chapters as $id => $ch) {
         $oldch = clone($ch);
         $pagenum++;
         $ch->pagenum = $pagenum;
@@ -224,25 +224,24 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
     $context = context_module::instance($cm->id);
 
     switch ($book->numbering) {
-      case BOOK_NUM_NONE:
-          $toc .= '<div class="book_toc_none">';
-          break;
-      case BOOK_NUM_NUMBERS:
-          $toc .= '<div class="book_toc_numbered">';
-          break;
-      case BOOK_NUM_BULLETS:
-          $toc .= '<div class="book_toc_bullets">';
-          break;
-      case BOOK_NUM_INDENTED:
-          $toc .= '<div class="book_toc_indented">';
-          break;
+        case BOOK_NUM_NONE:
+            $toc .= '<div class="book_toc_none">';
+            break;
+        case BOOK_NUM_NUMBERS:
+            $toc .= '<div class="book_toc_numbered">';
+            break;
+        case BOOK_NUM_BULLETS:
+            $toc .= '<div class="book_toc_bullets">';
+            break;
+        case BOOK_NUM_INDENTED:
+            $toc .= '<div class="book_toc_indented">';
+            break;
     }
-
 
     if ($edit) { // Teacher's TOC
         $toc .= '<ul>';
         $i = 0;
-        foreach($chapters as $ch) {
+        foreach ($chapters as $ch) {
             $i++;
             $title = trim(format_string($ch->title, true, array('context'=>$context)));
             if (!$ch->subchapter) {
@@ -281,19 +280,27 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
             }
             $toc .=  '&nbsp;&nbsp;';
             if ($i != 1) {
-                $toc .=  ' <a title="'.get_string('up').'" href="move.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;up=1&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/up').'" class="iconsmall" alt="'.get_string('up').'" /></a>';
+                $toc .=  ' <a title="'.get_string('up').'" href="move.php?id='.$cm->id.'&amp;chapterid='.$ch->id.
+                        '&amp;up=1&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/up').'" class="iconsmall" alt="'.get_string('up').'" /></a>';
             }
             if ($i != count($chapters)) {
-                $toc .=  ' <a title="'.get_string('down').'" href="move.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;up=0&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/down').'" class="iconsmall" alt="'.get_string('down').'" /></a>';
+                $toc .=  ' <a title="'.get_string('down').'" href="move.php?id='.$cm->id.'&amp;chapterid='.$ch->id.
+                        '&amp;up=0&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/down').'" class="iconsmall" alt="'.get_string('down').'" /></a>';
             }
-            $toc .=  ' <a title="'.get_string('edit').'" href="edit.php?cmid='.$cm->id.'&amp;id='.$ch->id.'"><img src="'.$OUTPUT->pix_url('t/edit').'" class="iconsmall" alt="'.get_string('edit').'" /></a>';
-            $toc .=  ' <a title="'.get_string('delete').'" href="delete.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.get_string('delete').'" /></a>';
+            $toc .=  ' <a title="'.get_string('edit').'" href="edit.php?cmid='.$cm->id.'&amp;id='.$ch->id.'"><img src="'.
+                    $OUTPUT->pix_url('t/edit').'" class="iconsmall" alt="'.get_string('edit').'" /></a>';
+            $toc .=  ' <a title="'.get_string('delete').'" href="delete.php?id='.$cm->id.'&amp;chapterid='.$ch->id.
+                    '&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.get_string('delete').'" /></a>';
             if ($ch->hidden) {
-                $toc .= ' <a title="'.get_string('show').'" href="show.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/show').'" class="iconsmall" alt="'.get_string('show').'" /></a>';
+                $toc .= ' <a title="'.get_string('show').'" href="show.php?id='.$cm->id.'&amp;chapterid='.$ch->id.
+                        '&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/show').'" class="iconsmall" alt="'.get_string('show').'" /></a>';
             } else {
-                $toc .= ' <a title="'.get_string('hide').'" href="show.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/hide').'" class="iconsmall" alt="'.get_string('hide').'" /></a>';
+                $toc .= ' <a title="'.get_string('hide').'" href="show.php?id='.$cm->id.'&amp;chapterid='.$ch->id.
+                        '&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/hide').'" class="iconsmall" alt="'.get_string('hide').'" /></a>';
             }
-            $toc .= ' <a title="'.get_string('addafter', 'mod_book').'" href="edit.php?cmid='.$cm->id.'&amp;pagenum='.$ch->pagenum.'&amp;subchapter='.$ch->subchapter.'"><img src="'.$OUTPUT->pix_url('add', 'mod_book').'" class="iconsmall" alt="'.get_string('addafter', 'mod_book').'" /></a>';
+            $toc .= ' <a title="'.get_string('addafter', 'mod_book').'" href="edit.php?cmid='.$cm->id.
+                    '&amp;pagenum='.$ch->pagenum.'&amp;subchapter='.$ch->subchapter.'"><img src="'.
+                    $OUTPUT->pix_url('add', 'mod_book').'" class="iconsmall" alt="'.get_string('addafter', 'mod_book').'" /></a>';
 
             $toc .= (!$ch->subchapter) ? '<ul>' : '</li>';
             $first = 0;
@@ -301,7 +308,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
         $toc .= '</ul></li></ul>';
     } else { // Normal students view
         $toc .= '<ul>';
-        foreach($chapters as $ch) {
+        foreach ($chapters as $ch) {
             $title = trim(format_string($ch->title, true, array('context'=>$context)));
             if (!$ch->hidden) {
                 if (!$ch->subchapter) {
@@ -420,7 +427,7 @@ class book_file_info extends file_info {
 
         $children = array();
         $chapters = $DB->get_records('book_chapters', array('bookid'=>$this->cm->instance), 'pagenum', 'id, pagenum');
-        foreach ($chapters as $itemid=>$unused) {
+        foreach ($chapters as $itemid => $unused) {
             if ($child = $this->browser->get_file_info($this->context, 'mod_book', $this->filearea, $itemid)) {
                 $children[] = $child;
             }
