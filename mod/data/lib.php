@@ -3424,7 +3424,7 @@ function data_get_all_recordids($dataid) {
  * runs out of records or returns a subset of records.
  *
  * @param array $recordids    An array of record ids.
- * @param array $searcharray   Contains information for the advanced search criteria
+ * @param array $searcharray  Contains information for the advanced search criteria
  * @param int $dataid         The data id of the database.
  * @return array $recordids   An array of record ids.
  */
@@ -3444,8 +3444,8 @@ function data_get_advance_search_ids($recordids, $searcharray, $dataid) {
 /**
  * Gets the record IDs given the search criteria
  *
- * @param string $alias       record alias.
- * @param array $searcharray  criteria for the search.
+ * @param string $alias       Record alias.
+ * @param array $searcharray  Criteria for the search.
  * @param int $dataid         Data ID for the database
  * @param array $recordids    An array of record IDs.
  * @return array $nestarray   An arry of record IDs
@@ -3494,11 +3494,11 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
  * Returns an array with an sql string for advanced searches and the parameters that go with them.
  *
  * @param int $sort            DATA_*
- * @param stdClass $data       data module object
+ * @param stdClass $data       Data module object
  * @param array $recordids     An array of record IDs.
- * @param string $selectdata   information for the select part of the sql statement.
+ * @param string $selectdata   Information for the select part of the sql statement.
  * @param string $sortorder    Additional sort parameters
- * @return array sqlselect     sqlselect['sql] has the sql string, sqlselect['params'] contains an array of parameters.
+ * @return array sqlselect     sqlselect['sql'] has the sql string, sqlselect['params'] contains an array of parameters.
  */
 function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $sortorder) {
     global $DB;
@@ -3509,9 +3509,31 @@ function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $so
                              {user} u ';
         $groupsql = ' GROUP BY r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
     } else {
-        $sortfield = data_get_field_from_id($sort, $data);
-        $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
-        $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
+        // Sorting through 'Other' criteria
+        if ($sort <= 0) {
+            switch ($sort) {
+                case DATA_LASTNAME:
+                    $sortcontentfull = "u.lastname";
+                    break;
+                case DATA_FIRSTNAME:
+                    $sortcontentfull = "u.firstname";
+                    break;
+                case DATA_APPROVED:
+                    $sortcontentfull = "r.approved";
+                    break;
+                case DATA_TIMEMODIFIED:
+                    $sortcontentfull = "r.timemodified";
+                    break;
+                case DATA_TIMEADDED:
+                default:
+                    $sortcontentfull = "r.timecreated";
+            }
+        } else {
+            $sortfield = data_get_field_from_id($sort, $data);
+            $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
+            $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
+        }
+
         $nestselectsql = 'SELECT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' . $sortcontentfull . '
                               AS _order
                             FROM {data_content} c,

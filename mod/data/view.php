@@ -592,7 +592,7 @@ if ($showactivity) {
 
         $recordids = data_get_all_recordids($data->id);
         $newrecordids = data_get_advance_search_ids($recordids, $search_array, $data->id);
-        $totalcount = (count($newrecordids));
+        $totalcount = count($newrecordids);
         $selectdata = $groupselect . $approveselect;
 
         if (!empty($advanced)) {
