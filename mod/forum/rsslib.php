@@ -43,7 +43,7 @@ function forum_rss_get_feed($context, $args) {
 
     $forumid  = clean_param($args[3], PARAM_INT);
     $cm = get_coursemodule_from_instance('forum', $forumid, 0, false, MUST_EXIST);
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $modcontext = context_module::instance($cm->id);
 
     //context id from db should match the submitted one
     if ($context->id != $modcontext->id || !has_capability('mod/forum:viewdiscussion', $modcontext)) {
@@ -58,8 +58,14 @@ function forum_rss_get_feed($context, $args) {
     //the sql that will retreive the data for the feed and be hashed to get the cache filename
     $sql = forum_rss_get_sql($forum, $cm);
 
-    //hash the sql to get the cache file name
-    $filename = rss_get_file_name($forum, $sql . $USER->id);
+    // Hash the sql to get the cache file name.
+    // If the forum is Q and A then we need to cache the files per user. This can
+    // have a large impact on performance, so we want to only do it on this type of forum.
+    if ($forum->type == 'qanda') {
+        $filename = rss_get_file_name($forum, $sql . $USER->id);
+    } else {
+        $filename = rss_get_file_name($forum, $sql);
+    }
     $cachedfilepath = rss_get_file_full_name('mod_forum', $filename);
 
     //Is the cache out of date?
@@ -151,7 +157,7 @@ function forum_rss_feed_discussions_sql($forum, $cm, $newsince=0) {
     $now = round(time(), -2);
     $params = array($cm->instance);
 
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $modcontext = context_module::instance($cm->id);
 
     if (!empty($CFG->forum_enabletimedposts)) { /// Users must fulfill timed posts
         if (!has_capability('mod/forum:viewhiddentimedposts', $modcontext)) {
@@ -205,7 +211,7 @@ function forum_rss_feed_discussions_sql($forum, $cm, $newsince=0) {
  * @return string the SQL query to be used to get the Post details from the forum table of the database
  */
 function forum_rss_feed_posts_sql($forum, $cm, $newsince=0) {
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $modcontext = context_module::instance($cm->id);
 
     //get group enforcement SQL
     $groupmode    = groups_get_activity_groupmode($cm);
@@ -310,7 +316,7 @@ function forum_rss_feed_contents($forum, $sql) {
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
         print_error('invalidcoursemodule');
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     $formatoptions = new stdClass();
     $items = array();
@@ -319,14 +325,14 @@ function forum_rss_feed_contents($forum, $sql) {
             $user = new stdClass();
 
             if ($isdiscussion && !forum_user_can_see_discussion($forum, $rec->discussionid, $context)) {
-                // This is a discussion which the user can't has no permission to view
+                // This is a discussion which the user has no permission to view
                 $item->title = get_string('forumsubjecthidden', 'forum');
-                $item->description = get_string('forumbodyhidden', 'forum');
+                $message = get_string('forumbodyhidden', 'forum');
                 $item->author = get_string('forumauthorhidden', 'forum');
             } else if (!$isdiscussion && !forum_user_can_see_post($forum, $rec->discussionid, $rec->postid, $USER, $cm)) {
-                // This is a post which the user can't has no permission to view
+                // This is a post which the user has no permission to view
                 $item->title = get_string('forumsubjecthidden', 'forum');
-                $item->description = get_string('forumbodyhidden', 'forum');
+                $message = get_string('forumbodyhidden', 'forum');
                 $item->author = get_string('forumauthorhidden', 'forum');
             } else {
                 // The user must have permission to view
@@ -341,9 +347,9 @@ function forum_rss_feed_contents($forum, $sql) {
                 $user->firstname = $rec->userfirstname;
                 $user->lastname = $rec->userlastname;
                 $item->author = fullname($user);
-
+                $message = file_rewrite_pluginfile_urls($rec->postmessage, 'pluginfile.php', $context->id,
+                        'mod_forum', 'post', $rec->postid);
                 $formatoptions->trusted = $rec->posttrust;
-                $item->description = format_text($rec->postmessage,$rec->postformat,$formatoptions,$forum->course);
             }
 
             if ($isdiscussion) {
@@ -352,10 +358,7 @@ function forum_rss_feed_contents($forum, $sql) {
                 $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid."&parent=".$rec->postid;
             }
 
-
             $formatoptions->trusted = $rec->posttrust;
-            $message = file_rewrite_pluginfile_urls($rec->postmessage, 'pluginfile.php', $context->id,
-                'mod_forum', 'post', $rec->postid);
             $item->description = format_text($message, $rec->postformat, $formatoptions, $forum->course);
 
             //TODO: MDL-31129 implement post attachment handling
@@ -367,6 +370,7 @@ function forum_rss_feed_contents($forum, $sql) {
                     $item->attachments = array();
                 }
             }*/
+            $item->pubdate = $rec->postcreated;
 
             $items[] = $item;
         }
