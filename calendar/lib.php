@@ -621,23 +621,6 @@ function calendar_add_event_metadata($event) {
 }
 
 /**
- * Prints a calendar event
- *
- * @deprecated Moodle 2.0 - MDL-22887 please do not use this function any more.
- * @todo MDL-31133 - will be removed in Moodle 2.3
- * @see core_calendar_renderer event function
- */
-function calendar_print_event($event, $showactions=true) {
-    global $CFG, $USER, $OUTPUT, $PAGE;
-    debugging('calendar_print_event is deprecated please update your code', DEBUG_DEVELOPER);
-    $renderer = $PAGE->get_renderer('core_calendar');
-    if (!($event instanceof calendar_event)) {
-        $event = new calendar_event($event);
-    }
-    echo $renderer->event($event);
-}
-
-/**
  * Get calendar events
  *
  * @param int $tstart Start time of time range for events
@@ -1740,6 +1723,7 @@ function calendar_get_allowed_types(&$allowed, $course = null) {
         }
         if ($course->id != SITEID) {
             $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $allowed->user = has_capability('moodle/calendar:manageownentries', $coursecontext);
 
             if (has_capability('moodle/calendar:manageentries', $coursecontext)) {
                 $allowed->courses = array($course->id => 1);
@@ -2274,6 +2258,20 @@ class calendar_event {
 
         // Delete the event
         $DB->delete_records('event', array('id'=>$this->properties->id));
+
+        // If we are deleting parent of a repeated event series, promote the next event in the series as parent
+        if (($this->properties->id == $this->properties->repeatid) && !$deleterepeated) {
+            $newparent = $DB->get_field_sql("SELECT id from {event} where repeatid = ? order by id ASC", array($this->properties->id), IGNORE_MULTIPLE);
+            if (!empty($newparent)) {
+                $DB->execute("UPDATE {event} SET repeatid = ? WHERE repeatid = ?", array($newparent, $this->properties->id));
+                // Get all records where the repeatid is the same as the event being removed
+                $events = $DB->get_records('event', array('repeatid' => $newparent));
+                // For each of the returned events trigger the event_update hook.
+                foreach ($events as $event) {
+                    self::calendar_event_hook('update_event', array($event, false));
+                }
+            }
+        }
 
         // If the editor context hasn't already been set then set it now
         if ($this->editorcontext === null) {

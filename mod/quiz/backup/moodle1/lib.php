@@ -18,8 +18,7 @@
  * Provides support for the conversion of moodle1 backup to the moodle2 format
  * Based off of a template @ http://docs.moodle.org/dev/Backup_1.9_conversion_for_developers
  *
- * @package    mod
- * @subpackage quiz
+ * @package    mod_quiz
  * @copyright  2011 Aparup Banerjee <aparup@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -87,38 +86,38 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
     public function process_quiz($data) {
         global $CFG;
 
-        // replay the upgrade step 2008081501
+        // Replay the upgrade step 2008081501.
         if (is_null($data['sumgrades'])) {
             $data['sumgrades'] = 0;
-            //@todo for user data: quiz_attempts SET sumgrades=0 WHERE sumgrades IS NULL
-            //@todo for user data: quiz_grades.grade should be not be null , convert to default 0
+            // TODO for user data: quiz_attempts SET sumgrades=0 WHERE sumgrades IS NULL.
+            // TODO for user data: quiz_grades.grade should be not be null , convert to default 0.
         }
 
-        // replay the upgrade step 2009042000
+        // Replay the upgrade step 2009042000.
         if ($CFG->texteditors !== 'textarea') {
             $data['intro']       = text_to_html($data['intro'], false, false, true);
             $data['introformat'] = FORMAT_HTML;
         }
 
-        // replay the upgrade step 2009031001
+        // Replay the upgrade step 2009031001.
         $data['timelimit'] *= 60;
 
-        // get the course module id and context id
+        // Get the course module id and context id.
         $instanceid     = $data['id'];
         $cminfo         = $this->get_cminfo($instanceid);
         $this->moduleid = $cminfo['id'];
         $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
-        // get a fresh new file manager for this instance
+        // Get a fresh new file manager for this instance.
         $this->fileman = $this->converter->get_file_manager($contextid, 'mod_quiz');
 
-        // convert course files embedded into the intro
+        // Convert course files embedded into the intro.
         $this->fileman->filearea = 'intro';
         $this->fileman->itemid   = 0;
         $data['intro'] = moodle1_converter::migrate_referenced_files(
                 $data['intro'], $this->fileman);
 
-        // start writing quiz.xml
+        // Start writing quiz.xml.
         $this->open_xml_writer("activities/quiz_{$this->moduleid}/quiz.xml");
         $this->xmlwriter->begin_tag('activity', array('id' => $instanceid,
                 'moduleid' => $this->moduleid, 'modulename' => 'quiz',
@@ -155,7 +154,7 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
     }
 
     public function process_quiz_feedback($data) {
-        // replay the upgrade step 2010122302
+        // Replay the upgrade step 2010122302.
         if (is_null($data['mingrade'])) {
             $data['mingrade'] = 0;
         }
@@ -171,15 +170,15 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
      */
     public function on_quiz_end() {
 
-        // append empty <overrides> subpath element
+        // Append empty <overrides> subpath element.
         $this->write_xml('overrides', array());
 
-        // finish writing quiz.xml
+        // Finish writing quiz.xml.
         $this->xmlwriter->end_tag('quiz');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
 
-        // write inforef.xml
+        // Write inforef.xml.
         $this->open_xml_writer("activities/quiz_{$this->moduleid}/inforef.xml");
         $this->xmlwriter->begin_tag('inforef');
         $this->xmlwriter->begin_tag('fileref');

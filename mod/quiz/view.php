@@ -30,8 +30,8 @@ require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
-$id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
-$q = optional_param('q',  0, PARAM_INT);  // quiz ID
+$id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
+$q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('quiz', $id)) {
@@ -75,7 +75,7 @@ add_to_log($course->id, 'quiz', 'view', 'view.php?id=' . $cm->id, $quiz->id, $cm
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-// Initialize $PAGE, compute blocks
+// Initialize $PAGE, compute blocks.
 $PAGE->set_url('/mod/quiz/view.php', array('id' => $cm->id));
 
 // Create view object which collects all the information the renderer will need.
@@ -144,7 +144,7 @@ $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 $output = $PAGE->get_renderer('mod_quiz');
 
-// Print table with existing attempts
+// Print table with existing attempts.
 if ($attempts) {
     // Work out which columns we need, taking account what data is available in each attempt.
     list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);

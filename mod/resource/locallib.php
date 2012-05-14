@@ -69,11 +69,18 @@ function resource_display_embed($resource, $cm, $course, $file) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $path = '/'.$context->id.'/mod_resource/content/'.$resource->revision.$file->get_filepath().$file->get_filename();
     $fullurl = file_encode_url($CFG->wwwroot.'/pluginfile.php', $path, false);
+    $moodleurl = new moodle_url('/pluginfile.php' . $path);
 
     $mimetype = $file->get_mimetype();
     $title    = $resource->name;
 
     $extension = resourcelib_get_extension($file->get_filename());
+
+    $mediarenderer = $PAGE->get_renderer('core', 'media');
+    $embedoptions = array(
+        core_media::OPTION_TRUSTED => true,
+        core_media::OPTION_BLOCK => true,
+    );
 
     if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
         $code = resourcelib_embed_image($fullurl, $title);
@@ -82,33 +89,9 @@ function resource_display_embed($resource, $cm, $course, $file) {
         // PDF document
         $code = resourcelib_embed_pdf($fullurl, $title, $clicktoopen);
 
-    } else if ($mimetype === 'audio/mp3') {
-        // MP3 audio file
-        $code = resourcelib_embed_mp3($fullurl, $title, $clicktoopen);
-
-    } else if ($mimetype === 'video/x-flv' or $extension === 'f4v') {
-        // Flash video file
-        $code = resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen);
-
-    } else if ($mimetype === 'application/x-shockwave-flash') {
-        // Flash file
-        $code = resourcelib_embed_flash($fullurl, $title, $clicktoopen);
-
-    } else if (substr($mimetype, 0, 10) === 'video/x-ms') {
-        // Windows Media Player file
-        $code = resourcelib_embed_mediaplayer($fullurl, $title, $clicktoopen);
-
-    } else if ($mimetype === 'video/quicktime') {
-        // Quicktime file
-        $code = resourcelib_embed_quicktime($fullurl, $title, $clicktoopen);
-
-    } else if ($mimetype === 'video/mpeg') {
-        // Mpeg file
-        $code = resourcelib_embed_mpeg($fullurl, $title, $clicktoopen);
-
-    } else if ($mimetype === 'audio/x-pn-realaudio') {
-        // RealMedia file
-        $code = resourcelib_embed_real($fullurl, $title, $clicktoopen);
+    } else if ($mediarenderer->can_embed_url($moodleurl, $embedoptions)) {
+        // Media (audio/video) file.
+        $code = $mediarenderer->embed_url($moodleurl, $title, 0, 0, $embedoptions);
 
     } else {
         // anything else - just try object tag enlarged as much as possible

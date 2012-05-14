@@ -120,7 +120,7 @@ class feedback_item_textfield extends feedback_item_base {
     public function get_analysed($item, $groupid = false, $courseid = false) {
         global $DB;
 
-        $analysed_val = null;
+        $analysed_val = new stdClass();
         $analysed_val->data = null;
         $analysed_val->name = $item->name;
 

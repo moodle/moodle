@@ -86,7 +86,7 @@ if ($options->flags == question_display_options::EDITABLE && optional_param('sav
 add_to_log($attemptobj->get_courseid(), 'quiz', 'review', 'review.php?attempt=' .
         $attemptobj->get_attemptid(), $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
-// Work out appropriate title and whether blocks should be shown
+// Work out appropriate title and whether blocks should be shown.
 if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
     $strreviewtitle = get_string('reviewofpreview', 'quiz');
     navigation_node::override_active_url($attemptobj->start_attempt_url());
@@ -98,13 +98,13 @@ if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
     }
 }
 
-// Set up the page header
+// Set up the page header.
 $headtags = $attemptobj->get_html_head_contributions($page, $showall);
 $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 $accessmanager->setup_attempt_page($PAGE);
 
-// Summary table start ============================================================================
+// Summary table start. ============================================================================
 
 // Work out some time-related things.
 $attempt = $attemptobj->get_attempt();
@@ -235,7 +235,7 @@ if ($options->overallfeedback && $feedback) {
     );
 }
 
-// Summary table end ==============================================================================
+// Summary table end. ==============================================================================
 
 if ($showall) {
     $slots = $attemptobj->get_slots();

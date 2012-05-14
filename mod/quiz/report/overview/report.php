@@ -207,6 +207,14 @@ class quiz_overview_report extends quiz_attempts_report {
             $this->add_state_column($columns, $headers);
             $this->add_time_columns($columns, $headers);
 
+            $this->add_grade_columns($quiz, $options->usercanseegrades, $columns, $headers, false);
+
+            if (!$table->is_downloading() && has_capability('mod/quiz:regrade', $this->context) &&
+                    $this->has_regraded_questions($from, $where, $params)) {
+                $columns[] = 'regraded';
+                $headers[] = get_string('regrade', 'quiz_overview');
+            }
+
             if ($options->slotmarks) {
                 foreach ($questions as $slot => $question) {
                     // Ignore questions of zero length.
@@ -221,14 +229,6 @@ class quiz_overview_report extends quiz_attempts_report {
                     $headers[] = $header;
                 }
             }
-
-            if (!$table->is_downloading() && has_capability('mod/quiz:regrade', $this->context) &&
-                    $this->has_regraded_questions($from, $where, $params)) {
-                $columns[] = 'regraded';
-                $headers[] = get_string('regrade', 'quiz_overview');
-            }
-
-            $this->add_grade_columns($quiz, $options->usercanseegrades, $columns, $headers, false);
 
             $this->set_up_table_columns($table, $columns, $headers, $this->get_base_url(), $options, false);
             $table->set_attribute('class', 'generaltable generalbox grades');

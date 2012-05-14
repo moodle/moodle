@@ -250,8 +250,9 @@ class block_base {
             }
         }
 
-        if (empty($CFG->allowuserblockhiding) ||
-                (empty($bc->content) && empty($bc->footer))) {
+        if (empty($CFG->allowuserblockhiding)
+                || (empty($bc->content) && empty($bc->footer))
+                || !$this->instance_can_be_collapsed()) {
             $bc->collapsible = block_contents::NOT_HIDEABLE;
         } else if (get_user_preferences('block' . $bc->blockinstanceid . 'hidden', false)) {
             $bc->collapsible = block_contents::HIDDEN;
@@ -630,12 +631,21 @@ class block_base {
     }
 
     /**
-     * If overridden and set to true by the block it will not be hidable when
+     * If overridden and set to false by the block it will not be hidable when
      * editing is turned on.
      *
      * @return bool
      */
     public function instance_can_be_hidden() {
+        return true;
+    }
+
+    /**
+     * If overridden and set to false by the block it will not be collapsible.
+     *
+     * @return bool
+     */
+    public function instance_can_be_collapsed() {
         return true;
     }
 

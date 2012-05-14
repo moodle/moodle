@@ -38,7 +38,7 @@ $PAGE->set_pagelayout('incourse');
 
 add_to_log($course->id, "quiz", "view all", "index.php?id=$course->id", "");
 
-// Print the header
+// Print the header.
 $strquizzes = get_string("modulenameplural", "quiz");
 $streditquestions = '';
 $editqcontexts = new question_edit_contexts($coursecontext);
@@ -57,14 +57,14 @@ $PAGE->set_button($streditquestions);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-// Get all the appropriate data
+// Get all the appropriate data.
 if (!$quizzes = get_all_instances_in_course("quiz", $course)) {
     notice(get_string('thereareno', 'moodle', $strquizzes), "../../course/view.php?id=$course->id");
     die;
 }
 $sections = get_all_sections($course->id);
 
-// Check if we need the closing date header
+// Check if we need the closing date header.
 $showclosingheader = false;
 $showfeedback = false;
 foreach ($quizzes as $quiz) {
@@ -91,7 +91,7 @@ if ($showclosingheader) {
 array_unshift($headings, get_string('sectionname', 'format_'.$course->format));
 array_unshift($align, 'center');
 
-$showing = '';  // default
+$showing = '';
 
 if (has_capability('mod/quiz:viewreports', $coursecontext)) {
     array_push($headings, get_string('attempts', 'quiz'));
@@ -106,7 +106,7 @@ if (has_capability('mod/quiz:viewreports', $coursecontext)) {
         array_push($headings, get_string('feedback', 'quiz'));
         array_push($align, 'left');
     }
-    $showing = 'grades';  // default
+    $showing = 'grades';
 
     $grades = $DB->get_records_sql_menu('
             SELECT qg.quiz, qg.grade
@@ -192,5 +192,5 @@ foreach ($quizzes as $quiz) {
 // Display the table.
 echo html_writer::table($table);
 
-// Finish the page
+// Finish the page.
 echo $OUTPUT->footer();

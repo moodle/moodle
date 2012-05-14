@@ -26,8 +26,6 @@ class profile_field_datetime extends profile_field_base {
         $attributes = array(
             'startyear' => $this->field->param1,
             'stopyear'  => $this->field->param2,
-            'timezone'  => 99,
-            'applydst'  => true,
             'optional'  => $optional
         );
 

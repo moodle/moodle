@@ -53,10 +53,10 @@ define('QUIZ_ATTEMPTLAST',  '4');
 /**#@-*/
 
 /**
- * If start and end date for the quiz are more than this many seconds apart
+ * @var int If start and end date for the quiz are more than this many seconds apart
  * they will be represented by two separate events in the calendar
  */
-define('QUIZ_MAX_EVENT_LENGTH', 5*24*60*60); // 5 days
+define('QUIZ_MAX_EVENT_LENGTH', 5*24*60*60); // 5 days.
 
 /**#@+
  * Options for navigation method within quizzes.
@@ -138,7 +138,7 @@ function quiz_update_instance($quiz, $mform) {
         quiz_update_grades($quiz);
     }
 
-    // Delete any previous preview attempts
+    // Delete any previous preview attempts.
     quiz_delete_previews($quiz);
 
     return true;
@@ -187,7 +187,7 @@ function quiz_delete_override($quiz, $overrideid) {
 
     $override = $DB->get_record('quiz_overrides', array('id' => $overrideid), '*', MUST_EXIST);
 
-    // Delete the events
+    // Delete the events.
     $events = $DB->get_records('event', array('modulename' => 'quiz',
             'instance' => $quiz->id, 'groupid' => (int)$override->groupid,
             'userid' => (int)$override->userid));
@@ -232,7 +232,7 @@ function quiz_delete_all_overrides($quiz) {
 function quiz_update_effective_access($quiz, $userid) {
     global $DB;
 
-    // check for user override
+    // Check for user override.
     $override = $DB->get_record('quiz_overrides', array('quiz' => $quiz->id, 'userid' => $userid));
 
     if (!$override) {
@@ -244,18 +244,18 @@ function quiz_update_effective_access($quiz, $userid) {
         $override->password = null;
     }
 
-    // check for group overrides
+    // Check for group overrides.
     $groupings = groups_get_user_groups($quiz->course, $userid);
 
     if (!empty($groupings[0])) {
-        // Select all overrides that apply to the User's groups
+        // Select all overrides that apply to the User's groups.
         list($extra, $params) = $DB->get_in_or_equal(array_values($groupings[0]));
         $sql = "SELECT * FROM {quiz_overrides}
                 WHERE groupid $extra AND quiz = ?";
         $params[] = $quiz->id;
         $records = $DB->get_records_sql($sql, $params);
 
-        // Combine the overrides
+        // Combine the overrides.
         $opens = array();
         $closes = array();
         $limits = array();
@@ -279,7 +279,7 @@ function quiz_update_effective_access($quiz, $userid) {
                 $passwords[] = $gpoverride->password;
             }
         }
-        // If there is a user override for a setting, ignore the group override
+        // If there is a user override for a setting, ignore the group override.
         if (is_null($override->timeopen) && count($opens)) {
             $override->timeopen = min($opens);
         }
@@ -301,7 +301,7 @@ function quiz_update_effective_access($quiz, $userid) {
 
     }
 
-    // merge with quiz defaults
+    // Merge with quiz defaults.
     $keys = array('timeopen', 'timeclose', 'timelimit', 'attempts', 'password', 'extrapasswords');
     foreach ($keys as $key) {
         if (isset($override->{$key})) {
@@ -385,10 +385,10 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
     $result = new stdClass();
     $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
 
-    //datesubmitted == time created. dategraded == time modified or time overridden
-    //if grade was last modified by the user themselves use date graded. Otherwise use
-    // date submitted
-    // TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704
+    // Datesubmitted == time created. dategraded == time modified or time overridden
+    // if grade was last modified by the user themselves use date graded. Otherwise use
+    // date submitted.
+    // TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704.
     if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
         $result->time = $grade->dategraded;
     } else {
@@ -631,7 +631,7 @@ function quiz_upgrade_grades() {
         $i=0;
         foreach ($rs as $quiz) {
             $i++;
-            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
+            upgrade_set_timeout(60*5); // Set up timeout, may also abort execution.
             quiz_update_grades($quiz, 0, false);
             $pbar->update($i, $count, "Updating Quiz grades ($i/$count).");
         }
@@ -652,7 +652,7 @@ function quiz_grade_item_update($quiz, $grades = null) {
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
-    if (array_key_exists('cmidnumber', $quiz)) { // may not be always present
+    if (array_key_exists('cmidnumber', $quiz)) { // May not be always present.
         $params = array('itemname' => $quiz->name, 'idnumber' => $quiz->cmidnumber);
     } else {
         $params = array('itemname' => $quiz->name);
@@ -667,7 +667,7 @@ function quiz_grade_item_update($quiz, $grades = null) {
         $params['gradetype'] = GRADE_TYPE_NONE;
     }
 
-    // description by TJ:
+    // What this is trying to do:
     // 1. If the quiz is set to not show grades while the quiz is still open,
     //    and is set to show grades after the quiz is closed, then create the
     //    grade_item with a show-after date that is the quiz close date.
@@ -691,9 +691,10 @@ function quiz_grade_item_update($quiz, $grades = null) {
         }
 
     } else {
+        // Either
         // a) both open and closed enabled
         // b) open enabled, closed disabled - we can not "hide after",
-        //    grades are kept visible even after closing
+        //    grades are kept visible even after closing.
         $params['hidden'] = 0;
     }
 
@@ -706,7 +707,7 @@ function quiz_grade_item_update($quiz, $grades = null) {
     if (!empty($gradebook_grades->items)) {
         $grade_item = $gradebook_grades->items[0];
         if ($grade_item->locked) {
-            // NOTE: this is an extremely nasty hack! It is not a bug if this confirmation fails badly.  --skodak
+            // NOTE: this is an extremely nasty hack! It is not a bug if this confirmation fails badly. --skodak.
             $confirm_regrade = optional_param('confirm_regrade', 0, PARAM_INT);
             if (!$confirm_regrade) {
                 $message = get_string('gradeitemislocked', 'grades');
@@ -851,7 +852,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
     $groupmode       = groups_get_activity_groupmode($cm, $course);
 
     if (is_null($modinfo->groups)) {
-        // load all my groups and cache it in modinfo
+        // Load all my groups and cache it in modinfo.
         $modinfo->groups = groups_get_user_groups($course->id);
     }
 
@@ -860,7 +861,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
     foreach ($attempts as $attempt) {
         if ($attempt->userid != $USER->id) {
             if (!$grader) {
-                // Grade permission required
+                // Grade permission required.
                 continue;
             }
 
@@ -974,7 +975,7 @@ function quiz_process_options($quiz) {
     $quiz->password = $quiz->quizpassword;
     unset($quiz->quizpassword);
 
-    // Quiz feedback
+    // Quiz feedback.
     if (isset($quiz->feedbacktext)) {
         // Clean up the boundary text.
         for ($i = 0; $i < count($quiz->feedbacktext); $i += 1) {
@@ -1078,11 +1079,11 @@ function quiz_after_add_or_update($quiz) {
     global $DB;
     $cmid = $quiz->coursemodule;
 
-    // we need to use context now, so we need to make sure all needed info is already in db
+    // We need to use context now, so we need to make sure all needed info is already in db.
     $DB->set_field('course_modules', 'instance', $quiz->id, array('id'=>$cmid));
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
 
-    // Save the feedback
+    // Save the feedback.
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
     for ($i = 0; $i <= $quiz->feedbackboundarycount; $i++) {
@@ -1107,7 +1108,7 @@ function quiz_after_add_or_update($quiz) {
     // Update the events relating to this quiz.
     quiz_update_events($quiz);
 
-    //update related grade item
+    // Update related grade item.
     quiz_grade_item_update($quiz);
 }
 
@@ -1127,21 +1128,21 @@ function quiz_update_events($quiz, $override = null) {
     $conds = array('modulename'=>'quiz',
                    'instance'=>$quiz->id);
     if (!empty($override)) {
-        // only load events for this override
+        // Only load events for this override.
         $conds['groupid'] = isset($override->groupid)?  $override->groupid : 0;
         $conds['userid'] = isset($override->userid)?  $override->userid : 0;
     }
     $oldevents = $DB->get_records('event', $conds);
 
-    // Now make a todo list of all that needs to be updated
+    // Now make a todo list of all that needs to be updated.
     if (empty($override)) {
         // We are updating the primary settings for the quiz, so we
-        // need to add all the overrides
+        // need to add all the overrides.
         $overrides = $DB->get_records('quiz_overrides', array('quiz' => $quiz->id));
-        // as well as the original quiz (empty override)
+        // As well as the original quiz (empty override).
         $overrides[] = new stdClass();
     } else {
-        // Just do the one override
+        // Just do the one override.
         $overrides = array($override);
     }
 
@@ -1151,13 +1152,13 @@ function quiz_update_events($quiz, $override = null) {
         $timeopen  = isset($current->timeopen)?  $current->timeopen : $quiz->timeopen;
         $timeclose = isset($current->timeclose)? $current->timeclose : $quiz->timeclose;
 
-        // only add open/close events for an override if they differ from the quiz default
+        // Only add open/close events for an override if they differ from the quiz default.
         $addopen  = empty($current->id) || !empty($current->timeopen);
         $addclose = empty($current->id) || !empty($current->timeclose);
 
         $event = new stdClass();
-        $event->description = $quiz->intro;
-        // Events module won't show user events when the courseid is nonzero
+        $event->description = format_module_intro('quiz', $quiz, $quiz->coursemodule);
+        // Events module won't show user events when the courseid is nonzero.
         $event->courseid    = ($userid) ? 0 : $quiz->course;
         $event->groupid     = $groupid;
         $event->userid      = $userid;
@@ -1168,13 +1169,13 @@ function quiz_update_events($quiz, $override = null) {
         $event->visible     = instance_is_visible('quiz', $quiz);
         $event->eventtype   = 'open';
 
-        // Determine the event name
+        // Determine the event name.
         if ($groupid) {
             $params = new stdClass();
             $params->quiz = $quiz->name;
             $params->group = groups_get_group_name($groupid);
             if ($params->group === false) {
-                // group doesn't exist, just skip it
+                // Group doesn't exist, just skip it.
                 continue;
             }
             $eventname = get_string('overridegroupeventname', 'quiz', $params);
@@ -1194,7 +1195,7 @@ function quiz_update_events($quiz, $override = null) {
                     unset($event->id);
                 }
                 $event->name = $eventname;
-                // calendar_event::create will reuse a db record if the id field is set
+                // The method calendar_event::create will reuse a db record if the id field is set.
                 calendar_event::create($event);
             } else {
                 // Separate start and end events.
@@ -1206,7 +1207,7 @@ function quiz_update_events($quiz, $override = null) {
                         unset($event->id);
                     }
                     $event->name = $eventname.' ('.get_string('quizopens', 'quiz').')';
-                    // calendar_event::create will reuse a db record if the id field is set
+                    // The method calendar_event::create will reuse a db record if the id field is set.
                     calendar_event::create($event);
                 }
                 if ($timeclose && $addclose) {
@@ -1224,7 +1225,7 @@ function quiz_update_events($quiz, $override = null) {
         }
     }
 
-    // Delete any leftover events
+    // Delete any leftover events.
     foreach ($oldevents as $badevent) {
         $badevent = calendar_event::load($badevent);
         $badevent->delete();
@@ -1334,7 +1335,7 @@ function quiz_reset_userdata($data) {
             'item' => get_string('attemptsdeleted', 'quiz'),
             'error' => false);
 
-        // Remove all grades from gradebook
+        // Remove all grades from gradebook.
         $DB->delete_records_select('quiz_grades',
                 'quiz IN (SELECT id FROM {quiz} WHERE course = ?)', array($data->courseid));
         if (empty($data->reset_gradebook_grades)) {
@@ -1346,7 +1347,7 @@ function quiz_reset_userdata($data) {
             'error' => false);
     }
 
-    // Updating dates - shift may be negative too
+    // Updating dates - shift may be negative too.
     if ($data->timeshift) {
         shift_course_mod_dates('quiz', array('timeopen', 'timeclose'),
                 $data->timeshift, $data->courseid);
@@ -1375,7 +1376,7 @@ function quiz_check_file_access($attemptuniqueid, $questionid, $context = null) 
     $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $attemptuniqueid));
     $attemptobj = quiz_attempt::create($attempt->id);
 
-    // does question exist?
+    // Does the question exist?
     if (!$question = $DB->get_record('question', array('id' => $questionid))) {
         return false;
     }
@@ -1390,16 +1391,16 @@ function quiz_check_file_access($attemptuniqueid, $questionid, $context = null) 
     $attemptobj->load_questions(array($questionid));
     $attemptobj->load_question_states(array($questionid));
 
-    // obtain state
+    // Obtain the state.
     $state = $attemptobj->get_question_state($questionid);
-    // obtain questoin
+    // Obtain the question.
     $question = $attemptobj->get_question($questionid);
 
-    // access granted if the current user submitted this file
+    // Access granted if the current user submitted this file.
     if ($attempt->userid != $USER->id) {
         return false;
     }
-    // access granted if the current user has permission to grade quizzes in this course
+    // Access granted if the current user has permission to grade quizzes in this course.
     if (!(has_capability('mod/quiz:viewreports', $context) ||
             has_capability('mod/quiz:grade', $context))) {
         return false;
@@ -1415,7 +1416,7 @@ function quiz_check_file_access($attemptuniqueid, $questionid, $context = null) 
  */
 function quiz_print_overview($courses, &$htmlarray) {
     global $USER, $CFG;
-    // These next 6 Lines are constant in all modules (just change module name)
+    // These next 6 Lines are constant in all modules (just change module name).
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return array();
     }
@@ -1634,10 +1635,8 @@ function quiz_extend_navigation($quiznode, $course, $module, $cm) {
 function quiz_extend_settings_navigation($settings, $quiznode) {
     global $PAGE, $CFG;
 
-    /**
-     * Require {@link questionlib.php}
-     * Included here as we only ever want to include this file if we really need to.
-     */
+    // Require {@link questionlib.php}
+    // Included here as we only ever want to include this file if we really need to.
     require_once($CFG->libdir . '/questionlib.php');
 
     // We want to add these new nodes after the Edit settings node, and before the
@@ -1711,7 +1710,7 @@ function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
         return false;
     }
 
-    // 'intro' area is served by pluginfile.php
+    // The 'intro' area is served by pluginfile.php.
     $fileareas = array('feedback');
     if (!in_array($filearea, $fileareas)) {
         return false;

@@ -46,21 +46,21 @@ class backup_quiz_activity_task extends backup_activity_task {
      */
     protected function define_my_steps() {
         // Generate the quiz.xml file containing all the quiz information
-        // and annotating used questions
+        // and annotating used questions.
         $this->add_step(new backup_quiz_activity_structure_step('quiz_structure', 'quiz.xml'));
 
         // Note: Following  steps must be present
         // in all the activities using question banks (only quiz for now)
-        // TODO: Specialise these step to a new subclass of backup_activity_task
+        // TODO: Specialise these step to a new subclass of backup_activity_task.
 
         // Process all the annotated questions to calculate the question
         // categories needing to be included in backup for this activity
-        // plus the categories belonging to the activity context itself
+        // plus the categories belonging to the activity context itself.
         $this->add_step(new backup_calculate_question_categories('activity_question_categories'));
 
         // Clean backup_temp_ids table from questions. We already
         // have used them to detect question_categories and aren't
-        // needed anymore
+        // needed anymore.
         $this->add_step(new backup_delete_temp_questions('clean_temp_questions'));
     }
 
@@ -75,15 +75,15 @@ class backup_quiz_activity_task extends backup_activity_task {
 
         $base = preg_quote($CFG->wwwroot, '/');
 
-        // Link to the list of quizzes
+        // Link to the list of quizzes.
         $search="/(".$base."\/mod\/quiz\/index.php\?id\=)([0-9]+)/";
         $content= preg_replace($search, '$@QUIZINDEX*$2@$', $content);
 
-        // Link to quiz view by moduleid
+        // Link to quiz view by moduleid.
         $search="/(".$base."\/mod\/quiz\/view.php\?id\=)([0-9]+)/";
         $content= preg_replace($search, '$@QUIZVIEWBYID*$2@$', $content);
 
-        // Link to quiz view by quizid
+        // Link to quiz view by quizid.
         $search="/(".$base."\/mod\/quiz\/view.php\?q\=)([0-9]+)/";
         $content= preg_replace($search, '$@QUIZVIEWBYQ*$2@$', $content);
 

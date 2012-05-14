@@ -82,7 +82,7 @@ if (empty($CFG->version)) {
     cli_error(get_string('missingconfigversion', 'debug'));
 }
 
-require("$CFG->dirroot/version.php");       // defines $version, $release and $maturity
+require("$CFG->dirroot/version.php");       // defines $version, $release, $branch and $maturity
 $CFG->target_release = $release;            // used during installation and upgrades
 
 if ($version < $CFG->version) {
@@ -150,6 +150,7 @@ if ($version > $CFG->version) {
     upgrade_core($version, true);
 }
 set_config('release', $release);
+set_config('branch', $branch);
 
 // unconditionally upgrade
 upgrade_noncore(true);

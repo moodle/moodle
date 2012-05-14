@@ -35,10 +35,10 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
 
     protected function define_structure() {
 
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Define each element separated
+        // Define each element separated.
         $quiz = new backup_nested_element('quiz', array('id'), array(
             'name', 'intro', 'introformat', 'timeopen', 'timeclose', 'timelimit',
             'overduehandling', 'graceperiod', 'preferredbehaviour', 'attempts_number',
@@ -82,14 +82,13 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
             'state', 'timestart', 'timefinish', 'timemodified', 'sumgrades'));
 
         // This module is using questions, so produce the related question states and sessions
-        // attaching them to the $attempt element based in 'uniqueid' matching
+        // attaching them to the $attempt element based in 'uniqueid' matching.
         $this->add_question_usages($attempt, 'uniqueid');
 
         // Define elements for access rule subplugin attempt data.
         $this->add_subplugin_structure('quizaccess', $attempt, true);
 
-        // Build the tree
-
+        // Build the tree.
         $quiz->add_child($qinstances);
         $qinstances->add_child($qinstance);
 
@@ -105,7 +104,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $quiz->add_child($attempts);
         $attempts->add_child($attempt);
 
-        // Define sources
+        // Define sources.
         $quiz->set_source_table('quiz', array('id' => backup::VAR_ACTIVITYID));
 
         $qinstance->set_source_table('quiz_question_instances',
@@ -114,15 +113,15 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $feedback->set_source_table('quiz_feedback',
                 array('quizid' => backup::VAR_PARENTID));
 
-        // Quiz overrides to backup are different depending of user info
+        // Quiz overrides to backup are different depending of user info.
         $overrideparams = array('quiz' => backup::VAR_PARENTID);
-        if (!$userinfo) { //  Without userinfo, skip user overrides
+        if (!$userinfo) { //  Without userinfo, skip user overrides.
             $overrideparams['userid'] = backup_helper::is_sqlparam(null);
 
         }
         $override->set_source_table('quiz_overrides', $overrideparams);
 
-        // All the rest of elements only happen if we are including user info
+        // All the rest of elements only happen if we are including user info.
         if ($userinfo) {
             $grade->set_source_table('quiz_grades', array('quiz' => backup::VAR_PARENTID));
             $attempt->set_source_sql('
@@ -132,23 +131,23 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
                     array('quiz' => backup::VAR_PARENTID));
         }
 
-        // Define source alias
+        // Define source alias.
         $quiz->set_source_alias('attempts', 'attempts_number');
         $grade->set_source_alias('grade', 'gradeval');
         $attempt->set_source_alias('attempt', 'attemptnum');
 
-        // Define id annotations
+        // Define id annotations.
         $qinstance->annotate_ids('question', 'question');
         $override->annotate_ids('user', 'userid');
         $override->annotate_ids('group', 'groupid');
         $grade->annotate_ids('user', 'userid');
         $attempt->annotate_ids('user', 'userid');
 
-        // Define file annotations
-        $quiz->annotate_files('mod_quiz', 'intro', null); // This file area hasn't itemid
+        // Define file annotations.
+        $quiz->annotate_files('mod_quiz', 'intro', null); // This file area hasn't itemid.
         $feedback->annotate_files('mod_quiz', 'feedback', 'id');
 
-        // Return the root element (quiz), wrapped into standard activity structure
+        // Return the root element (quiz), wrapped into standard activity structure.
         return $this->prepare_activity_structure($quiz);
     }
 }

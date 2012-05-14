@@ -112,6 +112,21 @@ class web_testcase extends advanced_testcase {
         $this->assertEquals(wikify_links('this is a <a href="http://someaddress.com/query">link</a>'), 'this is a link [ http://someaddress.com/query ]');
     }
 
+    /**
+     * Tests moodle_url::get_path().
+     */
+    public function test_moodle_url_get_path() {
+        $url = new moodle_url('http://www.example.org:447/my/file/is/here.txt?really=1');
+        $this->assertEquals('/my/file/is/here.txt', $url->get_path());
+
+        $url = new moodle_url('http://www.example.org/');
+        $this->assertEquals('/', $url->get_path());
+
+        $url = new moodle_url('http://www.example.org/pluginfile.php/slash/arguments');
+        $this->assertEquals('/pluginfile.php/slash/arguments', $url->get_path());
+        $this->assertEquals('/pluginfile.php', $url->get_path(false));
+    }
+
     function test_moodle_url_round_trip() {
         $strurl = 'http://moodle.org/course/view.php?id=5';
         $url = new moodle_url($strurl);

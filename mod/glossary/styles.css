@@ -18,6 +18,9 @@
 .path-mod-glossary table.glossaryapproval,
 .path-mod-glossary .glossarypost .entrylowersection table{width: 100%;margin-bottom:0em;}
 
+.glossary-activity-picture { float: left; }
+.glossary-activity-content { margin-left: 40px; }
+
 /** Page specific styles **/
 #page-mod-glossary-view .glossarycontrol {float: right;text-align:right;white-space: nowrap;margin: 5px 0;}
 #page-mod-glossary-view table.glossarycategoryheader,

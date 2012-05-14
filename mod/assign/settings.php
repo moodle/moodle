@@ -40,40 +40,21 @@ assign_plugin_manager::add_admin_assign_plugin_settings('assignsubmission', $ADM
 assign_plugin_manager::add_admin_assign_plugin_settings('assignfeedback', $ADMIN, $settings, $module);
 
 if ($ADMIN->fulltree) {
+    $menu = array();
     foreach (get_plugin_list('assignfeedback') as $type => $notused) {
         $visible = !get_config('assignfeedback_' . $type, 'disabled');
         if ($visible) {
             $menu['assignfeedback_' . $type] = new lang_string('pluginname', 'assignfeedback_' . $type);
         }
     }
-    $settings->add(new admin_setting_configselect('assign_feedback_plugin_for_gradebook',
+
+    // The default here is feedback_comments (if it exists)
+    $settings->add(new admin_setting_configselect('assign/feedback_plugin_for_gradebook',
                    new lang_string('feedbackpluginforgradebook', 'mod_assign'),
-                   new lang_string('feedbackplugin', 'mod_assign'), 'feedback_comments', $menu));
-    $settings->add(new admin_setting_configcheckbox('assign_showrecentsubmissions',
+                   new lang_string('feedbackplugin', 'mod_assign'), 'assignfeedback_comments', $menu));
+    $settings->add(new admin_setting_configcheckbox('assign/showrecentsubmissions',
                    new lang_string('showrecentsubmissions', 'assign'),
                    new lang_string('configshowrecentsubmissions', 'assign'), 0));
 
-
-    $settings->add(new admin_setting_heading('assign_defaultplugins',
-                   new lang_string('defaultplugins', 'assign'), ''));
-
-    foreach (get_plugin_list('assignsubmission') as $type => $notused) {
-        $visible = !get_config('assignsubmission_' . $type, 'disabled');
-        if ($visible) {
-            $settings->add(new admin_setting_configcheckbox('assignsubmission_' . $type . '_default',
-                   new lang_string('enabled', 'assignsubmission_' . $type),
-                   new lang_string('enabled_help', 'assignsubmission_' . $type), 0));
-
-        }
-    }
-    foreach (get_plugin_list('assignfeedback') as $type => $notused) {
-        $visible = !get_config('assignfeedback_' . $type, 'disabled');
-        if ($visible) {
-            $settings->add(new admin_setting_configcheckbox('assignfeedback_' . $type . '_default',
-                   new lang_string('enabled', 'assignfeedback_' . $type),
-                   new lang_string('enabled_help', 'assignfeedback_' . $type), 0));
-
-        }
-    }
 
 }

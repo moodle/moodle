@@ -136,7 +136,7 @@ class feedback_item_numeric extends feedback_item_base {
     public function get_analysed($item, $groupid = false, $courseid = false) {
         global $DB;
 
-        $analysed = null;
+        $analysed = new stdClass();
         $analysed->data = array();
         $analysed->name = $item->name;
         $values = feedback_get_group_values($item, $groupid, $courseid);

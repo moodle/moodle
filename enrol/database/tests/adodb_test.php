@@ -95,6 +95,7 @@ class core_adodb_testcase extends advanced_testcase {
         $rs = $extdb->Execute($sql);
         $this->assertEmpty($rs->EOF);
         $row = $rs->FetchRow();
+        $row = array_change_key_case($row, CASE_LOWER);
         $this->assertEquals('2', $row['id']);
         $this->assertEquals('admin', $row['username']);
         $this->assertEmpty($rs->FetchRow());

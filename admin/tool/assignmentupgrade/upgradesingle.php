@@ -26,6 +26,8 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
+require_sesskey();
+
 $assignmentid = required_param('id', PARAM_INT);
 
 // admin_externalpage_setup calls require_login and checks moodle/site:config

@@ -164,6 +164,7 @@ if ($mode == 'browse') {
 }
 $orgstr = '&currentorg='.$currentorg;
 
+$SESSION->scorm = new stdClass();
 $SESSION->scorm->scoid = $sco->id;
 $SESSION->scorm->scormstatus = 'Not Initialized';
 $SESSION->scorm->scormmode = $mode;

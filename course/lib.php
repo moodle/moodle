@@ -4414,8 +4414,7 @@ function include_course_ajax($course, $modules = array(), $config = null) {
 
     // Ensure that ajax should be included
     $courseformatajaxsupport = course_format_ajax_support($course->format);
-    if (!$CFG->enablecourseajax
-        || !$PAGE->theme->enablecourseajax
+    if (!$PAGE->theme->enablecourseajax
         || !$CFG->enableajax
         || empty($USER->editing)
         || !$PAGE->user_is_editing()

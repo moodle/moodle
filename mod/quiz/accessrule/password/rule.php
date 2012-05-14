@@ -61,7 +61,7 @@ class quizaccess_password extends quiz_access_rule_base {
         $mform->addElement('static', 'passwordmessage', '',
                 get_string('requirepasswordmessage', 'quizaccess_password'));
 
-        // don't use the 'proper' field name of 'password' since that get's
+        // Don't use the 'proper' field name of 'password' since that get's
         // Firefox's password auto-complete over-excited.
         $mform->addElement('password', 'quizpassword',
                 get_string('quizpassword', 'quizaccess_password'));
@@ -74,7 +74,7 @@ class quizaccess_password extends quiz_access_rule_base {
             return $errors; // Password is OK.
 
         } else if (isset($this->quiz->extrapasswords)) {
-            // Group overrides may have additional passwords
+            // Group overrides may have additional passwords.
             foreach ($this->quiz->extrapasswords as $password) {
                 if (strcmp($password, $enteredpassword) === 0) {
                     return $errors; // Password is OK.

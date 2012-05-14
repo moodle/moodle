@@ -90,6 +90,7 @@ function scorm_get_manifest($blocks, $scoes) {
                 case 'ORGANIZATION':
                     $identifier = $block['attrs']['IDENTIFIER'];
                     $organization = '';
+                    $scoes->elements[$manifest][$organization][$identifier] = new stdClass();
                     $scoes->elements[$manifest][$organization][$identifier]->identifier = $identifier;
                     $scoes->elements[$manifest][$organization][$identifier]->parent = '/';
                     $scoes->elements[$manifest][$organization][$identifier]->launch = '';
@@ -113,6 +114,7 @@ function scorm_get_manifest($blocks, $scoes) {
                     array_push($parents, $parent);
 
                     $identifier = $block['attrs']['IDENTIFIER'];
+                    $scoes->elements[$manifest][$organization][$identifier] = new stdClass();
                     $scoes->elements[$manifest][$organization][$identifier]->identifier = $identifier;
                     $scoes->elements[$manifest][$organization][$identifier]->parent = $parent->identifier;
                     if (!isset($block['attrs']['ISVISIBLE'])) {

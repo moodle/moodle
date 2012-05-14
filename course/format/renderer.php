@@ -146,16 +146,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         }
 
         $o.= html_writer::start_tag('div', array('class' => 'summary'));
+        $o.= $this->format_summary_text($section);
 
-        $context = context_course::instance($section->course);
-        $summarytext = file_rewrite_pluginfile_urls($section->summary, 'pluginfile.php',
-            $context->id, 'course', 'section', $section->id);
-        $summaryformatoptions = new stdClass();
-        $summaryformatoptions->noclean = true;
-        $summaryformatoptions->overflowdiv = true;
-
-        $o.= format_text($summarytext, $section->summaryformat, $summaryformatoptions);
-
+        $context = context_course::instance($course->id);
         if ($PAGE->user_is_editing() && has_capability('moodle/course:update', $context)) {
             $url = new moodle_url('/course/editsection.php', array('id'=>$section->id));
 
@@ -268,17 +261,16 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     protected function section_summary($section, $course) {
 
         $o = '';
-        $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section));
+        $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
+            'class' => 'section-summary clearfix'));
 
         $title = get_section_name($course, $section);
-        $o.= html_writer::start_tag('div', array('class' => 'section-summary'));
         $o.= html_writer::start_tag('a', array('href' => course_get_url($course, $section->section)));
         $o.= $this->output->heading($title, 3, 'header section-title');
         $o.= html_writer::end_tag('a');
 
         $o.= html_writer::start_tag('div', array('class' => 'summarytext'));
-        $o.= format_text($section->summary, $section->summaryformat);
-        $o.= html_writer::end_tag('div');
+        $o.= $this->format_summary_text($section);
         $o.= html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
 
@@ -561,19 +553,49 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
             echo $this->end_section_list();
 
-            // Print the add section link
-            $straddsection = get_string('addanadditionalsection', 'moodle');
-            echo html_writer::start_tag('div', array('class' => 'mdl-align'));
-            echo $this->output->action_link(
-                new moodle_url('/course/addsection.php',
-                    array('courseid' => $course->id, 'sesskey' => sesskey())
-                ), $this->output->pix_icon('t/add', $straddsection).$straddsection, null,
-                    array('class' => 'addsectionlink')
-            );
+            echo html_writer::start_tag('div', array('class' => 'mdl-right'));
+
+            // Increase number of sections.
+            $straddsection = get_string('increasesections', 'moodle');
+            $url = new moodle_url('/course/changenumsections.php',
+                array('courseid' => $course->id,
+                      'increase' => true,
+                      'sesskey' => sesskey()));
+            $icon = $this->output->pix_icon('t/switch_plus', $straddsection);
+            echo html_writer::link($url, $icon.get_accesshide($straddsection), array('class' => 'increase-sections'));
+
+            if ($course->numsections > 0) {
+                // Reduce number of sections sections.
+                $strremovesection = get_string('reducesections', 'moodle');
+                $url = new moodle_url('/course/changenumsections.php',
+                    array('courseid' => $course->id,
+                          'increase' => false,
+                          'sesskey' => sesskey()));
+                $icon = $this->output->pix_icon('t/switch_minus', $strremovesection);
+                echo html_writer::link($url, $icon.get_accesshide($strremovesection), array('class' => 'reduce-sections'));
+            }
+
             echo html_writer::end_tag('div');
         } else {
             echo $this->end_section_list();
         }
 
+    }
+
+    /**
+     * Generate html for a section summary text
+     *
+     * @param stdClass $section The course_section entry from DB
+     * @return string HTML to output.
+     */
+    protected function format_summary_text($section) {
+        $context = context_course::instance($section->course);
+        $summarytext = file_rewrite_pluginfile_urls($section->summary, 'pluginfile.php',
+            $context->id, 'course', 'section', $section->id);
+
+        $options = new stdClass();
+        $options->noclean = true;
+        $options->overflowdiv = true;
+        return format_text($summarytext, $section->summaryformat, $options);
     }
 }

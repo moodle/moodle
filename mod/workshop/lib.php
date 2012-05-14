@@ -596,8 +596,8 @@ function workshop_get_recent_mod_activity(&$activities, &$index, $timestart, $co
 
     if ($groupid) {
         $groupselect = "AND (authorgroupmembership.groupid = :authorgroupid OR reviewergroupmembership.groupid = :reviewergroupid)";
-        $groupjoin   = "LEFT JOIN {groups_members} authorgroupmembership ON authorgroumembership.userid = author.id
-                        LEFT JOIN {groups_members} reviewergroupmembership ON reviewergroumembership.userid = reviewer.id";
+        $groupjoin   = "LEFT JOIN {groups_members} authorgroupmembership ON authorgroupmembership.userid = author.id
+                        LEFT JOIN {groups_members} reviewergroupmembership ON reviewergroupmembership.userid = reviewer.id";
         $params['authorgroupid'] = $groupid;
         $params['reviewergroupid'] = $groupid;
     } else {

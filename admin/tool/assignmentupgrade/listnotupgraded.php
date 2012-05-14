@@ -40,6 +40,7 @@ $assignments = new tool_assignmentupgrade_assignments_table($perpage);
 $batchform = new tool_assignmentupgrade_batchoperations_form();
 $data = $batchform->get_data();
 if ($data && $data->selectedassignments != '' || $data && isset($data->upgradeall)) {
+    require_sesskey();
     echo $renderer->confirm_batch_operation_page($data);
 } else {
     echo $renderer->assignment_list_page($assignments, $batchform);

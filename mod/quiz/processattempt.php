@@ -33,7 +33,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 // Remember the current time as the time any responses were submitted
-// (so as to make sure students don't get penalized for slow processing on this page)
+// (so as to make sure students don't get penalized for slow processing on this page).
 $timenow = time();
 
 // Get submitted parameters.

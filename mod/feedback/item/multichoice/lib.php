@@ -144,7 +144,7 @@ class feedback_item_multichoice extends feedback_item_base {
         if ($info->subtype == 'c') {
             $sizeofanswers = count($answers);
             for ($i = 1; $i <= $sizeofanswers; $i++) {
-                $ans = null;
+                $ans = new stdClass();
                 $ans->answertext = $answers[$i-1];
                 $ans->answercount = 0;
                 foreach ($values as $value) {
@@ -162,7 +162,7 @@ class feedback_item_multichoice extends feedback_item_base {
         } else {
             $sizeofanswers = count($answers);
             for ($i = 1; $i <= $sizeofanswers; $i++) {
-                $ans = null;
+                $ans = new stdClass();
                 $ans->answertext = $answers[$i-1];
                 $ans->answercount = 0;
                 foreach ($values as $value) {

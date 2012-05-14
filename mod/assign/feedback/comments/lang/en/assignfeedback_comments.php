@@ -23,7 +23,9 @@
  */
 
 
-$string['pluginname'] = 'Feedback comments';
+$string['default'] = 'Enabled by default';
+$string['default_help'] = 'If set, this feedback method will be enabled by default for all new assignments.';
 $string['enabled'] = 'Feedback comments';
 $string['enabled_help'] = 'If enabled, the marker can leave feedback comments for each submission. ';
+$string['pluginname'] = 'Feedback comments';
 

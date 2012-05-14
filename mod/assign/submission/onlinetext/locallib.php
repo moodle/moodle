@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * File area for online text submission assignment
  */
-define('ASSIGN_FILEAREA_SUBMISSION_ONLINETEXT', 'submissions_onlinetext');
+define('ASSIGNSUBMISSION_ONLINETEXT_FILEAREA', 'submissions_onlinetext');
 
 /**
  * library class for onlinetext submission plugin extending submission plugin base class
@@ -91,7 +91,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         }
 
 
-        $data = file_prepare_standard_editor($data, 'onlinetext', $editoroptions, $this->assignment->get_context(), 'assignsubmission_onlinetext', ASSIGN_FILEAREA_SUBMISSION_ONLINETEXT, $submissionid);
+        $data = file_prepare_standard_editor($data, 'onlinetext', $editoroptions, $this->assignment->get_context(), 'assignsubmission_onlinetext', ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $submissionid);
         $mform->addElement('editor', 'onlinetext_editor', '', null, $editoroptions);
         return true;
     }
@@ -123,7 +123,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
         $editoroptions = $this->get_edit_options();
 
-        $data = file_postupdate_standard_editor($data, 'onlinetext', $editoroptions, $this->assignment->get_context(), 'assignsubmission_onlinetext', ASSIGN_FILEAREA_SUBMISSION_ONLINETEXT, $submission->id);
+        $data = file_postupdate_standard_editor($data, 'onlinetext', $editoroptions, $this->assignment->get_context(), 'assignsubmission_onlinetext', ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $submission->id);
 
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
         if ($onlinetextsubmission) {
@@ -231,7 +231,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
             $fs = get_file_storage();
 
-            $fsfiles = $fs->get_area_files($this->assignment->get_context()->id, 'assignsubmission_onlinetext', ASSIGN_FILEAREA_SUBMISSION_ONLINETEXT, $submission->id, "timemodified", false);
+            $fsfiles = $fs->get_area_files($this->assignment->get_context()->id, 'assignsubmission_onlinetext', ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $submission->id, "timemodified", false);
 
             foreach ($fsfiles as $file) {
                 $files[$file->get_filename()] = $file;
@@ -256,7 +256,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         if ($onlinetextsubmission) {
 
             // render for portfolio API
-            $result .= $this->assignment->render_editor_content(ASSIGN_FILEAREA_SUBMISSION_ONLINETEXT, $onlinetextsubmission->submission, $this->get_type(), 'onlinetext', 'assignsubmission_onlinetext');
+            $result .= $this->assignment->render_editor_content(ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $onlinetextsubmission->submission, $this->get_type(), 'onlinetext', 'assignsubmission_onlinetext');
 
         }
 
@@ -310,6 +310,15 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
         $onlinetextsubmission->submission = $submission->id;
         $onlinetextsubmission->assignment = $this->assignment->get_instance()->id;
+
+        if ($onlinetextsubmission->onlinetext === null) {
+            $onlinetextsubmission->onlinetext = '';
+        }
+
+        if ($onlinetextsubmission->onlineformat === null) {
+            $onlinetextsubmission->onlineformat = editors_get_preferred_format();
+        }
+
         if (!$DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission) > 0) {
             $log .= get_string('couldnotconvertsubmission', 'mod_assign', $submission->userid);
             return false;
@@ -323,7 +332,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                                                         // New file area
                                                         $this->assignment->get_context()->id,
                                                         'assignsubmission_onlinetext',
-                                                        ASSIGN_FILEAREA_SUBMISSION_ONLINETEXT,
+                                                        ASSIGNSUBMISSION_ONLINETEXT_FILEAREA,
                                                         $submission->id);
         return true;
     }
@@ -374,7 +383,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
      * @return array - An array of fileareas (keys) and descriptions (values)
      */
     public function get_file_areas() {
-        return array(ASSIGN_FILEAREA_SUBMISSION_ONLINETEXT=>$this->get_name());
+        return array(ASSIGNSUBMISSION_ONLINETEXT_FILEAREA=>$this->get_name());
     }
 
 }

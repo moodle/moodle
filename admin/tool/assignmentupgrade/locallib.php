@@ -131,16 +131,11 @@ function tool_assignmentupgrade_any_upgradable_assignments() {
             $upgradabletypes[] = $shorttype;
         }
     }
-    $paramlist = '?';
-    foreach ($upgradabletypes as $index => $upgradabletype) {
-        if ($index > 0) {
-            $paramlist .= ', ?';
-        }
-    }
+    list($sql, $params) = $DB->get_in_or_equal($upgradabletypes);
 
-    $record = $DB->get_record_sql('SELECT COUNT(id) as count from {assignment} where assignmenttype in (' . $paramlist . ')', $upgradabletypes);
+    $count = $DB->count_records_sql('SELECT COUNT(id) from {assignment} where assignmenttype ' . $sql, $params);
 
-    return $record->count > 0;
+    return $count > 0;
 }
 
 /**
@@ -161,14 +156,10 @@ function tool_assignmentupgrade_load_all_upgradable_assignmentids() {
             $upgradabletypes[] = $shorttype;
         }
     }
-    $paramlist = '?';
-    foreach ($upgradabletypes as $index => $upgradabletype) {
-        if ($index > 0) {
-            $paramlist .= ', ?';
-        }
-    }
 
-    $records = $DB->get_records_sql('SELECT id from {assignment} where assignmenttype in (' . $paramlist . ')', $upgradabletypes);
+    list($sql, $params) = $DB->get_in_or_equal($upgradabletypes);
+
+    $records = $DB->get_records_sql('SELECT id from {assignment} where assignmenttype ' . $sql, $params);
     $ids = array();
     foreach ($records as $record) {
         $ids[] = $record->id;

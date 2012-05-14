@@ -71,44 +71,32 @@ function iplookup_find_location($ip) {
     } else {
         require_once($CFG->libdir.'/filelib.php');
 
-        $ipdata = download_file_content('http://netgeo.caida.org/perl/netgeo.cgi?target='.$ip);
-        if ($ipdata === false) {
-            $info['error'] = get_string('cannotnetgeo', 'error');
+        $ipdata = download_file_content('http://www.geoplugin.net/json.gp?ip='.$ip);
+        if ($ipdata) {
+            $ipdata = preg_replace('/^geoPlugin\((.*)\)\s*$/s', '$1', $ipdata);
+            $ipdata = json_decode($ipdata, true);
+        }
+        if (!is_array($ipdata)) {
+            $info['error'] = get_string('cannotgeoplugin', 'error');
             return $info;
         }
-        $matches = null;
-        if (!preg_match('/LAT:\s*(-?\d+\.\d+)/s', $ipdata, $matches)) {
-            $info['error'] = get_string('iplookupfailed', 'error', $ip);
-            return $info;
-        }
-        $info['latitude'] = (float)$matches[1];
-        if (!preg_match('/LONG:\s*(-?\d+\.\d+)/s', $ipdata, $matches)) {
-            $info['error'] = get_string('iplookupfailed', 'error', $ip);
-            return $info;
-        }
-        $info['longitude'] = (float)$matches[1];
+        $info['latitude']  = (float)$ipdata['geoplugin_latitude'];
+        $info['longitude'] = (float)$ipdata['geoplugin_longitude'];
+        $info['city']      = s($ipdata['geoplugin_city']);
 
-        if (preg_match('/CITY:\s*([^<]*)/', $ipdata, $matches)) {
-            if (!empty($matches[1])) {
-                $info['city'] = s($matches[1]);
-                $info['title'][] = $info['city'];
-            }
+        $countrycode = $ipdata['geoplugin_countryCode'];
+        $countries = get_string_manager()->get_list_of_countries(true);
+        if (isset($countries[$countrycode])) {
+            // prefer our localized country names
+            $info['country'] = $countries[$countrycode];
+        } else {
+            $info['country'] = s($ipdata['geoplugin_countryName']);
         }
 
-        if (preg_match('/COUNTRY:\s*([^<]*)/', $ipdata, $matches)) {
-            if (!empty($matches[1])) {
-                $countrycode = $matches[1];
-                $countries = get_string_manager()->get_list_of_countries(true);
-                if (isset($countries[$countrycode])) {
-                    // prefer our localized country names
-                    $info['country'] = $countries[$countrycode];
-                } else {
-                    $info['country'] = $countrycode;
-                }
-                $info['title'][] = $info['country'];
-            }
-        }
-        $info['note'] = get_string('iplookupnetgeonote', 'admin');
+        $info['note'] = get_string('iplookupgeoplugin', 'admin');
+
+        $info['title'][] = $info['country'];
+        $info['title'][] = $info['city'];
 
         return $info;
     }

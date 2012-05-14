@@ -2,6 +2,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
 
     var CSS = {
         ACTIVITY : 'activity',
+        COMMANDSPAN : 'span.commands',
         CONTENT : 'content',
         COURSECONTENT : 'course-content',
         EDITINGMOVE : 'editing_move',
@@ -59,35 +60,40 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                 if (sectionid > 0) {
                     // Remove move icons
                     var movedown = sectionnode.one('.'+CSS.RIGHT+' a.'+CSS.MOVEDOWN);
-                    if (movedown) {
-                        movedown.remove();
-                    }
                     var moveup = sectionnode.one('.'+CSS.RIGHT+' a.'+CSS.MOVEUP);
-                    if (moveup) {
-                        moveup.remove();
-                    }
+
                     // Add dragger icon
                     var title = M.util.get_string('movesection', 'moodle', sectionid);
                     var cssleft = sectionnode.one('.'+CSS.LEFT);
-                    cssleft.setStyle('cursor', 'move');
-                    cssleft.appendChild(Y.Node.create('<br />'));
-                    cssleft.appendChild(this.get_drag_handle(title, CSS.SECTIONHANDLE));
 
-                    // Make each li element in the lists of sections draggable
-                    var dd = new Y.DD.Drag({
-                        node: sectionnode,
-                        // Make each li a Drop target too
-                        groups: this.groups,
-                        target: true,
-                        handles: ['.'+CSS.LEFT]
-                    }).plug(Y.Plugin.DDProxy, {
-                        // Don't move the node at the end of the drag
-                        moveOnEnd: false
-                    }).plug(Y.Plugin.DDConstrained, {
-                        // Keep it inside the .course-content
-                        constrain: '#'+CSS.PAGECONTENT,
-                        stickY: true
-                    });
+                    if ((movedown || moveup) && cssleft) {
+                        cssleft.setStyle('cursor', 'move');
+                        cssleft.appendChild(Y.Node.create('<br />'));
+                        cssleft.appendChild(this.get_drag_handle(title, CSS.SECTIONHANDLE));
+
+                        if (moveup) {
+                            moveup.remove();
+                        }
+                        if (movedown) {
+                            movedown.remove();
+                        }
+
+                        // Make each li element in the lists of sections draggable
+                        var dd = new Y.DD.Drag({
+                            node: sectionnode,
+                            // Make each li a Drop target too
+                            groups: this.groups,
+                            target: true,
+                            handles: ['.'+CSS.LEFT]
+                        }).plug(Y.Plugin.DDProxy, {
+                            // Don't move the node at the end of the drag
+                            moveOnEnd: false
+                        }).plug(Y.Plugin.DDConstrained, {
+                            // Keep it inside the .course-content
+                            constrain: '#'+CSS.PAGECONTENT,
+                            stickY: true
+                        });
+                    }
                 }
             }, this);
         },
@@ -313,6 +319,9 @@ YUI.add('moodle-course-dragdrop', function(Y) {
 
             var sectionselector = M.course.format.get_section_selector(Y);
 
+            // Add spinner if it not there
+            var spinner = M.util.add_spinner(Y, dragnode.one(CSS.COMMANDSPAN));
+
             var params = {};
 
             // Handle any variables which we must pass back through to
@@ -342,13 +351,18 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                 on: {
                     start : function(tid) {
                         this.lock_drag_handle(drag, CSS.EDITINGMOVE);
+                        spinner.show();
                     },
                     success: function(tid, response) {
                         this.unlock_drag_handle(drag, CSS.EDITINGMOVE);
+                        window.setTimeout(function(e) {
+                            spinner.hide();
+                        }, 250);
                     },
                     failure: function(tid, response) {
                         this.ajax_failure(response);
                         this.unlock_drag_handle(drag, CSS.SECTIONHANDLE);
+                        spinner.hide();
                         // TODO: revert nodes location
                     }
                 },

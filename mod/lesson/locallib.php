@@ -609,37 +609,19 @@ function lesson_get_media_html($lesson, $context) {
 
     $extension = resourcelib_get_extension($url->out(false));
 
+    $mediarenderer = $PAGE->get_renderer('core', 'media');
+    $embedoptions = array(
+        core_media::OPTION_TRUSTED => true,
+        core_media::OPTION_BLOCK => true
+    );
+
     // find the correct type and print it out
     if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
         $code = resourcelib_embed_image($url, $title);
 
-    } else if ($mimetype == 'audio/mp3') {
-        // MP3 audio file
-        $code = resourcelib_embed_mp3($url, $title, $clicktoopen);
-
-    } else if ($mimetype == 'video/x-flv' or $extension === 'f4v') {
-        // Flash video file
-        $code = resourcelib_embed_flashvideo($url, $title, $clicktoopen);
-
-    } else if ($mimetype == 'application/x-shockwave-flash') {
-        // Flash file
-        $code = resourcelib_embed_flash($url, $title, $clicktoopen);
-
-    } else if (substr($mimetype, 0, 10) == 'video/x-ms') {
-        // Windows Media Player file
-        $code = resourcelib_embed_mediaplayer($url, $title, $clicktoopen);
-
-    } else if ($mimetype == 'video/quicktime') {
-        // Quicktime file
-        $code = resourcelib_embed_quicktime($url, $title, $clicktoopen);
-
-    } else if ($mimetype == 'video/mpeg') {
-        // Mpeg file
-        $code = resourcelib_embed_mpeg($url, $title, $clicktoopen);
-
-    } else if ($mimetype == 'audio/x-pn-realaudio-plugin') {
-        // RealMedia file
-        $code = resourcelib_embed_real($url, $title, $clicktoopen);
+    } else if ($mediarenderer->can_embed_url($url, $embedoptions)) {
+        // Media (audio/video) file.
+        $code = $mediarenderer->embed_url($url, $title, 0, 0, $embedoptions);
 
     } else {
         // anything else - just try object tag enlarged as much as possible

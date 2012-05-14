@@ -256,7 +256,7 @@ $string['configmycoursesperpage'] = 'Maximum number of courses to display in any
 $string['configmymoodleredirect'] = 'This setting forces redirects to /my on login for non-admins and replaces the top level site navigation with /my';
 $string['configmypagelocked'] = 'This setting prevents the default page from being edited by any non-admins';
 $string['confignavcourselimit'] = 'Limits the number of courses shown to the user when they are either not logged in or are not enrolled in any courses.';
-$string['confignavshowallcourses'] = 'Setting this ensures that all courses on the site are shown in the navigation at all times.';
+$string['confignavshowallcourses'] = 'If enabled users will see courses they are enrolled in both within the My Courses branch and the course structure. When disabled users with enrolments will only see the My Courses branch of the navigaiton.';
 $string['confignavshowcategories'] = 'Show course categories in the navigation bar and navigation blocks. This does not occur with courses the user is currently enrolled in, they will still be listed under mycourses without categories.';
 $string['confignotifyloginfailures'] = 'If login failures have been recorded, email notifications can be sent out.  Who should see these notifications?';
 $string['confignotifyloginthreshold'] = 'If notifications about failed logins are active, how many failed login attempts by one user or one IP address is it worth notifying about?';
@@ -464,8 +464,6 @@ $string['emptysettingvalue'] = 'Empty';
 $string['enableajax'] = 'Enable AJAX';
 $string['enablecalendarexport'] = 'Enable calendar export';
 $string['enablecomments'] = 'Enable comments';
-$string['enablecourseajax'] = 'Enable AJAX course editing';
-$string['enablecourseajax_desc'] = 'Allow AJAX when editing main course pages. Note that the course format and the theme must support AJAX editing and the user has to enable AJAX in their profiles, too.';
 $string['enablecourserequests'] = 'Enable course requests';
 $string['enablecssoptimiser'] = 'Enable CSS optimiser';
 $string['enablecssoptimiser_desc'] = 'When enabled CSS will be run through an optimisation process before being cached. The optimiser processes the CSS removing duplicate rules and styles, as well as white space removeable and reformatting. Please note turning this on at the same time as theme designer mode is aweful for performance but will help theme designers create optimised CSS.';
@@ -587,11 +585,11 @@ $string['ipblocked'] = 'This site is not available currently.';
 $string['ipblocker'] = 'IP blocker';
 $string['ipblockersyntax'] = 'Put every entry on one line. Valid entries are either full IP address (such as <b>192.168.10.1</b>) which matches a single host; or partial address (such as <b>192.168.</b>) which matches any address starting with those numbers; or CIDR notation (such as <b>231.54.211.0/20</b>); or a range of IP addresses (such as <b>231.3.56.10-20</b>) where the range applies to the last part of the address. Text domain names (like \'example.com\') are not supported. Blank lines are ignored.';
 $string['iplookup'] = 'IP address lookup';
+$string['iplookupgeoplugin'] = '<a href="http://www.geoplugin.com">geoPlugin</a> service is currently being used to look up geographical information. For more accurate results we recommend installing a local copy of the MaxMind GeoLite database.';
 $string['iplookupinfo'] = 'By default Moodle uses the free online NetGeo (The Internet Geographic Database) server to lookup location of IP addresses, unfortunately this database is not maintained anymore and may return <em>wildly incorrect</em> data.
 It is recommended to install local copy of free GeoLite City database from MaxMind.<br />
 IP address location is displayed on simple map or using Google Maps. Please note that you need to have a Google account and apply for free Google Maps API key to enable interactive maps.';
 $string['iplookupmaxmindnote'] = 'This product includes GeoLite data created by MaxMind, available from <a href="http://www.maxmind.com/">http://www.maxmind.com/</a>.';
-$string['iplookupnetgeonote'] = 'The NetGeo server is currently being used to look up geographical information. For more accurate results we recommend installing a local copy of the MaxMind GeoLite database.';
 $string['keeptagnamecase'] = 'Keep tag name casing';
 $string['lang'] = 'Default language';
 $string['langcache'] = 'Cache language menu';

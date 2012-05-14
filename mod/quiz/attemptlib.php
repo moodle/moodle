@@ -72,7 +72,7 @@ class quiz {
     protected $accessmanager = null;
     protected $ispreviewuser = null;
 
-    // Constructor =========================================================================
+    // Constructor =============================================================
     /**
      * Constructor, assuming we already have the necessary data loaded.
      *
@@ -111,7 +111,7 @@ class quiz {
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
-        // Update quiz with override information
+        // Update quiz with override information.
         $quiz = quiz_update_effective_access($quiz, $userid);
 
         return new quiz($quiz, $cm, $course);
@@ -126,7 +126,7 @@ class quiz {
         return new quiz_attempt($attemptdata, $this->quiz, $this->cm, $this->course);
     }
 
-    // Functions for loading more data =====================================================
+    // Functions for loading more data =========================================
 
     /**
      * Load just basic information about all the questions in this quiz.
@@ -160,7 +160,7 @@ class quiz {
         get_question_options($questionstoprocess);
     }
 
-    // Simple getters ======================================================================
+    // Simple getters ==========================================================
     /** @return int the course id. */
     public function get_courseid() {
         return $this->course->id;
@@ -282,7 +282,7 @@ class quiz {
         return require_capability($capability, $this->context, $userid, $doanything);
     }
 
-    // URLs related to this attempt ========================================================
+    // URLs related to this attempt ============================================
     /**
      * @return string the URL of this quiz's view page.
      */
@@ -340,7 +340,7 @@ class quiz {
         return new moodle_url('/mod/quiz/summary.php', array('attempt' => $attemptid));
     }
 
-    // Bits of content =====================================================================
+    // Bits of content =========================================================
 
     /**
      * @param bool $unfinished whether there is currently an unfinished attempt active.
@@ -405,7 +405,7 @@ class quiz {
         return '';
     }
 
-    // Private methods =====================================================================
+    // Private methods =========================================================
     /**
      * Check that the definition of a particular question is loaded, and if not throw an exception.
      * @param $id a questionid.
@@ -437,16 +437,16 @@ class quiz_attempt {
     /** @var string to identify the abandoned state. */
     const ABANDONED   = 'abandoned';
 
-    // Basic data
+    // Basic data.
     protected $quizobj;
     protected $attempt;
 
     // More details of what happened for each question.
     protected $quba;
-    protected $pagelayout; // array page no => array of numbers on the page in order.
+    protected $pagelayout; // Array page no => array of numbers on the page in order.
     protected $reviewoptions = null;
 
-    // Constructor =========================================================================
+    // Constructor =============================================================
     /**
      * Constructor assuming we already have the necessary data loaded.
      *
@@ -482,7 +482,7 @@ class quiz_attempt {
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
-        // Update quiz with override information
+        // Update quiz with override information.
         $quiz = quiz_update_effective_access($quiz, $attempt->userid);
 
         return new quiz_attempt($attempt, $quiz, $cm, $course);
@@ -555,7 +555,7 @@ class quiz_attempt {
         }
     }
 
-    // Simple getters ======================================================================
+    // Simple getters ==========================================================
     public function get_quiz() {
         return $this->quizobj->get_quiz();
     }
@@ -998,7 +998,7 @@ class quiz_attempt {
      * student should next do something.
      * @return int timestamp by which the student needs to do something.
      */
-    function get_due_date() {
+    public function get_due_date() {
         $deadlines = array();
         if ($this->quizobj->get_quiz()->timelimit) {
             $deadlines[] = $this->attempt->timestart + $this->quizobj->get_quiz()->timelimit;
@@ -1024,7 +1024,7 @@ class quiz_attempt {
         }
     }
 
-    // URLs related to this attempt ========================================================
+    // URLs related to this attempt ============================================
     /**
      * @return string quiz view url.
      */
@@ -1086,7 +1086,7 @@ class quiz_attempt {
         return $this->page_and_question_url('review', $slot, $page, $showall, $thispage);
     }
 
-    // Bits of content =====================================================================
+    // Bits of content =========================================================
 
     /**
      * If $reviewoptions->attempt is false, meaning that students can't review this
@@ -1259,7 +1259,7 @@ class quiz_attempt {
         }
 
         // If the attempt is already overdue, look to see if it should be abandoned ...
-        if ($this->attempt->state == quiz_attempt::OVERDUE) {
+        if ($this->attempt->state == self::OVERDUE) {
             $timeoverdue = -$timeleft;
             if ($timeoverdue > $this->quizobj->get_quiz()->graceperiod) {
                 $this->process_abandon($timestamp, $studentisonline);
@@ -1268,7 +1268,7 @@ class quiz_attempt {
             return; // ... and we are done.
         }
 
-        if ($this->attempt->state != quiz_attempt::IN_PROGRESS) {
+        if ($this->attempt->state != self::IN_PROGRESS) {
             return; // Attempt is already in a final state.
         }
 
@@ -1313,7 +1313,7 @@ class quiz_attempt {
             $DB->update_record('quiz_attempts', $this->attempt);
         }
 
-        if (!$this->is_preview() && $this->attempt->state == quiz_attempt::FINISHED) {
+        if (!$this->is_preview() && $this->attempt->state == self::FINISHED) {
             quiz_save_best_grade($this->get_quiz(), $this->get_userid());
         }
 
@@ -1352,7 +1352,7 @@ class quiz_attempt {
         if (!$this->is_preview()) {
             quiz_save_best_grade($this->get_quiz(), $this->attempt->userid);
 
-            // Trigger event
+            // Trigger event.
             $this->fire_state_transition_event('quiz_attempt_submitted', $timestamp);
 
             // Tell any access rules that care that the attempt is over.
@@ -1406,7 +1406,7 @@ class quiz_attempt {
     protected function fire_state_transition_event($event, $timestamp) {
         global $USER;
 
-        // Trigger event
+        // Trigger event.
         $eventdata = new stdClass();
         $eventdata->component   = 'mod_quiz';
         $eventdata->attemptid   = $this->attempt->id;
@@ -1451,7 +1451,7 @@ class quiz_attempt {
                 get_string('gradingattempt', 'quiz_grading', $a));
     }
 
-    // Private methods =====================================================================
+    // Private methods =========================================================
 
     /**
      * Get a URL for a particular question on a particular page of the quiz.
@@ -1468,7 +1468,7 @@ class quiz_attempt {
      * @return The requested URL.
      */
     protected function page_and_question_url($script, $slot, $page, $showall, $thispage) {
-        // Fix up $page
+        // Fix up $page.
         if ($page == -1) {
             if (!is_null($slot) && !$showall) {
                 $page = $this->quba->get_question($slot)->_page;

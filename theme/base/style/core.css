@@ -765,8 +765,18 @@ body.tag .managelink {padding: 5px;}
 .dir-rtl .felement.feditor select {margin-right:18.75%;margin-left:auto;}
 .dir-rtl .mform .fitem .felement {margin-right: 16%;margin-left:auto;}
 
-/* Resourcelib mp3 player size: only width could be changed here, height hardcoded in JS */
-.resourcecontent .resourcemediaplugin_mp3 object {height:25px; width: 600px}
+/* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
+.resourcecontent .mediaplugin_mp3 object {height:25px; width: 600px}
+.resourcecontent audio.mediaplugin_html5audio {width: 600px}
+
+/* Audio player size in 'inline' mode (can only change width, as above) */
+.mediaplugin_mp3 object {height:15px;width:300px}
+audio.mediaplugin_html5audio {width: 300px}
+
+/* TinyMCE moodle media preview frame should not have padding */
+.core_media_preview.pagelayout-embedded #content {padding:0;}
+.core_media_preview.pagelayout-embedded #maincontent {height:0;}
+.core_media_preview.pagelayout-embedded .mediaplugin {margin:0;}
 
 /*
 Fix for SubScript & SuperScript

@@ -101,7 +101,7 @@ class quizaccess_openclosedate extends quiz_access_rule_base {
         }
 
         // Otherwise, return to the time left until the close date, providing
-        // that is less than QUIZ_SHOW_TIME_BEFORE_DEADLINE
+        // that is less than QUIZ_SHOW_TIME_BEFORE_DEADLINE.
         if ($this->quiz->timeclose) {
             $timeleft = $this->quiz->timeclose - $timenow;
             if ($timeleft < QUIZ_SHOW_TIME_BEFORE_DEADLINE) {

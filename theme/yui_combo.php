@@ -33,10 +33,13 @@ define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 
 // get special url parameters
-if (!$parts = combo_params()) {
+
+list($parts, $slasharguments) = combo_params();
+if (!$parts) {
     combo_not_found();
 }
 
+$etag = sha1($parts);
 $parts = trim($parts, '&');
 
 // find out what we are serving - only one type per request
@@ -53,16 +56,18 @@ if (substr($parts, -3) === '.js') {
 // If-Modified-Since header, we can send back a 304 Not Modified since the
 // content never changes (the rev number is increased any time the content changes)
 if (strpos($parts, '/-1/') === false and (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))) {
-    $lifetime = 60*60*24*30; // 30 days
+    $lifetime = 60*60*24*360; // 1 year, we do not change YUI versions often, there are a few custom yui modules
     header('HTTP/1.1 304 Not Modified');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
-    header('Cache-Control: max-age='.$lifetime);
+    header('Cache-Control: public, max-age='.$lifetime);
     header('Content-Type: '.$mimetype);
+    header('Etag: '.$etag);
     die;
 }
 
 $parts = explode('&', $parts);
 $cache = true;
+$lastmodified = 0;
 
 foreach ($parts as $part) {
     if (empty($part)) {
@@ -108,13 +113,20 @@ foreach ($parts as $part) {
         continue;
     }
     $filecontent = file_get_contents($contentfile);
+    $fmodified = filemtime($contentfile);
+    if ($fmodified > $lastmodified) {
+        $lastmodified = $fmodified;
+    }
+
+    $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
+    $sep = ($slasharguments ? '/' : '?file=');
 
     if ($mimetype === 'text/css') {
         if ($version == 'moodle') {
-            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/'.$frankenstyle.'/'.array_shift($bits).'/$1.$2', $filecontent);
+            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php'.$sep.$version.'/'.$frankenstyle.'/'.array_shift($bits).'/$1.$2', $filecontent);
         } else if ($version == 'gallery') {
             // search for all images in gallery module CSS and serve them through the yui_image.php script
-            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/'.$bits[0].'/'.$bits[1].'/$1.$2', $filecontent);
+            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php'.$sep.$version.'/'.$bits[0].'/'.$bits[1].'/$1.$2', $filecontent);
         } else {
             // First we need to remove relative paths to images. These are used by YUI modules to make use of global assets.
             // I've added this as a separate regex so it can be easily removed once
@@ -122,15 +134,19 @@ foreach ($parts as $part) {
             $filecontent = preg_replace('#(\.\./\.\./\.\./\.\./assets/skins/sam/)?([a-z0-9_-]+)\.(png|gif)#', '$2.$3', $filecontent);
 
             // search for all images in yui2 CSS and serve them through the yui_image.php script
-            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/$1.$2', $filecontent);
+            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php'.$sep.$version.'/$1.$2', $filecontent);
         }
     }
 
     $content .= $filecontent;
 }
 
+if ($lastmodified == 0) {
+    $lastmodified = time();
+}
+
 if ($cache) {
-    combo_send_cached($content, $mimetype);
+    combo_send_cached($content, $mimetype, $etag, $lastmodified);
 } else {
     combo_send_uncached($content, $mimetype);
 }
@@ -140,17 +156,20 @@ if ($cache) {
  * Send the JavaScript cached
  * @param string $content
  * @param string $mimetype
+ * @param string $etag
+ * @param int $lastmodified
  */
-function combo_send_cached($content, $mimetype) {
-    $lifetime = 60*60*24*30; // 30 days
+function combo_send_cached($content, $mimetype, $etag, $lastmodified) {
+    $lifetime = 60*60*24*360; // 1 year, we do not change YUI versions often, there are a few custom yui modules
 
     header('Content-Disposition: inline; filename="combo"');
-    header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
     header('Cache-Control: max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
+    header('Etag: '.$etag);
     if (!min_enable_zlib_compression()) {
         header('Content-Length: '.strlen($content));
     }
@@ -190,13 +209,22 @@ function combo_not_found($message = '') {
 }
 
 function combo_params() {
-    // note: buggy or misconfigured IIS does return the query string in REQUEST_URL
-    if (isset($_SERVER['REQUEST_URI']) and strpos($_SERVER['REQUEST_URI'], '?') !== false) {
-        $parts = explode('?', $_SERVER['REQUEST_URI'], 2);
-        return $parts[1];
+    if (isset($_SERVER['QUERY_STRING']) and strpos($_SERVER['QUERY_STRING'], 'file=/') === 0) {
+        // url rewriting
+        $slashargument = substr($_SERVER['QUERY_STRING'], 6);
+        return array($slashargument, true);
 
-    } else if (isset($_SERVER['QUERY_STRING'])) {
-        return $_SERVER['QUERY_STRING'];
+    } else if (isset($_SERVER['REQUEST_URI']) and strpos($_SERVER['REQUEST_URI'], '?') !== false) {
+        $parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+        return array($parts[1], false);
+
+    } else if (isset($_SERVER['QUERY_STRING']) and strpos($_SERVER['QUERY_STRING'], '?') !== false) {
+        // note: buggy or misconfigured IIS does return the query string in REQUEST_URI
+        return array($_SERVER['QUERY_STRING'], false);
+
+    } else if ($slashargument = min_get_slash_argument()) {
+        $slashargument = ltrim($slashargument, '/');
+        return array($slashargument, true);
 
     } else {
         // unsupported server, sorry!

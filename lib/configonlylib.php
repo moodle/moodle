@@ -109,3 +109,39 @@ function min_enable_zlib_compression() {
 
     return true;
 }
+
+/**
+ * Returns the slashargument part of the URL.
+ * Note: ".php" is NOT allowed in slasharguments!
+ *
+ * @return string
+ */
+function min_get_slash_argument() {
+    // Note: This code has to work in the same cases as normal get_slash_argument(),
+    //       but at the same time it may be simpler because we do not have to deal
+    //       with encodings and other tricky stuff.
+
+    $relativepath = '';
+
+    if (!empty($_GET['file']) and strpos($_GET['file'], '/') === 0) {
+        // server is using url rewriting, most probably IIS
+        return $_GET['file'];
+
+    } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
+        if (isset($_SERVER['PATH_INFO']) and $_SERVER['PATH_INFO'] !== '') {
+            $relativepath = urldecode($_SERVER['PATH_INFO']);
+        }
+
+    } else {
+        if (isset($_SERVER['PATH_INFO'])) {
+            $relativepath = $_SERVER['PATH_INFO'];
+        }
+    }
+
+    $matches = null;
+    if (preg_match('|^.+\.php(.*)$|i', $relativepath, $matches)) {
+        $relativepath = $matches[1];
+    }
+
+    return $relativepath;
+}

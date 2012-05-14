@@ -7707,6 +7707,7 @@ function get_core_subsystems() {
             'langconfig'  => NULL,
             'license'     => NULL,
             'mathslib'    => NULL,
+            'media'       => 'media',
             'message'     => 'message',
             'mimetypes'   => NULL,
             'mnet'        => 'mnet',

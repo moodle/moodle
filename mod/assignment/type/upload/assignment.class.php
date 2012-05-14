@@ -600,8 +600,9 @@ class assignment_upload extends assignment_base {
             $eventdata->courseid     = $this->course->id;
             $eventdata->userid       = $USER->id;
             if ($files) {
-                $eventdata->files        = $files;
+                $eventdata->files        = $files; // This is depreceated - please use pathnamehashes instead!
             }
+            $eventdata->pathnamehashes = array_keys($files);
             events_trigger('assessable_file_uploaded', $eventdata);
             $returnurl  = new moodle_url('/mod/assignment/view.php', array('id'=>$this->cm->id));
             redirect($returnurl);

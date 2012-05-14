@@ -409,8 +409,11 @@ function install_cli_database(array $options, $interactive) {
 
     $CFG->version = '';
     $CFG->release = '';
+    $CFG->branch = '';
+
     $version = null;
     $release = null;
+    $branch = null;
 
     // read $version and $release
     require($CFG->dirroot.'/version.php');
@@ -450,6 +453,7 @@ function install_cli_database(array $options, $interactive) {
     // install core
     install_core($version, true);
     set_config('release', $release);
+    set_config('branch', $branch);
 
     // install all plugins types, local, etc.
     upgrade_noncore(true);

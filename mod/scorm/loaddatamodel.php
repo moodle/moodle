@@ -14,49 +14,44 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This page loads the correct JS file based on package type
+ *
+ * @package mod_scorm
+ * @copyright 1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once("../../config.php");
 require_once('locallib.php');
 
-$id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
-$a = optional_param('a', '', PARAM_INT);         // scorm ID
-$scoid = required_param('scoid', PARAM_INT);     // sco ID
-$mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
-$attempt = required_param('attempt', PARAM_INT); // new attempt
+$id = optional_param('id', 0, PARAM_INT);       // Course Module ID, or
+$a = optional_param('a', 0, PARAM_INT);         // scorm ID.
+$scoid = required_param('scoid', PARAM_INT);     // sco ID.
+$mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode.
+$attempt = required_param('attempt', PARAM_INT); // new attempt.
 
 if (!empty($id)) {
-    if (! $cm = get_coursemodule_from_id('scorm', $id)) {
-        print_error('invalidcoursemodule');
-    }
-    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-        print_error('coursemisconf');
-    }
-    if (! $scorm = $DB->get_record("scorm", array("id"=>$cm->instance))) {
-        print_error('invalidcoursemodule');
-    }
+    $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
+    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $scorm = $DB->get_record('scorm', array('id'=>$cm->instance), '*', MUST_EXIST);
 } else if (!empty($a)) {
-    if (! $scorm = $DB->get_record("scorm", array("id"=>$a))) {
-        print_error('invalidcoursemodule');
-    }
-    if (! $course = $DB->get_record("course", array("id"=>$scorm->course))) {
-        print_error('coursemisconf');
-    }
-    if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
-        print_error('invalidcoursemodule');
-    }
+    $scorm = $DB->get_record('scorm', array('id'=>$a), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id'=>$scorm->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id, false, MUST_EXIST);
 } else {
     print_error('missingparameter');
 }
 
-$url = new moodle_url('/mod/scorm/loaddatamodel.php', array('scoid'=>$scoid, 'id'=>$cm->id, 'attempt'=>$attempt));
-if ($mode !== '') {
-    $url->param('mode', $mode);
-}
-$PAGE->set_url($url);
+$PAGE->set_url('/mod/scorm/loaddatamodel.php', array('scoid'=>$scoid, 'id'=>$cm->id));
 
 require_login($course, false, $cm);
 
+$userdata = new stdClass();
 if ($usertrack = scorm_get_tracks($scoid, $USER->id, $attempt)) {
-    if ((isset($usertrack->{'cmi.exit'}) && ($usertrack->{'cmi.exit'} != 'time-out')) || (!scorm_version_check($scorm->version, SCORM_13))) {
+    // According to SCORM 2004 spec(RTE V1, 4.2.8), only cmi.exit==suspend should allow previous datamodel elements on re-launch.
+    if (!scorm_version_check($scorm->version, SCORM_13) ||
+        (isset($usertrack->{'cmi.exit'}) && ($usertrack->{'cmi.exit'} == 'suspend'))) {
         foreach ($usertrack as $key => $value) {
             $userdata->$key = addslashes_js($value);
         }
@@ -71,7 +66,7 @@ if ($usertrack = scorm_get_tracks($scoid, $USER->id, $attempt)) {
 $userdata->student_id = addslashes_js($USER->username);
 $userdata->student_name = addslashes_js($USER->lastname .', '. $USER->firstname);
 $userdata->mode = 'normal';
-if (isset($mode)) {
+if (!empty($mode)) {
     $userdata->mode = $mode;
 }
 if ($userdata->mode == 'normal') {
@@ -89,18 +84,22 @@ if ($scodatas = scorm_get_sco($scoid, SCO_DATA)) {
 if (!$sco = scorm_get_sco($scoid)) {
     print_error('cannotfindsco', 'scorm');
 }
+if (scorm_version_check($scorm->version, SCORM_13)) {
+    $userdata->{'cmi.scaled_passing_score'} = $DB->get_field('scorm_seq_objective', 'minnormalizedmeasure', array('scoid'=>$scoid));
+}
 
 header('Content-Type: text/javascript; charset=UTF-8');
 
-$scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
+$scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe.
 if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php')) {
-    include($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php');
+    include_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php');
 } else {
-    include($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.js.php');
+    include_once($CFG->dirroot.'/mod/scorm/datamodels/scorm_12.js.php');
 }
-// set the start time of this SCO
+// Set the start time of this SCO.
 scorm_insert_track($USER->id, $scorm->id, $scoid, $attempt, 'x.start.time', time());
 ?>
+
 
 var errorCode = "0";
 function underscore(str) {

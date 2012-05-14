@@ -432,15 +432,16 @@ class phpunit_util {
     public static function reset_database() {
         global $DB;
 
+        if (!is_null(self::$lastdbwrites) and self::$lastdbwrites == $DB->perf_get_writes()) {
+            return false;
+        }
+
         $tables = $DB->get_tables(false);
         if (!$tables or empty($tables['config'])) {
             // not installed yet
             return false;
         }
 
-        if (!is_null(self::$lastdbwrites) and self::$lastdbwrites == $DB->perf_get_writes()) {
-            return false;
-        }
         if (!$data = self::get_tabledata()) {
             // not initialised yet
             return false;
