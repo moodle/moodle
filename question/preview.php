@@ -132,7 +132,7 @@ $optionsform->set_data($options);
 
 // Process change of settings, if that was requested.
 if ($newoptions = $optionsform->get_submitted_data()) {
-    // Set user preferences
+    // Set user preferences.
     $options->save_user_preview_options($newoptions);
     if (!isset($newoptions->variant)) {
         $newoptions->variant = $options->variant;
@@ -205,19 +205,19 @@ if ($question->length) {
 } else {
     $displaynumber = 'i';
 }
-$restartdisabled = '';
-$finishdisabled = '';
-$filldisabled = '';
+$restartdisabled = array();
+$finishdisabled = array();
+$filldisabled = array();
 if ($quba->get_question_state($slot)->is_finished()) {
-    $finishdisabled = ' disabled="disabled"';
-    $filldisabled = ' disabled="disabled"';
+    $finishdisabled = array('disabled' => 'disabled');
+    $filldisabled = array('disabled' => 'disabled');
 }
 // If question type cannot give us a correct response, disable this button.
 if (is_null($quba->get_correct_response($slot))) {
-    $filldisabled = ' disabled="disabled"';
+    $filldisabled = array('disabled' => 'disabled');
 }
 if (!$previewid) {
-    $restartdisabled = ' disabled="disabled"';
+    $restartdisabled = array('disabled' => 'disabled');
 }
 
 // Prepare technical info to be output.
@@ -230,7 +230,7 @@ $technical[] = get_string('technicalinfoquestionsummary', 'question', s($qa->get
 $technical[] = get_string('technicalinforightsummary',    'question', s($qa->get_right_answer_summary()));
 $technical[] = get_string('technicalinfostate',           'question', '' . $qa->get_state());
 
-// Output
+// Start output.
 $title = get_string('previewquestion', 'question', format_string($question->name));
 $headtags = question_engine::initialise_js() . $quba->render_question_head_html($slot);
 $PAGE->set_title($title);
@@ -238,35 +238,35 @@ $PAGE->set_heading($title);
 echo $OUTPUT->header();
 
 // Start the question form.
-echo '<form method="post" action="' . $actionurl .
-        '" enctype="multipart/form-data" id="responseform">', "\n";
-echo '<div>';
-echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />', "\n";
-echo '<input type="hidden" name="slots" value="' . $slot . '" />', "\n";
-echo '</div>';
+echo html_writer::start_tag('form', array('method' => 'post', 'action' => $actionurl,
+        'enctype' => 'multipart/form-data', 'id' => 'responseform'));
+echo html_writer::start_tag('div');
+echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
+echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'slots', 'value' => $slot));
+echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'scrollpos', 'value' => '', 'id' => 'scrollpos'));
+echo html_writer::end_tag('div');
 
 // Output the question.
 echo $quba->render_question($slot, $options, $displaynumber);
 
 // Finish the question form.
-echo '<div id="previewcontrols" class="controls">';
-echo '<input type="submit" name="restart"' . $restartdisabled .
-        ' value="' . get_string('restart', 'question') . '" />', "\n";
-echo '<input type="submit" name="save"' . $finishdisabled .
-        ' value="' . get_string('save', 'question') . '" />', "\n";
-echo '<input type="submit" name="fill"' . $filldisabled .
-        ' value="' . get_string('fillincorrect', 'question') . '" />', "\n";
-echo '<input type="submit" name="finish"' . $finishdisabled .
-        ' value="' . get_string('submitandfinish', 'question') . '" />', "\n";
-echo '<input type="hidden" name="scrollpos" id="scrollpos" value="" />';
-echo '</div>';
-echo '</form>';
+echo html_writer::start_tag('div', array('id' => 'previewcontrols', 'class' => 'controls'));
+echo html_writer::empty_tag('input', $restartdisabled + array('type' => 'submit',
+        'name' => 'restart', 'value' => get_string('restart', 'question')));
+echo html_writer::empty_tag('input', $finishdisabled  + array('type' => 'submit',
+        'name' => 'save',    'value' => get_string('save', 'question')));
+echo html_writer::empty_tag('input', $filldisabled    + array('type' => 'submit',
+        'name' => 'fill',    'value' => get_string('fillincorrect', 'question')));
+echo html_writer::empty_tag('input', $finishdisabled  + array('type' => 'submit',
+        'name' => 'finish',  'value' => get_string('submitandfinish', 'question')));
+echo html_writer::end_tag('div');
+echo html_writer::end_tag('form');
 
 // Output the technical info.
 print_collapsible_region_start('', 'techinfo', get_string('technicalinfo', 'question'),
         'core_question_preview_techinfo_collapsed', true);
 foreach ($technical as $info) {
-    echo '<p class="notifytiny">' . $info . '</p>';
+    echo html_writer::tag('p', $info, array('class' => 'notifytiny'));
 }
 print_collapsible_region_end();
 
