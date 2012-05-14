@@ -48,15 +48,13 @@ class repository_equella extends repository {
     public function get_listing($path = null, $page = null) {
         global $CFG, $COURSE;
         $callbackurl = $CFG->wwwroot . '/repository/equella/callback.php?repo_id=' . $this->id;
-        $cancelurl = $callbackurl;
         $mimetypesstr = implode(',', $this->mimetypes); 
         $url = $this->get_option('equella_url')
                 . '?method=lms'
                 . '&returnurl='.urlencode($callbackurl)
                 . '&returnprefix=tle'
                 . '&template=standard'
-                . '&token='.urlencode($this->getssotoken('read'))
-                . '&cancelurl='.urlencode($cancelurl)
+                . '&token='.urlencode($this->getssotoken('write'))
                 . '&courseId='.urlencode($COURSE->id)
                 . '&action='.urlencode($this->get_option('equella_action'))
                 . '&forcePost=true'
@@ -108,8 +106,7 @@ class repository_equella extends repository {
     public function instance_config_form($mform) {
         $mform->addElement('text', 'equella_url', get_string('equellaurl', 'repository_equella'));
         $mform->addElement('text', 'equella_action', get_string('equellaaction', 'repository_equella'));
-        $mform->setDefault('equella_action', 'selectOrAdd');
-        $mform->addElement('text', 'equella_admin_username', get_string('adminusername', 'repository_equella'));
+        $mform->setDefault('equella_action', 'searchThin');
         $mform->addElement('text', 'equella_options', get_string('equellaoptions', 'repository_equella'));
         $choices = array(
             'none' => get_string('restrictionnone', 'repository_equella'),
@@ -118,19 +115,15 @@ class repository_equella extends repository {
         );
         $mform->addElement('select', 'equella_select_restriction', get_string('selectrestriction', 'repository_equella'), $choices);
 
-        $mform->addElement('header', '', get_string('defaultrolesettings', 'repository_equella'));
+        $mform->addElement('header', '', get_string('group', 'repository_equella', get_string('group.default', 'repository_equella')));
         $mform->addElement('text', 'equella_shareid', get_string('sharedid', 'repository_equella'));
         $mform->addElement('text', 'equella_sharedsecret', get_string('sharedsecrets', 'repository_equella'));
 
-        $mform->addElement('header', '', get_string('teacherrolesettings', 'repository_equella'));
-        $mform->addElement('text', 'equella_editingteacher_shareid', get_string('sharedid', 'repository_equella'));
-        $mform->setDefault('equella_editingteacher_shareid', 'editingteacher');
-        $mform->addElement('text', 'equella_editingteacher_sharedsecret', get_string('sharedsecrets', 'repository_equella'));
-
-        $mform->addElement('header', '', get_string('managerrolesettings', 'repository_equella'));
-        $mform->addElement('text', 'equella_manager_shareid', get_string('sharedid', 'repository_equella'));
-        $mform->setDefault('equella_manager_shareid', 'manager');
-        $mform->addElement('text', 'equella_manager_sharedsecret', get_string('sharedsecrets', 'repository_equella'));
+        foreach( self::get_all_editing_roles() as $role ) {
+            $mform->addElement('header', '', get_string('group', 'repository_equella', format_string($role->name)));
+            $mform->addElement('text', "equella_{$role->shortname}_shareid", get_string('sharedid', 'repository_equella'));
+            $mform->addElement('text', "equella_{$role->shortname}_sharedsecret", get_string('sharedsecrets', 'repository_equella'));
+        }   
     }
 
     /**
@@ -139,13 +132,17 @@ class repository_equella extends repository {
      * @return array
      */
     public static function get_instance_option_names() {
-        return array('equella_url', 'equella_action',
-            'equella_select_restruction', 'equella_options',
-            'equella_location', 'equella_admin_username',
-            'equella_shareid', 'equella_sharedsecret',
-            'equella_editingteacher_shareid', 'equella_editingteacher_sharedsecret',
-            'equella_manager_shareid', 'equella_manager_sharedsecret',
+        $rv = array('equella_url', 'equella_action',
+            'equella_select_restriction', 'equella_options',
+            'equella_shareid', 'equella_sharedsecret'
         );
+
+        foreach( self::get_all_editing_roles() as $role ) {
+            array_push($rv, "equella_{$role->shortname}_shareid");
+            array_push($rv, "equella_{$role->shortname}_sharedsecret");
+        }
+
+        return $rv;
     }
 
     /**
@@ -175,18 +172,7 @@ class repository_equella extends repository {
      * @return string
      */
     function appendtoken($url, $readwrite = null) {
-        return $this->append_with_token($url, $this->getssotoken($readwrite));
-    }
-
-    /**
-     * Append token to equella url
-     *
-     * @param string $url
-     * @param string $token
-     * @return string
-     */
-    function append_with_token($url, $token) {
-        return $url . (strpos($url, '?') != false ? '&' : '?') . 'token=' . urlencode($token);
+        return $url . (strpos($url, '?') != false ? '&' : '?') . 'token=' . urlencode($this->getssotoken($readwrite));
     }
 
     /**
@@ -197,15 +183,6 @@ class repository_equella extends repository {
      */
     function full_url($urlpart) {
         return str_ireplace('signon.do', $urlpart, $this->get_option('equella_url'));
-    }
-
-    /**
-     * Generate equella sso token api
-     *
-     * @return string
-     */
-    function getssotoken_api() {
-        return equella_getssotoken_raw($this->get_option('equella_admin_username'), $this->get_option('equella_shareid'), $this->get_option('equella_sharedsecret'));
     }
 
     /**
@@ -222,7 +199,7 @@ class repository_equella extends repository {
             $context_cc = get_context_instance(CONTEXT_COURSECAT, $COURSE->category);
             $context_c = get_context_instance(CONTEXT_COURSE, $COURSE->id);
 
-            foreach(get_all_editing_roles() as $role) {
+            foreach( self::get_all_editing_roles() as $role) {
                 //does user have this role?
                 if(user_has_role_assignment($USER->id, $role->id, $context_sys->id) ||
                     user_has_role_assignment($USER->id, $role->id, $context_cc->id) ||
@@ -240,6 +217,20 @@ class repository_equella extends repository {
         if(!empty($shareid)) {
             return $this->getssotoken_raw($USER->username, $shareid, $this->get_option('equella_sharedsecret'));
         }
+    }
+
+    private static function get_all_editing_roles() {
+        global $DB;
+        return $DB->get_records_sql(
+            "SELECT r.* FROM {role_capabilities} rc
+            INNER JOIN {role} r ON rc.roleid = r.id
+            WHERE capability = :capability
+            AND permission = 1
+            ORDER BY r.shortname",
+            array(
+                'capability' => 'moodle/course:manageactivities'
+            )
+        );
     }
 
     /**
