@@ -252,6 +252,8 @@ echo $quba->render_question($slot, $options, $displaynumber);
 echo '<div id="previewcontrols" class="controls">';
 echo '<input type="submit" name="restart"' . $restartdisabled .
         ' value="' . get_string('restart', 'question') . '" />', "\n";
+echo '<input type="submit" name="save"' . $finishdisabled .
+        ' value="' . get_string('save', 'question') . '" />', "\n";
 echo '<input type="submit" name="fill"' . $filldisabled .
         ' value="' . get_string('fillincorrect', 'question') . '" />', "\n";
 echo '<input type="submit" name="finish"' . $finishdisabled .
