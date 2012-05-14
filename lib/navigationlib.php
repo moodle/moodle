@@ -1577,21 +1577,29 @@ class global_navigation extends navigation_node {
                 // First up fetch all of the courses in categories where we know that we are going to
                 // need the majority of courses.
                 list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-                list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array($SITE->id), SQL_PARAMS_NAMED, 'lcourse', false);
                 list($categoryids, $categoryparams) = $DB->get_in_or_equal($fullfetch, SQL_PARAMS_NAMED, 'lcategory');
                 $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
                             FROM {course} c
                                 $ccjoin
-                            WHERE c.category {$categoryids} AND
-                                c.id {$courseids}
+                            WHERE c.category {$categoryids}
                         ORDER BY c.sortorder ASC";
-                $coursesrs = $DB->get_recordset_sql($sql, $courseparams + $categoryparams);
+                $coursesrs = $DB->get_recordset_sql($sql, $categoryparams);
                 foreach ($coursesrs as $course) {
+                    if ($course->id == $SITE->id) {
+                        // This should not be necessary, frontpage is not in any category.
+                        continue;
+                    }
+                    if (array_key_exists($course->id, $this->addedcourses)) {
+                        // It is probably better to not include the already loaded courses
+                        // directly in SQL because inequalities may confuse query optimisers
+                        // and may interfere with query caching.
+                        continue;
+                    }
                     if (!$this->can_add_more_courses_to_category($course->category)) {
                         continue;
                     }
                     context_instance_preload($course);
-                    if ($course->id != $SITE->id && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                    if (!$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
                         continue;
                     }
                     $coursenodes[$course->id] = $this->add_course($course);
@@ -1604,21 +1612,30 @@ class global_navigation extends navigation_node {
                 // proportion of the courses.
                 foreach ($partfetch as $categoryid) {
                     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-                    list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array($SITE->id), SQL_PARAMS_NAMED, 'lcourse', false);
                     $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
                                 FROM {course} c
                                     $ccjoin
-                                WHERE c.category = :categoryid AND
-                                    c.id {$courseids}
+                                WHERE c.category = :categoryid
                             ORDER BY c.sortorder ASC";
-                    $courseparams['categoryid'] = $categoryid;
+                    $courseparams = array('categoryid' => $categoryid);
                     $coursesrs = $DB->get_recordset_sql($sql, $courseparams, 0, $limit * 5);
                     foreach ($coursesrs as $course) {
+                        if ($course->id == $SITE->id) {
+                            // This should not be necessary, frontpage is not in any category.
+                            continue;
+                        }
+                        if (array_key_exists($course->id, $this->addedcourses)) {
+                            // It is probably better to not include the already loaded courses
+                            // directly in SQL because inequalities may confuse query optimisers
+                            // and may interfere with query caching.
+                            // This also helps to respect expected $limit on repeated executions.
+                            continue;
+                        }
                         if (!$this->can_add_more_courses_to_category($course->category)) {
                             break;
                         }
                         context_instance_preload($course);
-                        if ($course->id != $SITE->id && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                        if (!$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
                             continue;
                         }
                         $coursenodes[$course->id] = $this->add_course($course);
@@ -1637,8 +1654,12 @@ class global_navigation extends navigation_node {
                     ORDER BY c.sortorder ASC";
             $coursesrs = $DB->get_recordset_sql($sql, $courseparams);
             foreach ($coursesrs as $course) {
+                if ($course->id == $SITE->id) {
+                    // frotpage is not wanted here
+                    continue;
+                }
                 context_instance_preload($course);
-                if ($course->id != $SITE->id && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                if (!$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     continue;
                 }
                 $coursenodes[$course->id] = $this->add_course($course);
