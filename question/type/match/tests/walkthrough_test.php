@@ -95,8 +95,6 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     }
 
     public function test_deferred_feedback_partial_answer() {
-//TODO: this was failing randomly for me, somebody has to fix it, looks like the old expectations worked incorrectly -- skodak
-return;
 
         // Create a matching question.
         $m = test_question_maker::make_a_matching_question();
@@ -129,8 +127,8 @@ return;
         $this->check_current_state(question_state::$invalid);
         $this->check_current_mark(null);
         $this->check_current_output(
-                $this->get_contains_select_expectation('sub0', $choices, 1, true),
-                $this->get_contains_select_expectation('sub1', $choices, 2, true),
+                $this->get_contains_select_expectation('sub0', $choices, $orderforchoice[1], true),
+                $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[2], true),
                 $this->get_contains_select_expectation('sub2', $choices, null, true),
                 $this->get_contains_select_expectation('sub3', $choices, null, true),
                 $this->get_contains_question_text_expectation($m),
@@ -143,16 +141,14 @@ return;
         $this->check_current_state(question_state::$gradedpartial);
         $this->check_current_mark(2);
         $this->check_current_output(
-                $this->get_contains_select_expectation('sub0', $choices, 1, false),
-                $this->get_contains_select_expectation('sub1', $choices, 2, false),
+                $this->get_contains_select_expectation('sub0', $choices, $orderforchoice[1], false),
+                $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[2], false),
                 $this->get_contains_select_expectation('sub2', $choices, null, false),
                 $this->get_contains_select_expectation('sub3', $choices, null, false),
                 $this->get_contains_partcorrect_expectation());
     }
 
     public function test_interactive_correct_no_submit() {
-//TODO: this was failing randomly for me, somebody has to fix it, looks like the old expectations worked incorrectly -- skodak
-        return;
 
         // Create a matching question.
         $m = test_question_maker::make_a_matching_question();
@@ -195,18 +191,16 @@ return;
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(4);
         $this->check_current_output(
-                $this->get_contains_select_expectation('sub0', $choices, 1, false),
-                $this->get_contains_select_expectation('sub1', $choices, 2, false),
-                $this->get_contains_select_expectation('sub2', $choices, 2, false),
-                $this->get_contains_select_expectation('sub3', $choices, 1, false),
+                $this->get_contains_select_expectation('sub0', $choices, $orderforchoice[1], false),
+                $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[2], false),
+                $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[2], false),
+                $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[1], false),
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
     }
 
     public function test_interactive_partial_no_submit() {
-//TODO: this was failing randomly for me, somebody has to fix it, looks like the old expectations worked incorrectly -- skodak
-return;
 
         // Create a matching question.
         $m = test_question_maker::make_a_matching_question();
@@ -249,9 +243,9 @@ return;
         $this->check_current_state(question_state::$gradedpartial);
         $this->check_current_mark(2);
         $this->check_current_output(
-                $this->get_contains_select_expectation('sub0', $choices, 1, false),
-                $this->get_contains_select_expectation('sub1', $choices, 2, false),
-                $this->get_contains_select_expectation('sub2', $choices, 1, false),
+                $this->get_contains_select_expectation('sub0', $choices, $orderforchoice[1], false),
+                $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[2], false),
+                $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[1], false),
                 $this->get_contains_select_expectation('sub3', $choices, null, false),
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_partcorrect_expectation(),
@@ -259,8 +253,6 @@ return;
     }
 
     public function test_interactive_with_invalid() {
-//TODO: this was failing randomly for me, somebody has to fix it, looks like the old expectations worked incorrectly -- skodak
-return;
 
         // Create a matching question.
         $m = test_question_maker::make_a_matching_question();
@@ -318,10 +310,10 @@ return;
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(4);
         $this->check_current_output(
-                $this->get_contains_select_expectation('sub0', $choices, 1, false),
-                $this->get_contains_select_expectation('sub1', $choices, 2, false),
-                $this->get_contains_select_expectation('sub2', $choices, 2, false),
-                $this->get_contains_select_expectation('sub3', $choices, 1, false),
+                $this->get_contains_select_expectation('sub0', $choices, $orderforchoice[1], false),
+                $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[2], false),
+                $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[2], false),
+                $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[1], false),
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
@@ -380,8 +372,6 @@ return;
     }
 
     public function test_match_clear_wrong() {
-//TODO: this was failing randomly for me, somebody has to fix it, looks like the old expectations worked incorrectly -- skodak
-return;
 
         // Create a matching question.
         $m = test_question_maker::make_a_matching_question();
@@ -421,10 +411,10 @@ return;
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output(
-                $this->get_contains_select_expectation('sub0', $choices, 3, false),
-                $this->get_contains_select_expectation('sub1', $choices, 3, false),
-                $this->get_contains_select_expectation('sub2', $choices, 3, false),
-                $this->get_contains_select_expectation('sub3', $choices, 3, false),
+                $this->get_contains_select_expectation('sub0', $choices, $orderforchoice[3], false),
+                $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[3], false),
+                $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[3], false),
+                $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[3], false),
                 $this->get_contains_hidden_expectation(
                         $this->quba->get_field_prefix($this->slot) . 'sub0', '0'),
                 $this->get_contains_hidden_expectation(
@@ -463,10 +453,10 @@ return;
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output(
-                $this->get_contains_select_expectation('sub0', $choices, 3, false),
-                $this->get_contains_select_expectation('sub1', $choices, 3, false),
-                $this->get_contains_select_expectation('sub2', $choices, 2, false),
-                $this->get_contains_select_expectation('sub3', $choices, 1, false),
+                $this->get_contains_select_expectation('sub0', $choices, $orderforchoice[3], false),
+                $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[3], false),
+                $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[2], false),
+                $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[1], false),
                 $this->get_contains_hidden_expectation(
                         $this->quba->get_field_prefix($this->slot) . 'sub0', '0'),
                 $this->get_contains_hidden_expectation(
@@ -489,8 +479,8 @@ return;
         $this->check_current_output(
                 $this->get_contains_select_expectation('sub0', $choices, null, true),
                 $this->get_contains_select_expectation('sub1', $choices, null, true),
-                $this->get_contains_select_expectation('sub2', $choices, 2, true),
-                $this->get_contains_select_expectation('sub3', $choices, 1, true),
+                $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[2], true),
+                $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[1], true),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_tries_remaining_expectation(1),

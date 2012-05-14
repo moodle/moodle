@@ -455,8 +455,10 @@ abstract class question_testcase extends advanced_testcase {
         } else if (get_class($expectation) === 'question_contains_select_expectation') {
             $tag = array('tag'=>'select', 'attributes'=>array('name'=>$expectation->name),
                 'children'=>array('count'=>count($expectation->choices)));
-            if (!$expectation->enabled) {
+            if ($expectation->enabled === false) {
                 $tag['attributes']['disabled'] = 'disabled';
+            } else if ($expectation->enabled === true) {
+                // TODO
             }
             foreach(array_keys($expectation->choices) as $value) {
                 if ($expectation->selected === $value) {
@@ -464,8 +466,9 @@ abstract class question_testcase extends advanced_testcase {
                 } else {
                     $tag['child'] = array('tag'=>'option', 'attributes'=>array('value'=>$value));
                 }
-                $this->assertTag($tag, $compare, $message);
             }
+
+            $this->assertTag($tag, $compare, 'expected select not found in ' . $compare);
             return;
 
         } else if (get_class($expectation) === 'question_check_specified_fields_expectation') {
