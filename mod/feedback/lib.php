@@ -558,15 +558,6 @@ function feedback_cron () {
 }
 
 /**
- * @todo: deprecated - to be deleted in 2.2
- * @return bool false
- */
-function feedback_get_participants($feedbackid) {
-    return false;
-}
-
-
-/**
  * @return bool false
  */
 function feedback_scale_used ($feedbackid, $scaleid) {
