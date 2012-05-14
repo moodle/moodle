@@ -4515,6 +4515,9 @@ function include_course_ajax($course, $modules = array(), $config = null) {
     foreach ($modules as $module => $modname) {
         $PAGE->requires->string_for_js('pluginname', $module);
     }
+
+    // Prevent caching of this page to stop confusion when changing page after making AJAX changes
+    $PAGE->set_cacheable(false);
 }
 
 /**
