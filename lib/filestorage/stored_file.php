@@ -161,6 +161,9 @@ class stored_file {
      * @param string $filename file name
      */
     public function rename($filepath, $filename) {
+        if ($this->fs->file_exists($this->get_contextid(), $this->get_component(), $this->get_filearea(), $this->get_itemid(), $filepath, $filename)) {
+            throw new file_exception('storedfilenotcreated', '', 'file exists, cannot rename');
+        }
         $filerecord = new stdClass;
         $filerecord->filepath = $filepath;
         $filerecord->filename = $filename;

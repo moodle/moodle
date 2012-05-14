@@ -102,8 +102,16 @@ class filelib_testcase extends advanced_testcase {
         $usercontext = context_user::instance($user->id);
         $USER = $DB->get_record('user', array('id'=>$user->id));
 
+        $repositorypluginname = 'user';
+
+        $args = array();
+        $args['type'] = $repositorypluginname;
+        $repos = repository::get_instances($args);
+        $userrepository = reset($repos);
+        $this->assertInstanceOf('repository', $userrepository);
 
         $fs = get_file_storage();
+
         $syscontext = context_system::instance();
         $component = 'core';
         $filearea  = 'unittest';
@@ -122,28 +130,51 @@ class filelib_testcase extends advanced_testcase {
             'source'    => $sourcefield,
         );
         $ref = $fs->pack_reference($filerecord);
-
         $originalfile = $fs->create_file_from_string($filerecord, 'Test content');
-
         $fileid = $originalfile->get_id();
         $this->assertInstanceOf('stored_file', $originalfile);
+
+        // create a user private file
+        $userfilerecord = new stdClass;
+        $userfilerecord->contextid = $usercontext->id;
+        $userfilerecord->component = 'user';
+        $userfilerecord->filearea  = 'private';
+        $userfilerecord->itemid    = 0;
+        $userfilerecord->filepath  = '/';
+        $userfilerecord->filename  = 'userfile.txt';
+        $userfilerecord->source    = 'test';
+        $userfile = $fs->create_file_from_string($userfilerecord, 'User file content');
+        $userfileref = $fs->pack_reference($userfilerecord);
+
+        $filerefrecord = clone((object)$filerecord);
+        $filerefrecord->filename = 'testref.txt';
+        // create a file reference
+        $fileref = $fs->create_file_from_reference($filerefrecord, $userrepository->id, $userfileref);
+        $this->assertInstanceOf('stored_file', $fileref);
+        $this->assertEquals($userrepository->id, $fileref->repository->id);
+        $this->assertEquals($userfile->get_contenthash(), $fileref->get_contenthash());
+        $this->assertEquals($userfile->get_filesize(), $fileref->get_filesize());
+        $this->assertRegExp('#' . $userfile->get_filename(). '$#', $fileref->get_reference_details());
 
         $draftitemid = 0;
         file_prepare_draft_area($draftitemid, $syscontext->id, $component, $filearea, $itemid);
 
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid);
-        $this->assertEquals(2, count($draftfiles));
+        $this->assertEquals(3, count($draftfiles));
 
         $draftfile = $fs->get_file($usercontext->id, 'user', 'draft', $draftitemid, $filepath, $filename);
         $source = unserialize($draftfile->get_source());
         $this->assertEquals($ref, $source->original);
         $this->assertEquals($sourcefield, $source->source);
 
+        $draftfileref = $fs->get_file($usercontext->id, 'user', 'draft', $draftitemid, $filepath, $filerefrecord->filename);
+        $this->assertInstanceOf('stored_file', $draftfileref);
+        $this->assertEquals(true, $draftfileref->is_external_file());
 
         // change some information
         $author = 'Dongsheng Cai';
         $draftfile->set_author($author);
-        $newsourcefield = 'Get from flickr';
+        $newsourcefield = 'Get from Flickr';
         $license = 'GPLv3';
         $draftfile->set_license($license);
         // if you want to really just change source field, do this:

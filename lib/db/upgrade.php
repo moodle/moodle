@@ -594,26 +594,29 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2012052100.00) {
 
-        // Define field referencefileid to be added to files
+        // Define field referencefileid to be added to files.
         $table = new xmldb_table('files');
 
-        // Define field referencefileid to be added to files
+        // Define field referencefileid to be added to files.
         $field = new xmldb_field('referencefileid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'sortorder');
-        // Conditionally launch add field referencefileid
+
+        // Conditionally launch add field referencefileid.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        // Define field referencelastsync to be added to files
+        // Define field referencelastsync to be added to files.
         $field = new xmldb_field('referencelastsync', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'referencefileid');
-        // Conditionally launch add field referencelastsync
+
+        // Conditionally launch add field referencelastsync.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        // Define field referencelifetime to be added to files
-        $field = new xmldb_field('referencelastsync', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'referencefileid');
-        // Conditionally launch add field referencelifetime
+        // Define field referencelifetime to be added to files.
+        $field = new xmldb_field('referencelifetime', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'referencelastsync');
+
+        // Conditionally launch add field referencelifetime.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -627,7 +630,6 @@ function xmldb_main_upgrade($oldversion) {
 
         // Adding fields to table files_reference.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('fileid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('repositoryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('lastsync', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('lifetime', XMLDB_TYPE_INTEGER, '10', null, null, null, null);

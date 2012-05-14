@@ -109,8 +109,12 @@ class filestoragelib_testcase extends advanced_testcase {
         $contenthash = $originalfile->get_contenthash();
         $newpath = '/test/';
         $newname = 'newtest.txt';
+        // try break it
+        $this->setExpectedException('file_exception');
+        // this shall throw exception
+        $originalfile->rename($filepath, $filename);
+        // this should work
         $originalfile->rename($newpath, $newname);
-
         $file = $fs->get_file($syscontext->id, $component, $filearea, $itemid, $newpath, $newname);
         $this->assertInstanceOf('stored_file', $file);
         $this->assertEquals($contenthash, $file->get_contenthash());

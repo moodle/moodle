@@ -1665,9 +1665,9 @@ class file_storage {
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
-                 WHERE r.reference = ?";
+                 WHERE r.reference = ? AND (f.component <> ? OR f.filearea <> ?)";
 
-        $rs = $DB->get_recordset_sql($sql, array($str));
+        $rs = $DB->get_recordset_sql($sql, array($str, 'user', 'draft'));
         $files = array();
         foreach ($rs as $filerecord) {
             $file = $this->get_file_instance($filerecord);
@@ -1691,9 +1691,9 @@ class file_storage {
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
-                 WHERE r.reference = ?";
+                 WHERE r.reference = ? AND (f.component <> ? OR f.filearea <> ?)";
 
-        $count = $DB->count_records_sql($sql, array($str));
+        $count = $DB->count_records_sql($sql, array($str, 'user', 'draft'));
         return $count;
     }
 
@@ -1722,9 +1722,9 @@ class file_storage {
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
-                 WHERE r.reference = ?";
+                 WHERE r.reference = ? AND (f.component <> ? OR f.filearea <> ?)";
 
-        $rs = $DB->get_recordset_sql($sql, array($reference));
+        $rs = $DB->get_recordset_sql($sql, array($reference, 'user', 'draft'));
         $files = array();
         foreach ($rs as $filerecord) {
             $file = $this->get_file_instance($filerecord);
@@ -1761,9 +1761,9 @@ class file_storage {
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
-                 WHERE r.reference = ?";
+                 WHERE r.reference = ? AND (f.component <> ? OR f.filearea <> ?)";
 
-        $count = $DB->count_records_sql($sql, array($reference));
+        $count = $DB->count_records_sql($sql, array($reference, 'user', 'draft'));
         return $count;
     }
 
