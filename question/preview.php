@@ -220,6 +220,16 @@ if (!$previewid) {
     $restartdisabled = ' disabled="disabled"';
 }
 
+// Prepare technical info to be output.
+$qa = $quba->get_question_attempt($slot);
+$technical = array();
+$technical[] = get_string('behaviourbeingused', 'question',
+        question_engine::get_behaviour_name($qa->get_behaviour_name()));
+$technical[] = get_string('technicalinfominfraction',     'question', $qa->get_min_fraction());
+$technical[] = get_string('technicalinfoquestionsummary', 'question', s($qa->get_question_summary()));
+$technical[] = get_string('technicalinforightsummary',    'question', s($qa->get_right_answer_summary()));
+$technical[] = get_string('technicalinfostate',           'question', '' . $qa->get_state());
+
 // Output
 $title = get_string('previewquestion', 'question', format_string($question->name));
 $headtags = question_engine::initialise_js() . $quba->render_question_head_html($slot);
@@ -238,9 +248,6 @@ echo '</div>';
 // Output the question.
 echo $quba->render_question($slot, $options, $displaynumber);
 
-echo '<p class="notifytiny">' . get_string('behaviourbeingused', 'question',
-        question_engine::get_behaviour_name(
-        $quba->get_question_attempt($slot)->get_behaviour_name())) . '</p>';
 // Finish the question form.
 echo '<div id="previewcontrols" class="controls">';
 echo '<input type="submit" name="restart"' . $restartdisabled .
@@ -252,6 +259,14 @@ echo '<input type="submit" name="finish"' . $finishdisabled .
 echo '<input type="hidden" name="scrollpos" id="scrollpos" value="" />';
 echo '</div>';
 echo '</form>';
+
+// Output the technical info.
+print_collapsible_region_start('', 'techinfo', get_string('technicalinfo', 'question'),
+        'core_question_preview_techinfo_collapsed', true);
+foreach ($technical as $info) {
+    echo '<p class="notifytiny">' . $info . '</p>';
+}
+print_collapsible_region_end();
 
 // Display the settings form.
 $optionsform->display();
