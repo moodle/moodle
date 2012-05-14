@@ -504,11 +504,13 @@ class file_storage {
             $dirs = $includedirs ? "" : "AND filename <> '.'";
             $length = textlib::strlen($filepath);
 
-            $sql = "SELECT *
-                      FROM {files}
-                     WHERE contextid = :contextid AND component = :component AND filearea = :filearea AND itemid = :itemid
-                           AND ".$DB->sql_substr("filepath", 1, $length)." = :filepath
-                           AND id <> :dirid
+            $sql = "SELECT f.*, r.repositoryid, r.reference
+                      FROM {files} f
+                 LEFT JOIN {files_reference} r
+                           ON f.referencefileid = r.id
+                     WHERE f.contextid = :contextid AND f.component = :component AND f.filearea = :filearea AND f.itemid = :itemid
+                           AND ".$DB->sql_substr("f.filepath", 1, $length)." = :filepath
+                           AND f.id <> :dirid
                            $dirs
                   ORDER BY $sort";
             $params = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'dirid'=>$directory->get_id());
@@ -532,12 +534,14 @@ class file_storage {
             $length = textlib::strlen($filepath);
 
             if ($includedirs) {
-                $sql = "SELECT *
-                          FROM {files}
-                         WHERE contextid = :contextid AND component = :component AND filearea = :filearea
-                               AND itemid = :itemid AND filename = '.'
-                               AND ".$DB->sql_substr("filepath", 1, $length)." = :filepath
-                               AND id <> :dirid
+                $sql = "SELECT f.*, r.repositoryid, r.reference
+                          FROM {files} f
+                     LEFT JOIN {files_reference} r
+                               ON f.referencefileid = r.id
+                         WHERE f.contextid = :contextid AND f.component = :component AND f.filearea = :filearea
+                               AND f.itemid = :itemid AND f.filename = '.'
+                               AND ".$DB->sql_substr("f.filepath", 1, $length)." = :filepath
+                               AND f.id <> :dirid
                       ORDER BY $sort";
                 $reqlevel = substr_count($filepath, '/') + 1;
                 $filerecords = $DB->get_records_sql($sql, $params);
@@ -549,10 +553,12 @@ class file_storage {
                 }
             }
 
-            $sql = "SELECT *
-                      FROM {files}
-                     WHERE contextid = :contextid AND component = :component AND filearea = :filearea AND itemid = :itemid
-                           AND filepath = :filepath AND filename <> '.'
+            $sql = "SELECT f.*, r.repositoryid, r.reference
+                      FROM {files} f
+                 LEFT JOIN {files_reference} r
+                           ON f.referencefileid = r.id
+                     WHERE f.contextid = :contextid AND f.component = :component AND f.filearea = :filearea AND f.itemid = :itemid
+                           AND f.filepath = :filepath AND f.filename <> '.'
                   ORDER BY $sort";
 
             $filerecords = $DB->get_records_sql($sql, $params);

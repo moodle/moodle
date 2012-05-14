@@ -240,6 +240,7 @@ class repository_coursefiles extends repository {
      * @return stdClass|null|false
      */
     public function get_file_by_reference($reference) {
+        $fs = get_file_storage();
         $ref = $reference->reference;
         $params = file_storage::unpack_reference($ref);
         if (!is_array($params)) {
