@@ -94,8 +94,143 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012030901, 'quiz');
     }
 
+    if ($oldversion < 2012040198) {
+        // This step was added later. In MDL-32727, it was found that adding the
+        // unique index on quiz-userid-attempt sometimes failed because of
+        // duplicate entries {quizid}-{userid}-{attempt}. We do two things to
+        // prevent these problems. First, here, we delete all preview attempts.
+
+        // This code is an approximate copy-and-paste from
+        // question_engine_data_mapper::delete_questions_usage_by_activities
+        // Note that, for simplicity, the MySQL performance hack has been removed.
+        // Since this code is for upgrade only, performance in not so critical,
+        // where as simplicity of testing the code is.
+
+        // Note that there is a limit to how far I am prepared to go in eliminating
+        // all calls to library functions in this upgrade code. The only library
+        // function still being used in question_engine::get_all_response_file_areas();
+        // I think it is pretty safe not to inline it here.
+
+        // Get a list of response variables that have files.
+        require_once($CFG->dirroot . '/question/type/questiontypebase.php');
+        $variables = array();
+        foreach (get_plugin_list('qtype') as $plugin => $path) {
+            $file = $path . '/questiontype.php';
+            if (!is_readable($file)) {
+                continue;
+            }
+            include_once($file);
+            $class = 'qtype_' . $qtypename;
+            if (!class_exists($class)) {
+                continue;
+            }
+            $qtype = new $class();
+            if (!method_exists($qtype, 'response_file_areas')) {
+                continue;
+            }
+            $variables += $qtype->response_file_areas();
+        }
+
+        // Conver that to a list of actual file area names.
+        $fileareas = array();
+        foreach (array_unique($variables) as $variable) {
+            $fileareas[] = 'response_' . $variable;
+        }
+        // No point checking if this is empty as an optimisation, because essay
+        // has response file areas, so the array will never be empty.
+
+        // Get all the contexts where there are previews.
+        $contextids = $DB->get_records_sql_menu("
+                SELECT DISTINCT qu.contextid, 1
+                  FROM {question_usages} qu
+                  JOIN {quiz_attempts} quiza ON quiza.uniqueid = qu.id
+                 WHERE quiza.preview = 1");
+
+        // Loop over contexts and files areas, deleting all files.
+        $fs = get_file_storage();
+        foreach ($contextids as $contextid => $notused) {
+            foreach ($fileareas as $filearea) {
+                upgrade_set_timeout(300);
+                $fs->delete_area_files_select($contextid, 'question', $filearea,
+                        "IN (SELECT qas.id
+                               FROM {question_attempt_steps} qas
+                               JOIN {question_attempts} qa ON qa.id = qas.questionattemptid
+                               JOIN {quiz_attempts} quiza ON quiza.uniqueid = qa.questionusageid
+                              WHERE quiza.preview = 1)");
+            }
+        }
+
+        // Now delete the question data associated with the previews.
+        $DB->delete_records_select('question_attempt_step_data', "attemptstepid IN (
+                SELECT qas.id
+                  FROM {question_attempt_steps} qas
+                  JOIN {question_attempts} qa ON qa.id = qas.questionattemptid
+                  JOIN {quiz_attempts} quiza ON quiza.uniqueid = qa.questionusageid
+                 WHERE quiza.preview = 1)");
+
+        $DB->delete_records_select('question_attempt_steps', "questionattemptid IN (
+                SELECT qa.id
+                  FROM {question_attempts} qa
+                  JOIN {quiz_attempts} quiza ON quiza.uniqueid = qa.questionusageid
+                 WHERE quiza.preview = 1)");
+
+        $DB->delete_records_select('question_attempts', "{question_attempts}.questionusageid IN (
+                SELECT uniqueid FROM {quiz_attempts} WHERE preview = 1)");
+
+        $DB->delete_records_select('question_usages', "{question_usages}.id IN (
+                SELECT uniqueid FROM {quiz_attempts} WHERE preview = 1)");
+
+        // Finally delete the previews.
+        $DB->delete_records('quiz_attempts', array('preview' => 1));
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2012040198, 'quiz');
+    }
+
+    if ($oldversion < 2012040199) {
+        // This step was added later. In MDL-32727, it was found that adding the
+        // unique index on quiz-userid-attempt sometimes failed because of
+        // duplicate entries {quizid}-{userid}-{attempt}.
+        // Here, if there are still duplicate entires, we renumber the values in
+        // the attempt column.
+
+        // Load all the problem quiz attempts.
+        $problems = $DB->get_recordset_sql('
+                SELECT qa.id, qa.quiz, qa.userid, qa.attempt
+                  FROM {quiz_attempts} qa
+                  JOIN (
+                          SELECT DISTINCT quiz, userid
+                            FROM {quiz_attempts}
+                        GROUP BY quiz, userid, attempt
+                          HAVING COUNT(1) > 1
+                       ) problems_view ON problems_view.quiz = qa.quiz AND
+                                          problems_view.userid = qa.userid
+              ORDER BY qa.quiz, qa.userid, qa.attempt, qa.id');
+
+        // Renumber them.
+        $currentquiz = null;
+        $currentuserid = null;
+        $attempt = 1;
+        foreach ($problems as $problem) {
+            if ($problem->quiz !== $currentquiz || $problem->userid !== $currentuserid) {
+                $currentquiz = $problem->quiz;
+                $currentuserid = $problem->userid;
+                $attempt = 1;
+            }
+            if ($attempt != $problem->attempt) {
+                $DB->set_field('quiz_attempts', 'attempt', $attempt, array('id' => $problem->id));
+            }
+            $attempt += 1;
+        }
+
+        $problems->close();
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2012040199, 'quiz');
+    }
+
     if ($oldversion < 2012040200) {
-        // Define index quiz-userid-attempt (unique) to be dropped form quiz_attempts
+        // Define index userid to be dropped form quiz_attempts
         $table = new xmldb_table('quiz_attempts');
         $index = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
 
