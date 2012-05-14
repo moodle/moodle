@@ -1110,7 +1110,7 @@ abstract class repository {
      *                          repository::get_file_reference()
      * @param stored_file $storedfile created file reference
      */
-    public function cache_file_by_reference($reference, $storedfile = null) {
+    public function cache_file_by_reference($reference, $storedfile) {
     }
 
     /**

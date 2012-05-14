@@ -143,25 +143,23 @@ switch ($action) {
         }
 
         if (!empty($updatedata)) {
-            $updatedata['timemodified'] = $file->get_timemodified();
-            $changes = array_diff(array_keys($updatedata), array('filepath'));
-            if (!empty($changes)) {
-                // any change except for the moving to another folder alters 'Date modified' of the file
-                $updatedata['timemodified'] = time();
-            }
             if (array_key_exists('filename', $updatedata) || array_key_exists('filepath', $updatedata)) {
                 // check that target file name does not exist
                 if ($fs->file_exists($user_context->id, 'user', 'draft', $draftid, $newfilepath, $newfilename)) {
                     die(json_encode((object)array('error' => get_string('fileexists', 'repository'))));
                 }
-                try {
-                    $newfile = $fs->create_file_from_storedfile($updatedata, $file);
-                } catch (Exception $e) {
-                    die(json_encode((object)array('error' => $e->getMessage())));
-                }
-                $file->delete();
-            } else {
-                $file->update((object)$updatedata);
+                $file->rename($newfilepath, $newfilename);
+            }
+            if (array_key_exists('license', $updatedata)) {
+                $file->set_license($updatedata['license']);
+            }
+            if (array_key_exists('author', $updatedata)) {
+                $file->set_license($updatedata['author']);
+            }
+            $changes = array_diff(array_keys($updatedata), array('filepath'));
+            if (!empty($changes)) {
+                // any change except for the moving to another folder alters 'Date modified' of the file
+                $file->set_timemodified(time());
             }
         }
 

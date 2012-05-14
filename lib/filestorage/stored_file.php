@@ -197,25 +197,6 @@ class stored_file {
     }
 
     /**
-     * Update some file record fields
-     *
-     * @param stdClass $dataobject
-     */
-    public function update($dataobject) {
-        // TODO MDL-28666 THIS FUNCTION IS COPIED FROM UNFINISHED CODE OF MDL-28666.
-        global $DB;
-        $keys = array_keys((array)$this->file_record);
-        foreach ($dataobject as $field => $value) {
-            if (in_array($field, $keys)) {
-                $this->file_record->$field = $value;
-            } else {
-                throw new coding_exception("Invalid field name, $field doesn't exist in file record");
-            }
-        }
-        $DB->update_record('files', $this->file_record);
-    }
-
-    /**
      * Is this a directory?
      *
      * Directories are only emulated, internally they are stored as empty

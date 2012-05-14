@@ -598,7 +598,12 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
             $item->datemodified = $file->get_timemodified();
             $item->datecreated = $file->get_timecreated();
             $item->isref = $file->is_external_file();
-            $item->refcount = $fs->get_reference_count($file);
+            // find the file this draft file was created from and count all references in local
+            // system pointing to that file
+            $source = unserialize($file->get_source());
+            if (isset($source->original)) {
+                $item->refcount = $fs->search_references_count($source->original);
+            }
 
             // TODO MDL-32900 this is not the correct way to check that it is archive, use filetype_parser instead
             if ($icon == 'zip') {
