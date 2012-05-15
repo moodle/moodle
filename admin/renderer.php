@@ -256,19 +256,23 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function plugin_management_page(plugin_manager $pluginman, available_update_checker $checker) {
+        global $CFG;
+
         $output = '';
 
         $output .= $this->header();
         $output .= $this->heading(get_string('pluginsoverview', 'core_admin'));
         $output .= $this->plugins_overview_panel($pluginman);
 
-        $output .= $this->container_start('checkforupdates');
-        $output .= $this->single_button(new moodle_url($this->page->url, array('fetchremote' => 1)), get_string('checkforupdates', 'core_plugin'));
-        if ($timefetched = $checker->get_last_timefetched()) {
-            $output .= $this->container(get_string('checkforupdateslast', 'core_plugin',
-                userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
+        if (empty($CFG->disableupdatenotifications)) {
+            $output .= $this->container_start('checkforupdates');
+            $output .= $this->single_button(new moodle_url($this->page->url, array('fetchremote' => 1)), get_string('checkforupdates', 'core_plugin'));
+            if ($timefetched = $checker->get_last_timefetched()) {
+                $output .= $this->container(get_string('checkforupdateslast', 'core_plugin',
+                    userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
+            }
+            $output .= $this->container_end();
         }
-        $output .= $this->container_end();
 
         $output .= $this->box($this->plugins_control_panel($pluginman), 'generalbox');
         $output .= $this->footer();
@@ -771,6 +775,8 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string as usually
      */
     public function plugins_overview_panel(plugin_manager $pluginman) {
+        global $CFG;
+
         $plugininfo = $pluginman->get_plugins();
 
         $numtotal = $numdisabled = $numextension = $numupdatable = 0;
@@ -787,7 +793,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 if (!$plugin->is_standard()) {
                     $numextension++;
                 }
-                if ($plugin->available_updates()) {
+                if (empty($CFG->disableupdatenotifications) and $plugin->available_updates()) {
                     $numupdatable++;
                 }
             }
@@ -813,6 +819,8 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML code
      */
     public function plugins_control_panel(plugin_manager $pluginman) {
+        global $CFG;
+
         $plugininfo = $pluginman->get_plugins();
 
         if (empty($plugininfo)) {
@@ -916,7 +924,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
 
                 $updateinfo = '';
-                if (is_array($plugin->available_updates())) {
+                if (empty($CFG->disableupdatenotifications) and is_array($plugin->available_updates())) {
                     foreach ($plugin->available_updates() as $availableupdate) {
                         $updateinfo .= $this->plugin_available_update_info($availableupdate);
                     }
