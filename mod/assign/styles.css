@@ -128,3 +128,7 @@ div.earlysubmission {
     border: 0px;
 }
 
+#page-mod-assign-view div.gradingtable tr .quickgrademodified {
+    background-color: #FFCC99;
+}
+

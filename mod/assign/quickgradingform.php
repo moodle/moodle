@@ -31,37 +31,32 @@ require_once ($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
 /**
- * Assignment grading options form
+ * Assignment quick grading form
  *
  * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assign_grading_batch_operations_form extends moodleform {
+class mod_assign_quick_grading_form extends moodleform {
     /**
-     * Define this form - called by the parent constructor
+     * Define this form - called from the parent constructor
      */
     function definition() {
         $mform = $this->_form;
         $instance = $this->_customdata;
 
-        $mform->addElement('header', 'general', get_string('batchoperations', 'assign'));
         // visible elements
-        $options = array();
-        $options['lock'] = get_string('locksubmissions', 'assign');
-        $options['unlock'] = get_string('unlocksubmissions', 'assign');
-        if ($instance['submissiondrafts']) {
-            $options['reverttodraft'] = get_string('reverttodraft', 'assign');
-        }
-        $mform->addElement('select', 'operation', get_string('batchoperationsdescription', 'assign'), $options, array('class'=>'operation ignoredirty'));
-        $mform->addHelpButton('operation', 'batchoperationsdescription', 'assign');
-        $mform->addElement('hidden', 'action', 'batchgradingoperation');
+        $mform->addElement('html', $instance['gradingtable']);
+
+        // hidden params
         $mform->addElement('hidden', 'id', $instance['cm']);
-        $mform->addElement('hidden', 'selectedusers', '', array('class'=>'selectedusers'));
-        $mform->addElement('hidden', 'returnaction', 'grading');
+        $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'action', 'quickgrade');
+        $mform->setType('action', PARAM_ALPHA);
 
-        $mform->addElement('submit', 'submit', get_string('submit'));
+        // buttons
+        $mform->addElement('header', 'general', get_string('quickgrading', 'assign'));
+        $mform->addElement('submit', 'savequickgrades', get_string('saveallchanges', 'assign'));
     }
-
 }
 

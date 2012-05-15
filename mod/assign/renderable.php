@@ -49,6 +49,29 @@ class assign_submit_for_grading_page implements renderable {
 }
 
 /**
+ * Implements a renderable grading error notification
+ * @package   mod_assign
+ * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class assign_quickgrading_result implements renderable {
+    /** @var string $message is the message to display to the user */
+    var $message = '';
+    /** @var int $coursemoduleid */
+    var $coursemoduleid = 0;
+
+    /**
+     * Constructor
+     * @param string $message This is the message to display
+     */
+    public function __construct($message, $coursemoduleid) {
+        $this->message = $message;
+        $this->coursemoduleid = $coursemoduleid;
+    }
+
+}
+
+/**
  * Implements a renderable grading options form
  * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
@@ -59,18 +82,23 @@ class assign_form implements renderable {
     var $form = null;
     /** @var string $classname is the name of the class to assign to the container */
     var $classname = '';
+    /** @var string $jsinitfunction is an optional js function to add to the page requires */
+    var $jsinitfunction = '';
 
     /**
      * Constructor
-     * @param string $classname
-     * @param moodleform $form
+     * @param string $classname This is the class name for the container div
+     * @param moodleform $form This is the moodleform
+     * @param string $jsinitfunction This is an optional js function to add to the page requires
      */
-    public function __construct($classname, moodleform $form) {
+    public function __construct($classname, moodleform $form, $jsinitfunction = '') {
         $this->classname = $classname;
         $this->form = $form;
+        $this->jsinitfunction = $jsinitfunction;
     }
 
 }
+
 
 /**
  * Implements a renderable user summary
