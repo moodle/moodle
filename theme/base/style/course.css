@@ -137,3 +137,20 @@
 
 table.category_subcategories {margin-bottom:1em;}
 table.category_subcategories td {white-space: nowrap;}
+
+span.editinstructions {
+    position: relative;
+    top: 5px;
+    left: 19px;
+    width: 329px;
+    padding: 3px;
+    background-color: #dddddd;
+    color: #000000;
+    text-decoration: none;
+    z-index: 100;
+    border: 1px solid black;
+}
+
+input.titleeditor {
+    width: 330px;
+}
