@@ -218,6 +218,9 @@ class graded_users_iterator {
 
         if (!empty($this->grade_items)) {
             foreach ($this->grade_items as $grade_item) {
+                if (!isset($feedbacks[$grade_item->id])) {
+                    $feedbacks[$grade_item->id] = new stdClass();
+                }
                 if (array_key_exists($grade_item->id, $grade_records)) {
                     $feedbacks[$grade_item->id]->feedback       = $grade_records[$grade_item->id]->feedback;
                     $feedbacks[$grade_item->id]->feedbackformat = $grade_records[$grade_item->id]->feedbackformat;
