@@ -584,30 +584,19 @@ function external_delete_descriptions($component) {
 }
 
 /**
- * Description of warning messages with external_multiple_structure.
+ * Creates a warnings external_multiple_structure
  *
- * @package    core_webservice
- * @copyright  2012 Yang Yang
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @return external_multiple_structure
  * @since  Moodle 2.3
  */
-class external_warnings {
-
-    /**
-     * Creates a warnings external_multiple_structure
-     *
-     * @return external_multiple_structure
-     * @since  Moodle 2.3
-     */
-    public function warnings() {
-        return new external_multiple_structure(
-            new external_single_structure( array(
-                    'element'   => new external_value(PARAM_TEXT, 'element'),
-                    'elementid' => new external_value(PARAM_INT, 'element id'),
-                    'warningcode' => new external_value(PARAM_ALPHANUM, 'the warning code can be used by
-                               the client app to implement specific behaviour (e.g. "missingcourse")'),
-                    'message' => new external_value(PARAM_TEXT, 'untranslated english message to explain the warning')
-                ), 'warning'), 'list of warnings'
-        );
-    }
+function external_warnings() {
+    return new external_multiple_structure(
+        new external_single_structure(array(
+            'item' => new external_value(PARAM_TEXT, 'item', VALUE_OPTIONAL),
+            'itemid' => new external_value(PARAM_INT, 'item id', VALUE_OPTIONAL),
+            'warningcode' => new external_value(PARAM_ALPHANUM, 'the warning code can be used by
+                the client app to implement specific behaviour'),
+            'message' => new external_value(PARAM_TEXT, 'untranslated english message to explain the warning')
+                ), 'warning'), 'list of warnings', VALUE_OPTIONAL
+    );
 }
