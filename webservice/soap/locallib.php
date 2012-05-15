@@ -41,8 +41,7 @@ class moodle_zend_soap_server extends Zend_Soap_Server {
      *
      * Note that the arguments are the reverse of those used by SoapFault.
      *
-     * Moodle note: the difference with the Zend server is that we throw a SoapFault exception
-     * with the debuginfo integrated in the exception message when DEBUG >= NORMAL
+     * Moodle note: basically we return the faultactor (errorcode) and faultdetails (debuginfo)
      *
      * If an exception is passed as the first argument, its message and code
      * will be used to create the fault object if it has been registered via
@@ -55,15 +54,96 @@ class moodle_zend_soap_server extends Zend_Soap_Server {
      */
     public function fault($fault = null, $code = "Receiver")
     {
-        //intercept any exceptions with debug info and transform it in Moodle exception
+
+        //run the zend code that clean/create a soapfault
+        $soapfault = parent::fault($fault, $code);
+
+        //intercept any exceptions and add the errorcode and debuginfo (optional)
+        $actor = null;
+        $details = null;
         if ($fault instanceof Exception) {
             //add the debuginfo to the exception message if debuginfo must be returned
+            $actor = $fault->errorcode;
             if (debugging() and isset($fault->debuginfo)) {
-                $fault = new SoapFault('Receiver', $fault->getMessage() . ' | DEBUG INFO: ' . $fault->debuginfo);
+                $details = $fault->debuginfo;
             }
         }
 
-        return parent::fault($fault, $code);
+        return new SoapFault($soapfault->faultcode,
+                $soapfault->getMessage() . ' | ERRORCODE: ' . $fault->errorcode,
+                $actor, $details);
+    }
+
+    /**
+     * NOTE: this is basically a copy of the Zend handle()
+     *       but with $soap->fault returning faultactor + faultdetail
+     *
+     * Handle a request
+     *
+     * Instantiates SoapServer object with options set in object, and
+     * dispatches its handle() method.
+     *
+     * $request may be any of:
+     * - DOMDocument; if so, then cast to XML
+     * - DOMNode; if so, then grab owner document and cast to XML
+     * - SimpleXMLElement; if so, then cast to XML
+     * - stdClass; if so, calls __toString() and verifies XML
+     * - string; if so, verifies XML
+     *
+     * If no request is passed, pulls request using php:://input (for
+     * cross-platform compatability purposes).
+     *
+     * @param DOMDocument|DOMNode|SimpleXMLElement|stdClass|string $request Optional request
+     * @return void|string
+     */
+    public function handle($request = null)
+    {
+        if (null === $request) {
+            $request = file_get_contents('php://input');
+        }
+
+        // Set Zend_Soap_Server error handler
+        $displayErrorsOriginalState = $this->_initializeSoapErrorContext();
+
+        $setRequestException = null;
+        /**
+         * @see Zend_Soap_Server_Exception
+         */
+        require_once 'Zend/Soap/Server/Exception.php';
+        try {
+            $this->_setRequest($request);
+        } catch (Zend_Soap_Server_Exception $e) {
+            $setRequestException = $e;
+        }
+
+        $soap = $this->_getSoap();
+
+        ob_start();
+        if($setRequestException instanceof Exception) {
+            // Send SOAP fault message if we've catched exception
+            $soap->fault("Sender", $setRequestException->getMessage());
+        } else {
+            try {
+                $soap->handle($request);
+            } catch (Exception $e) {
+                $fault = $this->fault($e);
+                $faultactor = isset($fault->faultactor) ? $fault->faultactor : null;
+                $detail = isset($fault->detail) ? $fault->detail : null;
+                $soap->fault($fault->faultcode, $fault->faultstring, $faultactor, $detail);
+            }
+        }
+        $this->_response = ob_get_clean();
+
+        // Restore original error handler
+        restore_error_handler();
+        ini_set('display_errors', $displayErrorsOriginalState);
+
+        if (!$this->_returnResponse) {
+            echo $this->_response;
+            return;
+        }
+
+        return $this->_response;
     }
 }
 
