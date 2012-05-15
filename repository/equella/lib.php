@@ -48,7 +48,7 @@ class repository_equella extends repository {
     public function get_listing($path = null, $page = null) {
         global $CFG, $COURSE;
         $callbackurl = $CFG->wwwroot . '/repository/equella/callback.php?repo_id=' . $this->id;
-        $mimetypesstr = implode(',', $this->mimetypes); 
+        $mimetypesstr = implode(',', $this->mimetypes);
         $url = $this->get_option('equella_url')
                 . '?method=lms'
                 . '&returnurl='.urlencode($callbackurl)
@@ -123,7 +123,7 @@ class repository_equella extends repository {
             $mform->addElement('header', '', get_string('group', 'repository_equella', format_string($role->name)));
             $mform->addElement('text', "equella_{$role->shortname}_shareid", get_string('sharedid', 'repository_equella'));
             $mform->addElement('text', "equella_{$role->shortname}_sharedsecret", get_string('sharedsecrets', 'repository_equella'));
-        }   
+        }
     }
 
     /**
@@ -195,15 +195,25 @@ class repository_equella extends repository {
         global $USER, $COURSE;
 
         if( $readwrite == 'write' ) {
-            $context_sys = get_system_context();
-            $context_cc = get_context_instance(CONTEXT_COURSECAT, $COURSE->category);
-            $context_c = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+            $context_sys = context_system::instance();
+            if (!empty($COURSE->category)) {
+                $context_cc = context_coursecat::instance($COURSE->category);
+            }
+            $context_c = context_course::instance($COURSE->id);
 
             foreach( self::get_all_editing_roles() as $role) {
                 //does user have this role?
-                if(user_has_role_assignment($USER->id, $role->id, $context_sys->id) ||
-                    user_has_role_assignment($USER->id, $role->id, $context_cc->id) ||
-                    user_has_role_assignment($USER->id, $role->id, $context_c->id)) {
+                $hasroleassignment = false;
+                if (user_has_role_assignment($USER->id, $role->id, $context_sys->id)) {
+                    $hasroleassignment = true;
+                }
+                if (!$hasroleassignment && !empty($context_cc) && user_has_role_assignment($USER->id, $role->id, $context_cc->id)) {
+                    $hasroleassignment = true;
+                }
+                if (!$hasroleassignment && user_has_role_assignment($USER->id, $role->id, $context_c->id)) {
+                    $hasroleassignment = true;
+                }
+                if ($hasroleassignment) {
                     //see if the user has a role that is linked to an equella role
                     $shareid = $this->get_option("equella_{$role->shortname}_shareid");
                     if( !empty($shareid) ) {
@@ -221,16 +231,12 @@ class repository_equella extends repository {
 
     private static function get_all_editing_roles() {
         global $DB;
-        return $DB->get_records_sql(
-            "SELECT r.* FROM {role_capabilities} rc
-            INNER JOIN {role} r ON rc.roleid = r.id
-            WHERE capability = :capability
-            AND permission = 1
-            ORDER BY r.shortname",
-            array(
-                'capability' => 'moodle/course:manageactivities'
-            )
-        );
+        $sql = "SELECT r.* FROM {role_capabilities} rc
+                     INNER JOIN {role} r
+                                ON rc.roleid = r.id
+                          WHERE capability = :capability AND permission = 1
+                       ORDER BY r.shortname";
+        return $DB->get_records_sql($sql, array('capability' => 'moodle/course:manageactivities'));
     }
 
     /**
