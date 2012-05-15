@@ -174,6 +174,7 @@ class core_admin_renderer extends plugin_renderer_base {
      */
     public function upgrade_plugin_check_page(plugin_manager $pluginman, available_update_checker $checker,
             $version, $showallplugins, $reloadurl, $continueurl) {
+        global $CFG;
 
         $output = '';
 
@@ -181,13 +182,15 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->box_start('generalbox');
         $output .= $this->container_start('generalbox', 'notice');
         $output .= html_writer::tag('p', get_string('pluginchecknotice', 'core_plugin'));
-        $output .= $this->container_start('checkforupdates');
-        $output .= $this->single_button(new moodle_url($reloadurl, array('fetchupdates' => 1)), get_string('checkforupdates', 'core_plugin'));
-        if ($timefetched = $checker->get_last_timefetched()) {
-            $output .= $this->container(get_string('checkforupdateslast', 'core_plugin',
-                userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
+        if (empty($CFG->disableupdatenotifications)) {
+            $output .= $this->container_start('checkforupdates');
+            $output .= $this->single_button(new moodle_url($reloadurl, array('fetchupdates' => 1)), get_string('checkforupdates', 'core_plugin'));
+            if ($timefetched = $checker->get_last_timefetched()) {
+                $output .= $this->container(get_string('checkforupdateslast', 'core_plugin',
+                    userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
+            }
+            $output .= $this->container_end();
         }
-        $output .= $this->container_end();
         $output .= $this->container_end();
 
         $output .= $this->plugins_check_table($pluginman, $version, array('full' => $showallplugins));
@@ -563,6 +566,8 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML code
      */
     public function plugins_check_table(plugin_manager $pluginman, $version, array $options = null) {
+        global $CFG;
+
         $plugininfo = $pluginman->get_plugins();
 
         if (empty($plugininfo)) {
@@ -645,7 +650,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 $status = get_string('status_' . $statuscode, 'core_plugin');
 
                 $availableupdates = $plugin->available_updates();
-                if (!empty($availableupdates)) {
+                if (!empty($availableupdates) and empty($CFG->disableupdatenotifications)) {
                     foreach ($availableupdates as $availableupdate) {
                         $status .= $this->plugin_available_update_info($availableupdate);
                     }
