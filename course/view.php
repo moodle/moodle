@@ -88,8 +88,13 @@
 
     require_once($CFG->dirroot.'/calendar/lib.php');    /// This is after login because it needs $USER
 
-    //TODO: danp do we need different urls?
-    add_to_log($course->id, 'course', 'view', "view.php?id=$course->id", "$course->id");
+    $logparam = 'id='. $course->id;
+    $loglabel = 'view';
+    if(!empty($section)) {
+        $logparam .= '&section='. $section;
+        $loglabel = 'view section';
+    }
+    add_to_log($course->id, 'course', $loglabel, "view.php?". $logparam, "$course->fullname");
 
     $course->format = clean_param($course->format, PARAM_ALPHA);
     if (!file_exists($CFG->dirroot.'/course/format/'.$course->format.'/format.php')) {
