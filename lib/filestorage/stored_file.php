@@ -43,7 +43,7 @@ require_once("$CFG->dirroot/repository/lib.php");
 class stored_file {
     /** @var file_storage file storage pool instance */
     private $fs;
-    /** @var stdClass record from the files table */
+    /** @var stdClass record from the files table left join files_reference table */
     private $file_record;
     /** @var string location of content files */
     private $filedir;

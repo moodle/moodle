@@ -145,7 +145,7 @@ class file_storage {
     /**
      * Create instance of file class from database record.
      *
-     * @param stdClass $filerecord record from the files table
+     * @param stdClass $filerecord record from the files table left join files_reference table
      * @return stored_file instance of file abstraction class
      */
     public function get_file_instance(stdClass $filerecord) {
