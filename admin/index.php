@@ -240,7 +240,9 @@ if ($version > $CFG->version) {  // upgrade
 
         if ($fetchupdates) {
             // no sesskey support guaranteed here
-            available_update_checker::instance()->fetch();
+            if (empty($CFG->disableupdatenotifications)) {
+                available_update_checker::instance()->fetch();
+            }
             redirect($reloadurl);
         }
 

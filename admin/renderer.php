@@ -230,11 +230,12 @@ class core_admin_renderer extends plugin_renderer_base {
      */
     public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
             $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch) {
+        global $CFG;
         $output = '';
 
         $output .= $this->header();
         $output .= $this->maturity_info($maturity);
-        $output .= $this->available_updates($availableupdates, $availableupdatesfetch);
+        $output .= empty($CFG->disableupdatenotifications) ? $this->available_updates($availableupdates, $availableupdatesfetch) : '';
         $output .= $this->insecure_dataroot_warning($insecuredataroot);
         $output .= $this->display_errors_warning($errorsdisplayed);
         $output .= $this->cron_overdue_warning($cronoverdue);
