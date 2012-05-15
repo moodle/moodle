@@ -29,17 +29,17 @@ if ($hascustommenu) {
 }
 
 /************************************************************************************************/
-if (!empty($PAGE->theme->settings->frontpagelogo)) {
-    $logourl = $PAGE->theme->settings->frontpagelogo;
-} else if (!empty($PAGE->theme->settings->logo)) {
-    $logourl = $PAGE->theme->settings->logo;
+if (!empty($PAGE->theme->settings->frontpagelogourl)) {
+    $logourl = $PAGE->theme->settings->frontpagelogourl;
+} else if (!empty($PAGE->theme->settings->customlogourl)) {
+    $logourl = $PAGE->theme->settings->customlogourl;
 } else {
     $logourl = $OUTPUT->pix_url('logo', 'theme');
 }
 
 $hasframe = !isset($PAGE->theme->settings->noframe) || !$PAGE->theme->settings->noframe;
 
-$displaylogo = !isset($PAGE->theme->settings->displaylogo) || $PAGE->theme->settings->displaylogo;
+$displaylogo = !isset($PAGE->theme->settings->headercontent) || $PAGE->theme->settings->headercontent;
 /************************************************************************************************/
 
 echo $OUTPUT->doctype() ?>
