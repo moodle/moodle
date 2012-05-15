@@ -1393,6 +1393,7 @@ $string['restoreusersprecheck'] = 'Checking user data';
 $string['restoreusersprecheckerror'] = 'Some problems were detected when checking user data';
 $string['restricted'] = 'Restricted';
 $string['returningtosite'] = 'Returning to this web site?';
+$string['returntomaincoursepage'] = 'Return to main course page';
 $string['returntooriginaluser'] = 'Return to {$a}';
 $string['revert'] = 'Revert';
 $string['role'] = 'Role';
