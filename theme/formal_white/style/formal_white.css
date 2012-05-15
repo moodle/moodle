@@ -14,6 +14,8 @@ a:link {text-decoration:none;color:black;}
 a:visited {text-decoration:none;color:black;}
 a:hover {text-decoration:underline;color:black;}
 
+a.autolink {text-decoration:underline;}
+
 h1 {font-size:140%;font-weight:bold;}
 h2 {font-size:130%;}
 h3 {font-size:120%;}
