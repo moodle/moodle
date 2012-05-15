@@ -44,8 +44,7 @@ if ($id) {
     $course = $DB->get_record('course', array('id'=>$data->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('data', $data->id, $course->id, null, MUST_EXIST);
 }
-
-$context = context_module::instance($cm->id, MUST_EXIST);
+$context = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
 require_login($course, false, $cm);
 
 require_capability('mod/data:managetemplates', $context);
