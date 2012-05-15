@@ -55,14 +55,14 @@ class moodle_zend_soap_server extends Zend_Soap_Server {
     public function fault($fault = null, $code = "Receiver")
     {
 
-        //run the zend code that clean/create a soapfault
+        // Run the zend code that clean/create a soapfault.
         $soapfault = parent::fault($fault, $code);
 
-        //intercept any exceptions and add the errorcode and debuginfo (optional)
+        // Intercept any exceptions and add the errorcode and debuginfo (optional).
         $actor = null;
         $details = null;
         if ($fault instanceof Exception) {
-            //add the debuginfo to the exception message if debuginfo must be returned
+            // Add the debuginfo to the exception message if debuginfo must be returned.
             $actor = $fault->errorcode;
             if (debugging() and isset($fault->debuginfo)) {
                 $details = $fault->debuginfo;
@@ -75,10 +75,12 @@ class moodle_zend_soap_server extends Zend_Soap_Server {
     }
 
     /**
+     * Handle a request
+     *
      * NOTE: this is basically a copy of the Zend handle()
      *       but with $soap->fault returning faultactor + faultdetail
-     *
-     * Handle a request
+     *       So we don't require coding style checks within this method
+     *       to keep it as similar as the original one.
      *
      * Instantiates SoapServer object with options set in object, and
      * dispatches its handle() method.

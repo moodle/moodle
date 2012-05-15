@@ -48,17 +48,17 @@ class moodle_zend_xmlrpc_server extends Zend_XmlRpc_Server {
      */
     public function fault($fault = null, $code = 404)
     {
-        //intercept any exceptions with debug info and transform it in Moodle exception
+        // Intercept any exceptions with debug info and transform it in Moodle exception.
         if ($fault instanceof Exception) {
-            // code php exception must be a long
-            // we obtain a hash of the errorcode, and then to get an integer hash
+            // Code php exception must be a long
+            // we obtain a hash of the errorcode, and then to get an integer hash.
             $code = base_convert(md5($fault->errorcode), 16, 10);
-            // code php exception being a long, it has a maximum number of digits.
+            // Code php exception being a long, it has a maximum number of digits.
             // we strip the $code to 8 digits, and hope for no error code collisions.
             // Collisions should be pretty rare, and if needed the client can retrieve
             // the accurate errorcode from the last | in the exception message.
             $code = substr($code, 0, 8);
-            //add the debuginfo to the exception message if debuginfo must be returned
+            // Add the debuginfo to the exception message if debuginfo must be returned.
             if (debugging() and isset($fault->debuginfo)) {
                 $fault = new Exception($fault->getMessage() . ' | DEBUG INFO: ' . $fault->debuginfo
                         . ' | ERRORCODE: ' . $fault->errorcode, $code);
