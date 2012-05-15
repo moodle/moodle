@@ -489,6 +489,9 @@ function get_exception_info($ex) {
         $debuginfo = null;
     }
 
+    // Append the error code to the debug info to make grepping and googling easier
+    $debuginfo .= PHP_EOL."Error code: $errorcode";
+
     $backtrace = $ex->getTrace();
     $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));
     array_unshift($backtrace, $place);
@@ -497,6 +500,8 @@ function get_exception_info($ex) {
     if (empty($module) || $module == 'moodle' || $module == 'core') {
         $module = 'error';
     }
+    // Search for the $errorcode's associated string
+    // If not found, append the contents of $a to $debuginfo so helpful information isn't lost
     if (function_exists('get_string_manager')) {
         if (get_string_manager()->string_exists($errorcode, $module)) {
             $message = get_string($errorcode, $module, $a);
@@ -505,9 +510,11 @@ function get_exception_info($ex) {
             $message = get_string($errorcode, 'moodle', $a);
         } else {
             $message = $module . '/' . $errorcode;
+            $debuginfo .= PHP_EOL.'$a contents: '.print_r($a, true);
         }
     } else {
         $message = $module . '/' . $errorcode;
+        $debuginfo .= PHP_EOL.'$a contents: '.print_r($a, true);
     }
 
     // Be careful, no guarantee weblib.php is loaded.
