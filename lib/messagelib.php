@@ -389,7 +389,7 @@ function message_get_providers_for_user($userid) {
 
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
-    $providers = $DB->get_records('message_providers', null, 'name');
+    $providers = get_message_providers();
 
     // Remove all the providers we aren't allowed to see now
     foreach ($providers as $providerid => $provider) {

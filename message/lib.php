@@ -2298,6 +2298,36 @@ function get_message_processors($ready = false) {
 }
 
 /**
+ * Get all message providers, validate their plugin existance and
+ * system configuration
+ *
+ * @return mixed $processors array of objects containing information on message processors
+ */
+function get_message_providers() {
+    global $CFG, $DB;
+    require_once($CFG->libdir . '/pluginlib.php');
+    $pluginman = plugin_manager::instance();
+
+    $providers = $DB->get_records('message_providers', null, 'name');
+
+    // Remove all the providers whose plugins are disabled or don't exist
+    foreach ($providers as $providerid => $provider) {
+        $plugin = $pluginman->get_plugin_info($provider->component);
+        if ($plugin) {
+            if ($plugin->get_status() === plugin_manager::PLUGIN_STATUS_MISSING) {
+                unset($providers[$providerid]);   // Plugins does not exist
+                continue;
+            }
+            if ($plugin->is_enabled() === false) {
+                unset($providers[$providerid]);   // Plugin disabled
+                continue;
+            }
+        }
+    }
+    return $providers;
+}
+
+/**
  * Get an instance of the message_output class for one of the output plugins.
  * @param string $type the message output type. E.g. 'email' or 'jabber'.
  * @return message_output message_output the requested class.
