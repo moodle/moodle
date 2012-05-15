@@ -74,7 +74,7 @@
     }
 
 /// If the hub plugin is installed then we let it take over the homepage here
-    if (get_config('local_hub', 'hubenabled') && file_exists($CFG->dirroot.'/local/hub/lib.php')) {
+    if (file_exists($CFG->dirroot.'/local/hub/lib.php') and get_config('local_hub', 'hubenabled')) {
         require_once($CFG->dirroot.'/local/hub/lib.php');
         $hub = new local_hub();
         $continue = $hub->display_homepage();
