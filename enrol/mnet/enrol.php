@@ -145,6 +145,7 @@ class enrol_mnet_mnetservice_enrol {
             // users {@link http://tracker.moodle.org/browse/MDL-21327}
             $user = mnet_strip_user((object)$userdata, mnet_fields_to_import($client));
             $user->mnethostid = $client->id;
+            $user->auth = 'mnet';
             try {
                 $user->id = $DB->insert_record('user', $user);
             } catch (Exception $e) {
