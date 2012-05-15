@@ -4528,7 +4528,20 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
             // Ooops, this module is not properly installed, force-delete it in the next block
         }
     }
+
     // We have tried to delete everything the nice way - now let's force-delete any remaining module data
+
+    // Remove all data from availability and completion tables that is associated
+    // with course-modules belonging to this course. Note this is done even if the
+    // features are not enabled now, in case they were enabled previously.
+    $DB->delete_records_select('course_modules_completion',
+           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
+           array($courseid));
+    $DB->delete_records_select('course_modules_availability',
+           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
+           array($courseid));
+
+    // Remove course-module data.
     $cms = $DB->get_records('course_modules', array('course'=>$course->id));
     foreach ($cms as $cm) {
         if ($module = $DB->get_record('modules', array('id'=>$cm->module))) {
@@ -4541,15 +4554,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
         $DB->delete_records('course_modules', array('id'=>$cm->id));
     }
-    // Remove all data from availability and completion tables that is associated
-    // with course-modules belonging to this course. Note this is done even if the
-    // features are not enabled now, in case they were enabled previously
-    $DB->delete_records_select('course_modules_completion',
-           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
-           array($courseid));
-    $DB->delete_records_select('course_modules_availability',
-           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
-           array($courseid));
+
     if ($showfeedback) {
         echo $OUTPUT->notification($strdeleted.get_string('type_mod_plural', 'plugin'), 'notifysuccess');
     }
