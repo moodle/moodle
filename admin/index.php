@@ -44,11 +44,6 @@ if (!function_exists('iconv')) {
     echo 'Moodle requires the iconv PHP extension. Please install or enable the iconv extension.';
     die();
 }
-if (iconv('UTF-8', 'UTF-8//IGNORE', 'abc') !== 'abc') {
-    // known to be broken in mid-2011 MAMP installations
-    echo 'Broken iconv PHP extension detected, installation/upgrade can not continue.';
-    die();
-}
 
 define('NO_OUTPUT_BUFFERING', true);
 
@@ -434,6 +429,8 @@ $availableupdates = $updateschecker->get_update_info('core',
     array('minmaturity' => $CFG->updateminmaturity, 'notifybuilds' => $CFG->updatenotifybuilds));
 $availableupdatesfetch = $updateschecker->get_last_timefetched();
 
+$buggyiconvnomb = (!function_exists('mb_convert_encoding') and @iconv('UTF-8', 'UTF-8//IGNORE', '100'.chr(130).'€') !== '100€');
+
 admin_externalpage_setup('adminnotifications');
 
 if ($fetchupdates) {
@@ -444,4 +441,4 @@ if ($fetchupdates) {
 
 $output = $PAGE->get_renderer('core', 'admin');
 echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
-        $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch);
+        $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch, $buggyiconvnomb);

@@ -1031,6 +1031,7 @@ $string['usetags'] = 'Enable tags functionality';
 $string['validateerror'] = 'This value was not valid:';
 $string['verifychangedemail'] = 'Restrict domains when changing email';
 $string['warningcurrentsetting'] = 'Invalid current value: {$a}';
+$string['warningiconvbuggy'] = 'Your version of the iconv library does not support the //IGNORE modifier. You should install the mbstring extension which can be used instead for cleaning strings containing invalid UTF-8 characters.';
 $string['webproxy'] = 'Web proxy';
 $string['webproxyinfo'] = 'Fill in following options if your Moodle server can not access internet directly. Internet access is required for download of environment data, language packs, RSS feeds, timezones, etc.<br /><em>PHP cURL extension is highly recommended.</em>';
 $string['xmlrpcrecommended'] = 'The xmlrpc extension is needed for hub communication, and useful for web services and Moodle networking';
