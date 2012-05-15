@@ -291,6 +291,11 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager.fp-select .fp-original .fp-originloading {display:none;}
 .filemanager.fp-select .fp-original.fp-loading .fp-originloading {display:inline;}
 
+.filemanager.fp-select .fp-reflist.fp-unknown {display:none;}
+.filemanager.fp-select .fp-reflist .fp-reflistloading {display:none;}
+.filemanager.fp-select .fp-reflist.fp-loading .fp-reflistloading {display:inline;}
+.filemanager.fp-select .fp-reflist .fp-value {max-width:400px;max-height:50px;overflow:auto;}
+
 /*
  * Create folder dialogue (File Manager only)
  */

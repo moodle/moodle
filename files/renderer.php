@@ -322,12 +322,17 @@ class core_files_renderer extends plugin_renderer_base {
      * disabled if they are not applicable for the particular file;
      *
      * There may be present elements with classes 'fp-original', 'fp-datemodified', 'fp-datecreated',
-     * 'fp-size', 'fp-dimensions'. They will receive additional class 'fp-unknown' if information
-     * is unavailable. If there is information available, the content of embedded element
-     * with class 'fp-value' will be substituted with the value;
+     * 'fp-size', 'fp-dimensions', 'fp-reflist'. They will receive additional class 'fp-unknown' if
+     * information is unavailable. If there is information available, the content of embedded
+     * element with class 'fp-value' will be substituted with the value;
      *
      * The value of Original ('fp-original') is loaded in separate request. When it is applicable
      * but not yet loaded the 'fp-original' element receives additional class 'fp-loading';
+     *
+     * The value of 'Aliases/Shortcuts' ('fp-reflist') is also loaded in separate request. When it
+     * is applicable but not yet loaded the 'fp-original' element receives additional class
+     * 'fp-loading'. The string explaining that XX references exist will replace content of element
+     * 'fp-refcount'. Inside '.fp-reflist .fp-value' each reference will be enclosed in <li>;
      *
      * Elements with classes 'fp-file-update', 'fp-file-download', 'fp-file-delete', 'fp-file-zip',
      * 'fp-file-unzip', 'fp-file-setmain' and 'fp-file-cancel' will hold corresponding onclick
@@ -371,6 +376,8 @@ class core_files_renderer extends plugin_renderer_base {
             <td class="mdl-left"><select></select></td></tr>
             <tr class="{!}fp-original"><td class="mdl-right"><label>'.get_string('original', 'repository').'</label>:</td>
             <td class="mdl-left"><span class="fp-originloading">'.$icon_progress.' '.$strloading.'</span><span class="fp-value"/></td></tr>
+            <tr class="{!}fp-reflist"><td class="mdl-right"><label>'.get_string('referenceslist', 'repository').'</label>:</td>
+            <td class="mdl-left"><p class="{!}fp-refcount"/><span class="fp-reflistloading">'.$icon_progress.' '.$strloading.'</span><ul class="fp-value"/></td></tr>
         </table>
     </form>
     <p class="{!}fp-thumbnail"></p>

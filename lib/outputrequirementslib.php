@@ -445,7 +445,8 @@ class page_requirements_manager {
                                                         array('nofilesattached', 'repository'), array('filepicker', 'repository'), array('logout', 'repository'),
                                                         array('nofilesavailable', 'repository'), array('norepositoriesavailable', 'repository'),
                                                         array('fileexistsdialogheader', 'repository'), array('fileexistsdialog_editor', 'repository'),
-                                                        array('fileexistsdialog_filemanager', 'repository'), array('renameto', 'repository')
+                                                        array('fileexistsdialog_filemanager', 'repository'), array('renameto', 'repository'),
+                                                        array('referencesexist', 'repository')
                                                     ));
                     break;
                 case 'core_comment':

@@ -395,6 +395,34 @@ switch ($action) {
         }
         die;
 
+    case 'getreferences':
+        $filename    = required_param('filename', PARAM_FILE);
+        $filepath    = required_param('filepath', PARAM_PATH);
+
+        $fs = get_file_storage();
+        $file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename);
+        if (!$file) {
+            echo json_encode(false);
+        } else {
+            $source = unserialize($file->get_source());
+            $return = array('filename' => $filename, 'filepath' => $filepath, 'references' => array());
+            $browser = get_file_browser();
+            if (isset($source->original)) {
+                $reffiles = $fs->search_references($source->original);
+                foreach ($reffiles as $reffile) {
+                    $refcontext = get_context_instance_by_id($reffile->get_contextid());
+                    $fileinfo = $browser->get_file_info($refcontext, $reffile->get_component(), $reffile->get_filearea(), $reffile->get_itemid(), $reffile->get_filepath(), $reffile->get_filename());
+                    if (empty($fileinfo)) {
+                        $return['references'][] = get_string('undisclosedreference', 'repository');
+                    } else {
+                        $return['references'][] = $fileinfo->get_readable_fullname();
+                    }
+                }
+            }
+            echo json_encode((object)$return);
+        }
+        die;
+
     default:
         // no/unknown action?
         echo json_encode(false);
