@@ -466,7 +466,10 @@ class core_admin_renderer extends plugin_renderer_base {
                 $updateinfo .= $this->moodle_available_update_info($update);
             }
         } else {
-            $updateinfo .= $this->heading(get_string('updateavailablenot', 'core_admin'), 3);
+            $now = time();
+            if ($fetch and ($fetch <= $now) and ($now - $fetch < HOURSECS)) {
+                $updateinfo .= $this->heading(get_string('updateavailablenot', 'core_admin'), 3);
+            }
         }
 
         $updateinfo .= $this->container_start('checkforupdates');
