@@ -17,6 +17,10 @@
         verbose="false"
         >
 
+    <php>
+        <!--<const name="PHPUNIT_LONGTEST" value="1"/> uncomment to execute also slow or otherwise expensive tests-->
+    </php>
+
 <!--All core suites need to be manually added here-->
 
     <testsuites>
