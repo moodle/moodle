@@ -18,16 +18,15 @@
 /**
  * Displays the TinyMCE popup window to insert a Moodle emoticon
  *
- * @package    tinymceplugin
- * @subpackage moodleemoticon
- * @copyright  2010 David Mudrak <david@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tinymce_moodleemoticon
+ * @copyright 2010 David Mudrak <david@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('NO_MOODLE_COOKIES', true); // Session not used here
 define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
 
-require_once(dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))))) . '/config.php');
+require_once(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))) . '/config.php');
 
 $PAGE->set_context(get_system_context());
 
@@ -35,14 +34,15 @@ $emoticonmanager = get_emoticon_manager();
 $stringmanager = get_string_manager();
 
 $editor = get_texteditor('tinymce');
+$plugin = $editor->get_plugin('moodleemoticon');
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title><?php print_string('moodleemoticon:desc', 'editor_tinymce'); ?></title>
-    <script type="text/javascript" src="../../tiny_mce_popup.js?v=<?php echo $editor->version ?>"></script>
-    <script type="text/javascript" src="js/dialog.js?v=<?php echo $editor->version ?>"></script>
+    <script type="text/javascript" src="../../tiny_mce/<?php echo $editor->version ?>/tiny_mce_popup.js"></script>
+    <script type="text/javascript" src="<?php echo $plugin->get_tinymce_file_url('js/dialog.js'); ?>"></script>
 </head>
 <body>
 

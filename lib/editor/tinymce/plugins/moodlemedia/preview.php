@@ -17,13 +17,13 @@
 /**
  * Provides A/V preview features for the TinyMCE editor Moodle Media plugin.
  * The preview is included in an iframe within the popup dialog.
- * @package editor
- * @subpackage tinymce
+ *
+ * @package tinymce_moodlemedia
  * @copyright 1999 onwards Martin Dougiamas   {@link http://moodle.com}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(__FILE__) . '/../../../../../../../config.php');
+require(dirname(__FILE__) . '/../../../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/editorlib.php');
 require_once($CFG->libdir . '/editor/tinymce/lib.php');
@@ -38,7 +38,7 @@ $editor = new tinymce_texteditor();
 
 // Now output this file which is super-simple
 $PAGE->set_pagelayout('embedded');
-$PAGE->set_url(new moodle_url('/lib/editor/tinymce/tiny_mce/'.$editor->version.'/plugins/moodlemedia/preview.php',
+$PAGE->set_url(new moodle_url('/lib/editor/tinymce/tiny_mce/' . $editor->version . '/plugins/moodlemedia/preview.php',
         array('path' => $path)));
 $PAGE->set_context(context_system::instance());
 $PAGE->add_body_class('core_media_preview');

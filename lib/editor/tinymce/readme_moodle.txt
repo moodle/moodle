@@ -39,11 +39,6 @@ Note1: if the local modification includes lang changes, then steps 6-8 (from upg
 AMOS maintainer / custom-tinymce maintainer / integrators about that.
 
 =========================================================================================
-Added:
- * plugins/gragmath/*
- * plugins/moodlemotions/*
- * plugins/moodlenolink/*
- * plugins/moodlemedia/*
 
 Modified:
  * image integration - file picker integration

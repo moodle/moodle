@@ -2,7 +2,7 @@
 
 define('NO_MOODLE_COOKIES', true);
 
-require("../../../../../../../config.php");
+require("../../../../../config.php");
 
 $lang = required_param('elanguage', PARAM_SAFEDIR);
 
@@ -22,6 +22,9 @@ if (!file_exists("$CFG->dirroot/lib/dragmath/applet/lang/$lang.xml")) {
     $lang = 'en';
 }
 
+$editor = get_texteditor('tinymce');
+$plugin = $editor->get_plugin('dragmath');
+
 @header('Content-Type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -30,8 +33,8 @@ if (!file_exists("$CFG->dirroot/lib/dragmath/applet/lang/$lang.xml")) {
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title><?php print_string('dragmath:dragmath_title', 'editor_tinymce')?></title>
-<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
-<script type="text/javascript" src="js/dragmath.js"></script>
+<script type="text/javascript" src="../../tiny_mce/<?php echo $editor->version ?>/tiny_mce_popup.js"></script>
+<script type="text/javascript" src="<?php echo $plugin->get_tinymce_file_url('js/dragmath.js'); ?>"></script>
 </head>
 <body>
 
