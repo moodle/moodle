@@ -49,7 +49,7 @@ $saveas_filename = optional_param('title', '', PARAM_FILE);     // save as file 
 $saveas_path   = optional_param('savepath', '/', PARAM_PATH);   // save as file path
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
 $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
-$usefilereference  = optional_param('usefilereference', '', PARAM_ALPHA);
+$usefilereference  = optional_param('usefilereference', false, PARAM_BOOL);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
@@ -212,7 +212,7 @@ switch ($action) {
             // Some repository plugins are hosting moodle internal files, we cannot use get_file
             // method, so we use copy_to_area method
             // (local, user, coursefiles, recent)
-            if ($repo->has_moodle_files() && ($usefilereference != 'yes')) {
+            if ($repo->has_moodle_files() && !$usefilereference) {
                 // check filesize against max allowed size
                 $filesize = $repo->get_file_size($source);
                 if (empty($filesize)) {
@@ -268,7 +268,7 @@ switch ($action) {
             $record->userid       = $USER->id;
 
 
-            if ($usefilereference == 'yes') {
+            if ($usefilereference) {
                 $reference = $repo->get_file_reference($source);
                 // get reference life time from repo
                 $record->referencelifetime = $repo->get_reference_file_lifetime($reference);

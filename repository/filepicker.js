@@ -1067,7 +1067,7 @@ M.core_filepicker.init = function(Y, options) {
                 } else if ((return_types & 4/*FILE_REFERENCE*/) &&
                         (this.options.return_types & 4/*FILE_REFERENCE*/) &&
                         selectnode.one('.fp-linktype-4 input').get('checked')) {
-                    params['usefilereference'] = 'yes';
+                    params['usefilereference'] = '1';
                 }
 
                 selectnode.addClass('loading');
