@@ -92,6 +92,10 @@ if ($editform->is_cancelled()) {
     redirect($returnurl);
 
 } elseif ($data = $editform->get_data()) {
+    if (!has_capability('moodle/course:changeidnumber', $context)) {
+        // Remove the idnumber if the user doesn't have permission to modify it
+        unset($data->idnumber);
+    }
 
     if ($data->id) {
         groups_update_group($data, $editform, $editoroptions);

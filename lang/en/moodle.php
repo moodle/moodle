@@ -855,6 +855,10 @@ $string['icon'] = 'Icon';
 $string['idnumber'] = 'ID number';
 $string['idnumbercourse'] = 'Course ID number';
 $string['idnumbercourse_help'] = 'The ID number of a course is only used when matching the course against external systems and is not displayed anywhere on the site. If the course has an official code name it may be entered, otherwise the field can be left blank.';
+$string['idnumbergroup'] = 'Group ID number';
+$string['idnumbergroup_help'] = 'The ID number of a group is only used when matching the group against external systems and is not displayed anywhere on the site. If the group has an official code name it may be entered, otherwise the field can be left blank.';
+$string['idnumbergrouping'] = 'Grouping ID number';
+$string['idnumbergrouping_help'] = 'The ID number of a grouping is only used when matching the grouping against external systems and is not displayed anywhere on the site. If the grouping has an official code name it may be entered, otherwise the field can be left blank.';
 $string['idnumbermod'] = 'ID number';
 $string['idnumbermod_help'] = 'Setting an ID number provides a way of identifying the activity for grade calculation purposes. If the activity is not included in any grade calculation then the ID number field may be left blank.
 

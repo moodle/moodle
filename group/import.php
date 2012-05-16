@@ -80,6 +80,7 @@ if ($mform_post->is_cancelled()) {
     $optionalDefaults = array("lang" => 1);
     $optional = array("coursename" => 1,
             "idnumber" => 1,
+            "groupidnumber" => 1,
             "description" => 1,
             "enrolmentkey" => 1);
 
@@ -166,6 +167,24 @@ if ($mform_post->is_cancelled()) {
                     echo $OUTPUT->notification(get_string('nopermissionforcreation', 'group', $groupname));
 
                 } else {
+                    if (isset($newgroup->groupidnumber)) {
+                        // The CSV field for the group idnumber is groupidnumber rather than
+                        // idnumber as that field is already in use for the course idnumber.
+                        $newgroup->groupidnumber = trim($newgroup->groupidnumber);
+                        if (has_capability('moodle/course:changeidnumber', $newgrpcoursecontext)) {
+                            $newgroup->idnumber = $newgroup->groupidnumber;
+                            if ($existing = groups_get_group_by_idnumber($newgroup->courseid, $newgroup->idnumber)) {
+                                // idnumbers must be unique to a course but we shouldn't ignore group creation for duplicates
+                                $existing->name = s($existing->name);
+                                $existing->idnumber = s($existing->idnumber);
+                                $existing->problemgroup = $groupname;
+                                echo $OUTPUT->notification(get_string('groupexistforcoursewithidnumber', 'error', $existing));
+                                unset($newgroup->idnumber);
+                            }
+                        }
+                        // Always drop the groupidnumber key. It's not a valid database field
+                        unset($newgroup->groupidnumber);
+                    }
                     if ($groupid = groups_get_group_by_name($newgroup->courseid, $groupname)) {
                         echo $OUTPUT->notification("$groupname :".get_string('groupexistforcourse', 'error', $groupname));
                     } else if (groups_create_group($newgroup)) {

@@ -40,6 +40,7 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:managegroups', $context);
+$changeidnumber = has_capability('moodle/course:changeidnumber', $context);
 
 // Make sure all groups are OK and belong to course
 $groupidarray = explode(',',$groupids);
@@ -47,6 +48,9 @@ $groupnames = array();
 foreach($groupidarray as $groupid) {
     if (!$group = $DB->get_record('groups', array('id' => $groupid))) {
         print_error('invalidgroupid');
+    }
+    if (!empty($group->idnumber) && !$changeidnumber) {
+        print_error('grouphasidnumber', '', '', $group->name);
     }
     if ($courseid != $group->courseid) {
         print_error('groupunknown', '', '', $group->courseid);

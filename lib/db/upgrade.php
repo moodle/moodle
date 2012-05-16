@@ -448,6 +448,7 @@ function xmldb_main_upgrade($oldversion) {
         $field = new xmldb_field('coursedisplay', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'completionnotify');
 
         // Conditionally launch add field coursedisplay
+        //
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -499,6 +500,42 @@ function xmldb_main_upgrade($oldversion) {
         unset_config('enablecourseajax');
 
         upgrade_main_savepoint(true, 2012050400.02);
+    }
+
+    if ($oldversion < 2012051100.01) {
+
+        // Define field idnumber to be added to groups
+        $table = new xmldb_table('groups');
+        $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'courseid');
+        $index = new xmldb_index('idnumber', XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
+
+        // Conditionally launch add field idnumber
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Conditionally launch add index idnumber
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define field idnumber to be added to groupings
+        $table = new xmldb_table('groupings');
+        $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'name');
+        $index = new xmldb_index('idnumber', XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
+
+        // Conditionally launch add field idnumber
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Conditionally launch add index idnumber
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012051100.01);
     }
 
     return true;

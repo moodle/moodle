@@ -192,6 +192,7 @@ echo ' onclick="window.status=this.selectedIndex==-1 ? \'\' : this.options[this.
 
 $groups = groups_get_all_groups($courseid);
 $selectedname = '&nbsp;';
+$preventgroupremoval = array();
 
 if ($groups) {
     // Print out the HTML
@@ -205,6 +206,9 @@ if ($groups) {
                 // Only keep selected name if there is one group selected
                 $selectedname = $groupname;
             }
+        }
+        if (!empty($group->idnumber) && !has_capability('moodle/course:changeidnumber', $context)) {
+            $preventgroupremoval[$group->id] = true;
         }
 
         echo "<option value=\"{$group->id}\"$select title=\"$groupname\">$groupname</option>\n";
@@ -276,6 +280,7 @@ echo '</form>'."\n";
 
 if (ajaxenabled()) {
     $PAGE->requires->js_init_call('M.core_group.init_index', array($CFG->wwwroot, $courseid));
+    $PAGE->requires->js_init_call('M.core_group.groupslist', array($preventgroupremoval));
 }
 
 echo $OUTPUT->footer();
