@@ -111,6 +111,7 @@
             $section->sequence = '';
             $section->visible = 1;
             $section->id = $DB->insert_record('course_sections', $section);
+            rebuild_course_cache($SITE->id, true);
         }
 
         if (!empty($section->sequence) or !empty($section->summary) or $editing) {

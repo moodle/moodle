@@ -1015,11 +1015,54 @@ class restore_section_structure_step extends restore_structure_step {
 
     protected function define_structure() {
         $section = new restore_path_element('section', '/section');
+        $avail = new restore_path_element('availability', '/section/availability');
 
         // Apply for 'format' plugins optional paths at section level
         $this->add_plugin_structure('format', $section);
 
-        return array($section);
+        return array($section, $avail);
+    }
+
+    public function process_availability($data) {
+        global $DB;
+        $data = (object)$data;
+        $data->coursesectionid = $this->task->get_sectionid();
+        // NOTE: Other values in $data need updating, but these (cm,
+        // grade items) have not yet been restored.
+        $DB->insert_record('course_sections_availability', $data);
+    }
+
+    public function after_restore() {
+        global $DB;
+        // Get main data object
+        $sectionid = $this->get_task()->get_sectionid();
+        $data = $DB->get_record('course_sections',
+                array('id' => $sectionid), 'id, groupingid', MUST_EXIST);
+        if ($data->groupingid) {
+            // Correct grouping id
+            $DB->set_field('course_sections', 'groupingid',
+                    $this->get_mappingid('grouping', $data->groupingid),
+                    array('id' => $sectionid));
+        }
+
+        // Get data object for current section availability (if any)
+        $data = $DB->get_record('course_sections_availability',
+                array('coursesectionid' => $sectionid), 'id, sourcecmid, gradeitemid', IGNORE_MISSING);
+
+        // Update mappings
+        if ($data) {
+            $data->sourcecmid = $this->get_mappingid('course_module', $data->sourcecmid);
+            if (!$data->sourcecmid) {
+                $data->sourcecmid = null;
+            }
+            $data->gradeitemid = $this->get_mappingid('grade_item', $data->gradeitemid);
+            if (!$data->gradeitemid) {
+                $data->gradeitemid = null;
+            }
+
+            $DB->update_record('course_sections_availability', $data);
+            rebuild_course_cache($this->get_task()->get_courseid(), true);
+        }
     }
 
     public function process_section($data) {
@@ -1040,6 +1083,10 @@ class restore_section_structure_step extends restore_structure_step {
             $section->summaryformat = $data->summaryformat;
             $section->sequence = '';
             $section->visible = $data->visible;
+            $section->availablefrom = isset($data->availablefrom) ? $data->availablefrom : 0;
+            $section->availableuntil = isset($data->availableuntil) ? $data->availableuntil : 0;
+            $section->showavailability = isset($data->showavailability) ? $data->showavailability : 0;
+            $section->groupingid = isset($data->groupingid) ? $data->groupingid : 0;
             $newitemid = $DB->insert_record('course_sections', $section);
             $restorefiles = true;
 
@@ -1054,6 +1101,14 @@ class restore_section_structure_step extends restore_structure_step {
                 $section->summaryformat = $data->summaryformat;
                 $restorefiles = true;
             }
+
+            // Don't update available from, available until, or show availability
+            // (I didn't see a useful way to define whether existing or new one should
+            // take precedence).
+
+            // Always update groupingid (otherwise it will break later when it updates id)
+            $section->groupingid = isset($data->groupingid) ? $data->groupingid : 0;
+
             $DB->update_record('course_sections', $section);
             $newitemid = $secrec->id;
         }
