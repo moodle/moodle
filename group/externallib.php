@@ -574,7 +574,7 @@ class core_group_external extends external_api {
 
     /**
      * Create groupings
-     * 
+     *
      * @param array $groupings array of grouping description arrays (with keys groupname and courseid)
      * @return array of newly created groupings
      * @since Moodle 2.3
@@ -690,6 +690,13 @@ class core_group_external extends external_api {
             if (! $currentgrouping = $DB->get_record('groupings', array('id'=>$grouping->id))) {
                 throw new invalid_parameter_exception("Grouping $grouping->id does not exist in the course");
             }
+
+            // Check if the new modified grouping name already exists in the course.
+            if ($grouping->name != $currentgrouping->name and
+                    $DB->count_records('groupings', array('courseid'=>$currentgrouping->courseid, 'name'=>$grouping->name))) {
+                throw new invalid_parameter_exception('A different grouping with the same name already exists in the course');
+            }
+
             $grouping->courseid = $currentgrouping->courseid;
 
             // Now security checks.
