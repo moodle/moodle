@@ -41,7 +41,7 @@ if ($edit){
     $pagename = 'repositoryinstancenew';
 }
 
-admin_externalpage_setup($pagename);
+admin_externalpage_setup($pagename, '', null, new moodle_url('/admin/repositoryinstances.php'));
 require_capability('moodle/site:config', $context);
 
 $baseurl = new moodle_url("/$CFG->admin/repositoryinstance.php", array('sesskey'=>sesskey()));
