@@ -18,7 +18,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
 
 class repository_equella extends repository {
     /** @var array mimetype filter */
-    private $memetypes;
+    private $mimetypes;
 
     /**
      * Constructor
