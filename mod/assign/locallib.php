@@ -118,10 +118,10 @@ class assign {
     private $returnparams = array();
 
     /** @var string modulename prevents excessive calls to get_string */
-    private static $modulename = '';
+    private static $modulename = null;
 
     /** @var string modulenameplural prevents excessive calls to get_string */
-    private static $modulenameplural = '';
+    private static $modulenameplural = null;
 
     /**
      * Constructor for the base assign class
