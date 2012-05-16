@@ -30,7 +30,7 @@ class repository_equella extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
 
-        if (!empty($this->options['mimetypes'])) {
+        if (!empty($this->options['mimetypes']) && !in_array('*', $this->options['mimetypes'])) {
             $this->mimetypes = $this->options['mimetypes'];
             $this->mimetypes = array_unique(array_map(array($this, 'toMimeType'), $this->options['mimetypes']));
         } else {
@@ -48,7 +48,7 @@ class repository_equella extends repository {
     public function get_listing($path = null, $page = null) {
         global $CFG, $COURSE;
         $callbackurl = $CFG->wwwroot . '/repository/equella/callback.php?repo_id=' . $this->id;
-        
+
         $mimetypesstr = '';
         if (!empty($this->mimetypes)) {
             $mimetypesstr = '&mimeTypes=' . implode(',', $this->mimetypes);
