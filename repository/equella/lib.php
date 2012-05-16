@@ -50,8 +50,14 @@ class repository_equella extends repository {
         $callbackurl = $CFG->wwwroot . '/repository/equella/callback.php?repo_id=' . $this->id;
 
         $mimetypesstr = '';
+        $restrict = '';
         if (!empty($this->mimetypes)) {
             $mimetypesstr = '&mimeTypes=' . implode(',', $this->mimetypes);
+            // We're restricting to a mime type, so we always restrict to selecting resources only.
+            $restrict = '&attachmentonly=true';
+        } else if ($this->get_option('equella_select_restriction') != 'none') {
+            // The option value matches the EQUELLA paramter name.
+            $restrict = '&' . $this->get_option('equella_select_restriction') . '=true';
         }
 
         $url = $this->get_option('equella_url')
@@ -65,7 +71,8 @@ class repository_equella extends repository {
                 . '&forcePost=true'
                 . '&cancelDisabled=true'
                 . '&attachmentUuidUrls=true'
-                . '&options='.urlencode($this->get_option('equella_options') . $mimetypesstr);
+                . '&options='.urlencode($this->get_option('equella_options') . $mimetypesstr)
+                . $restrict;
         $list = array();
         $list['object'] = array();
         $list['object']['type'] = 'text/html';
