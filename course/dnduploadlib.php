@@ -48,18 +48,16 @@ function dndupload_add_to_course($course, $modnames) {
 
     // Add the javascript to the page.
     $jsmodule = array(
-        'name' => 'dndupload',
-        'fullpath' => new moodle_url('/lib/ajax/dndupload.js'),
+        'name' => 'coursedndupload',
+        'fullpath' => new moodle_url('/course/dndupload.js'),
         'strings' => array(
-            array('addfilehere', 'core_dndupload'),
-            array('dndworking', 'core_dndupload'),
-            array('filetoolarge', 'core_dndupload'),
-            array('nofilereader', 'core_dndupload'),
-            array('noajax', 'core_dndupload'),
-            array('actionchoice', 'core_dndupload'),
-            array('servererror', 'core_dndupload'),
-            array('upload', 'core'),
-            array('cancel', 'core')
+            array('addfilehere', 'moodle'),
+            array('dndworking', 'moodle'),
+            array('filetoolarge', 'moodle'),
+            array('actionchoice', 'moodle'),
+            array('servererror', 'moodle'),
+            array('upload', 'moodle'),
+            array('cancel', 'moodle')
         ),
         'requires' => array('node', 'event', 'panel', 'json')
     );
@@ -105,12 +103,12 @@ class dndupload_handler {
         // Add some default types to handle.
         // Note: 'Files' type is hard-coded into the Javascript as this needs to be ...
         // ... treated a little differently.
-        $this->add_type('url', array('url', 'text/uri-list'), get_string('addlinkhere', 'core_dndupload'),
-                        get_string('nameforlink', 'core_dndupload'), 10);
-        $this->add_type('text/html', array('text/html'), get_string('addpagehere', 'core_dndupload'),
-                        get_string('nameforpage', 'core_dndupload'), 20);
-        $this->add_type('text', array('text', 'text/plain'), get_string('addpagehere', 'core_dndupload'),
-                        get_string('nameforpage', 'core_dndupload'), 30);
+        $this->add_type('url', array('url', 'text/uri-list'), get_string('addlinkhere', 'moodle'),
+                        get_string('nameforlink', 'moodle'), 10);
+        $this->add_type('text/html', array('text/html'), get_string('addpagehere', 'moodle'),
+                        get_string('nameforpage', 'moodle'), 20);
+        $this->add_type('text', array('text', 'text/plain'), get_string('addpagehere', 'moodle'),
+                        get_string('nameforpage', 'moodle'), 30);
 
         // Loop through all modules to find handlers.
         $mods = get_plugin_list_with_function('mod', 'dndupload_register');
@@ -430,7 +428,7 @@ class dndupload_ajax_processor {
         if ($this->is_file_upload()) {
             require_capability('moodle/course:managefiles', $this->context);
             if ($content != null) {
-                throw new moodle_exception('fileuploadwithcontent', 'core_dndupload');
+                throw new moodle_exception('fileuploadwithcontent', 'moodle');
             }
         }
 
@@ -458,7 +456,7 @@ class dndupload_ajax_processor {
         $types = $this->dnduploadhandler->get_handled_file_types($this->module->name);
         $repo = repository::get_instances(array('type' => 'upload'));
         if (empty($repo)) {
-            throw new moodle_exception('errornouploadrepo', 'core_dndupload');
+            throw new moodle_exception('errornouploadrepo', 'moodle');
         }
         $repo = reset($repo); // Get the first (and only) upload repo.
         $details = $repo->process_upload(null, $maxbytes, $types, '/', $draftitemid);
@@ -490,7 +488,7 @@ class dndupload_ajax_processor {
         // Check this plugin is registered to handle this type of upload
         if (!$this->dnduploadhandler->has_type_handler($this->module->name, $this->type)) {
             $info = (object)array('modname' => $this->module->name, 'type' => $this->type);
-            throw new moodle_exception('moddoesnotsupporttype', 'core_dndupload', $info);
+            throw new moodle_exception('moddoesnotsupporttype', 'moodle', $info);
         }
 
         // Create a course module to hold the new instance.
@@ -587,7 +585,7 @@ class dndupload_ajax_processor {
         if (!$instanceid) {
             // Something has gone wrong - undo everything we can.
             delete_course_module($this->cm->id);
-            throw new moodle_exception('errorcreatingactivity', 'core_dndupload', '', $this->module->name);
+            throw new moodle_exception('errorcreatingactivity', 'moodle', '', $this->module->name);
         }
 
         $DB->set_field('course_modules', 'instance', $instanceid, array('id' => $this->cm->id));
@@ -604,7 +602,7 @@ class dndupload_ajax_processor {
         if (!isset($info->cms[$this->cm->id])) {
             // The course module has not been properly created in the course - undo everything.
             delete_course_module($this->cm->id);
-            throw new moodle_exception('errorcreatingactivity', 'core_dndupload', '', $this->module->name);
+            throw new moodle_exception('errorcreatingactivity', 'moodle', '', $this->module->name);
         }
         $mod = $info->cms[$this->cm->id];
 

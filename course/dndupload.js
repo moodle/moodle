@@ -25,7 +25,7 @@ M.course_dndupload = {
     // YUI object.
     Y: null,
     // URL for upload requests
-    url: M.cfg.wwwroot + '/lib/ajax/dndupload.php',
+    url: M.cfg.wwwroot + '/course/dndupload.php',
     // maximum size of files allowed in this form
     maxbytes: 0,
     // ID of the course we are on
@@ -93,7 +93,7 @@ M.course_dndupload = {
         }, this);
 
         var div = this.add_status_div();
-        div.setContent(M.util.get_string('dndworking', 'core_dndupload'));
+        div.setContent(M.util.get_string('dndworking', 'moodle'));
     },
 
     /**
@@ -116,7 +116,6 @@ M.course_dndupload = {
      * @return true if browser supports drag/drop upload
      */
     browser_supported: function() {
-
         if (typeof FileReader == 'undefined') {
             return false;
         }
@@ -207,7 +206,7 @@ M.course_dndupload = {
             }
             return {
                 realtype: 'Files',
-                addmessage: M.util.get_string('addfilehere', 'core_dndupload'),
+                addmessage: M.util.get_string('addfilehere', 'moodle'),
                 namemessage: null, // Should not be asked for anyway
                 type: 'Files'
             };
@@ -464,7 +463,7 @@ M.course_dndupload = {
         preview.div.appendChild(document.createTextNode(' '));
 
         preview.namespan.className = 'instancename';
-        preview.namespan.innerHTML = M.util.get_string('addfilehere', 'core_dndupload');
+        preview.namespan.innerHTML = M.util.get_string('addfilehere', 'moodle');
         preview.div.appendChild(preview.namespan);
 
         modsel.appendChild(preview.li);
@@ -536,7 +535,7 @@ M.course_dndupload = {
         } else {
             sel = handlers[0].module;
         }
-        content += '<p>'+M.util.get_string('actionchoice', 'core_dndupload', file.name)+'</p>';
+        content += '<p>'+M.util.get_string('actionchoice', 'moodle', file.name)+'</p>';
         content += '<div id="dndupload_handlers'+uploadid+'">';
         for (var i=0; i<handlers.length; i++) {
             var id = 'dndupload_handler'+uploadid+handlers[i].module;
@@ -636,7 +635,7 @@ M.course_dndupload = {
         var self = this;
 
         if (file.size > this.maxbytes) {
-            alert("'"+file.name+"' "+M.util.get_string('filetoolarge', 'core_dndupload'));
+            alert("'"+file.name+"' "+M.util.get_string('filetoolarge', 'moodle'));
             return;
         }
 
@@ -677,7 +676,7 @@ M.course_dndupload = {
                         }
                     }
                 } else {
-                    alert(M.util.get_string('servererror', 'core_dndupload'));
+                    alert(M.util.get_string('servererror', 'moodle'));
                 }
             }
         };
@@ -851,7 +850,7 @@ M.course_dndupload = {
                         }
                     }
                 } else {
-                    alert(M.util.get_string('servererror', 'core_dndupload'));
+                    alert(M.util.get_string('servererror', 'moodle'));
                 }
             }
         };
