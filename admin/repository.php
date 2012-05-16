@@ -21,7 +21,7 @@ require_once($CFG->libdir . '/adminlib.php');
 $repository       = optional_param('repos', '', PARAM_ALPHANUMEXT);
 $action           = optional_param('action', '', PARAM_ACTION);
 $sure             = optional_param('sure', '', PARAM_ALPHA);
-$downloadcontents = optional_param('downloadcontents', '', PARAM_ALPHA);
+$downloadcontents = optional_param('downloadcontents', false, PARAM_BOOL);
 
 $display = true; // fall through to normal display
 
@@ -205,12 +205,6 @@ if (($action == 'edit') || ($action == 'new')) {
             print_error('confirmsesskeybad', '', $baseurl);
         }
 
-        if (!empty($downloadcontents) and $downloadcontents == 'yes') {
-            $downloadcontents = true;
-        } else {
-            $downloadcontents = false;
-        }
-
         if ($repositorytype->delete($downloadcontents)) {
             redirect($baseurl);
         } else {
@@ -237,7 +231,7 @@ if (($action == 'edit') || ($action == 'new')) {
             'action' =>'delete',
             'repos'=> $repository,
             'sure' => 'yes',
-            'downloadcontents' => 'yes',
+            'downloadcontents' => 1,
         ));
 
         $output .= $OUTPUT->single_button($removeurl, get_string('continueuninstall', 'repository'));

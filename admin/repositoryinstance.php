@@ -27,7 +27,7 @@ $hide    = optional_param('hide', 0, PARAM_INT);
 $delete  = optional_param('delete', 0, PARAM_INT);
 $sure    = optional_param('sure', '', PARAM_ALPHA);
 $type    = optional_param('type', '', PARAM_PLUGIN);
-$downloadcontents = optional_param('downloadcontents', '', PARAM_ALPHA);
+$downloadcontents = optional_param('downloadcontents', false, PARAM_BOOL);
 
 $context = context_system::instance();
 
@@ -123,11 +123,6 @@ if (!empty($edit) || !empty($new)) {
             throw new repository_exception('readonlyinstance', 'repository');
      }
     if ($sure) {
-        if (!empty($downloadcontents) and $downloadcontents == 'yes') {
-            $downloadcontents = true;
-        } else {
-            $downloadcontents = false;
-        }
         if ($instance->delete($downloadcontents)) {
             $deletedstr = get_string('instancedeleted', 'repository');
             redirect($parenturl, $deletedstr, 3);
@@ -145,7 +140,7 @@ if (!empty($edit) || !empty($new)) {
         'sure' => 'yes',
     ));
     $continueanddownloadurl = new moodle_url($continueurl, array(
-        'downloadcontents' => 'yes'
+        'downloadcontents' => 1
     ));
     $message = get_string('confirmdelete', 'repository', $instance->name);
     echo html_writer::tag('p', $message);
