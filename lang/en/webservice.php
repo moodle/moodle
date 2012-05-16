@@ -170,6 +170,7 @@ $string['serviceusersmatching'] = 'Authorised users matching';
 $string['serviceuserssettings'] = 'Change settings for the authorised users';
 $string['simpleauthlog'] = 'Simple authentication login';
 $string['step'] = 'Step';
+$string['supplyinfo'] = 'More details';
 $string['testauserwithtestclientdescription'] = 'Simulate external access to the service using the web service test client. Before doing so, login as a user with the moodle/webservice:createtoken capability and obtain the security key (token) via My profile settings. You will use this token in the test client. In the test client, also choose an enabled protocol with the token authentication. <strong>WARNING: The functions that you test WILL BE EXECUTED for this user, so be careful what you choose to test!</strong>';
 $string['testclient'] = 'Web service test client';
 $string['testclientdescription'] = '* The web service test client <strong>executes</strong> the functions for <strong>REAL</strong>. Do not test functions that you don\'t know. <br/>* All existing web service functions are not yet implemented into the test client. <br/>* In order to check that a user cannot access some functions, you can test some functions that you didn\'t allow.<br/>* To see clearer error messages set the debugging to <strong>{$a->mode}</strong> into {$a->atag}<br/>* Access the {$a->amfatag}.';
