@@ -83,6 +83,7 @@ class tinymce_texteditor extends texteditor {
 
     protected function get_init_params($elementid, array $options=null) {
         global $CFG, $PAGE, $OUTPUT;
+        require_once($CFG->dirroot . '/lib/editor/tinymce/classes/plugin.php');
 
         //TODO: we need to implement user preferences that affect the editor setup too
 
@@ -186,6 +187,22 @@ class tinymce_texteditor extends texteditor {
         if (!empty($options['required'])) {
             $params['init_instance_callback'] = 'M.editor_tinymce.onblur_event';
         }
+
+        // Allow plugins to adjust parameters, then return.
+        editor_tinymce_plugin::all_update_init_params($params, $context, $options);
         return $params;
+    }
+
+    /**
+     * Gets a named plugin object. Will cause fatal error if plugin doesn't
+     * exist. This is intended for use by plugin files themselves.
+     *
+     * @param string $plugin Name of plugin e.g. 'moodleemoticon'
+     * @return editor_tinymce_plugin Plugin object
+     */
+    public function get_plugin($plugin) {
+        global $CFG;
+        require_once($CFG->dirroot . '/lib/editor/tinymce/classes/plugin.php');
+        return editor_tinymce_plugin::get($plugin);
     }
 }
