@@ -97,7 +97,7 @@ class editsection_form extends moodleform {
             if ($completion->is_enabled()) {
                 $completionoptions = array();
                 $modinfo = get_fast_modinfo($course);
-                foreach($modinfo->cms as $id => $cm) {
+                foreach ($modinfo->cms as $id => $cm) {
                     // Add each course-module if it:
                     // (a) has completion turned on
                     // (b) does not belong to current course-section
@@ -124,7 +124,7 @@ class editsection_form extends moodleform {
                         get_string('completioncondition', 'condition'), $grouparray);
 
                 $count = count($fullcs->conditionscompletion) + 1;
-                $this->repeat_elements(array($group), $count,array(),
+                $this->repeat_elements(array($group), $count, array(),
                         'conditioncompletionrepeats', 'conditioncompletionadds', 2,
                         get_string('addcompletions', 'condition'), true);
                 $mform->addHelpButton('conditioncompletiongroup[0]',
@@ -147,7 +147,7 @@ class editsection_form extends moodleform {
 
                 if ($completion->is_enabled()) {
                     $num = 0;
-                    foreach($fullcs->conditionscompletion as $othercmid => $state) {
+                    foreach ($fullcs->conditionscompletion as $othercmid => $state) {
                         $groupelements = $mform->getElement('conditioncompletiongroup[' . $num . ']')->getElements();
                         $groupelements[0]->setValue($othercmid);
                         $groupelements[1]->setValue($state);

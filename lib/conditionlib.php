@@ -100,7 +100,7 @@ class condition_info extends condition_info_base {
      * Gets the course-module object with full necessary data to determine availability.
      * @return object Course-module object with full data
      * @throws coding_exception If data was not supplied when constructing object
-    */
+     */
     public function get_full_course_module() {
         return $this->get_full_item();
     }
@@ -118,7 +118,7 @@ class condition_info extends condition_info_base {
         parent::update_from_form($ci, $fromform, $wipefirst);
     }
 
-   /**
+    /**
      * Used in course/lib.php because we need to disable the completion JS if
      * a completion value affects a conditional activity.
      *
@@ -138,7 +138,7 @@ class condition_info extends condition_info_base {
 
             // Activities
             foreach ($modinfo->cms as $othercm) {
-                foreach ($othercm->conditionscompletion as $cmid=>$expectedcompletion) {
+                foreach ($othercm->conditionscompletion as $cmid => $expectedcompletion) {
                     $CONDITIONLIB_PRIVATE->usedincondition[$course->id][$cmid] = true;
                 }
             }
@@ -203,7 +203,7 @@ class condition_info_section extends condition_info_base {
      * Gets the section object with full necessary data to determine availability.
      * @return object Section object with full data
      * @throws coding_exception If data was not supplied when constructing object
-    */
+     */
     public function get_full_section() {
         return $this->get_full_item();
     }
@@ -272,7 +272,7 @@ class condition_info_section extends condition_info_base {
                 }
             } else {
                 // Request is for current user - use cache
-                if(!array_key_exists($this->item->course, $CONDITIONLIB_PRIVATE->groupingscache)) {
+                if( !array_key_exists($this->item->course, $CONDITIONLIB_PRIVATE->groupingscache)) {
                     if (has_capability('moodle/site:accessallgroups', $context)) {
                         $CONDITIONLIB_PRIVATE->groupingscache[$this->item->course] = true;
                     } else {
@@ -307,13 +307,13 @@ class condition_info_section extends condition_info_base {
     }
 
     /**
-    * Utility function called by modedit.php; updates the
-    * course_modules_availability table based on the module form data.
-    *
-    * @param object $section Section object, must at minimum contain id
-    * @param object $fromform Data from form
-    * @param bool $wipefirst If true, wipes existing conditions
-    */
+     * Utility function called by modedit.php; updates the
+     * course_modules_availability table based on the module form data.
+     *
+     * @param object $section Section object, must at minimum contain id
+     * @param object $fromform Data from form
+     * @param bool $wipefirst If true, wipes existing conditions
+     */
     public static function update_section_from_form($section, $fromform, $wipefirst=true) {
         $ci = new condition_info_section($section, CONDITION_MISSING_EVERYTHING);
         parent::update_from_form($ci, $fromform, $wipefirst);
@@ -369,10 +369,10 @@ abstract class condition_info_base {
             throw new coding_exception('Invalid parameters; item ID not included');
         }
 
-        //  DB table to store availability conditions
+        // DB table to store availability conditions
         $this->availtable = $tableprefix . '_availability';
 
-        // name of module/section ID field in DB
+        // Name of module/section ID field in DB
         $this->idfieldname = $idfield;
 
         // If not loading data, don't do anything else
@@ -887,7 +887,7 @@ abstract class condition_info_base {
         }
     }
 
-   /**
+    /**
      * Obtains a grade score. Note that this score should not be displayed to
      * the user, because gradebook rules might prohibit that. It may be a
      * non-final score subject to adjustment later.
@@ -986,7 +986,7 @@ abstract class condition_info_base {
      * Initialises the global cache
      * @global stdClass $CONDITIONLIB_PRIVATE
      */
-    static function init_global_cache() {
+    public static function init_global_cache() {
         global $CONDITIONLIB_PRIVATE;
         $CONDITIONLIB_PRIVATE = new stdClass;
         $CONDITIONLIB_PRIVATE->usedincondition = array();

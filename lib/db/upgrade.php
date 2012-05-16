@@ -588,7 +588,7 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        /// Main savepoint reached
+        // Main savepoint reached
         upgrade_main_savepoint(true, 2012051100.03);
     }
 

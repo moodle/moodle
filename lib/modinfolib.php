@@ -200,10 +200,10 @@ class course_modinfo extends stdClass {
     }
 
     /**
-    * Gets data about specific numbered section.
-    * @param int $sectionnumber Number (not id) of section
-    * @return section_info Information for numbered section
-    */
+     * Gets data about specific numbered section.
+     * @param int $sectionnumber Number (not id) of section
+     * @return section_info Information for numbered section
+     */
     public function get_section_info($sectionnumber) {
         return $this->sectioninfo[$sectionnumber];
     }
@@ -1567,7 +1567,7 @@ class section_info extends stdClass {
         }
 
         // Remove default data
-        foreach(self::$sectioncachedefaults as $field => $value) {
+        foreach (self::$sectioncachedefaults as $field => $value) {
             // Exact compare as strings to avoid problems if some strings are set
             // to "0" etc.
             if (isset($section->{$field}) && $section->{$field} === $value) {
