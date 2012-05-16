@@ -729,16 +729,16 @@ class core_course_external extends external_api {
         self::validate_context($coursecontext);
 
         $backupdefaults = array(
-                                'activities' => 1,
-                                'blocks' => 1,
-                                'filters' => 1,
-                                'users' => 0,
-                                'role_assignments' => 0,
-                                'user_files' => 0,
-                                'comments' => 0,
-                                'completion_information' => 0,
-                                'logs' => 0,
-                                'histories' => 0
+            'activities' => 1,
+            'blocks' => 1,
+            'filters' => 1,
+            'users' => 0,
+            'role_assignments' => 0,
+            'user_files' => 0,
+            'comments' => 0,
+            'completion_information' => 0,
+            'logs' => 0,
+            'histories' => 0
         );
 
         $backupsettings = array();
@@ -766,10 +766,7 @@ class core_course_external extends external_api {
         // The backup controller check for this currently, this may be redundant.
         require_capability('moodle/course:create', $categorycontext);
         require_capability('moodle/restore:restorecourse', $categorycontext);
-        require_capability('moodle/restore:restoretargetimport', $categorycontext);
-
         require_capability('moodle/backup:backupcourse', $coursecontext);
-        require_capability('moodle/backup:backuptargetimport', $coursecontext);
 
         if (!empty($backupsettings['users'])) {
             require_capability('moodle/backup:userinfo', $coursecontext);
@@ -787,14 +784,9 @@ class core_course_external extends external_api {
         }
 
         // Backup the course.
-        if (!empty($backupsettings['users'])) {
-            $mode = backup::MODE_SAMESITE;
-        } else {
-            $mode = backup::MODE_IMPORT;
-        }
 
         $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
-        backup::INTERACTIVE_NO, $mode, $USER->id);
+        backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $USER->id);
 
         foreach ($backupsettings as $name => $value) {
             $bc->get_plan()->get_setting($name)->set_value($value);
@@ -805,19 +797,14 @@ class core_course_external extends external_api {
 
         $bc->execute_plan();
         $results = $bc->get_results();
-
-        if (!empty($results['backup_destination'])) {
-            $file = $results['backup_destination'];
-        } else {
-            $file = null;
-        }
+        $file = $results['backup_destination'];
 
         $bc->destroy();
 
         // Restore the backup immediately.
 
         // Check if we need to unzip the file because the backup temp dir does not contains backup files.
-        if ($file and !file_exists($backupbasepath . "/moodle_backup.xml")) {
+        if (!file_exists($backupbasepath . "/moodle_backup.xml")) {
             $file->extract_to_pathname(get_file_packer(), $backupbasepath);
         }
 
@@ -825,7 +812,7 @@ class core_course_external extends external_api {
         $newcourseid = restore_dbops::create_new_course($params['fullname'], $params['shortname'], $params['categoryid']);
 
         $rc = new restore_controller($backupid, $newcourseid,
-                backup::INTERACTIVE_NO, $mode, $USER->id, backup::TARGET_NEW_COURSE);
+                backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $USER->id, backup::TARGET_NEW_COURSE);
 
         foreach ($backupsettings as $name => $value) {
             $setting = $rc->get_plan()->get_setting($name);
@@ -872,9 +859,8 @@ class core_course_external extends external_api {
             fulldelete($backupbasepath);
         }
 
-        if ($file) {
-            $file->delete();
-        }
+        // Delete the course backup file created by this WebService. Originally located in the course backups area.
+        $file->delete();
 
         return array('id' => $course->id, 'shortname' => $course->shortname);
     }
