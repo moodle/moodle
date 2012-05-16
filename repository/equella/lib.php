@@ -48,7 +48,12 @@ class repository_equella extends repository {
     public function get_listing($path = null, $page = null) {
         global $CFG, $COURSE;
         $callbackurl = $CFG->wwwroot . '/repository/equella/callback.php?repo_id=' . $this->id;
-        $mimetypesstr = implode(',', $this->mimetypes);
+        
+        $mimetypesstr = '';
+        if (!empty($this->mimetypes)) {
+            $mimetypesstr = '&mimeTypes=' . implode(',', $this->mimetypes);
+        }
+
         $url = $this->get_option('equella_url')
                 . '?method=lms'
                 . '&returnurl='.urlencode($callbackurl)
@@ -60,7 +65,7 @@ class repository_equella extends repository {
                 . '&forcePost=true'
                 . '&cancelDisabled=true'
                 . '&attachmentUuidUrls=true'
-                . '&options='.urlencode($this->get_option('equella_options') . '&mimeTypes=' . $mimetypesstr);
+                . '&options='.urlencode($this->get_option('equella_options') . $mimetypesstr);
         $list = array();
         $list['object'] = array();
         $list['object']['type'] = 'text/html';
