@@ -805,15 +805,20 @@ class core_course_external extends external_api {
 
         $bc->execute_plan();
         $results = $bc->get_results();
-        $file = $results['backup_destination'];
+
+        if (!empty($results['backup_destination'])) {
+            $file = $results['backup_destination'];
+        } else {
+            $file = null;
+        }
+
         $bc->destroy();
 
         // Restore the backup immediately.
 
-        // In a backup mode different than import, we need to unzip the file because the backup temp directory is deleted.
-        if (!empty($backupsettings['users'])) {
-            check_dir_exists($CFG->tempdir . '/backup');
-            $file->extract_to_pathname(get_file_packer(), $CFG->tempdir . '/backup/' . $backupid);
+        // Check if we need to unzip the file because the backup temp dir does not contains backup files.
+        if ($file and !file_exists($backupbasepath . "/moodle_backup.xml")) {
+            $file->extract_to_pathname(get_file_packer(), $backupbasepath);
         }
 
         // Create new course.
@@ -865,6 +870,10 @@ class core_course_external extends external_api {
 
         if (empty($CFG->keeptempdirectoriesonbackup)) {
             fulldelete($backupbasepath);
+        }
+
+        if ($file) {
+            $file->delete();
         }
 
         return array('id' => $course->id, 'shortname' => $course->shortname);
