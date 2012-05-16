@@ -31,6 +31,8 @@ require('../../config.php');
 require_once("$CFG->dirroot/webservice/soap/locallib.php");
 
 if (!webservice_protocol_is_enabled('soap')) {
+    debugging('The server died because the web services or the SOAP protocol are not enable',
+        DEBUG_DEVELOPER);
     die;
 }
 
