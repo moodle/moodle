@@ -165,27 +165,6 @@ switch ($action) {
 
         die(json_encode((object)array('filepath' => $newfilepath)));
 
-    case 'rename':
-        // TODO deprecate this, use 'updatefile' instead
-        $filename    = required_param('filename', PARAM_FILE);
-        $filepath    = required_param('filepath', PARAM_PATH);
-        $newfilename = required_param('newfilename', PARAM_FILE);
-
-        $fs = get_file_storage();
-        if ($fs->file_exists($user_context->id, 'user', 'draft', $draftid, $filepath, $newfilename)) {
-            //bad luck, we can not rename!
-            echo json_encode(false);
-        } else if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename)) {
-            $return = new stdClass();
-            $newfile = $fs->create_file_from_storedfile(array('filename'=>$newfilename), $file);
-            $file->delete();
-            $return->filepath = $newfile->get_filepath();
-            echo json_encode($return);
-        } else {
-            echo json_encode(false);
-        }
-        die;
-
     case 'updatedir':
         $filepath = required_param('filepath', PARAM_PATH);
         $fs = get_file_storage();
@@ -197,118 +176,38 @@ switch ($action) {
         $newdirname = required_param('newdirname', PARAM_FILE);
         $parent = required_param('newfilepath', PARAM_PATH);
         $newfilepath = clean_param($parent . '/' . $newdirname . '/', PARAM_PATH);
-        //we must update directory and all children too
+        if ($newfilepath == $filepath) {
+            // no action required
+            die(json_encode((object)array('filepath' => $parent)));
+        }
         if ($fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $newfilepath, true)) {
             //bad luck, we can not rename if something already exists there
             die(json_encode((object)array('error' => get_string('folderexists', 'repository'))));
         }
         $xfilepath = preg_quote($filepath, '|');
-        if ($newfilepath !== $filepath && preg_match("|^$xfilepath|", $parent)) {
+        if (preg_match("|^$xfilepath|", $parent)) {
             // we can not move folder to it's own subfolder
             die(json_encode((object)array('error' => get_string('folderrecurse', 'repository'))));
         }
 
+        //we must update directory and all children too
         $files = $fs->get_area_files($user_context->id, 'user', 'draft', $draftid);
-        $moved = array();
         foreach ($files as $file) {
             if (!preg_match("|^$xfilepath|", $file->get_filepath())) {
                 continue;
             }
             // move one by one
             $path = preg_replace("|^$xfilepath|", $newfilepath, $file->get_filepath());
-            $updatedata = array('filepath' => $path, 'timemodified' => $file->get_timemodified());
-            if ($dirname !== $newdirname && $file->get_filepath() === $filepath) {
+            if ($dirname !== $newdirname && $file->get_filepath() === $filepath && $file->get_filename() === '.') {
                 // this is the main directory we move/rename AND it has actually been renamed
-                $updatedata['timemodified'] = time();
+                $file->set_timemodified(time());
             }
-            $fs->create_file_from_storedfile($updatedata, $file);
-            $moved[] = $file;
-        }
-        foreach ($moved as $file) {
-            // delete all old
-            $file->delete();
+            $file->rename($path, $file->get_filename());
         }
 
         $return = new stdClass();
         $return->filepath = $parent;
         echo json_encode($return);
-        die;
-
-    case 'renamedir':
-    case 'movedir':
-        // TODO deprecate this, use 'renamemovedir' instead
-
-        $filepath = required_param('filepath', PARAM_PATH);
-        $fs = get_file_storage();
-
-        if (!$dir = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, '.')) {
-            echo json_encode(false);
-            die;
-        }
-        if ($action === 'renamedir') {
-            $newdirname = required_param('newdirname', PARAM_FILE);
-            $parent = clean_param(dirname($filepath) . '/', PARAM_PATH);
-            $newfilepath = $parent . $newdirname . '/';
-        } else {
-            $newfilepath = required_param('newfilepath', PARAM_PATH);
-            $parts = explode('/', trim($dir->get_filepath(), '/'));
-            $dirname = end($parts);
-            $newfilepath = clean_param($newfilepath . '/' . $dirname . '/', PARAM_PATH);
-        }
-
-        //we must update directory and all children too
-        if ($fs->get_directory_files($user_context->id, 'user', 'draft', $draftid, $newfilepath, true)) {
-            //bad luck, we can not rename if something already exists there
-            echo json_encode(false);
-            die;
-        }
-
-        $xfilepath = preg_quote($filepath, '|');
-
-        $files = $fs->get_area_files($user_context->id, 'user', 'draft', $draftid);
-        $moved = array();
-        foreach ($files as $file) {
-            if (!preg_match("|^$xfilepath|", $file->get_filepath())) {
-                continue;
-            }
-            // move one by one
-            $path = preg_replace("|^$xfilepath|", $newfilepath, $file->get_filepath());
-            $fs->create_file_from_storedfile(array('filepath'=>$path), $file);
-            $moved[] = $file;
-        }
-        foreach ($moved as $file) {
-            // delete all old
-            $file->delete();
-        }
-
-        $return = new stdClass();
-        if ($action === 'renamedir') {
-            $return->filepath = $parent;
-        } else {
-            $return->filepath = $newfilepath;
-        }
-        echo json_encode($return);
-        die;
-
-    case 'movefile':
-        // TODO deprecate this, use 'updatefile' instead
-        $filename    = required_param('filename', PARAM_FILE);
-        $filepath    = required_param('filepath', PARAM_PATH);
-        $newfilepath = required_param('newfilepath', PARAM_PATH);
-
-        $fs = get_file_storage();
-        if ($fs->file_exists($user_context->id, 'user', 'draft', $draftid, $newfilepath, $filename)) {
-            //bad luck, we can not rename!
-            echo json_encode(false);
-        } else if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename)) {
-            $return = new stdClass();
-            $newfile = $fs->create_file_from_storedfile(array('filepath'=>$newfilepath), $file);
-            $file->delete();
-            $return->filepath = $newfile->get_filepath();
-            echo json_encode($return);
-        } else {
-            echo json_encode(false);
-        }
         die;
 
     case 'zip':
