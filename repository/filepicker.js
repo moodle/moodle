@@ -1082,6 +1082,10 @@ M.core_filepicker.init = function(Y, options) {
                     },
                     callback: function(id, obj, args) {
                         selectnode.removeClass('loading');
+                        if (obj.event == 'fileexists') {
+                            scope.process_existing_file(obj);
+                            return;
+                        }
                         if (scope.options.editor_target && scope.options.env=='editor') {
                             scope.options.editor_target.value=obj.url;
                             scope.options.editor_target.onchange();
