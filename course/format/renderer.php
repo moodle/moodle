@@ -463,19 +463,18 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             echo $this->end_section_list();
         }
 
+        // Start single-section div
+        echo html_writer::start_tag('div', array('class' => 'single-section'));
+
         // Title with section navigation links.
         $sectionnavlinks = $this->get_nav_links($course, $sections, $displaysection);
         $sectiontitle = '';
-        $sectiontitle .= html_writer::start_tag('div', array('class' => 'section-navigation headingblock header'));
+        $sectiontitle .= html_writer::start_tag('div', array('class' => 'section-navigation header headingblock'));
         $sectiontitle .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
         $sectiontitle .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
-        $sectiontitle .= html_writer::tag('div', get_section_name($course, $sections[$displaysection]), array('class' => 'mdl-align'));
+        $sectiontitle .= html_writer::tag('div', get_section_name($course, $sections[$displaysection]), array('class' => 'mdl-align title'));
         $sectiontitle .= html_writer::end_tag('div');
         echo $sectiontitle;
-
-        // Show completion help icon.
-        $completioninfo = new completion_info($course);
-        echo $completioninfo->display_help_icon();
 
         // Copy activity clipboard..
         echo $this->course_activity_clipboard($course, $displaysection);
@@ -486,6 +485,10 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         // The requested section page.
         $thissection = $sections[$displaysection];
         echo $this->section_header($thissection, $course, true);
+        // Show completion help icon.
+        $completioninfo = new completion_info($course);
+        echo $completioninfo->display_help_icon();
+
         print_section($course, $thissection, $mods, $modnamesused, true);
         if ($PAGE->user_is_editing()) {
             print_section_add_menus($course, $displaysection, $modnames);
@@ -502,6 +505,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $sectionbottomnav .= html_writer::tag('div', $courselink, array('class' => 'mdl-align'));
         $sectionbottomnav .= html_writer::end_tag('div');
         echo $sectionbottomnav;
+
+        // close single-section div.
+        echo html_writer::end_tag('div');
     }
 
     /**

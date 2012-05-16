@@ -11,12 +11,14 @@
 .course-content .section-summary { border: 1px solid #DDD; margin-top: 5px; list-style: none; }
 .course-content .section-summary .section-title  { margin: 2px 5px 2px 5px; }
 .course-content .section-summary .summarytext { margin: 2px 5px 2px 5px; }
-.course-content .section-navigation { display: block; padding: 0.5em; margin-top: 1em; margin-bottom: -0.5em !important; }
-.course-content .section-navigation .mdl-left { float: left; font-weight: normal; margin-right: 1em; }
-.course-content .section-navigation .mdl-left .larrow { margin-right: 0.1em; }
-.course-content .section-navigation .mdl-right { float: right; font-weight: normal; margin-left: 1em; }
-.course-content .section-navigation .mdl-right .rarrow { margin-left: 0.1em; }
-.course-content .section-navigation .mdl-bottom { font-weight: normal; margin-top: 0; }
+.course-content .single-section { margin-top: 1em; }
+.course-content .single-section .section-navigation { display: block; padding: 0.5em; margin-bottom: -0.5em; }
+.course-content .single-section .section-navigation .title { font-weight: bold; font-size: 108%; }
+.course-content .single-section .section-navigation .mdl-left { font-weight: normal; float: left; margin-right: 1em; }
+.course-content .single-section .section-navigation .mdl-left .larrow { margin-right: 0.1em; }
+.course-content .single-section .section-navigation .mdl-right { font-weight: normal; float: right; margin-left: 1em; }
+.course-content .single-section .section-navigation .mdl-right .rarrow { margin-left: 0.1em; }
+.course-content .single-section .section-navigation .mdl-bottom { margin-top: 0; }
 
 #page-site-index .subscribelink {text-align:right;}
 #page-site-index .headingblock {margin-bottom: 9px;}
@@ -29,6 +31,7 @@
 .path-course-view .block.drag .header {cursor: move;}
 .path-course-view .completionprogress {float:right;}
 .path-course-view .completionprogress img.iconhelp {vertical-align:top;}
+.path-course-view .single-section .completionprogress {margin-right: -3.5em; padding-left: 1.5em; padding-right: 0em;}
 .path-course-view .section .summary {line-height:normal;}
 
 .path-course-view li.activity {margin-right:20px; position:relative;}
