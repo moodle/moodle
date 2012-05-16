@@ -1777,19 +1777,16 @@ class file_storage {
      * Convert file alias to local file
      *
      * @param stored_file $storedfile a stored_file instances
-     * @return stored_file|bool stored_file or return false when fail
+     * @return stored_file stored_file
      */
     public function import_external_file($storedfile) {
         global $CFG;
         require_once($CFG->dirroot.'/repository/lib.php');
         // sync external file
-        if (repository::sync_external_file($storedfile)) {
-            // Remove file references
-            $storedfile->delete_reference();
-            return $storedfile;
-        } else {
-            return false;
-        }
+        repository::sync_external_file($storedfile);
+        // Remove file references
+        $storedfile->delete_reference();
+        return $storedfile;
     }
 
     /**

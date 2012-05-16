@@ -126,7 +126,10 @@ class stored_file {
                 }
 
                 if ($field == 'filename') {
-                    $value = clean_param($value, PARAM_FILE);
+                    // folder has filename == '.', so we pass this
+                    if ($value != '.') {
+                        $value = clean_param($value, PARAM_FILE);
+                    }
                     if ($value === '') {
                         throw new file_exception('storedfileproblem', 'Invalid file name');
                     }

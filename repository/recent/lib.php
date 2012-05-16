@@ -64,8 +64,12 @@ class repository_recent extends repository {
     private function get_recent_files($limitfrom = 0, $limit = DEFAULT_RECENT_FILES_NUM) {
         // XXX: get current itemid
         global $USER, $DB, $itemid;
+        // This SQL will ignore draft files if not owned by current user.
+        // Ignore all file references.
         $sql = 'SELECT files1.*
                   FROM {files} files1
+             LEFT JOIN {files_reference} r
+                       ON files1.referencefileid = r.id
                   JOIN (
                       SELECT contenthash, filename, MAX(id) AS id
                         FROM {files}
@@ -74,7 +78,8 @@ class repository_recent extends repository {
                          AND ((filearea = :filearea1 AND itemid = :itemid) OR filearea != :filearea2)
                     GROUP BY contenthash, filename
                   ) files2 ON files1.id = files2.id
-                ORDER BY files1.timemodified DESC';
+                 WHERE r.repositoryid is NULL
+              ORDER BY files1.timemodified DESC';
         $params = array(
             'userid' => $USER->id,
             'filename' => '.',
