@@ -499,10 +499,12 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var titletext = oldtitle;
             var editbutton = element.one('a.' + CSS.EDITTITLECLASS + ' img');
 
-            // Disable the current href to prevent redirections when editing
+            // Handle events for edit_resource_title
+            var listenevents = [];
+            var thisevent;
+
+            // Grab the anchor so that we can swap it with the edit form
             var anchor = instancename.ancestor('a');
-            anchor.setAttribute('oldhref', anchor.getAttribute('href'));
-            anchor.removeAttribute('href');
 
             var data = {
                 'class'   : 'resource',
@@ -536,35 +538,48 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             // Clear the existing content and put the editor in
             currenttitle.set('data', '');
             editform.appendChild(editor);
-            instancename.appendChild(editform);
+            anchor.replace(editform);
             element.appendChild(editinstructions);
             e.preventDefault();
 
             // Focus and select the editor text
             editor.focus().select();
 
+            // Handle removal of the editor
+            var clear_edittitle = function() {
+                // Detach all listen events to prevent duplicate triggers
+                var thisevent;
+                while (thisevent = listenevents.shift()) {
+                    thisevent.detach();
+                }
+
+                if (editinstructions) {
+                    // Convert back to anchor and remove instructions
+                    editform.replace(anchor);
+                    editinstructions.remove();
+                    editinstructions = null;
+                }
+            }
+
             // Handle cancellation of the editor
-            editor.on('blur', function(e) {
-                // Detach the blur event before removing as some actions trigger multiple blurs in
-                // some browser
-                editor.detach('blur');
-                editform.remove();
-                editinstructions.remove();
+            var cancel_edittitle = function(e) {
+                clear_edittitle();
 
                 // Set the title and anchor back to their previous settings
                 currenttitle.set('data', oldtitle);
-                anchor.setAttribute('href', anchor.getAttribute('oldhref'));
-                anchor.removeAttribute('oldhref');
-            });
+            };
+
+            // Cancel the edit if we lose focus or the escape key is pressed
+            thisevent = editor.on('blur', cancel_edittitle);
+            listenevents.push(thisevent);
 
             // Handle form submission
-            editform.on('submit', function(e) {
+            thisevent = editform.on('submit', function(e) {
                 // We don't actually want to submit anything
                 e.preventDefault();
 
-                // Detach the handlers to prevent multiple submissions
-                editform.detach('submit');
-                editor.detach('blur');
+                // Clear the edit title boxes
+                clear_edittitle();
 
                 // We only accept strings which have valid content
                 var newtitle = Y.Lang.trim(editor.get('value'));
@@ -583,17 +598,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                     // Invalid content. Set the title back to it's original contents
                     currenttitle.set('data', oldtitle);
                 }
-
-                editform.remove();
-                editinstructions.remove();
-
-                // We need a timeout here otherwise hitting return to save in some browsers triggers
-                // the anchor
-                setTimeout(function(e) {
-                    anchor.setAttribute('href', anchor.getAttribute('oldhref'));
-                    anchor.removeAttribute('oldhref');
-                }, 500);
             }, this);
+            listenevents.push(thisevent);
         }
     }, {
         NAME : 'course-resource-toolbox',
