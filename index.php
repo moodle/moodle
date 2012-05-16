@@ -41,6 +41,9 @@
     $PAGE->set_url('/', $urlparams);
     $PAGE->set_course($SITE);
 
+    // Prevent caching of this page to stop confusion when changing page after making AJAX changes
+    $PAGE->set_cacheable(false);
+
     if ($CFG->forcelogin) {
         require_login();
     } else {
