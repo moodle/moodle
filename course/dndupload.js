@@ -16,7 +16,7 @@
 /**
  * Javascript library for enableing a drag and drop upload to courses
  *
- * @package    moodlecore
+ * @package    core
  * @subpackage course
  * @copyright  2012 Davo Smith
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -176,6 +176,10 @@ M.course_dndupload = {
      */
     types_includes: function(e, type) {
         var i;
+        if (e._event.dataTransfer === null) {
+            // TODO MDL-33054: If we get here then something has gone wrong.
+            return false;
+        }
         var types = e._event.dataTransfer.types;
         if (types == null) {
             return false;
@@ -558,7 +562,7 @@ M.course_dndupload = {
             visible: true,
             render: true,
             buttons: [{
-                value: M.util.get_string('upload', 'core'),
+                value: M.util.get_string('upload', 'moodle'),
                 action: function(e) {
                     e.preventDefault();
                     // Find out which module was selected
@@ -580,7 +584,7 @@ M.course_dndupload = {
                 },
                 section: Y.WidgetStdMod.FOOTER
             },{
-                value: M.util.get_string('cancel', 'core'),
+                value: M.util.get_string('cancel', 'moodle'),
                 action: function(e) {
                     e.preventDefault();
                     panel.hide();
@@ -752,7 +756,7 @@ M.course_dndupload = {
             visible: true,
             render: true,
             buttons: [{
-                value: M.util.get_string('upload', 'core'),
+                value: M.util.get_string('upload', 'moodle'),
                 action: function(e) {
                     e.preventDefault();
                     var name = Y.one('#dndupload_handler_name'+uploadid).get('value');
@@ -781,7 +785,7 @@ M.course_dndupload = {
                 },
                 section: Y.WidgetStdMod.FOOTER
             },{
-                value: M.util.get_string('cancel', 'core'),
+                value: M.util.get_string('cancel', 'moodle'),
                 action: function(e) {
                     e.preventDefault();
                     panel.hide();
