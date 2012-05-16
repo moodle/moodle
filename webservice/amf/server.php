@@ -31,6 +31,8 @@ require('../../config.php');
 require_once("$CFG->dirroot/webservice/amf/locallib.php");
 
 if (!webservice_protocol_is_enabled('amf')) {
+    debugging('The server died because the web services or the AMF protocol are not enable',
+        DEBUG_DEVELOPER);
     die;
 }
 
