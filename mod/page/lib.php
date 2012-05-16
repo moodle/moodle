@@ -472,3 +472,46 @@ function page_export_contents($cm, $baseurl) {
 
     return $contents;
 }
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function mod_page_dndupload_register() {
+    return array('types' => array(
+                     array('identifier' => 'text/html', 'message' => get_string('createpage', 'page')),
+                     array('identifier' => 'text', 'message' => get_string('createpage', 'page'))
+                 ));
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function mod_page_dndupload_handle($uploadinfo) {
+    // Gather the required info.
+    $data = new stdClass();
+    $data->course = $uploadinfo->course->id;
+    $data->name = $uploadinfo->displayname;
+    $data->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $data->introformat = FORMAT_HTML;
+    if ($uploadinfo->type == 'text/html') {
+        $data->contentformat = FORMAT_HTML;
+        $data->content = clean_param($uploadinfo->content, PARAM_CLEANHTML);
+    } else {
+        $data->contentformat = FORMAT_PLAIN;
+        $data->content = clean_param($uploadinfo->content, PARAM_TEXT);
+    }
+    $data->coursemodule = $uploadinfo->coursemodule;
+
+    // Set the display options to the site defaults.
+    $config = get_config('page');
+    $data->display = $config->display;
+    $data->popupheight = $config->popupheight;
+    $data->popupwidth = $config->popupwidth;
+    $data->printheading = $config->printheading;
+    $data->printintro = $config->printintro;
+
+    return page_add_instance($data, null);
+}
