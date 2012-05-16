@@ -2659,7 +2659,7 @@ function data_export_csv($export, $delimiter_name, $dataname, $count, $return=fa
     $filename .= '.csv';
     if (empty($return)) {
         header("Content-Type: application/download\n");
-        header("Content-Disposition: attachment; filename=$filename");
+        header("Content-Disposition: attachment; filename=\"$filename\"");
         header('Expires: 0');
         header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
         header('Pragma: public');

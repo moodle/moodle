@@ -566,7 +566,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
     $filename = 'logs_'.userdate(time(),get_string('backupnameformat', 'langconfig'),99,false);
     $filename .= '.txt';
     header("Content-Type: application/download\n");
-    header("Content-Disposition: attachment; filename=$filename");
+    header("Content-Disposition: attachment; filename=\"$filename\"");
     header("Expires: 0");
     header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
     header("Pragma: public");

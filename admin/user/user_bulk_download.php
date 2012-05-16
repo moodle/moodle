@@ -152,7 +152,7 @@ function user_download_csv($fields) {
     $filename = clean_filename(get_string('users').'.csv');
 
     header("Content-Type: application/download\n");
-    header("Content-Disposition: attachment; filename=$filename");
+    header("Content-Disposition: attachment; filename=\"$filename\"");
     header("Expires: 0");
     header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
     header("Pragma: public");
