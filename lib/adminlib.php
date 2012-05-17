@@ -123,11 +123,12 @@ define('INSECURE_DATAROOT_ERROR', 2);
 function uninstall_plugin($type, $name) {
     global $CFG, $DB, $OUTPUT;
 
-    // recursively uninstall all module subplugins first
-    if ($type === 'mod') {
-        if (file_exists("$CFG->dirroot/mod/$name/db/subplugins.php")) {
+    // recursively uninstall all module/editor subplugins first
+    if ($type === 'mod' || $type === 'editor') {
+        $base = get_component_directory($type . '_' . $name);
+        if (file_exists("$base/db/subplugins.php")) {
             $subplugins = array();
-            include("$CFG->dirroot/mod/$name/db/subplugins.php");
+            include("$base/db/subplugins.php");
             foreach ($subplugins as $subplugintype=>$dir) {
                 $instances = get_plugin_list($subplugintype);
                 foreach ($instances as $subpluginname => $notusedpluginpath) {
