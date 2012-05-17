@@ -195,4 +195,78 @@ class filelib_testcase extends advanced_testcase {
         $this->assertEquals($license, $file->get_license());
         $this->assertEquals($newsourcefield, $file->get_source());
     }
+
+    /**
+     * Testing deleting original files
+     *
+     * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
+     * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+     */
+    public function test_delete_original_file_from_draft() {
+        global $USER, $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $usercontext = context_user::instance($user->id);
+        $USER = $DB->get_record('user', array('id'=>$user->id));
+
+        $repositorypluginname = 'user';
+
+        $args = array();
+        $args['type'] = $repositorypluginname;
+        $repos = repository::get_instances($args);
+        $userrepository = reset($repos);
+        $this->assertInstanceOf('repository', $userrepository);
+
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+
+        $filecontent = 'User file content';
+
+        // create a user private file
+        $userfilerecord = new stdClass;
+        $userfilerecord->contextid = $usercontext->id;
+        $userfilerecord->component = 'user';
+        $userfilerecord->filearea  = 'private';
+        $userfilerecord->itemid    = 0;
+        $userfilerecord->filepath  = '/';
+        $userfilerecord->filename  = 'userfile.txt';
+        $userfilerecord->source    = 'test';
+        $userfile = $fs->create_file_from_string($userfilerecord, $filecontent);
+        $userfileref = $fs->pack_reference($userfilerecord);
+        $contenthash = $userfile->get_contenthash();
+
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'phpunit',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => 'test.txt',
+        );
+        // create a file reference
+        $fileref = $fs->create_file_from_reference($filerecord, $userrepository->id, $userfileref);
+        $this->assertInstanceOf('stored_file', $fileref);
+        $this->assertEquals($userrepository->id, $fileref->repository->id);
+        $this->assertEquals($userfile->get_contenthash(), $fileref->get_contenthash());
+        $this->assertEquals($userfile->get_filesize(), $fileref->get_filesize());
+        $this->assertRegExp('#' . $userfile->get_filename(). '$#', $fileref->get_reference_details());
+
+        $draftitemid = 0;
+        file_prepare_draft_area($draftitemid, $usercontext->id, 'user', 'private', 0);
+        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid);
+        $this->assertEquals(2, count($draftfiles));
+        $draftfile = $fs->get_file($usercontext->id, 'user', 'draft', $draftitemid, $userfilerecord->filepath, $userfilerecord->filename);
+        $draftfile->delete();
+        // Save changed file
+        file_save_draft_area_files($draftitemid, $usercontext->id, 'user', 'private', 0);
+
+        // The file reference should be a regular moodle file now
+        $fileref = $fs->get_file($syscontext->id, 'core', 'phpunit', 0, '/', 'test.txt');
+        $this->assertEquals(false, $fileref->is_external_file());
+        $this->assertEquals($contenthash, $fileref->get_contenthash());
+        $this->assertEquals($filecontent, $fileref->get_content());
+    }
 }

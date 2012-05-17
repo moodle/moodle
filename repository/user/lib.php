@@ -226,6 +226,17 @@ class repository_user extends repository {
     }
 
     /**
+     * Return reference file life time
+     *
+     * @param string $ref
+     * @return int
+     */
+    public function get_reference_file_lifetime($ref) {
+        // this should be realtime
+        return 0;
+    }
+
+    /**
      * Repository method to serve file
      *
      * @param stored_file $storedfile

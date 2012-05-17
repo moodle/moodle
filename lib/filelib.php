@@ -375,7 +375,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
                     continue;
                 }
                 $draftfile = $fs->create_file_from_storedfile($file_record, $file);
-                // XXX: This is a hack for file manager
+                // XXX: This is a hack for file manager (MDL-28666)
                 // File manager needs to know the original file information before copying
                 // to draft area, so we append these information in mdl_files.source field
                 // {@link file_storage::search_references()}
@@ -679,9 +679,13 @@ function file_get_submitted_draft_itemid($elname) {
  */
 function file_restore_source_field_from_draft_file($storedfile) {
     $source = unserialize($storedfile->get_source());
-    if (!empty($source) && is_object($source)) {
-        $restoredsource = $source->source;
-        $storedfile->set_source($restoredsource);
+    if (!empty($source)) {
+        if (is_object($source)) {
+            $restoredsource = $source->source;
+            $storedfile->set_source($restoredsource);
+        } else {
+            throw new moodle_exception('invalidsourcefield', 'error');
+        }
     }
     return $storedfile;
 }
@@ -811,6 +815,11 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             // Updated sort order
             if ($oldfile->get_sortorder() != $newfile->get_sortorder()) {
                 $oldfile->set_sortorder($newfile->get_sortorder());
+            }
+
+            // Update file size
+            if ($oldfile->get_filesize() != $newfile->get_filesize()) {
+                $oldfile->set_filesize($newfile->get_filesize());
             }
 
             // unchanged file or directory - we keep it as is

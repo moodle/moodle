@@ -191,15 +191,27 @@ class stored_file {
      */
     public function delete_reference() {
         global $DB;
+
         // Remove repository info.
         $this->repository = null;
+
+        // Remove reference info from DB.
+        $DB->delete_records('files_reference', array('id'=>$this->file_record->referencefileid));
+
+        // Must refresh $this->file_record form DB
+        $filerecord = $DB->get_record('files', array('id'=>$this->get_id()));
+        // Update DB
+        $filerecord->referencelastsync = null;
+        $filerecord->referencelifetime = null;
+        $filerecord->referencefileid = null;
+        $this->update($filerecord);
+
+        // unset object variable
         unset($this->file_record->repositoryid);
         unset($this->file_record->reference);
         unset($this->file_record->referencelastsync);
         unset($this->file_record->referencelifetime);
-
-        // Remove reference info from DB.
-        $DB->delete_records('files_reference', array('id'=>$this->file_record->referencefileid));
+        unset($this->file_record->referencefileid);
     }
 
     /**
@@ -558,6 +570,17 @@ class stored_file {
     public function get_filesize() {
         $this->sync_external_file();
         return $this->file_record->filesize;
+    }
+
+    /**
+     * Returns the size of file in bytes.
+     *
+     * @param int $filesize bytes
+     */
+    public function set_filesize($filesize) {
+        $filerecord = new stdClass;
+        $filerecord->filesize = $filesize;
+        $this->update($filerecord);
     }
 
     /**

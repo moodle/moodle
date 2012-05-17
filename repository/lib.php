@@ -1066,6 +1066,7 @@ abstract class repository {
      * @param array $options additional options affecting the file serving
      */
     public function send_file($storedfile, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
+        throw new coding_exception("Repository plugin must implement send_file() method.");
     }
 
     /**
