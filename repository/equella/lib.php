@@ -18,7 +18,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
 
 class repository_equella extends repository {
     /** @var array mimetype filter */
-    private $mimetypes;
+    private $mimetypes = array();
 
     /**
      * Constructor
@@ -30,11 +30,11 @@ class repository_equella extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
 
-        if (!empty($this->options['mimetypes']) && !in_array('*', $this->options['mimetypes'])) {
-            $this->mimetypes = $this->options['mimetypes'];
-            $this->mimetypes = array_unique(array_map(array($this, 'toMimeType'), $this->options['mimetypes']));
-        } else {
-            $this->mimetypes = array();
+        if (isset($this->options['mimetypes'])) {
+            $mt = $this->options['mimetypes'];
+            if (!empty($mt) && !in_array('*', $mt)) {
+                $this->mimetypes = array_unique(array_map(array($this, 'toMimeType'), $mt));
+            }
         }
     }
 
