@@ -365,6 +365,9 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
         scorm_tree_node = tree;
         tree.singleNodeHighlight = true;
         tree.subscribe('labelClick', function(node) {
+            if (node.title == '' || node.title == null) {
+                return; //this item has no navigation
+            }
             scorm_activate_item(node);
             if (node.children.length) {
                 scorm_bloody_labelclick = true;
