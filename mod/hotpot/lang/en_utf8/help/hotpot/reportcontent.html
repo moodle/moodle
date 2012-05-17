@@ -1,0 +1,109 @@
+<h1>Report Content</h1>
+<p>You can specify different content for the Hot Potatoes reports.</p>
+
+<h2>Selecting the type of report</h2>
+<div class="indent">
+    <p>
+        <b>Overview</b><br />
+        This report is a list of all attempts at this quiz.
+
+        It shows the picture and name of each user, along with their
+        grade for the quiz and the score, time and duration of each attempt.
+
+        Attempts may be selected and then deleted if required.
+    </p>
+    <p>
+        <b>Simple statistics</b><br />
+        This report is a list of all attempts at this quiz,
+        except &quot;in progress&quot; attempts.
+
+        It shows the picture and name of each user, along with their
+        grade for the quiz, and the score of each question in each attempt.
+
+        It also gives the average scores of the individual
+        questions and the quiz as a whole.
+    </p>
+    <p>
+        <b>Detailed statistics</b><br />
+        This report shows full details of all attempts at this quiz,
+        except &quot;in progress&quot; attempts.
+
+        The report contains the following tables:
+    </p>
+    <ul>
+        <li>the <a href="help.php?module=hotpot&amp;file=responsestable.html">responses table</a>,
+        which shows how each user responded to each question in each of their attempts at the quiz.</li>
+
+        <li>the <a href="help.php?module=hotpot&amp;file=analysistable.html">item analysis table</a>,
+        which lists the responses to each question and the frequency of each response.</li>
+    </ul>
+    <p>
+        <b>Click trail report</b><br />
+        This report shows details of every click by every student in all attempts at this quiz,
+        except &quot;in progress&quot; attempts.
+
+        The report can be very large and is intended to be downloaded and viewed in a spreadsheet
+        program, such as Microsoft Excel.
+
+        Details of the columns in this report are available in the
+        <a href="help.php?module=hotpot&amp;file=clickreporttable.html">click trail table</a>
+        help file.
+    </p>
+    <p>
+        The click trail report is only available if
+        <a href="help.php?module=hotpot&amp;file=clickreporting.html">click reporting</a>
+        has been enabled for this HotPot activity.
+    </p>
+</div>
+
+<h2>Selecting users</h2>
+<div class="indent">
+    <p>
+        <b>All users</b><br />
+        The report will show responses by all users who have attempted this quiz.
+        This includes users who are not currently enrolled on the course,
+        the &quot;guest&quot; user, course creators and Moodle administrators.
+    </p>
+    <p>
+        <b>All participants</b><br />
+        The report will show responses by all students and teachers who are currently
+        enrolled on this course, as well as responses by the &quot;guest&quot; user,
+        course creators and Moodle administrators.
+    </p>
+    <p>
+        <b>Group: group name</b><br />
+        The report will show responses by all students in the group selected.
+        The group options will not appear on the drop-down menu if there are
+        no groups defined for this course.
+    </p>
+    <p>
+        <b>Enrolled students</b><br />
+        The report will show responses by students currently enrolled in this course.
+        Teacher's responses will not be included in the report.
+    </p>
+    <p>
+        <b>Single student</b><br />
+        The report will show responses by a single student selected from a drop-down list
+        of students' names.
+    </p>
+</div>
+
+<h2>Selecting grades</h2>
+<div class="indent">
+    <p>
+        <b>All attempts</b><br />
+        The report will include the responses from all the attempts by each user.
+    </p>
+    <p>
+        <b>Best attempt</b><br />
+        The report will only include the responses from the highest scoring attempt by each user.
+    </p>
+    <p>
+        <b>First attempt</b><br />
+        The report will only include the responses from the first attempt by each user.
+    </p>
+    <p>
+        <b>Last attempt</b><br />
+        The report will only include the responses from the most recent attempt by each user.
+    </p>
+</div>

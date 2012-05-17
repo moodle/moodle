@@ -42,7 +42,7 @@ class qformat_hotpot extends qformat_default {
                 break;
             default:
                 // shouldn't happen !!
-                $courseid = 0; 
+                $courseid = 0;
         }
         require_once($CFG->libdir.'/filelib.php');
         $baseurl = get_file_url($courseid).'/';
@@ -81,7 +81,12 @@ class qformat_hotpot extends qformat_default {
         $questions = array();
         switch ($xml->quiztype) {
             case 'jcloze':
-                $this->process_jcloze($xml, $questions);
+                if (strpos($source, '<gap-fill><question-record>')) {
+                    $startwithgap = true;
+                } else {
+                    $startwithgap = false;
+                }
+                $this->process_jcloze($xml, $questions, $startwithgap);
                 break;
             case 'jcross':
                 $this->process_jcross($xml, $questions);
@@ -114,7 +119,7 @@ class qformat_hotpot extends qformat_default {
         }
     }
 
-    function process_jcloze(&$xml, &$questions) {
+    function process_jcloze(&$xml, &$questions, $startwithgap) {
         // define default grade (per cloze gap)
         $defaultgrade = 1;
         $gap_count = 0;
@@ -144,10 +149,27 @@ class qformat_hotpot extends qformat_default {
                 $question->usecase = 0; // Ignore case
                 $question->image = "";  // No images with this format
             }
-            $question->qtype = MULTIANSWER;
 
+            $question->qtype = MULTIANSWER;
             $question->name = $this->hotpot_get_title($xml, $x);
-            $question->questiontext = $this->hotpot_get_reading($xml);
+            $question->questiontext = '';
+
+            // add get dropdown list, if any
+            if (intval($xml->xml_value('hotpot-config-file,'.$xml->quiztype.',use-drop-down-list'))) {
+                $dropdownlist = $this->hotpot_jcloze_wordlist($xml);
+                $answertype = MULTICHOICE;
+            } else {
+                $dropdownlist = false;
+                $answertype = SHORTANSWER;
+
+                // add wordlist, if required (not required if we are using dropdowns)
+                if (intval($xml->xml_value('hotpot-config-file,'.$xml->quiztype.',include-word-list'))) {
+                    $question->questiontext .= '<p>'.implode(' ', $this->hotpot_jcloze_wordlist($xml)).'</p>';
+                }
+            }
+
+            // add reading, if any
+            $question->questiontext .= $this->hotpot_get_reading($xml);
 
             // setup answer arrays
             if ($moodle_14) {
@@ -160,71 +182,130 @@ class qformat_hotpot extends qformat_default {
             }
 
             $q = 0;
-            while ($text = $xml->xml_value($tags, $exercise."[$q]")) {
-                // add next bit of text
-                $question->questiontext .= $this->hotpot_prepare_str($text);
+            $looping = true;
+            while ($looping) {
+                // get next bit of text
+                $questiontext = $xml->xml_value($tags, $exercise."[$q]");
+                $questiontext = $this->hotpot_prepare_str($questiontext);
 
-                // check for a gap
+                // get next gap
+                $gap = '';
                 $question_record = $exercise."['question-record'][$q]['#']";
                 if ($xml->xml_value($tags, $question_record)) {
 
                     // add gap
                     $gap_count ++;
                     $positionkey = $q+1;
-                    $question->questiontext .= '{#'.$positionkey.'}';
-        
+                    $gap = '{#'.$positionkey.'}';
+
                     // initialize answer settings
                     if ($moodle_14) {
                         $question->answers[$q]->positionkey = $positionkey;
-                        $question->answers[$q]->answertype = SHORTANSWER;
+                        $question->answers[$q]->answertype = $answertype;
                         $question->answers[$q]->norm = $defaultgrade;
                         $question->answers[$q]->alternatives = array();
                     } else {
                         $wrapped = new stdClass();
-                        $wrapped->qtype = SHORTANSWER;
+                        $wrapped->qtype = $answertype;
                         $wrapped->usecase = 0;
                         $wrapped->defaultgrade = $defaultgrade;
                         $wrapped->questiontextformat = 0;
                         $wrapped->answer = array();
                         $wrapped->fraction = array();
                         $wrapped->feedback = array();
+                        // required for multichoice
+                        $wrapped->single = 1;
+                        $wrapped->answernumbering = 0;
+                        $wrapped->shuffleanswers = 0;
+                        $wrapped->correctfeedback = '';
+                        $wrapped->partiallycorrectfeedback = '';
+                        $wrapped->incorrectfeedback = '';
+                        // array of answers
                         $answers = array();
                     }
-        
+
                     // add answers
-                    $a = 0;
-                    while (($answer=$question_record."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
-                        $text = $this->hotpot_prepare_str($xml->xml_value($tags,  $answer."['text'][0]['#']"));
-                        $correct = $xml->xml_value($tags,  $answer."['correct'][0]['#']");
-                        $feedback = $this->hotpot_prepare_str($xml->xml_value($tags,  $answer."['feedback'][0]['#']"));
-                        if (strlen($text)) {
-                            // set score (0=0%, 1=100%)
-                            $fraction = empty($correct) ? 0 : 1;
-                            // store answer
+                    if ($dropdownlist) {
+
+                        $a = 0;
+                        $correcttext = '';
+                        $correctfeedback = '';
+                        while (($answer=$question_record."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
+                            if (intval($xml->xml_value($tags,  $answer."['correct'][0]['#']"))) {
+                                $correcttext = $this->hotpot_prepare_str($xml->xml_value($tags,  $answer."['text'][0]['#']"));
+                                $correctfeedback = $this->hotpot_prepare_str($xml->xml_value($tags,  $answer."['feedback'][0]['#']"));
+                                break;
+                            }
+                            $a++;
+                        }
+
+                        foreach ($dropdownlist as $a => $answer) {
+                            if ($answer==$correcttext) {
+                                $fraction = 1;
+                                $feedback = $correctfeedback;
+                            } else {
+                                $fraction = 0;
+                                $feedback = '';
+                            }
                             if ($moodle_14) {
                                 $question->answers[$q]->alternatives[$a] = new stdClass();
-                                $question->answers[$q]->alternatives[$a]->answer = $text;
+                                $question->answers[$q]->alternatives[$a]->answer = $answer;
                                 $question->answers[$q]->alternatives[$a]->fraction = $fraction;
                                 $question->answers[$q]->alternatives[$a]->feedback = $feedback;
                             } else {
-                                $wrapped->answer[] = $text;
+                                $wrapped->answer[] = $answer;
                                 $wrapped->fraction[] = $fraction;
                                 $wrapped->feedback[] = $feedback;
-                                $answers[] = (empty($fraction) ? '' : '=').$text.(empty($feedback) ? '' : ('#'.$feedback));
+                                $answers[] = ($fraction==0 ? '' : '=').$answer.($feedback=='' ? '' : ('#'.$feedback));
                             }
                         }
-                        $a++;
+                    } else {
+                        $a = 0;
+                        while (($answer=$question_record."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
+                            $text = $this->hotpot_prepare_str($xml->xml_value($tags,  $answer."['text'][0]['#']"));
+                            $correct = $xml->xml_value($tags,  $answer."['correct'][0]['#']");
+                            $feedback = $this->hotpot_prepare_str($xml->xml_value($tags,  $answer."['feedback'][0]['#']"));
+                            if (strlen($text)) {
+                                // set score (0=0%, 1=100%)
+                                $fraction = empty($correct) ? 0 : 1;
+                                // store answer
+                                if ($moodle_14) {
+                                    $question->answers[$q]->alternatives[$a] = new stdClass();
+                                    $question->answers[$q]->alternatives[$a]->answer = $text;
+                                    $question->answers[$q]->alternatives[$a]->fraction = $fraction;
+                                    $question->answers[$q]->alternatives[$a]->feedback = $feedback;
+                                } else {
+                                    $wrapped->answer[] = $text;
+                                    $wrapped->fraction[] = $fraction;
+                                    $wrapped->feedback[] = $feedback;
+                                    $answers[] = (empty($fraction) ? '' : '=').$text.(empty($feedback) ? '' : ('#'.$feedback));
+                                }
+                            }
+                            $a++;
+                        }
                     }
+
                     // compile answers into question text, if necessary
                     if ($moodle_14) {
                         // do nothing
                     } else {
-                        $wrapped->questiontext = '{'.$defaultgrade.':SHORTANSWER:'.implode('~', $answers).'}';
+                        $wrapped->questiontext = '{'.$defaultgrade.':'.$answertype.':'.implode('~', $answers).'}';
                         $question->options->questions[] = $wrapped;
                     }
                 } // end if gap
+
+                if (strlen($questiontext) || strlen($gap)) {
+                    if ($startwithgap) {
+                        $question->questiontext .= $gap.$questiontext;
+                    } else {
+                        $question->questiontext .= $questiontext.$gap;
+                    }
+                } else {
+                    $looping = false;
+                }
+
                 $q++;
-            } // end while $text
+            } // end while $looping
 
             if ($q) {
                 // define total grade for this exercise
@@ -239,6 +320,32 @@ class qformat_hotpot extends qformat_default {
 
             $x++;
         } // end while $exercise
+    }
+
+    function hotpot_jcloze_wordlist(&$xml) {
+        $wordlist = array();
+
+        $q = 0;
+        $tags = 'data,gap-fill,question-record';
+        while (($question="[$q]['#']") && $xml->xml_value($tags, $question)) {
+            $a = 0;
+            $aa = 0;
+            while (($answer=$question."['answer'][$a]['#']") && $xml->xml_value($tags, $answer)) {
+                $text = $xml->xml_value($tags,  $answer."['text'][0]['#']");
+                $correct = $xml->xml_value($tags, $answer."['correct'][0]['#']");
+                if (strlen($text) && intval($correct)) {
+                    $wordlist[] = $text;
+                    $aa++;
+                }
+                $a++;
+            }
+            $q++;
+        }
+
+        $wordlist = array_unique($wordlist);
+        sort($wordlist);
+
+        return $wordlist;
     }
 
     function process_jcross(&$xml, &$questions) {
@@ -488,7 +595,7 @@ class qformat_hotpot extends qformat_default {
                     $a++;
                 }
                 if ($correct_answers_all_zero) {
-                    // correct answers all have score of 0%, 
+                    // correct answers all have score of 0%,
                     // so reset score for correct answers 100%
                     foreach ($correct_answers as $aa) {
                         $question->fraction[$aa] = 1;
@@ -531,10 +638,10 @@ class qformat_hotpot extends qformat_default {
         $tags = 'data,reading';
         if ($xml->xml_value("$tags,include-reading")) {
             if ($title = $xml->xml_value("$tags,reading-title")) {
-                $str .= "<H3>$title</H3>";
+                $str .= "<h3>$title</h3>";
             }
             if ($text = $xml->xml_value("$tags,reading-text")) {
-                $str .= "<P>$text</P>";
+                $str .= "<p>$text</p>";
             }
         }
         return $this->hotpot_prepare_str($str);
@@ -572,7 +679,7 @@ function hotpot_charcode_to_utf8($charcode) {
         return chr(($charcode >> 0x12) + 0xF0).chr((($charcode >> 0x0C) & 0x3F) + 0x80).chr((($charcode >> 0x06) & 0x3F) + 0x80).chr(($charcode & 0x3F) + 0x80);
     }
     // unidentified char code !!
-    return ' '; 
+    return ' ';
 }
 
 function hotpot_convert_relative_urls($str, $baseurl, $filename) {

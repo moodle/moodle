@@ -298,8 +298,9 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
     // maintain a cache of info on table columns
     static $table_columns = array();
     if (empty($table_columns[$table])) {
-        global $CFG, $db;
-        $table_columns[$table] = $db->MetaColumns("$CFG->prefix$table");
+        //global $CFG, $db;
+        //$table_columns[$table] = $db->MetaColumns("$CFG->prefix$table");
+        $table_columns[$table] = $DB->get_columns($table);
     }
 
     // get values for fields in this record

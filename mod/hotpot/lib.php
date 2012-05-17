@@ -1097,7 +1097,7 @@ function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $cour
     }
 }
 
-function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
+function hotpot_print_recent_mod_activity($activity, $courseid, $detail=false) {
 /// Basically, this function prints the results of "hotpot_get_recent_activity"
 
     global $CFG, $THEME, $USER;
@@ -1108,10 +1108,14 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
         $bgcolor = '';
     }
 
+    if (is_object($courseid) && isset($courseid->id)) {
+        $courseid = $courseid->id; // shouldn't happen !!
+    }
+
     print '<table border="0" cellpadding="3" cellspacing="0">';
 
     print '<tr><td'.$bgcolor.' class="forumpostpicture" width="35" valign="top">';
-    print_user_picture($activity->user->userid, $course, $activity->user->picture);
+    print_user_picture($activity->user->userid, $courseid, $activity->user->picture);
     print '</td><td width="100%"><font size="2">';
 
     if ($detail) {
@@ -1123,7 +1127,7 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
         $href = "$CFG->wwwroot/mod/hotpot/view.php?hp=$activity->instance";
         print '<a href="'.$href.'">'.$activity->name.'</a> - ';
     }
-    if (has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $course))) {
+    if (has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $courseid))) {
         // score (with link to attempt details)
         $href = "$CFG->wwwroot/mod/hotpot/review.php?hp=$activity->instance&attempt=".$activity->content->attemptid;
         print '<a href="'.$href.'">('.hotpot_format_score($activity->content).')</a> ';
@@ -1133,7 +1137,7 @@ function hotpot_print_recent_mod_activity($activity, $course, $detail=false) {
     }
 
     // link to user
-    $href = "$CFG->wwwroot/user/view.php?id=$activity->user->userid&course=$course";
+    $href = "$CFG->wwwroot/user/view.php?id=$activity->user->userid&course=$courseid";
     print '<a href="'.$href.'">'.$activity->user->fullname.'</a> ';
 
     // time and date
@@ -1805,7 +1809,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         $quoteopen = '("|&quot;|&amp;quot;)'; // open quote
         $quoteclose = '\\5'; //  close quote (to match open quote)
 
-        $tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value', 'object'=>'data', 'embed'=>'src');
+        $tags = array('script'=>'src', 'link'=>'href', 'a'=>'href','img'=>'src','param'=>'value', 'object'=>'data', 'embed'=>'src', '(?:table|th|td)' =>'background');
         foreach ($tags as $tag=>$attribute) {
             if ($tag=='param') {
                 $url = '\S+?\.\S+?'; // must include a filename and have no spaces

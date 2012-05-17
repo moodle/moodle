@@ -141,7 +141,7 @@
             // HP5 v5
             $get_html = empty($framename) ? true : false;
         }
-        
+
         if ($get_html) {
 
             if (HOTPOT_FIRST_ATTEMPT) {
@@ -356,14 +356,20 @@
         $body .= ""
         .   '<script type="text/javascript">'."\n"
         .   "//<![CDATA[\n"
-        .   "   var s = (typeof(window.onload)=='function') ? onload.toString() : '';\n"
-        .   "   if (s.indexOf('".$matches[3]."')<0) {\n"
-        .   "       if (s=='') {\n" // no previous onload
-        .   "           window.onload = new Function('".$matches[3]."');\n"
-        .   "       } else {\n"
-        .   "           window.onload_hotpot = onload;\n"
-        .   "           window.onload = new Function('window.onload_hotpot();'+'".$matches[3]."');\n"
-        .   "       }\n"
+        .   "    var re = new RegExp('\\\\s+', 'g');\n"
+        .   "    if (typeof(window.onload)=='function') {\n"
+        .   "        var s = onload.toString();\n"
+        .   "        s = s.replace(re, '');\n"
+        .   "    } else {\n"
+        .   "        var s = '';\n"
+        .   "    }\n"
+        .   "    if (s.indexOf('".$matches[3]."'.replace(re, ''))<0) {\n"
+        .   "        if (s=='') {\n" // no previous onload
+        .   "            window.onload = new Function('".$matches[3]."');\n"
+        .   "        } else {\n"
+        .   "            window.onload_hotpot = onload;\n"
+        .   "            window.onload = new Function('window.onload_hotpot();'+'".$matches[3]."');\n"
+        .   "        }\n"
         .   "    }\n"
         .   "//]]>\n"
         .   "</script>\n"
