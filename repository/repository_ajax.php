@@ -317,11 +317,18 @@ switch ($action) {
                 }
 
                 // Check if exceed maxbytes.
-                if (($maxbytes!==-1) && (filesize($file['path']) > $maxbytes)) {
+                if (($maxbytes!==-1) && (filesize($downloadedfile['path']) > $maxbytes)) {
                     throw new file_exception('maxbytes');
                 }
 
-                $record->source = !empty($downloadedfile['url']) ? $downloadedfile['url'] : '';
+                // {@link file_restore_source_field_from_draft_file()}
+                $sourcefield = '';
+                if (!empty($downloadedfile['url'])) {
+                    $source = new stdClass;
+                    $source->source = $downloadedfile['url'];
+                    $sourcefield = serialize($source);
+                }
+                $record->source = $sourcefield;
 
                 $info = repository::move_to_filepool($downloadedfile['path'], $record);
                 if (empty($info)) {
