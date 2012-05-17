@@ -59,7 +59,11 @@ class sqlsrv_native_moodle_database extends moodle_database {
         // the name used by 'extension_loaded()' is case specific! The extension
         // therefore *could be* mixed case and hence not found.
         if (!function_exists('sqlsrv_num_rows')) {
-            return get_string('sqlsrvextensionisnotpresentinphp', 'install');
+            if (stripos(PHP_OS, 'win') === 0) {
+                return get_string('nativesqlsrvnodriver', 'install');
+            } else {
+                return get_string('nativesqlsrvnonwindows', 'install');
+            }
         }
         return true;
     }
