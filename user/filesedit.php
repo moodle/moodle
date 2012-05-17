@@ -48,7 +48,7 @@ require_capability('moodle/user:manageownfiles', $context);
 $title = get_string('myfiles');
 $struser = get_string('user');
 
-$PAGE->set_url('/user/files.php');
+$PAGE->set_url('/user/filesedit.php');
 $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
