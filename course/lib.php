@@ -1854,11 +1854,13 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     if (course_ajax_enabled($course)) {
         $straddeither = get_string('addresourceoractivity');
         // The module chooser link
-        $modchooser = '<div class="sectionaddmodule">';
-        $modchooser .= '<div class="section_add_menus"><a class="sectionmodchooserlink" href="#">';
-        $modchooser .= '<img alt="'.$straddeither.'" src="'.$OUTPUT->pix_url('t/add').'" class="activityicon">&nbsp;';
-        $modchooser .= '<span class="instancename">'.$straddeither.'</span>';
-        $modchooser .= '</a></div></div>';
+        $modchooser = html_writer::start_tag('div', array('class' => 'mdl-right'));
+        $modchooser.= html_writer::start_tag('div', array('class' => 'section-modchooser'));
+        $icon = $OUTPUT->pix_icon('t/add', $straddeither);
+        $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
+        $modchooser.= html_writer::link('#', $icon.$span, array('class' => 'section-modchooser-link'));
+        $modchooser.= html_writer::end_tag('div');
+        $modchooser.= html_writer::end_tag('div');
 
         // Wrap the normal output in a noscript div
         $usemodchooser = get_user_preferences('usemodchooser', 1);
