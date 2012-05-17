@@ -1431,6 +1431,8 @@ class core_course_external extends external_api {
         // Validate parameters.
         $params = self::validate_parameters(self::delete_categories_parameters(), array('categories' => $categories));
 
+        $transaction = $DB->start_delegated_transaction();
+
         foreach ($params['categories'] as $category) {
             if (!$deletecat = $DB->get_record('course_categories', array('id' => $category['id']))) {
                 throw new moodle_exception('unknowcategory');
@@ -1468,6 +1470,7 @@ class core_course_external extends external_api {
             }
         }
 
+        $transaction->allow_commit();
     }
 
     /**
