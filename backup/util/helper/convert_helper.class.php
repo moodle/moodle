@@ -55,12 +55,6 @@ abstract class convert_helper {
 
         $converters = array();
 
-        // Only apply for backup converters if the (experimental) setting enables it.
-        // This will be out once we get proper support of backup converters. MDL-29956
-        if (!$restore && empty($CFG->enablebackupconverters)) {
-            return $converters;
-        }
-
         $plugins    = get_list_of_plugins('backup/converter');
         foreach ($plugins as $name) {
             $filename = $restore ? 'lib.php' : 'backuplib.php';
