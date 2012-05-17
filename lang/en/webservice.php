@@ -54,6 +54,7 @@ $string['createtokenforuserauto'] = 'Create a token for a user automatically';
 $string['createtokenforuserdescription'] = 'Create a token for the web services user.';
 $string['createuser'] = 'Create a specific user';
 $string['createuserdescription'] = 'A web services user is required to represent the system controlling Moodle.';
+$string['criteriaerror'] = 'Missing permissions to search on a criteria.';
 $string['default'] = 'Default to "{$a}"';
 $string['deleteaservice'] = 'Delete service';
 $string['deleteservice'] = 'Delete the service: {$a->name} (id: {$a->id})';

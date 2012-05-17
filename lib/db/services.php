@@ -433,6 +433,24 @@ $functions = array(
 
     // === course related functions ===
 
+    'core_course_get_categories' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'get_categories',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Return category details',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/category:viewhiddencategories',
+    ),
+
+    'core_course_update_categories' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'update_categories',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Update categories',
+        'type'        => 'write',
+        'capabilities'=> 'moodle:category/manage',
+    ),
+
     'moodle_course_get_courses' => array(
         'classname'   => 'core_course_external',
         'methodname'  => 'get_courses',
@@ -494,6 +512,24 @@ $functions = array(
         'description' => 'Duplicate an existing course (creating a new one) without user data',
         'type'        => 'write',
         'capabilities'=> 'moodle/backup:backupcourse,moodle/restore:restorecourse,moodle/course:create',
+    ),
+
+    'core_course_create_categories' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'create_categories',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Create course categories',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/category:manage',
+    ),
+
+    'core_course_delete_categories' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'delete_categories',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Delete course categories',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/category:manage',
     ),
 
     // === message related functions ===
