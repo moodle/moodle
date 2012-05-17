@@ -89,7 +89,7 @@ class repository_equella extends repository {
      * @return int
      */
     public function supported_returntypes() {
-        return FILE_EXTERNAL | FILE_REFERENCE;
+        return FILE_REFERENCE;
     }
 
     /**
