@@ -483,7 +483,12 @@ function quiz_cron() {
  *      array if there are none.
  */
 function quiz_get_user_attempts($quizid, $userid, $status = 'finished', $includepreviews = false) {
-    global $DB;
+    global $DB, $CFG;
+    // TODO MDL-33071 it is very annoying to have to included all of locallib.php
+    // just to get the quiz_attempt::FINISHED constants, but I will try to sort
+    // that out properly for Moodle 2.4. For now, I will just do a quick fix for
+    // MDL-33048.
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
     $params = array();
     switch ($status) {
