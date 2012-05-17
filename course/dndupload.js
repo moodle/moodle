@@ -235,15 +235,17 @@ M.course_dndupload = {
 
         // Check for files first.
         if (this.types_includes(e, 'Files')) {
-            if (this.handlers.filehandlers.length == 0) {
-                return false; // No available file handlers - ignore this drag.
+            if (e.type != 'drop' || e._event.dataTransfer.files.length != 0) {
+                if (this.handlers.filehandlers.length == 0) {
+                    return false; // No available file handlers - ignore this drag.
+                }
+                return {
+                    realtype: 'Files',
+                    addmessage: M.util.get_string('addfilehere', 'moodle'),
+                    namemessage: null, // Should not be asked for anyway
+                    type: 'Files'
+                };
             }
-            return {
-                realtype: 'Files',
-                addmessage: M.util.get_string('addfilehere', 'moodle'),
-                namemessage: null, // Should not be asked for anyway
-                type: 'Files'
-            };
         }
 
         // Check each of the registered types.
@@ -703,6 +705,11 @@ M.course_dndupload = {
                             if (result.onclick) {
                                 resel.a.onclick = result.onclick;
                             }
+                            if (self.Y.UA.gecko > 0) {
+                                // Fix a Firefox bug which makes sites with a '~' in their wwwroot
+                                // log the user out when clicking on the link (before refreshing the page).
+                                resel.div.innerHTML = unescape(resel.div.innerHTML);
+                            }
                             self.add_editing(result.elementid);
                         } else {
                             // Error - remove the dummy element
@@ -844,6 +851,7 @@ M.course_dndupload = {
      * @param contents the actual data that was dropped
      * @param section the DOM element representing the selected course section
      * @param sectionnumber the number of the selected course section
+     * @param module the module chosen to handle this upload
      */
     upload_item: function(name, type, contents, section, sectionnumber, module) {
 
@@ -877,6 +885,11 @@ M.course_dndupload = {
                             if (result.onclick) {
                                 resel.a.onclick = result.onclick;
                             }
+                            if (self.Y.UA.gecko > 0) {
+                                // Fix a Firefox bug which makes sites with a '~' in their wwwroot
+                                // log the user out when clicking on the link (before refreshing the page).
+                                resel.div.innerHTML = unescape(resel.div.innerHTML);
+                            }
                             self.add_editing(result.elementid, sectionnumber);
                         } else {
                             // Error - remove the dummy element
@@ -890,6 +903,34 @@ M.course_dndupload = {
             }
         };
 
+        if (type == 'text/html') {
+            // If this was html content dragged from Chrome => Firefox, we will
+            // need to fix the byte order of the content.
+            if (this.Y.UA.gecko > 0) {
+                if (contents.indexOf('<') == -1) {
+                    // There are no html tags in this content => it probably needs fixing.
+                    var codes = new Array();
+                    for (i=0; i<contents.length; i++) {
+                        var val = contents.charCodeAt(i);
+                        var val1 = Math.floor(val / 256);
+                        var val2 = val % 256;
+                        codes[i*2] = val2;
+                        codes[i*2+1] = val1;
+                    }
+                    var fixedcontents = '';
+                    for (i=0; i<codes.length; i++) {
+                        var val = codes[i];
+                        // Ideally we should deal with multi-byte characters here; I'm not sure how.
+                        fixedcontents += String.fromCharCode(val);
+                    }
+                    if (fixedcontents.indexOf('<') != -1) {
+                        // The fixed content contains html tags => it is probably correct.
+                        contents = fixedcontents;
+                    }
+                }
+            }
+        }
+
         // Prepare the data to send
         var formData = new FormData();
         formData.append('contents', contents);
@@ -900,15 +941,17 @@ M.course_dndupload = {
         formData.append('type', type);
         formData.append('module', module);
 
-        // Contents from Firefox have their unicode byte-order reversed, swap back and
-        // provide as an alternative.
         if (type == 'text/html') {
-            var fixedcontents = '';
-            for (i=0; i<contents.length; i+=2) {
-                var val = contents.charCodeAt(i+1) * 256 + contents.charCodeAt(i);
-                fixedcontents += String.fromCharCode(val);
+            // This html content might have been dragged from Firefox to Chrome (in Linux).
+            // Need to provide an extra fixed version of the contents, in case the original does not upload.
+            if (this.Y.UA.webkit > 0 && this.Y.UA.os == 'linux') {
+                var fixedcontents = '';
+                for (i=0; i<contents.length; i+=2) {
+                    var val = contents.charCodeAt(i+1) * 256 + contents.charCodeAt(i);
+                    fixedcontents += String.fromCharCode(val);
+                }
+                formData.append('fixedcontents', fixedcontents);
             }
-            formData.append('fixedcontents', fixedcontents);
         }
 
         // Send the data

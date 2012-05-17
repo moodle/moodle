@@ -109,7 +109,7 @@ class dndupload_handler {
         // Add some default types to handle.
         // Note: 'Files' type is hard-coded into the Javascript as this needs to be ...
         // ... treated a little differently.
-        $this->add_type('url', array('url', 'text/uri-list'), get_string('addlinkhere', 'moodle'),
+        $this->add_type('url', array('url', 'text/uri-list', 'text/x-moz-url'), get_string('addlinkhere', 'moodle'),
                         get_string('nameforlink', 'moodle'), 10);
         $this->add_type('text/html', array('text/html'), get_string('addpagehere', 'moodle'),
                         get_string('nameforpage', 'moodle'), 20);
