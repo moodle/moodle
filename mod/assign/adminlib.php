@@ -460,8 +460,6 @@ class assign_plugin_manager {
         }
         ksort($pluginsbyname);
 
-        // We need to reset settings after the loop
-        $tempsettings = $settings;
         foreach ($pluginsbyname as $pluginname => $plugin) {
             $settings = new admin_settingpage($subtype . '_'.$plugin,
                     $pluginname, 'moodle/site:config', !$module->visible);
@@ -472,9 +470,6 @@ class assign_plugin_manager {
 
             $admin->add($subtype . 'plugins', $settings);
         }
-
-        // Reset settings to the original point in the tree
-        $settings = $tempsettings;
 
     }
 }
