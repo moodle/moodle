@@ -3512,6 +3512,14 @@ class dml_testcase extends database_driver_testcase {
         $records = $DB->get_records_sql($sql, array("%D%"));
         $this->assertEquals(count($records), 6);
 
+        // verify usual escaping characters work fine
+        $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', true, true, false, '\\');
+        $records = $DB->get_records_sql($sql, array("ouc\\_"));
+        $this->assertEquals(count($records), 1);
+        $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', true, true, false, '|');
+        $records = $DB->get_records_sql($sql, array("ouc|%"));
+        $this->assertEquals(count($records), 1);
+
         // TODO: we do not require accent insensitivness yet, just make sure it does not throw errors
         $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', true, false);
         $records = $DB->get_records_sql($sql, array('aui'));
