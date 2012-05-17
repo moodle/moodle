@@ -71,6 +71,11 @@ class cc2moodle {
             return false;
         }
 
+        // Before iterate over directories, try to find one manifest at top level
+        if (file_exists($folder . '/imsmanifest.xml')) {
+            return $folder . '/imsmanifest.xml';
+        }
+
         $result = false;
         try {
             $dirIter = new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::KEY_AS_PATHNAME);
