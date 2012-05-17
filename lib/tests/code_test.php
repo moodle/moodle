@@ -33,6 +33,27 @@ class code_testcase extends advanced_testcase {
 
     public function test_dnc() {
         global $CFG;
+
+        if ($CFG->ostype === 'UNIX') {
+            // try it the faster way
+            $oldcwd = getcwd();
+            chdir($CFG->dirroot);
+            $output = null;
+            $exclude = array();
+            foreach ($this->extensions_to_ignore as $ext) {
+                $exclude[] = '--exclude="*.'.$ext.'"';
+            }
+            $exclude = implode(' ', $exclude);
+            exec('grep -r '.$exclude.' DONOT'.'COMMIT .', $output, $code);
+            chdir($oldcwd);
+            // return code 0 means found, return code 1 means NOT found, 127 is grep not found
+            if ($code == 1) {
+                // executed only if no file failed the test
+                $this->assertTrue(true);
+                return;
+            }
+        }
+
         $regexp = '/\.(' . implode('|', $this->extensions_to_ignore) . ')$/';
         $this->badstrings = array();
         $this->badstrings['DONOT' . 'COMMIT'] = 'DONOT' . 'COMMIT'; // If we put the literal string here, it fails the test!
