@@ -3,7 +3,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     // The CSS selectors we use
     var CSS = {
         ACTIVITYLI : 'li.activity',
-        COMMANDSPAN : 'li.activity span.commands',
+        COMMANDSPAN : 'span.commands',
         SPINNERCOMMANDSPAN : 'span.commands',
         CONTENTAFTERLINK : 'div.contentafterlink',
         DELETE : 'a.editing_delete',
@@ -252,7 +252,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          */
         setup_for_resource : function(baseselector) {
             if (!baseselector) {
-                var baseselector = CSS.PAGECONTENT;
+                var baseselector = CSS.PAGECONTENT + ' ' + CSS.ACTIVITYLI;;
             }
 
             Y.all(baseselector).each(this._setup_for_resource, this);
