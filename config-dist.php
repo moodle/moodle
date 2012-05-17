@@ -431,6 +431,11 @@ $CFG->admin = 'admin';
 //
 //      $CFG->cssoptimiserpretty = true;
 //
+// Use the following flag to completely disable the Available update notifications
+// feature and hide it from the server administration UI.
+//
+//      $CFG->disableupdatenotifications = true;
+//
 //=========================================================================
 // 8. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================

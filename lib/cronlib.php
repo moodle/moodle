@@ -382,9 +382,11 @@ function cron_run() {
     mtrace(get_string('siteupdatesend', 'hub'));
 
     // If enabled, fetch information about available updates and eventually notify site admins
-    require_once($CFG->libdir.'/pluginlib.php');
-    $updateschecker = available_update_checker::instance();
-    $updateschecker->cron();
+    if (empty($CFG->disableupdatenotifications)) {
+        require_once($CFG->libdir.'/pluginlib.php');
+        $updateschecker = available_update_checker::instance();
+        $updateschecker->cron();
+    }
 
     //cleanup old session linked tokens
     //deletes the session linked tokens that are over a day old.
