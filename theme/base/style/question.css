@@ -87,6 +87,10 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 .importerror {margin-top: 10px;border-bottom: 1px solid #555;}
 .mform .que.comment .fitemtitle {width: 20%;}
 
+#page-question-preview #techinfo {
+    margin: 1em 0;
+}
+
 /** Overide for RTL layout **/
 .dir-rtl #qtypechoicecontainer #chooseqtype .instruction,
 .dir-rtl #qtypechoicecontainer #chooseqtype .qtypesummary {right: 60%;left: 0%; border-left:0;border-right: 1px solid grey;}
