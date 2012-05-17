@@ -55,7 +55,7 @@ class repository_equella extends repository {
             $mimetypesstr = '&mimeTypes=' . implode(',', $this->mimetypes);
             // We're restricting to a mime type, so we always restrict to selecting resources only.
             $restrict = '&attachmentonly=true';
-        } else if ($this->get_option('equella_select_restriction') != 'none') {
+        } elseif ($this->get_option('equella_select_restriction') != 'none') {
             // The option value matches the EQUELLA paramter name.
             $restrict = '&' . $this->get_option('equella_select_restriction') . '=true';
         }
