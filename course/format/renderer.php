@@ -547,6 +547,11 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             } else {
                 // This will create a course section if it doesn't exist..
                 $thissection = get_course_section($section, $course->id);
+
+                // The returned section is only a bare database object rather than
+                // a section_info object - we will need at least the uservisible
+                // field in it.
+                $thissection->uservisible = true;
             }
             // Show the section if the user is permitted to access it, OR if it's not available
             // but showavailability is turned on
