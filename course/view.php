@@ -5,6 +5,7 @@
     require_once('../config.php');
     require_once('lib.php');
     require_once($CFG->dirroot.'/mod/forum/lib.php');
+    require_once($CFG->libdir.'/conditionlib.php');
     require_once($CFG->libdir.'/completionlib.php');
 
     $id          = optional_param('id', 0, PARAM_INT);
@@ -215,16 +216,16 @@
         }
     }
 
-    if (! $sections = get_all_sections($course->id)) {   // No sections found
-        // Double-check to be extra sure
-        if (! $section = $DB->get_record('course_sections', array('course'=>$course->id, 'section'=>0))) {
-            $section->course = $course->id;   // Create a default section.
-            $section->section = 0;
-            $section->visible = 1;
-            $section->summaryformat = FORMAT_HTML;
-            $section->id = $DB->insert_record('course_sections', $section);
-        }
-        if (! $sections = get_all_sections($course->id) ) {      // Try again
+    if (!$sections = $modinfo->get_section_info_all()) {   // No sections found
+        $section = new stdClass;
+        $section->course = $course->id;   // Create a default section.
+        $section->section = 0;
+        $section->visible = 1;
+        $section->summaryformat = FORMAT_HTML;
+        $section->id = $DB->insert_record('course_sections', $section);
+        rebuild_course_cache($course->id);
+        $modinfo = get_fast_modinfo($COURSE);
+        if (!$sections = $modinfo->get_section_info_all()) {      // Try again
             print_error('cannotcreateorfindstructs', 'error');
         }
     }

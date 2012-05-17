@@ -162,6 +162,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         }
         $o.= html_writer::end_tag('div');
 
+        $o .= $this->section_availability_message($section);
+
         return $o;
     }
 
@@ -272,8 +274,32 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o.= html_writer::start_tag('div', array('class' => 'summarytext'));
         $o.= $this->format_summary_text($section);
         $o.= html_writer::end_tag('div');
+
+        $o .= $this->section_availability_message($section);
+
         $o.= html_writer::end_tag('li');
 
+        return $o;
+    }
+
+    /**
+     * If section is not visible to current user, display the message about that
+     * ('Not available until...', that sort of thing). Otherwise, returns blank.
+     *
+     * @param stdClass $section The course_section entry from DB
+     * @return string HTML to output
+     */
+    protected function section_availability_message($section) {
+        $o = '';
+        if (!$section->uservisible) {
+            $o .= html_writer::start_tag('div', array('class' => 'availabilityinfo'));
+            if (!empty($section->availableinfo)) {
+                $o .= $section->availableinfo;
+            } else {
+                $o .= get_string('notavailable');
+            }
+            $o .= html_writer::end_tag('div');
+        }
         return $o;
     }
 
@@ -522,9 +548,14 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 // This will create a course section if it doesn't exist..
                 $thissection = get_course_section($section, $course->id);
             }
-            $showsection = ($canviewhidden or $thissection->visible or !$course->hiddensections);
-            if (!$thissection->visible && !$canviewhidden) {
-                if (!$course->hiddensections) {
+            // Show the section if the user is permitted to access it, OR if it's not available
+            // but showavailability is turned on
+            $showsection = $thissection->uservisible ||
+                    ($thissection->visible && !$thissection->available && $thissection->showavailability);
+            if (!$showsection) {
+                // Hidden section message is overridden by 'unavailable' control
+                // (showavailability option).
+                if (!$course->hiddensections && $thissection->available) {
                     echo $this->section_hidden($section);
                 }
 
@@ -537,9 +568,11 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 echo $this->section_summary($thissection, $course);
             } else {
                 echo $this->section_header($thissection, $course, false);
-                print_section($course, $thissection, $mods, $modnamesused);
-                if ($PAGE->user_is_editing()) {
-                    print_section_add_menus($course, $section, $modnames);
+                if ($thissection->uservisible) {
+                    print_section($course, $thissection, $mods, $modnamesused);
+                    if ($PAGE->user_is_editing()) {
+                        print_section_add_menus($course, $section, $modnames);
+                    }
                 }
                 echo $this->section_footer();
             }
