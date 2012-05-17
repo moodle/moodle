@@ -383,6 +383,7 @@ class backup_section_structure_step extends backup_structure_step {
         $section->set_source_alias('section', 'number');
 
         // Set annotations
+        $section->annotate_ids('grouping', 'groupingid');
         $section->annotate_files('course', 'section', 'id');
 
         return $section;
