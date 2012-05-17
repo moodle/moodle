@@ -235,10 +235,14 @@ $string['gradedisplaytype_help'] = 'This setting determines how grades are displ
 * Letter - Letters or words are used to represent a range of grades';
 $string['gradedon'] = 'Graded: {$a}';
 $string['gradeexport'] = 'Grade export';
+$string['gradeexportcustomprofilefields'] = 'Grade export custom profile fields';
+$string['gradeexportcustomprofilefields_desc'] = 'Include these custom profile fields in the grade export, separated by commas.';
 $string['gradeexportdecimalpoints'] = 'Grade export decimal points';
 $string['gradeexportdecimalpoints_desc'] = 'The number of decimal points to display for export. This can be overridden during export.';
 $string['gradeexportdisplaytype'] = 'Grade export display type';
 $string['gradeexportdisplaytype_desc'] = 'Grades can be shown as real grades, as percentages (in reference to the minimum and maximum grades) or as letters (A, B, C etc..) during export. This can be overridden during export.';
+$string['gradeexportuserprofilefields'] = 'Grade export user profile fields';
+$string['gradeexportuserprofilefields_desc'] = 'Include these user profile fields in the grade export, separated by commas.';
 $string['gradeforstudent'] = '{$a->student}<br />{$a->item}{$a->feedback}';
 $string['gradehelp'] = 'Grade help';
 $string['gradehistorylifetime'] = 'Grade history lifetime';

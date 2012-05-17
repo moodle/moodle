@@ -209,12 +209,9 @@ abstract class grade_export {
 
         echo '<table>';
         echo '<tr>';
-        echo '<th>'.get_string("firstname")."</th>".
-             '<th>'.get_string("lastname")."</th>".
-             '<th>'.get_string("idnumber")."</th>".
-             '<th>'.get_string("institution")."</th>".
-             '<th>'.get_string("department")."</th>".
-             '<th>'.get_string("email")."</th>";
+        foreach (get_user_profile_fields() as $field) {
+            echo '<th>' . $field->fullname . '</th>';
+        }
         foreach ($this->columns as $grade_item) {
             echo '<th>'.$this->format_column_name($grade_item).'</th>';
 
@@ -269,7 +266,9 @@ abstract class grade_export {
             }
 
             echo '<tr>';
-            echo "<td>$user->firstname</td><td>$user->lastname</td><td>$user->idnumber</td><td>$user->institution</td><td>$user->department</td><td>$user->email</td>";
+            foreach (get_user_profile_fields() as $field) {
+                echo '<td>' . $user->{$field->shortname} . '</td>';
+            }
             echo $rowstr;
             echo "</tr>";
 

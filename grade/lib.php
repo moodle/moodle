@@ -169,11 +169,26 @@ class graded_users_iterator {
             }
         }
 
+        $userfields = 'u.*';
+        $customfieldssql = '';
+        if ($CFG->grade_export_customprofilefields) {
+            $customfieldcount = 0;
+            foreach (get_user_profile_fields() as $field) {
+                    if ($field->customid) {
+                    $customfieldssql .= "
+                            LEFT JOIN (SELECT * FROM {user_info_data} WHERE fieldid=$field->customid) cf$customfieldcount
+                            ON u.id = cf$customfieldcount.userid";
+                    $userfields .= ", cf$customfieldcount.data AS $field->shortname";
+                    $customfieldcount++;
+                }
+            }
+        }
+
         // $params contents: gradebookroles and groupid (for $groupwheresql)
-        $users_sql = "SELECT u.* $ofields
+        $users_sql = "SELECT $userfields $ofields
                         FROM {user} u
                         JOIN ($enrolledsql) je ON je.id = u.id
-                             $groupsql
+                             $groupsql $customfieldssql
                         JOIN (
                                   SELECT DISTINCT ra.userid
                                     FROM {role_assignments} ra
@@ -2665,4 +2680,40 @@ abstract class grade_helper {
         }
         return self::$exportplugins;
     }
+}
+
+/**
+ * Returns an array of user profile fields to be included in export
+ *
+ * @return array An array of stdClass instances with customid, shortname and fullname fields
+ */
+function get_user_profile_fields() {
+    global $CFG, $DB;
+    $fields = array();
+    $userprofilefields = explode(",", $CFG->grade_export_userprofilefields);
+    if ($userprofilefields) {
+        foreach ($userprofilefields as $field) {
+            $obj = new stdClass();
+            $obj->customid  = 0;
+            $obj->shortname = $field;
+            $obj->fullname  = get_string($field);
+            $fields[] = $obj;
+        }
+    }
+
+    $customprofilefields = explode(",", $CFG->grade_export_customprofilefields);
+    if (isset($customprofilefields)) {
+        foreach ($customprofilefields as $field) {
+            $record = $DB->get_record('user_info_field', array('shortname' => $field));
+            if ($record) {
+                $obj = new stdClass();
+                $obj->customid  = $record->id;
+                $obj->shortname = $field;
+                $obj->fullname  = $record->name;
+                $fields[] = $obj;
+            }
+        }
+    }
+
+    return $fields;
 }
