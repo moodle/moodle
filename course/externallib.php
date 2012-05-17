@@ -311,8 +311,6 @@ class core_course_external extends external_api {
 
                     $context = context_system::instance();
                     $value = null;
-                    // $criteriaerrormsg is a code error, do not fix typo, do not edit it.
-                    $criteriaerrormsg = 'Missing permissions to search on a criteria.';
                     switch ($key) {
                         case 'id':
                             $value = clean_param($crit['value'], PARAM_INT);
@@ -324,8 +322,8 @@ class core_course_external extends external_api {
                             } else {
                                 // We must throw an exception.
                                 // Otherwise the dev client would think no idnumber exists.
-                                throw new moodle_exception($criteriaerrormsg,
-                                        '', '', null,
+                                throw new moodle_exception('criteriaerror',
+                                        'webservice', '', null,
                                         'You don\'t have the permissions to search on the "idnumber" field.');
                             }
                             break;
@@ -344,8 +342,8 @@ class core_course_external extends external_api {
                                         context_system::instance())) {
                                 $value = clean_param($crit['value'], PARAM_INT);
                             } else {
-                                throw new moodle_exception($criteriaerrormsg,
-                                        '', '', null,
+                                throw new moodle_exception('criteriaerror',
+                                        'webservice', '', null,
                                         'You don\'t have the permissions to search on the "visible" field.');
                             }
                             break;
@@ -354,15 +352,15 @@ class core_course_external extends external_api {
                             if (has_capability('moodle/category:manage', $context)) {
                                 $value = clean_param($crit['value'], PARAM_THEME);
                             } else {
-                                throw new moodle_exception($criteriaerrormsg,
-                                        '', '', null,
+                                throw new moodle_exception('criteriaerror',
+                                        'webservice', '', null,
                                         'You don\'t have the permissions to search on the "theme" field.');
                             }
                             break;
 
                         default:
-                            throw new moodle_exception($criteriaerrormsg,
-                                    '', '', null,
+                            throw new moodle_exception('criteriaerror',
+                                    'webservice', '', null,
                                     'You can not search on this criteria: ' . $key);
                     }
 
@@ -497,7 +495,7 @@ class core_course_external extends external_api {
      * @return int result of strcmp
      * @since Moodle 2.3
      */
-    public static function compare_categories_by_path($category1, $category2) {
+    private static function compare_categories_by_path($category1, $category2) {
         return strcmp($category1->path, $category2->path);
     }
 
@@ -510,7 +508,7 @@ class core_course_external extends external_api {
      * @return int result of strcmp
      * @since Moodle 2.3
      */
-    public static function compare_categories_by_sortorder($category1, $category2) {
+    private static function compare_categories_by_sortorder($category1, $category2) {
         return strcmp($category1['sortorder'], $category2['sortorder']);
     }
 
