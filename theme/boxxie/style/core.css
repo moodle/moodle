@@ -14,11 +14,11 @@ body {
     background: #fff;
     padding: 5px;
     width: auto;
-    
+
 }
 
 #page-content {
-	min-width: inherit;
+    min-width: inherit;
 }
 
 a:link,
@@ -170,7 +170,7 @@ td.eventskey {
   width:180px;
 }
 
-.calendarlayout .sidecalendar .block .content { 
+.calendarlayout .sidecalendar .block .content {
   font-size:0.85em;
  }
 
@@ -224,7 +224,7 @@ td.eventskey {
 }
 
 .maincalendar .calendar-controls h1.current {
-    margin: 0auto;
+    margin: 0 auto;
     font-size: 1.5em;
     text-align: center;
     line-height: 1;
@@ -318,11 +318,11 @@ h2.headingblock {
 .course-content .current {
   background:#69804e;
  }
- 
+
 .course-content .current .left {
     color: #fff;
 }
- 
+
 .course-content .main .content {
     padding: 10px;
     background:#fff;
@@ -747,62 +747,15 @@ h2.headingblock {
 /* Assignment */
 
 #page-mod-assignment-view .reportlink a {
-    background: #fcffd8;
+    background-color: #fcffd8;
 }
 
 #page-mod-assignment-view .generalbox {
-    width: 75%;
     border-color: #e5e5e5;
-    padding: 10px;
 }
 
-#page-mod-assignment-view #dates {
-    width: 45%;
-    margin: 20px auto 25px;
-}
-
-#page-mod-assignment-view #dates table {
-    margin: 0 auto;
-}
-
-#page-mod-assignment-view fieldset .fitem {
-    width: 50%;
-    margin: 0 auto;
-}
-
-#page-mod-assignment-view fieldset .fitem .fitemtitle {
-    width: 30%;
-}
-
-#page-mod-assignment-view fieldset .fitem .ffile {
-    margin-left: 32%;
-}
-
-#page-mod-assignment-view .mform fieldset {
-    margin-bottom: 0;
-}
-
-#page-mod-assignment-view .mform .fitem .fsubmit {
-    text-align: center;
-    margin: 0;
-    width: 100%;
-}
-
-#page-mod-assignment-view .singlebutton {
-    margin: 15px;
-}
-
-#page-mod-assignment-view #online {
-    margin: 10px auto;
-    width: 90%;
-}
-
-#page-mod-assignment-view #online fieldset .fitem {
-    width: 100%;
-}
-
-#page-mod-assignment-view #online fieldset .fitem .fitemtitle {
-    width: 15%;
+#page-mod-assignment-submissions .mform fieldset legend {
+    margin-top: 0.5em;
 }
 
 /* Choice */
@@ -1084,7 +1037,7 @@ h2.headingblock {
 #custommenu .yui3-menu .yui3-menu .yui3-menu-label-active,
 #custommenu .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
      background-color:#4E6632;
-    
+
 }
 
 #custommenu .yui3-menu-content,
