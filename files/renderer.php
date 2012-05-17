@@ -198,26 +198,26 @@ class core_files_renderer extends plugin_renderer_base {
             <div class="{!}fp-viewbar">
                 <a class="{!}fp-vb-icons" href="#"></a>
                 <a class="{!}fp-vb-details" href="#"></a>
-                <a class="{!}fp-vb-tree" href="#"></a>    
+                <a class="{!}fp-vb-tree" href="#"></a>
             </div>
             <div class="fp-toolbar">
                 <div class="{!}fp-btn-add"><a href="#"><img src="'.$this->pix_url('a/add_file').'" /> '.$straddfile.'</a></div>
                 <div class="{!}fp-btn-mkdir"><a href="#"><img src="'.$this->pix_url('a/create_folder').'" /> '.$strmakedir.'</a></div>
-                <div class="{!}fp-btn-download"><a href"#"><img src="'.$this->pix_url('a/download_all').'" /> '.$strdownload.'</a></div>
+                <div class="{!}fp-btn-download"><a href="#"><img src="'.$this->pix_url('a/download_all').'" /> '.$strdownload.'</a></div>
             </div>
         </div>
         <div class="fp-pathbar">
-            <span class="{!}fp-path-folder"><a class="{!}fp-path-folder-name"></a></span>
+            <span class="{!}fp-path-folder"><a class="{!}fp-path-folder-name" href="#"></a></span>
         </div>
     </div>
-    <div class="filemanager-loading mdl-align">'.$icon_progress.'</div> 
+    <div class="filemanager-loading mdl-align">'.$icon_progress.'</div>
     <div class="filemanager-container" >
         <div class="fm-content-wrapper">
             <div class="fp-content"></div>
-            <div class="fm-empty-container mdl-align">'.$strnofilesattached.'
-                <span class="dndupload-message">'.$strdndenabledinbox.'</span><div class="dndupload-arrow"></div>
+            <div class="fm-empty-container <!--mdl-align-->">'.$strnofilesattached.'
+                <span class="dndupload-message">'.$strdndenabledinbox.'<br/><span class="dndupload-arrow"></span></span>
             </div>
-            <div class="dndupload-target">'.$strdroptoupload.'<div class="dndupload-arrow"></div>
+            <div class="dndupload-target">'.$strdroptoupload.'<br/><span class="dndupload-arrow"></span></div>
             <div class="dndupload-uploadinprogress">'.$icon_progress.'</div>
         </div>
         <div class="filemanager-updating">'.$icon_progress.'</div>
@@ -243,10 +243,14 @@ class core_files_renderer extends plugin_renderer_base {
 <div class="fp-file">
     <a href="#">
     <div style="position:relative;">
-    <div class="{!}fp-thumbnail"></div>
-    <div class="fp-reficons"></div>
+        <div class="{!}fp-thumbnail"></div>
+        <div class="fp-reficons1"></div>
+        <div class="fp-reficons2"></div>
     </div>
-    <div class="{!}fp-filename"></div></a>
+    <div class="fp-filename-field">
+        <div class="{!}fp-filename"></div>
+    </div>
+    </a>
     <a class="{!}fp-contextmenu" href="#">'.$this->pix_icon('i/menu', '▶').'</a>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
@@ -268,8 +272,10 @@ class core_files_renderer extends plugin_renderer_base {
     private function fm_js_template_listfilename() {
         $rv = '
 <span>
+    <a href="#">
     <span class="{!}fp-icon"></span>
     <span class="{!}fp-filename"></span>
+    </a>
     <a class="{!}fp-contextmenu" href="#" onclick="return false;">'.$this->pix_icon('i/menu', '▶').'</a>
 </span>';
         return preg_replace('/\{\!\}/', '', $rv);
@@ -383,8 +389,8 @@ class core_files_renderer extends plugin_renderer_base {
     <p class="{!}fp-thumbnail"></p>
     <form>
         <p class="fp-select-update">
-            <button class="{!}fp-file-update" >'.get_string('update', 'moodle').'</button>
-            <button class="{!}fp-file-cancel" >'.get_string('cancel').'</button>
+            <a class="{!}fp-file-update" href="#"><span>'.get_string('update', 'moodle').'</span></a>
+            <a class="{!}fp-file-cancel" href="#"><span>'.get_string('cancel').'</span></a>
         </p>
     </form>
     <div class="fp-fileinfo">
@@ -508,12 +514,12 @@ class core_files_renderer extends plugin_renderer_base {
         </ul>
     </div>
     <div class="fp-repo-items">
-        <div class="fp-navbar">  
+        <div class="fp-navbar">
             <div>
                 <div class="{!}fp-viewbar">
                     <a class="{!}fp-vb-icons" href="#"></a>
                     <a class="{!}fp-vb-details" href="#"></a>
-                    <a class="{!}fp-vb-tree" href="#"></a>    
+                    <a class="{!}fp-vb-tree" href="#"></a>
                 </div>
                 <div class="{!}fp-toolbar">
                     <div class="{!}fp-tb-back"><a href="#">'.get_string('back', 'repository').'</a></div>
@@ -525,8 +531,8 @@ class core_files_renderer extends plugin_renderer_base {
                 </div>
             </div>
             <div class="fp-pathbar">
-                 <span class="{!}fp-path-folder"><a class="{!}fp-path-folder-name" href="#"></a></span>         
-            </div>         
+                 <span class="{!}fp-path-folder"><a class="{!}fp-path-folder-name" href="#"></a></span>
+            </div>
         </div>
         <div class="{!}fp-content"></div>
     </div>
@@ -555,7 +561,9 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <a class="fp-file" href="#" >
     <div class="{!}fp-thumbnail"></div>
-    <p class="{!}fp-filename"></p>
+    <div class="fp-filename-field">
+        <p class="{!}fp-filename"></p>
+    </div>
 </a>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
@@ -648,16 +656,15 @@ class core_files_renderer extends plugin_renderer_base {
         </div>
         <div class="fp-hr"></div>
         <table>
-            
             <tr class="{!}fp-linktype-2">
                 <td></td>
-                <td class="mdl-left"><input type="radio"/><label>'.get_string('makefileinternal', 'repository').'</label></td></tr>
+                <td class="mdl-left"><input type="radio"/><label>&nbsp;'.get_string('makefileinternal', 'repository').'</label></td></tr>
             <tr class="{!}fp-linktype-1">
                 <td></td>
-                <td class="mdl-left"><input type="radio"/><label>'.get_string('makefilelink', 'repository').'</label></td></tr>
+                <td class="mdl-left"><input type="radio"/><label>&nbsp;'.get_string('makefilelink', 'repository').'</label></td></tr>
             <tr class="{!}fp-linktype-4">
                 <td></td>
-                <td class="mdl-left"><input type="radio"/><label>'.get_string('makefilereference', 'repository').'</label></td></tr>
+                <td class="mdl-left"><input type="radio"/><label>&nbsp;'.get_string('makefilereference', 'repository').'</label></td></tr>
             <tr class="{!}fp-saveas">
                 <td class="mdl-right"><label>'.get_string('saveas', 'repository').'</label>:</td>
                 <td class="mdl-left"><input type="text"/></td></tr>
@@ -703,7 +710,7 @@ class core_files_renderer extends plugin_renderer_base {
     private function fp_js_template_uploadform() {
         $rv = '
 <div class="fp-upload-form mdl-align">
-    <div class="fp-content-center">            
+    <div class="fp-content-center">
         <form enctype="multipart/form-data" method="POST">
             <table >
                 <tr class="{!}fp-file">
@@ -733,9 +740,11 @@ class core_files_renderer extends plugin_renderer_base {
      */
     private function fp_js_template_loading() {
         return '
-<div style="text-align:center">
-    <img src="'.$this->pix_url('i/loading').'" />
-    <p>'.get_string('loading', 'repository').'</p>
+<div class="fp-content-loading">
+    <div class="fp-content-center">
+        <img src="'.$this->pix_url('i/loading').'" />
+        <p>'.get_string('loading', 'repository').'</p>
+    </div>
 </div>';
     }
 
@@ -794,13 +803,13 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="file-picker fp-dlg">
     <p class="{!}fp-dlg-text"></p>
-    <a class="{!}fp-dlg-butoverwrite fp-panel-button" >'.get_string('overwrite', 'repository').'</a>
-    <a class="{!}fp-dlg-butcancel fp-panel-button" >'.get_string('cancel').'</a>
-    <a class="{!}fp-dlg-butrename fp-panel-button" />
+    <a class="{!}fp-dlg-butoverwrite fp-panel-button" href="#">'.get_string('overwrite', 'repository').'</a>
+    <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
+    <a class="{!}fp-dlg-butrename fp-panel-button" href="#"/>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
-   
+
     /**
      * FilePicker JS template for repository login form including templates for each element type
      *
