@@ -77,6 +77,9 @@ class repository_equella extends repository {
         $list['object'] = array();
         $list['object']['type'] = 'text/html';
         $list['object']['src'] = $url;
+        $list['nologin']  = true;
+        $list['nosearch'] = true;
+        $list['norefresh'] = true;
         return $list;
     }
 
