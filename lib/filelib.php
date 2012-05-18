@@ -4080,6 +4080,12 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 // somebody tries to gain illegal access, cm type must match the component!
                 send_file_not_found();
             }
+
+            $bprecord = $DB->get_record('block_positions', array('blockinstanceid' => $context->instanceid), 'visible');
+            // User can't access file, if block is hidden or doesn't have block:view capability
+            if (($bprecord && !$bprecord->visible) || !has_capability('moodle/block:view', $context)) {
+                 send_file_not_found();
+            }
         } else {
             $birecord = null;
         }
