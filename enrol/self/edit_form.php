@@ -161,18 +161,17 @@ class enrol_self_edit_form extends moodleform {
     * Gets a list of roles that this user can assign for the course as the default for self-enrolment
     *
     * @param context $context the context.
-    * @param integer $defaultrole the id of the role that is set as the default for self-enrolement
+    * @param integer $defaultrole the id of the role that is set as the default for self-enrolment
     * @return array index is the role id, value is the role name
     */
     function extend_assignable_roles($context, $defaultrole) {
         global $DB;
-        $roles = get_assignable_roles($context);
-        $sql = "SELECT r.id, r.name
-                  FROM {role} r
-                 WHERE r.id = $defaultrole";
-        $results = $DB->get_record_sql($sql);
-        if (isset($results->name)) {
-            $roles[$results->id] = $results->name;
+
+        $roles = get_assignable_roles($context, ROLENAME_BOTH);
+        if (!isset($roles[$defaultrole])) {
+            if ($role = $DB->get_record('role', array('id'=>$defaultrole))) {
+                $roles[$defaultrole] = role_get_name($role, $context, ROLENAME_BOTH);
+            }
         }
         return $roles;
     }

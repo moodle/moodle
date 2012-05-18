@@ -438,10 +438,10 @@ function url_get_variable_options($config) {
     );
 
     if ($config->rolesinparams) {
-        $roles = get_all_roles();
+        $roles = role_fix_names(get_all_roles());
         $roleoptions = array();
         foreach ($roles as $role) {
-            $roleoptions['course'.$role->shortname] = get_string('yourwordforx', '', $role->name);
+            $roleoptions['course'.$role->shortname] = get_string('yourwordforx', '', $role->localname);
         }
         $options[get_string('roles')] = $roleoptions;
     }
@@ -509,9 +509,8 @@ function url_get_variable_values($url, $cm, $course, $config) {
 
     //hmm, this is pretty fragile and slow, why do we need it here??
     if ($config->rolesinparams) {
-        $roles = get_all_roles();
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-        $roles = role_fix_names($roles, $coursecontext, ROLENAME_ALIAS);
+        $roles = role_fix_names(get_all_roles($coursecontext), $coursecontext, ROLENAME_ALIAS);
         foreach ($roles as $role) {
             $values['course'.$role->shortname] = $role->localname;
         }

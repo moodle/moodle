@@ -695,8 +695,7 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
         $extrawheretest = ' AND ' . $extrawheretest;
     }
 
-    $sql = "SELECT r.id AS roleid, r.shortname AS roleshortname, r.name AS rolename,
-                   u.id AS userid, $fields
+    $sql = "SELECT r.id AS roleid, u.id AS userid, $fields
               FROM {groups_members} gm
               JOIN {user} u ON u.id = gm.userid
          LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid ".get_related_contexts_string($context).")
@@ -726,8 +725,7 @@ function groups_calculate_role_people($rs, $context) {
         return array();
     }
 
-    $roles = $DB->get_records_menu('role', null, 'name', 'id, name');
-    $aliasnames = role_fix_names($roles, $context);
+    $allroles = role_fix_names(get_all_roles($context), $context);
 
     // Array of all involved roles
     $roles = array();
@@ -753,15 +751,12 @@ function groups_calculate_role_people($rs, $context) {
         // If user has a role...
         if (!is_null($rec->roleid)) {
             // Create information about role if this is a new one
-            if (!array_key_exists($rec->roleid,$roles)) {
+            if (!array_key_exists($rec->roleid, $roles)) {
+                $role = $allroles[$rec->roleid];
                 $roledata = new stdClass();
-                $roledata->id        = $rec->roleid;
-                $roledata->shortname = $rec->roleshortname;
-                if (array_key_exists($rec->roleid, $aliasnames)) {
-                    $roledata->name = $aliasnames[$rec->roleid];
-                } else {
-                    $roledata->name = $rec->rolename;
-                }
+                $roledata->id        = $role->id;
+                $roledata->shortname = $role->shortname;
+                $roledata->name      = $role->localname;
                 $roledata->users = array();
                 $roles[$roledata->id] = $roledata;
             }

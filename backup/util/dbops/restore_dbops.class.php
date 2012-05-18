@@ -347,7 +347,6 @@ abstract class restore_dbops {
 
         // Gather various information about roles
         $coursectx = get_context_instance(CONTEXT_COURSE, $courseid);
-        $allroles = $DB->get_records('role');
         $assignablerolesshortname = get_assignable_roles($coursectx, ROLENAME_SHORT, false, $userid);
 
         // Note: under 1.9 we had one function restore_samerole() that performed one complete

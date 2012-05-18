@@ -256,19 +256,14 @@ class permissions_table extends capability_table_base {
      * @param string $contextname print_context_name($context) - to save recomputing.
      */
     public function __construct($context, $contextname, $allowoverrides, $allowsafeoverrides, $overridableroles) {
-        global $DB;
-
         parent::__construct($context, 'permissions');
         $this->contextname = $contextname;
         $this->allowoverrides = $allowoverrides;
         $this->allowsafeoverrides = $allowsafeoverrides;
         $this->overridableroles = $overridableroles;
 
-        $roles = $DB->get_records('role', null, 'sortorder DESC');
-        foreach ($roles as $roleid=>$role) {
-            $roles[$roleid] = $role->name;
-        }
-        $this->roles = role_fix_names($roles, $context);
+        $roles = get_all_roles($context);
+        $this->roles = role_fix_names(array_reverse($roles, true), $context, ROLENAME_ALIAS, true);
 
     }
 
@@ -593,18 +588,6 @@ class define_role_table_advanced extends capability_table_with_risks {
         global $DB;
         $this->errors = array();
 
-        // Role name.
-        $name = optional_param('name', null, PARAM_MULTILANG);
-        if (!is_null($name)) {
-            $this->role->name = $name;
-            if (html_is_blank($this->role->name)) {
-                $this->errors['name'] = get_string('errorbadrolename', 'role');
-            }
-        }
-        if ($DB->record_exists_select('role', 'name = ? and id <> ?', array($this->role->name, $this->roleid))) {
-            $this->errors['name'] = get_string('errorexistsrolename', 'role');
-        }
-
         // Role short name. We clean this in a special way. We want to end up
         // with only lowercase safe ASCII characters.
         $shortname = optional_param('shortname', null, PARAM_RAW);
@@ -618,6 +601,20 @@ class define_role_table_advanced extends capability_table_with_risks {
         }
         if ($DB->record_exists_select('role', 'shortname = ? and id <> ?', array($this->role->shortname, $this->roleid))) {
             $this->errors['shortname'] = get_string('errorexistsroleshortname', 'role');
+        }
+
+        // Role name.
+        $name = optional_param('name', null, PARAM_MULTILANG);
+        if (!is_null($name)) {
+            $this->role->name = $name;
+            // Hack: short names of standard roles are equal to archetypes, empty name means localised via lang packs.
+            $archetypes = get_role_archetypes();
+            if (!isset($archetypes[$shortname]) and html_is_blank($this->role->name)) {
+                $this->errors['name'] = get_string('errorbadrolename', 'role');
+            }
+        }
+        if ($this->role->name !== '' and $DB->record_exists_select('role', 'name = ? and id <> ?', array($this->role->name, $this->roleid))) {
+            $this->errors['name'] = get_string('errorexistsrolename', 'role');
         }
 
         // Description.
@@ -779,9 +776,9 @@ class define_role_table_advanced extends capability_table_with_risks {
         global $OUTPUT;
         // Extra fields at the top of the page.
         echo '<div class="topfields clearfix">';
-        $this->print_field('name', get_string('rolefullname', 'role'), $this->get_name_field('name'));
-        $this->print_field('shortname', get_string('roleshortname', 'role'), $this->get_shortname_field('shortname'));
-        $this->print_field('edit-description', get_string('description'), $this->get_description_field('description'));
+        $this->print_field('shortname', get_string('roleshortname', 'role').'&nbsp;'.$OUTPUT->help_icon('roleshortname', 'role'), $this->get_shortname_field('shortname'));
+        $this->print_field('name', get_string('customrolename', 'role').'&nbsp;'.$OUTPUT->help_icon('customrolename', 'role'), $this->get_name_field('name'));
+        $this->print_field('edit-description', get_string('customroledescription', 'role').'&nbsp;'.$OUTPUT->help_icon('customroledescription', 'role'), $this->get_description_field('description'));
         $this->print_field('menuarchetype', get_string('archetype', 'role').'&nbsp;'.$OUTPUT->help_icon('archetype', 'role'), $this->get_archetype_field('archetype'));
         $this->print_field('', get_string('maybeassignedin', 'role'), $this->get_assignable_levels_control());
         echo "</div>";
@@ -862,7 +859,7 @@ class view_role_definition_table extends define_role_table_advanced {
     }
 
     protected function get_name_field($id) {
-        return strip_tags(format_string($this->role->name));
+        return role_get_name($this->role);
     }
 
     protected function get_shortname_field($id) {
@@ -870,7 +867,7 @@ class view_role_definition_table extends define_role_table_advanced {
     }
 
     protected function get_description_field($id) {
-        return format_text($this->role->description, FORMAT_HTML);
+        return role_get_description($this->role);
     }
 
     protected function get_archetype_field($id) {
@@ -1273,8 +1270,7 @@ abstract class role_allow_role_page {
      */
     protected function load_required_roles() {
     /// Get all roles
-        $this->roles = get_all_roles();
-        role_fix_names($this->roles, get_context_instance(CONTEXT_SYSTEM), ROLENAME_ORIGINAL);
+        $this->roles = role_fix_names(get_all_roles(), get_context_instance(CONTEXT_SYSTEM), ROLENAME_ORIGINAL);
     }
 
     /**

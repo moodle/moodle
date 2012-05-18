@@ -2529,30 +2529,24 @@ function print_course($course, $highlightterms = '') {
     /// first find all roles that are supposed to be displayed
     if (!empty($CFG->coursecontact)) {
         $managerroles = explode(',', $CFG->coursecontact);
-        $namesarray = array();
         $rusers = array();
 
         if (!isset($course->managers)) {
             $rusers = get_role_users($managerroles, $context, true,
-                'ra.id AS raid, u.id, u.username, u.firstname, u.lastname,
-                 r.name AS rolename, r.sortorder, r.id AS roleid',
+                'ra.id AS raid, u.id, u.username, u.firstname, u.lastname, rn.name AS rolecoursealias,
+                 r.name AS rolename, r.sortorder, r.id AS roleid, r.shortname AS roleshortname',
                 'r.sortorder ASC, u.lastname ASC');
         } else {
             //  use the managers array if we have it for perf reasosn
             //  populate the datastructure like output of get_role_users();
             foreach ($course->managers as $manager) {
-                $u = new stdClass();
-                $u = $manager->user;
-                $u->roleid = $manager->roleid;
-                $u->rolename = $manager->rolename;
-
-                $rusers[] = $u;
+                $user = clone($manager->user);
+                $user->roleid = $manager->roleid;
+                $user->rolename = $manager->rolename;
+                $user->roleshortname = $manager->roleshortname;
+                $user->rolecoursealias = $manager->rolecoursealias;
+                $rusers[$user->id] = $user;
             }
-        }
-
-        /// Rename some of the role names if needed
-        if (isset($context)) {
-            $aliasnames = $DB->get_records('role_names', array('contextid'=>$context->id), '', 'roleid,contextid,name');
         }
 
         $namesarray = array();
@@ -2563,12 +2557,15 @@ function print_course($course, $highlightterms = '') {
                 continue;
             }
 
-            if (isset($aliasnames[$ra->roleid])) {
-                $ra->rolename = $aliasnames[$ra->roleid]->name;
-            }
+            $role = new stdClass();
+            $role->id = $ra->roleid;
+            $role->name = $ra->rolename;
+            $role->shortname = $ra->roleshortname;
+            $role->coursealias = $ra->rolecoursealias;
+            $rolename = role_get_name($role, $context, ROLENAME_ALIAS);
 
             $fullname = fullname($ra, $canviewfullnames);
-            $namesarray[$ra->id] = format_string($ra->rolename).': '.
+            $namesarray[$ra->id] = $rolename.': '.
                 html_writer::link(new moodle_url('/user/view.php', array('id'=>$ra->id, 'course'=>SITEID)), $fullname);
         }
 
