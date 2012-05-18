@@ -822,6 +822,11 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 $oldfile->set_filesize($newfile->get_filesize());
             }
 
+            // Update file timemodified
+            if ($oldfile->get_timemodified() != $newfile->get_timemodified()) {
+                $oldfile->set_timemodified($newfile->get_timemodified());
+            }
+
             // unchanged file or directory - we keep it as is
             unset($newhashes[$oldhash]);
             if (!$oldfile->is_directory()) {
