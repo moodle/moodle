@@ -920,6 +920,10 @@ sup {vertical-align: super;}
     display:none;
 }
 
+.modchooser .moodle-dialogue-hd {
+    text-align: center;
+}
+
 /* Center the submit buttons within the area */
 #choosercontainer #chooseform .submitbuttons {
     margin: 0.7em 0;
