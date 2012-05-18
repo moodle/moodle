@@ -586,6 +586,10 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_key('sourcecmid', XMLDB_KEY_FOREIGN, array('sourcecmid'), 'course_modules', array('id'));
         $table->add_key('gradeitemid', XMLDB_KEY_FOREIGN, array('gradeitemid'), 'grade_items', array('id'));
 
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
         // Main savepoint reached
         upgrade_main_savepoint(true, 2012051100.03);
     }
