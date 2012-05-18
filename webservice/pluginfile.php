@@ -46,7 +46,7 @@ $authenticationinfo = $webservicelib->authenticate_user($token);
 //check the service allows file download
 $enabledfiledownload = (int) ($authenticationinfo['service']->downloadfiles);
 if (empty($enabledfiledownload)) {
-    throw new webservice_access_exception(get_string('enabledirectdownload', 'webservice'));
+    throw new webservice_access_exception('Web service file downloading must be enabled in external service settings');
 }
 
 //finally we can serve the file :)
