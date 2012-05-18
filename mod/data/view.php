@@ -542,7 +542,7 @@ if ($showactivity) {
             $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
             $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
 
-            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' . $sortcontentfull . ' AS _order ';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' . $sortcontentfull . ' AS sortorder ';
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = '{data_content} c, {data_records} r, {data_content} cs, {user} u ';
             $where =  'WHERE c.recordid = r.id
@@ -552,7 +552,7 @@ if ($showactivity) {
                          AND cs.recordid = r.id ';
             $params['dataid'] = $data->id;
             $params['sort'] = $sort;
-            $sortorder = ' ORDER BY _order '.$order.' , r.id ASC ';
+            $sortorder = ' ORDER BY sortorder '.$order.' , r.id ASC ';
             $searchselect = '';
 
             // If requiredentries is not reached, only show current user's entries

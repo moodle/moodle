@@ -3610,7 +3610,7 @@ function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $so
         }
 
         $nestselectsql = 'SELECT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' . $sortcontentfull . '
-                              AS _order
+                              AS sortorder
                             FROM {data_content} c,
                                  {data_records} r,
                                  {user} u ';
