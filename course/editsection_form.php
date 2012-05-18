@@ -174,7 +174,7 @@ class editsection_form extends moodleform {
                     $groupelements[1]->setValue(is_null($data->operator) ? '' :
                             $data->operator);
                     $groupelements[2]->setValue(is_null($data->value) ? '' :
-                            $data->operator);
+                            $data->value);
                     $num++;
                 }
 
