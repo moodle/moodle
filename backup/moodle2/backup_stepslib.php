@@ -376,11 +376,15 @@ class backup_section_structure_step extends backup_structure_step {
         // Add nested elements for _availability table
         $avail = new backup_nested_element('availability', array('id'), array(
                 'sourcecmid', 'requiredcompletion', 'gradeitemid', 'grademin', 'grademax'));
+        $avail_field = new backup_nested_element('availability_field', array('id'), array(
+            'userfield', 'customfieldid', 'operator', 'value'));
         $section->add_child($avail);
+        $section->add_child($avail_field);
 
         // Define sources
         $section->set_source_table('course_sections', array('id' => backup::VAR_SECTIONID));
         $avail->set_source_table('course_sections_availability', array('coursesectionid' => backup::VAR_SECTIONID));
+        $avail_field->set_source_table('course_sections_avail_fields', array('coursesectionid' => backup::VAR_SECTIONID));
 
         // Aliases
         $section->set_source_alias('section', 'number');

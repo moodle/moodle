@@ -400,7 +400,7 @@
         <INDEX NAME="course_section" UNIQUE="true" FIELDS="course, section"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="course_sections_availability" COMMENT="Completion or grade conditions that affect if a section is currently available to students." PREVIOUS="course_sections" NEXT="course_request">
+    <TABLE NAME="course_sections_availability" COMMENT="Completion or grade conditions that affect if a section is currently available to students." PREVIOUS="course_sections" NEXT="course_sections_avail_fields">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="coursesectionid"/>
         <FIELD NAME="coursesectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the section whose availability is being restricted by this condition." PREVIOUS="id" NEXT="sourcecmid"/>
@@ -417,7 +417,21 @@
         <KEY NAME="gradeitemid" TYPE="foreign" FIELDS="gradeitemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="sourcecmid"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="course_request" COMMENT="course requests" PREVIOUS="course_sections_availability" NEXT="filter_active">
+    <TABLE NAME="course_sections_avail_fields" COMMENT="Stores user field conditions that affect whether an activity is currently available to students." PREVIOUS="course_sections_availability" NEXT="course_request">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="coursesectionid"/>
+        <FIELD NAME="coursesectionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the section whose availability is being restricted by this condition." PREVIOUS="id" NEXT="userfield"/>
+        <FIELD NAME="userfield" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="The user profile field this record relates to if it is not a custom profile field" PREVIOUS="coursesectionid" NEXT="customfieldid"/>
+        <FIELD NAME="customfieldid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID for the custom field if this relates to one" PREVIOUS="userfield" NEXT="operator"/>
+        <FIELD NAME="operator" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The operator, such as less than or equal to, between the field and the value" PREVIOUS="customfieldid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The required value of the field" PREVIOUS="operator"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="coursesectionid"/>
+        <KEY NAME="coursesectionid" TYPE="foreign" FIELDS="coursesectionid" REFTABLE="course_sections" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="course_request" COMMENT="course requests" PREVIOUS="course_sections_avail_fields" NEXT="filter_active">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="fullname"/>
         <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="shortname"/>

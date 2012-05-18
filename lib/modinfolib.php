@@ -1497,6 +1497,8 @@ class section_info extends stdClass {
                 ? $data->conditionscompletion : array();
         $this->conditionsgrade = isset($data->conditionsgrade)
                 ? $data->conditionsgrade : array();
+        $this->conditionsfield = isset($data->conditionsfield)
+                ? $data->conditionsfield : array();
 
         // Other data from other places
         $this->course = $courseid;

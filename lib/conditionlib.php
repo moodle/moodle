@@ -364,7 +364,7 @@ class condition_info_section extends condition_info_base {
  */
 abstract class condition_info_base {
     /** @var object, bool, string, string, array */
-     protected $item, $gotdata, $availtable, $idfieldname, $usergroupings;
+     protected $item, $gotdata, $availtable, $availfieldtable, $idfieldname, $usergroupings;
 
     /**
      * Constructs with item details.
@@ -402,6 +402,9 @@ abstract class condition_info_base {
 
         // DB table to store availability conditions
         $this->availtable = $tableprefix . '_availability';
+
+        // DB table to store availability conditions for user fields
+        $this->availfieldtable = $tableprefix . '_avail_fields';
 
         // Name of module/section ID field in DB
         $this->idfieldname = $idfield;
@@ -503,13 +506,14 @@ abstract class condition_info_base {
                     $item->conditionsgrade[$condition->gradeitemid] = $minmax;
                 }
             }
+
             // For user fields
-            $sql = "SELECT cma.id as cmaid, cma.*, uf.*
-                      FROM {course_modules_avail_fields} cma
+            $sql = "SELECT a.id as cmaid, a.*, uf.*
+                      FROM {" . $tableprefix . "_avail_fields} a
                  LEFT JOIN {user_info_field} uf
-                        ON cma.customfieldid =  uf.id
-                     WHERE coursemoduleid = :cmid";
-            if ($conditions = $DB->get_records_sql($sql, array('cmid' => $cm->id))) {
+                        ON a.customfieldid =  uf.id
+                     WHERE " . $idfield . " = :itemid";
+            if ($conditions = $DB->get_records_sql($sql, array('itemid' => $item->id))) {
                 foreach ($conditions as $condition) {
                     // If the custom field is not empty, then
                     // we have a custom profile field
@@ -531,7 +535,7 @@ abstract class condition_info_base {
                     $details->fieldname = $fieldname;
                     $details->operator = $condition->operator;
                     $details->value = $condition->value;
-                    $cm->conditionsfield[$field] = $details;
+                    $item->conditionsfield[$field] = $details;
                 }
             }
         }
@@ -654,8 +658,11 @@ abstract class condition_info_base {
     public function add_user_field_condition($field, $operator, $value) {
         global $DB;
 
+        // Get the field name
+        $idfieldname = $this->idfieldname;
+
         $objavailfield = new stdClass;
-        $objavailfield->coursemoduleid = $this->cm->id;
+        $objavailfield->$idfieldname = $this->item->id;
         if (is_numeric($field)) { // If the condition field is numeric then it is a custom profile field
             // Need to get the field name so we can add it to the cache
             $ufield = $DB->get_field('user_info_field', 'name', array('id' => $field));
@@ -667,10 +674,10 @@ abstract class condition_info_base {
         }
         $objavailfield->operator = $operator;
         $objavailfield->value = $value;
-        $DB->insert_record('course_modules_avail_fields', $objavailfield, false);
+        $DB->insert_record($this->availfieldtable, $objavailfield, false);
 
         // Store in memory too
-        $this->cm->conditionsfield[$field] = $objavailfield;
+        $this->item->conditionsfield[$field] = $objavailfield;
     }
 
     /**
@@ -718,8 +725,7 @@ abstract class condition_info_base {
         global $DB;
 
         $DB->delete_records($this->availtable, array($this->idfieldname => $this->item->id));
-        $DB->delete_records('course_modules_avail_fields',
-            array('coursemoduleid' => $this->cm->id));
+        $DB->delete_records($this->availfieldtable, array($this->idfieldname => $this->item->id));
 
         // And from memory
         $this->item->conditionsgrade = array();
@@ -786,9 +792,9 @@ abstract class condition_info_base {
         }
 
         // User field conditions
-        if (count($this->cm->conditionsfield) > 0) {
+        if (count($this->item->conditionsfield) > 0) {
             // Need the array of operators
-            foreach ($this->cm->conditionsfield as $field => $details) {
+            foreach ($this->item->conditionsfield as $field => $details) {
                 $a = new stdclass;
                 $a->field = $details->fieldname;
                 $a->operator = get_string($details->operator, 'filters');
@@ -990,8 +996,8 @@ abstract class condition_info_base {
         }
 
         // Check if user field condition
-        if (count($this->cm->conditionsfield) > 0) {
-            foreach ($this->cm->conditionsfield as $field => $details) {
+        if (count($this->item->conditionsfield) > 0) {
+            foreach ($this->item->conditionsfield as $field => $details) {
                 $uservalue = $this->get_cached_user_profile_field($userid, $field, $grabthelot);
                 if (!$fieldconditionmet = $this->is_field_condition_met($details->operator, $uservalue, $details->value)) {
                     // Set available to false

@@ -611,6 +611,26 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
+        // Define table section_modules_avail_fields to be created
+        $table = new xmldb_table('course_sections_avail_fields');
+
+        // Adding fields to table course_modules_section_fields
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('coursesectionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userfield', XMLDB_TYPE_CHAR, '50', null, null, null, null);
+        $table->add_field('customfieldid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('operator', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('value', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table course_modules_avail_fields
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('coursesectionid', XMLDB_KEY_FOREIGN, array('coursesectionid'), 'course_sections', array('id'));
+
+        // Conditionally launch create table for section_modules_avail_fields
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
         // Main savepoint reached
         upgrade_main_savepoint(true, 2012051700.02);
     }

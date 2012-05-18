@@ -547,13 +547,6 @@ class restore_process_course_modules_availability extends restore_execution_step
             }
         }
 
-        // Now we need to do it for conditional field availability
-        $params = array('backupid' => $this->get_restoreid(), 'itemname' => 'module_availability_field');
-        $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid');
-        foreach($rs as $availrec) {
-            $availability = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'module_availability_field', $availrec->itemid)->info;
-            $DB->insert_record('course_modules_avail_fields', $availability);
-        }
         $rs->close();
     }
 }
@@ -1038,6 +1031,7 @@ class restore_section_structure_step extends restore_structure_step {
         $paths[] = $section;
         if ($CFG->enableavailability) {
             $paths[] = new restore_path_element('availability', '/section/availability');
+            $paths[] = new restore_path_element('availability_field', '/section/availability_field');
         }
 
         // Apply for 'format' plugins optional paths at section level
@@ -1139,6 +1133,29 @@ class restore_section_structure_step extends restore_structure_step {
         // need updating. The mapping is stored with $newid => $newid for
         // convenience.
         $this->set_mapping('course_sections_availability', $newid, $newid);
+    }
+
+    public function process_availability_field($data) {
+        global $DB;
+        $data = (object)$data;
+        // Mark it is as passed by default
+        $passed = true;
+        // Ok, if it is a profile field we need to check it exists
+        if (!is_null($data->customfieldid)) {
+            if (!$DB->record_exists('user_info_field', array('id' => $data->customfieldid))) {
+                $passed = false;
+            }
+        }
+        if ($passed) {
+            // Create the object to insert into the database
+            $avail_field = new stdClass();
+            $avail_field->coursesectionid = $this->task->get_sectionid();
+            $avail_field->userfield = $data->userfield;
+            $avail_field->customfieldid = $data->customfieldid;
+            $avail_field->operator = $data->operator;
+            $avail_field->value = $data->value;
+            $DB->insert_record('course_sections_avail_fields', $avail_field);
+        }
     }
 
     protected function after_execute() {
@@ -2547,7 +2564,7 @@ class restore_module_structure_step extends restore_structure_step {
         $paths[] = $module;
         if ($CFG->enableavailability) {
             $paths[] = new restore_path_element('availability', '/module/availability_info/availability');
-            $paths[] = new restore_path_element('availability_fields', '/module/availability_info/availability_field');
+            $paths[] = new restore_path_element('availability_field', '/module/availability_info/availability_field');
         }
 
         // Apply for 'format' plugins optional paths at module level
@@ -2650,19 +2667,28 @@ class restore_module_structure_step extends restore_structure_step {
         restore_dbops::set_backup_ids_record($this->get_restoreid(), 'module_availability', $data->id, 0, null, $data);
     }
 
-    protected function process_availability_fields($data) {
+    protected function process_availability_field($data) {
         global $DB;
-
         $data = (object)$data;
-        // Create the object to insert into the database
-        $avail_field = new stdClass();
-        $avail_field->coursemoduleid = $this->task->get_moduleid(); // Lets add the availability cmid
-        $avail_field->userfield = $data->userfield;
-        $avail_field->customfieldid = $data->customfieldid;
-        $avail_field->operator = $data->operator;
-        $avail_field->value = $data->value;
-        // Insert into the database
-        $DB->insert_record('course_modules_avail_fields', $avail_field);
+        // Mark it is as passed by default
+        $passed = true;
+        // Ok, if it is a profile field we need to check it exists
+        if (!is_null($data->customfieldid)) {
+            if (!$DB->record_exists('user_info_field', array('id' => $data->customfieldid))) {
+                $passed = false;
+            }
+        }
+        if ($passed) {
+            // Create the object to insert into the database
+            $avail_field = new stdClass();
+            $avail_field->coursemoduleid = $this->task->get_moduleid(); // Lets add the availability cmid
+            $avail_field->userfield = $data->userfield;
+            $avail_field->customfieldid = $data->customfieldid;
+            $avail_field->operator = $data->operator;
+            $avail_field->value = $data->value;
+            // Insert into the database
+            $DB->insert_record('course_modules_avail_fields', $avail_field);
+        }
     }
 }
 
