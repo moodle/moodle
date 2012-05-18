@@ -103,13 +103,39 @@ class repository_equella extends repository {
     }
 
     /**
+     * Get file from external repository by reference
+     * {@link repository::get_file_reference()}
+     * {@link repository::get_file()}
+     *
+     * @param stdClass $reference file reference db record
+     * @return stdClass|null|false
+     */
+    public function get_file_by_reference($reference) {
+        $ref = base64_decode($reference->reference);
+        $url = $this->appendtoken($ref);
+
+        // we use this cache to get the correct file size
+        $cachedfilepath = cache_file::get($url, array('ttl' => 0));
+        if ($cachedfilepath === false) {
+            // Cache the file.
+            $path = $this->get_file($url);
+            $cachedfilepath = cache_file::create_from_file($url, $path['path']);
+        }
+
+        $fileinfo = new stdClass;
+        $fileinfo->filepath = $cachedfilepath;
+
+        return $fileinfo;
+    }
+
+    /**
      * Send equella file to browser
      *
      * @param stored_file $stored_file
      */
     public function send_file($stored_file) {
-        $resourceurl = base64_decode($stored_file->get_reference());
-        $url = $this->appendtoken($resourceurl);
+        $reference = base64_decode($stored_file->get_reference());
+        $url = $this->appendtoken($reference);
         header('Location: ' . $url);
     }
 

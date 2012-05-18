@@ -28,9 +28,9 @@ require_login();
 $json = required_param('tlelinks', PARAM_RAW);
 
 $info = array_pop(json_decode($json));
-$reference = clean_param($info->url, PARAM_URL);
-$thumbnail = clean_param($info->thumbnail, PARAM_RAW);
-$filename  = basename($reference);
+$url = clean_param($info->url, PARAM_URL);
+$thumbnail = clean_param($info->thumbnail, PARAM_URL);
+$filename  = clean_param($info->name, PARAM_FILE);
 
 $js =<<<EOD
 <html>
@@ -39,7 +39,7 @@ $js =<<<EOD
     window.onload = function() {
         var resource = {};
         resource.title = "$filename";
-        resource.reference = "$reference";
+        resource.source = "$url";
         resource.thumbnail = '$thumbnail';
         parent.M.core_filepicker.select_file(resource);
     }
