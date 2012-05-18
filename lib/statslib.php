@@ -232,7 +232,7 @@ function stats_cron_daily($maxdays=1) {
 
         // Process login info first
         // Note: PostgreSQL doesn't like aliases in HAVING clauses
-        $sql = "INSERT INTO {stats_user_daily}
+        $sql = "INSERT INTO {temp_stats_user_daily}
                             (stattype, timeend, courseid, userid, statsreads)
 
                 SELECT 'logins', $nextmidnight AS timeend, ".SITEID." AS courseid,
@@ -249,11 +249,11 @@ function stats_cron_daily($maxdays=1) {
 
         stats_progress('1');
 
-        $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
+        $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'logins' AS stattype, $nextmidnight AS timeend, ".SITEID." AS courseid, 0,
                        COALESCE(SUM(statsreads), 0) as stat1, COUNT('x') as stat2
-                  FROM {stats_user_daily}
+                  FROM {temp_stats_user_daily}
                  WHERE stattype = 'logins' AND timeend = $nextmidnight";
 
         if ($logspresent && !stats_run_query($sql)) {
@@ -273,7 +273,7 @@ function stats_cron_daily($maxdays=1) {
         //   in that case, we'll count non-deleted users.
         //
 
-        $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
+        $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'enrolments' AS stattype, $nextmidnight AS timeend, e.courseid, ra.roleid,
                         COUNT(DISTINCT ue.userid) AS stat1, 0 AS stat2
@@ -290,7 +290,7 @@ function stats_cron_daily($maxdays=1) {
         stats_progress('3');
 
         // using table alias in UPDATE does not work in pg < 8.2
-        $sql = "UPDATE {stats_daily}
+        $sql = "UPDATE {temp_stats_daily}
                    SET stat2 = (
 
                     SELECT COUNT(DISTINCT ra.userid)
@@ -298,13 +298,13 @@ function stats_cron_daily($maxdays=1) {
                       JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = :courselevel)
                       JOIN {enrol} e ON e.courseid = c.instanceid
                       JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = ra.userid)
-                     WHERE ra.roleid = {stats_daily}.roleid
-                       AND e.courseid = {stats_daily}.courseid
+                     WHERE ra.roleid = {temp_stats_daily}.roleid
+                       AND e.courseid = {temp_stats_daily}.courseid
                        AND EXISTS (
 
                         SELECT 'x'
                           FROM {temp_log1} l
-                         WHERE l.course = {stats_daily}.courseid
+                         WHERE l.course = {temp_stats_daily}.courseid
                            AND l.userid = ra.userid
                                   )
                                 )
@@ -323,7 +323,7 @@ function stats_cron_daily($maxdays=1) {
         stats_progress('4');
 
         // Now get course total enrolments (roleid==0) - except frontpage
-        $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
+        $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'enrolments', $nextmidnight AS timeend, e.courseid AS courseid, 0 AS roleid,
                        COUNT(DISTINCT userid) AS stat1, 0 AS stat2
@@ -338,26 +338,26 @@ function stats_cron_daily($maxdays=1) {
         }
         stats_progress('5');
 
-        $sql = "UPDATE {stats_daily}
+        $sql = "UPDATE {temp_stats_daily}
                    SET stat2 = (
 
                    SELECT COUNT(DISTINCT ue.userid)
                      FROM {enrol} e
                      JOIN {user_enrolments} ue ON ue.enrolid = e.id
-                    WHERE e.courseid = {stats_daily}.courseid
+                    WHERE e.courseid = {temp_stats_daily}.courseid
                       AND EXISTS (
 
                        SELECT 'x'
                          FROM {temp_log1} l
-                        WHERE l.course = {stats_daily}.courseid
+                        WHERE l.course = {temp_stats_daily}.courseid
                           AND l.userid = ue.userid
                                  )
                                 )
 
-                 WHERE {stats_daily}.stattype = 'enrolments'
-                   AND {stats_daily}.timeend = $nextmidnight
-                   AND {stats_daily}.roleid = 0
-                   AND {stats_daily}.courseid IN (
+                 WHERE {temp_stats_daily}.stattype = 'enrolments'
+                   AND {temp_stats_daily}.timeend = $nextmidnight
+                   AND {temp_stats_daily}.roleid = 0
+                   AND {temp_stats_daily}.courseid IN (
 
                    SELECT l.course
                      FROM {temp_log2} l
@@ -370,7 +370,7 @@ function stats_cron_daily($maxdays=1) {
         stats_progress('6');
 
         // Frontpage(==site) enrolments total
-        $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
+        $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'enrolments', $nextmidnight, ".SITEID.", 0, $totalactiveusers AS stat1,
                        $dailyactiveusers AS stat2" .
@@ -386,18 +386,19 @@ function stats_cron_daily($maxdays=1) {
         if ($defaultfproleid) {
             // first remove default frontpage role counts if created by previous query
             $sql = "DELETE
-                      FROM {stats_daily}
+                      FROM {temp_stats_daily}
                      WHERE stattype = 'enrolments'
                        AND courseid = ".SITEID."
                        AND roleid = $defaultfproleid
                        AND timeend = $nextmidnight";
+
             if ($logspresent && !stats_run_query($sql)) {
                 $failed = true;
                 break;
             }
             stats_progress('8');
 
-            $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
+            $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
                     SELECT 'enrolments', $nextmidnight, ".SITEID.", $defaultfproleid, 
                            $totalactiveusers AS stat1, $dailyactiveusers AS stat2" .
@@ -418,7 +419,7 @@ function stats_cron_daily($maxdays=1) {
     /// individual user stats (including not-logged-in) in each course, this is slow - reuse this data if possible
         list($viewactionssql, $params1) = $DB->get_in_or_equal($viewactions, SQL_PARAMS_NAMED, 'view');
         list($postactionssql, $params2) = $DB->get_in_or_equal($postactions, SQL_PARAMS_NAMED, 'post');
-        $sql = "INSERT INTO {stats_user_daily} (stattype, timeend, courseid, userid, statsreads, statswrites)
+        $sql = "INSERT INTO {temp_stats_user_daily} (stattype, timeend, courseid, userid, statsreads, statswrites)
 
                 SELECT 'activity' AS stattype, $nextmidnight AS timeend, course AS courseid, userid,
                        SUM(CASE WHEN action $viewactionssql THEN 1 ELSE 0 END) AS statsreads,
@@ -435,7 +436,7 @@ function stats_cron_daily($maxdays=1) {
 
 
     /// how many view/post actions in each course total
-        $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
+        $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'activity' AS stattype, $nextmidnight AS timeend, c.id AS courseid, 0,
                        SUM(CASE WHEN l.action $viewactionssql THEN 1 ELSE 0 END) AS stat1,
@@ -453,13 +454,13 @@ function stats_cron_daily($maxdays=1) {
 
     /// how many view actions for each course+role - excluding guests and frontpage
 
-        $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
+        $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'activity', $nextmidnight AS timeend, courseid, roleid, SUM(statsreads), SUM(statswrites)
                   FROM (
 
                     SELECT pl.courseid, pl.roleid, sud.statsreads, sud.statswrites
-                      FROM {stats_user_daily} sud, (
+                      FROM {temp_stats_user_daily} sud, (
 
                         SELECT DISTINCT ra.userid, ra.roleid, e.courseid
                           FROM {role_assignments} ra
@@ -471,8 +472,8 @@ function stats_cron_daily($maxdays=1) {
                                                     ) pl
                      WHERE sud.userid = pl.userid
                        AND sud.courseid = pl.courseid
-                       AND sud.timeend = $nextmidnight AND
-                                  sud.stattype='activity'
+                       AND sud.timeend = $nextmidnight
+                       AND sud.stattype='activity'
                        ) inline_view
 
               GROUP BY timeend, courseid, roleid
@@ -487,14 +488,14 @@ function stats_cron_daily($maxdays=1) {
     /// how many view actions from guests only in each course - excluding frontpage
     /// normal users may enter course with temporary guest access too
 
-        $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
+        $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'activity', $nextmidnight AS timeend, courseid, $guestrole AS roleid,
                        SUM(statsreads), SUM(statswrites)
                   FROM (
 
                     SELECT sud.courseid, sud.statsreads, sud.statswrites
-                      FROM {stats_user_daily} sud
+                      FROM {temp_stats_user_daily} sud
                      WHERE sud.timeend = $nextmidnight
                        AND sud.courseid <> ".SITEID."
                        AND sud.stattype='activity'
@@ -518,13 +519,13 @@ function stats_cron_daily($maxdays=1) {
 
 
     /// how many view actions for each role on frontpage - excluding guests, not-logged-in and default frontpage role
-        $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
+        $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'activity', $nextmidnight AS timeend, courseid, roleid,
                        SUM(statsreads), SUM(statswrites)
                   FROM (
                     SELECT pl.courseid, pl.roleid, sud.statsreads, sud.statswrites
-                      FROM {stats_user_daily} sud, (
+                      FROM {temp_stats_user_daily} sud, (
 
                         SELECT DISTINCT ra.userid, ra.roleid, c.instanceid AS courseid
                           FROM {role_assignments} ra
@@ -551,14 +552,15 @@ function stats_cron_daily($maxdays=1) {
 
 
     /// how many view actions for default frontpage role on frontpage only
-        $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
+        $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'activity', timeend, courseid, $defaultfproleid AS roleid,
                        SUM(statsreads), SUM(statswrites)
                   FROM (
                     SELECT sud.timeend AS timeend, sud.courseid, sud.statsreads, sud.statswrites
-                      FROM {stats_user_daily} sud
-                     WHERE sud.timeend = :nextm AND sud.courseid = :siteid
+                      FROM {temp_stats_user_daily} sud
+                     WHERE sud.timeend = :nextm
+                       AND sud.courseid = :siteid
                        AND sud.stattype='activity'
                        AND sud.userid <> $guest
                        AND sud.userid <> 0
@@ -581,14 +583,14 @@ function stats_cron_daily($maxdays=1) {
         stats_progress('15');
 
     /// how many view actions for guests or not-logged-in on frontpage
-        $sql = "INSERT INTO {stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
+        $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
                 SELECT 'activity', $nextmidnight AS timeend, ".SITEID." AS courseid, $guestrole AS roleid,
                        SUM(statsreads), SUM(statswrites)
                   FROM (
 
                     SELECT sud.statsreads, sud.statswrites
-                      FROM {stats_user_daily} sud
+                      FROM {temp_stats_user_daily} sud
                      WHERE (sud.userid = $guest OR sud.userid = 0)
                        AND sud.timeend = $nextmidnight
                        AND sud.courseid = ".SITEID."
@@ -1559,12 +1561,44 @@ function stats_temp_table_create() {
     $log->add_index('temp_tl_user_ix', XMLDB_INDEX_NOTUNIQUE, array('userid'));
     $log->add_index('temp_tl_usecouact_ix', XMLDB_INDEX_NOTUNIQUE, array('userid','course','action'));
 
+    $user = new xmldb_table('temp_stats_daily');
+    $user->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+    $user->add_field('roleid',   XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+    $user->add_field('stattype', XMLDB_TYPE_CHAR,    '20', null,           XMLDB_NOTNULL, null, 'activity');
+    $user->add_field('timeend',  XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+    $user->add_field('stat1',    XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+    $user->add_field('stat2',    XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+ 
+    $user->add_index('temp_tsd_courseid_ix', XMLDB_INDEX_NOTUNIQUE, array('courseid'));
+    $user->add_index('temp_tsd_roleid_ix',   XMLDB_INDEX_NOTUNIQUE, array('roleid'));
+    $user->add_index('temp_tsd_statype_ix',  XMLDB_INDEX_NOTUNIQUE, array('stattype'));
+    $user->add_index('temp_tsd_timeend_ix',  XMLDB_INDEX_NOTUNIQUE, array('timeend'));
+
+    $daily = new xmldb_table('temp_stats_user_daily');
+    $daily->add_field('courseid',    XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+    $daily->add_field('userid',      XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+    $daily->add_field('roleid',      XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+    $daily->add_field('timeend',     XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+    $daily->add_field('statsreads',  XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+    $daily->add_field('statswrites', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+    $daily->add_field('stattype',    XMLDB_TYPE_CHAR,    '30', null,           XMLDB_NOTNULL, null, null);
+
+    $daily->add_index('temp_tsud_courseid_ix', XMLDB_INDEX_NOTUNIQUE, array('courseid'));
+    $daily->add_index('temp_tsud_userid_ix',   XMLDB_INDEX_NOTUNIQUE, array('userid'));
+    $daily->add_index('temp_tsud_roleid_ix',   XMLDB_INDEX_NOTUNIQUE, array('roleid'));
+    $daily->add_index('temp_tsud_stattype_ix', XMLDB_INDEX_NOTUNIQUE, array('stattype'));
+    $daily->add_index('temp_tsud_timeend_ix',  XMLDB_INDEX_NOTUNIQUE, array('timeend'));
+
     try {
         $dbman->create_temp_table($log);
 
         $log->name = 'temp_log2';
 
         $dbman->create_temp_table($log);
+
+        $dbman->create_temp_table($user);
+
+        $dbman->create_temp_table($daily);
 
     } catch (Exception $e) {
         mtrace("Temporary table creation failed!");
@@ -1582,7 +1616,7 @@ function stats_temp_table_drop() {
 
     $dbman = $DB->get_manager();
 
-    $tables = array('temp_log1', 'temp_log2');
+    $tables = array('temp_log1', 'temp_log2', 'temp_stats_daily', 'temp_stats_user_daily');
 
     foreach ($tables as $name) {
 
@@ -1613,7 +1647,7 @@ function stats_temp_table_fill($timestart, $timeend) {
             SELECT userid, course, action FROM {log} l
              WHERE l.time >= ? AND l.time < ?';
 
-    $DB->execute($sql);
+    $DB->execute($sql, array($timestart, $timeend));
 
     $sql = 'INSERT INTO {temp_log2} (userid, course, action)
 
@@ -1633,10 +1667,31 @@ function stats_temp_table_fill($timestart, $timeend) {
 function stats_temp_table_clean() {
     global $DB;
 
-    $tables = array('temp_log1', 'temp_log2');
+    $sql = array();
+
+    $sql['up1'] = 'INSERT INTO {stats_daily} (courseid, roleid, stattype, timeend, stat1, stat2)
+
+                   SELECT courseid, roleid, stattype, timeend, stat1, stat2 FROM {temp_stats_daily}';
+
+    $sql['up2'] = 'INSERT INTO {stats_user_daily}
+                               (courseid, userid, roleid, timeend, statsreads, statswrites, stattype)
+
+                   SELECT courseid, userid, roleid, timeend, statsreads, statswrites, stattype
+                     FROM {temp_stats_user_daily}';
+
+    foreach ($sql as $id => $query) {
+        try {
+            $DB->execute($query);
+        } catch (Exception $e) {
+            mtrace("Error during table cleanup!");
+            return false;
+        }
+    }
+
+    $tables = array('temp_log1', 'temp_log2', 'temp_stats_daily', 'temp_stats_user_daily');
 
     foreach ($tables as $name) {
-        $DB->delete_record($name);
+        $DB->delete_records($name);
     }
 
     return true;
