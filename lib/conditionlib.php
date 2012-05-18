@@ -505,10 +505,10 @@ abstract class condition_info_base {
             }
             // For user fields
             $sql = "SELECT cma.id as cmaid, cma.*, uf.*
-                    FROM {course_modules_avail_fields} cma
-                    LEFT JOIN {user_info_field} uf
-                    ON cma.customfieldid =  uf.id
-                    WHERE coursemoduleid = :cmid";
+                      FROM {course_modules_avail_fields} cma
+                 LEFT JOIN {user_info_field} uf
+                        ON cma.customfieldid =  uf.id
+                     WHERE coursemoduleid = :cmid";
             if ($conditions = $DB->get_records_sql($sql, array('cmid' => $cm->id))) {
                 foreach ($conditions as $condition) {
                     // If the custom field is not empty, then
@@ -646,14 +646,12 @@ abstract class condition_info_base {
     /**
      * Adds user fields condition
      *
-     * @global object
      * @param mixed $field numeric if it is a user profile field, character
      *                     if it is a column in the user table
      * @param int $operator specifies the relationship between field and value
      * @param char $value the value of the field
      */
     public function add_user_field_condition($field, $operator, $value) {
-        // Add to DB
         global $DB;
 
         $objavailfield = new stdClass;
@@ -1245,10 +1243,9 @@ abstract class condition_info_base {
                     if ($grabthelot) {
                         // Get all custom profile field values for user
                         $sql = "SELECT uf.id, ud.data
-                                FROM {user_info_field} uf
-                                LEFT JOIN {user_info_data} ud
-                                ON uf.id = ud.fieldid
-                                WHERE ud.userid = :userid";
+                                  FROM {user_info_field} uf
+                             LEFT JOIN {user_info_data} ud ON uf.id = ud.fieldid
+                                 WHERE ud.userid = :userid";
                         if ($records = $DB->get_records_sql($sql, array('userid' => $USER->id))) {
                             foreach ($records as $r) {
                                 $SESSION->userfieldcache[$r->id] = $r->data;
@@ -1257,11 +1254,10 @@ abstract class condition_info_base {
                     } else {
                         // Just get specified user field
                         $sql = "SELECT ud.data
-                                FROM {user_info_data} ud
-                                INNER JOIN {user_info_field} uf
-                                ON ud.fieldid = uf.id
-                                WHERE uf.id = :fieldid
-                                AND ud.userid = :userid";
+                                  FROM {user_info_data} ud
+                            INNER JOIN {user_info_field} uf ON ud.fieldid = uf.id
+                                 WHERE uf.id = :fieldid
+                                   AND ud.userid = :userid";
                         if ($record = $DB->get_record_sql($sql, array('fieldid' => $fieldid, 'userid' => $USER->id))) {
                             $field = $record->data;
                         } else {
@@ -1281,11 +1277,10 @@ abstract class condition_info_base {
         } else {
             if ($iscustomprofilefield) {
                 $sql = "SELECT ud.data
-                        FROM {user_info_data} ud
-                        INNER JOIN {user_info_field} uf
-                        ON ud.fieldid = uf.id
-                        WHERE uf.id = :fieldid
-                        AND ud.userid = :userid";
+                          FROM {user_info_data} ud
+                    INNER JOIN {user_info_field} uf ON ud.fieldid = uf.id
+                         WHERE uf.id = :fieldid
+                           AND ud.userid = :userid";
                 if ($record = $DB->get_record_sql($sql, array('fieldid' => $fieldid, 'userid' => $userid))) {
                     return $record->data;
                 }

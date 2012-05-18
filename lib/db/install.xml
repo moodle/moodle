@@ -347,12 +347,12 @@
         <KEY NAME="gradeitemid" TYPE="foreign" FIELDS="gradeitemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="sourcecmid"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="course_modules_avail_fields" COMMENT="Table stores user field conditions that affect whether a module/activity is currently available to students or not." PREVIOUS="course_modules_availability" NEXT="course_modules_completion">
+    <TABLE NAME="course_modules_avail_fields" COMMENT="Stores user field conditions that affect whether an activity is currently available to students." PREVIOUS="course_modules_availability" NEXT="course_modules_completion">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="coursemoduleid"/>
-        <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of the module whose availability is being restricted by this condition." PREVIOUS="id" NEXT="userfield"/>
-        <FIELD NAME="userfield" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="The required value of the field" PREVIOUS="coursemoduleid" NEXT="customfieldid"/>
-        <FIELD NAME="customfieldid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The required value of the user profile field" PREVIOUS="userfield" NEXT="operator"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="coursemoduleid"/>
+        <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the module whose availability is being restricted by this condition." PREVIOUS="id" NEXT="userfield"/>
+        <FIELD NAME="userfield" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="The user profile field this record relates to if it is not a custom profile field" PREVIOUS="coursemoduleid" NEXT="customfieldid"/>
+        <FIELD NAME="customfieldid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID for the custom field if this relates to one" PREVIOUS="userfield" NEXT="operator"/>
         <FIELD NAME="operator" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The operator, such as less than or equal to, between the field and the value" PREVIOUS="customfieldid" NEXT="value"/>
         <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The required value of the field" PREVIOUS="operator"/>
       </FIELDS>

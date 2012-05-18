@@ -586,14 +586,19 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_key('sourcecmid', XMLDB_KEY_FOREIGN, array('sourcecmid'), 'course_modules', array('id'));
         $table->add_key('gradeitemid', XMLDB_KEY_FOREIGN, array('gradeitemid'), 'grade_items', array('id'));
 
-        // Define table course_modules_availability to be created
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012051100.03);
+    }
+
+    if ($oldversion < 2012051700.02) {
+        // Define table course_modules_avail_fields to be created
         $table = new xmldb_table('course_modules_avail_fields');
 
         // Adding fields to table course_modules_avail_fields
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('coursemoduleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('coursemoduleid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('userfield', XMLDB_TYPE_CHAR, '50', null, null, null, null);
-        $table->add_field('customfieldid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('customfieldid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('operator', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
         $table->add_field('value', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
 
@@ -601,13 +606,13 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('coursemoduleid', XMLDB_KEY_FOREIGN, array('coursemoduleid'), 'course_modules', array('id'));
 
-        // Conditionally launch create table for course_modules_availability
+        // Conditionally launch create table for course_modules_avail_fields
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2012051100.03);
+        upgrade_main_savepoint(true, 2012051700.02);
     }
 
     if ($oldversion < 2012052100.00) {

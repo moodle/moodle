@@ -358,18 +358,19 @@ abstract class moodleform_mod extends moodleform {
             }
         }
 
-        // Conditions: Verify that the user profile field has not been declared more than one
+        // Conditions: Verify that the user profile field has not been declared more than once
         if (array_key_exists('conditionfieldgroup', $data)) {
             // Array to store the existing fields
             $arrcurrentfields = array();
-            // Error message displayed if any condition is declared more than once
-            $stralreadydeclaredwarning = get_string('fielddeclaredmultipletimes', 'condition');
+            // Error message displayed if any condition is declared more than once. We use lang string because
+            // this way we don't actually generate the string unless there is an error.
+            $stralreadydeclaredwarning = new lang_string('fielddeclaredmultipletimes', 'condition');
             foreach ($data['conditionfieldgroup'] as $i => $fielddata) {
                 if ($fielddata['conditionfield'] == 0) { // Don't need to bother if none is selected
                     continue;
                 }
                 if (in_array($fielddata['conditionfield'], $arrcurrentfields)) {
-                    $errors["conditionfieldgroup[{$i}]"] = $stralreadydeclaredwarning;
+                    $errors["conditionfieldgroup[{$i}]"] = $stralreadydeclaredwarning->out();
                 }
                 // Add the field to the array
                 $arrcurrentfields[] = $fielddata['conditionfield'];
@@ -572,8 +573,7 @@ abstract class moodleform_mod extends moodleform {
             $grouparray[] =& $mform->createElement('select', 'conditionfieldoperator', '', $operators);
             $grouparray[] =& $mform->createElement('text', 'conditionfieldvalue');
             $mform->setType('conditionfieldvalue', PARAM_RAW);
-            $group = $mform->createElement('group', 'conditionfieldgroup',
-                get_string('userfield', 'condition'), $grouparray);
+            $group = $mform->createElement('group', 'conditionfieldgroup', get_string('userfield', 'condition'), $grouparray);
 
             $this->repeat_elements(array($group), $fieldcount, array(), 'conditionfieldrepeats', 'conditionfieldadds', 2,
                                    get_string('adduserfields', 'condition'), true);

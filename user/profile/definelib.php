@@ -291,8 +291,10 @@ function profile_delete_field($id) {
 
     // Delete any module dependencies for this field
     $DB->delete_records('course_modules_avail_fields', array('field' => $id));
+
     // Need to rebuild course cache to update the info
     rebuild_course_cache();
+
     /// Try to remove the record from the database
     $DB->delete_records('user_info_field', array('id'=>$id));
 
