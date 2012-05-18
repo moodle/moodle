@@ -154,7 +154,7 @@ switch ($action) {
                 $file->set_license($updatedata['license']);
             }
             if (array_key_exists('author', $updatedata)) {
-                $file->set_license($updatedata['author']);
+                $file->set_author($updatedata['author']);
             }
             $changes = array_diff(array_keys($updatedata), array('filepath'));
             if (!empty($changes)) {
