@@ -27,6 +27,7 @@ YUI.add('moodle-course-modchooser', function(Y) {
                 width: '540px'
             };
             this.setup_chooser_dialogue(dialogue, header, params);
+            this.overlay.get('boundingBox').addClass('modchooser');
 
             this.jumplink = this.container.one('#jump');
 
