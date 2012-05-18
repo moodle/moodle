@@ -167,7 +167,7 @@ class core_course_renderer extends plugin_renderer_base {
         global $OUTPUT;
 
         // Add the header
-        $header = html_writer::tag('div', get_string('choosemodtype', 'moodle'),
+        $header = html_writer::tag('div', get_string('addresourceoractivity', 'moodle'),
                 array('id' => 'choosertitle', 'class' => 'hd'));
 
         $formcontent = html_writer::start_tag('form', array('action' => new moodle_url('/course/jumpto.php'),
