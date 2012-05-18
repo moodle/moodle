@@ -1585,6 +1585,10 @@ function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// File API                                                                   //
+////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Lists all browsable file areas
  *
@@ -1596,8 +1600,10 @@ function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
  * @return array
  */
 function glossary_get_file_areas($course, $cm, $context) {
-    $areas = array();
-    return $areas;
+    return array(
+        'attachment' => get_string('areaattachment', 'mod_glossary'),
+        'entry' => get_string('areaentry', 'mod_glossary'),
+    );
 }
 
 /**
@@ -1621,42 +1627,52 @@ function mod_glossary_get_file_info($browser, $areas, $course, $cm, $context, $f
         return null;
     }
 
-    if ($filearea === 'attachment' or $filearea === 'entry') {
-        if (!$entry = $DB->get_record('glossary_entries', array('id' => $itemid))) {
-            return null;
-        }
-
-        if (!$glossary = $DB->get_record('glossary', array('id' => $cm->instance))) {
-            return null;
-        }
-
-        if ($glossary->defaultapproval and !$entry->approved and !has_capability('mod/glossary:approve', $context)) {
-            return null;
-        }
-
-        // this trickery here is because we need to support source glossary access
-        if ($entry->glossaryid == $cm->instance) {
-            $filecontext = $context;
-        } else if ($entry->sourceglossaryid == $cm->instance) {
-            if (!$maincm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
-                return null;
-            }
-            $filecontext = get_context_instance(CONTEXT_MODULE, $maincm->id);
-        } else {
-            return null;
-        }
-
-        $fs = get_file_storage();
-        $filepath = is_null($filepath) ? '/' : $filepath;
-        $filename = is_null($filename) ? '.' : $filename;
-        if (!($storedfile = $fs->get_file($filecontext->id, 'mod_glossary', $filearea, $itemid, $filepath, $filename))) {
-            return null;
-        }
-        $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        return new file_info_stored($browser, $filecontext, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
+    if (!isset($areas[$filearea])) {
+        return null;
     }
 
-    return null;
+    if (!has_capability('moodle/course:managefiles', $context)) {
+        return null;
+    }
+
+    if (is_null($itemid)) {
+        require_once($CFG->dirroot.'/mod/glossary/locallib.php');
+        return new glossary_file_info_container($browser, $course, $cm, $context, $areas, $filearea);
+    }
+
+    if (!$entry = $DB->get_record('glossary_entries', array('id' => $itemid))) {
+        return null;
+    }
+
+    if (!$glossary = $DB->get_record('glossary', array('id' => $cm->instance))) {
+        return null;
+    }
+
+    if ($glossary->defaultapproval and !$entry->approved and !has_capability('mod/glossary:approve', $context)) {
+        return null;
+    }
+
+    // this trickery here is because we need to support source glossary access
+    if ($entry->glossaryid == $cm->instance) {
+        $filecontext = $context;
+    } else if ($entry->sourceglossaryid == $cm->instance) {
+        if (!$maincm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
+            return null;
+        }
+        $filecontext = get_context_instance(CONTEXT_MODULE, $maincm->id);
+    } else {
+        return null;
+    }
+
+    $fs = get_file_storage();
+    $filepath = is_null($filepath) ? '/' : $filepath;
+    $filename = is_null($filename) ? '.' : $filename;
+    if (!($storedfile = $fs->get_file($filecontext->id, 'mod_glossary', $filearea, $itemid, $filepath, $filename))) {
+        return null;
+    }
+    $urlbase = $CFG->wwwroot.'/pluginfile.php';
+
+    return new file_info_stored($browser, $filecontext, $storedfile, $urlbase, s($entry->concept), true, true, false, false);
 }
 
 /**
