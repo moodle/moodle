@@ -291,7 +291,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      */
     protected function section_availability_message($section) {
         $o = '';
-        if (!$section->uservisible) {
+        if (!$section->uservisible || $section->availableinfo) {
             $o .= html_writer::start_tag('div', array('class' => 'availabilityinfo'));
             if (!empty($section->availableinfo)) {
                 $o .= $section->availableinfo;
