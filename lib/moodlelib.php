@@ -4711,6 +4711,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $DB->delete_records_select('course_sections_availability',
            'coursesectionid IN (SELECT id from {course_sections} WHERE course=?)',
            array($course->id));
+    $DB->delete_records_select('course_sections_avail_fields',
+           'coursesectionid IN (SELECT id from {course_sections} WHERE course=?)',
+           array($course->id));
     $DB->delete_records('course_sections', array('course'=>$course->id));
 
     // delete legacy, section and any other course files
