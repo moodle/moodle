@@ -139,8 +139,8 @@ class repository_recent extends repository {
                     );
                     if ($imageinfo = $fileinfo->get_imageinfo()) {
                         $fileurl = new moodle_url($fileinfo->get_url());
-                        $node['realthumbnail'] = $fileurl->out(false, array('preview' => 'thumb'));
-                        $node['realicon'] = $fileurl->out(false, array('preview' => 'tinyicon'));
+                        $node['realthumbnail'] = $fileurl->out(false, array('preview' => 'thumb', 'oid' => $fileinfo->get_timemodified()));
+                        $node['realicon'] = $fileurl->out(false, array('preview' => 'tinyicon', 'oid' => $fileinfo->get_timemodified()));
                         $node['image_width'] = $imageinfo['width'];
                         $node['image_height'] = $imageinfo['height'];
                     }

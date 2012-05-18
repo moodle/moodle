@@ -224,8 +224,8 @@ class repository_local_file {
             if ($imageinfo = $this->fileinfo->get_imageinfo()) {
                 // what a beautiful picture, isn't it
                 $fileurl = new moodle_url($this->fileinfo->get_url());
-                $node['realthumbnail'] = $fileurl->out(false, array('preview' => 'thumb'));
-                $node['realicon'] = $fileurl->out(false, array('preview' => 'tinyicon'));
+                $node['realthumbnail'] = $fileurl->out(false, array('preview' => 'thumb', 'oid' => $this->fileinfo->get_timemodified()));
+                $node['realicon'] = $fileurl->out(false, array('preview' => 'tinyicon', 'oid' => $this->fileinfo->get_timemodified()));
                 $node['image_width'] = $imageinfo['width'];
                 $node['image_height'] = $imageinfo['height'];
             }

@@ -625,8 +625,8 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
                 $item->url = $itemurl->out();
                 $item->thumbnail = $OUTPUT->pix_url(file_extension_icon($item->filename, 32))->out(false);
                 if ($imageinfo = $file->get_imageinfo()) {
-                    $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb'));
-                    $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon'));
+                    $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb', 'oid' => $file->get_timemodified()));
+                    $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
                     $item->image_width = $imageinfo['width'];
                     $item->image_height = $imageinfo['height'];
                 }
