@@ -209,9 +209,9 @@ class core_course_renderer extends plugin_renderer_base {
 
         $formcontent .= html_writer::start_tag('div', array('class' => 'submitbuttons'));
         $formcontent .= html_writer::tag('input', '',
-                array('type' => 'submit', 'name' => 'submitbutton', 'id' => 'submitbutton', 'value' => get_string('next')));
-        $formcontent .= html_writer::tag('input', '',
                 array('type' => 'submit', 'name' => 'addcancel', 'id' => 'addcancel', 'value' => get_string('cancel')));
+        $formcontent .= html_writer::tag('input', '',
+                array('type' => 'submit', 'name' => 'submitbutton', 'id' => 'submitbutton', 'value' => get_string('add')));
         $formcontent .= html_writer::end_tag('div');
         $formcontent .= html_writer::end_tag('form');
 

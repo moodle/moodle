@@ -47,8 +47,8 @@ YUI.add('moodle-course-modchooser', function(Y) {
                     'option'        : ''
                 };
                 var options = [
-                    'height=400',
-                    'width=500',
+                    'height=600',
+                    'width=800',
                     'top=0',
                     'left=0',
                     'menubar=0',
