@@ -813,9 +813,10 @@ class xmldb_table extends xmldb_object {
      * @param string $name name of the index
      * @param int $type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
      * @param array $fields an array of fieldnames to build the index over
+     * @param array $hints optional index type hints
      */
-    public function add_index($name, $type, $fields) {
-        $index = new xmldb_index($name, $type, $fields);
+    public function add_index($name, $type, $fields, $hints = array()) {
+        $index = new xmldb_index($name, $type, $fields, $hints);
         $this->addIndex($index);
     }
 

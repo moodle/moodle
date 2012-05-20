@@ -1037,7 +1037,7 @@
       <INDEXES>
         <INDEX NAME="contextlevel-instanceid" UNIQUE="true" FIELDS="contextlevel, instanceid" NEXT="instanceid"/>
         <INDEX NAME="instanceid" UNIQUE="false" FIELDS="instanceid" PREVIOUS="contextlevel-instanceid" NEXT="path"/>
-        <INDEX NAME="path" UNIQUE="false" FIELDS="path" PREVIOUS="instanceid"/>
+        <INDEX NAME="path" UNIQUE="false" FIELDS="path" HINTS="varchar_pattern_ops" PREVIOUS="instanceid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="context_temp" COMMENT="Used by build_context_path() in upgrade and cron to keep context depths and paths in sync." PREVIOUS="context" NEXT="capabilities">

@@ -165,10 +165,11 @@ class database_manager {
      *
      * @param xmldb_table $xmldb_table table to be searched
      * @param xmldb_index $xmldb_index the index to be searched
-     * @return string|bool Index name or false if no indexes are found.
+     * @param bool $returnall true means return array of all indexes, false means first index only as string
+     * @return array|string|bool Index name, array of index names or false if no indexes are found.
      * @throws ddl_table_missing_exception Thrown when table is not found.
      */
-    public function find_index_name(xmldb_table $xmldb_table, xmldb_index $xmldb_index) {
+    public function find_index_name(xmldb_table $xmldb_table, xmldb_index $xmldb_index, $returnall = false) {
         // Calculate the name of the table
         $tablename = $xmldb_table->getName();
 
@@ -183,6 +184,8 @@ class database_manager {
         // Get list of indexes in table
         $indexes = $this->mdb->get_indexes($tablename);
 
+        $return = array();
+
         // Iterate over them looking for columns coincidence
         foreach ($indexes as $indexname => $index) {
             $columns = $index['columns'];
@@ -190,8 +193,16 @@ class database_manager {
             $diferences = array_merge(array_diff($columns, $indcolumns), array_diff($indcolumns, $columns));
             // If no differences, we have find the index
             if (empty($diferences)) {
-                return $indexname;
+                if ($returnall) {
+                    $return[] = $indexname;
+                } else {
+                    return $indexname;
+                }
             }
+        }
+
+        if ($return and $returnall) {
+            return $return;
         }
 
         // Arriving here, index not found

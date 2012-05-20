@@ -90,6 +90,8 @@ class edit_index_save extends XMLDBAction {
         $unique = required_param('unique', PARAM_INT);
         $fields = required_param('fields', PARAM_CLEAN);
         $fields = str_replace(' ', '', trim(strtolower($fields)));
+        $hints = required_param('hints', PARAM_CLEAN);
+        $hints = str_replace(' ', '', trim(strtolower($hints)));
 
         $editeddir = $XMLDB->editeddirs[$dirpath];
         $structure = $editeddir->xml_file->getStructure();
@@ -160,11 +162,20 @@ class edit_index_save extends XMLDBAction {
                 }
             }
         }
+        $hintsarr = array();
+        foreach (explode(',', $hints) as $hint) {
+            $hint = preg_replace('/[^a-z]/', '', $hint);
+            if ($hint === '') {
+                continue;
+            }
+            $hintsarr[] = $hint;
+        }
 
         if (!empty($errors)) {
             $tempindex = new xmldb_index($name);
             $tempindex->setUnique($unique);
             $tempindex->setFields($fieldsarr);
+            $tempindex->setHints($hintsarr);
             // Prepare the output
             $o = '<p>' .implode(', ', $errors) . '</p>
                   <p>' . $tempindex->readableInfo() . '</p>';
@@ -197,6 +208,7 @@ class edit_index_save extends XMLDBAction {
             // Set the rest of fields
             $index->setUnique($unique);
             $index->setFields($fieldsarr);
+            $index->setHints($hintsarr);
 
             // If the hash has changed from the old one, change the version
             // and mark the structure as changed

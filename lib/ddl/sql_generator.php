@@ -1013,13 +1013,16 @@ abstract class sql_generator {
         $results = array();
 
         // Get the real index name
-        $dbindexname = $this->mdb->get_manager()->find_index_name($xmldb_table, $xmldb_index);
+        $dbindexnames = $this->mdb->get_manager()->find_index_name($xmldb_table, $xmldb_index, true);
 
         // Replace TABLENAME and INDEXNAME as needed
-        $dropsql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->drop_index_sql);
-        $dropsql = str_replace('INDEXNAME', $this->getEncQuoted($dbindexname), $dropsql);
-
-        $results[] = $dropsql;
+        if ($dbindexnames) {
+            foreach ($dbindexnames as $dbindexname) {
+                $dropsql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->drop_index_sql);
+                $dropsql = str_replace('INDEXNAME', $this->getEncQuoted($dbindexname), $dropsql);
+                $results[] = $dropsql;
+            }
+        }
 
         return $results;
     }

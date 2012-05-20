@@ -899,6 +899,24 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012062500.02);
     }
 
+    if ($oldversion < 2012062500.04) {
+
+        // Define index path (not unique) to be added to context
+        $table = new xmldb_table('context');
+        $index = new xmldb_index('path', XMLDB_INDEX_NOTUNIQUE, array('path'), array('varchar_pattern_ops'));
+
+        // Recreate index with new pattern hint
+        if ($DB->get_dbfamily() === 'postgres') {
+            if ($dbman->index_exists($table, $index)) {
+                $dbman->drop_index($table, $index);
+            }
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012062500.04);
+    }
+
 
     return true;
 }
