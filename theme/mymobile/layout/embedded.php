@@ -52,7 +52,7 @@ echo $OUTPUT->doctype() ?>
     <!-- END OF HEADER -->
     <?php if ($mypagetype == 'mod-chat-gui_ajax-index') { ?>
     <div data-role="page" id="chatpage" data-fullscreen="true" data-title="<?php p($SITE->shortname) ?>">
-        <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+        <?php echo $OUTPUT->main_content(); ?>
         <input type="button" value="back" data-role="none" id="chatback" onClick="history.back()">
     </div>
     <?php } else { ?>
@@ -64,7 +64,7 @@ echo $OUTPUT->doctype() ?>
             <?php } ?>
         </div>
         <div data-role="content" data-theme="<?php echo $databodytheme;?>">
-            <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+            <?php echo $OUTPUT->main_content(); ?>
         </div>
     </div>
     <?php } ?>
