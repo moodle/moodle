@@ -48,7 +48,7 @@ $strbooks = get_string('modulenameplural', 'book');
 $strbook  = get_string('modulename', 'book');
 $strtop  = get_string('top', 'book');
 
-add_to_log($course->id, 'book', 'generateimscp', 'tool/generateimscp/index.php?id='.$cm->id, $book->id, $cm->id);
+add_to_log($course->id, 'book', 'exportimscp', 'tool/exportimscp/index.php?id='.$cm->id, $book->id, $cm->id);
 
 $file = booktool_exportimscp_build_package($book, $context);
 

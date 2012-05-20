@@ -96,10 +96,17 @@ class restore_book_activity_task extends restore_activity_task {
     static public function define_restore_log_rules() {
         $rules = array();
 
+        $rules[] = new restore_log_rule('book', 'add', 'view.php?id={course_module}', '{book}');
+        $rules[] = new restore_log_rule('book', 'update', 'view.php?id={course_module}&chapterid={book_chapter}', '{book}');
         $rules[] = new restore_log_rule('book', 'update', 'view.php?id={course_module}', '{book}');
+        $rules[] = new restore_log_rule('book', 'view', 'view.php?id={course_module}&chapterid={book_chapter}', '{book}');
         $rules[] = new restore_log_rule('book', 'view', 'view.php?id={course_module}', '{book}');
-        $rules[] = new restore_log_rule('book', 'view all', 'view.php?id={course_module}', '{book}');
-        $rules[] = new restore_log_rule('book', 'print', 'view.php?id={course_module}', '{book}');
+        $rules[] = new restore_log_rule('book', 'print', 'tool/print/index.php?id={course_module}&chapterid={book_chapter}', '{book}');
+        $rules[] = new restore_log_rule('book', 'print', 'tool/print/index.php?id={course_module}', '{book}');
+        $rules[] = new restore_log_rule('book', 'exportimscp', 'tool/exportimscp/index.php?id={course_module}', '{book}');
+        // To convert old 'generateimscp' log entries
+        $rules[] = new restore_log_rule('book', 'generateimscp', 'tool/generateimscp/index.php?id={course_module}', '{book}',
+                'book', 'exportimscp', 'tool/exportimscp/index.php?id={course_module}', '{book}');
 
         return $rules;
     }
@@ -118,6 +125,8 @@ class restore_book_activity_task extends restore_activity_task {
      */
     static public function define_restore_log_rules_for_course() {
         $rules = array();
+
+        $rules[] = new restore_log_rule('book', 'view all', 'index.php?id={course}', null);
 
         return $rules;
     }

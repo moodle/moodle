@@ -24,5 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2011101400; // The current plugin version (Date: YYYYMMDDXX)
 $plugin->component = 'booktool_importhtml'; // Full name of the plugin (used for diagnostics)
+$plugin->version   = 2012052100; // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2012051900; // Requires this Moodle version
