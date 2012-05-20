@@ -25,8 +25,15 @@
 defined('MOODLE_INTERNAL') || die;
 
 $string['modulename'] = 'Book';
+$string['modulename_help'] = 'The book module enables a teacher to create a multi-page resource in a book-like format, with chapters and subchapters. Books can contain media files as well as text and are useful for displaying lengthy passages of information which can be broken down into sections.
+
+A book may be used
+
+* To display reading material for individual modules of study
+* As a staff departmental handbook
+* As a showcase portfolio of student work';
+$string['modulename_link'] = 'mod/book/view';
 $string['modulenameplural'] = 'Books';
-$string['modulename_help'] = 'Book is a simple multipage study material.';
 $string['pluginname'] = 'Book';
 $string['pluginadministration'] = 'Book administration';
 
@@ -103,3 +110,5 @@ $string['errorchapter'] = 'Error reading book chapter.';
 $string['page-mod-book-x'] = 'Any book module page';
 
 $string['missingfilemanagement'] = 'Dear users of Book module, I supposed you have already notised that it is not possible to delete or manage files used in Book chapters. Please vote in {$a} to get this fixed, thanks. Petr Škoda';
+$string['subplugintype_booktool'] = 'Book tool';
+$string['subplugintype_booktool_plural'] = 'Book tools';

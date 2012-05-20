@@ -380,6 +380,10 @@ class plugin_manager {
                 'social_activities', 'tag_flickr', 'tag_youtube', 'tags'
             ),
 
+            'booktool' => array(
+                'exportimscp', 'importhtml', 'print'
+            ),
+
             'coursereport' => array(
                 //deprecated!
             ),
@@ -441,7 +445,7 @@ class plugin_manager {
             ),
 
             'mod' => array(
-                'assign', 'assignment', 'chat', 'choice', 'data', 'feedback', 'folder',
+                'assign', 'assignment', 'book', 'chat', 'choice', 'data', 'feedback', 'folder',
                 'forum', 'glossary', 'imscp', 'label', 'lesson', 'lti', 'page',
                 'quiz', 'resource', 'scorm', 'survey', 'url', 'wiki', 'workshop'
             ),
