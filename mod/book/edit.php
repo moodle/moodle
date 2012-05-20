@@ -115,10 +115,6 @@ $PAGE->set_heading(format_string($course->fullname));
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('editingchapter', 'mod_book'));
 
-if (debugging()) {
-    echo $OUTPUT->box($OUTPUT->notification(get_string('missingfilemanagement', 'mod_book', html_writer::link('http://tracker.moodle.org/browse/MDL-28019', 'MDL-28019'))));
-}
-
 $mform->display();
 
 echo $OUTPUT->footer();

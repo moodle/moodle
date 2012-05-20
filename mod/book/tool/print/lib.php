@@ -37,10 +37,6 @@ function booktool_print_extend_settings_navigation(settings_navigation $settings
         return;
     }
 
-    if (empty($PAGE->cm->context)) {
-        $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
-    }
-
     $params = $PAGE->url->params();
 
     if (empty($params['id']) or empty($params['chapterid'])) {

@@ -37,10 +37,6 @@ function booktool_exportimscp_extend_settings_navigation(settings_navigation $se
         return;
     }
 
-    if (empty($PAGE->cm->context)) {
-        $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
-    }
-
     if (has_capability('booktool/exportimscp:export', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/book/tool/exportimscp/index.php', array('id'=>$PAGE->cm->id));
         $icon = new pix_icon('generate', '', 'booktool_exportimscp', array('class'=>'icon'));

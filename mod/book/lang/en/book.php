@@ -109,6 +109,5 @@ $string['errorchapter'] = 'Error reading book chapter.';
 
 $string['page-mod-book-x'] = 'Any book module page';
 
-$string['missingfilemanagement'] = 'Dear users of Book module, I supposed you have already notised that it is not possible to delete or manage files used in Book chapters. Please vote in {$a} to get this fixed, thanks. Petr Škoda';
 $string['subplugintype_booktool'] = 'Book tool';
 $string['subplugintype_booktool_plural'] = 'Book tools';

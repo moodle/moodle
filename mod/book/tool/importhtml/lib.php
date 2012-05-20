@@ -37,10 +37,6 @@ function booktool_importhtml_extend_settings_navigation(settings_navigation $set
          return;
      }
 
-     if (empty($PAGE->cm->context)) {
-         $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
-     }
-
      if (has_capability('booktool/importhtml:import', $PAGE->cm->context)) {
          $url = new moodle_url('/mod/book/tool/importhtml/index.php', array('id'=>$PAGE->cm->id));
          $node->add(get_string('import', 'booktool_importhtml'), $url, navigation_node::TYPE_SETTING, null, null, null);

@@ -297,10 +297,6 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         return;
     }
 
-    if (empty($PAGE->cm->context)) {
-        $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
-    }
-
     $plugins = get_plugin_list('booktool');
     foreach ($plugins as $plugin => $dir) {
         if (file_exists("$dir/lib.php")) {
