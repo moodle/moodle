@@ -52,4 +52,4 @@ add_to_log($course->id, 'book', 'exportimscp', 'tool/exportimscp/index.php?id='.
 
 $file = booktool_exportimscp_build_package($book, $context);
 
-send_stored_file($file, 10, 0, true, clean_filename($book->name).'.zip');
+send_stored_file($file, 10, 0, true, array('filename' => clean_filename($book->name).'.zip'));
