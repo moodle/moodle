@@ -44,18 +44,18 @@ function booktool_print_get_toc($chapters, $book, $cm) {
     $toc = ''; // Representation of toc (HTML).
 
     switch ($book->numbering) {
-      case BOOK_NUM_NONE:
-          $toc .= '<div class="book_toc_none">';
-          break;
-      case BOOK_NUM_NUMBERS:
-          $toc .= '<div class="book_toc_numbered">';
-          break;
-      case BOOK_NUM_BULLETS:
-          $toc .= '<div class="book_toc_bullets">';
-          break;
-      case BOOK_NUM_INDENTED:
-          $toc .= '<div class="book_toc_indented">';
-          break;
+        case BOOK_NUM_NONE:
+            $toc .= '<div class="book_toc_none">';
+            break;
+        case BOOK_NUM_NUMBERS:
+            $toc .= '<div class="book_toc_numbered">';
+            break;
+        case BOOK_NUM_BULLETS:
+            $toc .= '<div class="book_toc_bullets">';
+            break;
+        case BOOK_NUM_INDENTED:
+            $toc .= '<div class="book_toc_indented">';
+            break;
     }
 
     $toc .= '<a name="toc"></a>'; // Representation of toc (HTML).
@@ -66,7 +66,7 @@ function booktool_print_get_toc($chapters, $book, $cm) {
         $toc .= '<p class="book_chapter_title">'.get_string('toc', 'mod_book').'</p>';
     }
     $toc .= '<ul>';
-    foreach($chapters as $ch) {
+    foreach ($chapters as $ch) {
         if (!$ch->hidden) {
             $title = book_get_chapter_title($ch->id, $chapters, $book, $context);
             if (!$ch->subchapter) {

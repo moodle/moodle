@@ -98,7 +98,7 @@ function toolbook_importhtml_import_chapters($package, $type, $book, $context, $
         $matches = null;
         if (preg_match_all('/(src|codebase|name|href)\s*=\s*"([^"]+)"/i', $chapter->content, $matches)) {
             $file_record = array('contextid'=>$context->id, 'component'=>'mod_book', 'filearea'=>'chapter', 'itemid'=>$chapter->id);
-            foreach ($matches[0] as $i=>$match) {
+            foreach ($matches[0] as $i => $match) {
                 $filepath = dirname($chapter->importsrc).'/'.$matches[2][$i];
                 $filepath = toolbook_importhtml_fix_path($filepath);
 
@@ -128,7 +128,7 @@ function toolbook_importhtml_import_chapters($package, $type, $book, $context, $
         $newcontent = $chapter->content;
         $matches = null;
         if (preg_match_all('/(href)\s*=\s*"([^"]+)"/i', $chapter->content, $matches)) {
-            foreach ($matches[0] as $i=>$match) {
+            foreach ($matches[0] as $i => $match) {
                 if (strpos($matches[2][$i], ':') !== false or strpos($matches[2][$i], '@') !== false) {
                     // it is either absolute or pluginfile link
                     continue;
@@ -177,7 +177,7 @@ function toolbook_importhtml_parse_styles($html) {
     if (preg_match('/<head[^>]*>(.+)<\/head>/is', $html, $matches)) {
         $head = $matches[1];
         if (preg_match_all('/<link[^>]+rel="stylesheet"[^>]*>/i', $head, $matches)) { // Extract links to css.
-            for($i=0; $i<count($matches[0]); $i++) {
+            for ($i=0; $i<count($matches[0]); $i++) {
                 $styles .= $matches[0][$i]."\n";
             }
         }
@@ -196,7 +196,7 @@ function toolbook_importhtml_fix_path($path) {
     $path = '/'.ltrim($path, './'); // dirname() produces . for top level files + our paths start with /
 
     $cnt = substr_count($path, '..');
-    for($i=0; $i<$cnt; $i++) {
+    for ($i=0; $i<$cnt; $i++) {
         $path = preg_replace('|[^/]+/\.\./|', '', $path, 1);
     }
 
@@ -309,7 +309,7 @@ function toolbook_importhtml_get_chapter_files($package, $type) {
         $chapterfiles = $tophtmlfiles;
 
     } else if ($type == 1) {
-        foreach ($topdirs as $dir=>$htmlfiles) {
+        foreach ($topdirs as $dir => $htmlfiles) {
             if (empty($htmlfiles)) {
                 continue;
             }

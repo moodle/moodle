@@ -73,7 +73,7 @@ function booktool_exportimscp_build_package($book, $context) {
              WHERE contextid = :contextid AND component = 'booktool_exportimscp' AND itemid < :revision";
     $params = array('contextid'=>$context->id, 'revision'=>$book->revision);
     $revisions = $DB->get_records_sql($sql, $params);
-    foreach ($revisions as $rev=>$unused) {
+    foreach ($revisions as $rev => $unused) {
         $fs->delete_area_files($context->id, 'booktool_exportimscp', 'temp', $rev);
         $fs->delete_area_files($context->id, 'booktool_exportimscp', 'package', $rev);
     }
@@ -108,11 +108,13 @@ function booktool_exportimscp_prepare_files($book, $context) {
             $file->delete();
         }
         $content = booktool_exportimscp_chapter_content($chapter, $context);
-        $index_file_record = array('contextid'=>$context->id, 'component'=>'booktool_exportimscp', 'filearea'=>'temp', 'itemid'=>$book->revision, 'filepath'=>"/$chapter->pagenum/", 'filename'=>'index.html');
+        $index_file_record = array('contextid'=>$context->id, 'component'=>'booktool_exportimscp', 'filearea'=>'temp',
+                'itemid'=>$book->revision, 'filepath'=>"/$chapter->pagenum/", 'filename'=>'index.html');
         $fs->create_file_from_string($index_file_record, $content);
     }
 
-    $css_file_record = array('contextid'=>$context->id, 'component'=>'booktool_exportimscp', 'filearea'=>'temp', 'itemid'=>$book->revision, 'filepath'=>"/css/", 'filename'=>'styles.css');
+    $css_file_record = array('contextid'=>$context->id, 'component'=>'booktool_exportimscp', 'filearea'=>'temp',
+            'itemid'=>$book->revision, 'filepath'=>"/css/", 'filename'=>'styles.css');
     $fs->create_file_from_pathname($css_file_record, dirname(__FILE__).'/imscp.css');
 
     // Init imsmanifest and others
@@ -137,6 +139,7 @@ function booktool_exportimscp_prepare_files($book, $context) {
 
     // To store the prev level (book only have 0 and 1)
     $prevlevel = null;
+    $currlevel = 0;
     foreach ($chapters as $chapter) {
         // Calculate current level ((book only have 0 and 1)
         $currlevel = empty($chapter->subchapter) ? 0 : 1;
@@ -164,9 +167,10 @@ function booktool_exportimscp_prepare_files($book, $context) {
 
         $chaptertitle = format_string($chapter->title, true, array('context'=>$context));
 
-       // Add the imsitems
-        $imsitems .= $currspaces .'        <item identifier="ITEM-' . $book->course . '-' . $book->id . '-' . $chapter->pagenum .'" isvisible="true" identifierref="RES-' . $book->course . '-' . $book->id . '-' . $chapter->pagenum . '">
- ' . $currspaces . '         <title>' . htmlspecialchars($chaptertitle) . '</title>' . "\n";
+        // Add the imsitems
+        $imsitems .= $currspaces .'        <item identifier="ITEM-' . $book->course . '-' . $book->id . '-' . $chapter->pagenum .'" isvisible="true" identifierref="RES-' .
+                $book->course . '-' . $book->id . '-' . $chapter->pagenum . "\">\n" .
+                $currspaces . '         <title>' . htmlspecialchars($chaptertitle) . '</title>' . "\n";
 
         // Add the imsresources
         // First, check if we have localfiles
@@ -177,9 +181,10 @@ function booktool_exportimscp_prepare_files($book, $context) {
         // Now add the dependency to css
         $cssdependency = "\n" . '      <dependency identifierref="RES-' . $book->course . '-'  . $book->id . '-css" />';
         // Now build the resources section
-        $imsresources .= '    <resource identifier="RES-' . $book->course . '-'  . $book->id . '-' . $chapter->pagenum . '" type="webcontent" xml:base="' . $chapter->pagenum . '/" href="index.html">
-      <file href="' . $chapter->pagenum . '/index.html" />' . implode($localfiles) . $cssdependency . '
-    </resource>' . "\n";
+        $imsresources .= '    <resource identifier="RES-' . $book->course . '-'  . $book->id . '-' . $chapter->pagenum . '" type="webcontent" xml:base="' .
+                $chapter->pagenum . '/" href="index.html">' . "\n" .
+                '      <file href="' . $chapter->pagenum . '/index.html" />' . implode($localfiles) . $cssdependency . "\n".
+                '    </resource>' . "\n";
     }
 
     // Close items (the latest chapter)
@@ -208,7 +213,8 @@ function booktool_exportimscp_prepare_files($book, $context) {
     // Close manifest
     $imsmanifest .= "\n</manifest>\n";
 
-    $manifest_file_record = array('contextid'=>$context->id, 'component'=>'booktool_exportimscp', 'filearea'=>'temp', 'itemid'=>$book->revision, 'filepath'=>"/", 'filename'=>'imsmanifest.xml');
+    $manifest_file_record = array('contextid'=>$context->id, 'component'=>'booktool_exportimscp', 'filearea'=>'temp',
+            'itemid'=>$book->revision, 'filepath'=>"/", 'filename'=>'imsmanifest.xml');
     $fs->create_file_from_string($manifest_file_record, $imsmanifest);
 }
 
