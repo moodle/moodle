@@ -2,6 +2,13 @@ This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
 
+=== 2.4 ===
+
+required changes in code:
+* use role_get_name() or role_fix_names() if you need any role names, using role.name
+  directly from database is not correct any more
+
+
 === 2.2 ===
 
 required changes in code:
