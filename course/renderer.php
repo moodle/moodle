@@ -188,20 +188,20 @@ class core_course_renderer extends plugin_renderer_base {
         // Put all options into one tag 'alloptions' to allow us to handle scrolling
         $formcontent .= html_writer::start_tag('div', array('class' => 'alloptions'));
 
-        // First display Resources
-        $resources = array_filter($modules,
-                create_function('$mod', 'return ($mod->archetype === MOD_CLASS_RESOURCE);'));
-        if (count($resources)) {
-            $formcontent .= $this->course_modchooser_title('resources');
-            $formcontent .= $this->course_modchooser_module_types($resources);
-        }
-
-        // Then activities
+        // Activities
         $activities = array_filter($modules,
                 create_function('$mod', 'return ($mod->archetype !== MOD_CLASS_RESOURCE);'));
         if (count($activities)) {
             $formcontent .= $this->course_modchooser_title('activities');
             $formcontent .= $this->course_modchooser_module_types($activities);
+        }
+
+        // Activities
+        $resources = array_filter($modules,
+                create_function('$mod', 'return ($mod->archetype === MOD_CLASS_RESOURCE);'));
+        if (count($resources)) {
+            $formcontent .= $this->course_modchooser_title('resources');
+            $formcontent .= $this->course_modchooser_module_types($resources);
         }
 
         $formcontent .= html_writer::end_tag('div'); // modoptions
