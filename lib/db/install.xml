@@ -172,16 +172,15 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="course_completion_crit_compl" COMMENT="Course completion user records" PREVIOUS="course_completion_criteria" NEXT="course_completion_notify">
+    <TABLE NAME="course_completion_crit_compl" COMMENT="Course completion user records" PREVIOUS="course_completion_criteria" NEXT="course_completions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="criteriaid"/>
         <FIELD NAME="criteriaid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Completion criteria this references" PREVIOUS="course" NEXT="gradefinal"/>
         <FIELD NAME="gradefinal" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The final grade for the course (included regardless of whether a passing grade was required)" PREVIOUS="criteriaid" NEXT="unenroled"/>
-        <FIELD NAME="unenroled" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Timestamp when the user was unenroled" PREVIOUS="gradefinal" NEXT="deleted"/>
-        <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="unenroled" NEXT="timecompleted"/>
-        <FIELD NAME="timecompleted" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="deleted"/>
+        <FIELD NAME="unenroled" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Timestamp when the user was unenroled" PREVIOUS="gradefinal" NEXT="timecompleted"/>
+        <FIELD NAME="timecompleted" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="unenroled"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -193,29 +192,12 @@
         <INDEX NAME="timecompleted" UNIQUE="false" FIELDS="timecompleted" PREVIOUS="criteriaid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="course_completion_notify" COMMENT="Course completion notification emails" PREVIOUS="course_completion_crit_compl" NEXT="course_completions">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="role"/>
-        <FIELD NAME="role" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the role to receive this notification message when a course has been completed" PREVIOUS="course" NEXT="message"/>
-        <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="HTML formatted message to be sent" PREVIOUS="role" NEXT="timesent"/>
-        <FIELD NAME="timesent" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="message"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="course_completions" COMMENT="Course completion records" PREVIOUS="course_completion_notify" NEXT="enrol">
+    <TABLE NAME="course_completions" COMMENT="Course completion records" PREVIOUS="course_completion_crit_compl" NEXT="enrol">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="deleted"/>
-        <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" PREVIOUS="course" NEXT="timenotified"/>
-        <FIELD NAME="timenotified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="deleted" NEXT="timeenrolled"/>
-        <FIELD NAME="timeenrolled" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timenotified" NEXT="timestarted"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="timeenrolled"/>
+        <FIELD NAME="timeenrolled" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="timestarted"/>
         <FIELD NAME="timestarted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeenrolled" NEXT="timecompleted"/>
         <FIELD NAME="timecompleted" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="timestarted" NEXT="reaggregate"/>
         <FIELD NAME="reaggregate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecompleted"/>

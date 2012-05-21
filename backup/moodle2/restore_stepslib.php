@@ -1830,7 +1830,6 @@ class restore_course_completion_structure_step extends restore_structure_step {
 
         $paths = array();
         $paths[] = new restore_path_element('course_completion_criteria', '/course_completion/course_completion_criteria');
-        $paths[] = new restore_path_element('course_completion_notify', '/course_completion/course_completion_notify');
         $paths[] = new restore_path_element('course_completion_aggr_methd', '/course_completion/course_completion_aggr_methd');
 
         if ($userinfo) {
@@ -1934,9 +1933,6 @@ class restore_course_completion_structure_step extends restore_structure_step {
             if (isset($data->unenroled)) {
                 $params['unenroled'] = $data->unenroled;
             }
-            if (isset($data->deleted)) {
-                $params['deleted'] = $data->deleted;
-            }
             $DB->insert_record('course_completion_crit_compl', $params);
         }
     }
@@ -1959,8 +1955,6 @@ class restore_course_completion_structure_step extends restore_structure_step {
             $params = array(
                 'userid' => $data->userid,
                 'course' => $data->course,
-                'deleted' => $data->deleted,
-                'timenotified' => $this->apply_date_offset($data->timenotified),
                 'timeenrolled' => $this->apply_date_offset($data->timeenrolled),
                 'timestarted' => $this->apply_date_offset($data->timestarted),
                 'timecompleted' => $this->apply_date_offset($data->timecompleted),
@@ -1968,34 +1962,6 @@ class restore_course_completion_structure_step extends restore_structure_step {
             );
             $DB->insert_record('course_completions', $params);
         }
-    }
-
-    /**
-     * Process course completion notification records.
-     *
-     * Note: As of Moodle 2.0 this table is not being used however it has been
-     * left in in the hopes that one day the functionality there will be completed
-     *
-     * @global moodle_database $DB
-     * @param stdClass $data
-     */
-    public function process_course_completion_notify($data) {
-        global $DB;
-
-        $data = (object)$data;
-
-        $data->course = $this->get_courseid();
-        if (!empty($data->role)) {
-            $data->role = $this->get_mappingid('role', $data->role);
-        }
-
-        $params = array(
-            'course' => $data->course,
-            'role' => $data->role,
-            'message' => $data->message,
-            'timesent' => $this->apply_date_offset($data->timesent),
-        );
-        $DB->insert_record('course_completion_notify', $params);
     }
 
     /**
