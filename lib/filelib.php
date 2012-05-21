@@ -1591,7 +1591,7 @@ function mimeinfo_from_type($element, $mimetype) {
     $mimeinfo = & get_mimetypes_array();
 
     if (!array_key_exists($mimetype, $cached)) {
-        $cached[$mimetype] = null;    
+        $cached[$mimetype] = null;
         foreach($mimeinfo as $filetype => $values) {
             if ($values['type'] == $mimetype) {
                 if ($cached[$mimetype] === null) {
