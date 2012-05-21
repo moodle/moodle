@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * HTML import lib
+ * Book print lib
  *
  * @package    booktool_print
  * @copyright  2011 Petr Skoda {@link http://skodak.org}

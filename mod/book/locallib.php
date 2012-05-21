@@ -27,6 +27,13 @@ defined('MOODLE_INTERNAL') || die;
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
+/**
+ * The following defines are used to define how the chapters and subchapters of a book should be displayed in that table of contents.
+ * BOOK_NUM_NONE        No special styling will applied and the editor will be able to do what ever thay want in the title
+ * BOOK_NUM_NUMBERS     Chapters and subchapters are numbered (1, 1.1, 1.2, 2, ...)
+ * BOOK_NUM_BULLETS     Subchapters are indented and displayed with bullets
+ * BOOK_NUM_INDENTED    Subchapters are indented
+ */
 define('BOOK_NUM_NONE',     '0');
 define('BOOK_NUM_NUMBERS',  '1');
 define('BOOK_NUM_BULLETS',  '2');
@@ -88,7 +95,7 @@ function book_preload_chapters($book) {
             $hidesub = $ch->hidden;
             $parent = $ch->id;
             $ch->parent = null;
-            $ch->subchpaters = array();
+            $ch->subchapters = array();
         } else {
             $ch->prev = $prevsub;
             $ch->next = null;
@@ -96,7 +103,7 @@ function book_preload_chapters($book) {
                 $chapters[$prevsub]->next = $ch->id;
             }
             $ch->parent = $parent;
-            $ch->subchpaters = null;
+            $ch->subchapters = null;
             $chapters[$parent]->subchapters[$ch->id] = $ch->id;
             if ($hidesub) {
                 // all subchapters in hidden chapter must be hidden too
