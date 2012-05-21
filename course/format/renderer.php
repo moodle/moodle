@@ -552,6 +552,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 // a section_info object - we will need at least the uservisible
                 // field in it.
                 $thissection->uservisible = true;
+                $thissection->availableinfo = null;
+                $thissection->showavailability = 0;
             }
             // Show the section if the user is permitted to access it, OR if it's not available
             // but showavailability is turned on
