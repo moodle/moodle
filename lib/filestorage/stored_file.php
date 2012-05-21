@@ -154,6 +154,17 @@ class stored_file {
                 throw new coding_exception("Invalid field name, $field doesn't exist in file record");
             }
         }
+        // Validate mimetype field
+        $pathname = $this->get_content_file_location();
+        // try to recover the content from trash
+        if (!is_readable($pathname)) {
+            if (!$this->fs->try_content_recovery($this) or !is_readable($pathname)) {
+                throw new file_exception('storedfilecannotread', '', $pathname);
+            }
+        }
+        $mimetype = $this->fs->mimetype($pathname);
+        $this->file_record->mimetype = $mimetype;
+
         $DB->update_record('files', $this->file_record);
     }
 

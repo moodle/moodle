@@ -1028,7 +1028,7 @@ class file_storage {
 
         $newrecord->timecreated  = $filerecord->timecreated;
         $newrecord->timemodified = $filerecord->timemodified;
-        $newrecord->mimetype     = empty($filerecord->mimetype) ? mimeinfo('type', $filerecord->filename) : $filerecord->mimetype;
+        $newrecord->mimetype     = empty($filerecord->mimetype) ? $this->mimetype($pathname) : $filerecord->mimetype;
         $newrecord->userid       = empty($filerecord->userid) ? null : $filerecord->userid;
         $newrecord->source       = empty($filerecord->source) ? null : $filerecord->source;
         $newrecord->author       = empty($filerecord->author) ? null : $filerecord->author;
@@ -1145,7 +1145,6 @@ class file_storage {
 
         $newrecord->timecreated  = $filerecord->timecreated;
         $newrecord->timemodified = $filerecord->timemodified;
-        $newrecord->mimetype     = empty($filerecord->mimetype) ? mimeinfo('type', $filerecord->filename) : $filerecord->mimetype;
         $newrecord->userid       = empty($filerecord->userid) ? null : $filerecord->userid;
         $newrecord->source       = empty($filerecord->source) ? null : $filerecord->source;
         $newrecord->author       = empty($filerecord->author) ? null : $filerecord->author;
@@ -1153,6 +1152,9 @@ class file_storage {
         $newrecord->sortorder    = $filerecord->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
+        $filepathname = $this->path_from_hash($newrecord->contenthash) . '/' . $newrecord->contenthash;
+        // get mimetype by magic bytes
+        $newrecord->mimetype = empty($filerecord->mimetype) ? $this->mimetype($filepathname) : $filerecord->mimetype;
 
         $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
@@ -1216,7 +1218,7 @@ class file_storage {
         $filerecord->referencefileid   = empty($filerecord->referencefileid) ? 0 : $filerecord->referencefileid;
         $filerecord->referencelastsync = empty($filerecord->referencelastsync) ? 0 : $filerecord->referencelastsync;
         $filerecord->referencelifetime = empty($filerecord->referencelifetime) ? 0 : $filerecord->referencelifetime;
-        $filerecord->mimetype          = empty($filerecord->mimetype) ? mimeinfo('type', $filerecord->filename) : $filerecord->mimetype;
+        $filerecord->mimetype          = empty($filerecord->mimetype) ? $this->mimetype($filerecord->filename) : $filerecord->mimetype;
         $filerecord->userid            = empty($filerecord->userid) ? null : $filerecord->userid;
         $filerecord->source            = empty($filerecord->source) ? null : $filerecord->source;
         $filerecord->author            = empty($filerecord->author) ? null : $filerecord->author;
@@ -1333,7 +1335,7 @@ class file_storage {
         }
 
         if (!isset($filerecord['mimetype'])) {
-            $filerecord['mimetype'] = mimeinfo('type', $filerecord['filename']);
+            $filerecord['mimetype'] = $imageinfo['mimetype'];
         }
 
         $width    = $imageinfo['width'];
@@ -1787,6 +1789,24 @@ class file_storage {
         // Remove file references
         $storedfile->delete_reference();
         return $storedfile;
+    }
+
+    /**
+     * Return mimetype by given file pathname
+     *
+     * This method uses fileinfo module to get mimetype using magic bytes if file exists.
+     * If not, it will get mimetype based on filename
+     *
+     * @param string $pathname
+     * @return string
+     */
+    public static function mimetype($pathname) {
+        if (file_exists($pathname)) {
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            return $finfo->file($pathname);
+        } else {
+            return mimeinfo('type', $pathname);
+        }
     }
 
     /**
