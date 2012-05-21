@@ -102,23 +102,4 @@ class format_topics_renderer extends format_section_renderer_base {
 
         return array_merge($controls, parent::section_edit_controls($course, $section, $onsectionpage));
     }
-
-    /**
-     * Generate the content to displayed on the left part of a section
-     *
-     * before course modules are included
-     * @param stdClass $section The course_section entry from DB
-     * @param stdClass $course The course entry from DB
-     * @param bool $onsectionpage true if being printed on a section page
-     * @return string HTML to output.
-     */
-    protected function section_left_content($section, $course, $onsectionpage) {
-        $o = parent::section_left_content($section, $course, $onsectionpage);
-
-        if ($section->section > 0) {
-            $o.= $section->section;
-        }
-
-        return $o;
-    }
 }
