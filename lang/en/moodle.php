@@ -466,6 +466,7 @@ $string['dndenabled'] = 'Drag and drop available';
 $string['dndenabled_help'] = 'You can drag one or more files from your desktop and drop them onto the box below to upload them.<br />Note: this may not work with other web browsers';
 $string['dndenabled_insentence'] = 'drag and drop available';
 $string['dndenabled_inbox'] = 'drag and drop files here to upload them';
+$string['dnduploadwithoutcontent'] = 'This upload does not have any content';
 $string['dndworkingfiletextlink'] = 'Drag and drop files, text or links onto course sections to upload them';
 $string['dndworkingfilelink'] = 'Drag and drop files or links onto course sections to upload them';
 $string['dndworkingfiletext'] = 'Drag and drop files or text onto course sections to upload them';

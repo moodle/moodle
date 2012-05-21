@@ -304,17 +304,21 @@ class dndupload_handler {
      * @return object Data to pass on to Javascript code
      */
     public function get_js_data() {
+        global $CFG;
+
         $ret = new stdClass;
 
         // Sort the types by priority.
         uasort($this->types, array($this, 'type_compare'));
 
         $ret->types = array();
-        foreach ($this->types as $type) {
-            if (empty($type->handlers)) {
-                continue; // Skip any types without registered handlers.
+        if ($CFG->dndallowtextandlinks) {
+            foreach ($this->types as $type) {
+                if (empty($type->handlers)) {
+                    continue; // Skip any types without registered handlers.
+                }
+                $ret->types[] = $type;
             }
-            $ret->types[] = $type;
         }
 
         $ret->filehandlers = $this->filehandlers;
@@ -435,6 +439,10 @@ class dndupload_ajax_processor {
             require_capability('moodle/course:managefiles', $this->context);
             if ($content != null) {
                 throw new moodle_exception('fileuploadwithcontent', 'moodle');
+            }
+        } else {
+            if (empty($content)) {
+                throw new moodle_exception('dnduploadwithoutcontent', 'moodle');
             }
         }
 
