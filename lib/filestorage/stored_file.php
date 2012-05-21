@@ -154,7 +154,8 @@ class stored_file {
             }
         }
         // Validate mimetype field
-        $pathname = $this->get_content_file_location();
+        // we don't use {@link stored_file::get_content_file_location()} here becaues it will try to update file_record
+        $pathname = $this->get_pathname_by_contenthash();
         // try to recover the content from trash
         if (!is_readable($pathname)) {
             if (!$this->fs->try_content_recovery($this) or !is_readable($pathname)) {
@@ -262,6 +263,24 @@ class stored_file {
     }
 
     /**
+     * Get file pathname by contenthash
+     *
+     * NOTE, this function is not calling sync_external_file, it assume the contenthash is current
+     * Protected - developers must not gain direct access to this function.
+     *
+     * @return string full path to pool file with file content
+     */
+    protected function get_pathname_by_contenthash() {
+        // Detect is local file or not.
+        $contenthash = $this->file_record->contenthash;
+        $l1 = $contenthash[0].$contenthash[1];
+        $l2 = $contenthash[2].$contenthash[3];
+        return "$this->filedir/$l1/$l2/$contenthash";
+    }
+
+    /**
+     * Get file pathname by given contenthash, this method will try to sync files
+     *
      * Protected - developers must not gain direct access to this function.
      *
      * NOTE: do not make this public, we must not modify or delete the pool files directly! ;-)
@@ -270,12 +289,7 @@ class stored_file {
      **/
     protected function get_content_file_location() {
         $this->sync_external_file();
-        // Detect is local file or not.
-        $contenthash = $this->file_record->contenthash;
-        $l1 = $contenthash[0].$contenthash[1];
-        $l2 = $contenthash[2].$contenthash[3];
-        $path  = "$this->filedir/$l1/$l2/$contenthash";
-        return "$this->filedir/$l1/$l2/$contenthash";
+        return $this->get_pathname_by_contenthash();
     }
 
     /**
