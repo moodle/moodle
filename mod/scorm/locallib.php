@@ -1338,7 +1338,8 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                 $isvisible = true;
             }
             if ($parents[$level] != $sco->parent) {
-                if ($newlevel = array_search($sco->parent,$parents)) {
+                $newlevel = array_search($sco->parent,$parents);
+                if ($newlevel !== false) {
                     for ($i=0; $i<($level-$newlevel); $i++) {
                         $result->toc .= "\t\t</li></ul></li>\n";
                     }
