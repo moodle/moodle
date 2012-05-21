@@ -52,7 +52,13 @@ function dndupload_add_to_course($course, $modnames) {
         'fullpath' => new moodle_url('/course/dndupload.js'),
         'strings' => array(
             array('addfilehere', 'moodle'),
-            array('dndworking', 'moodle'),
+            array('dndworkingfiletextlink', 'moodle'),
+            array('dndworkingfilelink', 'moodle'),
+            array('dndworkingfiletext', 'moodle'),
+            array('dndworkingfile', 'moodle'),
+            array('dndworkingtextlink', 'moodle'),
+            array('dndworkingtext', 'moodle'),
+            array('dndworkinglink', 'moodle'),
             array('filetoolarge', 'moodle'),
             array('actionchoice', 'moodle'),
             array('servererror', 'moodle'),
@@ -103,7 +109,7 @@ class dndupload_handler {
         // Add some default types to handle.
         // Note: 'Files' type is hard-coded into the Javascript as this needs to be ...
         // ... treated a little differently.
-        $this->add_type('url', array('url', 'text/uri-list'), get_string('addlinkhere', 'moodle'),
+        $this->add_type('url', array('url', 'text/uri-list', 'text/x-moz-url'), get_string('addlinkhere', 'moodle'),
                         get_string('nameforlink', 'moodle'), 10);
         $this->add_type('text/html', array('text/html'), get_string('addpagehere', 'moodle'),
                         get_string('nameforpage', 'moodle'), 20);
@@ -298,17 +304,21 @@ class dndupload_handler {
      * @return object Data to pass on to Javascript code
      */
     public function get_js_data() {
+        global $CFG;
+
         $ret = new stdClass;
 
         // Sort the types by priority.
         uasort($this->types, array($this, 'type_compare'));
 
         $ret->types = array();
-        foreach ($this->types as $type) {
-            if (empty($type->handlers)) {
-                continue; // Skip any types without registered handlers.
+        if (!empty($CFG->dndallowtextandlinks)) {
+            foreach ($this->types as $type) {
+                if (empty($type->handlers)) {
+                    continue; // Skip any types without registered handlers.
+                }
+                $ret->types[] = $type;
             }
-            $ret->types[] = $type;
         }
 
         $ret->filehandlers = $this->filehandlers;
@@ -429,6 +439,10 @@ class dndupload_ajax_processor {
             require_capability('moodle/course:managefiles', $this->context);
             if ($content != null) {
                 throw new moodle_exception('fileuploadwithcontent', 'moodle');
+            }
+        } else {
+            if (empty($content)) {
+                throw new moodle_exception('dnduploadwithoutcontent', 'moodle');
             }
         }
 
