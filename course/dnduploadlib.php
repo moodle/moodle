@@ -557,7 +557,13 @@ class dndupload_ajax_processor {
         }
         // The following are used inside some few core functions, so may as well set them here.
         $this->cm->coursemodule = $this->cm->id;
-        $this->cm->groupmodelink = (!$this->course->groupmodeforce);
+        $groupbuttons = ($this->course->groupmode or (!$this->course->groupmodeforce));
+        if ($groupbuttons and plugin_supports('mod', $this->module->name, FEATURE_GROUPS, 0)) {
+            $this->cm->groupmodelink = (!$this->course->groupmodeforce);
+        } else {
+            $this->cm->groupmodelink = false;
+            $this->cm->groupmode = false;
+        }
     }
 
     /**
@@ -619,6 +625,8 @@ class dndupload_ajax_processor {
             throw new moodle_exception('errorcreatingactivity', 'moodle', '', $this->module->name);
         }
         $mod = $info->cms[$this->cm->id];
+        $mod->groupmodelink = $this->cm->groupmodelink;
+        $mod->groupmode = $this->cm->groupmode;
 
         // Trigger mod_created event with information about this module.
         $eventdata = new stdClass();
@@ -635,12 +643,6 @@ class dndupload_ajax_processor {
         add_to_log($this->course->id, $mod->modname, "add",
                    "view.php?id=$mod->id",
                    "$instanceid", $mod->id);
-
-        if ($this->cm->groupmodelink && plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
-            $mod->groupmodelink = $this->cm->groupmodelink;
-        } else {
-            $mod->groupmodelink = false;
-        }
 
         $this->send_response($mod);
     }
