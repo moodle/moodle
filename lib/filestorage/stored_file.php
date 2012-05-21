@@ -25,8 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->dirroot/repository/lib.php");
-
 /**
  * Class representing local files stored in a sha1 file pool.
  *
@@ -63,6 +61,7 @@ class stored_file {
         $this->filedir     = $filedir; // keep secret, do not expose!
 
         if (!empty($file_record->repositoryid)) {
+            require_once("$CFG->dirroot/repository/lib.php");
             $this->repository = repository::get_repository_by_id($file_record->repositoryid, SYSCONTEXTID);
             if ($this->repository->supported_returntypes() & FILE_REFERENCE != FILE_REFERENCE) {
                 // Repository cannot do file reference.
