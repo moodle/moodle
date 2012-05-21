@@ -137,6 +137,7 @@ $string['displaystart_help'] = 'This setting specifies whether a forum post shou
 $string['eachuserforum'] = 'Each person posts one discussion';
 $string['edit'] = 'Edit';
 $string['editedby'] = 'Edited by {$a->name} - original submission {$a->date}';
+$string['editedpostupdated'] = '{$a}\'s post was updated';
 $string['editing'] = 'Editing';
 $string['emptymessage'] = 'Something was wrong with your post. Perhaps you left it blank, or the attachment was too big. Your changes have NOT been saved.';
 $string['erroremptymessage'] = 'Post message cannot be empty';
