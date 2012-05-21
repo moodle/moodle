@@ -1404,7 +1404,7 @@ class backup_final_files_structure_step extends backup_structure_step {
             'contenthash', 'contextid', 'component', 'filearea', 'itemid',
             'filepath', 'filename', 'userid', 'filesize',
             'mimetype', 'status', 'timecreated', 'timemodified',
-            'source', 'author', 'license', 'sortorder'));
+            'source', 'author', 'license', 'sortorder', 'reference', 'repositoryid'));
 
         // Build the tree
 
@@ -1412,9 +1412,12 @@ class backup_final_files_structure_step extends backup_structure_step {
 
         // Define sources
 
-        $file->set_source_sql("SELECT f.*
+        $file->set_source_sql("SELECT f.*, r.repositoryid, r.reference
                                  FROM {files} f
-                                 JOIN {backup_ids_temp} bi ON f.id = bi.itemid
+                                 JOIN {files_reference} r
+                                      ON r.id = f.referencefileid
+                                 JOIN {backup_ids_temp} bi
+                                      ON f.id = bi.itemid
                                 WHERE bi.backupid = ?
                                   AND bi.itemname = 'filefinal'", array(backup::VAR_BACKUPID));
 
@@ -1442,6 +1445,8 @@ class backup_main_structure_step extends backup_structure_step {
         $info['backup_date']    = time();
         $info['backup_uniqueid']= $this->get_backupid();
         $info['mnet_remoteusers']=backup_controller_dbops::backup_includes_mnet_remote_users($this->get_backupid());
+        $info['include_file_references_to_external_content'] =
+                backup_controller_dbops::backup_includes_file_references($this->get_backupid());
         $info['original_wwwroot']=$CFG->wwwroot;
         $info['original_site_identifier_hash'] = md5(get_site_identifier());
         $info['original_course_id'] = $this->get_courseid();
@@ -1461,7 +1466,7 @@ class backup_main_structure_step extends backup_structure_step {
 
         $information = new backup_nested_element('information', null, array(
             'name', 'moodle_version', 'moodle_release', 'backup_version',
-            'backup_release', 'backup_date', 'mnet_remoteusers', 'original_wwwroot',
+            'backup_release', 'backup_date', 'mnet_remoteusers', 'include_file_references_to_external_content', 'original_wwwroot',
             'original_site_identifier_hash', 'original_course_id',
             'original_course_fullname', 'original_course_shortname', 'original_course_startdate',
             'original_course_contextid', 'original_system_contextid'));
@@ -1584,8 +1589,12 @@ class backup_store_backup_file extends backup_execution_step {
         // Calculate the zip fullpath (in OS temp area it's always backup.mbz)
         $zipfile = $basepath . '/backup.mbz';
 
+        $has_file_references = backup_controller_dbops::backup_includes_file_references($this->get_backupid());
         // Perform storage and return it (TODO: shouldn't be array but proper result object)
-        return array('backup_destination' => backup_helper::store_backup_file($this->get_backupid(), $zipfile));
+        return array(
+            'backup_destination' => backup_helper::store_backup_file($this->get_backupid(), $zipfile),
+            'include_file_references_to_external_content' => $has_file_references
+        );
     }
 }
 

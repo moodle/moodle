@@ -403,9 +403,7 @@ function cron_run() {
     cron_execute_plugin_type('format', 'course formats');
     cron_execute_plugin_type('profilefield', 'profile fields');
     cron_execute_plugin_type('webservice', 'webservices');
-    // TODO: Repository lib.php files are messed up (include many other files, etc), so it is
-    // currently not possible to implement repository plugin cron using this infrastructure
-    // cron_execute_plugin_type('repository', 'repository plugins');
+    cron_execute_plugin_type('repository', 'repository plugins');
     cron_execute_plugin_type('qbehaviour', 'question behaviours');
     cron_execute_plugin_type('qformat', 'question import/export formats');
     cron_execute_plugin_type('qtype', 'question types');
@@ -462,6 +460,9 @@ function cron_run() {
     $fs = get_file_storage();
     $fs->cron();
 
+    mtrace("Clean up cached external files");
+    // 1 week
+    cache_file::cleanup(array(), 60 * 60 * 24 * 7);
 
     mtrace("Cron script completed correctly");
 

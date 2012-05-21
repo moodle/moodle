@@ -105,18 +105,18 @@ class MoodleQuickForm_wikifiletable extends HTML_QuickForm_element {
                 $checkbox .= " />";
 
                 //actions
-                $icon = mimeinfo_from_type('icon', $file->get_mimetype());
+                $icon = file_file_icon($file);
                 $file_url = file_encode_url($CFG->wwwroot.'/pluginfile.php', "/{$this->_contextid}/mod_wiki/attachments/{$this->_fileareaitemid}/".$file->get_filename());
 
                 $action_icons = "";
                 if(!empty($tags['attach'])) {
-                    $action_icons .= "<a href=\"javascript:void(0)\" class=\"wiki-attachment-attach\" ".$this->printInsertTags($tags['attach'], $file->get_filename())." title=\"".get_string('attachmentattach', 'wiki')."\"><img src=\"".$OUTPUT->pix_url('f/pdf')->out()."\" alt=\"Attach\" /></a>"; //TODO: localize
+                    $action_icons .= "<a href=\"javascript:void(0)\" class=\"wiki-attachment-attach\" ".$this->printInsertTags($tags['attach'], $file->get_filename())." title=\"".get_string('attachmentattach', 'wiki')."\">".$OUTPUT->pix_icon($icon, "Attach")."</a>"; //TODO: localize
                 }
 
-                $action_icons .= "&nbsp;&nbsp;<a href=\"javascript:void(0)\" class=\"wiki-attachment-link\" ".$this->printInsertTags($tags['link'], $file_url)." title=\"".get_string('attachmentlink', 'wiki')."\"><img src=\"".$OUTPUT->pix_url('f/web')->out()."\" alt=\"Link\" /></a>";
+                $action_icons .= "&nbsp;&nbsp;<a href=\"javascript:void(0)\" class=\"wiki-attachment-link\" ".$this->printInsertTags($tags['link'], $file_url)." title=\"".get_string('attachmentlink', 'wiki')."\">".$OUTPUT->pix_icon($icon, "Link")."</a>";
 
-                if ($icon == 'image') {
-                    $action_icons .= "&nbsp;&nbsp;<a href=\"javascript:void(0)\" class=\"wiki-attachment-image\" ".$this->printInsertTags($tags['image'], $file->get_filename())." title=\"".get_string('attachmentimage', 'wiki')."\"><img src=\"".$OUTPUT->pix_url('f/image')->out()."\" alt=\"Image\" /></a>"; //TODO: localize
+                if (file_mimetype_in_typegroup($file->get_mimetype(), 'web_image')) {
+                    $action_icons .= "&nbsp;&nbsp;<a href=\"javascript:void(0)\" class=\"wiki-attachment-image\" ".$this->printInsertTags($tags['image'], $file->get_filename())." title=\"".get_string('attachmentimage', 'wiki')."\">".$OUTPUT->pix_icon($icon, "Image")."</a>"; //TODO: localize
                 }
 
                 $htmltable->data[] = array($checkbox, '<a href="'.$file_url.'">'.$file->get_filename().'</a>', $action_icons);

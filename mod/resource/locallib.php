@@ -303,14 +303,13 @@ function resource_get_optional_details($resource, $cm) {
             // For a typical file resource, the sortorder is 1 for the main file
             // and 0 for all other files. This sort approach is used just in case
             // there are situations where the file has a different sort order
-            $mimetype = $DB->get_field_sql(
-                    'SELECT mimetype FROM {files} WHERE contextid=? ORDER BY sortorder DESC',
+            $record = $DB->get_record_sql(
+                    'SELECT filename, mimetype FROM {files} WHERE contextid=? ORDER BY sortorder DESC',
                     array($context->id), IGNORE_MULTIPLE);
             // Only show type if it is not unknown
-            if ($mimetype && $mimetype !== 'document/unknown') {
-                $type = get_mimetype_description($mimetype);
-                // There are some known mimetypes which don't have descriptions
-                if ($type === get_string('document/unknown','mimetypes')) {
+            if ($record) {
+                $type = get_mimetype_description($record);
+                if ($type === get_mimetype_description('document/unknown')) {
                     $type = '';
                 }
             }

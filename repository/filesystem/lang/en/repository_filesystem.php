@@ -30,6 +30,7 @@ $string['filesystem:view'] = 'View file system repository';
 $string['information'] = 'These folders are within the <b>{$a}</b> directory.';
 $string['invalidpath'] = 'Invalid root path';
 $string['path'] = 'Select a subdirectory';
+$string['root'] = 'Root';
 $string['nosubdir'] = 'You need to create at least one folder inside the <b>{$a}</b> directory so you can select it here.';
 $string['pluginname_help'] = 'Create repository from local directory';
 $string['pluginname'] = 'File system';

@@ -198,7 +198,7 @@ class portfolio_format_image extends portfolio_format_file {
      * @return string
      */
     public static function mimetypes() {
-        return mimeinfo_from_icon('type', 'image', true);
+        return file_get_typegroup('type', 'image');
     }
 
     /**
@@ -286,10 +286,7 @@ class portfolio_format_video extends portfolio_format_file {
       * @return array
       */
     public static function mimetypes() {
-        return array_merge(
-            mimeinfo_from_icon('type', 'video', true),
-            mimeinfo_from_icon('type', 'avi', true)
-        );
+        return file_get_typegroup('type', 'video');
     }
 }
 
@@ -561,12 +558,7 @@ class portfolio_format_document extends portfolio_format_file {
      * @return array of documents mimetypes
      */
     public static function mimetypes() {
-        return array_merge(
-            array('text/plain', 'text/rtf'),
-            mimeinfo_from_icon('type', 'word', true),
-            mimeinfo_from_icon('type', 'docx', true),
-            mimeinfo_from_icon('type', 'odt', true)
-        );
+        return file_get_typegroup('type', 'document');
     }
 }
 
@@ -588,11 +580,7 @@ class portfolio_format_spreadsheet extends portfolio_format_file {
      * @return array of documents mimetypes
      */
     public static function mimetypes() {
-        return array_merge(
-            mimeinfo_from_icon('type', 'excel', true),
-            mimeinfo_from_icon('type', 'xlsm', true),
-            mimeinfo_from_icon('type', 'ods', true)
-        );
+        return file_get_typegroup('type', 'spreadsheet');
     }
 }
 
@@ -614,6 +602,6 @@ class portfolio_format_presentation extends portfolio_format_file {
      * @return array presentation document mimetypes
      */
     public static function mimetypes() {
-        return mimeinfo_from_icon('type', 'powerpoint', true);
+        return file_get_typegroup('type', 'presentation');
     }
 }

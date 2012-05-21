@@ -513,10 +513,7 @@ class blog_entry {
             $ffurl    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/attachment/'.$this->id.'/'.$filename);
             $mimetype = $file->get_mimetype();
 
-            $icon     = mimeinfo_from_type("icon", $mimetype);
-            $type     = mimeinfo_from_type("type", $mimetype);
-
-            $image = $OUTPUT->pix_icon("f/$icon", $filename, 'moodle', array('class'=>'icon'));
+            $image = $OUTPUT->pix_icon(file_file_icon($file), $filename, 'moodle', array('class'=>'icon'));
 
             if ($return == "html") {
                 $output .= html_writer::link($ffurl, $image);
@@ -526,7 +523,7 @@ class blog_entry {
                 $output .= "$strattachment $filename:\n$ffurl\n";
 
             } else {
-                if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {    // Image attachments don't get printed as links
+                if (file_mimetype_in_typegroup($file->get_mimetype(), 'web_image')) {    // Image attachments don't get printed as links
                     $imagereturn .= '<br /><img src="'.$ffurl.'" alt="" />';
                 } else {
                     $imagereturn .= html_writer::link($ffurl, $image);

@@ -45,7 +45,10 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
     public $_helpbutton = '';
 
     /** @var array options provided to initalize filemanager */
-    protected $_options    = array('maxbytes'=>0, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
+    // PHP doesn't support 'key' => $value1 | $value2 in class definition
+    // We cannot do $_options = array('return_types'=> FILE_INTERNAL | FILE_REFERENCE);
+    // So I have to set null here, and do it in constructor
+    protected $_options    = array('maxbytes'=>0, 'accepted_types'=>'*', 'return_types'=>null);
 
     /**
      * Constructor
@@ -64,6 +67,9 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
             if (array_key_exists($name, $this->_options)) {
                 $this->_options[$name] = $value;
             }
+        }
+        if (!empty($options['return_types'])) {
+            $this->_options['return_types'] = FILE_INTERNAL | FILE_REFERENCE;
         }
         if (!empty($options['maxbytes'])) {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
@@ -137,7 +143,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $args = new stdClass();
         // need these three to filter repositories list
         $args->accepted_types = $this->_options['accepted_types']?$this->_options['accepted_types']:'*';
-        $args->return_types = FILE_INTERNAL;
+        $args->return_types = FILE_INTERNAL | FILE_REFERENCE;
         $args->itemid = $draftitemid;
         $args->maxbytes = $this->_options['maxbytes'];
         $args->context = $PAGE->context;

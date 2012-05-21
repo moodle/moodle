@@ -16,15 +16,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This plugin is used to access recent used files
+ *
+ * @since 2.0
+ * @package    repository_recent
+ * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+require_once($CFG->dirroot . '/repository/lib.php');
+
+/**
  * repository_recent class is used to browse recent used files
  *
  * @since 2.0
- * @package    repository
- * @subpackage recent
- * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
+ * @package    repository_recent
+ * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 define('DEFAULT_RECENT_FILES_NUM', 50);
 class repository_recent extends repository {
 
@@ -56,8 +64,12 @@ class repository_recent extends repository {
     private function get_recent_files($limitfrom = 0, $limit = DEFAULT_RECENT_FILES_NUM) {
         // XXX: get current itemid
         global $USER, $DB, $itemid;
+        // This SQL will ignore draft files if not owned by current user.
+        // Ignore all file references.
         $sql = 'SELECT files1.*
                   FROM {files} files1
+             LEFT JOIN {files_reference} r
+                       ON files1.referencefileid = r.id
                   JOIN (
                       SELECT contenthash, filename, MAX(id) AS id
                         FROM {files}
@@ -66,7 +78,8 @@ class repository_recent extends repository {
                          AND ((filearea = :filearea1 AND itemid = :itemid) OR filearea != :filearea2)
                     GROUP BY contenthash, filename
                   ) files2 ON files1.id = files2.id
-                ORDER BY files1.timemodified DESC';
+                 WHERE r.repositoryid is NULL
+              ORDER BY files1.timemodified DESC';
         $params = array(
             'userid' => $USER->id,
             'filename' => '.',
@@ -107,17 +120,31 @@ class repository_recent extends repository {
 
         try {
             foreach ($files as $file) {
-                $params = base64_encode(serialize($file));
-                // Check that file exists and accessible
-                $filesize = $this->get_file_size($params);
-                if (!empty($filesize)) {
+                // Check that file exists and accessible, retrieve size/date info
+                $browser = get_file_browser();
+                $context = get_context_instance_by_id($file['contextid']);
+                $fileinfo = $browser->get_file_info($context, $file['component'],
+                        $file['filearea'], $file['itemid'], $file['filepath'], $file['filename']);
+                if ($fileinfo) {
+                    $params = base64_encode(serialize($file));
                     $node = array(
-                        'title' => $file['filename'],
-                        'size' => $filesize,
-                        'date' => '',
+                        'title' => $fileinfo->get_visible_name(),
+                        'size' => $fileinfo->get_filesize(),
+                        'datemodified' => $fileinfo->get_timemodified(),
+                        'datecreated' => $fileinfo->get_timecreated(),
+                        'author' => $fileinfo->get_author(),
+                        'license' => $fileinfo->get_license(),
                         'source'=> $params,
-                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file['filename'], 32))->out(false),
+                        'icon' => $OUTPUT->pix_url(file_file_icon($fileinfo, 24))->out(false),
+                        'thumbnail' => $OUTPUT->pix_url(file_file_icon($fileinfo, 90))->out(false),
                     );
+                    if ($imageinfo = $fileinfo->get_imageinfo()) {
+                        $fileurl = new moodle_url($fileinfo->get_url());
+                        $node['realthumbnail'] = $fileurl->out(false, array('preview' => 'thumb', 'oid' => $fileinfo->get_timemodified()));
+                        $node['realicon'] = $fileurl->out(false, array('preview' => 'tinyicon', 'oid' => $fileinfo->get_timemodified()));
+                        $node['image_width'] = $imageinfo['width'];
+                        $node['image_height'] = $imageinfo['height'];
+                    }
                     $list[] = $node;
                 }
             }

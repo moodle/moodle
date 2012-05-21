@@ -118,9 +118,9 @@ class wikimedia {
             $commons_main_dir = 'http://upload.wikimedia.org/wikipedia/commons/';
             if ($image_url) {
                 $short_path = str_replace($commons_main_dir, '', $image_url);
-                $extension = pathinfo($short_path, PATHINFO_EXTENSION);
+                $extension = strtolower(pathinfo($short_path, PATHINFO_EXTENSION));
                 if (strcmp($extension, 'gif') == 0) {  //no thumb for gifs
-                    return $OUTPUT->pix_url(file_extension_icon('xx.jpg', 32));
+                    return $OUTPUT->pix_url(file_extension_icon('.gif', $thumb_width))->out(false);
                 }
                 $dir_parts = explode('/', $short_path);
                 $file_name = end($dir_parts);

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,14 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * repository_local class is used to browse moodle files
+ * This plugin is used to access local files
  *
- * @since      2.0
+ * @since 2.0
  * @package    repository_local
- * @copyright  2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+require_once($CFG->dirroot . '/repository/lib.php');
 
+/**
+ * repository_local class is used to browse moodle files
+ *
+ * @since 2.0
+ * @package    repository_local
+ * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class repository_local extends repository {
     /**
      * local plugin doesn't require login, so list all files
@@ -200,15 +208,28 @@ class repository_local_file {
         $encodedpath = base64_encode(serialize($this->fileinfo->get_params()));
         $node = array(
             'title' => $this->fileinfo->get_visible_name(),
-            'size' => 0,
-            'date' => '');
+            'datemodified' => $this->fileinfo->get_timemodified(),
+            'datecreated' => $this->fileinfo->get_timecreated()
+        );
         if ($this->isdir) {
             $node['path'] = $encodedpath;
-            $node['thumbnail'] = $OUTPUT->pix_url('f/folder-32')->out(false);
+            $node['thumbnail'] = $OUTPUT->pix_url(file_folder_icon(90))->out(false);
             $node['children'] = array();
         } else {
+            $node['size'] = $this->fileinfo->get_filesize();
+            $node['author'] = $this->fileinfo->get_author();
+            $node['license'] = $this->fileinfo->get_license();
             $node['source'] = $encodedpath;
-            $node['thumbnail'] = $OUTPUT->pix_url(file_extension_icon($node['title'], 32))->out(false);
+            $node['thumbnail'] = $OUTPUT->pix_url(file_file_icon($this->fileinfo, 90))->out(false);
+            $node['icon'] = $OUTPUT->pix_url(file_file_icon($this->fileinfo), 24)->out(false);
+            if ($imageinfo = $this->fileinfo->get_imageinfo()) {
+                // what a beautiful picture, isn't it
+                $fileurl = new moodle_url($this->fileinfo->get_url());
+                $node['realthumbnail'] = $fileurl->out(false, array('preview' => 'thumb', 'oid' => $this->fileinfo->get_timemodified()));
+                $node['realicon'] = $fileurl->out(false, array('preview' => 'tinyicon', 'oid' => $this->fileinfo->get_timemodified()));
+                $node['image_width'] = $imageinfo['width'];
+                $node['image_height'] = $imageinfo['height'];
+            }
         }
         return $node;
     }

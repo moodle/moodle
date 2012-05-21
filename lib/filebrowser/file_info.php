@@ -227,6 +227,20 @@ abstract class file_info {
     }
 
     /**
+     * Returns the localised human-readable name of the file together with
+     * virtual path
+     *
+     * @return string
+     */
+    public function get_readable_fullname() {
+        $fpath = array();
+        for ($parent = $this; $parent; $parent = $parent->get_parent()) {
+            array_unshift($fpath, $parent->get_visible_name());
+        }
+        return join('/', $fpath);
+    }
+
+    /**
      * Create new directory, may throw exception - make sure
      * params are valid.
      *

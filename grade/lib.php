@@ -1049,6 +1049,7 @@ class grade_structure {
      */
     public function get_element_icon(&$element, $spacerifnone=false) {
         global $CFG, $OUTPUT;
+        require_once $CFG->libdir.'/filelib.php';
 
         switch ($element['type']) {
             case 'item':
@@ -1114,7 +1115,7 @@ class grade_structure {
 
             case 'category':
                 $strcat = get_string('category', 'grades');
-                return '<img src="'.$OUTPUT->pix_url('f/folder') . '" class="icon itemicon" ' .
+                return '<img src="'.$OUTPUT->pix_url(file_folder_icon()) . '" class="icon itemicon" ' .
                         'title="'.s($strcat).'" alt="'.s($strcat).'" />';
         }
 

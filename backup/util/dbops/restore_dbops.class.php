@@ -685,6 +685,9 @@ abstract class restore_dbops {
         $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $rec) {
             $file = (object)unserialize(base64_decode($rec->info));
+
+            $isreference = !empty($file->repositoryid);
+
             // ignore root dirs (they are created automatically)
             if ($file->filepath == '/' && $file->filename == '.') {
                 continue;
@@ -697,10 +700,12 @@ abstract class restore_dbops {
                 $fs->create_directory($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->userid);
                 continue;
             }
+
             // arrived here, file found
             // Find file in backup pool
             $backuppath = $basepath . backup_file_manager::get_backup_content_file_location($file->contenthash);
-            if (!file_exists($backuppath)) {
+
+            if (!file_exists($backuppath) && !$isreference) {
                 throw new restore_dbops_exception('file_not_found_in_pool', $file);
             }
             if (!$fs->file_exists($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->filename)) {
@@ -717,7 +722,11 @@ abstract class restore_dbops {
                     'author'      => $file->author,
                     'license'     => $file->license,
                     'sortorder'   => $file->sortorder);
-                $fs->create_file_from_pathname($file_record, $backuppath);
+                if ($isreference) {
+                    $fs->create_file_from_reference($file_record, $file->repositoryid, $file->reference);
+                } else {
+                    $fs->create_file_from_pathname($file_record, $backuppath);
+                }
             }
         }
         $rs->close();
@@ -1204,6 +1213,7 @@ abstract class restore_dbops {
     public static function set_backup_files_record($restoreid, $filerec) {
         global $DB;
 
+        // Store external files info in `info` field
         $filerec->info     = base64_encode(serialize($filerec)); // Serialize the whole rec in info
         $filerec->backupid = $restoreid;
         $DB->insert_record('backup_files_temp', $filerec);

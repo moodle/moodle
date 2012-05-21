@@ -77,4 +77,134 @@ class filestoragelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('stored_file', $previewtinyicon);
         $this->assertEquals('6b9864ae1536a8eeef54e097319175a8be12f07c', $previewtinyicon->get_filename());
     }
+
+    /**
+     * Make sure renaming is working
+     *
+     * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
+     */
+    public function test_file_renaming() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+        $component = 'core';
+        $filearea  = 'unittest';
+        $itemid    = 0;
+        $filepath  = '/';
+        $filename  = 'test.txt';
+
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => $component,
+            'filearea'  => $filearea,
+            'itemid'    => $itemid,
+            'filepath'  => $filepath,
+            'filename'  => $filename,
+        );
+
+        $originalfile = $fs->create_file_from_string($filerecord, 'Test content');
+        $this->assertInstanceOf('stored_file', $originalfile);
+        $contenthash = $originalfile->get_contenthash();
+        $newpath = '/test/';
+        $newname = 'newtest.txt';
+
+        // this should work
+        $originalfile->rename($newpath, $newname);
+        $file = $fs->get_file($syscontext->id, $component, $filearea, $itemid, $newpath, $newname);
+        $this->assertInstanceOf('stored_file', $file);
+        $this->assertEquals($contenthash, $file->get_contenthash());
+
+        // try break it
+        $this->setExpectedException('file_exception');
+        // this shall throw exception
+        $originalfile->rename($newpath, $newname);
+    }
+
+    /**
+     * Create file from reference tests
+     *
+     * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
+     */
+    public function test_create_file_from_reference() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest(true);
+        // create user
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $usercontext = context_user::instance($user->id);
+        $syscontext = context_system::instance();
+        $USER = $DB->get_record('user', array('id'=>$user->id));
+
+        $fs = get_file_storage();
+
+        $repositorypluginname = 'user';
+        // override repository permission
+        $capability = 'repository/' . $repositorypluginname . ':view';
+        $allroles = $DB->get_records_menu('role', array(), 'id', 'archetype, id');
+        assign_capability($capability, CAP_ALLOW, $allroles['guest'], $syscontext->id, true);
+
+
+        $args = array();
+        $args['type'] = $repositorypluginname;
+        $repos = repository::get_instances($args);
+        $userrepository = reset($repos);
+        $this->assertInstanceOf('repository', $userrepository);
+
+        $component = 'user';
+        $filearea  = 'private';
+        $itemid    = 0;
+        $filepath  = '/';
+        $filename  = 'userfile.txt';
+
+        $filerecord = array(
+            'contextid' => $usercontext->id,
+            'component' => $component,
+            'filearea'  => $filearea,
+            'itemid'    => $itemid,
+            'filepath'  => $filepath,
+            'filename'  => $filename,
+        );
+
+        $content = 'Test content';
+        $originalfile = $fs->create_file_from_string($filerecord, $content);
+        $this->assertInstanceOf('stored_file', $originalfile);
+
+        $newfilerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'phpunit',
+            'itemid'    => 0,
+            'filepath'  => $filepath,
+            'filename'  => $filename,
+        );
+        $ref = $fs->pack_reference($filerecord);
+        $newstoredfile = $fs->create_file_from_reference($newfilerecord, $userrepository->id, $ref);
+        $this->assertInstanceOf('stored_file', $newstoredfile);
+        $this->assertEquals($userrepository->id, $newstoredfile->repository->id);
+        $this->assertEquals($originalfile->get_contenthash(), $newstoredfile->get_contenthash());
+        $this->assertEquals($originalfile->get_filesize(), $newstoredfile->get_filesize());
+        $this->assertRegExp('#' . $filename. '$#', $newstoredfile->get_reference_details());
+
+        // Test looking for references
+        $count = $fs->get_references_count_by_storedfile($originalfile);
+        $this->assertEquals(1, $count);
+        $files = $fs->get_references_by_storedfile($originalfile);
+        $file = reset($files);
+        $this->assertEquals($file, $newstoredfile);
+
+        // Look for references by repository ID
+        $files = $fs->get_external_files($userrepository->id);
+        $file = reset($files);
+        $this->assertEquals($file, $newstoredfile);
+
+        // Try convert reference to local file
+        $importedfile = $fs->import_external_file($newstoredfile);
+        $this->assertFalse($importedfile->is_external_file());
+        $this->assertInstanceOf('stored_file', $importedfile);
+        // still readable?
+        $this->assertEquals($content, $importedfile->get_content());
+    }
 }
