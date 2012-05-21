@@ -312,7 +312,7 @@ class dndupload_handler {
         uasort($this->types, array($this, 'type_compare'));
 
         $ret->types = array();
-        if ($CFG->dndallowtextandlinks) {
+        if (!empty($CFG->dndallowtextandlinks)) {
             foreach ($this->types as $type) {
                 if (empty($type->handlers)) {
                     continue; // Skip any types without registered handlers.
