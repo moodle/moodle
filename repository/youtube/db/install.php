@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Installation file for the Youtube repository.
  *
  * @package    repository_youtube
  * @category   repository
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 /**
- * Create a instance of youtube repository
+ * Create a default instance of the youtube repository
  *
  * @return bool A status indicating success or failure
  */
@@ -32,8 +31,8 @@ function xmldb_repository_youtube_install() {
     global $CFG;
     $result = true;
     require_once($CFG->dirroot.'/repository/lib.php');
-    $youtube_plugin = new repository_type('youtube', array(), true);
-    if(!$id = $youtube_plugin->create(true)) {
+    $youtubeplugin = new repository_type('youtube', array(), true);
+    if(!$id = $youtubeplugin->create(true)) {
         $result = false;
     }
     return $result;
