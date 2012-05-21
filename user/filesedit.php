@@ -33,13 +33,11 @@ if (isguestuser()) {
 }
 
 $returnurl = optional_param('returnurl', '', PARAM_URL);
+$returnbutton = true;
 
 if (empty($returnurl)) {
-    if (!empty($_SERVER["HTTP_REFERER"])) {
-        $returnurl = $_SERVER["HTTP_REFERER"];
-    } else {
-        $returnurl = new moodle_url('/user/files.php');
-    }
+    $returnbutton = false;
+    $returnurl = new moodle_url('/user/filesedit.php');
 }
 
 $context = get_context_instance(CONTEXT_USER, $USER->id);
@@ -48,7 +46,7 @@ require_capability('moodle/user:manageownfiles', $context);
 $title = get_string('myfiles');
 $struser = get_string('user');
 
-$PAGE->set_url('/user/files.php');
+$PAGE->set_url('/user/filesedit.php');
 $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
@@ -60,7 +58,7 @@ $data->returnurl = $returnurl;
 $options = array('subdirs'=>1, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 file_prepare_standard_filemanager($data, 'files', $options, $context, 'user', 'private', 0);
 
-$mform = new user_filesedit_form(null, array('data'=>$data, 'options'=>$options));
+$mform = new user_filesedit_form(null, array('data'=>$data, 'options'=>$options, 'cancelbutton'=>$returnbutton));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
