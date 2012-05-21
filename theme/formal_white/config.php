@@ -94,7 +94,7 @@ $THEME->layouts = array(
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
     ),
-    'general' => array(
+    'standard' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-post',
