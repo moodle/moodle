@@ -246,7 +246,7 @@ class file_storage {
         $file->copy_content_to($tmpfilepath);
 
         if ($mode === 'tinyicon') {
-            $data = generate_image_thumbnail($tmpfilepath, 16, 16);
+            $data = generate_image_thumbnail($tmpfilepath, 24, 24);
 
         } else if ($mode === 'thumb') {
             $data = generate_image_thumbnail($tmpfilepath, 90, 90);
