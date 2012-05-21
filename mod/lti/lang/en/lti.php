@@ -194,9 +194,6 @@ $string['icon_url'] = 'Icon URL';
 $string['icon_url_help'] = 'The icon URL allows the icon that shows up in the course listing for this activity to be modified. Instead of using the default
 LTI icon, an icon which conveys the type of activity may be specified.';
 $string['id'] = 'id';
-$string['imsroleadmin'] = 'Instructor,Administrator';
-$string['imsroleinstructor'] = 'Instructor';
-$string['imsrolelearner'] = 'Learner';
 $string['invalidid'] = 'LTI ID was incorrect';
 $string['launch_in_moodle'] = 'Launch tool in moodle';
 $string['launch_in_popup'] = 'Launch tool in a pop-up';
@@ -259,20 +256,16 @@ $string['misconfiguredtools'] = 'Misconfigured tool instances were detected';
 $string['missingparameterserror'] = 'The page is misconfigured: "{$a}"';
 $string['module_class_type'] = 'Moodle module type';
 $string['modulename'] = 'External Tool';
-$string['modulename_help'] = 'External tools allow Moodle users to interact with learning resources and activities on other web sites. For instance, an
-external tool could provide access to a new activity type or learning materials from a publisher.
+$string['modulename_help'] = 'The external tool activity module enables students to interact with learning resources and activities on other web sites. For example, an external tool could provide access to a new activity type or learning materials from a publisher.
 
-To setup an external tool instance a tool provider which supports LTI (Learning Tools Interoperability) is required.
-If you find a tool provider which supports LTI, they should be able to provide instructions on how to configure the
-external tool instance. Additionally, tool types configured by a site administrator will also be available for use.
+To create an external tool activity, a tool provider which supports LTI (Learning Tools Interoperability) is required. A teacher can create an external tool activity or make use of a tool configured by the site administrator.
 
-External tools differ from URL resources in a few ways:
-* **Context aware** - External tools have access to information about the user who launched the tool, such as
-        insitution, course, name, and other information.
-* **Deep integration** - External tools support reading, updating, and deleting grades associated with the activity instance. More integration points
-        are planned for future releases.
-* **Security** - External tool configurations create a trust relationship between Moodle and the tool provider, allowing secure communication
-        between them.';
+External tool activities differ from URL resources in a few ways:
+
+* External tools are context aware i.e. they have access to information about the user who launched the tool, such as institution, course and name
+* External tools support reading, updating, and deleting grades associated with the activity instance
+* External tool configurations create a trust relationship between your site and the tool provider, allowing secure communication between them';
+$string['modulename_link'] = 'mod/lti/view';
 $string['modulenameplural'] = 'basicltis';
 $string['modulenamepluralformatted'] = 'LTI Instances';
 $string['never'] = 'Never';
@@ -366,8 +359,6 @@ is set to always launch through SSL.
 
 The Launch URL may also be set to an https address to force launching through SSL, and this field may be left blank.';
 $string['send'] = 'Send';
-$string['setdefault'] = 'Set a default value for the professor if delegating';
-$string['setupbox'] = 'LTI Tool Setup Box';
 $string['setupoptions'] = 'Setup Options';
 $string['share_email'] = 'Share launcher\'s email with the tool';
 $string['share_email_admin'] = 'Share launcher\'s email with tool';

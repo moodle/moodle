@@ -39,7 +39,7 @@ class repositorylib_testcase extends advanced_testcase {
         $PAGE->set_url('/');
         $PAGE->set_course($SITE);
 
-        $this->setUser(2);
+        $this->setAdminUser();
 
         $args = new stdClass();
         $args->accepted_types = '*';

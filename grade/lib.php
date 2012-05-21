@@ -44,6 +44,11 @@ class graded_users_iterator {
     public $sortorder2;
 
     /**
+     * Should users whose enrolment has been suspended be ignored?
+     */
+    protected $onlyactive = false;
+
+    /**
      * Constructor
      *
      * @param object $course A course object
@@ -89,9 +94,7 @@ class graded_users_iterator {
 
         list($gradebookroles_sql, $params) =
             $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr');
-
-        //limit to users with an active enrolment
-        list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext);
+        list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext, '', 0, $this->onlyactive);
 
         $params = array_merge($params, $enrolledparams);
 
@@ -215,6 +218,9 @@ class graded_users_iterator {
 
         if (!empty($this->grade_items)) {
             foreach ($this->grade_items as $grade_item) {
+                if (!isset($feedbacks[$grade_item->id])) {
+                    $feedbacks[$grade_item->id] = new stdClass();
+                }
                 if (array_key_exists($grade_item->id, $grade_records)) {
                     $feedbacks[$grade_item->id]->feedback       = $grade_records[$grade_item->id]->feedback;
                     $feedbacks[$grade_item->id]->feedbackformat = $grade_records[$grade_item->id]->feedbackformat;
@@ -251,6 +257,18 @@ class graded_users_iterator {
             $this->grades_rs = null;
         }
         $this->gradestack = array();
+    }
+
+    /**
+     * Should all enrolled users be exported or just those with an active enrolment?
+     *
+     * @param bool $onlyactive True to limit the export to users with an active enrolment
+     */
+    public function require_active_enrolment($onlyactive = true) {
+        if (!empty($this->users_rs)) {
+            debugging('Calling require_active_enrolment() has no effect unless you call init() again', DEBUG_DEVELOPER);
+        }
+        $this->onlyactive  = $onlyactive;
     }
 
 

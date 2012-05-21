@@ -1050,28 +1050,6 @@ function calendar_get_link_href($linkbase, $d, $m, $y) {
 }
 
 /**
- * This function has been deprecated as of Moodle 2.0... DO NOT USE!!!!!
- *
- * @deprecated Moodle 2.0 - MDL-24284 please do not use this function any more.
- * @todo MDL-31134 - will be removed in Moodle 2.3
- * @see calendar_get_link_href()
- *
- * @param string $text
- * @param string|moodle_url $linkbase
- * @param int|null $d The number of the day.
- * @param int|null $m The number of the month.
- * @param int|null $y The number of the year.
- * @return string HTML link
- */
-function calendar_get_link_tag($text, $linkbase, $d, $m, $y) {
-    $url = calendar_get_link_href(new moodle_url($linkbase), $d, $m, $y);
-    if (empty($url)) {
-        return $text;
-    }
-    return html_writer::link($url, $text);
-}
-
-/**
  * Build and return a previous month HTML link, with an arrow.
  *
  * @param string $text The text label.
@@ -1491,15 +1469,16 @@ function calendar_get_default_courses() {
     }
 
     $courses = array();
-    if (!empty($CFG->calendar_adminseesall) && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM))) {
+    if (!empty($CFG->calendar_adminseesall) && has_capability('moodle/calendar:manageentries', context_system::instance())) {
         list ($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-        $sql = "SELECT DISTINCT c.* $select
+        $sql = "SELECT c.* $select
                   FROM {course} c
-                  JOIN {event} e ON e.courseid = c.id
-                  $join";
+                  $join
+                  WHERE EXISTS (SELECT 1 FROM {event} e WHERE e.courseid = c.id)
+                  ";
         $courses = $DB->get_records_sql($sql, null, 0, 20);
         foreach ($courses as $course) {
-            context_instance_preload($course);
+            context_helper::preload_from_record($course);
         }
         return $courses;
     }

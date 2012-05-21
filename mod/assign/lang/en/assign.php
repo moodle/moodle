@@ -139,7 +139,12 @@ $string['manageassignfeedbackplugins'] = 'Manage assignment feedback plugins';
 $string['manageassignsubmissionplugins'] = 'Manage assignment submission plugins';
 $string['messageprovider:assign_updates'] = 'Assignment notifications';
 $string['modulename'] = 'Assignment';
-$string['modulename_help'] = 'Assignments enable the teacher to specify a task either on or offline which can then be graded.';
+$string['modulename_help'] = 'The assignment activity module enables a teacher to assess students’ learning by setting work and then reviewing it and providing feedback and grades.
+
+Students can submit any digital content (files), such as word-processed documents, spreadsheets, images, audio and video clips. Alternatively, or in addition, the assignment may require students to type text directly into a field using the text editor. An assignment can also be used to remind students of \'real-world\' assignments they need to complete, such as art work, and thus not require any digital content.
+
+When reviewing assignments, teachers can leave feedback comments and upload files, such as marked-up student submissions, documents with comments or spoken audio feedback. Assignments can be graded using a numerical or custom scale or an advanced grading method such as a rubric. Final grades are recorded in the gradebook.';
+$string['modulename_link'] = 'mod/assignment/view';
 $string['modulenameplural'] = 'Assignments';
 $string['mysubmission'] = 'My submission: ';
 $string['newsubmissions'] = 'Assignments submitted';

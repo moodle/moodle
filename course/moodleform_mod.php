@@ -252,10 +252,10 @@ abstract class moodleform_mod extends moodleform {
             foreach($fullcm->conditionsgrade as $gradeitemid=>$minmax) {
                 $groupelements=$mform->getElement('conditiongradegroup['.$num.']')->getElements();
                 $groupelements[0]->setValue($gradeitemid);
-                // These numbers are always in the format 0.00000 - the rtrims remove any final zeros and,
-                // if it is a whole number, the decimal place.
-                $groupelements[2]->setValue(is_null($minmax->min)?'':rtrim(rtrim($minmax->min,'0'),'.'));
-                $groupelements[4]->setValue(is_null($minmax->max)?'':rtrim(rtrim($minmax->max,'0'),'.'));
+                $groupelements[2]->setValue(is_null($minmax->min) ? '' :
+                        format_float($minmax->min, 5, true, true));
+                $groupelements[4]->setValue(is_null($minmax->max) ? '' :
+                        format_float($minmax->max, 5, true, true));
                 $num++;
             }
 
@@ -321,16 +321,18 @@ abstract class moodleform_mod extends moodleform {
         // Conditions: Verify that the grade conditions are numbers, and make sense.
         if (array_key_exists('conditiongradegroup', $data)) {
             foreach ($data['conditiongradegroup'] as $i => $gradedata) {
-                if ($gradedata['conditiongrademin'] !== '' && !is_numeric($gradedata['conditiongrademin'])) {
+                if ($gradedata['conditiongrademin'] !== '' &&
+                        !is_numeric(unformat_float($gradedata['conditiongrademin']))) {
                     $errors["conditiongradegroup[{$i}]"] = get_string('gradesmustbenumeric', 'condition');
                     continue;
                 }
-                if ($gradedata['conditiongrademax'] !== '' && !is_numeric($gradedata['conditiongrademax'])) {
+                if ($gradedata['conditiongrademax'] !== '' &&
+                        !is_numeric(unformat_float($gradedata['conditiongrademax']))) {
                     $errors["conditiongradegroup[{$i}]"] = get_string('gradesmustbenumeric', 'condition');
                     continue;
                 }
                 if ($gradedata['conditiongrademin'] !== '' && $gradedata['conditiongrademax'] !== '' &&
-                        $gradedata['conditiongrademax'] < $gradedata['conditiongrademin']) {
+                        unformat_float($gradedata['conditiongrademax']) < unformat_float($gradedata['conditiongrademin'])) {
                     $errors["conditiongradegroup[{$i}]"] = get_string('badgradelimits', 'condition');
                     continue;
                 }

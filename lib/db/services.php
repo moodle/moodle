@@ -163,6 +163,62 @@ $functions = array(
         'capabilities'=> 'moodle/course:managegroups',
     ),
 
+    'core_group_create_groupings' => array(
+        'classname'   => 'core_group_external',
+        'methodname'  => 'create_groupings',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Creates new groupings',
+        'type'        => 'write',
+    ),
+
+    'core_group_update_groupings' => array(
+        'classname'   => 'core_group_external',
+        'methodname'  => 'update_groupings',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Updates existing groupings',
+        'type'        => 'write',
+    ),
+
+    'core_group_get_groupings' => array(
+        'classname'   => 'core_group_external',
+        'methodname'  => 'get_groupings',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Returns groupings details.',
+        'type'        => 'read',
+    ),
+
+    'core_group_get_course_groupings' => array(
+        'classname'   => 'core_group_external',
+        'methodname'  => 'get_course_groupings',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Returns all groupings in specified course.',
+        'type'        => 'read',
+    ),
+
+    'core_group_delete_groupings' => array(
+        'classname'   => 'core_group_external',
+        'methodname'  => 'delete_groupings',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Deletes all specified groupings.',
+        'type'        => 'write',
+    ),
+
+    'core_group_assign_grouping' => array(
+        'classname'   => 'core_group_external',
+        'methodname'  => 'assign_grouping',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Assing groups from groupings',
+        'type'        => 'write',
+    ),
+
+    'core_group_unassign_grouping' => array(
+        'classname'   => 'core_group_external',
+        'methodname'  => 'unassign_grouping',
+        'classpath'   => 'group/externallib.php',
+        'description' => 'Unassing groups from groupings',
+        'type'        => 'write',
+    ),
+
     // === file related functions ===
 
     'moodle_file_get_files' => array(
@@ -377,6 +433,15 @@ $functions = array(
 
     // === course related functions ===
 
+    'core_course_get_contents' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'get_course_contents',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Get course contents',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/course:update,moodle/course:viewhiddencourses',
+    ),
+
     'moodle_course_get_courses' => array(
         'classname'   => 'core_course_external',
         'methodname'  => 'get_courses',
@@ -413,15 +478,6 @@ $functions = array(
         'capabilities'=> 'moodle/course:create,moodle/course:visibility',
     ),
 
-    'core_course_get_contents' => array(
-        'classname'   => 'core_course_external',
-        'methodname'  => 'get_course_contents',
-        'classpath'   => 'course/externallib.php',
-        'description' => 'Get course contents',
-        'type'        => 'read',
-        'capabilities'=> 'moodle/course:update,moodle/course:viewhiddencourses',
-    ),
-
     'core_course_delete_courses' => array(
         'classname'   => 'core_course_external',
         'methodname'  => 'delete_courses',
@@ -429,6 +485,53 @@ $functions = array(
         'description' => 'Deletes all specified courses',
         'type'        => 'write',
         'capabilities'=> 'moodle/course:delete',
+    ),
+
+    'core_course_duplicate_course' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'duplicate_course',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Duplicate an existing course (creating a new one) without user data',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/backup:backupcourse,moodle/restore:restorecourse,moodle/course:create',
+    ),
+
+    // === course category related functions ===
+
+    'core_course_get_categories' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'get_categories',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Return category details',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/category:viewhiddencategories',
+    ),
+
+    'core_course_create_categories' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'create_categories',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Create course categories',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/category:manage',
+    ),
+
+    'core_course_update_categories' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'update_categories',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Update categories',
+        'type'        => 'write',
+        'capabilities'=> 'moodle:category/manage',
+    ),
+
+    'core_course_delete_categories' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'delete_categories',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Delete course categories',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/category:manage',
     ),
 
     // === message related functions ===

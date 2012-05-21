@@ -63,8 +63,8 @@ $definenew    = optional_param('definenew', null, PARAM_INT);
 
 // no guest autologin
 require_login(0, false);
-$url = new moodle_url('/mod/lti/typesettings.php');
-$PAGE->set_url($url);
+$pageurl = new moodle_url('/mod/lti/typessettings.php');
+$PAGE->set_url($pageurl);
 
 admin_externalpage_setup('managemodules'); // Hacky solution for printing the admin page
 
@@ -178,7 +178,7 @@ if (empty($SITE->fullname)) {
     echo $OUTPUT->heading(get_string('toolsetup', 'lti'));
     echo $OUTPUT->box_start('generalbox');
     if ($action == 'add') {
-        $form = new mod_lti_edit_types_form(null, (object)array('isadmin' => true));
+        $form = new mod_lti_edit_types_form($pageurl, (object)array('isadmin' => true));
         $form->display();
     } else if ($action == 'update') {
         $form = new mod_lti_edit_types_form('typessettings.php?id='.$id, (object)array('isadmin' => true));

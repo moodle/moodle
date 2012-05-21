@@ -3,12 +3,13 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     // The CSS selectors we use
     var CSS = {
         ACTIVITYLI : 'li.activity',
-        COMMANDSPAN : 'li.activity span.commands',
+        COMMANDSPAN : 'span.commands',
         SPINNERCOMMANDSPAN : 'span.commands',
         CONTENTAFTERLINK : 'div.contentafterlink',
         DELETE : 'a.editing_delete',
         DIMCLASS : 'dimmed',
         DIMMEDTEXT : 'dimmed_text',
+        EDITTITLE : 'a.editing_title',
         EDITTITLECLASS : 'edittitle',
         GENERICICONCLASS : 'iconsmall',
         GROUPSNONE : 'a.editing_groupsnone',
@@ -251,12 +252,15 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          */
         setup_for_resource : function(baseselector) {
             if (!baseselector) {
-                var baseselector = CSS.PAGECONTENT;
+                var baseselector = CSS.PAGECONTENT + ' ' + CSS.ACTIVITYLI;;
             }
 
             Y.all(baseselector).each(this._setup_for_resource, this);
         },
         _setup_for_resource : function(toolboxtarget) {
+            // Edit Title
+            this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.EDITTITLE, this.edit_resource_title);
+
             // Move left and right
             this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.MOVELEFT, this.move_left);
             this.replace_button(toolboxtarget, CSS.COMMANDSPAN + ' ' + CSS.MOVERIGHT, this.move_right);
@@ -482,6 +486,126 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             anchor.appendChild(newicon);
             anchor.on('click', this.move_left, this);
             moveright.insert(anchor, 'before');
+        },
+        /**
+         * Edit the title for the resource
+         */
+        edit_resource_title : function(e) {
+            // Get the element we're working on
+            var element = e.target.ancestor(CSS.ACTIVITYLI);
+            var instancename  = element.one(CSS.INSTANCENAME);
+            var currenttitle = instancename.get('firstChild');
+            var oldtitle = currenttitle.get('data');
+            var titletext = oldtitle;
+            var editbutton = element.one('a.' + CSS.EDITTITLECLASS + ' img');
+
+            // Handle events for edit_resource_title
+            var listenevents = [];
+            var thisevent;
+
+            // Grab the anchor so that we can swap it with the edit form
+            var anchor = instancename.ancestor('a');
+
+            var data = {
+                'class'   : 'resource',
+                'field'   : 'gettitle',
+                'id'      : this.get_element_id(element)
+            };
+
+            // Try to retrieve the existing string from the server
+            var response = this.send_request(data, editbutton);
+            if (response.instancename) {
+                titletext = response.instancename;
+            }
+
+            // Create the editor and submit button
+            var editor = Y.Node.create('<input />')
+                .setAttrs({
+                    'name'  : 'title',
+                    'value' : titletext,
+                    'autocomplete' : 'off'
+                })
+                .addClass('titleeditor');
+            var editform = Y.Node.create('<form />')
+                .setStyle('padding', '0')
+                .setStyle('display', 'inline')
+                .setAttribute('action', '#');
+
+            var editinstructions = Y.Node.create('<span />')
+                .addClass('editinstructions')
+                .set('innerHTML', M.util.get_string('edittitleinstructions', 'moodle'));
+
+            // Clear the existing content and put the editor in
+            currenttitle.set('data', '');
+            editform.appendChild(editor);
+            anchor.replace(editform);
+            element.appendChild(editinstructions);
+            e.preventDefault();
+
+            // Focus and select the editor text
+            editor.focus().select();
+
+            // Handle removal of the editor
+            var clear_edittitle = function() {
+                // Detach all listen events to prevent duplicate triggers
+                var thisevent;
+                while (thisevent = listenevents.shift()) {
+                    thisevent.detach();
+                }
+
+                if (editinstructions) {
+                    // Convert back to anchor and remove instructions
+                    editform.replace(anchor);
+                    editinstructions.remove();
+                    editinstructions = null;
+                }
+            }
+
+            // Handle cancellation of the editor
+            var cancel_edittitle = function(e) {
+                clear_edittitle();
+
+                // Set the title and anchor back to their previous settings
+                currenttitle.set('data', oldtitle);
+            };
+
+            // Cancel the edit if we lose focus or the escape key is pressed
+            thisevent = editor.on('blur', cancel_edittitle);
+            listenevents.push(thisevent);
+            thisevent = Y.one('document').on('keyup', function(e) {
+                if (e.keyCode == 27) {
+                    cancel_edittitle(e);
+                }
+            });
+            listenevents.push(thisevent);
+
+            // Handle form submission
+            thisevent = editform.on('submit', function(e) {
+                // We don't actually want to submit anything
+                e.preventDefault();
+
+                // Clear the edit title boxes
+                clear_edittitle();
+
+                // We only accept strings which have valid content
+                var newtitle = Y.Lang.trim(editor.get('value'));
+                if (newtitle != null && newtitle != "" && newtitle != titletext) {
+                    var data = {
+                        'class'   : 'resource',
+                        'field'   : 'updatetitle',
+                        'title'   : newtitle,
+                        'id'      : this.get_element_id(element)
+                    };
+                    var response = this.send_request(data, editbutton);
+                    if (response.instancename) {
+                        currenttitle.set('data', response.instancename);
+                    }
+                } else {
+                    // Invalid content. Set the title back to it's original contents
+                    currenttitle.set('data', oldtitle);
+                }
+            }, this);
+            listenevents.push(thisevent);
         }
     }, {
         NAME : 'course-resource-toolbox',

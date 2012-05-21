@@ -75,8 +75,18 @@ $string['methoddaemon'] = 'Chat server daemon';
 $string['methodnormal'] = 'Normal method';
 $string['methodajax'] = 'Ajax method';
 $string['modulename'] = 'Chat';
-$string['modulename_help'] = 'The chat module allows participants to have a real-time synchronous discussion via the web.  This is a useful way to get a different understanding of each other and the topic being discussed - the mode
-of using a chat room is quite different from the asynchronous forums.';
+$string['modulename_help'] = 'The chat activity module enables participants to have real-time synchronous discussions.
+
+The chat may be a one-off activity or it may be repeated at the same time each day or each week. Chat sessions are saved and can be made available for everyone to view or restricted to users with the capability to view chat session logs.
+
+Chats are especially useful when the group chatting is not able to meet face-to-face, such as
+
+* Regular meetings of students doing online courses to enable them to share experiences with others on the same course but in a different city (or country)
+* A student temporarily unable to attend in person chatting with their teacher to catch up with work
+* Students out on work experience getting together to discuss their experiences with each other and their teacher
+* Younger children using chat at home in the evenings as a controlled (monitored) introduction to the world of social networking
+* A question and answer session with an invited speaker in a different location';
+$string['modulename_link'] = 'mod/chat/view';
 $string['modulenameplural'] = 'Chats';
 $string['neverdeletemessages'] = 'Never delete messages';
 $string['nextsession'] = 'Next scheduled session';

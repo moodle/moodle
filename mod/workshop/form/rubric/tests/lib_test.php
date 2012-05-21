@@ -43,7 +43,7 @@ class workshopform_rubric_strategy_test extends advanced_testcase {
      * Setup testing environment
      */
     protected function setUp() {
-        parent::setUser();
+        parent::setUp();
         $cm             = new stdclass();
         $course         = new stdclass();
         $context        = new stdclass();

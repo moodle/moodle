@@ -289,7 +289,7 @@ abstract class assign_plugin {
 
         if ($current) {
             $current->value = $value;
-            return $DB->update_record('assign_plugin_config', $current, array('id'=>$current->id));
+            return $DB->update_record('assign_plugin_config', $current);
         } else {
             $setting = new stdClass();
             $setting->assignment = $this->assignment->get_instance()->id;

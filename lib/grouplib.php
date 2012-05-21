@@ -94,6 +94,25 @@ function groups_get_group_by_name($courseid, $name) {
 }
 
 /**
+ * Returns the groupid of a group with the idnumber specified for the course.
+ * Group idnumbers should be unique within course
+ *
+ * @category group
+ * @param int $courseid The id of the course
+ * @param string $idnumber idnumber of group
+ * @return group object
+ */
+function groups_get_group_by_idnumber($courseid, $idnumber) {
+    global $DB;
+    if (empty($idnumber)) {
+        return false;
+    } else if ($group = $DB->get_record('groups', array('courseid' => $courseid, 'idnumber' => $idnumber))) {
+        return $group;
+    }
+    return false;
+}
+
+/**
  * Returns the groupingid of a grouping with the name specified for the course.
  * Grouping names should be unique in course
  *
@@ -106,6 +125,25 @@ function groups_get_grouping_by_name($courseid, $name) {
     global $DB;
     if ($groupings = $DB->get_records('groupings', array('courseid'=>$courseid, 'name'=>$name))) {
         return key($groupings);
+    }
+    return false;
+}
+
+/**
+ * Returns the groupingid of a grouping with the idnumber specified for the course.
+ * Grouping names should be unique within course
+ *
+ * @category group
+ * @param int $courseid The id of the course
+ * @param string $idnumber idnumber of the group
+ * @return grouping object
+ */
+function groups_get_grouping_by_idnumber($courseid, $idnumber) {
+    global $DB;
+    if (empty($idnumber)) {
+        return false;
+    } else if ($grouping = $DB->get_record('groupings', array('courseid' => $courseid, 'idnumber' => $idnumber))) {
+        return $grouping;
     }
     return false;
 }
@@ -229,23 +267,32 @@ function groups_get_user_groups($courseid, $userid=0) {
 }
 
 /**
- * Gets an array of all groupings in a specified course.
+ * Gets an array of all groupings in a specified course. This value is cached
+ * for a single course (so you can call it repeatedly for the same course
+ * without a performance penalty).
  *
  * @category group
- * @param int $courseid return only groupings in this with this courseid
- * @return array|bool Returns an array of the grouping objects or false if no records
- * or an error occurred.
+ * @param int $courseid return all groupings from course with this courseid
+ * @return array Returns an array of the grouping objects (empty if none)
  */
 function groups_get_all_groupings($courseid) {
-    global $CFG, $DB;
+    global $CFG, $DB, $GROUPLIB_CACHE;
 
-    return $DB->get_records_sql("SELECT *
-                                   FROM {groupings}
-                                  WHERE courseid = ?
-                               ORDER BY name ASC", array($courseid));
+    // Use cached data if available. (Note: We only cache a single request, so
+    // as not to waste memory if processing is happening for multiple courses.)
+    if (!empty($GROUPLIB_CACHE->groupings) &&
+            $GROUPLIB_CACHE->groupings->courseid == $courseid) {
+        return $GROUPLIB_CACHE->groupings->result;
+    }
+    if (empty($GROUPLIB_CACHE)) {
+        $GROUPLIB_CACHE = new stdClass();
+    }
+    $GROUPLIB_CACHE->groupings = new stdClass();
+    $GROUPLIB_CACHE->groupings->courseid = $courseid;
+    $GROUPLIB_CACHE->groupings->result =
+            $DB->get_records('groupings', array('courseid' => $courseid), 'name ASC');
+    return $GROUPLIB_CACHE->groupings->result;
 }
-
-
 
 /**
  * Determines if the user is a member of the given group.

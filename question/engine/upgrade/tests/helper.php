@@ -137,10 +137,5 @@ abstract class question_attempt_upgrader_test_base extends advanced_testcase {
         $this->clear_html2text_dependencies($qa);
 
         $this->assertEquals($expectedqa, $qa);
-
-        // uncomment following to get better diff on failure
-        //foreach (get_object_vars($expectedqa) as $k=>$v) {
-        //    $this->assertEquals($v, $qa->$k, '', 0, 10, false);
-        //}
     }
 }

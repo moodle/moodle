@@ -608,7 +608,7 @@ abstract class question_bank_action_column_base extends question_bank_column_bas
 
     public function get_required_fields() {
         // createdby is required for permission checks.
-        return array('q.id, q.createdby');
+        return array('q.id', 'q.createdby');
     }
 }
 
@@ -1033,6 +1033,8 @@ class question_bank_view {
     }
 
     protected function default_sort() {
+        $this->requiredcolumns['qtype'] = $this->knowncolumntypes['qtype'];
+        $this->requiredcolumns['questionname'] = $this->knowncolumntypes['questionname'];
         return array('qtype' => 1, 'questionname' => 1);
     }
 

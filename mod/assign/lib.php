@@ -754,8 +754,8 @@ function assign_get_user_grades($assign, $userid=0) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
-    $context = context_module::instance($assign->cmidnumber);
-    $assignment = new assign($context, null, null);
+    $assignment = new assign(null, null, null);
+    $assignment->set_instance($assign);
     return $assignment->get_user_grades_for_gradebook($userid);
 }
 

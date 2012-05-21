@@ -11,8 +11,12 @@
 .course-content .section-summary { border: 1px solid #DDD; margin-top: 5px; list-style: none; }
 .course-content .section-summary .section-title  { margin: 2px 5px 2px 5px; }
 .course-content .section-summary .summarytext { margin: 2px 5px 2px 5px; }
-.course-content .section-navigation { display: block; padding: 10px; }
-.course-content .section-navigation .right { float: right; }
+.course-content .section-navigation { display: block; padding: 0.5em; margin-top: 1em; margin-bottom: -0.5em !important; }
+.course-content .section-navigation .mdl-left { float: left; font-weight: normal; margin-right: 1em; }
+.course-content .section-navigation .mdl-left .larrow { margin-right: 0.1em; }
+.course-content .section-navigation .mdl-right { float: right; font-weight: normal; margin-left: 1em; }
+.course-content .section-navigation .mdl-right .rarrow { margin-left: 0.1em; }
+.course-content .section-navigation .mdl-bottom { font-weight: normal; margin-top: 0; }
 
 #page-site-index .subscribelink {text-align:right;}
 #page-site-index .headingblock {margin-bottom: 9px;}
@@ -133,3 +137,27 @@
 
 table.category_subcategories {margin-bottom:1em;}
 table.category_subcategories td {white-space: nowrap;}
+
+span.editinstructions {
+    position: relative;
+    top: 5px;
+    left: 19px;
+    width: 329px;
+    padding: 3px;
+    background-color: #dddddd;
+    color: #000000;
+    text-decoration: none;
+    z-index: 100;
+    border: 1px solid black;
+}
+
+input.titleeditor {
+    width: 330px;
+}
+
+/* Course drag and drop upload styles */
+#dndupload-status {width:60%;margin:0 auto;padding:2px;border:1px solid #ddd;text-align:center;background:#ffc}
+.dndupload-preview {color:#909090;border:1px dashed #909090;}
+.dndupload-progress-outer {width:70px;border:solid black 1px;height:10px;display:inline-block;margin:0;padding:0;overflow:hidden;position:relative;}
+.dndupload-progress-inner {width:0%;height:100%;background-color:green;display:inline-block;margin:0;padding:0;float:left;}
+.dndupload-hidden {display:none;}

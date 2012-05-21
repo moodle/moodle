@@ -52,16 +52,21 @@ function iplookup_find_location($ip) {
             $info['title'][] = $info['city'];
         }
 
-        if (!empty($location->country_code)) {
+        if (!empty($location->countryCode)) {
             $countries = get_string_manager()->get_list_of_countries(true);
-            if (isset($countries[$location->country_code])) {
+            if (isset($countries[$location->countryCode])) {
                 // prefer our localized country names
-                $info['country'] = $countries[$location->country_code];
+                $info['country'] = $countries[$location->countryCode];
             } else {
-                $info['country'] = $location->country_name;
+                $info['country'] = $location->countryName;
             }
             $info['title'][] = $info['country'];
+
+        } else if (!empty($location->countryName)) {
+            $info['country'] = $location->countryName;
+            $info['title'][] = $info['country'];
         }
+
         $info['longitude'] = $location->longitude;
         $info['latitude']  = $location->latitude;
         $info['note'] = get_string('iplookupmaxmindnote', 'admin');
@@ -95,8 +100,8 @@ function iplookup_find_location($ip) {
 
         $info['note'] = get_string('iplookupgeoplugin', 'admin');
 
-        $info['title'][] = $info['country'];
         $info['title'][] = $info['city'];
+        $info['title'][] = $info['country'];
 
         return $info;
     }

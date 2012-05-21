@@ -42,9 +42,31 @@ class repository_upload extends repository {
      * @return array|bool
      */
     public function upload($saveas_filename, $maxbytes) {
-        global $USER, $CFG;
+        global $CFG;
 
         $types = optional_param_array('accepted_types', '*', PARAM_RAW);
+        $savepath = optional_param('savepath', '/', PARAM_PATH);
+        $itemid   = optional_param('itemid', 0, PARAM_INT);
+        $license  = optional_param('license', $CFG->sitedefaultlicense, PARAM_TEXT);
+        $author   = optional_param('author', '', PARAM_TEXT);
+
+        return $this->process_upload($saveas_filename, $maxbytes, $types, $savepath, $itemid, $license, $author);
+    }
+
+    /**
+     * Do the actual processing of the uploaded file
+     * @param string $saveas_filename name to give to the file
+     * @param int $maxbytes maximum file size
+     * @param mixed $types optional array of file extensions that are allowed or '*' for all
+     * @param string $savepath optional path to save the file to
+     * @param int $itemid optional the ID for this item within the file area
+     * @param string $license optional the license to use for this file
+     * @param string $author optional the name of the author of this file
+     * @return object containing details of the file uploaded
+     */
+    public function process_upload($saveas_filename, $maxbytes, $types = '*', $savepath = '/', $itemid = 0, $license = null, $author = '') {
+        global $USER, $CFG;
+
         if ((is_array($types) and in_array('*', $types)) or $types == '*') {
             $this->mimetypes = '*';
         } else {
@@ -53,13 +75,17 @@ class repository_upload extends repository {
             }
         }
 
+        if ($license == null) {
+            $license = $CFG->sitedefaultlicense;
+        }
+
         $record = new stdClass();
         $record->filearea = 'draft';
         $record->component = 'user';
-        $record->filepath = optional_param('savepath', '/', PARAM_PATH);
-        $record->itemid   = optional_param('itemid', 0, PARAM_INT);
-        $record->license  = optional_param('license', $CFG->sitedefaultlicense, PARAM_TEXT);
-        $record->author   = optional_param('author', '', PARAM_TEXT);
+        $record->filepath = $savepath;
+        $record->itemid   = $itemid;
+        $record->license  = $license;
+        $record->author   = $author;
 
         $context = get_context_instance(CONTEXT_USER, $USER->id);
         $elname = 'repo_upload_file';

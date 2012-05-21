@@ -53,6 +53,7 @@ $string['displayselect_help'] = 'This setting, together with the file type and w
 * New window - The file is displayed in a new browser window with menus and an address bar';
 $string['displayselect_link'] = 'mod/file/mod';
 $string['displayselectexplain'] = 'Choose display type, unfortunately not all types are suitable for all files.';
+$string['dnduploadresource'] = 'Create file resource';
 $string['encryptedcode'] = 'Encrypted code';
 $string['filenotfound'] = 'File not found, sorry.';
 $string['filterfiles'] = 'Use filters on file content';
@@ -64,6 +65,16 @@ $string['legacyfiles'] = 'Migration of old course file';
 $string['legacyfilesactive'] = 'Active';
 $string['legacyfilesdone'] = 'Finished';
 $string['modulename'] = 'File';
+$string['modulename_help'] = 'The file module enables a teacher to provide a file as a course resource. Where possible, the file will be displayed within the course interface; otherwise students will be prompted to download it. The file may include supporting files, for example an HTML page may have embedded images or Flash objects.
+
+Note that students need to have the appropriate software on their computers in order to open the file.
+
+A file may be used
+
+* To share presentations given in class
+* To include a mini website as a course resource
+* To provide draft files of certain software programs (eg Photoshop .psd) so students can edit and submit them for assessment';
+$string['modulename_link'] = 'mod/resource/view';
 $string['modulenameplural'] = 'Files';
 $string['neverseen'] = 'Never seen';
 $string['notmigrated'] = 'This legacy resource type ({$a}) was not yet migrated, sorry.';

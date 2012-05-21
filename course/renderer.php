@@ -154,4 +154,155 @@ class core_course_renderer extends plugin_renderer_base {
         $content .= html_writer::end_tag('div');
         return $content;
     }
+
+    /**
+     * Build the HTML for the module chooser javascript popup
+     *
+     * @param array $modules A set of modules as returned form @see
+     * get_module_metadata
+     * @param object $course The course that will be displayed
+     * @return string The composed HTML for the module
+     */
+    public function course_modchooser($modules, $course) {
+        global $OUTPUT;
+
+        // Add the header
+        $header = html_writer::tag('div', get_string('addresourceoractivity', 'moodle'),
+                array('id' => 'choosertitle', 'class' => 'hd'));
+
+        $formcontent = html_writer::start_tag('form', array('action' => new moodle_url('/course/jumpto.php'),
+                'id' => 'chooserform', 'method' => 'post'));
+        $formcontent .= html_writer::start_tag('div', array('id' => 'typeformdiv'));
+        $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'id' => 'course',
+                'name' => 'course', 'value' => $course->id));
+        $formcontent .= html_writer::tag('input', '',
+                array('type' => 'hidden', 'id' => 'jump', 'name' => 'jump', 'value' => ''));
+        $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'name' => 'sesskey',
+                'value' => sesskey()));
+        $formcontent .= html_writer::end_tag('div');
+
+        // Put everything into one tag 'options'
+        $formcontent .= html_writer::start_tag('div', array('class' => 'options'));
+        $formcontent .= html_writer::tag('div', get_string('selectmoduletoviewhelp', 'moodle'),
+                array('class' => 'instruction'));
+        // Put all options into one tag 'alloptions' to allow us to handle scrolling
+        $formcontent .= html_writer::start_tag('div', array('class' => 'alloptions'));
+
+        // First display Resources
+        $resources = array_filter($modules,
+                create_function('$mod', 'return ($mod->archetype === MOD_CLASS_RESOURCE);'));
+        if (count($resources)) {
+            $formcontent .= $this->course_modchooser_title('resources');
+            $formcontent .= $this->course_modchooser_module_types($resources);
+        }
+
+        // Then activities
+        $activities = array_filter($modules,
+                create_function('$mod', 'return ($mod->archetype !== MOD_CLASS_RESOURCE);'));
+        if (count($activities)) {
+            $formcontent .= $this->course_modchooser_title('activities');
+            $formcontent .= $this->course_modchooser_module_types($activities);
+        }
+
+        $formcontent .= html_writer::end_tag('div'); // modoptions
+        $formcontent .= html_writer::end_tag('div'); // types
+
+        $formcontent .= html_writer::start_tag('div', array('class' => 'submitbuttons'));
+        $formcontent .= html_writer::tag('input', '',
+                array('type' => 'submit', 'name' => 'addcancel', 'id' => 'addcancel', 'value' => get_string('cancel')));
+        $formcontent .= html_writer::tag('input', '',
+                array('type' => 'submit', 'name' => 'submitbutton', 'id' => 'submitbutton', 'value' => get_string('add')));
+        $formcontent .= html_writer::end_tag('div');
+        $formcontent .= html_writer::end_tag('form');
+
+        // Wrap the whole form in a div
+        $formcontent = html_writer::tag('div', $formcontent, array('id' => 'chooseform'));
+
+        // Put all of the content together
+        $content = $formcontent;
+
+        $content = html_writer::tag('div', $content, array('id' => 'choosercontainer'));
+        return $header . html_writer::tag('div', $content, array('id' => 'chooserdialogue'));
+    }
+
+    /**
+     * Build the HTML for a specified set of modules
+     *
+     * @param array $modules A set of modules as used by the
+     * course_modchooser_module function
+     * @return string The composed HTML for the module
+     */
+    protected function course_modchooser_module_types($modules) {
+        $return = '';
+        foreach ($modules as $module) {
+            if (!isset($module->types)) {
+                $return .= $this->course_modchooser_module($module);
+            } else {
+                $return .= $this->course_modchooser_module($module, array('nonoption'));
+                foreach ($module->types as $type) {
+                    $return .= $this->course_modchooser_module($type, array('option', 'subtype'));
+                }
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Return the HTML for the specified module adding any required classes
+     *
+     * @param object $module An object containing the title, and link. An
+     * icon, and help text may optionally be specified. If the module
+     * contains subtypes in the types option, then these will also be
+     * displayed.
+     * @param array $classes Additional classes to add to the encompassing
+     * div element
+     * @return string The composed HTML for the module
+     */
+    protected function course_modchooser_module($module, $classes = array('option')) {
+        $output = '';
+        $output .= html_writer::start_tag('div', array('class' => implode(' ', $classes)));
+        $output .= html_writer::start_tag('label', array('for' => 'module_' . $module->name));
+        if (!isset($module->types)) {
+            $output .= html_writer::tag('input', '', array('type' => 'radio',
+                    'name' => 'jumplink', 'id' => 'module_' . $module->name, 'value' => $module->link));
+        }
+
+        $output .= html_writer::start_tag('span', array('class' => 'modicon'));
+        if (isset($module->icon)) {
+            // Add an icon if we have one
+            $output .= $module->icon;
+        }
+        $output .= html_writer::end_tag('span');
+
+        $output .= html_writer::tag('span', $module->title, array('class' => 'typename'));
+        if (!isset($module->help)) {
+            // Add help if found
+            $module->help = get_string('nohelpforactivityorresource', 'moodle');
+        }
+
+        // Format the help text using markdown with the following options
+        $options = new stdClass();
+        $options->trusted = false;
+        $options->noclean = false;
+        $options->smiley = false;
+        $options->filter = false;
+        $options->para = true;
+        $options->newlines = false;
+        $options->overflowdiv = false;
+        $module->help = format_text($module->help, FORMAT_MARKDOWN, $options);
+        $output .= html_writer::tag('span', $module->help, array('class' => 'typesummary'));
+        $output .= html_writer::end_tag('label');
+        $output .= html_writer::end_tag('div');
+
+        return $output;
+    }
+
+    protected function course_modchooser_title($title, $identifier = null) {
+        $module = new stdClass();
+        $module->name = $title;
+        $module->types = array();
+        $module->title = get_string($title, $identifier);
+        $module->help = '';
+        return $this->course_modchooser_module($module, array('moduletypetitle'));
+    }
 }

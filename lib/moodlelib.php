@@ -4528,7 +4528,20 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
             // Ooops, this module is not properly installed, force-delete it in the next block
         }
     }
+
     // We have tried to delete everything the nice way - now let's force-delete any remaining module data
+
+    // Remove all data from availability and completion tables that is associated
+    // with course-modules belonging to this course. Note this is done even if the
+    // features are not enabled now, in case they were enabled previously.
+    $DB->delete_records_select('course_modules_completion',
+           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
+           array($courseid));
+    $DB->delete_records_select('course_modules_availability',
+           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
+           array($courseid));
+
+    // Remove course-module data.
     $cms = $DB->get_records('course_modules', array('course'=>$course->id));
     foreach ($cms as $cm) {
         if ($module = $DB->get_record('modules', array('id'=>$cm->module))) {
@@ -4541,15 +4554,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
         $DB->delete_records('course_modules', array('id'=>$cm->id));
     }
-    // Remove all data from availability and completion tables that is associated
-    // with course-modules belonging to this course. Note this is done even if the
-    // features are not enabled now, in case they were enabled previously
-    $DB->delete_records_select('course_modules_completion',
-           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
-           array($courseid));
-    $DB->delete_records_select('course_modules_availability',
-           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
-           array($courseid));
+
     if ($showfeedback) {
         echo $OUTPUT->notification($strdeleted.get_string('type_mod_plural', 'plugin'), 'notifysuccess');
     }
@@ -4641,7 +4646,10 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     }
     $DB->update_record('course', $oldcourse);
 
-    // Delete course sections.
+    // Delete course sections and availability options.
+    $DB->delete_records_select('course_sections_availability',
+           'coursesectionid IN (SELECT id from {course_sections} WHERE course=?)',
+           array($course->id));
     $DB->delete_records('course_sections', array('course'=>$course->id));
 
     // delete legacy, section and any other course files
@@ -9111,20 +9119,32 @@ function generate_password($maxlen=10) {
  * Given a float, prints it nicely.
  * Localized floats must not be used in calculations!
  *
+ * The stripzeros feature is intended for making numbers look nicer in small
+ * areas where it is not necessary to indicate the degree of accuracy by showing
+ * ending zeros. If you turn it on with $decimalpoints set to 3, for example,
+ * then it will display '5.4' instead of '5.400' or '5' instead of '5.000'.
+ *
  * @param float $float The float to print
  * @param int $decimalpoints The number of decimal places to print.
  * @param bool $localized use localized decimal separator
+ * @param bool $stripzeros If true, removes final zeros after decimal point
  * @return string locale float
  */
-function format_float($float, $decimalpoints=1, $localized=true) {
+function format_float($float, $decimalpoints=1, $localized=true, $stripzeros=false) {
     if (is_null($float)) {
         return '';
     }
     if ($localized) {
-        return number_format($float, $decimalpoints, get_string('decsep', 'langconfig'), '');
+        $separator = get_string('decsep', 'langconfig');
     } else {
-        return number_format($float, $decimalpoints, '.', '');
+        $separator = '.';
     }
+    $result = number_format($float, $decimalpoints, $separator, '');
+    if ($stripzeros) {
+        // Remove zeros and final dot if not needed
+        $result = preg_replace('~(' . preg_quote($separator) . ')?0+$~', '', $result);
+    }
+    return $result;
 }
 
 /**
@@ -10096,20 +10116,22 @@ function get_performance_info() {
              } else {
                  $othercount += 1;
              }
-             $details .= "<div class='yui-module'><p>$module</p>";
-             foreach ($backtraces as $backtrace) {
-                 $details .= "<div class='backtrace'>$backtrace</div>";
+             if (!empty($CFG->yuimoduledebug)) {
+                 // hidden feature for developers working on YUI module infrastructure
+                 $details .= "<div class='yui-module'><p>$module</p>";
+                 foreach ($backtraces as $backtrace) {
+                     $details .= "<div class='backtrace'>$backtrace</div>";
+                 }
+                 $details .= '</div>';
              }
-             $details .= '</div>';
          }
          $info['html'] .= "<span class='includedyuimodules'>Included YUI modules: $yuicount</span> ";
          $info['txt'] .= "includedyuimodules: $yuicount ";
          $info['html'] .= "<span class='includedjsmodules'>Other JavaScript modules: $othercount</span> ";
          $info['txt'] .= "includedjsmodules: $othercount ";
-         // Slightly odd to output the details in a display: none div. The point
-         // Is that it takes a lot of space, and if you care you can reveal it
-         // using firebug.
-         $info['html'] .= '<div id="yui-module-debug" class="notifytiny">'.$details.'</div>';
+         if ($details) {
+             $info['html'] .= '<div id="yui-module-debug" class="notifytiny">'.$details.'</div>';
+         }
      }
 
     if (!empty($PERF->logwrites)) {

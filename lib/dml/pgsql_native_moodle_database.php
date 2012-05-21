@@ -1118,7 +1118,11 @@ class pgsql_native_moodle_database extends moodle_database {
         if (strpos($param, '%') !== false) {
             debugging('Potential SQL injection detected, sql_like() expects bound parameters (? or :named)');
         }
-        $escapechar = pg_escape_string($this->pgsql, $escapechar); // prevents problems with C-style escapes of enclosing '\'
+        if ($escapechar === '\\') {
+            // Prevents problems with C-style escapes of enclosing '\',
+            // E'... bellow prevents compatibility warnings.
+            $escapechar = '\\\\';
+        }
 
         // postgresql does not support accent insensitive text comparisons, sorry
         if ($casesensitive) {
@@ -1126,7 +1130,7 @@ class pgsql_native_moodle_database extends moodle_database {
         } else {
             $LIKE = $notlike ? 'NOT ILIKE' : 'ILIKE';
         }
-        return "$fieldname $LIKE $param ESCAPE '$escapechar'";
+        return "$fieldname $LIKE $param ESCAPE E'$escapechar'";
     }
 
     public function sql_bitxor($int1, $int2) {

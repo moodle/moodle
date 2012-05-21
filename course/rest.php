@@ -43,6 +43,7 @@ $summary    = optional_param('summary', '', PARAM_RAW);
 $sequence   = optional_param('sequence', '', PARAM_SEQUENCE);
 $visible    = optional_param('visible', 0, PARAM_INT);
 $pageaction = optional_param('action', '', PARAM_ALPHA); // Used to simulate a DELETE command
+$title      = optional_param('title', '', PARAM_TEXT);
 
 $PAGE->set_url('/course/rest.php', array('courseId'=>$courseid,'class'=>$class));
 
@@ -56,8 +57,8 @@ if (in_array($class, array('resource'))) {
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 } else {
     require_login($course);
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 }
+$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 require_sesskey();
 
 echo $OUTPUT->header(); // send headers
@@ -127,6 +128,39 @@ switch($requestmethod) {
                         }
 
                         moveto_module($cm, $section, $beforemod);
+                        break;
+                    case 'gettitle':
+                        require_capability('moodle/course:manageactivities', $modcontext);
+                        $cm = get_coursemodule_from_id('', $id, 0, false, MUST_EXIST);
+                        $module = new stdClass();
+                        $module->id = $cm->instance;
+
+                        // Don't pass edit strings through multilang filters - we need the entire string
+                        echo json_encode(array('instancename' => $cm->name));
+                        break;
+                    case 'updatetitle':
+                        require_capability('moodle/course:manageactivities', $modcontext);
+                        $cm = get_coursemodule_from_id('', $id, 0, false, MUST_EXIST);
+                        $module = new stdClass();
+                        $module->id = $cm->instance;
+
+                        // Escape strings as they would be by mform
+                        if (!empty($CFG->formatstringstriptags)) {
+                            $module->name = clean_param($title, PARAM_TEXT);
+                        } else {
+                            $module->name = clean_param($title, PARAM_CLEANHTML);
+                        }
+
+                        if (!empty($module->name)) {
+                            $DB->update_record($cm->modname, $module);
+                        } else {
+                            $module->name = $cm->name;
+                        }
+
+                        // We need to return strings after they've been through filters for multilang
+                        $stringoptions = new stdClass;
+                        $stringoptions->context = $coursecontext;
+                        echo json_encode(array('instancename' => format_string($module->name, true,  $stringoptions)));
                         break;
                 }
                 rebuild_course_cache($course->id);

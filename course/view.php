@@ -5,6 +5,7 @@
     require_once('../config.php');
     require_once('lib.php');
     require_once($CFG->dirroot.'/mod/forum/lib.php');
+    require_once($CFG->libdir.'/conditionlib.php');
     require_once($CFG->libdir.'/completionlib.php');
 
     $id          = optional_param('id', 0, PARAM_INT);
@@ -17,6 +18,7 @@
     $move        = optional_param('move', 0, PARAM_INT);
     $marker      = optional_param('marker',-1 , PARAM_INT);
     $switchrole  = optional_param('switchrole',-1, PARAM_INT);
+    $modchooser  = optional_param('modchooser', -1, PARAM_BOOL);
 
     $params = array();
     if (!empty($name)) {
@@ -37,6 +39,9 @@
     }
 
     $PAGE->set_url('/course/view.php', $urlparams); // Defined here to avoid notices on errors etc
+
+    // Prevent caching of this page to stop confusion when changing page after making AJAX changes
+    $PAGE->set_cacheable(false);
 
     preload_course_contexts($course->id);
     $context = context_course::instance($course->id, MUST_EXIST);
@@ -125,6 +130,11 @@
                 redirect($PAGE->url);
             }
         }
+        if (($modchooser == 1) && confirm_sesskey()) {
+            set_user_preference('usemodchooser', $modchooser);
+        } else if (($modchooser == 0) && confirm_sesskey()) {
+            set_user_preference('usemodchooser', $modchooser);
+        }
 
         if (has_capability('moodle/course:update', $context)) {
             if ($hide && confirm_sesskey()) {
@@ -212,16 +222,16 @@
         }
     }
 
-    if (! $sections = get_all_sections($course->id)) {   // No sections found
-        // Double-check to be extra sure
-        if (! $section = $DB->get_record('course_sections', array('course'=>$course->id, 'section'=>0))) {
-            $section->course = $course->id;   // Create a default section.
-            $section->section = 0;
-            $section->visible = 1;
-            $section->summaryformat = FORMAT_HTML;
-            $section->id = $DB->insert_record('course_sections', $section);
-        }
-        if (! $sections = get_all_sections($course->id) ) {      // Try again
+    if (!$sections = $modinfo->get_section_info_all()) {   // No sections found
+        $section = new stdClass;
+        $section->course = $course->id;   // Create a default section.
+        $section->section = 0;
+        $section->visible = 1;
+        $section->summaryformat = FORMAT_HTML;
+        $section->id = $DB->insert_record('course_sections', $section);
+        rebuild_course_cache($course->id);
+        $modinfo = get_fast_modinfo($COURSE);
+        if (!$sections = $modinfo->get_section_info_all()) {      // Try again
             print_error('cannotcreateorfindstructs', 'error');
         }
     }
@@ -237,7 +247,11 @@
 
     echo html_writer::end_tag('div');
 
-    // Include the command toolbox YUI module
-    include_course_ajax($course, $modnamesused);
+    // Include course AJAX
+    if (include_course_ajax($course, $modnamesused)) {
+        // Add the module chooser
+        $renderer = $PAGE->get_renderer('core', 'course');
+        echo $renderer->course_modchooser(get_module_metadata($course, $modnames), $course);
+    }
 
     echo $OUTPUT->footer();

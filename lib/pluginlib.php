@@ -97,6 +97,7 @@ class plugin_manager {
      *      the values are the corresponding objects extending {@link plugininfo_base}
      */
     public function get_plugins($disablecache=false) {
+        global $CFG;
 
         if ($disablecache or is_null($this->pluginsinfo)) {
             $this->pluginsinfo = array();
@@ -118,8 +119,7 @@ class plugin_manager {
                 $this->pluginsinfo[$plugintype] = $plugins;
             }
 
-            // TODO: MDL-20438 verify this is the correct solution/replace
-            if (!during_initial_install()) {
+            if (empty($CFG->disableupdatenotifications) and !during_initial_install()) {
                 // append the information about available updates provided by {@link available_update_checker()}
                 $provider = available_update_checker::instance();
                 foreach ($this->pluginsinfo as $plugintype => $plugins) {

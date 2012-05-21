@@ -37,6 +37,10 @@ class grade_export_form extends moodleform {
         $mform->addElement('advcheckbox', 'export_feedback', get_string('exportfeedback', 'grades'));
         $mform->setDefault('export_feedback', 0);
 
+        $mform->addElement('advcheckbox', 'export_onlyactive', get_string('exportonlyactive', 'grades'));
+        $mform->setDefault('export_onlyactive', 0);
+        $mform->addHelpButton('export_onlyactive', 'exportonlyactive', 'grades');
+
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
         $mform->addElement('select', 'previewrows', get_string('previewrows', 'grades'), $options);
 

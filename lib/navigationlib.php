@@ -1577,21 +1577,29 @@ class global_navigation extends navigation_node {
                 // First up fetch all of the courses in categories where we know that we are going to
                 // need the majority of courses.
                 list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-                list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array($SITE->id), SQL_PARAMS_NAMED, 'lcourse', false);
                 list($categoryids, $categoryparams) = $DB->get_in_or_equal($fullfetch, SQL_PARAMS_NAMED, 'lcategory');
                 $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
                             FROM {course} c
                                 $ccjoin
-                            WHERE c.category {$categoryids} AND
-                                c.id {$courseids}
+                            WHERE c.category {$categoryids}
                         ORDER BY c.sortorder ASC";
-                $coursesrs = $DB->get_recordset_sql($sql, $courseparams + $categoryparams);
+                $coursesrs = $DB->get_recordset_sql($sql, $categoryparams);
                 foreach ($coursesrs as $course) {
+                    if ($course->id == $SITE->id) {
+                        // This should not be necessary, frontpage is not in any category.
+                        continue;
+                    }
+                    if (array_key_exists($course->id, $this->addedcourses)) {
+                        // It is probably better to not include the already loaded courses
+                        // directly in SQL because inequalities may confuse query optimisers
+                        // and may interfere with query caching.
+                        continue;
+                    }
                     if (!$this->can_add_more_courses_to_category($course->category)) {
                         continue;
                     }
                     context_instance_preload($course);
-                    if ($course->id != $SITE->id && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                    if (!$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
                         continue;
                     }
                     $coursenodes[$course->id] = $this->add_course($course);
@@ -1604,21 +1612,30 @@ class global_navigation extends navigation_node {
                 // proportion of the courses.
                 foreach ($partfetch as $categoryid) {
                     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-                    list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array($SITE->id), SQL_PARAMS_NAMED, 'lcourse', false);
                     $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
                                 FROM {course} c
                                     $ccjoin
-                                WHERE c.category = :categoryid AND
-                                    c.id {$courseids}
+                                WHERE c.category = :categoryid
                             ORDER BY c.sortorder ASC";
-                    $courseparams['categoryid'] = $categoryid;
+                    $courseparams = array('categoryid' => $categoryid);
                     $coursesrs = $DB->get_recordset_sql($sql, $courseparams, 0, $limit * 5);
                     foreach ($coursesrs as $course) {
+                        if ($course->id == $SITE->id) {
+                            // This should not be necessary, frontpage is not in any category.
+                            continue;
+                        }
+                        if (array_key_exists($course->id, $this->addedcourses)) {
+                            // It is probably better to not include the already loaded courses
+                            // directly in SQL because inequalities may confuse query optimisers
+                            // and may interfere with query caching.
+                            // This also helps to respect expected $limit on repeated executions.
+                            continue;
+                        }
                         if (!$this->can_add_more_courses_to_category($course->category)) {
                             break;
                         }
                         context_instance_preload($course);
-                        if ($course->id != $SITE->id && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                        if (!$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
                             continue;
                         }
                         $coursenodes[$course->id] = $this->add_course($course);
@@ -1637,8 +1654,12 @@ class global_navigation extends navigation_node {
                     ORDER BY c.sortorder ASC";
             $coursesrs = $DB->get_recordset_sql($sql, $courseparams);
             foreach ($coursesrs as $course) {
+                if ($course->id == $SITE->id) {
+                    // frotpage is not wanted here
+                    continue;
+                }
                 context_instance_preload($course);
-                if ($course->id != $SITE->id && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                if (!$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     continue;
                 }
                 $coursenodes[$course->id] = $this->add_course($course);
@@ -1898,8 +1919,7 @@ class global_navigation extends navigation_node {
         require_once($CFG->dirroot.'/course/lib.php');
 
         $modinfo = get_fast_modinfo($course);
-
-        $sections = array_slice(get_all_sections($course->id), 0, $course->numsections+1, true);
+        $sections = array_slice($modinfo->get_section_info_all(), 0, $course->numsections+1, true);
         $activities = array();
 
         foreach ($sections as $key => $section) {
@@ -1961,8 +1981,6 @@ class global_navigation extends navigation_node {
         $namingfunction = 'callback_'.$courseformat.'_get_section_name';
         $namingfunctionexists = (function_exists($namingfunction));
 
-        $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
-
         $urlfunction = 'callback_'.$courseformat.'_get_section_url';
         if (function_exists($urlfunction)) {
             // This code path is deprecated but we decided not to warn developers as
@@ -1982,10 +2000,11 @@ class global_navigation extends navigation_node {
             if ($course->id == $SITE->id) {
                 $this->load_section_activities($coursenode, $section->section, $activities);
             } else {
-                if ((!$viewhiddensections && !$section->visible) || (!$this->showemptysections &&
+                if (!$section->uservisible || (!$this->showemptysections &&
                         !$section->hasactivites && $this->includesectionnum !== $section->section)) {
                     continue;
                 }
+
                 if ($namingfunctionexists) {
                     $sectionname = $namingfunction($course, $section, $sections);
                 } else {
@@ -2003,7 +2022,7 @@ class global_navigation extends navigation_node {
                 }
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
-                $sectionnode->hidden = (!$section->visible);
+                $sectionnode->hidden = (!$section->visible || !$section->available);
                 if ($key != '0' && $section->section != '0' && $section->section == $key && $this->page->context->contextlevel != CONTEXT_MODULE && $section->hasactivites) {
                     $sectionnode->make_active();
                     $this->load_section_activities($sectionnode, $section->section, $activities);
@@ -3527,20 +3546,38 @@ class settings_navigation extends navigation_node {
 
             if ($this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
                 // We are on the course page, retain the current page params e.g. section.
-                $url = clone($this->page->url);
-                $url->param('sesskey', sesskey());
+                $baseurl = clone($this->page->url);
+                $baseurl->param('sesskey', sesskey());
             } else {
                 // Edit on the main course page.
-                $url = new moodle_url('/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));
+                $baseurl = new moodle_url('/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));
             }
+
+            $editurl = clone($baseurl);
             if ($this->page->user_is_editing()) {
-                $url->param('edit', 'off');
+                $editurl->param('edit', 'off');
                 $editstring = get_string('turneditingoff');
             } else {
-                $url->param('edit', 'on');
+                $editurl->param('edit', 'on');
                 $editstring = get_string('turneditingon');
             }
-            $coursenode->add($editstring, $url, self::TYPE_SETTING, null, null, new pix_icon('i/edit', ''));
+            $coursenode->add($editstring, $editurl, self::TYPE_SETTING, null, null, new pix_icon('i/edit', ''));
+
+            // Add the module chooser toggle
+            $modchoosertoggleurl = clone($baseurl);
+            if ($this->page->user_is_editing() && course_ajax_enabled($course)) {
+                if ($usemodchooser = get_user_preferences('usemodchooser', 1)) {
+                    $modchoosertogglestring = get_string('modchooserdisable', 'moodle');
+                    $modchoosertoggleurl->param('modchooser', 'off');
+                } else {
+                    $modchoosertogglestring = get_string('modchooserenable', 'moodle');
+                    $modchoosertoggleurl->param('modchooser', 'on');
+                }
+                $modchoosertoggle = $coursenode->add($modchoosertogglestring, $modchoosertoggleurl, self::TYPE_SETTING);
+                $modchoosertoggle->add_class('modchoosertoggle');
+                $modchoosertoggle->add_class('visibleifjs');
+                user_preference_allow_ajax_update('usemodchooser', PARAM_BOOL);
+            }
 
             if ($this->page->user_is_editing()) {
                 // Removed as per MDL-22732
@@ -3709,7 +3746,8 @@ class settings_navigation extends navigation_node {
             $formatidentifier = optional_param($requestkey, 0, PARAM_INT);
         }
 
-        $sections = get_all_sections($course->id);
+        $modinfo = get_fast_modinfo($course);
+        $sections = $modinfo->get_section_info_all();
 
         $addresource = $this->add(get_string('addresource'));
         $addactivity = $this->add(get_string('addactivity'));

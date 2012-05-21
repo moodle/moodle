@@ -30,6 +30,7 @@ $string['configframesize'] = 'When a web page or an uploaded file is displayed w
 $string['configrolesinparams'] = 'Enable if you want to include localized role names in list of available parameter variables.';
 $string['configsecretphrase'] = 'This secret phrase is used to produce encrypted code value that can be sent to some servers as a parameter.  The encrypted code is produced by an md5 value of the current user IP address concatenated with your secret phrase. ie code = md5(IP.secretphrase). Please note that this is not reliable because IP address may change and is often shared by different computers.';
 $string['contentheader'] = 'Content';
+$string['createurl'] = 'Create a URL';
 $string['displayoptions'] = 'Available display options';
 $string['displayselect'] = 'Display';
 $string['displayselect_help'] = 'This setting, together with the URL file type and whether the browser allows embedding, determines how the URL is displayed. Options may include:
@@ -48,6 +49,10 @@ $string['invalidstoredurl'] = 'Cannot display this resource, URL is invalid.';
 $string['chooseavariable'] = 'Choose a variable...';
 $string['invalidurl'] = 'Entered URL is invalid';
 $string['modulename'] = 'URL';
+$string['modulename_help'] = 'The URL module enables a teacher to provide a web link as a course resource. Anything that is freely available online, such as documents or images, can be linked to; the URL doesn’t have to be the home page of a website. The URL of a particular web page may be copied and pasted or a teacher can use the file picker and choose a link from a repository such as Flickr, YouTube or Wikimedia (depending upon which repositories are enabled for the site).
+
+There are a number of display options for the URL, such as embedded or opening in a new window and advanced options for passing information, such as a student\'s name, to the URL if required.';
+$string['modulename_link'] = 'mod/url/view';
 $string['modulenameplural'] = 'URLs';
 $string['neverseen'] = 'Never seen';
 $string['optionsheader'] = 'Options';

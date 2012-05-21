@@ -35,6 +35,9 @@ class moodle1_converter_testcase extends advanced_testcase {
     /** @var string the name of the directory containing the unpacked Moodle 1.9 backup */
     protected $tempdir;
 
+    /** @var string saved hash of an icon file used during testing */
+    protected $iconhash;
+
     protected function setUp() {
         global $CFG;
 
@@ -61,6 +64,7 @@ class moodle1_converter_testcase extends advanced_testcase {
             "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/icon.gif",
             "$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/icon.gif"
         );
+        $this->iconhash = sha1_file($CFG->tempdir.'/backup/'.$this->tempdir.'/moddata/unittest/4/icon.gif');
         copy(
             "$CFG->dirroot/backup/converter/moodle1/tests/fixtures/icon.gif",
             "$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/7/icon.gif"
@@ -272,7 +276,8 @@ class moodle1_converter_testcase extends advanced_testcase {
         // migrate a single file
         $fileman->itemid = 4;
         $fileman->migrate_file('moddata/unittest/4/icon.gif');
-        $this->assertTrue(is_file($converter->get_workdir_path().'/files/4e/4ea114b0558f53e3af8dd9afc0e0810a95c2a724'));
+        $subdir = substr($this->iconhash, 0, 2);
+        $this->assertTrue(is_file($converter->get_workdir_path().'/files/'.$subdir.'/'.$this->iconhash));
         // get the file id
         $fileids = $fileman->get_fileids();
         $this->assertEquals(gettype($fileids), 'array');
@@ -285,7 +290,7 @@ class moodle1_converter_testcase extends advanced_testcase {
         $filerecordids = $converter->get_stash_itemids('files');
         foreach ($filerecordids as $filerecordid) {
             $filerecord = $converter->get_stash('files', $filerecordid);
-            $this->assertEquals('4ea114b0558f53e3af8dd9afc0e0810a95c2a724', $filerecord['contenthash']);
+            $this->assertEquals($this->iconhash, $filerecord['contenthash']);
             $this->assertEquals($contextid, $filerecord['contextid']);
             $this->assertEquals('mod_unittest', $filerecord['component']);
             if ($filerecord['filearea'] === 'testarea') {

@@ -41,6 +41,9 @@
     $PAGE->set_url('/', $urlparams);
     $PAGE->set_course($SITE);
 
+    // Prevent caching of this page to stop confusion when changing page after making AJAX changes
+    $PAGE->set_cacheable(false);
+
     if ($CFG->forcelogin) {
         require_login();
     } else {
@@ -74,7 +77,7 @@
     }
 
 /// If the hub plugin is installed then we let it take over the homepage here
-    if (get_config('local_hub', 'hubenabled') && file_exists($CFG->dirroot.'/local/hub/lib.php')) {
+    if (file_exists($CFG->dirroot.'/local/hub/lib.php') and get_config('local_hub', 'hubenabled')) {
         require_once($CFG->dirroot.'/local/hub/lib.php');
         $hub = new local_hub();
         $continue = $hub->display_homepage();
@@ -111,6 +114,7 @@
             $section->sequence = '';
             $section->visible = 1;
             $section->id = $DB->insert_record('course_sections', $section);
+            rebuild_course_cache($SITE->id, true);
         }
 
         if (!empty($section->sequence) or !empty($section->summary) or $editing) {
@@ -147,8 +151,12 @@
             echo $OUTPUT->box_end();
         }
     }
-    include_course_ajax($SITE, $modnamesused);
-
+    // Include course AJAX
+    if (include_course_ajax($SITE, $modnamesused)) {
+        // Add the module chooser
+        $renderer = $PAGE->get_renderer('core', 'course');
+        echo $renderer->course_modchooser(get_module_metadata($SITE, $modnames), $SITE);
+    }
 
     if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {
         $frontpagelayout = $CFG->frontpageloggedin;

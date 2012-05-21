@@ -1818,4 +1818,45 @@ class moodlelib_testcase extends advanced_testcase {
         // used as a key
         $array = array(get_string('yes', null, null, true) => 'yes');
     }
+
+    /**
+     * Test localised float formatting.
+     */
+    public function test_format_float() {
+        global $SESSION, $CFG;
+
+        // Special case for null
+        $this->assertEquals('', format_float(null));
+
+        // Default 1 decimal place
+        $this->assertEquals('5.4', format_float(5.43));
+        $this->assertEquals('5.0', format_float(5.001));
+
+        // Custom number of decimal places
+        $this->assertEquals('5.43000', format_float(5.43, 5));
+
+        // Option to strip ending zeros after rounding
+        $this->assertEquals('5.43', format_float(5.43, 5, true, true));
+        $this->assertEquals('5', format_float(5.0001, 3, true, true));
+
+        // It is not possible to directly change the result of get_string in
+        // a unit test. Instead, we create a language pack for language 'xx' in
+        // dataroot and make langconfig.php with the string we need to change.
+        // The example separator used here is 'X'; on PHP 5.3 and before this
+        // must be a single byte character due to PHP bug/limitation in
+        // number_format, so you can't use UTF-8 characters.
+        $SESSION->lang = 'xx';
+        $langconfig = "<?php\n\$string['decsep'] = 'X';";
+        $langfolder = $CFG->dataroot . '/lang/xx';
+        check_dir_exists($langfolder);
+        file_put_contents($langfolder . '/langconfig.php', $langconfig);
+
+        // Localisation on (default)
+        $this->assertEquals('5X43000', format_float(5.43, 5));
+        $this->assertEquals('5X43', format_float(5.43, 5, true, true));
+
+        // Localisation off
+        $this->assertEquals('5.43000', format_float(5.43, 5, false));
+        $this->assertEquals('5.43', format_float(5.43, 5, false, true));
+    }
 }

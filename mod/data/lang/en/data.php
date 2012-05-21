@@ -32,6 +32,7 @@ $string['advancedsearch'] = 'Advanced search';
 $string['alttext'] = 'Alternative text';
 $string['approve'] = 'Approve';
 $string['approved'] = 'Approved';
+$string['areacontent'] = 'Fields';
 $string['ascending'] = 'Ascending';
 $string['asearchtemplate'] = 'Advanced search template';
 $string['atmaxentry'] = 'You have entered the maximum number of entries allowed!';
@@ -207,7 +208,19 @@ $string['menuchoose'] = 'Choose...';
 $string['missingdata'] = 'Data id or object must be provided to field class';
 $string['missingfield'] = 'Programmer error: You must specify field and/or data when defining field class.';
 $string['modulename'] = 'Database';
-$string['modulename_help'] = 'The database activity module enables participants to create, maintain and search a bank of record entries. The format and structure of these entries can be almost unlimited, including images, files, URLs, numbers and text amongst other things.';
+$string['modulename_help'] = 'The database activity module enables participants to create, maintain and search a collection of entries (i.e. records).  The structure of the entries is defined by the teacher as a number of fields. Field types include checkbox, radio buttons, dropdown menu, text area, URL, picture and uploaded file.
+
+The visual layout of information when listing, viewing or editing database entries may be controlled by database templates. Database activities may be shared between courses as presets and a teacher may also import and export database entries.
+
+If the database auto-linking filter is enabled, any entries in a database will be automatically linked to where the words or phrases appear within the course.
+
+A teacher can allow comments on entries. Entries can also be rated by teachers or students (peer evaluation). Ratings are aggregated to form a final grade which is recorded in the gradebook.
+
+Database activities have many uses, such as
+
+* A collaborative collection of web links/books/journal references
+* For displaying student-created photos/posters/websites/poems for peer comment and review';
+$string['modulename_link'] = 'mod/data/view';
 $string['modulenameplural'] = 'Databases';
 $string['more'] = 'More';
 $string['moreurl'] = 'More URL';

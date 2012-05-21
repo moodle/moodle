@@ -51,7 +51,7 @@ class moodle_page_test extends advanced_testcase {
     protected $testpage;
 
     public function setUp() {
-        parent::setUser();
+        parent::setUp();
         $this->resetAfterTest();
         $this->testpage = new testable_moodle_page();
     }
@@ -561,7 +561,8 @@ class moodle_page_editing_test extends advanced_testcase {
     protected $originaluserediting;
 
     protected function setUp() {
-        $this->setUser(2); // admin
+        parent::setUp();
+        $this->setAdminUser();
         $this->testpage = new testable_moodle_page();
         $this->testpage->set_context(get_context_instance(CONTEXT_SYSTEM));
         $this->resetAfterTest();

@@ -38,7 +38,7 @@ $CFG = new stdClass();
 // will be stored.  This database must already have been created         //
 // and a username/password created to access it.                         //
 
-$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mysqli', 'mssql' or 'oci'
+$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mysqli', 'mssql', 'sqlsrv' or 'oci'
 $CFG->dblibrary = 'native';     // 'native' only at the moment
 $CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
 $CFG->dbname    = 'moodle';     // database name, eg moodle
@@ -430,6 +430,11 @@ $CFG->admin = 'admin';
 // so that anyone wanting to can still clearly read it.
 //
 //      $CFG->cssoptimiserpretty = true;
+//
+// Use the following flag to completely disable the Available update notifications
+// feature and hide it from the server administration UI.
+//
+//      $CFG->disableupdatenotifications = true;
 //
 //=========================================================================
 // 8. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!

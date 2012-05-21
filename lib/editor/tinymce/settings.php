@@ -33,8 +33,11 @@ if ($ADMIN->fulltree) {
         'PSpellShell'=>'PSpellShell');
     $settings->add(new admin_setting_configselect('editor_tinymce/spellengine',
             get_string('spellengine', 'admin'), '', 'GoogleSpell', $options));
-    $settings->add(new admin_setting_configtext('editor_tinymce/spelllanguagelist',
+    $settings->add(new admin_setting_configtextarea('editor_tinymce/spelllanguagelist',
             get_string('spelllanguagelist', 'admin'), '',
             '+English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr,German=de,Italian=it,Polish=pl,' .
             'Portuguese=pt,Spanish=es,Swedish=sv', PARAM_RAW));
+    $settings->add(new admin_setting_configtextarea('editor_tinymce/fontselectlist',
+        get_string('fontselectlist', 'editor_tinymce'), '',
+        'Trebuchet=Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,times new roman,times,serif;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times,serif;Verdana=verdana,arial,helvetica,sans-serif;Impact=impact;Wingdings=wingdings', PARAM_RAW));
 }

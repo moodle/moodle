@@ -2659,7 +2659,7 @@ function data_export_csv($export, $delimiter_name, $dataname, $count, $return=fa
     $filename .= '.csv';
     if (empty($return)) {
         header("Content-Type: application/download\n");
-        header("Content-Disposition: attachment; filename=$filename");
+        header("Content-Disposition: attachment; filename=\"$filename\"");
         header('Expires: 0');
         header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
         header('Pragma: public');
@@ -2800,6 +2800,10 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0)
     return $exportdata;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// File API                                                                   //
+////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Lists all browsable file areas
  *
@@ -2811,8 +2815,7 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0)
  * @return array
  */
 function data_get_file_areas($course, $cm, $context) {
-    $areas = array();
-    return $areas;
+    return array('content' => get_string('areacontent', 'mod_data'));
 }
 
 /**
@@ -2836,55 +2839,65 @@ function mod_data_get_file_info($browser, $areas, $course, $cm, $context, $filea
         return null;
     }
 
-    if ($filearea === 'content') {
-        if (!$content = $DB->get_record('data_content', array('id'=>$itemid))) {
-            return null;
-        }
-
-        if (!$field = $DB->get_record('data_fields', array('id'=>$content->fieldid))) {
-            return null;
-        }
-
-        if (!$record = $DB->get_record('data_records', array('id'=>$content->recordid))) {
-            return null;
-        }
-
-        if (!$data = $DB->get_record('data', array('id'=>$field->dataid))) {
-            return null;
-        }
-
-        //check if approved
-        if ($data->approval and !$record->approved and !data_isowner($record) and !has_capability('mod/data:approve', $context)) {
-            return null;
-        }
-
-        // group access
-        if ($record->groupid) {
-            $groupmode = groups_get_activity_groupmode($cm, $course);
-            if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
-                if (!groups_is_member($record->groupid)) {
-                    return null;
-                }
-            }
-        }
-
-        $fieldobj = data_get_field($field, $data, $cm);
-
-        $filepath = is_null($filepath) ? '/' : $filepath;
-        $filename = is_null($filename) ? '.' : $filename;
-        if (!$fieldobj->file_ok($filepath.$filename)) {
-            return null;
-        }
-
-        $fs = get_file_storage();
-        if (!($storedfile = $fs->get_file($context->id, 'mod_data', $filearea, $itemid, $filepath, $filename))) {
-            return null;
-        }
-        $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        return new file_info_stored($browser, $context, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
+    if (!isset($areas[$filearea])) {
+        return null;
     }
 
-    return null;
+    if (!has_capability('moodle/course:managefiles', $context)) {
+        return null;
+    }
+
+    if (is_null($itemid)) {
+        require_once($CFG->dirroot.'/mod/data/locallib.php');
+        return new data_file_info_container($browser, $course, $cm, $context, $areas, $filearea);
+    }
+
+    if (!$content = $DB->get_record('data_content', array('id'=>$itemid))) {
+        return null;
+    }
+
+    if (!$field = $DB->get_record('data_fields', array('id'=>$content->fieldid))) {
+        return null;
+    }
+
+    if (!$record = $DB->get_record('data_records', array('id'=>$content->recordid))) {
+        return null;
+    }
+
+    if (!$data = $DB->get_record('data', array('id'=>$field->dataid))) {
+        return null;
+    }
+
+    //check if approved
+    if ($data->approval and !$record->approved and !data_isowner($record) and !has_capability('mod/data:approve', $context)) {
+        return null;
+    }
+
+    // group access
+    if ($record->groupid) {
+        $groupmode = groups_get_activity_groupmode($cm, $course);
+        if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+            if (!groups_is_member($record->groupid)) {
+                return null;
+            }
+        }
+    }
+
+    $fieldobj = data_get_field($field, $data, $cm);
+
+    $filepath = is_null($filepath) ? '/' : $filepath;
+    $filename = is_null($filename) ? '.' : $filename;
+    if (!$fieldobj->file_ok($filepath.$filename)) {
+        return null;
+    }
+
+    $fs = get_file_storage();
+    if (!($storedfile = $fs->get_file($context->id, 'mod_data', $filearea, $itemid, $filepath, $filename))) {
+        return null;
+    }
+    $urlbase = $CFG->wwwroot.'/pluginfile.php';
+
+    return new file_info_stored($browser, $context, $storedfile, $urlbase, $itemid, true, true, false, false);
 }
 
 /**
@@ -3424,7 +3437,7 @@ function data_get_all_recordids($dataid) {
  * runs out of records or returns a subset of records.
  *
  * @param array $recordids    An array of record ids.
- * @param array $searcharray   Contains information for the advanced search criteria
+ * @param array $searcharray  Contains information for the advanced search criteria
  * @param int $dataid         The data id of the database.
  * @return array $recordids   An array of record ids.
  */
@@ -3444,8 +3457,8 @@ function data_get_advance_search_ids($recordids, $searcharray, $dataid) {
 /**
  * Gets the record IDs given the search criteria
  *
- * @param string $alias       record alias.
- * @param array $searcharray  criteria for the search.
+ * @param string $alias       Record alias.
+ * @param array $searcharray  Criteria for the search.
  * @param int $dataid         Data ID for the database
  * @param array $recordids    An array of record IDs.
  * @return array $nestarray   An arry of record IDs
@@ -3494,11 +3507,11 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
  * Returns an array with an sql string for advanced searches and the parameters that go with them.
  *
  * @param int $sort            DATA_*
- * @param stdClass $data       data module object
+ * @param stdClass $data       Data module object
  * @param array $recordids     An array of record IDs.
- * @param string $selectdata   information for the select part of the sql statement.
+ * @param string $selectdata   Information for the select part of the sql statement.
  * @param string $sortorder    Additional sort parameters
- * @return array sqlselect     sqlselect['sql] has the sql string, sqlselect['params'] contains an array of parameters.
+ * @return array sqlselect     sqlselect['sql'] has the sql string, sqlselect['params'] contains an array of parameters.
  */
 function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $sortorder) {
     global $DB;
@@ -3509,11 +3522,33 @@ function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $so
                              {user} u ';
         $groupsql = ' GROUP BY r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname ';
     } else {
-        $sortfield = data_get_field_from_id($sort, $data);
-        $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
-        $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
+        // Sorting through 'Other' criteria
+        if ($sort <= 0) {
+            switch ($sort) {
+                case DATA_LASTNAME:
+                    $sortcontentfull = "u.lastname";
+                    break;
+                case DATA_FIRSTNAME:
+                    $sortcontentfull = "u.firstname";
+                    break;
+                case DATA_APPROVED:
+                    $sortcontentfull = "r.approved";
+                    break;
+                case DATA_TIMEMODIFIED:
+                    $sortcontentfull = "r.timemodified";
+                    break;
+                case DATA_TIMEADDED:
+                default:
+                    $sortcontentfull = "r.timecreated";
+            }
+        } else {
+            $sortfield = data_get_field_from_id($sort, $data);
+            $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
+            $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
+        }
+
         $nestselectsql = 'SELECT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' . $sortcontentfull . '
-                              AS _order
+                              AS sortorder
                             FROM {data_content} c,
                                  {data_records} r,
                                  {user} u ';

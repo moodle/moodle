@@ -79,14 +79,15 @@ class restore_final_task extends restore_task {
             $this->add_step(new restore_course_logs_structure_step('course_logs', 'course/logs.xml'));
         }
 
-        // Rebuild course cache to see results, whoah!
-        $this->add_step(new restore_rebuild_course_cache('rebuild_course_cache'));
-
         // Review all the executed tasks having one after_restore method
         // executing it to perform some final adjustments of information
         // not available when the task was executed.
-        // This step is always the last one before the one cleaning the temp stuff!
+        // This step is always the last one performing modifications on restored information
+        // Don't add any new step after it. Only cache rebuild and clean are allowed.
         $this->add_step(new restore_execute_after_restore('executing_after_restore'));
+
+        // Rebuild course cache to see results, whoah!
+        $this->add_step(new restore_rebuild_course_cache('rebuild_course_cache'));
 
         // Clean the temp dir (conditionally) and drop temp table
         $this->add_step(new restore_drop_and_clean_temp_stuff('drop_and_clean_temp_stuff'));

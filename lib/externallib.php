@@ -582,3 +582,21 @@ function external_delete_descriptions($component) {
     $DB->delete_records('external_services', array('component'=>$component));
     $DB->delete_records('external_functions', array('component'=>$component));
 }
+
+/**
+ * Creates a warnings external_multiple_structure
+ *
+ * @return external_multiple_structure
+ * @since  Moodle 2.3
+ */
+function external_warnings() {
+    return new external_multiple_structure(
+        new external_single_structure(array(
+            'item' => new external_value(PARAM_TEXT, 'item', VALUE_OPTIONAL),
+            'itemid' => new external_value(PARAM_INT, 'item id', VALUE_OPTIONAL),
+            'warningcode' => new external_value(PARAM_ALPHANUM, 'the warning code can be used by
+                the client app to implement specific behaviour'),
+            'message' => new external_value(PARAM_TEXT, 'untranslated english message to explain the warning')
+                ), 'warning'), 'list of warnings', VALUE_OPTIONAL
+    );
+}

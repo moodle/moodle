@@ -391,8 +391,7 @@ class grade_report_grader extends grade_report {
         list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
 
         //fields we need from the user table
-        $userfields = user_picture::fields('u');
-        $userfields .= get_extra_user_fields_sql($this->context);
+        $userfields = user_picture::fields('u', get_extra_user_fields($this->context));
 
         $sortjoin = $sort = $params = null;
 

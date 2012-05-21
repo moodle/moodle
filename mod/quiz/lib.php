@@ -483,7 +483,12 @@ function quiz_cron() {
  *      array if there are none.
  */
 function quiz_get_user_attempts($quizid, $userid, $status = 'finished', $includepreviews = false) {
-    global $DB;
+    global $DB, $CFG;
+    // TODO MDL-33071 it is very annoying to have to included all of locallib.php
+    // just to get the quiz_attempt::FINISHED constants, but I will try to sort
+    // that out properly for Moodle 2.4. For now, I will just do a quick fix for
+    // MDL-33048.
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
     $params = array();
     switch ($status) {
@@ -743,23 +748,6 @@ function quiz_grade_item_delete($quiz) {
 
     return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0,
             null, array('deleted' => 1));
-}
-
-/**
- * Returns an array of users who have data in a given quiz
- *
- * @todo: deprecated - to be deleted in 2.2
- *
- * @param int $quizid the quiz id.
- * @return array of userids.
- */
-function quiz_get_participants($quizid) {
-    global $CFG, $DB;
-
-    return $DB->get_records_sql('
-            SELECT DISTINCT userid, userid
-            JOIN {quiz_attempts} qa
-            WHERE a.quiz = ?', array($quizid));
 }
 
 /**
