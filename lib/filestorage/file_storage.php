@@ -1803,7 +1803,7 @@ class file_storage {
     public static function mimetype($pathname) {
         if (file_exists($pathname)) {
             $finfo = new finfo(FILEINFO_MIME_TYPE);
-            return $finfo->file($pathname);
+            return mimeinfo_from_type('type', $finfo->file($pathname));
         } else {
             return mimeinfo('type', $pathname);
         }

@@ -1414,24 +1414,24 @@ function &get_mimetypes_array() {
         'jcw'  => array ('type'=>'text/xml', 'icon'=>'text'),
         'jmt'  => array ('type'=>'text/xml', 'icon'=>'text'),
         'jmx'  => array ('type'=>'text/xml', 'icon'=>'text'),
-        'jpe'  => array ('type'=>'image/jpeg', 'icon'=>'image', 'groups'=>array('image', 'web_image'), 'string'=>'jpeg'),
-        'jpeg' => array ('type'=>'image/jpeg', 'icon'=>'image', 'groups'=>array('image', 'web_image'), 'string'=>'jpeg'),
-        'jpg'  => array ('type'=>'image/jpeg', 'icon'=>'image', 'groups'=>array('image', 'web_image'), 'string'=>'jpeg'),
-        'jqz'  => array ('type'=>'text/xml', 'icon'=>'text'),
+        'jpe'  => array ('type'=>'image/jpeg', 'icon'=>'jpeg', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
+        'jpeg' => array ('type'=>'image/jpeg', 'icon'=>'jpeg', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
+        'jpg'  => array ('type'=>'image/jpeg', 'icon'=>'jpeg', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
+        'jqz'  => array ('type'=>'text/xml', 'icon'=>'xml'),
         'js'   => array ('type'=>'application/x-javascript', 'icon'=>'text', 'groups'=>array('web_file')),
         'latex'=> array ('type'=>'application/x-latex', 'icon'=>'text'),
         'm'    => array ('type'=>'text/plain', 'icon'=>'text'),
         'mbz'  => array ('type'=>'application/vnd.moodle.backup', 'icon'=>'moodle'),
-        'mov'  => array ('type'=>'video/quicktime', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'mov'),
-        'movie'=> array ('type'=>'video/x-sgi-movie', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'mov'),
-        'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'mp3'),
-        'mp3'  => array ('type'=>'audio/mp3', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'mp3'),
-        'mp4'  => array ('type'=>'video/mp4', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'mpeg'),
-        'm4v'  => array ('type'=>'video/mp4', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'mpeg'),
-        'm4a'  => array ('type'=>'audio/mp4', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'mp3'),
-        'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'mpeg'),
-        'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'mpeg'),
-        'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'mpeg'),
+        'mov'  => array ('type'=>'video/quicktime', 'icon'=>'mov', 'groups'=>array('video'), 'string'=>'video'),
+        'movie'=> array ('type'=>'video/x-sgi-movie', 'icon'=>'mov', 'groups'=>array('video'), 'string'=>'video'),
+        'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'mp3', 'groups'=>array('audio'), 'string'=>'audio'),
+        'mp3'  => array ('type'=>'audio/mp3', 'icon'=>'mp3', 'groups'=>array('audio'), 'string'=>'audio'),
+        'mp4'  => array ('type'=>'video/mp4', 'icon'=>'mpeg', 'groups'=>array('video'), 'string'=>'video'),
+        'm4v'  => array ('type'=>'video/mp4', 'icon'=>'mpeg', 'groups'=>array('video'), 'string'=>'video'),
+        'm4a'  => array ('type'=>'audio/mp4', 'icon'=>'mp3', 'groups'=>array('audio'), 'string'=>'audio'),
+        'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video'), 'string'=>'video'),
+        'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video'), 'string'=>'video'),
+        'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video'), 'string'=>'video'),
 
         'odt'  => array ('type'=>'application/vnd.oasis.opendocument.text', 'icon'=>'odt', 'groups'=>array('odt')),
         'ott'  => array ('type'=>'application/vnd.oasis.opendocument.text-template', 'icon'=>'odt', 'groups'=>array('odt')),
@@ -1603,15 +1603,14 @@ function mimeinfo_from_type($element, $mimetype) {
                 }
             }
         }
-    }
-    if ($cached[$mimetype] !== null && $cached[$mimetype] !== 'xxx') {
-        if ($element = 'extension') {
-            return $cached[$mimetype];
-        } else {
-            return mimeinfo($element, '.'.$cached[$mimetype]);
+        if (empty($cached[$mimetype])) {
+            $cached[$mimetype] = 'xxx';
         }
+    }
+    if ($element === 'extension') {
+        return $cached[$mimetype];
     } else {
-        return mimeinfo($element, '');
+        return mimeinfo($element, '.'.$cached[$mimetype]);
     }
 }
 
