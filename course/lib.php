@@ -3778,7 +3778,7 @@ function create_course($data, $editoroptions = NULL) {
     fix_course_sortorder();
 
     // update module restrictions
-    if ($course->restrictmodules) {
+    if ($course->restrictmodules || $CFG->restrictbydefault ) {
         if (isset($data->allowedmods)) {
             update_restricted_mods($course, $data->allowedmods);
         } else {
