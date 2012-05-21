@@ -56,25 +56,31 @@ class core_files_renderer extends plugin_renderer_base {
 
         $html .= $this->output->box_start();
         $table = new html_table();
-        $table->head = array(get_string('filename', 'backup'), get_string('size'), get_string('modified'));
-        $table->align = array('left', 'right', 'right');
+        $table->head = array(get_string('name'), get_string('lastmodified'), get_string('size', 'repository'), get_string('type', 'repository'));
+        $table->align = array('left', 'left', 'left', 'left');
         $table->width = '100%';
         $table->data = array();
 
         foreach ($tree->tree as $file) {
-            if (!empty($file['isdir'])) {
-                $table->data[] = array(
-                    html_writer::link($file['url'], $this->output->pix_icon('f/folder', 'icon') . ' ' . $file['filename']),
-                    '',
-                    $file['filedate'],
-                    );
-            } else {
-                $table->data[] = array(
-                    html_writer::link($file['url'], $this->output->pix_icon('f/'.mimeinfo('icon', $file['filename']), get_string('icon')) . ' ' . $file['filename']),
-                    $file['filesize'],
-                    $file['filedate'],
-                    );
+            $filedate = $filesize = $filetype = '';
+            if ($file['filedate']) {
+                $filedate = userdate($file['filedate'], get_string('strftimedatetimeshort', 'langconfig'));
             }
+            if (empty($file['isdir'])) {
+                if ($file['filesize']) {
+                    $filesize = display_size($file['filesize']);
+                }
+                $fileicon = file_file_icon($file, 24);
+                $filetype = get_mimetype_description($file);
+            } else {
+                $fileicon = file_folder_icon(24);
+            }
+            $table->data[] = array(
+                html_writer::link($file['url'], $this->output->pix_icon($fileicon, get_string('icon')) . ' ' . $file['filename']),
+                $filedate,
+                $filesize,
+                $filetype
+                );
         }
 
         $html .= html_writer::table($table);
@@ -952,8 +958,9 @@ class files_tree_viewer implements renderable {
             $fileitem = array(
                     'params'   => $params,
                     'filename' => $child->get_visible_name(),
-                    'filedate' => $filedate ? userdate($filedate) : '',
-                    'filesize' => $filesize ? display_size($filesize) : ''
+                    'mimetype' => $child->get_mimetype(),
+                    'filedate' => $filedate ? $filedate : '',
+                    'filesize' => $filesize ? $filesize : ''
                     );
             $url = new moodle_url('/files/index.php', $params);
             if ($child->is_directory()) {

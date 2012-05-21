@@ -25,7 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->libdir/filestorage/stored_file.php");
 require_once("$CFG->dirroot/repository/lib.php");
 
 /**
@@ -444,7 +443,7 @@ class stored_file {
      */
     public function is_valid_image() {
         $mimetype = $this->get_mimetype();
-        if ($mimetype !== 'image/gif' and $mimetype !== 'image/jpeg' and $mimetype !== 'image/png') {
+        if (!file_mimetype_in_typegroup($mimetype, 'web_image')) {
             return false;
         }
         if (!$info = $this->get_imageinfo()) {

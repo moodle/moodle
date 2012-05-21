@@ -1518,13 +1518,6 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             //Accessibility: for files get description via icon, this is very ugly hack!
             $altname = '';
             $altname = $mod->modfullname;
-            if (!empty($customicon)) {
-                $archetype = plugin_supports('mod', $mod->modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
-                if ($archetype == MOD_ARCHETYPE_RESOURCE) {
-                    $mimetype = mimeinfo_from_icon('type', $customicon);
-                    $altname = get_mimetype_description($mimetype);
-                }
-            }
             // Avoid unnecessary duplication: if e.g. a forum name already
             // includes the word forum (or Forum, etc) then it is unhelpful
             // to include that in the accessible description that is added.

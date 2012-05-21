@@ -181,7 +181,7 @@ switch ($action) {
                 $mimetypes[] = mimeinfo('type', $type);
             }
             if (!in_array(mimeinfo('type', $saveas_filename), $mimetypes)) {
-                throw new moodle_exception('invalidfiletype', 'repository', '', get_string(mimeinfo('type', $saveas_filename), 'mimetypes'));
+                throw new moodle_exception('invalidfiletype', 'repository', '', get_mimetype_description(array('filename' => $saveas_filename)));
             }
         }
 
@@ -266,7 +266,6 @@ switch ($action) {
             $record->timecreated  = $now;
             $record->timemodified = $now;
             $record->userid       = $USER->id;
-            $record->mimetype     = mimeinfo('type', $record->filename);
 
 
             if ($usefilereference == 'yes') {
@@ -304,7 +303,7 @@ switch ($action) {
                     'url'=>moodle_url::make_draftfile_url($storedfile->get_itemid(), $storedfile->get_filepath(), $storedfile->get_filename())->out(),
                     'id'=>$storedfile->get_itemid(),
                     'file'=>$storedfile->get_filename(),
-                    'icon' => $OUTPUT->pix_url(file_extension_icon($storedfile->get_filename(), 32))->out(),
+                    'icon' => $OUTPUT->pix_url(file_file_icon($storedfile, 32))->out(),
                 );
                 echo json_encode($info);
                 die;

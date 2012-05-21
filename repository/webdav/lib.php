@@ -127,7 +127,7 @@ class repository_webdav extends repository {
                 if ($path != $v['href']) {
                     $folders[] = array(
                         'title'=>$title,
-                        'thumbnail'=>$OUTPUT->pix_url('f/folder-32')->out(false),
+                        'thumbnail'=>$OUTPUT->pix_url(file_folder_icon(90))->out(false),
                         'children'=>array(),
                         'datemodified'=>$v['lastmodified'],
                         'path'=>$v['href']
@@ -138,7 +138,7 @@ class repository_webdav extends repository {
                 $size = !empty($v['getcontentlength'])? $v['getcontentlength']:'';
                 $files[] = array(
                     'title'=>$title,
-                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($title, 32))->out(false),
+                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($title, 90))->out(false),
                     'size'=>$size,
                     'datemodified'=>$v['lastmodified'],
                     'source'=>$v['href']

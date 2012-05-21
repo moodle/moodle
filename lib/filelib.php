@@ -590,8 +590,6 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
             $item->size = $filesize ? $filesize : null;
             $item->filesize = $filesize ? display_size($filesize) : '';
 
-            $icon = mimeinfo_from_type('icon', $file->get_mimetype());
-            $item->icon = $OUTPUT->pix_url('f/' . $icon)->out();
             $item->sortorder = $file->get_sortorder();
             $item->author = $file->get_author();
             $item->license = $file->get_license();
@@ -605,25 +603,25 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
                 $item->refcount = $fs->search_references_count($source->original);
             }
 
-            // TODO MDL-32900 this is not the correct way to check that it is archive, use filetype_parser instead
-            if ($icon == 'zip') {
-                $item->type = 'zip';
-            } else {
-                $item->type = 'file';
-            }
-
             if ($file->is_directory()) {
                 $item->filesize = 0;
-                $item->icon = $OUTPUT->pix_url('f/folder')->out();
+                $item->icon = $OUTPUT->pix_url(file_folder_icon(24))->out(false);
                 $item->type = 'folder';
                 $foldername = explode('/', trim($item->filepath, '/'));
                 $item->fullname = trim(array_pop($foldername), '/');
-                $item->thumbnail = $OUTPUT->pix_url('f/folder-32')->out(false);
+                $item->thumbnail = $OUTPUT->pix_url(file_folder_icon(90))->out(false);
             } else {
                 // do NOT use file browser here!
+                $item->mimetype = get_mimetype_description($file);
+                if (file_mimetype_in_typegroup($item->mimetype, 'archive')) {
+                    $item->type = 'zip';
+                } else {
+                    $item->type = 'file';
+                }
                 $itemurl = moodle_url::make_draftfile_url($draftitemid, $item->filepath, $item->filename);
                 $item->url = $itemurl->out();
-                $item->thumbnail = $OUTPUT->pix_url(file_extension_icon($item->filename, 32))->out(false);
+                $item->icon = $OUTPUT->pix_url(file_file_icon($file, 24))->out(false);
+                $item->thumbnail = $OUTPUT->pix_url(file_file_icon($file, 90))->out(false);
                 if ($imageinfo = $file->get_imageinfo()) {
                     $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb', 'oid' => $file->get_timemodified()));
                     $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
@@ -1323,7 +1321,32 @@ function download_file_content_write_handler($received, $ch, $data) {
 }
 
 /**
- * Returns a list of information about file t ypes based on extensions
+ * Returns a list of information about file types based on extensions.
+ *
+ * The following elements expected in value array for each extension:
+ * 'type' - mimetype
+ * 'icon' - location of the icon file. If value is FILENAME, then either pix/f/FILENAME.gif
+ *     or pix/f/FILENAME.png must be present in moodle and contain 16x16 filetype icon;
+ *     also files with bigger sizes under names
+ *     FILENAME-24, FILENAME-32, FILENAME-64, FILENAME-128, FILENAME-256 are recommended.
+ * 'groups' (optional) - array of filetype groups this filetype extension is part of;
+ *     commonly used in moodle the following groups:
+ *       - web_image - image that can be included as <img> in HTML
+ *       - image - image that we can parse using GD to find it's dimensions, also used for portfolio format
+ *       - video - file that can be imported as video in text editor
+ *       - audio - file that can be imported as audio in text editor
+ *       - archive - we can extract files from this archive
+ *       - spreadsheet - used for portfolio format
+ *       - document - used for portfolio format
+ *       - presentation - used for portfolio format
+ * 'string' (optional) - the name of the string from lang/en/mimetypes.php that displays
+ *     human-readable description for this filetype;
+ *     Function {@link get_mimetype_description()} first looks at the presence of string for
+ *     particular mimetype (value of 'type'), if not found looks for string specified in 'string'
+ *     attribute, if not found returns the value of 'type';
+ * 'defaulticon' (boolean, optional) - used by function {@link file_mimetype_icon()} to find
+ *     an icon for mimetype. If an entry with 'defaulticon' is not found for a particular mimetype,
+ *     this function will return first found icon; Especially usefull for types such as 'text/plain'
  *
  * @category files
  * @return array List of information about file types based on extensions.
@@ -1331,57 +1354,57 @@ function download_file_content_write_handler($received, $ch, $data) {
  *   from 'element name' to data. Current element names are 'type' and 'icon'.
  *   Unknown types should use the 'xxx' entry which includes defaults.
  */
-function get_mimetypes_array() {
+function &get_mimetypes_array() {
     static $mimearray = array (
         'xxx'  => array ('type'=>'document/unknown', 'icon'=>'unknown'),
-        '3gp'  => array ('type'=>'video/quicktime', 'icon'=>'video'),
-        'aac'  => array ('type'=>'audio/aac', 'icon'=>'audio'),
-        'ai'   => array ('type'=>'application/postscript', 'icon'=>'image'),
-        'aif'  => array ('type'=>'audio/x-aiff', 'icon'=>'audio'),
-        'aiff' => array ('type'=>'audio/x-aiff', 'icon'=>'audio'),
-        'aifc' => array ('type'=>'audio/x-aiff', 'icon'=>'audio'),
+        '3gp'  => array ('type'=>'video/quicktime', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'aac'  => array ('type'=>'audio/aac', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'ai'   => array ('type'=>'application/postscript', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
+        'aif'  => array ('type'=>'audio/x-aiff', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'aiff' => array ('type'=>'audio/x-aiff', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'aifc' => array ('type'=>'audio/x-aiff', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
         'applescript'  => array ('type'=>'text/plain', 'icon'=>'text'),
         'asc'  => array ('type'=>'text/plain', 'icon'=>'text'),
         'asm'  => array ('type'=>'text/plain', 'icon'=>'text'),
-        'au'   => array ('type'=>'audio/au', 'icon'=>'audio'),
-        'avi'  => array ('type'=>'video/x-ms-wm', 'icon'=>'avi'),
-        'bmp'  => array ('type'=>'image/bmp', 'icon'=>'image'),
+        'au'   => array ('type'=>'audio/au', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'avi'  => array ('type'=>'video/x-ms-wm', 'icon'=>'avi', 'groups'=>array('video'), 'string'=>'video'),
+        'bmp'  => array ('type'=>'image/bmp', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
         'c'    => array ('type'=>'text/plain', 'icon'=>'text'),
         'cct'  => array ('type'=>'shockwave/director', 'icon'=>'flash'),
         'cpp'  => array ('type'=>'text/plain', 'icon'=>'text'),
         'cs'   => array ('type'=>'application/x-csh', 'icon'=>'text'),
-        'css'  => array ('type'=>'text/css', 'icon'=>'text'),
-        'csv'  => array ('type'=>'text/csv', 'icon'=>'excel'),
-        'dv'   => array ('type'=>'video/x-dv', 'icon'=>'video'),
+        'css'  => array ('type'=>'text/css', 'icon'=>'text', 'groups'=>array('web_file')),
+        'csv'  => array ('type'=>'text/csv', 'icon'=>'excel', 'groups'=>array('spreadsheet')),
+        'dv'   => array ('type'=>'video/x-dv', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
         'dmg'  => array ('type'=>'application/octet-stream', 'icon'=>'dmg'),
 
-        'doc'  => array ('type'=>'application/msword', 'icon'=>'word'),
-        'docx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'icon'=>'docx'),
+        'doc'  => array ('type'=>'application/msword', 'icon'=>'word', 'groups'=>array('document')),
+        'docx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'icon'=>'docx', 'groups'=>array('document')),
         'docm' => array ('type'=>'application/vnd.ms-word.document.macroEnabled.12', 'icon'=>'docm'),
         'dotx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.template', 'icon'=>'dotx'),
         'dotm' => array ('type'=>'application/vnd.ms-word.template.macroEnabled.12', 'icon'=>'dotm'),
 
         'dcr'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
-        'dif'  => array ('type'=>'video/x-dv', 'icon'=>'video'),
+        'dif'  => array ('type'=>'video/x-dv', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
         'dir'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
         'dxr'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
         'eps'  => array ('type'=>'application/postscript', 'icon'=>'pdf'),
         'fdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
-        'flv'  => array ('type'=>'video/x-flv', 'icon'=>'video'),
-        'f4v'  => array ('type'=>'video/mp4', 'icon'=>'video'),
-        'gif'  => array ('type'=>'image/gif', 'icon'=>'image'),
-        'gtar' => array ('type'=>'application/x-gtar', 'icon'=>'zip'),
-        'tgz'  => array ('type'=>'application/g-zip', 'icon'=>'zip'),
-        'gz'   => array ('type'=>'application/g-zip', 'icon'=>'zip'),
-        'gzip' => array ('type'=>'application/g-zip', 'icon'=>'zip'),
+        'flv'  => array ('type'=>'video/x-flv', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'f4v'  => array ('type'=>'video/mp4', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'gif'  => array ('type'=>'image/gif', 'icon'=>'image', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
+        'gtar' => array ('type'=>'application/x-gtar', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
+        'tgz'  => array ('type'=>'application/g-zip', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
+        'gz'   => array ('type'=>'application/g-zip', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
+        'gzip' => array ('type'=>'application/g-zip', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
         'h'    => array ('type'=>'text/plain', 'icon'=>'text'),
         'hpp'  => array ('type'=>'text/plain', 'icon'=>'text'),
-        'hqx'  => array ('type'=>'application/mac-binhex40', 'icon'=>'zip'),
+        'hqx'  => array ('type'=>'application/mac-binhex40', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
         'htc'  => array ('type'=>'text/x-component', 'icon'=>'text'),
-        'html' => array ('type'=>'text/html', 'icon'=>'html'),
+        'html' => array ('type'=>'text/html', 'icon'=>'html', 'groups'=>array('web_file')),
         'xhtml'=> array ('type'=>'application/xhtml+xml', 'icon'=>'html'),
-        'htm'  => array ('type'=>'text/html', 'icon'=>'html'),
-        'ico'  => array ('type'=>'image/vnd.microsoft.icon', 'icon'=>'image'),
+        'htm'  => array ('type'=>'text/html', 'icon'=>'html', 'groups'=>array('web_file')),
+        'ico'  => array ('type'=>'image/vnd.microsoft.icon', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
         'ics'  => array ('type'=>'text/calendar', 'icon'=>'text'),
         'isf'  => array ('type'=>'application/inspiration', 'icon'=>'isf'),
         'ist'  => array ('type'=>'application/inspiration.template', 'icon'=>'isf'),
@@ -1391,52 +1414,52 @@ function get_mimetypes_array() {
         'jcw'  => array ('type'=>'text/xml', 'icon'=>'jcw'),
         'jmt'  => array ('type'=>'text/xml', 'icon'=>'jmt'),
         'jmx'  => array ('type'=>'text/xml', 'icon'=>'jmx'),
-        'jpe'  => array ('type'=>'image/jpeg', 'icon'=>'image'),
-        'jpeg' => array ('type'=>'image/jpeg', 'icon'=>'image'),
-        'jpg'  => array ('type'=>'image/jpeg', 'icon'=>'image'),
+        'jpe'  => array ('type'=>'image/jpeg', 'icon'=>'image', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
+        'jpeg' => array ('type'=>'image/jpeg', 'icon'=>'image', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
+        'jpg'  => array ('type'=>'image/jpeg', 'icon'=>'image', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
         'jqz'  => array ('type'=>'text/xml', 'icon'=>'jqz'),
-        'js'   => array ('type'=>'application/x-javascript', 'icon'=>'text'),
+        'js'   => array ('type'=>'application/x-javascript', 'icon'=>'text', 'groups'=>array('web_file')),
         'latex'=> array ('type'=>'application/x-latex', 'icon'=>'text'),
         'm'    => array ('type'=>'text/plain', 'icon'=>'text'),
         'mbz'  => array ('type'=>'application/vnd.moodle.backup', 'icon'=>'moodle'),
-        'mov'  => array ('type'=>'video/quicktime', 'icon'=>'video'),
-        'movie'=> array ('type'=>'video/x-sgi-movie', 'icon'=>'video'),
-        'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'audio'),
-        'mp3'  => array ('type'=>'audio/mp3', 'icon'=>'audio'),
-        'mp4'  => array ('type'=>'video/mp4', 'icon'=>'video'),
-        'm4v'  => array ('type'=>'video/mp4', 'icon'=>'video'),
-        'm4a'  => array ('type'=>'audio/mp4', 'icon'=>'audio'),
-        'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'video'),
-        'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'video'),
-        'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'video'),
+        'mov'  => array ('type'=>'video/quicktime', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'movie'=> array ('type'=>'video/x-sgi-movie', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'mp3'  => array ('type'=>'audio/mp3', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'mp4'  => array ('type'=>'video/mp4', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'm4v'  => array ('type'=>'video/mp4', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'm4a'  => array ('type'=>'audio/mp4', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
 
-        'odt'  => array ('type'=>'application/vnd.oasis.opendocument.text', 'icon'=>'odt'),
-        'ott'  => array ('type'=>'application/vnd.oasis.opendocument.text-template', 'icon'=>'odt'),
-        'oth'  => array ('type'=>'application/vnd.oasis.opendocument.text-web', 'icon'=>'odt'),
+        'odt'  => array ('type'=>'application/vnd.oasis.opendocument.text', 'icon'=>'odt', 'groups'=>array('document')),
+        'ott'  => array ('type'=>'application/vnd.oasis.opendocument.text-template', 'icon'=>'odt', 'groups'=>array('document')),
+        'oth'  => array ('type'=>'application/vnd.oasis.opendocument.text-web', 'icon'=>'odt', 'groups'=>array('document')),
         'odm'  => array ('type'=>'application/vnd.oasis.opendocument.text-master', 'icon'=>'odm'),
         'odg'  => array ('type'=>'application/vnd.oasis.opendocument.graphics', 'icon'=>'odg'),
         'otg'  => array ('type'=>'application/vnd.oasis.opendocument.graphics-template', 'icon'=>'odg'),
         'odp'  => array ('type'=>'application/vnd.oasis.opendocument.presentation', 'icon'=>'odp'),
         'otp'  => array ('type'=>'application/vnd.oasis.opendocument.presentation-template', 'icon'=>'odp'),
-        'ods'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet', 'icon'=>'ods'),
-        'ots'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet-template', 'icon'=>'ods'),
+        'ods'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet', 'icon'=>'ods', 'groups'=>array('spreadsheet')),
+        'ots'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet-template', 'icon'=>'ods', 'groups'=>array('spreadsheet')),
         'odc'  => array ('type'=>'application/vnd.oasis.opendocument.chart', 'icon'=>'odc'),
         'odf'  => array ('type'=>'application/vnd.oasis.opendocument.formula', 'icon'=>'odf'),
         'odb'  => array ('type'=>'application/vnd.oasis.opendocument.database', 'icon'=>'odb'),
         'odi'  => array ('type'=>'application/vnd.oasis.opendocument.image', 'icon'=>'odi'),
-        'oga'  => array ('type'=>'audio/ogg', 'icon'=>'audio'),
-        'ogg'  => array ('type'=>'audio/ogg', 'icon'=>'audio'),
-        'ogv'  => array ('type'=>'video/ogg', 'icon'=>'video'),
+        'oga'  => array ('type'=>'audio/ogg', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'ogg'  => array ('type'=>'audio/ogg', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'ogv'  => array ('type'=>'video/ogg', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
 
-        'pct'  => array ('type'=>'image/pict', 'icon'=>'image'),
+        'pct'  => array ('type'=>'image/pict', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
         'pdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
         'php'  => array ('type'=>'text/plain', 'icon'=>'text'),
-        'pic'  => array ('type'=>'image/pict', 'icon'=>'image'),
-        'pict' => array ('type'=>'image/pict', 'icon'=>'image'),
-        'png'  => array ('type'=>'image/png', 'icon'=>'image'),
+        'pic'  => array ('type'=>'image/pict', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
+        'pict' => array ('type'=>'image/pict', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
+        'png'  => array ('type'=>'image/png', 'icon'=>'image', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
 
-        'pps'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'powerpoint'),
-        'ppt'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'powerpoint'),
+        'pps'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'powerpoint', 'groups'=>array('presentation')),
+        'ppt'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'powerpoint', 'groups'=>array('presentation')),
         'pptx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'icon'=>'pptx'),
         'pptm' => array ('type'=>'application/vnd.ms-powerpoint.presentation.macroEnabled.12', 'icon'=>'pptm'),
         'potx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.template', 'icon'=>'potx'),
@@ -1446,22 +1469,22 @@ function get_mimetypes_array() {
         'ppsm' => array ('type'=>'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', 'icon'=>'ppsm'),
 
         'ps'   => array ('type'=>'application/postscript', 'icon'=>'pdf'),
-        'qt'   => array ('type'=>'video/quicktime', 'icon'=>'video'),
-        'ra'   => array ('type'=>'audio/x-realaudio-plugin', 'icon'=>'audio'),
-        'ram'  => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio'),
+        'qt'   => array ('type'=>'video/quicktime', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'ra'   => array ('type'=>'audio/x-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'ram'  => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
         'rhb'  => array ('type'=>'text/xml', 'icon'=>'xml'),
-        'rm'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio'),
-        'rmvb' => array ('type'=>'application/vnd.rn-realmedia-vbr', 'icon'=>'video'),
-        'rtf'  => array ('type'=>'text/rtf', 'icon'=>'text'),
+        'rm'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'rmvb' => array ('type'=>'application/vnd.rn-realmedia-vbr', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'rtf'  => array ('type'=>'text/rtf', 'icon'=>'text', 'groups'=>array('document')),
         'rtx'  => array ('type'=>'text/richtext', 'icon'=>'text'),
-        'rv'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'video'),
+        'rv'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
         'sh'   => array ('type'=>'application/x-sh', 'icon'=>'text'),
-        'sit'  => array ('type'=>'application/x-stuffit', 'icon'=>'zip'),
+        'sit'  => array ('type'=>'application/x-stuffit', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
         'smi'  => array ('type'=>'application/smil', 'icon'=>'text'),
         'smil' => array ('type'=>'application/smil', 'icon'=>'text'),
         'sqt'  => array ('type'=>'text/xml', 'icon'=>'xml'),
-        'svg'  => array ('type'=>'image/svg+xml', 'icon'=>'image'),
-        'svgz' => array ('type'=>'image/svg+xml', 'icon'=>'image'),
+        'svg'  => array ('type'=>'image/svg+xml', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
+        'svgz' => array ('type'=>'image/svg+xml', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
         'swa'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
         'swf'  => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash'),
         'swfl' => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash'),
@@ -1477,25 +1500,25 @@ function get_mimetypes_array() {
         'sxg'  => array ('type'=>'application/vnd.sun.xml.writer.global', 'icon'=>'odt'),
         'sxm'  => array ('type'=>'application/vnd.sun.xml.math', 'icon'=>'odt'),
 
-        'tar'  => array ('type'=>'application/x-tar', 'icon'=>'zip'),
-        'tif'  => array ('type'=>'image/tiff', 'icon'=>'image'),
-        'tiff' => array ('type'=>'image/tiff', 'icon'=>'image'),
+        'tar'  => array ('type'=>'application/x-tar', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
+        'tif'  => array ('type'=>'image/tiff', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
+        'tiff' => array ('type'=>'image/tiff', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
         'tex'  => array ('type'=>'application/x-tex', 'icon'=>'text'),
         'texi' => array ('type'=>'application/x-texinfo', 'icon'=>'text'),
         'texinfo'  => array ('type'=>'application/x-texinfo', 'icon'=>'text'),
         'tsv'  => array ('type'=>'text/tab-separated-values', 'icon'=>'text'),
-        'txt'  => array ('type'=>'text/plain', 'icon'=>'text'),
-        'wav'  => array ('type'=>'audio/wav', 'icon'=>'audio'),
-        'webm'  => array ('type'=>'video/webm', 'icon'=>'video'),
-        'wmv'  => array ('type'=>'video/x-ms-wmv', 'icon'=>'avi'),
-        'asf'  => array ('type'=>'video/x-ms-asf', 'icon'=>'avi'),
+        'txt'  => array ('type'=>'text/plain', 'icon'=>'text', 'defaulticon'=>true),
+        'wav'  => array ('type'=>'audio/wav', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'webm'  => array ('type'=>'video/webm', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'wmv'  => array ('type'=>'video/x-ms-wmv', 'icon'=>'avi', 'groups'=>array('video'), 'string'=>'video'),
+        'asf'  => array ('type'=>'video/x-ms-asf', 'icon'=>'avi', 'groups'=>array('video'), 'string'=>'video'),
         'xdp'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
         'xfd'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
         'xfdf' => array ('type'=>'application/pdf', 'icon'=>'pdf'),
 
-        'xls'  => array ('type'=>'application/vnd.ms-excel', 'icon'=>'excel'),
+        'xls'  => array ('type'=>'application/vnd.ms-excel', 'icon'=>'excel', 'groups'=>array('spreadsheet')),
         'xlsx' => array ('type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'icon'=>'xlsx'),
-        'xlsm' => array ('type'=>'application/vnd.ms-excel.sheet.macroEnabled.12', 'icon'=>'xlsm'),
+        'xlsm' => array ('type'=>'application/vnd.ms-excel.sheet.macroEnabled.12', 'icon'=>'xlsm', 'groups'=>array('spreadsheet')),
         'xltx' => array ('type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.template', 'icon'=>'xltx'),
         'xltm' => array ('type'=>'application/vnd.ms-excel.template.macroEnabled.12', 'icon'=>'xltm'),
         'xlsb' => array ('type'=>'application/vnd.ms-excel.sheet.binary.macroEnabled.12', 'icon'=>'xlsb'),
@@ -1503,7 +1526,7 @@ function get_mimetypes_array() {
 
         'xml'  => array ('type'=>'application/xml', 'icon'=>'xml'),
         'xsl'  => array ('type'=>'text/xml', 'icon'=>'xml'),
-        'zip'  => array ('type'=>'application/zip', 'icon'=>'zip')
+        'zip'  => array ('type'=>'application/zip', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive')
     );
     return $mimearray;
 }
@@ -1515,39 +1538,41 @@ function get_mimetypes_array() {
  *
  * @category files
  * @param string $element Desired information (usually 'icon'
- *   for icon filename or 'type' for MIME type)
+ *   for icon filename or 'type' for MIME type. Can also be
+ *   'icon24', ...32, 48, 64, 72, 80, 96, 128, 256)
  * @param string $filename Filename we're looking up
  * @return string Requested piece of information from array
  */
 function mimeinfo($element, $filename) {
     global $CFG;
-    $mimeinfo = get_mimetypes_array();
+    $mimeinfo = & get_mimetypes_array();
+    static $iconpostfixes = array(256=>'-256', 128=>'-128', 96=>'-96', 80=>'-80', 72=>'-72', 64=>'-64', 48=>'-48', 32=>'-32', 24=>'-24', 16=>'');
 
-    if (preg_match('/\.([a-z0-9]+)$/i', $filename, $match)) {
-        if (isset($mimeinfo[strtolower($match[1])][$element])) {
-            return $mimeinfo[strtolower($match[1])][$element];
-        } else {
-            if ($element == 'icon32') {
-                if (isset($mimeinfo[strtolower($match[1])]['icon'])) {
-                    $filename = $mimeinfo[strtolower($match[1])]['icon'];
-                } else {
-                    $filename = 'unknown';
+    $filetype = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    if (empty($filetype)) {
+        $filetype = 'xxx'; // file without extension
+    }
+    if (preg_match('/^icon(\d*)$/', $element, $iconsizematch)) {
+        $iconsize = max(array(16, (int)$iconsizematch[1]));
+        $filenames = array($mimeinfo['xxx']['icon']);
+        if ($filetype != 'xxx' && isset($mimeinfo[$filetype]['icon'])) {
+            array_unshift($filenames, $mimeinfo[$filetype]['icon']);
+        }
+        // find the file with the closest size, first search for specific icon then for default icon
+        foreach ($filenames as $filename) {
+            foreach ($iconpostfixes as $size => $postfix) {
+                $fullname = $CFG->dirroot.'/pix/f/'.$filename.$postfix;
+                if ($iconsize >= $size && (file_exists($fullname.'.png') || file_exists($fullname.'.gif'))) {
+                    return $filename.$postfix;
                 }
-                $filename .= '-32';
-                if (file_exists($CFG->dirroot.'/pix/f/'.$filename.'.png') or file_exists($CFG->dirroot.'/pix/f/'.$filename.'.gif')) {
-                    return $filename;
-                } else {
-                    return 'unknown-32';
-                }
-            } else {
-                return $mimeinfo['xxx'][$element];   // By default
             }
         }
-    } else {
-        if ($element == 'icon32') {
-            return 'unknown-32';
-        }
+    } else if (isset($mimeinfo[$filetype][$element])) {
+        return $mimeinfo[$filetype][$element];
+    } else if (isset($mimeinfo['xxx'][$element])) {
         return $mimeinfo['xxx'][$element];   // By default
+    } else {
+        return null;
     }
 }
 
@@ -1556,66 +1581,115 @@ function mimeinfo($element, $filename) {
  * the other way around.
  *
  * @category files
- * @param string $element Desired information (usually 'icon')
+ * @param string $element Desired information ('extension', 'icon', 'icon-24', etc.)
  * @param string $mimetype MIME type we're looking up
  * @return string Requested piece of information from array
  */
 function mimeinfo_from_type($element, $mimetype) {
-    $mimeinfo = get_mimetypes_array();
+    /* array of cached mimetype->extension associations */
+    static $cached = array();
+    $mimeinfo = & get_mimetypes_array();
 
-    foreach($mimeinfo as $values) {
-        if ($values['type']==$mimetype) {
-            if (isset($values[$element])) {
-                return $values[$element];
+    if (!array_key_exists($mimetype, $cached)) {
+        $cached[$mimetype] = null;    
+        foreach($mimeinfo as $filetype => $values) {
+            if ($values['type'] == $mimetype) {
+                if ($cached[$mimetype] === null) {
+                    $cached[$mimetype] = $filetype;
+                }
+                if (!empty($values['defaulticon'])) {
+                    $cached[$mimetype] = $filetype;
+                    break;
+                }
             }
-            break;
         }
     }
-    return $mimeinfo['xxx'][$element]; // Default
+    if ($cached[$mimetype] !== null && $cached[$mimetype] !== 'xxx') {
+        if ($element = 'extension') {
+            return $cached[$mimetype];
+        } else {
+            return mimeinfo($element, '.'.$cached[$mimetype]);
+        }
+    } else {
+        return mimeinfo($element, '');
+    }
 }
 
 /**
- * Get information about a filetype based on the icon file.
+ * Return the relative icon path for a given file
  *
- * @category files
- * @param string $element Desired information (usually 'icon')
- * @param string $icon Icon file name without extension
- * @param bool $all return all matching entries (defaults to false - best (by ext)/last match)
- * @return string Requested piece of information from array
+ * Usage:
+ * <code>
+ * // $file - instance of stored_file or file_info
+ * $icon = $OUTPUT->pix_url(file_file_icon($file))->out();
+ * echo html_writer::empty_tag('img', array('src' => $icon, 'alt' => get_mimetype_description($file)));
+ * </code>
+ * or
+ * <code>
+ * echo $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
+ * </code>
+ *
+ * @param stored_file|file_info|stdClass|array $file (in case of object attributes $file->filename
+ *     and $file->mimetype are expected)
+ * @param int $size The size of the icon. Defaults to 16 can also be 24, 32, 64, 128, 256
+ * @return string
  */
-function mimeinfo_from_icon($element, $icon, $all=false) {
-    $mimeinfo = get_mimetypes_array();
+function file_file_icon($file, $size = null) {
+    if (!is_object($file)) {
+        $file = (object)$file;
+    }
+    if (isset($file->filename)) {
+        $filename = $file->filename;
+    } else if (method_exists($file, 'get_filename')) {
+        $filename = $file->get_filename();
+    } else if (method_exists($file, 'get_visible_name')) {
+        $filename = $file->get_visible_name();
+    } else {
+        $filename = '';
+    }
+    if (isset($file->mimetype)) {
+        $mimetype = $file->mimetype;
+    } else if (method_exists($file, 'get_mimetype')) {
+        $mimetype = $file->get_mimetype();
+    } else {
+        $mimetype = '';
+    }
+    if ($filename && pathinfo($filename, PATHINFO_EXTENSION) &&
+            (!$mimetype || mimeinfo('type', $filename) === $mimetype)) {
+        // files with different extensions sharing the same mimetype (i.e. 'text/plain') may have different icons
+        return file_extension_icon($filename, $size);
+    } else {
+        // if mimetype and extension do not match we assume that mimetype is more correct
+        return file_mimetype_icon($mimetype, $size);
+    }
+}
 
-    if (preg_match("/\/(.*)/", $icon, $matches)) {
-        $icon = $matches[1];
-    }
-    // Try to get the extension
-    $extension = '';
-    if (($cutat = strrpos($icon, '.')) !== false && $cutat < strlen($icon)-1) {
-        $extension = substr($icon, $cutat + 1);
-    }
-    $info = array($mimeinfo['xxx'][$element]); // Default
-    foreach($mimeinfo as $key => $values) {
-        if ($values['icon']==$icon) {
-            if (isset($values[$element])) {
-                $info[$key] = $values[$element];
-            }
-            //No break, for example for 'excel' we don't want 'csv'!
+/**
+ * Return the relative icon path for a folder image
+ *
+ * Usage:
+ * <code>
+ * $icon = $OUTPUT->pix_url(file_folder_icon())->out();
+ * echo html_writer::empty_tag('img', array('src' => $icon));
+ * </code>
+ * or
+ * <code>
+ * echo $OUTPUT->pix_icon(file_folder_icon(32));
+ * </code>
+ *
+ * @param int $iconsize The size of the icon. Defaults to 16 can also be 24, 32, 48, 64, 72, 80, 96, 128, 256
+ * @return string
+ */
+function file_folder_icon($iconsize = null) {
+    global $CFG;
+    static $iconpostfixes = array(256=>'-256', 128=>'-128', 96=>'-96', 80=>'-80', 72=>'-72', 64=>'-64', 48=>'-48', 32=>'-32', 24=>'-24', 16=>'');
+    $iconsize = max(array(16, (int)$iconsize));
+    foreach ($iconpostfixes as $size => $postfix) {
+        $fullname = $CFG->dirroot.'/pix/f/folder'.$postfix;
+        if ($iconsize >= $size && (file_exists($fullname.'.png') || file_exists($fullname.'.gif'))) {
+            return 'f/folder'.$postfix;
         }
     }
-    if ($all) {
-        if (count($info) > 1) {
-            array_shift($info); // take off document/unknown if we have better options
-        }
-        return array_values($info); // Keep keys out when requesting all
-    }
-
-    // Requested only one, try to get the best by extension coincidence, else return the last
-    if ($extension && isset($info[$extension])) {
-        return $info[$extension];
-    }
-
-    return array_pop($info); // Return last match (mimicking behaviour/comment inside foreach loop)
 }
 
 /**
@@ -1626,27 +1700,19 @@ function mimeinfo_from_icon($element, $icon, $all=false) {
  *
  * <code>
  * $mimetype = 'image/jpg';
- * $icon = $OUTPUT->pix_url(file_mimetype_icon($mimetype));
- * echo '<img src="'.$icon.'" alt="'.$mimetype.'" />';
+ * $icon = $OUTPUT->pix_url(file_mimetype_icon($mimetype))->out();
+ * echo html_writer::empty_tag('img', array('src' => $icon, 'alt' => get_mimetype_description($mimetype)));
  * </code>
  *
  * @category files
  * @todo MDL-31074 When an $OUTPUT->icon method is available this function should be altered
  * to conform with that.
  * @param string $mimetype The mimetype to fetch an icon for
- * @param int $size The size of the icon. Not yet implemented
+ * @param int $size The size of the icon. Defaults to 16 can also be 24, 32, 64, 128, 256
  * @return string The relative path to the icon
  */
 function file_mimetype_icon($mimetype, $size = NULL) {
-    global $CFG;
-
-    $icon = mimeinfo_from_type('icon', $mimetype);
-    if ($size) {
-        if (file_exists("$CFG->dirroot/pix/f/$icon-$size.png") or file_exists("$CFG->dirroot/pix/f/$icon-$size.gif")) {
-            $icon = "$icon-$size";
-        }
-    }
-    return 'f/'.$icon;
+    return 'f/'.mimeinfo_from_type('icon'.$size, $mimetype);
 }
 
 /**
@@ -1656,9 +1722,9 @@ function file_mimetype_icon($mimetype, $size = NULL) {
  * a return the full path to an icon.
  *
  * <code>
- * $filename = 'jpg';
- * $icon = $OUTPUT->pix_url(file_extension_icon($filename));
- * echo '<img src="'.$icon.'" alt="blah" />';
+ * $filename = '.jpg';
+ * $icon = $OUTPUT->pix_url(file_extension_icon($filename))->out();
+ * echo html_writer::empty_tag('img', array('src' => $icon, 'alt' => '...'));
  * </code>
  *
  * @todo MDL-31074 When an $OUTPUT->icon method is available this function should be altered
@@ -1666,39 +1732,150 @@ function file_mimetype_icon($mimetype, $size = NULL) {
  * @todo MDL-31074 Implement $size
  * @category files
  * @param string $filename The filename to get the icon for
- * @param int $size The size of the icon. Defaults to null can also be 32
+ * @param int $size The size of the icon. Defaults to 16 can also be 24, 32, 64, 128, 256
  * @return string
  */
 function file_extension_icon($filename, $size = NULL) {
-    global $CFG;
-
-    $icon = mimeinfo('icon', $filename);
-    if ($size) {
-        if (file_exists("$CFG->dirroot/pix/f/$icon-$size.png") or file_exists("$CFG->dirroot/pix/f/$icon-$size.gif")) {
-            $icon = "$icon-$size";
-        }
-    }
-    return 'f/'.$icon;
+    return 'f/'.mimeinfo('icon'.$size, $filename);
 }
 
 /**
  * Obtains descriptions for file types (e.g. 'Microsoft Word document') from the
  * mimetypes.php language file.
  *
- * @param string $mimetype MIME type (can be obtained using the mimeinfo function)
+ * @param mixed $obj - instance of stored_file or file_info or array/stdClass with field
+ *   'filename' and 'mimetype', or just a string with mimetype (though it is recommended to
+ *   have filename); In case of array/stdClass the field 'mimetype' is optional.
  * @param bool $capitalise If true, capitalises first character of result
  * @return string Text description
  */
-function get_mimetype_description($mimetype, $capitalise=false) {
-    if (get_string_manager()->string_exists($mimetype, 'mimetypes')) {
-        $result = get_string($mimetype, 'mimetypes');
+function get_mimetype_description($obj, $capitalise=false) {
+    if (is_object($obj) && method_exists($obj, 'get_filename') && method_exists($obj, 'get_mimetype')) {
+        // this is an instance of stored_file
+        $mimetype = $obj->get_mimetype();
+        $filename = $obj->get_filename();
+    } else if (is_object($obj) && method_exists($obj, 'get_visible_name') && method_exists($obj, 'get_mimetype')) {
+        // this is an instance of file_info
+        $mimetype = $obj->get_mimetype();
+        $filename = $obj->get_visible_name();
+    } else if (is_array($obj) || is_object ($obj)) {
+        $obj = (array)$obj;
+        if (!empty($obj['filename'])) {
+            $filename = $obj['filename'];
+        } else {
+            $filename = '';
+        }
+        if (!empty($obj['mimetype'])) {
+            $mimetype = $obj['mimetype'];
+        } else {
+            $mimetype = mimeinfo('type', $filename);
+        }
     } else {
-        $result = get_string('document/unknown','mimetypes');
+        $mimetype = $obj;
+        $filename = '';
+    }
+    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    if (empty($extension)) {
+        $mimetypestr = mimeinfo_from_type('string', $mimetype);
+        $extension = mimeinfo_from_type('extension', $mimetype);
+    } else {
+        $mimetypestr = mimeinfo('string', $filename);
+    }
+    $chunks = explode('/', $mimetype, 2);
+    $chunks[] = '';
+    $attr = array(
+        'mimetype' => $mimetype,
+        'ext' => $extension,
+        'mimetype1' => $chunks[0],
+        'mimetype2' => $chunks[1],
+    );
+    $a = array();
+    foreach ($attr as $key => $value) {
+        $a[$key] = $value;
+        $a[strtoupper($key)] = strtoupper($value);
+        $a[ucfirst($key)] = ucfirst($value);
+    }
+    if (get_string_manager()->string_exists($mimetype, 'mimetypes')) {
+        $result = get_string($mimetype, 'mimetypes', (object)$a);
+    } else if (get_string_manager()->string_exists($mimetypestr, 'mimetypes')) {
+        $result = get_string($mimetypestr, 'mimetypes', (object)$a);
+    } else if (get_string_manager()->string_exists('default', 'mimetypes')) {
+        $result = get_string('default', 'mimetypes', (object)$a);
+    } else {
+        $result = $mimetype;
     }
     if ($capitalise) {
         $result=ucfirst($result);
     }
     return $result;
+}
+
+/**
+ * Returns array of elements of type $element in type group(s)
+ *
+ * @param string $element name of the element we are interested in, usually 'type' or 'extension'
+ * @param string|array $groups one group or array of groups/extensions/mimetypes
+ * @return array
+ */
+function file_get_typegroup($element, $groups) {
+    static $cached = array();
+    if (!is_array($groups)) {
+        $groups = array($groups);
+    }
+    if (!array_key_exists($element, $cached)) {
+        $cached[$element] = array();
+    }
+    $result = array();
+    foreach ($groups as $group) {
+        if (!array_key_exists($group, $cached[$element])) {
+            // retrieive and cache all elements of type $element for group $group
+            $mimeinfo = & get_mimetypes_array();
+            $cached[$element][$group] = array();
+            foreach ($mimeinfo as $extension => $value) {
+                $value['extension'] = $extension;
+                if (empty($value[$element])) {
+                    continue;
+                }
+                if (($group === $extension || $group === $value['type'] ||
+                        (!empty($value['groups']) && in_array($group, $value['groups']))) &&
+                        !in_array($value[$element], $cached[$element][$group])) {
+                    $cached[$element][$group][] = $value[$element];
+                }
+            }
+        }
+        $result = array_merge($result, $cached[$element][$group]);
+    }
+    return array_unique($result);
+}
+
+/**
+ * Checks if file with name $filename has one of the extensions in groups $groups
+ *
+ * @see get_mimetypes_array()
+ * @param string $filename name of the file to check
+ * @param string|array $groups one group or array of groups to check
+ * @param bool $checktype if true and extension check fails, find the mimetype and check if
+ * file mimetype is in mimetypes in groups $groups
+ * @return bool
+ */
+function file_extension_in_typegroup($filename, $groups, $checktype = false) {
+    $extension = pathinfo($filename, PATHINFO_EXTENSION);
+    if (!empty($extension) && in_array(strtolower($extension), file_get_typegroup('extension', $groups))) {
+        return true;
+    }
+    return $checktype && file_mimetype_in_typegroup(mimeinfo('type', $filename), $groups);
+}
+
+/**
+ * Checks if mimetype $mimetype belongs to one of the groups $groups
+ *
+ * @see get_mimetypes_array()
+ * @param string $mimetype
+ * @param string|array $groups one group or array of groups to check
+ * @return bool
+ */
+function file_mimetype_in_typegroup($mimetype, $groups) {
+    return !empty($mimetype) && in_array($mimetype, file_get_typegroup('type', $groups));
 }
 
 /**
@@ -3162,109 +3339,6 @@ class curl_cache {
                 }
             }
         }
-    }
-}
-
-/**
- * This class is used to parse lib/file/file_types.mm which help get file extensions by file types.
- *
- * The file_types.mm file can be edited by freemind in graphic environment.
- *
- * @package   core_files
- * @category  files
- * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class filetype_parser {
-    /**
-     * Check file_types.mm file, setup variables
-     *
-     * @global stdClass $CFG
-     * @param string $file
-     */
-    public function __construct($file = '') {
-        global $CFG;
-        if (empty($file)) {
-            $this->file = $CFG->libdir.'/filestorage/file_types.mm';
-        } else {
-            $this->file = $file;
-        }
-        $this->tree = array();
-        $this->result = array();
-    }
-
-    /**
-     * A private function to browse xml nodes
-     *
-     * @param array $parent
-     * @param array $types
-     */
-    private function _browse_nodes($parent, $types) {
-        $key = (string)$parent['TEXT'];
-        if(isset($parent->node)) {
-            $this->tree[$key] = array();
-            if (in_array((string)$parent['TEXT'], $types)) {
-                $this->_select_nodes($parent, $this->result);
-            } else {
-                foreach($parent->node as $v){
-                    $this->_browse_nodes($v, $types);
-                }
-            }
-        } else {
-            $this->tree[] = $key;
-        }
-    }
-
-    /**
-     * A private function to select text nodes
-     *
-     * @param array $parent
-     */
-    private function _select_nodes($parent){
-        if(isset($parent->node)) {
-            foreach($parent->node as $v){
-                $this->_select_nodes($v, $this->result);
-            }
-        } else {
-            $this->result[] = (string)$parent['TEXT'];
-        }
-    }
-
-
-    /**
-     * Get file extensions by file types names.
-     *
-     * @param array $types
-     * @return mixed
-     */
-    public function get_extensions($types) {
-        if (!is_array($types)) {
-            $types = array($types);
-        }
-        $this->result = array();
-        if ((is_array($types) && in_array('*', $types)) ||
-            $types == '*' || empty($types)) {
-            return array('*');
-        }
-        foreach ($types as $key=>$value){
-            if (strpos($value, '.') !== false) {
-                $this->result[] = $value;
-                unset($types[$key]);
-            }
-        }
-        if (file_exists($this->file)) {
-            $xml = simplexml_load_file($this->file);
-            foreach($xml->node->node as $v){
-                if (in_array((string)$v['TEXT'], $types)) {
-                    $this->_select_nodes($v);
-                } else {
-                    $this->_browse_nodes($v, $types);
-                }
-            }
-        } else {
-            exit('Failed to open file lib/filestorage/file_types.mm');
-        }
-        return $this->result;
     }
 }
 

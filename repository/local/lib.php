@@ -213,14 +213,15 @@ class repository_local_file {
         );
         if ($this->isdir) {
             $node['path'] = $encodedpath;
-            $node['thumbnail'] = $OUTPUT->pix_url('f/folder-32')->out(false);
+            $node['thumbnail'] = $OUTPUT->pix_url(file_folder_icon(90))->out(false);
             $node['children'] = array();
         } else {
             $node['size'] = $this->fileinfo->get_filesize();
             $node['author'] = $this->fileinfo->get_author();
             $node['license'] = $this->fileinfo->get_license();
             $node['source'] = $encodedpath;
-            $node['thumbnail'] = $OUTPUT->pix_url(file_extension_icon($node['title'], 32))->out(false);
+            $node['thumbnail'] = $OUTPUT->pix_url(file_file_icon($this->fileinfo, 90))->out(false);
+            $node['icon'] = $OUTPUT->pix_url(file_file_icon($this->fileinfo), 24)->out(false);
             if ($imageinfo = $this->fileinfo->get_imageinfo()) {
                 // what a beautiful picture, isn't it
                 $fileurl = new moodle_url($this->fileinfo->get_url());

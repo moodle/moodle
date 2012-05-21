@@ -128,14 +128,15 @@ class repository_recent extends repository {
                 if ($fileinfo) {
                     $params = base64_encode(serialize($file));
                     $node = array(
-                        'title' => $file['filename'],
+                        'title' => $fileinfo->get_visible_name(),
                         'size' => $fileinfo->get_filesize(),
                         'datemodified' => $fileinfo->get_timemodified(),
                         'datecreated' => $fileinfo->get_timecreated(),
                         'author' => $fileinfo->get_author(),
                         'license' => $fileinfo->get_license(),
                         'source'=> $params,
-                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file['filename'], 32))->out(false),
+                        'icon' => $OUTPUT->pix_url(file_file_icon($fileinfo, 24))->out(false),
+                        'thumbnail' => $OUTPUT->pix_url(file_file_icon($fileinfo, 90))->out(false),
                     );
                     if ($imageinfo = $fileinfo->get_imageinfo()) {
                         $fileurl = new moodle_url($fileinfo->get_url());

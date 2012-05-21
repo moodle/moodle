@@ -100,7 +100,7 @@ class repository_user extends repository {
                             'datecreated' => $child->get_timecreated(),
                             'path' => $encodedpath,
                             'children'=>array(),
-                            'thumbnail' => $OUTPUT->pix_url('f/folder-32')->out(false)
+                            'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false)
                         );
                         $list[] = $node;
                     } else {
@@ -113,7 +113,8 @@ class repository_user extends repository {
                             'author' => $child->get_author(),
                             'license' => $child->get_license(),
                             'source'=> $encodedpath,
-                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($child->get_visible_name(), 32))->out(false)
+                            'icon' => $OUTPUT->pix_url(file_file_icon($child, 24))->out(false),
+                            'thumbnail' => $OUTPUT->pix_url(file_file_icon($child, 90))->out(false)
                         );
                         if ($imageinfo = $child->get_imageinfo()) {
                             $fileurl = new moodle_url($child->get_url());

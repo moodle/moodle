@@ -67,8 +67,7 @@ class mod_wiki_edit_form extends moodleform {
         $fieldname = get_string('format' . $format, 'wiki');
         if ($format != 'html') {
             // Use wiki editor
-            $ft = new filetype_parser;
-            $extensions = $ft->get_extensions('image');
+            $extensions = file_get_typegroup('extension', 'web_image');
             $fs = get_file_storage();
             $tree = $fs->get_area_tree($contextid, 'mod_wiki', $this->_customdata['filearea'], $this->_customdata['fileitemid']);
             $files = array();

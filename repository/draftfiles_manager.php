@@ -303,10 +303,8 @@ default:
             if ($file->type != 'folder') {
                 $drafturl = $file->url;
                 // a file
-                $fileicon = $OUTPUT->pix_url(file_extension_icon($file->filename))->out(false);
-                $type = mimeinfo('icon', $file->filename);
                 echo '<li>';
-                echo '<img src="'.$fileicon. '" class="iconsmall" />';
+                echo $OUTPUT->pix_icon(file_file_icon($file), '', 'moodle', array('class' => 'iconsmall'));
                 echo html_writer::link($drafturl, $file->filename);
 
                 $home_url->param('filename', $file->filename);
@@ -321,7 +319,7 @@ default:
                 $home_url->param('action', 'renameform');
                 echo ' [<a href="'.$home_url->out().'" class="fm-operation">'.get_string('rename').'</a>]';
 
-                if ($type == 'zip') {
+                if (file_extension_in_typegroup($file->filename, 'archive', true)) {
                     $home_url->param('action', 'unzip');
                     $home_url->param('draftpath', $file->filepath);
                     echo ' [<a href="'.$home_url->out().'" class="fm-operation">'.get_string('unzip').'</a>]';
@@ -331,7 +329,7 @@ default:
             } else {
                 // a folder
                 echo '<li>';
-                echo '<img src="'.$OUTPUT->pix_url('f/folder') . '" class="iconsmall" />';
+                echo '<img src="'.$OUTPUT->pix_url(file_folder_icon()) . '" class="iconsmall" />';
 
                 $home_url->param('action', 'browse');
                 $home_url->param('draftpath', $file->filepath);

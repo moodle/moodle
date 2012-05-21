@@ -208,7 +208,7 @@ class assignment_online extends assignment_base {
         $popup = $OUTPUT->action_link($link, shorten_text(trim(strip_tags(format_text($submission->data1,$submission->data2))), 15), $action, array('title'=>get_string('submission', 'assignment')));
 
         $output = '<div class="files">'.
-                  '<img src="'.$OUTPUT->pix_url('f/html') . '" class="icon" alt="html" />'.
+                  $OUTPUT->pix_icon(file_extension_icon('.htm'), 'html', 'moodle', array('class' => 'icon')).
                   $popup .
                   '</div>';
                   return $output;
@@ -233,7 +233,7 @@ class assignment_online extends assignment_base {
         $popup = $OUTPUT->action_link($link, get_string('popupinnewwindow','assignment'), $action, array('title'=>get_string('submission', 'assignment')));
 
         $output = '<div class="files">'.
-                  '<img align="middle" src="'.$OUTPUT->pix_url('f/html') . '" height="16" width="16" alt="html" />'.
+                  $OUTPUT->pix_icon(file_extension_icon('.htm'), 'html', 'moodle', array('height' => 16, 'width' => 16)).
                   $popup .
                   '</div>';
 

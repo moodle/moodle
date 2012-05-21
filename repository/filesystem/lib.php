@@ -101,7 +101,8 @@ class repository_filesystem extends repository {
                             'size' => filesize($this->root_path.$file),
                             'datecreated' => filectime($this->root_path.$file),
                             'datemodified' => filemtime($this->root_path.$file),
-                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($this->root_path.$file, 32))->out(false)
+                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file, 90))->out(false),
+                            'icon' => $OUTPUT->pix_url(file_extension_icon($file, 24))->out(false)
                         );
                     } else {
                         if (!empty($path)) {
@@ -114,7 +115,7 @@ class repository_filesystem extends repository {
                             'children' => array(),
                             'datecreated' => filectime($this->root_path.$file),
                             'datemodified' => filemtime($this->root_path.$file),
-                            'thumbnail' => $OUTPUT->pix_url('f/folder-32')->out(false),
+                            'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
                             'path' => $current_path
                             );
                     }

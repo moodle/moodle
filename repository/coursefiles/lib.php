@@ -109,7 +109,7 @@ class repository_coursefiles extends repository {
                         'datecreated' => $child->get_timecreated(),
                         'path' => $encodedpath,
                         'children'=>array(),
-                        'thumbnail' => $OUTPUT->pix_url('f/folder-32')->out(false)
+                        'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false)
                     );
                     $list[] = $node;
                 } else {
@@ -122,7 +122,7 @@ class repository_coursefiles extends repository {
                         'datemodified' => $child->get_timemodified(),
                         'datecreated' => $child->get_timecreated(),
                         'source'=> $encodedpath,
-                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($child->get_visible_name(), 32))->out(false)
+                        'thumbnail' => $OUTPUT->pix_url(file_file_icon($child, 90))->out(false)
                     );
                     if ($imageinfo = $child->get_imageinfo()) {
                         $fileurl = new moodle_url($child->get_url());

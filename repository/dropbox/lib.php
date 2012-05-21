@@ -217,7 +217,7 @@ class repository_dropbox extends repository {
                     'path' => file_correct_filepath($file->path),
                     'size' => $file->size,
                     'date' => $file->modified,
-                    'thumbnail' => $OUTPUT->pix_url('f/folder-32')->out(false),
+                    'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
                     'children' => array(),
                 );
             } else {
@@ -226,7 +226,7 @@ class repository_dropbox extends repository {
                     'source' => $file->path,
                     'size' => $file->size,
                     'date' => $file->modified,
-                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->path, 32))->out(false)
+                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->path, 90))->out(false)
                 );
             }
         }

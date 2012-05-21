@@ -844,7 +844,6 @@ abstract class repository {
         }
 
         $repositories = array();
-        $ft = new filetype_parser();
         if (isset($args['accepted_types'])) {
             $accepted_types = $args['accepted_types'];
         } else {
@@ -875,16 +874,10 @@ abstract class repository {
             } else {
                 // check mimetypes
                 if ($accepted_types !== '*' and $repository->supported_filetypes() !== '*') {
-                    $accepted_types = $ft->get_extensions($accepted_types);
-                    $supported_filetypes = $ft->get_extensions($repository->supported_filetypes());
-
-                    $is_supported = false;
-                    foreach  ($supported_filetypes as $type) {
-                        if (in_array($type, $accepted_types)) {
-                            $is_supported = true;
-                        }
-                    }
-
+                    $accepted_ext = file_get_typegroup('extension', $accepted_types);
+                    $supported_ext = file_get_typegroup('extension', $repository->supported_filetypes());
+                    $valid_ext = array_intersect($accepted_ext, $supported_ext);
+                    $is_supported = !empty($valid_ext);
                 }
                 // check return values
                 if ($returntypes !== 3 and $repository->supported_returntypes() !== 3) {
@@ -1223,7 +1216,7 @@ abstract class repository {
                     'size' => 0,
                     'date' => $filedate,
                     'path' => array_reverse($path),
-                    'thumbnail' => $OUTPUT->pix_url('f/folder-32')
+                    'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false)
                 );
 
                 //if ($dynamicmode && $child->is_writable()) {
@@ -1260,7 +1253,8 @@ abstract class repository {
                     'date' => $filedate,
                     //'source' => $child->get_url(),
                     'source' => base64_encode($source),
-                    'thumbnail'=>$OUTPUT->pix_url(file_extension_icon($filename, 32)),
+                    'icon'=>$OUTPUT->pix_url(file_file_icon($child, 24))->out(false),
+                    'thumbnail'=>$OUTPUT->pix_url(file_file_icon($child, 90))->out(false),
                 );
                 $filecount++;
             }
@@ -1549,13 +1543,12 @@ abstract class repository {
      */
     final public function get_meta() {
         global $CFG, $OUTPUT;
-        $ft = new filetype_parser;
         $meta = new stdClass();
         $meta->id   = $this->id;
         $meta->name = $this->get_name();
         $meta->type = $this->options['type'];
         $meta->icon = $OUTPUT->pix_url('icon', 'repository_'.$meta->type)->out(false);
-        $meta->supported_types = $ft->get_extensions($this->supported_filetypes());
+        $meta->supported_types = file_get_typegroup('extension', $this->supported_filetypes());
         $meta->return_types = $this->supported_returntypes();
         $meta->sortorder = $this->options['sortorder'];
         return $meta;
@@ -1724,35 +1717,26 @@ abstract class repository {
      * @return bool
      */
     public function filter(&$value) {
-        $pass = false;
         $accepted_types = optional_param_array('accepted_types', '', PARAM_RAW);
-        $ft = new filetype_parser;
-        //$ext = $ft->get_extensions($this->supported_filetypes());
         if (isset($value['children'])) {
-            $pass = true;
             if (!empty($value['children'])) {
                 $value['children'] = array_filter($value['children'], array($this, 'filter'));
             }
+            return true; // always return directories
         } else {
             if ($accepted_types == '*' or empty($accepted_types)
                 or (is_array($accepted_types) and in_array('*', $accepted_types))) {
-                $pass = true;
-            } elseif (is_array($accepted_types)) {
-                foreach ($accepted_types as $type) {
-                    $extensions = $ft->get_extensions($type);
-                    if (!is_array($extensions)) {
-                        $pass = true;
-                    } else {
-                        foreach ($extensions as $ext) {
-                            if (preg_match('#'.$ext.'$#i', $value['title'])) {
-                                $pass = true;
-                            }
-                        }
+                return true;
+            } else {
+                $extensions = file_get_typegroup('extension', $accepted_types);
+                foreach ($extensions as $ext) {
+                    if (preg_match('#\.'.$ext.'$#i', $value['title'])) {
+                        return true;
                     }
                 }
             }
         }
-        return $pass;
+        return false;
     }
 
     /**
@@ -1843,17 +1827,13 @@ abstract class repository {
                 $filename = $file['fullname'];
             }
             if (!isset($file['mimetype']) && !$isfolder && $filename) {
-                $mimetype = mimeinfo('type', $filename);
-                if (get_string_manager()->string_exists($mimetype, 'mimetypes')) {
-                    $mimetype = get_string($mimetype, 'mimetypes');
-                }
-                $file['mimetype'] = $mimetype;
+                $file['mimetype'] = get_mimetype_description(array('filename' => $filename));
             }
             if (!isset($file['icon'])) {
                 if ($isfolder) {
-                    $file['icon'] = $OUTPUT->pix_url('f/folder')->out(false);
+                    $file['icon'] = $OUTPUT->pix_url(file_folder_icon(24))->out(false);
                 } else if ($filename) {
-                    $file['icon'] = $OUTPUT->pix_url('f/'.mimeinfo('icon', $filename))->out(false);
+                    $file['icon'] = $OUTPUT->pix_url(file_extension_icon($filename, 24))->out(false);
                 }
             }
             if ($converttoobject) {
@@ -2455,7 +2435,6 @@ function initialise_filepicker($args) {
 
     $return->author = fullname($USER);
 
-    $ft = new filetype_parser();
     if (empty($args->context)) {
         $context = $PAGE->context;
     } else {
@@ -2492,7 +2471,7 @@ function initialise_filepicker($args) {
     }
 
     // provided by form element
-    $return->accepted_types = $ft->get_extensions($args->accepted_types);
+    $return->accepted_types = file_get_typegroup('extension', $args->accepted_types);
     $return->return_types = $args->return_types;
     foreach ($repositories as $repository) {
         $meta = $repository->get_meta();
