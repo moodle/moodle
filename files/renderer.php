@@ -195,15 +195,15 @@ class core_files_renderer extends plugin_renderer_base {
     </div>
     <div class="fp-navbar">
         <div class="filemanager-toolbar">
-            <div class="{!}fp-viewbar">
-                <a class="{!}fp-vb-icons" href="#"></a>
-                <a class="{!}fp-vb-details" href="#"></a>
-                <a class="{!}fp-vb-tree" href="#"></a>
-            </div>
             <div class="fp-toolbar">
                 <div class="{!}fp-btn-add"><a href="#"><img src="'.$this->pix_url('a/add_file').'" /> '.$straddfile.'</a></div>
                 <div class="{!}fp-btn-mkdir"><a href="#"><img src="'.$this->pix_url('a/create_folder').'" /> '.$strmakedir.'</a></div>
                 <div class="{!}fp-btn-download"><a href="#"><img src="'.$this->pix_url('a/download_all').'" /> '.$strdownload.'</a></div>
+            </div>
+            <div class="{!}fp-viewbar">
+                <a class="{!}fp-vb-icons" href="#"></a>
+                <a class="{!}fp-vb-details" href="#"></a>
+                <a class="{!}fp-vb-tree" href="#"></a>
             </div>
         </div>
         <div class="fp-pathbar">
@@ -297,8 +297,10 @@ class core_files_renderer extends plugin_renderer_base {
     private function fm_js_template_mkdir() {
         $rv = '
 <div class="fp-mkdir-dlg">
-    <input type="text">
-    <a class="{!}fp-dlg-butcreate fp-panel-button">'.get_string('create').'</a>
+    <p>New folder name:</p>
+    <input type="text"><br/>
+    <a class="{!}fp-dlg-butcreate fp-panel-button" href="#">'.get_string('create').'</a>
+    <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
@@ -418,10 +420,8 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="filemanager fp-dlg">
     <div class="{!}fp-dlg-text"></div>
-    <!--<div class="fp-dlg-but"><button class="{!}fp-dlg-butconfirm" >'.get_string('ok').'</button></div>
-    <div class="fp-dlg-but"><button class="{!}fp-dlg-butcancel" >'.get_string('cancel').'</button></div>-->
-    <a class="{!}fp-dlg-butconfirm fp-panel-button" >'.get_string('ok').'</a>
-    <a class="{!}fp-dlg-butcancel fp-panel-button">'.get_string('cancel').'</a>
+    <a class="{!}fp-dlg-butconfirm fp-panel-button" href="#">'.get_string('ok').'</a>
+    <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
@@ -510,17 +510,12 @@ class core_files_renderer extends plugin_renderer_base {
 <div class="file-picker fp-generallayout">
     <div class="fp-repo-area">
         <ul class="fp-list">
-            <li class="{!}fp-repo"><img class="{!}fp-repo-icon" width="16" height="16" />&nbsp;<a class="{!}fp-repo-name" href="#"></a></li>
+            <li class="{!}fp-repo"><a href="#"><img class="{!}fp-repo-icon" width="16" height="16" />&nbsp;<span class="{!}fp-repo-name" /span></a></li>
         </ul>
     </div>
     <div class="fp-repo-items">
         <div class="fp-navbar">
             <div>
-                <div class="{!}fp-viewbar">
-                    <a class="{!}fp-vb-icons" href="#"></a>
-                    <a class="{!}fp-vb-details" href="#"></a>
-                    <a class="{!}fp-vb-tree" href="#"></a>
-                </div>
                 <div class="{!}fp-toolbar">
                     <div class="{!}fp-tb-back"><a href="#">'.get_string('back', 'repository').'</a></div>
                     <div class="{!}fp-tb-search fp-search"><form/></div>
@@ -528,6 +523,11 @@ class core_files_renderer extends plugin_renderer_base {
                     <div class="{!}fp-tb-logout"><img src="'.$this->pix_url('a/logout').'" /><a href="#"></a></div>
                     <div class="{!}fp-tb-manage"><a href="#"><img src="'.$this->pix_url('a/setting').'" /> '.get_string('manageurl', 'repository').'</a></div>
                     <div class="{!}fp-tb-help"><a href="#"><img src="'.$this->pix_url('a/help').'" /> '.get_string('help').'</a></div>
+                </div>
+                <div class="{!}fp-viewbar">
+                    <a class="{!}fp-vb-icons" href="#"></a>
+                    <a class="{!}fp-vb-details" href="#"></a>
+                    <a class="{!}fp-vb-tree" href="#"></a>
                 </div>
             </div>
             <div class="fp-pathbar">
@@ -780,7 +780,7 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="file-picker fp-msg">
     <p class="{!}fp-msg-text"></p>
-    <a class="{!}fp-msg-butok fp-panel-button">'.get_string('ok').'</a>
+    <a class="{!}fp-msg-butok fp-panel-button" href="#">'.get_string('ok').'</a>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }

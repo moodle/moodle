@@ -36,14 +36,14 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
  */
 .file-picker .fp-list {list-style-type:none;padding:0;float:left;width:100%;margin:0;}
 .dir-rtl .file-picker .fp-list {text-align:right;}
-.file-picker .fp-list .fp-repo {display:block;padding:.5em .7em;}
+.file-picker .fp-list .fp-repo a{display:block;padding:.5em .7em;}
 .file-picker .fp-list .fp-repo.active {background:#F2F2F2;}
 .file-picker .fp-repo-icon {padding: 0px 7px 0px 5px;}
 
 /*
  * Tools, Path & View on fp-navbar (File Picker and File Manager)
  */
-.fp-toolbar {display: table-row;line-height: 22px;}
+.fp-toolbar {display: table-row;line-height: 22px;float:left;}
 .fp-toolbar.empty {display:none;}
 .fp-toolbar .disabled {display:none;}
 .fp-toolbar div {display: inline-block;padding: 0px 2px;}
@@ -150,20 +150,20 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
  * File exists dialogue on Upload (File Picker only)
  */
 .file-picker.fp-dlg {text-align: center;}
-.file-picker.fp-dlg .fp-dlg-text {padding: 40px 20px 10px 20px;}
+.file-picker.fp-dlg .fp-dlg-text {padding: 40px 20px 10px 20px;font-size: 12px;}
 
 /*
  * Error dialogue on Upload (File Picker only)
  */
 .file-picker.fp-msg {text-align: center;}
-.file-picker.fp-msg .fp-msg-text {padding: 40px 20px 10px 20px;min-width:200px;max-width:500px;max-height:300px;overflow:auto;}
-.file-picker.fp-msg.fp-msg-error .fp-msg-text {padding: 40px 20px 10px 20px;}
+.file-picker.fp-msg .fp-msg-text {padding: 40px 20px 10px 20px;min-width:200px;max-width:500px;max-height:300px;overflow:auto;font-size: 12px;}
+.file-picker.fp-msg.fp-msg-error .fp-msg-text {padding: 40px 20px 10px 20px;font-size: 12px;}
 
 /*
  * Error on fp-content (File Picker only)
  */
 .file-picker .fp-content-error {height: 100%;width: 100%;display: table;text-align: center;}
-.file-picker .fp-content-error .fp-error {height: 100%;width: 100%;display:table-cell;vertical-align: middle;padding: 40px 20px 10px 20px;}
+.file-picker .fp-content-error .fp-error {height: 100%;width: 100%;display:table-cell;vertical-align: middle;padding: 40px 20px 10px 20px;font-size: 12px;}
 
 /*
  * Lazy loading on fp-content (File Picker only)
@@ -236,8 +236,8 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
  */
 .filemanager .fp-iconview .fp-reficons1 {position:absolute;height:100%;width:100%;top:0;left:0;z-index:1000;}
 .filemanager .fp-iconview .fp-reficons2 {position:absolute;height:100%;width:100%;top:0;left:0;z-index:1001;}
-.filemanager .fp-iconview .fp-file.fp-hasreferences .fp-reficons1 {background: url('[[pix:moodle|t/lock]]') no-repeat;background-position:bottom left;}
-.filemanager .fp-iconview .fp-file.fp-isreference .fp-reficons2 {background: url('[[pix:moodle|t/right]]') no-repeat;background-position:bottom right;}
+.filemanager .fp-iconview .fp-file.fp-hasreferences .fp-reficons1 {background: url('[[pix:theme|fp/link]]') no-repeat;background-position:bottom right;}
+.filemanager .fp-iconview .fp-file.fp-isreference .fp-reficons2 {background: url('[[pix:theme|fp/alias]]') no-repeat;background-position:bottom left;}
 
 /*
  * Table view (File Manager only)
@@ -261,7 +261,6 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 /*
  * Drag and drop support (File Manager only)
  */
-/*.filepicker-filelist div:not(.dndupload-target),*/
 .filemanager.fm-noitems .fm-empty-container {display:block;position:absolute;top:10px;bottom:10px;left:10px;right:10px;border: 2px dashed #BBB;padding-top:85px;text-align:center;z-index: 3000;}
 .filepicker-filelist .dndupload-target,
 .filemanager-container .dndupload-target {background:#FFF;position:absolute;top:10px;bottom:10px;left:10px;right:10px;border: 2px dashed #fb7979;padding-top:85px;text-align:center;z-index:3000;-webkit-box-shadow:  0px 0px 0px 10px #FFF;-moz-box-shadow: 0px 0px 0px 10px #FFF;box-shadow:  0px 0px 0px 10px #FFF;z-index: 3000;}
@@ -303,20 +302,23 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 
 .filemanager.fp-select .fp-reflist.fp-unknown {display:none;}
 .filemanager.fp-select .fp-reflist .fp-reflistloading {display:none;}
+.filemanager.fp-select .fp-refcount {max-width: 265px;}
 .filemanager.fp-select .fp-reflist.fp-loading .fp-reflistloading {display:inline;}
-.filemanager.fp-select .fp-reflist .fp-value {max-width:400px;max-height:50px;overflow:auto;}
+.filemanager.fp-select .fp-reflist .fp-value {background: #FFF;border: 1px solid #BBB;padding: 8px 7px;margin: 0px;max-width: 265px;max-height: 75px;overflow:auto;}
+.filemanager.fp-select .fp-reflist .fp-value li {padding-bottom: 7px;}
 
 /*
  * Create folder dialogue (File Manager only)
  */
-.filemanager .fp-mkdir-dlg input {margin-top: 20px;margin-left: 20px;float:left;}
-.filemanager .fp-dlg-butcreate {margin-top: 20px;margin-right: 20px;}
+.filemanager .fp-mkdir-dlg {text-align: center;}
+.filemanager .fp-mkdir-dlg p {text-align: left;margin: 40px 20px 0px;}
+.filemanager .fp-mkdir-dlg input {margin: 0px 20px 20px;}
 
 /*
  * Confirm dialogue for delete (File Manager only)
  */
 .filemanager.fp-dlg {text-align: center;}
-.filemanager.fp-dlg .fp-dlg-text {padding: 0px 10px;min-width:200px;max-width:340px;max-height:300px;overflow:auto;line-height: 22px;margin: 40px 20px 20px 20px;}
+.filemanager.fp-dlg .fp-dlg-text {padding: 0px 10px;min-width:200px;max-width:340px;max-height:300px;overflow:auto;line-height: 22px;margin: 40px 20px 20px;font-size: 12px;}
 
 /*
  *file picker search dialog
