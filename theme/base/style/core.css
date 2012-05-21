@@ -828,6 +828,11 @@ sup {vertical-align: super;}
     text-align: center;
 }
 
+#choosercontainer #chooseform .submitbuttons input {
+    min-width: 100px;
+    margin: 0px 0.5em;
+}
+
 /* Various settings for the options area */
 #choosercontainer #chooseform .options {
     position: relative;
