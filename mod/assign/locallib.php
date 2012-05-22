@@ -889,6 +889,8 @@ class assign {
      *
      * @param mixed $grade int|null
      * @param boolean $editing Are we allowing changes to this grade?
+     * @param int $userid The user id the grade belongs to
+     * @param int $modified Timestamp from when the grade was last modified
      * @return string User-friendly representation of grade
      */
     public function display_grade($grade, $editing, $userid=0, $modified=0) {
@@ -896,10 +898,12 @@ class assign {
 
         static $scalegrades = array();
 
-        if ($this->get_instance()->grade >= 0) {    // Normal number
+        if ($this->get_instance()->grade >= 0) {
+            // Normal number
             if ($editing) {
                 $o = '<input type="text" name="quickgrade_' . $userid . '" value="' . $grade . '" size="6" maxlength="10" class="quickgrade"/>';
                 $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade,2);
+                $o .= '<input type="hidden" name="grademodified_' . $userid . '" value="' . $modified . '"/>';
                 return $o;
             } else if ($grade == -1 || $grade === null) {
                 return '-';
@@ -907,7 +911,8 @@ class assign {
                 return format_float(($grade),2) .'&nbsp;/&nbsp;'. format_float($this->get_instance()->grade,2);
             }
 
-        } else {                                // Scale
+        } else {
+            // Scale
             if (empty($this->cache['scale'])) {
                 if ($scale = $DB->get_record('scale', array('id'=>-($this->get_instance()->grade)))) {
                     $this->cache['scale'] = make_menu_from_list($scale->scale);
@@ -2319,7 +2324,8 @@ class assign {
     /**
      * save quick grades
      *
-     * @return string - The result of the save operation
+     * @global moodle_database $DB
+     * @return string The result of the save operation
      */
     private function process_save_quick_grades() {
         global $USER, $DB, $CFG;
@@ -2331,36 +2337,37 @@ class assign {
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
         $controller = $gradingmanager->get_active_controller();
         if (!empty($controller)) {
-            return get_string('errorquickgradingnotcompatiblewithadvancedgrading', 'assign');
+            return get_string('errorquickgradingvsadvancedgrading', 'assign');
         }
 
         $users = array();
         // first check all the last modified values
-        $len = strlen('grademodified_');
+        // Using POST is really unfortunate. A better solution needs to be found here. As we are looking for grades students we could
+        // gets a list of possible users and look for values based upon that.
         foreach ($_POST as $key => $value) {
-            if (substr($key, 0, $len) === 'grademodified_') {
+            if (preg_match('#^grademodified_(\d+)$#', $key, $matches)) {
                 // gather the userid, updated grade and last modified value
                 $record = new stdClass();
-                $record->userid = (int)substr($key, $len);
+                $record->userid = (int)$matches[1];
                 $record->grade = required_param('quickgrade_' . $record->userid, PARAM_INT);
-                $record->lastmodified = $value;
+                $record->lastmodified = clean_param($value, PARAM_INT);
                 $record->gradinginfo = grade_get_grades($this->get_course()->id, 'mod', 'assign', $this->get_instance()->id, array($record->userid));
                 $users[$record->userid] = $record;
             }
         }
-        list($userids, $useridparams) = $DB->get_in_or_equal(array_keys($users));
+        if (empty($users)) {
+            // Quick check to see whether we have any users to update and we don't
+            return get_string('quickgradingchangessaved', 'assign'); // Technical lie
+        }
 
+        list($userids, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
+        $params['assignment'] = $this->get_instance()->id;
         // check them all for currency
-        $currentgrades = $DB->get_recordset_sql('SELECT u.id as userid,
-                                                        g.grade as grade,
-                                                        g.timemodified as lastmodified
-                                                 FROM {user} u
-                                                 LEFT JOIN {assign_grades} g ON
-                                                            u.id = g.userid AND
-                                                            g.assignment = ? WHERE u.id ' .
-                                                 $userids,
-                                                 array_merge(array($this->get_instance()->id),
-                                                       $useridparams));
+        $sql = 'SELECT u.id as userid, g.grade as grade, g.timemodified as lastmodified
+                  FROM {user} u
+             LEFT JOIN {assign_grades} g ON u.id = g.userid AND g.assignment = :assignment
+                 WHERE u.id ' . $userids;
+        $currentgrades = $DB->get_recordset_sql($sql, $params);
 
         $modifiedusers = array();
         foreach ($currentgrades as $current) {
@@ -2396,6 +2403,7 @@ class assign {
             }
 
         }
+        $currentgrades->close();
 
         // ok - ready to process the updates
         foreach ($modifiedusers as $userid => $modified) {
@@ -2420,8 +2428,6 @@ class assign {
                 }
             }
 
-            $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
-
             $this->add_to_log('grade submission', $this->format_grade_for_log($grade));
         }
 
@@ -2442,10 +2448,7 @@ class assign {
         // Need submit permission to submit an assignment
         require_capability('mod/assign:grade', $this->context);
 
-
-
         $mform = new mod_assign_grading_options_form(null, array('cm'=>$this->get_course_module()->id, 'contextid'=>$this->context->id, 'userid'=>$USER->id, 'showquickgrading'=>false));
-
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
             set_user_preference('assign_filter', $formdata->filter);

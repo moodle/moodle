@@ -92,15 +92,12 @@ class mod_assign_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_assign_quickgrading_result(assign_quickgrading_result $result) {
+        $url = new moodle_url('/mod/assign/view.php', array('id' => $result->coursemoduleid, 'action'=>'grading'));
+
         $o = '';
         $o .= $this->output->heading(get_string('quickgradingresult', 'assign'), 4);
-
         $o .= $this->output->notification($result->message);
-
-        $o .= $this->output->continue_button(new moodle_url('/mod/assign/view.php',
-                                                          array('id' => $result->coursemoduleid,
-                                                                'action'=>'grading')));
-
+        $o .= $this->output->continue_button($url);
         return $o;
     }
 

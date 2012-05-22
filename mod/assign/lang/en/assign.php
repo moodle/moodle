@@ -101,7 +101,7 @@ for <i>\'{$a->assignment}\'  at {$a->timeupdated}</i><br /><br />
 It is <a href="{$a->url}">available on the web site</a>.';
 $string['enabled'] = 'Enabled';
 $string['errornosubmissions'] = 'There are no submissions to download';
-$string['errorquickgradingnotcompatiblewithadvancedgrading'] = 'The grades were not saved because this assignment is currently using advanced grading';
+$string['errorquickgradingvsadvancedgrading'] = 'The grades were not saved because this assignment is currently using advanced grading';
 $string['errorrecordmodified'] = 'The grades were not saved because someone has modified one or more records more recently than when you loaded the page.';
 $string['feedbackcomments'] = 'Feedback comments';
 $string['feedback'] = 'Feedback';

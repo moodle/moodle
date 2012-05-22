@@ -229,6 +229,8 @@ class assign_grading_table extends table_sql implements renderable {
      *
      * @param string $grade
      * @param boolean $editable
+     * @param int $userid The user id of the user this grade belongs to
+     * @param int $modified Timestamp showing when the grade was last modified
      * @return string The formatted grade
      */
     function display_grade($grade, $editable, $userid, $modified) {
@@ -236,7 +238,6 @@ class assign_grading_table extends table_sql implements renderable {
             return $grade;
         }
         $o = $this->assignment->display_grade($grade, $editable, $userid, $modified);
-
         return $o;
     }
 
@@ -341,7 +342,6 @@ class assign_grading_table extends table_sql implements renderable {
         }
 
         $grade = $this->display_grade($row->grade, $this->quickgrading, $row->userid, $row->timemarked);
-
 
         //return $grade . $separator . $link;
         return $link . $separator . $grade;
