@@ -330,12 +330,12 @@ if ($hassiteconfig) {
       $typeoptionnames = repository::static_function($repositorytype->get_typename(), 'get_type_option_names');
       $instanceoptionnames = repository::static_function($repositorytype->get_typename(), 'get_instance_option_names');
       if (!empty($typeoptionnames) || !empty($instanceoptionnames)) {
-            $ADMIN->add('repositorysettings',
-                new admin_externalpage('repositorysettings'.$repositorytype->get_typename(),
-                        $repositorytype->get_readablename(),
-                        $url . '?action=edit&repos=' . $repositorytype->get_typename()),
-                        'moodle/site:config');
-        }
+
+          $params = array('action'=>'edit', 'sesskey'=>sesskey(), 'repos'=>$repositorytype->get_typename());
+          $settingsurl = new moodle_url("/$CFG->admin/repository.php", $params);
+          $repositoryexternalpage = new admin_externalpage('repositorysettings'.$repositorytype->get_typename(), $repositorytype->get_readablename(), $settingsurl);
+          $ADMIN->add('repositorysettings', $repositoryexternalpage);
+      }
     }
 }
 
