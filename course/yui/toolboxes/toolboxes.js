@@ -28,7 +28,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         MOVELEFTCLASS : 'editing_moveleft',
         MOVERIGHT : 'a.editing_moveright',
         PAGECONTENT : 'div#page-content',
-        RIGHTDIV : 'div.right',
+        RIGHTSIDE : '.right',
         SECTIONHIDDENCLASS : 'hidden',
         SECTIONIDPREFIX : 'section-',
         SECTIONLI : 'li.section',
@@ -384,7 +384,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             e.preventDefault();
 
             // Return early if the current section is hidden
-            var section = e.target.ancestor(CSS.SECTIONLI);
+            var section = e.target.ancestor(M.course.format.get_section_selector(Y));
             if (section && section.hasClass(CSS.SECTIONHIDDENCLASS)) {
                 return;
             }
@@ -649,17 +649,17 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         },
         _setup_for_section : function(toolboxtarget) {
             // Section Highlighting
-            this.replace_button(toolboxtarget, CSS.RIGHTDIV + ' ' + CSS.HIGHLIGHT, this.toggle_highlight);
+            this.replace_button(toolboxtarget, CSS.RIGHTSIDE + ' ' + CSS.HIGHLIGHT, this.toggle_highlight);
 
             // Section Visibility
-            this.replace_button(toolboxtarget, CSS.RIGHTDIV + ' ' + CSS.SHOWHIDE, this.toggle_hide_section);
+            this.replace_button(toolboxtarget, CSS.RIGHTSIDE + ' ' + CSS.SHOWHIDE, this.toggle_hide_section);
         },
         toggle_hide_section : function(e) {
             // Prevent the default button action
             e.preventDefault();
 
             // Get the section we're working on
-            var section = e.target.ancestor(CSS.SECTIONLI);
+            var section = e.target.ancestor(M.course.format.get_section_selector(Y));
             var button = e.target.ancestor('a', true);
             var hideicon = button.one('img');
 
@@ -691,7 +691,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var data = {
                 'class' : 'section',
                 'field' : 'visible',
-                'id'    : this.get_section_id(section),
+                'id'    : this.get_section_id(section.ancestor(M.course.format.get_section_wrapper(Y), true)),
                 'value' : value
             };
 
@@ -725,7 +725,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             e.preventDefault();
 
             // Get the section we're working on
-            var section = e.target.ancestor(CSS.SECTIONLI);
+            var section = e.target.ancestor(M.course.format.get_section_selector(Y));
             var button = e.target.ancestor('a', true);
             var buttonicon = button.one('img');
 
@@ -736,22 +736,22 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             // Set the current highlighted item text
             var old_string = M.util.get_string('markthistopic', 'moodle');
             Y.one(CSS.PAGECONTENT)
-                .all(CSS.SECTIONLI + '.current ' + CSS.HIGHLIGHT)
+                .all(M.course.format.get_section_selector(Y) + '.current ' + CSS.HIGHLIGHT)
                 .set('title', old_string);
             Y.one(CSS.PAGECONTENT)
-                .all(CSS.SECTIONLI + '.current ' + CSS.HIGHLIGHT + ' img')
+                .all(M.course.format.get_section_selector(Y) + '.current ' + CSS.HIGHLIGHT + ' img')
                 .set('title', old_string)
                 .set('alt', old_string)
                 .set('src', M.util.image_url('i/marker'));
 
             // Remove the highlighting from all sections
-            var allsections = Y.one(CSS.PAGECONTENT).all(CSS.SECTIONLI)
+            var allsections = Y.one(CSS.PAGECONTENT).all(M.course.format.get_section_selector(Y))
                 .removeClass('current');
 
             // Then add it if required to the selected section
             if (!togglestatus) {
                 section.addClass('current');
-                value = this.get_section_id(section);
+                value = this.get_section_id(section.ancestor(M.course.format.get_section_wrapper(Y), true));
                 var new_string = M.util.get_string('markedthistopic', 'moodle');
                 button
                     .set('title', new_string);
