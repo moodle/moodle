@@ -151,7 +151,7 @@ class filelib_testcase extends advanced_testcase {
         // create a file reference
         $fileref = $fs->create_file_from_reference($filerefrecord, $userrepository->id, $userfileref);
         $this->assertInstanceOf('stored_file', $fileref);
-        $this->assertEquals($userrepository->id, $fileref->repository->id);
+        $this->assertEquals($userrepository->id, $fileref->get_repository_id());
         $this->assertEquals($userfile->get_contenthash(), $fileref->get_contenthash());
         $this->assertEquals($userfile->get_filesize(), $fileref->get_filesize());
         $this->assertRegExp('#' . $userfile->get_filename(). '$#', $fileref->get_reference_details());
@@ -249,7 +249,7 @@ class filelib_testcase extends advanced_testcase {
         // create a file reference
         $fileref = $fs->create_file_from_reference($filerecord, $userrepository->id, $userfileref);
         $this->assertInstanceOf('stored_file', $fileref);
-        $this->assertEquals($userrepository->id, $fileref->repository->id);
+        $this->assertEquals($userrepository->id, $fileref->get_repository_id());
         $this->assertEquals($userfile->get_contenthash(), $fileref->get_contenthash());
         $this->assertEquals($userfile->get_filesize(), $fileref->get_filesize());
         $this->assertRegExp('#' . $userfile->get_filename(). '$#', $fileref->get_reference_details());

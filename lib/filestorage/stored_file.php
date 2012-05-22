@@ -45,7 +45,7 @@ class stored_file {
     /** @var string location of content files */
     private $filedir;
     /** @var repository repository plugin instance */
-    public $repository;
+    private $repository;
 
     /**
      * Constructor, this constructor should be called ONLY from the file_storage class!
