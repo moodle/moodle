@@ -42,7 +42,7 @@ class medialib_testcase extends advanced_testcase {
         global $CFG;
         parent::setUp();
 
-        // Reset CFG.
+        // Reset $CFG and $SERVER.
         $this->resetAfterTest(true);
 
         // Consistent initial setup: all players disabled.
@@ -82,18 +82,6 @@ class medialib_testcase extends advanced_testcase {
     }
 
     /**
-     * Post-test cleanup. Replaces old $CFG.
-     */
-    public function tearDown() {
-        // Replace original user agent.
-        if (isset($this->realserver)) {
-            $_SERVER = $this->realserver;
-        }
-
-        parent::tearDown();
-    }
-
-    /**
      * Test for the core_media_player is_enabled.
      */
     public function test_is_enabled() {
@@ -106,6 +94,32 @@ class medialib_testcase extends advanced_testcase {
         $this->assertFalse($test->is_enabled());
         $CFG->core_media_enable_test = 1;
         $this->assertTrue($test->is_enabled());
+    }
+
+    /**
+     * Test for core_media::get_filename.
+     */
+    public function test_get_filename() {
+        $this->assertEquals('frog.mp4', core_media::get_filename(new moodle_url(
+                '/pluginfile.php/312/mod_page/content/7/frog.mp4')));
+        // This should work even though slasharguments is true, because we want
+        // it to support 'legacy' links if somebody toggles the option later.
+        $this->assertEquals('frog.mp4', core_media::get_filename(new moodle_url(
+                '/pluginfile.php?file=/312/mod_page/content/7/frog.mp4')));
+    }
+
+    /**
+     * Test for core_media::get_extension.
+     */
+    public function test_get_extension() {
+        $this->assertEquals('mp4', core_media::get_extension(new moodle_url(
+                '/pluginfile.php/312/mod_page/content/7/frog.mp4')));
+        $this->assertEquals('', core_media::get_extension(new moodle_url(
+                '/pluginfile.php/312/mod_page/content/7/frog')));
+        $this->assertEquals('mp4', core_media::get_extension(new moodle_url(
+                '/pluginfile.php?file=/312/mod_page/content/7/frog.mp4')));
+        $this->assertEquals('', core_media::get_extension(new moodle_url(
+                '/pluginfile.php?file=/312/mod_page/content/7/frog')));
     }
 
     /**
@@ -342,6 +356,26 @@ class medialib_testcase extends advanced_testcase {
         $url = new moodle_url('http://example.org/test.ogg');
         $t = $renderer->embed_url($url);
         $this->assertTrue(self::str_contains($t, '</audio>'));
+    }
+
+    /**
+     * Same as test_embed_url MP3 test, but for slash arguments.
+     */
+    public function test_slash_arguments() {
+        global $CFG, $PAGE;
+
+        // Again we do not turn slasharguments actually on, because it has to
+        // work regardless of the setting of that variable in case of handling
+        // links created using previous setting.
+
+        // Enable MP3 and get renderer.
+        $CFG->core_media_enable_mp3 = true;
+        $renderer = new core_media_renderer_test($PAGE, '');
+
+        // Format: mp3.
+        $url = new moodle_url('http://example.org/pluginfile.php?file=x/y/z/test.mp3');
+        $t = $renderer->embed_url($url);
+        $this->assertTrue(self::str_contains($t, 'core_media_mp3_'));
     }
 
     /**

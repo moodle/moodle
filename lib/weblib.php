@@ -763,13 +763,29 @@ class moodle_url {
      * By default the path includes slash-arguments (for example,
      * '/myfile.php/extra/arguments') so it is what you would expect from a
      * URL path. If you don't want this behaviour, you can opt to exclude the
-     * slash arguments.
+     * slash arguments. (Be careful: if the $CFG variable slasharguments is
+     * disabled, these URLs will have a different format and you may need to
+     * look at the 'file' parameter too.)
      *
      * @param bool $includeslashargument If true, includes slash arguments
      * @return string Path of URL
      */
     public function get_path($includeslashargument = true) {
         return $this->path . ($includeslashargument ? $this->slashargument : '');
+    }
+
+    /**
+     * Returns a given parameter value from the URL.
+     *
+     * @param string $name Name of parameter
+     * @return string Value of parameter or null if not set
+     */
+    public function get_param($name) {
+        if (array_key_exists($name, $this->params)) {
+            return $this->params[$name];
+        } else {
+            return null;
+        }
     }
 }
 
