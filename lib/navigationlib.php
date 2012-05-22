@@ -2324,7 +2324,7 @@ class global_navigation extends navigation_node {
 
         $context = get_context_instance(CONTEXT_USER, $USER->id);
         if ($iscurrentuser && has_capability('moodle/user:manageownfiles', $context)) {
-            $url = new moodle_url('/user/files.php');
+            $url = new moodle_url('/user/filesedit.php');
             $usernode->add(get_string('myfiles'), $url, self::TYPE_SETTING);
         }
 
