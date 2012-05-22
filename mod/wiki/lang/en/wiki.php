@@ -183,6 +183,7 @@ $string['searchcontent'] = 'Search in page content';
 $string['searchresult'] = 'Search results:';
 $string['searchwikis'] = 'Search wikis';
 $string['special'] = 'Special';
+$string['tableofcontents'] = 'Table of contents';
 $string['tagsdeleted'] = 'Wiki tags have been deleted';
 $string['tagtitle'] = 'See the "{$a}" tag';
 $string['teacherrating'] = 'Teacher rating';
