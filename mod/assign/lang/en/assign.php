@@ -172,7 +172,6 @@ $string['notgradedyet'] = 'Not graded yet';
 $string['notsubmittedyet'] = 'Not submitted yet';
 $string['notifications'] = 'Notifications';
 $string['nousersselected'] = 'No users selected';
-$string['notification'] = 'Notification';
 $string['numberofdraftsubmissions'] = 'Drafts';
 $string['numberofparticipants'] = 'Participants';
 $string['numberofsubmittedassignments'] = 'Submitted';
