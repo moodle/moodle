@@ -239,7 +239,7 @@ abstract class wiki_markup_parser extends generic_parser {
             $i++;
         }
 
-        $this->returnvalues['toc'] = "<div class=\"wiki-toc\"><p class=\"wiki-toc-title\">Table of contents</p>$toc</div>";
+        $this->returnvalues['toc'] = "<div class=\"wiki-toc\"><p class=\"wiki-toc-title\">" . get_string('tableofcontents', 'wiki') . "</p>$toc</div>";
     }
 
     /**
