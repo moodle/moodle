@@ -87,12 +87,33 @@ class mod_assign_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render a grading error notification
+     * @param assign_quickgrading_result $result The result to render
+     * @return string
+     */
+    public function render_assign_quickgrading_result(assign_quickgrading_result $result) {
+        $o = '';
+        $o .= $this->output->heading(get_string('quickgradingresult', 'assign'), 4);
+
+        $o .= $this->output->notification($result->message);
+
+        $o .= $this->output->continue_button(new moodle_url('/mod/assign/view.php',
+                                                          array('id' => $result->coursemoduleid,
+                                                                'action'=>'grading')));
+
+        return $o;
+    }
+
+    /**
      * Render the generic form
      * @param assign_form $form The form to render
      * @return string
      */
     public function render_assign_form(assign_form $form) {
         $o = '';
+        if ($form->jsinitfunction) {
+            $this->page->requires->js_init_call($form->jsinitfunction, array());
+        }
         $o .= $this->output->box_start('boxaligncenter ' . $form->classname);
         $o .= $this->moodleform($form->form);
         $o .= $this->output->box_end();

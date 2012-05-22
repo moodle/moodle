@@ -348,6 +348,9 @@ class assign {
                 //cancel button
                 $action = 'grading';
             }
+        }else if ($action == 'quickgrade') {
+            $message = $this->process_save_quick_grades();
+            $action = 'quickgradingresult';
         }else if ($action == 'saveoptions') {
             $this->process_save_grading_options();
             $action = 'grading';
@@ -360,6 +363,9 @@ class assign {
         if ($action == 'previousgrade') {
             $mform = null;
             $o .= $this->view_single_grade_page($mform, -1);
+        } else if ($action == 'quickgradingresult') {
+            $mform = null;
+            $o .= $this->view_quickgrading_result($message);
         } else if ($action == 'nextgrade') {
             $mform = null;
             $o .= $this->view_single_grade_page($mform, 1);
@@ -882,17 +888,20 @@ class assign {
      * Return a grade in user-friendly form, whether it's a scale or not
      *
      * @param mixed $grade int|null
+     * @param boolean $editing Are we allowing changes to this grade?
      * @return string User-friendly representation of grade
      */
-    public function display_grade($grade) {
+    public function display_grade($grade, $editing, $userid=0, $modified=0) {
         global $DB;
 
         static $scalegrades = array();
 
-
-
         if ($this->get_instance()->grade >= 0) {    // Normal number
-            if ($grade == -1 || $grade === null) {
+            if ($editing) {
+                $o = '<input type="text" name="quickgrade_' . $userid . '" value="' . $grade . '" size="6" maxlength="10" class="quickgrade"/>';
+                $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade,2);
+                return $o;
+            } else if ($grade == -1 || $grade === null) {
                 return '-';
             } else {
                 return format_float(($grade),2) .'&nbsp;/&nbsp;'. format_float($this->get_instance()->grade,2);
@@ -906,11 +915,26 @@ class assign {
                     return '-';
                 }
             }
-            $scaleid = (int)$grade;
-            if (isset($this->cache['scale'][$scaleid])) {
-                return $this->cache['scale'][$scaleid];
+            if ($editing) {
+                $o = '<select name="quickgrade_' . $userid . '" class="quickgrade">';
+                $o .= '<option value="-1">' . get_string('nograde') . '</option>';
+                foreach ($this->cache['scale'] as $optionid => $option) {
+                    $selected = '';
+                    if ($grade == $optionid) {
+                        $selected = 'selected="selected"';
+                    }
+                    $o .= '<option value="' . $optionid . '" ' . $selected . '>' . $option . '</option>';
+                }
+                $o .= '</select>';
+                $o .= '<input type="hidden" name="grademodified_' . $userid . '" value="' . $modified . '"/>';
+                return $o;
+            } else {
+                $scaleid = (int)$grade;
+                if (isset($this->cache['scale'][$scaleid])) {
+                    return $this->cache['scale'][$scaleid];
+                }
+                return '-';
             }
-            return '-';
         }
     }
 
@@ -961,7 +985,7 @@ class assign {
      */
     private function get_grading_userid_list(){
         $filter = get_user_preferences('assign_filter', '');
-        $table = new assign_grading_table($this, 0, $filter);
+        $table = new assign_grading_table($this, 0, $filter, 0, false);
 
         $useridlist = $table->get_column_data('userid');
 
@@ -987,7 +1011,7 @@ class assign {
         }
 
         $filter = get_user_preferences('assign_filter', '');
-        $table = new assign_grading_table($this, 0, $filter);
+        $table = new assign_grading_table($this, 0, $filter, 0, false);
 
         $userid = $table->get_cell_data($num, 'userid', $last);
 
@@ -1203,11 +1227,28 @@ class assign {
         return $result;
     }
 
+    /**
+     * Display a grading error
+     *
+     * @param string $message - The description of the result
+     * @return string
+     */
+    private function view_quickgrading_result($message) {
+        $o = '';
+        $o .= $this->output->render(new assign_header($this->get_instance(),
+                                                      $this->get_context(),
+                                                      $this->show_intro(),
+                                                      $this->get_course_module()->id,
+                                                      get_string('quickgradingresult', 'assign')));
+        $o .= $this->output->render(new assign_quickgrading_result($message, $this->get_course_module()->id));
+        $o .= $this->view_footer();
+        return $o;
+    }
 
     /**
      * Display the page footer
      *
-     * @return None
+     * @return string
      */
     private function view_footer() {
         return $this->output->render_footer();
@@ -1523,6 +1564,7 @@ class assign {
         // Include grading options form
         require_once($CFG->dirroot . '/mod/assign/gradingoptionsform.php');
         require_once($CFG->dirroot . '/mod/assign/gradingactionsform.php');
+        require_once($CFG->dirroot . '/mod/assign/quickgradingform.php');
         require_once($CFG->dirroot . '/mod/assign/gradingbatchoperationsform.php');
         $o = '';
 
@@ -1548,13 +1590,25 @@ class assign {
                                                                   'post', '',
                                                                   array('class'=>'gradingactionsform'));
 
+        $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
+
         $perpage = get_user_preferences('assign_perpage', 10);
         $filter = get_user_preferences('assign_filter', '');
+        $controller = $gradingmanager->get_active_controller();
+        $showquickgrading = empty($controller);
+        if (optional_param('action', '', PARAM_ALPHA) == 'saveoptions') {
+            $quickgrading = optional_param('quickgrading', false, PARAM_BOOL);
+            set_user_preference('assign_quickgrading', $quickgrading);
+        }
+        $quickgrading = get_user_preferences('assign_quickgrading', false);
+
         // print options  for changing the filter and changing the number of results per page
         $gradingoptionsform = new mod_assign_grading_options_form(null,
                                                                   array('cm'=>$this->get_course_module()->id,
                                                                         'contextid'=>$this->context->id,
-                                                                        'userid'=>$USER->id),
+                                                                        'userid'=>$USER->id,
+                                                                        'showquickgrading'=>$showquickgrading,
+                                                                        'quickgrading'=>$quickgrading),
                                                                   'post', '',
                                                                   array('class'=>'gradingoptionsform'));
 
@@ -1577,10 +1631,18 @@ class assign {
         }
 
         $o .= $this->output->render(new assign_form('gradingactionsform', $gradingactionsform));
-        $o .= $this->output->render(new assign_form('gradingoptionsform', $gradingoptionsform));
+        $o .= $this->output->render(new assign_form('gradingoptionsform', $gradingoptionsform, 'M.mod_assign.init_grading_options'));
 
         // load and print the table of submissions
-        $o .= $this->output->render(new assign_grading_table($this, $perpage, $filter));
+        if ($showquickgrading && $quickgrading) {
+            $table = $this->output->render(new assign_grading_table($this, $perpage, $filter, 0, true));
+            $quickgradingform = new mod_assign_quick_grading_form(null,
+                                                                  array('cm'=>$this->get_course_module()->id,
+                                                                        'gradingtable'=>$table));
+            $o .= $this->output->render(new assign_form('quickgradingform', $quickgradingform));
+        } else {
+            $o .= $this->output->render(new assign_grading_table($this, $perpage, $filter, 0, false));
+        }
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
         $users = array_keys($this->list_participants($currentgroup, true));
@@ -1658,7 +1720,7 @@ class assign {
                                                       $this->get_course_module()->id,
                                                       get_string('editsubmission', 'assign')));
 
-        $o .= $this->output->notification('This assignment is no longer accepting submissions');
+        $o .= $this->output->notification(get_string('submissionsclosed', 'assign'));
 
         $o .= $this->view_footer();
 
@@ -1682,9 +1744,7 @@ class assign {
         require_capability('mod/assign:submit', $this->context);
 
         if (!$this->submissions_open()) {
-            $subclosed  = '';
-            $subclosed .= $this->view_student_error_message();
-            return $subclosed;
+            return $this->view_student_error_message();
         }
         $o .= $this->output->render(new assign_header($this->get_instance(),
                                                       $this->get_context(),
@@ -1875,7 +1935,7 @@ class assign {
                                                                  $gradebookgrade->str_long_grade,
                                                                  has_capability('mod/assign:grade', $this->get_context()));
                 } else {
-                    $gradefordisplay = $this->display_grade($gradebookgrade->grade);
+                    $gradefordisplay = $this->display_grade($gradebookgrade->grade, false);
                 }
 
                 $gradeddate = $gradebookgrade->dategraded;
@@ -2257,6 +2317,118 @@ class assign {
     }
 
     /**
+     * save quick grades
+     *
+     * @return string - The result of the save operation
+     */
+    private function process_save_quick_grades() {
+        global $USER, $DB, $CFG;
+
+        // Need grade permission
+        require_capability('mod/assign:grade', $this->context);
+
+        // make sure advanced grading is disabled
+        $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
+        $controller = $gradingmanager->get_active_controller();
+        if (!empty($controller)) {
+            return get_string('errorquickgradingnotcompatiblewithadvancedgrading', 'assign');
+        }
+
+        $users = array();
+        // first check all the last modified values
+        $len = strlen('grademodified_');
+        foreach ($_POST as $key => $value) {
+            if (substr($key, 0, $len) === 'grademodified_') {
+                // gather the userid, updated grade and last modified value
+                $record = new stdClass();
+                $record->userid = (int)substr($key, $len);
+                $record->grade = required_param('quickgrade_' . $record->userid, PARAM_INT);
+                $record->lastmodified = $value;
+                $record->gradinginfo = grade_get_grades($this->get_course()->id, 'mod', 'assign', $this->get_instance()->id, array($record->userid));
+                $users[$record->userid] = $record;
+            }
+        }
+        list($userids, $useridparams) = $DB->get_in_or_equal(array_keys($users));
+
+        // check them all for currency
+        $currentgrades = $DB->get_recordset_sql('SELECT u.id as userid,
+                                                        g.grade as grade,
+                                                        g.timemodified as lastmodified
+                                                 FROM {user} u
+                                                 LEFT JOIN {assign_grades} g ON
+                                                            u.id = g.userid AND
+                                                            g.assignment = ? WHERE u.id ' .
+                                                 $userids,
+                                                 array_merge(array($this->get_instance()->id),
+                                                       $useridparams));
+
+        $modifiedusers = array();
+        foreach ($currentgrades as $current) {
+            $modified = $users[(int)$current->userid];
+
+            // check to see if the outcomes were modified
+            if ($CFG->enableoutcomes) {
+                foreach ($modified->gradinginfo->outcomes as $outcomeid => $outcome) {
+                    $oldoutcome = $outcome->grades[$modified->userid]->grade;
+                    $newoutcome = optional_param('outcome_' . $outcomeid . '_' . $modified->userid, -1, PARAM_INT);
+                    if ($oldoutcome != $newoutcome) {
+                        // can't check modified time for outcomes because it is not reported
+                        $modifiedusers[$modified->userid] = $modified;
+                        continue;
+                    }
+                }
+            }
+
+
+            if (($current->grade < 0 || $current->grade === NULL) &&
+                ($modified->grade < 0 || $modified->grade === NULL)) {
+                // different ways to indicate no grade
+                continue;
+            }
+            if ($current->grade != $modified->grade) {
+                // grade changed
+                if ((int)$current->lastmodified > (int)$modified->lastmodified) {
+                    // error - record has been modified since viewing the page
+                    return get_string('errorrecordmodified', 'assign');
+                } else {
+                    $modifiedusers[$modified->userid] = $modified;
+                }
+            }
+
+        }
+
+        // ok - ready to process the updates
+        foreach ($modifiedusers as $userid => $modified) {
+            $grade = $this->get_user_grade($userid, true);
+            $grade->grade= grade_floatval($modified->grade);
+            $grade->grader= $USER->id;
+
+            $this->update_grade($grade);
+
+            // save outcomes
+            if ($CFG->enableoutcomes) {
+                $data = array();
+                foreach ($modified->gradinginfo->outcomes as $outcomeid => $outcome) {
+                    $oldoutcome = $outcome->grades[$modified->userid]->grade;
+                    $newoutcome = optional_param('outcome_' . $outcomeid . '_' . $modified->userid, -1, PARAM_INT);
+                    if ($oldoutcome != $newoutcome) {
+                        $data[$outcomeid] = $newoutcome;
+                    }
+                }
+                if (count($data) > 0) {
+                    grade_update_outcomes('mod/assign', $this->course->id, 'mod', 'assign', $this->get_instance()->id, $userid, $data);
+                }
+            }
+
+            $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+
+            $this->add_to_log('grade submission', $this->format_grade_for_log($grade));
+        }
+
+        return get_string('quickgradingchangessaved', 'assign');
+    }
+
+    /**
      * save grading options
      *
      * @return void
@@ -2272,7 +2444,7 @@ class assign {
 
 
 
-        $mform = new mod_assign_grading_options_form(null, array('cm'=>$this->get_course_module()->id, 'contextid'=>$this->context->id, 'userid'=>$USER->id));
+        $mform = new mod_assign_grading_options_form(null, array('cm'=>$this->get_course_module()->id, 'contextid'=>$this->context->id, 'userid'=>$USER->id, 'showquickgrading'=>false));
 
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
@@ -2295,7 +2467,7 @@ class assign {
 
         $info = get_string('gradestudent', 'assign', array('id'=>$user->id, 'fullname'=>fullname($user)));
         if ($grade->grade != '') {
-            $info .= get_string('grade') . ': ' . $this->display_grade($grade->grade) . '. ';
+            $info .= get_string('grade') . ': ' . $this->display_grade($grade->grade, false) . '. ';
         } else {
             $info .= get_string('nograde', 'assign');
         }

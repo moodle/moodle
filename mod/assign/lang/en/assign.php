@@ -101,6 +101,8 @@ for <i>\'{$a->assignment}\'  at {$a->timeupdated}</i><br /><br />
 It is <a href="{$a->url}">available on the web site</a>.';
 $string['enabled'] = 'Enabled';
 $string['errornosubmissions'] = 'There are no submissions to download';
+$string['errorquickgradingnotcompatiblewithadvancedgrading'] = 'The grades were not saved because this assignment is currently using advanced grading';
+$string['errorrecordmodified'] = 'The grades were not saved because someone has modified one or more records more recently than when you loaded the page.';
 $string['feedbackcomments'] = 'Feedback comments';
 $string['feedback'] = 'Feedback';
 $string['feedbackplugins'] = 'Feedback plugins';
@@ -173,11 +175,16 @@ $string['preventlatesubmissions_help'] = 'If enabled, students will not be able 
 $string['preventsubmissions'] = 'Prevent the user from making any more submissions to this assignment.';
 $string['preventsubmissionsshort'] = 'Prevent submission changes';
 $string['previous'] = 'Previous';
+$string['quickgrading'] = 'Quick grading';
+$string['quickgradingresult'] = 'Quick grading';
+$string['quickgradingchangessaved'] = 'The grade changes were saved';
+$string['quickgrading_help'] = 'Quick grading allows you to assign grades (and outcomes) directly in the submissions table. Quick grading is not compatible with advanced grading and is not recommended when there are multiple markers.';
 $string['reverttodraftforstudent'] = 'Revert submission to draft for student: (id={$a->id}, fullname={$a->fullname}).';
 $string['reverttodraft'] = 'Revert the submission to draft status.';
 $string['reverttodraftshort'] = 'Revert the submission to draft';
 $string['reviewed'] = 'Reviewed';
 $string['savechanges'] = 'Save changes';
+$string['saveallchanges'] = 'Save all changes';
 $string['savenext'] = 'Save and show next';
 $string['sendnotifications'] = 'Send notifications to graders';
 $string['sendnotifications_help'] = 'If enabled, graders (usually teachers) receive a message whenever a student submits an assignment, early, on time and late. Message methods are configurable.';
