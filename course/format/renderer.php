@@ -261,10 +261,15 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function section_summary($section, $course) {
+        // If section is hidden then display grey section link
+        $classattr = 'section-summary clearfix';
+        If (!$section->visible) {
+            $classattr .= ' dimmed_text';
+        }
 
         $o = '';
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
-            'class' => 'section-summary clearfix'));
+            'class' => $classattr));
 
         $title = get_section_name($course, $section);
         $o.= html_writer::start_tag('a', array('href' => course_get_url($course, $section->section)));
@@ -351,9 +356,13 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $back = $sectionno - 1;
         while ($back > 0 and empty($links['previous'])) {
             if ($canviewhidden || $sections[$back]->visible) {
+                $params = array();
+                if (!$sections[$back]->visible) {
+                    $params = array('class' => 'dimmed_text');
+                }
                 $previouslink = html_writer::tag('span', $this->output->larrow(), array('class' => 'larrow'));
                 $previouslink .= get_section_name($course, $sections[$back]);
-                $links['previous'] = html_writer::link(course_get_url($course, $back), $previouslink);
+                $links['previous'] = html_writer::link(course_get_url($course, $back), $previouslink, $params);
             }
             $back--;
         }
@@ -361,9 +370,13 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $forward = $sectionno + 1;
         while ($forward <= $course->numsections and empty($links['next'])) {
             if ($canviewhidden || $sections[$forward]->visible) {
+                $params = array();
+                if (!$sections[$forward]->visible) {
+                    $params = array('class' => 'dimmed_text');
+                }
                 $nextlink = get_section_name($course, $sections[$forward]);
                 $nextlink .= html_writer::tag('span', $this->output->rarrow(), array('class' => 'rarrow'));
-                $links['next'] = html_writer::link(course_get_url($course, $forward), $nextlink);
+                $links['next'] = html_writer::link(course_get_url($course, $forward), $nextlink, $params);
             }
             $forward++;
         }
@@ -444,7 +457,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 echo $this->start_section_list();
                 echo $this->section_hidden($displaysection);
                 echo $this->end_section_list();
-                echo $sectionnavlinks;
             }
             // Can't view this section.
             return;
@@ -463,19 +475,23 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             echo $this->end_section_list();
         }
 
+        // Start single-section div
+        echo html_writer::start_tag('div', array('class' => 'single-section'));
+
         // Title with section navigation links.
         $sectionnavlinks = $this->get_nav_links($course, $sections, $displaysection);
         $sectiontitle = '';
-        $sectiontitle .= html_writer::start_tag('div', array('class' => 'section-navigation headingblock header'));
+        $sectiontitle .= html_writer::start_tag('div', array('class' => 'section-navigation header headingblock'));
         $sectiontitle .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
         $sectiontitle .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
-        $sectiontitle .= html_writer::tag('div', get_section_name($course, $sections[$displaysection]), array('class' => 'mdl-align'));
+        // Title attributes
+        $titleattr = 'mdl-align title';
+        if (!$sections[$displaysection]->visible) {
+            $titleattr .= ' dimmed_text';
+        }
+        $sectiontitle .= html_writer::tag('div', get_section_name($course, $sections[$displaysection]), array('class' => $titleattr));
         $sectiontitle .= html_writer::end_tag('div');
         echo $sectiontitle;
-
-        // Show completion help icon.
-        $completioninfo = new completion_info($course);
-        echo $completioninfo->display_help_icon();
 
         // Copy activity clipboard..
         echo $this->course_activity_clipboard($course, $displaysection);
@@ -486,6 +502,10 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         // The requested section page.
         $thissection = $sections[$displaysection];
         echo $this->section_header($thissection, $course, true);
+        // Show completion help icon.
+        $completioninfo = new completion_info($course);
+        echo $completioninfo->display_help_icon();
+
         print_section($course, $thissection, $mods, $modnamesused, true);
         if ($PAGE->user_is_editing()) {
             print_section_add_menus($course, $displaysection, $modnames);
@@ -502,6 +522,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $sectionbottomnav .= html_writer::tag('div', $courselink, array('class' => 'mdl-align'));
         $sectionbottomnav .= html_writer::end_tag('div');
         echo $sectionbottomnav;
+
+        // close single-section div.
+        echo html_writer::end_tag('div');
     }
 
     /**
