@@ -183,7 +183,7 @@ class filestoragelib_testcase extends advanced_testcase {
         $ref = $fs->pack_reference($filerecord);
         $newstoredfile = $fs->create_file_from_reference($newfilerecord, $userrepository->id, $ref);
         $this->assertInstanceOf('stored_file', $newstoredfile);
-        $this->assertEquals($userrepository->id, $newstoredfile->repository->id);
+        $this->assertEquals($userrepository->id, $newstoredfile->get_repository_id());
         $this->assertEquals($originalfile->get_contenthash(), $newstoredfile->get_contenthash());
         $this->assertEquals($originalfile->get_filesize(), $newstoredfile->get_filesize());
         $this->assertRegExp('#' . $filename. '$#', $newstoredfile->get_reference_details());
