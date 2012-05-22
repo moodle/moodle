@@ -173,10 +173,7 @@ class repository_upload extends repository {
             // check filetype
             $filemimetype = mimeinfo('type', $_FILES[$elname]['name']);
             if (!in_array($filemimetype, $this->mimetypes)) {
-                if ($sm->string_exists($filemimetype, 'mimetypes')) {
-                    $filemimetype = get_string($filemimetype, 'mimetypes');
-                }
-                throw new moodle_exception('invalidfiletype', 'repository', '', $filemimetype);
+                throw new moodle_exception('invalidfiletype', 'repository', '', get_mimetype_description(array('filename' => $_FILES[$elname]['name'])));
             }
         }
 
