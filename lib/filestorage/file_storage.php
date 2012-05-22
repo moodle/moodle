@@ -1260,6 +1260,8 @@ class file_storage {
             $filerecord->timemodified = $now;
         }
 
+        $transaction = $DB->start_delegated_transaction();
+
         // Insert file reference record.
         try {
             $referencerecord = new stdClass;
@@ -1291,6 +1293,8 @@ class file_storage {
         }
 
         $this->create_directory($filerecord->contextid, $filerecord->component, $filerecord->filearea, $filerecord->itemid, $filerecord->filepath, $filerecord->userid);
+
+        $transaction->allow_commit();
 
         // Adding repositoryid and reference to file record to create stored_file instance
         $filerecord->repositoryid = $repositoryid;
