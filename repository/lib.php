@@ -1728,9 +1728,8 @@ abstract class repository {
                 or (is_array($accepted_types) and in_array('*', $accepted_types))) {
                 return true;
             } else {
-                $extensions = file_get_typegroup('extension', $accepted_types);
-                foreach ($extensions as $ext) {
-                    if (preg_match('#\.'.$ext.'$#i', $value['title'])) {
+                foreach ($accepted_types as $ext) {
+                    if (preg_match('#'.$ext.'$#i', $value['title'])) {
                         return true;
                     }
                 }

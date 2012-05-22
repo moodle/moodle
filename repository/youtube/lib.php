@@ -111,17 +111,23 @@ class repository_youtube extends repository {
         $links = $xml->children('http://www.w3.org/2005/Atom');
         foreach ($xml->entry as $entry) {
             $media = $entry->children('http://search.yahoo.com/mrss/');
-            $title = $media->group->title;
+            $title = (string)$media->group->title;
+            $description = (string)$media->group->description;
+            if (empty($description)) {
+                $description = $title;
+            }
             $attrs = $media->group->thumbnail[2]->attributes();
             $thumbnail = $attrs['url'];
             $arr = explode('/', $entry->id);
             $id = $arr[count($arr)-1];
             $source = 'http://www.youtube.com/v/' . $id . '#' . $title;
             $list[] = array(
-                'title'=>(string)$title,
+                'shorttitle'=>$title,
+                'thumbnail_title'=>$description,
+                'title'=>$title.'.avi', // this is a hack so we accept this file by extension
                 'thumbnail'=>(string)$attrs['url'],
-                'thumbnail_width'=>150,
-                'thumbnail_height'=>120,
+                'thumbnail_width'=>(int)$attrs['width'],
+                'thumbnail_height'=>(int)$attrs['height'],
                 'size'=>'',
                 'date'=>'',
                 'source'=>$source
@@ -186,7 +192,7 @@ class repository_youtube extends repository {
      * @return array
      */
     public function supported_filetypes() {
-        return array('web_video');
+        return array('video');
     }
 
     /**

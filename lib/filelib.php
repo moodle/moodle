@@ -1595,22 +1595,22 @@ function mimeinfo_from_type($element, $mimetype) {
         foreach($mimeinfo as $filetype => $values) {
             if ($values['type'] == $mimetype) {
                 if ($cached[$mimetype] === null) {
-                    $cached[$mimetype] = $filetype;
+                    $cached[$mimetype] = '.'.$filetype;
                 }
                 if (!empty($values['defaulticon'])) {
-                    $cached[$mimetype] = $filetype;
+                    $cached[$mimetype] = '.'.$filetype;
                     break;
                 }
             }
         }
         if (empty($cached[$mimetype])) {
-            $cached[$mimetype] = 'xxx';
+            $cached[$mimetype] = '.xxx';
         }
     }
     if ($element === 'extension') {
         return $cached[$mimetype];
     } else {
-        return mimeinfo($element, '.'.$cached[$mimetype]);
+        return mimeinfo($element, $cached[$mimetype]);
     }
 }
 
@@ -1831,7 +1831,7 @@ function file_get_typegroup($element, $groups) {
             $mimeinfo = & get_mimetypes_array();
             $cached[$element][$group] = array();
             foreach ($mimeinfo as $extension => $value) {
-                $value['extension'] = $extension;
+                $value['extension'] = '.'.$extension;
                 if (empty($value[$element])) {
                     continue;
                 }
@@ -1859,7 +1859,7 @@ function file_get_typegroup($element, $groups) {
  */
 function file_extension_in_typegroup($filename, $groups, $checktype = false) {
     $extension = pathinfo($filename, PATHINFO_EXTENSION);
-    if (!empty($extension) && in_array(strtolower($extension), file_get_typegroup('extension', $groups))) {
+    if (!empty($extension) && in_array('.'.strtolower($extension), file_get_typegroup('extension', $groups))) {
         return true;
     }
     return $checktype && file_mimetype_in_typegroup(mimeinfo('type', $filename), $groups);
