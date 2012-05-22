@@ -385,6 +385,9 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
             },
             toggle_textarea: function(focus) {
                 var t = Y.one('#dlg-content-'+this.client_id);
+                if (!t) {
+                    return false;
+                }
                 if (focus) {
                     if (t.get('value') == M.str.moodle.addcomment) {
                         t.set('value', '');
