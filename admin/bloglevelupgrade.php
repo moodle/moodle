@@ -99,7 +99,7 @@ function bloglevelupgrade_entries($blogentries, $forum, $cm, $groupid=-1) {
         $discussion->groupid = $groupid;
         $message = '';
 
-        $discussionid = forum_add_discussion($discussion, null, $message);
+        $discussionid = forum_add_discussion($discussion, null, $message, $blogentry->userid);
 
         // Copy file attachment records
         $fs = get_file_storage();
