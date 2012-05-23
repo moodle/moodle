@@ -189,8 +189,8 @@ class completion_criteria_course extends completion_criteria {
         // Loop through completions, and mark as complete
         $rs = $DB->get_recordset_sql($sql);
         foreach ($rs as $record) {
-            $completion = new completion_criteria_completion((array)$record);
-            $completion->mark_complete($record->timecompleted);
+            $completion = new completion_criteria_completion($record, DATA_OBJECT_FETCH_BY_KEY);
+            $completion->mark_complete($record['timecompleted']);
         }
         $rs->close();
     }
