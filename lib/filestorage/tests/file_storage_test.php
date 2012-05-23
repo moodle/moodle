@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->dirroot . '/repository/lib.php');
 
 class filestoragelib_testcase extends advanced_testcase {
 
@@ -206,5 +207,194 @@ class filestoragelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('stored_file', $importedfile);
         // still readable?
         $this->assertEquals($content, $importedfile->get_content());
+    }
+
+    /**
+     * TODO: the tests following this line were added to demonstrate specific Oracle problems in
+     * MDL-33172. They need to be improved to properly evalulate the results of the tests. This is
+     * tracked in MDL-33326.
+     */
+    private function setup_three_private_files() {
+        global $USER, $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $usercontext = context_user::instance($user->id);
+        $USER = $DB->get_record('user', array('id'=>$user->id));
+        // create a user private file
+        $file1 = new stdClass;
+        $file1->contextid = $usercontext->id;
+        $file1->component = 'user';
+        $file1->filearea  = 'private';
+        $file1->itemid    = 0;
+        $file1->filepath  = '/';
+        $file1->filename  = '1.txt';
+        $file1->source    = 'test';
+
+        $fs = get_file_storage();
+        $userfile1 = $fs->create_file_from_string($file1, 'file1 content');
+        $file2 = clone($file1);
+        $file2->filename = '2.txt';
+        $userfile2 = $fs->create_file_from_string($file2, 'file2 content');
+
+        $file3 = clone($file1);
+        $file3->filename = '3.txt';
+        $userfile3 = $fs->create_file_from_storedfile($file3, $userfile2);
+
+        $user->ctxid = $usercontext->id;
+
+        return $user;
+    }
+
+
+    public function test_get_area_files() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        // Get area files with default options.
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        // Should be the two files we added plus the folder.
+        $this->assertEquals(4, count($areafiles));
+
+        // Get area files without a folder.
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'sortorder', false);
+        // Should be the two files without folder.
+        $this->assertEquals(3, count($areafiles));
+
+        // Get area files ordered by id (was breaking on oracle).
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'id', false);
+        // Should be the two files without folder.
+        $this->assertEquals(3, count($areafiles));
+
+        // Test with an itemid with no files
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private', 666, 'sortorder', false);
+        // Should none
+        $this->assertEquals(0, count($areafiles));
+    }
+
+    public function test_get_area_tree() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        // Get area files with default options.
+        $areafiles = $fs->get_area_tree($user->ctxid, 'user', 'private', 0);
+        $areafiles = $fs->get_area_tree($user->ctxid, 'user', 'private', 666);
+        //TODO: verify result!! MDL-33326
+    }
+
+    public function test_get_file_by_id() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+
+        // Test get_file_by_id.
+        $filebyid = reset($areafiles);
+        $shouldbesame = $fs->get_file_by_id($filebyid->get_id());
+        $this->assertEquals($filebyid->get_contenthash(), $shouldbesame->get_contenthash());
+    }
+
+    public function test_get_file_by_hash() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        // Test get_file_by_hash
+        $filebyhash = reset($areafiles);
+        $shouldbesame = $fs->get_file_by_hash($filebyhash->get_pathnamehash());
+        $this->assertEquals($filebyhash->get_id(), $shouldbesame->get_id());
+    }
+
+    public function test_get_references_by_storedfile() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        //Test get_file_by_hash
+
+        $testfile = reset($areafiles);
+        $references = $fs->get_references_by_storedfile($testfile);
+        //TODO: verify result!! MDL-33326
+    }
+
+    public function test_get_external_files() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        $repos = repository::get_instances(array('type'=>'user'));
+        $userrepository = reset($repos);
+        $this->assertInstanceOf('repository', $userrepository);
+
+        // this should break on oracle
+        $fs->get_external_files($userrepository->id, 'id');
+        //TODO: verify result!! MDL-33326
+     }
+
+    public function test_get_directory_files() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        // This should also break on oracle.
+        $fs->create_directory($user->ctxid, 'user', 'private', 0, '/');
+        //TODO: verify result!! MDL-33326
+
+        // Don't recurse with dirs
+        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', false, true, 'id');
+        //TODO: verify result!! MDL-33326
+
+        // Don't recurse without dirs
+        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', false, false, 'id');
+        //TODO: verify result!! MDL-33326
+
+        // Recurse with dirs
+        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', true, true, 'id');
+        //TODO: verify result!! MDL-33326
+        // Recurse without dirs
+        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', true, false, 'id');
+        //TODO: verify result!! MDL-33326
+    }
+
+    public function test_search_references() {
+        $fs = get_file_storage();
+        $references = $fs->search_references('testsearch');
+        //TODO: verify result!! MDL-33326
+    }
+
+    public function test_search_references_count() {
+        $fs = get_file_storage();
+        $references = $fs->search_references_count('testsearch');
+        //TODO: verify result!! MDL-33326
+    }
+
+    public function test_delete_area_files() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        // Get area files with default options.
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        // Should be the two files we added plus the folder.
+        $this->assertEquals(4, count($areafiles));
+        $fs->delete_area_files($user->ctxid, 'user', 'private');
+
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        // Should be the two files we added plus the folder.
+        $this->assertEquals(0, count($areafiles));
+    }
+
+    public function test_delete_area_files_select() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        // Get area files with default options.
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        // Should be the two files we added plus the folder.
+        $this->assertEquals(4, count($areafiles));
+        $fs->delete_area_files_select($user->ctxid, 'user', 'private', '!= :notitemid', array('notitemid'=>9999));
+
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        // Should be the two files we added plus the folder.
+        $this->assertEquals(0, count($areafiles));
     }
 }
