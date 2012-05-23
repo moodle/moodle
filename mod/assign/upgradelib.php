@@ -84,6 +84,7 @@ class assign_upgrade_manager {
         $data->introformat = $oldassignment->introformat;
         $data->alwaysshowdescription = 1;
         $data->sendnotifications = $oldassignment->emailteachers;
+        $data->sendlatenotifications = $oldassignment->emailteachers;
         $data->duedate = $oldassignment->timedue;
         $data->allowsubmissionsfromdate = $oldassignment->timeavailable;
         $data->grade = $oldassignment->grade;
