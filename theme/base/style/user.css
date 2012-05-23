@@ -3,6 +3,7 @@
 .userprofile .fullprofilelink {text-align:center; margin:10px;}
 .userprofile .profilepicture {float:left; margin-right:20px;}
 .userprofile .description {margin-bottom:20px;}
+.userprofile .label {font-weight:normal;text-align:left;}
 
 .user-box {margin:8px;width:115px;height:160px;text-align:center;float:left;clear: none;}
 
