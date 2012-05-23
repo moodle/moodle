@@ -103,44 +103,43 @@ if ($form->is_cancelled()){
 
     // Handle aggregation methods
     // Overall aggregation
-    $aggregation = new completion_aggregation();
-    $aggregation->course = $data->id;
-    $aggregation->criteriatype = null;
+    $aggdata = array(
+        'course'        => $data->id,
+        'criteriatype'  => null
+    );
+    $aggregation = new completion_aggregation($aggdata);
     $aggregation->setMethod($data->overall_aggregation);
-    $aggregation->insert();
+    $aggregation->save();
 
     // Activity aggregation
     if (empty($data->activity_aggregation)) {
         $data->activity_aggregation = 0;
     }
 
-    $aggregation = new completion_aggregation();
-    $aggregation->course = $data->id;
-    $aggregation->criteriatype = COMPLETION_CRITERIA_TYPE_ACTIVITY;
+    $aggdata['criteriatype'] = COMPLETION_CRITERIA_TYPE_ACTIVITY;
+    $aggregation = new completion_aggregation($aggdata);
     $aggregation->setMethod($data->activity_aggregation);
-    $aggregation->insert();
+    $aggregation->save();
 
     // Course aggregation
     if (empty($data->course_aggregation)) {
         $data->course_aggregation = 0;
     }
 
-    $aggregation = new completion_aggregation();
-    $aggregation->course = $data->id;
-    $aggregation->criteriatype = COMPLETION_CRITERIA_TYPE_COURSE;
+    $aggdata['criteriatype'] = COMPLETION_CRITERIA_TYPE_COURSE;
+    $aggregation = new completion_aggregation($aggdata);
     $aggregation->setMethod($data->course_aggregation);
-    $aggregation->insert();
+    $aggregation->save();
 
     // Role aggregation
     if (empty($data->role_aggregation)) {
         $data->role_aggregation = 0;
     }
 
-    $aggregation = new completion_aggregation();
-    $aggregation->course = $data->id;
-    $aggregation->criteriatype = COMPLETION_CRITERIA_TYPE_ROLE;
+    $aggdata['criteriatype'] = COMPLETION_CRITERIA_TYPE_ROLE;
+    $aggregation = new completion_aggregation($aggdata);
     $aggregation->setMethod($data->role_aggregation);
-    $aggregation->insert();
+    $aggregation->save();
 
     // Update course total passing grade
     if (!empty($data->criteria_grade)) {
@@ -152,7 +151,10 @@ if ($form->is_cancelled()){
         }
     }
 
-    redirect($CFG->wwwroot."/course/view.php?id=$course->id", get_string('changessaved'));
+    add_to_log($course->id, 'course', 'completion updated', 'completion.php?id='.$course->id);
+
+    $url = new moodle_url('/course/view.php', array('id' => $course->id));
+    redirect($url);
 }
 
 

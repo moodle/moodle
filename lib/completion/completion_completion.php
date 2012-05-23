@@ -111,7 +111,7 @@ class completion_completion extends data_object {
             $this->timeenrolled = $timeenrolled;
         }
 
-        $this->_save();
+        return $this->_save();
     }
 
     /**
@@ -137,7 +137,7 @@ class completion_completion extends data_object {
             $this->timestarted = $timestarted;
         }
 
-        $this->_save();
+        return $this->_save();
     }
 
     /**
@@ -165,24 +165,24 @@ class completion_completion extends data_object {
         $this->timecompleted = $timecomplete;
 
         // Save record
-        $this->_save();
+        return $this->_save();
     }
 
     /**
      * Save course completion status
      *
      * This method creates a course_completions record if none exists
+     * @access  private
+     * @return  bool
      */
     private function _save() {
-        global $DB;
-
         if ($this->timeenrolled === null) {
             $this->timeenrolled = 0;
         }
 
         // Save record
         if ($this->id) {
-            $this->update();
+            return $this->update();
         } else {
             // Make sure reaggregate field is not null
             if (!$this->reaggregate) {
@@ -191,10 +191,10 @@ class completion_completion extends data_object {
 
             // Make sure timestarted is not null
             if (!$this->timestarted) {
-                    $this->timestarted = 0;
+                $this->timestarted = 0;
             }
-			
-            $this->insert();
+
+            return $this->insert();
         }
     }
 }
