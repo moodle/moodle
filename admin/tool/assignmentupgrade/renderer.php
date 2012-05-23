@@ -161,7 +161,6 @@ class tool_assignmentupgrade_renderer extends plugin_renderer_base {
             $output .= $this->container(get_string('conversionfailed', 'tool_assignmentupgrade', $log));
         } else {
             $output .= $this->container(get_string('upgradeassignmentsuccess', 'tool_assignmentupgrade'));
-            
             $output .= $this->container(html_writer::link(new moodle_url('/course/view.php', array('id'=>$assignmentsummary->courseid)) ,get_string('viewcourse', 'tool_assignmentupgrade')));
         }
         $output .= $this->container_end();

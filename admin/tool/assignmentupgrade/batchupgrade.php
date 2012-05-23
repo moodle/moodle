@@ -35,8 +35,7 @@ require_sesskey();
 // admin_externalpage_setup calls require_login and checks moodle/site:config
 admin_externalpage_setup('assignmentupgrade', '', array(), tool_assignmentupgrade_url('batchupgrade'));
 
-
-$PAGE->set_pagelayout('maintenance'); 
+$PAGE->set_pagelayout('maintenance');
 $PAGE->navbar->add(get_string('batchupgrade', 'tool_assignmentupgrade'));
 
 $renderer = $PAGE->get_renderer('tool_assignmentupgrade');
