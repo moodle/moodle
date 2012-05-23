@@ -1,39 +1,39 @@
-<?PHP //$Id$
+<?php
 //This php script contains all the stuff to restore hotpot mods
-    //-----------------------------------------------------------
-    // This is the "graphical" structure of the hotpot mod:
-    //-----------------------------------------------------------
-    //
-    //                         hotpot
-    //                      (CL, pk->id,
-    //                   fk->course, files)
-    //                           |
-    //            +--------------+---------------+
-    //            |                              |
-    //      hotpot_attempts             hotpot_questions
-    //       (UL, pk->id,                 (UL, pk->id,
-    //        fk->hotpot)               fk->hotpot, text)
-    //            |                              |    |
-    //            +-------------------+----------+    |
-    //            |                   |               |
-    //      hotpot_details     hotpot_responses       |
-    //       (UL, pk->id,        (UL, pk->id,         |
-    //       fk->attempt)    fk->attempt, question,   |
-    //                      correct, wrong, ignored)  |
-    //                                |               |
-    //                                +-------+-------+
-    //                                        |
-    //                                 hotpot_strings
-    //                                  (UL, pk->id)
-    //
-    // Meaning: pk->primary key field of the table
-    //          fk->foreign key to link with parent
-    //          nt->nested field (recursive data)
-    //          CL->course level info
-    //          UL->user level info
-    //          files->table may have files
-    //
-    //-----------------------------------------------------------
+//-----------------------------------------------------------
+// This is the "graphical" structure of the hotpot mod:
+//-----------------------------------------------------------
+//
+//                         hotpot
+//                      (CL, pk->id,
+//                   fk->course, files)
+//                           |
+//            +--------------+---------------+
+//            |                              |
+//      hotpot_attempts             hotpot_questions
+//       (UL, pk->id,                 (UL, pk->id,
+//        fk->hotpot)               fk->hotpot, text)
+//            |                              |    |
+//            +-------------------+----------+    |
+//            |                   |               |
+//      hotpot_details     hotpot_responses       |
+//       (UL, pk->id,        (UL, pk->id,         |
+//       fk->attempt)    fk->attempt, question,   |
+//                      correct, wrong, ignored)  |git
+//                                |               |
+//                                +-------+-------+
+//                                        |
+//                                 hotpot_strings
+//                                  (UL, pk->id)
+//
+// Meaning: pk->primary key field of the table
+//          fk->foreign key to link with parent
+//          nt->nested field (recursive data)
+//          CL->course level info
+//          UL->user level info
+//          files->table may have files
+//
+//-----------------------------------------------------------
 
 require_once ("$CFG->dirroot/mod/hotpot/lib.php");
 
@@ -298,9 +298,8 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
     // maintain a cache of info on table columns
     static $table_columns = array();
     if (empty($table_columns[$table])) {
-        //global $CFG, $db;
-        //$table_columns[$table] = $db->MetaColumns("$CFG->prefix$table");
-        $table_columns[$table] = $DB->get_columns($table);
+        global $CFG, $db;
+        $table_columns[$table] = $db->MetaColumns("$CFG->prefix$table");
     }
 
     // get values for fields in this record
@@ -360,17 +359,19 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
     }
 
     // check all "not null" fields have been set
-    foreach ($table_columns[$table] as $column) {
-        if ($column->not_null) {
-            $name = $column->name;
-            if ($name=='id' || (isset($record->$name) && ! is_null($record->$name))) {
-                // do nothing
-            } else if (isset($column->default_value)) {
-                $record->$name = $column->default_value;
-            } else if (preg_match('/int|decimal|double|float|time|year/i', $column->type)) {
-                $record->$name = 0;
-            } else {
-                $record->$name = '';
+    if (isset($table_columns[$table]) && is_array($table_columns[$table])) {
+        foreach ($table_columns[$table] as $column) {
+            if ($column->not_null) {
+                $name = $column->name;
+                if ($name=='id' || (isset($record->$name) && ! is_null($record->$name))) {
+                    // do nothing
+                } else if (isset($column->default_value)) {
+                    $record->$name = $column->default_value;
+                } else if (preg_match('/int|decimal|double|float|time|year/i', $column->type)) {
+                    $record->$name = 0;
+                } else {
+                    $record->$name = '';
+                }
             }
         }
     }
@@ -434,11 +435,11 @@ function hotpot_restore_logs($restore, $log) {
                     $status = true;
                 }
             }
-        break;
+            break;
         case "view all":
             $log->url = "index.php?id=".$log->course;
             $status = true;
-        break;
+            break;
         case "report":
             if ($log->cmid) {
                 //Get the new_id of the module (to recode the info field)
@@ -449,7 +450,7 @@ function hotpot_restore_logs($restore, $log) {
                     $status = true;
                 }
             }
-        break;
+            break;
         case "attempt":
         case "submit":
         case "review":
@@ -468,13 +469,13 @@ function hotpot_restore_logs($restore, $log) {
                     }
                 }
             }
-        break;
+            break;
         default:
             // Oops, unknown $log->action
             if (!defined('RESTORE_SILENTLY')) {
                 print "<p>action (".$log->module."-".$log->action.") unknown. Not restored</p>";
             }
-        break;
+            break;
     } // end switch
     return $status ? $log : false;
 }
@@ -487,7 +488,7 @@ function hotpot_decode_content_links($content, $restore) {
             $start = $matches[0][$i][1];
             $length = strlen($matches[0][$i][0]);
             $replace = hotpot_decode_content_link(
-                // $scriptname, $paramname, $paramvalue, $restore
+            // $scriptname, $paramname, $paramvalue, $restore
                 $matches[2][$i][0], $matches[3][$i][0], $matches[4][$i][0], $restore
             );
             $content = substr_replace($content, $replace, $start, $length);
