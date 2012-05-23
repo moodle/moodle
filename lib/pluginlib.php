@@ -1112,12 +1112,12 @@ class available_update_checker {
      */
     protected function cron_execute() {
 
-        $this->restore_response();
-        $previous = $this->recentresponse;
-        $this->fetch();
-        $this->restore_response(true);
-        $current = $this->recentresponse;
         try {
+            $this->restore_response();
+            $previous = $this->recentresponse;
+            $this->fetch();
+            $this->restore_response(true);
+            $current = $this->recentresponse;
             $changes = $this->compare_responses($previous, $current);
             $notifications = $this->cron_notifications($changes);
             $this->cron_notify($notifications);
