@@ -8,4 +8,4 @@
 #page-admin-tool-assignmentupgrade-listnotupgraded .tool_assignmentupgrade_upgradetable tr.selectedrow td { background-color: #ffeecc; }
 #page-admin-tool-assignmentupgrade-listnotupgraded .tool_assignmentupgrade_upgradetable tr.unselectedrow td { background-color: white; }
 
-
+#page-admin-tool-assignmentupgrade-listnotupgraded .tool_assignmentupgrade_paginationform .hidden { display: none; }
