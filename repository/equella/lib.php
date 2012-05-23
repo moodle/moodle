@@ -32,7 +32,7 @@ class repository_equella extends repository {
 
         if (isset($this->options['mimetypes'])) {
             $mt = $this->options['mimetypes'];
-            if (!empty($mt) && !in_array('*', $mt)) {
+            if (!empty($mt) && is_array($mt) && !in_array('*', $mt)) {
                 $this->mimetypes = array_unique(array_map(array($this, 'toMimeType'), $mt));
             }
         }
@@ -47,7 +47,7 @@ class repository_equella extends repository {
      */
     public function get_listing($path = null, $page = null) {
         global $CFG, $COURSE;
-        $callbackurl = $CFG->wwwroot . '/repository/equella/callback.php?repo_id=' . $this->id;
+        $callbackurl = new moodle_url('/repository/equella/callback.php', array('repo_id'=>$this->id));
 
         $mimetypesstr = '';
         $restrict = '';
@@ -100,6 +100,29 @@ class repository_equella extends repository {
      */
     public function get_file_reference($source) {
         return base64_encode($source);
+    }
+
+    /**
+     * Download a file, this function can be overridden by subclass. {@link curl}
+     *
+     * @param string $url the url of file
+     * @param string $filename save location
+     * @return string the location of the file
+     */
+    public function get_file($url, $filename = '') {
+        global $CFG, $USER;
+        $cookiename = uniqid('', true) . '.cookie';
+        $dir = make_temp_directory('repository/equella/' . $USER->id);
+        $cookiepathname = $dir . '/' . $cookiename;
+        $path = $this->prepare_file($filename);
+        $fp = fopen($path, 'w');
+        $c = new curl(array('cookie'=>$cookiepathname));
+        $c->download(array(array('url'=>$url, 'file'=>$fp)), array('CURLOPT_FOLLOWLOCATION'=>true));
+        // Close file handler.
+        fclose($fp);
+        // delete cookie jar
+        unlink($cookiepathname);
+        return array('path'=>$path, 'url'=>$url);
     }
 
     /**
