@@ -74,7 +74,9 @@ Y.extend(DIALOGUE, Y.Overlay, {
                     this.centerDialogue();
                 }
                 if (this.get('draggable')) {
-                    this.plug(Y.Plugin.Drag, {handles : ['#' + this.get('id') + ' .' + CSS.HEADER]});
+                    var titlebar = '#' + this.get('id') + ' .' + CSS.HEADER;
+                    this.plug(Y.Plugin.Drag, {handles : [titlebar]});
+                    Y.one(titlebar).setStyle('cursor', 'move');
                 }
                 break;
         }
