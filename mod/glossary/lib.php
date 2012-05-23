@@ -971,9 +971,8 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
  */
 function  glossary_print_entry_concept($entry, $return=false) {
     global $OUTPUT;
-    $options = new stdClass();
-    $options->para = false;
-    $text = format_text($OUTPUT->heading('<span class="nolink">' . $entry->concept . '</span>', 3, 'nolink'), FORMAT_MOODLE, $options);
+
+    $text = html_writer::tag('h3', format_string($entry->concept));
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
@@ -1015,6 +1014,7 @@ function glossary_print_entry_definition($entry, $glossary, $cm) {
     $options->trusted = $entry->definitiontrust;
     $options->context = $context;
     $options->overflowdiv = true;
+
     $text = format_text($definition, $entry->definitionformat, $options);
 
     // Stop excluding concepts from autolinking
