@@ -1367,7 +1367,7 @@ function &get_mimetypes_array() {
         'asc'  => array ('type'=>'text/plain', 'icon'=>'text'),
         'asm'  => array ('type'=>'text/plain', 'icon'=>'text'),
         'au'   => array ('type'=>'audio/au', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
-        'avi'  => array ('type'=>'video/x-ms-wm', 'icon'=>'avi', 'groups'=>array('video'), 'string'=>'video'),
+        'avi'  => array ('type'=>'video/x-ms-wm', 'icon'=>'avi', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'bmp'  => array ('type'=>'image/bmp', 'icon'=>'bmp', 'groups'=>array('image'), 'string'=>'image'),
         'c'    => array ('type'=>'text/plain', 'icon'=>'text'),
         'cct'  => array ('type'=>'shockwave/director', 'icon'=>'flash'),
@@ -1390,8 +1390,8 @@ function &get_mimetypes_array() {
         'dxr'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
         'eps'  => array ('type'=>'application/postscript', 'icon'=>'eps'),
         'fdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
-        'flv'  => array ('type'=>'video/x-flv', 'icon'=>'flash', 'groups'=>array('video'), 'string'=>'video'),
-        'f4v'  => array ('type'=>'video/mp4', 'icon'=>'flash', 'groups'=>array('video'), 'string'=>'video'),
+        'flv'  => array ('type'=>'video/x-flv', 'icon'=>'flash', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'f4v'  => array ('type'=>'video/mp4', 'icon'=>'flash', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'gif'  => array ('type'=>'image/gif', 'icon'=>'gif', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
         'gtar' => array ('type'=>'application/x-gtar', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
         'tgz'  => array ('type'=>'application/g-zip', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
@@ -1422,16 +1422,16 @@ function &get_mimetypes_array() {
         'latex'=> array ('type'=>'application/x-latex', 'icon'=>'text'),
         'm'    => array ('type'=>'text/plain', 'icon'=>'text'),
         'mbz'  => array ('type'=>'application/vnd.moodle.backup', 'icon'=>'moodle'),
-        'mov'  => array ('type'=>'video/quicktime', 'icon'=>'mov', 'groups'=>array('video'), 'string'=>'video'),
+        'mov'  => array ('type'=>'video/quicktime', 'icon'=>'mov', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'movie'=> array ('type'=>'video/x-sgi-movie', 'icon'=>'mov', 'groups'=>array('video'), 'string'=>'video'),
         'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'mp3', 'groups'=>array('audio'), 'string'=>'audio'),
-        'mp3'  => array ('type'=>'audio/mp3', 'icon'=>'mp3', 'groups'=>array('audio'), 'string'=>'audio'),
-        'mp4'  => array ('type'=>'video/mp4', 'icon'=>'mpeg', 'groups'=>array('video'), 'string'=>'video'),
-        'm4v'  => array ('type'=>'video/mp4', 'icon'=>'mpeg', 'groups'=>array('video'), 'string'=>'video'),
+        'mp3'  => array ('type'=>'audio/mp3', 'icon'=>'mp3', 'groups'=>array('audio','web_audio'), 'string'=>'audio'),
+        'mp4'  => array ('type'=>'video/mp4', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'm4v'  => array ('type'=>'video/mp4', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
         'm4a'  => array ('type'=>'audio/mp4', 'icon'=>'mp3', 'groups'=>array('audio'), 'string'=>'audio'),
-        'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video'), 'string'=>'video'),
-        'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video'), 'string'=>'video'),
-        'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video'), 'string'=>'video'),
+        'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
 
         'odt'  => array ('type'=>'application/vnd.oasis.opendocument.text', 'icon'=>'odt', 'groups'=>array('document')),
         'ott'  => array ('type'=>'application/vnd.oasis.opendocument.text-template', 'icon'=>'odt', 'groups'=>array('document')),
@@ -1469,8 +1469,8 @@ function &get_mimetypes_array() {
         'ppsm' => array ('type'=>'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', 'icon'=>'pptx'),
 
         'ps'   => array ('type'=>'application/postscript', 'icon'=>'pdf'),
-        'qt'   => array ('type'=>'video/quicktime', 'icon'=>'mov', 'groups'=>array('video'), 'string'=>'video'),
-        'ra'   => array ('type'=>'audio/x-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'qt'   => array ('type'=>'video/quicktime', 'icon'=>'mov', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'ra'   => array ('type'=>'audio/x-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio','web_audio'), 'string'=>'audio'),
         'ram'  => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
         'rhb'  => array ('type'=>'text/xml', 'icon'=>'xml'),
         'rm'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
@@ -1483,11 +1483,11 @@ function &get_mimetypes_array() {
         'smi'  => array ('type'=>'application/smil', 'icon'=>'text'),
         'smil' => array ('type'=>'application/smil', 'icon'=>'text'),
         'sqt'  => array ('type'=>'text/xml', 'icon'=>'xml'),
-        'svg'  => array ('type'=>'image/svg+xml', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
-        'svgz' => array ('type'=>'image/svg+xml', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
+        'svg'  => array ('type'=>'image/svg+xml', 'icon'=>'image', 'groups'=>array('image','web_image'), 'string'=>'image'),
+        'svgz' => array ('type'=>'image/svg+xml', 'icon'=>'image', 'groups'=>array('image','web_image'), 'string'=>'image'),
         'swa'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
-        'swf'  => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash'),
-        'swfl' => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash'),
+        'swf'  => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash', 'groups'=>array('video','web_video')),
+        'swfl' => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash', 'groups'=>array('video','web_video')),
 
         'sxw'  => array ('type'=>'application/vnd.sun.xml.writer', 'icon'=>'odt'),
         'stw'  => array ('type'=>'application/vnd.sun.xml.writer.template', 'icon'=>'odt'),
@@ -1653,14 +1653,15 @@ function file_file_icon($file, $size = null) {
     } else {
         $mimetype = '';
     }
-    if ($filename && pathinfo($filename, PATHINFO_EXTENSION) &&
-            (!$mimetype || mimeinfo('type', $filename) === $mimetype)) {
-        // files with different extensions sharing the same mimetype (i.e. 'text/plain') may have different icons
-        return file_extension_icon($filename, $size);
-    } else {
-        // if mimetype and extension do not match we assume that mimetype is more correct
-        return file_mimetype_icon($mimetype, $size);
+    $mimetypes = &get_mimetypes_array();
+    if ($filename) {
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        if ($extension && !empty($mimetypes[$extension])) {
+            // if file name has known extension, return icon for this extension
+            return file_extension_icon($filename, $size);
+        }
     }
+    return file_mimetype_icon($mimetype, $size);
 }
 
 /**
@@ -1682,13 +1683,18 @@ function file_file_icon($file, $size = null) {
 function file_folder_icon($iconsize = null) {
     global $CFG;
     static $iconpostfixes = array(256=>'-256', 128=>'-128', 96=>'-96', 80=>'-80', 72=>'-72', 64=>'-64', 48=>'-48', 32=>'-32', 24=>'-24', 16=>'');
+    static $cached = array();
     $iconsize = max(array(16, (int)$iconsize));
-    foreach ($iconpostfixes as $size => $postfix) {
-        $fullname = $CFG->dirroot.'/pix/f/folder'.$postfix;
-        if ($iconsize >= $size && (file_exists($fullname.'.png') || file_exists($fullname.'.gif'))) {
-            return 'f/folder'.$postfix;
+    if (!array_key_exists($iconsize, $cached)) {
+        foreach ($iconpostfixes as $size => $postfix) {
+            $fullname = $CFG->dirroot.'/pix/f/folder'.$postfix;
+            if ($iconsize >= $size && (file_exists($fullname.'.png') || file_exists($fullname.'.gif'))) {
+                $cached[$iconsize] = 'f/folder'.$postfix;
+                break;
+            }
         }
     }
+    return $cached[$iconsize];
 }
 
 /**
@@ -1749,6 +1755,7 @@ function file_extension_icon($filename, $size = NULL) {
  * @return string Text description
  */
 function get_mimetype_description($obj, $capitalise=false) {
+    $filename = $mimetype = '';
     if (is_object($obj) && method_exists($obj, 'get_filename') && method_exists($obj, 'get_mimetype')) {
         // this is an instance of stored_file
         $mimetype = $obj->get_mimetype();
@@ -1761,22 +1768,22 @@ function get_mimetype_description($obj, $capitalise=false) {
         $obj = (array)$obj;
         if (!empty($obj['filename'])) {
             $filename = $obj['filename'];
-        } else {
-            $filename = '';
         }
         if (!empty($obj['mimetype'])) {
             $mimetype = $obj['mimetype'];
-        } else {
-            $mimetype = mimeinfo('type', $filename);
         }
     } else {
         $mimetype = $obj;
-        $filename = '';
+    }
+    $mimetypefromext = mimeinfo('type', $filename);
+    if (empty($mimetype) || $mimetypefromext !== 'document/unknown') {
+        // if file has a known extension, overwrite the specified mimetype
+        $mimetype = $mimetypefromext;
     }
     $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     if (empty($extension)) {
         $mimetypestr = mimeinfo_from_type('string', $mimetype);
-        $extension = mimeinfo_from_type('extension', $mimetype);
+        $extension = str_replace('.', '', mimeinfo_from_type('extension', $mimetype));
     } else {
         $mimetypestr = mimeinfo('string', $filename);
     }
@@ -1835,7 +1842,7 @@ function file_get_typegroup($element, $groups) {
                 if (empty($value[$element])) {
                     continue;
                 }
-                if (($group === $extension || $group === $value['type'] ||
+                if (($group === '.'.$extension || $group === $value['type'] ||
                         (!empty($value['groups']) && in_array($group, $value['groups']))) &&
                         !in_array($value[$element], $cached[$element][$group])) {
                     $cached[$element][$group][] = $value[$element];
