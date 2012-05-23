@@ -1264,6 +1264,14 @@ function js_reset_all_caches() {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
 
-    set_config('jsrev', empty($CFG->jsrev) ? 1 : $CFG->jsrev+1);
+    $next = time();
+    if (isset($CFG->jsrev) and $next <= $CFG->jsrev and $CFG->jsrev - $next < 60*60) {
+        // This resolves problems when reset is requested repeatedly within 1s,
+        // the < 1h condition prevents accidental switching to future dates
+        // because we might not recover from it.
+        $next = $CFG->jsrev+1;
+    }
+
+    set_config('jsrev', $next);
     fulldelete("$CFG->cachedir/js");
 }
