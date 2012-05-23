@@ -308,7 +308,11 @@ function process_group_tag($tagcontents) {
     // Get configs
     $truncatecoursecodes    = $this->get_config('truncatecoursecodes');
     $createnewcourses       = $this->get_config('createnewcourses');
+    $updatecourses          = $this->get_config('updatecourses');
     $createnewcategories    = $this->get_config('createnewcategories');
+    $categoryseparator      = trim($this->get_config('categoryseparator'));
+
+    if (!$categoryseparator) { $categoryseparator = '|'; }
 
     // Process tag contents
     $group = new stdClass();
@@ -354,24 +358,24 @@ function process_group_tag($tagcontents) {
         // Third, check if the course(s) exist
         foreach ($group->coursecode as $coursecode) {
             $coursecode = trim($coursecode);
+            // Set shortname to description or description to shortname if one is set but not the other.
+            $nodescription = !isset($group->description);
+            $noshortname = !isset($group->shortName);
+            if ( $nodescription && $noshortname) {
+                // If neither short nor long description are set let if fail
+                $this->log_line("Neither long nor short name are set for $coursecode");
+            } else if ($nodescription) {
+                // If short and ID exist, then give the long short's value, then give short the ID's value
+                $group->description = $group->shortName;
+                $group->shortName = $coursecode;
+            } else if ($noshortname) {
+                // If long and ID exist, then map long to long, then give short the ID's value.
+                $group->shortName = $coursecode;
+            }
             if (!$DB->get_field('course', 'id', array('idnumber'=>$coursecode))) {
                 if (!$createnewcourses) {
                     $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
                 } else {
-                    // Set shortname to description or description to shortname if one is set but not the other.
-                    $nodescription = !isset($group->description);
-                    $noshortname = !isset($group->shortName);
-                    if ( $nodescription && $noshortname) {
-                        // If neither short nor long description are set let if fail
-                        $this->log_line("Neither long nor short name are set for $coursecode");
-                    } else if ($nodescription) {
-                        // If short and ID exist, then give the long short's value, then give short the ID's value
-                        $group->description = $group->shortName;
-                        $group->shortName = $coursecode;
-                    } else if ($noshortname) {
-                        // If long and ID exist, then map long to long, then give short the ID's value.
-                        $group->shortName = $coursecode;
-                    }
                     // Create the (hidden) course(s) if not found
                     $courseconfig = get_config('moodlecourse'); // Load Moodle Course shell defaults
                     $course = new stdClass();
@@ -394,25 +398,47 @@ function process_group_tag($tagcontents) {
 
                     // Handle course categorisation (taken from the group.org.orgunit field if present)
                     if (strlen($group->category)>0) {
-                        // If the category is defined and exists in Moodle, we want to store it in that one
-                        if ($catid = $DB->get_field('course_categories', 'id', array('name'=>$group->category))) {
-                            $course->category = $catid;
-                        } else if ($createnewcategories) {
-                            // Else if we're allowed to create new categories, let's create this one
-                            $newcat = new stdClass();
-                            $newcat->name = $group->category;
-                            $newcat->visible = 0;
-                            $catid = $DB->insert_record('course_categories', $newcat);
-                            $course->category = $catid;
-                            $this->log_line("Created new (hidden) category, #$catid: $newcat->name");
-                        } else {
-                            // If not found and not allowed to create, stick with default
-                            $this->log_line('Category '.$group->category.' not found in Moodle database, so using default category instead.');
-                            $course->category = 1;
-                        }
-                    } else {
-                        $course->category = 1;
+						// Categories can be nested now...
+                        $sep = '{\\'.$categoryseparator.'}';
+						$matches = preg_split($sep, $group->category, -1, PREG_SPLIT_NO_EMPTY);
+                        // iterate through each category to get to the last
+                        // one, create it if necessary (and allowed)
+                        $catid = 0;
+                        $t_catname = '';
+                        foreach ($matches as $catname) {
+                            $catname = trim($catname);
+                            if (strlen($t_catname)) {
+                                $t_catname .= ' / ';
+                            }
+                            $t_catname .= $catname;
+                            $parentid = $catid;
+                            if ($catid = $DB->get_field('course_categories', 'id', array('name'=>$catname,'parent'=>$parentid))) {
+                                $course->category = $catid;
+                                continue; // This category exists, skip to the next one
+                            }
+                            if ($createnewcategories) {
+                                // Create this category
+                                $newcat = new stdClass();
+                            	$newcat->name = $catname;
+                            	$newcat->visible = 0;
+								$newcat->parent = $parentid;
+                          		$catid = $DB->insert_record('course_categories', $newcat);
+                                $course->category = $catid;
+                            	$this->log_line("Created new (hidden) category '$t_catname'");
+                            } else {
+                            	// we encountered a category that doesn't
+                            	// exist and we can't create it; set the
+                            	// default category for this course.
+                            	$course->category = 1; // Miscellaneous
+                            	$this->log_line("Cannot create requested category '$group->category'; setting to Miscellaneous.");
+                            	break;
+							}
+						}
+					} else {
+					    // If no category was specified, set to Misc
+					    $course->category = 1; // Miscellaneous
                     }
+
                     $course->timecreated = time();
                     $course->startdate = time();
                     // Choose a sort order that puts us at the start of the list!
@@ -438,9 +464,33 @@ function process_group_tag($tagcontents) {
 
                     $this->log_line("Created course $coursecode in Moodle (Moodle ID is $course->id)");
                 }
+			} else if ($recstatus==2 && ($courseid = $DB->get_field('course', 'id', array('idnumber'=>$coursecode)))) {
+			    if ($updatecourses) {
+				    // Update
+				    $did_update = 0;
+				    $fullname = $DB->get_field('course', 'fullname', array('idnumber'=>$coursecode));
+				    if ($fullname != $group->description) {
+					    $DB->set_field('course', 'fullname', $group->description, array('idnumber'=>$coursecode));
+					    add_to_log(SITEID, "course", "update", "view.php?id=$courseid", "$group->description (ID $courseid)");
+					    $did_update = 1;
+                    }
+				    $shortname = $DB->get_field('course', 'shortname', array('idnumber'=>$coursecode));
+				    if ($shortname != $group->shortName) {
+					    $DB->set_field('course', 'shortname', $group->shortName, array('idnumber'=>$coursecode));
+					    add_to_log(SITEID, "course", "update", "view.php?id=$courseid", "$group->shortName (ID $courseid)");
+					    $did_update = 1;
+                    }
+                    if ($did_update) {
+					    $this->log_line("Updated course $coursecode in Moodle (Moodle ID is $courseid)");
+                    }
+				} else {
+				    $this->log_line("Ignoring update to course $coursecode");
+                }
             } else if ($recstatus==3 && ($courseid = $DB->get_field('course', 'id', array('idnumber'=>$coursecode)))) {
                 // If course does exist, but recstatus==3 (delete), then set the course as hidden
                 $DB->set_field('course', 'visible', '0', array('id'=>$courseid));
+                add_to_log(SITEID, "course", "delete", "view.php?id=$courseid", "$group->description (ID $courseid)");
+                $this->log_line("Deleted (set to not visible) course $coursecode in Moodle (Moodle ID is $courseid)");
             }
         } // End of foreach(coursecode)
     }
@@ -459,6 +509,7 @@ function process_person_tag($tagcontents){
     $fixcasepersonalnames   = $this->get_config('fixcasepersonalnames');
     $imsdeleteusers         = $this->get_config('imsdeleteusers');
     $createnewusers         = $this->get_config('createnewusers');
+    $imsupdateusers         = $this->get_config('imsupdateusers');
 
     $person = new stdClass();
     if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
@@ -470,7 +521,10 @@ function process_person_tag($tagcontents){
     if(preg_match('{<name>.*?<n>.*?<family>(.+?)</family>.*?</n>.*?</name>}is', $tagcontents, $matches)){
         $person->lastname = trim($matches[1]);
     }
-    if(preg_match('{<userid>(.*?)</userid>}is', $tagcontents, $matches)){
+    if(preg_match('{<userid\s+authenticationtype\s*=\s*"*(.+?)"*>.*?</userid>}is', $tagcontents, $matches)){
+        $person->auth = trim($matches[1]);
+    }
+    if(preg_match('{<userid.*?>(.*?)</userid>}is', $tagcontents, $matches)){
         $person->username = trim($matches[1]);
     }
     if($imssourcedidfallback && trim($person->username)==''){
@@ -510,7 +564,6 @@ function process_person_tag($tagcontents){
     // Now if the recstatus is 3, we should delete the user if-and-only-if the setting for delete users is turned on
     // In the "users" table we can do this by setting deleted=1
     if($recstatus==3){
-
         if($imsdeleteusers){ // If we're allowed to delete user records
             // Make sure their "deleted" field is set to one
             $DB->set_field('user', 'deleted', 1, array('username'=>$person->username));
@@ -519,9 +572,19 @@ function process_person_tag($tagcontents){
             $this->log_line("Ignoring deletion request for user '$person->username' (ID number $person->idnumber).");
         }
 
-    }else{ // Add or update record
-
-
+    } else if ($recstatus==2) { // Update
+        if ($imsupdateusers) {
+		    if ($id = $DB->get_field('user', 'id', array('idnumber'=>$person->idnumber))) {
+			    $person->id = $id;
+			    $DB->update_record('user', $person);
+			    $this->log_line("Updated user $person->username");
+            } else {
+			    $this->log_line("Ignoring update request for non-existent user $person->username");
+            }
+        } else {
+            $this->log_line("Ignoring update request for user $person->username");
+        }
+	}else{ // Add record
         // If the user exists (matching sourcedid) then we don't need to do anything.
         if(!$DB->get_field('user', 'id', array('idnumber'=>$person->idnumber)) && $createnewusers){
             // If they don't exist and haven't a defined username, we log this as a potential problem.
@@ -534,7 +597,7 @@ function process_person_tag($tagcontents){
 
             // If they don't exist and they have a defined username, and $createnewusers == true, we create them.
             $person->lang = 'manual'; //TODO: this needs more work due tu multiauth changes
-            $person->auth = $CFG->auth;
+			if (!$person->auth) { $person->auth = $CFG->auth; }
             $person->confirmed = 1;
             $person->timemodified = time();
             $person->mnethostid = $CFG->mnet_localhost_id;
@@ -669,7 +732,7 @@ function process_membership_tag($tagcontents){
 
                     $this->enrol_user($einstance, $memberstoreobj->userid, $moodleroleid, $timeframe->begin, $timeframe->end);
 
-                    $this->log_line("Enrolled user #$memberstoreobj->userid ($member->idnumber) to role $member->roletype in course $memberstoreobj->course");
+                    $this->log_line("Enrolled user #$memberstoreobj->userid ($member->idnumber) to role $member->roletype in course $ship->coursecode");
                     $memberstally++;
 
                     // At this point we can also ensure the group membership is recorded if present
@@ -711,13 +774,15 @@ function process_membership_tag($tagcontents){
                     }
 
                     $membersuntally++;
-                    $this->log_line("Unenrolled $member->idnumber from role $moodleroleid in course");
+                    $this->log_line("Unenrolled $member->idnumber from role $moodleroleid in course $ship->coursecode");
                 }
 
             }
         }
-        $this->log_line("Added $memberstally users to course $ship->coursecode");
-        if($membersuntally > 0){
+        if ($memberstally > 0) {
+            $this->log_line("Added $memberstally users to course $ship->coursecode");
+        }
+        if ($membersuntally > 0) {
             $this->log_line("Removed $membersuntally users from course $ship->coursecode");
         }
     }
