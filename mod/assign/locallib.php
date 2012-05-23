@@ -1095,6 +1095,11 @@ class assign {
         $params = array('yesterday' => $yesterday, 'today' => $timenow);
         $submissions = $DB->get_records_sql($sql, $params);
 
+        if (empty($submissions)) {
+            mtrace('done.');
+            return true;
+        }
+
         mtrace('Processing ' . count($submissions) . ' assignment submissions ...');
 
         // Preload courses we are going to need those.
