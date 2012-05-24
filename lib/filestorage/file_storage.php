@@ -1733,7 +1733,7 @@ class file_storage {
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
                  WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
-		 AND (f.component <> ? OR f.filearea <> ?)";
+                   AND (f.component <> ? OR f.filearea <> ?)";
 
         $rs = $DB->get_recordset_sql($sql, array($reference, 'user', 'draft'));
         $files = array();
