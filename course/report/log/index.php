@@ -22,7 +22,7 @@
 
     $group       = optional_param('group', 0, PARAM_INT); // Group to display
     $user        = optional_param('user', 0, PARAM_INT); // User to display
-    $date        = optional_param('date', 0, PARAM_FILE); // Date to display - number or some string
+    $date        = optional_param('date', 0, PARAM_INT); // Date to display
     $modname     = optional_param('modname', '', PARAM_SAFEDIR); // course_module->id
     $modid       = optional_param('modid', 0, PARAM_FILE); // number or 'site_errors'
     $modaction   = optional_param('modaction', '', PARAM_PATH); // an action as recorded in the logs
