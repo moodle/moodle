@@ -1070,7 +1070,7 @@ function get_array_of_activities($courseid) {
         return $mod; // always return array
     }
 
-    if ($sections = get_all_sections($courseid)) {
+    if ($sections = $DB->get_records("course_sections", array("course"=>$courseid), "section ASC")) {
        foreach ($sections as $section) {
            if (!empty($section->sequence)) {
                $sequence = explode(",", $section->sequence);
