@@ -82,7 +82,7 @@ function cron() {
     }
 
     $this->logfp = false; // File pointer for writing log data to
-    if(!empty($logtolocation)) {
+    if (!empty($logtolocation)) {
         $this->logfp = fopen($logtolocation, 'a');
     }
 
@@ -103,19 +103,19 @@ function cron() {
 
         // Decide if we want to process the file (based on filepath, modification time, and MD5 hash)
         // This is so we avoid wasting the server's efforts processing a file unnecessarily
-        if(empty($prev_path)  || ($filename != $prev_path)) {
+        if (empty($prev_path)  || ($filename != $prev_path)) {
             $fileisnew = true;
-        } elseif(isset($prev_time) && ($filemtime <= $prev_time)) {
+        } elseif (isset($prev_time) && ($filemtime <= $prev_time)) {
             $fileisnew = false;
             $this->log_line('File modification time is not more recent than last update - skipping processing.');
-        } elseif(isset($prev_md5) && ($md5 == $prev_md5)) {
+        } elseif (isset($prev_md5) && ($md5 == $prev_md5)) {
             $fileisnew = false;
             $this->log_line('File MD5 hash is same as on last update - skipping processing.');
         } else {
             $fileisnew = true; // Let's process it!
         }
 
-        if($fileisnew) {
+        if ($fileisnew) {
 
             $listoftags = array('group', 'person', 'member', 'membership', 'comments', 'properties'); // The list of tags which should trigger action (even if only cache trimming)
             $this->continueprocessing = true; // The <properties> tag is allowed to halt processing if we're demanding a matching target
@@ -133,7 +133,7 @@ function cron() {
                     while (true) {
                       // If we've got a full tag (i.e. the most recent line has closed the tag) then process-it-and-forget-it.
                       // Must always make sure to remove tags from cache so they don't clog up our memory
-                      if($tagcontents = $this->full_tag_found_in_cache('group', $curline)) {
+                      if ($tagcontents = $this->full_tag_found_in_cache('group', $curline)) {
                           $this->process_group_tag($tagcontents);
                           $this->remove_tag_from_cache('group');
                       } elseif($tagcontents = $this->full_tag_found_in_cache('person', $curline)) {
@@ -212,22 +212,22 @@ function cron() {
 
 
 
-    }else{ // end of if(file_exists)
+    } else { // end of if(file_exists)
         $this->log_line('File not found: '.$filename);
     }
 
     if (!empty($mailadmins)) {
         $msg = "An IMS enrolment has been carried out within Moodle.\nTime taken: $timeelapsed seconds.\n\n";
-        if(!empty($logtolocation)){
-            if($this->logfp){
+        if (!empty($logtolocation)){
+            if ($this->logfp){
                 $msg .= "Log data has been written to:\n";
                 $msg .= "$logtolocation\n";
                 $msg .= "(Log file size: ".ceil(filesize($logtolocation)/1024)."Kb)\n\n";
-            }else{
+            } else {
                 $msg .= "The log file appears not to have been successfully written.\nCheck that the file is writeable by the server:\n";
                 $msg .= "$logtolocation\n\n";
             }
-        }else{
+        } else {
             $msg .= "Logging is currently not active.";
         }
 
@@ -248,7 +248,7 @@ function cron() {
 
     }
 
-    if($this->logfp){
+    if ($this->logfp) {
       fclose($this->logfp);
     }
 
@@ -263,11 +263,11 @@ function cron() {
 * @param string $latestline The very last line in the cache (used for speeding up the match)
 */
 function full_tag_found_in_cache($tagname, $latestline){ // Return entire element if found. Otherwise return false.
-    if(strpos(strtolower($latestline), '</'.strtolower($tagname).'>')===false){
+    if (strpos(strtolower($latestline), '</'.strtolower($tagname).'>')===false) {
         return false;
-    }elseif(preg_match('{(<'.$tagname.'\b.*?>.*?</'.$tagname.'>)}is', $this->xmlcache, $matches)){
+    } elseif (preg_match('{(<'.$tagname.'\b.*?>.*?</'.$tagname.'>)}is', $this->xmlcache, $matches)) {
         return $matches[1];
-    }else return false;
+    } else return false;
 }
 
 /**
@@ -289,10 +289,10 @@ function remove_tag_from_cache($tagname){ // Trim the cache so we're not in dang
 * @param string $tagname the name of the tag we're interested in
 */
 function get_recstatus($tagdata, $tagname){
-    if(preg_match('{<'.$tagname.'\b[^>]*recstatus\s*=\s*["\'](\d)["\']}is', $tagdata, $matches)){
+    if (preg_match('{<'.$tagname.'\b[^>]*recstatus\s*=\s*["\'](\d)["\']}is', $tagdata, $matches)) {
         // echo "<p>get_recstatus($tagname) found status of $matches[1]</p>";
         return intval($matches[1]);
-    }else{
+    } else {
         // echo "<p>get_recstatus($tagname) found nothing</p>";
         return 0; // Unspecified
     }
@@ -312,14 +312,16 @@ function process_group_tag($tagcontents) {
     $createnewcategories    = $this->get_config('createnewcategories');
     $categoryseparator      = trim($this->get_config('categoryseparator'));
 
-    if (!$categoryseparator) { $categoryseparator = '|'; }
+    if (!$categoryseparator) {
+        $categoryseparator = '|';
+    }
 
     // Process tag contents
     $group = new stdClass();
     if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)) {
         $group->coursecode = trim($matches[1]);
     }
-    if (preg_match('{<description>.*?<long>(.*?)</long>.*?</description>}is', $tagcontents, $matches)){
+    if (preg_match('{<description>.*?<long>(.*?)</long>.*?</description>}is', $tagcontents, $matches)) {
         $group->description = trim($matches[1]);
     }
     if (preg_match('{<description>.*?<short>(.*?)</short>.*?</description>}is', $tagcontents, $matches)) {
@@ -398,9 +400,9 @@ function process_group_tag($tagcontents) {
 
                     // Handle course categorisation (taken from the group.org.orgunit field if present)
                     if (strlen($group->category)>0) {
-						// Categories can be nested now...
+                        // Categories can be nested now...
                         $sep = '{\\'.$categoryseparator.'}';
-						$matches = preg_split($sep, $group->category, -1, PREG_SPLIT_NO_EMPTY);
+                        $matches = preg_split($sep, $group->category, -1, PREG_SPLIT_NO_EMPTY);
                         // iterate through each category to get to the last
                         // one, create it if necessary (and allowed)
                         $catid = 0;
@@ -419,24 +421,24 @@ function process_group_tag($tagcontents) {
                             if ($createnewcategories) {
                                 // Create this category
                                 $newcat = new stdClass();
-                            	$newcat->name = $catname;
-                            	$newcat->visible = 0;
-								$newcat->parent = $parentid;
-                          		$catid = $DB->insert_record('course_categories', $newcat);
+                                $newcat->name = $catname;
+                                $newcat->visible = 0;
+                                $newcat->parent = $parentid;
+                                  $catid = $DB->insert_record('course_categories', $newcat);
                                 $course->category = $catid;
-                            	$this->log_line("Created new (hidden) category '$t_catname'");
+                                $this->log_line("Created new (hidden) category '$t_catname'");
                             } else {
-                            	// we encountered a category that doesn't
-                            	// exist and we can't create it; set the
-                            	// default category for this course.
-                            	$course->category = 1; // Miscellaneous
-                            	$this->log_line("Cannot create requested category '$group->category'; setting to Miscellaneous.");
-                            	break;
-							}
-						}
-					} else {
-					    // If no category was specified, set to Misc
-					    $course->category = 1; // Miscellaneous
+                                // we encountered a category that doesn't
+                                // exist and we can't create it; set the
+                                // default category for this course.
+                                $course->category = 1; // Miscellaneous
+                                $this->log_line("Cannot create requested category '$group->category'; setting to Miscellaneous.");
+                                break;
+                            }
+                        }
+                    } else {
+                        // If no category was specified, set to Misc
+                        $course->category = 1; // Miscellaneous
                     }
 
                     $course->timecreated = time();
@@ -464,27 +466,27 @@ function process_group_tag($tagcontents) {
 
                     $this->log_line("Created course $coursecode in Moodle (Moodle ID is $course->id)");
                 }
-			} else if ($recstatus==2 && ($courseid = $DB->get_field('course', 'id', array('idnumber'=>$coursecode)))) {
-			    if ($updatecourses) {
-				    // Update
-				    $did_update = 0;
-				    $fullname = $DB->get_field('course', 'fullname', array('idnumber'=>$coursecode));
-				    if ($fullname != $group->description) {
-					    $DB->set_field('course', 'fullname', $group->description, array('idnumber'=>$coursecode));
-					    add_to_log(SITEID, "course", "update", "view.php?id=$courseid", "$group->description (ID $courseid)");
-					    $did_update = 1;
+            } else if ($recstatus==2 && ($courseid = $DB->get_field('course', 'id', array('idnumber'=>$coursecode)))) {
+                if ($updatecourses) {
+                    // Update
+                    $did_update = 0;
+                    $fullname = $DB->get_field('course', 'fullname', array('idnumber'=>$coursecode));
+                    if ($fullname != $group->description) {
+                        $DB->set_field('course', 'fullname', $group->description, array('idnumber'=>$coursecode));
+                        add_to_log(SITEID, "course", "update", "view.php?id=$courseid", "$group->description (ID $courseid)");
+                        $did_update = 1;
                     }
-				    $shortname = $DB->get_field('course', 'shortname', array('idnumber'=>$coursecode));
-				    if ($shortname != $group->shortName) {
-					    $DB->set_field('course', 'shortname', $group->shortName, array('idnumber'=>$coursecode));
-					    add_to_log(SITEID, "course", "update", "view.php?id=$courseid", "$group->shortName (ID $courseid)");
-					    $did_update = 1;
+                    $shortname = $DB->get_field('course', 'shortname', array('idnumber'=>$coursecode));
+                    if ($shortname != $group->shortName) {
+                        $DB->set_field('course', 'shortname', $group->shortName, array('idnumber'=>$coursecode));
+                        add_to_log(SITEID, "course", "update", "view.php?id=$courseid", "$group->shortName (ID $courseid)");
+                        $did_update = 1;
                     }
                     if ($did_update) {
-					    $this->log_line("Updated course $coursecode in Moodle (Moodle ID is $courseid)");
+                        $this->log_line("Updated course $coursecode in Moodle (Moodle ID is $courseid)");
                     }
-				} else {
-				    $this->log_line("Ignoring update to course $coursecode");
+                } else {
+                    $this->log_line("Ignoring update to course $coursecode");
                 }
             } else if ($recstatus==3 && ($courseid = $DB->get_field('course', 'id', array('idnumber'=>$coursecode)))) {
                 // If course does exist, but recstatus==3 (delete), then set the course as hidden
@@ -512,48 +514,48 @@ function process_person_tag($tagcontents){
     $imsupdateusers         = $this->get_config('imsupdateusers');
 
     $person = new stdClass();
-    if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
+    if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)) {
         $person->idnumber = trim($matches[1]);
     }
-    if(preg_match('{<name>.*?<n>.*?<given>(.+?)</given>.*?</n>.*?</name>}is', $tagcontents, $matches)){
+    if (preg_match('{<name>.*?<n>.*?<given>(.+?)</given>.*?</n>.*?</name>}is', $tagcontents, $matches)) {
         $person->firstname = trim($matches[1]);
     }
-    if(preg_match('{<name>.*?<n>.*?<family>(.+?)</family>.*?</n>.*?</name>}is', $tagcontents, $matches)){
+    if (preg_match('{<name>.*?<n>.*?<family>(.+?)</family>.*?</n>.*?</name>}is', $tagcontents, $matches)) {
         $person->lastname = trim($matches[1]);
     }
-    if(preg_match('{<userid\s+authenticationtype\s*=\s*"*(.+?)"*>.*?</userid>}is', $tagcontents, $matches)){
+    if (preg_match('{<userid\s+authenticationtype\s*=\s*"*(.+?)"*>.*?</userid>}is', $tagcontents, $matches)) {
         $person->auth = trim($matches[1]);
     }
-    if(preg_match('{<userid.*?>(.*?)</userid>}is', $tagcontents, $matches)){
+    if (preg_match('{<userid.*?>(.*?)</userid>}is', $tagcontents, $matches)) {
         $person->username = trim($matches[1]);
     }
-    if($imssourcedidfallback && trim($person->username)==''){
+    if ($imssourcedidfallback && trim($person->username)=='') {
       // This is the point where we can fall back to useing the "sourcedid" if "userid" is not supplied
       // NB We don't use an "elseif" because the tag may be supplied-but-empty
         $person->username = $person->idnumber;
     }
-    if(preg_match('{<email>(.*?)</email>}is', $tagcontents, $matches)){
+    if (preg_match('{<email>(.*?)</email>}is', $tagcontents, $matches)) {
         $person->email = trim($matches[1]);
     }
-    if(preg_match('{<url>(.*?)</url>}is', $tagcontents, $matches)){
+    if (preg_match('{<url>(.*?)</url>}is', $tagcontents, $matches)) {
         $person->url = trim($matches[1]);
     }
-    if(preg_match('{<adr>.*?<locality>(.+?)</locality>.*?</adr>}is', $tagcontents, $matches)){
+    if (preg_match('{<adr>.*?<locality>(.+?)</locality>.*?</adr>}is', $tagcontents, $matches)) {
         $person->city = trim($matches[1]);
     }
-    if(preg_match('{<adr>.*?<country>(.+?)</country>.*?</adr>}is', $tagcontents, $matches)){
+    if (preg_match('{<adr>.*?<country>(.+?)</country>.*?</adr>}is', $tagcontents, $matches)) {
         $person->country = trim($matches[1]);
     }
 
     // Fix case of some of the fields if required
-    if($fixcaseusernames && isset($person->username)){
+    if ($fixcaseusernames && isset($person->username)) {
         $person->username = strtolower($person->username);
     }
-    if($fixcasepersonalnames){
-        if(isset($person->firstname)){
+    if ($fixcasepersonalnames) {
+        if (isset($person->firstname)) {
             $person->firstname = ucwords(strtolower($person->firstname));
         }
-        if(isset($person->lastname)){
+        if (isset($person->lastname)) {
             $person->lastname = ucwords(strtolower($person->lastname));
         }
     }
@@ -563,32 +565,32 @@ function process_person_tag($tagcontents){
 
     // Now if the recstatus is 3, we should delete the user if-and-only-if the setting for delete users is turned on
     // In the "users" table we can do this by setting deleted=1
-    if($recstatus==3){
-        if($imsdeleteusers){ // If we're allowed to delete user records
+    if ($recstatus==3) {
+        if ($imsdeleteusers) { // If we're allowed to delete user records
             // Make sure their "deleted" field is set to one
             $DB->set_field('user', 'deleted', 1, array('username'=>$person->username));
             $this->log_line("Marked user record for user '$person->username' (ID number $person->idnumber) as deleted.");
-        }else{
+        } else {
             $this->log_line("Ignoring deletion request for user '$person->username' (ID number $person->idnumber).");
         }
 
     } else if ($recstatus==2) { // Update
         if ($imsupdateusers) {
-		    if ($id = $DB->get_field('user', 'id', array('idnumber'=>$person->idnumber))) {
-			    $person->id = $id;
-			    $DB->update_record('user', $person);
-			    $this->log_line("Updated user $person->username");
+            if ($id = $DB->get_field('user', 'id', array('idnumber'=>$person->idnumber))) {
+                $person->id = $id;
+                $DB->update_record('user', $person);
+                $this->log_line("Updated user $person->username");
             } else {
-			    $this->log_line("Ignoring update request for non-existent user $person->username");
+                $this->log_line("Ignoring update request for non-existent user $person->username");
             }
         } else {
             $this->log_line("Ignoring update request for user $person->username");
         }
-	}else{ // Add record
+    } else { // Add record
         // If the user exists (matching sourcedid) then we don't need to do anything.
-        if(!$DB->get_field('user', 'id', array('idnumber'=>$person->idnumber)) && $createnewusers){
+        if (!$DB->get_field('user', 'id', array('idnumber'=>$person->idnumber)) && $createnewusers) {
             // If they don't exist and haven't a defined username, we log this as a potential problem.
-            if((!isset($person->username)) || (strlen($person->username)==0)){
+            if ((!isset($person->username)) || (strlen($person->username)==0)) {
                 $this->log_line("Cannot create new user for ID # $person->idnumber - no username listed in IMS data for this person.");
             } else if ($DB->get_field('user', 'id', array('username'=>$person->username))){
                 // If their idnumber is not registered but their user ID is, then add their idnumber to their record
@@ -597,7 +599,9 @@ function process_person_tag($tagcontents){
 
             // If they don't exist and they have a defined username, and $createnewusers == true, we create them.
             $person->lang = 'manual'; //TODO: this needs more work due tu multiauth changes
-			if (!$person->auth) { $person->auth = $CFG->auth; }
+            if (!$person->auth) {
+                $person->auth = $CFG->auth;
+            }
             $person->confirmed = 1;
             $person->timemodified = time();
             $person->mnethostid = $CFG->mnet_localhost_id;
@@ -627,7 +631,7 @@ function process_person_tag($tagcontents){
 
             // Make sure their "deleted" field is set to zero.
             $DB->set_field('user', 'deleted', 0, array('idnumber'=>$person->idnumber));
-        }else{
+        } else {
             $this->log_line("No user record found for '$person->username' (ID number $person->idnumber).");
         }
 
@@ -655,34 +659,34 @@ function process_membership_tag($tagcontents){
 
     $ship = new stdClass();
 
-    if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
+    if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)) {
         $ship->coursecode = ($truncatecoursecodes > 0)
                                  ? substr(trim($matches[1]), 0, intval($truncatecoursecodes))
                                  : trim($matches[1]);
         $ship->courseid = $DB->get_field('course', 'id', array('idnumber'=>$ship->coursecode));
     }
-    if($ship->courseid && preg_match_all('{<member>(.*?)</member>}is', $tagcontents, $membermatches, PREG_SET_ORDER)){
+    if ($ship->courseid && preg_match_all('{<member>(.*?)</member>}is', $tagcontents, $membermatches, PREG_SET_ORDER)) {
         $courseobj = new stdClass();
         $courseobj->id = $ship->courseid;
 
-        foreach($membermatches as $mmatch){
+        foreach ($membermatches as $mmatch) {
             $member = new stdClass();
             $memberstoreobj = new stdClass();
-            if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $mmatch[1], $matches)){
+            if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $mmatch[1], $matches)) {
                 $member->idnumber = trim($matches[1]);
             }
-            if(preg_match('{<role\s+roletype=["\'](.+?)["\'].*?>}is', $mmatch[1], $matches)){
+            if (preg_match('{<role\s+roletype=["\'](.+?)["\'].*?>}is', $mmatch[1], $matches)) {
                 $member->roletype = trim($matches[1]); // 01 means Student, 02 means Instructor, 3 means ContentDeveloper, and there are more besides
-            } elseif($imscapitafix && preg_match('{<roletype>(.+?)</roletype>}is', $mmatch[1], $matches)){
+            } elseif ($imscapitafix && preg_match('{<roletype>(.+?)</roletype>}is', $mmatch[1], $matches)) {
                 // The XML that comes out of Capita Student Records seems to contain a misinterpretation of the IMS specification!
                 $member->roletype = trim($matches[1]); // 01 means Student, 02 means Instructor, 3 means ContentDeveloper, and there are more besides
             }
-            if(preg_match('{<role\b.*?<status>(.+?)</status>.*?</role>}is', $mmatch[1], $matches)){
+            if (preg_match('{<role\b.*?<status>(.+?)</status>.*?</role>}is', $mmatch[1], $matches)) {
                 $member->status = trim($matches[1]); // 1 means active, 0 means inactive - treat this as enrol vs unenrol
             }
 
             $recstatus = ($this->get_recstatus($mmatch[1], 'role'));
-            if($recstatus==3){
+            if ($recstatus==3) {
               $member->status = 0; // See above - recstatus of 3 (==delete) is treated the same as status of 0
               //echo "<p>process_membership_tag: unenrolling member due to recstatus of 3</p>";
             }
@@ -690,10 +694,10 @@ function process_membership_tag($tagcontents){
             $timeframe = new stdClass();
             $timeframe->begin = 0;
             $timeframe->end = 0;
-            if(preg_match('{<role\b.*?<timeframe>(.+?)</timeframe>.*?</role>}is', $mmatch[1], $matches)){
+            if (preg_match('{<role\b.*?<timeframe>(.+?)</timeframe>.*?</role>}is', $mmatch[1], $matches)) {
                 $timeframe = $this->decode_timeframe($matches[1]);
             }
-            if(preg_match('{<role\b.*?<extension>.*?<cohort>(.+?)</cohort>.*?</extension>.*?</role>}is', $mmatch[1], $matches)){
+            if (preg_match('{<role\b.*?<extension>.*?<cohort>(.+?)</cohort>.*?</extension>.*?</role>}is', $mmatch[1], $matches)) {
                 $member->groupname = trim($matches[1]);
                 // The actual processing (ensuring a group record exists, etc) occurs below, in the enrol-a-student clause
             }
@@ -709,17 +713,17 @@ function process_membership_tag($tagcontents){
             $memberstoreobj->course = $ship->courseid;
             $memberstoreobj->time = time();
             $memberstoreobj->timemodified = time();
-            if($memberstoreobj->userid){
+            if ($memberstoreobj->userid) {
 
                 // Decide the "real" role (i.e. the Moodle role) that this user should be assigned to.
                 // Zero means this roletype is supposed to be skipped.
                 $moodleroleid = $this->rolemappings[$member->roletype];
-                if(!$moodleroleid) {
+                if (!$moodleroleid) {
                     $this->log_line("SKIPPING role $member->roletype for $memberstoreobj->userid ($member->idnumber) in course $memberstoreobj->course");
                     continue;
                 }
 
-                if(intval($member->status) == 1) {
+                if (intval($member->status) == 1) {
                     // Enrol the member
 
                     $einstance = $DB->get_record('enrol',
@@ -736,12 +740,12 @@ function process_membership_tag($tagcontents){
                     $memberstally++;
 
                     // At this point we can also ensure the group membership is recorded if present
-                    if(isset($member->groupname)){
+                    if (isset($member->groupname)) {
                         // Create the group if it doesn't exist - either way, make sure we know the group ID
-                        if(isset($groupids[$member->groupname])) {
+                        if (isset($groupids[$member->groupname])) {
                             $member->groupid = $groupids[$member->groupname]; // Recall the group ID from cache if available
                         } else {
-                            if($groupid = $DB->get_field('groups', 'id', array('courseid'=>$ship->courseid, 'name'=>$member->groupname))){
+                            if ($groupid = $DB->get_field('groups', 'id', array('courseid'=>$ship->courseid, 'name'=>$member->groupname))) {
                                 $member->groupid = $groupid;
                                 $groupids[$member->groupname] = $groupid; // Store ID in cache
                             } else {
@@ -758,7 +762,7 @@ function process_membership_tag($tagcontents){
                             }
                         }
                         // Add the user-to-group association if it doesn't already exist
-                        if($member->groupid) {
+                        if ($member->groupid) {
                             groups_add_member($member->groupid, $memberstoreobj->userid);
                         }
                     } // End of group-enrolment (from member.role.extension.cohort tag)
@@ -797,7 +801,7 @@ function process_properties_tag($tagcontents){
     $imsrestricttarget = $this->get_config('imsrestricttarget');
 
     if ($imsrestricttarget) {
-        if(!(preg_match('{<target>'.preg_quote($imsrestricttarget).'</target>}is', $tagcontents, $matches))){
+        if (!(preg_match('{<target>'.preg_quote($imsrestricttarget).'</target>}is', $tagcontents, $matches))) {
             $this->log_line("Skipping processing: required target \"$imsrestricttarget\" not specified in this data.");
             $this->continueprocessing = false;
         }
@@ -812,7 +816,7 @@ function process_properties_tag($tagcontents){
 */
 function log_line($string){
     mtrace($string);
-    if($this->logfp) {
+    if ($this->logfp) {
         fwrite($this->logfp, $string . "\n");
     }
 }
@@ -826,10 +830,10 @@ function decode_timeframe($string){ // Pass me the INNER CONTENTS of a <timefram
     // Explanatory note: The matching will ONLY match if the attribute restrict="1"
     // because otherwise the time markers should be ignored (participation should be
     // allowed outside the period)
-    if(preg_match('{<begin\s+restrict="1">(\d\d\d\d)-(\d\d)-(\d\d)</begin>}is', $string, $matches)){
+    if (preg_match('{<begin\s+restrict="1">(\d\d\d\d)-(\d\d)-(\d\d)</begin>}is', $string, $matches)) {
         $ret->begin = mktime(0,0,0, $matches[2], $matches[3], $matches[1]);
     }
-    if(preg_match('{<end\s+restrict="1">(\d\d\d\d)-(\d\d)-(\d\d)</end>}is', $string, $matches)){
+    if (preg_match('{<end\s+restrict="1">(\d\d\d\d)-(\d\d)-(\d\d)</end>}is', $string, $matches)) {
         $ret->end = mktime(0,0,0, $matches[2], $matches[3], $matches[1]);
     }
     return $ret;
