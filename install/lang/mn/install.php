@@ -60,7 +60,7 @@ $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Та <strong>{$a->packname} {$a->packversion}</strong> багцыг компьютер дээрээ амжилттай суулгаж ажиллуулсан тул энэ хуудсыг харж байна. Баяр хүргэе!';
 $string['welcomep30'] = '<strong>{$a->installername}</strong> -ний энэ хувилбар нь <strong>Mooдл</strong> ажиллах орчныг үүсгэх програмууд агуулсан, тэдгээр нь:';
 $string['welcomep40'] = 'Энэ багц нь мөн <strong>Mooдл {$a->moodlerelease} ({$a->moodleversion})</strong>-г агуулсан.';
-$string['welcomep50'] = 'Энэ багц доторх бүх програмууд нь өөрсдийн лизенцтэй. Бүрэн <strong>{$a->installername}</strong> багц нь 
+$string['welcomep50'] = 'Энэ багц доторх бүх програмууд нь өөрсдийн лизенцтэй. Бүрэн <strong>{$a->installername}</strong> багц нь
 <a href="http://www.opensource.org/docs/definition_plain.html">open source</a>  бөгөөд <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> -ийн лизенцийн дор түгээгддэг.';
 $string['welcomep60'] = 'Дараагийн хуудсууд нь компьютер дээрээ <strong>Mooдл</strong> тохируулах тааруулах энгийн алхмуудыг агуулсан байгаа. Та анхны утгын тохиргоонуудыг хүлээн авч болно, эсвэл өөрийн хэрэгцээнд нийцүүлэн өөрчилж болно.';
 $string['welcomep70'] = '<strong>Mooдлээ</strong> тохируулахын тулд доорх “Үргэлжлүүлэх” товчин дээр дарж цааж явна уу.';

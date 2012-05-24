@@ -75,13 +75,13 @@ $string['phpversionhelp'] = '<p>Moodle-k PHP 4.1.0 edo geroagoko bertsioa behar 
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Orri hau ikusten baduzu <strong>{$a->packname} {$a->packversion}</strong> paketea
     zure ordenadorean instalatu ahal izan duzu. Zorionak!';
-$string['welcomep30'] = '<strong>{$a->installername}</strong>ren bertsio honek <strong>Moodle</strong>k 
+$string['welcomep30'] = '<strong>{$a->installername}</strong>ren bertsio honek <strong>Moodle</strong>k
     zure ordenadorean funtzionatzeko behar diren aplikazioak dauzka,
     bereziki:';
 $string['welcomep40'] = 'Paketeak ere zera dauka: <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Paketeko aplikazio guztien erabilpena dagozkien lizentziek 
-    arautzen dute. <strong>{$a->installername}</strong> aplikazioak 
-    <a href="http://www.opensource.org/docs/definition_plain.html">kode irekia</a> dauka eta 
+$string['welcomep50'] = 'Paketeko aplikazio guztien erabilpena dagozkien lizentziek
+    arautzen dute. <strong>{$a->installername}</strong> aplikazioak
+    <a href="http://www.opensource.org/docs/definition_plain.html">kode irekia</a> dauka eta
    <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> lizentziapean banatzen da.';
 $string['welcomep60'] = 'Datozen orriek urrats erraz batzuen bidez gidatuko zaituzte
    <strong>Moodle</strong> zure ordenadorean instalatu eta konfiguratzeko. Aholkatzen diren lehentsitako baloreak

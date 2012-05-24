@@ -37,7 +37,7 @@ $string['cliincorrectvalueerror'] = 'שגיאה: ערך לא תקין
 $string['cliincorrectvalueretry'] = 'ערך שגוי, נסה שנית';
 $string['clitypevalue'] = 'סוג הערך';
 $string['clitypevaluedefault'] = 'סוג הערך, הקש Enter לשימוש בערך ברירת מחדל ({$a})';
-$string['cliunknowoption'] = 'אפשרויות לא מוכרות : 
+$string['cliunknowoption'] = 'אפשרויות לא מוכרות :
 {$a}
 אנא השתמש באפשרות העזרה.';
 $string['cliyesnoprompt'] = 'רשום y (שפרושו כן) או n (שפרושו לא)';

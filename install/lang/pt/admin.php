@@ -36,8 +36,8 @@ $string['cliincorrectvalueerror'] = 'Erro. Valor "{$a->value}" incorreto para "{
 $string['cliincorrectvalueretry'] = 'Valor incorreto, por favor tente novamente';
 $string['clitypevalue'] = 'valor do tipo';
 $string['clitypevaluedefault'] = 'Escreva o valor. Ou Enter para usar o valor  por omissão ({$a}).';
-$string['cliunknowoption'] = 'Opções desconhecidas: 
-{$a} 
+$string['cliunknowoption'] = 'Opções desconhecidas:
+{$a}
 Por favor use a opção --help';
 $string['cliyesnoprompt'] = 'digite s (para sim) ou n (para não)';
 $string['environmentrequireinstall'] = 'é necessário estar instalada/ativa';
