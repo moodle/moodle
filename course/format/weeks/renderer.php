@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/course/format/renderer.php');
+require_once($CFG->dirroot.'/course/format/weeks/lib.php');
 
 
 /**
@@ -62,20 +63,18 @@ class format_weeks_renderer extends format_section_renderer_base {
     /**
      * Is the section passed in the current section?
      *
-     * @param stdClass $course The course entry from DB
      * @param stdClass $section The course_section entry from the DB
+     * @param stdClass $course The course entry from DB
      * @return bool true if the section is current
      */
     protected function is_section_current($section, $course) {
         if ($section->section < 1) {
             return false;
         }
-        $oneweekseconds = 604800;
-        $startdate = $course->startdate + ($oneweekseconds * ($section->section - 1));
-        $enddate = $startdate + $oneweekseconds;
 
         $timenow = time();
+        $dates = format_weeks_get_section_dates($section, $course);
 
-        return (($timenow >= $startdate) && ($timenow < $enddate));
+        return (($timenow >= $dates->start) && ($timenow < $dates->end));
     }
 }
