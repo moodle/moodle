@@ -32,7 +32,7 @@
     <location>editor/tinymce/tiny_mce</location>
     <name>TinyMCE</name>
     <license>LGPL</license>
-    <version>3.5</version>
+    <version>3.5.1.1</version>
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
