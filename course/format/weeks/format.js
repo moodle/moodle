@@ -38,7 +38,7 @@ M.course.format.swap_sections = function(Y, node1, node2) {
         COURSECONTENT : 'course-content',
         LEFT : 'left',
         SECTIONADDMENUS : 'section_add_menus',
-        WEEKDATES: 'weekdates'
+        WEEKDATES: 'sectionname'
     };
 
     var sectionlist = Y.Node.all('.'+CSS.COURSECONTENT+' '+M.course.format.get_section_selector(Y));
