@@ -376,7 +376,7 @@ function cron_run() {
 
     //Run registration updated cron
     mtrace(get_string('siteupdatesstart', 'hub'));
-    require_once($CFG->dirroot . "/$CFG->admin/registration/lib.php");
+    require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
     $registrationmanager = new registration_manager();
     $registrationmanager->cron();
     mtrace(get_string('siteupdatesend', 'hub'));
