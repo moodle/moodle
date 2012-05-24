@@ -1794,19 +1794,19 @@ class file_storage {
     /**
      * Return mimetype by given file pathname
      *
-     * This method uses fileinfo module to get mimetype using magic bytes if file exists.
-     * If not, it will get mimetype based on filename
+     * If file has a known extension, we return the mimetype based on extension.
+     * Otherwise (when possible) we try to get the mimetype from file contents.
      *
      * @param string $pathname
      * @return string
      */
     public static function mimetype($pathname) {
-        if (file_exists($pathname)) {
+        $type = mimeinfo('type', $pathname);
+        if ($type === 'document/unknown' && class_exists('finfo') && file_exists($pathname)) {
             $finfo = new finfo(FILEINFO_MIME_TYPE);
-            return mimeinfo_from_type('type', $finfo->file($pathname));
-        } else {
-            return mimeinfo('type', $pathname);
+            $type = mimeinfo_from_type('type', $finfo->file($pathname));
         }
+        return $type;
     }
 
     /**

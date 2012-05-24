@@ -82,7 +82,7 @@ function resource_display_embed($resource, $cm, $course, $file) {
         core_media::OPTION_BLOCK => true,
     );
 
-    if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
+    if (file_mimetype_in_typegroup($mimetype, 'web_image')) {  // It's an image
         $code = resourcelib_embed_image($fullurl, $title);
 
     } else if ($mimetype === 'application/pdf') {
@@ -409,19 +409,11 @@ function resource_print_filenotfound($resource, $cm, $course) {
  * @return int display type constant
  */
 function resource_get_final_display_type($resource) {
-    global $CFG;
+    global $CFG, $PAGE;
 
     if ($resource->display != RESOURCELIB_DISPLAY_AUTO) {
         return $resource->display;
     }
-
-    static $download = array('application/zip', 'application/x-tar', 'application/g-zip');    // binary formats
-    static $embed    = array('image/gif', 'image/jpeg', 'image/png', 'image/svg+xml',         // images
-                             'application/x-shockwave-flash', 'video/x-flv', 'video/x-ms-wm', // video formats
-                             'video/quicktime', 'video/mpeg', 'video/mp4',
-                             'audio/mp3', 'audio/x-realaudio-plugin', 'x-realaudio-plugin',   // audio formats
-                             'application/pdf', 'text/html',
-                            );
 
     if (empty($resource->mainfile)) {
         return RESOURCELIB_DISPLAY_DOWNLOAD;
@@ -429,10 +421,10 @@ function resource_get_final_display_type($resource) {
         $mimetype = mimeinfo('type', $resource->mainfile);
     }
 
-    if (in_array($mimetype, $download)) {
+    if (file_mimetype_in_typegroup($mimetype, 'archive')) {
         return RESOURCELIB_DISPLAY_DOWNLOAD;
     }
-    if (in_array($mimetype, $embed)) {
+    if (file_mimetype_in_typegroup($mimetype, array('web_image', '.pdf', '.htm', 'web_video', 'web_audio'))) {
         return RESOURCELIB_DISPLAY_EMBED;
     }
 

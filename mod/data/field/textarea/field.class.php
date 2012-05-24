@@ -82,7 +82,7 @@ class data_field_textarea extends data_field_base {
         if ($options['maxfiles'] != 0 ) {
             $args = new stdClass();
             // need these three to filter repositories list
-            $args->accepted_types = array('image');
+            $args->accepted_types = array('web_image');
             $args->return_types = (FILE_INTERNAL | FILE_EXTERNAL);
             $args->context = $this->context;
             $args->env = 'filepicker';

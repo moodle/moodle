@@ -75,7 +75,7 @@ class data_field_picture extends data_field_base {
         $options = new stdClass();
         $options->maxbytes  = $this->field->param3;
         $options->itemid    = $itemid;
-        $options->accepted_types = array('image');
+        $options->accepted_types = array('web_image');
         $options->return_types = FILE_INTERNAL;
         $options->context = $PAGE->context;
         if (!empty($file)) {
