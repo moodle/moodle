@@ -280,25 +280,35 @@ class plugin_manager {
     }
 
     /**
-     * Checks all dependencies for all installed plugins. Used by install and upgrade.
+     * Checks all dependencies for all installed plugins
+     *
+     * This is used by install and upgrade. The array passed by reference as the second
+     * argument is populated with the list of plugins that have failed dependencies (note that
+     * a single plugin can appear multiple times in the $failedplugins).
+     *
      * @param int $moodleversion the version from version.php.
+     * @param array $failedplugins to return the list of plugins with non-satisfied dependencies
      * @return bool true if all the dependencies are satisfied for all plugins.
      */
-    public function all_plugins_ok($moodleversion) {
+    public function all_plugins_ok($moodleversion, &$failedplugins = array()) {
+
+        $return = true;
         foreach ($this->get_plugins() as $type => $plugins) {
             foreach ($plugins as $plugin) {
 
                 if (!empty($plugin->versionrequires) && $plugin->versionrequires > $moodleversion) {
-                    return false;
+                    $return = false;
+                    $failedplugins[] = $plugin->component;
                 }
 
                 if (!$this->are_dependencies_satisfied($plugin->get_other_required_plugins())) {
-                    return false;
+                    $return = false;
+                    $failedplugins[] = $plugin->component;
                 }
             }
         }
 
-        return true;
+        return $return;
     }
 
     /**
