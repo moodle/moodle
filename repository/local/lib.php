@@ -221,7 +221,7 @@ class repository_local_file {
             $node['license'] = $this->fileinfo->get_license();
             $node['source'] = $encodedpath;
             $node['thumbnail'] = $OUTPUT->pix_url(file_file_icon($this->fileinfo, 90))->out(false);
-            $node['icon'] = $OUTPUT->pix_url(file_file_icon($this->fileinfo), 24)->out(false);
+            $node['icon'] = $OUTPUT->pix_url(file_file_icon($this->fileinfo, 24))->out(false);
             if ($imageinfo = $this->fileinfo->get_imageinfo()) {
                 // what a beautiful picture, isn't it
                 $fileurl = new moodle_url($this->fileinfo->get_url());

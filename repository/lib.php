@@ -1772,6 +1772,26 @@ abstract class repository {
      */
     public static function prepare_listing($listing) {
         global $OUTPUT;
+
+        $defaultfoldericon = $OUTPUT->pix_url(file_folder_icon(24))->out(false);
+        // prepare $listing['path'] or $listing->path
+        if (is_array($listing) && isset($listing['path']) && is_array(($listing['path']))) {
+            $path = &$listing['path'];
+        } else if (is_object($listing) && isset($listing->path) && is_array(($listing->path))) {
+            $path = &$listing->path;
+        }
+        if (isset($path)) {
+            $len = count($path);
+            for ($i=0; $i<$len; $i++) {
+                if (is_array($path[$i]) && !isset($path[$i]['icon'])) {
+                    $path[$i]['icon'] = $defaultfoldericon;
+                } else if (is_object($path[$i]) && !isset($path[$i]->icon)) {
+                    $path[$i]->icon = $defaultfoldericon;
+                }
+            }
+        }
+
+        // prepare $listing['list'] or $listing->list
         if (is_array($listing) && isset($listing['list']) && is_array(($listing['list']))) {
             $listing['list'] = array_values($listing['list']); // convert to array
             $files = &$listing['list'];
@@ -1830,7 +1850,7 @@ abstract class repository {
             }
             if (!isset($file['icon'])) {
                 if ($isfolder) {
-                    $file['icon'] = $OUTPUT->pix_url(file_folder_icon(24))->out(false);
+                    $file['icon'] = $defaultfoldericon;
                 } else if ($filename) {
                     $file['icon'] = $OUTPUT->pix_url(file_extension_icon($filename, 24))->out(false);
                 }

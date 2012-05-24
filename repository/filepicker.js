@@ -74,6 +74,67 @@ YUI.add('moodle-core_filepicker', function(Y) {
         return this;
     }
 
+    /** set image source to src, if there is preview, remember it in lazyloading.
+     *  If there is a preview and it was already loaded, use it. */
+    Y.Node.prototype.setImgSrc = function(src, realsrc, lazyloading) {
+        if (realsrc) {
+            if (M.core_filepicker.loadedpreviews[realsrc]) {
+                this.set('src', realsrc).addClass('realpreview');
+                return this;
+            } else {
+                if (!this.get('id')) {
+                    this.generateID();
+                }
+                lazyloading[this.get('id')] = realsrc;
+            }
+        }
+        this.set('src', src);
+        return this;
+    }
+
+    /**
+     * Replaces the image source with preview. If the image is inside the treeview, we need
+     * also to update the html property of corresponding YAHOO.widget.HTMLNode
+     * @param array lazyloading array containing associations of imgnodeid->realsrc
+     */
+    Y.Node.prototype.setImgRealSrc = function(lazyloading) {
+        if (this.get('id') && lazyloading[this.get('id')]) {
+            var newsrc = lazyloading[this.get('id')];
+            M.core_filepicker.loadedpreviews[newsrc] = true;
+            this.set('src', newsrc).addClass('realpreview');
+            delete lazyloading[this.get('id')];
+            var treenode = this.ancestor('.fp-treeview')
+            if (treenode && treenode.get('parentNode').treeview) {
+                treenode.get('parentNode').treeview.getRoot().refreshPreviews(this.get('id'), newsrc);
+            }
+        }
+        return this;
+    }
+
+    /** scan TreeView to find which node contains image with id=imgid and replace it's html
+     * with the new image source. */
+    YAHOO.widget.Node.prototype.refreshPreviews = function(imgid, newsrc, regex) {
+        if (!regex) {
+            regex = new RegExp("<img\\s[^>]*id=\""+imgid+"\"[^>]*?(/?)>", "im");
+        }
+        if (this.expanded || this.isLeaf) {
+            var html = this.getContentHtml();
+            if (html && this.setHtml && regex.test(html)) {
+                var newhtml = this.html.replace(regex, "<img id=\""+imgid+"\" src=\""+newsrc+"\" class=\"realpreview\"$1>", html);
+                this.setHtml(newhtml);
+                return true;
+            }
+            if (!this.isLeaf && this.children) {
+                for(var c in this.children) {
+                    if (this.children[c].refreshPreviews(imgid, newsrc, regex)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Displays a list of files (used by filepicker, filemanager) inside the Node
      *
@@ -133,10 +194,8 @@ YUI.add('moodle-core_filepicker', function(Y) {
             var tmpnodedata = {className:options.classnamecallback(node)};
             el.get('children').addClass(tmpnodedata.className);
             if (node.icon) {
-                el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', node.icon));
-                if (node.realicon) {
-                    lazyloading[el.one('.fp-icon img').generateID()] = node.realicon;
-                }
+                el.one('.fp-icon').appendChild(Y.Node.create('<img/>'));
+                el.one('.fp-icon img').setImgSrc(node.icon, node.realicon, lazyloading);
             }
             // create node
             tmpnodedata.html = el.getContent();
@@ -181,6 +240,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
                     var pathelement = options.filepath[i];
                     mytreeel.path = pathelement.path;
                     mytreeel.title = pathelement.name;
+                    mytreeel.icon = pathelement.icon;
                     mytreeel.dynamicLoadComplete = true; // we will call it manually
                     mytreeel.expanded = true;
                 }
@@ -238,10 +298,8 @@ YUI.add('moodle-core_filepicker', function(Y) {
             el.get('children').addClass(o.data['classname']);
             el.one('.fp-filename').setContent(o.value);
             if (o.data['icon']) {
-                el.one('.fp-icon').appendChild(Y.Node.create('<img/>').set('src', o.data['icon']));
-                if (o.data['realicon']) {
-                    lazyloading[el.one('.fp-icon img').generateID()] = o.data['realicon'];
-                }
+                el.one('.fp-icon').appendChild(Y.Node.create('<img/>'));
+                el.one('.fp-icon img').setImgSrc(o.data['icon'], o.data['realicon'], lazyloading);
             }
             if (options.rightclickcallback) {
                 el.get('children').addClass('fp-hascontextmenu');
@@ -342,14 +400,11 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 filenamediv.setStyleAdv('width', width);
                 imgdiv.setStyleAdv('width', width).setStyleAdv('height', height);
                 var img = Y.Node.create('<img/>').setAttrs({
-                        src: src,
                         title: file_get_description(node),
                         alt: node.thumbnail_alt ? node.thumbnail_alt : file_get_filename(node)}).
                     setStyle('maxWidth', ''+width+'px').
                     setStyle('maxHeight', ''+height+'px');
-                if (node.realthumbnail) {
-                    lazyloading[img.generateID()] = node.realthumbnail;
-                }
+                img.setImgSrc(src, node.realthumbnail, lazyloading);
                 imgdiv.appendChild(img);
                 element.on('click', function(e, nd) {
                     if (options.rightclickcallback && e.target.ancestor('.fp-iconview .fp-contextmenu', true)) {
@@ -404,6 +459,11 @@ M.core_filepicker.active_filepicker = null;
  * HTML Templates to use in FilePicker
  */
 M.core_filepicker.templates = M.core_filepicker.templates || {};
+
+/**
+ * Array of image sources for real previews (realicon or realthumbnail) that are already loaded
+ */
+M.core_filepicker.loadedpreviews = M.core_filepicker.loadedpreviews || {};
 
 /**
 * Set selected file info
@@ -761,8 +821,7 @@ M.core_filepicker.init = function(Y, options) {
                 if (scope.lazyloading) {
                     fpcontent.all('img').each( function(node) {
                         if (node.get('id') && scope.lazyloading[node.get('id')] && is_node_visible(node)) {
-                            node.set('src', scope.lazyloading[node.get('id')]);
-                            delete scope.lazyloading[node.get('id')];
+                            node.setImgRealSrc(scope.lazyloading);
                         }
                     });
                 }
