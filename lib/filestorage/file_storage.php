@@ -272,7 +272,7 @@ class file_storage {
     public function get_file_by_id($fileid) {
         global $DB;
 
-        $sql = "SELECT f.*, r.repositoryid, r.reference
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
@@ -293,7 +293,7 @@ class file_storage {
     public function get_file_by_hash($pathnamehash) {
         global $DB;
 
-        $sql = "SELECT f.*, r.repositoryid, r.reference
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
@@ -370,7 +370,7 @@ class file_storage {
      */
     public function get_external_files($repositoryid, $sort = 'sortorder, itemid, filepath, filename') {
         global $DB;
-        $sql = "SELECT f.*, r.repositoryid, r.reference
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
@@ -407,7 +407,7 @@ class file_storage {
             $itemidsql = '';
         }
 
-        $sql = "SELECT f.*, r.repositoryid, r.reference
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
@@ -504,7 +504,7 @@ class file_storage {
             $dirs = $includedirs ? "" : "AND filename <> '.'";
             $length = textlib::strlen($filepath);
 
-            $sql = "SELECT f.*, r.repositoryid, r.reference
+            $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                       FROM {files} f
                  LEFT JOIN {files_reference} r
                            ON f.referencefileid = r.id
@@ -534,7 +534,7 @@ class file_storage {
             $length = textlib::strlen($filepath);
 
             if ($includedirs) {
-                $sql = "SELECT f.*, r.repositoryid, r.reference
+                $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                           FROM {files} f
                      LEFT JOIN {files_reference} r
                                ON f.referencefileid = r.id
@@ -553,7 +553,7 @@ class file_storage {
                 }
             }
 
-            $sql = "SELECT f.*, r.repositoryid, r.reference
+            $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                       FROM {files} f
                  LEFT JOIN {files_reference} r
                            ON f.referencefileid = r.id
@@ -772,7 +772,7 @@ class file_storage {
         unset($filerecord['contenthash']);
         unset($filerecord['pathnamehash']);
 
-        $sql = "SELECT f.*, r.repositoryid, r.reference
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
@@ -1669,11 +1669,12 @@ class file_storage {
      */
     public function search_references($str) {
         global $DB;
-        $sql = "SELECT f.*, r.repositoryid, r.reference
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
-                 WHERE r.reference = ? AND (f.component <> ? OR f.filearea <> ?)";
+                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
+                 AND (f.component <> ? OR f.filearea <> ?)";
 
         $rs = $DB->get_recordset_sql($sql, array($str, 'user', 'draft'));
         $files = array();
@@ -1699,7 +1700,8 @@ class file_storage {
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
-                 WHERE r.reference = ? AND (f.component <> ? OR f.filearea <> ?)";
+                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
+                 AND (f.component <> ? OR f.filearea <> ?)";
 
         $count = $DB->count_records_sql($sql, array($str, 'user', 'draft'));
         return $count;
@@ -1726,11 +1728,12 @@ class file_storage {
 
         $reference = self::pack_reference($params);
 
-        $sql = "SELECT f.*, r.repositoryid, r.reference
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
-                 WHERE r.reference = ? AND (f.component <> ? OR f.filearea <> ?)";
+                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
+		 AND (f.component <> ? OR f.filearea <> ?)";
 
         $rs = $DB->get_recordset_sql($sql, array($reference, 'user', 'draft'));
         $files = array();
@@ -1769,7 +1772,8 @@ class file_storage {
                   FROM {files} f
              LEFT JOIN {files_reference} r
                        ON f.referencefileid = r.id
-                 WHERE r.reference = ? AND (f.component <> ? OR f.filearea <> ?)";
+                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
+                 AND (f.component <> ? OR f.filearea <> ?)";
 
         $count = $DB->count_records_sql($sql, array($reference, 'user', 'draft'));
         return $count;
@@ -1874,6 +1878,38 @@ class file_storage {
             set_config('fileslastcleanup', time());
             mtrace('done.');
         }
+    }
+
+    /**
+     * Get the sql formated fields for a file instance to be created from a
+     * {files} and {files_refernece} join.
+     *
+     * @param string $filesprefix the table prefix for the {files} table
+     * @param string $filesreferenceprefix the table prefix for the {files_reference} table
+     * @return string the sql to go after a SELECT
+     */
+    private static function instance_sql_fields($filesprefix, $filesreferenceprefix) {
+        // Note, these fieldnames MUST NOT overlap between the two tables,
+        // else problems like MDL-33172 occur.
+        $filefields = array('contenthash', 'pathnamehash', 'contextid', 'component', 'filearea',
+            'itemid', 'filepath', 'filename', 'userid', 'filesize', 'mimetype', 'status', 'source',
+            'author', 'license', 'timecreated', 'timemodified', 'sortorder', 'referencefileid',
+            'referencelastsync', 'referencelifetime');
+
+        $referencefields = array('repositoryid', 'reference');
+
+        // id is specifically named to prevent overlaping between the two tables.
+        $fields = array();
+        $fields[] = $filesprefix.'.id AS id';
+        foreach ($filefields as $field) {
+            $fields[] = "{$filesprefix}.{$field}";
+        }
+
+        foreach ($referencefields as $field) {
+            $fields[] = "{$filesreferenceprefix}.{$field}";
+        }
+
+        return implode(', ', $fields);
     }
 }
 
