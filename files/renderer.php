@@ -277,7 +277,7 @@ class core_files_renderer extends plugin_renderer_base {
      */
     private function fm_js_template_listfilename() {
         $rv = '
-<span>
+<span class="fp-filename-icon">
     <a href="#">
     <span class="{!}fp-icon"></span>
     <span class="{!}fp-filename"></span>
@@ -535,6 +535,7 @@ class core_files_renderer extends plugin_renderer_base {
                     <a class="{!}fp-vb-details" href="#"></a>
                     <a class="{!}fp-vb-tree" href="#"></a>
                 </div>
+                <div class="fp-clear-right"></div>
             </div>
             <div class="fp-pathbar">
                  <span class="{!}fp-path-folder"><a class="{!}fp-path-folder-name" href="#"></a></span>
@@ -591,7 +592,13 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string
      */
     private function fp_js_template_listfilename() {
-        $rv = '<span><span class="{!}fp-icon"></span> <span class="{!}fp-filename"></span></span>';
+        $rv = '
+<span class="fp-filename-icon">
+    <a href="#">
+        <span class="{!}fp-icon"></span>
+        <span class="{!}fp-filename"></span>
+    </a>
+</span>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
 

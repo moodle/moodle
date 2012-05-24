@@ -43,10 +43,10 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
 /*
  * Tools, Path & View on fp-navbar (File Picker and File Manager)
  */
-.fp-toolbar {display: table-row;line-height: 22px;float:left;}
+.fp-toolbar {/*display: table-row;*/display: block;line-height: 22px;float:left;}
 .fp-toolbar.empty {display:none;}
 .fp-toolbar .disabled {display:none;}
-.fp-toolbar div {display: inline-block;padding: 0px 2px;}
+.fp-toolbar div {display: inline-block;padding: 0px 2px;padding-right: 10px;}
 .fp-toolbar img {vertical-align: -15%; margin-right: 5px;}
 .file-picker .search-entry {background:#FFF url('[[pix:a/search]]') no-repeat 3px 3px;height:18px;width:230px;border: 1px solid #BBB;padding-left:20px;}
 
@@ -64,6 +64,7 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
 .fp-vb-tree {background:url('[[pix:theme|fp/view_tree_active]]') no-repeat 0px 0px;width:23px;height:22px;display: inline-block;margin-left: -4px;}
 .fp-vb-tree.checked {background:url('[[pix:theme|fp/view_tree_selected]]');}
 .fp-viewbar.disabled .fp-vb-tree {background:url('[[pix:theme|fp/view_tree_inactive]]');}
+.file-picker .fp-clear-right {clear: right;}
 
 /*
  * Icon view (File Picker and File Manager)
@@ -86,37 +87,36 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
 .file-picker .yui3-datatable-data .yui3-datatable-odd .yui3-datatable-sorted {background-color: #F6F6F6;}
 .file-picker .yui3-datatable-even .yui3-datatable-cell {background-color: #FFF;border-left: 0px solid #FFF;}
 .file-picker .yui3-datatable-data .yui3-datatable-even .yui3-datatable-sorted {background-color: #FFF;}
-.file-picker .fp-icon img {max-height:16px;max-width:16px;}
 
 /*
- * Tree view (File Picker and File Manager)
+ * Tree view (File Manager only)
  */
 /*.file-picker .fp-treeview .fp-folder .fp-icon, .filemanager .fp-treeview .fp-folder .fp-icon {}*/
 /* first or middle sibling, no children */
-/*.file-picker .ygtvtn, .filemanager*/ .ygtvtn {background: url('[[pix:moodle|y/tn]]') 0 0 no-repeat;width:17px;height:22px;}
+.file-picker .ygtvtn, .filemanager .ygtvtn {background: url('[[pix:moodle|y/tn]]') 0px 0px no-repeat;width:17px;height:22px;}
 /* first or middle sibling, collapsable */
-/*.file-picker .ygtvtm, .filemanager*/ .ygtvtm {background: url('[[pix:moodle|y/tm]]') 0 0 no-repeat;width:13px;height:12px;cursor:pointer;}
+.file-picker .ygtvtm, .filemanager .ygtvtm {background: url('[[pix:moodle|y/tm]]') 0px 10px no-repeat;width:13px;height:12px;cursor:pointer;}
 /* first or middle sibling, collapsable, hover */
-/*.file-picker .ygtvtmh, .filemanager*/ .ygtvtmh {background: url('[[pix:moodle|y/tm]]') 0 0 no-repeat;width:13px;height:12px;cursor:pointer;}
+.file-picker .ygtvtmh, .filemanager .ygtvtmh {background: url('[[pix:moodle|y/tm]]') 0px 10px no-repeat;width:13px;height:12px;cursor:pointer;}
 /* first or middle sibling, expandable */
-/*.file-picker .ygtvtp, .filemanager*/ .ygtvtp {background: url('[[pix:moodle|y/tp]]') 0 0 no-repeat;width:13px;height:12px;cursor:pointer;}
+.file-picker .ygtvtp, .filemanager .ygtvtp {background: url('[[pix:moodle|y/tp]]') 0px 10px no-repeat;width:13px;height:12px;cursor:pointer;}
 /* first or middle sibling, expandable, hover */
-/*.file-picker .ygtvtph, .filemanager*/ .ygtvtph {background: url('[[pix:moodle|y/tp]]') 0 0 no-repeat;width:13px;height:22px;cursor:pointer;}
+.file-picker .ygtvtph, .filemanager .ygtvtph {background: url('[[pix:moodle|y/tp]]') 0px 10px no-repeat;width:13px;height:22px;cursor:pointer;}
 /* last sibling, no children */
-/*.file-picker .ygtvln, .filemanager*/ .ygtvln {background: url('[[pix:moodle|y/ln]]') 0 0 no-repeat;width:17px;height:22px;}
+.file-picker .ygtvln, .filemanager .ygtvln {background: url('[[pix:moodle|y/ln]]') 0px 0px no-repeat;width:17px;height:22px;}
 /* Last sibling, collapsable */
-/*.file-picker .ygtvlm, .filemanager*/ .ygtvlm {background: url('[[pix:moodle|y/lm]]') 0 0 no-repeat;width:13px;height:12px;cursor:pointer;}
+.file-picker .ygtvlm, .filemanager .ygtvlm {background: url('[[pix:moodle|y/lm]]') 0px 10px no-repeat;width:13px;height:12px;cursor:pointer;}
 /* Last sibling, collapsable, hover */
-/*.file-picker .ygtvlmh, .filemanager*/ .ygtvlmh {background: url('[[pix:moodle|y/lm]]') 0 0 no-repeat;width:13px;height:12px;cursor:pointer;}
+.file-picker .ygtvlmh, .filemanager .ygtvlmh {background: url('[[pix:moodle|y/lm]]') 0px 10px no-repeat;width:13px;height:12px;cursor:pointer;}
 /* Last sibling, expandable */
-/*.file-picker .ygtvlp, .filemanager*/ .ygtvlp {background: url('[[pix:moodle|y/lp]]') 0 0 no-repeat;width:13px;height:12px;cursor:pointer;}
+.file-picker .ygtvlp, .filemanager .ygtvlp {background: url('[[pix:moodle|y/lp]]') 0px 10px no-repeat;width:13px;height:12px;cursor:pointer;}
 /* Last sibling, expandable, hover */
-/*.file-picker .ygtvlph, .filemanager*/ .ygtvlph {background: url('[[pix:moodle|y/lp]]') 0 0 no-repeat;width:13px;height:12px;cursor:pointer;}
+.file-picker .ygtvlph, .filemanager .ygtvlph {background: url('[[pix:moodle|y/lp]]') 0px 10px no-repeat;width:13px;height:12px;cursor:pointer;}
 /* Loading icon */
-/*.file-picker .ygtvloading, .filemanager*/ .ygtvloading {background: url('[[pix:moodle|y/loading]]') 0 0 no-repeat;width:16px;height:22px;}
+.file-picker .ygtvloading, .filemanager .ygtvloading {background: transparent url('[[pix:moodle|y/loading]]') 0 0 no-repeat;width:16px;height:22px;}
 /* the style for the empty cells that are used for rendering the depth* of the node */
-/*.file-picker .ygtvdepthcell, .filemanager*/ .ygtvdepthcell {background: url('[[pix:moodle|y/vline]]') 0 0 no-repeat;width:17px;height:22px;}
-/*.file-picker .ygtvblankdepthcell, .filemanager*/ .ygtvblankdepthcell {width:17px;height:22px;}
+.file-picker .ygtvdepthcell, .filemanager .ygtvdepthcell {background: url('[[pix:moodle|y/vline]]') 0 0 no-repeat;width:17px;height:/*22px;*/32px;}
+.file-picker .ygtvblankdepthcell, .filemanager .ygtvblankdepthcell {width:17px;height:22px;}
 /* the style of the div around each node */
 /*.file-picker .ygtvitem  table, .filemanager .ygtvitem  table{margin-bottom:0;}*/
 /*.file-picker .ygtvitem  td, .filemanager .ygtvitem  td {border:none;padding:0;}*/
@@ -127,7 +127,12 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
 .filemanager .ygtvlabel,.filemanager .ygtvlabel:link,.filemanager .ygtvlabel:visited,.filemanager .ygtvlabel:hover {margin-left:2px;text-decoration: none;}*/
 a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .ygtvlabel, .ygtvlabel:link, .ygtvlabel:visited, .ygtvlabel:hover {background-color: transparent;cursor: pointer;margin-left: 2px;text-decoration: none;}
-/*.file-picker*/ .ygtvfocus {background-color: #DDD;}
+.file-picker .ygtvfocus, .filemanager .ygtvfocus {background-color: #EEE;}
+
+.fp-filename-icon {margin-top: 10px;display: block;/*top: -10px;position: relative;*/}
+.fp-icon {float: left;margin-top: -7px;width: 24px;height: 24px;margin-right: 10px;text-align: center;line-height: 24px;}
+.fp-icon img {max-height:24px;max-width:24px;vertical-align: middle;}
+.fp-filename {padding-right: 10px;}
 
 /*
  * Repositories Login on fp-content (File Picker only)
@@ -228,7 +233,7 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 /*.filemanager-container ul{margin:0;padding:0;}
 .filemanager-container ul li{white-space:nowrap;list-style-type:none;}
 .filemanager-container ul li a{padding:0}*/
-.filemanager .fp-content{overflow: auto;max-height: 400px;}
+.filemanager .fp-content{overflow: auto;max-height: 472px;}
 .filemanager-container, .filepicker-filelist {overflow:hidden;}
 
 /*
@@ -256,14 +261,15 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager .fp-contextmenu {display:none;}
 .filemanager .fp-iconview .fp-folder.fp-hascontextmenu .fp-contextmenu {display:block;position:absolute;right:7px;bottom:5px;z-index: 2000;}
 .filemanager .fp-treeview .fp-folder.fp-hascontextmenu .fp-contextmenu,
-.filemanager .fp-tableview .fp-folder.fp-hascontextmenu .fp-contextmenu {display:inline;}
+.filemanager .fp-tableview .fp-folder.fp-hascontextmenu .fp-contextmenu {/*display: inline;*//*position: relative;left: 14px;margin-right: -20px;top: 6px;background: yellow;*/}
 
 /*
  * Drag and drop support (File Manager only)
  */
+.filepicker-filelist .filepicker-container,
 .filemanager.fm-noitems .fm-empty-container {display:block;position:absolute;top:10px;bottom:10px;left:10px;right:10px;border: 2px dashed #BBB;padding-top:85px;text-align:center;z-index: 3000;}
 .filepicker-filelist .dndupload-target,
-.filemanager-container .dndupload-target {background:#FFF;position:absolute;top:10px;bottom:10px;left:10px;right:10px;border: 2px dashed #fb7979;padding-top:85px;text-align:center;z-index:3000;-webkit-box-shadow:  0px 0px 0px 10px #FFF;-moz-box-shadow: 0px 0px 0px 10px #FFF;box-shadow:  0px 0px 0px 10px #FFF;z-index: 3000;}
+.filemanager-container .dndupload-target {background:#FFF;position:absolute;top:10px;bottom:10px;left:10px;right:10px;border: 2px dashed #fb7979;padding-top:85px;text-align:center;z-index:3000;-webkit-box-shadow:  0px 0px 0px 10px #FFF;-moz-box-shadow: 0px 0px 0px 10px #FFF;box-shadow:  0px 0px 0px 10px #FFF;}
 .filepicker-filelist.dndupload-over .dndupload-target,
 .filemanager-container.dndupload-over .dndupload-target {background:#FFF;position:absolute;top:10px;bottom:10px;left:10px;right:10px;border: 2px dashed #6c8cd3;padding-top:85px;text-align:center;z-index: 3000;}
 .dndupload-message {display:none;}
@@ -310,7 +316,7 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 /*
  * Create folder dialogue (File Manager only)
  */
-.filemanager .fp-mkdir-dlg {text-align: center;}
+.filemanager.fp-mkdir-dlg {text-align: center;z-index: 999999}
 .filemanager .fp-mkdir-dlg p {text-align: left;margin: 40px 20px 0px;}
 .filemanager .fp-mkdir-dlg input {margin: 0px 20px 20px;}
 
