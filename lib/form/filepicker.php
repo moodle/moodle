@@ -60,7 +60,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
      * @param array $options set of options to initalize filepicker
      */
     function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $options = (array)$options;
         foreach ($options as $name=>$value) {
@@ -68,12 +68,18 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
                 $this->_options[$name] = $value;
             }
         }
-        if (!empty($options['return_types'])) {
-            $this->_options['return_types'] = FILE_INTERNAL | FILE_REFERENCE;
+        if (empty($options['return_types'])) {
+            $this->_options['return_types'] = FILE_INTERNAL;
         }
+        $fpmaxbytes = 0;
         if (!empty($options['maxbytes'])) {
-            $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
+            $fpmaxbytes = $options['maxbytes'];
         }
+        $coursemaxbytes = 0;
+        if (!empty($PAGE->course)) {
+            $coursemaxbytes = $PAGE->course->maxbytes;
+        }
+        $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $coursemaxbytes, $fpmaxbytes);
         $this->_type = 'filepicker';
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
     }
@@ -143,7 +149,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $args = new stdClass();
         // need these three to filter repositories list
         $args->accepted_types = $this->_options['accepted_types']?$this->_options['accepted_types']:'*';
-        $args->return_types = FILE_INTERNAL | FILE_REFERENCE;
+        $args->return_types = $this->_options['return_types'];
         $args->itemid = $draftitemid;
         $args->maxbytes = $this->_options['maxbytes'];
         $args->context = $PAGE->context;
