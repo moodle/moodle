@@ -732,8 +732,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
     } else if (count($oldfiles) < 2) {
         $filecount = 0;
         // there were no files before - one file means root dir only ;-)
-        $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
         foreach ($draftfiles as $file) {
+            $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
             if (!$options['subdirs']) {
                 if ($file->get_filepath() !== '/' or $file->is_directory()) {
                     continue;
@@ -766,7 +766,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
     } else {
         // we have to merge old and new files - we want to keep file ids for files that were not changed
         // we change time modified for all new and changed files, we keep time created as is
-        $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'timemodified'=>time());
 
         $newhashes = array();
         foreach ($draftfiles as $file) {
@@ -835,6 +834,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         // Add fresh file or the file which has changed status
         // the size and subdirectory tests are extra safety only, the UI should prevent it
         foreach ($newhashes as $file) {
+            $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'timemodified'=>time());
             if (!$options['subdirs']) {
                 if ($file->get_filepath() !== '/' or $file->is_directory()) {
                     continue;
