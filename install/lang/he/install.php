@@ -76,8 +76,8 @@ $string['paths'] = 'נתיבים';
 $string['pathserrcreatedataroot'] = 'ספריית המידע (Data Directory) - ({$a->dataroot}) לא יכולה להיווצר על-ידי המתקין.';
 $string['pathshead'] = 'נתיבים מאושרים';
 $string['pathsrodataroot'] = 'ספריית המידע (Data Directory) לא ניתנת לכתיבה.';
-$string['pathsroparentdataroot'] = 'ספריית האב - ({$a->parent}) לא ניתנת לכתיבה. 
-ספריית המידע (Data Directory) - ({$a->dataroot}) לא יכולה להיווצר על-ידי המתקין. ';
+$string['pathsroparentdataroot'] = 'ספריית האב - ({$a->parent}) לא ניתנת לכתיבה.
+ספריית המידע (Data Directory) - ({$a->dataroot}) לא יכולה להיווצר על-ידי המתקין.';
 $string['pathssubdirroot'] = 'הנתיב המלא לספריית ההתקנה של Moodle';
 $string['pathsunsecuredataroot'] = 'ספריית המידע (Data Directory) לא מאובטחת';
 $string['pathswrongadmindir'] = 'ספריית ה-admin לא קיימת';
@@ -93,11 +93,11 @@ $string['welcomep20'] = 'הינך רואה את עמוד זה מפני שהתק�
 חבילה במחשבך. ברכותינו!';
 $string['welcomep30'] = 'גירסת <strong>{$a->installername}</strong> כוללת את היישומים ליצור סביבה אשר בה <strong> Moodle </strong>
 יפעל דהיינו:';
-$string['welcomep40'] = 'החבילה כוללת בנוסף 
+$string['welcomep40'] = 'החבילה כוללת בנוסף
 <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'השימוש בכל היישומים בחבילה זו מפוקח ע"י הרשיונות המתאימים להם. החבילה 
+$string['welcomep50'] = 'השימוש בכל היישומים בחבילה זו מפוקח ע"י הרשיונות המתאימים להם. החבילה
 <strong>{$a->installername}</strong>
-השלמה היא 
+השלמה היא
 <a href="http://www.opensource.org/docs/definition_plain.html"> קוד פתוח
 </a>
 והיא מבוזרת תחת רישיון

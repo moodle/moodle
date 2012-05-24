@@ -36,7 +36,7 @@ $string['cliincorrectvalueerror'] = 'Fehler: Falscher Wert "{$a->value}" für "{
 $string['cliincorrectvalueretry'] = 'Falscher Wert - bitte nochmal';
 $string['clitypevalue'] = 'Wert eingeben';
 $string['clitypevaluedefault'] = 'Wert eingeben oder Standardwert benutzen ({$a})';
-$string['cliunknowoption'] = 'Nicht erkannte Optionen: 
+$string['cliunknowoption'] = 'Nicht erkannte Optionen:
   {$a}
 Hilfe wird über die Option -help angezeigt.';
 $string['cliyesnoprompt'] = 'y (yes=ja) oder n (no=nein) eingeben';

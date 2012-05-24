@@ -68,7 +68,7 @@ $string['pathshead'] = 'Confirmar caminhos';
 $string['pathsrodataroot'] = 'A diretoria dataroot não tem permissões de escrita.';
 $string['pathsroparentdataroot'] = 'O diretório pai ({$a->parent}) não tem permissões de escrita. O programa de instalação não conseguiu criar o diretório de dados ({$a->dataroot})';
 $string['pathssubadmindir'] = 'Alguns (poucos) alojamentos web usam /admin como um URL especial para permitir o acesso ao control panel ou a outras funcionalidades.
-Infelizmente esta designação entra em conflito com a localização que o Moodle atribui às páginas de administração. 
+Infelizmente esta designação entra em conflito com a localização que o Moodle atribui às páginas de administração.
 A solução passa por renomear o diretório admin da sua instalação do Moodle e colocando o nome escolhido aqui. Por exemplo:
 <em>moodleadmin</em>. Isto corrige os links de administração no Moodle.';
 $string['pathssubdataroot'] = 'É necessário um local onde o Moodle possa gravar os ficheiros submetidos. Este diretório tem que ter permissões de leitura e ESCRITA pelo servidor web (normalmente \'nobody\' ou \'apache\'), mas não pode estar acessível através da web. O programa de instalação tentará criar este diretório se ele ainda não existir.';
