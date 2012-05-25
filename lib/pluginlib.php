@@ -296,7 +296,7 @@ class plugin_manager {
         foreach ($this->get_plugins() as $type => $plugins) {
             foreach ($plugins as $plugin) {
 
-                if (!empty($plugin->versionrequires) && $plugin->versionrequires > $moodleversion) {
+                if (!$plugin->is_core_dependency_satisfied($moodleversion)) {
                     $return = false;
                     $failedplugins[] = $plugin->component;
                 }
@@ -1618,6 +1618,22 @@ abstract class plugininfo_base {
      */
     public function is_standard() {
         return $this->source === plugin_manager::PLUGIN_SOURCE_STANDARD;
+    }
+
+    /**
+     * Returns true if the the given Moodle version is enough to run this plugin
+     *
+     * @param string|int|double $moodleversion
+     * @return bool
+     */
+    public function is_core_dependency_satisfied($moodleversion) {
+
+        if (empty($this->versionrequires)) {
+            return true;
+
+        } else {
+            return (double)$this->versionrequires <= (double)$moodleversion;
+        }
     }
 
     /**
