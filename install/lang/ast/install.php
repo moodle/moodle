@@ -44,10 +44,10 @@ $string['memorylimithelp'] = '<p>La llende de memoria del PHP del so servidor ta
 
 <p>Esto va facer que Moodle tenga problemes de memoria más tarde, especialmente si tien munchos módulos y/o munchos usuarios.</p>
 
-<p>Recomendamos que configure PHP con una llende más grande si ye posible, como por exemplu 40M.  
+<p>Recomendamos que configure PHP con una llende más grande si ye posible, como por exemplu 40M.
    Esisten varies formes nes que pue intentar facer esta modificación:</p>
 <ol>
-<li>Si pue, recompile PHP con <i>--enable-memory-limit</i>.  
+<li>Si pue, recompile PHP con <i>--enable-memory-limit</i>.
    Esto va permitir que\'l propiu Moodle modifique la llende de memoria.</li>
 <li>Si tien accesu al so ficheru php.ini pue modificar el valor de <b>memory_limit</b> a daqué paecío a 40M.  Si nun tien accesu a esi ficheru igual pue pidir al alministrador del sistema que lo faiga.</li>
 <li>En dellos servidores PHP pue crear un ficheru .htaccess nel direutoriu Moodle cola ringlera que vien darréu:

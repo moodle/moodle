@@ -36,7 +36,7 @@ $string['cliincorrectvalueerror'] = 'Fout, waarde "{$a->value}" voor de optie "{
 $string['cliincorrectvalueretry'] = 'Foute waarde. Probeer opnieuw';
 $string['clitypevalue'] = 'type waarde';
 $string['clitypevaluedefault'] = 'type waarde, druk op Enter om de standaardwaarde te gebruiken ({$a})';
-$string['cliunknowoption'] = 'Onherkenbare opties: 
+$string['cliunknowoption'] = 'Onherkenbare opties:
 {$a}
 gebruik --help optie.';
 $string['cliyesnoprompt'] = 'typ j (ja) of n (nee)';

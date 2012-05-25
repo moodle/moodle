@@ -59,8 +59,8 @@ $string['pathssubadmindir'] = 'Nifer fach iawn o westeiwyr gwe sy\'n defnyddio /
 $string['pathssubdataroot'] = 'Mae Moodle angen lle ar gyfer cadw ffeiliau sy\'n cael eu llwytho i fyny. Dylai defnyddiwr gweinydd y we (fel arfer \'neb\' neu \'apache\') allu darllen ac YSGRIFENNU ar y cyfeiriadur hwn, ond ni ddylid gallu mynd i mewn iddo\'n uniongyrchol drwy\'r we. Bydd y rhaglen osod yn ceisio ei greu os nad yw\'n bodoli.';
 $string['pathssubdirroot'] = 'Llwybr cyfeiriadur llawn i raglen Moodle.';
 $string['pathssubwwwroot'] = 'Y cyfeiriad gwe llawn a ddefnyddir i fynd i mewn i Moodle.
-Nid yw\'n bosibl mynd i mewn i Moodle wrth ddefnyddio amryw o gyfeiriadau. 
-Os oes gan eich safle amryw o gyfeiriadau cyhoeddus, bydd rhaid i chi sefydlu llwybrau ailgyfeirio parhaol ar gyfer pob un ohonynt ar wahân i hwn. 
+Nid yw\'n bosibl mynd i mewn i Moodle wrth ddefnyddio amryw o gyfeiriadau.
+Os oes gan eich safle amryw o gyfeiriadau cyhoeddus, bydd rhaid i chi sefydlu llwybrau ailgyfeirio parhaol ar gyfer pob un ohonynt ar wahân i hwn.
 Os gellir mynd i mewn i\'ch safle o\'r Rhyngrwyd a\'r Fewnrwyd, defnyddiwch y cyfeiriad cyhoeddus yma a sefydlu DNS er mwyn i ddefnyddwyr y Fewnrwyd allu defnyddio\'r cyfeiriad cyhoeddus hefyd.
 Os nad yw\'r cyfeiriad yn gywir, newidiwch yr URL yn eich porwr i ailddechrau\'r rhaglen osod gyda gwerth gwahanol.';
 $string['pathsunsecuredataroot'] = 'Dydy lleoliad y data gwraidd ddim yn ddiogel';
@@ -72,15 +72,15 @@ $string['phpversionhelp'] = '<p>Mae angen o leiaf fersiwn PHP 4.3.0 neu 5.1.0 ar
 <p>Rhaid i chi uwchraddio PHP neu newid i westeiwr â fersiwn fwy diweddar o PHP!<br/>
 (Os oes gennych 5.0.x gallech hefyd is-raddio i fersiwn 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Rydych chi\'n gweld y dudalen hon gan eich bod wedi gosod a  
+$string['welcomep20'] = 'Rydych chi\'n gweld y dudalen hon gan eich bod wedi gosod a
     lansio\'r pecyn <strong>{$a->packname} {$a->packversion}</strong> yn llwyddiannus ar eich cyfrifiadur. Llongyfarchiadau!';
-$string['welcomep30'] = 'Mae\'r fersiwn <strong>{$a->installername}</strong> yn cynnwys rhaglenni 
+$string['welcomep30'] = 'Mae\'r fersiwn <strong>{$a->installername}</strong> yn cynnwys rhaglenni
     i greu amgylchedd y gall  <strong>Moodle</strong> weithio ynddo, sef:';
 $string['welcomep40'] = 'Mae\'r pecyn hefyd yn cynnwys <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Y trwyddedau perthnasol sy\'n llywodraethu dros yr holl raglenni yn y pecyn hwn. Y pecyn cyflawn yw <strong>{$a->installername}</strong> 
+$string['welcomep50'] = 'Y trwyddedau perthnasol sy\'n llywodraethu dros yr holl raglenni yn y pecyn hwn. Y pecyn cyflawn yw <strong>{$a->installername}</strong>
     <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> a chaiff ei ddosbarthu dan y drwydded <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
-$string['welcomep60'] = 'Bydd y tudalennau canlynol yn eich arwain drwy\'r camau syml i  
-    ffurfweddu a gosod <strong>Moodle</strong> ar eich cyfrifiadur. Gallwch ddewis derbyn y gosodiadau 
+$string['welcomep60'] = 'Bydd y tudalennau canlynol yn eich arwain drwy\'r camau syml i
+    ffurfweddu a gosod <strong>Moodle</strong> ar eich cyfrifiadur. Gallwch ddewis derbyn y gosodiadau
     diofyn, neu gallwch eu newid eich hun ar gyfer eich dibenion chi.';
 $string['welcomep70'] = 'Cliciwch y botwm "Nesaf" i fwrw ymlaen i osod <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Cyfeiriad ar y we';

@@ -43,16 +43,16 @@ $string['installation'] = 'Instalēšana';
 $string['langdownloaderror'] = '“{$a}” valodas pakotne diemžēl netika instalēta. Instalēšana tiks turpināta angļu valodā.';
 $string['memorylimithelp'] = '<p>Pašlaik iestatītais PHP atmiņas apjoma ierobežojums jūsu serverī ir {$a}.</p>
 
-<p>Sistēmā Moodle tas vēlāk var izraisīt atmiņas izmantošanas problēmas, it īpaši tad, 
+<p>Sistēmā Moodle tas vēlāk var izraisīt atmiņas izmantošanas problēmas, it īpaši tad,
    ja būsit iespējojis lielu skaitu moduļu un/vai lietotāju.</p>
 
 <p>Ja iespējams, ieteicams konfigurēt PHP ar lielāku maksimālās atmiņas apjomu, piemēram, 40 MB. Ir vairāki veidi, kā to var izdarīt, piemēram:</p>
 <ol>
-<li>Ja iespējams, atkārtoti kompilējiet PHP, izmantojot <i>--enable-memory-limit</i>.  
+<li>Ja iespējams, atkārtoti kompilējiet PHP, izmantojot <i>--enable-memory-limit</i>.
     Šādā gadījumā sistēma Moodle atmiņas apjoma ierobežojumu varēs iestatīt automātiski.</li>
 <li>Ja jums ir piekļuve php.ini failam, varat mainīt tajā esošo parametra <b>memory_limit</b> iestatījumu, piemēram, uz 40 MB.  Ja jums nav piekļuves šim failam, palūdziet to izdarīt administratoram.</li>
 <li>Dažos PHP serveros Moodle direktorijā var izveidot failu .htaccess, kurā ir šāda rinda:    <p><blockquote>php_value memory_limit 40M</blockquote></p>
-    <p>Tomēr dažos serveros tas neļaus darboties <b>nevienai</b> PHP lapai 
+    <p>Tomēr dažos serveros tas neļaus darboties <b>nevienai</b> PHP lapai
 (atverot šīs lapas, tiks parādīti kļūdas ziņojumi), un fails .htaccess būs jānoņem.</p></li>
 </ol>';
 $string['phpversion'] = 'PHP versija';
@@ -61,17 +61,17 @@ $string['phpversionhelp'] = '<p>Sistēmā Moodle jāizmanto PHP, kuras versija i
 <p>Ir jājaunina PHP vai jāpāriet uz resursdatoru, kurā tiek izmantota jaunāka PHP versija.</p>
 (Ja PHP versija ir 5.0.x, var arī atkāpties uz versiju 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Jūs redzat šo lapu, jo esat veiksmīgi instalējis un 
+$string['welcomep20'] = 'Jūs redzat šo lapu, jo esat veiksmīgi instalējis un
     palaidis savā datorā pakotni <strong>{$a->packname} {$a->packversion}</strong>. Apsveicam!';
-$string['welcomep30'] = 'Šajā <strong>{$a->installername}</strong> laidienā ir iekļautas lietojumprogrammas, 
+$string['welcomep30'] = 'Šajā <strong>{$a->installername}</strong> laidienā ir iekļautas lietojumprogrammas,
     kas paredzētas, lai izveidotu vidi, kurā darbosies sistēma <strong>Moodle</strong>, proti:';
 $string['welcomep40'] = 'Pakotnē ir iekļauta arī sistēma <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Visu šīs pakotnes lietojumprogrammu izmantošanu regulē attiecīgo 
-    licenču nosacījumi. Visā <strong>{$a->installername}</strong> pakotnē ir iekļauts 
-    <a href="http://www.opensource.org/docs/definition_plain.html">atklātais pirmkods</a>, un tā tiek izplatīta 
+$string['welcomep50'] = 'Visu šīs pakotnes lietojumprogrammu izmantošanu regulē attiecīgo
+    licenču nosacījumi. Visā <strong>{$a->installername}</strong> pakotnē ir iekļauts
+    <a href="http://www.opensource.org/docs/definition_plain.html">atklātais pirmkods</a>, un tā tiek izplatīta
     saskaņā ar <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licences nosacījumiem.';
-$string['welcomep60'] = 'Nākamajās lapās tiks sniegti vienkārši norādījumi par to, kā 
-    datorā konfigurēt un iestatīt sistēmu <strong>Moodle</strong>. Varat akceptēt noklusējuma 
+$string['welcomep60'] = 'Nākamajās lapās tiks sniegti vienkārši norādījumi par to, kā
+    datorā konfigurēt un iestatīt sistēmu <strong>Moodle</strong>. Varat akceptēt noklusējuma
     iestatījumus vai varat tos mainīt, lai pielāgotu savām vajadzībām.';
 $string['welcomep70'] = 'Noklikšķiniet uz pogas Tālāk, lai turpinātu sistēmas <strong>Moodle</strong> instalēšanu.';
 $string['wwwroot'] = 'Tīmekļa adrese';
