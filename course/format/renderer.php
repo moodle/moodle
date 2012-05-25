@@ -92,7 +92,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         if ($section->section != 0) {
             // Only in the non-general sections.
-            if ($course->marker == $section->section) {
+            if ($this->is_section_current($section, $course)) {
                 $o = get_accesshide(get_string('currentsection', 'format_'.$course->format));
             }
         }
@@ -121,7 +121,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             // Only in the non-general sections.
             if (!$section->visible) {
                 $sectionstyle = ' hidden';
-            } else if ($course->marker == $section->section) {
+            } else if ($this->is_section_current($section, $course)) {
                 $sectionstyle = ' current';
             }
             $linktitle = ($course->coursedisplay == COURSE_DISPLAY_MULTIPAGE);
@@ -668,5 +668,17 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $options->noclean = true;
         $options->overflowdiv = true;
         return format_text($summarytext, $section->summaryformat, $options);
+    }
+
+    /**
+     * Is the section passed in the current section? (Note this isn't strictly
+     * a renderering method, but neater here).
+     *
+     * @param stdClass $course The course entry from DB
+     * @param stdClass $section The course_section entry from the DB
+     * @return bool true if the section is current
+     */
+    protected function is_section_current($section, $course) {
+        return ($course->marker == $section->section);
     }
 }
