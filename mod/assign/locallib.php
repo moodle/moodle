@@ -361,8 +361,6 @@ class assign {
         } else if ($action == 'nextgrade') {
             $mform = null;
             $o .= $this->view_single_grade_page($mform, 1);
-        } else if ($action == 'redirect') {
-            redirect(required_param('url', PARAM_TEXT));
         } else if ($action == 'grade') {
             $o .= $this->view_single_grade_page($mform);
         } else if ($action == 'viewpluginassignfeedback') {
@@ -904,10 +902,12 @@ class assign {
                 $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade,2);
                 $o .= '<input type="hidden" name="grademodified_' . $userid . '" value="' . $modified . '"/>';
                 return $o;
-            } else if ($grade == -1 || $grade === null) {
-                return '-';
             } else {
-                return format_float(($grade),2) .'&nbsp;/&nbsp;'. format_float($this->get_instance()->grade,2);
+                if ($grade == -1 || $grade === null) {
+                    return '-';
+                } else {
+                    return format_float(($grade),2) .'&nbsp;/&nbsp;'. format_float($this->get_instance()->grade,2);
+                }
             }
 
         } else {
@@ -1690,32 +1690,22 @@ class assign {
         global $USER, $CFG;
         // Include grading options form
         require_once($CFG->dirroot . '/mod/assign/gradingoptionsform.php');
-        require_once($CFG->dirroot . '/mod/assign/gradingactionsform.php');
         require_once($CFG->dirroot . '/mod/assign/quickgradingform.php');
         require_once($CFG->dirroot . '/mod/assign/gradingbatchoperationsform.php');
         $o = '';
 
         $links = array();
-        $selecturl = (string)(new moodle_url('/mod/assign/view.php',
-                                             array('action'=>'grading', 'id'=>$this->get_course_module()->id)));
-        $links[$selecturl] = get_string('selectlink', 'assign');
         if (has_capability('gradereport/grader:view', $this->get_course_context()) &&
                 has_capability('moodle/grade:viewall', $this->get_course_context())) {
-            $gradebookurl = (string) (new moodle_url('/grade/report/grader/index.php',
-                                                     array('id' => $this->get_course()->id)));
+            $gradebookurl = '/grade/report/grader/index.php?id=' . $this->get_course()->id;
             $links[$gradebookurl] = get_string('viewgradebook', 'assign');
         }
         if ($this->is_any_submission_plugin_enabled()) {
-            $downloadurl = (string) (new moodle_url('/mod/assign/view.php',
-                                                    array('id' => $this->get_course_module()->id,
-                                                          'action' => 'downloadall')));
+            $downloadurl = '/mod/assign/view.php?id=' . $this->get_course_module()->id . '&action=downloadall';
             $links[$downloadurl] = get_string('downloadall', 'assign');
         }
-        $gradingactionsform = new mod_assign_grading_actions_form(null,
-                                                                  array('links'=>$links,
-                                                                        'cm'=>$this->get_course_module()->id),
-                                                                  'post', '',
-                                                                  array('class'=>'gradingactionsform'));
+
+        $gradingactions = new url_select($links);
 
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
 
@@ -1757,8 +1747,11 @@ class assign {
             plagiarism_update_status($this->get_course(), $this->get_course_module());
         }
 
-        $o .= $this->output->render(new assign_form('gradingactionsform', $gradingactionsform));
-        $o .= $this->output->render(new assign_form('gradingoptionsform', $gradingoptionsform, 'M.mod_assign.init_grading_options'));
+        $actionformtext = $this->output->render($gradingactions);
+        $o .= $this->output->render(new assign_header($this->get_instance(),
+                                                      $this->get_context(), false, $this->get_course_module()->id, get_string('grading', 'assign'), $actionformtext));
+        $o .= groups_print_activity_menu($this->get_course_module(), $CFG->wwwroot . '/mod/assign/view.php?id=' . $this->get_course_module()->id.'&action=grading', true);
+
 
         // load and print the table of submissions
         if ($showquickgrading && $quickgrading) {
@@ -1777,6 +1770,7 @@ class assign {
             // if no enrolled user in a course then don't display the batch operations feature
             $o .= $this->output->render(new assign_form('gradingbatchoperationsform', $gradingbatchoperationsform));
         }
+        $o .= $this->output->render(new assign_form('gradingoptionsform', $gradingoptionsform, 'M.mod_assign.init_grading_options'));
         return $o;
     }
 
@@ -1794,11 +1788,6 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/gradeform.php');
 
         // only load this if it is
-
-        $o .= $this->output->render(new assign_header($this->get_instance(),
-                                                      $this->get_context(), false, $this->get_course_module()->id, get_string('grading', 'assign')));
-        $o .= groups_print_activity_menu($this->get_course_module(), $CFG->wwwroot . '/mod/assign/view.php?id=' . $this->get_course_module()->id.'&action=grading', true);
-
 
         $o .= $this->view_grading_table();
 

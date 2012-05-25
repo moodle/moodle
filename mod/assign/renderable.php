@@ -365,6 +365,8 @@ class assign_header implements renderable {
     var $coursemoduleid = 0;
     /** @var string $subpage optional subpage (extra level in the breadcrumbs) */
     var $subpage = '';
+    /** @var string $preface optional preface (text to show before the heading) */
+    var $preface = '';
 
     /**
      * Constructor
@@ -374,13 +376,15 @@ class assign_header implements renderable {
      * @param bool $showintro  - show or hide the intro
      * @param int $coursemoduleid  - the course module id
      * @param string $subpage  - an optional sub page in the navigation
+     * @param string $preface  - an optional preface to show before the heading
      */
-    public function __construct(stdClass $assign, $context, $showintro, $coursemoduleid, $subpage='') {
+    public function __construct(stdClass $assign, $context, $showintro, $coursemoduleid, $subpage='', $preface='') {
         $this->assign = $assign;
         $this->context = $context;
         $this->showintro = $showintro;
         $this->coursemoduleid = $coursemoduleid;
         $this->subpage = $subpage;
+        $this->preface = $preface;
     }
 }
 
