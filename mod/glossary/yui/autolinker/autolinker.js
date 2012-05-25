@@ -70,7 +70,8 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
                     this.overlay.hide(); //hide progress indicator
 
                     for (key in data.entries) {
-                        new M.core.alert({title:data.entries[key].concept, message:data.entries[key].definition, lightbox:false});
+                        definition = data.entries[key].definition + data.entries[key].attachments
+                        new M.core.alert({title:data.entries[key].concept, message:definition, lightbox:false});
                     }
 
                     return true;

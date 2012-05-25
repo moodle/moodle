@@ -70,6 +70,12 @@ if ($entries) {
         $options->context = $context;
         $entries[$key]->definition = format_text($definition, $entry->definitionformat, $options);
 
+        $entries[$key]->attachments = '';
+        if (!empty($entries[$key]->attachment)) {
+            $attachments = glossary_print_attachments($entry, $cm, 'html');
+            $entries[$key]->attachments = html_writer::tag('p', $attachments);
+        }
+
         $entries[$key]->footer = "<p style=\"text-align:right\">&raquo;&nbsp;<a href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\">".format_string($entry->glossaryname,true)."</a></p>";
         add_to_log($entry->courseid, 'glossary', 'view entry', "showentry.php?eid=$entry->id", $entry->id, $entry->cmid);
     }
