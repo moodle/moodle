@@ -152,6 +152,20 @@ if (!core_tables_exist()) {
         die();
     }
 
+    // check plugin dependencies
+    $failed = array();
+    if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+        $PAGE->navbar->add(get_string('pluginscheck', 'admin'));
+        $PAGE->set_title($strinstallation);
+        $PAGE->set_heading($strinstallation . ' - Moodle ' . $CFG->target_release);
+
+        $output = $PAGE->get_renderer('core', 'admin');
+        $url = new moodle_url('/admin/index.php', array('agreelicense' => 1, 'confirmrelease' => 1, 'lang' => $CFG->lang));
+        echo $output->unsatisfied_dependencies_page($version, $failed, $url);
+        die();
+    }
+    unset($failed);
+
     //TODO: add a page with list of non-standard plugins here
 
     $strdatabasesetup = get_string('databasesetup');

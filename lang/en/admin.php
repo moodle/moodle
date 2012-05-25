@@ -753,6 +753,7 @@ $string['pleaserefreshregistration'] = 'Your site has been registered with moodl
 $string['pleaseregister'] = 'Please register your site to remove this button';
 $string['plugin'] = 'Plugin';
 $string['plugins'] = 'Plugins';
+$string['pluginscheck'] = 'Plugin dependencies check';
 $string['pluginscheckfailed'] = 'Dependencies check failed for {$a->pluginslist}';
 $string['pluginschecktodo'] = 'You must solve all the plugin requirements before proceeding to install this Moodle version!';
 $string['pluginsoverview'] = 'Plugins overview';
