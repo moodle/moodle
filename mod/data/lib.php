@@ -2833,17 +2833,13 @@ function data_get_file_areas($course, $cm, $context) {
  * @return file_info_stored file_info_stored instance or null if not found
  */
 function data_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return null;
     }
 
     if (!isset($areas[$filearea])) {
-        return null;
-    }
-
-    if (!has_capability('moodle/course:managefiles', $context)) {
         return null;
     }
 
@@ -2895,6 +2891,13 @@ function data_get_file_info($browser, $areas, $course, $cm, $context, $filearea,
     if (!($storedfile = $fs->get_file($context->id, 'mod_data', $filearea, $itemid, $filepath, $filename))) {
         return null;
     }
+
+    // Checks to see if the user can manage files or is the owner.
+    // TODO MDL-33805 - Do not use userid here and move the capability check above.
+    if (!has_capability('moodle/course:managefiles', $context) && $storedfile->get_userid() != $USER->id) {
+        return null;
+    }
+
     $urlbase = $CFG->wwwroot.'/pluginfile.php';
 
     return new file_info_stored($browser, $context, $storedfile, $urlbase, $itemid, true, true, false, false);
