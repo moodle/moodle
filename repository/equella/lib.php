@@ -179,7 +179,7 @@ class repository_equella extends repository {
         );
         $mform->addElement('select', 'equella_select_restriction', get_string('selectrestriction', 'repository_equella'), $choices);
 
-        $mform->addElement('header', '', get_string('group', 'repository_equella', get_string('group.default', 'repository_equella')));
+        $mform->addElement('header', '', get_string('group', 'repository_equella', get_string('groupdefault', 'repository_equella')));
         $mform->addElement('text', 'equella_shareid', get_string('sharedid', 'repository_equella'));
         $mform->addElement('text', 'equella_sharedsecret', get_string('sharedsecrets', 'repository_equella'));
 

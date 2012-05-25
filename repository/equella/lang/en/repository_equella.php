@@ -30,9 +30,9 @@ $string['restrictionnone'] = 'No restriction';
 $string['restrictionitemsonly'] = 'Item summary only';
 $string['restrictionattachmentsonly'] = 'Attached resource only';
 
-$string['sharedsecrets.heading'] = 'Shared Secret Settings';
-$string['sharedsecrets.help'] =  '<p>Below you can set a default EQUELLA shared secret for single signing-on users.  You can configure different shared secrets for general (read) usage, and a specialised role based shared secret for each <em>write</em> role in your Moodle site.  If a shared secret ID is not configured for a role then the default shared secret ID and shared secret are used.</p><p>All shared secret IDs and shared secrets must also be configured within EQUELLA and the shared secret module enabled.  This configuration is found in the EQUELLA Administration Console under User Management > Shared Secrets.</p>';
+$string['sharedsecretsheading'] = 'Shared Secret Settings';
+$string['sharedsecretshelp'] =  '<p>Below you can set a default EQUELLA shared secret for single signing-on users.  You can configure different shared secrets for general (read) usage, and a specialised role based shared secret for each <em>write</em> role in your Moodle site.  If a shared secret ID is not configured for a role then the default shared secret ID and shared secret are used.</p><p>All shared secret IDs and shared secrets must also be configured within EQUELLA and the shared secret module enabled.  This configuration is found in the EQUELLA Administration Console under User Management > Shared Secrets.</p>';
 $string['group'] = '{$a} role settings';
-$string['group.default'] = 'Default';
-$string['sharedid.title'] = 'Shared secret ID';
-$string['sharedsecret.title'] = 'Shared secret';
+$string['groupdefault'] = 'Default';
+$string['sharedidtitle'] = 'Shared secret ID';
+$string['sharedsecrettitle'] = 'Shared secret';
