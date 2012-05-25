@@ -51,7 +51,7 @@ $string['memorylimithelp'] = '<p>PHP minnegrensen for serveren din er nå satt t
 <p>Dette kan skape minneproblemer for Moodle senere, spesielt hvis du har mange moduler tillatt og/eller mange brukere.</p>
 <p>Vi anbefaler at du konfigurer PHP med en høyere grense enn mulig, for eksepmel 40M. Det er flere måter å gjøre dette på.:</p>
 <ol>
-<li>Hvis du har muligheten, rekompiler PHP med<i>--enable-memory-limit</i>.  
+<li>Hvis du har muligheten, rekompiler PHP med<i>--enable-memory-limit</i>.
 Dette vil tillate Moodle å sette minnegrensen selv.</li>
 <li>Hvis du har tilgang til php.ini fila di, kan du endre <b>memory_limit</b> innstillinga der til omtrent 40M. Hvis du ikke har tilgang kan du be administrator gjøre dette for deg.</li>
 <li>På noen PHP-servere kan du lage en .htaccess fil i Moodlemappen som inneholder denne linjen:
