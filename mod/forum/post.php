@@ -647,7 +647,7 @@ if ($fromform = $mform_post->get_data()) {
         if (!empty($message)) { // if we're printing stuff about the file upload
             $timemessage = 4;
         }
-	
+
         if ($realpost->userid == $USER->id) {
             $message .= '<br />'.get_string("postupdated", "forum");
         } else {
