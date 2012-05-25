@@ -647,7 +647,13 @@ if ($fromform = $mform_post->get_data()) {
         if (!empty($message)) { // if we're printing stuff about the file upload
             $timemessage = 4;
         }
-        $message .= '<br />'.get_string("postupdated", "forum");
+	
+        if ($realpost->userid == $USER->id) {
+            $message .= '<br />'.get_string("postupdated", "forum");
+        } else {
+            $realuser = $DB->get_record('user', array('id' => $realpost->userid));
+            $message .= '<br />'.get_string("editedpostupdated", "forum", fullname($realuser));
+        }
 
         if ($subscribemessage = forum_post_subscription($fromform, $forum)) {
             $timemessage = 4;
