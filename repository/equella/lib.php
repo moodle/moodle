@@ -259,22 +259,22 @@ class repository_equella extends repository {
         global $USER, $COURSE;
 
         if( $readwrite == 'write' ) {
-            $context_sys = context_system::instance();
+            $systemcontext = context_system::instance();
             if (!empty($COURSE->category)) {
-                $context_cc = context_coursecat::instance($COURSE->category);
+                $categorycontext = context_coursecat::instance($COURSE->category);
             }
-            $context_c = context_course::instance($COURSE->id);
+            $coursecontext = context_course::instance($COURSE->id);
 
             foreach( self::get_all_editing_roles() as $role) {
                 //does user have this role?
                 $hasroleassignment = false;
-                if (user_has_role_assignment($USER->id, $role->id, $context_sys->id)) {
+                if (user_has_role_assignment($USER->id, $role->id, $systemcontext->id)) {
                     $hasroleassignment = true;
                 }
-                if (!$hasroleassignment && !empty($context_cc) && user_has_role_assignment($USER->id, $role->id, $context_cc->id)) {
+                if (!$hasroleassignment && !empty($categorycontext) && user_has_role_assignment($USER->id, $role->id, $categorycontext->id)) {
                     $hasroleassignment = true;
                 }
-                if (!$hasroleassignment && user_has_role_assignment($USER->id, $role->id, $context_c->id)) {
+                if (!$hasroleassignment && user_has_role_assignment($USER->id, $role->id, $coursecontext->id)) {
                     $hasroleassignment = true;
                 }
                 if ($hasroleassignment) {

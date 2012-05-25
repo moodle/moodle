@@ -32,6 +32,15 @@ $url = clean_param($info->url, PARAM_URL);
 $thumbnail = clean_param($info->thumbnail, PARAM_URL);
 $filename  = clean_param($info->name, PARAM_FILE);
 
+// TODO MDL-32117 EQUELLA callback should provide more information
+// $author = clean_param($info->author, PARAM_RAW);
+// $timecreated = clean_param($info->timecreated, PARAM_RAW);
+// $timemodified = clean_param($info->timemodified, PARAM_RAW);
+// NOTE: the license string must match the license names {@link license_manager::install_licenses()}
+// We could create a function to map the license names
+// $license = clean_param($info->license, PARAM_RAW);
+// $filesize = clean_param($info->filesize, PARAM_INT);
+
 $js =<<<EOD
 <html>
 <head>
@@ -41,6 +50,8 @@ $js =<<<EOD
         resource.title = "$filename";
         resource.source = "$url";
         resource.thumbnail = '$thumbnail';
+        // resource.author = "$author";
+        // resource.license = "$license";
         parent.M.core_filepicker.select_file(resource);
     }
     </script>
