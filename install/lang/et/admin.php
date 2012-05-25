@@ -36,7 +36,7 @@ $string['cliincorrectvalueerror'] = 'Viga, vigane väärtus "{$a->value}" "{$a->
 $string['cliincorrectvalueretry'] = 'Vale väärtus(value), palun proovige uuesti';
 $string['clitypevalue'] = 'tüübi väärtus';
 $string['clitypevaluedefault'] = 'sisesta väärtus, vajuta Enter kasutamaks vaikeväärtust ({$a})';
-$string['cliunknowoption'] = 'Tundmatud valikud: 
+$string['cliunknowoption'] = 'Tundmatud valikud:
    {$a}
 Palun kasuta --help valikut.';
 $string['cliyesnoprompt'] = 'kirjuta y (tähendab jah) või n (tähendab ei)';
