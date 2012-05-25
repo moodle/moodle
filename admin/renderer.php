@@ -219,19 +219,15 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->box_end();
         $output .= $this->upgrade_reload($reloadurl);
 
-        if ($pluginman->all_plugins_ok($version)) {
-            if ($pluginman->some_plugins_updatable()) {
-                $output .= $this->container_start('upgradepluginsinfo');
-                $output .= $this->help_icon('upgradepluginsinfo', 'core_admin', get_string('upgradepluginsfirst', 'core_admin'));
-                $output .= $this->container_end();
-            }
-            $button = new single_button($continueurl, get_string('upgradestart', 'admin'), 'get');
-            $button->class = 'continuebutton';
-            $output .= $this->render($button);
-        } else {
-            $output .= $this->box(get_string('pluginschecktodo', 'admin'), 'environmentbox errorbox');
+        if ($pluginman->some_plugins_updatable()) {
+            $output .= $this->container_start('upgradepluginsinfo');
+            $output .= $this->help_icon('upgradepluginsinfo', 'core_admin', get_string('upgradepluginsfirst', 'core_admin'));
+            $output .= $this->container_end();
         }
 
+        $button = new single_button($continueurl, get_string('upgradestart', 'admin'), 'get');
+        $button->class = 'continuebutton';
+        $output .= $this->render($button);
         $output .= $this->footer();
 
         return $output;

@@ -252,6 +252,15 @@ if ($version > $CFG->version) {  // upgrade
 
         $reloadurl = new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1));
 
+        // check plugin dependencies first
+        $failed = array();
+        if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+            $output = $PAGE->get_renderer('core', 'admin');
+            echo $output->unsatisfied_dependencies_page($version, $failed, $reloadurl);
+            die();
+        }
+        unset($failed);
+
         if ($fetchupdates) {
             // no sesskey support guaranteed here
             if (empty($CFG->disableupdatenotifications)) {
@@ -304,6 +313,16 @@ if (moodle_needs_upgrading()) {
             }
 
             $output = $PAGE->get_renderer('core', 'admin');
+
+            // check plugin dependencies first
+            $failed = array();
+            if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+                echo $output->unsatisfied_dependencies_page($version, $failed, $PAGE->url);
+                die();
+            }
+            unset($failed);
+
+            // dependencies check passed, let's rock!
             echo $output->upgrade_plugin_check_page(plugin_manager::instance(), available_update_checker::instance(),
                     $version, $showallplugins,
                     new moodle_url($PAGE->url),
