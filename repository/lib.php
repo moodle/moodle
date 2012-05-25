@@ -1775,9 +1775,9 @@ abstract class repository {
 
         $defaultfoldericon = $OUTPUT->pix_url(file_folder_icon(24))->out(false);
         // prepare $listing['path'] or $listing->path
-        if (is_array($listing) && isset($listing['path']) && is_array(($listing['path']))) {
+        if (is_array($listing) && isset($listing['path']) && is_array((listing['path'])) {
             $path = &$listing['path'];
-        } else if (is_object($listing) && isset($listing->path) && is_array(($listing->path))) {
+        } else if (is_object($listing) && isset($listing->path) && is_array($listing->path)) {
             $path = &$listing->path;
         }
         if (isset($path)) {
@@ -1792,10 +1792,10 @@ abstract class repository {
         }
 
         // prepare $listing['list'] or $listing->list
-        if (is_array($listing) && isset($listing['list']) && is_array(($listing['list']))) {
+        if (is_array($listing) && isset($listing['list']) && is_array($listing['list'])) {
             $listing['list'] = array_values($listing['list']); // convert to array
             $files = &$listing['list'];
-        } else if (is_object($listing) && isset($listing->list) && is_array(($listing->list))) {
+        } else if (is_object($listing) && isset($listing->list) && is_array($listing->list)) {
             $listing->list = array_values($listing->list); // convert to array
             $files = &$listing->list;
         } else {
