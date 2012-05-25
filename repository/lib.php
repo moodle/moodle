@@ -1775,7 +1775,7 @@ abstract class repository {
 
         $defaultfoldericon = $OUTPUT->pix_url(file_folder_icon(24))->out(false);
         // prepare $listing['path'] or $listing->path
-        if (is_array($listing) && isset($listing['path']) && is_array((listing['path'])) {
+        if (is_array($listing) && isset($listing['path']) && is_array($listing['path'])) {
             $path = &$listing['path'];
         } else if (is_object($listing) && isset($listing->path) && is_array($listing->path)) {
             $path = &$listing->path;
