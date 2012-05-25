@@ -8005,7 +8005,10 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
     }
 
     if (file_exists($basedir) && filetype($basedir) == 'dir') {
-        $dirhandle = opendir($basedir);
+        if (!$dirhandle = opendir($basedir)) {
+            debugging("Could not open $basedir");
+            return array();
+        }
         while (false !== ($dir = readdir($dirhandle))) {
             $firstchar = substr($dir, 0, 1);
             if ($firstchar === '.' or $dir === 'CVS' or $dir === '_vti_cnf' or $dir === 'simpletest' or $dir === 'yui' or $dir === 'phpunit' or $dir === $exclude) {
@@ -10201,7 +10204,7 @@ function apd_get_profiling() {
 }
 
 /**
- * Delete directory or only it's content
+ * Delete directory or only its content
  *
  * @param string $dir directory path
  * @param bool $content_only
@@ -10212,7 +10215,9 @@ function remove_dir($dir, $content_only=false) {
         // nothing to do
         return true;
     }
-    $handle = opendir($dir);
+    if (!$handle = opendir($dir)) {
+        return false;
+    }
     $result = true;
     while (false!==($item = readdir($handle))) {
         if($item != '.' && $item != '..') {

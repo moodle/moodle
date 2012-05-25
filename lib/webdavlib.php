@@ -946,7 +946,10 @@ EOD;
             if ($result) {
                 // recurse directories
                 if (is_dir($localpath)) {
-                    $dp = opendir($localpath);
+                    if (!$dp = opendir($localpath)) {
+                        error_log("Could not open $localpath");
+                        return false;
+                    }
                     $fl = array();
                     while($filename = readdir($dp)) {
                         if ((is_file($localpath."/".$filename) || is_dir($localpath."/".$filename)) && $filename!="." && $filename != "..") {
