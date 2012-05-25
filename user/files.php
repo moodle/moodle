@@ -16,22 +16,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * View private user files
+ * Manage files in folder in private area.
  *
- * @package   moodlecore
+ * @package   moodle
  * @copyright 2010 Petr Skoda (http://skodak.org)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../config.php');
+require_once("$CFG->dirroot/user/files_form.php");
+require_once("$CFG->dirroot/repository/lib.php");
 
 require_login();
 if (isguestuser()) {
     die();
 }
 
+$returnurl = optional_param('returnurl', '', PARAM_URL);
+$returnbutton = true;
+
+if (empty($returnurl)) {
+    $returnbutton = false;
+    $returnurl = new moodle_url('/user/files.php');
+}
+
 $context = get_context_instance(CONTEXT_USER, $USER->id);
 require_capability('moodle/user:manageownfiles', $context);
+
 $title = get_string('myfiles');
 $struser = get_string('user');
 
@@ -42,13 +53,22 @@ $PAGE->set_heading($title);
 $PAGE->set_pagelayout('mydashboard');
 $PAGE->set_pagetype('user-files');
 
+$data = new stdClass();
+$data->returnurl = $returnurl;
+$options = array('subdirs'=>1, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>-1, 'accepted_types'=>'*');
+file_prepare_standard_filemanager($data, 'files', $options, $context, 'user', 'private', 0);
+
+$mform = new user_files_form(null, array('data'=>$data, 'options'=>$options, 'cancelbutton'=>$returnbutton));
+
+if ($mform->is_cancelled()) {
+    redirect($returnurl);
+} else if ($formdata = $mform->get_data()) {
+    $formdata = file_postupdate_standard_filemanager($formdata, 'files', $options, $context, 'user', 'private', 0);
+    redirect($returnurl);
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->box_start('generalbox');
-
-$renderer = $PAGE->get_renderer('core', 'user');
-echo $renderer->user_files_tree();
-
-echo $OUTPUT->single_button(new moodle_url('/user/filesedit.php'), get_string('myfilesmanage'), 'get');
-
+$mform->display();
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();

@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
 
-class user_filesedit_form extends moodleform {
+class user_files_form extends moodleform {
     function definition() {
         $mform = $this->_form;
 
