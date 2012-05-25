@@ -1393,7 +1393,7 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
                 $group = true;
             } else if ($isloggedin) {
                 $groupids = array();
-                
+
                 // We already have the courses to examine in $courses
                 // For each course...
                 foreach ($courseeventsfrom as $courseid => $course) {
