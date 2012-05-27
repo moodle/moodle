@@ -1047,6 +1047,7 @@ class restore_section_structure_step extends restore_structure_step {
         global $CFG, $DB;
         $data = (object)$data;
         $oldid = $data->id; // We'll need this later
+        $oldsection = $data->number;
 
         $restorefiles = false;
 
@@ -1099,10 +1100,12 @@ class restore_section_structure_step extends restore_structure_step {
 
             $DB->update_record('course_sections', $section);
             $newitemid = $secrec->id;
+            $oldsection = $secrec->section;
         }
 
         // Annotate the section mapping, with restorefiles option if needed
         $this->set_mapping('course_section', $oldid, $newitemid, $restorefiles);
+        $this->set_mapping('course_sectionnumber', $oldsection, $section->section, $restorefiles);
 
         // set the new course_section id in the task
         $this->task->set_sectionid($newitemid);
@@ -2541,7 +2544,7 @@ class restore_module_structure_step extends restore_structure_step {
 
         $data = (object)$data;
         $oldid = $data->id;
-
+        $oldsection = $data->sectionnumber;
         $this->task->set_old_moduleversion($data->version);
 
         $data->course = $this->task->get_courseid();
@@ -2568,6 +2571,7 @@ class restore_module_structure_step extends restore_structure_step {
                 'course' => $this->get_courseid(),
                 'section' => 1);
             $data->section = $DB->insert_record('course_sections', $sectionrec); // section 1
+            $this->set_mapping('course_sectionnumber', $oldsection, $sectionrec->section, $restorefiles);
         }
         $data->groupingid= $this->get_mappingid('grouping', $data->groupingid);      // grouping
         if (!$CFG->enablegroupmembersonly) {                                         // observe groupsmemberonly
