@@ -25,16 +25,16 @@
 defined('MOODLE_INTERNAL') || die;
 
 $string['doimport'] = 'Import';
-$string['errornochapters'] = 'Can not find chapters in selected file';
-$string['import'] = 'Import from HTML';
+$string['errornochapters'] = 'Cannot find chapters in selected file';
+$string['import'] = 'Import chapter';
 $string['importhtml:import'] = 'Import chapters';
 $string['importing'] = 'Importing';
 $string['importingchapters'] = 'Importing chapters into book';
-$string['pluginname'] = 'Book HTML import';
+$string['pluginname'] = 'Book chapter import';
 $string['relinking'] = 'Relinking';
 $string['type'] = 'Type';
 $string['typeonefile'] = 'One HTML file with headings as chapters';
 $string['typezipfiles'] = 'Each HTML file represents one chapter';
-$string['typezipdirs'] = 'Each directory represents one chapter';
-$string['ziparchive'] = 'Zip archive';
-$string['ziparchive_help'] = 'Select a ZIP archive that contains HTML files and other media. File or directory names ending with "_sub" indicate subchapters. You can use copy and paste in text editor for simple HML files without embedded media.';
+$string['typezipdirs'] = 'Each folder represents one chapter';
+$string['ziparchive'] = 'Zip file';
+$string['ziparchive_help'] = 'Select a zip file containing HTML files and optional multimedia files and folders. To upload subchapters, add "_sub" to the end of HTML file or folder names.';
