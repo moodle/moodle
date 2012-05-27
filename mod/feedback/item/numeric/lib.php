@@ -420,4 +420,8 @@ class feedback_item_numeric extends feedback_item_base {
     function can_switch_require() {
         return true;
     }
+    
+    function clean_input_value($value) {
+        return clean_param($value, PARAM_FLOAT);
+    }
 }
