@@ -205,6 +205,8 @@ class stored_file {
         // Remove repository info.
         $this->repository = null;
 
+        $transaction = $DB->start_delegated_transaction();
+
         // Remove reference info from DB.
         $DB->delete_records('files_reference', array('id'=>$this->file_record->referencefileid));
 
@@ -215,6 +217,8 @@ class stored_file {
         $filerecord->referencelifetime = null;
         $filerecord->referencefileid = null;
         $this->update($filerecord);
+
+        $transaction->allow_commit();
 
         // unset object variable
         unset($this->file_record->repositoryid);
@@ -247,6 +251,9 @@ class stored_file {
      */
     public function delete() {
         global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
         // If other files referring to this file, we need convert them
         if ($files = $this->fs->get_references_by_storedfile($this)) {
             foreach ($files as $file) {
@@ -256,6 +263,9 @@ class stored_file {
         // Now delete file records in DB
         $DB->delete_records('files', array('id'=>$this->file_record->id));
         $DB->delete_records('files_reference', array('id'=>$this->file_record->referencefileid));
+
+        $transaction->allow_commit();
+
         // moves pool file to trash if content not needed any more
         $this->fs->deleted_file_cleanup($this->file_record->contenthash);
         return true; // BC only
