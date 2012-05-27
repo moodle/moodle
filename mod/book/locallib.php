@@ -194,12 +194,6 @@ function book_add_fake_block($chapters, $chapter, $book, $cm, $edit) {
 
     $toc = book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
 
-    if ($edit) {
-        $toc .= '<div class="book_faq">';
-        $toc .=  $OUTPUT->help_icon('faq', 'mod_book', get_string('faq', 'mod_book'));
-        $toc .=  '</div>';
-    }
-
     $bc = new block_contents();
     $bc->title = get_string('toc', 'mod_book');
     $bc->attributes['class'] = 'block';

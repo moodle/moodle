@@ -35,7 +35,7 @@ if ($ADMIN->fulltree) {
     $options = book_get_numbering_types();
 
     $settings->add(new admin_setting_configmultiselect('book/numberingoptions',
-        get_string('numberingoptions', 'mod_book'), get_string('numberingoptions_help', 'mod_book'),
+        get_string('numberingoptions', 'mod_book'), get_string('numberingoptions_desc', 'mod_book'),
         array_keys($options), $options));
 
 
