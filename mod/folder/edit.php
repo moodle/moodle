@@ -48,7 +48,7 @@ $PAGE->set_activity_record($folder);
 
 $data = new stdClass();
 $data->id = $cm->id;
-$options = array('mainfile'=>true, 'subdirs'=>1, 'maxbytes'=>$CFG->maxbytes, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
+$options = array('subdirs'=>1, 'maxbytes'=>$CFG->maxbytes, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 file_prepare_standard_filemanager($data, 'files', $options, $context, 'mod_folder', 'content', 0);
 
 $mform = new mod_folder_edit_form(null, array('data'=>$data, 'options'=>$options));
