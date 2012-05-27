@@ -962,18 +962,24 @@ class cm_info extends stdClass  {
         $modcontext = get_context_instance(CONTEXT_MODULE, $this->id);
         $userid = $this->modinfo->get_user_id();
         $this->uservisible = true;
+        // Check visibility/availability conditions.
         if ((!$this->visible or !$this->available) and
                 !has_capability('moodle/course:viewhiddenactivities', $modcontext, $userid)) {
             // If the activity is hidden or unavailable, and you don't have viewhiddenactivities,
-            // set it so that user can't see or access it
+            // set it so that user can't see or access it.
             $this->uservisible = false;
-        } else if (!empty($CFG->enablegroupmembersonly) and !empty($this->groupmembersonly)
+        }
+        // Check group membership. The grouping option makes the activity
+        // completely invisible as it does not apply to the user at all.
+        if (!empty($CFG->enablegroupmembersonly) and !empty($this->groupmembersonly)
                 and !has_capability('moodle/site:accessallgroups', $modcontext, $userid)) {
             // If the activity has 'group members only' and you don't have accessallgroups...
             $groups = $this->modinfo->get_groups($this->groupingid);
             if (empty($groups)) {
                 // ...and you don't belong to a group, then set it so you can't see/access it
                 $this->uservisible = false;
+                // Ensure activity is completely hidden from user.
+                $this->showavailability = 0;
             }
         }
     }
