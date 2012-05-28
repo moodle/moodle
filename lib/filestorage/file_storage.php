@@ -1028,7 +1028,7 @@ class file_storage {
 
         $newrecord->timecreated  = $filerecord->timecreated;
         $newrecord->timemodified = $filerecord->timemodified;
-        $newrecord->mimetype     = empty($filerecord->mimetype) ? $this->mimetype($pathname) : $filerecord->mimetype;
+        $newrecord->mimetype     = empty($filerecord->mimetype) ? $this->mimetype($pathname, $filerecord->filename) : $filerecord->mimetype;
         $newrecord->userid       = empty($filerecord->userid) ? null : $filerecord->userid;
         $newrecord->source       = empty($filerecord->source) ? null : $filerecord->source;
         $newrecord->author       = empty($filerecord->author) ? null : $filerecord->author;
@@ -1154,7 +1154,7 @@ class file_storage {
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
         $filepathname = $this->path_from_hash($newrecord->contenthash) . '/' . $newrecord->contenthash;
         // get mimetype by magic bytes
-        $newrecord->mimetype = empty($filerecord->mimetype) ? $this->mimetype($filepathname) : $filerecord->mimetype;
+        $newrecord->mimetype = empty($filerecord->mimetype) ? $this->mimetype($filepathname, $filerecord->filename) : $filerecord->mimetype;
 
         $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
@@ -1805,11 +1805,15 @@ class file_storage {
      * If file has a known extension, we return the mimetype based on extension.
      * Otherwise (when possible) we try to get the mimetype from file contents.
      *
-     * @param string $pathname
+     * @param string $pathname full path to the file
+     * @param string $filename correct file name with extension, if omitted will be taken from $path
      * @return string
      */
-    public static function mimetype($pathname) {
-        $type = mimeinfo('type', $pathname);
+    public static function mimetype($pathname, $filename = null) {
+        if (empty($filename)) {
+            $filename = $pathname;
+        }
+        $type = mimeinfo('type', $filename);
         if ($type === 'document/unknown' && class_exists('finfo') && file_exists($pathname)) {
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $type = mimeinfo_from_type('type', $finfo->file($pathname));
