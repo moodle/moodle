@@ -2058,9 +2058,10 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid 
 //functions to handle the values
 ////////////////////////////////////////////////
 
-/**     
+/**
  * cleans the userinput while submitting the form.
  *
+ * @param stdClass $item The feedback item record from the database that the value needs to be cleaned against.
  * @param mixed $value
  * @return mixed
  */

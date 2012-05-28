@@ -334,7 +334,12 @@ class feedback_item_textarea extends feedback_item_base {
         return true;
     }
 
-    function clean_input_value($value) {
+    /**
+     * Cleans the value coming from the user for a field of this type.
+     * @param mixed $value
+     * @return mixed
+     */
+    public function clean_input_value($value) {
         return clean_param($value, PARAM_CLEANHTML);
     }
 }
