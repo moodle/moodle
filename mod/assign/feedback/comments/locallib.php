@@ -54,6 +54,77 @@ class assign_feedback_comments extends assign_feedback_plugin {
     }
 
     /**
+     * Get quickgrading form elements as html
+     *
+     * @param int $userid The user id in the table this quickgrading element relates to
+     * @param mixed $grade - The grade data - may be null if there are no grades for this user (yet)
+     * @return mixed - A html string containing the html form elements required for quickgrading
+     */
+    public function get_quickgrading_html($userid, $grade) {
+        $commenttext = '';
+        if ($grade) {
+            $feedbackcomments = $this->get_feedback_comments($grade->id);
+            if ($feedbackcomments) {
+                $commenttext = $feedbackcomments->commenttext;
+            }
+        }
+
+        return html_writer::tag('textarea', $commenttext, array('name'=>'quickgrade_comments_' . $userid,
+                                                                'class'=>'quickgrade'));
+    }
+
+    /**
+     * Has the plugin quickgrading form element been modified in the current form submission?
+     *
+     * @param int $userid The user id in the table this quickgrading element relates to
+     * @param stdClass $grade The grade
+     * @return boolean - true if the quickgrading form element has been modified
+     */
+    public function is_quickgrading_modified($userid, $grade) {
+        $commenttext = '';
+        if ($grade) {
+            $feedbackcomments = $this->get_feedback_comments($grade->id);
+            if ($feedbackcomments) {
+                $commenttext = $feedbackcomments->commenttext;
+            }
+        }
+        return optional_param('quickgrade_comments_' . $userid, '', PARAM_TEXT) != $commenttext;
+    }
+
+
+    /**
+     * Override to indicate a plugin supports quickgrading
+     *
+     * @return boolean - True if the plugin supports quickgrading
+     */
+    public function supports_quickgrading() {
+        return true;
+    }
+
+    /**
+     * Save quickgrading changes
+     *
+     * @param int $userid The user id in the table this quickgrading element relates to
+     * @param stdClass $grade The grade
+     * @return boolean - true if the grade changes were saved correctly
+     */
+    public function save_quickgrading_changes($userid, $grade) {
+        global $DB;
+        $feedbackcomment = $this->get_feedback_comments($grade->id);
+        if ($feedbackcomment) {
+            $feedbackcomment->commenttext = optional_param('quickgrade_comments_' . $userid, '', PARAM_TEXT);
+            return $DB->update_record('assignfeedback_comments', $feedbackcomment);
+        } else {
+            $feedbackcomment = new stdClass();
+            $feedbackcomment->commenttext = optional_param('quickgrade_comments_' . $userid, '', PARAM_TEXT);
+            $feedbackcomment->commentformat = FORMAT_HTML;
+            $feedbackcomment->grade = $grade->id;
+            $feedbackcomment->assignment = $this->assignment->get_instance()->id;
+            return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
+        }
+    }
+
+    /**
      * Get form elements for the grading page
      *
      * @param stdClass|null $grade

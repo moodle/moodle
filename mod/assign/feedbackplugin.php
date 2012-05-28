@@ -81,4 +81,46 @@ abstract class assign_feedback_plugin extends assign_plugin {
         return '';
     }
 
+    /**
+     * Override to indicate a plugin supports quickgrading
+     *
+     * @return boolean - True if the plugin supports quickgrading
+     */
+    public function supports_quickgrading() {
+        return false;
+    }
+
+    /**
+     * Get quickgrading form elements as html
+     *
+     * @param int $userid The user id in the table this quickgrading element relates to
+     * @param mixed $grade grade or null - The grade data. May be null if there are no grades for this user (yet)
+     * @return mixed - A html string containing the html form elements required for quickgrading or false to indicate this plugin does not support quickgrading
+     */
+    public function get_quickgrading_html($userid, $grade) {
+        return false;
+    }
+
+    /**
+     * Has the plugin quickgrading form element been modified in the current form submission?
+     *
+     * @param int $userid The user id in the table this quickgrading element relates to
+     * @param stdClass $grade The grade
+     * @return boolean - true if the quickgrading form element has been modified
+     */
+    public function is_quickgrading_modified($userid, $grade) {
+        return false;
+    }
+
+    /**
+     * Save quickgrading changes
+     *
+     * @param int $userid The user id in the table this quickgrading element relates to
+     * @param stdClass $grade The grade
+     * @return boolean - true if the grade changes were saved correctly
+     */
+    public function save_quickgrading_changes($userid, $grade) {
+        return false;
+    }
+
 }

@@ -2531,17 +2531,20 @@ class assign {
 
         $users = array();
         // first check all the last modified values
-        // Using POST is really unfortunate. A better solution needs to be found here. As we are looking for grades students we could
+        $currentgroup = groups_get_activity_group($this->get_course_module(), true);
+        $participants = $this->list_participants($currentgroup, true);
+
         // gets a list of possible users and look for values based upon that.
-        foreach ($_POST as $key => $value) {
-            if (preg_match('#^grademodified_(\d+)$#', $key, $matches)) {
+        foreach ($participants as $userid => $unused) {
+            $modified = optional_param('grademodified_' . $userid, -1, PARAM_INT);
+            if ($modified >= 0) {
                 // gather the userid, updated grade and last modified value
                 $record = new stdClass();
-                $record->userid = (int)$matches[1];
-                $record->grade = required_param('quickgrade_' . $record->userid, PARAM_INT);
-                $record->lastmodified = clean_param($value, PARAM_INT);
-                $record->gradinginfo = grade_get_grades($this->get_course()->id, 'mod', 'assign', $this->get_instance()->id, array($record->userid));
-                $users[$record->userid] = $record;
+                $record->userid = $userid;
+                $record->grade = required_param('quickgrade_' . $userid, PARAM_INT);
+                $record->lastmodified = $modified;
+                $record->gradinginfo = grade_get_grades($this->get_course()->id, 'mod', 'assign', $this->get_instance()->id, array($userid));
+                $users[$userid] = $record;
             }
         }
         if (empty($users)) {
@@ -2561,6 +2564,7 @@ class assign {
         $modifiedusers = array();
         foreach ($currentgrades as $current) {
             $modified = $users[(int)$current->userid];
+            $grade = $this->get_user_grade($userid, false);
 
             // check to see if the outcomes were modified
             if ($CFG->enableoutcomes) {
@@ -2571,6 +2575,20 @@ class assign {
                         // can't check modified time for outcomes because it is not reported
                         $modifiedusers[$modified->userid] = $modified;
                         continue;
+                    }
+                }
+            }
+
+            // let plugins participate
+            foreach ($this->feedbackplugins as $plugin) {
+                if ($plugin->is_visible() && $plugin->is_enabled() && $plugin->supports_quickgrading()) {
+                    if ($plugin->is_quickgrading_modified($modified->userid, $grade)) {
+                        if ((int)$current->lastmodified > (int)$modified->lastmodified) {
+                            return get_string('errorrecordmodified', 'assign');
+                        } else {
+                            $modifiedusers[$modified->userid] = $modified;
+                            continue;
+                        }
                     }
                 }
             }
@@ -2601,6 +2619,13 @@ class assign {
             $grade->grader= $USER->id;
 
             $this->update_grade($grade);
+
+            // save plugins data
+            foreach ($this->feedbackplugins as $plugin) {
+                if ($plugin->is_visible() && $plugin->is_enabled() && $plugin->supports_quickgrading()) {
+                    $plugin->save_quickgrading_changes($userid, $grade);
+                }
+            }
 
             // save outcomes
             if ($CFG->enableoutcomes) {
