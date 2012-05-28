@@ -30,6 +30,7 @@
 
 /// If we can find the Shibboleth attribute, save it in session and return to main login page
     if (!empty($_SERVER[$pluginconfig->user_attribute])) {    // Shibboleth auto-login
+        $frm = new stdClass();
         $frm->username = strtolower($_SERVER[$pluginconfig->user_attribute]);
         $frm->password = substr(base64_encode($_SERVER[$pluginconfig->user_attribute]),0,8);
         // The random password consists of the first 8 letters of the base 64 encoded user ID
