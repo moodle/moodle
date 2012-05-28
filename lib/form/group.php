@@ -90,6 +90,9 @@ class MoodleQuickForm_group extends HTML_QuickForm_group{
                 return 'static';
             }
         } else {
+            if ($this->getGroupType() == 'submit') {
+                return 'actionbuttons';
+            }
             return 'fieldset';
         }
     }
