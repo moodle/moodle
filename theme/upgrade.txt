@@ -2,6 +2,11 @@ This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
 
+=== 2.3 ===
+
+optional changes:
+* add new u/f3.png image when theme contains customised f1 and f2 default user images
+
 === 2.2 ===
 
 required changes:

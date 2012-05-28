@@ -3612,7 +3612,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
             }
 
             // fix file name automatically
-            if ($filename !== 'f1' and $filename !== 'f2') {
+            if ($filename !== 'f1' and $filename !== 'f2' and $filename !== 'f3') {
                 $filename = 'f1';
             }
 
@@ -3625,19 +3625,27 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 redirect($theme->pix_url('u/'.$filename, 'moodle')); // intentionally not cached
             }
 
-            if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.png')) {
-                if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg')) {
-                    // bad reference - try to prevent future retries as hard as possible!
-                    if ($user = $DB->get_record('user', array('id'=>$context->instanceid), 'id, picture')) {
-                        if ($user->picture == 1 or $user->picture > 10) {
-                            $DB->set_field('user', 'picture', 0, array('id'=>$user->id));
+            if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'.png')) {
+                if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'.jpg')) {
+                    if ($filename === 'f3') {
+                        // f3 400x400px was introduced in 2.3, there might be only the smaller version.
+                        if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', 'f1.png')) {
+                            $file = $fs->get_file($context->id, 'user', 'icon', 0, '/', 'f1.jpg');
                         }
                     }
-                    // no redirect here because it is not cached
-                    $theme = theme_config::load($themename);
-                    $imagefile = $theme->resolve_image_location('u/'.$filename, 'moodle');
-                    send_file($imagefile, basename($imagefile), 60*60*24*14);
                 }
+            }
+            if (!$file) {
+                // bad reference - try to prevent future retries as hard as possible!
+                if ($user = $DB->get_record('user', array('id'=>$context->instanceid), 'id, picture')) {
+                    if ($user->picture > 0) {
+                        $DB->set_field('user', 'picture', 0, array('id'=>$user->id));
+                    }
+                }
+                // no redirect here because it is not cached
+                $theme = theme_config::load($themename);
+                $imagefile = $theme->resolve_image_location('u/'.$filename, 'moodle');
+                send_file($imagefile, basename($imagefile), 60*60*24*14);
             }
 
             send_stored_file($file, 60*60*24*365, 0, false, array('preview' => $preview)); // enable long caching, there are many images on each page
