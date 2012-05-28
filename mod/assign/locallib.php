@@ -1126,7 +1126,7 @@ class assign {
         // Simple array we'll use for caching modules.
         $modcache = array();
 
-        // Email students about new feedback
+        // Message students about new feedback
         foreach ($submissions as $submission) {
 
             mtrace("Processing assignment submission $submission->id ...");
@@ -2377,7 +2377,7 @@ class assign {
     }
 
     /**
-     * email someone about something (static so it can be called from cron)
+     * Message someone about something (static so it can be called from cron)
      *
      * @param stdClass $userfrom
      * @param stdClass $userto
@@ -2426,7 +2426,7 @@ class assign {
     }
 
     /**
-     * email someone about something
+     * Message someone about something
      *
      * @param stdClass $userfrom
      * @param stdClass $userto
@@ -2440,13 +2440,13 @@ class assign {
     }
 
     /**
-     * Email student upon successful submission
+     * Notify student upon successful submission
      *
      * @global moodle_database $DB
      * @param stdClass $submission
      * @return void
      */
-    private function email_student_submission_receipt(stdClass $submission) {
+    private function notify_student_submission_receipt(stdClass $submission) {
         global $DB;
 
         $adminconfig = $this->get_admin_config();
@@ -2459,13 +2459,13 @@ class assign {
     }
 
     /**
-     * Email graders upon student submissions
+     * Send notifications to graders upon student submissions
      *
      * @global moodle_database $DB
      * @param stdClass $submission
      * @return void
      */
-    private function email_graders(stdClass $submission) {
+    private function notify_graders(stdClass $submission) {
         global $DB;
 
         $late = $this->get_instance()->duedate && ($this->get_instance()->duedate < time());
@@ -2505,8 +2505,8 @@ class assign {
             $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
             $this->update_submission($submission);
             $this->add_to_log('submit for grading', $this->format_submission_for_log($submission));
-            $this->email_graders($submission);
-            $this->email_student_submission_receipt($submission);
+            $this->notify_graders($submission);
+            $this->notify_student_submission_receipt($submission);
         }
     }
 
@@ -2738,8 +2738,8 @@ class assign {
             $this->add_to_log('submit', $this->format_submission_for_log($submission));
 
             if (!$this->get_instance()->submissiondrafts) {
-                $this->email_student_submission_receipt($submission);
-                $this->email_graders($submission);
+                $this->notify_student_submission_receipt($submission);
+                $this->notify_graders($submission);
             }
             return true;
         }
