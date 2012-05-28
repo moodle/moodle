@@ -149,7 +149,8 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course" NEXT="criteriatype"/>
-        <INDEX NAME="criteriatype" UNIQUE="false" FIELDS="criteriatype" PREVIOUS="course"/>
+        <INDEX NAME="criteriatype" UNIQUE="false" FIELDS="criteriatype" PREVIOUS="course" NEXT="coursecriteriatype"/>
+        <INDEX NAME="coursecriteriatype" UNIQUE="true" FIELDS="course, criteriatype" PREVIOUS="criteriatype"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_completion_criteria" COMMENT="Course completion criteria" PREVIOUS="course_completion_aggr_methd" NEXT="course_completion_crit_compl">
@@ -190,7 +191,8 @@
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="course"/>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course" PREVIOUS="userid" NEXT="criteriaid"/>
         <INDEX NAME="criteriaid" UNIQUE="false" FIELDS="criteriaid" PREVIOUS="course" NEXT="timecompleted"/>
-        <INDEX NAME="timecompleted" UNIQUE="false" FIELDS="timecompleted" PREVIOUS="criteriaid"/>
+        <INDEX NAME="timecompleted" UNIQUE="false" FIELDS="timecompleted" PREVIOUS="criteriaid" NEXT="useridcoursecriteriaid"/>
+        <INDEX NAME="useridcoursecriteriaid" UNIQUE="true" FIELDS="userid, course, criteriaid" PREVIOUS="timecompleted"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_completion_notify" COMMENT="Course completion notification emails" PREVIOUS="course_completion_crit_compl" NEXT="course_completions">
@@ -226,7 +228,8 @@
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="course"/>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course" PREVIOUS="userid" NEXT="timecompleted"/>
-        <INDEX NAME="timecompleted" UNIQUE="false" FIELDS="timecompleted" PREVIOUS="course"/>
+        <INDEX NAME="timecompleted" UNIQUE="false" FIELDS="timecompleted" PREVIOUS="course" NEXT="useridcourse"/>
+        <INDEX NAME="useridcourse" UNIQUE="true" FIELDS="userid, course" PREVIOUS="timecompleted"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="enrol" COMMENT="Instances of enrolment plugins used in courses, fields marked as custom have a plugin defined meaning, core does not touch them. Create a new linked table if you need even more custom fields." PREVIOUS="course_completions" NEXT="user_enrolments">
