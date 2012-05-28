@@ -77,6 +77,30 @@ class filestoragelib_testcase extends advanced_testcase {
         $previewtinyicon = $fs->get_file_preview($file, 'thumb');
         $this->assertInstanceOf('stored_file', $previewtinyicon);
         $this->assertEquals('6b9864ae1536a8eeef54e097319175a8be12f07c', $previewtinyicon->get_filename());
+
+        $this->setExpectedException('file_exception');
+        $fs->get_file_preview($file, 'amodewhichdoesntexist');
+    }
+
+    public function test_get_file_preview_nonimage() {
+        $this->resetAfterTest(true);
+        $syscontext = context_system::instance();
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/textfiles/',
+            'filename'  => 'testtext.txt',
+        );
+
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecord, 'text contents');
+        $textfile = $fs->get_file($syscontext->id, $filerecord['component'], $filerecord['filearea'],
+            $filerecord['itemid'], $filerecord['filepath'], $filerecord['filename']);
+
+        $preview = $fs->get_file_preview($textfile, 'thumb');
+        $this->assertFalse($preview);
     }
 
     /**
@@ -209,20 +233,14 @@ class filestoragelib_testcase extends advanced_testcase {
         $this->assertEquals($content, $importedfile->get_content());
     }
 
-    /**
-     * TODO: the tests following this line were added to demonstrate specific Oracle problems in
-     * MDL-33172. They need to be improved to properly evalulate the results of the tests. This is
-     * tracked in MDL-33326.
-     */
     private function setup_three_private_files() {
-        global $USER, $DB;
 
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
+        $this->setUser($user->id);
         $usercontext = context_user::instance($user->id);
-        $USER = $DB->get_record('user', array('id'=>$user->id));
         // create a user private file
         $file1 = new stdClass;
         $file1->contextid = $usercontext->id;
@@ -235,19 +253,22 @@ class filestoragelib_testcase extends advanced_testcase {
 
         $fs = get_file_storage();
         $userfile1 = $fs->create_file_from_string($file1, 'file1 content');
+        $this->assertInstanceOf('stored_file', $userfile1);
+
         $file2 = clone($file1);
         $file2->filename = '2.txt';
         $userfile2 = $fs->create_file_from_string($file2, 'file2 content');
+        $this->assertInstanceOf('stored_file', $userfile2);
 
         $file3 = clone($file1);
         $file3->filename = '3.txt';
         $userfile3 = $fs->create_file_from_storedfile($file3, $userfile2);
+        $this->assertInstanceOf('stored_file', $userfile3);
 
         $user->ctxid = $usercontext->id;
 
         return $user;
     }
-
 
     public function test_get_area_files() {
         $user = $this->setup_three_private_files();
@@ -255,33 +276,97 @@ class filestoragelib_testcase extends advanced_testcase {
 
         // Get area files with default options.
         $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+
         // Should be the two files we added plus the folder.
         $this->assertEquals(4, count($areafiles));
 
+        // Verify structure.
+        foreach($areafiles as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
+
         // Get area files without a folder.
-        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'sortorder', false);
+        $folderlessfiles = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'sortorder', false);
         // Should be the two files without folder.
-        $this->assertEquals(3, count($areafiles));
+        $this->assertEquals(3, count($folderlessfiles));
+
+        // Verify structure.
+        foreach($folderlessfiles as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
 
         // Get area files ordered by id (was breaking on oracle).
-        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'id', false);
+        $filesbyid  = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'id', false);
         // Should be the two files without folder.
-        $this->assertEquals(3, count($areafiles));
+        $this->assertEquals(3, count($filesbyid));
+
+        // Verify structure.
+        foreach($filesbyid as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
 
         // Test with an itemid with no files
         $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private', 666, 'sortorder', false);
-        // Should none
-        $this->assertEquals(0, count($areafiles));
+        // Should be none
+        $this->assertEmpty($areafiles);
     }
 
     public function test_get_area_tree() {
         $user = $this->setup_three_private_files();
         $fs = get_file_storage();
 
+
         // Get area files with default options.
-        $areafiles = $fs->get_area_tree($user->ctxid, 'user', 'private', 0);
-        $areafiles = $fs->get_area_tree($user->ctxid, 'user', 'private', 666);
-        //TODO: verify result!! MDL-33326
+        $areatree = $fs->get_area_tree($user->ctxid, 'user', 'private', 0);
+        $this->assertEmpty($areatree['subdirs']);
+        $this->assertNotEmpty($areatree['files']);
+        $this->assertCount(3, $areatree['files']);
+
+        // Ensure an empty try with a fake itemid.
+        $emptytree = $fs->get_area_tree($user->ctxid, 'user', 'private', 666);
+        $this->assertEmpty($emptytree['subdirs']);
+        $this->assertEmpty($emptytree['files']);
+
+        // Create a subdir
+        $dir = $fs->create_directory($user->ctxid, 'user', 'private', 0, '/testsubdir/');
+        $this->assertInstanceOf('stored_file', $dir);
+
+        // Add a file to the subdir.
+        $filerecord = array(
+            'contextid' => $user->ctxid,
+            'component' => 'user',
+            'filearea'  => 'private',
+            'itemid'    => 0,
+            'filepath'  => '/testsubdir/',
+            'filename'  => 'test-get-area-tree.txt',
+        );
+
+        $directoryfile = $fs->create_file_from_string($filerecord, 'Test content');
+        $this->assertInstanceOf('stored_file', $directoryfile);
+
+        $areatree = $fs->get_area_tree($user->ctxid, 'user', 'private', 0);
+
+        // At the top level there should still be 3 files.
+        $this->assertCount(3, $areatree['files']);
+
+        // There should now be a subdirectory.
+        $this->assertCount(1, $areatree['subdirs']);
+
+        // The test subdir is named testsubdir.
+        $subdir = $areatree['subdirs']['testsubdir'];
+        $this->assertNotEmpty($subdir);
+        // It should have one file we added.
+        $this->assertCount(1, $subdir['files']);
+        // And no subdirs itself.
+        $this->assertCount(0, $subdir['subdirs']);
+
+        // verify the file is the one we added.
+        $subdirfile = reset($subdir['files']);
+        $this->assertInstanceOf('stored_file', $subdirfile);
+        $this->assertEquals($filerecord['filename'], $subdirfile->get_filename());
     }
 
     public function test_get_file_by_id() {
@@ -294,6 +379,10 @@ class filestoragelib_testcase extends advanced_testcase {
         $filebyid = reset($areafiles);
         $shouldbesame = $fs->get_file_by_id($filebyid->get_id());
         $this->assertEquals($filebyid->get_contenthash(), $shouldbesame->get_contenthash());
+
+        // Test an id which doens't exist.
+        $doesntexist = $fs->get_file_by_id(99999);
+        $this->assertFalse($doesntexist);
     }
 
     public function test_get_file_by_hash() {
@@ -305,6 +394,10 @@ class filestoragelib_testcase extends advanced_testcase {
         $filebyhash = reset($areafiles);
         $shouldbesame = $fs->get_file_by_hash($filebyhash->get_pathnamehash());
         $this->assertEquals($filebyhash->get_id(), $shouldbesame->get_id());
+
+        // Test an hash which doens't exist.
+        $doesntexist = $fs->get_file_by_hash('DOESNTEXIST');
+        $this->assertFalse($doesntexist);
     }
 
     public function test_get_references_by_storedfile() {
@@ -316,7 +409,7 @@ class filestoragelib_testcase extends advanced_testcase {
 
         $testfile = reset($areafiles);
         $references = $fs->get_references_by_storedfile($testfile);
-        //TODO: verify result!! MDL-33326
+        //TODO: verify result!! MDL-33368
     }
 
     public function test_get_external_files() {
@@ -329,43 +422,130 @@ class filestoragelib_testcase extends advanced_testcase {
 
         // this should break on oracle
         $fs->get_external_files($userrepository->id, 'id');
-        //TODO: verify result!! MDL-33326
-     }
+        //TODO: verify result!! MDL-33368
+    }
+
+    public function test_create_directory_contextid_negative() {
+        $fs = get_file_storage();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory(-1, 'core', 'unittest', 0, '/');
+    }
+
+    public function test_create_directory_contextid_invalid() {
+        $fs = get_file_storage();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory('not an int', 'core', 'unittest', 0, '/');
+    }
+
+    public function test_create_directory_component_invalid() {
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory($syscontext->id, 'bad/component', 'unittest', 0, '/');
+    }
+
+    public function test_create_directory_filearea_invalid() {
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory($syscontext->id, 'core', 'bad-filearea', 0, '/');
+    }
+
+    public function test_create_directory_itemid_negative() {
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory($syscontext->id, 'core', 'unittest', -1, '/');
+    }
+
+    public function test_create_directory_itemid_invalid() {
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory($syscontext->id, 'core', 'unittest', 'notanint', '/');
+    }
+
+    public function test_create_directory_filepath_invalid() {
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory($syscontext->id, 'core', 'unittest', 0, '/not-with-trailing/or-leading-slash');
+    }
 
     public function test_get_directory_files() {
         $user = $this->setup_three_private_files();
         $fs = get_file_storage();
 
-        // This should also break on oracle.
-        $fs->create_directory($user->ctxid, 'user', 'private', 0, '/');
-        //TODO: verify result!! MDL-33326
+        $dir = $fs->create_directory($user->ctxid, 'user', 'private', 0, '/testsubdir/');
+        $this->assertInstanceOf('stored_file', $dir);
 
-        // Don't recurse with dirs
-        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', false, true, 'id');
-        //TODO: verify result!! MDL-33326
+        // Add a file to the subdir.
+        $filerecord = array(
+            'contextid' => $user->ctxid,
+            'component' => 'user',
+            'filearea'  => 'private',
+            'itemid'    => 0,
+            'filepath'  => '/testsubdir/',
+            'filename'  => 'test-get-area-tree.txt',
+        );
+
+        $directoryfile = $fs->create_file_from_string($filerecord, 'Test content');
+        $this->assertInstanceOf('stored_file', $directoryfile);
 
         // Don't recurse without dirs
-        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', false, false, 'id');
-        //TODO: verify result!! MDL-33326
+        $files = $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', false, false, 'id');
+        // 3 files only.
+        $this->assertCount(3, $files);
+        foreach($files as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
+
+        // Don't recurse with dirs
+        $files = $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', false, true, 'id');
+        // 3 files + 1 directory
+        $this->assertCount(4, $files);
+        foreach($files as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
 
         // Recurse with dirs
-        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', true, true, 'id');
-        //TODO: verify result!! MDL-33326
+        $files = $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', true, true, 'id');
+        // 3 files + 1 directory +  1 subdir file
+        $this->assertCount(5, $files);
+        foreach($files as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
+
         // Recurse without dirs
-        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', true, false, 'id');
-        //TODO: verify result!! MDL-33326
+        $files = $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', true, false, 'id');
+        // 3 files +  1 subdir file
+        $this->assertCount(4, $files);
+        foreach($files as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
     }
 
     public function test_search_references() {
         $fs = get_file_storage();
         $references = $fs->search_references('testsearch');
-        //TODO: verify result!! MDL-33326
+        //TODO: verify result!! MDL-33368
     }
 
     public function test_search_references_count() {
         $fs = get_file_storage();
         $references = $fs->search_references_count('testsearch');
-        //TODO: verify result!! MDL-33326
+        //TODO: verify result!! MDL-33368
     }
 
     public function test_delete_area_files() {
@@ -381,6 +561,20 @@ class filestoragelib_testcase extends advanced_testcase {
         $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
         // Should be the two files we added plus the folder.
         $this->assertEquals(0, count($areafiles));
+    }
+
+    public function test_delete_area_files_itemid() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        // Get area files with default options.
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        // Should be the two files we added plus the folder.
+        $this->assertEquals(4, count($areafiles));
+        $fs->delete_area_files($user->ctxid, 'user', 'private', 9999);
+
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        $this->assertEquals(4, count($areafiles));
     }
 
     public function test_delete_area_files_select() {
