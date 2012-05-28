@@ -135,12 +135,10 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             var dragnodeid = Number(this.get_section_id(dragnode));
             var dropnodeid = Number(this.get_section_id(dropnode));
 
-            var targetoffset = 0;
             var loopstart = dragnodeid;
             var loopend = dropnodeid;
 
             if (this.goingup) {
-                targetoffset = 1;
                 loopstart = dropnodeid;
                 loopend = dragnodeid;
             }
@@ -166,7 +164,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             params['class'] = 'section';
             params.field = 'move';
             params.id = dragnodeid;
-            params.value = dropnodeid - targetoffset;
+            params.value = dropnodeid;
 
             // Do AJAX request
             var uri = M.cfg.wwwroot + this.get('ajaxurl');

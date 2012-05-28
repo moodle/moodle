@@ -52,6 +52,16 @@ class courselib_testcase extends advanced_testcase {
         $this->assertEquals($oldsections[5], $neworder[5]);
         $this->assertEquals($oldsections[6], $neworder[6]);
 
+        $neworder = reorder_sections($sections, 4, 2);
+        $neworder = array_keys($neworder);
+        $this->assertEquals($oldsections[0], $neworder[0]);
+        $this->assertEquals($oldsections[1], $neworder[1]);
+        $this->assertEquals($oldsections[2], $neworder[3]);
+        $this->assertEquals($oldsections[3], $neworder[4]);
+        $this->assertEquals($oldsections[4], $neworder[2]);
+        $this->assertEquals($oldsections[5], $neworder[5]);
+        $this->assertEquals($oldsections[6], $neworder[6]);
+
         $neworder = reorder_sections(1, 2, 4);
         $this->assertFalse($neworder);
     }
