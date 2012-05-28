@@ -315,6 +315,7 @@ abstract class backup_cron_automated_helper {
      */
     public static function launch_automated_backup($course, $starttime, $userid) {
 
+        $outcome = true;
         $config = get_config('backup');
         $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_AUTOMATED, $userid);
 
@@ -347,7 +348,7 @@ abstract class backup_cron_automated_helper {
 
             $bc->set_status(backup::STATUS_AWAITING);
 
-            $outcome = $bc->execute_plan();
+            $bc->execute_plan();
             $results = $bc->get_results();
             $file = $results['backup_destination'];
             $dir = $config->backup_auto_destination;
@@ -363,16 +364,17 @@ abstract class backup_cron_automated_helper {
                 }
             }
 
-            $outcome = true;
-        } catch (backup_exception $e) {
-            $bc->log('backup_auto_failed_on_course', backup::LOG_WARNING, $course->shortname);
+        } catch (moodle_exception $e) {
+            $bc->log('backup_auto_failed_on_course', backup::LOG_ERROR, $course->shortname); // Log error header.
+            $bc->log('Exception: ' . $e->errorcode, backup::LOG_ERROR, $e->a, 1); // Log original exception problem.
+            $bc->log('Debug: ' . $e->debuginfo, backup::LOG_DEBUG, null, 1); // Log original debug information.
             $outcome = false;
         }
 
         $bc->destroy();
         unset($bc);
 
-        return true;
+        return $outcome;
     }
 
     /**
