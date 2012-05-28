@@ -107,13 +107,13 @@ class EvalMath {
         'sin','sinh','arcsin','asin','arcsinh','asinh',
         'cos','cosh','arccos','acos','arccosh','acosh',
         'tan','tanh','arctan','atan','arctanh','atanh',
-        'sqrt','abs','ln','log','exp','floor','ceil');
+        'sqrt','abs','ln','log','exp','floor','ceil','round');
 
     var $fc = array( // calc functions emulation
         'average'=>array(-1), 'max'=>array(-1),  'min'=>array(-1),
         'mod'=>array(2),      'pi'=>array(0),    'power'=>array(2),
         'round'=>array(1, 2), 'sum'=>array(-1), 'rand_int'=>array(2),
-        'rand_float'=>array(0), 'round'=>array(2));
+        'rand_float'=>array(0));
 
     var $allowimplicitmultiplication;
 
