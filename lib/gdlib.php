@@ -119,6 +119,7 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
     $image->height = $imageinfo[1];
     $image->type   = $imageinfo[2];
 
+    $t = null;
     switch ($image->type) {
         case IMAGETYPE_GIF:
             if (function_exists('imagecreatefromgif')) {
@@ -126,6 +127,11 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
             } else {
                 debugging('GIF not supported on this server');
                 return false;
+            }
+            // Guess transparent colour from GIF.
+            $transparent = imagecolortransparent($im);
+            if ($transparent != -1) {
+                $t = imagecolorsforindex($im, $transparent);
             }
             break;
         case IMAGETYPE_JPEG:
@@ -167,7 +173,17 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
         $im1 = imagecreatetruecolor(100, 100);
         $im2 = imagecreatetruecolor(35, 35);
         $im3 = imagecreatetruecolor(512, 512);
-        if ($image->type == IMAGETYPE_PNG and $imagefnc === 'imagepng') {
+        if ($image->type != IMAGETYPE_JPEG and $imagefnc === 'imagepng') {
+            if ($t) {
+                // Transparent GIF hacking...
+                $transparentcolour = imagecolorallocate($im1 , $t['red'] , $t['green'] , $t['blue']);
+                imagecolortransparent($im1 , $transparentcolour);
+                $transparentcolour = imagecolorallocate($im2 , $t['red'] , $t['green'] , $t['blue']);
+                imagecolortransparent($im2 , $transparentcolour);
+                $transparentcolour = imagecolorallocate($im3 , $t['red'] , $t['green'] , $t['blue']);
+                imagecolortransparent($im3 , $transparentcolour);
+            }
+
             imagealphablending($im1, false);
             $color = imagecolorallocatealpha($im1, 0, 0,  0, 127);
             imagefill($im1, 0, 0,  $color);
