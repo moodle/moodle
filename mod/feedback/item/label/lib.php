@@ -231,8 +231,13 @@ class feedback_item_label extends feedback_item_base {
     function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {}
     function get_printval($item, $value) {}
     function get_analysed($item, $groupid = false, $courseid = false) {}
-    
-    function clean_input_value($value) {
+
+    /**
+     * Cleans the value coming from the user for a field of this type.
+     * @param mixed $value
+     * @return mixed
+     */
+    public function clean_input_value($value) {
         return '';
     }
 }
