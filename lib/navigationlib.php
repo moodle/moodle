@@ -153,7 +153,7 @@ class navigation_node implements renderable {
                 $this->shorttext = $properties['shorttext'];
             }
             if (!array_key_exists('icon', $properties)) {
-                $properties['icon'] = new pix_icon('i/navigationitem', 'moodle');
+                $properties['icon'] = new pix_icon('i/navigationitem', '');
             }
             $this->icon = $properties['icon'];
             if ($this->icon instanceof pix_icon) {
