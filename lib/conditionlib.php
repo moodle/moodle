@@ -846,6 +846,16 @@ abstract class condition_info_base {
             }
         }
 
+        // If the item is marked as 'not visible' then we don't change the available
+        // flag (visible/available are treated distinctly), but we remove any
+        // availability info. If the item is hidden with the eye icon, it doesn't
+        // make sense to show 'Available from <date>' or similar, because even
+        // when that date arrives it will still not be available unless somebody
+        // toggles the eye icon.
+        if (!$this->item->visible) {
+            $information = '';
+        }
+
         $information = trim($information);
         return $available;
     }
