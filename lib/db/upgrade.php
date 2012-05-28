@@ -685,5 +685,75 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached
         upgrade_main_savepoint(true, 2012052500.03);
     }
+
+    /**
+     * Major clean up of course completion tables
+     */
+    if ($oldversion < 2012052900.00) {
+
+        // Clean up all instances of duplicate records
+        // Add indexes to prevent new duplicates
+        upgrade_course_completion_remove_duplicates(
+            'course_completions',
+            array('userid', 'course'),
+            array('timecompleted', 'timestarted', 'timeenrolled')
+        );
+
+        // Define index useridcourse (unique) to be added to course_completions
+        $table = new xmldb_table('course_completions');
+        $index = new xmldb_index('useridcourse', XMLDB_INDEX_UNIQUE, array('userid', 'course'));
+
+
+        // Conditionally launch add index useridcourse
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012052900.00);
+    }
+
+    if ($oldversion < 2012052900.01) {
+
+        upgrade_course_completion_remove_duplicates(
+            'course_completion_crit_compl',
+            array('userid', 'course', 'criteriaid'),
+            array('timecompleted')
+        );
+
+
+        // Define index useridcoursecriteraid (unique) to be added to course_completion_crit_compl
+        $table = new xmldb_table('course_completion_crit_compl');
+        $index = new xmldb_index('useridcoursecriteraid', XMLDB_INDEX_UNIQUE, array('userid', 'course', 'criteriaid'));
+
+        // Conditionally launch add index useridcoursecriteraid
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012052900.01);
+    }
+
+    if ($oldversion < 2012052900.02) {
+
+        upgrade_course_completion_remove_duplicates(
+            'course_completion_aggr_methd',
+            array('course', 'criteriatype')
+        );
+
+        // Define index coursecriteratype (unique) to be added to course_completion_aggr_methd
+        $table = new xmldb_table('course_completion_aggr_methd');
+        $index = new xmldb_index('coursecriteriatype', XMLDB_INDEX_UNIQUE, array('course', 'criteriatype'));
+
+        // Conditionally launch add index coursecriteratype
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012052900.02);
+    }
+
     return true;
 }
