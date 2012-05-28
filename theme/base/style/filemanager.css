@@ -38,23 +38,19 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
 .dir-rtl .file-picker .fp-list {text-align:right;}
 .file-picker .fp-list .fp-repo a{display:block;padding:.5em .7em;}
 .file-picker .fp-list .fp-repo.active {background:#F2F2F2;}
-.file-picker .fp-repo-icon {padding: 0px 7px 0px 5px;}
+.file-picker .fp-list .fp-repo-icon {padding: 0px 7px 0px 5px;}
 
 /*
  * Tools, Path & View on fp-navbar (File Picker and File Manager)
  */
-.fp-toolbar {/*display: table-row;*/display: block;line-height: 22px;float:left;}
+.fp-toolbar {display: table-row;line-height: 22px;float:left;/*display: inline-block;*/}
 .fp-toolbar.empty {display:none;}
 .fp-toolbar .disabled {display:none;}
 .fp-toolbar div {display: inline-block;padding: 0px 2px;padding-right: 10px;}
 .fp-toolbar img {vertical-align: -15%; margin-right: 5px;}
-.file-picker .search-entry {background:#FFF url('[[pix:a/search]]') no-repeat 3px 3px;height:18px;width:230px;border: 1px solid #BBB;padding-left:20px;}
+.file-picker .fp-tb-search input {background:#FFF url('[[pix:a/search]]') no-repeat 3px 3px;height:18px;width:200px;border: 1px solid #BBB;padding-left:20px;padding-top: 1px;padding-bottom: 1px;padding-right: 6px;}
 
-.file-picker .fp-pathbar {display: table-row;}
-.fp-pathbar .fp-path-folder {background:url('[[pix:theme|fp/path_folder]]') no-repeat 0 0;width:27px;height:12px;margin-left: 4px;}
-.fp-pathbar .fp-path-folder-name {margin-left: 32px;line-height: 20px;}
-
-.fp-viewbar {float:right;width:69px;height:22px;margin-right:8px;}
+.fp-viewbar {float:right;width:69px;height:22px;margin-right:8px;/*display: inline-block;*/}
 .fp-vb-icons {background:url('[[pix:theme|fp/view_icon_active]]') no-repeat 0 0;width:22px;height:22px;display: inline-block;}
 .fp-vb-icons.checked {background:url('[[pix:theme|fp/view_icon_selected]]');}
 .fp-viewbar.disabled .fp-vb-icons {background:url('[[pix:theme|fp/view_icon_inactive]]');}
@@ -64,7 +60,12 @@ background: #CCC!important;filter: progid:DXImageTransform.Microsoft.gradient(st
 .fp-vb-tree {background:url('[[pix:theme|fp/view_tree_active]]') no-repeat 0px 0px;width:23px;height:22px;display: inline-block;margin-left: -4px;}
 .fp-vb-tree.checked {background:url('[[pix:theme|fp/view_tree_selected]]');}
 .fp-viewbar.disabled .fp-vb-tree {background:url('[[pix:theme|fp/view_tree_inactive]]');}
-.file-picker .fp-clear-right {clear: right;}
+.file-picker .fp-clear-left {clear: left;}
+
+.file-picker .fp-pathbar {display: table-row;/*display: inline-block;*/}
+.fp-pathbar.empty {display: none;}
+.fp-pathbar .fp-path-folder {background:url('[[pix:theme|fp/path_folder]]') no-repeat 0 0;width:27px;height:12px;margin-left: 4px;}
+.fp-pathbar .fp-path-folder-name {margin-left: 32px;line-height: 20px;}
 
 /*
  * Icon view (File Picker and File Manager)
@@ -316,9 +317,8 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 /*
  * Create folder dialogue (File Manager only)
  */
-.filemanager.fp-mkdir-dlg {text-align: center;z-index: 999999}
-.filemanager .fp-mkdir-dlg p {text-align: left;margin: 40px 20px 0px;}
-.filemanager .fp-mkdir-dlg input {margin: 0px 20px 20px;}
+.filemanager .fp-mkdir-dlg {text-align: center;}
+.filemanager .fp-mkdir-dlg .fp-mkdir-dlg-text {text-align: left;margin: 40px 20px 20px;}
 
 /*
  * Confirm dialogue for delete (File Manager only)
