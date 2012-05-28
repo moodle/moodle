@@ -32,16 +32,56 @@ require_once $CFG->libdir.'/gradelib.php';
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class graded_users_iterator {
-    public $course;
-    public $grade_items;
-    public $groupid;
-    public $users_rs;
-    public $grades_rs;
-    public $gradestack;
-    public $sortfield1;
-    public $sortorder1;
-    public $sortfield2;
-    public $sortorder2;
+
+    /**
+     * The couse whose users we are interested in
+     */
+    protected $course;
+
+    /**
+     * An array of grade items or null if only user data was requested
+     */
+    protected $grade_items;
+
+    /**
+     * The group ID we are interested in. 0 means all groups.
+     */
+    protected $groupid;
+
+    /**
+     * A recordset of graded users
+     */
+    protected $users_rs;
+
+    /**
+     * A recordset of user grades (grade_grade instances)
+     */
+    protected $grades_rs;
+
+    /**
+     * Array used when moving to next user while iterating through the grades recordset
+     */
+    protected $gradestack;
+
+    /**
+     * The first field of the users table by which the array of users will be sorted
+     */
+    protected $sortfield1;
+
+    /**
+     * Should sortfield1 be ASC or DESC
+     */
+    protected $sortorder1;
+
+    /**
+     * The second field of the users table by which the array of users will be sorted
+     */
+    protected $sortfield2;
+
+    /**
+     * Should sortfield2 be ASC or DESC
+     */
+    protected $sortorder2;
 
     /**
      * Should users whose enrolment has been suspended be ignored?
@@ -59,7 +99,7 @@ class graded_users_iterator {
      * @param string $sortfield2 The second field of the users table by which the array of users will be sorted
      * @param string $sortorder2 The order in which the second sorting field will be sorted (ASC or DESC)
      */
-    public function graded_users_iterator($course, $grade_items=null, $groupid=0,
+    public function __construct($course, $grade_items=null, $groupid=0,
                                           $sortfield1='lastname', $sortorder1='ASC',
                                           $sortfield2='firstname', $sortorder2='ASC') {
         $this->course      = $course;
@@ -75,6 +115,7 @@ class graded_users_iterator {
 
     /**
      * Initialise the iterator
+     *
      * @return boolean success
      */
     public function init() {
@@ -177,7 +218,7 @@ class graded_users_iterator {
      * Returns information about the next user
      * @return mixed array of user info, all grades and feedback or null when no more users found
      */
-    function next_user() {
+    public function next_user() {
         if (!$this->users_rs) {
             return false; // no users present
         }
@@ -244,10 +285,9 @@ class graded_users_iterator {
     }
 
     /**
-     * Close the iterator, do not forget to call this function.
-     * @return void
+     * Close the iterator, do not forget to call this function
      */
-    function close() {
+    public function close() {
         if ($this->users_rs) {
             $this->users_rs->close();
             $this->users_rs = null;
@@ -273,23 +313,23 @@ class graded_users_iterator {
 
 
     /**
-     * _push
+     * Add a grade_grade instance to the grade stack
      *
      * @param grade_grade $grade Grade object
      *
      * @return void
      */
-    function _push($grade) {
+    private function _push($grade) {
         array_push($this->gradestack, $grade);
     }
 
 
     /**
-     * _pop
+     * Remove a grade_grade instance from the grade stack
      *
-     * @return object current grade object
+     * @return grade_grade current grade object
      */
-    function _pop() {
+    private function _pop() {
         global $DB;
         if (empty($this->gradestack)) {
             if (empty($this->grades_rs) || !$this->grades_rs->valid()) {
