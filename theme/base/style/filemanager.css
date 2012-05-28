@@ -317,8 +317,8 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 /*
  * Create folder dialogue (File Manager only)
  */
-.filemanager .fp-mkdir-dlg {text-align: center;}
-.filemanager .fp-mkdir-dlg .fp-mkdir-dlg-text {text-align: left;margin: 40px 20px 20px;}
+.filemanager.fp-mkdir-dlg {text-align: center;}
+.filemanager.fp-mkdir-dlg .fp-mkdir-dlg-text {text-align: left;margin: 40px 20px 20px;}
 
 /*
  * Confirm dialogue for delete (File Manager only)
