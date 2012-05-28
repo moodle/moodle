@@ -163,7 +163,7 @@ if ($mform->is_cancelled()) {
 // form processing
 } else if ($data = $mform->get_data(false)) {
 
-    if (is_array($data->feedback)) {
+    if (isset($data->feedback) && is_array($data->feedback)) {
         $data->feedbackformat = $data->feedback['format'];
         $data->feedback = $data->feedback['text'];
     }
