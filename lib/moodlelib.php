@@ -9642,7 +9642,7 @@ function address_in_subnet($addr, $subnetstr) {
  */
 function mtrace($string, $eol="\n", $sleep=0) {
 
-    if (defined('STDOUT')) {
+    if (defined('STDOUT') and !PHPUNIT_TEST) {
         fwrite(STDOUT, $string.$eol);
     } else {
         echo $string . $eol;
