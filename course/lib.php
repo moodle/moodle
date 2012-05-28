@@ -2948,8 +2948,11 @@ function delete_mod_from_section($mod, $section) {
  * @param int $section Section number (not id!!!)
  * @param int $move (-1 or 1)
  * @return boolean true if section moved successfully
+ * @todo MDL-33379 remove this function in 2.5
  */
 function move_section($course, $section, $move) {
+    debugging('This function will be removed before 2.5 is released please use move_section_to', DEBUG_DEVELOPER);
+
 /// Moves a whole course section up and down within the course
     global $USER, $DB;
 
@@ -2989,7 +2992,7 @@ function move_section_to($course, $section, $destination) {
         return true;
     }
 
-    if ($destination > $course->numsections) {
+    if (($destination > $course->numsections) || ($destination < 1)) {
         return false;
     }
 

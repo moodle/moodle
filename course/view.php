@@ -159,7 +159,10 @@
 
             if (!empty($section)) {
                 if (!empty($move) and confirm_sesskey()) {
-                    if (move_section($course, $section, $move)) {
+                    $destsection = $section + $move;
+                    if (move_section_to($course, $section, $destsection)) {
+                        // Rebuild course cache, after moving section
+                        rebuild_course_cache($course->id, true);
                         if ($course->id == SITEID) {
                             redirect($CFG->wwwroot . '/?redirect=0');
                         } else {
