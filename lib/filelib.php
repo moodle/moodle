@@ -3628,7 +3628,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
             if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'.png')) {
                 if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'.jpg')) {
                     if ($filename === 'f3') {
-                        // f3 400x400px was introduced in 2.3, there might be only the smaller version.
+                        // f3 512x512px was introduced in 2.3, there might be only the smaller version.
                         if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', 'f1.png')) {
                             $file = $fs->get_file($context->id, 'user', 'icon', 0, '/', 'f1.jpg');
                         }
