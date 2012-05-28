@@ -2995,6 +2995,8 @@ function move_section($course, $section, $move) {
         }
         $n++;
     }
+    // After moving section, rebuild course cache.
+    rebuild_course_cache($course->id, true);
     return true;
 }
 
