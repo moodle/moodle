@@ -1775,7 +1775,7 @@ function admin_mnet_method_profile(Zend_Server_Reflection_Function_Abstract $fun
  *
  * @param   string  $table      Table name
  * @param   array   $uniques    Array of field names that should be unique
- * @param   array   $feildstocheck  Array of fields to generate "correct" data from (optional)
+ * @param   array   $fieldstocheck  Array of fields to generate "correct" data from (optional)
  * @return  void
  */
 function upgrade_course_completion_remove_duplicates($table, $uniques, $fieldstocheck = array()) {
@@ -1792,7 +1792,7 @@ function upgrade_course_completion_remove_duplicates($table, $uniques, $fieldsto
         $pointer = 0;
 
         // Generate SQL for finding records with these duplicate uniques
-        $sql_select = implode(' = ? AND ', $uniques).' = ?'; /// builds "fieldname = ? AND fieldname = ?"
+        $sql_select = implode(' = ? AND ', $uniques).' = ?'; // builds "fieldname = ? AND fieldname = ?"
         $uniq_values = array();
         foreach ($uniques as $u) {
             $uniq_values[] = $duplicate->$u;
@@ -1831,7 +1831,7 @@ function upgrade_course_completion_remove_duplicates($table, $uniques, $fieldsto
             }
         }
         if ($needsupdate || isset($origrecord->reaggregate)) {
-            // If this table has a reaggregate field, update to force recheck on next cron cron
+            // If this table has a reaggregate field, update to force recheck on next cron run
             if (isset($origrecord->reaggregate)) {
                 $origrecord->reaggregate = time();
             }
