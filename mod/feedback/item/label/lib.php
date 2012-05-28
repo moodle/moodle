@@ -270,6 +270,11 @@ class feedback_item_label extends feedback_item_base {
     }
     public function get_analysed($item, $groupid = false, $courseid = false) {
     }
+    /**
+     * Cleans the value coming from the user for a field of this type.
+     * @param mixed $value
+     * @return mixed
+     */
     public function clean_input_value($value) {
         return '';
     }

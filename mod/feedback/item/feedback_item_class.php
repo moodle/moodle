@@ -128,13 +128,13 @@ abstract class feedback_item_base {
      */
     abstract public function print_item_show_value($item, $value = '');
 
-    /**     
+    /**
      * cleans the userinput while submitting the form
      *
      * @param mixed $value
      * @return mixed
      */
-    abstract function clean_input_value($value);
+    abstract public function clean_input_value($value);
 
 }
 
