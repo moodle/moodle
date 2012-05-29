@@ -132,7 +132,8 @@ if (isset($maturity)) {
             echo get_string('morehelp') . ': ' . get_docs_url('admin/versions') . PHP_EOL;
             cli_separator();
         } else {
-            cli_error(get_string('maturitycorewarning', 'admin', $maturitylevel));
+            cli_problem(get_string('maturitycorewarning', 'admin', $maturitylevel));
+            cli_error(get_string('maturityallowunstable', 'admin'));
         }
     }
 }

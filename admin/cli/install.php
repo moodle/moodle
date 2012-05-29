@@ -425,7 +425,8 @@ if (isset($maturity)) {
                 exit(1);
             }
         } else {
-            cli_error(get_string('maturitycorewarning', 'admin'));
+            cli_problem(get_string('maturitycorewarning', 'admin', $maturitylevel));
+            cli_error(get_string('maturityallowunstable', 'admin'));
         }
     }
 }
