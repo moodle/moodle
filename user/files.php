@@ -33,10 +33,8 @@ if (isguestuser()) {
 }
 
 $returnurl = optional_param('returnurl', '', PARAM_URL);
-$returnbutton = true;
 
 if (empty($returnurl)) {
-    $returnbutton = false;
     $returnurl = new moodle_url('/user/files.php');
 }
 
@@ -58,7 +56,7 @@ $data->returnurl = $returnurl;
 $options = array('subdirs'=>1, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>-1, 'accepted_types'=>'*');
 file_prepare_standard_filemanager($data, 'files', $options, $context, 'user', 'private', 0);
 
-$mform = new user_files_form(null, array('data'=>$data, 'options'=>$options, 'cancelbutton'=>$returnbutton));
+$mform = new user_files_form(null, array('data'=>$data, 'options'=>$options));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
