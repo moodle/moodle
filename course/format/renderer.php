@@ -506,7 +506,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $completioninfo = new completion_info($course);
         echo $completioninfo->display_help_icon();
 
-        print_section($course, $thissection, $mods, $modnamesused, true);
+        print_section($course, $thissection, $mods, $modnamesused, true, '100%', false, true);
         if ($PAGE->user_is_editing()) {
             print_section_add_menus($course, $displaysection, $modnames);
         }
