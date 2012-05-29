@@ -69,7 +69,8 @@ class condition_info extends condition_info_base {
      * @param object $cm Moodle course-module object. May have extra fields
      *   ->conditionsgrade, ->conditionscompletion which should come from
      *   get_fast_modinfo. Should have ->availablefrom, ->availableuntil,
-     *   and ->showavailability, ->course; but the only required thing is ->id.
+     *   and ->showavailability, ->course, ->visible; but the only required
+     *   thing is ->id.
      * @param int $expectingmissing Used to control whether or not a developer
      *   debugging message (performance warning) will be displayed if some of
      *   the above data is missing and needs to be retrieved; a
@@ -426,7 +427,8 @@ abstract class condition_info_base {
      * @return array Array of field names
      */
     protected function get_main_table_fields() {
-        return array('id', 'course', 'availablefrom', 'availableuntil', 'showavailability');
+        return array('id', 'course', 'visible',
+                'availablefrom', 'availableuntil', 'showavailability');
     }
 
     /**
@@ -844,6 +846,16 @@ abstract class condition_info_base {
                 // unfortunately this is not possible in the current system. Maybe
                 // later, or if somebody else wants to add it.
             }
+        }
+
+        // If the item is marked as 'not visible' then we don't change the available
+        // flag (visible/available are treated distinctly), but we remove any
+        // availability info. If the item is hidden with the eye icon, it doesn't
+        // make sense to show 'Available from <date>' or similar, because even
+        // when that date arrives it will still not be available unless somebody
+        // toggles the eye icon.
+        if (!$this->item->visible) {
+            $information = '';
         }
 
         $information = trim($information);
