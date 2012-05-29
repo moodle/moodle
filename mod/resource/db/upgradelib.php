@@ -138,6 +138,8 @@ function resource_20_migrate() {
             // try migration of main file - ignore if does not exist
             if ($file = resourcelib_try_file_migration($resource->mainfile, $candidate->cmid, $candidate->course, 'mod_resource', 'content', 0)) {
                 $resource->mainfile = $file->get_filepath().$file->get_filename();
+            } else {
+                continue;
             }
         }
 
