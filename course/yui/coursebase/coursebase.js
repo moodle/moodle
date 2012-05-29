@@ -68,6 +68,21 @@ YUI.add('moodle-course-coursebase', function(Y) {
         return null;
     }
 
+   /**
+    * Process sections after ajax response (should be defined in format.js)
+    * If some response is expected, we pass it over to format, as it knows better
+    * hot to process it.
+    *
+    * @param {YUI} Y YUI3 instance
+    * @param {NodeList} list of sections
+    * @param {array} response ajax response
+    * @param {string} sectionfrom first affected section
+    * @param {string} sectionto last affected section
+    * @return void
+    */
+    M.course.format.process_sections = M.course.format.process_sections || function(Y, sectionlist, response, sectionfrom, sectionto) {
+        return null;
+    }
 
    /**
     * Get sections config for this format, for examples see function definition

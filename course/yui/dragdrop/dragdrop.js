@@ -179,9 +179,16 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                         lightbox.show();
                     },
                     success: function(tid, response) {
-                        window.setTimeout(function(e) {
-                            lightbox.hide();
-                        }, 250);
+                        // Update section titles, we can't simply swap them as
+                        // they might have custom title
+                        try {
+                            var responsetext = Y.JSON.parse(response.responseText);
+                            if (responsetext.error) {
+                                new M.core.ajaxException(responsetext);
+                            }
+                            M.course.format.process_sections(Y, sectionlist, responsetext, loopstart, loopend);
+                        } catch (e) {}
+
                         // Classic bubble sort algorithm is applied to the section
                         // nodes between original drag node location and the new one.
                         do {
@@ -200,6 +207,11 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                             }
                             loopend = loopend - 1;
                         } while (swapped);
+
+                        // Finally, hide the lightbox
+                        window.setTimeout(function(e) {
+                            lightbox.hide();
+                        }, 250);
                     },
                     failure: function(tid, response) {
                         this.ajax_failure(response);

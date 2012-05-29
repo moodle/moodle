@@ -117,3 +117,24 @@ function format_weeks_get_section_dates($section, $course) {
 
     return $dates;
 }
+
+/**
+ * Callback function to do some action after section move
+ *
+ * @param stdClass $course The course entry from DB
+ * @return array This will be passed in ajax respose.
+ */
+function callback_weeks_ajax_section_move($course) {
+    global $COURSE, $PAGE;
+
+    $titles = array();
+    rebuild_course_cache($course->id);
+    $modinfo = get_fast_modinfo($COURSE);
+    $renderer = $PAGE->get_renderer('format_weeks');
+    if ($renderer && ($sections = $modinfo->get_section_info_all())) {
+        foreach ($sections as $number => $section) {
+            $titles[$number] = $renderer->section_title($section, $course);
+        }
+    }
+    return array('sectiontitles' => $titles, 'action' => 'move');
+}

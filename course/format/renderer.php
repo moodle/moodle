@@ -57,6 +57,21 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     abstract protected function page_title();
 
     /**
+     * Generate the section title
+     *
+     * @param stdClass $section The course_section entry from DB
+     * @param stdClass $course The course entry from DB
+     * @return string HTML to output.
+     */
+    public function section_title($section, $course) {
+        $title = get_section_name($course, $section);
+        if ($section->section != 0 && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+            $title = html_writer::link(course_get_url($course, $section->section), $title);
+        }
+        return $title;
+    }
+
+    /**
      * Generate the content to displayed on the right part of a section
      * before course modules are included
      *
@@ -106,7 +121,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      *
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
-     * @param bool $onsectionpage true if being printed on a section page
+     * @param bool $onsectionpage true if being printed on a single-section page
      * @return string HTML to output.
      */
     protected function section_header($section, $course, $onsectionpage) {
@@ -115,7 +130,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o = '';
         $currenttext = '';
         $sectionstyle = '';
-        $linktitle = false;
 
         if ($section->section != 0) {
             // Only in the non-general sections.
@@ -124,7 +138,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             } else if ($this->is_section_current($section, $course)) {
                 $sectionstyle = ' current';
             }
-            $linktitle = ($course->coursedisplay == COURSE_DISPLAY_MULTIPAGE);
         }
 
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
@@ -138,11 +151,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o.= html_writer::start_tag('div', array('class' => 'content'));
 
         if (!$onsectionpage) {
-            $title = get_section_name($course, $section);
-            if ($linktitle) {
-                $title = html_writer::link(course_get_url($course, $section->section), $title);
-            }
-            $o.= $this->output->heading($title, 3, 'sectionname');
+            $o.= $this->output->heading($this->section_title($section, $course), 3, 'sectionname');
         }
 
         $o.= html_writer::start_tag('div', array('class' => 'summary'));
