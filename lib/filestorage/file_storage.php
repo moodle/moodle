@@ -859,19 +859,13 @@ class file_storage {
             return $this->get_file_instance($newrecord);
         }
 
+        // note: referencefileid is copied from the original file so that
+        // creating a new file from an existing alias creates new alias implicitly.
+        // here we just check the database consistency.
         if (!empty($newrecord->repositoryid)) {
-            try {
-                $referencerecord = new stdClass;
-                $referencerecord->repositoryid = $newrecord->repositoryid;
-                $referencerecord->reference = $newrecord->reference;
-                $referencerecord->lastsync  = $newrecord->referencelastsync;
-                $referencerecord->lifetime  = $newrecord->referencelifetime;
-                $referencerecord->id = $DB->insert_record('files_reference', $referencerecord);
-            } catch (dml_exception $e) {
-                throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
-                                                         $newrecord->filepath, $newrecord->filename, $e->debuginfo);
+            if ($newrecord->referencefileid != $this->get_referencefileid($newrecord->repositoryid, $newrecord->reference, MUST_EXIST)) {
+                throw new file_reference_exception($newrecord->repositoryid, $newrecord->reference, $newrecord->referencefileid);
             }
-            $newrecord->referencefileid = $referencerecord->id;
         }
 
         try {
@@ -1180,12 +1174,12 @@ class file_storage {
     }
 
     /**
-     * Create a moodle file from file reference information
+     * Create a new alias/shortcut file from file reference information
      *
-     * @param stdClass $filerecord
-     * @param int $repositoryid
-     * @param string $reference
-     * @param array $options options for creating external file
+     * @param stdClass|array $filerecord object or array describing the new file
+     * @param int $repositoryid the id of the repository that provides the original file
+     * @param string $reference the information required by the repository to locate the original file
+     * @param array $options options for creating the new file
      * @return stored_file
      */
     public function create_file_from_reference($filerecord, $repositoryid, $reference, $options = array()) {
@@ -1268,19 +1262,12 @@ class file_storage {
 
         $transaction = $DB->start_delegated_transaction();
 
-        // Insert file reference record.
         try {
-            $referencerecord = new stdClass;
-            $referencerecord->repositoryid = $repositoryid;
-            $referencerecord->reference = $reference;
-            $referencerecord->lastsync = $filerecord->referencelastsync;
-            $referencerecord->lifetime = $filerecord->referencelifetime;
-            $referencerecord->id = $DB->insert_record('files_reference', $referencerecord);
-        } catch (dml_exception $e) {
-            throw $e;
+            $filerecord->referencefileid = $this->get_or_create_referencefileid($repositoryid, $reference,
+                $filerecord->referencelastsync, $filerecord->referencelifetime);
+        } catch (Exception $e) {
+            throw new file_reference_exception($repositoryid, $reference, null, null, $e->getMessage());
         }
-
-        $filerecord->referencefileid = $referencerecord->id;
 
         // External file doesn't have content in moodle.
         // So we create an empty file for it.
@@ -1925,5 +1912,60 @@ class file_storage {
 
         return implode(', ', $fields);
     }
-}
 
+    /**
+     * Returns the id of the record in {files_reference} that matches the passed repositoryid and reference
+     *
+     * If the record already exists, its id is returned. If there is no such record yet,
+     * new one is created (using the lastsync and lifetime provided, too) and its id is returned.
+     *
+     * @param int $repositoryid
+     * @param string $reference
+     * @return int
+     */
+    private function get_or_create_referencefileid($repositoryid, $reference, $lastsync = null, $lifetime = null) {
+        global $DB;
+
+        $id = $this->get_referencefileid($repositoryid, $reference, IGNORE_MISSING);
+
+        if ($id !== false) {
+            // bah, that was easy
+            return $id;
+        }
+
+        // no such record yet, create one
+        try {
+            $id = $DB->insert_record('files_reference', array(
+                'repositoryid'  => $repositoryid,
+                'reference'     => $reference,
+                'lastsync'      => $lastsync,
+                'lifetime'      => $lifetime));
+        } catch (dml_exception $e) {
+            // if inserting the new record failed, chances are that the race condition has just
+            // occured and the unique index did not allow to create the second record with the same
+            // repositoryid + reference combo
+            $id = $this->get_referencefileid($repositoryid, $reference, MUST_EXIST);
+        }
+
+        return $id;
+    }
+
+    /**
+     * Returns the id of the record in {files_reference} that matches the passed parameters
+     *
+     * Depending on the required strictness, false can be returned. The behaviour is consistent
+     * with standard DML methods.
+     *
+     * @param int $repositoryid
+     * @param string $reference
+     * @param int $strictness either {@link IGNORE_MISSING}, {@link IGNORE_MULTIPLE} or {@link MUST_EXIST}
+     * @return int|bool
+     */
+    private function get_referencefileid($repositoryid, $reference, $strictness) {
+        global $DB;
+
+        return $DB->get_field_select('files_reference', 'id',
+            'repositoryid = ? AND '.$DB->sql_compare_text('reference').' = '.$DB->sql_compare_text('?'),
+            array($repositoryid, $reference), $strictness);
+    }
+}
