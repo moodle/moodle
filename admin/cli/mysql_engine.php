@@ -34,8 +34,8 @@ if ($DB->get_dbfamily() !== 'mysql') {
 }
 
 // now get cli options
-list($options, $unrecognized) = cli_get_params(array('help'=>false, 'list'=>false, 'engine'=>false),
-                                               array('h'=>'help', 'l'=>'list'));
+list($options, $unrecognized) = cli_get_params(array('help'=>false, 'list'=>false, 'engine'=>false, 'available'=>false),
+                                               array('h'=>'help', 'l'=>'list', 'a'=>'available'));
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -52,6 +52,7 @@ and does not support transactions.
 Options:
 --engine=ENGINE       Convert MySQL tables to different engine
 -l, --list            Show table information
+-a, --available       Show list of available engines
 -h, --help            Print out this help
 
 Example:
@@ -59,7 +60,11 @@ Example:
 ";
 
 if (!empty($options['engine'])) {
+    $engines = mysql_get_engines();
     $engine = clean_param($options['engine'], PARAM_ALPHA);
+    if (!isset($engines[strtoupper($engine)])) {
+        cli_error("Error: engine '$engine' is not available on this server!");
+    }
 
     echo "Converting tables to '$engine' for $CFG->wwwroot:\n";
     $prefix = $DB->get_prefix();
@@ -68,9 +73,11 @@ if (!empty($options['engine'])) {
     $rs = $DB->get_recordset_sql($sql);
     $converted = 0;
     $skipped   = 0;
+    $errors    = 0;
     foreach ($rs as $table) {
-        if ($table->engine === $engine) {
-            echo str_pad($table->name, 40). " - NO CONVERSION NEEDED\n";
+        if (strtoupper($table->engine) === strtoupper($engine)) {
+            $newengine = mysql_get_table_engine($table->name);
+            echo str_pad($table->name, 40). " - NO CONVERSION NEEDED ($newengine)\n";
             $skipped++;
             continue;
         }
@@ -78,16 +85,22 @@ if (!empty($options['engine'])) {
 
         try {
             $DB->change_database_structure("ALTER TABLE {$table->name} ENGINE = $engine");
+            $newengine = mysql_get_table_engine($table->name);
+            if (strtoupper($newengine) !== strtoupper($engine)) {
+                echo "ERROR ($newengine)\n";
+                $errors++;
+                continue;
+            }
+            echo "DONE ($newengine)\n";
+            $converted++;
         } catch (moodle_exception $e) {
             echo $e->getMessage()."\n";
-            $skipped++;
+            $errors++;
             continue;
         }
-        echo "DONE\n";
-        $converted++;
     }
     $rs->close();
-    echo "Converted: $converted, skipped: $skipped\n";
+    echo "Converted: $converted, skipped: $skipped, errors: $errors\n";
     exit(0); // success
 
 } else if (!empty($options['list'])) {
@@ -115,7 +128,53 @@ if (!empty($options['engine'])) {
     }
     exit(0); // success
 
+} else if (!empty($options['available'])) {
+    echo "List of available MySQL engines for $CFG->wwwroot:\n";
+    $engines = mysql_get_engines();
+    foreach ($engines as $engine) {
+        echo " $engine\n";
+    }
+    die;
+
 } else {
     echo $help;
     die;
+}
+
+
+
+// ========== Some functions ==============
+
+function mysql_get_engines() {
+    global $DB;
+
+    $sql = "SHOW Engines";
+    $rs = $DB->get_recordset_sql($sql);
+    $engines = array();
+    foreach ($rs as $engine) {
+        if (strtoupper($engine->support) !== 'YES' and strtoupper($engine->support) !== 'DEFAULT') {
+            continue;
+        }
+        $engines[strtoupper($engine->engine)] = $engine->engine;
+        if (strtoupper($engine->support) === 'DEFAULT') {
+            $engines[strtoupper($engine->engine)] .= ' (default)';
+        }
+    }
+    $rs->close();
+
+    return $engines;
+}
+
+function mysql_get_table_engine($tablename) {
+    global $DB;
+
+    $engine = null;
+    $sql = "SHOW TABLE STATUS WHERE Name = '$tablename'"; // no special chars expected here
+    $rs = $DB->get_recordset_sql($sql);
+    if ($rs->valid()) {
+        $record = $rs->current();
+        $engine = $record->engine;
+    }
+    $rs->close();
+    return $engine;
 }
