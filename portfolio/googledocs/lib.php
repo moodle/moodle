@@ -126,4 +126,16 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
 
         $this->googleoauth = new google_oauth($clientid, $secret, $returnurl->out(false), google_docs::REALM);
     }
+
+    public function instance_sanity_check() {
+        $clientid = $this->get_config('clientid');
+        $secret = $this->get_config('secret');
+
+        // If there is no oauth config (e.g. plugins upgraded from < 2.3 then
+        // there will be no config and this plugin should be disabled.
+        if (empty($clientid) or empty($secret)) {
+            return 'nooauthcredentials';
+        }
+        return 0;
+    }
 }
