@@ -809,7 +809,7 @@ class portfolio_exporter {
      */
     public function get_tempfiles($skipfile='portfolio-export.zip') {
         $fs = get_file_storage();
-        $files = $fs->get_area_files(SYSCONTEXTID, 'portfolio', 'exporter', $this->id, '', false);
+        $files = $fs->get_area_files(SYSCONTEXTID, 'portfolio', 'exporter', $this->id, 'sortorder, itemid, filepath, filename', false);
         if (empty($files)) {
             return array();
         }
