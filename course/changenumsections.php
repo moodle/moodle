@@ -53,5 +53,7 @@ if ($course->numsections >= 0) {
     $DB->update_record('course', $course);
 }
 
+$url = course_get_url($course);
+$url->set_anchor('changenumsections');
 // Redirect to where we were..
-redirect(course_get_url($course));
+redirect($url);

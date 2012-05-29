@@ -633,7 +633,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
             echo $this->end_section_list();
 
-            echo html_writer::start_tag('div', array('class' => 'mdl-right'));
+            echo html_writer::start_tag('div', array('id' => 'changenumsections', 'class' => 'mdl-right'));
 
             // Increase number of sections.
             $straddsection = get_string('increasesections', 'moodle');
