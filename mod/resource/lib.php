@@ -500,7 +500,7 @@ function mod_resource_dndupload_handle($uploadinfo) {
     $data = new stdClass();
     $data->course = $uploadinfo->course->id;
     $data->name = $uploadinfo->displayname;
-    $data->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $data->intro = '';
     $data->introformat = FORMAT_HTML;
     $data->coursemodule = $uploadinfo->coursemodule;
     $data->files = $uploadinfo->draftitemid;
@@ -512,6 +512,8 @@ function mod_resource_dndupload_handle($uploadinfo) {
     $data->popupwidth = $config->popupwidth;
     $data->printheading = $config->printheading;
     $data->printintro = $config->printintro;
+    $data->showsize = $config->showsize;
+    $data->showtype = $config->showtype;
 
     return resource_add_instance($data, null);
 }
