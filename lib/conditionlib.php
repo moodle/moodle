@@ -101,16 +101,16 @@ class condition_info {
 
         // Missing basic data from course_modules
         if (!isset($cm->availablefrom) || !isset($cm->availableuntil) ||
-            !isset($cm->showavailability) || !isset($cm->course)) {
+            !isset($cm->showavailability) || !isset($cm->course) || !isset($cm->visible)) {
             if ($expectingmissing<CONDITION_MISSING_EVERYTHING) {
                 debugging('Performance warning: condition_info constructor is
                     faster if you pass in $cm with at least basic fields
-                    (availablefrom,availableuntil,showavailability,course).
+                    (availablefrom,availableuntil,showavailability,course,visible).
                     [This warning can be disabled, see phpdoc.]',
                     DEBUG_DEVELOPER);
             }
             $cm = $DB->get_record('course_modules',array('id'=>$cm->id),
-                'id,course,availablefrom,availableuntil,showavailability');
+                'id, course, availablefrom, availableuntil, showavailability, visible');
         }
 
         $this->cm = clone($cm);
@@ -484,6 +484,16 @@ WHERE
                 // unfortunately this is not possible in the current system. Maybe
                 // later, or if somebody else wants to add it.
             }
+        }
+
+        // If the item is marked as 'not visible' then we don't change the available
+        // flag (visible/available are treated distinctly), but we remove any
+        // availability info. If the item is hidden with the eye icon, it doesn't
+        // make sense to show 'Available from <date>' or similar, because even
+        // when that date arrives it will still not be available unless somebody
+        // toggles the eye icon.
+        if (!$this->cm->visible) {
+            $information = '';
         }
 
         $information=trim($information);
