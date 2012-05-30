@@ -118,10 +118,10 @@ class assign {
     private $returnparams = array();
 
     /** @var string modulename prevents excessive calls to get_string */
-    private static $modulename = '';
+    private static $modulename = null;
 
     /** @var string modulenameplural prevents excessive calls to get_string */
-    private static $modulenameplural = '';
+    private static $modulenameplural = null;
 
     /**
      * Constructor for the base assign class
@@ -2368,8 +2368,8 @@ class assign {
         global $CFG;
         $posthtml  = '<p><font face="sans-serif">'.
                      '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.format_string($course->shortname, true, array('context' => $context->get_course_context())).'</a> ->'.
-                     '<a href="'.$CFG->wwwroot.'/mod/assignment/index.php?id='.$course->id.'">'.$modulename.'</a> ->'.
-                     '<a href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$coursemodule->id.'">'.format_string($assignmentname, true, array('context' => $context)).'</a></font></p>';
+                     '<a href="'.$CFG->wwwroot.'/mod/assign/index.php?id='.$course->id.'">'.$modulename.'</a> ->'.
+                     '<a href="'.$CFG->wwwroot.'/mod/assign/view.php?id='.$coursemodule->id.'">'.format_string($assignmentname, true, array('context' => $context)).'</a></font></p>';
         $posthtml .= '<hr /><font face="sans-serif">';
         $posthtml .= '<p>'.get_string($messagetype . 'html', 'assign', $info).'</p>';
         $posthtml .= '</font><hr />';
