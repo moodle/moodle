@@ -303,8 +303,8 @@ class core_files_renderer extends plugin_renderer_base {
     private function fm_js_template_mkdir() {
         $rv = '
 <div class="filemanager fp-mkdir-dlg">
-    <div class="fp-mkdir-dlg-text">New folder name:<br/><input type="text" /></div>
-    <a class="{!}fp-dlg-butcreate fp-panel-button" href="#">'.get_string('create').'</a>
+    <div class="fp-mkdir-dlg-text">'.get_string('newfoldername','repository').'<br/><input type="text" /></div>
+    <a class="{!}fp-dlg-butcreate fp-panel-button" href="#">'.get_string('makeafolder').'</a>
     <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
@@ -896,7 +896,7 @@ class core_files_renderer extends plugin_renderer_base {
      * Default contents is one text input field with name="s"
      */
     public function repository_default_searchform() {
-        $str = '<input name="s" value="Search" />';
+        $str = '<div class="fp-def-search"><input name="s" value='.get_string('search', 'repository').' /></div>';
         return $str;
     }
 }
