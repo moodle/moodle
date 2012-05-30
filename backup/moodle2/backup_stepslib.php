@@ -1414,7 +1414,7 @@ class backup_final_files_structure_step extends backup_structure_step {
 
         $file->set_source_sql("SELECT f.*, r.repositoryid, r.reference
                                  FROM {files} f
-                                 JOIN {files_reference} r
+                                 LEFT JOIN {files_reference} r
                                       ON r.id = f.referencefileid
                                  JOIN {backup_ids_temp} bi
                                       ON f.id = bi.itemid
