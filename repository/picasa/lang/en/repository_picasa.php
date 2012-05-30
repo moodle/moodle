@@ -25,6 +25,9 @@
 $string['clientid'] = 'Client ID';
 $string['configplugin'] = 'Picasa repository configuration';
 $string['oauthinfo'] = '<p>To use the Picasa repository you must be registered with Google. Instructions for registing your installation with Google are described in <a href="{$a->docsurl}">Moodle Docs</a>. The redirect url should be set to:</p><p>{$a->callbackurl}</p>';
+$string['oauth2upgrade_message_subject'] = 'Important information regarding Picasa repository plugin';
+$string['oauth2upgrade_message_content'] = 'As part of the upgrade to Moodle 2.3, the Picasa repository plugin has been disabled due to changes in Googles API. To re-enable your plugin, you must add and reconfigure configure oauth credentials of this plugin.';
+$string['oauth2upgrade_message_small'] = 'The Picasa repository plugin has been disabled until configured with OAuth2';
 $string['picasa:view'] = 'View picasa repository';
 $string['pluginname'] = 'Picasa web album';
 $string['secret'] = 'Secret';

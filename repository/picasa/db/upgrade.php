@@ -29,5 +29,42 @@ function xmldb_repository_picasa_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2012051400, 'repository', 'picasa');
     }
 
+    if ($oldversion < 2012053000) {
+        require_once($CFG->dirroot.'/repository/lib.php');
+        $existing = $DB->get_record('repository', array('type' => 'picasa'), '*', IGNORE_MULTIPLE);
+
+        if ($existing) {
+            $picasaplugin = new repository_type('picasa', array(), true);
+            $picasaplugin->delete();
+            repository_picasa_admin_upgrade_notification();
+        }
+
+        upgrade_plugin_savepoint(true, 2012053000, 'repository', 'picasa');
+    }
+
     return true;
+}
+
+function repository_picasa_admin_upgrade_notification() {
+    $admins = get_admins();
+
+    if (empty($admins)) {
+        return;
+    }
+    $mainadmin = reset($admins);
+
+    foreach ($admins as $admin) {
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'notices';
+        $message->userfrom          = $mainadmin;
+        $message->userto            = $admin;
+        $message->smallmessage      = get_string('oauth2upgrade_message_small', 'repository_picasa');
+        $message->subject           = get_string('oauth2upgrade_message_subject', 'repository_picasa');
+        $message->fullmessage       = get_string('oauth2upgrade_message_content', 'repository_picasa');
+        $message->fullmessagehtml   = get_string('oauth2upgrade_message_content', 'repository_picasa');
+        $message->fullmessageformat = FORMAT_PLAIN;
+        $message->notification      = 1;
+        message_send($message);
+    }
 }
