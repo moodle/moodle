@@ -108,6 +108,29 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Displays the list of plugins with unsatisfied dependencies
+     *
+     * @param double|string|int $version Moodle on-disk version
+     * @param array $failed list of plugins with unsatisfied dependecies
+     * @param moodle_url $reloadurl URL of the page to recheck the dependencies
+     * @return string HTML
+     */
+    public function unsatisfied_dependencies_page($version, array $failed, moodle_url $reloadurl) {
+        $output = '';
+
+        $output .= $this->header();
+        $output .= $this->heading(get_string('pluginscheck', 'admin'));
+        $output .= $this->warning(get_string('pluginscheckfailed', 'admin', array('pluginslist' => implode(', ', array_unique($failed)))));
+        $output .= $this->plugins_check_table(plugin_manager::instance(), $version, array('xdep' => true));
+        $output .= $this->warning(get_string('pluginschecktodo', 'admin'));
+        $output .= $this->continue_button($reloadurl);
+
+        $output .= $this->footer();
+
+        return $output;
+    }
+
+    /**
      * Display the 'You are about to upgrade Moodle' page. The first page
      * during upgrade.
      * @param string $strnewversion
@@ -197,19 +220,15 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->box_end();
         $output .= $this->upgrade_reload($reloadurl);
 
-        if ($pluginman->all_plugins_ok($version)) {
-            if ($pluginman->some_plugins_updatable()) {
-                $output .= $this->container_start('upgradepluginsinfo');
-                $output .= $this->help_icon('upgradepluginsinfo', 'core_admin', get_string('upgradepluginsfirst', 'core_admin'));
-                $output .= $this->container_end();
-            }
-            $button = new single_button($continueurl, get_string('upgradestart', 'admin'), 'get');
-            $button->class = 'continuebutton';
-            $output .= $this->render($button);
-        } else {
-            $output .= $this->box(get_string('pluginschecktodo', 'admin'), 'environmentbox errorbox');
+        if ($pluginman->some_plugins_updatable()) {
+            $output .= $this->container_start('upgradepluginsinfo');
+            $output .= $this->help_icon('upgradepluginsinfo', 'core_admin', get_string('upgradepluginsfirst', 'core_admin'));
+            $output .= $this->container_end();
         }
 
+        $button = new single_button($continueurl, get_string('upgradestart', 'admin'), 'get');
+        $button->class = 'continuebutton';
+        $output .= $this->render($button);
         $output .= $this->footer();
 
         return $output;
@@ -563,13 +582,14 @@ class core_admin_renderer extends plugin_renderer_base {
      * This default implementation renders all plugins into one big table. The rendering
      * options support:
      *     (bool)full = false: whether to display up-to-date plugins, too
+     *     (bool)xdep = false: display the plugins with unsatisified dependecies only
      *
      * @param plugin_manager $pluginman provides information about the plugins.
      * @param int $version the version of the Moodle code from version.php.
      * @param array $options rendering options
      * @return string HTML code
      */
-    public function plugins_check_table(plugin_manager $pluginman, $version, array $options = null) {
+    public function plugins_check_table(plugin_manager $pluginman, $version, array $options = array()) {
         global $CFG;
 
         $plugininfo = $pluginman->get_plugins();
@@ -578,11 +598,8 @@ class core_admin_renderer extends plugin_renderer_base {
             return '';
         }
 
-        if (empty($options)) {
-            $options = array(
-                'full' => false,
-            );
-        }
+        $options['full'] = isset($options['full']) ? (bool)$options['full'] : false;
+        $options['xdep'] = isset($options['xdep']) ? (bool)$options['xdep'] : false;
 
         $table = new html_table();
         $table->id = 'plugins-check';
@@ -666,15 +683,27 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 $statusisboring = in_array($statuscode, array(
                         plugin_manager::PLUGIN_STATUS_NODB, plugin_manager::PLUGIN_STATUS_UPTODATE));
-                $dependenciesok = $pluginman->are_dependencies_satisfied(
-                        $plugin->get_other_required_plugins());
-                if ($isstandard and $statusisboring and $dependenciesok and empty($availableupdates)) {
+
+                $coredependency = $plugin->is_core_dependency_satisfied($version);
+                $otherpluginsdependencies = $pluginman->are_dependencies_satisfied($plugin->get_other_required_plugins());
+                $dependenciesok = $coredependency && $otherpluginsdependencies;
+
+                if ($options['xdep']) {
+                    // we want to see only plugins with failed dependencies
+                    if ($dependenciesok) {
+                        continue;
+                    }
+
+                } else if ($isstandard and $statusisboring and $dependenciesok and empty($availableupdates)) {
+                    // no change is going to happen to the plugin - display it only
+                    // if the user wants to see the full list
                     if (empty($options['full'])) {
                         continue;
                     }
-                } else {
-                    $numofhighlighted[$type]++;
                 }
+
+                // ok, the plugin should be displayed
+                $numofhighlighted[$type]++;
 
                 $row->cells = array($displayname, $rootdir, $source,
                     $versiondb, $versiondisk, $requires, $status);
@@ -691,7 +720,11 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $sumofhighlighted = array_sum($numofhighlighted);
 
-        if ($sumofhighlighted == 0) {
+        if ($options['xdep']) {
+            // we do not want to display no heading and links in this mode
+            $out = '';
+
+        } else if ($sumofhighlighted == 0) {
             $out  = $this->output->container_start('nonehighlighted', 'plugins-check-info');
             $out .= $this->output->heading(get_string('nonehighlighted', 'core_plugin'));
             if (empty($options['full'])) {
