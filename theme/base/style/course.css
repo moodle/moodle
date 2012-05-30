@@ -11,6 +11,7 @@
 .course-content .section-summary { border: 1px solid #DDD; margin-top: 5px; list-style: none; }
 .course-content .section-summary .section-title  { margin: 2px 5px 2px 5px; }
 .course-content .section-summary .summarytext { margin: 2px 5px 2px 5px; }
+.course-content .section-summary .section-summary-activities .activity-count {margin-right: 10px;}
 .course-content .single-section { margin-top: 1em; }
 .course-content .single-section .section-navigation { display: block; padding: 0.5em; margin-bottom: -0.5em; }
 .course-content .single-section .section-navigation .title { font-weight: bold; font-size: 108%; }
