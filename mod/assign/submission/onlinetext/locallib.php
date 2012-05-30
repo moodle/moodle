@@ -192,7 +192,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
       * @param bool $showviewlink - If the summary has been truncated set this to true
       * @return string
       */
-    public function view_summary(stdClass $submission, $showviewlink) {
+    public function view_summary(stdClass $submission, & $showviewlink) {
 
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
         // always show the view link
