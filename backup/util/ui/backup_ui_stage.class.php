@@ -124,6 +124,8 @@ class backup_ui_stage_initial extends backup_ui_stage {
             // Store as a variable so we can iterate by reference
             $tasks = $this->ui->get_tasks();
             // Iterate all tasks by reference
+            $add_settings = array();
+            $dependencies = array();
             foreach ($tasks as &$task) {
                 // For the initial stage we are only interested in the root settings
                 if ($task instanceof backup_root_task) {
@@ -134,16 +136,22 @@ class backup_ui_stage_initial extends backup_ui_stage {
                         if ($setting->get_name() == 'filename') {
                             continue;
                         }
-                        $form->add_setting($setting, $task);
+                        $add_settings[] = array($setting, $task);
                     }
                     // Then add all dependencies
                     foreach ($settings as &$setting) {
                         if ($setting->get_name() == 'filename') {
                             continue;
                         }
-                        $form->add_dependencies($setting);
+                        $dependencies[] = $setting;
                     }
                 }
+            }
+            // Add all settings at once.
+            $form->add_settings($add_settings);
+            // Add dependencies.
+            foreach ($dependencies as $depsetting) {
+                $form->add_dependencies($depsetting);
             }
             $this->stageform = $form;
         }
@@ -226,6 +234,8 @@ class backup_ui_stage_schema extends backup_ui_stage {
             $tasks = $this->ui->get_tasks();
             $content = '';
             $courseheading = false;
+            $add_settings = array();
+            $dependencies = array();
             foreach ($tasks as $task) {
                 if (!($task instanceof backup_root_task)) {
                     if (!$courseheading) {
@@ -235,11 +245,11 @@ class backup_ui_stage_schema extends backup_ui_stage {
                     }
                     // First add each setting
                     foreach ($task->get_settings() as $setting) {
-                        $form->add_setting($setting, $task);
+                        $add_settings[] = array($setting, $task);
                     }
                     // The add all the dependencies
                     foreach ($task->get_settings() as $setting) {
-                        $form->add_dependencies($setting);
+                        $dependencies[] = $setting;
                     }
                 } else if ($this->ui->enforce_changed_dependencies()) {
                     // Only show these settings if dependencies changed them.
@@ -253,6 +263,10 @@ class backup_ui_stage_schema extends backup_ui_stage {
                         }
                     }
                 }
+            }
+            $form->add_settings($add_settings);
+            foreach ($dependencies as $depsetting) {
+                $form->add_dependencies($depsetting);
             }
             $this->stageform = $form;
         }
