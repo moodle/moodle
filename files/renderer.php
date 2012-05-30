@@ -185,7 +185,6 @@ class core_files_renderer extends plugin_renderer_base {
         $strmakedir  = get_string('makeafolder', 'moodle');
         $strdownload = get_string('downloadfolder', 'repository');
         $strloading  = get_string('loading', 'repository');
-        $strnofilesattached = get_string('nofilesattached', 'repository');
         $strdroptoupload = get_string('droptoupload', 'moodle');
         $icon_progress = $OUTPUT->pix_icon('i/loading_small', $strloading).'';
         $restrictions = $this->fm_print_restrictions($fm);
@@ -220,7 +219,7 @@ class core_files_renderer extends plugin_renderer_base {
     <div class="filemanager-container" >
         <div class="fm-content-wrapper">
             <div class="fp-content"></div>
-            <div class="fm-empty-container <!--mdl-align-->">'.$strnofilesattached.'
+            <div class="fm-empty-container <!--mdl-align-->">
                 <span class="dndupload-message">'.$strdndenabledinbox.'<br/><span class="dndupload-arrow"></span></span>
             </div>
             <div class="dndupload-target">'.$strdroptoupload.'<br/><span class="dndupload-arrow"></span></div>
