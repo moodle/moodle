@@ -105,7 +105,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * @param bool $showviewlink Set to true to show a link to view the full feedback
      * @return string
      */
-    public function view_summary(stdClass $grade, $showviewlink) {
+    public function view_summary(stdClass $grade, & $showviewlink) {
         $feedbackcomments = $this->get_feedback_comments($grade->id);
         if ($feedbackcomments) {
             $text = format_text($feedbackcomments->commenttext, $feedbackcomments->commentformat, array('context' => $this->assignment->get_context()));

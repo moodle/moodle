@@ -53,7 +53,7 @@ class assign_submission_comments extends assign_submission_plugin {
     * @param bool $showviewlink - If the comments are long this is set to true so they can be shown in a separate page
     * @return string
     */
-   public function view_summary(stdClass $submission, $showviewlink) {
+   public function view_summary(stdClass $submission, & $showviewlink) {
 
         // never show a link to view full submission
         $showviewlink = false;
