@@ -72,7 +72,7 @@ if (isset($formdata->sesskey) AND
    !isset($formdata->gonextpage) AND
    !isset($formdata->gopreviouspage)) {
 
-    $gopage = (int) $formdata->lastpage;
+    $gopage = $formdata->lastpage;
 }
 if (isset($formdata->savevalues)) {
     $savevalues = true;
@@ -441,10 +441,13 @@ if ($feedback_can_submit) {
                 echo $OUTPUT->box_start('feedback_item_box_'.$align.$dependstyle);
                 $value = '';
                 //get the value
-                $frmvaluename = $feedbackitem->typ . '_'. $feedbackitem->id;
+                $frmvaluename = $feedbackitem->typ.'_'.$feedbackitem->id;
                 if (isset($savereturn)) {
-                    $value = isset($formdata->{$frmvaluename}) ? $formdata->{$frmvaluename} : null;
-                    $value = feedback_clean_input_value($feedbackitem, $value);
+                    if (isset($formdata->{$frmvaluename})) {
+                        $value = $formdata->{$frmvaluename};
+                    } else {
+                        $value = null;
+                    }
                 } else {
                     if (isset($feedbackcompletedtmp->id)) {
                         $value = feedback_get_item_value($feedbackcompletedtmp->id,
@@ -463,7 +466,6 @@ if ($feedback_can_submit) {
                     feedback_print_item_complete($feedbackitem, $value, $highlightrequired);
                     echo $OUTPUT->box_end();
                 }
-
                 echo $OUTPUT->box_end();
 
                 $lastbreakposition = $feedbackitem->position; //last item-pos (item or pagebreak)
