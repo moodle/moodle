@@ -112,6 +112,7 @@ class core_admin_renderer extends plugin_renderer_base {
      *
      * @param double|string|int $version Moodle on-disk version
      * @param array $failed list of plugins with unsatisfied dependecies
+     * @param moodle_url $reloadurl URL of the page to recheck the dependencies
      * @return string HTML
      */
     public function unsatisfied_dependencies_page($version, array $failed, moodle_url $reloadurl) {
@@ -682,8 +683,10 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 $statusisboring = in_array($statuscode, array(
                         plugin_manager::PLUGIN_STATUS_NODB, plugin_manager::PLUGIN_STATUS_UPTODATE));
-                $dependenciesok = $pluginman->are_dependencies_satisfied(
-                        $plugin->get_other_required_plugins()) && $plugin->is_core_dependency_satisfied($version);
+
+                $coredependency = $plugin->is_core_dependency_satisfied($version);
+                $otherpluginsdependencies = $pluginman->are_dependencies_satisfied($plugin->get_other_required_plugins());
+                $dependenciesok = $coredependency && $otherpluginsdependencies;
 
                 if ($options['xdep']) {
                     // we want to see only plugins with failed dependencies
