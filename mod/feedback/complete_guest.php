@@ -54,7 +54,7 @@
 
     //if the use hit enter into a textfield so the form should not submit
     if(isset($formdata->sesskey) AND !isset($formdata->savevalues) AND !isset($formdata->gonextpage) AND !isset($formdata->gopreviouspage)) {
-        $gopage = (int)$formdata->lastpage;
+        $gopage = $formdata->lastpage;
     }
     if(isset($formdata->savevalues)) {
         $savevalues = true;
@@ -372,8 +372,7 @@
                         //get the value
                         $frmvaluename = $feedbackitem->typ . '_'. $feedbackitem->id;
                         if(isset($savereturn)) {
-                            $value = isset($formdata->{$frmvaluename})?$formdata->{$frmvaluename}:NULL;
-                            $value = feedback_clean_input_value($feedbackitem, $value);
+                            $value =  isset($formdata->{$frmvaluename})?$formdata->{$frmvaluename}:NULL;
                         }else {
                             if(isset($feedbackcompletedtmp->id)) {
                                 $value = feedback_get_item_value($feedbackcompletedtmp->id, $feedbackitem->id, sesskey());
