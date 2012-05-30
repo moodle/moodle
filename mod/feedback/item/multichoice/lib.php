@@ -826,13 +826,4 @@ class feedback_item_multichoice extends feedback_item_base {
     public function value_is_array() {
         return true;
     }
-
-    /**
-     * Cleans the value coming from the user for a field of this type.
-     * @param mixed $value
-     * @return mixed
-     */
-    public function clean_input_value($value) {
-        return clean_param_array($value, PARAM_INT);
-    }
 }

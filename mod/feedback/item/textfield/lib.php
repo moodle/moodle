@@ -320,13 +320,4 @@ class feedback_item_textfield extends feedback_item_base {
     public function can_switch_require() {
         return true;
     }
-
-    /**
-     * Cleans the value coming from the user for a field of this type.
-     * @param mixed $value
-     * @return mixed
-     */
-    public function clean_input_value($value) {
-        return clean_param($value, PARAM_CLEANHTML);
-    }
 }
