@@ -648,13 +648,14 @@ abstract class repository {
      * This function is used to copy a moodle file to draft area
      *
      * @param string $encoded The metainfo of file, it is base64 encoded php serialized data
-     * @param int $draftitemid itemid
-     * @param string $new_filepath the new path in draft area
-     * @param string $new_filename The intended name of file
+     * @param stdClass|array $filerecord contains itemid, filepath, filename and optionally other
+     *      attributes of the new file
+     * @param int $maxbytes maximum allowed size of file, -1 if unlimited. If size of file exceeds
+     *      the limit, the file_exception is thrown.
      * @return array The information of file
      */
-    public function copy_to_area($encoded, $draftitemid, $new_filepath, $new_filename) {
-        global $USER, $DB;
+    public function copy_to_area($encoded, $filerecord, $maxbytes = -1) {
+        global $USER;
         $fs = get_file_storage();
         $browser = get_file_browser();
 
@@ -662,9 +663,17 @@ abstract class repository {
             throw new coding_exception('Only repository used to browse moodle files can use repository::copy_to_area()');
         }
 
-
         $params = unserialize(base64_decode($encoded));
-        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+        $user_context = context_user::instance($USER->id);
+
+        $filerecord = (array)$filerecord;
+        // make sure the new file will be created in user draft area
+        $filerecord['component'] = 'user';
+        $filerecord['filearea'] = 'draft';
+        $filerecord['contextid'] = $user_context->id;
+        $draftitemid = $filerecord['itemid'];
+        $new_filepath = $filerecord['filepath'];
+        $new_filename = $filerecord['filename'];
 
         $contextid  = clean_param($params['contextid'], PARAM_INT);
         $fileitemid = clean_param($params['itemid'],    PARAM_INT);
@@ -676,11 +685,15 @@ abstract class repository {
         $context    = get_context_instance_by_id($contextid);
         // the file needs to copied to draft area
         $file_info  = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
+        if ($maxbytes !== -1 && $file_info->get_filesize() > $maxbytes) {
+            throw new file_exception('maxbytes');
+        }
 
         if (repository::draftfile_exists($draftitemid, $new_filepath, $new_filename)) {
             // create new file
             $unused_filename = repository::get_unused_filename($draftitemid, $new_filepath, $new_filename);
-            $file_info->copy_to_storage($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $unused_filename);
+            $filerecord['filename'] = $unused_filename;
+            $file_info->copy_to_storage($filerecord);
             $event = array();
             $event['event'] = 'fileexists';
             $event['newfile'] = new stdClass;
@@ -690,12 +703,13 @@ abstract class repository {
             $event['existingfile'] = new stdClass;
             $event['existingfile']->filepath = $new_filepath;
             $event['existingfile']->filename = $new_filename;
-            $event['existingfile']->url      = moodle_url::make_draftfile_url($draftitemid, $filepath, $filename)->out();;
+            $event['existingfile']->url      = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $new_filename)->out();;
             return $event;
         } else {
-            $file_info->copy_to_storage($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $new_filename);
+            $file_info->copy_to_storage($filerecord);
             $info = array();
             $info['itemid'] = $draftitemid;
+            $info['file']  = $new_filename;
             $info['title']  = $new_filename;
             $info['contextid'] = $user_context->id;
             $info['url'] = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $new_filename)->out();;
@@ -1464,6 +1478,7 @@ abstract class repository {
      * @return int file size in bytes
      */
     public function get_file_size($source) {
+        // TODO MDL-33297 remove this function completely?
         $browser    = get_file_browser();
         $params     = unserialize(base64_decode($source));
         $contextid  = clean_param($params['contextid'], PARAM_INT);

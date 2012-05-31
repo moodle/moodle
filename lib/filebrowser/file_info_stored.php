@@ -519,25 +519,21 @@ class file_info_stored extends file_info {
     /**
      * Copy content of this file to local storage, overriding current file if needed.
      *
-     * @param int $contextid context ID
-     * @param string $component file component
-     * @param string $filearea file area
-     * @param int $itemid item ID
-     * @param string $filepath file path
-     * @param string $filename file name
+     * @param array|stdClass $filerecord contains contextid, component, filearea,
+     *    itemid, filepath, filename and optionally other attributes of the new file
      * @return bool success
      */
-    public function copy_to_storage($contextid, $component, $filearea, $itemid, $filepath, $filename) {
+    public function copy_to_storage($filerecord) {
         if (!$this->is_readable() or $this->is_directory()) {
             return false;
         }
+        $filerecord = (array)$filerecord;
 
         $fs = get_file_storage();
-        if ($existing = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename)) {
+        if ($existing = $fs->get_file($filerecord['contextid'], $filerecord['component'], $filerecord['filearea'], $filerecord['itemid'], $filerecord['filepath'], $filerecord['filename'])) {
             $existing->delete();
         }
-        $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename);
-        $fs->create_file_from_storedfile($file_record, $this->lf);
+        $fs->create_file_from_storedfile($filerecord, $this->lf);
 
         return true;
     }
