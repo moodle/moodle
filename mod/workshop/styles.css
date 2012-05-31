@@ -20,12 +20,12 @@
 
 .path-mod-workshop .groupwidget {
     text-align:center;
-    margin: 0.75 auto;
+    margin: 0.75em auto;
 }
 
 .path-mod-workshop .perpagewidget {
     text-align:center;
-    margin: 0.75 auto;
+    margin: 0.75em auto;
 }
 
 /**
@@ -246,7 +246,7 @@
     color: black;
     font-size: 140%;
     border: 1px solid #ddd;
-    border-bottom: none;
+    border-bottom: 0;
     background: #e7f1c3;
 }
 
@@ -276,7 +276,7 @@
 }
 
 .path-mod-workshop .userplan td.lastcol {
-    border-right: none;
+    border-right: 0;
 }
 
 .path-mod-workshop .userplan td.active {

@@ -43,7 +43,7 @@ table.message .searchresults td {padding:5px;}
 .message .messagearea .messagehistory .left {padding-bottom:10px;width:50%;float:left;clear:both;}
 .message .messagearea .messagehistory .right {padding-bottom:10px;width:50%;float:right;clear:both;}
 .message .messagearea .messagehistory .notification {padding:10px;background-color:#EEEEEE;margin-top:5px;}
-.message .messagearea .messagesend {padding-top:20px;float:center;clear:both;}
+.message .messagearea .messagesend {padding-top:20px;clear:both;}
 .message .messagearea .messagesend .messagesendbox {width:100%}
 .message .messagearea .messagesend fieldset {padding:0px;margin:0;} /** bring the message send button closer to the message box */
 

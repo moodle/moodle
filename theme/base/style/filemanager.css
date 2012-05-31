@@ -228,8 +228,7 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 /*
  * Lazy loading on fp-content (File Picker only)
  */
-.file-picker .fp-nextpage {clear:both;align:center;}
-.file-picker .fp-nextpage .fp-nextpage-link {align:center;}
+.file-picker .fp-nextpage {clear:both;}
 .file-picker .fp-nextpage .fp-nextpage-loading {display:none;}
 .file-picker .fp-nextpage.loading .fp-nextpage-link {display:none;}
 .file-picker .fp-nextpage.loading .fp-nextpage-loading {display:block;text-align: center;height: 100px;padding-top: 50px;}
