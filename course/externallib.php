@@ -921,7 +921,7 @@ class core_course_external extends external_api {
      * @return null
      * @since Moodle 2.3
      */
-    public static function import_course($importfrom, $importto, $deletecontent, $options) {
+    public static function import_course($importfrom, $importto, $deletecontent = 0, $options = array()) {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
         require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
