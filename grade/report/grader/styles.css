@@ -185,7 +185,7 @@ margin-right:10px;
 }
 
 table#user-grades .quickfeedback {
-border:#000 1px dashed;
+border:1px dashed #000;
 }
 
 .path-grade-report-grader #siteconfiglink {
@@ -262,7 +262,7 @@ border-width:0 1px 1px;
 }
 
 .path-grade-report-grader table td.topleft {
-border-bottom:none;
+border-bottom:0;
 }
 
 table#user-grades td.topleft {
@@ -325,12 +325,12 @@ margin: 10px 10px 0px 10px;
 }
 
 .path-grade-report-grader table#quick_edit td.fullname {
-border-left:none;
+border-left:0;
 padding-left:5px;
 }
 
 .path-grade-report-grader table#quick_edit td.picture {
-border-right:none;
+border-right:0;
 }
 
 .path-grade-report-grader table#quick_edit td.finalgrade input {
