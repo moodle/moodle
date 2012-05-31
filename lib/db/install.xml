@@ -2372,13 +2372,16 @@
         <FIELD NAME="repositoryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="lastsync"/>
         <FIELD NAME="lastsync" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Last time the proxy file was synced with repository" PREVIOUS="repositoryid" NEXT="lifetime"/>
         <FIELD NAME="lifetime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="How often do we have to sync proxy file with repository" PREVIOUS="lastsync" NEXT="reference"/>
-        <FIELD NAME="reference" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="lifetime" NEXT="referencehash"/>
+        <FIELD NAME="reference" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Identification of the external file. Repository plugins are interpreting it to locate the external file." PREVIOUS="lifetime" NEXT="referencehash"/>
         <FIELD NAME="referencehash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="Internal implementation detail, contains SHA1 hash of the reference field. Can be indexed and used for comparison. Not meant to be used by a non-core code." PREVIOUS="reference"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="repositoryid"/>
         <KEY NAME="repositoryid" TYPE="foreign" FIELDS="repositoryid" REFTABLE="repository_instances" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="uq_external_file" UNIQUE="true" FIELDS="repositoryid, referencehash" COMMENT="The combination of repositoryid and reference field is supposed to be a unique identification of an external file. Because the reference is a TEXT field, we can't use to compose the index. So we use the referencehash instead and the file API is responsible to keep it up-to-date"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="repository" COMMENT="This table contains one entry for every configured external repository instance." PREVIOUS="files_reference" NEXT="repository_instances">
       <FIELDS>

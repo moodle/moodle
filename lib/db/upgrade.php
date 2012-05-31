@@ -818,5 +818,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012060100.03);
     }
 
+    if ($oldversion < 2012060100.04) {
+        // Add a unique index over repositoryid and referencehash fields in files_reference table
+        $table = new xmldb_table('files_reference');
+        $index = new xmldb_index('uq_external_file', XMLDB_INDEX_UNIQUE, array('repositoryid', 'referencehash'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2012060100.04);
+    }
+
     return true;
 }
