@@ -156,7 +156,7 @@ class repository_equella extends repository {
      *
      * @param stored_file $stored_file
      */
-    public function send_file($stored_file) {
+    public function send_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
         $reference = base64_decode($stored_file->get_reference());
         $url = $this->appendtoken($reference);
         header('Location: ' . $url);
@@ -218,7 +218,7 @@ class repository_equella extends repository {
      * @return string
      */
     function getssotoken_raw($username, $shareid, $sharedsecret) {
-        $time = mktime() . '000';
+        $time = time() . '000';
         return urlencode($username)
             . ':'
             . $shareid

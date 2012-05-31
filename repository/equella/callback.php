@@ -27,7 +27,8 @@ require_once(dirname(dirname(__FILE__)).'/lib.php');
 require_login();
 $json = required_param('tlelinks', PARAM_RAW);
 
-$info = array_pop(json_decode($json));
+$decodedinfo = json_decode($json);
+$info = array_pop($decodedinfo);
 $url = clean_param($info->url, PARAM_URL);
 $thumbnail = clean_param($info->thumbnail, PARAM_URL);
 $filename  = clean_param($info->name, PARAM_FILE);
