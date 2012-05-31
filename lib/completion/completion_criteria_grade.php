@@ -216,7 +216,7 @@ class completion_criteria_grade extends completion_criteria {
         $rs = $DB->get_recordset_sql($sql);
         foreach ($rs as $record) {
             $completion = new completion_criteria_completion((array) $record, DATA_OBJECT_FETCH_BY_KEY);
-            $completion->mark_complete($record['timecompleted']);
+            $completion->mark_complete($record->timecompleted);
         }
         $rs->close();
     }
