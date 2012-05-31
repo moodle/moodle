@@ -61,9 +61,6 @@ class mod_resource_mod_form extends moodleform_mod {
         $mform->addElement('header', 'contentsection', get_string('contentheader', 'resource'));
 
         $filemanager_options = array();
-        // 3 == FILE_EXTERNAL | FILE_INTERNAL | FILE_REFERENCE
-        // These two constant names are defined in repository/lib.php
-        $filemanager_options['return_types'] = 7;
         $filemanager_options['accepted_types'] = '*';
         $filemanager_options['maxbytes'] = 0;
         $filemanager_options['maxfiles'] = -1;
