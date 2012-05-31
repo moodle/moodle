@@ -259,25 +259,9 @@ class repository_equella extends repository {
         global $USER, $COURSE;
 
         if( $readwrite == 'write' ) {
-            $systemcontext = context_system::instance();
-            if (!empty($COURSE->category)) {
-                $categorycontext = context_coursecat::instance($COURSE->category);
-            }
-            $coursecontext = context_course::instance($COURSE->id);
 
             foreach( self::get_all_editing_roles() as $role) {
-                //does user have this role?
-                $hasroleassignment = false;
-                if (user_has_role_assignment($USER->id, $role->id, $systemcontext->id)) {
-                    $hasroleassignment = true;
-                }
-                if (!$hasroleassignment && !empty($categorycontext) && user_has_role_assignment($USER->id, $role->id, $categorycontext->id)) {
-                    $hasroleassignment = true;
-                }
-                if (!$hasroleassignment && user_has_role_assignment($USER->id, $role->id, $coursecontext->id)) {
-                    $hasroleassignment = true;
-                }
-                if ($hasroleassignment) {
+                if (user_has_role_assignment($USER->id, $role->id, $this->context->id)) {
                     //see if the user has a role that is linked to an equella role
                     $shareid = $this->get_option("equella_{$role->shortname}_shareid");
                     if( !empty($shareid) ) {
