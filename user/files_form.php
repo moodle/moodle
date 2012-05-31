@@ -33,12 +33,11 @@ class user_files_form extends moodleform {
 
         $data           = $this->_customdata['data'];
         $options        = $this->_customdata['options'];
-        $cancelbutton   = isset($this->_customdata['cancelbutton']) ? $this->_customdata['cancelbutton'] : true;
 
         $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, $options);
         $mform->addElement('hidden', 'returnurl', $data->returnurl);
 
-        $this->add_action_buttons($cancelbutton, get_string('savechanges'));
+        $this->add_action_buttons(true, get_string('savechanges'));
 
         $this->set_data($data);
     }
