@@ -119,9 +119,10 @@ class core_course_external extends external_api {
                 $sectionvalues = array();
                 $sectionvalues['id'] = $section->id;
                 $sectionvalues['name'] = get_section_name($course, $section);
-                $summary = file_rewrite_pluginfile_urls($section->summary, 'webservice/pluginfile.php', $context->id, 'course', 'section', $section->id);
                 $sectionvalues['visible'] = $section->visible;
-                $sectionvalues['summary'] = format_text($summary, $section->summaryformat);
+                list($sectionvalues['summary'], $sectionvalues['summaryformat']) =
+                        external_format_text($section->summary, $section->summaryformat,
+                                $context->id, 'course', 'section', $section->id);
                 $sectioncontents = array();
 
                 //for each module of the section
@@ -205,6 +206,7 @@ class core_course_external extends external_api {
                     'name' => new external_value(PARAM_TEXT, 'Section name'),
                     'visible' => new external_value(PARAM_INT, 'is the section visible', VALUE_OPTIONAL),
                     'summary' => new external_value(PARAM_RAW, 'Section description'),
+                    'summaryformat' => new external_format_value('summary'),
                     'modules' => new external_multiple_structure(
                             new external_single_structure(
                                 array(
@@ -311,8 +313,8 @@ class core_course_external extends external_api {
             $courseinfo['fullname'] = $course->fullname;
             $courseinfo['shortname'] = $course->shortname;
             $courseinfo['categoryid'] = $course->category;
-            $courseinfo['summary'] = $course->summary;
-            $courseinfo['summaryformat'] = $course->summaryformat;
+            list($courseinfo['summary'], $courseinfo['summaryformat']) =
+                external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', 0);
             $courseinfo['format'] = $course->format;
             $courseinfo['startdate'] = $course->startdate;
             $courseinfo['numsections'] = $course->numsections;
@@ -367,8 +369,7 @@ class core_course_external extends external_api {
                             'fullname' => new external_value(PARAM_TEXT, 'full name'),
                             'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL),
                             'summary' => new external_value(PARAM_RAW, 'summary'),
-                            'summaryformat' => new external_value(PARAM_INT,
-                                    'the summary text Moodle format'),
+                            'summaryformat' => new external_format_value('summary'),
                             'format' => new external_value(PARAM_PLUGIN,
                                     'course format: weeks, topics, social, site,..'),
                             'showgrades' => new external_value(PARAM_INT,
@@ -435,8 +436,7 @@ class core_course_external extends external_api {
                             'categoryid' => new external_value(PARAM_INT, 'category id'),
                             'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL),
                             'summary' => new external_value(PARAM_RAW, 'summary', VALUE_OPTIONAL),
-                            'summaryformat' => new external_value(PARAM_INT,
-                                    'the summary text Moodle format', VALUE_DEFAULT, FORMAT_MOODLE),
+                            'summaryformat' => new external_format_value('summary', VALUE_DEFAULT),
                             'format' => new external_value(PARAM_PLUGIN,
                                     'course format: weeks, topics, social, site,..',
                                     VALUE_DEFAULT, $courseconfig->format),
@@ -559,6 +559,9 @@ class core_course_external extends external_api {
             }
 
             $course['category'] = $course['categoryid'];
+
+            // Summary format.
+            $course['summaryformat'] = external_validate_format($course['summaryformat']);
 
             //Note: create_course() core function check shortname, idnumber, category
             $course['id'] = create_course((object) $course)->id;
@@ -1085,13 +1088,9 @@ class core_course_external extends external_api {
                     $categoryinfo = array();
                     $categoryinfo['id'] = $category->id;
                     $categoryinfo['name'] = $category->name;
-                    $categoryinfo['description'] = file_rewrite_pluginfile_urls($category->description,
-                            'webservice/pluginfile.php', $context->id, 'coursecat', 'description', null);
-                    $options = new stdClass;
-                    $options->noclean = true;
-                    $options->para = false;
-                    $categoryinfo['description'] = format_text($categoryinfo['description'],
-                            $category->descriptionformat, $options);
+                    list($categoryinfo['description'], $categoryinfo['descriptionformat']) =
+                        external_format_text($category->description, $category->descriptionformat,
+                                $context->id, 'coursecat', 'description', null);
                     $categoryinfo['parent'] = $category->parent;
                     $categoryinfo['sortorder'] = $category->sortorder;
                     $categoryinfo['coursecount'] = $category->coursecount;
@@ -1160,6 +1159,7 @@ class core_course_external extends external_api {
                     'name' => new external_value(PARAM_TEXT, 'category name'),
                     'idnumber' => new external_value(PARAM_RAW, 'category id number', VALUE_OPTIONAL),
                     'description' => new external_value(PARAM_RAW, 'category description'),
+                    'descriptionformat' => new external_format_value('description'),
                     'parent' => new external_value(PARAM_INT, 'parent category id'),
                     'sortorder' => new external_value(PARAM_INT, 'category sorting order'),
                     'coursecount' => new external_value(PARAM_INT, 'number of courses in this category'),
@@ -1193,6 +1193,7 @@ class core_course_external extends external_api {
                                         'the new category idnumber', VALUE_OPTIONAL),
                                 'description' => new external_value(PARAM_RAW,
                                         'the new category description', VALUE_OPTIONAL),
+                                'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
                                 'theme' => new external_value(PARAM_THEME,
                                         'the new category theme. This option must be enabled on moodle',
                                         VALUE_OPTIONAL),
@@ -1257,7 +1258,7 @@ class core_course_external extends external_api {
             if (!empty($category['description'])) {
                 $newcategory->description = $category['description'];
             }
-            $newcategory->descriptionformat = FORMAT_HTML;
+            $newcategory->descriptionformat = external_validate_format($category['descriptionformat']);
             if (isset($category['theme']) and !empty($CFG->allowcategorythemes)) {
                 $newcategory->theme = $category['theme'];
             }
@@ -1308,6 +1309,7 @@ class core_course_external extends external_api {
                             'idnumber' => new external_value(PARAM_RAW, 'category id number', VALUE_OPTIONAL),
                             'parent' => new external_value(PARAM_INT, 'parent category id', VALUE_OPTIONAL),
                             'description' => new external_value(PARAM_RAW, 'category description', VALUE_OPTIONAL),
+                            'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
                             'theme' => new external_value(PARAM_THEME,
                                     'the category theme. This option must be enabled on moodle', VALUE_OPTIONAL),
                         )
@@ -1356,7 +1358,7 @@ class core_course_external extends external_api {
             }
             if (!empty($cat['description'])) {
                 $category->description = $cat['description'];
-                $category->descriptionformat = FORMAT_HTML;
+                $category->descriptionformat = external_validate_format($cat['descriptionformat']);
             }
             if (!empty($cat['theme'])) {
                 $category->theme = $cat['theme'];

@@ -53,7 +53,11 @@ class core_notes_external extends external_api {
                             'publishstate' => new external_value(PARAM_ALPHA, '\'personal\', \'course\' or \'site\''),
                             'courseid' => new external_value(PARAM_INT, 'course id of the note (in Moodle a note can only be created into a course, even for site and personal notes)'),
                             'text' => new external_value(PARAM_RAW, 'the text of the message - text or HTML'),
-                            'format' => new external_value(PARAM_ALPHA, '\'text\' or \'html\'', VALUE_DEFAULT, 'text'),
+                            'format' => new external_value(PARAM_ALPHANUMEXT, // For backward compatibility it can not be PARAM_INT, so we don't use external_format_value.
+                                    'text format (' . FORMAT_HTML . ' = HTML, '
+                                    . FORMAT_MOODLE . ' = MOODLE, '
+                                    . FORMAT_PLAIN . ' = PLAIN or '
+                                    . FORMAT_MARKDOWN . ' = MARKDOWN)', VALUE_DEFAULT, FORMAT_HTML),
                             'clientnoteid' => new external_value(PARAM_ALPHANUMEXT, 'your own client id for the note. If this id is provided, the fail message id will be returned to you', VALUE_OPTIONAL),
                         )
                     )
@@ -130,18 +134,19 @@ class core_notes_external extends external_api {
                 $dbnote = new stdClass;
                 $dbnote->courseid = $note['courseid'];
                 $dbnote->userid = $note['userid'];
-                //clean param text and set format accordingly
+                // Need to support 'html' and 'text' format values for backward compatibility.
                 switch (strtolower($note['format'])) {
                     case 'html':
-                        $dbnote->content = clean_param($note['text'], PARAM_CLEANHTML);
-                        $dbnote->format = FORMAT_HTML;
+                        $textformat = FORMAT_HTML;
                         break;
                     case 'text':
+                        $textformat = FORMAT_PLAIN;
                     default:
-                        $dbnote->content = clean_param($note['text'], PARAM_TEXT);
-                        $dbnote->format = FORMAT_PLAIN;
+                        $textformat = external_validate_format($note['format']);
                         break;
                 }
+                $dbnote->content = $note['text'];
+                $dbnote->format = $textformat;
 
                 //get the state ('personal', 'course', 'site')
                 switch ($note['publishstate']) {
@@ -169,6 +174,9 @@ class core_notes_external extends external_api {
 
                 $resultnote['noteid'] = $success;
             } else {
+                // WARNINGS: for backward compatibility we return this errormessage.
+                //          We should have thrown exceptions as these errors prevent results to be returned.
+                // See http://docs.moodle.org/dev/Errors_handling_in_web_services#When_to_send_a_warning_on_the_server_side .
                 $resultnote['noteid'] = -1;
                 $resultnote['errormessage'] = $errormessage;
             }

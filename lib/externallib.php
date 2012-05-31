@@ -584,19 +584,242 @@ function external_delete_descriptions($component) {
 }
 
 /**
- * Creates a warnings external_multiple_structure
+ * Standard Moodle web service warnings
  *
- * @return external_multiple_structure
- * @since  Moodle 2.3
+ * @package    core_webservice
+ * @copyright  2012 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.3
  */
-function external_warnings() {
-    return new external_multiple_structure(
-        new external_single_structure(array(
-            'item' => new external_value(PARAM_TEXT, 'item', VALUE_OPTIONAL),
-            'itemid' => new external_value(PARAM_INT, 'item id', VALUE_OPTIONAL),
-            'warningcode' => new external_value(PARAM_ALPHANUM, 'the warning code can be used by
-                the client app to implement specific behaviour'),
-            'message' => new external_value(PARAM_TEXT, 'untranslated english message to explain the warning')
-                ), 'warning'), 'list of warnings', VALUE_OPTIONAL
-    );
+class external_warnings extends external_multiple_structure {
+
+    /**
+     * Constructor
+     *
+     * @since Moodle 2.3
+     */
+    public function __construct() {
+
+        parent::__construct(
+            new external_single_structure(
+                array(
+                    'item' => new external_value(PARAM_TEXT, 'item', VALUE_OPTIONAL),
+                    'itemid' => new external_value(PARAM_INT, 'item id', VALUE_OPTIONAL),
+                    'warningcode' => new external_value(PARAM_ALPHANUM,
+                            'the warning code can be used by the client app to implement specific behaviour'),
+                    'message' => new external_value(PARAM_TEXT,
+                            'untranslated english message to explain the warning')
+                ), 'warning'),
+            'list of warnings', VALUE_OPTIONAL);
+    }
+}
+
+/**
+ * A pre-filled external_value class for text format.
+ *
+ * Default is FORMAT_HTML
+ * This should be used all the time in external xxx_params()/xxx_returns functions
+ * as it is the standard way to implement text format param/return values.
+ *
+ * @package    core_webservice
+ * @copyright  2012 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.3
+ */
+class external_format_value extends external_value {
+
+    /**
+     * Constructor
+     *
+     * @param string $textfieldname Name of the text field
+     * @param int $required if VALUE_REQUIRED then set standard default FORMAT_HTML
+     * @since Moodle 2.3
+     */
+    public function __construct($textfieldname, $required = VALUE_REQUIRED) {
+
+        $default = ($required == VALUE_DEFAULT) ? FORMAT_HTML : null;
+
+        $desc = $textfieldname . ' format (' . FORMAT_HTML . ' = HTML, '
+                . FORMAT_MOODLE . ' = MOODLE, '
+                . FORMAT_PLAIN . ' = PLAIN or '
+                . FORMAT_MARKDOWN . ' = MARKDOWN)';
+
+        parent::__construct($type, $desc='', $required, $default);
+    }
+}
+
+/**
+ * Validate text field format against known FORMAT_XXX
+ *
+ * @param array $format the format to validate
+ * @return the validated format
+ * @throws coding_exception
+ * @since 2.3
+ */
+function external_validate_format($format) {
+    $allowedformats = array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN);
+    if (!in_array($format, $allowedformats)) {
+        throw new moodle_exception('formatnotsupported', 'webservice', '' , null,
+                'The format with value=' . $format . ' is not supported by this Moodle site');
+    }
+    return $format;
+}
+
+/**
+ * Format the text to be returned properly as requested by the either the web service server,
+ * either by an internally call.
+ * The caller can change the format (raw, filter, file, fileurl) with the external_settings singleton
+ * All web service servers must set this singleton when parsing the $_GET and $_POST.
+ *
+ * @param string $text The content that may contain ULRs in need of rewriting.
+ * @param int $textformat The text format, by default FORMAT_HTML.
+ * @param int $contextid This parameter and the next two identify the file area to use.
+ * @param string $component
+ * @param string $filearea helps identify the file area.
+ * @param int $itemid helps identify the file area.
+ * @return array text + textformat
+ * @since Moodle 2.3
+ */
+function external_format_text($text, $textformat, $contextid, $component, $filearea, $itemid) {
+    global $CFG;
+
+    // Get settings (singleton).
+    $settings = external_settings::get_instance();
+
+    if ($settings->get_fileurl()) {
+        $text = file_rewrite_pluginfile_urls($text, $settings->get_file(), $contextid, $component, $filearea, $itemid);
+    }
+
+    if (!$settings->get_raw()) {
+        $textformat = FORMAT_HTML; // Force format to HTML when not raw.
+        $text = format_text($text, $textformat,
+                array('noclean' => true, 'para' => false, 'filter' => $settings->get_filter()));
+    }
+
+    return array($text, $textformat);
+}
+
+/**
+ * Singleton to handle the external settings.
+ *
+ * We use singleton to encapsulate the "logic"
+ *
+ * @package    core_webservice
+ * @copyright  2012 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.3
+ */
+class external_settings {
+
+    /** @var object the singleton instance */
+    public static $instance = null;
+
+    /** @var boolean Should the external function return raw text or formatted */
+    private $raw = false;
+
+    /** @var boolean Should the external function filter the text */
+    private $filter = false;
+
+    /** @var boolean Should the external function rewrite plugin file url */
+    private $fileurl = true;
+
+    /** @var string In which file should the urls be rewritten */
+    private $file = 'webservice/pluginfile.php';
+
+    /**
+     * Constructor - protected - can not be instanciated
+     */
+    protected function __construct() {
+    }
+
+    /**
+     * Clone - private - can not be cloned
+     */
+    private final function __clone() {
+    }
+
+    /**
+     * Return only one instance
+     *
+     * @return object
+     */
+    public static function get_instance() {
+        if (self::$instance === null) {
+            self::$instance = new external_settings;
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Set raw
+     *
+     * @param boolean $raw
+     */
+    public function set_raw($raw) {
+        $this->raw = $raw;
+    }
+
+    /**
+     * Get raw
+     *
+     * @return boolean
+     */
+    public function get_raw() {
+        return $this->raw;
+    }
+
+    /**
+     * Set filter
+     *
+     * @param boolean $filter
+     */
+    public function set_filter($filter) {
+        $this->filter = $filter;
+    }
+
+    /**
+     * Get filter
+     *
+     * @return boolean
+     */
+    public function get_filter() {
+        return $this->filter;
+    }
+
+    /**
+     * Set fileurl
+     *
+     * @param boolean $fileurl
+     */
+    public function set_fileurl($fileurl) {
+        $this->fileurl = $fileurl;
+    }
+
+    /**
+     * Get fileurl
+     *
+     * @return boolean
+     */
+    public function get_fileurl() {
+        return $this->fileurl;
+    }
+
+    /**
+     * Set file
+     *
+     * @param string $file
+     */
+    public function set_file($file) {
+        $this->file = $file;
+    }
+
+    /**
+     * Get file
+     *
+     * @return string
+     */
+    public function get_file() {
+        return $this->file;
+    }
 }

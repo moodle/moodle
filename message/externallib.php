@@ -50,7 +50,8 @@ class core_message_external extends external_api {
                     new external_single_structure(
                         array(
                             'touserid' => new external_value(PARAM_INT, 'id of the user to send the private message'),
-                            'text' => new external_value(PARAM_RAW, 'the text of the message - not that you can send anything it will be automatically cleaned to PARAM_TEXT and used againt MOODLE_FORMAT'),
+                            'text' => new external_value(PARAM_RAW, 'the text of the message'),
+                            'textformat' => new external_format_value('text', VALUE_DEFAULT),
                             'clientmsgid' => new external_value(PARAM_ALPHANUMEXT, 'your own client id for the message. If this id is provided, the fail message id will be returned to you', VALUE_OPTIONAL),
                         )
                     )
@@ -111,7 +112,6 @@ class core_message_external extends external_api {
 
         $resultmessages = array();
         foreach ($params['messages'] as $message) {
-            $text = clean_param($message['text'], PARAM_TEXT);
             $resultmsg = array(); //the infos about the success of the operation
 
             //we are going to do some checking
@@ -143,7 +143,8 @@ class core_message_external extends external_api {
             //now we can send the message (at least try)
             if ($success) {
                 //TODO MDL-31118 performance improvement - edit the function so we can pass an array instead one touser object
-                $success = message_post_message($USER, $tousers[$message['touserid']], $text, FORMAT_MOODLE);
+                $success = message_post_message($USER, $tousers[$message['touserid']],
+                        $message['text'], external_validate_format($message['textformat']));
             }
 
             //build the resultmsg
@@ -153,6 +154,9 @@ class core_message_external extends external_api {
             if ($success) {
                 $resultmsg['msgid'] = $success;
             } else {
+                // WARNINGS: for backward compatibility we return this errormessage.
+                //          We should have thrown exceptions as these errors prevent results to be returned.
+                // See http://docs.moodle.org/dev/Errors_handling_in_web_services#When_to_send_a_warning_on_the_server_side .
                 $resultmsg['msgid'] = -1;
                 $resultmsg['errormessage'] = $errormessage;
             }
