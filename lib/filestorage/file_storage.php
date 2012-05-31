@@ -1938,6 +1938,7 @@ class file_storage {
             $id = $DB->insert_record('files_reference', array(
                 'repositoryid'  => $repositoryid,
                 'reference'     => $reference,
+                'referencehash' => sha1($reference),
                 'lastsync'      => $lastsync,
                 'lifetime'      => $lifetime));
         } catch (dml_exception $e) {

@@ -779,5 +779,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012060100.01);
     }
 
+    if ($oldversion < 2012060100.02) {
+        // Populate referencehash field with SHA1 hash of the reference - this shoudl affect only 2.3dev sites
+        // that were using the feature for testing. Production sites have the table empty.
+        $rs = $DB->get_recordset('files_reference', null, '', 'id, reference');
+        foreach ($rs as $record) {
+            $hash = sha1($record->reference);
+            $DB->set_field('files_reference', 'referencehash', $hash, array('id' => $record->id));
+        }
+        $rs->close();
+
+        upgrade_main_savepoint(true, 2012060100.02);
+    }
+
     return true;
 }
