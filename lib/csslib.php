@@ -526,6 +526,8 @@ class css_optimiser {
         );
         $imports = array();
         $charset = false;
+        // Keyframes are used for CSS animation they will be processed right at the very end.
+        $keyframes = array();
 
         $currentprocess = self::PROCESSING_START;
         $currentrule = css_rule::init();
@@ -579,6 +581,14 @@ class css_optimiser {
                                 $currentmedia = $medias[$mediatypes];
                                 $currentprocess = self::PROCESSING_SELECTORS;
                                 $buffer = '';
+                            } else if ($currentatrule == 'keyframes' && preg_match('#@((\-moz\-|\-webkit\-)?keyframes)\s*([^\s]+)#', $buffer, $matches)) {
+                                $keyframefor = $matches[1];
+                                $keyframename = $matches[3];
+                                $keyframe = new css_keyframe($keyframefor, $keyframename);
+                                $keyframes[] = $keyframe;
+                                $currentmedia = $keyframe;
+                                $currentprocess = self::PROCESSING_SELECTORS;
+                                $buffer = '';
                             }
                             // continue 1: The switch processing chars
                             // continue 2: The switch processing the state
@@ -612,8 +622,8 @@ class css_optimiser {
                                 continue 3;
                             }
                             if (!empty($buffer)) {
-                                if ($suspectatrule && preg_match('#@(media|import|charset)\s*#', $buffer, $matches)) {
-                                    $currentatrule = $matches[1];
+                                if ($suspectatrule && preg_match('#@(media|import|charset|(\-moz\-|\-webkit\-)?(keyframes))\s*#', $buffer, $matches)) {
+                                    $currentatrule = (!empty($matches[3]))?$matches[3]:$matches[1];
                                     $currentprocess = self::PROCESSING_ATRULE;
                                     $buffer .= $char;
                                 } else {
@@ -652,6 +662,10 @@ class css_optimiser {
                                 continue 3;
                             }
                             if ($currentatrule == 'media') {
+                                $currentmedia = $medias['all'];
+                                $currentatrule = false;
+                                $buffer = '';
+                            } else if (strpos($currentatrule, 'keyframes') !== false) {
                                 $currentmedia = $medias['all'];
                                 $currentatrule = false;
                                 $buffer = '';
@@ -760,6 +774,18 @@ class css_optimiser {
             }
             $css .= $media->out();
         }
+
+        if (count($keyframes) > 0) {
+            foreach ($keyframes as $keyframe) {
+                $this->optimisedrules += $keyframe->count_rules();
+                $this->optimisedselectors +=  $keyframe->count_selectors();
+                if ($keyframe->has_errors()) {
+                    $this->errors += $keyframe->get_errors();
+                }
+                $css .= $keyframe->out();
+            }
+        }
+
         $this->optimisedstrlen = strlen($css);
 
         $this->timecomplete = microtime(true);
@@ -1135,6 +1161,17 @@ abstract class css_writer {
             self::decrease_indent();
             $output .= '}';
         }
+        return $output;
+    }
+
+    public static function keyframe($for, $name, array &$rules) {
+        $nl = self::get_separator();
+
+        $output = $nl."@{$for} {$name} {";
+        foreach ($rules as $rule) {
+            $output .= $rule->out();
+        }
+        $output .= '}';
         return $output;
     }
 
@@ -1536,44 +1573,23 @@ class css_rule {
             }
         }
         return $css." has the following errors:\n".join("\n", $errors);
-
     }
 }
 
-/**
- * A media class to organise rules by the media they apply to.
- *
- * @package core_css
- * @category css
- * @copyright 2012 Sam Hemelryk
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class css_media {
-
+abstract class css_rule_collection {
     /**
-     * An array of the different media types this instance applies to.
-     * @var array
-     */
-    protected $types = array();
-
-    /**
-     * An array of rules within this media instance
+     * An array of rules within this collection instance
      * @var array
      */
     protected $rules = array();
 
     /**
-     * Initalises a new media instance
-     *
-     * @param string $for The media that the contained rules are destined for.
+     * The collection must be able to print itself.
      */
-    public function __construct($for = 'all') {
-        $types = explode(',', $for);
-        $this->types = array_map('trim', $types);
-    }
+    abstract public function out();
 
     /**
-     * Adds a new CSS rule to this media instance
+     * Adds a new CSS rule to this collection instance
      *
      * @param css_rule $newrule
      */
@@ -1589,7 +1605,7 @@ class css_media {
     }
 
     /**
-     * Returns the rules used by this
+     * Returns the rules used by this collection
      *
      * @return array
      */
@@ -1622,7 +1638,7 @@ class css_media {
     }
 
     /**
-     * Returns the total number of rules that exist within this media set
+     * Returns the total number of rules that exist within this collection
      *
      * @return int
      */
@@ -1631,7 +1647,7 @@ class css_media {
     }
 
     /**
-     * Returns the total number of selectors that exist within this media set
+     * Returns the total number of selectors that exist within this collection
      *
      * @return int
      */
@@ -1641,6 +1657,62 @@ class css_media {
             $count += $rule->get_selector_count();
         }
         return $count;
+    }
+
+    /**
+     * Returns true if the collection has any rules that have errors
+     *
+     * @return boolean
+     */
+    public function has_errors() {
+        foreach ($this->rules as $rule) {
+            if ($rule->has_errors()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns any errors that have happened within rules in this collection.
+     *
+     * @return string
+     */
+    public function get_errors() {
+        $errors = array();
+        foreach ($this->rules as $rule) {
+            if ($rule->has_errors()) {
+                $errors[] = $rule->get_error_string();
+            }
+        }
+        return $errors;
+    }
+}
+
+/**
+ * A media class to organise rules by the media they apply to.
+ *
+ * @package core_css
+ * @category css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_media extends css_rule_collection {
+
+    /**
+     * An array of the different media types this instance applies to.
+     * @var array
+     */
+    protected $types = array();
+
+    /**
+     * Initalises a new media instance
+     *
+     * @param string $for The media that the contained rules are destined for.
+     */
+    public function __construct($for = 'all') {
+        $types = explode(',', $for);
+        $this->types = array_map('trim', $types);
     }
 
     /**
@@ -1660,34 +1732,56 @@ class css_media {
     public function get_types() {
         return $this->types;
     }
+}
 
+/**
+ * A media class to organise rules by the media they apply to.
+ *
+ * @package core_css
+ * @category css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_keyframe extends css_rule_collection {
+
+    /** @var string $for The directive e.g. keyframes, -moz-keyframes, -webkit-keyframes  */
+    protected $for;
+
+    /** @var string $name The name for the keyframes */
+    protected $name;
     /**
-     * Returns true if the media has any rules that have errors
+     * Constructs a new keyframe
      *
-     * @return boolean
+     * @param string $for The directive e.g. keyframes, -moz-keyframes, -webkit-keyframes
+     * @param string $name The name for the keyframes
      */
-    public function has_errors() {
-        foreach ($this->rules as $rule) {
-            if ($rule->has_errors()) {
-                return true;
-            }
-        }
-        return false;
+    public function __construct($for, $name) {
+        $this->for = $for;
+        $this->name = $name;
     }
-
     /**
-     * Returns any errors that have happened within rules in this media set.
+     * Returns the directive of this keyframe
+     *
+     * e.g. keyframes, -moz-keyframes, -webkit-keyframes
+     * @return string
+     */
+    public function get_for() {
+        return $this->for;
+    }
+    /**
+     * Returns the name of this keyframe
+     * @return string
+     */
+    public function get_name() {
+        return $this->name;
+    }
+    /**
+     * Returns the CSS for this collection of keyframes and all of its rules.
      *
      * @return string
      */
-    public function get_errors() {
-        $errors = array();
-        foreach ($this->rules as $rule) {
-            if ($rule->has_errors()) {
-                $errors[] = $rule->get_error_string();
-            }
-        }
-        return $errors;
+    public function out() {
+        return css_writer::keyframe($this->for, $this->name, $this->rules);
     }
 }
 

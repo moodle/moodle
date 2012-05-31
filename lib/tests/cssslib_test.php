@@ -72,7 +72,7 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->try_invalid_css_handling($optimiser);
         $this->try_bulk_processing($optimiser);
         $this->try_break_things($optimiser);
-        $this->try_advanced_css_animation($optimiser);
+        $this->try_keyframe_css_animation($optimiser);
     }
 
     /**
@@ -807,17 +807,87 @@ CSS;
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
-    public function try_advanced_css_animation(css_optimiser $optimiser) {
-        $css = '.dndupload-arrow{width:56px;height:47px;position:absolute;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;background:url(\'[[pix:theme|fp/dnd_arrow]]\') center no-repeat;margin-left:-28px;}';
+    public function try_keyframe_css_animation(css_optimiser $optimiser) {
         $css = '.dndupload-arrow{width:56px;height:47px;position:absolute;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;background:url(\'[[pix:theme|fp/dnd_arrow]]\') no-repeat center;margin-left:-28px;}';
+        $this->assertEquals($css, $optimiser->process($css));
+
+        $css = '@keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}';
+        $this->assertEquals($css, $optimiser->process($css));
+
+        $css  = "@keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}\n";
+        $css .= "@-moz-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}\n";
+        $css .= "@-webkit-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}";
+        $this->assertEquals($css, $optimiser->process($css));
+
+
+        $cssin = <<<CSS
+.test {color:#FFF;}
+.testtwo {color:#FFF;}
+@media print {
+    .test {background-color:#FFF;}
+}
+.dndupload-arrow{width:56px;height:47px;position:absolute;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;background:url('[[pix:theme|fp/dnd_arrow]]') no-repeat center;margin-left:-28px;}
+@media print {
+    .test {background-color:#000;}
+}
+@keyframes mymove {0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}}
+@-moz-keyframes mymove{0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}}
+@-webkit-keyframes mymove {0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}}
+@media print {
+    .test {background-color:#333;}
+}
+.test {color:#888;}
+.testtwo {color:#888;}
+CSS;
+
+        $cssout = <<<CSS
+.test,
+.testtwo{color:#888;}
+.dndupload-arrow{width:56px;height:47px;position:absolute;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;background:url('[[pix:theme|fp/dnd_arrow]]') no-repeat center;margin-left:-28px;}
+
+
+@media print {
+  .test{background:#333;}
+}
+@keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
+@-moz-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
+@-webkit-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
+CSS;
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
-        $cssin = '@keyframes mymove{0%{top:10px;}12%{top:40px;}30%{top:20px}65%{top:35px;}100%{top:9px;}}';
-        $cssout = '@keyframes mymove{0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}}';
+
+
+        $cssin = <<<CSS
+.dndupload-target {display:none;}
+.dndsupported .dndupload-ready .dndupload-target {display:block;}
+.dndupload-uploadinprogress {display:none;text-align:center;}
+.dndupload-uploading .dndupload-uploadinprogress {display:block;}
+.dndupload-arrow {background:url('[[pix:theme|fp/dnd_arrow]]') center no-repeat;width:56px;height:47px;position:absolute;margin-left: -28px;/*right:46%;left:46%;*/animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;}
+@keyframes mymove {0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}}@-moz-keyframes mymove{0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}}@-webkit-keyframes mymove {0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}}
+
+/*
+ * Select Dialogue (File Manager only)
+ */
+.filemanager.fp-select .fp-select-loading {display:none;}
+.filemanager.fp-select.loading .fp-select-loading {display:block;}
+.filemanager.fp-select.loading form {display:none;}
+CSS;
+
+        $cssout = <<<CSS
+.dndupload-target,
+.filemanager.fp-select .fp-select-loading,
+.filemanager.fp-select.loading form{display:none;}
+.dndsupported .dndupload-ready .dndupload-target,
+.dndupload-uploading .dndupload-uploadinprogress,
+.filemanager.fp-select.loading .fp-select-loading{display:block;}
+.dndupload-uploadinprogress{display:none;text-align:center;}
+.dndupload-arrow{width:56px;height:47px;position:absolute;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;background:url('[[pix:theme|fp/dnd_arrow]]') no-repeat center;margin-left:-28px;}
+
+@keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
+@-moz-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
+@-webkit-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
+CSS;
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
-        $cssin = '@keyframes mymove{0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}} @-moz-keyframes mymove{0%{top:10px;}12%{top:40px;}30%{top:20px}65%{top:35px;}100%{top:9px;}} @-webkit-keyframes mymove{0%{top:10px;}12%{top:40px;}30%{top:20px}65%{top:35px;}100%{top:9px;}}';
-        $cssout = '@keyframes mymove{0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}} @-moz-keyframes mymove{0%{top:10px;}12%{top:40px;}30%{top:20px}65%{top:35px;}100%{top:9px;}} @-webkit-keyframes mymove{0%{top:10px;}12%{top:40px;}30%{top:20px}65%{top:35px;}100%{top:9px;}}';
-        $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 }
