@@ -810,7 +810,7 @@ class mssql_native_moodle_database extends moodle_database {
         } else {
             unset($params['id']);
             if ($returnid) {
-                $returning = "; SELECT SCOPE_IDENTITY()";
+                $returning = "OUTPUT inserted.id";
             }
         }
 
@@ -822,18 +822,29 @@ class mssql_native_moodle_database extends moodle_database {
         $qms    = array_fill(0, count($params), '?');
         $qms    = implode(',', $qms);
 
-        $sql = "INSERT INTO {" . $table . "} ($fields) VALUES($qms) $returning";
+        $sql = "INSERT INTO {" . $table . "} ($fields) $returning VALUES ($qms)";
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
 
         $this->query_start($sql, $params, SQL_QUERY_INSERT);
         $result = mssql_query($rawsql, $this->mssql);
-        $this->query_end($result);
+        // Expected results are:
+        //     - true: insert ok and there isn't returned information.
+        //     - false: insert failed and there isn't returned information.
+        //     - resource: insert executed, need to look for returned (output)
+        //           values to know if the insert was ok or no. Posible values
+        //           are false = failed, integer = insert ok, id returned.
+        $end = false;
+        if (is_bool($result)) {
+            $end = $result;
+        } else if (is_resource($result)) {
+            $end = mssql_result($result, 0, 0); // Fetch 1st column from 1st row.
+        }
+        $this->query_end($end); // End the query with the calculated $end.
 
         if ($returning !== "") {
-            $row = mssql_fetch_assoc($result);
-            $params['id'] = reset($row);
+            $params['id'] = $end;
         }
         $this->free_result($result);
 
