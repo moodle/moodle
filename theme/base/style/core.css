@@ -942,6 +942,12 @@ sup {vertical-align: super;}
     line-height: 2em;
 }
 
+.dir-rtl #choosercontainer #chooseform .instruction, .jsenabled #choosercontainer #chooseform .typesummary {
+    left: 0px;
+    right: 18.5em;
+    border-right: 1px solid grey;
+}
+
 /* Selected option settings */
 .jsenabled .choosercontainer #chooseform .instruction,
 .choosercontainer #chooseform .selected .typesummary {
