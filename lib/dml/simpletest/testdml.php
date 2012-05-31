@@ -2044,6 +2044,34 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1e-300, $DB->get_field($tablename, 'onetext', array('id' => $id)));
         $id = $DB->insert_record($tablename, array('onetext' => 1e300));
         $this->assertEqual(1e300, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+
+        // Test that inserting data violating one unique key leads to error.
+        // Empty the table completely.
+        $this->assertTrue($DB->delete_records($tablename));
+
+        // Add one unique constraint (index).
+        $key = new xmldb_key('testuk', XMLDB_KEY_UNIQUE, array('course', 'oneint'));
+        $dbman->add_key($table, $key);
+
+        // Let's insert one record violating the constraint multiple times.
+        $record = (object)array('course' => 1, 'oneint' => 1);
+        $this->assertTrue($DB->insert_record($tablename, $record, false)); // insert 1st. No problem expected.
+
+        // Re-insert same record, not returning id. dml_exception expected.
+        try {
+            $DB->insert_record($tablename, $record, false);
+            $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
+
+        // Re-insert same record, returning id. dml_exception expected.
+        try {
+            $DB->insert_record($tablename, $record, true);
+            $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
     }
 
     public function test_import_record() {
