@@ -792,5 +792,31 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012060100.02);
     }
 
+    if ($oldversion < 2012060100.03) {
+        // Merge duplicate records in files_reference that were created during the development
+        // phase at 2.3dev sites. This is needed so we can create the unique index over
+        // (repositoryid, referencehash) fields.
+        $sql = "SELECT repositoryid, referencehash, MIN(id) AS minid
+                  FROM {files_reference}
+              GROUP BY repositoryid, referencehash
+                HAVING COUNT(*) > 1;";
+        $duprs = $DB->get_recordset_sql($sql);
+        foreach ($duprs as $duprec) {
+            // get the list of all ids in {files_reference} that need to be remapped
+            $dupids = $DB->get_records_select('files_reference', "repositoryid = ? AND referencehash = ? AND id > ?",
+                array($duprec->repositoryid, $duprec->referencehash, $duprec->minid), '', 'id');
+            $dupids = array_keys($dupids);
+            // relink records in {files} that are now referring to a duplicate record
+            // in {files_reference} to refer to the first one
+            list($subsql, $subparams) = $DB->get_in_or_equal($dupids);
+            $DB->set_field_select('files', 'referencefileid', $duprec->minid, "referencefileid $subsql", $subparams);
+            // and finally remove all orphaned records from {files_reference}
+            $DB->delete_records_list('files_reference', 'id', $dupids);
+        }
+        $duprs->close();
+
+        upgrade_main_savepoint(true, 2012060100.03);
+    }
+
     return true;
 }
