@@ -1659,59 +1659,74 @@ class file_storage {
     }
 
     /**
-     * Search references by providing reference content
+     * Returns all aliases that link to an external file identified by the given reference
      *
-     * @param string $str
-     * @return array
+     * Aliases in user draft areas are excluded from the returned list.
+     *
+     * @param string $reference identification of the referenced file
+     * @return array of stored_file indexed by its pathnamehash
      */
-    public function search_references($str) {
+    public function search_references($reference) {
         global $DB;
+
+        if (is_null($reference)) {
+            throw new coding_exception('NULL is not a valid reference to an external file');
+        }
+
+        $referencehash = sha1($reference);
+
         $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
-             LEFT JOIN {files_reference} r
-                       ON f.referencefileid = r.id
-                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
-                 AND (f.component <> ? OR f.filearea <> ?)";
+                  JOIN {files_reference} r ON f.referencefileid = r.id
+                  JOIN {repository_instances} ri ON r.repositoryid = ri.id
+                 WHERE r.referencehash = ?
+                       AND (f.component <> ? OR f.filearea <> ?)";
 
-        $rs = $DB->get_recordset_sql($sql, array($str, 'user', 'draft'));
+        $rs = $DB->get_recordset_sql($sql, array($referencehash, 'user', 'draft'));
         $files = array();
         foreach ($rs as $filerecord) {
-            $file = $this->get_file_instance($filerecord);
-            if ($file->is_external_file()) {
-                $files[$filerecord->pathnamehash] = $file;
-            }
+            $files[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
         }
 
         return $files;
     }
 
     /**
-     * Search references count by providing reference content
+     * Returns the number of aliases that link to an external file identified by the given reference
      *
-     * @param string $str
+     * Aliases in user draft areas are not counted.
+     *
+     * @param string $reference identification of the referenced file
      * @return int
      */
-    public function search_references_count($str) {
+    public function search_references_count($reference) {
         global $DB;
+
+        if (is_null($reference)) {
+            throw new coding_exception('NULL is not a valid reference to an external file');
+        }
+
+        $referencehash = sha1($reference);
+
         $sql = "SELECT COUNT(f.id)
                   FROM {files} f
-             LEFT JOIN {files_reference} r
-                       ON f.referencefileid = r.id
-                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
-                 AND (f.component <> ? OR f.filearea <> ?)";
+                  JOIN {files_reference} r ON f.referencefileid = r.id
+                  JOIN {repository_instances} ri ON r.repositoryid = ri.id
+                 WHERE r.referencehash = ?
+                       AND (f.component <> ? OR f.filearea <> ?)";
 
-        $count = $DB->count_records_sql($sql, array($str, 'user', 'draft'));
-        return $count;
+        return $DB->count_records_sql($sql, array($referencehash, 'user', 'draft'));
     }
 
     /**
-     * Return all files referring to provided stored_file instance
-     * This won't work for draft files
+     * Returns all aliases that link to the given stored_file
+     *
+     * Aliases in user draft areas are excluded from the returned list.
      *
      * @param stored_file $storedfile
-     * @return array
+     * @return array of stored_file
      */
-    public function get_references_by_storedfile($storedfile) {
+    public function get_references_by_storedfile(stored_file $storedfile) {
         global $DB;
 
         $params = array();
@@ -1721,37 +1736,19 @@ class file_storage {
         $params['itemid']    = $storedfile->get_itemid();
         $params['filename']  = $storedfile->get_filename();
         $params['filepath']  = $storedfile->get_filepath();
-        $params['userid']    = $storedfile->get_userid();
 
-        $reference = self::pack_reference($params);
-
-        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
-                  FROM {files} f
-             LEFT JOIN {files_reference} r
-                       ON f.referencefileid = r.id
-                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
-                   AND (f.component <> ? OR f.filearea <> ?)";
-
-        $rs = $DB->get_recordset_sql($sql, array($reference, 'user', 'draft'));
-        $files = array();
-        foreach ($rs as $filerecord) {
-            $file = $this->get_file_instance($filerecord);
-            if ($file->is_external_file()) {
-                $files[$filerecord->pathnamehash] = $file;
-            }
-        }
-
-        return $files;
+        return $this->search_references(self::pack_reference($params));
     }
 
     /**
-     * Return the count files referring to provided stored_file instance
-     * This won't work for draft files
+     * Returns the number of aliases that link to the given stored_file
+     *
+     * Aliases in user draft areas are not counted.
      *
      * @param stored_file $storedfile
      * @return int
      */
-    public function get_references_count_by_storedfile($storedfile) {
+    public function get_references_count_by_storedfile(stored_file $storedfile) {
         global $DB;
 
         $params = array();
@@ -1761,19 +1758,8 @@ class file_storage {
         $params['itemid']    = $storedfile->get_itemid();
         $params['filename']  = $storedfile->get_filename();
         $params['filepath']  = $storedfile->get_filepath();
-        $params['userid']    = $storedfile->get_userid();
 
-        $reference = self::pack_reference($params);
-
-        $sql = "SELECT COUNT(f.id)
-                  FROM {files} f
-             LEFT JOIN {files_reference} r
-                       ON f.referencefileid = r.id
-                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
-                 AND (f.component <> ? OR f.filearea <> ?)";
-
-        $count = $DB->count_records_sql($sql, array($reference, 'user', 'draft'));
-        return $count;
+        return $this->search_references_count(self::pack_reference($params));
     }
 
     /**
@@ -1782,7 +1768,7 @@ class file_storage {
      * @param stored_file $storedfile a stored_file instances
      * @return stored_file stored_file
      */
-    public function import_external_file($storedfile) {
+    public function import_external_file(stored_file $storedfile) {
         global $CFG;
         require_once($CFG->dirroot.'/repository/lib.php');
         // sync external file
@@ -1965,8 +1951,7 @@ class file_storage {
     private function get_referencefileid($repositoryid, $reference, $strictness) {
         global $DB;
 
-        return $DB->get_field_select('files_reference', 'id',
-            'repositoryid = ? AND '.$DB->sql_compare_text('reference').' = '.$DB->sql_compare_text('?'),
-            array($repositoryid, $reference), $strictness);
+        return $DB->get_field('files_reference', 'id',
+            array('repositoryid' => $repositoryid, 'referencehash' => sha1($reference)), $strictness);
     }
 }
