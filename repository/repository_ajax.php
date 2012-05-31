@@ -254,21 +254,24 @@ switch ($action) {
                     $event['existingfile']->filepath = $saveas_path;
                     $event['existingfile']->filename = $saveas_filename;
                     $event['existingfile']->url      = moodle_url::make_draftfile_url($itemid, $saveas_path, $saveas_filename)->out();;
-                    echo json_encode($event);
-                    die;
+                } else {
+                    $storedfile = $fs->create_file_from_reference($record, $repo_id, $reference);
+                    $event = array(
+                        'url'=>moodle_url::make_draftfile_url($storedfile->get_itemid(), $storedfile->get_filepath(), $storedfile->get_filename())->out(),
+                        'id'=>$storedfile->get_itemid(),
+                        'file'=>$storedfile->get_filename(),
+                        'icon' => $OUTPUT->pix_url(file_file_icon($storedfile, 32))->out(),
+                    );
                 }
-                $storedfile = $fs->create_file_from_reference($record, $repo_id, $reference);
+                if ($maxbytes !== -1 && $storedfile->get_filesize() > $maxbytes) {
+                    $storedfile->delete();
+                    throw new file_exception('maxbytes');
+                }
                 // Repository plugin callback
                 // You can cache reository file in this callback
                 // or complete other tasks.
                 $repo->cache_file_by_reference($reference, $storedfile);
-                $info = array(
-                    'url'=>moodle_url::make_draftfile_url($storedfile->get_itemid(), $storedfile->get_filepath(), $storedfile->get_filename())->out(),
-                    'id'=>$storedfile->get_itemid(),
-                    'file'=>$storedfile->get_filename(),
-                    'icon' => $OUTPUT->pix_url(file_file_icon($storedfile, 32))->out(),
-                );
-                echo json_encode($info);
+                echo json_encode($event);
                 die;
             } else if ($repo->has_moodle_files()) {
                 // Some repository plugins (local, user, coursefiles, recent) are hosting moodle
