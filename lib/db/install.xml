@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20120521" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20120531" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2372,7 +2372,8 @@
         <FIELD NAME="repositoryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="lastsync"/>
         <FIELD NAME="lastsync" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Last time the proxy file was synced with repository" PREVIOUS="repositoryid" NEXT="lifetime"/>
         <FIELD NAME="lifetime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="How often do we have to sync proxy file with repository" PREVIOUS="lastsync" NEXT="reference"/>
-        <FIELD NAME="reference" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="lifetime"/>
+        <FIELD NAME="reference" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="lifetime" NEXT="referencehash"/>
+        <FIELD NAME="referencehash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="Internal implementation detail, contains SHA1 hash of the reference field. Can be indexed and used for comparison. Not meant to be used by a non-core code." PREVIOUS="reference"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="repositoryid"/>

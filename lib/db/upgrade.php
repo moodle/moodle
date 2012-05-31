@@ -769,5 +769,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012052900.05);
     }
 
+    if ($oldversion < 2012060100.01) {
+        // Add field referencehash to files_reference
+        $table = new xmldb_table('files_reference');
+        $field = new xmldb_field('referencehash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, 'reference');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_main_savepoint(true, 2012060100.01);
+    }
+
     return true;
 }
