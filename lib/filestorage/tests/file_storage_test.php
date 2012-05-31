@@ -77,6 +77,30 @@ class filestoragelib_testcase extends advanced_testcase {
         $previewtinyicon = $fs->get_file_preview($file, 'thumb');
         $this->assertInstanceOf('stored_file', $previewtinyicon);
         $this->assertEquals('6b9864ae1536a8eeef54e097319175a8be12f07c', $previewtinyicon->get_filename());
+
+        $this->setExpectedException('file_exception');
+        $fs->get_file_preview($file, 'amodewhichdoesntexist');
+    }
+
+    public function test_get_file_preview_nonimage() {
+        $this->resetAfterTest(true);
+        $syscontext = context_system::instance();
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/textfiles/',
+            'filename'  => 'testtext.txt',
+        );
+
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecord, 'text contents');
+        $textfile = $fs->get_file($syscontext->id, $filerecord['component'], $filerecord['filearea'],
+            $filerecord['itemid'], $filerecord['filepath'], $filerecord['filename']);
+
+        $preview = $fs->get_file_preview($textfile, 'thumb');
+        $this->assertFalse($preview);
     }
 
     /**
@@ -209,20 +233,14 @@ class filestoragelib_testcase extends advanced_testcase {
         $this->assertEquals($content, $importedfile->get_content());
     }
 
-    /**
-     * TODO: the tests following this line were added to demonstrate specific Oracle problems in
-     * MDL-33172. They need to be improved to properly evalulate the results of the tests. This is
-     * tracked in MDL-33326.
-     */
     private function setup_three_private_files() {
-        global $USER, $DB;
 
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
+        $this->setUser($user->id);
         $usercontext = context_user::instance($user->id);
-        $USER = $DB->get_record('user', array('id'=>$user->id));
         // create a user private file
         $file1 = new stdClass;
         $file1->contextid = $usercontext->id;
@@ -235,19 +253,22 @@ class filestoragelib_testcase extends advanced_testcase {
 
         $fs = get_file_storage();
         $userfile1 = $fs->create_file_from_string($file1, 'file1 content');
+        $this->assertInstanceOf('stored_file', $userfile1);
+
         $file2 = clone($file1);
         $file2->filename = '2.txt';
         $userfile2 = $fs->create_file_from_string($file2, 'file2 content');
+        $this->assertInstanceOf('stored_file', $userfile2);
 
         $file3 = clone($file1);
         $file3->filename = '3.txt';
         $userfile3 = $fs->create_file_from_storedfile($file3, $userfile2);
+        $this->assertInstanceOf('stored_file', $userfile3);
 
         $user->ctxid = $usercontext->id;
 
         return $user;
     }
-
 
     public function test_get_area_files() {
         $user = $this->setup_three_private_files();
@@ -255,33 +276,97 @@ class filestoragelib_testcase extends advanced_testcase {
 
         // Get area files with default options.
         $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+
         // Should be the two files we added plus the folder.
         $this->assertEquals(4, count($areafiles));
 
+        // Verify structure.
+        foreach ($areafiles as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
+
         // Get area files without a folder.
-        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'sortorder', false);
+        $folderlessfiles = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'sortorder', false);
         // Should be the two files without folder.
-        $this->assertEquals(3, count($areafiles));
+        $this->assertEquals(3, count($folderlessfiles));
+
+        // Verify structure.
+        foreach ($folderlessfiles as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
 
         // Get area files ordered by id (was breaking on oracle).
-        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'id', false);
+        $filesbyid  = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'id', false);
         // Should be the two files without folder.
-        $this->assertEquals(3, count($areafiles));
+        $this->assertEquals(3, count($filesbyid));
+
+        // Verify structure.
+        foreach ($filesbyid as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
 
         // Test with an itemid with no files
         $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private', 666, 'sortorder', false);
-        // Should none
-        $this->assertEquals(0, count($areafiles));
+        // Should be none.
+        $this->assertEmpty($areafiles);
     }
 
     public function test_get_area_tree() {
         $user = $this->setup_three_private_files();
         $fs = get_file_storage();
 
+
         // Get area files with default options.
-        $areafiles = $fs->get_area_tree($user->ctxid, 'user', 'private', 0);
-        $areafiles = $fs->get_area_tree($user->ctxid, 'user', 'private', 666);
-        //TODO: verify result!! MDL-33326
+        $areatree = $fs->get_area_tree($user->ctxid, 'user', 'private', 0);
+        $this->assertEmpty($areatree['subdirs']);
+        $this->assertNotEmpty($areatree['files']);
+        $this->assertCount(3, $areatree['files']);
+
+        // Ensure an empty try with a fake itemid.
+        $emptytree = $fs->get_area_tree($user->ctxid, 'user', 'private', 666);
+        $this->assertEmpty($emptytree['subdirs']);
+        $this->assertEmpty($emptytree['files']);
+
+        // Create a subdir.
+        $dir = $fs->create_directory($user->ctxid, 'user', 'private', 0, '/testsubdir/');
+        $this->assertInstanceOf('stored_file', $dir);
+
+        // Add a file to the subdir.
+        $filerecord = array(
+            'contextid' => $user->ctxid,
+            'component' => 'user',
+            'filearea'  => 'private',
+            'itemid'    => 0,
+            'filepath'  => '/testsubdir/',
+            'filename'  => 'test-get-area-tree.txt',
+        );
+
+        $directoryfile = $fs->create_file_from_string($filerecord, 'Test content');
+        $this->assertInstanceOf('stored_file', $directoryfile);
+
+        $areatree = $fs->get_area_tree($user->ctxid, 'user', 'private', 0);
+
+        // At the top level there should still be 3 files.
+        $this->assertCount(3, $areatree['files']);
+
+        // There should now be a subdirectory.
+        $this->assertCount(1, $areatree['subdirs']);
+
+        // The test subdir is named testsubdir.
+        $subdir = $areatree['subdirs']['testsubdir'];
+        $this->assertNotEmpty($subdir);
+        // It should have one file we added.
+        $this->assertCount(1, $subdir['files']);
+        // And no subdirs itself.
+        $this->assertCount(0, $subdir['subdirs']);
+
+        // Verify the file is the one we added.
+        $subdirfile = reset($subdir['files']);
+        $this->assertInstanceOf('stored_file', $subdirfile);
+        $this->assertEquals($filerecord['filename'], $subdirfile->get_filename());
     }
 
     public function test_get_file_by_id() {
@@ -294,6 +379,10 @@ class filestoragelib_testcase extends advanced_testcase {
         $filebyid = reset($areafiles);
         $shouldbesame = $fs->get_file_by_id($filebyid->get_id());
         $this->assertEquals($filebyid->get_contenthash(), $shouldbesame->get_contenthash());
+
+        // Test an id which doens't exist.
+        $doesntexist = $fs->get_file_by_id(99999);
+        $this->assertFalse($doesntexist);
     }
 
     public function test_get_file_by_hash() {
@@ -305,6 +394,10 @@ class filestoragelib_testcase extends advanced_testcase {
         $filebyhash = reset($areafiles);
         $shouldbesame = $fs->get_file_by_hash($filebyhash->get_pathnamehash());
         $this->assertEquals($filebyhash->get_id(), $shouldbesame->get_id());
+
+        // Test an hash which doens't exist.
+        $doesntexist = $fs->get_file_by_hash('DOESNTEXIST');
+        $this->assertFalse($doesntexist);
     }
 
     public function test_get_references_by_storedfile() {
@@ -316,7 +409,7 @@ class filestoragelib_testcase extends advanced_testcase {
 
         $testfile = reset($areafiles);
         $references = $fs->get_references_by_storedfile($testfile);
-        //TODO: verify result!! MDL-33326
+        // TODO MDL-33368 Verify result!!
     }
 
     public function test_get_external_files() {
@@ -327,45 +420,132 @@ class filestoragelib_testcase extends advanced_testcase {
         $userrepository = reset($repos);
         $this->assertInstanceOf('repository', $userrepository);
 
-        // this should break on oracle
+        // This should break on oracle.
         $fs->get_external_files($userrepository->id, 'id');
-        //TODO: verify result!! MDL-33326
-     }
+        // TODO MDL-33368 Verify result!!
+    }
+
+    public function test_create_directory_contextid_negative() {
+        $fs = get_file_storage();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory(-1, 'core', 'unittest', 0, '/');
+    }
+
+    public function test_create_directory_contextid_invalid() {
+        $fs = get_file_storage();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory('not an int', 'core', 'unittest', 0, '/');
+    }
+
+    public function test_create_directory_component_invalid() {
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory($syscontext->id, 'bad/component', 'unittest', 0, '/');
+    }
+
+    public function test_create_directory_filearea_invalid() {
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory($syscontext->id, 'core', 'bad-filearea', 0, '/');
+    }
+
+    public function test_create_directory_itemid_negative() {
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory($syscontext->id, 'core', 'unittest', -1, '/');
+    }
+
+    public function test_create_directory_itemid_invalid() {
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory($syscontext->id, 'core', 'unittest', 'notanint', '/');
+    }
+
+    public function test_create_directory_filepath_invalid() {
+        $fs = get_file_storage();
+        $syscontext = context_system::instance();
+
+        $this->setExpectedException('file_exception');
+        $fs->create_directory($syscontext->id, 'core', 'unittest', 0, '/not-with-trailing/or-leading-slash');
+    }
 
     public function test_get_directory_files() {
         $user = $this->setup_three_private_files();
         $fs = get_file_storage();
 
-        // This should also break on oracle.
-        $fs->create_directory($user->ctxid, 'user', 'private', 0, '/');
-        //TODO: verify result!! MDL-33326
+        $dir = $fs->create_directory($user->ctxid, 'user', 'private', 0, '/testsubdir/');
+        $this->assertInstanceOf('stored_file', $dir);
 
-        // Don't recurse with dirs
-        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', false, true, 'id');
-        //TODO: verify result!! MDL-33326
+        // Add a file to the subdir.
+        $filerecord = array(
+            'contextid' => $user->ctxid,
+            'component' => 'user',
+            'filearea'  => 'private',
+            'itemid'    => 0,
+            'filepath'  => '/testsubdir/',
+            'filename'  => 'test-get-area-tree.txt',
+        );
+
+        $directoryfile = $fs->create_file_from_string($filerecord, 'Test content');
+        $this->assertInstanceOf('stored_file', $directoryfile);
 
         // Don't recurse without dirs
-        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', false, false, 'id');
-        //TODO: verify result!! MDL-33326
+        $files = $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', false, false, 'id');
+        // 3 files only.
+        $this->assertCount(3, $files);
+        foreach ($files as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
 
-        // Recurse with dirs
-        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', true, true, 'id');
-        //TODO: verify result!! MDL-33326
-        // Recurse without dirs
-        $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', true, false, 'id');
-        //TODO: verify result!! MDL-33326
+        // Don't recurse with dirs.
+        $files = $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', false, true, 'id');
+        // 3 files + 1 directory.
+        $this->assertCount(4, $files);
+        foreach ($files as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
+
+        // Recurse with dirs.
+        $files = $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', true, true, 'id');
+        // 3 files + 1 directory +  1 subdir file.
+        $this->assertCount(5, $files);
+        foreach ($files as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
+
+        // Recurse without dirs.
+        $files = $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', true, false, 'id');
+        // 3 files +  1 subdir file.
+        $this->assertCount(4, $files);
+        foreach ($files as $key => $file) {
+            $this->assertInstanceOf('stored_file', $file);
+            $this->assertEquals($key, $file->get_pathnamehash());
+        }
     }
 
     public function test_search_references() {
         $fs = get_file_storage();
         $references = $fs->search_references('testsearch');
-        //TODO: verify result!! MDL-33326
+        // TODO MDL-33368 Verify result!!
     }
 
     public function test_search_references_count() {
         $fs = get_file_storage();
         $references = $fs->search_references_count('testsearch');
-        //TODO: verify result!! MDL-33326
+        // TODO MDL-33368 Verify result!!
     }
 
     public function test_delete_area_files() {
@@ -383,6 +563,20 @@ class filestoragelib_testcase extends advanced_testcase {
         $this->assertEquals(0, count($areafiles));
     }
 
+    public function test_delete_area_files_itemid() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        // Get area files with default options.
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        // Should be the two files we added plus the folder.
+        $this->assertEquals(4, count($areafiles));
+        $fs->delete_area_files($user->ctxid, 'user', 'private', 9999);
+
+        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
+        $this->assertEquals(4, count($areafiles));
+    }
+
     public function test_delete_area_files_select() {
         $user = $this->setup_three_private_files();
         $fs = get_file_storage();
@@ -396,5 +590,580 @@ class filestoragelib_testcase extends advanced_testcase {
         $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
         // Should be the two files we added plus the folder.
         $this->assertEquals(0, count($areafiles));
+    }
+
+    public function test_create_file_from_url() {
+        $this->resetAfterTest(true);
+
+        $syscontext = context_system::instance();
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/downloadtest/',
+        );
+        $url = 'http://download.moodle.org/unittest/test.html';
+
+        $fs = get_file_storage();
+
+        // Test creating file without filename.
+        $file1 = $fs->create_file_from_url($filerecord, $url);
+        $this->assertInstanceOf('stored_file', $file1);
+
+        // Set filename.
+        $filerecord['filename'] = 'unit-test-filename.html';
+        $file2 = $fs->create_file_from_url($filerecord, $url);
+        $this->assertInstanceOf('stored_file', $file2);
+
+        // Use temporary file.
+        $filerecord['filename'] = 'unit-test-with-temp-file.html';
+        $file3 = $fs->create_file_from_url($filerecord, $url, null, true);
+        $file3 = $this->assertInstanceOf('stored_file', $file3);
+    }
+
+    public function test_cron() {
+        $this->resetAfterTest(true);
+
+        // Note: this is only testing DB compatibility atm, rather than
+        // that work is done.
+        $fs = get_file_storage();
+
+        $this->expectOutputRegex('/Cleaning up/');
+        $fs->cron();
+    }
+
+    public function test_is_area_empty() {
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+
+        $this->assertFalse($fs->is_area_empty($user->ctxid, 'user', 'private'));
+
+        // File area with madeup itemid should be empty.
+        $this->assertTrue($fs->is_area_empty($user->ctxid, 'user', 'private', 9999));
+        // Still empty with dirs included.
+        $this->assertTrue($fs->is_area_empty($user->ctxid, 'user', 'private', 9999, false));
+    }
+
+    public function test_move_area_files_to_new_context() {
+        $this->resetAfterTest(true);
+
+        // Create a course with a page resource.
+        $course = $this->getDataGenerator()->create_course();
+        $page1 = $this->getDataGenerator()->create_module('page', array('course'=>$course->id));
+        $page1context = context_module::instance($page1->cmid);
+
+        // Add a file to the page.
+        $fs = get_file_storage();
+        $filerecord = array(
+            'contextid' => $page1context->id,
+            'component' => 'mod_page',
+            'filearea'  => 'content',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => 'unit-test-file.txt',
+        );
+
+        $originalfile = $fs->create_file_from_string($filerecord, 'Test content');
+        $this->assertInstanceOf('stored_file', $originalfile);
+
+        $pagefiles = $fs->get_area_files($page1context->id, 'mod_page', 'content', 0, 'sortorder', false);
+        // Should be one file in filearea.
+        $this->assertFalse($fs->is_area_empty($page1context->id, 'mod_page', 'content'));
+
+        // Create a new page.
+        $page2 = $this->getDataGenerator()->create_module('page', array('course'=>$course->id));
+        $page2context = context_module::instance($page2->cmid);
+
+        // Newly created page area is empty.
+        $this->assertTrue($fs->is_area_empty($page2context->id, 'mod_page', 'content'));
+
+        // Move the files.
+        $fs->move_area_files_to_new_context($page1context->id, $page2context->id, 'mod_page', 'content');
+
+        // Page2 filearea should no longer be empty.
+        $this->assertFalse($fs->is_area_empty($page2context->id, 'mod_page', 'content'));
+
+        // Page1 filearea should now be empty.
+        $this->assertTrue($fs->is_area_empty($page1context->id, 'mod_page', 'content'));
+
+        $page2files = $fs->get_area_files($page2context->id, 'mod_page', 'content', 0, 'sortorder', false);
+        $movedfile = reset($page2files);
+
+        // The two files should have the same content hash.
+        $this->assertEquals($movedfile->get_contenthash(), $originalfile->get_contenthash());
+    }
+
+    public function test_convert_image() {
+        global $CFG;
+
+        $this->resetAfterTest(false);
+
+        $filepath = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
+        $syscontext = context_system::instance();
+        $filerecord = array(
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/images/',
+            'filename'  => 'testimage.jpg',
+        );
+
+        $fs = get_file_storage();
+        $original = $fs->create_file_from_pathname($filerecord, $filepath);
+
+        $filerecord['filename'] = 'testimage-converted-10x10.jpg';
+        $converted = $fs->convert_image($filerecord, $original, 10, 10, true, 100);
+        $this->assertInstanceOf('stored_file', $converted);
+
+        $filerecord['filename'] = 'testimage-convereted-nosize.jpg';
+        $converted = $fs->convert_image($filerecord, $original);
+        $this->assertInstanceOf('stored_file', $converted);
+    }
+
+    private function generate_file_record() {
+        $syscontext = context_system::instance();
+        $filerecord = new stdClass();
+        $filerecord->contextid = $syscontext->id;
+        $filerecord->component = 'core';
+        $filerecord->filearea = 'phpunit';
+        $filerecord->filepath = '/';
+        $filerecord->filename = 'testfile.txt';
+        $filerecord->itemid = 0;
+
+        return $filerecord;
+    }
+
+    public function test_create_file_from_storedfile_file_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+
+        $fs = get_file_storage();
+        $this->setExpectedException('file_exception');
+        // Create a file from a file id which doesn't exist.
+        $fs->create_file_from_storedfile($filerecord,  9999);
+    }
+
+    public function test_create_file_from_storedfile_contextid_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+
+        $fs = get_file_storage();
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+        $this->assertInstanceOf('stored_file', $file1);
+
+        $filerecord->filename = 'invalid.txt';
+        $filerecord->contextid = 'invalid';
+
+        $this->setExpectedException('file_exception', 'Invalid contextid');
+        $fs->create_file_from_storedfile($filerecord, $file1->get_id());
+    }
+
+    public function test_create_file_from_storedfile_component_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+
+        $fs = get_file_storage();
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+        $this->assertInstanceOf('stored_file', $file1);
+
+        $filerecord->filename = 'invalid.txt';
+        $filerecord->component = 'bad/component';
+
+        $this->setExpectedException('file_exception', 'Invalid component');
+        $fs->create_file_from_storedfile($filerecord, $file1->get_id());
+    }
+
+    public function test_create_file_from_storedfile_filearea_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+
+        $fs = get_file_storage();
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+        $this->assertInstanceOf('stored_file', $file1);
+
+        $filerecord->filename = 'invalid.txt';
+        $filerecord->filearea = 'bad-filearea';
+
+        $this->setExpectedException('file_exception', 'Invalid filearea');
+        $fs->create_file_from_storedfile($filerecord, $file1->get_id());
+    }
+
+    public function test_create_file_from_storedfile_itemid_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+
+        $fs = get_file_storage();
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+        $this->assertInstanceOf('stored_file', $file1);
+
+        $filerecord->filename = 'invalid.txt';
+        $filerecord->itemid = 'bad-itemid';
+
+        $this->setExpectedException('file_exception', 'Invalid itemid');
+        $fs->create_file_from_storedfile($filerecord, $file1->get_id());
+    }
+
+    public function test_create_file_from_storedfile_filepath_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+
+        $fs = get_file_storage();
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+        $this->assertInstanceOf('stored_file', $file1);
+
+        $filerecord->filename = 'invalid.txt';
+        $filerecord->filepath = 'a-/bad/-filepath';
+
+        $this->setExpectedException('file_exception', 'Invalid file path');
+        $fs->create_file_from_storedfile($filerecord, $file1->get_id());
+    }
+
+    public function test_create_file_from_storedfile_filename_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+
+        $fs = get_file_storage();
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+        $this->assertInstanceOf('stored_file', $file1);
+
+        $filerecord->filename = '';
+
+        $this->setExpectedException('file_exception', 'Invalid file name');
+        $fs->create_file_from_storedfile($filerecord, $file1->get_id());
+    }
+
+    public function test_create_file_from_storedfile_timecreated_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+
+        $fs = get_file_storage();
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+        $this->assertInstanceOf('stored_file', $file1);
+
+        $filerecord->filename = 'invalid.txt';
+        $filerecord->timecreated = 'today';
+
+        $this->setExpectedException('file_exception', 'Invalid file timecreated');
+        $fs->create_file_from_storedfile($filerecord, $file1->get_id());
+    }
+
+    public function test_create_file_from_storedfile_timemodified_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+
+        $fs = get_file_storage();
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+        $this->assertInstanceOf('stored_file', $file1);
+
+        $filerecord->filename = 'invalid.txt';
+        $filerecord->timemodified  = 'today';
+
+        $this->setExpectedException('file_exception', 'Invalid file timemodified');
+        $fs->create_file_from_storedfile($filerecord, $file1->get_id());
+    }
+
+    public function test_create_file_from_storedfile_duplicate() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+
+        $fs = get_file_storage();
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+        $this->assertInstanceOf('stored_file', $file1);
+
+        // Creating a file validating unique constraint.
+        $this->setExpectedException('stored_file_creation_exception');
+        $fs->create_file_from_storedfile($filerecord, $file1->get_id());
+    }
+
+    public function test_create_file_from_storedfile() {
+        $this->resetAfterTest(true);
+
+        $syscontext = context_system::instance();
+
+        $filerecord = new stdClass();
+        $filerecord->contextid = $syscontext->id;
+        $filerecord->component = 'core';
+        $filerecord->filearea = 'phpunit';
+        $filerecord->filepath = '/';
+        $filerecord->filename = 'testfile.txt';
+        $filerecord->itemid = 0;
+
+        $fs = get_file_storage();
+
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+        $this->assertInstanceOf('stored_file', $file1);
+
+        $filerecord->filename = 'test-create-file-from-storedfile.txt';
+        $file2 = $fs->create_file_from_storedfile($filerecord, $file1->get_id());
+        $this->assertInstanceOf('stored_file', $file2);
+
+        // These will be normalised to current time..
+        $filerecord->timecreated = -100;
+        $filerecord->timemodified= -100;
+        $filerecord->filename = 'test-create-file-from-storedfile-bad-dates.txt';
+
+        $file3 = $fs->create_file_from_storedfile($filerecord, $file1->get_id());
+        $this->assertInstanceOf('stored_file', $file3);
+
+        $this->assertNotEquals($file3->get_timemodified(), $filerecord->timemodified);
+        $this->assertNotEquals($file3->get_timecreated(), $filerecord->timecreated);
+    }
+
+    public function test_create_file_from_string_contextid_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->contextid = 'invalid';
+
+        $this->setExpectedException('file_exception', 'Invalid contextid');
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+    }
+
+    public function test_create_file_from_string_component_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->component = 'bad/component';
+
+        $this->setExpectedException('file_exception', 'Invalid component');
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+    }
+
+    public function test_create_file_from_string_filearea_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->filearea = 'bad-filearea';
+
+        $this->setExpectedException('file_exception', 'Invalid filearea');
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+    }
+
+    public function test_create_file_from_string_itemid_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->itemid = 'bad-itemid';
+
+        $this->setExpectedException('file_exception', 'Invalid itemid');
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+    }
+
+    public function test_create_file_from_string_filepath_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->filepath = 'a-/bad/-filepath';
+
+        $this->setExpectedException('file_exception', 'Invalid file path');
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+    }
+
+    public function test_create_file_from_string_filename_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->filename = '';
+
+        $this->setExpectedException('file_exception', 'Invalid file name');
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+    }
+
+    public function test_create_file_from_string_timecreated_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->timecreated = 'today';
+
+        $this->setExpectedException('file_exception', 'Invalid file timecreated');
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+    }
+
+    public function test_create_file_from_string_timemodified_invalid() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->timemodified  = 'today';
+
+        $this->setExpectedException('file_exception', 'Invalid file timemodified');
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+    }
+
+    public function test_create_file_from_string_duplicate() {
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $file1 = $fs->create_file_from_string($filerecord, 'text contents');
+
+        // Creating a file validating unique constraint.
+        $this->setExpectedException('stored_file_creation_exception');
+        $file2 = $fs->create_file_from_string($filerecord, 'text contents');
+    }
+
+    public function test_create_file_from_pathname_contextid_invalid() {
+        global $CFG;
+        $path = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
+
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->contextid = 'invalid';
+
+        $this->setExpectedException('file_exception', 'Invalid contextid');
+        $file1 = $fs->create_file_from_pathname($filerecord, $path);
+    }
+
+    public function test_create_file_from_pathname_component_invalid() {
+        global $CFG;
+        $path = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
+
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->component = 'bad/component';
+
+        $this->setExpectedException('file_exception', 'Invalid component');
+        $file1 = $fs->create_file_from_pathname($filerecord, $path);
+    }
+
+    public function test_create_file_from_pathname_filearea_invalid() {
+        global $CFG;
+        $path = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
+
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->filearea = 'bad-filearea';
+
+        $this->setExpectedException('file_exception', 'Invalid filearea');
+        $file1 = $fs->create_file_from_pathname($filerecord, $path);
+    }
+
+    public function test_create_file_from_pathname_itemid_invalid() {
+        global $CFG;
+        $path = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
+
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->itemid = 'bad-itemid';
+
+        $this->setExpectedException('file_exception', 'Invalid itemid');
+        $file1 = $fs->create_file_from_pathname($filerecord, $path);
+    }
+
+    public function test_create_file_from_pathname_filepath_invalid() {
+        global $CFG;
+        $path = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
+
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->filepath = 'a-/bad/-filepath';
+
+        $this->setExpectedException('file_exception', 'Invalid file path');
+        $file1 = $fs->create_file_from_pathname($filerecord, $path);
+    }
+
+    public function test_create_file_from_pathname_filename_invalid() {
+        global $CFG;
+        $path = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
+
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->filename = '';
+
+        $this->setExpectedException('file_exception', 'Invalid file name');
+        $file1 = $fs->create_file_from_pathname($filerecord, $path);
+    }
+
+    public function test_create_file_from_pathname_timecreated_invalid() {
+        global $CFG;
+        $path = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
+
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->timecreated = 'today';
+
+        $this->setExpectedException('file_exception', 'Invalid file timecreated');
+        $file1 = $fs->create_file_from_pathname($filerecord, $path);
+    }
+
+    public function test_create_file_from_pathname_timemodified_invalid() {
+        global $CFG;
+        $path = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
+
+        $this->resetAfterTest(true);
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $filerecord->timemodified  = 'today';
+
+        $this->setExpectedException('file_exception', 'Invalid file timemodified');
+        $file1 = $fs->create_file_from_pathname($filerecord, $path);
+    }
+
+    public function test_create_file_from_pathname_duplicate_file() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        $path = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
+
+        $filerecord = $this->generate_file_record();
+        $fs = get_file_storage();
+
+        $file1 = $fs->create_file_from_pathname($filerecord, $path);
+        $this->assertInstanceOf('stored_file', $file1);
+
+        // Creating a file validating unique constraint.
+        $this->setExpectedException('stored_file_creation_exception');
+        $file2 = $fs->create_file_from_pathname($filerecord, $path);
     }
 }
