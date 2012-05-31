@@ -132,6 +132,10 @@ class css_optimiser_testcase extends advanced_testcase {
         $cssin = '.test {background: #123456 url(data:image/gif;base64,AAAA) no-repeat top left;}';
         $cssout = '.test{background:#123456 url(data:image/gif;base64,AAAA) no-repeat top left;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '#custommenu {background-image:none;background-position:right center;background-repeat:no-repeat;};';
+        $cssout = '#custommenu {background-image:none;background-position:right center;background-repeat:no-repeat;};';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
     /**

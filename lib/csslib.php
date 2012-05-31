@@ -643,8 +643,9 @@ class css_optimiser {
                                 // continue 3: The for loop
                                 continue 3;
                             }
-
-                            $currentselector->add($buffer);
+                            if ($buffer !== '') {
+                                $currentselector->add($buffer);
+                            }
                             $currentrule->add_selector($currentselector);
                             $currentselector = css_selector::init();
                             $currentprocess = self::PROCESSING_STYLES;
@@ -765,6 +766,7 @@ class css_optimiser {
             $css .= implode("\n", $imports);
             $css .= "\n\n";
         }
+
         foreach ($medias as $media) {
             $media->organise_rules_by_selectors();
             $this->optimisedrules += $media->count_rules();
@@ -772,6 +774,15 @@ class css_optimiser {
             if ($media->has_errors()) {
                 $this->errors += $media->get_errors();
             }
+            if (in_array('all', $media->get_types())) {
+                $resetrules = $media->get_reset_rules(true);
+                if (!empty($resetrules)) {
+                    $css .= css_writer::media('all', $resetrules);
+                }
+            }
+        }
+
+        foreach ($medias as $media) {
             $css .= $media->out();
         }
 
@@ -1269,6 +1280,12 @@ class css_selector {
     protected $count = 0;
 
     /**
+     * Is null if there are no selector, true if all selectors are basic and false otherwise.
+     * @var bool|null
+     */
+    protected $isbasic = null;
+
+    /**
      * Initialises a new CSS selector
      * @return css_selector
      */
@@ -1292,6 +1309,13 @@ class css_selector {
         if (strpos($selector, '.') !== 0 && strpos($selector, '#') !== 0) {
             $count ++;
         }
+        if ($this->isbasic !== false) {
+            if ($count > 1) {
+                $this->isbasic = false;
+            } else {
+                $this->isbasic = (preg_match('#^[a-z]+(:[a-zA-Z]+)?$#', $selector))?true:false;
+            }
+        }
         $this->count = $count;
         $this->selectors[] = $selector;
     }
@@ -1309,6 +1333,14 @@ class css_selector {
      */
     public function out() {
         return css_writer::selector($this->selectors);
+    }
+
+    /**
+     * Returns true is all of the selectors act only upon basic elements (no classes/ids)
+     * @return bool
+     */
+    public function is_basic() {
+        return ($this->isbasic === true);
     }
 }
 
@@ -1574,6 +1606,22 @@ class css_rule {
         }
         return $css." has the following errors:\n".join("\n", $errors);
     }
+
+    /**
+     * Returns true if this rule could be considered a reset rule.
+     *
+     * A reset rule is a rule that acts upon an HTML element and does not include any other parts to its selector.
+     *
+     * @return bool
+     */
+    public function is_reset_rule() {
+        foreach ($this->selectors as $selector) {
+            if (!$selector->is_basic()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 abstract class css_rule_collection {
@@ -1731,6 +1779,23 @@ class css_media extends css_rule_collection {
      */
     public function get_types() {
         return $this->types;
+    }
+
+    /**
+     * Returns all of the reset rules known by this media set.
+     * @return array
+     */
+    public function get_reset_rules($remove = false) {
+        $resetrules = array();
+        foreach ($this->rules as $key => $rule) {
+            if ($rule->is_reset_rule()) {
+                $resetrules[] = clone $rule;
+                if ($remove) {
+                    unset($this->rules[$key]);
+                }
+            }
+        }
+        return $resetrules;
     }
 }
 
