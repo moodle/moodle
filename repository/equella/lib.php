@@ -46,7 +46,7 @@ class repository_equella extends repository {
      * @param array
      */
     public function get_listing($path = null, $page = null) {
-        global $CFG, $COURSE;
+        global $COURSE;
         $callbackurl = new moodle_url('/repository/equella/callback.php', array('repo_id'=>$this->id));
 
         $mimetypesstr = '';
@@ -110,7 +110,7 @@ class repository_equella extends repository {
      * @return string the location of the file
      */
     public function get_file($url, $filename = '') {
-        global $CFG, $USER;
+        global $USER;
         $cookiename = uniqid('', true) . '.cookie';
         $dir = make_temp_directory('repository/equella/' . $USER->id);
         $cookiepathname = $dir . '/' . $cookiename;
