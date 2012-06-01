@@ -115,7 +115,8 @@
             if ($course->id == SITEID) {
                 redirect($CFG->wwwroot .'/?redirect=0');
             } else {
-                redirect($PAGE->url);
+                $url = new moodle_url($PAGE->url, array('editingenabled' => 1));
+                redirect($url);
             }
         } else if (($edit == 0) and confirm_sesskey()) {
             $USER->editing = 0;

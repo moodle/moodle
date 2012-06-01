@@ -53,7 +53,7 @@ M.course_dndupload = {
     // The classes that an element must have to be identified as a course section
     sectionclasses: ['section', 'main'],
     // The ID of the main content area of the page (for adding the 'status' div)
-    pagecontentid: 'page-content',
+    pagecontentid: 'page',
     // The selector identifying the list of modules within a section (note changing this may require
     // changes to the get_mods_element function)
     modslistselector: 'ul.section',
@@ -92,7 +92,9 @@ M.course_dndupload = {
             this.init_events(el);
         }, this);
 
-        this.add_status_div();
+        if (options.showstatus) {
+            this.add_status_div();
+        }
     },
 
     /**
@@ -100,14 +102,18 @@ M.course_dndupload = {
      * is available (or to explain why it is not available)
      */
     add_status_div: function() {
+        var coursecontents = document.getElementById(this.pagecontentid);
+        if (!coursecontents) {
+            return;
+        }
+
         var div = document.createElement('div');
         div.id = 'dndupload-status';
-        var coursecontents = document.getElementById(this.pagecontentid);
-        if (coursecontents) {
-            coursecontents.insertBefore(div, coursecontents.firstChild);
-        }
-        div = this.Y.one(div);
+        div.style.opacity = 0.0;
+        coursecontents.insertBefore(div, coursecontents.firstChild);
 
+        var Y = this.Y;
+        div = Y.one(div);
         var handlefile = (this.handlers.filehandlers.length > 0);
         var handletext = false;
         var handlelink = false;
@@ -134,6 +140,25 @@ M.course_dndupload = {
             $msgident += 'link';
         }
         div.setContent(M.util.get_string($msgident, 'moodle'));
+
+        var fadeanim = new Y.Anim({
+            node: '#dndupload-status',
+            from: {
+                opacity: 0.0,
+                top: '-30px'
+            },
+
+            to: {
+                opacity: 1.0,
+                top: '0px'
+            },
+            duration: 0.5
+        });
+        fadeanim.once('end', function(e) {
+            this.set('reverse', 1);
+            Y.later(3000, this, 'run', null, false);
+        });
+        fadeanim.run();
     },
 
     /**
