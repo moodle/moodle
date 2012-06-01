@@ -278,13 +278,7 @@ class repository_equella extends repository {
     }
 
     private static function get_all_editing_roles() {
-        global $DB;
-        $sql = "SELECT r.* FROM {role_capabilities} rc
-                     INNER JOIN {role} r
-                                ON rc.roleid = r.id
-                          WHERE capability = :capability AND permission = 1
-                       ORDER BY r.shortname";
-        return $DB->get_records_sql($sql, array('capability' => 'moodle/course:manageactivities'));
+        return get_roles_with_capability('moodle/course:manageactivities', CAP_ALLOW);
     }
 
     /**
