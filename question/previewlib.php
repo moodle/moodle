@@ -228,7 +228,7 @@ class question_preview_options extends question_display_options {
  * @return bool false if file not found, does not return if found - justsend the file
  */
 function question_preview_question_pluginfile($course, $context, $component,
-        $filearea, $qubaid, $slot, $args, $forcedownload, $options) {
+        $filearea, $qubaid, $slot, $args, $forcedownload, $fileoptions) {
     global $USER, $DB, $CFG;
 
     $quba = question_engine::load_questions_usage_by_activity($qubaid);
@@ -256,7 +256,7 @@ function question_preview_question_pluginfile($course, $context, $component,
         send_file_not_found();
     }
 
-    send_stored_file($file, 0, 0, $forcedownload, $options);
+    send_stored_file($file, 0, 0, $forcedownload, $fileoptions);
 }
 
 /**
