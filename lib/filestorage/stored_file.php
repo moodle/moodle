@@ -161,7 +161,7 @@ class stored_file {
                 throw new file_exception('storedfilecannotread', '', $pathname);
             }
         }
-        $mimetype = $this->fs->mimetype($pathname);
+        $mimetype = $this->fs->mimetype($pathname, $this->file_record->filename);
         $this->file_record->mimetype = $mimetype;
 
         $DB->update_record('files', $this->file_record);
