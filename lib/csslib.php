@@ -787,6 +787,7 @@ class css_optimiser {
         }
 
         if (count($keyframes) > 0) {
+            $css .= "\n";
             foreach ($keyframes as $keyframe) {
                 $this->optimisedrules += $keyframe->count_rules();
                 $this->optimisedselectors +=  $keyframe->count_selectors();
@@ -1491,24 +1492,33 @@ class css_rule {
      * @return array An array of consolidated styles
      */
     public function get_consolidated_styles() {
+        $organisedstyles = array();
         $finalstyles = array();
         $consolidate = array();
         foreach ($this->styles as $style) {
             $consolidatetoclass = $style->consolidate_to();
-            if ($style->is_valid() && !empty($consolidatetoclass) && class_exists('css_style_'.$consolidatetoclass)) {
+            if (($style->is_valid() || $style->is_special_empty_value()) && !empty($consolidatetoclass) && class_exists('css_style_'.$consolidatetoclass)) {
                 $class = 'css_style_'.$consolidatetoclass;
                 if (!array_key_exists($class, $consolidate)) {
                     $consolidate[$class] = array();
+                    $organisedstyles[$class] = true;
                 }
                 $consolidate[$class][] = $style;
             } else {
-                $finalstyles[] = $style;
+                $organisedstyles[$style->get_name()] = $style;
             }
         }
 
         foreach ($consolidate as $class => $styles) {
-            $styles = $class::consolidate($styles);
-            foreach ($styles as $style) {
+            $organisedstyles[$class] = $class::consolidate($styles);
+        }
+
+        foreach ($organisedstyles as $style) {
+            if (is_array($style)) {
+                foreach ($style as $s) {
+                    $finalstyles[] = $s;
+                }
+            } else {
                 $finalstyles[] = $style;
             }
         }
@@ -1860,6 +1870,9 @@ class css_keyframe extends css_rule_collection {
  */
 abstract class css_style {
 
+    /** Constant used for recongise a special empty value in a CSS style */
+    const NULL_VALUE = '@@$NULL$@@';
+
     /**
      * The name of the style
      * @var string
@@ -1893,7 +1906,6 @@ abstract class css_style {
      * @var string
      */
     protected $errormessage = null;
-
 
     /**
      * Initialises a new style.
@@ -2036,6 +2048,23 @@ abstract class css_style {
      */
     public function get_last_error() {
         return $this->errormessage;
+    }
+
+    /**
+     * Returns true if the value for this style is the special null value.
+     *
+     * This should only be overriden in circumstances where a shorthand style can lead
+     * to move explicit styles being overwritten. Not a common place occurenace.
+     *
+     * Example:
+     *   This occurs if the shorthand background property was used but no proper value
+     *   was specified for this style.
+     *   This leads to a null value being used unless otherwise overridden.
+     *
+     * @return bool
+     */
+    public function is_special_empty_value() {
+        return false;
     }
 }
 
@@ -3464,45 +3493,60 @@ class css_style_background extends css_style {
 
         $repeats = array('repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'inherit');
         $attachments = array('scroll' , 'fixed', 'inherit');
+        $positions = array('top', 'left', 'bottom', 'right', 'center');
 
         $return = array();
         $unknownbits = array();
 
+        $color = self::NULL_VALUE;
         if (count($bits) > 0 && css_is_colour(reset($bits))) {
-            $return[] = new css_style_backgroundcolor('background-color', array_shift($bits));
+            $color = array_shift($bits);
         }
+        $return[] = new css_style_backgroundcolor('background-color', $color);
+
+        $image = self::NULL_VALUE;
         if (count($bits) > 0 && preg_match('#(none|inherit|url\(\))#', reset($bits))) {
             $image = array_shift($bits);
             if ($image == 'url()') {
                 $image = "url({$imageurl})";
             }
-            $return[] = new css_style_backgroundimage('background-image', $image);
         }
+        $return[] = new css_style_backgroundimage('background-image', $image);
+
+        $repeat = self::NULL_VALUE;
         if (count($bits) > 0 && in_array(reset($bits), $repeats)) {
-            $return[] = new css_style_backgroundrepeat('background-repeat', array_shift($bits));
+            $repeat = array_shift($bits);
         }
+        $return[] = new css_style_backgroundrepeat('background-repeat', $repeat);
+
+        $attachment = self::NULL_VALUE;
         if (count($bits) > 0 && in_array(reset($bits), $attachments)) {
             // scroll , fixed, inherit
-            $return[] = new css_style_backgroundattachment('background-attachment', array_shift($bits));
+            $attachment = array_shift($bits);
         }
+        $return[] = new css_style_backgroundattachment('background-attachment', $attachment);
+
+        $position = self::NULL_VALUE;
         if (count($bits) > 0) {
             $widthbits = array();
             foreach ($bits as $bit) {
-                if (in_array($bit, array('top', 'left', 'bottom', 'right', 'center')) || css_is_width($bit)) {
+                if (in_array($bit, $positions) || css_is_width($bit)) {
                     $widthbits[] = $bit;
                 } else {
                     $unknownbits[] = $bit;
                 }
             }
-            $return[] = new css_style_backgroundposition('background-position', join(' ',$widthbits));
+            $position = join(' ',$widthbits);
         }
+        $return[] = new css_style_backgroundposition('background-position', $position);
+
         if (count($unknownbits)) {
             foreach ($unknownbits as $bit) {
-                if (css_is_colour($bit)) {
+                if ($color === self::NULL_VALUE && css_is_colour($bit)) {
                     $return[] = new css_style_backgroundcolor('background-color', $bit);
-                } else if (in_array($bit, $repeats)) {
+                } else if ($repeat === self::NULL_VALUE && in_array($bit, $repeats)) {
                     $return[] = new css_style_backgroundrepeat('background-repeat', $bit);
-                } else if (in_array($bit, $attachments)) {
+                } else if ($attachment === self::NULL_VALUE && in_array($bit, $attachments)) {
                     $return[] = new css_style_backgroundattachment('background-attachment', $bit);
                 }
             }
@@ -3518,32 +3562,83 @@ class css_style_background extends css_style {
      */
     public static function consolidate(array $styles) {
 
-        if (count($styles) < 1) {
+        if (empty($styles)) {
             return $styles;
         }
 
-        $color = $image = $repeat = $attachment = $position = null;
+        $color = null;
+        $image = null;
+        $repeat = null;
+        $attachment = null;
+        $position = null;
+        $size = null;
+        $origin = null;
+        $clip = null;
+
+        $organisedstyles = array();
         foreach ($styles as $style) {
+            $organisedstyles[$style->get_name()] = $style;
             switch ($style->get_name()) {
                 case 'background-color' : $color = css_style_color::shrink_value($style->get_value()); break;
                 case 'background-image' : $image = $style->get_value(); break;
                 case 'background-repeat' : $repeat = $style->get_value(); break;
                 case 'background-attachment' : $attachment = $style->get_value(); break;
                 case 'background-position' : $position = $style->get_value(); break;
+                case 'background-clip' : $clip = $style->get_value(); break;
+                case 'background-origin' : $origin = $style->get_value(); break;
+                case 'background-size' : $size = $style->get_value(); break;
             }
         }
 
-        if ((is_null($image) || is_null($position) || is_null($repeat)) && ($image!= null || $position != null || $repeat != null)) {
-            return $styles;
+        $consolidatetosingle = array();
+        if (!is_null($color) && !is_null($image) && !is_null($repeat) && !is_null($attachment) && !is_null($position)) {
+            // We can use the shorthand background-style!
+            if (!$organisedstyles['background-color']->is_special_empty_value()) {
+                $consolidatetosingle[] = $color;
+            }
+            if (!$organisedstyles['background-image']->is_special_empty_value()) {
+                $consolidatetosingle[] = $image;
+            }
+            if (!$organisedstyles['background-repeat']->is_special_empty_value()) {
+                $consolidatetosingle[] = $repeat;
+            }
+            if (!$organisedstyles['background-attachment']->is_special_empty_value()) {
+                $consolidatetosingle[] = $attachment;
+            }
+            if (!$organisedstyles['background-position']->is_special_empty_value()) {
+                $consolidatetosingle[] = $position;
+            }
+            // Reset them all to null so we don't use them again.
+            $color = null;
+            $image = null;
+            $repeat = null;
+            $attachment = null;
+            $position = null;
         }
 
-        $value = array();
-        if (!is_null($color)) $value[] .= $color;
-        if (!is_null($image)) $value[] .= $image;
-        if (!is_null($repeat)) $value[] .= $repeat;
-        if (!is_null($attachment)) $value[] .= $attachment;
-        if (!is_null($position)) $value[] .= $position;
-        return array(new css_style_background('background', join(' ', $value)));
+        $return = array();
+        // Single background style needs to come first;
+        if (count($consolidatetosingle) > 0) {
+            $return[] = new css_style_background('background', join(' ', $consolidatetosingle));
+        }
+        foreach ($styles as $style) {
+            $value = null;
+            switch ($style->get_name()) {
+                case 'background-color' : $value = $color; break;
+                case 'background-image' : $value = $image; break;
+                case 'background-repeat' : $value = $repeat; break;
+                case 'background-attachment' : $value = $attachment; break;
+                case 'background-position' : $value = $position; break;
+                case 'background-clip' : $value = $clip; break;
+                case 'background-origin' : $value = $origin; break;
+                case 'background-size' : $value = $size; break;
+            }
+            if (!is_null($value)) {
+                $return[] = $style;
+            }
+        }
+
+        return $return;
     }
 }
 
@@ -3577,6 +3672,19 @@ class css_style_backgroundcolor extends css_style_color {
     public function consolidate_to() {
         return 'background';
     }
+
+    /**
+     * Returns true if the value for this style is the special null value.
+     *
+     * This occurs if the shorthand background property was used but no proper value
+     * was specified for this style.
+     * This leads to a null value being used unless otherwise overridden.
+     *
+     * @return bool
+     */
+    public function is_special_empty_value() {
+        return ($this->value === self::NULL_VALUE);
+    }
 }
 
 /**
@@ -3606,6 +3714,19 @@ class css_style_backgroundimage extends css_style_generic {
      */
     public function consolidate_to() {
         return 'background';
+    }
+
+    /**
+     * Returns true if the value for this style is the special null value.
+     *
+     * This occurs if the shorthand background property was used but no proper value
+     * was specified for this style.
+     * This leads to a null value being used unless otherwise overridden.
+     *
+     * @return bool
+     */
+    public function is_special_empty_value() {
+        return ($this->value === self::NULL_VALUE);
     }
 }
 
@@ -3637,6 +3758,19 @@ class css_style_backgroundrepeat extends css_style_generic {
     public function consolidate_to() {
         return 'background';
     }
+
+    /**
+     * Returns true if the value for this style is the special null value.
+     *
+     * This occurs if the shorthand background property was used but no proper value
+     * was specified for this style.
+     * This leads to a null value being used unless otherwise overridden.
+     *
+     * @return bool
+     */
+    public function is_special_empty_value() {
+        return ($this->value === self::NULL_VALUE);
+    }
 }
 
 /**
@@ -3667,6 +3801,19 @@ class css_style_backgroundattachment extends css_style_generic {
     public function consolidate_to() {
         return 'background';
     }
+
+    /**
+     * Returns true if the value for this style is the special null value.
+     *
+     * This occurs if the shorthand background property was used but no proper value
+     * was specified for this style.
+     * This leads to a null value being used unless otherwise overridden.
+     *
+     * @return bool
+     */
+    public function is_special_empty_value() {
+        return ($this->value === self::NULL_VALUE);
+    }
 }
 
 /**
@@ -3687,6 +3834,109 @@ class css_style_backgroundposition extends css_style_generic {
      */
     public static function init($value) {
         return new css_style_backgroundposition('background-position', $value);
+    }
+
+    /**
+     * Consolidates this style into a single background style
+     *
+     * @return string
+     */
+    public function consolidate_to() {
+        return 'background';
+    }
+
+    /**
+     * Returns true if the value for this style is the special null value.
+     *
+     * This occurs if the shorthand background property was used but no proper value
+     * was specified for this style.
+     * This leads to a null value being used unless otherwise overridden.
+     *
+     * @return bool
+     */
+    public function is_special_empty_value() {
+        return ($this->value === self::NULL_VALUE);
+    }
+}
+
+/**
+ * A background size style.
+ *
+ * @package core_css
+ * @category css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_style_backgroundsize extends css_style_generic {
+
+    /**
+     * Creates a new background size style
+     *
+     * @param string $value The value of the style
+     * @return css_style_backgroundposition
+     */
+    public static function init($value) {
+        return new css_style_backgroundsize('background-size', $value);
+    }
+
+    /**
+     * Consolidates this style into a single background style
+     *
+     * @return string
+     */
+    public function consolidate_to() {
+        return 'background';
+    }
+}
+
+/**
+ * A background clip style.
+ *
+ * @package core_css
+ * @category css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_style_backgroundclip extends css_style_generic {
+
+    /**
+     * Creates a new background clip style
+     *
+     * @param string $value The value of the style
+     * @return css_style_backgroundposition
+     */
+    public static function init($value) {
+        return new css_style_backgroundclip('background-clip', $value);
+    }
+
+    /**
+     * Consolidates this style into a single background style
+     *
+     * @return string
+     */
+    public function consolidate_to() {
+        return 'background';
+    }
+}
+
+/**
+ * A background origin style.
+ *
+ * @package core_css
+ * @category css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_style_backgroundorigin extends css_style_generic {
+
+    /**
+     * Creates a new background origin style
+     *
+     * @param string $value The value of the style
+     * @return css_style_backgroundposition
+     */
+    public static function init($value) {
+        return new css_style_backgroundorigin('background-origin', $value);
     }
 
     /**

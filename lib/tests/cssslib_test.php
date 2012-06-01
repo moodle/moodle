@@ -77,12 +77,37 @@ class css_optimiser_testcase extends advanced_testcase {
 
     /**
      * Background colour tests
+     *
+     * When testing background styles it is important to understand how the background shorthand works.
+     * background shorthand allows the following styles to be specified in a single "background" declaration:
+     *   - background-color
+     *   - background-image
+     *   - background-repeat
+     *   - background-attachment
+     *   - background-position
+     *
+     * If the background shorthand is used it can contain one or more of those (preferabbly in that order).
+     * Important it does not need to contain all of them.
+     * However even if it doesn't contain values for all styles all of the styles will be affected.
+     * If a style is missed from the shorthand background style but has an existing value in the rule then the existing value
+     * is cleared.
+     *
+     * For example:
+     *      .test {background: url(\'test.png\');background: bottom right;background:#123456;}
+     * will result in:
+     *      .test {background:#123456;}
+     *
+     * And:
+     *      .test {background-image: url(\'test.png\');background:#123456;}
+     * will result in:
+     *      .test {background:#123456;}
+     *
      * @param css_optimiser $optimiser
      */
     protected function check_background(css_optimiser $optimiser) {
 
         $cssin = '.test {background-color: #123456;}';
-        $cssout = '.test{background:#123456;}';
+        $cssout = '.test{background-color:#123456;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.test {background-image: url(\'test.png\');}';
@@ -103,7 +128,11 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.test {background: url(   \'test.png\'    )}.test{background: bottom right}.test {background:#123456;}';
-        $cssout = '.test{background-image:url(\'test.png\');background-position:bottom right;background-color:#123456;}';
+        $cssout = '.test{background:#123456;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {background-image: url(\'test.png\');background:#123456;}';
+        $cssout = '.test{background:#123456;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.test {background-color: #123456;background-repeat: repeat-x; background-position: 100% 0%;}';
@@ -112,17 +141,11 @@ class css_optimiser_testcase extends advanced_testcase {
 
         $cssin = '.tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: 0 10%;background-repeat: no-repeat;}
                   .tree_item.branch.navigation_node {background-image:none;padding-left:0;}';
-        $cssout = '.tree_item.branch{background:url([[pix:t/expanded]]) no-repeat 0 10%;} .tree_item.branch.navigation_node{background-image:none;padding-left:0;}';
+        $cssout = '.tree_item.branch{background-image:url([[pix:t/expanded]]);background-position:0 10%;background-repeat:no-repeat;} .tree_item.branch.navigation_node{background-image:none;padding-left:0;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
-
-        $cssin = '.block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty]]);background-position: 0% 5%;background-repeat: no-repeat;}
-                  .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed]]);}';
-        $cssout = '.block_tree .tree_item.emptybranch{background:url([[pix:t/collapsed_empty]]) no-repeat 0% 5%;} .block_tree .collapsed .tree_item.branch{background-image:url([[pix:t/collapsed]]);}';
-        $this->assertEquals($cssout, $optimiser->process($cssin));
-
 
         $cssin = '#nextLink{background:url(data:image/gif;base64,AAAA);}';
-        $cssout = '#nextLink{background-image:url(data:image/gif;base64,AAAA);}';
+        $cssout = '#nextLink{background:url(data:image/gif;base64,AAAA);}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '#nextLink{background-image:url(data:image/gif;base64,AAAA);}';
@@ -133,8 +156,12 @@ class css_optimiser_testcase extends advanced_testcase {
         $cssout = '.test{background:#123456 url(data:image/gif;base64,AAAA) no-repeat top left;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
-        $cssin = '#custommenu {background-image:none;background-position:right center;background-repeat:no-repeat;};';
-        $cssout = '#custommenu {background-image:none;background-position:right center;background-repeat:no-repeat;};';
+        $cssin = '#test {background-image:none;background-position:right center;background-repeat:no-repeat;}';
+        $cssout = '#test{background-image:none;background-position:right center;background-repeat:no-repeat;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {background: url([[pix:theme|photos]]) no-repeat 50% 50%;background-size: 40px 40px;-webkit-background-size: 40px 40px;}';
+        $cssout = '.test{background:url([[pix:theme|photos]]) no-repeat 50% 50%;background-size:40px 40px;-webkit-background-size:40px 40px;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
@@ -184,7 +211,7 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one {border:1px solid red;width:20px;} .two {border:1px solid red;height:20px;}';
-        $cssout = ".one{width:20px;border:1px solid #FF0000;} .two{height:20px;border:1px solid #FF0000;}";
+        $cssout = ".one{border:1px solid #FF0000;width:20px;} .two{border:1px solid #FF0000;height:20px;}";
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.test {border: 1px solid #123456;} .test {border-color: #654321}';
@@ -516,7 +543,7 @@ class css_optimiser_testcase extends advanced_testcase {
             '.one {background-color:red;} .one {:blue;}',
             '.one {background-color:red;} .one {:#00F}',
         );
-        $cssout = '.one{background:#F00;}';
+        $cssout = '.one{background-color:#F00;}';
         foreach ($cssin as $css) {
             $this->assertEquals($cssout, $optimiser->process($css));
         }
@@ -538,15 +565,15 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one {background-color:red;color;border-color:blue}';
-        $cssout = '.one{background:#F00;border-color:#00F;}';
+        $cssout = '.one{background-color:#F00;border-color:#00F;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin  = '{background-color:#123456;color:red;}{color:green;}';
-        $cssout = "{color:#008000;background:#123456;}";
+        $cssout = "{background-color:#123456;color:#008000;}";
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin  = '.one {color:red;} {color:green;} .one {background-color:blue;}';
-        $cssout = ".one{color:#F00;background:#00F;} {color:#008000;}";
+        $cssout = ".one{color:#F00;background-color:#00F;} {color:#008000;}";
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
@@ -655,16 +682,16 @@ class css_optimiser_testcase extends advanced_testcase {
 CSS;
 
         $cssout = <<<CSS
-.test .one{color:#F00;margin:10px;border-width:0;background:#123;}
+.test .one{margin:10px;border-width:0;color:#F00;background-color:#123;}
 .test.one{margin:15px;border:1px solid #008000;}
-#test .one{color:#000;margin:20px;}
+#test .one{margin:20px;color:#000;}
 #test #one{margin:25px;}
 .test #one{margin:30px;}
 #new.style{color:#000;}
 
 
 @media print {
-  #test .one{color:#123456;margin:40px;}
+  #test .one{margin:40px;color:#123456;}
   #test #one{margin:45px;}
 }
 
@@ -851,8 +878,9 @@ CSS;
 
 
 @media print {
-  .test{background:#333;}
+  .test{background-color:#333;}
 }
+
 @keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
 @-moz-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
 @-webkit-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
@@ -885,7 +913,8 @@ CSS;
 .dndupload-uploading .dndupload-uploadinprogress,
 .filemanager.fp-select.loading .fp-select-loading{display:block;}
 .dndupload-uploadinprogress{display:none;text-align:center;}
-.dndupload-arrow{width:56px;height:47px;position:absolute;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;background:url('[[pix:theme|fp/dnd_arrow]]') no-repeat center;margin-left:-28px;}
+.dndupload-arrow{background:url('[[pix:theme|fp/dnd_arrow]]') no-repeat center;width:56px;height:47px;position:absolute;margin-left:-28px;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;}
+
 
 @keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
 @-moz-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
