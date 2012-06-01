@@ -194,7 +194,7 @@ class quiz_grading_report extends quiz_default_report {
                 SELECT quiza.*, u.firstname, u.lastname, u.idnumber
                 FROM {quiz_attempts} quiza
                 JOIN {user} u ON u.id = quiza.userid
-                WHERE quiza.uniqueid $asql AND quiza.state == ? AND quiza.quiz = ?",
+                WHERE quiza.uniqueid $asql AND quiza.state = ? AND quiza.quiz = ?",
                 $params);
 
         $attempts = array();
