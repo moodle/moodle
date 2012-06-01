@@ -333,7 +333,8 @@ default:
 
                 $home_url->param('action', 'browse');
                 $home_url->param('draftpath', $file->filepath);
-                $foldername = trim(array_pop(explode('/', trim($file->filepath, '/'))), '/');
+                $filepathchunks = explode('/', trim($file->filepath, '/'));
+                $foldername = trim(array_pop($filepathchunks), '/');
                 echo html_writer::link($home_url, $foldername);
 
                 $home_url->param('draftpath', $file->filepath);
