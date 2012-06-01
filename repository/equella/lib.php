@@ -33,7 +33,7 @@ class repository_equella extends repository {
         if (isset($this->options['mimetypes'])) {
             $mt = $this->options['mimetypes'];
             if (!empty($mt) && is_array($mt) && !in_array('*', $mt)) {
-                $this->mimetypes = array_unique(array_map(array($this, 'toMimeType'), $mt));
+                $this->mimetypes = array_unique(array_map(array($this, 'to_mime_type'), $mt));
             }
         }
     }
@@ -217,7 +217,7 @@ class repository_equella extends repository {
      * @param string $sharedsecret
      * @return string
      */
-    function getssotoken_raw($username, $shareid, $sharedsecret) {
+    private static function getssotoken_raw($username, $shareid, $sharedsecret) {
         $time = time() . '000';
         return urlencode($username)
             . ':'
@@ -235,7 +235,7 @@ class repository_equella extends repository {
      * @param $readwrite
      * @return string
      */
-    function appendtoken($url, $readwrite = null) {
+    private function appendtoken($url, $readwrite = null) {
         return $url . (strpos($url, '?') != false ? '&' : '?') . 'token=' . urlencode($this->getssotoken($readwrite));
     }
 
@@ -245,7 +245,7 @@ class repository_equella extends repository {
      * @param string $urlpart
      * @return string
      */
-    function full_url($urlpart) {
+    private function full_url($urlpart) {
         return str_ireplace('signon.do', $urlpart, $this->get_option('equella_url'));
     }
 
@@ -255,7 +255,7 @@ class repository_equella extends repository {
      * @param string $readwrite
      * @return string
      */
-    function getssotoken($readwrite = 'read') {
+    private function getssotoken($readwrite = 'read') {
         global $USER, $COURSE;
 
         if( $readwrite == 'write' ) {
@@ -287,7 +287,7 @@ class repository_equella extends repository {
      * @param string $value
      * @return string
      */
-    private function toMimeType($value) {
+    private static function to_mime_type($value) {
         return mimeinfo('type', $value);
     }
 }
