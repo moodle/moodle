@@ -818,8 +818,33 @@ sup {vertical-align: super;}
     display:none;
 }
 
+.moodle-dialogue-base .moodle-dialogue {
+    background-color: transparent;
+    border: 0px solid transparent!important;
+}
+
+.modchooser .moodle-dialogue-wrap {
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC!important;
+    height: auto;
+    border-radius:10px;
+    -webkit-box-shadow: 5px 5px 20px 0px #666666;-moz-box-shadow: 5px 5px 20px 0px #666666;box-shadow: 5px 5px 20px 0px #666666;
+}
+
 .modchooser .moodle-dialogue-hd {
-    text-align: center;
+    font-weight: normal;
+    border-radius: 10px 10px 0px 0px;border-bottom: 1px solid #BBBBBB!important;padding:5px 5px 5px 5px;text-align: center!important;font-size:12px;letter-spacing: 1px;color:#333333; text-shadow: 1px 1px 1px #FFFFFF;filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
+    background: #CCCCCC;filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC');background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC));background: -moz-linear-gradient(top,  #FFFFFF,  #CCCCCC);
+}
+
+.modchooser .moodle-dialogue-bd {
+    overflow: auto;
+    padding: 0px;
+    background: #F2F2F2;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    font-size: 12px;
+    color: #555555;
 }
 
 /* Center the submit buttons within the area */
@@ -836,16 +861,16 @@ sup {vertical-align: super;}
 /* Various settings for the options area */
 #choosercontainer #chooseform .options {
     position: relative;
-    border-bottom: 1px solid grey;
-    padding: 0.24em 0;
+    border-bottom: 1px solid #BBBBBB;
 }
 
 /* Only set these options if we're showing the js container */
 .jsenabled #choosercontainer #chooseform .alloptions {
-    max-height: 530px;
+    max-height: 550px;
     overflow-x: hidden;
     overflow-y: auto;
-    max-width: 18.15em;
+    max-width: 18.5em;
+    -webkit-box-shadow: inset 0px 0px 30px 0px #CCCCCC;-moz-box-shadow: inset 0px 0px 30px 0px #CCCCCC;box-shadow: inset 0px 0px 30px 0px #CCCCCC;
 }
 
 /* Settings for option rows and option subtypes */
@@ -853,12 +878,12 @@ sup {vertical-align: super;}
 #choosercontainer #chooseform .option,
 #choosercontainer #chooseform .nonoption {
     margin-bottom: 0;
-    padding: 0 0 0 0.3em;
+    padding: 0 1.6em 0 1.6em;
 }
 
 #choosercontainer #chooseform .moduletypetitle {
-    font-weight: bold;
-    text-align : center;
+    text-transform: uppercase;
+    padding: 1em 0 .3em 0;
 }
 
 #choosercontainer #chooseform .subtype {
@@ -868,7 +893,7 @@ sup {vertical-align: super;}
 
 #choosercontainer #chooseform .option .typename,
 #choosercontainer #chooseform .option span.modicon img.icon {
-    padding: 0 0 0 0.3em;
+    padding: 0 0 0 0.5em;
 }
 
 #choosercontainer #chooseform .option input[type=radio],
@@ -879,7 +904,8 @@ sup {vertical-align: super;}
 
 #choosercontainer #chooseform .option label {
     display: block;
-    padding: 0.2em 0 0.2em 0;
+    padding: 0.3em 0 0.1em 0;
+    border-bottom: 1px solid #FFFFFF;
 }
 
 /* The instruction/help area */
@@ -892,12 +918,12 @@ sup {vertical-align: super;}
     bottom: 0px;
     left: 18.5em;
     margin: 0;
-    border-left: 1px solid grey;
-    padding: 0.3em 0.5em;
+    padding: 2em 2em 2em 2.4em;
     background-color: white;
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 550px;
+    line-height: 2em;
 }
 
 /* Selected option settings */
@@ -906,6 +932,7 @@ sup {vertical-align: super;}
     display: block;
 }
 #choosercontainer #chooseform .selected {
-    background-color: #ddd;
+    background-color: #FFFFFF;
+    -webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;-moz-box-shadow: 0px 0px 10px 0px #CCCCCC;box-shadow: 0px 0px 10px 0px #CCCCCC;
 }
 
