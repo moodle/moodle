@@ -34,55 +34,40 @@ require_once($CFG->libdir.'/googleapi.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_googledocs extends repository {
-    private $subauthtoken = '';
+    private $googleoauth = null;
 
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
-        global $USER;
         parent::__construct($repositoryid, $context, $options);
 
-        // TODO: I wish there was somewhere we could explicitly put this outside of constructor..
-        $googletoken = optional_param('token', false, PARAM_RAW);
-        if($googletoken){
-            $gauth = new google_authsub(false, $googletoken); // will throw exception if fails
-            google_docs::set_sesskey($gauth->get_sessiontoken(), $USER->id);
-        }
+        $returnurl = new moodle_url('/repository/repository_callback.php',
+            array('callback' => 'yes', 'repo_id' =>$this->id));
+
+        $clientid = get_config('googledocs', 'clientid');
+        $secret = get_config('googledocs', 'secret');
+        $this->googleoauth = new google_oauth($clientid, $secret, $returnurl->out(false), google_docs::REALM);
+
         $this->check_login();
     }
 
     public function check_login() {
-        global $USER;
-
-        $sesskey = google_docs::get_sesskey($USER->id);
-
-        if($sesskey){
-            try{
-                $gauth = new google_authsub($sesskey);
-                $this->subauthtoken = $sesskey;
-                return true;
-            }catch(Exception $e){
-                // sesskey is not valid, delete store and re-auth
-                google_docs::delete_sesskey($USER->id);
-            }
-        }
-
-        return false;
+        return $this->googleoauth->is_logged_in();
     }
 
-    public function print_login($ajax = true){
-        global $CFG;
-        if($ajax){
-            $ret = array();
-            $popup_btn = new stdClass();
-            $popup_btn->type = 'popup';
-            $returnurl = $CFG->wwwroot.'/repository/repository_callback.php?callback=yes&repo_id='.$this->id;
-            $popup_btn->url = google_authsub::login_url($returnurl, google_docs::REALM);
-            $ret['login'] = array($popup_btn);
-            return $ret;
+    public function print_login() {
+        $url = $this->googleoauth->get_login_url();
+
+        if ($this->options['ajax']) {
+            $popup = new stdClass();
+            $popup->type = 'popup';
+            $popup->url = $url->out(false);
+            return array('login' => array($popup));
+        } else {
+            echo '<a target="_blank" href="'.$url->out(false).'">'.get_string('login', 'repository').'</a>';
         }
     }
 
     public function get_listing($path='', $page = '') {
-        $gdocs = new google_docs(new google_authsub($this->subauthtoken));
+        $gdocs = new google_docs($this->googleoauth);
 
         $ret = array();
         $ret['dynload'] = true;
@@ -91,7 +76,7 @@ class repository_googledocs extends repository {
     }
 
     public function search($search_text, $page = 0) {
-        $gdocs = new google_docs(new google_authsub($this->subauthtoken));
+        $gdocs = new google_docs($this->googleoauth);
 
         $ret = array();
         $ret['dynload'] = true;
@@ -99,37 +84,44 @@ class repository_googledocs extends repository {
         return $ret;
     }
 
-    public function logout(){
-        global $USER;
-
-        $token = google_docs::get_sesskey($USER->id);
-
-        $gauth = new google_authsub($token);
-        // revoke token from google
-        $gauth->revoke_session_token();
-
-        google_docs::delete_sesskey($USER->id);
-        $this->subauthtoken = '';
-
+    public function logout() {
+        $this->googleoauth->log_out();
         return parent::logout();
     }
 
     public function get_file($url, $file = '') {
-        global $CFG;
+        $gdocs = new google_docs($this->googleoauth);
+
         $path = $this->prepare_file($file);
-
-        $fp = fopen($path, 'w');
-        $gdocs = new google_docs(new google_authsub($this->subauthtoken));
-        $gdocs->download_file($url, $fp);
-
-        return array('path'=>$path, 'url'=>$url);
+        return $gdocs->download_file($url, $path);
     }
 
     public function supported_filetypes() {
-       return array('document');
+        return '*';
     }
     public function supported_returntypes() {
         return FILE_INTERNAL;
     }
+
+    public static function get_type_option_names() {
+        return array('clientid', 'secret', 'pluginname');
+    }
+
+    public static function type_config_form($mform, $classname = 'repository') {
+
+        $a = new stdClass;
+        $a->docsurl = get_docs_url('Google_OAuth2_Setup');
+        $a->callbackurl = google_oauth::callback_url()->out(false);
+
+        $mform->addElement('static', null, '', get_string('oauthinfo', 'repository_googledocs', $a));
+
+        parent::type_config_form($mform);
+        $mform->addElement('text', 'clientid', get_string('clientid', 'repository_googledocs'));
+        $mform->addElement('text', 'secret', get_string('secret', 'repository_googledocs'));
+
+        $strrequired = get_string('required');
+        $mform->addRule('clientid', $strrequired, 'required', null, 'client');
+        $mform->addRule('secret', $strrequired, 'required', null, 'client');
+    }
 }
-//Icon from: http://www.iconspedia.com/icon/google-2706.html
+// Icon from: http://www.iconspedia.com/icon/google-2706.html.

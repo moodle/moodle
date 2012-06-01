@@ -221,7 +221,8 @@ if (!$exporter->get('instance')) {
         throw new portfolio_export_exception($exporter, 'noavailableplugins', 'portfolio');
     } else if (count($options) == 1) {
         // no point displaying a form, just redirect.
-        $instance = array_shift(array_keys($options));
+        $optionskeys = array_keys($options);
+        $instance = array_shift($optionskeys);
         redirect($CFG->wwwroot . '/portfolio/add.php?id= ' . $exporter->get('id') . '&instance=' . $instance . '&sesskey=' . sesskey());
     }
     // be very selective about not including this unless we really need to

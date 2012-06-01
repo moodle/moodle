@@ -107,7 +107,7 @@ final class portfolio_export_form extends moodleform {
      * @param stdClass $data portfolio information from form data
      * @return array
      */
-    public function validation($data) {
+    public function validation($data, $files) {
 
         $errors = array();
 
@@ -228,7 +228,7 @@ final class portfolio_admin_form extends moodleform {
      * @param stdObject $data form data
      * @return array
      */
-    public function validation($data) {
+    public function validation($data, $files) {
         global $DB;
 
         $errors = array();
@@ -296,7 +296,7 @@ final class portfolio_user_form extends moodleform {
      *
      * @param stdClass $data form data
      */
-    public function validation($data) {
+    public function validation($data, $files) {
 
         $errors = $this->instance->user_config_validation($data);
 
