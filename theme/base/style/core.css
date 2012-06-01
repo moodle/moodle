@@ -824,27 +824,40 @@ sup {vertical-align: super;}
 }
 
 .chooserdialogue .moodle-dialogue-wrap {
+    height: auto;
     background-color: #FFFFFF;
     border: 1px solid #CCCCCC!important;
-    height: auto;
     border-radius:10px;
-    -webkit-box-shadow: 5px 5px 20px 0px #666666;-moz-box-shadow: 5px 5px 20px 0px #666666;box-shadow: 5px 5px 20px 0px #666666;
+    box-shadow: 5px 5px 20px 0px #666666;
+    -webkit-box-shadow: 5px 5px 20px 0px #666666;
+    -moz-box-shadow: 5px 5px 20px 0px #666666;
 }
 
 .chooserdialogue .moodle-dialogue-hd {
-    font-weight: normal;
-    border-radius: 10px 10px 0px 0px;border-bottom: 1px solid #BBBBBB!important;padding:5px 5px 5px 5px;text-align: center!important;font-size:12px;letter-spacing: 1px;color:#333333; text-shadow: 1px 1px 1px #FFFFFF;filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
-    background: #CCCCCC;filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC');background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC));background: -moz-linear-gradient(top,  #FFFFFF,  #CCCCCC);
+    font-size:12px!important;
+    font-weight: normal!important;
+    letter-spacing: 1px;
+    color:#333333!important;
+    text-align: center!important;
+    text-shadow: 1px 1px 1px #FFFFFF;
+    padding:5px 5px 5px 5px;
+    border-radius: 10px 10px 0px 0px;
+    border-bottom: 1px solid #BBBBBB!important;
+    background: #CCCCCC;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC));
+    background: -moz-linear-gradient(top,  #FFFFFF,  #CCCCCC);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC')!important;
+    filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
 }
 
 .chooserdialogue .moodle-dialogue-bd {
+    font-size: 12px;
+    color: #555555;
     overflow: auto;
     padding: 0px;
     background: #F2F2F2;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    font-size: 12px;
-    color: #555555;
 }
 
 /* Center the submit buttons within the area */
@@ -870,7 +883,9 @@ sup {vertical-align: super;}
     overflow-x: hidden;
     overflow-y: auto;
     max-width: 18.5em;
-    -webkit-box-shadow: inset 0px 0px 30px 0px #CCCCCC;-moz-box-shadow: inset 0px 0px 30px 0px #CCCCCC;box-shadow: inset 0px 0px 30px 0px #CCCCCC;
+    box-shadow: inset 0px 0px 30px 0px #CCCCCC;
+    -webkit-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
+    -moz-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
 }
 
 /* Settings for option rows and option subtypes */
@@ -883,7 +898,8 @@ sup {vertical-align: super;}
 
 .choosercontainer #chooseform .moduletypetitle {
     text-transform: uppercase;
-    padding: 1em 0 .3em 0;
+    padding-top: 1.2em;
+    padding-bottom: 0.4em;
 }
 
 .choosercontainer #chooseform .subtype {
@@ -934,6 +950,8 @@ sup {vertical-align: super;}
 
 .choosercontainer #chooseform .selected {
     background-color: #FFFFFF;
-    -webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;-moz-box-shadow: 0px 0px 10px 0px #CCCCCC;box-shadow: 0px 0px 10px 0px #CCCCCC;
+    box-shadow: 0px 0px 10px 0px #CCCCCC;
+    -webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;
+    -moz-box-shadow: 0px 0px 10px 0px #CCCCCC;
 }
 
