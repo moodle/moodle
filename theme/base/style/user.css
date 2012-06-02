@@ -54,3 +54,5 @@
 .dir-rtl .userlist table#participants td,
 .dir-rtl .userlist table#participants th {text-align: right;}
 .dir-rtl .userlist table#participants {margin: 0 auto;}
+
+#page-my-index.dir-rtl .block h3.main { text-align: right;}

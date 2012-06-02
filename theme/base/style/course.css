@@ -42,9 +42,10 @@
 .path-course-view li.activity form.togglecompletion {display:inline;position:absolute;right:-20px;top:0;padding:0.2em 0;}
 .path-course-view li.activity form.togglecompletion div {display:inline;}
 .path-course-view li.activity form.togglecompletion .ajaxworking {position:absolute;top:0; left:20px;width: 20px; height: 20px;background: url([[pix:i/ajaxloader]]) no-repeat;}
-.dir-rtl.path-course-view li.activity {margin-right:0px;margin-left:20px;}
+.dir-rtl.path-course-view li.activity {margin-right:20px;margin-left:20px;}
 .dir-rtl.path-course-view li.activity form.togglecompletion,
-.dir-rtl.path-course-view li.activity span.autocompletion {right:auto;left:-20px;}
+.dir-rtl.path-course-view li.activity span.autocompletion {right:-20px;left:auto;padding:0px;}
+.dir-rtl.path-course-view .completionprogress {float: none;}
 
 .section img.movetarget {height:16px;width:80px;}
 
@@ -106,6 +107,9 @@
 .course_category_tree .category .courses .course_link {display:block;background-image:url([[pix:moodle|i/course]]);background-repeat: no-repeat;padding-left:18px;}
 .course_category_tree .category .course {position:relative;}
 .course_category_tree .category .course_info {position:absolute;right:0;top:0;}
+.dir-rtl .course_category_tree .category .course_info { position: static; }
+.dir-rtl .course_category_tree .category .course_info a, .dir-rtl .course_category_tree .category .course_info div {float: right;}
+.dir-rtl .course_category_tree .controls div {padding: 7px;}
 .course_category_tree .category .course_info a,
 .course_category_tree .category .course_info div {float:left;width:16px;height:16px;}
 .jsenabled .course_category_tree .controls {visibility: visible;}
@@ -144,7 +148,8 @@
 table.category_subcategories {margin-bottom:1em;}
 table.category_subcategories td {white-space: nowrap;}
 
-span.editinstructions {
+.dir-rtl.path-course-view li.activity form.togglecompletion,
+.dir-rtl.path-course-view li.activity span.autocompletion span.editinstructions {
     position: relative;
     top: 5px;
     left: 19px;

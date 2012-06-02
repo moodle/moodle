@@ -1,6 +1,6 @@
 .block {border:1px solid;margin-bottom:1em;}
 .block .header h2 {margin:4px;}
-.block .header .block_action {float:right;margin:0 4px;vertical-align:top;}
+.block .header .block_action {float:right;margin:2px 4px 0;vertical-align:top;}
 .block .header .block_action input {margin-right:2px;}
 .block .header .commands {margin-left:4px;}
 .block .header .commands .icon img {width:11px;height:11px;margin-right:1px;}
