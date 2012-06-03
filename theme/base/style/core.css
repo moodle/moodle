@@ -444,6 +444,15 @@ body.tag .managelink {padding: 5px;}
 .tag_cloud .s1 {font-size: 0.9em;}
 .tag_cloud .s0 {font-size: 0.8em;}
 
+.dir-rtl .file-picker .ygtvtp {background: url([[pix:moodle|y/tp_rtl]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
+.dir-rtl .file-picker .ygtvln {background: url([[pix:moodle|y/ln_rtl]]) 0 0 no-repeat;width:17px;height:22px;}
+.dir-rtl .file-picker .fp-list {text-align:right;}
+.dir-rtl .file-picker .fp-pathbar {text-align: right;}
+.dir-rtl .file-picker div.bd {text-align:right;}
+.dir-rtl #filemenu .yuimenuitemlabel {text-align: right;}
+.dir-rtl .filepicker .yui-layout-unit-left {left:500px;}
+.dir-rtl .filepicker .yui-layout-unit-center {left:0px;}
+
 /*
  * Backup and Restore CSS
  */
