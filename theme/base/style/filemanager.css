@@ -25,6 +25,7 @@ background: #CCCCCC;filter: progid:DXImageTransform.Microsoft.gradient(startColo
  */
 #filesskin .file-picker.fp-generallayout {width: 724px;background: #FFFFFF;border-radius:10px;border: 1px solid #CCCCCC;position: relative;}
 .file-picker .fp-repo-area {width:180px;overflow:auto;display:inline-block;border-right:1px solid #BBBBBB;position:absolute;top:26px;bottom:1px;}
+.dir-rtl .file-picker .fp-repo-area {top:29px;}
 .file-picker .fp-repo-items {vertical-align:top;display: inline-block;margin-left: 181px;}
 .file-picker .fp-navbar {background: #F2F2F2;min-height:22px;border-bottom: 1px solid #BBBBBB;padding: 5px 8px;}
 .file-picker .fp-content {background: #FFFFFF;clear: both;overflow:auto;width: 543px;height: 349px;margin-bottom:-14px;}
@@ -40,6 +41,7 @@ background: #CCCCCC;filter: progid:DXImageTransform.Microsoft.gradient(startColo
 .file-picker .fp-list {list-style-type:none;padding:0;float:left;width:100%;margin:0;}
 .dir-rtl .file-picker .fp-list {text-align:right;}
 .file-picker .fp-list .fp-repo a{display:block;padding:.5em .7em;}
+.dir-rtl .file-picker .fp-list .fp-repo a {display:inline;}
 .file-picker .fp-list .fp-repo.active {background:#F2F2F2;}
 .file-picker .fp-list .fp-repo-icon {padding: 0px 7px 0px 5px;}
 
@@ -53,6 +55,7 @@ background: #CCCCCC;filter: progid:DXImageTransform.Microsoft.gradient(startColo
 .fp-toolbar.empty {display:none;}
 .fp-toolbar .disabled {display:none;}
 .fp-toolbar div {display: inline-block;padding: 0px 2px;padding-right: 10px;}
+.dir-rtl .fp-toolbar div {width:100px;}
 .fp-toolbar img {vertical-align: -15%; margin-right: 5px;}
 
 .fp-toolbar .fp-tb-search {width: 228px;height: 14px;}
@@ -64,12 +67,15 @@ background: #CCCCCC;filter: progid:DXImageTransform.Microsoft.gradient(startColo
 .dir-rtl .fp-viewbar {float: left;width: 100px;}
 
 .fp-vb-icons {background:url('[[pix:theme|fp/view_icon_active]]') no-repeat 0 0;width:22px;height:22px;display: inline-block;}
+.dir-rtl .fp-vb-icons {background:url('[[pix:theme|fp/view_icon_active]]') no-repeat 0 0;}
 .fp-vb-icons.checked {background:url('[[pix:theme|fp/view_icon_selected]]');}
 .fp-viewbar.disabled .fp-vb-icons {background:url('[[pix:theme|fp/view_icon_inactive]]');}
 .fp-vb-details {background:url('[[pix:theme|fp/view_list_active]]') no-repeat 0px 0px;width:23px;height:22px;display: inline-block;margin-left: -4px;}
+.dir-rtl .fp-vb-details {background:url('[[pix:theme|fp/view_list_active]]') no-repeat 0px 0px;}
 .fp-vb-details.checked {background:url('[[pix:theme|fp/view_list_selected]]');}
 .fp-viewbar.disabled .fp-vb-details {background:url('[[pix:theme|fp/view_list_inactive]]');}
 .fp-vb-tree {background:url('[[pix:theme|fp/view_tree_active]]') no-repeat 0px 0px;width:23px;height:22px;display: inline-block;margin-left: -4px;}
+.dir-rtl .fp-vb-tree {background:url('[[pix:theme|fp/view_tree_active]]') no-repeat 0px 0px;}
 .fp-vb-tree.checked {background:url('[[pix:theme|fp/view_tree_selected]]');}
 .fp-viewbar.disabled .fp-vb-tree {background:url('[[pix:theme|fp/view_tree_inactive]]');}
 .file-picker .fp-clear-left {clear: left;}
@@ -149,8 +155,10 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 
 .fp-filename-icon {margin-top: 10px;display: block;position: relative;}
 .fp-icon {float: left;margin-top: -7px;width: 24px;height: 24px;margin-right: 10px;text-align: center;line-height: 24px;}
+.dir-rtl .fp-icon {float: right}
 .fp-icon img {max-height:24px;max-width:24px;vertical-align: middle;}
 .fp-filename {padding-right: 10px;}
+.dir-rtl .fp-filename {padding-left: 10px;}
 
 /*
  * Repositories Login on fp-content (File Picker only)
