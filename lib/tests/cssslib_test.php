@@ -163,6 +163,14 @@ class css_optimiser_testcase extends advanced_testcase {
         $cssin = '.test {background: url([[pix:theme|photos]]) no-repeat 50% 50%;background-size: 40px 40px;-webkit-background-size: 40px 40px;}';
         $cssout = '.test{background:url([[pix:theme|photos]]) no-repeat 50% 50%;background-size:40px 40px;-webkit-background-size:40px 40px;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test{background-image: -o-linear-gradient(#3c3c3c, #111);background-image: linear-gradient(#3c3c3c, #111);}';
+        $cssout = '.test{background-image:-o-linear-gradient(#3c3c3c, #111);background-image:linear-gradient(#3c3c3c, #111);}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test{background-image: -moz-linear-gradient(#3c3c3c, #111);background-image: -webkit-linear-gradient(#3c3c3c, #111);background-image: -o-linear-gradient(#3c3c3c, #111);background-image: linear-gradient(#3c3c3c, #111);background-image: url(/test.png);}';
+        $cssout = '.test{background-image:-moz-linear-gradient(#3c3c3c, #111);background-image:-webkit-linear-gradient(#3c3c3c, #111);background-image:-o-linear-gradient(#3c3c3c, #111);background-image:linear-gradient(#3c3c3c, #111);background-image:url(/test.png);}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
     /**

@@ -1233,6 +1233,12 @@ abstract class css_writer {
     public static function styles(array $styles) {
         $bits = array();
         foreach ($styles as $style) {
+            if (is_array($style)) {
+                foreach ($style as $advstyle) {
+                    $bits[] = $advstyle->out();
+                }
+                continue;
+            }
             $bits[] = $style->out();
         }
         return join('', $bits);
@@ -1429,7 +1435,18 @@ class css_rule {
         }
         if ($style instanceof css_style) {
             $name = $style->get_name();
-            if (array_key_exists($name, $this->styles)) {
+            $exists = array_key_exists($name, $this->styles);
+            // We need to find out if the current style support multiple values, or whether the style
+            // is already set up to record multiple values. This can happen with background images which can have single
+            // and multiple values.
+            if ($style->allows_multiple_values() || ($exists && is_array($this->styles[$name]))) {
+                if (!$exists) {
+                    $this->styles[$name] = array();
+                } else if ($this->styles[$name] instanceof css_style) {
+                    $this->styles[$name] = array($this->styles[$name]);
+                }
+                $this->styles[$name][] = $style;
+            } else if ($exists) {
                 $this->styles[$name]->set_value($style->get_value());
             } else {
                 $this->styles[$name] = $style;
@@ -1495,7 +1512,12 @@ class css_rule {
         $organisedstyles = array();
         $finalstyles = array();
         $consolidate = array();
+        $advancedstyles = array();
         foreach ($this->styles as $style) {
+            if (is_array($style)) {
+                $advancedstyles += $style;
+                continue;
+            }
             $consolidatetoclass = $style->consolidate_to();
             if (($style->is_valid() || $style->is_special_empty_value()) && !empty($consolidatetoclass) && class_exists('css_style_'.$consolidatetoclass)) {
                 $class = 'css_style_'.$consolidatetoclass;
@@ -1522,6 +1544,7 @@ class css_rule {
                 $finalstyles[] = $style;
             }
         }
+        $finalstyles = array_merge($finalstyles,$advancedstyles);
         return $finalstyles;
     }
 
@@ -1548,6 +1571,10 @@ class css_rule {
     public function split_by_style() {
         $return = array();
         foreach ($this->styles as $style) {
+            if (is_array($style)) {
+                $return[] = new css_rule($this->selectors, $style);
+                continue;
+            }
             $return[] = new css_rule($this->selectors, array($style));
         }
         return $return;
@@ -1591,6 +1618,14 @@ class css_rule {
      */
     public function has_errors() {
         foreach ($this->styles as $style) {
+            if (is_array($style)) {
+                foreach ($style as $advstyle) {
+                    if ($advstyle->has_error()) {
+                        return true;
+                    }
+                }
+                continue;
+            }
             if ($style->has_error()) {
                 return true;
             }
@@ -2064,6 +2099,10 @@ abstract class css_style {
      * @return bool
      */
     public function is_special_empty_value() {
+        return false;
+    }
+
+    public function allows_multiple_values() {
         return false;
     }
 }
@@ -3505,7 +3544,7 @@ class css_style_background extends css_style {
         $return[] = new css_style_backgroundcolor('background-color', $color);
 
         $image = self::NULL_VALUE;
-        if (count($bits) > 0 && preg_match('#(none|inherit|url\(\))#', reset($bits))) {
+        if (count($bits) > 0 && preg_match('#^\s*(none|inherit|url\(\))\s*$#', reset($bits))) {
             $image = array_shift($bits);
             if ($image == 'url()') {
                 $image = "url({$imageurl})";
@@ -3576,7 +3615,12 @@ class css_style_background extends css_style {
         $clip = null;
 
         $organisedstyles = array();
+        $advancedstyles = array();
         foreach ($styles as $style) {
+            if ($style instanceof css_style_backgroundimage_advanced) {
+                $advancedstyles[] = $style;
+                continue;
+            }
             $organisedstyles[$style->get_name()] = $style;
             switch ($style->get_name()) {
                 case 'background-color' : $color = css_style_color::shrink_value($style->get_value()); break;
@@ -3637,7 +3681,7 @@ class css_style_background extends css_style {
                 $return[] = $style;
             }
         }
-
+        $return = array_merge($return, $advancedstyles);
         return $return;
     }
 }
@@ -3698,12 +3742,15 @@ class css_style_backgroundcolor extends css_style_color {
 class css_style_backgroundimage extends css_style_generic {
 
     /**
-     * Creates a new background colour style
+     * Creates a new background image style
      *
      * @param string $value The value of the style
      * @return css_style_backgroundimage
      */
     public static function init($value) {
+        if (!preg_match('#^\s*(none|inherit|url\()#i', $value)) {
+            return css_style_backgroundimage_advanced::init($value);
+        }
         return new css_style_backgroundimage('background-image', $value);
     }
 
@@ -3727,6 +3774,28 @@ class css_style_backgroundimage extends css_style_generic {
      */
     public function is_special_empty_value() {
         return ($this->value === self::NULL_VALUE);
+    }
+}
+
+class css_style_backgroundimage_advanced extends css_style_generic {
+    /**
+     * Creates a new background colour style
+     *
+     * @param string $value The value of the style
+     * @return css_style_backgroundimage
+     */
+    public static function init($value) {
+        return new css_style_backgroundimage_advanced('background-image', $value);
+    }
+
+    /**
+     * Returns true because the advanced background image supports multiple values.
+     * e.g. -webkit-linear-gradient and -moz-linear-gradient.
+     *
+     * @return boolean
+     */
+    public function allows_multiple_values() {
+        return true;
     }
 }
 
