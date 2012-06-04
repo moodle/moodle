@@ -368,8 +368,8 @@ abstract class oauth2_client extends curl {
     private $clientid = '';
     /** var string The client secret. */
     private $clientsecret = '';
-    /** var string URL to return to after authenticating */
-    private $returnurl = '';
+    /** var moodle_url URL to return to after authenticating */
+    private $returnurl = null;
     /** var string scope of the authentication request */
     private $scope = '';
     /** var stdClass access token object */
@@ -392,10 +392,10 @@ abstract class oauth2_client extends curl {
      *
      * @param string $clientid
      * @param string $clientsecret
-     * @param string $returnurl
+     * @param moodle_url $returnurl
      * @param string $scope
      */
-    public function __construct($clientid, $clientsecret, $returnurl, $scope) {
+    public function __construct($clientid, $clientsecret, moodle_url $returnurl, $scope) {
         parent::__construct();
         $this->clientid = $clientid;
         $this->clientsecret = $clientsecret;
@@ -456,7 +456,7 @@ abstract class oauth2_client extends curl {
                         array('client_id' => $this->clientid,
                               'response_type' => 'code',
                               'redirect_uri' => $callbackurl->out(false),
-                              'state' => $this->returnurl,
+                              'state' => $this->returnurl->out_as_local_url(false),
                               'scope' => $this->scope,
                           ));
 

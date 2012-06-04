@@ -46,7 +46,7 @@ class repository_picasa extends repository {
 
         $clientid = get_config('picasa', 'clientid');
         $secret = get_config('picasa', 'secret');
-        $this->googleoauth = new google_oauth($clientid, $secret, $returnurl->out(false), google_picasa::REALM);
+        $this->googleoauth = new google_oauth($clientid, $secret, $returnurl, google_picasa::REALM);
 
         $this->check_login();
     }

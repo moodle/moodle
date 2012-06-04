@@ -44,7 +44,7 @@ class repository_googledocs extends repository {
 
         $clientid = get_config('googledocs', 'clientid');
         $secret = get_config('googledocs', 'secret');
-        $this->googleoauth = new google_oauth($clientid, $secret, $returnurl->out(false), google_docs::REALM);
+        $this->googleoauth = new google_oauth($clientid, $secret, $returnurl, google_docs::REALM);
 
         $this->check_login();
     }
