@@ -65,11 +65,14 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->check_margins($optimiser);
         $this->check_padding($optimiser);
         $this->check_widths($optimiser);
+        $this->check_cursor($optimiser);
+        $this->check_vertical_align($optimiser);
 
         $this->try_broken_css_found_in_moodle($optimiser);
         $this->try_invalid_css_handling($optimiser);
         $this->try_bulk_processing($optimiser);
         $this->try_break_things($optimiser);
+        $this->try_advanced_css_animation($optimiser);
     }
 
     /**
@@ -88,6 +91,11 @@ class css_optimiser_testcase extends advanced_testcase {
 
         $cssin = '.test {background: #123456 url(\'test.png\') no-repeat top left;}';
         $cssout = '.test{background:#123456 url(\'test.png\') no-repeat top left;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        // Check out this for madness, background position and background-repeat have been reversed
+        $cssin = '.test {background: #123456 url(\'test.png\') center no-repeat;}';
+        $cssout = '.test{background:#123456 url(\'test.png\') no-repeat center;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.test {background: url(\'test.png\') no-repeat top left;}.test{background-position: bottom right}.test {background-color:#123456;}';
@@ -153,6 +161,14 @@ class css_optimiser_testcase extends advanced_testcase {
 
         $cssin = '.one, .two {border:0px;}';
         $cssout = ".one, .two{border-width:0;}";
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one, .two {border: thin;}';
+        $cssout = ".one, .two{border-width:thin;}";
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one, .two {border: thin solid black;}';
+        $cssout = ".one, .two{border:thin solid #000000;}";
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one, .two {border-top: 5px solid white;}';
@@ -267,6 +283,10 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one {color:#123 !important;} .one {color:#321;}';
+        $cssout = '.one{color:#123 !important;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {color:#123!important;} .one {color:#321;}';
         $cssout = '.one{color:#123 !important;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
@@ -392,6 +412,70 @@ class css_optimiser_testcase extends advanced_testcase {
 
         $cssin = '.one, .two, .one.two, .one .two {margin:0;} .one.two {margin:0 7px;}';
         $cssout = '.one, .two, .one .two{margin:0;} .one.two{margin:0 7px;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+    }
+
+    protected function check_cursor(css_optimiser $optimiser) {
+        // Valid cursor
+        $cssin = '.one {cursor: pointer;}';
+        $cssout = '.one{cursor:pointer;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        // Invalid cursor but tollerated
+        $cssin = '.one {cursor: hand;}';
+        $cssout = '.one{cursor:hand;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        // Valid cursor: url relative
+        $cssin = '.one {cursor: mycursor.png;}';
+        $cssout = '.one{cursor:mycursor.png;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        // Valid cursor: url absolute
+        $cssin = '.one {cursor: http://local.host/mycursor.png;}';
+        $cssout = '.one{cursor:http://local.host/mycursor.png;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+    }
+
+    protected function check_vertical_align(css_optimiser $optimiser) {
+        // Valid vertical aligns
+        $cssin = '.one {vertical-align: baseline;}';
+        $cssout = '.one{vertical-align:baseline;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+        $cssin = '.one {vertical-align: middle;}';
+        $cssout = '.one{vertical-align:middle;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+        $cssin = '.one {vertical-align: 0.75em;}';
+        $cssout = '.one{vertical-align:0.75em;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+        $cssin = '.one {vertical-align: 50%;}';
+        $cssout = '.one{vertical-align:50%;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        // Invalid but tollerated
+        $cssin = '.one {vertical-align: center;}';
+        $cssout = '.one{vertical-align:center;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+    }
+
+    protected function check_float(css_optimiser $optimiser) {
+        // Valid vertical aligns
+        $cssin = '.one {float: inherit;}';
+        $cssout = '.one{float:inherit;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+        $cssin = '.one {float: left;}';
+        $cssout = '.one{float:left;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+        $cssin = '.one {float: right;}';
+        $cssout = '.one{float:right;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+        $cssin = '.one {float: none;}';
+        $cssout = '.one{float:none;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        // Invalid but tollerated
+        $cssin = '.one {float: center;}';
+        $cssout = '.one{float:center;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
@@ -663,11 +747,15 @@ CSS;
         $this->assertTrue(css_is_width('199px'));
         $this->assertTrue(css_is_width('199em'));
         $this->assertTrue(css_is_width('199%'));
-        $this->assertTrue(css_is_width('-1'));
         $this->assertTrue(css_is_width('-1px'));
         $this->assertTrue(css_is_width('auto'));
         $this->assertTrue(css_is_width('inherit'));
 
+        // Valid widths but missing their unit specifier
+        $this->assertFalse(css_is_width('0.75'));
+        $this->assertFalse(css_is_width('3'));
+        $this->assertFalse(css_is_width('-1'));
+        // Totally invalid widths
         $this->assertFalse(css_is_width('-'));
         $this->assertFalse(css_is_width('bananas'));
         $this->assertFalse(css_is_width(''));
@@ -716,6 +804,20 @@ CSS;
         // Opacity with annoying IE equivilants....
         $cssin  = '.test {opacity: 0.5; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; filter: alpha(opacity=50);}';
         $cssout = '.test{opacity:0.5;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";filter:alpha(opacity=50);}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+    }
+
+    public function try_advanced_css_animation(css_optimiser $optimiser) {
+        $css = '.dndupload-arrow{width:56px;height:47px;position:absolute;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;background:url(\'[[pix:theme|fp/dnd_arrow]]\') center no-repeat;margin-left:-28px;}';
+        $css = '.dndupload-arrow{width:56px;height:47px;position:absolute;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;background:url(\'[[pix:theme|fp/dnd_arrow]]\') no-repeat center;margin-left:-28px;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '@keyframes mymove{0%{top:10px;}12%{top:40px;}30%{top:20px}65%{top:35px;}100%{top:9px;}}';
+        $cssout = '@keyframes mymove{0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '@keyframes mymove{0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}} @-moz-keyframes mymove{0%{top:10px;}12%{top:40px;}30%{top:20px}65%{top:35px;}100%{top:9px;}} @-webkit-keyframes mymove{0%{top:10px;}12%{top:40px;}30%{top:20px}65%{top:35px;}100%{top:9px;}}';
+        $cssout = '@keyframes mymove{0%{top:10px;} 12%{top:40px;} 30%{top:20px} 65%{top:35px;} 100%{top:9px;}} @-moz-keyframes mymove{0%{top:10px;}12%{top:40px;}30%{top:20px}65%{top:35px;}100%{top:9px;}} @-webkit-keyframes mymove{0%{top:10px;}12%{top:40px;}30%{top:20px}65%{top:35px;}100%{top:9px;}}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 }

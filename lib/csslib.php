@@ -352,7 +352,7 @@ function css_is_width($value) {
     if (in_array(strtolower($value), array('auto', 'inherit'))) {
         return true;
     }
-    if (preg_match('#^(\-\s*)?(\d*\.)?(\d+)\s*(em|px|pt|%|in|cm|mm|ex|pc)?$#i', $value)) {
+    if ((string)$value === '0' || preg_match('#^(\-\s*)?(\d*\.)?(\d+)\s*(em|px|pt|\%|in|cm|mm|ex|pc)$#i', $value)) {
         return true;
     }
     return false;
@@ -501,9 +501,16 @@ class css_optimiser {
     public function process($css) {
         global $CFG;
 
+        $css = trim($css);
+
         $this->reset_stats();
         $this->timestart = microtime(true);
         $this->rawstrlen = strlen($css);
+
+        if ($this->rawstrlen === 0) {
+            $this->errors[] = 'Skipping file as it has no content.';
+            return '';
+        }
 
         // First up we need to remove all line breaks - this allows us to instantly
         // reduce our processing requirements and as we will process everything
@@ -749,7 +756,7 @@ class css_optimiser {
             $this->optimisedrules += $media->count_rules();
             $this->optimisedselectors +=  $media->count_selectors();
             if ($media->has_errors()) {
-                $this->errors[] = $media->get_errors();
+                $this->errors += $media->get_errors();
             }
             $css .= $media->out();
         }
@@ -774,11 +781,20 @@ class css_optimiser {
             'rawrules'              => $this->rawrules,
             'optimisedstrlen'       => $this->optimisedstrlen,
             'optimisedrules'        => $this->optimisedrules,
-            'optimisedselectors'     => $this->optimisedselectors,
-            'improvementstrlen'     => round(100 - ($this->optimisedstrlen / $this->rawstrlen) * 100, 1).'%',
-            'improvementrules'      => round(100 - ($this->optimisedrules / $this->rawrules) * 100, 1).'%',
-            'improvementselectors'  => round(100 - ($this->optimisedselectors / $this->rawselectors) * 100, 1).'%',
+            'optimisedselectors'    => $this->optimisedselectors,
+            'improvementstrlen'     => '-',
+            'improvementrules'     => '-',
+            'improvementselectors'     => '-',
         );
+        if ($this->rawstrlen > 0) {
+            $stats['improvementstrlen'] = round(100 - ($this->optimisedstrlen / $this->rawstrlen) * 100, 1).'%';
+        }
+        if ($this->rawrules > 0) {
+            $stats['improvementrules'] = round(100 - ($this->optimisedrules / $this->rawrules) * 100, 1).'%';
+        }
+        if ($this->rawselectors > 0) {
+            $stats['improvementselectors'] = round(100 - ($this->optimisedselectors / $this->rawselectors) * 100, 1).'%';
+        }
         return $stats;
     }
 
@@ -794,10 +810,16 @@ class css_optimiser {
     /**
      * Returns an array of errors that have occured
      *
+     * @param bool $clear If set to true the errors will be cleared after being returned.
      * @return array
      */
-    public function get_errors() {
-        return $this->errors;
+    public function get_errors($clear = false) {
+        $errors = $this->errors;
+        if ($clear) {
+            // Reset the error array
+            $this->errors = array();
+        }
+        return $errors;
     }
 
     /**
@@ -821,15 +843,22 @@ class css_optimiser {
      * @return string
      */
     public function output_stats_css() {
-        $stats = $this->get_stats();
-
-        $strlenimprovement = round(100 - ($this->optimisedstrlen / $this->rawstrlen) * 100, 1);
-        $ruleimprovement = round(100 - ($this->optimisedrules / $this->rawrules) * 100, 1);
-        $selectorimprovement = round(100 - ($this->optimisedselectors / $this->rawselectors) * 100, 1);
-        $timetaken = round($this->timecomplete - $this->timestart, 4);
 
         $computedcss  = "/****************************************\n";
         $computedcss .= " *------- CSS Optimisation stats --------\n";
+
+        if ($this->rawstrlen === 0) {
+            $computedcss .= " File not processed as it has no content /\n\n";
+            $computedcss .= " ****************************************/\n\n";
+            return $computedcss;
+        } else if ($this->rawrules === 0) {
+            $computedcss .= " File contained no rules to be processed /\n\n";
+            $computedcss .= " ****************************************/\n\n";
+            return $computedcss;
+        }
+
+        $stats = $this->get_stats();
+
         $computedcss .= " *  ".date('r')."\n";
         $computedcss .= " *  {$stats['commentsincss']}  \t comments removed\n";
         $computedcss .= " *  Optimisation took {$stats['timetaken']} seconds\n";
@@ -1169,6 +1198,7 @@ abstract class css_writer {
      * @return string
      */
     public static function style($name, $value, $important = false) {
+        $value = trim($value);
         if ($important && strpos($value, '!important') === false) {
             $value .= ' !important';
         }
@@ -1657,7 +1687,7 @@ class css_media {
                 $errors[] = $rule->get_error_string();
             }
         }
-        return join("\n", $errors);
+        return $errors;
     }
 }
 
@@ -1745,6 +1775,7 @@ abstract class css_style {
         $important = preg_match('#(\!important\s*;?\s*)$#', $value, $matches);
         if ($important) {
             $value = substr($value, 0, -(strlen($matches[1])));
+            $value = rtrim($value);
         }
         if (!$this->important || $important) {
             $this->value = $this->clean_value($value);
@@ -2233,7 +2264,7 @@ class css_style_border extends css_style {
         $return = array();
         if (count($bits) > 0) {
             $width = array_shift($bits);
-            if (!css_is_width($width)) {
+            if (!css_style_borderwidth::is_border_width($width)) {
                 $width = '0';
             }
             $return[] = new css_style_borderwidth('border-top-width', $width);
@@ -2800,6 +2831,35 @@ class css_style_borderwidth extends css_style_width {
      */
     public function consolidate_to() {
         return 'border';
+    }
+
+    /**
+     * Checks if the width is valid
+     * @return bool
+     */
+    public function is_valid() {
+        return self::is_border_width($this->value);
+    }
+
+    /**
+     * Cleans the provided value
+     *
+     * @param mixed $value Cleans the provided value optimising it if possible
+     * @return string
+     */
+    protected function clean_value($value) {
+        $isvalid = self::is_border_width($value);
+        if (!$isvalid) {
+            $this->set_error('Invalid width specified for '.$this->name);
+        } else if (preg_match('#^0\D+$#', $value)) {
+            return '0';
+        }
+        return trim($value);
+    }
+
+    public static function is_border_width($value) {
+        $altwidthvalues = array('thin', 'medium', 'thick');
+        return css_is_width($value) || in_array($value, $altwidthvalues);
     }
 }
 
@@ -3677,5 +3737,44 @@ class css_style_paddingleft extends css_style_padding {
      */
     public function consolidate_to() {
         return 'padding';
+    }
+}
+
+class css_style_cursor extends css_style_generic {
+    public static function init($value) {
+        return new css_style_cursor('cursor', $value);
+    }
+    protected function clean_value($value) {
+        $allowed = array('auto', 'crosshair', 'default', 'e-resize', 'help', 'move', 'n-resize', 'ne-resize', 'nw-resize',
+                         'pointer', 'progress', 's-resize', 'se-resize', 'sw-resize', 'text', 'w-resize', 'wait', 'inherit');
+        if (!in_array($value, $allowed) && !preg_match('#\.[a-zA-Z0-9_\-]{1,5}$#', $value)) {
+            $this->set_error('Invalid or unexpected cursor value specified: '.$value);
+        }
+        return trim($value);
+    }
+}
+
+class css_style_verticalalign extends css_style_generic {
+    public static function init($value) {
+        return new css_style_verticalalign('vertical-align', $value);
+    }
+    protected function clean_value($value) {
+        $allowed = array('baseline', 'sub', 'super', 'top', 'text-top', 'middle', 'bottom', 'text-bottom', 'inherit');
+        if (!css_is_width($value) && !in_array($value, $allowed)) {
+            $this->set_error('Invalid vertical-align value specified: '.$value);
+        }
+        return trim($value);
+    }
+}
+class css_style_float extends css_style_generic {
+    public static function init($value) {
+        return new css_style_float('float', $value);
+    }
+    protected function clean_value($value) {
+        $allowed = array('left', 'right', 'none', 'inherit');
+        if (!css_is_width($value) && !in_array($value, $allowed)) {
+            $this->set_error('Invalid float value specified: '.$value);
+        }
+        return trim($value);
     }
 }
