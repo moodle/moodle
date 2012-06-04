@@ -39,7 +39,7 @@ $url = optional_param('url', '', PARAM_URL);
 $hubname = optional_param('hubname', '', PARAM_TEXT);
 $token = optional_param('token', '', PARAM_TEXT);
 
-admin_externalpage_setup('registrationindex');
+admin_externalpage_setup('registrationhubs');
 
 //check that we are waiting a confirmation from this hub, and check that the token is correct
 $registrationmanager = new registration_manager();

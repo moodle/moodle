@@ -219,7 +219,8 @@ $temp->add(new admin_setting_configselect('memcachedpconn', new lang_string('mem
 $ADMIN->add('server', $temp);
 
 
-$ADMIN->add('server', new admin_externalpage('adminregistration', new lang_string('registration','admin'), "$CFG->wwwroot/$CFG->admin/registration/index.php"));
+$ADMIN->add('server', new admin_externalpage('adminregistration', new lang_string('hubs', 'admin'),
+    "$CFG->wwwroot/$CFG->admin/registration/index.php"));
 
 // "update notifications" settingpage
 if (empty($CFG->disableupdatenotifications)) {

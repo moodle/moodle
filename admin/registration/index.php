@@ -22,8 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
  *
- * On this page the administrator select if he wants to register on Moodle.org or
- * a specific hub
+ * On this page the administrator selects which hub he wants to register,
+ * except for MOOCH. Admins can register with MOOCH with the top admin menu "Registration" link.
+ * On this page the administrator can also unregister from any hubs, including MOOCH.
  */
 
 require('../../config.php');
@@ -34,7 +35,7 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/forms.php');
 require_once($CFG->dirroot . '/course/publish/lib.php');
 require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
 
-admin_externalpage_setup('registrationindex');
+admin_externalpage_setup('registrationhubs');
 
 $renderer = $PAGE->get_renderer('core', 'register');
 
@@ -126,13 +127,15 @@ if (empty($cancel) and $unregistration and $confirm and confirm_sesskey()) {
     }
 }
 
-echo $OUTPUT->header();
-
-//do not check sesskey if confirm = false because this script is linked into email message
-if (!empty($errormessage)) {
-    echo $OUTPUT->notification(get_string('unregistrationerror', 'hub', $errormessage));
-}
 if (empty($cancel) and $unregistration and !$confirm) {
+
+    echo $OUTPUT->header();
+
+    //do not check sesskey if confirm = false because this script is linked into email message
+    if (!empty($errormessage)) {
+        echo $OUTPUT->notification(get_string('unregistrationerror', 'hub', $errormessage));
+    }
+
     $hub = $registrationmanager->get_registeredhub($huburl);
     echo $OUTPUT->heading(get_string('unregisterfrom', 'hub', $hub->hubname), 3, 'main');
     if ($cleanregdata) {
@@ -142,6 +145,7 @@ if (empty($cancel) and $unregistration and !$confirm) {
         $siteunregistrationform = new site_unregistration_form('',
                         array('huburl' => $huburl, 'hubname' => $hub->hubname));
     }
+
     $siteunregistrationform->display();
 } else {
     $registeredonmoodleorg = false;
@@ -150,8 +154,49 @@ if (empty($cancel) and $unregistration and !$confirm) {
         $registeredonmoodleorg = true;
     }
 
-    echo $OUTPUT->heading(get_string('registeron', 'hub'), 3, 'main');
-    echo $renderer->registrationselector($registeredonmoodleorg);
+    // load the hub selector form
+    $hubselectorform = new hub_selector_form();
+    $fromform = $hubselectorform->get_data();
+    $selectedhuburl = optional_param('publichub', false, PARAM_URL);
+    $unlistedhuburl = optional_param('unlistedurl', false, PARAM_TEXT);
+    $password = optional_param('password', '', PARAM_RAW);
+
+    if (!empty($unlistedhuburl)) {
+        if (clean_param($unlistedhuburl, PARAM_URL) !== '') {
+            $huburl = $unlistedhuburl;
+        }
+    } else if (!empty($selectedhuburl)) {
+        $huburl = $selectedhuburl;
+    }
+
+    // a hub has been selected, redirect to the hub registration page
+    if (empty($cancel) and !empty($huburl) and confirm_sesskey()) {
+        $hubname = optional_param(clean_param($huburl, PARAM_ALPHANUMEXT), '', PARAM_TEXT);
+        $params = array('sesskey' => sesskey(), 'huburl' => $huburl,
+            'password' => $password, 'hubname' => $hubname);
+        redirect(new moodle_url($CFG->wwwroot . "/" . $CFG->admin . "/registration/register.php",
+                        $params));
+    }
+
+    echo $OUTPUT->header();
+
+    //check if the site is registered on Moodle.org and display a message about registering on MOOCH
+    $registered = $DB->count_records('registration_hubs', array('huburl' => HUB_MOODLEORGHUBURL, 'confirmed' => 1));
+    if (empty($registered)) {
+        $warningmsg = get_string('registermoochtips', 'hub');
+        $warningmsg .= $renderer->single_button(new moodle_url('register.php', array('huburl' => HUB_MOODLEORGHUBURL
+                    , 'hubname' => 'Moodle.org')), get_string('register', 'admin'));
+        echo $renderer->box($warningmsg, 'buttons mdl-align generalbox adminwarning');
+    }
+
+    //do not check sesskey if confirm = false because this script is linked into email message
+    if (!empty($errormessage)) {
+        echo $OUTPUT->notification(get_string('unregistrationerror', 'hub', $errormessage));
+    }
+
+    echo $OUTPUT->heading(get_string('registerwith', 'hub'));
+
+    $hubselectorform->display();
 
     if (extension_loaded('xmlrpc')) {
         $hubs = $registrationmanager->get_registered_on_hubs();

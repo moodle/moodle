@@ -430,6 +430,8 @@ $availableupdates = $updateschecker->get_update_info('core',
 $availableupdatesfetch = $updateschecker->get_last_timefetched();
 
 $buggyiconvnomb = (!function_exists('mb_convert_encoding') and @iconv('UTF-8', 'UTF-8//IGNORE', '100'.chr(130).'€') !== '100€');
+//check if the site is registered on Moodle.org
+$registered = $DB->count_records('registration_hubs', array('huburl' => HUB_MOODLEORGHUBURL, 'confirmed' => 1));
 
 admin_externalpage_setup('adminnotifications');
 
@@ -441,4 +443,5 @@ if ($fetchupdates) {
 
 $output = $PAGE->get_renderer('core', 'admin');
 echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
-        $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch, $buggyiconvnomb);
+        $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch, $buggyiconvnomb,
+        $registered);
