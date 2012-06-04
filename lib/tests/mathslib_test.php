@@ -142,7 +142,6 @@ class mathsslib_testcase extends basic_testcase {
     }
 
     public function test_rounding_function() {
-        
         // Rounding to the default number of decimal places
         // The default == 0
 
