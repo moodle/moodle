@@ -160,6 +160,7 @@ class repository_equella extends repository {
         $reference = base64_decode($stored_file->get_reference());
         $url = $this->appendtoken($reference);
         header('Location: ' . $url);
+        die;
     }
 
     /**
