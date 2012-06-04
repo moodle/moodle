@@ -16,7 +16,6 @@
         strict="false"
         verbose="false"
         printerClass="Hint_ResultPrinter"
-        printerFile="lib/phpunit/classes/hint_resultprinter.php"
         >
 
     <php>
