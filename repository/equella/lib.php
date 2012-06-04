@@ -240,16 +240,6 @@ class repository_equella extends repository {
     }
 
     /**
-     * Build equella url
-     *
-     * @param string $urlpart
-     * @return string
-     */
-    private function full_url($urlpart) {
-        return str_ireplace('signon.do', $urlpart, $this->get_option('equella_url'));
-    }
-
-    /**
      * Generate equella sso token
      *
      * @param string $readwrite
