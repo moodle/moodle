@@ -35,4 +35,12 @@ $code = required_param('code', PARAM_RAW);
 // The state parameter we've given (used in moodle as a redirect url).
 $state = required_param('state', PARAM_LOCALURL);
 
-redirect(new moodle_url($state, array('code' => $code)));
+$redirecturl = new moodle_url($state);
+$params = $redirecturl->params();
+
+if (isset($params['sesskey']) and confirm_sesskey($params['sesskey'])) {
+    $redirecturl->param('code', $code);
+    redirect($redirecturl);
+} else {
+    print_error('invalidsesskey');
+}
