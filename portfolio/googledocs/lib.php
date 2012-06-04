@@ -124,7 +124,7 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
         $clientid = $this->get_config('clientid');
         $secret = $this->get_config('secret');
 
-        $this->googleoauth = new google_oauth($clientid, $secret, $returnurl->out(false), google_docs::REALM);
+        $this->googleoauth = new google_oauth($clientid, $secret, $returnurl, google_docs::REALM);
     }
 
     public function instance_sanity_check() {

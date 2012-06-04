@@ -39,12 +39,14 @@ class repository_googledocs extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
 
-        $returnurl = new moodle_url('/repository/repository_callback.php',
-            array('callback' => 'yes', 'repo_id' =>$this->id));
+        $returnurl = new moodle_url('/repository/repository_callback.php');
+        $returnurl->param('callback', 'yes');
+        $returnurl->param('repo_id', $this->id);
+        $returnurl->param('sesskey', sesskey());
 
         $clientid = get_config('googledocs', 'clientid');
         $secret = get_config('googledocs', 'secret');
-        $this->googleoauth = new google_oauth($clientid, $secret, $returnurl->out(false), google_docs::REALM);
+        $this->googleoauth = new google_oauth($clientid, $secret, $returnurl, google_docs::REALM);
 
         $this->check_login();
     }
