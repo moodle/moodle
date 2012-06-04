@@ -443,6 +443,17 @@ YUI.add('moodle-core_filepicker', function(Y) {
         }
 
     }
+
+    /**
+     * creates a node and adds it to the div with id #filesskin. This is needed for CSS to be able
+     * to overwrite YUI skin styles (instead of using !important that does not work in IE)
+     */
+    Y.Node.createWithFilesSkin = function(node) {
+        if (!Y.one('#filesskin')) {
+            Y.one(document.body).appendChild(Y.Node.create('<div/>').set('id', 'filesskin'));
+        }
+        return Y.one('#filesskin').appendChild(Y.Node.create(node));
+    }
 }, '@VERSION@', {
     requires:['base', 'node', 'yui2-treeview', 'panel', 'cookie', 'datatable', 'datatable-sort']
 });
@@ -692,10 +703,9 @@ M.core_filepicker.init = function(Y, options) {
                 this.selectui.hide();
             }
             if (!this.process_dlg) {
-                this.process_dlg_node = Y.Node.create(M.core_filepicker.templates.processexistingfile);
+                this.process_dlg_node = Y.Node.createWithFilesSkin(M.core_filepicker.templates.processexistingfile);
                 var node = this.process_dlg_node;
                 node.generateID();
-                Y.one(document.body).appendChild(node);
                 this.process_dlg = new Y.Panel({
                     srcNode      : node,
                     headerContent: M.str.repository.fileexistsdialogheader,
@@ -736,9 +746,8 @@ M.core_filepicker.init = function(Y, options) {
                 header = M.str.moodle.info;
             }
             if (!this.msg_dlg) {
-                this.msg_dlg_node = Y.Node.create(M.core_filepicker.templates.message);
+                this.msg_dlg_node = Y.Node.createWithFilesSkin(M.core_filepicker.templates.message);
                 this.msg_dlg_node.generateID();
-                Y.one(document.body).appendChild(this.msg_dlg_node);
 
                 this.msg_dlg = new Y.Panel({
                     srcNode      : this.msg_dlg_node,
@@ -1215,10 +1224,8 @@ M.core_filepicker.init = function(Y, options) {
         },
         render: function() {
             var client_id = this.options.client_id;
-            this.fpnode = Y.Node.create(M.core_filepicker.templates.generallayout).
+            this.fpnode = Y.Node.createWithFilesSkin(M.core_filepicker.templates.generallayout).
                 set('id', 'filepicker-'+client_id);
-            this.selectnode = Y.Node.create(M.core_filepicker.templates.selectlayout);
-            Y.one(document.body).appendChild(this.fpnode);
             this.mainui = new Y.Panel({
                 srcNode      : this.fpnode,
                 headerContent: M.str.repository.filepicker,
@@ -1239,9 +1246,8 @@ M.core_filepicker.init = function(Y, options) {
                 this.mainui.set('y', 0);
             }
             // create panel for selecting a file (initially hidden)
-            this.selectnode = Y.Node.create(M.core_filepicker.templates.selectlayout).
+            this.selectnode = Y.Node.createWithFilesSkin(M.core_filepicker.templates.selectlayout).
                 set('id', 'filepicker-select-'+client_id);
-            Y.one(document.body).appendChild(this.selectnode);
             this.selectui = new Y.Panel({
                 srcNode      : this.selectnode,
                 zIndex       : 600000,
