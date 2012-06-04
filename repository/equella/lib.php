@@ -67,7 +67,7 @@ class repository_equella extends repository {
                 . '&template=standard'
                 . '&token='.urlencode($this->getssotoken('write'))
                 . '&courseId='.urlencode($COURSE->id)
-                . '&action='.urlencode($this->get_option('equella_action'))
+                . '&action=searchThin'
                 . '&forcePost=true'
                 . '&cancelDisabled=true'
                 . '&attachmentUuidUrls=true'
@@ -170,9 +170,14 @@ class repository_equella extends repository {
      */
     public function instance_config_form($mform) {
         $mform->addElement('text', 'equella_url', get_string('equellaurl', 'repository_equella'));
-        $mform->addElement('text', 'equella_action', get_string('equellaaction', 'repository_equella'));
-        $mform->setDefault('equella_action', 'searchThin');
+        $mform->setType('equella_url', PARAM_URL);
+
+        $strrequired = get_string('required');
+        $mform->addRule('equella_url', $strrequired, 'required', null, 'client');
+
         $mform->addElement('text', 'equella_options', get_string('equellaoptions', 'repository_equella'));
+        $mform->setType('equella_options', PARAM_NOTAGS);
+
         $choices = array(
             'none' => get_string('restrictionnone', 'repository_equella'),
             'itemonly' => get_string('restrictionitemsonly', 'repository_equella'),
@@ -183,13 +188,20 @@ class repository_equella extends repository {
         $mform->addElement('header', '',
             get_string('group', 'repository_equella', get_string('groupdefault', 'repository_equella')));
         $mform->addElement('text', 'equella_shareid', get_string('sharedid', 'repository_equella'));
+        $mform->setType('equella_shareid', PARAM_RAW);
+        $mform->addRule('equella_shareid', $strrequired, 'required', null, 'client');
+
         $mform->addElement('text', 'equella_sharedsecret', get_string('sharedsecrets', 'repository_equella'));
+        $mform->setType('equella_sharedsecret', PARAM_RAW);
+        $mform->addRule('equella_sharedsecret', $strrequired, 'required', null, 'client');
 
         foreach (self::get_all_editing_roles() as $role) {
             $mform->addElement('header', '', get_string('group', 'repository_equella', format_string($role->name)));
             $mform->addElement('text', "equella_{$role->shortname}_shareid", get_string('sharedid', 'repository_equella'));
+            $mform->setType("equella_{$role->shortname}_shareid", PARAM_RAW);
             $mform->addElement('text', "equella_{$role->shortname}_sharedsecret",
                 get_string('sharedsecrets', 'repository_equella'));
+            $mform->setType("equella_{$role->shortname}_sharedsecret", PARAM_RAW);
         }
     }
 
@@ -199,8 +211,7 @@ class repository_equella extends repository {
      * @return array
      */
     public static function get_instance_option_names() {
-        $rv = array('equella_url', 'equella_action',
-            'equella_select_restriction', 'equella_options',
+        $rv = array('equella_url','equella_select_restriction', 'equella_options',
             'equella_shareid', 'equella_sharedsecret'
         );
 
