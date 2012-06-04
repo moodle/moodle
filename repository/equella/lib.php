@@ -55,7 +55,7 @@ class repository_equella extends repository {
             $mimetypesstr = '&mimeTypes=' . implode(',', $this->mimetypes);
             // We're restricting to a mime type, so we always restrict to selecting resources only.
             $restrict = '&attachmentonly=true';
-        } elseif ($this->get_option('equella_select_restriction') != 'none') {
+        } else if ($this->get_option('equella_select_restriction') != 'none') {
             // The option value matches the EQUELLA paramter name.
             $restrict = '&' . $this->get_option('equella_select_restriction') . '=true';
         }
@@ -120,7 +120,7 @@ class repository_equella extends repository {
         $c->download(array(array('url'=>$url, 'file'=>$fp)), array('CURLOPT_FOLLOWLOCATION'=>true));
         // Close file handler.
         fclose($fp);
-        // delete cookie jar
+        // Delete cookie jar.
         unlink($cookiepathname);
         return array('path'=>$path, 'url'=>$url);
     }
@@ -137,7 +137,7 @@ class repository_equella extends repository {
         $ref = base64_decode($reference->reference);
         $url = $this->appendtoken($ref);
 
-        // we use this cache to get the correct file size
+        // We use this cache to get the correct file size.
         $cachedfilepath = cache_file::get($url, array('ttl' => 0));
         if ($cachedfilepath === false) {
             // Cache the file.
@@ -179,14 +179,16 @@ class repository_equella extends repository {
         );
         $mform->addElement('select', 'equella_select_restriction', get_string('selectrestriction', 'repository_equella'), $choices);
 
-        $mform->addElement('header', '', get_string('group', 'repository_equella', get_string('groupdefault', 'repository_equella')));
+        $mform->addElement('header', '',
+            get_string('group', 'repository_equella', get_string('groupdefault', 'repository_equella')));
         $mform->addElement('text', 'equella_shareid', get_string('sharedid', 'repository_equella'));
         $mform->addElement('text', 'equella_sharedsecret', get_string('sharedsecrets', 'repository_equella'));
 
-        foreach( self::get_all_editing_roles() as $role ) {
+        foreach (self::get_all_editing_roles() as $role) {
             $mform->addElement('header', '', get_string('group', 'repository_equella', format_string($role->name)));
             $mform->addElement('text', "equella_{$role->shortname}_shareid", get_string('sharedid', 'repository_equella'));
-            $mform->addElement('text', "equella_{$role->shortname}_sharedsecret", get_string('sharedsecrets', 'repository_equella'));
+            $mform->addElement('text', "equella_{$role->shortname}_sharedsecret",
+                get_string('sharedsecrets', 'repository_equella'));
         }
     }
 
@@ -201,7 +203,7 @@ class repository_equella extends repository {
             'equella_shareid', 'equella_sharedsecret'
         );
 
-        foreach( self::get_all_editing_roles() as $role ) {
+        foreach (self::get_all_editing_roles() as $role) {
             array_push($rv, "equella_{$role->shortname}_shareid");
             array_push($rv, "equella_{$role->shortname}_sharedsecret");
         }
@@ -248,21 +250,22 @@ class repository_equella extends repository {
     private function getssotoken($readwrite = 'read') {
         global $USER;
 
-        if( $readwrite == 'write' ) {
+        if ($readwrite == 'write') {
 
-            foreach( self::get_all_editing_roles() as $role) {
+            foreach (self::get_all_editing_roles() as $role) {
                 if (user_has_role_assignment($USER->id, $role->id, $this->context->id)) {
-                    //see if the user has a role that is linked to an equella role
+                    // See if the user has a role that is linked to an equella role.
                     $shareid = $this->get_option("equella_{$role->shortname}_shareid");
-                    if( !empty($shareid) ) {
-                        return $this->getssotoken_raw($USER->username, $shareid, $this->get_option("equella_{$role->shortname}_sharedsecret"));
+                    if (!empty($shareid)) {
+                        return $this->getssotoken_raw($USER->username, $shareid,
+                            $this->get_option("equella_{$role->shortname}_sharedsecret"));
                     }
                 }
             }
         }
-        //if we are only reading, use the unadorned shareid and secret
+        // If we are only reading, use the unadorned shareid and secret.
         $shareid = $this->get_option('equella_shareid');
-        if(!empty($shareid)) {
+        if (!empty($shareid)) {
             return $this->getssotoken_raw($USER->username, $shareid, $this->get_option('equella_sharedsecret'));
         }
     }
