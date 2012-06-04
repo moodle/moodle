@@ -43,9 +43,9 @@ class core_configonlylib_testcase extends advanced_testcase {
      * Test cleaning of invalid utf-8 entities.
      */
     public function test_min_fix_utf8() {
-        $this->assertSame('abc', fix_utf8('abc'));
-        $this->assertSame("žlutý koníček přeskočil potůček \n\t\r\0", fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
-        $this->assertSame('aš', fix_utf8('a'.chr(130).'š'), 'This fails with buggy iconv() when mbstring extenstion is not available as fallback.');
+        $this->assertSame('abc', min_fix_utf8('abc'));
+        $this->assertSame("žlutý koníček přeskočil potůček \n\t\r\0", min_fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
+        $this->assertSame('aš', min_fix_utf8('a'.chr(130).'š'), 'This fails with buggy iconv() when mbstring extenstion is not available as fallback.');
     }
 
     /**
