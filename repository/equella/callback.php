@@ -23,36 +23,50 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(dirname(__FILE__)).'/lib.php');
-require_login();
 $json = required_param('tlelinks', PARAM_RAW);
+
+require_login();
 
 $decodedinfo = json_decode($json);
 $info = array_pop($decodedinfo);
-$url = clean_param($info->url, PARAM_URL);
-$thumbnail = clean_param($info->thumbnail, PARAM_URL);
-$filename  = clean_param($info->name, PARAM_FILE);
 
-// TODO MDL-32117 EQUELLA callback should provide more information
-// $author = clean_param($info->author, PARAM_RAW);
-// $timecreated = clean_param($info->timecreated, PARAM_RAW);
-// $timemodified = clean_param($info->timemodified, PARAM_RAW);
-// NOTE: the license string must match the license names {@link license_manager::install_licenses()}
-// We could create a function to map the license names
-// $license = clean_param($info->license, PARAM_RAW);
-// $filesize = clean_param($info->filesize, PARAM_INT);
+$url = '';
+if (isset($info->url)) {
+    $url = s(clean_param($info->url, PARAM_URL));
+}
+
+$filename = '';
+if (isset($info->name)) {
+    $filename  = s(clean_param($info->name, PARAM_FILE));
+}
+
+$thumbnail = '';
+if (isset($info->thumbnail)) {
+    $thumbnail = s(clean_param($info->thumbnail, PARAM_URL));
+}
+
+$author = '';
+if (isset($info->author)) {
+    $author = s(clean_param($info->author, PARAM_NOTAGS));
+}
+
+$license = '';
+if (isset($info->license)) {
+    $license = s(clean_param($info->license, PARAM_ALPHAEXT));
+}
 
 $js =<<<EOD
 <html>
 <head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <script type="text/javascript">
     window.onload = function() {
         var resource = {};
         resource.title = "$filename";
         resource.source = "$url";
         resource.thumbnail = '$thumbnail';
-        // resource.author = "$author";
-        // resource.license = "$license";
+        resource.author = "$author";
+        resource.license = "$license";
         parent.M.core_filepicker.select_file(resource);
     }
     </script>
@@ -61,4 +75,5 @@ $js =<<<EOD
 </html>
 EOD;
 
+header('Content-Type: text/html; charset=utf-8');
 die($js);
