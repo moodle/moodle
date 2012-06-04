@@ -1126,10 +1126,19 @@ class restore_section_structure_step extends restore_structure_step {
     public function process_availability($data) {
         global $DB;
         $data = (object)$data;
+
         $data->coursesectionid = $this->task->get_sectionid();
+
         // NOTE: Other values in $data need updating, but these (cm,
-        // grade items) have not yet been restored.
-        $DB->insert_record('course_sections_availability', $data);
+        // grade items) have not yet been restored, so are done later.
+
+        $newid = $DB->insert_record('course_sections_availability', $data);
+
+        // We do not need to map between old and new id but storing a mapping
+        // means it gets added to the backup_ids table to record which ones
+        // need updating. The mapping is stored with $newid => $newid for
+        // convenience.
+        $this->set_mapping('course_sections_availability', $newid, $newid);
     }
 
     protected function after_execute() {
@@ -1142,16 +1151,20 @@ class restore_section_structure_step extends restore_structure_step {
 
         $sectionid = $this->get_task()->get_sectionid();
 
-        // Get data object for current section availability (if any)
-        // TODO: This can be processing already existing records, we need to be able to know which ones
-        //       are the just restored ones, perhaps creating 'course_sections_availability' mappings for them.
-        // TODO: Also, this must avoid duplicates, so if one course module or one grade item already is being
-        //       used for some availability rule... we need to handle that carefully.
+        // Get data object for current section availability (if any).
         $data = $DB->get_record('course_sections_availability',
                 array('coursesectionid' => $sectionid), 'id, sourcecmid, gradeitemid', IGNORE_MISSING);
 
-        // Update mappings
+        // If it exists, update mappings.
         if ($data) {
+            // Only update mappings for entries which are created by this restore.
+            // Otherwise, when you restore to an existing course, it will mess up
+            // existing section availability entries.
+            if (!$this->get_mappingid('course_sections_availability', $data->id, false)) {
+                return;
+            }
+
+            // Update source cmid / grade id to new value.
             $data->sourcecmid = $this->get_mappingid('course_module', $data->sourcecmid);
             if (!$data->sourcecmid) {
                 $data->sourcecmid = null;
