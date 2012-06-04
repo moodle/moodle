@@ -39,7 +39,7 @@ $redirecturl = new moodle_url($state);
 $params = $redirecturl->params();
 
 if (isset($params['sesskey']) and confirm_sesskey($params['sesskey'])) {
-    $redirecturl->param('code', $code);
+    $redirecturl->param('oauth2code', $code);
     redirect($redirecturl);
 } else {
     print_error('invalidsesskey');
