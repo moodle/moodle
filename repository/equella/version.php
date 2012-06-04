@@ -13,4 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-$plugin->version = 2012022400;
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->version   = 2012060100;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2012052500;        // Requires this Moodle version.
+$plugin->component = 'repository_equella'; // Full name of the plugin (used for diagnostics).
