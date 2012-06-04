@@ -1127,15 +1127,39 @@ function fix_utf8($value) {
             // shortcut
             return $value;
         }
-        // lower error reporting because glibc throws bogus notices
+
+        // Lower error reporting because glibc throws bogus notices.
         $olderror = error_reporting();
         if ($olderror & E_NOTICE) {
             error_reporting($olderror ^ E_NOTICE);
         }
-        $result = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+
+        // Note: this duplicates min_fix_utf8() intentionally.
+        static $buggyiconv = null;
+        if ($buggyiconv === null) {
+            $buggyiconv = (!function_exists('iconv') or iconv('UTF-8', 'UTF-8//IGNORE', '100'.chr(130).'€') !== '100€');
+        }
+
+        if ($buggyiconv) {
+            if (function_exists('mb_convert_encoding')) {
+                $subst = mb_substitute_character();
+                mb_substitute_character('');
+                $result = mb_convert_encoding($value, 'utf-8', 'utf-8');
+                mb_substitute_character($subst);
+
+            } else {
+                // Warn admins on admin/index.php page.
+                $result = $value;
+            }
+
+        } else {
+            $result = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+        }
+
         if ($olderror & E_NOTICE) {
             error_reporting($olderror);
         }
+
         return $result;
 
     } else if (is_array($value)) {

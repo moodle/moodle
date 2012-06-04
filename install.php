@@ -73,11 +73,6 @@ if (!function_exists('iconv')) {
     echo 'Moodle requires the iconv PHP extension. Please install or enable the iconv extension.';
     die();
 }
-if (iconv('UTF-8', 'UTF-8//IGNORE', 'abc') !== 'abc') {
-    // known to be broken in mid-2011 MAMP installations
-    echo 'Broken iconv PHP extension detected, installation can not continue.';
-    die;
-}
 
 if (PHP_INT_SIZE > 4) {
     // most probably 64bit PHP - we need a lot more memory
