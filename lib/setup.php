@@ -478,8 +478,21 @@ setup_DB();
 if (PHPUNIT_TEST and !PHPUNIT_UTIL) {
     // make sure tests do not run in parallel
     phpunit_util::acquire_test_lock();
-    // reset DB tables
-    phpunit_util::reset_database();
+    $dbhash = null;
+    try {
+        if ($dbhash = $DB->get_field('config', 'value', array('name'=>'phpunittest'))) {
+            // reset DB tables
+            phpunit_util::reset_database();
+        }
+    } catch (Exception $e) {
+        if ($dbhash) {
+            // we ned to reinit if reset fails
+            $DB->set_field('config', 'value', 'na', array('name'=>'phpunittest'));
+        } else {
+            throw $e;
+        }
+    }
+    unset($dbhash);
 }
 
 // Disable errors for now - needed for installation when debug enabled in config.php

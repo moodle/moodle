@@ -37,16 +37,24 @@ require_once($CFG->libdir.'/outputrequirementslib.php');
 /**
  * Invalidate all server and client side caches.
  *
- * This method deletes the phsyical directory that is used to cache the theme
+ * This method deletes the physical directory that is used to cache the theme
  * files used for serving.
- * Because it deletes the main theme cache directoy all themes are reset by
+ * Because it deletes the main theme cache directory all themes are reset by
  * this function.
  */
 function theme_reset_all_caches() {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
 
-    set_config('themerev', empty($CFG->themerev) ? 1 : $CFG->themerev+1);
+    $next = time();
+    if (isset($CFG->themerev) and $next <= $CFG->themerev and $CFG->themerev - $next < 60*60) {
+        // This resolves problems when reset is requested repeatedly within 1s,
+        // the < 1h condition prevents accidental switching to future dates
+        // because we might not recover from it.
+        $next = $CFG->themerev+1;
+    }
+
+    set_config('themerev', $next); // time is unique even when you reset/switch database
     fulldelete("$CFG->cachedir/theme");
 }
 

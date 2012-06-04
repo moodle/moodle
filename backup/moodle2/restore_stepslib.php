@@ -586,10 +586,22 @@ class restore_load_included_files extends restore_structure_step {
         return array($file);
     }
 
-    // Processing functions go here
+    /**
+     * Processing functions go here
+     *
+     * @param array $data one file record including repositoryid and reference
+     */
     public function process_file($data) {
 
         $data = (object)$data; // handy
+
+        $isreference = !empty($data->repositoryid);
+        $issamesite = $this->task->is_samesite();
+
+        // If it's not samesite, we skip file refernces
+        if (!$issamesite && $isreference) {
+            return;
+        }
 
         // load it if needed:
         //   - it it is one of the annotated inforef files (course/section/activity/block)
@@ -601,6 +613,7 @@ class restore_load_included_files extends restore_structure_step {
                         $data->component == 'grouping' || $data->component == 'grade' ||
                         $data->component == 'question' || substr($data->component, 0, 5) == 'qtype');
         if ($isfileref || $iscomponent) {
+            // Process files
             restore_dbops::set_backup_files_record($this->get_restoreid(), $data);
         }
     }
@@ -1034,6 +1047,7 @@ class restore_section_structure_step extends restore_structure_step {
         global $CFG, $DB;
         $data = (object)$data;
         $oldid = $data->id; // We'll need this later
+        $oldsection = $data->number;
 
         $restorefiles = false;
 
@@ -1086,10 +1100,12 @@ class restore_section_structure_step extends restore_structure_step {
 
             $DB->update_record('course_sections', $section);
             $newitemid = $secrec->id;
+            $oldsection = $secrec->section;
         }
 
         // Annotate the section mapping, with restorefiles option if needed
         $this->set_mapping('course_section', $oldid, $newitemid, $restorefiles);
+        $this->set_mapping('course_sectionnumber', $oldsection, $section->section, $restorefiles);
 
         // set the new course_section id in the task
         $this->task->set_sectionid($newitemid);
@@ -2528,7 +2544,7 @@ class restore_module_structure_step extends restore_structure_step {
 
         $data = (object)$data;
         $oldid = $data->id;
-
+        $oldsection = $data->sectionnumber;
         $this->task->set_old_moduleversion($data->version);
 
         $data->course = $this->task->get_courseid();
@@ -2555,6 +2571,7 @@ class restore_module_structure_step extends restore_structure_step {
                 'course' => $this->get_courseid(),
                 'section' => 1);
             $data->section = $DB->insert_record('course_sections', $sectionrec); // section 1
+            $this->set_mapping('course_sectionnumber', $oldsection, $sectionrec->section, $restorefiles);
         }
         $data->groupingid= $this->get_mappingid('grouping', $data->groupingid);      // grouping
         if (!$CFG->enablegroupmembersonly) {                                         // observe groupsmemberonly

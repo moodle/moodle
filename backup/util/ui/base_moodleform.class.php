@@ -136,24 +136,38 @@ abstract class base_moodleform extends moodleform {
      * @return bool
      */
     function add_setting(backup_setting $setting, base_task $task=null) {
+        return $this->add_settings(array(array($setting, $task)));
+    }
+    /**
+     * Adds multiple backup_settings as elements to the form
+     * @param array $settingstasks Consists of array($setting, $task) elements
+     * @return bool
+     */
+    public function add_settings(array $settingstasks) {
         global $OUTPUT;
 
-        // If the setting cant be changed or isn't visible then add it as a fixed setting.
-        if (!$setting->get_ui()->is_changeable() || $setting->get_visibility() != backup_setting::VISIBLE) {
-            return $this->add_fixed_setting($setting, $task);
-        }
+        $defaults = array();
+        foreach ($settingstasks as $st) {
+            list($setting, $task) = $st;
+            // If the setting cant be changed or isn't visible then add it as a fixed setting.
+            if (!$setting->get_ui()->is_changeable() || $setting->get_visibility() != backup_setting::VISIBLE) {
+                $this->add_fixed_setting($setting, $task);
+                continue;
+            }
 
-        // First add the formatting for this setting
-        $this->add_html_formatting($setting);
+            // First add the formatting for this setting
+            $this->add_html_formatting($setting);
 
-        // The call the add method with the get_element_properties array
-        call_user_func_array(array($this->_form, 'addElement'), $setting->get_ui()->get_element_properties($task, $OUTPUT));
-        $this->_form->setDefault($setting->get_ui_name(), $setting->get_value());
-        if ($setting->has_help()) {
-            list($identifier, $component) = $setting->get_help();
-            $this->_form->addHelpButton($setting->get_ui_name(), $identifier, $component);
+            // Then call the add method with the get_element_properties array
+            call_user_func_array(array($this->_form, 'addElement'), $setting->get_ui()->get_element_properties($task, $OUTPUT));
+            $defaults[$setting->get_ui_name()] = $setting->get_value();
+            if ($setting->has_help()) {
+                list($identifier, $component) = $setting->get_help();
+                $this->_form->addHelpButton($setting->get_ui_name(), $identifier, $component);
+            }
+            $this->_form->addElement('html', html_writer::end_tag('div'));
         }
-        $this->_form->addElement('html', html_writer::end_tag('div'));
+        $this->_form->setDefaults($defaults);
         return true;
     }
     /**

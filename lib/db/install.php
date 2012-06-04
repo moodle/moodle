@@ -319,8 +319,9 @@ function xmldb_main_install() {
     set_role_contextlevels($guestrole,          get_default_contextlevels('guest'));
     set_role_contextlevels($userrole,           get_default_contextlevels('user'));
 
-    // Init themes
-    set_config('themerev', 1);
+    // Init theme and JS revisions
+    set_config('themerev', time());
+    set_config('jsrev', time());
 
     // Install licenses
     require_once($CFG->libdir . '/licenselib.php');

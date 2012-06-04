@@ -48,10 +48,16 @@ class mod_assign_grading_options_form extends moodleform {
         $mform->addElement('header', 'general', get_string('gradingoptions', 'assign'));
         // visible elements
         $options = array(-1=>'All',10=>'10', 20=>'20', 50=>'50', 100=>'100');
-        $autosubmit = array('onchange'=>'form.submit();');
-        $mform->addElement('select', 'perpage', get_string('assignmentsperpage', 'assign'), $options, $autosubmit);
+        $mform->addElement('select', 'perpage', get_string('assignmentsperpage', 'assign'), $options, array('class'=>'ignoredirty'));
         $options = array(''=>get_string('filternone', 'assign'), ASSIGN_FILTER_SUBMITTED=>get_string('filtersubmitted', 'assign'), ASSIGN_FILTER_REQUIRE_GRADING=>get_string('filterrequiregrading', 'assign'));
-        $mform->addElement('select', 'filter', get_string('filter', 'assign'), $options, $autosubmit);
+        $mform->addElement('select', 'filter', get_string('filter', 'assign'), $options, array('class'=>'ignoredirty'));
+
+        // quickgrading
+        if ($instance['showquickgrading']) {
+            $mform->addElement('checkbox', 'quickgrading', get_string('quickgrading', 'assign'), '', array('class'=>'ignoredirty'));
+            $mform->addHelpButton('quickgrading', 'quickgrading', 'assign');
+            $mform->setDefault('quickgrading', $instance['quickgrading']);
+        }
 
         // hidden params
         $mform->addElement('hidden', 'contextid', $instance['contextid']);

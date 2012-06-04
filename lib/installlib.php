@@ -455,6 +455,11 @@ function install_cli_database(array $options, $interactive) {
     set_config('release', $release);
     set_config('branch', $branch);
 
+    if (PHPUNIT_TEST) {
+        // mark as test database as soon as possible
+        set_config('phpunittest', 'na');
+    }
+
     // install all plugins types, local, etc.
     upgrade_noncore(true);
 

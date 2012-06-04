@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20120516" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20120521" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -149,7 +149,8 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course" NEXT="criteriatype"/>
-        <INDEX NAME="criteriatype" UNIQUE="false" FIELDS="criteriatype" PREVIOUS="course"/>
+        <INDEX NAME="criteriatype" UNIQUE="false" FIELDS="criteriatype" PREVIOUS="course" NEXT="coursecriteriatype"/>
+        <INDEX NAME="coursecriteriatype" UNIQUE="true" FIELDS="course, criteriatype" PREVIOUS="criteriatype"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_completion_criteria" COMMENT="Course completion criteria" PREVIOUS="course_completion_aggr_methd" NEXT="course_completion_crit_compl">
@@ -190,7 +191,8 @@
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="course"/>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course" PREVIOUS="userid" NEXT="criteriaid"/>
         <INDEX NAME="criteriaid" UNIQUE="false" FIELDS="criteriaid" PREVIOUS="course" NEXT="timecompleted"/>
-        <INDEX NAME="timecompleted" UNIQUE="false" FIELDS="timecompleted" PREVIOUS="criteriaid"/>
+        <INDEX NAME="timecompleted" UNIQUE="false" FIELDS="timecompleted" PREVIOUS="criteriaid" NEXT="useridcoursecriteriaid"/>
+        <INDEX NAME="useridcoursecriteriaid" UNIQUE="true" FIELDS="userid, course, criteriaid" PREVIOUS="timecompleted"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_completion_notify" COMMENT="Course completion notification emails" PREVIOUS="course_completion_crit_compl" NEXT="course_completions">
@@ -226,7 +228,8 @@
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="course"/>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course" PREVIOUS="userid" NEXT="timecompleted"/>
-        <INDEX NAME="timecompleted" UNIQUE="false" FIELDS="timecompleted" PREVIOUS="course"/>
+        <INDEX NAME="timecompleted" UNIQUE="false" FIELDS="timecompleted" PREVIOUS="course" NEXT="useridcourse"/>
+        <INDEX NAME="useridcourse" UNIQUE="true" FIELDS="userid, course" PREVIOUS="timecompleted"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="enrol" COMMENT="Instances of enrolment plugins used in courses, fields marked as custom have a plugin defined meaning, core does not touch them. Create a new linked table if you need even more custom fields." PREVIOUS="course_completions" NEXT="user_enrolments">
@@ -2326,7 +2329,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="files" COMMENT="description of files, content is stored in sha1 file pool" PREVIOUS="message_working" NEXT="repository">
+    <TABLE NAME="files" COMMENT="description of files, content is stored in sha1 file pool" PREVIOUS="message_working" NEXT="files_reference">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="contenthash"/>
         <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="sha1 hash of file content" PREVIOUS="id" NEXT="pathnamehash"/>
@@ -2346,12 +2349,16 @@
         <FIELD NAME="license" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="license of the file to guide reuse" PREVIOUS="author" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="license" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="timecreated" NEXT="sortorder"/>
-        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="order of files" PREVIOUS="timemodified"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="order of files" PREVIOUS="timemodified" NEXT="referencefileid"/>
+        <FIELD NAME="referencefileid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Use to indicate file is a proxy for repository file" PREVIOUS="sortorder" NEXT="referencelastsync"/>
+        <FIELD NAME="referencelastsync" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Last time the proxy file was synced with repository, defined for performance reasons" PREVIOUS="referencefileid" NEXT="referencelifetime"/>
+        <FIELD NAME="referencelifetime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="How often do we have to sync proxy file with repository, defined for performance reasons" PREVIOUS="referencelastsync"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="contextid"/>
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
-        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="contextid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="contextid" NEXT="referencefileid"/>
+        <KEY NAME="referencefileid" TYPE="foreign" FIELDS="referencefileid" REFTABLE="files_reference" REFFIELDS="id" PREVIOUS="userid"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="component-filearea-contextid-itemid" UNIQUE="false" FIELDS="component, filearea, contextid, itemid" NEXT="contenthash"/>
@@ -2359,7 +2366,20 @@
         <INDEX NAME="pathnamehash" UNIQUE="true" FIELDS="pathnamehash" PREVIOUS="contenthash"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="repository" COMMENT="This table contains one entry for every configured external repository instance." PREVIOUS="files" NEXT="repository_instances">
+    <TABLE NAME="files_reference" COMMENT="Store files references" PREVIOUS="files" NEXT="repository">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="repositoryid"/>
+        <FIELD NAME="repositoryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="lastsync"/>
+        <FIELD NAME="lastsync" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Last time the proxy file was synced with repository" PREVIOUS="repositoryid" NEXT="lifetime"/>
+        <FIELD NAME="lifetime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="How often do we have to sync proxy file with repository" PREVIOUS="lastsync" NEXT="reference"/>
+        <FIELD NAME="reference" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="lifetime"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="repositoryid"/>
+        <KEY NAME="repositoryid" TYPE="foreign" FIELDS="repositoryid" REFTABLE="repository_instances" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="repository" COMMENT="This table contains one entry for every configured external repository instance." PREVIOUS="files_reference" NEXT="repository_instances">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="type"/>
         <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="visible"/>

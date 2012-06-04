@@ -207,7 +207,7 @@ class core_enrol_external extends external_api {
             $exceptionparam = new stdClass();
             $exceptionparam->message = $e->getMessage();
             $exceptionparam->courseid = $params['courseid'];
-            throw new moodle_exception(get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+            throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
         }
 
         if ($courseid == SITEID) {
@@ -543,7 +543,7 @@ class moodle_enrol_external extends external_api {
             $exceptionparam = new stdClass();
             $exceptionparam->message = $e->getMessage();
             $exceptionparam->courseid = $params['courseid'];
-            throw new moodle_exception(get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+            throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
         }
 
         if ($courseid == SITEID) {

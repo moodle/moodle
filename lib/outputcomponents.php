@@ -321,6 +321,9 @@ class user_picture implements renderable {
         } else if ($this->size === true or $this->size == 1) {
             $filename = 'f1';
             $size = 100;
+        } else if ($this->size > 100) {
+            $filename = 'f3';
+            $size = (int)$this->size;
         } else if ($this->size >= 50) {
             $filename = 'f1';
             $size = (int)$this->size;

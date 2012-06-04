@@ -16,13 +16,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This plugin is used to upload files
+ *
+ * @since 2.0
+ * @package    repository_upload
+ * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+require_once($CFG->dirroot . '/repository/lib.php');
+
+/**
  * A repository plugin to allow user uploading files
  *
  * @since 2.0
- * @package    repository
- * @subpackage upload
- * @copyright  2009 Dongsheng Cai
- * @author     Dongsheng Cai <dongsheng@moodle.com>
+ * @package    repository_upload
+ * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -163,12 +171,9 @@ class repository_upload extends repository {
 
         if ($this->mimetypes != '*') {
             // check filetype
-            $filemimetype = mimeinfo('type', $_FILES[$elname]['name']);
+            $filemimetype = file_storage::mimetype($_FILES[$elname]['tmp_name']);
             if (!in_array($filemimetype, $this->mimetypes)) {
-                if ($sm->string_exists($filemimetype, 'mimetypes')) {
-                    $filemimetype = get_string($filemimetype, 'mimetypes');
-                }
-                throw new moodle_exception('invalidfiletype', 'repository', '', $filemimetype);
+                throw new moodle_exception('invalidfiletype', 'repository', '', get_mimetype_description(array('filename' => $_FILES[$elname]['name'])));
             }
         }
 
@@ -193,18 +198,18 @@ class repository_upload extends repository {
             $event['newfile'] = new stdClass;
             $event['newfile']->filepath = $record->filepath;
             $event['newfile']->filename = $unused_filename;
-            $event['newfile']->url = moodle_url::make_draftfile_url($record->itemid, $record->filepath, $unused_filename)->out();
+            $event['newfile']->url = moodle_url::make_draftfile_url($record->itemid, $record->filepath, $unused_filename)->out(false);
 
             $event['existingfile'] = new stdClass;
             $event['existingfile']->filepath = $record->filepath;
             $event['existingfile']->filename = $existingfilename;
-            $event['existingfile']->url      = moodle_url::make_draftfile_url($record->itemid, $record->filepath, $existingfilename)->out();;
+            $event['existingfile']->url      = moodle_url::make_draftfile_url($record->itemid, $record->filepath, $existingfilename)->out(false);
             return $event;
         } else {
             $stored_file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
 
             return array(
-                'url'=>moodle_url::make_draftfile_url($record->itemid, $record->filepath, $record->filename)->out(),
+                'url'=>moodle_url::make_draftfile_url($record->itemid, $record->filepath, $record->filename)->out(false),
                 'id'=>$record->itemid,
                 'file'=>$record->filename);
         }

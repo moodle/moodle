@@ -549,14 +549,13 @@ function url_guess_icon($fullurl) {
 
     if (substr_count($fullurl, '/') < 3 or substr($fullurl, -1) === '/') {
         // most probably default directory - index.php, index.html, etc.
-        return 'f/web';
+        return file_extension_icon('.htm');
     }
 
-    $icon = mimeinfo('icon', $fullurl);
-    $icon = 'f/'.str_replace(array('.gif', '.png'), '', $icon);
+    $icon = file_extension_icon($fullurl);
 
-    if ($icon === 'f/html' or $icon === 'f/unknown') {
-        $icon = 'f/web';
+    if ($icon === file_extension_icon('')) {
+        return file_extension_icon('.htm');
     }
 
     return $icon;

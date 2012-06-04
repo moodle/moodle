@@ -152,6 +152,20 @@ if (!core_tables_exist()) {
         die();
     }
 
+    // check plugin dependencies
+    $failed = array();
+    if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+        $PAGE->navbar->add(get_string('pluginscheck', 'admin'));
+        $PAGE->set_title($strinstallation);
+        $PAGE->set_heading($strinstallation . ' - Moodle ' . $CFG->target_release);
+
+        $output = $PAGE->get_renderer('core', 'admin');
+        $url = new moodle_url('/admin/index.php', array('agreelicense' => 1, 'confirmrelease' => 1, 'lang' => $CFG->lang));
+        echo $output->unsatisfied_dependencies_page($version, $failed, $url);
+        die();
+    }
+    unset($failed);
+
     //TODO: add a page with list of non-standard plugins here
 
     $strdatabasesetup = get_string('databasesetup');
@@ -238,6 +252,15 @@ if ($version > $CFG->version) {  // upgrade
 
         $reloadurl = new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1));
 
+        // check plugin dependencies first
+        $failed = array();
+        if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+            $output = $PAGE->get_renderer('core', 'admin');
+            echo $output->unsatisfied_dependencies_page($version, $failed, $reloadurl);
+            die();
+        }
+        unset($failed);
+
         if ($fetchupdates) {
             // no sesskey support guaranteed here
             if (empty($CFG->disableupdatenotifications)) {
@@ -290,6 +313,16 @@ if (moodle_needs_upgrading()) {
             }
 
             $output = $PAGE->get_renderer('core', 'admin');
+
+            // check plugin dependencies first
+            $failed = array();
+            if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+                echo $output->unsatisfied_dependencies_page($version, $failed, $PAGE->url);
+                die();
+            }
+            unset($failed);
+
+            // dependencies check passed, let's rock!
             echo $output->upgrade_plugin_check_page(plugin_manager::instance(), available_update_checker::instance(),
                     $version, $showallplugins,
                     new moodle_url($PAGE->url),

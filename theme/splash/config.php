@@ -53,29 +53,29 @@ $THEME->layouts = array(
     'standard' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-pre'
     ),
     // Course page
     'course' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-pre'
     ),
     // Course page
     'coursecategory' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-pre'
     ),
     'incourse' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-pre'
     ),
     'frontpage' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-pre'
     ),
     'admin' => array(
         'file' => 'general.php',
@@ -85,12 +85,12 @@ $THEME->layouts = array(
     'mydashboard' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-pre'
     ),
     'mypublic' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-pre'
     ),
     'login' => array(
         'file' => 'general.php',

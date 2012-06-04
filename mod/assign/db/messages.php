@@ -24,8 +24,12 @@
 
 $messageproviders = array (
 
-// Ordinary assignment submissions
-    'assign_updates' => array (
+    // Ordinary assignment submissions
+    'assign_student_notification' => array (
+        'capability' => 'mod/assign:submit'
+    ),
+    'assign_grader_notification' => array (
+        'capability' => 'mod/assign:grade'
     )
 
 );

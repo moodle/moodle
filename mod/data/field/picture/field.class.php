@@ -52,7 +52,7 @@ class data_field_picture extends data_field_base {
                         if (empty($content->content1)) {
                             // Print icon if file already exists
                             $src = moodle_url::make_draftfile_url($itemid, '/', $file->get_filename());
-                            $displayname = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($file->get_mimetype())).'" class="icon" alt="'.$file->get_mimetype().'" />'. '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
+                            $displayname = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file), 'moodle', array('class' => 'icon')). '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
 
                         } else {
                             $displayname = get_string('nofilesattached', 'repository');
@@ -75,7 +75,7 @@ class data_field_picture extends data_field_base {
         $options = new stdClass();
         $options->maxbytes  = $this->field->param3;
         $options->itemid    = $itemid;
-        $options->accepted_types = array('image');
+        $options->accepted_types = array('web_image');
         $options->return_types = FILE_INTERNAL;
         $options->context = $PAGE->context;
         if (!empty($file)) {

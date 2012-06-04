@@ -28,6 +28,25 @@
  * @return bool
  */
 function xmldb_assign_upgrade($oldversion) {
+    global $CFG, $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2012051700) {
+
+        // Define field sendlatenotifications to be added to assign
+        $table = new xmldb_table('assign');
+        $field = new xmldb_field('sendlatenotifications', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'sendnotifications');
+
+        // Conditionally launch add field sendlatenotifications
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2012051700, 'assign');
+    }
+
     return true;
 }
 

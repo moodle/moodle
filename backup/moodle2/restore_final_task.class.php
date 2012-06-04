@@ -135,6 +135,7 @@ class restore_final_task extends restore_task {
         $rules[] = new restore_log_rule('course', 'report outline', 'report/outline/index.php?id={course}', '{course}');
         $rules[] = new restore_log_rule('course', 'report participation', 'report/participation/index.php?id={course}', '{course}');
         $rules[] = new restore_log_rule('course', 'report stats', 'report/stats/index.php?id={course}', '{course}');
+        $rules[] = new restore_log_rule('course', 'view section', 'view.php?id={course}&section={course_sectionnumber}', '{course_section}');
 
         // module 'user' rules
         $rules[] = new restore_log_rule('user', 'view', 'view.php?id={user}&course={course}', '{user}');

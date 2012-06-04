@@ -52,7 +52,13 @@ function dndupload_add_to_course($course, $modnames) {
         'fullpath' => new moodle_url('/course/dndupload.js'),
         'strings' => array(
             array('addfilehere', 'moodle'),
-            array('dndworking', 'moodle'),
+            array('dndworkingfiletextlink', 'moodle'),
+            array('dndworkingfilelink', 'moodle'),
+            array('dndworkingfiletext', 'moodle'),
+            array('dndworkingfile', 'moodle'),
+            array('dndworkingtextlink', 'moodle'),
+            array('dndworkingtext', 'moodle'),
+            array('dndworkinglink', 'moodle'),
             array('filetoolarge', 'moodle'),
             array('actionchoice', 'moodle'),
             array('servererror', 'moodle'),
@@ -103,7 +109,7 @@ class dndupload_handler {
         // Add some default types to handle.
         // Note: 'Files' type is hard-coded into the Javascript as this needs to be ...
         // ... treated a little differently.
-        $this->add_type('url', array('url', 'text/uri-list'), get_string('addlinkhere', 'moodle'),
+        $this->add_type('url', array('url', 'text/uri-list', 'text/x-moz-url'), get_string('addlinkhere', 'moodle'),
                         get_string('nameforlink', 'moodle'), 10);
         $this->add_type('text/html', array('text/html'), get_string('addpagehere', 'moodle'),
                         get_string('nameforpage', 'moodle'), 20);
@@ -298,17 +304,21 @@ class dndupload_handler {
      * @return object Data to pass on to Javascript code
      */
     public function get_js_data() {
+        global $CFG;
+
         $ret = new stdClass;
 
         // Sort the types by priority.
         uasort($this->types, array($this, 'type_compare'));
 
         $ret->types = array();
-        foreach ($this->types as $type) {
-            if (empty($type->handlers)) {
-                continue; // Skip any types without registered handlers.
+        if (!empty($CFG->dndallowtextandlinks)) {
+            foreach ($this->types as $type) {
+                if (empty($type->handlers)) {
+                    continue; // Skip any types without registered handlers.
+                }
+                $ret->types[] = $type;
             }
-            $ret->types[] = $type;
         }
 
         $ret->filehandlers = $this->filehandlers;
@@ -430,6 +440,10 @@ class dndupload_ajax_processor {
             if ($content != null) {
                 throw new moodle_exception('fileuploadwithcontent', 'moodle');
             }
+        } else {
+            if (empty($content)) {
+                throw new moodle_exception('dnduploadwithoutcontent', 'moodle');
+            }
         }
 
         require_sesskey();
@@ -543,7 +557,13 @@ class dndupload_ajax_processor {
         }
         // The following are used inside some few core functions, so may as well set them here.
         $this->cm->coursemodule = $this->cm->id;
-        $this->cm->groupmodelink = (!$this->course->groupmodeforce);
+        $groupbuttons = ($this->course->groupmode or (!$this->course->groupmodeforce));
+        if ($groupbuttons and plugin_supports('mod', $this->module->name, FEATURE_GROUPS, 0)) {
+            $this->cm->groupmodelink = (!$this->course->groupmodeforce);
+        } else {
+            $this->cm->groupmodelink = false;
+            $this->cm->groupmode = false;
+        }
     }
 
     /**
@@ -605,6 +625,8 @@ class dndupload_ajax_processor {
             throw new moodle_exception('errorcreatingactivity', 'moodle', '', $this->module->name);
         }
         $mod = $info->cms[$this->cm->id];
+        $mod->groupmodelink = $this->cm->groupmodelink;
+        $mod->groupmode = $this->cm->groupmode;
 
         // Trigger mod_created event with information about this module.
         $eventdata = new stdClass();
@@ -621,12 +643,6 @@ class dndupload_ajax_processor {
         add_to_log($this->course->id, $mod->modname, "add",
                    "view.php?id=$mod->id",
                    "$instanceid", $mod->id);
-
-        if ($this->cm->groupmodelink && plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
-            $mod->groupmodelink = $this->cm->groupmodelink;
-        } else {
-            $mod->groupmodelink = false;
-        }
 
         $this->send_response($mod);
     }

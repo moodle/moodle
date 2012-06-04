@@ -256,7 +256,7 @@ function resource_get_coursemodule_info($coursemodule) {
     $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false); // TODO: this is not very efficient!!
     if (count($files) >= 1) {
         $mainfile = reset($files);
-        $info->icon = file_extension_icon($mainfile->get_filename());
+        $info->icon = file_file_icon($mainfile);
         $resource->mainfile = $mainfile->get_filename();
     }
 
@@ -500,7 +500,7 @@ function mod_resource_dndupload_handle($uploadinfo) {
     $data = new stdClass();
     $data->course = $uploadinfo->course->id;
     $data->name = $uploadinfo->displayname;
-    $data->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $data->intro = '';
     $data->introformat = FORMAT_HTML;
     $data->coursemodule = $uploadinfo->coursemodule;
     $data->files = $uploadinfo->draftitemid;
@@ -512,6 +512,8 @@ function mod_resource_dndupload_handle($uploadinfo) {
     $data->popupwidth = $config->popupwidth;
     $data->printheading = $config->printheading;
     $data->printintro = $config->printintro;
+    $data->showsize = $config->showsize;
+    $data->showtype = $config->showtype;
 
     return resource_add_instance($data, null);
 }

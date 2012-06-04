@@ -2020,11 +2020,14 @@ class core_renderer extends renderer_base {
         $straddfile = get_string('openpicker', 'repository');
         $strloading  = get_string('loading', 'repository');
         $strdndenabled = get_string('dndenabled_inbox', 'moodle');
+        $strdroptoupload = get_string('droptoupload', 'moodle');
         $icon_progress = $OUTPUT->pix_icon('i/loading_small', $strloading).'';
 
         $currentfile = $options->currentfile;
         if (empty($currentfile)) {
-            $currentfile = get_string('nofilesattached', 'repository');
+            $currentfile = '';
+        } else {
+            $currentfile .= ' - ';
         }
         if ($options->maxbytes) {
             $size = $options->maxbytes;
@@ -2053,8 +2056,11 @@ $icon_progress
 EOD;
         if ($options->env != 'url') {
             $html .= <<<EOD
-    <div id="file_info_{$client_id}" class="mdl-left filepicker-filelist">
-    $currentfile<span id="dndenabled-{$client_id}" style="display: none"> - $strdndenabled </span>
+    <div id="file_info_{$client_id}" class="mdl-left filepicker-filelist" style="position: relative">
+    <div class="filepicker-filename">
+        <div class="filepicker-container">$currentfile<span class="dndupload-message">$strdndenabled <br/><span class="dndupload-arrow"></span></span></div>
+    </div>
+    <div><div class="dndupload-target">{$strdroptoupload}<br/><span class="dndupload-arrow"></span></div></div>
     </div>
 EOD;
         }

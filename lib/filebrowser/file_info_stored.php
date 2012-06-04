@@ -188,6 +188,16 @@ class file_info_stored extends file_info {
     }
 
     /**
+     * Returns width, height and mimetype of the stored image, or false
+     *
+     * @see stored_file::get_imageinfo()
+     * @return array|false
+     */
+    public function get_imageinfo() {
+        return $this->lf->get_imageinfo();
+    }
+
+    /**
      * Returns mimetype
      *
      * @return string mimetype or null if not known
@@ -495,7 +505,7 @@ class file_info_stored extends file_info {
         if ($this->is_directory()) {
             $filepath = $this->lf->get_filepath();
             $fs = get_file_storage();
-            $storedfiles = $fs->get_area_files($this->context->id, $this->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid(), "");
+            $storedfiles = $fs->get_area_files($this->context->id, $this->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid());
             foreach ($storedfiles as $file) {
                 if (strpos($file->get_filepath(), $filepath) === 0) {
                     $file->delete();

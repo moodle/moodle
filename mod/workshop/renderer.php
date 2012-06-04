@@ -749,14 +749,13 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $fileurl    = file_encode_url($CFG->wwwroot . '/pluginfile.php',
                                 '/' . $ctx->id . '/mod_workshop/submission_attachment/' . $submissionid . $filepath . $filename, true);
             $type       = $file->get_mimetype();
-            $type       = mimeinfo_from_type('type', $type);
-            $image      = html_writer::empty_tag('img', array('src'=>$this->output->pix_url(file_mimetype_icon($type)), 'alt'=>$type, 'class'=>'icon'));
+            $image      = $this->output->pix_icon(file_file_icon($file), get_mimetype_description($file), 'moodle', array('class' => 'icon'));
 
             $linkhtml   = html_writer::link($fileurl, $image) . substr($filepath, 1) . html_writer::link($fileurl, $filename);
             $linktxt    = "$filename [$fileurl]";
 
             if ($format == 'html') {
-                if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {
+                if (file_mimetype_in_typegroup($type, 'web_image')) {
                     $preview     = html_writer::empty_tag('img', array('src' => $fileurl, 'alt' => '', 'class' => 'preview'));
                     $preview     = html_writer::tag('a', $preview, array('href' => $fileurl));
                     $outputimgs .= $this->output->container($preview);

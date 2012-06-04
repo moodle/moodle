@@ -60,9 +60,8 @@ if (!isset($args[0]) || !in_array($args[0], $alloweddirs)) {
     print_error('invalidarguments');
 }
 
-// only serve some controlled extensions
-$allowedextensions = array('text/html', 'text/css', 'image/gif', 'application/x-javascript');
-if (!in_array(mimeinfo('type', $filepath), $allowedextensions)) {
+// only serve some controlled extensions/mimetypes
+if (!file_extension_in_typegroup($filepath, array('web_file', 'web_image'), true)) {
     print_error('invalidarguments');
 }
 

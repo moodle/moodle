@@ -67,25 +67,20 @@ function callback_weeks_definition() {
 function callback_weeks_get_section_name($course, $section) {
     // We can't add a node without text
     if (!empty($section->name)) {
-        // Return the name the user set
-        return format_string($section->name, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+        // Return the name the user set.
+        return format_string($section->name, true, array('context' => context_course::instance($course->id)));
     } else if ($section->section == 0) {
-        // Return the section0name
+        // Return the general section.
         return get_string('section0name', 'format_weeks');
     } else {
-        // Got to work out the date of the week so that we can show it
-        $sections = get_all_sections($course->id);
-        $weekdate = $course->startdate+7200;
-        foreach ($sections as $sec) {
-            if ($sec->id == $section->id) {
-                break;
-            } else if ($sec->section != 0) {
-                $weekdate += 604800;
-            }
-        }
-        $strftimedateshort = ' '.get_string('strftimedateshort');
-        $weekday = userdate($weekdate, $strftimedateshort);
-        $endweekday = userdate($weekdate+518400, $strftimedateshort);
+        $dates = format_weeks_get_section_dates($section, $course);
+
+        // We subtract 24 hours for display purposes.
+        $dates->end = ($dates->end - 86400);
+
+        $dateformat = ' '.get_string('strftimedateshort');
+        $weekday = userdate($dates->start, $dateformat);
+        $endweekday = userdate($dates->end, $dateformat);
         return $weekday.' - '.$endweekday;
     }
 }
@@ -101,4 +96,45 @@ function callback_weeks_ajax_support() {
     $ajaxsupport->capable = true;
     $ajaxsupport->testedbrowsers = array('MSIE' => 6.0, 'Gecko' => 20061111, 'Safari' => 531, 'Chrome' => 6.0);
     return $ajaxsupport;
+}
+
+/**
+ * Return the start and end date of the passed section
+ *
+ * @param stdClass $section The course_section entry from the DB
+ * @param stdClass $course The course entry from DB
+ * @return stdClass property start for startdate, property end for enddate
+ */
+function format_weeks_get_section_dates($section, $course) {
+    $oneweekseconds = 604800;
+    // Hack alert. We add 2 hours to avoid possible DST problems. (e.g. we go into daylight
+    // savings and the date changes.
+    $startdate = $course->startdate + 7200;
+
+    $dates = new stdClass();
+    $dates->start = $startdate + ($oneweekseconds * ($section->section - 1));
+    $dates->end = $dates->start + $oneweekseconds;
+
+    return $dates;
+}
+
+/**
+ * Callback function to do some action after section move
+ *
+ * @param stdClass $course The course entry from DB
+ * @return array This will be passed in ajax respose.
+ */
+function callback_weeks_ajax_section_move($course) {
+    global $COURSE, $PAGE;
+
+    $titles = array();
+    rebuild_course_cache($course->id);
+    $modinfo = get_fast_modinfo($COURSE);
+    $renderer = $PAGE->get_renderer('format_weeks');
+    if ($renderer && ($sections = $modinfo->get_section_info_all())) {
+        foreach ($sections as $number => $section) {
+            $titles[$number] = $renderer->section_title($section, $course);
+        }
+    }
+    return array('sectiontitles' => $titles, 'action' => 'move');
 }

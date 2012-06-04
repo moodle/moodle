@@ -344,7 +344,7 @@ abstract class assign_plugin {
      * @param bool $showviewlink Modifed to return whether or not to show a link to the full submission/feedback
      * @return string - return a string representation of the submission in full
      */
-    public function view_summary(stdClass $submissionorgrade, $showviewlink) {
+    public function view_summary(stdClass $submissionorgrade, & $showviewlink) {
         return '';
     }
 

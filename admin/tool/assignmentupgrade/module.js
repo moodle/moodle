@@ -61,6 +61,11 @@ M.tool_assignmentupgrade = {
             }
         });
 
+        var perpage = Y.one('#id_perpage');
+        perpage.on('change', function(e) {
+            window.onbeforeunload = null;
+            Y.one('.tool_assignmentupgrade_paginationform form').submit();
+        });
 
     }
 }

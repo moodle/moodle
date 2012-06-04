@@ -330,12 +330,12 @@ if ($hassiteconfig) {
       $typeoptionnames = repository::static_function($repositorytype->get_typename(), 'get_type_option_names');
       $instanceoptionnames = repository::static_function($repositorytype->get_typename(), 'get_instance_option_names');
       if (!empty($typeoptionnames) || !empty($instanceoptionnames)) {
-            $ADMIN->add('repositorysettings',
-                new admin_externalpage('repositorysettings'.$repositorytype->get_typename(),
-                        $repositorytype->get_readablename(),
-                        $url . '?action=edit&repos=' . $repositorytype->get_typename()),
-                        'moodle/site:config');
-        }
+
+          $params = array('action'=>'edit', 'sesskey'=>sesskey(), 'repos'=>$repositorytype->get_typename());
+          $settingsurl = new moodle_url("/$CFG->admin/repository.php", $params);
+          $repositoryexternalpage = new admin_externalpage('repositorysettings'.$repositorytype->get_typename(), $repositorytype->get_readablename(), $settingsurl);
+          $ADMIN->add('repositorysettings', $repositoryexternalpage);
+      }
     }
 }
 
@@ -370,7 +370,7 @@ if ($hassiteconfig) {
     // to set the page layout on all admin pages.
     // $wsdoclink = $OUTPUT->doc_link('How_to_get_a_security_key');
     $url = new moodle_url(get_docs_url('How_to_get_a_security_key'));
-    $wsdoclink = html_writer::tag('a', new lang_string('supplyinfo'),array('href'=>$url));
+    $wsdoclink = html_writer::tag('a', new lang_string('supplyinfo', 'webservice'), array('href'=>$url));
     $temp->add(new admin_setting_configcheckbox('enablewsdocumentation', new lang_string('enablewsdocumentation',
                         'admin'), new lang_string('configenablewsdocumentation', 'admin', $wsdoclink), false));
     $ADMIN->add('webservicesettings', $temp);

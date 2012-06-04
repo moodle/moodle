@@ -44,16 +44,28 @@ class Hint_ResultPrinter extends PHPUnit_TextUI_ResultPrinter {
 
         $exception = $defect->thrownException();
         $trace = $exception->getTrace();
-        $file = null;
-        $dirroot = realpath($CFG->dirroot).DIRECTORY_SEPARATOR;
-        $classpath = realpath("$CFG->dirroot/lib/phpunit/classes").DIRECTORY_SEPARATOR;
-        foreach ($trace as $item) {
-            if (strpos($item['file'], $dirroot) === 0 and strpos($item['file'], $classpath) !== 0) {
-                $file = $item['file'];
-                break;
+
+        if (class_exists('ReflectionClass')) {
+            $reflection = new ReflectionClass($testName);
+            $file = $reflection->getFileName();
+
+        } else {
+            $file = false;
+            $dirroot = realpath($CFG->dirroot).DIRECTORY_SEPARATOR;
+            $classpath = realpath("$CFG->dirroot/lib/phpunit/classes").DIRECTORY_SEPARATOR;
+            foreach ($trace as $item) {
+                if (strpos($item['file'], $dirroot) === 0 and strpos($item['file'], $classpath) !== 0) {
+                    if ($content = file_get_contents($item['file'])) {
+                        if (preg_match('/class\s+'.$testName.'\s+extends/', $content)) {
+                            $file = $item['file'];
+                            break;
+                        }
+                    }
+                }
             }
         }
-        if ($file === null) {
+
+        if ($file === false) {
             return;
         }
 

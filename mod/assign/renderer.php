@@ -87,12 +87,30 @@ class mod_assign_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render a grading error notification
+     * @param assign_quickgrading_result $result The result to render
+     * @return string
+     */
+    public function render_assign_quickgrading_result(assign_quickgrading_result $result) {
+        $url = new moodle_url('/mod/assign/view.php', array('id' => $result->coursemoduleid, 'action'=>'grading'));
+
+        $o = '';
+        $o .= $this->output->heading(get_string('quickgradingresult', 'assign'), 4);
+        $o .= $this->output->notification($result->message);
+        $o .= $this->output->continue_button($url);
+        return $o;
+    }
+
+    /**
      * Render the generic form
      * @param assign_form $form The form to render
      * @return string
      */
     public function render_assign_form(assign_form $form) {
         $o = '';
+        if ($form->jsinitfunction) {
+            $this->page->requires->js_init_call($form->jsinitfunction, array());
+        }
         $o .= $this->output->box_start('boxaligncenter ' . $form->classname);
         $o .= $this->moodleform($form->form);
         $o .= $this->output->box_end();
@@ -579,20 +597,19 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         $result = '<ul>';
         foreach ($dir['subdirs'] as $subdir) {
-            $image = $this->output->pix_icon("f/folder", $subdir['dirname'], 'moodle', array('class'=>'icon'));
+            $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle', array('class'=>'icon'));
             $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '.$this->htmllize_tree($tree, $subdir).'</li>';
         }
 
         foreach ($dir['files'] as $file) {
             $filename = $file->get_filename();
-            $icon = mimeinfo("icon", $filename);
             if ($CFG->enableplagiarism) {
                 require_once($CFG->libdir.'/plagiarismlib.php');
                 $plagiarsmlinks = plagiarism_get_links(array('userid'=>$file->get_userid(), 'file'=>$file, 'cmid'=>$tree->cm->id, 'course'=>$tree->course));
             } else {
                 $plagiarsmlinks = '';
             }
-            $image = $this->output->pix_icon("f/$icon", $filename, 'moodle', array('class'=>'icon'));
+            $image = $this->output->pix_icon(file_file_icon($file), $filename, 'moodle', array('class'=>'icon'));
             $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.$file->fileurl.' '.$plagiarsmlinks.$file->portfoliobutton.'</div></li>';
         }
 

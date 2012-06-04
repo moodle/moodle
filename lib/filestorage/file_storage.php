@@ -145,11 +145,12 @@ class file_storage {
     /**
      * Create instance of file class from database record.
      *
-     * @param stdClass $file_record record from the files table
+     * @param stdClass $filerecord record from the files table left join files_reference table
      * @return stored_file instance of file abstraction class
      */
-    public function get_file_instance(stdClass $file_record) {
-        return new stored_file($this, $file_record, $this->filedir);
+    public function get_file_instance(stdClass $filerecord) {
+        $storedfile = new stored_file($this, $filerecord, $this->filedir);
+        return $storedfile;
     }
 
     /**
@@ -245,7 +246,7 @@ class file_storage {
         $file->copy_content_to($tmpfilepath);
 
         if ($mode === 'tinyicon') {
-            $data = generate_image_thumbnail($tmpfilepath, 16, 16);
+            $data = generate_image_thumbnail($tmpfilepath, 24, 24);
 
         } else if ($mode === 'thumb') {
             $data = generate_image_thumbnail($tmpfilepath, 90, 90);
@@ -271,8 +272,13 @@ class file_storage {
     public function get_file_by_id($fileid) {
         global $DB;
 
-        if ($file_record = $DB->get_record('files', array('id'=>$fileid))) {
-            return $this->get_file_instance($file_record);
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                       ON f.referencefileid = r.id
+                 WHERE f.id = ?";
+        if ($filerecord = $DB->get_record_sql($sql, array($fileid))) {
+            return $this->get_file_instance($filerecord);
         } else {
             return false;
         }
@@ -287,8 +293,13 @@ class file_storage {
     public function get_file_by_hash($pathnamehash) {
         global $DB;
 
-        if ($file_record = $DB->get_record('files', array('pathnamehash'=>$pathnamehash))) {
-            return $this->get_file_instance($file_record);
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                       ON f.referencefileid = r.id
+                 WHERE f.pathnamehash = ?";
+        if ($filerecord = $DB->get_record_sql($sql, array($pathnamehash))) {
+            return $this->get_file_instance($filerecord);
         } else {
             return false;
         }
@@ -352,31 +363,71 @@ class file_storage {
     }
 
     /**
+     * Returns all files belonging to given repository
+     *
+     * @param int $repositoryid
+     * @param string $sort A fragment of SQL to use for sorting
+     */
+    public function get_external_files($repositoryid, $sort = 'sortorder, itemid, filepath, filename') {
+        global $DB;
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                       ON f.referencefileid = r.id
+                 WHERE r.repositoryid = ?";
+        if (!empty($sort)) {
+            $sql .= " ORDER BY {$sort}";
+        }
+
+        $result = array();
+        $filerecords = $DB->get_records_sql($sql, array($repositoryid));
+        foreach ($filerecords as $filerecord) {
+            $result[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
+        }
+        return $result;
+    }
+
+    /**
      * Returns all area files (optionally limited by itemid)
      *
      * @param int $contextid context ID
      * @param string $component component
      * @param string $filearea file area
      * @param int $itemid item ID or all files if not specified
-     * @param string $sort sort fields
+     * @param string $sort A fragment of SQL to use for sorting
      * @param bool $includedirs whether or not include directories
      * @return array of stored_files indexed by pathanmehash
      */
-    public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort="sortorder, itemid, filepath, filename", $includedirs = true) {
+    public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "sortorder, itemid, filepath, filename", $includedirs = true) {
         global $DB;
 
         $conditions = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea);
         if ($itemid !== false) {
+            $itemidsql = ' AND f.itemid = :itemid ';
             $conditions['itemid'] = $itemid;
+        } else {
+            $itemidsql = '';
+        }
+
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                       ON f.referencefileid = r.id
+                 WHERE f.contextid = :contextid
+                       AND f.component = :component
+                       AND f.filearea = :filearea
+                       $itemidsql";
+        if (!empty($sort)) {
+            $sql .= " ORDER BY {$sort}";
         }
 
         $result = array();
-        $file_records = $DB->get_records('files', $conditions, $sort);
-        foreach ($file_records as $file_record) {
-            if (!$includedirs and $file_record->filename === '.') {
+        $filerecords = $DB->get_records_sql($sql, $conditions);
+        foreach ($filerecords as $filerecord) {
+            if (!$includedirs and $filerecord->filename === '.') {
                 continue;
             }
-            $result[$file_record->pathnamehash] = $this->get_file_instance($file_record);
+            $result[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
         }
         return $result;
     }
@@ -442,7 +493,7 @@ class file_storage {
      * @param int $filepath directory path
      * @param bool $recursive include all subdirectories
      * @param bool $includedirs include files and directories
-     * @param string $sort sort fields
+     * @param string $sort A fragment of SQL to use for sorting
      * @return array of stored_files indexed by pathanmehash
      */
     public function get_directory_files($contextid, $component, $filearea, $itemid, $filepath, $recursive = false, $includedirs = true, $sort = "filepath, filename") {
@@ -452,28 +503,32 @@ class file_storage {
             return array();
         }
 
+        $orderby = (!empty($sort)) ? " ORDER BY {$sort}" : '';
+
         if ($recursive) {
 
             $dirs = $includedirs ? "" : "AND filename <> '.'";
             $length = textlib::strlen($filepath);
 
-            $sql = "SELECT *
-                      FROM {files}
-                     WHERE contextid = :contextid AND component = :component AND filearea = :filearea AND itemid = :itemid
-                           AND ".$DB->sql_substr("filepath", 1, $length)." = :filepath
-                           AND id <> :dirid
+            $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
+                      FROM {files} f
+                 LEFT JOIN {files_reference} r
+                           ON f.referencefileid = r.id
+                     WHERE f.contextid = :contextid AND f.component = :component AND f.filearea = :filearea AND f.itemid = :itemid
+                           AND ".$DB->sql_substr("f.filepath", 1, $length)." = :filepath
+                           AND f.id <> :dirid
                            $dirs
-                  ORDER BY $sort";
+                           $orderby";
             $params = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'dirid'=>$directory->get_id());
 
             $files = array();
             $dirs  = array();
-            $file_records = $DB->get_records_sql($sql, $params);
-            foreach ($file_records as $file_record) {
-                if ($file_record->filename == '.') {
-                    $dirs[$file_record->pathnamehash] = $this->get_file_instance($file_record);
+            $filerecords = $DB->get_records_sql($sql, $params);
+            foreach ($filerecords as $filerecord) {
+                if ($filerecord->filename == '.') {
+                    $dirs[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
                 } else {
-                    $files[$file_record->pathnamehash] = $this->get_file_instance($file_record);
+                    $files[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
                 }
             }
             $result = array_merge($dirs, $files);
@@ -485,32 +540,36 @@ class file_storage {
             $length = textlib::strlen($filepath);
 
             if ($includedirs) {
-                $sql = "SELECT *
-                          FROM {files}
-                         WHERE contextid = :contextid AND component = :component AND filearea = :filearea
-                               AND itemid = :itemid AND filename = '.'
-                               AND ".$DB->sql_substr("filepath", 1, $length)." = :filepath
-                               AND id <> :dirid
-                      ORDER BY $sort";
+                $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
+                          FROM {files} f
+                     LEFT JOIN {files_reference} r
+                               ON f.referencefileid = r.id
+                         WHERE f.contextid = :contextid AND f.component = :component AND f.filearea = :filearea
+                               AND f.itemid = :itemid AND f.filename = '.'
+                               AND ".$DB->sql_substr("f.filepath", 1, $length)." = :filepath
+                               AND f.id <> :dirid
+                               $orderby";
                 $reqlevel = substr_count($filepath, '/') + 1;
-                $file_records = $DB->get_records_sql($sql, $params);
-                foreach ($file_records as $file_record) {
-                    if (substr_count($file_record->filepath, '/') !== $reqlevel) {
+                $filerecords = $DB->get_records_sql($sql, $params);
+                foreach ($filerecords as $filerecord) {
+                    if (substr_count($filerecord->filepath, '/') !== $reqlevel) {
                         continue;
                     }
-                    $result[$file_record->pathnamehash] = $this->get_file_instance($file_record);
+                    $result[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
                 }
             }
 
-            $sql = "SELECT *
-                      FROM {files}
-                     WHERE contextid = :contextid AND component = :component AND filearea = :filearea AND itemid = :itemid
-                           AND filepath = :filepath AND filename <> '.'
-                  ORDER BY $sort";
+            $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
+                      FROM {files} f
+                 LEFT JOIN {files_reference} r
+                           ON f.referencefileid = r.id
+                     WHERE f.contextid = :contextid AND f.component = :component AND f.filearea = :filearea AND f.itemid = :itemid
+                           AND f.filepath = :filepath AND f.filename <> '.'
+                           $orderby";
 
-            $file_records = $DB->get_records_sql($sql, $params);
-            foreach ($file_records as $file_record) {
-                $result[$file_record->pathnamehash] = $this->get_file_instance($file_record);
+            $filerecords = $DB->get_records_sql($sql, $params);
+            foreach ($filerecords as $filerecord) {
+                $result[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
             }
         }
 
@@ -540,9 +599,9 @@ class file_storage {
             $conditions['itemid'] = $itemid;
         }
 
-        $file_records = $DB->get_records('files', $conditions);
-        foreach ($file_records as $file_record) {
-            $this->get_file_instance($file_record)->delete();
+        $filerecords = $DB->get_records('files', $conditions);
+        foreach ($filerecords as $filerecord) {
+            $this->get_file_instance($filerecord)->delete();
         }
 
         return true; // BC only
@@ -572,11 +631,11 @@ class file_storage {
         $params['component'] = $component;
         $params['filearea'] = $filearea;
 
-        $file_records = $DB->get_recordset_select('files', $where, $params);
-        foreach ($file_records as $file_record) {
-            $this->get_file_instance($file_record)->delete();
+        $filerecords = $DB->get_recordset_select('files', $where, $params);
+        foreach ($filerecords as $filerecord) {
+            $this->get_file_instance($filerecord)->delete();
         }
-        $file_records->close();
+        $filerecords->close();
     }
 
     /**
@@ -699,11 +758,11 @@ class file_storage {
     /**
      * Add new local file based on existing local file.
      *
-     * @param stdClass|array $file_record object or array describing changes
+     * @param stdClass|array $filerecord object or array describing changes
      * @param stored_file|int $fileorid id or stored_file instance of the existing local file
      * @return stored_file instance of newly created file
      */
-    public function create_file_from_storedfile($file_record, $fileorid) {
+    public function create_file_from_storedfile($filerecord, $fileorid) {
         global $DB;
 
         if ($fileorid instanceof stored_file) {
@@ -712,20 +771,26 @@ class file_storage {
             $fid = $fileorid;
         }
 
-        $file_record = (array)$file_record; // we support arrays too, do not modify the submitted record!
+        $filerecord = (array)$filerecord; // We support arrays too, do not modify the submitted record!
 
-        unset($file_record['id']);
-        unset($file_record['filesize']);
-        unset($file_record['contenthash']);
-        unset($file_record['pathnamehash']);
+        unset($filerecord['id']);
+        unset($filerecord['filesize']);
+        unset($filerecord['contenthash']);
+        unset($filerecord['pathnamehash']);
 
-        if (!$newrecord = $DB->get_record('files', array('id'=>$fid))) {
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                       ON f.referencefileid = r.id
+                 WHERE f.id = ?";
+
+        if (!$newrecord = $DB->get_record_sql($sql, array($fid))) {
             throw new file_exception('storedfileproblem', 'File does not exist');
         }
 
         unset($newrecord->id);
 
-        foreach ($file_record as $key=>$value) {
+        foreach ($filerecord as $key => $value) {
             // validate all parameters, we do not want any rubbish stored in database, right?
             if ($key == 'contextid' and (!is_number($value) or $value < 1)) {
                 throw new file_exception('storedfileproblem', 'Invalid contextid');
@@ -776,6 +841,10 @@ class file_storage {
                 }
             }
 
+            if ($key == 'referencefileid' or $key == 'referencelastsync' or $key == 'referencelifetime') {
+                $value = clean_param($value, PARAM_INT);
+            }
+
             $newrecord->$key = $value;
         }
 
@@ -790,12 +859,28 @@ class file_storage {
             return $this->get_file_instance($newrecord);
         }
 
+        if (!empty($newrecord->repositoryid)) {
+            try {
+                $referencerecord = new stdClass;
+                $referencerecord->repositoryid = $newrecord->repositoryid;
+                $referencerecord->reference = $newrecord->reference;
+                $referencerecord->lastsync  = $newrecord->referencelastsync;
+                $referencerecord->lifetime  = $newrecord->referencelifetime;
+                $referencerecord->id = $DB->insert_record('files_reference', $referencerecord);
+            } catch (dml_exception $e) {
+                throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
+                                                         $newrecord->filepath, $newrecord->filename, $e->debuginfo);
+            }
+            $newrecord->referencefileid = $referencerecord->id;
+        }
+
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
         } catch (dml_exception $e) {
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
                                                      $newrecord->filepath, $newrecord->filename, $e->debuginfo);
         }
+
 
         $this->create_directory($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
 
@@ -805,16 +890,16 @@ class file_storage {
     /**
      * Add new local file.
      *
-     * @param stdClass|array $file_record object or array describing file
+     * @param stdClass|array $filerecord object or array describing file
      * @param string $url the URL to the file
      * @param array $options {@link download_file_content()} options
      * @param bool $usetempfile use temporary file for download, may prevent out of memory problems
      * @return stored_file
      */
-    public function create_file_from_url($file_record, $url, array $options = NULL, $usetempfile = false) {
+    public function create_file_from_url($filerecord, $url, array $options = null, $usetempfile = false) {
 
-        $file_record = (array)$file_record;  //do not modify the submitted record, this cast unlinks objects
-        $file_record = (object)$file_record; // we support arrays too
+        $filerecord = (array)$filerecord;  // Do not modify the submitted record, this cast unlinks objects.
+        $filerecord = (object)$filerecord; // We support arrays too.
 
         $headers        = isset($options['headers'])        ? $options['headers'] : null;
         $postdata       = isset($options['postdata'])       ? $options['postdata'] : null;
@@ -824,13 +909,13 @@ class file_storage {
         $skipcertverify = isset($options['skipcertverify']) ? $options['skipcertverify'] : false;
         $calctimeout    = isset($options['calctimeout'])    ? $options['calctimeout'] : false;
 
-        if (!isset($file_record->filename)) {
+        if (!isset($filerecord->filename)) {
             $parts = explode('/', $url);
             $filename = array_pop($parts);
-            $file_record->filename = clean_param($filename, PARAM_FILE);
+            $filerecord->filename = clean_param($filename, PARAM_FILE);
         }
-        $source = !empty($file_record->source) ? $file_record->source : $url;
-        $file_record->source = clean_param($source, PARAM_URL);
+        $source = !empty($filerecord->source) ? $filerecord->source : $url;
+        $filerecord->source = clean_param($source, PARAM_URL);
 
         if ($usetempfile) {
             check_dir_exists($this->tempdir);
@@ -840,7 +925,7 @@ class file_storage {
                 throw new file_exception('storedfileproblem', 'Can not fetch file form URL');
             }
             try {
-                $newfile = $this->create_file_from_pathname($file_record, $tmpfile);
+                $newfile = $this->create_file_from_pathname($filerecord, $tmpfile);
                 @unlink($tmpfile);
                 return $newfile;
             } catch (Exception $e) {
@@ -853,104 +938,108 @@ class file_storage {
             if ($content === false) {
                 throw new file_exception('storedfileproblem', 'Can not fetch file form URL');
             }
-            return $this->create_file_from_string($file_record, $content);
+            return $this->create_file_from_string($filerecord, $content);
         }
     }
 
     /**
      * Add new local file.
      *
-     * @param stdClass|array $file_record object or array describing file
+     * @param stdClass|array $filerecord object or array describing file
      * @param string $pathname path to file or content of file
      * @return stored_file
      */
-    public function create_file_from_pathname($file_record, $pathname) {
+    public function create_file_from_pathname($filerecord, $pathname) {
         global $DB;
 
-        $file_record = (array)$file_record;  //do not modify the submitted record, this cast unlinks objects
-        $file_record = (object)$file_record; // we support arrays too
+        $filerecord = (array)$filerecord;  // Do not modify the submitted record, this cast unlinks objects.
+        $filerecord = (object)$filerecord; // We support arrays too.
 
         // validate all parameters, we do not want any rubbish stored in database, right?
-        if (!is_number($file_record->contextid) or $file_record->contextid < 1) {
+        if (!is_number($filerecord->contextid) or $filerecord->contextid < 1) {
             throw new file_exception('storedfileproblem', 'Invalid contextid');
         }
 
-        $file_record->component = clean_param($file_record->component, PARAM_COMPONENT);
-        if (empty($file_record->component)) {
+        $filerecord->component = clean_param($filerecord->component, PARAM_COMPONENT);
+        if (empty($filerecord->component)) {
             throw new file_exception('storedfileproblem', 'Invalid component');
         }
 
-        $file_record->filearea = clean_param($file_record->filearea, PARAM_AREA);
-        if (empty($file_record->filearea)) {
+        $filerecord->filearea = clean_param($filerecord->filearea, PARAM_AREA);
+        if (empty($filerecord->filearea)) {
             throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
 
-        if (!is_number($file_record->itemid) or $file_record->itemid < 0) {
+        if (!is_number($filerecord->itemid) or $filerecord->itemid < 0) {
             throw new file_exception('storedfileproblem', 'Invalid itemid');
         }
 
-        if (!empty($file_record->sortorder)) {
-            if (!is_number($file_record->sortorder) or $file_record->sortorder < 0) {
-                $file_record->sortorder = 0;
+        if (!empty($filerecord->sortorder)) {
+            if (!is_number($filerecord->sortorder) or $filerecord->sortorder < 0) {
+                $filerecord->sortorder = 0;
             }
         } else {
-            $file_record->sortorder = 0;
+            $filerecord->sortorder = 0;
         }
 
-        $file_record->filepath = clean_param($file_record->filepath, PARAM_PATH);
-        if (strpos($file_record->filepath, '/') !== 0 or strrpos($file_record->filepath, '/') !== strlen($file_record->filepath)-1) {
+        $filerecord->referencefileid   = !isset($filerecord->referencefileid) ? 0 : $filerecord->referencefileid;
+        $filerecord->referencelastsync = !isset($filerecord->referencelastsync) ? 0 : $filerecord->referencelastsync;
+        $filerecord->referencelifetime = !isset($filerecord->referencelifetime) ? 0 : $filerecord->referencelifetime;
+
+        $filerecord->filepath = clean_param($filerecord->filepath, PARAM_PATH);
+        if (strpos($filerecord->filepath, '/') !== 0 or strrpos($filerecord->filepath, '/') !== strlen($filerecord->filepath)-1) {
             // path must start and end with '/'
             throw new file_exception('storedfileproblem', 'Invalid file path');
         }
 
-        $file_record->filename = clean_param($file_record->filename, PARAM_FILE);
-        if ($file_record->filename === '') {
+        $filerecord->filename = clean_param($filerecord->filename, PARAM_FILE);
+        if ($filerecord->filename === '') {
             // filename must not be empty
             throw new file_exception('storedfileproblem', 'Invalid file name');
         }
 
         $now = time();
-        if (isset($file_record->timecreated)) {
-            if (!is_number($file_record->timecreated)) {
+        if (isset($filerecord->timecreated)) {
+            if (!is_number($filerecord->timecreated)) {
                 throw new file_exception('storedfileproblem', 'Invalid file timecreated');
             }
-            if ($file_record->timecreated < 0) {
+            if ($filerecord->timecreated < 0) {
                 //NOTE: unfortunately I make a mistake when creating the "files" table, we can not have negative numbers there, on the other hand no file should be older than 1970, right? (skodak)
-                $file_record->timecreated = 0;
+                $filerecord->timecreated = 0;
             }
         } else {
-            $file_record->timecreated = $now;
+            $filerecord->timecreated = $now;
         }
 
-        if (isset($file_record->timemodified)) {
-            if (!is_number($file_record->timemodified)) {
+        if (isset($filerecord->timemodified)) {
+            if (!is_number($filerecord->timemodified)) {
                 throw new file_exception('storedfileproblem', 'Invalid file timemodified');
             }
-            if ($file_record->timemodified < 0) {
+            if ($filerecord->timemodified < 0) {
                 //NOTE: unfortunately I make a mistake when creating the "files" table, we can not have negative numbers there, on the other hand no file should be older than 1970, right? (skodak)
-                $file_record->timemodified = 0;
+                $filerecord->timemodified = 0;
             }
         } else {
-            $file_record->timemodified = $now;
+            $filerecord->timemodified = $now;
         }
 
         $newrecord = new stdClass();
 
-        $newrecord->contextid = $file_record->contextid;
-        $newrecord->component = $file_record->component;
-        $newrecord->filearea  = $file_record->filearea;
-        $newrecord->itemid    = $file_record->itemid;
-        $newrecord->filepath  = $file_record->filepath;
-        $newrecord->filename  = $file_record->filename;
+        $newrecord->contextid = $filerecord->contextid;
+        $newrecord->component = $filerecord->component;
+        $newrecord->filearea  = $filerecord->filearea;
+        $newrecord->itemid    = $filerecord->itemid;
+        $newrecord->filepath  = $filerecord->filepath;
+        $newrecord->filename  = $filerecord->filename;
 
-        $newrecord->timecreated  = $file_record->timecreated;
-        $newrecord->timemodified = $file_record->timemodified;
-        $newrecord->mimetype     = empty($file_record->mimetype) ? mimeinfo('type', $file_record->filename) : $file_record->mimetype;
-        $newrecord->userid       = empty($file_record->userid) ? null : $file_record->userid;
-        $newrecord->source       = empty($file_record->source) ? null : $file_record->source;
-        $newrecord->author       = empty($file_record->author) ? null : $file_record->author;
-        $newrecord->license      = empty($file_record->license) ? null : $file_record->license;
-        $newrecord->sortorder    = $file_record->sortorder;
+        $newrecord->timecreated  = $filerecord->timecreated;
+        $newrecord->timemodified = $filerecord->timemodified;
+        $newrecord->mimetype     = empty($filerecord->mimetype) ? $this->mimetype($pathname, $filerecord->filename) : $filerecord->mimetype;
+        $newrecord->userid       = empty($filerecord->userid) ? null : $filerecord->userid;
+        $newrecord->source       = empty($filerecord->source) ? null : $filerecord->source;
+        $newrecord->author       = empty($filerecord->author) ? null : $filerecord->author;
+        $newrecord->license      = empty($filerecord->license) ? null : $filerecord->license;
+        $newrecord->sortorder    = $filerecord->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_file_to_pool($pathname);
 
@@ -974,99 +1063,104 @@ class file_storage {
     /**
      * Add new local file.
      *
-     * @param stdClass|array $file_record object or array describing file
+     * @param stdClass|array $filerecord object or array describing file
      * @param string $content content of file
      * @return stored_file
      */
-    public function create_file_from_string($file_record, $content) {
+    public function create_file_from_string($filerecord, $content) {
         global $DB;
 
-        $file_record = (array)$file_record;  //do not modify the submitted record, this cast unlinks objects
-        $file_record = (object)$file_record; // we support arrays too
+        $filerecord = (array)$filerecord;  // Do not modify the submitted record, this cast unlinks objects.
+        $filerecord = (object)$filerecord; // We support arrays too.
 
         // validate all parameters, we do not want any rubbish stored in database, right?
-        if (!is_number($file_record->contextid) or $file_record->contextid < 1) {
+        if (!is_number($filerecord->contextid) or $filerecord->contextid < 1) {
             throw new file_exception('storedfileproblem', 'Invalid contextid');
         }
 
-        $file_record->component = clean_param($file_record->component, PARAM_COMPONENT);
-        if (empty($file_record->component)) {
+        $filerecord->component = clean_param($filerecord->component, PARAM_COMPONENT);
+        if (empty($filerecord->component)) {
             throw new file_exception('storedfileproblem', 'Invalid component');
         }
 
-        $file_record->filearea = clean_param($file_record->filearea, PARAM_AREA);
-        if (empty($file_record->filearea)) {
+        $filerecord->filearea = clean_param($filerecord->filearea, PARAM_AREA);
+        if (empty($filerecord->filearea)) {
             throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
 
-        if (!is_number($file_record->itemid) or $file_record->itemid < 0) {
+        if (!is_number($filerecord->itemid) or $filerecord->itemid < 0) {
             throw new file_exception('storedfileproblem', 'Invalid itemid');
         }
 
-        if (!empty($file_record->sortorder)) {
-            if (!is_number($file_record->sortorder) or $file_record->sortorder < 0) {
-                $file_record->sortorder = 0;
+        if (!empty($filerecord->sortorder)) {
+            if (!is_number($filerecord->sortorder) or $filerecord->sortorder < 0) {
+                $filerecord->sortorder = 0;
             }
         } else {
-            $file_record->sortorder = 0;
+            $filerecord->sortorder = 0;
         }
+        $filerecord->referencefileid   = !isset($filerecord->referencefileid) ? 0 : $filerecord->referencefileid;
+        $filerecord->referencelastsync = !isset($filerecord->referencelastsync) ? 0 : $filerecord->referencelastsync;
+        $filerecord->referencelifetime = !isset($filerecord->referencelifetime) ? 0 : $filerecord->referencelifetime;
 
-        $file_record->filepath = clean_param($file_record->filepath, PARAM_PATH);
-        if (strpos($file_record->filepath, '/') !== 0 or strrpos($file_record->filepath, '/') !== strlen($file_record->filepath)-1) {
+        $filerecord->filepath = clean_param($filerecord->filepath, PARAM_PATH);
+        if (strpos($filerecord->filepath, '/') !== 0 or strrpos($filerecord->filepath, '/') !== strlen($filerecord->filepath)-1) {
             // path must start and end with '/'
             throw new file_exception('storedfileproblem', 'Invalid file path');
         }
 
-        $file_record->filename = clean_param($file_record->filename, PARAM_FILE);
-        if ($file_record->filename === '') {
+        $filerecord->filename = clean_param($filerecord->filename, PARAM_FILE);
+        if ($filerecord->filename === '') {
             // path must start and end with '/'
             throw new file_exception('storedfileproblem', 'Invalid file name');
         }
 
         $now = time();
-        if (isset($file_record->timecreated)) {
-            if (!is_number($file_record->timecreated)) {
+        if (isset($filerecord->timecreated)) {
+            if (!is_number($filerecord->timecreated)) {
                 throw new file_exception('storedfileproblem', 'Invalid file timecreated');
             }
-            if ($file_record->timecreated < 0) {
+            if ($filerecord->timecreated < 0) {
                 //NOTE: unfortunately I make a mistake when creating the "files" table, we can not have negative numbers there, on the other hand no file should be older than 1970, right? (skodak)
-                $file_record->timecreated = 0;
+                $filerecord->timecreated = 0;
             }
         } else {
-            $file_record->timecreated = $now;
+            $filerecord->timecreated = $now;
         }
 
-        if (isset($file_record->timemodified)) {
-            if (!is_number($file_record->timemodified)) {
+        if (isset($filerecord->timemodified)) {
+            if (!is_number($filerecord->timemodified)) {
                 throw new file_exception('storedfileproblem', 'Invalid file timemodified');
             }
-            if ($file_record->timemodified < 0) {
+            if ($filerecord->timemodified < 0) {
                 //NOTE: unfortunately I make a mistake when creating the "files" table, we can not have negative numbers there, on the other hand no file should be older than 1970, right? (skodak)
-                $file_record->timemodified = 0;
+                $filerecord->timemodified = 0;
             }
         } else {
-            $file_record->timemodified = $now;
+            $filerecord->timemodified = $now;
         }
 
         $newrecord = new stdClass();
 
-        $newrecord->contextid = $file_record->contextid;
-        $newrecord->component = $file_record->component;
-        $newrecord->filearea  = $file_record->filearea;
-        $newrecord->itemid    = $file_record->itemid;
-        $newrecord->filepath  = $file_record->filepath;
-        $newrecord->filename  = $file_record->filename;
+        $newrecord->contextid = $filerecord->contextid;
+        $newrecord->component = $filerecord->component;
+        $newrecord->filearea  = $filerecord->filearea;
+        $newrecord->itemid    = $filerecord->itemid;
+        $newrecord->filepath  = $filerecord->filepath;
+        $newrecord->filename  = $filerecord->filename;
 
-        $newrecord->timecreated  = $file_record->timecreated;
-        $newrecord->timemodified = $file_record->timemodified;
-        $newrecord->mimetype     = empty($file_record->mimetype) ? mimeinfo('type', $file_record->filename) : $file_record->mimetype;
-        $newrecord->userid       = empty($file_record->userid) ? null : $file_record->userid;
-        $newrecord->source       = empty($file_record->source) ? null : $file_record->source;
-        $newrecord->author       = empty($file_record->author) ? null : $file_record->author;
-        $newrecord->license      = empty($file_record->license) ? null : $file_record->license;
-        $newrecord->sortorder    = $file_record->sortorder;
+        $newrecord->timecreated  = $filerecord->timecreated;
+        $newrecord->timemodified = $filerecord->timemodified;
+        $newrecord->userid       = empty($filerecord->userid) ? null : $filerecord->userid;
+        $newrecord->source       = empty($filerecord->source) ? null : $filerecord->source;
+        $newrecord->author       = empty($filerecord->author) ? null : $filerecord->author;
+        $newrecord->license      = empty($filerecord->license) ? null : $filerecord->license;
+        $newrecord->sortorder    = $filerecord->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
+        $filepathname = $this->path_from_hash($newrecord->contenthash) . '/' . $newrecord->contenthash;
+        // get mimetype by magic bytes
+        $newrecord->mimetype = empty($filerecord->mimetype) ? $this->mimetype($filepathname, $filerecord->filename) : $filerecord->mimetype;
 
         $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
@@ -1086,9 +1180,138 @@ class file_storage {
     }
 
     /**
+     * Create a moodle file from file reference information
+     *
+     * @param stdClass $filerecord
+     * @param int $repositoryid
+     * @param string $reference
+     * @param array $options options for creating external file
+     * @return stored_file
+     */
+    public function create_file_from_reference($filerecord, $repositoryid, $reference, $options = array()) {
+        global $DB;
+
+        $filerecord = (array)$filerecord;  // Do not modify the submitted record, this cast unlinks objects.
+        $filerecord = (object)$filerecord; // We support arrays too.
+
+        // validate all parameters, we do not want any rubbish stored in database, right?
+        if (!is_number($filerecord->contextid) or $filerecord->contextid < 1) {
+            throw new file_exception('storedfileproblem', 'Invalid contextid');
+        }
+
+        $filerecord->component = clean_param($filerecord->component, PARAM_COMPONENT);
+        if (empty($filerecord->component)) {
+            throw new file_exception('storedfileproblem', 'Invalid component');
+        }
+
+        $filerecord->filearea = clean_param($filerecord->filearea, PARAM_AREA);
+        if (empty($filerecord->filearea)) {
+            throw new file_exception('storedfileproblem', 'Invalid filearea');
+        }
+
+        if (!is_number($filerecord->itemid) or $filerecord->itemid < 0) {
+            throw new file_exception('storedfileproblem', 'Invalid itemid');
+        }
+
+        if (!empty($filerecord->sortorder)) {
+            if (!is_number($filerecord->sortorder) or $filerecord->sortorder < 0) {
+                $filerecord->sortorder = 0;
+            }
+        } else {
+            $filerecord->sortorder = 0;
+        }
+
+        $filerecord->referencefileid   = empty($filerecord->referencefileid) ? 0 : $filerecord->referencefileid;
+        $filerecord->referencelastsync = empty($filerecord->referencelastsync) ? 0 : $filerecord->referencelastsync;
+        $filerecord->referencelifetime = empty($filerecord->referencelifetime) ? 0 : $filerecord->referencelifetime;
+        $filerecord->mimetype          = empty($filerecord->mimetype) ? $this->mimetype($filerecord->filename) : $filerecord->mimetype;
+        $filerecord->userid            = empty($filerecord->userid) ? null : $filerecord->userid;
+        $filerecord->source            = empty($filerecord->source) ? null : $filerecord->source;
+        $filerecord->author            = empty($filerecord->author) ? null : $filerecord->author;
+        $filerecord->license           = empty($filerecord->license) ? null : $filerecord->license;
+        $filerecord->filepath          = clean_param($filerecord->filepath, PARAM_PATH);
+        if (strpos($filerecord->filepath, '/') !== 0 or strrpos($filerecord->filepath, '/') !== strlen($filerecord->filepath)-1) {
+            // Path must start and end with '/'.
+            throw new file_exception('storedfileproblem', 'Invalid file path');
+        }
+
+        $filerecord->filename = clean_param($filerecord->filename, PARAM_FILE);
+        if ($filerecord->filename === '') {
+            // Path must start and end with '/'.
+            throw new file_exception('storedfileproblem', 'Invalid file name');
+        }
+
+        $now = time();
+        if (isset($filerecord->timecreated)) {
+            if (!is_number($filerecord->timecreated)) {
+                throw new file_exception('storedfileproblem', 'Invalid file timecreated');
+            }
+            if ($filerecord->timecreated < 0) {
+                // NOTE: unfortunately I make a mistake when creating the "files" table, we can not have negative numbers there, on the other hand no file should be older than 1970, right? (skodak)
+                $filerecord->timecreated = 0;
+            }
+        } else {
+            $filerecord->timecreated = $now;
+        }
+
+        if (isset($filerecord->timemodified)) {
+            if (!is_number($filerecord->timemodified)) {
+                throw new file_exception('storedfileproblem', 'Invalid file timemodified');
+            }
+            if ($filerecord->timemodified < 0) {
+                // NOTE: unfortunately I make a mistake when creating the "files" table, we can not have negative numbers there, on the other hand no file should be older than 1970, right? (skodak)
+                $filerecord->timemodified = 0;
+            }
+        } else {
+            $filerecord->timemodified = $now;
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        // Insert file reference record.
+        try {
+            $referencerecord = new stdClass;
+            $referencerecord->repositoryid = $repositoryid;
+            $referencerecord->reference = $reference;
+            $referencerecord->lastsync = $filerecord->referencelastsync;
+            $referencerecord->lifetime = $filerecord->referencelifetime;
+            $referencerecord->id = $DB->insert_record('files_reference', $referencerecord);
+        } catch (dml_exception $e) {
+            throw $e;
+        }
+
+        $filerecord->referencefileid = $referencerecord->id;
+
+        // External file doesn't have content in moodle.
+        // So we create an empty file for it.
+        list($filerecord->contenthash, $filerecord->filesize, $newfile) = $this->add_string_to_pool(null);
+
+        $filerecord->pathnamehash = $this->get_pathname_hash($filerecord->contextid, $filerecord->component, $filerecord->filearea, $filerecord->itemid, $filerecord->filepath, $filerecord->filename);
+
+        try {
+            $filerecord->id = $DB->insert_record('files', $filerecord);
+        } catch (dml_exception $e) {
+            if ($newfile) {
+                $this->deleted_file_cleanup($filerecord->contenthash);
+            }
+            throw new stored_file_creation_exception($filerecord->contextid, $filerecord->component, $filerecord->filearea, $filerecord->itemid,
+                                                    $filerecord->filepath, $filerecord->filename, $e->debuginfo);
+        }
+
+        $this->create_directory($filerecord->contextid, $filerecord->component, $filerecord->filearea, $filerecord->itemid, $filerecord->filepath, $filerecord->userid);
+
+        $transaction->allow_commit();
+
+        // Adding repositoryid and reference to file record to create stored_file instance
+        $filerecord->repositoryid = $repositoryid;
+        $filerecord->reference = $reference;
+        return $this->get_file_instance($filerecord);
+    }
+
+    /**
      * Creates new image file from existing.
      *
-     * @param stdClass|array $file_record object or array describing new file
+     * @param stdClass|array $filerecord object or array describing new file
      * @param int|stored_file $fid file id or stored file object
      * @param int $newwidth in pixels
      * @param int $newheight in pixels
@@ -1096,7 +1319,7 @@ class file_storage {
      * @param int $quality depending on image type 0-100 for jpeg, 0-9 (0 means no compression) for png
      * @return stored_file
      */
-    public function convert_image($file_record, $fid, $newwidth = NULL, $newheight = NULL, $keepaspectratio = true, $quality = NULL) {
+    public function convert_image($filerecord, $fid, $newwidth = null, $newheight = null, $keepaspectratio = true, $quality = null) {
         if (!function_exists('imagecreatefromstring')) {
             //Most likely the GD php extension isn't installed
             //image conversion cannot succeed
@@ -1107,9 +1330,9 @@ class file_storage {
             $fid = $fid->get_id();
         }
 
-        $file_record = (array)$file_record; // we support arrays too, do not modify the submitted record!
+        $filerecord = (array)$filerecord; // We support arrays too, do not modify the submitted record!
 
-        if (!$file = $this->get_file_by_id($fid)) { // make sure file really exists and we we correct data
+        if (!$file = $this->get_file_by_id($fid)) { // Make sure file really exists and we we correct data.
             throw new file_exception('storedfileproblem', 'File does not exist');
         }
 
@@ -1117,12 +1340,12 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'File is not an image');
         }
 
-        if (!isset($file_record['filename'])) {
-            $file_record['filename'] = $file->get_filename();
+        if (!isset($filerecord['filename'])) {
+            $filerecord['filename'] = $file->get_filename();
         }
 
-        if (!isset($file_record['mimetype'])) {
-            $file_record['mimetype'] = mimeinfo('type', $file_record['filename']);
+        if (!isset($filerecord['mimetype'])) {
+            $filerecord['mimetype'] = $imageinfo['mimetype'];
         }
 
         $width    = $imageinfo['width'];
@@ -1171,7 +1394,7 @@ class file_storage {
         }
 
         ob_start();
-        switch ($file_record['mimetype']) {
+        switch ($filerecord['mimetype']) {
             case 'image/gif':
                 imagegif($img);
                 break;
@@ -1201,7 +1424,7 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Can not convert image');
         }
 
-        return $this->create_file_from_string($file_record, $content);
+        return $this->create_file_from_string($filerecord, $content);
     }
 
     /**
@@ -1311,6 +1534,18 @@ class file_storage {
     }
 
     /**
+     * Content exists
+     *
+     * @param string $contenthash
+     * @return bool
+     */
+    public function content_exists($contenthash) {
+        $dir = $this->path_from_hash($contenthash);
+        $filepath = $dir . '/' . $contenthash;
+        return file_exists($filepath);
+    }
+
+    /**
      * Return path to file with given hash.
      *
      * NOTE: must not be public, files in pool must not be modified
@@ -1409,6 +1644,190 @@ class file_storage {
     }
 
     /**
+     * When user referring to a moodle file, we build the reference field
+     *
+     * @param array $params
+     * @return string
+     */
+    public static function pack_reference($params) {
+        $params = (array)$params;
+        $reference = array();
+        $reference['contextid'] = is_null($params['contextid']) ? null : clean_param($params['contextid'], PARAM_INT);
+        $reference['component'] = is_null($params['component']) ? null : clean_param($params['component'], PARAM_COMPONENT);
+        $reference['itemid']    = is_null($params['itemid'])    ? null : clean_param($params['itemid'],    PARAM_INT);
+        $reference['filearea']  = is_null($params['filearea'])  ? null : clean_param($params['filearea'],  PARAM_AREA);
+        $reference['filepath']  = is_null($params['filepath'])  ? null : clean_param($params['filepath'],  PARAM_PATH);;
+        $reference['filename']  = is_null($params['filename'])  ? null : clean_param($params['filename'],  PARAM_FILE);
+        return base64_encode(serialize($reference));
+    }
+
+    /**
+     * Unpack reference field
+     *
+     * @param string $str
+     * @return array
+     */
+    public static function unpack_reference($str) {
+        return unserialize(base64_decode($str));
+    }
+
+    /**
+     * Search references by providing reference content
+     *
+     * @param string $str
+     * @return array
+     */
+    public function search_references($str) {
+        global $DB;
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                       ON f.referencefileid = r.id
+                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
+                 AND (f.component <> ? OR f.filearea <> ?)";
+
+        $rs = $DB->get_recordset_sql($sql, array($str, 'user', 'draft'));
+        $files = array();
+        foreach ($rs as $filerecord) {
+            $file = $this->get_file_instance($filerecord);
+            if ($file->is_external_file()) {
+                $files[$filerecord->pathnamehash] = $file;
+            }
+        }
+
+        return $files;
+    }
+
+    /**
+     * Search references count by providing reference content
+     *
+     * @param string $str
+     * @return int
+     */
+    public function search_references_count($str) {
+        global $DB;
+        $sql = "SELECT COUNT(f.id)
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                       ON f.referencefileid = r.id
+                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
+                 AND (f.component <> ? OR f.filearea <> ?)";
+
+        $count = $DB->count_records_sql($sql, array($str, 'user', 'draft'));
+        return $count;
+    }
+
+    /**
+     * Return all files referring to provided stored_file instance
+     * This won't work for draft files
+     *
+     * @param stored_file $storedfile
+     * @return array
+     */
+    public function get_references_by_storedfile($storedfile) {
+        global $DB;
+
+        $params = array();
+        $params['contextid'] = $storedfile->get_contextid();
+        $params['component'] = $storedfile->get_component();
+        $params['filearea']  = $storedfile->get_filearea();
+        $params['itemid']    = $storedfile->get_itemid();
+        $params['filename']  = $storedfile->get_filename();
+        $params['filepath']  = $storedfile->get_filepath();
+        $params['userid']    = $storedfile->get_userid();
+
+        $reference = self::pack_reference($params);
+
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                       ON f.referencefileid = r.id
+                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
+                   AND (f.component <> ? OR f.filearea <> ?)";
+
+        $rs = $DB->get_recordset_sql($sql, array($reference, 'user', 'draft'));
+        $files = array();
+        foreach ($rs as $filerecord) {
+            $file = $this->get_file_instance($filerecord);
+            if ($file->is_external_file()) {
+                $files[$filerecord->pathnamehash] = $file;
+            }
+        }
+
+        return $files;
+    }
+
+    /**
+     * Return the count files referring to provided stored_file instance
+     * This won't work for draft files
+     *
+     * @param stored_file $storedfile
+     * @return int
+     */
+    public function get_references_count_by_storedfile($storedfile) {
+        global $DB;
+
+        $params = array();
+        $params['contextid'] = $storedfile->get_contextid();
+        $params['component'] = $storedfile->get_component();
+        $params['filearea']  = $storedfile->get_filearea();
+        $params['itemid']    = $storedfile->get_itemid();
+        $params['filename']  = $storedfile->get_filename();
+        $params['filepath']  = $storedfile->get_filepath();
+        $params['userid']    = $storedfile->get_userid();
+
+        $reference = self::pack_reference($params);
+
+        $sql = "SELECT COUNT(f.id)
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                       ON f.referencefileid = r.id
+                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
+                 AND (f.component <> ? OR f.filearea <> ?)";
+
+        $count = $DB->count_records_sql($sql, array($reference, 'user', 'draft'));
+        return $count;
+    }
+
+    /**
+     * Convert file alias to local file
+     *
+     * @param stored_file $storedfile a stored_file instances
+     * @return stored_file stored_file
+     */
+    public function import_external_file($storedfile) {
+        global $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
+        // sync external file
+        repository::sync_external_file($storedfile);
+        // Remove file references
+        $storedfile->delete_reference();
+        return $storedfile;
+    }
+
+    /**
+     * Return mimetype by given file pathname
+     *
+     * If file has a known extension, we return the mimetype based on extension.
+     * Otherwise (when possible) we try to get the mimetype from file contents.
+     *
+     * @param string $pathname full path to the file
+     * @param string $filename correct file name with extension, if omitted will be taken from $path
+     * @return string
+     */
+    public static function mimetype($pathname, $filename = null) {
+        if (empty($filename)) {
+            $filename = $pathname;
+        }
+        $type = mimeinfo('type', $filename);
+        if ($type === 'document/unknown' && class_exists('finfo') && file_exists($pathname)) {
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $type = mimeinfo_from_type('type', $finfo->file($pathname));
+        }
+        return $type;
+    }
+
+    /**
      * Cron cleanup job.
      */
     public function cron() {
@@ -1473,6 +1892,38 @@ class file_storage {
             set_config('fileslastcleanup', time());
             mtrace('done.');
         }
+    }
+
+    /**
+     * Get the sql formated fields for a file instance to be created from a
+     * {files} and {files_refernece} join.
+     *
+     * @param string $filesprefix the table prefix for the {files} table
+     * @param string $filesreferenceprefix the table prefix for the {files_reference} table
+     * @return string the sql to go after a SELECT
+     */
+    private static function instance_sql_fields($filesprefix, $filesreferenceprefix) {
+        // Note, these fieldnames MUST NOT overlap between the two tables,
+        // else problems like MDL-33172 occur.
+        $filefields = array('contenthash', 'pathnamehash', 'contextid', 'component', 'filearea',
+            'itemid', 'filepath', 'filename', 'userid', 'filesize', 'mimetype', 'status', 'source',
+            'author', 'license', 'timecreated', 'timemodified', 'sortorder', 'referencefileid',
+            'referencelastsync', 'referencelifetime');
+
+        $referencefields = array('repositoryid', 'reference');
+
+        // id is specifically named to prevent overlaping between the two tables.
+        $fields = array();
+        $fields[] = $filesprefix.'.id AS id';
+        foreach ($filefields as $field) {
+            $fields[] = "{$filesprefix}.{$field}";
+        }
+
+        foreach ($referencefields as $field) {
+            $fields[] = "{$filesreferenceprefix}.{$field}";
+        }
+
+        return implode(', ', $fields);
     }
 }
 

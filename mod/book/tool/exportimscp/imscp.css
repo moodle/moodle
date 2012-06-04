@@ -1,0 +1,35 @@
+body, table, td, th, li, p {
+  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-size: 1em;
+  line-height: 150%;
+  letter-spacing: 0.02em;
+}
+
+th {
+  font-weight: bold;
+}
+
+a:link,
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1.main,
+h2.main,
+h3.main,
+h4.main,
+h5.main,
+h6.main {
+  font-weight: bold;
+}
+
+h1#header {
+  color: #666666;
+  text-align: right;
+  padding-bottom: 0.2em;
+  border-bottom: solid 1px #666666;
+}

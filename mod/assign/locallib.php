@@ -118,10 +118,10 @@ class assign {
     private $returnparams = array();
 
     /** @var string modulename prevents excessive calls to get_string */
-    private static $modulename = '';
+    private static $modulename = null;
 
     /** @var string modulenameplural prevents excessive calls to get_string */
-    private static $modulenameplural = '';
+    private static $modulenameplural = null;
 
     /**
      * Constructor for the base assign class
@@ -348,6 +348,9 @@ class assign {
                 //cancel button
                 $action = 'grading';
             }
+        }else if ($action == 'quickgrade') {
+            $message = $this->process_save_quick_grades();
+            $action = 'quickgradingresult';
         }else if ($action == 'saveoptions') {
             $this->process_save_grading_options();
             $action = 'grading';
@@ -360,6 +363,9 @@ class assign {
         if ($action == 'previousgrade') {
             $mform = null;
             $o .= $this->view_single_grade_page($mform, -1);
+        } else if ($action == 'quickgradingresult') {
+            $mform = null;
+            $o .= $this->view_quickgrading_result($message);
         } else if ($action == 'nextgrade') {
             $mform = null;
             $o .= $this->view_single_grade_page($mform, 1);
@@ -413,6 +419,7 @@ class assign {
         $update->preventlatesubmissions = $formdata->preventlatesubmissions;
         $update->submissiondrafts = $formdata->submissiondrafts;
         $update->sendnotifications = $formdata->sendnotifications;
+        $update->sendlatenotifications = $formdata->sendlatenotifications;
         $update->duedate = $formdata->duedate;
         $update->allowsubmissionsfromdate = $formdata->allowsubmissionsfromdate;
         $update->grade = $formdata->grade;
@@ -630,6 +637,7 @@ class assign {
         $update->preventlatesubmissions = $formdata->preventlatesubmissions;
         $update->submissiondrafts = $formdata->submissiondrafts;
         $update->sendnotifications = $formdata->sendnotifications;
+        $update->sendlatenotifications = $formdata->sendlatenotifications;
         $update->duedate = $formdata->duedate;
         $update->allowsubmissionsfromdate = $formdata->allowsubmissionsfromdate;
         $update->grade = $formdata->grade;
@@ -882,23 +890,31 @@ class assign {
      * Return a grade in user-friendly form, whether it's a scale or not
      *
      * @param mixed $grade int|null
+     * @param boolean $editing Are we allowing changes to this grade?
+     * @param int $userid The user id the grade belongs to
+     * @param int $modified Timestamp from when the grade was last modified
      * @return string User-friendly representation of grade
      */
-    public function display_grade($grade) {
+    public function display_grade($grade, $editing, $userid=0, $modified=0) {
         global $DB;
 
         static $scalegrades = array();
 
-
-
-        if ($this->get_instance()->grade >= 0) {    // Normal number
-            if ($grade == -1 || $grade === null) {
+        if ($this->get_instance()->grade >= 0) {
+            // Normal number
+            if ($editing) {
+                $o = '<input type="text" name="quickgrade_' . $userid . '" value="' . $grade . '" size="6" maxlength="10" class="quickgrade"/>';
+                $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade,2);
+                $o .= '<input type="hidden" name="grademodified_' . $userid . '" value="' . $modified . '"/>';
+                return $o;
+            } else if ($grade == -1 || $grade === null) {
                 return '-';
             } else {
                 return format_float(($grade),2) .'&nbsp;/&nbsp;'. format_float($this->get_instance()->grade,2);
             }
 
-        } else {                                // Scale
+        } else {
+            // Scale
             if (empty($this->cache['scale'])) {
                 if ($scale = $DB->get_record('scale', array('id'=>-($this->get_instance()->grade)))) {
                     $this->cache['scale'] = make_menu_from_list($scale->scale);
@@ -906,11 +922,26 @@ class assign {
                     return '-';
                 }
             }
-            $scaleid = (int)$grade;
-            if (isset($this->cache['scale'][$scaleid])) {
-                return $this->cache['scale'][$scaleid];
+            if ($editing) {
+                $o = '<select name="quickgrade_' . $userid . '" class="quickgrade">';
+                $o .= '<option value="-1">' . get_string('nograde') . '</option>';
+                foreach ($this->cache['scale'] as $optionid => $option) {
+                    $selected = '';
+                    if ($grade == $optionid) {
+                        $selected = 'selected="selected"';
+                    }
+                    $o .= '<option value="' . $optionid . '" ' . $selected . '>' . $option . '</option>';
+                }
+                $o .= '</select>';
+                $o .= '<input type="hidden" name="grademodified_' . $userid . '" value="' . $modified . '"/>';
+                return $o;
+            } else {
+                $scaleid = (int)$grade;
+                if (isset($this->cache['scale'][$scaleid])) {
+                    return $this->cache['scale'][$scaleid];
+                }
+                return '-';
             }
-            return '-';
         }
     }
 
@@ -961,7 +992,7 @@ class assign {
      */
     private function get_grading_userid_list(){
         $filter = get_user_preferences('assign_filter', '');
-        $table = new assign_grading_table($this, 0, $filter);
+        $table = new assign_grading_table($this, 0, $filter, 0, false);
 
         $useridlist = $table->get_column_data('userid');
 
@@ -987,7 +1018,7 @@ class assign {
         }
 
         $filter = get_user_preferences('assign_filter', '');
-        $table = new assign_grading_table($this, 0, $filter);
+        $table = new assign_grading_table($this, 0, $filter, 0, false);
 
         $userid = $table->get_cell_data($num, 'userid', $last);
 
@@ -1039,16 +1070,139 @@ class assign {
          return false;
     }
 
-
     /**
-     *  Cron function to be run periodically according to the moodle cron
-     *  Finds all assignment notifications that have yet to be mailed out, and mails them
+     * Finds all assignment notifications that have yet to be mailed out, and mails them.
+     *
+     * Cron function to be run periodically according to the moodle cron
      *
      * @return bool
      */
     static function cron() {
-        global $CFG, $USER, $DB;
+        global $DB;
 
+        // only ever send a max of one days worth of updates
+        $yesterday = time() - (24 * 3600);
+        $timenow   = time();
+
+        // Collect all submissions from the past 24 hours that require mailing.
+        $sql = "SELECT s.*, a.course, a.name, g.*, g.id as gradeid, g.timemodified as lastmodified
+                 FROM {assign} a
+                 JOIN {assign_grades} g ON g.assignment = a.id
+            LEFT JOIN {assign_submission} s ON s.assignment = a.id AND s.userid = g.userid
+                WHERE g.timemodified >= :yesterday AND
+                      g.timemodified <= :today AND
+                      g.mailed = 0";
+        $params = array('yesterday' => $yesterday, 'today' => $timenow);
+        $submissions = $DB->get_records_sql($sql, $params);
+
+        if (empty($submissions)) {
+            mtrace('done.');
+            return true;
+        }
+
+        mtrace('Processing ' . count($submissions) . ' assignment submissions ...');
+
+        // Preload courses we are going to need those.
+        $courseids = array();
+        foreach ($submissions as $submission) {
+            $courseids[] = $submission->course;
+        }
+        // Filter out duplicates
+        $courseids = array_unique($courseids);
+        $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+        list($courseidsql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+        $sql = "SELECT c.*, {$ctxselect}
+                  FROM {course} c
+             LEFT JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
+                 WHERE c.id {$courseidsql}";
+        $params['contextlevel'] = CONTEXT_COURSE;
+        $courses = $DB->get_records_sql($sql, $params);
+        // Clean up... this could go on for a while.
+        unset($courseids);
+        unset($ctxselect);
+        unset($courseidsql);
+        unset($params);
+
+        // Simple array we'll use for caching modules.
+        $modcache = array();
+
+        // Email students about new feedback
+        foreach ($submissions as $submission) {
+
+            mtrace("Processing assignment submission $submission->id ...");
+
+            // do not cache user lookups - could be too many
+            if (!$user = $DB->get_record("user", array("id"=>$submission->userid))) {
+                mtrace("Could not find user $submission->userid");
+                continue;
+            }
+
+            // use a cache to prevent the same DB queries happening over and over
+            if (!array_key_exists($submission->course, $courses)) {
+                mtrace("Could not find course $submission->course");
+                continue;
+            }
+            $course = $courses[$submission->course];
+            if (isset($course->ctxid)) {
+                // Context has not yet been preloaded. Do so now.
+                context_helper::preload_from_record($course);
+            }
+
+            // Override the language and timezone of the "current" user, so that
+            // mail is customised for the receiver.
+            cron_setup_user($user, $course);
+
+            // context lookups are already cached
+            $coursecontext = context_course::instance($course->id);
+            if (!is_enrolled($coursecontext, $user->id)) {
+                $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+                mtrace(fullname($user)." not an active participant in " . $courseshortname);
+                continue;
+            }
+
+            if (!$grader = $DB->get_record("user", array("id"=>$submission->grader))) {
+                mtrace("Could not find grader $submission->grader");
+                continue;
+            }
+
+            if (!array_key_exists($submission->assignment, $modcache)) {
+                if (! $mod = get_coursemodule_from_instance("assign", $submission->assignment, $course->id)) {
+                    mtrace("Could not find course module for assignment id $submission->assignment");
+                    continue;
+                }
+                $modcache[$submission->assignment] = $mod;
+            } else {
+                $mod = $modcache[$submission->assignment];
+            }
+            // context lookups are already cached
+            $contextmodule = context_module::instance($mod->id);
+
+            if (!$mod->visible) {
+                // Hold mail notification for hidden assignments until later
+                continue;
+            }
+
+            // need to send this to the student
+            $messagetype = 'feedbackavailable';
+            $eventtype = 'assign_student_notification';
+            $updatetime = $submission->lastmodified;
+            $modulename = get_string('modulename', 'assign');
+            self::send_assignment_notification($grader, $user, $messagetype, $eventtype, $updatetime, $mod, $contextmodule, $course, $modulename, $submission->name);
+
+            $grade = new stdClass();
+            $grade->id = $submission->gradeid;
+            $grade->mailed = 1;
+            $DB->update_record('assign_grades', $grade);
+
+            mtrace('Done');
+        }
+        mtrace('Done processing ' . count($submissions) . ' assignment submissions');
+
+        cron_setup_user();
+
+        // Free up memory just to be sure
+        unset($courses);
+        unset($modcache);
 
         return true;
     }
@@ -1203,11 +1357,28 @@ class assign {
         return $result;
     }
 
+    /**
+     * Display a grading error
+     *
+     * @param string $message - The description of the result
+     * @return string
+     */
+    private function view_quickgrading_result($message) {
+        $o = '';
+        $o .= $this->output->render(new assign_header($this->get_instance(),
+                                                      $this->get_context(),
+                                                      $this->show_intro(),
+                                                      $this->get_course_module()->id,
+                                                      get_string('quickgradingresult', 'assign')));
+        $o .= $this->output->render(new assign_quickgrading_result($message, $this->get_course_module()->id));
+        $o .= $this->view_footer();
+        return $o;
+    }
 
     /**
      * Display the page footer
      *
-     * @return None
+     * @return string
      */
     private function view_footer() {
         return $this->output->render_footer();
@@ -1523,6 +1694,7 @@ class assign {
         // Include grading options form
         require_once($CFG->dirroot . '/mod/assign/gradingoptionsform.php');
         require_once($CFG->dirroot . '/mod/assign/gradingactionsform.php');
+        require_once($CFG->dirroot . '/mod/assign/quickgradingform.php');
         require_once($CFG->dirroot . '/mod/assign/gradingbatchoperationsform.php');
         $o = '';
 
@@ -1548,13 +1720,25 @@ class assign {
                                                                   'post', '',
                                                                   array('class'=>'gradingactionsform'));
 
+        $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
+
         $perpage = get_user_preferences('assign_perpage', 10);
         $filter = get_user_preferences('assign_filter', '');
+        $controller = $gradingmanager->get_active_controller();
+        $showquickgrading = empty($controller);
+        if (optional_param('action', '', PARAM_ALPHA) == 'saveoptions') {
+            $quickgrading = optional_param('quickgrading', false, PARAM_BOOL);
+            set_user_preference('assign_quickgrading', $quickgrading);
+        }
+        $quickgrading = get_user_preferences('assign_quickgrading', false);
+
         // print options  for changing the filter and changing the number of results per page
         $gradingoptionsform = new mod_assign_grading_options_form(null,
                                                                   array('cm'=>$this->get_course_module()->id,
                                                                         'contextid'=>$this->context->id,
-                                                                        'userid'=>$USER->id),
+                                                                        'userid'=>$USER->id,
+                                                                        'showquickgrading'=>$showquickgrading,
+                                                                        'quickgrading'=>$quickgrading),
                                                                   'post', '',
                                                                   array('class'=>'gradingoptionsform'));
 
@@ -1577,10 +1761,18 @@ class assign {
         }
 
         $o .= $this->output->render(new assign_form('gradingactionsform', $gradingactionsform));
-        $o .= $this->output->render(new assign_form('gradingoptionsform', $gradingoptionsform));
+        $o .= $this->output->render(new assign_form('gradingoptionsform', $gradingoptionsform, 'M.mod_assign.init_grading_options'));
 
         // load and print the table of submissions
-        $o .= $this->output->render(new assign_grading_table($this, $perpage, $filter));
+        if ($showquickgrading && $quickgrading) {
+            $table = $this->output->render(new assign_grading_table($this, $perpage, $filter, 0, true));
+            $quickgradingform = new mod_assign_quick_grading_form(null,
+                                                                  array('cm'=>$this->get_course_module()->id,
+                                                                        'gradingtable'=>$table));
+            $o .= $this->output->render(new assign_form('quickgradingform', $quickgradingform));
+        } else {
+            $o .= $this->output->render(new assign_grading_table($this, $perpage, $filter, 0, false));
+        }
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
         $users = array_keys($this->list_participants($currentgroup, true));
@@ -1658,7 +1850,7 @@ class assign {
                                                       $this->get_course_module()->id,
                                                       get_string('editsubmission', 'assign')));
 
-        $o .= $this->output->notification('This assignment is no longer accepting submissions');
+        $o .= $this->output->notification(get_string('submissionsclosed', 'assign'));
 
         $o .= $this->view_footer();
 
@@ -1682,9 +1874,7 @@ class assign {
         require_capability('mod/assign:submit', $this->context);
 
         if (!$this->submissions_open()) {
-            $subclosed  = '';
-            $subclosed .= $this->view_student_error_message();
-            return $subclosed;
+            return $this->view_student_error_message();
         }
         $o .= $this->output->render(new assign_header($this->get_instance(),
                                                       $this->get_context(),
@@ -1875,7 +2065,7 @@ class assign {
                                                                  $gradebookgrade->str_long_grade,
                                                                  has_capability('mod/assign:grade', $this->get_context()));
                 } else {
-                    $gradefordisplay = $this->display_grade($gradebookgrade->grade);
+                    $gradefordisplay = $this->display_grade($gradebookgrade->grade, false);
                 }
 
                 $gradeddate = $gradebookgrade->dategraded;
@@ -2097,19 +2287,19 @@ class assign {
     /**
      * Returns a list of teachers that should be grading given submission
      *
-     * @param stdClass $user
+     * @param int $userid
      * @return array
      */
-    private function get_graders(stdClass $user) {
+    private function get_graders($userid) {
         //potential graders
-        $potentialgraders = get_users_by_capability($this->context, 'mod/assign:grade', '', '', '', '', '', '', false, false);
+        $potentialgraders = get_enrolled_users($this->context, "mod/assign:grade");
 
         $graders = array();
         if (groups_get_activity_groupmode($this->get_course_module()) == SEPARATEGROUPS) {   // Separate groups are being used
-            if ($groups = groups_get_all_groups($this->get_course()->id, $user->id)) {  // Try to find all groups
+            if ($groups = groups_get_all_groups($this->get_course()->id, $userid)) {  // Try to find all groups
                 foreach ($groups as $group) {
                     foreach ($potentialgraders as $grader) {
-                        if ($grader->id == $user->id) {
+                        if ($grader->id == $userid) {
                             continue; // do not send self
                         }
                         if (groups_is_member($group->id, $grader->id)) {
@@ -2120,7 +2310,7 @@ class assign {
             } else {
                 // user not in group, try to find graders without group
                 foreach ($potentialgraders as $grader) {
-                    if ($grader->id == $user->id) {
+                    if ($grader->id == $userid) {
                         continue; // do not send self
                     }
                     if (!groups_has_membership($this->get_course_module(), $grader->id)) {
@@ -2130,7 +2320,7 @@ class assign {
             }
         } else {
             foreach ($potentialgraders as $grader) {
-                if ($grader->id == $user->id) {
+                if ($grader->id == $userid) {
                     continue; // do not send self
                 }
                 // must be enrolled
@@ -2143,88 +2333,151 @@ class assign {
     }
 
     /**
-     * Creates the text content for emails to grader
+     * Format a notification for plain text
      *
-     * @param array $info The info used by the 'emailgradermail' language string
-     * @return string
+     * @param string $messagetype
+     * @param stdClass $info
+     * @param stdClass $course
+     * @param stdClass $context
+     * @param string $modulename
+     * @param string $assignmentname
      */
-    private function format_email_grader_text($info) {
-        $posttext  = format_string($this->get_course()->shortname, true, array('context' => $this->get_course_context())).' -> '.
-                     $this->get_module_name().' -> '.
-                     format_string($this->get_instance()->name, true, array('context' => $this->context))."\n";
+    private static function format_notification_message_text($messagetype, $info, $course, $context, $modulename, $assignmentname) {
+        $posttext  = format_string($course->shortname, true, array('context' => $context->get_course_context())).' -> '.
+                     $modulename.' -> '.
+                     format_string($assignmentname, true, array('context' => $context))."\n";
         $posttext .= '---------------------------------------------------------------------'."\n";
-        $posttext .= get_string("emailgradermail", "assign", $info)."\n";
+        $posttext .= get_string($messagetype . 'text', "assign", $info)."\n";
         $posttext .= "\n---------------------------------------------------------------------\n";
         return $posttext;
     }
 
-     /**
-     * Creates the html content for emails to graders
+    /**
+     * Format a notification for HTML
      *
-     * @param array $info The info used by the 'emailgradermailhtml' language string
-     * @return string
+     * @param string $messagetype
+     * @param stdClass $info
+     * @param stdClass $course
+     * @param stdClass $context
+     * @param string $modulename
+     * @param stdClass $coursemodule
+     * @param string $assignmentname
+     * @param stdClass $info
      */
-    private function format_email_grader_html($info) {
+    private static function format_notification_message_html($messagetype, $info, $course, $context, $modulename, $coursemodule, $assignmentname) {
         global $CFG;
         $posthtml  = '<p><font face="sans-serif">'.
-                     '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->get_course()->id.'">'.format_string($this->get_course()->shortname, true, array('context' => $this->get_course_context())).'</a> ->'.
-                     '<a href="'.$CFG->wwwroot.'/mod/assignment/index.php?id='.$this->get_course()->id.'">'.$this->get_module_name().'</a> ->'.
-                     '<a href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$this->get_course_module()->id.'">'.format_string($this->get_instance()->name, true, array('context' => $this->context)).'</a></font></p>';
+                     '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.format_string($course->shortname, true, array('context' => $context->get_course_context())).'</a> ->'.
+                     '<a href="'.$CFG->wwwroot.'/mod/assign/index.php?id='.$course->id.'">'.$modulename.'</a> ->'.
+                     '<a href="'.$CFG->wwwroot.'/mod/assign/view.php?id='.$coursemodule->id.'">'.format_string($assignmentname, true, array('context' => $context)).'</a></font></p>';
         $posthtml .= '<hr /><font face="sans-serif">';
-        $posthtml .= '<p>'.get_string('emailgradermailhtml', 'assign', $info).'</p>';
+        $posthtml .= '<p>'.get_string($messagetype . 'html', 'assign', $info).'</p>';
         $posthtml .= '</font><hr />';
         return $posthtml;
     }
 
     /**
-     * email graders upon student submissions
+     * email someone about something (static so it can be called from cron)
      *
+     * @param stdClass $userfrom
+     * @param stdClass $userto
+     * @param string $messagetype
+     * @param string $eventtype
+     * @param int $updatetime
+     * @param stdClass $coursemodule
+     * @param stdClass $context
+     * @param stdClass $course
+     * @param string $modulename
+     * @param string $assignmentname
+     * @return void
+     */
+    public static function send_assignment_notification($userfrom, $userto, $messagetype, $eventtype,
+                                                        $updatetime, $coursemodule, $context, $course,
+                                                        $modulename, $assignmentname) {
+        global $CFG;
+
+        $info = new stdClass();
+        $info->username = fullname($userfrom, true);
+        $info->assignment = format_string($assignmentname,true, array('context'=>$context));
+        $info->url = $CFG->wwwroot.'/mod/assign/view.php?id='.$coursemodule->id;
+        $info->timeupdated = strftime('%c',$updatetime);
+
+        $postsubject = get_string($messagetype . 'small', 'assign', $info);
+        $posttext = self::format_notification_message_text($messagetype, $info, $course, $context, $modulename, $assignmentname);
+        $posthtml = ($userto->mailformat == 1) ? self::format_notification_message_html($messagetype, $info, $course, $context, $modulename, $coursemodule, $assignmentname) : '';
+
+        $eventdata = new stdClass();
+        $eventdata->modulename       = 'assign';
+        $eventdata->userfrom         = $userfrom;
+        $eventdata->userto           = $userto;
+        $eventdata->subject          = $postsubject;
+        $eventdata->fullmessage      = $posttext;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml  = $posthtml;
+        $eventdata->smallmessage     = $postsubject;
+
+        $eventdata->name            = $eventtype;
+        $eventdata->component       = 'mod_assign';
+        $eventdata->notification    = 1;
+        $eventdata->contexturl      = $info->url;
+        $eventdata->contexturlname  = $info->assignment;
+
+        message_send($eventdata);
+    }
+
+    /**
+     * email someone about something
+     *
+     * @param stdClass $userfrom
+     * @param stdClass $userto
+     * @param string $messagetype
+     * @param string $eventtype
+     * @param int $updatetime
+     * @return void
+     */
+    public function send_notification($userfrom, $userto, $messagetype, $eventtype, $updatetime) {
+        self::send_assignment_notification($userfrom, $userto, $messagetype, $eventtype, $updatetime, $this->get_course_module(), $this->get_context(), $this->get_course(), $this->get_module_name(), $this->get_instance()->name);
+    }
+
+    /**
+     * Email student upon successful submission
+     *
+     * @global moodle_database $DB
+     * @param stdClass $submission
+     * @return void
+     */
+    private function email_student_submission_receipt(stdClass $submission) {
+        global $DB;
+
+        $adminconfig = $this->get_admin_config();
+        if (!$adminconfig->submissionreceipts) {
+            // No need to do anything
+            return;
+        }
+        $user = $DB->get_record('user', array('id'=>$submission->userid), '*', MUST_EXIST);
+        $this->send_notification($user, $user, 'submissionreceipt', 'assign_student_notification', $submission->timemodified);
+    }
+
+    /**
+     * Email graders upon student submissions
+     *
+     * @global moodle_database $DB
      * @param stdClass $submission
      * @return void
      */
     private function email_graders(stdClass $submission) {
-        global $CFG, $DB;
+        global $DB;
 
-        if (empty($this->get_instance()->sendnotifications)) {          // No need to do anything
+        $late = $this->get_instance()->duedate && ($this->get_instance()->duedate < time());
+
+        if (!$this->get_instance()->sendnotifications && !($late && $this->get_instance()->sendlatenotifications)) {          // No need to do anything
             return;
         }
 
         $user = $DB->get_record('user', array('id'=>$submission->userid), '*', MUST_EXIST);
-
-        if ($teachers = $this->get_graders($user)) {
-
-            $strassignments = $this->get_module_name_plural();
-            $strassignment  = $this->get_module_name();
-            $strsubmitted  = get_string('submitted', 'assign');
-
+        if ($teachers = $this->get_graders($user->id)) {
             foreach ($teachers as $teacher) {
-                $info = new stdClass();
-                $info->username = fullname($user, true);
-                $info->assignment = format_string($this->get_instance()->name,true, array('context'=>$this->get_context()));
-                $info->url = $CFG->wwwroot.'/mod/assign/view.php?id='.$this->get_course_module()->id;
-                $info->timeupdated = strftime('%c',$submission->timemodified);
-
-                $postsubject = $strsubmitted.': '.$info->username.' -> '.$this->get_instance()->name;
-                $posttext = $this->format_email_grader_text($info);
-                $posthtml = ($teacher->mailformat == 1) ? $this->format_email_grader_html($info) : '';
-
-                $eventdata = new stdClass();
-                $eventdata->modulename       = 'assign';
-                $eventdata->userfrom         = $user;
-                $eventdata->userto           = $teacher;
-                $eventdata->subject          = $postsubject;
-                $eventdata->fullmessage      = $posttext;
-                $eventdata->fullmessageformat = FORMAT_PLAIN;
-                $eventdata->fullmessagehtml  = $posthtml;
-                $eventdata->smallmessage     = $postsubject;
-
-                $eventdata->name            = 'assign_updates';
-                $eventdata->component       = 'mod_assign';
-                $eventdata->notification    = 1;
-                $eventdata->contexturl      = $info->url;
-                $eventdata->contexturlname  = $info->assignment;
-
-                message_send($eventdata);
+                $this->send_notification($user, $teacher, 'gradersubmissionupdated', 'assign_grader_notification', $submission->timemodified);
             }
         }
     }
@@ -2253,7 +2506,121 @@ class assign {
             $this->update_submission($submission);
             $this->add_to_log('submit for grading', $this->format_submission_for_log($submission));
             $this->email_graders($submission);
+            $this->email_student_submission_receipt($submission);
         }
+    }
+
+    /**
+     * save quick grades
+     *
+     * @global moodle_database $DB
+     * @return string The result of the save operation
+     */
+    private function process_save_quick_grades() {
+        global $USER, $DB, $CFG;
+
+        // Need grade permission
+        require_capability('mod/assign:grade', $this->context);
+
+        // make sure advanced grading is disabled
+        $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
+        $controller = $gradingmanager->get_active_controller();
+        if (!empty($controller)) {
+            return get_string('errorquickgradingvsadvancedgrading', 'assign');
+        }
+
+        $users = array();
+        // first check all the last modified values
+        // Using POST is really unfortunate. A better solution needs to be found here. As we are looking for grades students we could
+        // gets a list of possible users and look for values based upon that.
+        foreach ($_POST as $key => $value) {
+            if (preg_match('#^grademodified_(\d+)$#', $key, $matches)) {
+                // gather the userid, updated grade and last modified value
+                $record = new stdClass();
+                $record->userid = (int)$matches[1];
+                $record->grade = required_param('quickgrade_' . $record->userid, PARAM_INT);
+                $record->lastmodified = clean_param($value, PARAM_INT);
+                $record->gradinginfo = grade_get_grades($this->get_course()->id, 'mod', 'assign', $this->get_instance()->id, array($record->userid));
+                $users[$record->userid] = $record;
+            }
+        }
+        if (empty($users)) {
+            // Quick check to see whether we have any users to update and we don't
+            return get_string('quickgradingchangessaved', 'assign'); // Technical lie
+        }
+
+        list($userids, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
+        $params['assignment'] = $this->get_instance()->id;
+        // check them all for currency
+        $sql = 'SELECT u.id as userid, g.grade as grade, g.timemodified as lastmodified
+                  FROM {user} u
+             LEFT JOIN {assign_grades} g ON u.id = g.userid AND g.assignment = :assignment
+                 WHERE u.id ' . $userids;
+        $currentgrades = $DB->get_recordset_sql($sql, $params);
+
+        $modifiedusers = array();
+        foreach ($currentgrades as $current) {
+            $modified = $users[(int)$current->userid];
+
+            // check to see if the outcomes were modified
+            if ($CFG->enableoutcomes) {
+                foreach ($modified->gradinginfo->outcomes as $outcomeid => $outcome) {
+                    $oldoutcome = $outcome->grades[$modified->userid]->grade;
+                    $newoutcome = optional_param('outcome_' . $outcomeid . '_' . $modified->userid, -1, PARAM_INT);
+                    if ($oldoutcome != $newoutcome) {
+                        // can't check modified time for outcomes because it is not reported
+                        $modifiedusers[$modified->userid] = $modified;
+                        continue;
+                    }
+                }
+            }
+
+
+            if (($current->grade < 0 || $current->grade === NULL) &&
+                ($modified->grade < 0 || $modified->grade === NULL)) {
+                // different ways to indicate no grade
+                continue;
+            }
+            if ($current->grade != $modified->grade) {
+                // grade changed
+                if ((int)$current->lastmodified > (int)$modified->lastmodified) {
+                    // error - record has been modified since viewing the page
+                    return get_string('errorrecordmodified', 'assign');
+                } else {
+                    $modifiedusers[$modified->userid] = $modified;
+                }
+            }
+
+        }
+        $currentgrades->close();
+
+        // ok - ready to process the updates
+        foreach ($modifiedusers as $userid => $modified) {
+            $grade = $this->get_user_grade($userid, true);
+            $grade->grade= grade_floatval($modified->grade);
+            $grade->grader= $USER->id;
+
+            $this->update_grade($grade);
+
+            // save outcomes
+            if ($CFG->enableoutcomes) {
+                $data = array();
+                foreach ($modified->gradinginfo->outcomes as $outcomeid => $outcome) {
+                    $oldoutcome = $outcome->grades[$modified->userid]->grade;
+                    $newoutcome = optional_param('outcome_' . $outcomeid . '_' . $modified->userid, -1, PARAM_INT);
+                    if ($oldoutcome != $newoutcome) {
+                        $data[$outcomeid] = $newoutcome;
+                    }
+                }
+                if (count($data) > 0) {
+                    grade_update_outcomes('mod/assign', $this->course->id, 'mod', 'assign', $this->get_instance()->id, $userid, $data);
+                }
+            }
+
+            $this->add_to_log('grade submission', $this->format_grade_for_log($grade));
+        }
+
+        return get_string('quickgradingchangessaved', 'assign');
     }
 
     /**
@@ -2270,10 +2637,7 @@ class assign {
         // Need submit permission to submit an assignment
         require_capability('mod/assign:grade', $this->context);
 
-
-
-        $mform = new mod_assign_grading_options_form(null, array('cm'=>$this->get_course_module()->id, 'contextid'=>$this->context->id, 'userid'=>$USER->id));
-
+        $mform = new mod_assign_grading_options_form(null, array('cm'=>$this->get_course_module()->id, 'contextid'=>$this->context->id, 'userid'=>$USER->id, 'showquickgrading'=>false));
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
             set_user_preference('assign_filter', $formdata->filter);
@@ -2295,7 +2659,7 @@ class assign {
 
         $info = get_string('gradestudent', 'assign', array('id'=>$user->id, 'fullname'=>fullname($user)));
         if ($grade->grade != '') {
-            $info .= get_string('grade') . ': ' . $this->display_grade($grade->grade) . '. ';
+            $info .= get_string('grade') . ': ' . $this->display_grade($grade->grade, false) . '. ';
         } else {
             $info .= get_string('nograde', 'assign');
         }
@@ -2374,6 +2738,7 @@ class assign {
             $this->add_to_log('submit', $this->format_submission_for_log($submission));
 
             if (!$this->get_instance()->submissiondrafts) {
+                $this->email_student_submission_receipt($submission);
                 $this->email_graders($submission);
             }
             return true;
@@ -2823,6 +3188,9 @@ class assign {
                 }
             }
             $this->process_outcomes($userid, $formdata);
+
+            $grade->mailed = 0;
+
             $this->update_grade($grade);
 
             $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);

@@ -221,7 +221,9 @@ if (!empty($activities)) {
                 echo $OUTPUT->spacer(array('height'=>30, 'br'=>true)); // should be done with CSS instead
             }
             echo $OUTPUT->box_start();
-            echo "<h2>$activity->name</h2>";
+            if (!empty($activity->name)) {
+                echo html_writer::tag('h2', $activity->name);
+            }
             $inbox = true;
 
         } else if ($activity->type == 'activity') {
@@ -230,16 +232,17 @@ if (!empty($activities)) {
                 $cm = $modinfo->cms[$activity->cmid];
 
                 if ($cm->visible) {
-                    $linkformat = '';
+                    $class = '';
                 } else {
-                    $linkformat = 'class="dimmed"';
+                    $class = 'dimmed';
                 }
                 $name        = format_string($cm->name);
                 $modfullname = $modnames[$cm->modname];
 
-                $image = "<img src=\"" . $OUTPUT->pix_url('icon', $cm->modname) . "\" class=\"icon\" alt=\"$modfullname\" />";
-                echo "<h3>$image $modfullname".
-                     " <a href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id\" $linkformat>$name</a></h3>";
+                $image = $OUTPUT->pix_icon('icon', $modfullname, $cm->modname, array('class' => 'icon smallicon'));
+                $link = html_writer::link(new moodle_url("/mod/$cm->modname/view.php",
+                            array("id" => $cm->id)), $name, array('class' => $class));
+                echo html_writer::tag('h3', "$image $modfullname $link");
            }
 
         } else {
@@ -269,7 +272,7 @@ if (!empty($activities)) {
 
 } else {
 
-    echo '<h3><center>' . get_string('norecentactivity') . '</center></h3>';
+    echo html_writer::tag('h3', get_string('norecentactivity'), array('class' => 'mdl-align'));
 
 }
 

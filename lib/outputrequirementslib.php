@@ -428,7 +428,7 @@ class page_requirements_manager {
      * @return array description of module or null if not found
      */
     protected function find_module($component) {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $module = null;
 
@@ -439,25 +439,14 @@ class page_requirements_manager {
                 case 'core_filepicker':
                     $module = array('name'     => 'core_filepicker',
                                     'fullpath' => '/repository/filepicker.js',
-                                    'requires' => array('base', 'node', 'node-event-simulate', 'json', 'async-queue', 'io-base', 'io-upload-iframe', 'io-form', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview', 'yui2-dragdrop', 'yui2-cookie'),
-                                    'strings'  => array(array('add', 'repository'), array('back', 'repository'), array('cancel', 'moodle'), array('close', 'repository'),
-                                                        array('cleancache', 'repository'), array('copying', 'repository'), array('date', 'repository'), array('downloadsucc', 'repository'),
-                                                        array('emptylist', 'repository'), array('error', 'repository'), array('federatedsearch', 'repository'),
-                                                        array('filenotnull', 'repository'), array('getfile', 'repository'), array('help', 'moodle'), array('iconview', 'repository'),
-                                                        array('invalidjson', 'repository'), array('linkexternal', 'repository'), array('listview', 'repository'),
-                                                        array('loading', 'repository'), array('login', 'repository'), array('logout', 'repository'), array('noenter', 'repository'),
-                                                        array('noresult', 'repository'), array('manageurl', 'repository'), array('popup', 'repository'), array('preview', 'repository'),
-                                                        array('refresh', 'repository'), array('save', 'repository'), array('saveas', 'repository'), array('saved', 'repository'),
-                                                        array('saving', 'repository'), array('search', 'repository'), array('searching', 'repository'), array('size', 'repository'),
-                                                        array('submit', 'repository'), array('sync', 'repository'), array('title', 'repository'), array('upload', 'repository'),
-                                                        array('uploading', 'repository'), array('xhtmlerror', 'repository'),
-                                                        array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),array('next', 'moodle'),
-                                                        array('ok', 'moodle'), array('error', 'moodle'), array('info', 'moodle'), array('norepositoriesavailable', 'repository'), array('norepositoriesexternalavailable', 'repository'),
-                                                        array('nofilesattached', 'repository'), array('filepicker', 'repository'),
-                                                        array('nofilesavailable', 'repository'), array('overwrite', 'repository'),
-                                                        array('renameto', 'repository'), array('fileexists', 'repository'),
+                                    'requires' => array('base', 'node', 'node-event-simulate', 'json', 'async-queue', 'io-base', 'io-upload-iframe', 'io-form', 'yui2-treeview', 'panel', 'cookie', 'datatable', 'datatable-sort', 'resize-plugin', 'dd-plugin', 'moodle-core_filepicker'),
+                                    'strings'  => array(array('lastmodified', 'moodle'), array('name', 'moodle'), array('type', 'repository'), array('size', 'repository'),
+                                                        array('invalidjson', 'repository'), array('error', 'moodle'), array('info', 'moodle'),
+                                                        array('nofilesattached', 'repository'), array('filepicker', 'repository'), array('logout', 'repository'),
+                                                        array('nofilesavailable', 'repository'), array('norepositoriesavailable', 'repository'),
                                                         array('fileexistsdialogheader', 'repository'), array('fileexistsdialog_editor', 'repository'),
-                                                        array('fileexistsdialog_filemanager', 'repository')
+                                                        array('fileexistsdialog_filemanager', 'repository'), array('renameto', 'repository'),
+                                                        array('referencesexist', 'repository')
                                                     ));
                     break;
                 case 'core_comment':
@@ -1275,6 +1264,14 @@ function js_reset_all_caches() {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
 
-    set_config('jsrev', empty($CFG->jsrev) ? 1 : $CFG->jsrev+1);
+    $next = time();
+    if (isset($CFG->jsrev) and $next <= $CFG->jsrev and $CFG->jsrev - $next < 60*60) {
+        // This resolves problems when reset is requested repeatedly within 1s,
+        // the < 1h condition prevents accidental switching to future dates
+        // because we might not recover from it.
+        $next = $CFG->jsrev+1;
+    }
+
+    set_config('jsrev', $next);
     fulldelete("$CFG->cachedir/js");
 }

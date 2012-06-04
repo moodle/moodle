@@ -39,6 +39,9 @@ class mod_wiki_edit_form extends moodleform {
         global $CFG;
 
         $mform = $this->_form;
+        // BEWARE HACK: In order for things to work we need to override the form id and set it to mform1.
+        // The first form to be instantiated never gets displayed so this should be safe.
+        $mform->updateAttributes(array('id' => 'mform1'));
 
         $version = $this->_customdata['version'];
         $format = $this->_customdata['format'];
@@ -67,8 +70,7 @@ class mod_wiki_edit_form extends moodleform {
         $fieldname = get_string('format' . $format, 'wiki');
         if ($format != 'html') {
             // Use wiki editor
-            $ft = new filetype_parser;
-            $extensions = $ft->get_extensions('image');
+            $extensions = file_get_typegroup('extension', 'web_image');
             $fs = get_file_storage();
             $tree = $fs->get_area_tree($contextid, 'mod_wiki', $this->_customdata['filearea'], $this->_customdata['fileitemid']);
             $files = array();

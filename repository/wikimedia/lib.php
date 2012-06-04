@@ -15,17 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once('wikimedia.php');
+/**
+ * This plugin is used to access wikimedia files
+ *
+ * @since 2.0
+ * @package    repository_wikimedia
+ * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+require_once($CFG->dirroot . '/repository/lib.php');
+require_once(dirname(__FILE__) . '/wikimedia.php');
 
 /**
  * repository_wikimedia class
  * This is a class used to browse images from wikimedia
  *
  * @since 2.0
- * @package    repository
- * @subpackage wikimedia
- * @copyright  2009 Dongsheng Cai
- * @author     Dongsheng Cai <dongsheng@moodle.com>
+ * @package    repository_wikimedia
+ * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

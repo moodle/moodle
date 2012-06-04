@@ -172,13 +172,20 @@ abstract class core_media {
      * @return string Filename only (not escaped)
      */
     public static function get_filename(moodle_url $url) {
-        $path = $url->get_path();
+        global $CFG;
+
+        // Use the 'file' parameter if provided (for links created when
+        // slasharguments was off). If not present, just use URL path.
+        $path = $url->get_param('file');
+        if (!$path) {
+            $path = $url->get_path();
+        }
+
         // Remove everything before last / if present. Does not use textlib as / is UTF8-safe.
         $slash = strrpos($path, '/');
         if ($slash !== false) {
             $path = substr($path, $slash + 1);
         }
-
         return $path;
     }
 

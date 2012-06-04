@@ -48,6 +48,8 @@ class assign_grading_table extends table_sql implements renderable {
     private $gradinginfo = null;
     /** @var int $tablemaxrows */
     private $tablemaxrows = 10000;
+    /** @var boolean $quickgrading */
+    private $quickgrading = false;
 
     /**
      * overridden constructor keeps a reference to the assignment class that is displaying this table
@@ -56,12 +58,14 @@ class assign_grading_table extends table_sql implements renderable {
      * @param int $perpage how many per page
      * @param string $filter The current filter
      * @param int $rowoffset For showing a subsequent page of results
+     * @param bool $quickgrading Is this table wrapped in a quickgrading form?
      */
-    function __construct(assign $assignment, $perpage, $filter, $rowoffset=0) {
+    function __construct(assign $assignment, $perpage, $filter, $rowoffset, $quickgrading) {
         global $CFG, $PAGE, $DB;
         parent::__construct('mod_assign_grading');
         $this->assignment = $assignment;
         $this->perpage = $perpage;
+        $this->quickgrading = $quickgrading;
         $this->output = $PAGE->get_renderer('mod_assign');
 
         $this->define_baseurl(new moodle_url($CFG->wwwroot . '/mod/assign/view.php', array('action'=>'grading', 'id'=>$assignment->get_course_module()->id)));
@@ -115,7 +119,7 @@ class assign_grading_table extends table_sql implements renderable {
 
         // Select
         $columns[] = 'select';
-        $headers[] = get_string('select') . '<div class="selectall"><input type="checkbox" name="selectall" title="' . get_string('selectall') . '"/></div>';
+        $headers[] = get_string('select') . '<div class="selectall"><input type="checkbox" class="ignoredirty" name="selectall" title="' . get_string('selectall') . '"/></div>';
 
         // Edit links
         if (!$this->is_downloading()) {
@@ -224,14 +228,16 @@ class assign_grading_table extends table_sql implements renderable {
      * Display a grade with scales etc.
      *
      * @param string $grade
+     * @param boolean $editable
+     * @param int $userid The user id of the user this grade belongs to
+     * @param int $modified Timestamp showing when the grade was last modified
      * @return string The formatted grade
      */
-    function display_grade($grade) {
+    function display_grade($grade, $editable, $userid, $modified) {
         if ($this->is_downloading()) {
             return $grade;
         }
-        $o = $this->assignment->display_grade($grade);
-
+        $o = $this->assignment->display_grade($grade, $editable, $userid, $modified);
         return $o;
     }
 
@@ -247,7 +253,20 @@ class assign_grading_table extends table_sql implements renderable {
             $options = make_grades_menu(-$outcome->scaleid);
 
             $options[0] = get_string('nooutcome', 'grades');
-            $outcomes .= $this->output->container($outcome->name . ': ' . $options[$outcome->grades[$row->userid]->grade], 'outcome');
+            if ($this->quickgrading&& !($outcome->grades[$row->userid]->locked)) {
+                $select = '<select name="outcome_' . $index . '_' . $row->userid . '" class="quickgrade">';
+                foreach ($options as $optionindex => $optionvalue) {
+                    $selected = '';
+                    if ($outcome->grades[$row->userid]->grade == $optionindex) {
+                        $selected = 'selected="selected"';
+                    }
+                    $select .= '<option value="' . $optionindex . '"' . $selected . '>' . $optionvalue . '</option>';
+                }
+                $select .= '</select>';
+                $outcomes .= $this->output->container($outcome->name . ': ' . $select, 'outcome');
+            } else {
+                $outcomes .= $this->output->container($outcome->name . ': ' . $options[$outcome->grades[$row->userid]->grade], 'outcome');
+            }
         }
 
         return $outcomes;
@@ -284,7 +303,7 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     function col_select(stdClass $row) {
-        return '<input type="checkbox" name="selectedusers" value="' . $row->userid . '"/>';
+        return '<input type="checkbox" name="selectedusers" value="' . $row->userid . '" class="ignoredirty"/>';
     }
 
     /**
@@ -322,13 +341,7 @@ class assign_grading_table extends table_sql implements renderable {
             $separator = $this->output->spacer(array(), true);
         }
 
-
-        if ($row->grade) {
-            $grade = $this->display_grade($row->grade);
-        } else {
-            $grade = '-';
-        }
-
+        $grade = $this->display_grade($row->grade, $this->quickgrading, $row->userid, $row->timemarked);
 
         //return $grade . $separator . $link;
         return $link . $separator . $grade;
@@ -345,7 +358,7 @@ class assign_grading_table extends table_sql implements renderable {
 
         $grade = $this->get_gradebook_data_for_user($row->userid);
         if ($grade) {
-            $o = $this->display_grade($grade->grade);
+            $o = $this->display_grade($grade->grade, false, $row->userid, $row->timemarked);
         }
 
         return $o;

@@ -89,6 +89,15 @@ switch($requestmethod) {
 
                     case 'move':
                         move_section_to($course, $id, $value);
+                        // See if format wants to do something about it
+                        $libfile = $CFG->dirroot.'/course/format/'.$course->format.'/lib.php';
+                        $functionname = 'callback_'.$course->format.'_ajax_section_move';
+                        if (!function_exists($functionname) && file_exists($libfile)) {
+                            require_once $libfile;
+                        }
+                        if (function_exists($functionname)) {
+                            echo json_encode($functionname($course));
+                        }
                         break;
                 }
                 rebuild_course_cache($course->id);

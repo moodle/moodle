@@ -13,6 +13,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('enablesafebrowserintegration', new lang_string('enablesafebrowserintegration', 'admin'), new lang_string('configenablesafebrowserintegration', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enablegroupmembersonly', new lang_string('enablegroupmembersonly', 'admin'), new lang_string('configenablegroupmembersonly', 'admin'), 0));
 
+    $temp->add(new admin_setting_configcheckbox('dndallowtextandlinks', new lang_string('dndallowtextandlinks', 'admin'), new lang_string('configdndallowtextandlinks', 'admin'), 0));
+
     $ADMIN->add('experimental', $temp);
 
     // "debugging" settingpage

@@ -92,14 +92,12 @@ M.course_dndupload = {
             this.init_events(el);
         }, this);
 
-        var div = this.add_status_div();
-        div.setContent(M.util.get_string('dndworking', 'moodle'));
+        this.add_status_div();
     },
 
     /**
      * Add a div element to tell the user that drag and drop upload
      * is available (or to explain why it is not available)
-     * @return the DOM element to add messages to
      */
     add_status_div: function() {
         var div = document.createElement('div');
@@ -108,7 +106,34 @@ M.course_dndupload = {
         if (coursecontents) {
             coursecontents.insertBefore(div, coursecontents.firstChild);
         }
-        return this.Y.one(div);
+        div = this.Y.one(div);
+
+        var handlefile = (this.handlers.filehandlers.length > 0);
+        var handletext = false;
+        var handlelink = false;
+        var i;
+        for (i=0; i<this.handlers.types.length; i++) {
+            switch (this.handlers.types[i].identifier) {
+            case 'text':
+            case 'text/html':
+                handletext = true;
+                break;
+            case 'url':
+                handlelink = true;
+                break;
+            }
+        }
+        $msgident = 'dndworking';
+        if (handlefile) {
+            $msgident += 'file';
+        }
+        if (handletext) {
+            $msgident += 'text';
+        }
+        if (handlelink) {
+            $msgident += 'link';
+        }
+        div.setContent(M.util.get_string($msgident, 'moodle'));
     },
 
     /**
@@ -176,14 +201,7 @@ M.course_dndupload = {
      */
     types_includes: function(e, type) {
         var i;
-        if (e._event.dataTransfer === null) {
-            // TODO MDL-33054: If we get here then something has gone wrong.
-            return false;
-        }
         var types = e._event.dataTransfer.types;
-        if (types == null) {
-            return false;
-        }
         for (i=0; i<types.length; i++) {
             if (types[i] == type) {
                 return true;
@@ -204,19 +222,33 @@ M.course_dndupload = {
      *           }
      */
     drag_type: function(e) {
-        if (this.types_includes(e, 'Files')) {
-            if (this.handlers.filehandlers.length == 0) {
-                return false; // No available file handlers - ignore this drag.
-            }
-            return {
-                realtype: 'Files',
-                addmessage: M.util.get_string('addfilehere', 'moodle'),
-                namemessage: null, // Should not be asked for anyway
-                type: 'Files'
-            };
+        // Check there is some data attached.
+        if (e._event.dataTransfer === null) {
+            return false;
+        }
+        if (e._event.dataTransfer.types === null) {
+            return false;
+        }
+        if (e._event.dataTransfer.types.length == 0) {
+            return false;
         }
 
-        // Check each of the registered types
+        // Check for files first.
+        if (this.types_includes(e, 'Files')) {
+            if (e.type != 'drop' || e._event.dataTransfer.files.length != 0) {
+                if (this.handlers.filehandlers.length == 0) {
+                    return false; // No available file handlers - ignore this drag.
+                }
+                return {
+                    realtype: 'Files',
+                    addmessage: M.util.get_string('addfilehere', 'moodle'),
+                    namemessage: null, // Should not be asked for anyway
+                    type: 'Files'
+                };
+            }
+        }
+
+        // Check each of the registered types.
         var types = this.handlers.types;
         for (var i=0; i<types.length; i++) {
             // Check each of the different identifiers for this type
@@ -401,6 +433,7 @@ M.course_dndupload = {
         resel.div.appendChild(resel.a);
 
         resel.icon.src = M.util.image_url('i/ajaxloader');
+        resel.icon.className = 'activityicon';
         resel.a.appendChild(resel.icon);
 
         resel.a.appendChild(document.createTextNode(' '));
@@ -672,6 +705,11 @@ M.course_dndupload = {
                             if (result.onclick) {
                                 resel.a.onclick = result.onclick;
                             }
+                            if (self.Y.UA.gecko > 0) {
+                                // Fix a Firefox bug which makes sites with a '~' in their wwwroot
+                                // log the user out when clicking on the link (before refreshing the page).
+                                resel.div.innerHTML = unescape(resel.div.innerHTML);
+                            }
                             self.add_editing(result.elementid);
                         } else {
                             // Error - remove the dummy element
@@ -813,6 +851,7 @@ M.course_dndupload = {
      * @param contents the actual data that was dropped
      * @param section the DOM element representing the selected course section
      * @param sectionnumber the number of the selected course section
+     * @param module the module chosen to handle this upload
      */
     upload_item: function(name, type, contents, section, sectionnumber, module) {
 
@@ -845,6 +884,11 @@ M.course_dndupload = {
                             resel.div.innerHTML += result.commands;
                             if (result.onclick) {
                                 resel.a.onclick = result.onclick;
+                            }
+                            if (self.Y.UA.gecko > 0) {
+                                // Fix a Firefox bug which makes sites with a '~' in their wwwroot
+                                // log the user out when clicking on the link (before refreshing the page).
+                                resel.div.innerHTML = unescape(resel.div.innerHTML);
                             }
                             self.add_editing(result.elementid, sectionnumber);
                         } else {

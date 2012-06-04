@@ -136,7 +136,7 @@ abstract class moodleform {
      * @param bool $editable
      */
     function moodleform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true) {
-        global $CFG;
+        global $CFG, $FULLME;
         if (empty($CFG->xmlstrictheaders)) {
             // no standard mform in moodle should allow autocomplete with the exception of user signup
             // this is valid attribute in html5, sorry, we have to ignore validation errors in legacy xhtml 1.0
@@ -152,7 +152,14 @@ abstract class moodleform {
         }
 
         if (empty($action)){
-            $action = strip_querystring(qualified_me());
+            // do not rely on PAGE->url here because dev often do not setup $actualurl properly in admin_externalpage_setup()
+            $action = strip_querystring($FULLME);
+            if (!empty($CFG->sslproxy)) {
+                // return only https links when using SSL proxy
+                $action = preg_replace('/^http:/', 'https:', $action, 1);
+            }
+            //TODO: use following instead of FULLME - see MDL-33015
+            //$action = strip_querystring(qualified_me());
         }
         // Assign custom data first, so that get_form_identifier can use it.
         $this->_customdata = $customdata;

@@ -147,7 +147,7 @@ if ($edit) {
                         'context'   => $workshop->context
                       );
 
-    $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
+    $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes, 'return_types' => FILE_INTERNAL);
     $submission     = file_prepare_standard_editor($submission, 'content', $contentopts, $workshop->context,
                                         'mod_workshop', 'submission_content', $submission->id);
     $submission     = file_prepare_standard_filemanager($submission, 'attachment', $attachmentopts, $workshop->context,

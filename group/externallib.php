@@ -95,8 +95,7 @@ class core_group_external extends external_api {
                 $exceptionparam = new stdClass();
                 $exceptionparam->message = $e->getMessage();
                 $exceptionparam->courseid = $group->courseid;
-                throw new moodle_exception(
-                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+                throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
             }
             require_capability('moodle/course:managegroups', $context);
 
@@ -168,8 +167,7 @@ class core_group_external extends external_api {
                 $exceptionparam = new stdClass();
                 $exceptionparam->message = $e->getMessage();
                 $exceptionparam->courseid = $group->courseid;
-                throw new moodle_exception(
-                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+                throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
             }
             require_capability('moodle/course:managegroups', $context);
 
@@ -231,8 +229,7 @@ class core_group_external extends external_api {
                 $exceptionparam = new stdClass();
                 $exceptionparam->message = $e->getMessage();
                 $exceptionparam->courseid = $params['courseid'];
-                throw new moodle_exception(
-                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+                throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
         }
         require_capability('moodle/course:managegroups', $context);
 
@@ -310,8 +307,7 @@ class core_group_external extends external_api {
                 $exceptionparam = new stdClass();
                 $exceptionparam->message = $e->getMessage();
                 $exceptionparam->courseid = $group->courseid;
-                throw new moodle_exception(
-                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+                throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
             }
             require_capability('moodle/course:managegroups', $context);
 
@@ -369,8 +365,7 @@ class core_group_external extends external_api {
                 $exceptionparam = new stdClass();
                 $exceptionparam->message = $e->getMessage();
                 $exceptionparam->courseid = $group->courseid;
-                throw new moodle_exception(
-                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+                throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
             }
             require_capability('moodle/course:managegroups', $context);
 
@@ -450,8 +445,7 @@ class core_group_external extends external_api {
                 $exceptionparam = new stdClass();
                 $exceptionparam->message = $e->getMessage();
                 $exceptionparam->courseid = $group->courseid;
-                throw new moodle_exception(
-                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+                throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
             }
             require_capability('moodle/course:managegroups', $context);
 
@@ -529,8 +523,7 @@ class core_group_external extends external_api {
                 $exceptionparam = new stdClass();
                 $exceptionparam->message = $e->getMessage();
                 $exceptionparam->courseid = $group->courseid;
-                throw new moodle_exception(
-                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+                throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
             }
             require_capability('moodle/course:managegroups', $context);
 

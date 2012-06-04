@@ -73,22 +73,13 @@ p {margin:0}
 #page-enrol-instances .select.menujump {margin-left:0.5em;}
 
 /* environmenttable */
-.environmenttable .error {
-    background-color: red;
-}
-
-.environmenttable .warn {
-    background-color: yellow;
-}
-
-.environmenttable .ok {
-    background-color: lime;
-}
+.environmenttable .error {background-color:red;}
+.environmenttable .warn {background-color:yellow;}
+.environmenttable .ok {background-color:lime;}
 
 /* adminsettings */
-#adminsettings .form-overridden {
-    background-color: yellow;
-}
+#adminsettings .form-overridden {background-color:yellow;}
+#adminsettings .form-warning {color:red;}
 
 /* tables */
 .editcourse th,

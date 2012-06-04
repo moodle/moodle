@@ -145,6 +145,12 @@ abstract class backup_general_helper extends backup_helper {
         $info->original_course_startdate= $infoarr['original_course_startdate'];
         $info->original_course_contextid= $infoarr['original_course_contextid'];
         $info->original_system_contextid= $infoarr['original_system_contextid'];
+        // Moodle backup file don't have this option before 2.3
+        if (!empty($infoarr['include_file_references_to_external_content'])) {
+            $info->include_file_references_to_external_content = 1;
+        } else {
+            $info->include_file_references_to_external_content = 0;
+        }
         $info->type   =  $infoarr['details']['detail'][0]['type'];
         $info->format =  $infoarr['details']['detail'][0]['format'];
         $info->mode   =  $infoarr['details']['detail'][0]['mode'];

@@ -45,7 +45,10 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
     public $_helpbutton = '';
 
     /** @var array options provided to initalize filemanager */
-    protected $_options    = array('maxbytes'=>0, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
+    // PHP doesn't support 'key' => $value1 | $value2 in class definition
+    // We cannot do $_options = array('return_types'=> FILE_INTERNAL | FILE_REFERENCE);
+    // So I have to set null here, and do it in constructor
+    protected $_options    = array('maxbytes'=>0, 'accepted_types'=>'*', 'return_types'=>null);
 
     /**
      * Constructor
@@ -57,7 +60,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
      * @param array $options set of options to initalize filepicker
      */
     function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $options = (array)$options;
         foreach ($options as $name=>$value) {
@@ -65,9 +68,18 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
                 $this->_options[$name] = $value;
             }
         }
-        if (!empty($options['maxbytes'])) {
-            $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
+        if (empty($options['return_types'])) {
+            $this->_options['return_types'] = FILE_INTERNAL;
         }
+        $fpmaxbytes = 0;
+        if (!empty($options['maxbytes'])) {
+            $fpmaxbytes = $options['maxbytes'];
+        }
+        $coursemaxbytes = 0;
+        if (!empty($PAGE->course)) {
+            $coursemaxbytes = $PAGE->course->maxbytes;
+        }
+        $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $coursemaxbytes, $fpmaxbytes);
         $this->_type = 'filepicker';
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
     }
@@ -137,7 +149,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $args = new stdClass();
         // need these three to filter repositories list
         $args->accepted_types = $this->_options['accepted_types']?$this->_options['accepted_types']:'*';
-        $args->return_types = FILE_INTERNAL;
+        $args->return_types = $this->_options['return_types'];
         $args->itemid = $draftitemid;
         $args->maxbytes = $this->_options['maxbytes'];
         $args->context = $PAGE->context;

@@ -90,21 +90,34 @@ $string['duedatereached'] = 'The due date for this assignment has now passed';
 $string['duedatevalidation'] = 'Due date must be after the allow submissions from date.';
 $string['editsubmission'] = 'Edit my submission';
 $string['editaction'] = 'Actions...';
-$string['emailgradermail'] = '{$a->username} has updated their assignment submission
+$string['gradersubmissionupdatedtext'] = '{$a->username} has updated their assignment submission
 for \'{$a->assignment}\' at {$a->timeupdated}
 
 It is available here:
 
     {$a->url}';
-$string['emailgradermailhtml'] = '{$a->username} has updated their assignment submission
+$string['gradersubmissionupdatedhtml'] = '{$a->username} has updated their assignment submission
 for <i>\'{$a->assignment}\'  at {$a->timeupdated}</i><br /><br />
 It is <a href="{$a->url}">available on the web site</a>.';
+$string['gradersubmissionupdatedsmall'] = '{$a->username} has updated their submission for assignment {$a->assignment}.';
 $string['enabled'] = 'Enabled';
 $string['errornosubmissions'] = 'There are no submissions to download';
-$string['feedbackcomments'] = 'Feedback comments';
+$string['errorquickgradingvsadvancedgrading'] = 'The grades were not saved because this assignment is currently using advanced grading';
+$string['errorrecordmodified'] = 'The grades were not saved because someone has modified one or more records more recently than when you loaded the page.';
 $string['feedback'] = 'Feedback';
+$string['feedbackavailabletext'] = '{$a->username} has posted some feedback on your
+assignment submission for \'{$a->assignment}\'
+
+You can see it appended to your assignment submission:
+
+    {$a->url}';
+$string['feedbackavailablehtml'] = '{$a->username} has posted some feedback on your
+assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
+You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
+$string['feedbackavailablesmall'] = '{$a->username} has given feedback for assignment {$a->assignment}';
 $string['feedbackplugins'] = 'Feedback plugins';
 $string['feedbackpluginforgradebook'] = 'Feedback plugin that will push comments to the gradebook';
+$string['feedbackpluginforgradebook_help'] = 'Only one assignment feedback plugin can push feedback into the gradebook.';
 $string['feedbackplugin'] = 'Feedback plugin';
 $string['feedbacksettings'] = 'Feedback settings';
 $string['filesubmissions'] = 'File submissions';
@@ -137,7 +150,8 @@ $string['locksubmissionforstudent'] = 'Prevent any more submissions for student:
 $string['locksubmissions'] = 'Lock submissions';
 $string['manageassignfeedbackplugins'] = 'Manage assignment feedback plugins';
 $string['manageassignsubmissionplugins'] = 'Manage assignment submission plugins';
-$string['messageprovider:assign_updates'] = 'Assignment notifications';
+$string['messageprovider:assign_student_notification'] = 'Assignment student notifications';
+$string['messageprovider:assign_grader_notification'] = 'Assignment grader notifications';
 $string['modulename'] = 'Assignment';
 $string['modulename_help'] = 'The assignment activity module enables a teacher to assess students’ learning by setting work and then reviewing it and providing feedback and grades.
 
@@ -173,15 +187,24 @@ $string['preventlatesubmissions_help'] = 'If enabled, students will not be able 
 $string['preventsubmissions'] = 'Prevent the user from making any more submissions to this assignment.';
 $string['preventsubmissionsshort'] = 'Prevent submission changes';
 $string['previous'] = 'Previous';
+$string['quickgrading'] = 'Quick grading';
+$string['quickgradingresult'] = 'Quick grading';
+$string['quickgradingchangessaved'] = 'The grade changes were saved';
+$string['quickgrading_help'] = 'Quick grading allows you to assign grades (and outcomes) directly in the submissions table. Quick grading is not compatible with advanced grading and is not recommended when there are multiple markers.';
 $string['reverttodraftforstudent'] = 'Revert submission to draft for student: (id={$a->id}, fullname={$a->fullname}).';
 $string['reverttodraft'] = 'Revert the submission to draft status.';
 $string['reverttodraftshort'] = 'Revert the submission to draft';
 $string['reviewed'] = 'Reviewed';
 $string['savechanges'] = 'Save changes';
+$string['saveallchanges'] = 'Save all changes';
 $string['savenext'] = 'Save and show next';
-$string['sendnotifications'] = 'Send notifications to graders';
+$string['sendnotifications'] = 'Notify graders about submissions';
 $string['sendnotifications_help'] = 'If enabled, graders (usually teachers) receive a message whenever a student submits an assignment, early, on time and late. Message methods are configurable.';
 $string['selectlink'] = 'Select...';
+$string['sendlatenotifications'] = 'Notify graders about late submissions';
+$string['sendlatenotifications_help'] = 'If enabled, graders (usually teachers) receive a message whenever a student submits an assignment late. Message methods are configurable.';
+$string['sendsubmissionreceipts'] = 'Send submission receipt to students';
+$string['sendsubmissionreceipts_help'] = 'This switch will enable submission receipts for students. Students will receive a notification every time they successfully submit an assignment';
 $string['settings'] = 'Assignment settings';
 $string['showrecentsubmissions'] = 'Show recent submissions';
 $string['submissiondrafts'] = 'Require students click submit button';
@@ -189,6 +212,16 @@ $string['submissiondrafts_help'] = 'If enabled, students will have to click a Su
 $string['submissionnotready'] = 'This assignment is not ready to submit:';
 $string['submissionplugins'] = 'Submission plugins';
 $string['submissionreceipts'] = 'Send submission receipts';
+$string['submissionreceipttext'] = 'You have submitted an
+assignment submission for \'{$a->assignment}\'
+
+You can see the status of your assignment submission:
+
+    {$a->url}';
+$string['submissionreceipthtml'] = 'You have submitted an
+assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
+You can the status of your <a href="{$a->url}">assignment submission</a>.';
+$string['submissionreceiptsmall'] = 'You have submitted your assignment submission for {$a->assignment}';
 $string['submissionslocked'] = 'This assignment is not accepting submissions';
 $string['submissionslockedshort'] = 'Submission changes not allowed';
 $string['submissions'] = 'Submissions';

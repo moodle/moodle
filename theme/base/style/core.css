@@ -210,7 +210,7 @@ a.skip:active {position: static;display: block;}
 .mform .fitem .fitemtitle {width:15%;text-align:right;float:left;}
 .mform .fitem .fitemtitle div {display: inline;}
 .mform .fitem .felement {border-width: 0;width:80%;margin-left:16%;}
-.mform .fitem fieldset.felement {margin-left:0;padding-left:1%;margin-bottom:0}
+.mform .fitem fieldset.felement {margin-left:15%;padding-left:1%;margin-bottom:0}
 .mform .error,
 .mform .required {color:#A00;}
 .mform .required .fgroup span label {color:#000;}
@@ -443,108 +443,6 @@ body.tag .managelink {padding: 5px;}
 .tag_cloud .s2,
 .tag_cloud .s1 {font-size: 0.9em;}
 .tag_cloud .s0 {font-size: 0.8em;}
-
-/**
- * File picker
- * Copyright (c) 2006 Yahoo! Inc. All rights reserved.
- * copy from yui/examples/treeview/assets/css/folders/tree.css
- * first or middle sibling, no children
- */
-/* first or middle sibling, no children */
-.file-picker .ygtvtn {background: url([[pix:moodle|y/tn]]) 0 0 no-repeat;width:17px;height:22px;}
-/* first or middle sibling, collapsable */
-.file-picker .ygtvtm {background: url([[pix:moodle|y/tm]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
-/* first or middle sibling, collapsable, hover */
-.file-picker .ygtvtmh {background: url([[pix:moodle|y/tmh]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
-/* first or middle sibling, expandable */
-.file-picker .ygtvtp {background: url([[pix:moodle|y/tp]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
-/* first or middle sibling, expandable, hover */
-.file-picker .ygtvtph {background: url([[pix:moodle|y/tph]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
-/* last sibling, no children */
-.file-picker .ygtvln {background: url([[pix:moodle|y/ln]]) 0 0 no-repeat;width:17px;height:22px;}
-/* Last sibling, collapsable */
-.file-picker .ygtvlm {background: url([[pix:moodle|y/lm]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
-/* Last sibling, collapsable, hover */
-.file-picker .ygtvlmh {background: url([[pix:moodle|y/lmh]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
-/* Last sibling, expandable */
-.file-picker .ygtvlp {background: url([[pix:moodle|y/lp]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
-/* Last sibling, expandable, hover */
-.file-picker .ygtvlph {background: url([[pix:moodle|y/lph]]) 0 0 no-repeat;width:34px;height:22px;cursor:pointer;}
-/* Loading icon */
-.file-picker .ygtvloading {background: url([[pix:moodle|y/loading]]) 0 0 no-repeat;width:16px;height:22px;}
-/* the style for the empty cells that are used for rendering the depth* of the node */
-.file-picker .ygtvdepthcell {background: url([[pix:moodle|y/vline]]) 0 0 no-repeat;width:17px;height:22px;}
-.file-picker .ygtvblankdepthcell {width:17px;height:22px;}
-/* the style of the div around each node */
-.file-picker .ygtvitem  table{margin-bottom:0;}
-.file-picker .ygtvitem  td {border:none;padding:0;}
-/* the style of the div around each node's collection of children */
-* html .file-picker .ygtvchildren {height:1%;}
-/* the style of the text label in ygTextNode */
-.file-picker .ygtvlabel,
-.file-picker .ygtvlabel:link,
-.file-picker .ygtvlabel:visited,
-.file-picker .ygtvlabel:hover {margin-left:2px;text-decoration: none;}
-.file-picker {font-size:12px;}
-.file-picker strong {background:#FFFFCC;}
-.file-picker .fp-panel {padding:0;margin:0;text-align:left;}
-.file-picker .fp-login-form {text-align:center;}
-.file-picker .fp-searchbar {float:right;}
-.file-picker .fp-viewbar {width:300px;float:left;}
-.file-picker .fp-toolbar {padding: .8em;background: #FFFFCC;text-align:center;margin: 3px;}
-.file-picker .fp-toolbar a {padding: 0 .5em;}
-.file-picker .fp-list {list-style-type:none;padding:0;float:left;width:100%;margin:0;}
-.dir-rtl .file-picker .fp-list {text-align:right;}
-.file-picker .fp-list li {border-bottom:1px dotted gray;margin-bottom: 1em;}
-.file-picker .fp-repo-name {display:block;padding: .5em;margin-bottom: .5em;}
-.file-picker .fp-pathbar {margin: .4em;border-bottom: 1px dotted gray;}
-.file-picker .fp-pathbar a {padding: .4em;}
-.file-picker .fp-rename-form {text-align:center;}
-.file-picker .fp-rename-form p {margin: 1em;}
-.file-picker .fp-upload-form {margin: 2em 0;text-align:center;}
-.file-picker .fp-upload-btn {clear:both;margin-top: 2em;}
-.file-picker .fp-paging {margin:1em .5em;clear:both;text-align:center;line-height: 2.5em;}
-.file-picker .fp-paging a {padding: .5em;border: 1px solid #CCC;}
-.file-picker .fp-paging a.cur_page {border: 1px solid blue;}
-.file-picker .fp-popup {text-align:center;}
-.file-picker .fp-grid-panel{}
-.file-picker .fp-grid {float:left;text-align:center;}
-.file-picker .fp-grid div {overflow: hidden;}
-.file-picker .fp-grid p {margin:0;padding:0;background: #FFFFCC;}
-.file-picker .fp-grid .label {height:48px;text-align:center;}
-.file-picker .fp-grid span {color:gray;}
-.file-picker .fp-error {padding: 2em 0;margin: 3em 5px;text-align:center;background: #FFBBBB;}
-.file-picker .fp-emptylist, .file-picker .fp-msg {text-align:center;}
-.filepicker-filelist {padding: 5px;margin: 6px 0;background: #E9F4FF;border: #AACCEE 1px solid}
-/* file picker search dialog */
-.file-picker div.bd {text-align:left;}
-
-/**
- * File Manager
- */
-.filemanager-toolbar {margin: 5px 0;}
-.filemanager-toolbar a {border: 1px solid #AACCEE;background: #F4FAFF;color: black;padding: 3px;}
-.filemanager-toolbar a:hover {background: #FFFFFF;}
-.filemanager-toolbar .helplink a {border: 0px; background: transparent;}
-.fm-breadcrumb {margin:0;}
-.filemanager-container {padding: 5px;margin: 6px 0;background: #E9F4FF;border: #AACCEE 1px solid}
-.filemanager-container ul{margin:0;padding:0;}
-.filemanager-container ul li{white-space:nowrap;list-style-type:none;}
-.filemanager-container ul li a{padding:0}
-.filemanager-loading{display:none}
-.jsenabled .filemanager-loading{display:block}
-.fm-menuicon{cursor: pointer;}
-#fm-move-div {margin: 6px;}
-#fm-move-div strong{color:red;}
-.fm-file-entry{border: 1px solid red;}
-.fm-operation {font-weight: bold;}
-
-.filemanager-container,
-.filepicker-filelist {overflow:hidden;}
-.filemanager-container .dndupload-target,
-.filepicker-filelist .dndupload-target {background:#f7f998;position:absolute;height:100%;width:100%;top:0;left:0;text-align:center;padding:5px;z-index:1000}
-.filemanager-container.dndupload-over .dndupload-target,
-.filepicker-filelist.dndupload-over .dndupload-target {background:#8EF947;font-weight:bold}
 
 /*
  * Backup and Restore CSS
@@ -928,6 +826,11 @@ sup {vertical-align: super;}
 #choosercontainer #chooseform .submitbuttons {
     margin: 0.7em 0;
     text-align: center;
+}
+
+#choosercontainer #chooseform .submitbuttons input {
+    min-width: 100px;
+    margin: 0px 0.5em;
 }
 
 /* Various settings for the options area */

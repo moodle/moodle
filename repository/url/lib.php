@@ -16,19 +16,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This plugin is used to access files by providing an url
+ *
+ * @since 2.0
+ * @package    repository_url
+ * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+require_once($CFG->dirroot . '/repository/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
+
+/**
  * repository_url class
  * A subclass of repository, which is used to download a file from a specific url
  *
  * @since 2.0
- * @package    repository
- * @subpackage url
- * @copyright  2009 Dongsheng Cai
- * @author     Dongsheng Cai <dongsheng@moodle.com>
+ * @package    repository_url
+ * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once(dirname(__FILE__).'/locallib.php');
-
 class repository_url extends repository {
     var $processedfiles = array();
 

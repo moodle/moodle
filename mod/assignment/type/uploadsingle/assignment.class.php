@@ -42,7 +42,7 @@ class assignment_uploadsingle extends assignment_base {
                     $found = true;
                     $mimetype = $file->get_mimetype();
                     $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/mod_assignment/submission/'.$submission->id.'/'.$filename);
-                    $output .= '<a href="'.$path.'" ><img class="icon" src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" alt="'.$mimetype.'" />'.s($filename).'</a><br />';
+                    $output .= '<a href="'.$path.'" >'.$OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file), 'moodle', array('class' => 'icon')).s($filename).'</a><br />';
                     $output .= plagiarism_get_links(array('userid'=>$userid, 'file'=>$file, 'cmid'=>$this->cm->id, 'course'=>$this->course, 'assignment'=>$this->assignment));
                     $output .='<br/>';
                 }
@@ -370,7 +370,7 @@ class assignment_uploadsingle extends assignment_base {
                     $filename = $file->get_filename();
                     $mimetype = $file->get_mimetype();
                     $link = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/mod_assignment', 'submission/'.$submission->id.'/'.$filename);
-                    $filenode->add($filename, $link, navigation_node::TYPE_SETTING, null, null, new pix_icon(file_mimetype_icon($mimetype), ''));
+                    $filenode->add($filename, $link, navigation_node::TYPE_SETTING, null, null, new pix_icon(file_file_icon($file), ''));
                 }
             }
         }

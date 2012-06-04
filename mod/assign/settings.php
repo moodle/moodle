@@ -55,6 +55,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('assign/showrecentsubmissions',
                    new lang_string('showrecentsubmissions', 'assign'),
                    new lang_string('configshowrecentsubmissions', 'assign'), 0));
-
-
+    $settings->add(new admin_setting_configcheckbox('assign/submissionreceipts',
+                   get_string('sendsubmissionreceipts', 'mod_assign'), get_string('sendsubmissionreceipts_help', 'mod_assign'), 1));
 }

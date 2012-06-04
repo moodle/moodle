@@ -15,22 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This plugin is used to access flickr pictures
+ *
+ * @since 2.0
+ * @package    repository_flickr_public
+ * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+require_once($CFG->dirroot . '/repository/lib.php');
+require_once($CFG->libdir.'/flickrlib.php');
+require_once(dirname(__FILE__) . '/image.php');
+
+/**
  * repository_flickr_public class
  * This one is used to create public repository
  * You can set up a public account in admin page, so everyone can access
  * flickr photos from this plugin
  *
  * @since 2.0
- * @package    repository
- * @subpackage flickr_public
- * @copyright  2009 Dongsheng Cai
- * @author     Dongsheng Cai <dongsheng@moodle.com>
+ * @package    repository_flickr_public
+ * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once($CFG->libdir.'/flickrlib.php');
-require_once(dirname(__FILE__) . '/image.php');
-
 class repository_flickr_public extends repository {
     private $flickr;
     public $photos;

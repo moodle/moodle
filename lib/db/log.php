@@ -38,6 +38,7 @@ global $DB; // TODO: this is a hack, we should really do something with the SQL 
 $logs = array(
     array('module'=>'course', 'action'=>'user report', 'mtable'=>'user', 'field'=>$DB->sql_concat('firstname', "' '" , 'lastname')),
     array('module'=>'course', 'action'=>'view', 'mtable'=>'course', 'field'=>'fullname'),
+    array('module'=>'course', 'action'=>'view section', 'mtable'=>'course_sections', 'field'=>'COALESCE(name, section)'),
     array('module'=>'course', 'action'=>'update', 'mtable'=>'course', 'field'=>'fullname'),
     array('module'=>'course', 'action'=>'enrol', 'mtable'=>'course', 'field'=>'fullname'), // there should be some way to store user id of the enrolled user!
     array('module'=>'course', 'action'=>'unenrol', 'mtable'=>'course', 'field'=>'fullname'), // there should be some way to store user id of the enrolled user!

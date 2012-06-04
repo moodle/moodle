@@ -119,6 +119,7 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
     $image->height = $imageinfo[1];
     $image->type   = $imageinfo[2];
 
+    $t = null;
     switch ($image->type) {
         case IMAGETYPE_GIF:
             if (function_exists('imagecreatefromgif')) {
@@ -126,6 +127,11 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
             } else {
                 debugging('GIF not supported on this server');
                 return false;
+            }
+            // Guess transparent colour from GIF.
+            $transparent = imagecolortransparent($im);
+            if ($transparent != -1) {
+                $t = imagecolorsforindex($im, $transparent);
             }
             break;
         case IMAGETYPE_JPEG:
@@ -166,19 +172,37 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
     if (function_exists('imagecreatetruecolor') and $CFG->gdversion >= 2) {
         $im1 = imagecreatetruecolor(100, 100);
         $im2 = imagecreatetruecolor(35, 35);
-        if ($image->type == IMAGETYPE_PNG and $imagefnc === 'imagepng') {
+        $im3 = imagecreatetruecolor(512, 512);
+        if ($image->type != IMAGETYPE_JPEG and $imagefnc === 'imagepng') {
+            if ($t) {
+                // Transparent GIF hacking...
+                $transparentcolour = imagecolorallocate($im1 , $t['red'] , $t['green'] , $t['blue']);
+                imagecolortransparent($im1 , $transparentcolour);
+                $transparentcolour = imagecolorallocate($im2 , $t['red'] , $t['green'] , $t['blue']);
+                imagecolortransparent($im2 , $transparentcolour);
+                $transparentcolour = imagecolorallocate($im3 , $t['red'] , $t['green'] , $t['blue']);
+                imagecolortransparent($im3 , $transparentcolour);
+            }
+
             imagealphablending($im1, false);
             $color = imagecolorallocatealpha($im1, 0, 0,  0, 127);
             imagefill($im1, 0, 0,  $color);
             imagesavealpha($im1, true);
+
             imagealphablending($im2, false);
             $color = imagecolorallocatealpha($im2, 0, 0,  0, 127);
             imagefill($im2, 0, 0,  $color);
             imagesavealpha($im2, true);
+
+            imagealphablending($im3, false);
+            $color = imagecolorallocatealpha($im3, 0, 0,  0, 127);
+            imagefill($im3, 0, 0,  $color);
+            imagesavealpha($im3, true);
         }
     } else {
         $im1 = imagecreate(100, 100);
         $im2 = imagecreate(35, 35);
+        $im3 = imagecreate(512, 512);
     }
 
     $cx = $image->width / 2;
@@ -192,6 +216,7 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
 
     imagecopybicubic($im1, $im, 0, 0, $cx - $half, $cy - $half, 100, 100, $half * 2, $half * 2);
     imagecopybicubic($im2, $im, 0, 0, $cx - $half, $cy - $half, 35, 35, $half * 2, $half * 2);
+    imagecopybicubic($im3, $im, 0, 0, $cx - $half, $cy - $half, 512, 512, $half * 2, $half * 2);
 
     $fs = get_file_storage();
 
@@ -218,6 +243,17 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
     $data = ob_get_clean();
     imagedestroy($im2);
     $icon['filename'] = 'f2'.$imageext;
+    $fs->create_file_from_string($icon, $data);
+
+    ob_start();
+    if (!$imagefnc($im3, NULL, $quality, $filters)) {
+        ob_end_clean();
+        $fs->delete_area_files($context->id, $component, $filearea, $itemid);
+        return false;
+    }
+    $data = ob_get_clean();
+    imagedestroy($im3);
+    $icon['filename'] = 'f3'.$imageext;
     $fs->create_file_from_string($icon, $data);
 
     return $file1->get_id();

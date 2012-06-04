@@ -84,9 +84,8 @@ class qtype_essay_renderer extends qtype_renderer {
         $output = array();
 
         foreach ($files as $file) {
-            $mimetype = $file->get_mimetype();
             $output[] = html_writer::tag('p', html_writer::link($qa->get_response_file_url($file),
-                    $this->output->pix_icon(file_mimetype_icon($mimetype), $mimetype,
+                    $this->output->pix_icon(file_file_icon($file), get_mimetype_description($file),
                     'moodle', array('class' => 'icon')) . ' ' . s($file->get_filename())));
         }
         return implode($output);
@@ -114,7 +113,9 @@ class qtype_essay_renderer extends qtype_renderer {
         $pickeroptions->itemid = $qa->prepare_response_files_draft_itemid(
                 'attachments', $options->context->id);
 
-        return form_filemanager_render($pickeroptions) . html_writer::empty_tag(
+        $fm = new form_filemanager($pickeroptions);
+        $filesrenderer = $this->page->get_renderer('core', 'files');
+        return $filesrenderer->render($fm). html_writer::empty_tag(
                 'input', array('type' => 'hidden', 'name' => $qa->get_qt_field_name('attachments'),
                 'value' => $pickeroptions->itemid));
     }

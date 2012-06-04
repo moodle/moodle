@@ -49,35 +49,36 @@ $THEME->editor_sheets = array('editor');
 ////////////////////////////////////////////////////
 
 $THEME->layouts = array(
+    // Most backwards compatible layout without the blocks - this is the layout used by default
     'base' => array(
         'file' => 'general.php',
-        'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'regions' => array(),
     ),
-    'general' => array(
+    // Standard layout with blocks, this is recommended for most pages with general information
+    'standard' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'course' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-pre'
     ),
     'coursecategory' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'incourse' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'frontpage' => array(
         'file' => 'frontpage.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'admin' => array(
         'file' => 'general.php',
@@ -87,13 +88,13 @@ $THEME->layouts = array(
     'mydashboard' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
         'options' => array('langmenu'=>true),
     ),
     'mypublic' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'login' => array(
         'file' => 'general.php',

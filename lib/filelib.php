@@ -374,7 +374,25 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
                 if (!$options['subdirs'] and ($file->is_directory() or $file->get_filepath() !== '/')) {
                     continue;
                 }
-                $fs->create_file_from_storedfile($file_record, $file);
+                $draftfile = $fs->create_file_from_storedfile($file_record, $file);
+                // XXX: This is a hack for file manager (MDL-28666)
+                // File manager needs to know the original file information before copying
+                // to draft area, so we append these information in mdl_files.source field
+                // {@link file_storage::search_references()}
+                // {@link file_storage::search_references_count()}
+                $sourcefield = $file->get_source();
+                $newsourcefield = new stdClass;
+                $newsourcefield->source = $sourcefield;
+                $original = new stdClass;
+                $original->contextid = $contextid;
+                $original->component = $component;
+                $original->filearea  = $filearea;
+                $original->itemid    = $itemid;
+                $original->filename  = $file->get_filename();
+                $original->filepath  = $file->get_filepath();
+                $newsourcefield->original = file_storage::pack_reference($original);
+                $draftfile->set_source(serialize($newsourcefield));
+                // End of file manager hack
             }
         }
         if (!is_null($text)) {
@@ -548,13 +566,13 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
     $data->path[] = array('name'=>get_string('files'), 'path'=>'/');
 
     // will be used to build breadcrumb
-    $trail = '';
+    $trail = '/';
     if ($filepath !== '/') {
         $filepath = file_correct_filepath($filepath);
         $parts = explode('/', $filepath);
         foreach ($parts as $part) {
             if ($part != '' && $part != null) {
-                $trail .= ('/'.$part.'/');
+                $trail .= ($part.'/');
                 $data->path[] = array('name'=>$part, 'path'=>$trail);
             }
         }
@@ -569,27 +587,47 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
             $item->filepath = $file->get_filepath();
             $item->fullname = trim($item->filename, '/');
             $filesize = $file->get_filesize();
+            $item->size = $filesize ? $filesize : null;
             $item->filesize = $filesize ? display_size($filesize) : '';
 
-            $icon = mimeinfo_from_type('icon', $file->get_mimetype());
-            $item->icon = $OUTPUT->pix_url('f/' . $icon)->out();
             $item->sortorder = $file->get_sortorder();
-
-            if ($icon == 'zip') {
-                $item->type = 'zip';
-            } else {
-                $item->type = 'file';
+            $item->author = $file->get_author();
+            $item->license = $file->get_license();
+            $item->datemodified = $file->get_timemodified();
+            $item->datecreated = $file->get_timecreated();
+            $item->isref = $file->is_external_file();
+            // find the file this draft file was created from and count all references in local
+            // system pointing to that file
+            $source = unserialize($file->get_source());
+            if (isset($source->original)) {
+                $item->refcount = $fs->search_references_count($source->original);
             }
 
             if ($file->is_directory()) {
                 $item->filesize = 0;
-                $item->icon = $OUTPUT->pix_url('f/folder')->out();
+                $item->icon = $OUTPUT->pix_url(file_folder_icon(24))->out(false);
                 $item->type = 'folder';
                 $foldername = explode('/', trim($item->filepath, '/'));
                 $item->fullname = trim(array_pop($foldername), '/');
+                $item->thumbnail = $OUTPUT->pix_url(file_folder_icon(90))->out(false);
             } else {
                 // do NOT use file browser here!
-                $item->url = moodle_url::make_draftfile_url($draftitemid, $item->filepath, $item->filename)->out();
+                $item->mimetype = get_mimetype_description($file);
+                if (file_mimetype_in_typegroup($item->mimetype, 'archive')) {
+                    $item->type = 'zip';
+                } else {
+                    $item->type = 'file';
+                }
+                $itemurl = moodle_url::make_draftfile_url($draftitemid, $item->filepath, $item->filename);
+                $item->url = $itemurl->out();
+                $item->icon = $OUTPUT->pix_url(file_file_icon($file, 24))->out(false);
+                $item->thumbnail = $OUTPUT->pix_url(file_file_icon($file, 90))->out(false);
+                if ($imageinfo = $file->get_imageinfo()) {
+                    $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb', 'oid' => $file->get_timemodified()));
+                    $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
+                    $item->image_width = $imageinfo['width'];
+                    $item->image_height = $imageinfo['height'];
+                }
             }
             $list[] = $item;
         }
@@ -631,6 +669,24 @@ function file_get_submitted_draft_itemid($elname) {
     return $param;
 }
 
+/**
+ * Restore the original source field from draft files
+ *
+ * @param stored_file $storedfile This only works with draft files
+ * @return stored_file
+ */
+function file_restore_source_field_from_draft_file($storedfile) {
+    $source = unserialize($storedfile->get_source());
+    if (!empty($source)) {
+        if (is_object($source)) {
+            $restoredsource = $source->source;
+            $storedfile->set_source($restoredsource);
+        } else {
+            throw new moodle_exception('invalidsourcefield', 'error');
+        }
+    }
+    return $storedfile;
+}
 /**
  * Saves files from a draft file area to a real one (merging the list of files).
  * Can rewrite URLs in some content at the same time if desired.
@@ -676,8 +732,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
     } else if (count($oldfiles) < 2) {
         $filecount = 0;
         // there were no files before - one file means root dir only ;-)
-        $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
         foreach ($draftfiles as $file) {
+            $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
             if (!$options['subdirs']) {
                 if ($file->get_filepath() !== '/' or $file->is_directory()) {
                     continue;
@@ -694,13 +750,22 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             if (!$file->is_directory()) {
                 $filecount++;
             }
+
+            if ($file->is_external_file()) {
+                $repoid = $file->get_repository_id();
+                if (!empty($repoid)) {
+                    $file_record['repositoryid'] = $repoid;
+                    $file_record['reference'] = $file->get_reference();
+                }
+            }
+            file_restore_source_field_from_draft_file($file);
+
             $fs->create_file_from_storedfile($file_record, $file);
         }
 
     } else {
         // we have to merge old and new files - we want to keep file ids for files that were not changed
         // we change time modified for all new and changed files, we keep time created as is
-        $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'timemodified'=>time());
 
         $newhashes = array();
         foreach ($draftfiles as $file) {
@@ -715,14 +780,50 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 $oldfile->delete();
                 continue;
             }
+
             $newfile = $newhashes[$oldhash];
-            if ($oldfile->get_contenthash() != $newfile->get_contenthash() or $oldfile->get_sortorder() != $newfile->get_sortorder()
-                or $oldfile->get_status() != $newfile->get_status() or $oldfile->get_license() != $newfile->get_license()
-                or $oldfile->get_author() != $newfile->get_author() or $oldfile->get_source() != $newfile->get_source()) {
+            // status changed, we delete old file, and create a new one
+            if ($oldfile->get_status() != $newfile->get_status()) {
                 // file was changed, use updated with new timemodified data
                 $oldfile->delete();
+                // This file will be added later
                 continue;
             }
+
+            file_restore_source_field_from_draft_file($newfile);
+            // Replaced file content
+            if ($oldfile->get_contenthash() != $newfile->get_contenthash()) {
+                $oldfile->replace_content_with($newfile);
+            }
+            // Updated author
+            if ($oldfile->get_author() != $newfile->get_author()) {
+                $oldfile->set_author($newfile->get_author());
+            }
+            // Updated license
+            if ($oldfile->get_license() != $newfile->get_license()) {
+                $oldfile->set_license($newfile->get_license());
+            }
+
+            // Updated file source
+            if ($oldfile->get_source() != $newfile->get_source()) {
+                $oldfile->set_source($newfile->get_source());
+            }
+
+            // Updated sort order
+            if ($oldfile->get_sortorder() != $newfile->get_sortorder()) {
+                $oldfile->set_sortorder($newfile->get_sortorder());
+            }
+
+            // Update file size
+            if ($oldfile->get_filesize() != $newfile->get_filesize()) {
+                $oldfile->set_filesize($newfile->get_filesize());
+            }
+
+            // Update file timemodified
+            if ($oldfile->get_timemodified() != $newfile->get_timemodified()) {
+                $oldfile->set_timemodified($newfile->get_timemodified());
+            }
+
             // unchanged file or directory - we keep it as is
             unset($newhashes[$oldhash]);
             if (!$oldfile->is_directory()) {
@@ -730,9 +831,10 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             }
         }
 
-        // now add new/changed files
+        // Add fresh file or the file which has changed status
         // the size and subdirectory tests are extra safety only, the UI should prevent it
         foreach ($newhashes as $file) {
+            $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'timemodified'=>time());
             if (!$options['subdirs']) {
                 if ($file->get_filepath() !== '/' or $file->is_directory()) {
                     continue;
@@ -749,6 +851,15 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             if (!$file->is_directory()) {
                 $filecount++;
             }
+
+            if ($file->is_external_file()) {
+                $repoid = $file->get_repository_id();
+                if (!empty($repoid)) {
+                    $file_record['repositoryid'] = $repoid;
+                    $file_record['reference'] = $file->get_reference();
+                }
+            }
+
             $fs->create_file_from_storedfile($file_record, $file);
         }
     }
@@ -1210,7 +1321,32 @@ function download_file_content_write_handler($received, $ch, $data) {
 }
 
 /**
- * Returns a list of information about file t ypes based on extensions
+ * Returns a list of information about file types based on extensions.
+ *
+ * The following elements expected in value array for each extension:
+ * 'type' - mimetype
+ * 'icon' - location of the icon file. If value is FILENAME, then either pix/f/FILENAME.gif
+ *     or pix/f/FILENAME.png must be present in moodle and contain 16x16 filetype icon;
+ *     also files with bigger sizes under names
+ *     FILENAME-24, FILENAME-32, FILENAME-64, FILENAME-128, FILENAME-256 are recommended.
+ * 'groups' (optional) - array of filetype groups this filetype extension is part of;
+ *     commonly used in moodle the following groups:
+ *       - web_image - image that can be included as <img> in HTML
+ *       - image - image that we can parse using GD to find it's dimensions, also used for portfolio format
+ *       - video - file that can be imported as video in text editor
+ *       - audio - file that can be imported as audio in text editor
+ *       - archive - we can extract files from this archive
+ *       - spreadsheet - used for portfolio format
+ *       - document - used for portfolio format
+ *       - presentation - used for portfolio format
+ * 'string' (optional) - the name of the string from lang/en/mimetypes.php that displays
+ *     human-readable description for this filetype;
+ *     Function {@link get_mimetype_description()} first looks at the presence of string for
+ *     particular mimetype (value of 'type'), if not found looks for string specified in 'string'
+ *     attribute, if not found returns the value of 'type';
+ * 'defaulticon' (boolean, optional) - used by function {@link file_mimetype_icon()} to find
+ *     an icon for mimetype. If an entry with 'defaulticon' is not found for a particular mimetype,
+ *     this function will return first found icon; Especially usefull for types such as 'text/plain'
  *
  * @category files
  * @return array List of information about file types based on extensions.
@@ -1218,179 +1354,179 @@ function download_file_content_write_handler($received, $ch, $data) {
  *   from 'element name' to data. Current element names are 'type' and 'icon'.
  *   Unknown types should use the 'xxx' entry which includes defaults.
  */
-function get_mimetypes_array() {
+function &get_mimetypes_array() {
     static $mimearray = array (
         'xxx'  => array ('type'=>'document/unknown', 'icon'=>'unknown'),
-        '3gp'  => array ('type'=>'video/quicktime', 'icon'=>'video'),
-        'aac'  => array ('type'=>'audio/aac', 'icon'=>'audio'),
-        'ai'   => array ('type'=>'application/postscript', 'icon'=>'image'),
-        'aif'  => array ('type'=>'audio/x-aiff', 'icon'=>'audio'),
-        'aiff' => array ('type'=>'audio/x-aiff', 'icon'=>'audio'),
-        'aifc' => array ('type'=>'audio/x-aiff', 'icon'=>'audio'),
+        '3gp'  => array ('type'=>'video/quicktime', 'icon'=>'mov', 'groups'=>array('video'), 'string'=>'video'),
+        'aac'  => array ('type'=>'audio/aac', 'icon'=>'mp3', 'groups'=>array('audio'), 'string'=>'audio'),
+        'ai'   => array ('type'=>'application/postscript', 'icon'=>'eps', 'groups'=>array('image'), 'string'=>'image'),
+        'aif'  => array ('type'=>'audio/x-aiff', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'aiff' => array ('type'=>'audio/x-aiff', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'aifc' => array ('type'=>'audio/x-aiff', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
         'applescript'  => array ('type'=>'text/plain', 'icon'=>'text'),
         'asc'  => array ('type'=>'text/plain', 'icon'=>'text'),
         'asm'  => array ('type'=>'text/plain', 'icon'=>'text'),
-        'au'   => array ('type'=>'audio/au', 'icon'=>'audio'),
-        'avi'  => array ('type'=>'video/x-ms-wm', 'icon'=>'avi'),
-        'bmp'  => array ('type'=>'image/bmp', 'icon'=>'image'),
+        'au'   => array ('type'=>'audio/au', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'avi'  => array ('type'=>'video/x-ms-wm', 'icon'=>'avi', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'bmp'  => array ('type'=>'image/bmp', 'icon'=>'bmp', 'groups'=>array('image'), 'string'=>'image'),
         'c'    => array ('type'=>'text/plain', 'icon'=>'text'),
         'cct'  => array ('type'=>'shockwave/director', 'icon'=>'flash'),
         'cpp'  => array ('type'=>'text/plain', 'icon'=>'text'),
         'cs'   => array ('type'=>'application/x-csh', 'icon'=>'text'),
-        'css'  => array ('type'=>'text/css', 'icon'=>'text'),
-        'csv'  => array ('type'=>'text/csv', 'icon'=>'excel'),
-        'dv'   => array ('type'=>'video/x-dv', 'icon'=>'video'),
+        'css'  => array ('type'=>'text/css', 'icon'=>'text', 'groups'=>array('web_file')),
+        'csv'  => array ('type'=>'text/csv', 'icon'=>'xlsx', 'groups'=>array('spreadsheet')),
+        'dv'   => array ('type'=>'video/x-dv', 'icon'=>'mov', 'groups'=>array('video'), 'string'=>'video'),
         'dmg'  => array ('type'=>'application/octet-stream', 'icon'=>'dmg'),
 
-        'doc'  => array ('type'=>'application/msword', 'icon'=>'word'),
-        'docx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'icon'=>'docx'),
-        'docm' => array ('type'=>'application/vnd.ms-word.document.macroEnabled.12', 'icon'=>'docm'),
-        'dotx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.template', 'icon'=>'dotx'),
-        'dotm' => array ('type'=>'application/vnd.ms-word.template.macroEnabled.12', 'icon'=>'dotm'),
+        'doc'  => array ('type'=>'application/msword', 'icon'=>'docx', 'groups'=>array('document')),
+        'docx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'icon'=>'docx', 'groups'=>array('document')),
+        'docm' => array ('type'=>'application/vnd.ms-word.document.macroEnabled.12', 'icon'=>'docx'),
+        'dotx' => array ('type'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.template', 'icon'=>'docx'),
+        'dotm' => array ('type'=>'application/vnd.ms-word.template.macroEnabled.12', 'icon'=>'docx'),
 
         'dcr'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
-        'dif'  => array ('type'=>'video/x-dv', 'icon'=>'video'),
+        'dif'  => array ('type'=>'video/x-dv', 'icon'=>'mov', 'groups'=>array('video'), 'string'=>'video'),
         'dir'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
         'dxr'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
-        'eps'  => array ('type'=>'application/postscript', 'icon'=>'pdf'),
+        'eps'  => array ('type'=>'application/postscript', 'icon'=>'eps'),
         'fdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
-        'flv'  => array ('type'=>'video/x-flv', 'icon'=>'video'),
-        'f4v'  => array ('type'=>'video/mp4', 'icon'=>'video'),
-        'gif'  => array ('type'=>'image/gif', 'icon'=>'image'),
-        'gtar' => array ('type'=>'application/x-gtar', 'icon'=>'zip'),
-        'tgz'  => array ('type'=>'application/g-zip', 'icon'=>'zip'),
-        'gz'   => array ('type'=>'application/g-zip', 'icon'=>'zip'),
-        'gzip' => array ('type'=>'application/g-zip', 'icon'=>'zip'),
+        'flv'  => array ('type'=>'video/x-flv', 'icon'=>'flash', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'f4v'  => array ('type'=>'video/mp4', 'icon'=>'flash', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'gif'  => array ('type'=>'image/gif', 'icon'=>'gif', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
+        'gtar' => array ('type'=>'application/x-gtar', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
+        'tgz'  => array ('type'=>'application/g-zip', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
+        'gz'   => array ('type'=>'application/g-zip', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
+        'gzip' => array ('type'=>'application/g-zip', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
         'h'    => array ('type'=>'text/plain', 'icon'=>'text'),
         'hpp'  => array ('type'=>'text/plain', 'icon'=>'text'),
-        'hqx'  => array ('type'=>'application/mac-binhex40', 'icon'=>'zip'),
-        'htc'  => array ('type'=>'text/x-component', 'icon'=>'text'),
-        'html' => array ('type'=>'text/html', 'icon'=>'html'),
-        'xhtml'=> array ('type'=>'application/xhtml+xml', 'icon'=>'html'),
-        'htm'  => array ('type'=>'text/html', 'icon'=>'html'),
-        'ico'  => array ('type'=>'image/vnd.microsoft.icon', 'icon'=>'image'),
+        'hqx'  => array ('type'=>'application/mac-binhex40', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
+        'htc'  => array ('type'=>'text/x-component', 'icon'=>'html'),
+        'html' => array ('type'=>'text/html', 'icon'=>'html', 'groups'=>array('web_file')),
+        'xhtml'=> array ('type'=>'application/xhtml+xml', 'icon'=>'html', 'groups'=>array('web_file')),
+        'htm'  => array ('type'=>'text/html', 'icon'=>'html', 'groups'=>array('web_file')),
+        'ico'  => array ('type'=>'image/vnd.microsoft.icon', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
         'ics'  => array ('type'=>'text/calendar', 'icon'=>'text'),
         'isf'  => array ('type'=>'application/inspiration', 'icon'=>'isf'),
         'ist'  => array ('type'=>'application/inspiration.template', 'icon'=>'isf'),
         'java' => array ('type'=>'text/plain', 'icon'=>'text'),
-        'jcb'  => array ('type'=>'text/xml', 'icon'=>'jcb'),
-        'jcl'  => array ('type'=>'text/xml', 'icon'=>'jcl'),
-        'jcw'  => array ('type'=>'text/xml', 'icon'=>'jcw'),
-        'jmt'  => array ('type'=>'text/xml', 'icon'=>'jmt'),
-        'jmx'  => array ('type'=>'text/xml', 'icon'=>'jmx'),
-        'jpe'  => array ('type'=>'image/jpeg', 'icon'=>'image'),
-        'jpeg' => array ('type'=>'image/jpeg', 'icon'=>'image'),
-        'jpg'  => array ('type'=>'image/jpeg', 'icon'=>'image'),
-        'jqz'  => array ('type'=>'text/xml', 'icon'=>'jqz'),
-        'js'   => array ('type'=>'application/x-javascript', 'icon'=>'text'),
+        'jcb'  => array ('type'=>'text/xml', 'icon'=>'xml'),
+        'jcl'  => array ('type'=>'text/xml', 'icon'=>'xml'),
+        'jcw'  => array ('type'=>'text/xml', 'icon'=>'xml'),
+        'jmt'  => array ('type'=>'text/xml', 'icon'=>'xml'),
+        'jmx'  => array ('type'=>'text/xml', 'icon'=>'xml'),
+        'jpe'  => array ('type'=>'image/jpeg', 'icon'=>'jpeg', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
+        'jpeg' => array ('type'=>'image/jpeg', 'icon'=>'jpeg', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
+        'jpg'  => array ('type'=>'image/jpeg', 'icon'=>'jpeg', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
+        'jqz'  => array ('type'=>'text/xml', 'icon'=>'xml'),
+        'js'   => array ('type'=>'application/x-javascript', 'icon'=>'text', 'groups'=>array('web_file')),
         'latex'=> array ('type'=>'application/x-latex', 'icon'=>'text'),
         'm'    => array ('type'=>'text/plain', 'icon'=>'text'),
         'mbz'  => array ('type'=>'application/vnd.moodle.backup', 'icon'=>'moodle'),
-        'mov'  => array ('type'=>'video/quicktime', 'icon'=>'video'),
-        'movie'=> array ('type'=>'video/x-sgi-movie', 'icon'=>'video'),
-        'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'audio'),
-        'mp3'  => array ('type'=>'audio/mp3', 'icon'=>'audio'),
-        'mp4'  => array ('type'=>'video/mp4', 'icon'=>'video'),
-        'm4v'  => array ('type'=>'video/mp4', 'icon'=>'video'),
-        'm4a'  => array ('type'=>'audio/mp4', 'icon'=>'audio'),
-        'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'video'),
-        'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'video'),
-        'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'video'),
+        'mov'  => array ('type'=>'video/quicktime', 'icon'=>'mov', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'movie'=> array ('type'=>'video/x-sgi-movie', 'icon'=>'mov', 'groups'=>array('video'), 'string'=>'video'),
+        'm3u'  => array ('type'=>'audio/x-mpegurl', 'icon'=>'mp3', 'groups'=>array('audio'), 'string'=>'audio'),
+        'mp3'  => array ('type'=>'audio/mp3', 'icon'=>'mp3', 'groups'=>array('audio','web_audio'), 'string'=>'audio'),
+        'mp4'  => array ('type'=>'video/mp4', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'm4v'  => array ('type'=>'video/mp4', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'm4a'  => array ('type'=>'audio/mp4', 'icon'=>'mp3', 'groups'=>array('audio'), 'string'=>'audio'),
+        'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'mpeg', 'groups'=>array('video','web_video'), 'string'=>'video'),
 
-        'odt'  => array ('type'=>'application/vnd.oasis.opendocument.text', 'icon'=>'odt'),
-        'ott'  => array ('type'=>'application/vnd.oasis.opendocument.text-template', 'icon'=>'odt'),
-        'oth'  => array ('type'=>'application/vnd.oasis.opendocument.text-web', 'icon'=>'odt'),
-        'odm'  => array ('type'=>'application/vnd.oasis.opendocument.text-master', 'icon'=>'odm'),
+        'odt'  => array ('type'=>'application/vnd.oasis.opendocument.text', 'icon'=>'odt', 'groups'=>array('document')),
+        'ott'  => array ('type'=>'application/vnd.oasis.opendocument.text-template', 'icon'=>'odt', 'groups'=>array('document')),
+        'oth'  => array ('type'=>'application/vnd.oasis.opendocument.text-web', 'icon'=>'oth', 'groups'=>array('document')),
+        'odm'  => array ('type'=>'application/vnd.oasis.opendocument.text-master', 'icon'=>'odt'),
         'odg'  => array ('type'=>'application/vnd.oasis.opendocument.graphics', 'icon'=>'odg'),
         'otg'  => array ('type'=>'application/vnd.oasis.opendocument.graphics-template', 'icon'=>'odg'),
         'odp'  => array ('type'=>'application/vnd.oasis.opendocument.presentation', 'icon'=>'odp'),
         'otp'  => array ('type'=>'application/vnd.oasis.opendocument.presentation-template', 'icon'=>'odp'),
-        'ods'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet', 'icon'=>'ods'),
-        'ots'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet-template', 'icon'=>'ods'),
+        'ods'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet', 'icon'=>'ods', 'groups'=>array('spreadsheet')),
+        'ots'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet-template', 'icon'=>'ods', 'groups'=>array('spreadsheet')),
         'odc'  => array ('type'=>'application/vnd.oasis.opendocument.chart', 'icon'=>'odc'),
         'odf'  => array ('type'=>'application/vnd.oasis.opendocument.formula', 'icon'=>'odf'),
         'odb'  => array ('type'=>'application/vnd.oasis.opendocument.database', 'icon'=>'odb'),
-        'odi'  => array ('type'=>'application/vnd.oasis.opendocument.image', 'icon'=>'odi'),
-        'oga'  => array ('type'=>'audio/ogg', 'icon'=>'audio'),
-        'ogg'  => array ('type'=>'audio/ogg', 'icon'=>'audio'),
-        'ogv'  => array ('type'=>'video/ogg', 'icon'=>'video'),
+        'odi'  => array ('type'=>'application/vnd.oasis.opendocument.image', 'icon'=>'odg'),
+        'oga'  => array ('type'=>'audio/ogg', 'icon'=>'wma', 'groups'=>array('audio'), 'string'=>'audio'),
+        'ogg'  => array ('type'=>'audio/ogg', 'icon'=>'wma', 'groups'=>array('audio'), 'string'=>'audio'),
+        'ogv'  => array ('type'=>'video/ogg', 'icon'=>'wmv', 'groups'=>array('video'), 'string'=>'video'),
 
-        'pct'  => array ('type'=>'image/pict', 'icon'=>'image'),
+        'pct'  => array ('type'=>'image/pict', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
         'pdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
         'php'  => array ('type'=>'text/plain', 'icon'=>'text'),
-        'pic'  => array ('type'=>'image/pict', 'icon'=>'image'),
-        'pict' => array ('type'=>'image/pict', 'icon'=>'image'),
-        'png'  => array ('type'=>'image/png', 'icon'=>'image'),
+        'pic'  => array ('type'=>'image/pict', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
+        'pict' => array ('type'=>'image/pict', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
+        'png'  => array ('type'=>'image/png', 'icon'=>'png', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
 
-        'pps'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'powerpoint'),
-        'ppt'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'powerpoint'),
+        'pps'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'pptx', 'groups'=>array('presentation')),
+        'ppt'  => array ('type'=>'application/vnd.ms-powerpoint', 'icon'=>'pptx', 'groups'=>array('presentation')),
         'pptx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'icon'=>'pptx'),
-        'pptm' => array ('type'=>'application/vnd.ms-powerpoint.presentation.macroEnabled.12', 'icon'=>'pptm'),
-        'potx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.template', 'icon'=>'potx'),
-        'potm' => array ('type'=>'application/vnd.ms-powerpoint.template.macroEnabled.12', 'icon'=>'potm'),
-        'ppam' => array ('type'=>'application/vnd.ms-powerpoint.addin.macroEnabled.12', 'icon'=>'ppam'),
-        'ppsx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'icon'=>'ppsx'),
-        'ppsm' => array ('type'=>'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', 'icon'=>'ppsm'),
+        'pptm' => array ('type'=>'application/vnd.ms-powerpoint.presentation.macroEnabled.12', 'icon'=>'pptx'),
+        'potx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.template', 'icon'=>'pptx'),
+        'potm' => array ('type'=>'application/vnd.ms-powerpoint.template.macroEnabled.12', 'icon'=>'pptx'),
+        'ppam' => array ('type'=>'application/vnd.ms-powerpoint.addin.macroEnabled.12', 'icon'=>'pptx'),
+        'ppsx' => array ('type'=>'application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'icon'=>'pptx'),
+        'ppsm' => array ('type'=>'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', 'icon'=>'pptx'),
 
         'ps'   => array ('type'=>'application/postscript', 'icon'=>'pdf'),
-        'qt'   => array ('type'=>'video/quicktime', 'icon'=>'video'),
-        'ra'   => array ('type'=>'audio/x-realaudio-plugin', 'icon'=>'audio'),
-        'ram'  => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio'),
+        'qt'   => array ('type'=>'video/quicktime', 'icon'=>'mov', 'groups'=>array('video','web_video'), 'string'=>'video'),
+        'ra'   => array ('type'=>'audio/x-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio','web_audio'), 'string'=>'audio'),
+        'ram'  => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
         'rhb'  => array ('type'=>'text/xml', 'icon'=>'xml'),
-        'rm'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio'),
-        'rmvb' => array ('type'=>'application/vnd.rn-realmedia-vbr', 'icon'=>'video'),
-        'rtf'  => array ('type'=>'text/rtf', 'icon'=>'text'),
+        'rm'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('audio'), 'string'=>'audio'),
+        'rmvb' => array ('type'=>'application/vnd.rn-realmedia-vbr', 'icon'=>'video', 'groups'=>array('video'), 'string'=>'video'),
+        'rtf'  => array ('type'=>'text/rtf', 'icon'=>'text', 'groups'=>array('document')),
         'rtx'  => array ('type'=>'text/richtext', 'icon'=>'text'),
-        'rv'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'video'),
+        'rv'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio', 'groups'=>array('video'), 'string'=>'video'),
         'sh'   => array ('type'=>'application/x-sh', 'icon'=>'text'),
-        'sit'  => array ('type'=>'application/x-stuffit', 'icon'=>'zip'),
+        'sit'  => array ('type'=>'application/x-stuffit', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
         'smi'  => array ('type'=>'application/smil', 'icon'=>'text'),
         'smil' => array ('type'=>'application/smil', 'icon'=>'text'),
         'sqt'  => array ('type'=>'text/xml', 'icon'=>'xml'),
-        'svg'  => array ('type'=>'image/svg+xml', 'icon'=>'image'),
-        'svgz' => array ('type'=>'image/svg+xml', 'icon'=>'image'),
+        'svg'  => array ('type'=>'image/svg+xml', 'icon'=>'image', 'groups'=>array('image','web_image'), 'string'=>'image'),
+        'svgz' => array ('type'=>'image/svg+xml', 'icon'=>'image', 'groups'=>array('image','web_image'), 'string'=>'image'),
         'swa'  => array ('type'=>'application/x-director', 'icon'=>'flash'),
-        'swf'  => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash'),
-        'swfl' => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash'),
+        'swf'  => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash', 'groups'=>array('video','web_video')),
+        'swfl' => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash', 'groups'=>array('video','web_video')),
 
         'sxw'  => array ('type'=>'application/vnd.sun.xml.writer', 'icon'=>'odt'),
         'stw'  => array ('type'=>'application/vnd.sun.xml.writer.template', 'icon'=>'odt'),
-        'sxc'  => array ('type'=>'application/vnd.sun.xml.calc', 'icon'=>'odt'),
-        'stc'  => array ('type'=>'application/vnd.sun.xml.calc.template', 'icon'=>'odt'),
-        'sxd'  => array ('type'=>'application/vnd.sun.xml.draw', 'icon'=>'odt'),
-        'std'  => array ('type'=>'application/vnd.sun.xml.draw.template', 'icon'=>'odt'),
-        'sxi'  => array ('type'=>'application/vnd.sun.xml.impress', 'icon'=>'odt'),
-        'sti'  => array ('type'=>'application/vnd.sun.xml.impress.template', 'icon'=>'odt'),
+        'sxc'  => array ('type'=>'application/vnd.sun.xml.calc', 'icon'=>'ods'),
+        'stc'  => array ('type'=>'application/vnd.sun.xml.calc.template', 'icon'=>'ods'),
+        'sxd'  => array ('type'=>'application/vnd.sun.xml.draw', 'icon'=>'odg'),
+        'std'  => array ('type'=>'application/vnd.sun.xml.draw.template', 'icon'=>'odg'),
+        'sxi'  => array ('type'=>'application/vnd.sun.xml.impress', 'icon'=>'odp'),
+        'sti'  => array ('type'=>'application/vnd.sun.xml.impress.template', 'icon'=>'odp'),
         'sxg'  => array ('type'=>'application/vnd.sun.xml.writer.global', 'icon'=>'odt'),
-        'sxm'  => array ('type'=>'application/vnd.sun.xml.math', 'icon'=>'odt'),
+        'sxm'  => array ('type'=>'application/vnd.sun.xml.math', 'icon'=>'odf'),
 
-        'tar'  => array ('type'=>'application/x-tar', 'icon'=>'zip'),
-        'tif'  => array ('type'=>'image/tiff', 'icon'=>'image'),
-        'tiff' => array ('type'=>'image/tiff', 'icon'=>'image'),
+        'tar'  => array ('type'=>'application/x-tar', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive'),
+        'tif'  => array ('type'=>'image/tiff', 'icon'=>'tiff', 'groups'=>array('image'), 'string'=>'image'),
+        'tiff' => array ('type'=>'image/tiff', 'icon'=>'tiff', 'groups'=>array('image'), 'string'=>'image'),
         'tex'  => array ('type'=>'application/x-tex', 'icon'=>'text'),
         'texi' => array ('type'=>'application/x-texinfo', 'icon'=>'text'),
         'texinfo'  => array ('type'=>'application/x-texinfo', 'icon'=>'text'),
         'tsv'  => array ('type'=>'text/tab-separated-values', 'icon'=>'text'),
-        'txt'  => array ('type'=>'text/plain', 'icon'=>'text'),
-        'wav'  => array ('type'=>'audio/wav', 'icon'=>'audio'),
-        'webm'  => array ('type'=>'video/webm', 'icon'=>'video'),
-        'wmv'  => array ('type'=>'video/x-ms-wmv', 'icon'=>'avi'),
-        'asf'  => array ('type'=>'video/x-ms-asf', 'icon'=>'avi'),
+        'txt'  => array ('type'=>'text/plain', 'icon'=>'text', 'defaulticon'=>true),
+        'wav'  => array ('type'=>'audio/wav', 'icon'=>'wav', 'groups'=>array('audio'), 'string'=>'audio'),
+        'webm'  => array ('type'=>'video/webm', 'icon'=>'wmv', 'groups'=>array('video'), 'string'=>'video'),
+        'wmv'  => array ('type'=>'video/x-ms-wmv', 'icon'=>'wmv', 'groups'=>array('video'), 'string'=>'video'),
+        'asf'  => array ('type'=>'video/x-ms-asf', 'icon'=>'wmv', 'groups'=>array('video'), 'string'=>'video'),
         'xdp'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
         'xfd'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
         'xfdf' => array ('type'=>'application/pdf', 'icon'=>'pdf'),
 
-        'xls'  => array ('type'=>'application/vnd.ms-excel', 'icon'=>'excel'),
+        'xls'  => array ('type'=>'application/vnd.ms-excel', 'icon'=>'xlsx', 'groups'=>array('spreadsheet')),
         'xlsx' => array ('type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'icon'=>'xlsx'),
-        'xlsm' => array ('type'=>'application/vnd.ms-excel.sheet.macroEnabled.12', 'icon'=>'xlsm'),
-        'xltx' => array ('type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.template', 'icon'=>'xltx'),
-        'xltm' => array ('type'=>'application/vnd.ms-excel.template.macroEnabled.12', 'icon'=>'xltm'),
-        'xlsb' => array ('type'=>'application/vnd.ms-excel.sheet.binary.macroEnabled.12', 'icon'=>'xlsb'),
-        'xlam' => array ('type'=>'application/vnd.ms-excel.addin.macroEnabled.12', 'icon'=>'xlam'),
+        'xlsm' => array ('type'=>'application/vnd.ms-excel.sheet.macroEnabled.12', 'icon'=>'xlsx', 'groups'=>array('spreadsheet')),
+        'xltx' => array ('type'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.template', 'icon'=>'xlsx'),
+        'xltm' => array ('type'=>'application/vnd.ms-excel.template.macroEnabled.12', 'icon'=>'xlsx'),
+        'xlsb' => array ('type'=>'application/vnd.ms-excel.sheet.binary.macroEnabled.12', 'icon'=>'xlsx'),
+        'xlam' => array ('type'=>'application/vnd.ms-excel.addin.macroEnabled.12', 'icon'=>'xlsx'),
 
         'xml'  => array ('type'=>'application/xml', 'icon'=>'xml'),
         'xsl'  => array ('type'=>'text/xml', 'icon'=>'xml'),
-        'zip'  => array ('type'=>'application/zip', 'icon'=>'zip')
+        'zip'  => array ('type'=>'application/zip', 'icon'=>'zip', 'groups'=>array('archive'), 'string'=>'archive')
     );
     return $mimearray;
 }
@@ -1402,39 +1538,41 @@ function get_mimetypes_array() {
  *
  * @category files
  * @param string $element Desired information (usually 'icon'
- *   for icon filename or 'type' for MIME type)
+ *   for icon filename or 'type' for MIME type. Can also be
+ *   'icon24', ...32, 48, 64, 72, 80, 96, 128, 256)
  * @param string $filename Filename we're looking up
  * @return string Requested piece of information from array
  */
 function mimeinfo($element, $filename) {
     global $CFG;
-    $mimeinfo = get_mimetypes_array();
+    $mimeinfo = & get_mimetypes_array();
+    static $iconpostfixes = array(256=>'-256', 128=>'-128', 96=>'-96', 80=>'-80', 72=>'-72', 64=>'-64', 48=>'-48', 32=>'-32', 24=>'-24', 16=>'');
 
-    if (preg_match('/\.([a-z0-9]+)$/i', $filename, $match)) {
-        if (isset($mimeinfo[strtolower($match[1])][$element])) {
-            return $mimeinfo[strtolower($match[1])][$element];
-        } else {
-            if ($element == 'icon32') {
-                if (isset($mimeinfo[strtolower($match[1])]['icon'])) {
-                    $filename = $mimeinfo[strtolower($match[1])]['icon'];
-                } else {
-                    $filename = 'unknown';
+    $filetype = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    if (empty($filetype)) {
+        $filetype = 'xxx'; // file without extension
+    }
+    if (preg_match('/^icon(\d*)$/', $element, $iconsizematch)) {
+        $iconsize = max(array(16, (int)$iconsizematch[1]));
+        $filenames = array($mimeinfo['xxx']['icon']);
+        if ($filetype != 'xxx' && isset($mimeinfo[$filetype]['icon'])) {
+            array_unshift($filenames, $mimeinfo[$filetype]['icon']);
+        }
+        // find the file with the closest size, first search for specific icon then for default icon
+        foreach ($filenames as $filename) {
+            foreach ($iconpostfixes as $size => $postfix) {
+                $fullname = $CFG->dirroot.'/pix/f/'.$filename.$postfix;
+                if ($iconsize >= $size && (file_exists($fullname.'.png') || file_exists($fullname.'.gif'))) {
+                    return $filename.$postfix;
                 }
-                $filename .= '-32';
-                if (file_exists($CFG->dirroot.'/pix/f/'.$filename.'.png') or file_exists($CFG->dirroot.'/pix/f/'.$filename.'.gif')) {
-                    return $filename;
-                } else {
-                    return 'unknown-32';
-                }
-            } else {
-                return $mimeinfo['xxx'][$element];   // By default
             }
         }
-    } else {
-        if ($element == 'icon32') {
-            return 'unknown-32';
-        }
+    } else if (isset($mimeinfo[$filetype][$element])) {
+        return $mimeinfo[$filetype][$element];
+    } else if (isset($mimeinfo['xxx'][$element])) {
         return $mimeinfo['xxx'][$element];   // By default
+    } else {
+        return null;
     }
 }
 
@@ -1443,66 +1581,120 @@ function mimeinfo($element, $filename) {
  * the other way around.
  *
  * @category files
- * @param string $element Desired information (usually 'icon')
+ * @param string $element Desired information ('extension', 'icon', 'icon-24', etc.)
  * @param string $mimetype MIME type we're looking up
  * @return string Requested piece of information from array
  */
 function mimeinfo_from_type($element, $mimetype) {
-    $mimeinfo = get_mimetypes_array();
+    /* array of cached mimetype->extension associations */
+    static $cached = array();
+    $mimeinfo = & get_mimetypes_array();
 
-    foreach($mimeinfo as $values) {
-        if ($values['type']==$mimetype) {
-            if (isset($values[$element])) {
-                return $values[$element];
+    if (!array_key_exists($mimetype, $cached)) {
+        $cached[$mimetype] = null;
+        foreach($mimeinfo as $filetype => $values) {
+            if ($values['type'] == $mimetype) {
+                if ($cached[$mimetype] === null) {
+                    $cached[$mimetype] = '.'.$filetype;
+                }
+                if (!empty($values['defaulticon'])) {
+                    $cached[$mimetype] = '.'.$filetype;
+                    break;
+                }
             }
-            break;
+        }
+        if (empty($cached[$mimetype])) {
+            $cached[$mimetype] = '.xxx';
         }
     }
-    return $mimeinfo['xxx'][$element]; // Default
+    if ($element === 'extension') {
+        return $cached[$mimetype];
+    } else {
+        return mimeinfo($element, $cached[$mimetype]);
+    }
 }
 
 /**
- * Get information about a filetype based on the icon file.
+ * Return the relative icon path for a given file
  *
- * @category files
- * @param string $element Desired information (usually 'icon')
- * @param string $icon Icon file name without extension
- * @param bool $all return all matching entries (defaults to false - best (by ext)/last match)
- * @return string Requested piece of information from array
+ * Usage:
+ * <code>
+ * // $file - instance of stored_file or file_info
+ * $icon = $OUTPUT->pix_url(file_file_icon($file))->out();
+ * echo html_writer::empty_tag('img', array('src' => $icon, 'alt' => get_mimetype_description($file)));
+ * </code>
+ * or
+ * <code>
+ * echo $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file));
+ * </code>
+ *
+ * @param stored_file|file_info|stdClass|array $file (in case of object attributes $file->filename
+ *     and $file->mimetype are expected)
+ * @param int $size The size of the icon. Defaults to 16 can also be 24, 32, 64, 128, 256
+ * @return string
  */
-function mimeinfo_from_icon($element, $icon, $all=false) {
-    $mimeinfo = get_mimetypes_array();
+function file_file_icon($file, $size = null) {
+    if (!is_object($file)) {
+        $file = (object)$file;
+    }
+    if (isset($file->filename)) {
+        $filename = $file->filename;
+    } else if (method_exists($file, 'get_filename')) {
+        $filename = $file->get_filename();
+    } else if (method_exists($file, 'get_visible_name')) {
+        $filename = $file->get_visible_name();
+    } else {
+        $filename = '';
+    }
+    if (isset($file->mimetype)) {
+        $mimetype = $file->mimetype;
+    } else if (method_exists($file, 'get_mimetype')) {
+        $mimetype = $file->get_mimetype();
+    } else {
+        $mimetype = '';
+    }
+    $mimetypes = &get_mimetypes_array();
+    if ($filename) {
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        if ($extension && !empty($mimetypes[$extension])) {
+            // if file name has known extension, return icon for this extension
+            return file_extension_icon($filename, $size);
+        }
+    }
+    return file_mimetype_icon($mimetype, $size);
+}
 
-    if (preg_match("/\/(.*)/", $icon, $matches)) {
-        $icon = $matches[1];
-    }
-    // Try to get the extension
-    $extension = '';
-    if (($cutat = strrpos($icon, '.')) !== false && $cutat < strlen($icon)-1) {
-        $extension = substr($icon, $cutat + 1);
-    }
-    $info = array($mimeinfo['xxx'][$element]); // Default
-    foreach($mimeinfo as $key => $values) {
-        if ($values['icon']==$icon) {
-            if (isset($values[$element])) {
-                $info[$key] = $values[$element];
+/**
+ * Return the relative icon path for a folder image
+ *
+ * Usage:
+ * <code>
+ * $icon = $OUTPUT->pix_url(file_folder_icon())->out();
+ * echo html_writer::empty_tag('img', array('src' => $icon));
+ * </code>
+ * or
+ * <code>
+ * echo $OUTPUT->pix_icon(file_folder_icon(32));
+ * </code>
+ *
+ * @param int $iconsize The size of the icon. Defaults to 16 can also be 24, 32, 48, 64, 72, 80, 96, 128, 256
+ * @return string
+ */
+function file_folder_icon($iconsize = null) {
+    global $CFG;
+    static $iconpostfixes = array(256=>'-256', 128=>'-128', 96=>'-96', 80=>'-80', 72=>'-72', 64=>'-64', 48=>'-48', 32=>'-32', 24=>'-24', 16=>'');
+    static $cached = array();
+    $iconsize = max(array(16, (int)$iconsize));
+    if (!array_key_exists($iconsize, $cached)) {
+        foreach ($iconpostfixes as $size => $postfix) {
+            $fullname = $CFG->dirroot.'/pix/f/folder'.$postfix;
+            if ($iconsize >= $size && (file_exists($fullname.'.png') || file_exists($fullname.'.gif'))) {
+                $cached[$iconsize] = 'f/folder'.$postfix;
+                break;
             }
-            //No break, for example for 'excel' we don't want 'csv'!
         }
     }
-    if ($all) {
-        if (count($info) > 1) {
-            array_shift($info); // take off document/unknown if we have better options
-        }
-        return array_values($info); // Keep keys out when requesting all
-    }
-
-    // Requested only one, try to get the best by extension coincidence, else return the last
-    if ($extension && isset($info[$extension])) {
-        return $info[$extension];
-    }
-
-    return array_pop($info); // Return last match (mimicking behaviour/comment inside foreach loop)
+    return $cached[$iconsize];
 }
 
 /**
@@ -1513,27 +1705,19 @@ function mimeinfo_from_icon($element, $icon, $all=false) {
  *
  * <code>
  * $mimetype = 'image/jpg';
- * $icon = $OUTPUT->pix_url(file_mimetype_icon($mimetype));
- * echo '<img src="'.$icon.'" alt="'.$mimetype.'" />';
+ * $icon = $OUTPUT->pix_url(file_mimetype_icon($mimetype))->out();
+ * echo html_writer::empty_tag('img', array('src' => $icon, 'alt' => get_mimetype_description($mimetype)));
  * </code>
  *
  * @category files
  * @todo MDL-31074 When an $OUTPUT->icon method is available this function should be altered
  * to conform with that.
  * @param string $mimetype The mimetype to fetch an icon for
- * @param int $size The size of the icon. Not yet implemented
+ * @param int $size The size of the icon. Defaults to 16 can also be 24, 32, 64, 128, 256
  * @return string The relative path to the icon
  */
 function file_mimetype_icon($mimetype, $size = NULL) {
-    global $CFG;
-
-    $icon = mimeinfo_from_type('icon', $mimetype);
-    if ($size) {
-        if (file_exists("$CFG->dirroot/pix/f/$icon-$size.png") or file_exists("$CFG->dirroot/pix/f/$icon-$size.gif")) {
-            $icon = "$icon-$size";
-        }
-    }
-    return 'f/'.$icon;
+    return 'f/'.mimeinfo_from_type('icon'.$size, $mimetype);
 }
 
 /**
@@ -1543,9 +1727,9 @@ function file_mimetype_icon($mimetype, $size = NULL) {
  * a return the full path to an icon.
  *
  * <code>
- * $filename = 'jpg';
- * $icon = $OUTPUT->pix_url(file_extension_icon($filename));
- * echo '<img src="'.$icon.'" alt="blah" />';
+ * $filename = '.jpg';
+ * $icon = $OUTPUT->pix_url(file_extension_icon($filename))->out();
+ * echo html_writer::empty_tag('img', array('src' => $icon, 'alt' => '...'));
  * </code>
  *
  * @todo MDL-31074 When an $OUTPUT->icon method is available this function should be altered
@@ -1553,39 +1737,151 @@ function file_mimetype_icon($mimetype, $size = NULL) {
  * @todo MDL-31074 Implement $size
  * @category files
  * @param string $filename The filename to get the icon for
- * @param int $size The size of the icon. Defaults to null can also be 32
+ * @param int $size The size of the icon. Defaults to 16 can also be 24, 32, 64, 128, 256
  * @return string
  */
 function file_extension_icon($filename, $size = NULL) {
-    global $CFG;
-
-    $icon = mimeinfo('icon', $filename);
-    if ($size) {
-        if (file_exists("$CFG->dirroot/pix/f/$icon-$size.png") or file_exists("$CFG->dirroot/pix/f/$icon-$size.gif")) {
-            $icon = "$icon-$size";
-        }
-    }
-    return 'f/'.$icon;
+    return 'f/'.mimeinfo('icon'.$size, $filename);
 }
 
 /**
  * Obtains descriptions for file types (e.g. 'Microsoft Word document') from the
  * mimetypes.php language file.
  *
- * @param string $mimetype MIME type (can be obtained using the mimeinfo function)
+ * @param mixed $obj - instance of stored_file or file_info or array/stdClass with field
+ *   'filename' and 'mimetype', or just a string with mimetype (though it is recommended to
+ *   have filename); In case of array/stdClass the field 'mimetype' is optional.
  * @param bool $capitalise If true, capitalises first character of result
  * @return string Text description
  */
-function get_mimetype_description($mimetype, $capitalise=false) {
-    if (get_string_manager()->string_exists($mimetype, 'mimetypes')) {
-        $result = get_string($mimetype, 'mimetypes');
+function get_mimetype_description($obj, $capitalise=false) {
+    $filename = $mimetype = '';
+    if (is_object($obj) && method_exists($obj, 'get_filename') && method_exists($obj, 'get_mimetype')) {
+        // this is an instance of stored_file
+        $mimetype = $obj->get_mimetype();
+        $filename = $obj->get_filename();
+    } else if (is_object($obj) && method_exists($obj, 'get_visible_name') && method_exists($obj, 'get_mimetype')) {
+        // this is an instance of file_info
+        $mimetype = $obj->get_mimetype();
+        $filename = $obj->get_visible_name();
+    } else if (is_array($obj) || is_object ($obj)) {
+        $obj = (array)$obj;
+        if (!empty($obj['filename'])) {
+            $filename = $obj['filename'];
+        }
+        if (!empty($obj['mimetype'])) {
+            $mimetype = $obj['mimetype'];
+        }
     } else {
-        $result = get_string('document/unknown','mimetypes');
+        $mimetype = $obj;
+    }
+    $mimetypefromext = mimeinfo('type', $filename);
+    if (empty($mimetype) || $mimetypefromext !== 'document/unknown') {
+        // if file has a known extension, overwrite the specified mimetype
+        $mimetype = $mimetypefromext;
+    }
+    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    if (empty($extension)) {
+        $mimetypestr = mimeinfo_from_type('string', $mimetype);
+        $extension = str_replace('.', '', mimeinfo_from_type('extension', $mimetype));
+    } else {
+        $mimetypestr = mimeinfo('string', $filename);
+    }
+    $chunks = explode('/', $mimetype, 2);
+    $chunks[] = '';
+    $attr = array(
+        'mimetype' => $mimetype,
+        'ext' => $extension,
+        'mimetype1' => $chunks[0],
+        'mimetype2' => $chunks[1],
+    );
+    $a = array();
+    foreach ($attr as $key => $value) {
+        $a[$key] = $value;
+        $a[strtoupper($key)] = strtoupper($value);
+        $a[ucfirst($key)] = ucfirst($value);
+    }
+    if (get_string_manager()->string_exists($mimetype, 'mimetypes')) {
+        $result = get_string($mimetype, 'mimetypes', (object)$a);
+    } else if (get_string_manager()->string_exists($mimetypestr, 'mimetypes')) {
+        $result = get_string($mimetypestr, 'mimetypes', (object)$a);
+    } else if (get_string_manager()->string_exists('default', 'mimetypes')) {
+        $result = get_string('default', 'mimetypes', (object)$a);
+    } else {
+        $result = $mimetype;
     }
     if ($capitalise) {
         $result=ucfirst($result);
     }
     return $result;
+}
+
+/**
+ * Returns array of elements of type $element in type group(s)
+ *
+ * @param string $element name of the element we are interested in, usually 'type' or 'extension'
+ * @param string|array $groups one group or array of groups/extensions/mimetypes
+ * @return array
+ */
+function file_get_typegroup($element, $groups) {
+    static $cached = array();
+    if (!is_array($groups)) {
+        $groups = array($groups);
+    }
+    if (!array_key_exists($element, $cached)) {
+        $cached[$element] = array();
+    }
+    $result = array();
+    foreach ($groups as $group) {
+        if (!array_key_exists($group, $cached[$element])) {
+            // retrieive and cache all elements of type $element for group $group
+            $mimeinfo = & get_mimetypes_array();
+            $cached[$element][$group] = array();
+            foreach ($mimeinfo as $extension => $value) {
+                $value['extension'] = '.'.$extension;
+                if (empty($value[$element])) {
+                    continue;
+                }
+                if (($group === '.'.$extension || $group === $value['type'] ||
+                        (!empty($value['groups']) && in_array($group, $value['groups']))) &&
+                        !in_array($value[$element], $cached[$element][$group])) {
+                    $cached[$element][$group][] = $value[$element];
+                }
+            }
+        }
+        $result = array_merge($result, $cached[$element][$group]);
+    }
+    return array_unique($result);
+}
+
+/**
+ * Checks if file with name $filename has one of the extensions in groups $groups
+ *
+ * @see get_mimetypes_array()
+ * @param string $filename name of the file to check
+ * @param string|array $groups one group or array of groups to check
+ * @param bool $checktype if true and extension check fails, find the mimetype and check if
+ * file mimetype is in mimetypes in groups $groups
+ * @return bool
+ */
+function file_extension_in_typegroup($filename, $groups, $checktype = false) {
+    $extension = pathinfo($filename, PATHINFO_EXTENSION);
+    if (!empty($extension) && in_array('.'.strtolower($extension), file_get_typegroup('extension', $groups))) {
+        return true;
+    }
+    return $checktype && file_mimetype_in_typegroup(mimeinfo('type', $filename), $groups);
+}
+
+/**
+ * Checks if mimetype $mimetype belongs to one of the groups $groups
+ *
+ * @see get_mimetypes_array()
+ * @param string $mimetype
+ * @param string|array $groups one group or array of groups to check
+ * @return bool
+ */
+function file_mimetype_in_typegroup($mimetype, $groups) {
+    return !empty($mimetype) && in_array($mimetype, file_get_typegroup('type', $groups));
 }
 
 /**
@@ -1991,18 +2287,32 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     if (!empty($options['preview'])) {
         // replace the file with its preview
         $fs = get_file_storage();
-        $stored_file = $fs->get_file_preview($stored_file, $options['preview']);
-        if (!$stored_file) {
-            // unable to create a preview of the file
-            send_header_404();
-            die();
+        $preview_file = $fs->get_file_preview($stored_file, $options['preview']);
+        if (!$preview_file) {
+            // unable to create a preview of the file, send its default mime icon instead
+            if ($options['preview'] === 'tinyicon') {
+                $size = 24;
+            } else if ($options['preview'] === 'thumb') {
+                $size = 90;
+            } else {
+                $size = 256;
+            }
+            $fileicon = file_file_icon($stored_file, $size);
+            send_file($CFG->dirroot.'/pix/'.$fileicon.'.png', basename($fileicon).'.png');
         } else {
             // preview images have fixed cache lifetime and they ignore forced download
             // (they are generated by GD and therefore they are considered reasonably safe).
+            $stored_file = $preview_file;
             $lifetime = DAYSECS;
             $filter = 0;
             $forcedownload = false;
         }
+    }
+
+    // handle external resource
+    if ($stored_file->is_external_file()) {
+        $stored_file->send_file($lifetime, $filter, $forcedownload, $options);
+        die;
     }
 
     if (!$stored_file or $stored_file->is_directory()) {
@@ -2943,7 +3253,7 @@ class curl_cache {
      * @global stdClass $CFG
      * @param string $module which module is using curl_cache
      */
-    function __construct($module = 'repository'){
+    public function __construct($module = 'repository') {
         global $CFG;
         if (!empty($module)) {
             $this->dir = $CFG->cachedir.'/'.$module.'/';
@@ -2974,14 +3284,13 @@ class curl_cache {
      * @param mixed $param
      * @return bool|string
      */
-    public function get($param){
+    public function get($param) {
         global $CFG, $USER;
         $this->cleanup($this->ttl);
         $filename = 'u'.$USER->id.'_'.md5(serialize($param));
         if(file_exists($this->dir.$filename)) {
             $lasttime = filemtime($this->dir.$filename);
-            if(time()-$lasttime > $this->ttl)
-            {
+            if (time()-$lasttime > $this->ttl) {
                 return false;
             } else {
                 $fp = fopen($this->dir.$filename, 'r');
@@ -3001,7 +3310,7 @@ class curl_cache {
      * @param mixed $param
      * @param mixed $val
      */
-    public function set($param, $val){
+    public function set($param, $val) {
         global $CFG, $USER;
         $filename = 'u'.$USER->id.'_'.md5(serialize($param));
         $fp = fopen($this->dir.$filename, 'w');
@@ -3012,18 +3321,19 @@ class curl_cache {
     /**
      * Remove cache files
      *
-     * @param int $expire The number os seconds before expiry
+     * @param int $expire The number of seconds before expiry
      */
-    public function cleanup($expire){
-        if($dir = opendir($this->dir)){
+    public function cleanup($expire) {
+        if ($dir = opendir($this->dir)) {
             while (false !== ($file = readdir($dir))) {
                 if(!is_dir($file) && $file != '.' && $file != '..') {
                     $lasttime = @filemtime($this->dir.$file);
-                    if(time() - $lasttime > $expire){
+                    if (time() - $lasttime > $expire) {
                         @unlink($this->dir.$file);
                     }
                 }
             }
+            closedir($dir);
         }
     }
     /**
@@ -3032,120 +3342,17 @@ class curl_cache {
      * @global object $CFG
      * @global object $USER
      */
-    public function refresh(){
+    public function refresh() {
         global $CFG, $USER;
-        if($dir = opendir($this->dir)){
+        if ($dir = opendir($this->dir)) {
             while (false !== ($file = readdir($dir))) {
-                if(!is_dir($file) && $file != '.' && $file != '..') {
-                    if(strpos($file, 'u'.$USER->id.'_')!==false){
+                if (!is_dir($file) && $file != '.' && $file != '..') {
+                    if (strpos($file, 'u'.$USER->id.'_') !== false) {
                         @unlink($this->dir.$file);
                     }
                 }
             }
         }
-    }
-}
-
-/**
- * This class is used to parse lib/file/file_types.mm which help get file extensions by file types.
- *
- * The file_types.mm file can be edited by freemind in graphic environment.
- *
- * @package   core_files
- * @category  files
- * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class filetype_parser {
-    /**
-     * Check file_types.mm file, setup variables
-     *
-     * @global stdClass $CFG
-     * @param string $file
-     */
-    public function __construct($file = '') {
-        global $CFG;
-        if (empty($file)) {
-            $this->file = $CFG->libdir.'/filestorage/file_types.mm';
-        } else {
-            $this->file = $file;
-        }
-        $this->tree = array();
-        $this->result = array();
-    }
-
-    /**
-     * A private function to browse xml nodes
-     *
-     * @param array $parent
-     * @param array $types
-     */
-    private function _browse_nodes($parent, $types) {
-        $key = (string)$parent['TEXT'];
-        if(isset($parent->node)) {
-            $this->tree[$key] = array();
-            if (in_array((string)$parent['TEXT'], $types)) {
-                $this->_select_nodes($parent, $this->result);
-            } else {
-                foreach($parent->node as $v){
-                    $this->_browse_nodes($v, $types);
-                }
-            }
-        } else {
-            $this->tree[] = $key;
-        }
-    }
-
-    /**
-     * A private function to select text nodes
-     *
-     * @param array $parent
-     */
-    private function _select_nodes($parent){
-        if(isset($parent->node)) {
-            foreach($parent->node as $v){
-                $this->_select_nodes($v, $this->result);
-            }
-        } else {
-            $this->result[] = (string)$parent['TEXT'];
-        }
-    }
-
-
-    /**
-     * Get file extensions by file types names.
-     *
-     * @param array $types
-     * @return mixed
-     */
-    public function get_extensions($types) {
-        if (!is_array($types)) {
-            $types = array($types);
-        }
-        $this->result = array();
-        if ((is_array($types) && in_array('*', $types)) ||
-            $types == '*' || empty($types)) {
-            return array('*');
-        }
-        foreach ($types as $key=>$value){
-            if (strpos($value, '.') !== false) {
-                $this->result[] = $value;
-                unset($types[$key]);
-            }
-        }
-        if (file_exists($this->file)) {
-            $xml = simplexml_load_file($this->file);
-            foreach($xml->node->node as $v){
-                if (in_array((string)$v['TEXT'], $types)) {
-                    $this->_select_nodes($v);
-                } else {
-                    $this->_browse_nodes($v, $types);
-                }
-            }
-        } else {
-            exit('Failed to open file lib/filestorage/file_types.mm');
-        }
-        return $this->result;
     }
 }
 
@@ -3413,7 +3620,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
             }
 
             // fix file name automatically
-            if ($filename !== 'f1' and $filename !== 'f2') {
+            if ($filename !== 'f1' and $filename !== 'f2' and $filename !== 'f3') {
                 $filename = 'f1';
             }
 
@@ -3426,19 +3633,27 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 redirect($theme->pix_url('u/'.$filename, 'moodle')); // intentionally not cached
             }
 
-            if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.png')) {
-                if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg')) {
-                    // bad reference - try to prevent future retries as hard as possible!
-                    if ($user = $DB->get_record('user', array('id'=>$context->instanceid), 'id, picture')) {
-                        if ($user->picture == 1 or $user->picture > 10) {
-                            $DB->set_field('user', 'picture', 0, array('id'=>$user->id));
+            if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'.png')) {
+                if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'.jpg')) {
+                    if ($filename === 'f3') {
+                        // f3 512x512px was introduced in 2.3, there might be only the smaller version.
+                        if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', 'f1.png')) {
+                            $file = $fs->get_file($context->id, 'user', 'icon', 0, '/', 'f1.jpg');
                         }
                     }
-                    // no redirect here because it is not cached
-                    $theme = theme_config::load($themename);
-                    $imagefile = $theme->resolve_image_location('u/'.$filename, 'moodle');
-                    send_file($imagefile, basename($imagefile), 60*60*24*14);
                 }
+            }
+            if (!$file) {
+                // bad reference - try to prevent future retries as hard as possible!
+                if ($user = $DB->get_record('user', array('id'=>$context->instanceid), 'id, picture')) {
+                    if ($user->picture > 0) {
+                        $DB->set_field('user', 'picture', 0, array('id'=>$user->id));
+                    }
+                }
+                // no redirect here because it is not cached
+                $theme = theme_config::load($themename);
+                $imagefile = $theme->resolve_image_location('u/'.$filename, 'moodle');
+                send_file($imagefile, basename($imagefile), 60*60*24*14);
             }
 
             send_stored_file($file, 60*60*24*365, 0, false, array('preview' => $preview)); // enable long caching, there are many images on each page
@@ -3888,6 +4103,12 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 // somebody tries to gain illegal access, cm type must match the component!
                 send_file_not_found();
             }
+
+            $bprecord = $DB->get_record('block_positions', array('blockinstanceid' => $context->instanceid), 'visible');
+            // User can't access file, if block is hidden or doesn't have block:view capability
+            if (($bprecord && !$bprecord->visible) || !has_capability('moodle/block:view', $context)) {
+                 send_file_not_found();
+            }
         } else {
             $birecord = null;
         }
@@ -3922,4 +4143,171 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
         send_file_not_found();
     }
 
+}
+
+/**
+ * Universe file cacheing class
+ *
+ * @package    core_files
+ * @category   files
+ * @copyright  2012 Dongsheng Cai {@link http://dongsheng.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_file {
+    /** @var string */
+    public $cachedir = '';
+
+    /**
+     * static method to create cache_file class instance
+     *
+     * @param array $options caching ooptions
+     */
+    public static function get_instance($options = array()) {
+        return new cache_file($options);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param array $options
+     */
+    private function __construct($options = array()) {
+        global $CFG;
+
+        // Path to file caches.
+        if (isset($options['cachedir'])) {
+            $this->cachedir = $options['cachedir'];
+        } else {
+            $this->cachedir = $CFG->cachedir . '/filedir';
+        }
+
+        // Create cache directory.
+        if (!file_exists($this->cachedir)) {
+            mkdir($this->cachedir, $CFG->directorypermissions, true);
+        }
+
+        // When use cache_file::get, it will check ttl.
+        if (isset($options['ttl']) && is_numeric($options['ttl'])) {
+            $this->ttl = $options['ttl'];
+        } else {
+            // One day.
+            $this->ttl = 60 * 60 * 24;
+        }
+    }
+
+    /**
+     * Get cached file, false if file expires
+     *
+     * @param mixed $param
+     * @param array $options caching options
+     * @return bool|string
+     */
+    public static function get($param, $options = array()) {
+        $instance = self::get_instance($options);
+        $filepath = $instance->generate_filepath($param);
+        if (file_exists($filepath)) {
+            $lasttime = filemtime($filepath);
+            if (time() - $lasttime > $instance->ttl) {
+                // Remove cache file.
+                unlink($filepath);
+                return false;
+            } else {
+                return $filepath;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Static method to create cache from a file
+     *
+     * @param mixed $ref
+     * @param string $srcfile
+     * @param array $options
+     * @return string cached file path
+     */
+    public static function create_from_file($ref, $srcfile, $options = array()) {
+        $instance = self::get_instance($options);
+        $cachedfilepath = $instance->generate_filepath($ref);
+        copy($srcfile, $cachedfilepath);
+        return $cachedfilepath;
+    }
+
+    /**
+     * Static method to create cache from url
+     *
+     * @param mixed $ref file reference
+     * @param string $url file url
+     * @param array $options options
+     * @return string cached file path
+     */
+    public static function create_from_url($ref, $url, $options = array()) {
+        $instance = self::get_instance($options);
+        $cachedfilepath = $instance->generate_filepath($ref);
+        $fp = fopen($cachedfilepath, 'w');
+        $curl = new curl;
+        $curl->download(array(array('url'=>$url, 'file'=>$fp)));
+        // Must close file handler.
+        fclose($fp);
+        return $cachedfilepath;
+    }
+
+    /**
+     * Static method to create cache from string
+     *
+     * @param mixed $ref file reference
+     * @param string $url file url
+     * @param array $options options
+     * @return string cached file path
+     */
+    public static function create_from_string($ref, $string, $options = array()) {
+        $instance = self::get_instance($options);
+        $cachedfilepath = $instance->generate_filepath($ref);
+        $fp = fopen($cachedfilepath, 'w');
+        fwrite($fp, $string);
+        // Must close file handler.
+        fclose($fp);
+        return $cachedfilepath;
+    }
+
+    /**
+     * Build path to cache file
+     *
+     * @param mixed $ref
+     * @return string
+     */
+    private function generate_filepath($ref) {
+        global $CFG;
+        $hash = sha1(serialize($ref));
+        $l1 = $hash[0].$hash[1];
+        $l2 = $hash[2].$hash[3];
+        $dir = $this->cachedir . "/$l1/$l2";
+        if (!file_exists($dir)) {
+            mkdir($dir, $CFG->directorypermissions, true);
+        }
+        return "$dir/$hash";
+    }
+
+    /**
+     * Remove cache files
+     *
+     * @param array $options options
+     * @param int $expire The number of seconds before expiry
+     */
+    public static function cleanup($options = array(), $expire) {
+        global $CFG;
+        $instance = self::get_instance($options);
+        if ($dir = opendir($instance->cachedir)) {
+            while (($file = readdir($dir)) !== false) {
+                if (!is_dir($file) && $file != '.' && $file != '..') {
+                    $lasttime = @filemtime($instance->cachedir . $file);
+                    if(time() - $lasttime > $expire){
+                        @unlink($instance->cachedir . $file);
+                    }
+                }
+            }
+            closedir($dir);
+        }
+    }
 }

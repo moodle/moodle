@@ -302,8 +302,7 @@ class core_course_external extends external_api {
                 $exceptionparam = new stdClass();
                 $exceptionparam->message = $e->getMessage();
                 $exceptionparam->courseid = $course->id;
-                throw new moodle_exception(
-                        get_string('errorcoursecontextnotvalid', 'webservice', $exceptionparam));
+                throw new moodle_exception('errorcoursecontextnotvalid', 'webservice', '', $exceptionparam);
             }
             require_capability('moodle/course:view', $context);
 
@@ -519,23 +518,20 @@ class core_course_external extends external_api {
                 $exceptionparam = new stdClass();
                 $exceptionparam->message = $e->getMessage();
                 $exceptionparam->catid = $course['categoryid'];
-                throw new moodle_exception(
-                        get_string('errorcatcontextnotvalid', 'webservice', $exceptionparam));
+                throw new moodle_exception('errorcatcontextnotvalid', 'webservice', '', $exceptionparam);
             }
             require_capability('moodle/course:create', $context);
 
             // Make sure lang is valid
             if (key_exists('lang', $course) and empty($availablelangs[$course['lang']])) {
-                throw new moodle_exception(
-                        get_string('errorinvalidparam', 'webservice', 'lang'));
+                throw new moodle_exception('errorinvalidparam', 'webservice', '', 'lang');
             }
 
             // Make sure theme is valid
             if (key_exists('forcetheme', $course)) {
                 if (!empty($CFG->allowcoursethemes)) {
                     if (empty($availablethemes[$course['forcetheme']])) {
-                        throw new moodle_exception(
-                                get_string('errorinvalidparam', 'webservice', 'forcetheme'));
+                        throw new moodle_exception('errorinvalidparam', 'webservice', '', 'forcetheme');
                     } else {
                         $course['theme'] = $course['forcetheme'];
                     }

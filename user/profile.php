@@ -280,7 +280,7 @@ if ($user->icq && !isset($hiddenfields['icqnumber'])) {
 }
 
 if ($user->skype && !isset($hiddenfields['skypeid'])) {
-    print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype).
+    print_row(get_string('skypeid').':','<a href="skype:'.urlencode($user->skype).'?call">'.s($user->skype).
         ' <img src="http://mystatus.skype.com/smallicon/'.urlencode($user->skype).'" alt="'.get_string('status').'" '.
         ' /></a>');
 }

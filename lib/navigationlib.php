@@ -1722,7 +1722,7 @@ class global_navigation extends navigation_node {
                       FROM {course_categories} cc
                       JOIN {context} ctx ON cc.id = ctx.instanceid";
         $sqlwhere = "WHERE ctx.contextlevel = ".CONTEXT_COURSECAT;
-        $sqlorder = "ORDER BY depth ASC, sortorder ASC, id ASC";
+        $sqlorder = "ORDER BY cc.depth ASC, cc.sortorder ASC, cc.id ASC";
         $params = array();
 
         $categoriestoload = array();
@@ -2931,7 +2931,7 @@ class global_navigation_for_ajax extends global_navigation {
                   JOIN {context} ctx ON cc.id = ctx.instanceid
                  WHERE ctx.contextlevel = ".CONTEXT_COURSECAT." AND
                        (cc.id = :categoryid1 OR cc.parent = :categoryid2)
-              ORDER BY depth ASC, sortorder ASC, id ASC";
+              ORDER BY cc.depth ASC, cc.sortorder ASC, cc.id ASC";
         $params = array('categoryid1' => $categoryid, 'categoryid2' => $categoryid);
         $categories = $DB->get_recordset_sql($sql, $params, 0, $limit);
         $subcategories = array();
