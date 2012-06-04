@@ -256,7 +256,7 @@ class repository_equella extends repository {
      * @return string
      */
     private function getssotoken($readwrite = 'read') {
-        global $USER, $COURSE;
+        global $USER;
 
         if( $readwrite == 'write' ) {
 
