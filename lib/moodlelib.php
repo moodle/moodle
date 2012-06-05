@@ -8136,11 +8136,21 @@ function upgrade_set_timeout($max_execution_time=300) {
  * @global object
  * @global object
  * @uses HOURSECS
+ * @return bool True if executed, false if not
  */
 function notify_login_failures() {
     global $CFG, $DB, $OUTPUT;
 
+    if (empty($CFG->notifyloginfailures)) {
+        return false;
+    }
+
     $recip = get_users_from_config($CFG->notifyloginfailures, 'moodle/site:config');
+
+    // If it has been less than an hour, or if there are no recipients, don't execute.
+    if (((time() - HOURSECS) < $CFG->lastnotifyfailure) || !is_array($recip) || count($recip) <= 0) {
+        return false;
+    }
 
     if (empty($CFG->lastnotifyfailure)) {
         $CFG->lastnotifyfailure=0;
@@ -8218,10 +8228,8 @@ function notify_login_failures() {
     }
     $rs->close();
 
-/// If we haven't run in the last hour and
-/// we have something useful to report and we
-/// are actually supposed to be reporting to somebody
-    if ((time() - HOURSECS) > $CFG->lastnotifyfailure && $count > 0 && is_array($recip) && count($recip) > 0) {
+    // If we have something useful to report.
+    if ($count > 0) {
         $site = get_site();
         $subject = get_string('notifyloginfailuressubject', '', format_string($site->fullname));
     /// Calculate the complete body of notification (start + messages + end)
@@ -8243,6 +8251,8 @@ function notify_login_failures() {
 
 /// Finally, delete all the temp records we have created in cache_flags
     $DB->delete_records_select('cache_flags', "flagtype IN ('login_failure_by_ip', 'login_failure_by_info')");
+
+    return true;
 }
 
 /**

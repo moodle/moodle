@@ -275,9 +275,8 @@ function cron_run() {
         }
         flush();
 
-        if (!empty($CFG->notifyloginfailures)) {
-            notify_login_failures();
-            mtrace('Notified login failured');
+        if (notify_login_failures()) {
+            mtrace('Notified login failures');
         }
         flush();
 
