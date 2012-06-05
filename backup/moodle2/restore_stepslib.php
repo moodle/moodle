@@ -212,15 +212,18 @@ class restore_gradebook_structure_step extends restore_structure_step {
         $data->itemid = $this->get_new_parentid('grade_item');
 
         $data->userid = $this->get_mappingid('user', $data->userid, NULL);
-        $data->usermodified = $this->get_mappingid('user', $data->usermodified, NULL);
-        $data->locktime     = $this->apply_date_offset($data->locktime);
-        // TODO: Ask, all the rest of locktime/exported... work with time... to be rolled?
-        $data->overridden = $this->apply_date_offset($data->overridden);
-        $data->timecreated  = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
+        if (!is_null($data->userid)) {
+            $data->usermodified = $this->get_mappingid('user', $data->usermodified, NULL);
+            $data->locktime     = $this->apply_date_offset($data->locktime);
+            // TODO: Ask, all the rest of locktime/exported... work with time... to be rolled?
+            $data->overridden = $this->apply_date_offset($data->overridden);
+            $data->timecreated  = $this->apply_date_offset($data->timecreated);
+            $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        $newitemid = $DB->insert_record('grade_grades', $data);
-        //$this->set_mapping('grade_grade', $oldid, $newitemid);
+            $newitemid = $DB->insert_record('grade_grades', $data);
+        } else {
+            debugging("Mapped user id not found for grade item id '{$data->itemid}'");
+        }
     }
     protected function process_grade_category($data) {
         global $DB;
