@@ -614,13 +614,13 @@ function notify_login_failures() {
 
     $recip = get_users_from_config($CFG->notifyloginfailures, 'moodle/site:config');
 
+    if (empty($CFG->lastnotifyfailure)) {
+        $CFG->lastnotifyfailure=0;
+    }
+
     // If it has been less than an hour, or if there are no recipients, don't execute.
     if (((time() - HOURSECS) < $CFG->lastnotifyfailure) || !is_array($recip) || count($recip) <= 0) {
         return false;
-    }
-
-    if (empty($CFG->lastnotifyfailure)) {
-        $CFG->lastnotifyfailure=0;
     }
 
     // we need to deal with the threshold stuff first.
