@@ -14,13 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Database manager instance is responsible for all database structure modifications.
  *
- * @package    core
- * @category   ddl
- * @subpackage ddl
+ * @package    core_ddl
  * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
  *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
  *             2008 Petr Skoda                   http://skodak.org
@@ -34,9 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * It is using db specific generators to find out the correct SQL syntax to do that.
  *
- * @package    core
- * @category   ddl
- * @subpackage ddl
+ * @package    core_ddl
  * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
  *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
  *             2008 Petr Skoda                   http://skodak.org
@@ -44,8 +39,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class database_manager {
 
-    /** @var moodle_database A moodle_database driver speific instance.*/
+    /** @var moodle_database A moodle_database driver specific instance.*/
     protected $mdb;
+
     /** @var sql_generator A driver specific SQL generator instance. Public because XMLDB editor needs to access it.*/
     public $generator;
 
@@ -55,8 +51,6 @@ class database_manager {
      * @param sql_generator $generator A driver specific SQL generator instance.
      */
     public function __construct($mdb, $generator) {
-        global $CFG;
-
         $this->mdb       = $mdb;
         $this->generator = $generator;
     }
@@ -100,7 +94,7 @@ class database_manager {
     /**
      * Given one xmldb_table, check if it exists in DB (true/false).
      *
-     * @param mixed $table The table to be searched (string name or xmldb_table instance).
+     * @param string|xmldb_table $table The table to be searched (string name or xmldb_table instance).
      * @return bool true/false True is a table exists, false otherwise.
      */
     public function table_exists($table) {
@@ -138,14 +132,14 @@ class database_manager {
      * @throws ddl_table_missing_exception
      */
     public function field_exists($table, $field) {
-    /// Calculate the name of the table
+        // Calculate the name of the table
         if (is_string($table)) {
             $tablename = $table;
         } else {
             $tablename = $table->getName();
         }
 
-    /// Check the table exists
+        // Check the table exists
         if (!$this->table_exists($table)) {
             throw new ddl_table_missing_exception($tablename);
         }
@@ -153,11 +147,11 @@ class database_manager {
         if (is_string($field)) {
             $fieldname = $field;
         } else {
-        /// Calculate the name of the table
+            // Calculate the name of the table
             $fieldname = $field->getName();
         }
 
-    /// Get list of fields in table
+        // Get list of fields in table
         $columns = $this->mdb->get_columns($tablename);
 
         $exists = array_key_exists($fieldname,  $columns);
@@ -175,32 +169,32 @@ class database_manager {
      * @throws ddl_table_missing_exception Thrown when table is not found.
      */
     public function find_index_name(xmldb_table $xmldb_table, xmldb_index $xmldb_index) {
-    /// Calculate the name of the table
+        // Calculate the name of the table
         $tablename = $xmldb_table->getName();
 
-    /// Check the table exists
+        // Check the table exists
         if (!$this->table_exists($xmldb_table)) {
             throw new ddl_table_missing_exception($tablename);
         }
 
-    /// Extract index columns
+        // Extract index columns
         $indcolumns = $xmldb_index->getFields();
 
-    /// Get list of indexes in table
+        // Get list of indexes in table
         $indexes = $this->mdb->get_indexes($tablename);
 
-    /// Iterate over them looking for columns coincidence
+        // Iterate over them looking for columns coincidence
         foreach ($indexes as $indexname => $index) {
             $columns = $index['columns'];
-        /// Check if index matchs queried index
+            // Check if index matches queried index
             $diferences = array_merge(array_diff($columns, $indcolumns), array_diff($indcolumns, $columns));
-        /// If no diferences, we have find the index
+            // If no differences, we have find the index
             if (empty($diferences)) {
                 return $indexname;
             }
         }
 
-    /// Arriving here, index not found
+        // Arriving here, index not found
         return false;
     }
 
@@ -233,23 +227,23 @@ class database_manager {
 
         $keycolumns = $xmldb_key->getFields();
 
-    /// Get list of keys in table
-    /// first primaries (we aren't going to use this now, because the MetaPrimaryKeys is awful)
-        ///TODO: To implement when we advance in relational integrity
-    /// then uniques (note that Moodle, for now, shouldn't have any UNIQUE KEY for now, but unique indexes)
-        ///TODO: To implement when we advance in relational integrity (note that AdoDB hasn't any MetaXXX for this.
-    /// then foreign (note that Moodle, for now, shouldn't have any FOREIGN KEY for now, but indexes)
-        ///TODO: To implement when we advance in relational integrity (note that AdoDB has one MetaForeignKeys()
-        ///but it's far from perfect.
-    /// TODO: To create the proper functions inside each generator to retrieve all the needed KEY info (name
-    ///       columns, reftable and refcolumns
+        // Get list of keys in table
+        // first primaries (we aren't going to use this now, because the MetaPrimaryKeys is awful)
+            //TODO: To implement when we advance in relational integrity
+        // then uniques (note that Moodle, for now, shouldn't have any UNIQUE KEY for now, but unique indexes)
+            //TODO: To implement when we advance in relational integrity (note that AdoDB hasn't any MetaXXX for this.
+        // then foreign (note that Moodle, for now, shouldn't have any FOREIGN KEY for now, but indexes)
+            //TODO: To implement when we advance in relational integrity (note that AdoDB has one MetaForeignKeys()
+            //but it's far from perfect.
+        // TODO: To create the proper functions inside each generator to retrieve all the needed KEY info (name
+        //       columns, reftable and refcolumns
 
-    /// So all we do is to return the official name of the requested key without any confirmation!)
-    /// One exception, hardcoded primary constraint names
+        // So all we do is to return the official name of the requested key without any confirmation!)
+        // One exception, hardcoded primary constraint names
         if ($this->generator->primary_key_name && $xmldb_key->getType() == XMLDB_KEY_PRIMARY) {
             return $this->generator->primary_key_name;
         } else {
-        /// Calculate the name suffix
+            // Calculate the name suffix
             switch ($xmldb_key->getType()) {
                 case XMLDB_KEY_PRIMARY:
                     $suffix = 'pk';
@@ -262,7 +256,7 @@ class database_manager {
                     $suffix = 'fk';
                     break;
             }
-        /// And simply, return the official name
+            // And simply, return the official name
             return $this->generator->getNameForObject($xmldb_table->getName(), implode(', ', $xmldb_key->getFields()), $suffix);
         }
     }
@@ -285,7 +279,7 @@ class database_manager {
         $structure = $xmldb_file->getStructure();
 
         if (!$loaded || !$xmldb_file->isLoaded()) {
-        /// Show info about the error if we can find it
+            // Show info about the error if we can find it
             if ($structure) {
                 if ($errors = $structure->getAllErrors()) {
                     throw new ddl_exception('ddlxmlfileerror', null, 'Errors found in XMLDB file: '. implode (', ', $errors));
@@ -312,7 +306,7 @@ class database_manager {
      * @return void
      */
     public function drop_table(xmldb_table $xmldb_table) {
-    /// Check table exists
+        // Check table exists
         if (!$this->table_exists($xmldb_table)) {
             throw new ddl_table_missing_exception($xmldb_table->getName());
         }
@@ -338,7 +332,7 @@ class database_manager {
 
         $loaded = $xmldb_file->loadXMLStructure();
         if (!$loaded || !$xmldb_file->isLoaded()) {
-        /// Show info about the error if we can find it
+            // Show info about the error if we can find it
             if ($structure =& $xmldb_file->getStructure()) {
                 if ($errors = $structure->getAllErrors()) {
                     throw new ddl_exception('ddlxmlfileerror', null, 'Errors found in XMLDB file: '. implode (', ', $errors));
@@ -418,7 +412,7 @@ class database_manager {
      * @return void
      */
     public function create_table(xmldb_table $xmldb_table) {
-    /// Check table doesn't exist
+        // Check table doesn't exist
         if ($this->table_exists($xmldb_table)) {
             throw new ddl_exception('ddltablealreadyexists', $xmldb_table->getName());
         }
@@ -477,14 +471,14 @@ class database_manager {
      * @return void
      */
     public function rename_table(xmldb_table $xmldb_table, $newname) {
-    /// Check newname isn't empty
+        // Check newname isn't empty
         if (!$newname) {
             throw new ddl_exception('ddlunknownerror', null, 'newname can not be empty');
         }
 
         $check = new xmldb_table($newname);
 
-    /// Check table already renamed
+        // Check table already renamed
         if (!$this->table_exists($xmldb_table)) {
             if ($this->table_exists($check)) {
                 throw new ddl_exception('ddlunknownerror', null, 'table probably already renamed');
@@ -493,7 +487,7 @@ class database_manager {
             }
         }
 
-    /// Check new table doesn't exist
+        // Check new table doesn't exist
         if ($this->table_exists($check)) {
             throw new ddl_exception('ddltablealreadyexists', $xmldb_table->getName(), 'can not rename table');
         }
@@ -505,7 +499,6 @@ class database_manager {
         $this->execute_sql_arr($sqlarr);
     }
 
-
     /**
      * This function will add the field to the table passed as arguments
      *
@@ -514,13 +507,13 @@ class database_manager {
      * @return void
      */
     public function add_field(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
-     /// Check the field doesn't exist
+         // Check the field doesn't exist
         if ($this->field_exists($xmldb_table, $xmldb_field)) {
             throw new ddl_exception('ddlfieldalreadyexists', $xmldb_field->getName());
         }
 
-    /// If NOT NULL and no default given (we ask the generator about the
-    /// *real* default that will be used) check the table is empty
+        // If NOT NULL and no default given (we ask the generator about the
+        // *real* default that will be used) check the table is empty
         if ($xmldb_field->getNotNull() && $this->generator->getDefaultValue($xmldb_field) === NULL && $this->mdb->count_records($xmldb_table->getName())) {
             throw new ddl_exception('ddlunknownerror', null, 'Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
                       ' cannot be added. Not null fields added to non empty tables require default value. Create skipped');
@@ -543,11 +536,11 @@ class database_manager {
         if (!$this->table_exists($xmldb_table)) {
             throw new ddl_table_missing_exception($xmldb_table->getName());
         }
-    /// Check the field exists
+        // Check the field exists
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
             throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
-    /// Check for dependencies in the DB before performing any action
+        // Check for dependencies in the DB before performing any action
         $this->check_field_dependencies($xmldb_table, $xmldb_field);
 
         if (!$sqlarr = $this->generator->getDropFieldSQL($xmldb_table, $xmldb_field)) {
@@ -568,11 +561,11 @@ class database_manager {
         if (!$this->table_exists($xmldb_table)) {
             throw new ddl_table_missing_exception($xmldb_table->getName());
         }
-    /// Check the field exists
+        // Check the field exists
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
             throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
-    /// Check for dependencies in the DB before performing any action
+        // Check for dependencies in the DB before performing any action
         $this->check_field_dependencies($xmldb_table, $xmldb_field);
 
         if (!$sqlarr = $this->generator->getAlterFieldSQL($xmldb_table, $xmldb_field)) {
@@ -590,7 +583,7 @@ class database_manager {
      * @return void
      */
     public function change_field_precision(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
-    /// Just a wrapper over change_field_type. Does exactly the same processing
+        // Just a wrapper over change_field_type. Does exactly the same processing
         $this->change_field_type($xmldb_table, $xmldb_field);
     }
 
@@ -615,7 +608,7 @@ class database_manager {
      * @return void
      */
     public function change_field_notnull(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
-    /// Just a wrapper over change_field_type. Does exactly the same processing
+        // Just a wrapper over change_field_type. Does exactly the same processing
         $this->change_field_type($xmldb_table, $xmldb_field);
     }
 
@@ -631,11 +624,11 @@ class database_manager {
         if (!$this->table_exists($xmldb_table)) {
             throw new ddl_table_missing_exception($xmldb_table->getName());
         }
-    /// Check the field exists
+        // Check the field exists
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
             throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
-    /// Check for dependencies in the DB before performing any action
+        // Check for dependencies in the DB before performing any action
         $this->check_field_dependencies($xmldb_table, $xmldb_field);
 
         if (!$sqlarr = $this->generator->getModifyDefaultSQL($xmldb_table, $xmldb_field)) {
@@ -663,19 +656,19 @@ class database_manager {
             throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 
-    /// Check the field exists
+        // Check the field exists
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
             throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
 
-    /// Check we have included full field specs
+        // Check we have included full field specs
         if (!$xmldb_field->getType()) {
             throw new ddl_exception('ddlunknownerror', null,
                       'Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
                       ' must contain full specs. Rename skipped');
         }
 
-    /// Check field isn't id. Renaming over that field is not allowed
+        // Check field isn't id. Renaming over that field is not allowed
         if ($xmldb_field->getName() == 'id') {
             throw new ddl_exception('ddlunknownerror', null,
                       'Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
@@ -701,17 +694,17 @@ class database_manager {
      */
     private function check_field_dependencies(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
 
-    /// Check the table exists
+        // Check the table exists
         if (!$this->table_exists($xmldb_table)) {
             throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 
-    /// Check the field exists
+        // Check the field exists
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
             throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
 
-    /// Check the field isn't in use by any index in the table
+        // Check the field isn't in use by any index in the table
         if ($indexes = $this->mdb->get_indexes($xmldb_table->getName(), false)) {
             foreach ($indexes as $indexname => $index) {
                 $columns = $index['columns'];
@@ -774,7 +767,7 @@ class database_manager {
     public function rename_key(xmldb_table $xmldb_table, xmldb_key $xmldb_key, $newname) {
         debugging('rename_key() is one experimental feature. You must not use it in production!', DEBUG_DEVELOPER);
 
-    /// Check newname isn't empty
+        // Check newname isn't empty
         if (!$newname) {
             throw new ddl_exception('ddlunknownerror', null, 'newname can not be empty');
         }
@@ -799,7 +792,7 @@ class database_manager {
             throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 
-    /// Check index doesn't exist
+        // Check index doesn't exist
         if ($this->index_exists($xmldb_table, $xmldb_intex)) {
             throw new ddl_exception('ddlunknownerror', null,
                       'Index ' . $xmldb_table->getName() . '->' . $xmldb_intex->getName() .
@@ -826,7 +819,7 @@ class database_manager {
             throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 
-    /// Check index exists
+        // Check index exists
         if (!$this->index_exists($xmldb_table, $xmldb_intex)) {
             throw new ddl_exception('ddlunknownerror', null,
                       'Index ' . $xmldb_table->getName() . '->' . $xmldb_intex->getName() .
@@ -853,12 +846,12 @@ class database_manager {
     public function rename_index($xmldb_table, $xmldb_intex, $newname) {
         debugging('rename_index() is one experimental feature. You must not use it in production!', DEBUG_DEVELOPER);
 
-    /// Check newname isn't empty
+        // Check newname isn't empty
         if (!$newname) {
             throw new ddl_exception('ddlunknownerror', null, 'newname can not be empty');
         }
 
-    /// Check index exists
+        // Check index exists
         if (!$this->index_exists($xmldb_table, $xmldb_intex)) {
             throw new ddl_exception('ddlunknownerror', null,
                       'Index ' . $xmldb_table->getName() . '->' . $xmldb_intex->getName() .

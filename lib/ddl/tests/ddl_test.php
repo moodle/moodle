@@ -17,8 +17,7 @@
 /**
  * DDL layer tests
  *
- * @package    core
- * @subpackage ddl
+ * @package    core_ddl
  * @category   phpunit
  * @copyright  2008 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -646,7 +645,7 @@ class ddl_testcase extends database_driver_testcase {
         // fill the table with some records before adding fields
         $this->fill_deftable('test_table1');
 
-        /// add one not null field without specifying default value (throws ddl_exception)
+        // add one not null field without specifying default value (throws ddl_exception)
         $field = new xmldb_field('onefield');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         try {
@@ -656,7 +655,7 @@ class ddl_testcase extends database_driver_testcase {
             $this->assertTrue($e instanceof ddl_exception);
         }
 
-        /// add one existing field (throws ddl_exception)
+        // add one existing field (throws ddl_exception)
         $field = new xmldb_field('course');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 2);
         try {
@@ -670,7 +669,7 @@ class ddl_testcase extends database_driver_testcase {
         // TODO: add one text field with default, must throw exception
         // TODO: add one binary field with default, must throw exception
 
-        /// add one integer field and check it
+        // add one integer field and check it
         $field = new xmldb_field('oneinteger');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 2);
         $dbman->add_field($table, $field);
@@ -686,7 +685,7 @@ class ddl_testcase extends database_driver_testcase {
         $this->assertEquals($columns['oneinteger']->meta_type    ,'I');
         $this->assertEquals($DB->get_field('test_table1', 'oneinteger', array(), IGNORE_MULTIPLE), 2); //check default has been applied
 
-        /// add one numeric field and check it
+        // add one numeric field and check it
         $field = new xmldb_field('onenumber');
         $field->set_attributes(XMLDB_TYPE_NUMBER, '6,3', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 2.55);
         $dbman->add_field($table, $field);
@@ -703,7 +702,7 @@ class ddl_testcase extends database_driver_testcase {
         $this->assertEquals($columns['onenumber']->meta_type    ,'N');
         $this->assertEquals($DB->get_field('test_table1', 'onenumber', array(), IGNORE_MULTIPLE), 2.550); //check default has been applied
 
-        /// add one float field and check it (not official type - must work as number)
+        // add one float field and check it (not official type - must work as number)
         $field = new xmldb_field('onefloat');
         $field->set_attributes(XMLDB_TYPE_FLOAT, '6,3', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 3.550);
         $dbman->add_field($table, $field);
@@ -723,7 +722,7 @@ class ddl_testcase extends database_driver_testcase {
         // this isn't a real problem at all.
         $this->assertEquals(round($DB->get_field('test_table1', 'onefloat', array(), IGNORE_MULTIPLE), 7), 3.550); //check default has been applied
 
-        /// add one char field and check it
+        // add one char field and check it
         $field = new xmldb_field('onechar');
         $field->set_attributes(XMLDB_TYPE_CHAR, '25', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 'Nice dflt!');
         $dbman->add_field($table, $field);
@@ -740,7 +739,7 @@ class ddl_testcase extends database_driver_testcase {
         $this->assertEquals($columns['onechar']->meta_type    ,'C');
         $this->assertEquals($DB->get_field('test_table1', 'onechar', array(), IGNORE_MULTIPLE), 'Nice dflt!'); //check default has been applied
 
-        /// add one big text field and check it
+        // add one big text field and check it
         $field = new xmldb_field('onetext');
         $field->set_attributes(XMLDB_TYPE_TEXT, 'big');
         $dbman->add_field($table, $field);
@@ -756,21 +755,21 @@ class ddl_testcase extends database_driver_testcase {
         $this->assertEquals($columns['onetext']->default_value, null);
         $this->assertEquals($columns['onetext']->meta_type    ,'X');
 
-        /// add one medium text field and check it
+        // add one medium text field and check it
         $field = new xmldb_field('mediumtext');
         $field->set_attributes(XMLDB_TYPE_TEXT, 'medium');
         $dbman->add_field($table, $field);
         $columns = $DB->get_columns('test_table1');
         $this->assertTrue(($columns['mediumtext']->max_length == -1) or ($columns['mediumtext']->max_length >= 16777215)); // -1 means unknown or big
 
-        /// add one small text field and check it
+        // add one small text field and check it
         $field = new xmldb_field('smalltext');
         $field->set_attributes(XMLDB_TYPE_TEXT, 'small');
         $dbman->add_field($table, $field);
         $columns = $DB->get_columns('test_table1');
         $this->assertTrue(($columns['smalltext']->max_length == -1) or ($columns['smalltext']->max_length >= 65535)); // -1 means unknown or big
 
-        /// add one binary field and check it
+        // add one binary field and check it
         $field = new xmldb_field('onebinary');
         $field->set_attributes(XMLDB_TYPE_BINARY);
         $dbman->add_field($table, $field);
