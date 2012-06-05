@@ -1105,7 +1105,7 @@ class restore_section_structure_step extends restore_structure_step {
 
         // Annotate the section mapping, with restorefiles option if needed
         $this->set_mapping('course_section', $oldid, $newitemid, $restorefiles);
-        $this->set_mapping('course_sectionnumber', $oldsection, $section->section, $restorefiles);
+        $this->set_mapping('course_sectionnumber', $oldsection, $section->section);
 
         // set the new course_section id in the task
         $this->task->set_sectionid($newitemid);
@@ -2584,7 +2584,7 @@ class restore_module_structure_step extends restore_structure_step {
                 'course' => $this->get_courseid(),
                 'section' => 1);
             $data->section = $DB->insert_record('course_sections', $sectionrec); // section 1
-            $this->set_mapping('course_sectionnumber', $oldsection, $sectionrec->section, $restorefiles);
+            $this->set_mapping('course_sectionnumber', $oldsection, 1); // Assign unmatching sections to section 1.
         }
         $data->groupingid= $this->get_mappingid('grouping', $data->groupingid);      // grouping
         if (!$CFG->enablegroupmembersonly) {                                         // observe groupsmemberonly
