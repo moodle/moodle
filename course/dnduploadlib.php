@@ -39,6 +39,8 @@ require_once($CFG->dirroot.'/course/lib.php');
 function dndupload_add_to_course($course, $modnames) {
     global $CFG, $PAGE;
 
+    $showstatus = optional_param('editingenabled', false, PARAM_BOOL);
+
     // Get all handlers.
     $handler = new dndupload_handler($course, $modnames);
     $jsdata = $handler->get_js_data();
@@ -65,12 +67,13 @@ function dndupload_add_to_course($course, $modnames) {
             array('upload', 'moodle'),
             array('cancel', 'moodle')
         ),
-        'requires' => array('node', 'event', 'panel', 'json')
+        'requires' => array('node', 'event', 'panel', 'json', 'anim')
     );
     $vars = array(
         array('courseid' => $course->id,
               'maxbytes' => get_max_upload_file_size($CFG->maxbytes, $course->maxbytes),
-              'handlers' => $handler->get_js_data())
+              'handlers' => $handler->get_js_data(),
+              'showstatus' => $showstatus)
     );
 
     $PAGE->requires->js_init_call('M.course_dndupload.init', $vars, true, $jsmodule);
