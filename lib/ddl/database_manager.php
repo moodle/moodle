@@ -333,7 +333,7 @@ class database_manager {
         $loaded = $xmldb_file->loadXMLStructure();
         if (!$loaded || !$xmldb_file->isLoaded()) {
             // Show info about the error if we can find it
-            if ($structure =& $xmldb_file->getStructure()) {
+            if ($structure = $xmldb_file->getStructure()) {
                 if ($errors = $structure->getAllErrors()) {
                     throw new ddl_exception('ddlxmlfileerror', null, 'Errors found in XMLDB file: '. implode (', ', $errors));
                 }

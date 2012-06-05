@@ -101,9 +101,9 @@ class xmldb_index extends xmldb_object {
 
     /**
      * Get the index fields
-     * @return array reference to fields array
+     * @return array
      */
-    function &getFields() {
+    function getFields() {
         return $this->fields;
     }
 

@@ -4443,6 +4443,9 @@ class dml_testcase extends database_driver_testcase {
         $DB->get_fieldset_sql("SELECT id FROM {{$tablename}} WHERE course = :select", array('select'=>1));
         $DB->set_field_select($tablename, 'course', '1', "id = :select", array('select'=>1));
         $DB->delete_records_select($tablename, "id = :select", array('select'=>1));
+
+        // if we get here test passed ok
+        $this->assertTrue(true);
     }
 
     public function test_limits_and_offsets() {

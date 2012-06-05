@@ -69,35 +69,33 @@ class xmldb_structure extends xmldb_object {
      * @param string $tablename
      * @return xmldb_table
      */
-    function &getTable($tablename) {
+    function getTable($tablename) {
         $i = $this->findTableInArray($tablename);
         if ($i !== NULL) {
             return $this->tables[$i];
         }
-        $null = NULL;
-        return $null;
+        return null;
     }
 
     /**
      * Returns the position of one table in the array.
      * @param string $tablename
-     * @return xmldb_table
+     * @return mixed
      */
-    function &findTableInArray($tablename) {
+    function findTableInArray($tablename) {
         foreach ($this->tables as $i => $table) {
             if ($tablename == $table->getName()) {
                 return $i;
             }
         }
-        $null = NULL;
-        return $null;
+        return null;
     }
 
     /**
      * This function will reorder the array of tables
      * @return bool success
      */
-    function orderTables() {
+    protected function orderTables() {
         $result = $this->orderElements($this->tables);
         if ($result) {
             $this->setTables($result);
@@ -109,9 +107,9 @@ class xmldb_structure extends xmldb_object {
 
     /**
      * Returns the tables of the structure
-     * @return array reference to table arrays
+     * @return array
      */
-    function &getTables() {
+    function getTables() {
         return $this->tables;
     }
 
@@ -129,23 +127,22 @@ class xmldb_structure extends xmldb_object {
      * @param xmldb_table $table
      * @param mixed $after
      */
-    function addTable(&$table, $after=NULL) {
+    function addTable($table, $after=NULL) {
 
         // Calculate the previous and next tables
         $prevtable = NULL;
         $nexttable = NULL;
 
         if (!$after) {
-            $alltables =& $this->getTables();
-            if ($alltables) {
-                end($alltables);
-                $prevtable =& $alltables[key($alltables)];
+            if ($this->tables) {
+                end($this->tables);
+                $prevtable = $this->tables[key($alltables)];
             }
         } else {
-            $prevtable =& $this->getTable($after);
+            $prevtable = $this->getTable($after);
         }
         if ($prevtable && $prevtable->getNext()) {
-            $nexttable =& $this->getTable($prevtable->getNext());
+            $nexttable = $this->getTable($prevtable->getNext());
         }
 
         // Set current table previous and next attributes
@@ -161,7 +158,7 @@ class xmldb_structure extends xmldb_object {
         $table->setLoaded(true);
         $table->setChanged(true);
         // Add the new table
-        $this->tables[] =& $table;
+        $this->tables[] = $table;
         // Reorder the whole structure
         $this->orderTables($this->tables);
         // Recalculate the hash
@@ -177,12 +174,12 @@ class xmldb_structure extends xmldb_object {
      */
     function deleteTable($tablename) {
 
-        $table =& $this->getTable($tablename);
+        $table = $this->getTable($tablename);
         if ($table) {
             $i = $this->findTableInArray($tablename);
             // Look for prev and next table
-            $prevtable =& $this->getTable($table->getPrevious());
-            $nexttable =& $this->getTable($table->getNext());
+            $prevtable = $this->getTable($table->getPrevious());
+            $nexttable = $this->getTable($table->getNext());
             // Change their previous and next attributes
             if ($prevtable) {
                 $prevtable->setNext($table->getNext());
@@ -206,7 +203,7 @@ class xmldb_structure extends xmldb_object {
      * Set the tables
      * @param array $tables
      */
-    function setTables(&$tables) {
+    function setTables($tables) {
         $this->tables = $tables;
     }
 
@@ -315,7 +312,7 @@ class xmldb_structure extends xmldb_object {
             $key = $this->name . $this->path . $this->comment;
             if ($this->tables) {
                 foreach ($this->tables as $tbl) {
-                    $table =& $this->getTable($tbl->getName());
+                    $table = $this->getTable($tbl->getName());
                     if ($recursive) {
                         $table->calculateHash($recursive);
                     }
@@ -368,9 +365,8 @@ class xmldb_structure extends xmldb_object {
 
         // Check if some foreign key in the whole structure is using it
         // (by comparing the reftable with the tablename)
-        $alltables = $this->getTables();
-        if ($alltables) {
-            foreach ($alltables as $table) {
+        if ($this->tables) {
+            foreach ($this->tables as $table) {
                 $keys = $table->getKeys();
                 if ($keys) {
                     foreach ($keys as $key) {
@@ -425,9 +421,8 @@ class xmldb_structure extends xmldb_object {
         }
         // Check if some foreign key in the whole structure is using it
         // By comparing the reftable and refields with the field)
-        $alltables = $this->getTables();
-        if ($alltables) {
-            foreach ($alltables as $table) {
+        if ($this->tables) {
+            foreach ($this->tables as $table) {
                 $keys = $table->getKeys();
                 if ($keys) {
                     foreach ($keys as $key) {
@@ -468,9 +463,8 @@ class xmldb_structure extends xmldb_object {
         // (by comparing the reftable and reffields with the fields in the key)
         $mytable = $this->getTable($tablename);
         $mykey = $mytable->getKey($keyname);
-        $alltables = $this->getTables();
-        if ($alltables && $mykey) {
-            foreach ($alltables as $table) {
+        if ($this->tables && $mykey) {
+            foreach ($this->tables as $table) {
                 $allkeys = $table->getKeys();
                 if ($allkeys) {
                     foreach ($allkeys as $key) {
@@ -531,8 +525,8 @@ class xmldb_structure extends xmldb_object {
             $errors[] = $this->getError();
         }
         // Delegate to tables
-        if ($tables = $this->getTables()) {
-            foreach ($tables as $table) {
+        if ($this->tables) {
+            foreach ($this->tables as $table) {
                 if ($tableerrors = $table->getAllErrors()) {
 
                 }

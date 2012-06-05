@@ -1233,6 +1233,7 @@ class ddl_testcase extends database_driver_testcase {
         $index = new xmldb_index('secondname');
         $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('course', 'name'));
         $dbman->add_index($table, $index);
+        $this->assertTrue($dbman->index_exists($table, $index));
     }
 
     public function testFindIndexName() {
@@ -1291,6 +1292,9 @@ class ddl_testcase extends database_driver_testcase {
         $key = new xmldb_key('id-course-grade');
         $key->set_attributes(XMLDB_KEY_UNIQUE, array('id', 'course', 'grade'));
         $dbman->add_key($table, $key);
+
+        // No easy way to test it, this just makes sure no errors are encountered.
+        $this->assertTrue(true);
     }
 
     public function testAddForeignUniqueKey() {
@@ -1302,6 +1306,9 @@ class ddl_testcase extends database_driver_testcase {
         $key = new xmldb_key('course');
         $key->set_attributes(XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'test_table0', array('id'));
         $dbman->add_key($table, $key);
+
+        // No easy way to test it, this just makes sure no errors are encountered.
+        $this->assertTrue(true);
     }
 
     public function testDropKey() {
@@ -1315,6 +1322,9 @@ class ddl_testcase extends database_driver_testcase {
         $dbman->add_key($table, $key);
 
         $dbman->drop_key($table, $key);
+
+        // No easy way to test it, this just makes sure no errors are encountered.
+        $this->assertTrue(true);
     }
 
     public function testAddForeignKey() {
@@ -1326,6 +1336,9 @@ class ddl_testcase extends database_driver_testcase {
         $key = new xmldb_key('course');
         $key->set_attributes(XMLDB_KEY_FOREIGN, array('course'), 'test_table0', array('id'));
         $dbman->add_key($table, $key);
+
+        // No easy way to test it, this just makes sure no errors are encountered.
+        $this->assertTrue(true);
     }
 
     public function testDropForeignKey() {
@@ -1339,6 +1352,9 @@ class ddl_testcase extends database_driver_testcase {
         $dbman->add_key($table, $key);
 
         $dbman->drop_key($table, $key);
+
+        // No easy way to test it, this just makes sure no errors are encountered.
+        $this->assertTrue(true);
     }
 
     public function testRenameField() {
@@ -1356,7 +1372,6 @@ class ddl_testcase extends database_driver_testcase {
         $this->assertFalse(array_key_exists('type', $columns));
         $this->assertTrue(array_key_exists('newfieldname', $columns));
     }
-
 
     public function testIndexExists() {
         // Skipping: this is just a test of find_index_name

@@ -114,17 +114,17 @@ class xmldb_key extends xmldb_object {
 
     /**
      * Get the key fields
-     * @return array reference to fields array
+     * @return array
      */
-    function &getFields() {
+    function getFields() {
         return $this->fields;
     }
 
     /**
      * Get the key reftable
-     * @return string reference
+     * @return string
      */
-    function &getRefTable() {
+    function getRefTable() {
         return $this->reftable;
     }
 
@@ -132,7 +132,7 @@ class xmldb_key extends xmldb_object {
      * Get the key reffields
      * @return array reference to ref fields
      */
-    function &getRefFields() {
+    function getRefFields() {
         return $this->reffields;
     }
 

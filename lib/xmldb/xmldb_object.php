@@ -207,7 +207,7 @@ class xmldb_object {
      * @param array $arr
      * @return bool
      */
-    function checkNameValues(&$arr) {
+    function checkNameValues($arr) {
         $result = true;
         // TODO: Perhaps, add support for reserved words
 
@@ -236,7 +236,7 @@ class xmldb_object {
     /**
      * Reconstruct previous/next attributes.
      * @param array $arr
-     * @return bool
+     * @return bool true if $arr modified
      */
     function fixPrevNext(&$arr) {
         global $CFG;
@@ -271,9 +271,9 @@ class xmldb_object {
      * This function will check that all the elements in one array
      * have a consistent info in their previous/next fields
      * @param array $arr
-     * @return bool
+     * @return bool true means ok, false invalid prev/next present
      */
-    function checkPreviousNextValues(&$arr) {
+    function checkPreviousNextValues($arr) {
         global $CFG;
         if (!empty($CFG->xmldbdisablenextprevchecking)) {
             return true;
@@ -430,14 +430,13 @@ class xmldb_object {
      * @param array $arr
      * @return mixed
      */
-    function &findObjectInArray($objectname, $arr) {
+    function findObjectInArray($objectname, $arr) {
         foreach ($arr as $i => $object) {
             if ($objectname == $object->getName()) {
                 return $i;
             }
         }
-        $null = NULL;
-        return $null;
+        return null;
     }
 
     /**

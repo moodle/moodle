@@ -72,7 +72,7 @@ class xmldb_file extends xmldb_object {
         return false;
     }
 
-    function &getStructure() {
+    function getStructure() {
         return $this->xmldb_structure;
     }
 
@@ -195,7 +195,7 @@ class xmldb_file extends xmldb_object {
      */
     function saveXMLFile() {
 
-        $structure =& $this->getStructure();
+        $structure = $this->getStructure();
 
         $result = file_put_contents($this->path, $structure->xmlOutput());
 

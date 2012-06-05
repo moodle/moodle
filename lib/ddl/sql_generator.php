@@ -322,7 +322,8 @@ abstract class sql_generator {
                 }
                 // make sure sequence field is unique
                 if ($sequencefield and $xmldb_key->getType() == XMLDB_KEY_PRIMARY) {
-                    $field = reset($xmldb_key->getFields());
+                    $fields = $xmldb_key->getFields();
+                    $field = reset($fields);
                     if ($sequencefield === $field) {
                         $sequencefield = null;
                     }
