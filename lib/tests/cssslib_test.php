@@ -72,6 +72,7 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->try_invalid_css_handling($optimiser);
         $this->try_bulk_processing($optimiser);
         $this->try_break_things($optimiser);
+        $this->try_media_rules($optimiser);
         $this->try_keyframe_css_animation($optimiser);
     }
 
@@ -994,6 +995,39 @@ CSS;
 @-webkit-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
 CSS;
         $this->assertEquals($cssout, $optimiser->process($cssin));
+    }
 
+    public function try_media_rules(css_optimiser $optimiser) {
+        $cssin = "@media print {\n  .test{background-color:#333;}\n}";
+        $cssout = "@media print {\n  .test{background-color:#333;}\n}";
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = "@media screen and (min-width:30px) {\n  #region-main-box{left: 30px;float: left;}\n}";
+        $cssout = "@media screen and (min-width:30px) {\n  #region-main-box{left:30px;float:left;}\n}";
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = "@media all and (min-width:500px) {\n  #region-main-box{left:30px;float:left;}\n}";
+        $cssout = "@media all and (min-width:500px) {\n  #region-main-box{left:30px;float:left;}\n}";
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = "@media (min-width:500px) {\n  #region-main-box{left:30px;float:left;}\n}";
+        $cssout = "@media (min-width:500px) {\n  #region-main-box{left:30px;float:left;}\n}";
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = "@media screen and (color), projection and (color) {\n  #region-main-box{left:30px;float:left;}\n}";
+        $cssout = "@media screen and (color),projection and (color) {\n  #region-main-box{left:30px;float:left;}\n}";
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = "@media print {\n  .test{background-color:#000;}\n}@media print {\n  .test{background-color:#FFF;}\n}";
+        $cssout = "@media print {\n  .test{background-color:#FFF;}\n}";
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = "@media screen and (min-width:30px) {\n  #region-main-box{background-color:#000;}\n}\n@media screen and (min-width:30px) {\n  #region-main-box{background-color:#FFF;}\n}";
+        $cssout = "@media screen and (min-width:30px) {\n  #region-main-box{background-color:#FFF;}\n}";
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = "@media screen and (min-width:30px) {\n  #region-main-box{background-color:#000;}\n}\n@media screen and (min-width:31px) {\n  #region-main-box{background-color:#FFF;}\n}";
+        $cssout = "@media screen and (min-width:30px) {\n  #region-main-box{background-color:#000;}\n}\n\n@media screen and (min-width:31px) {\n  #region-main-box{background-color:#FFF;}\n}";
+        $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 }

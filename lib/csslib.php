@@ -566,19 +566,30 @@ class css_optimiser {
                                     $currentprocess = self::PROCESSING_SELECTORS;
                                 }
                             }
-                            $buffer = '';
-                            $currentatrule = false;
+                            if ($currentatrule !== 'media') {
+                                $buffer = '';
+                                $currentatrule = false;
+                            }
                             // continue 1: The switch processing chars
                             // continue 2: The switch processing the state
                             // continue 3: The for loop
                             continue 3;
                         case '{':
-                            if ($currentatrule == 'media' && preg_match('#\s*@media\s*([a-zA-Z0-9]+(\s*,\s*[a-zA-Z0-9]+)*)#', $buffer, $matches)) {
+                            if ($currentatrule == 'media' && preg_match('#\s*@media\s*([a-zA-Z0-9]+(\s*,\s*[a-zA-Z0-9]+)*)\s*{#', $buffer, $matches)) {
+                                // Basic media declaration
                                 $mediatypes = str_replace(' ', '', $matches[1]);
                                 if (!array_key_exists($mediatypes, $medias)) {
                                     $medias[$mediatypes] = new css_media($mediatypes);
                                 }
                                 $currentmedia = $medias[$mediatypes];
+                                $currentprocess = self::PROCESSING_SELECTORS;
+                                $buffer = '';
+                            } else if ($currentatrule == 'media' && preg_match('#\s*@media\s*([^{]+)#', $buffer, $matches)) {
+                                // Advanced media query declaration http://www.w3.org/TR/css3-mediaqueries/
+                                $mediatypes = $matches[1];
+                                $hash = md5($mediatypes);
+                                $medias[$hash] = new css_media($mediatypes);
+                                $currentmedia = $medias[$hash];
                                 $currentprocess = self::PROCESSING_SELECTORS;
                                 $buffer = '';
                             } else if ($currentatrule == 'keyframes' && preg_match('#@((\-moz\-|\-webkit\-)?keyframes)\s*([^\s]+)#', $buffer, $matches)) {
