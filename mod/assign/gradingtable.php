@@ -253,7 +253,7 @@ class assign_grading_table extends table_sql implements renderable {
             $options = make_grades_menu(-$outcome->scaleid);
 
             $options[0] = get_string('nooutcome', 'grades');
-            if ($this->quickgrading&& !($outcome->grades[$row->userid]->locked)) {
+            if ($this->quickgrading && !($outcome->grades[$row->userid]->locked)) {
                 $select = '<select name="outcome_' . $index . '_' . $row->userid . '" class="quickgrade">';
                 foreach ($options as $optionindex => $optionvalue) {
                     $selected = '';
@@ -519,6 +519,7 @@ class assign_grading_table extends table_sql implements renderable {
     private function format_plugin_summary_with_link(assign_plugin $plugin, stdClass $item, $returnaction, $returnparams) {
         $link = '';
         $showviewlink = false;
+
         $summary = $plugin->view_summary($item, $showviewlink);
         $separator = '';
         if ($showviewlink) {
@@ -550,6 +551,7 @@ class assign_grading_table extends table_sql implements renderable {
     function other_cols($colname, $row){
         if (($pos = strpos($colname, 'assignsubmission_')) !== false) {
             $plugin = $this->assignment->get_submission_plugin_by_type(substr($colname, strlen('assignsubmission_')));
+
             if ($plugin->is_visible() && $plugin->is_enabled()) {
                 if ($row->submissionid) {
                     $submission = new stdClass();
@@ -558,7 +560,6 @@ class assign_grading_table extends table_sql implements renderable {
                     $submission->timemodified = $row->timesubmitted;
                     $submission->assignment = $this->assignment->get_instance()->id;
                     $submission->userid = $row->userid;
-
                     return $this->format_plugin_summary_with_link($plugin, $submission, 'grading', array());
                 }
             }
@@ -567,6 +568,7 @@ class assign_grading_table extends table_sql implements renderable {
         if (($pos = strpos($colname, 'feedback_')) !== false) {
             $plugin = $this->assignment->get_feedback_plugin_by_type(substr($colname, strlen('assignfeedback_')));
             if ($plugin->is_visible() && $plugin->is_enabled()) {
+                $grade = null;
                 if ($row->gradeid) {
                     $grade = new stdClass();
                     $grade->id = $row->gradeid;
@@ -576,7 +578,10 @@ class assign_grading_table extends table_sql implements renderable {
                     $grade->userid = $row->userid;
                     $grade->grade = $row->grade;
                     $grade->mailed = $row->mailed;
-
+                }
+                if ($this->quickgrading && $plugin->supports_quickgrading()) {
+                    return $plugin->get_quickgrading_html($row->userid, $grade);
+                } else if ($grade) {
                     return $this->format_plugin_summary_with_link($plugin, $grade, 'grading', array());
                 }
             }
