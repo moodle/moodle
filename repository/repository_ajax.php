@@ -263,10 +263,6 @@ switch ($action) {
                         'icon' => $OUTPUT->pix_url(file_file_icon($storedfile, 32))->out(),
                     );
                 }
-                if ($maxbytes !== -1 && $storedfile->get_filesize() > $maxbytes) {
-                    $storedfile->delete();
-                    throw new file_exception('maxbytes');
-                }
                 // Repository plugin callback
                 // You can cache reository file in this callback
                 // or complete other tasks.
