@@ -6397,7 +6397,7 @@ function forum_tp_count_discussion_unread_posts($userid, $discussionid) {
            'WHERE p.discussion = ? '.
                 'AND p.modified >= ? AND r.id is NULL';
 
-    return $DB->count_records_sql($sql, array($userid, $cutoffdate, $discussionid));
+    return $DB->count_records_sql($sql, array($userid, $discussionid, $cutoffdate));
 }
 
 /**
