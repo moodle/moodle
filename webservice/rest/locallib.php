@@ -43,10 +43,9 @@ class webservice_rest_server extends webservice_base_server {
      * @param string $authmethod authentication method of the web service (WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN, ...)
      * @param string $restformat Format of the return values: 'xml' or 'json'
      */
-    public function __construct($authmethod, $restformat = 'xml') {
+    public function __construct($authmethod) {
         parent::__construct($authmethod);
         $this->wsname = 'rest';
-        $this->restformat = ($restformat != 'xml' && $restformat != 'json')?'xml':$restformat; //sanity check, we accept only xml or json
     }
 
     /**
@@ -55,11 +54,22 @@ class webservice_rest_server extends webservice_base_server {
      *  1/ user authentication - username+password or token (wsusername, wspassword and wstoken parameters)
      *  2/ function name (wsfunction parameter)
      *  3/ function parameters (all other parameters except those above)
+     *  4/ text format parameters
+     *  5/ return rest format xml/json
      */
     protected function parse_request() {
 
-        //Get GET and POST paramters
-        $methodvariables = array_merge($_GET,$_POST);
+        // Retrieve and clean the POST/GET parameters from the parameters specific to the server.
+        parent::set_web_service_call_settings();
+
+        // Get GET and POST parameters.
+        $methodvariables = array_merge($_GET, $_POST);
+
+        // Retrieve REST format parameter - 'xml' (default) or 'json'.
+        $restformatisset = isset($methodvariables['moodlewsrestformat'])
+                && (($methodvariables['moodlewsrestformat'] == 'xml' || $methodvariables['moodlewsrestformat'] == 'json'));
+        $this->restformat = $restformatisset ? $methodvariables['moodlewsrestformat'] : 'xml';
+        unset($methodvariables['moodlewsrestformat']);
 
         if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {
             $this->username = isset($methodvariables['wsusername']) ? $methodvariables['wsusername'] : null;

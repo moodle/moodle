@@ -171,6 +171,10 @@ function user_get_users_by_id($userids) {
  *
  * Give user record from mdl_user, build an array conntains
  * all user details
+ *
+ * Warning: description file urls are 'webservice/pluginfile.php' is use.
+ *          it can be changed with $CFG->moodlewstextformatlinkstoimagesfile
+ *
  * @param stdClass $user user record from mdl_user
  * @param stdClass $context context object
  * @param stdClass $course moodle course
@@ -319,11 +323,10 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         if (!$cannotviewdescription) {
 
             if (in_array('description', $userfields)) {
-                $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user', 'profile', null);
-                $userdetails['description'] = $user->description;
-            }
-            if (in_array('descriptionformat', $userfields)) {
-                $userdetails['descriptionformat'] = $user->descriptionformat;
+                // Always return the descriptionformat if description is requested.
+                list($userdetails['description'], $userdetails['descriptionformat']) =
+                        external_format_text($user->description, $user->descriptionformat,
+                                $usercontext->id, 'user', 'profile', null);
             }
         }
     }
@@ -417,11 +420,15 @@ function user_get_user_details($user, $course = null, array $userfields = array(
 
     // If groups are in use and enforced throughout the course, then make sure we can meet in at least one course level group
     if (in_array('groups', $userfields) && !empty($course) && $canaccessallgroups) {
-        $usergroups = groups_get_all_groups($course->id, $user->id, $course->defaultgroupingid, 'g.id, g.name,g.description');
+        $usergroups = groups_get_all_groups($course->id, $user->id, $course->defaultgroupingid,
+                'g.id, g.name,g.description,g.descriptionformat');
         $userdetails['groups'] = array();
         foreach ($usergroups as $group) {
-            $group->description = file_rewrite_pluginfile_urls($group->description, 'pluginfile.php', $context->id, 'group', 'description', $group->id);
-            $userdetails['groups'][] = array('id'=>$group->id, 'name'=>$group->name, 'description'=>$group->description);
+            list($group->description, $group->descriptionformat) =
+                external_format_text($group->description, $group->descriptionformat,
+                        $context->id, 'group', 'description', $group->id);
+            $userdetails['groups'][] = array('id'=>$group->id, 'name'=>$group->name,
+                'description'=>$group->description, 'descriptionformat'=>$group->descriptionformat);
         }
     }
     //list of courses where the user is enrolled
