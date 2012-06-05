@@ -14,6 +14,7 @@
     $hide        = optional_param('hide', 0, PARAM_INT);
     $show        = optional_param('show', 0, PARAM_INT);
     $idnumber    = optional_param('idnumber', '', PARAM_RAW);
+    $sectionid   = optional_param('sectionid', 0, PARAM_INT);
     $section     = optional_param('section', 0, PARAM_INT);
     $move        = optional_param('move', 0, PARAM_INT);
     $marker      = optional_param('marker',-1 , PARAM_INT);
@@ -34,6 +35,11 @@
     $course = $DB->get_record('course', $params, '*', MUST_EXIST);
 
     $urlparams = array('id' => $course->id);
+
+    // Sectionid should get priority over section number
+    if ($sectionid) {
+        $section = $DB->get_field('course_sections', 'section', array('id' => $sectionid, 'course' => $course->id), MUST_EXIST);
+    }
     if ($section) {
         $urlparams['section'] = $section;
     }
