@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,27 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Native mssql class representing moodle database interface.
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/dml/moodle_database.php');
-require_once($CFG->libdir.'/dml/mssql_native_moodle_recordset.php');
-require_once($CFG->libdir.'/dml/mssql_native_moodle_temptables.php');
+require_once(__DIR__.'/moodle_database.php');
+require_once(__DIR__.'/mssql_native_moodle_recordset.php');
+require_once(__DIR__.'/mssql_native_moodle_temptables.php');
 
 /**
  * Native mssql class representing moodle database interface.
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -515,7 +511,7 @@ class mssql_native_moodle_database extends moodle_database {
     protected function normalise_value($column, $value) {
         $this->detect_objects($value);
 
-        if (is_bool($value)) { /// Always, convert boolean to int
+        if (is_bool($value)) { // Always, convert boolean to int
             $value = (int)$value;
         } // And continue processing because text columns with numeric info need special handling below
 
@@ -619,7 +615,7 @@ class mssql_native_moodle_database extends moodle_database {
         if (empty($params)) {
             return $sql;
         }
-        /// ok, we have verified sql statement with ? and correct number of params
+        // ok, we have verified sql statement with ? and correct number of params
         $parts = explode('?', $sql);
         $return = array_shift($parts);
         foreach ($params as $param) {
@@ -1039,7 +1035,7 @@ class mssql_native_moodle_database extends moodle_database {
         // convert params to ? types
         list($select, $params, $type) = $this->fix_sql_params($select, $params);
 
-    /// Get column metadata
+        // Get column metadata
         $columns = $this->get_columns($table);
         $column = $columns[$newfield];
 
@@ -1093,8 +1089,6 @@ class mssql_native_moodle_database extends moodle_database {
 
         return true;
     }
-
-/// SQL helper functions
 
     public function sql_cast_char2int($fieldname, $text=false) {
         if (!$text) {
@@ -1251,8 +1245,6 @@ s only returning name of SQL substring function, it now requires all parameters.
         }
     }
 
-/// session locking
-
     public function session_lock_supported() {
         return true;
     }
@@ -1314,8 +1306,6 @@ s only returning name of SQL substring function, it now requires all parameters.
 
         $this->free_result($result);
     }
-
-/// transactions
 
     /**
      * Driver specific start of real database transaction,

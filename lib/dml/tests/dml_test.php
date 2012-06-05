@@ -17,8 +17,7 @@
 /**
  * DML layer tests
  *
- * @package    core
- * @subpackage dml
+ * @package    core_dml
  * @category   phpunit
  * @copyright  2008 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -62,8 +61,6 @@ class dml_testcase extends database_driver_testcase {
 
         return $debuginfo;
     }
-
-    // NOTE: please keep order of test methods here matching the order of moodle_database class methods
 
     function test_diagnose() {
         $DB = $this->tdb;
@@ -1090,7 +1087,7 @@ class dml_testcase extends database_driver_testcase {
         $this->assertEquals(3, $counter);
         $rs->close();
 
-        $rs = $DB->get_recordset_list($tablename, 'course',array()); /// Must return 0 rows without conditions. MDL-17645
+        $rs = $DB->get_recordset_list($tablename, 'course',array()); // Must return 0 rows without conditions. MDL-17645
 
         $counter = 0;
         foreach ($rs as $record) {
@@ -1316,7 +1313,7 @@ class dml_testcase extends database_driver_testcase {
         $this->assertEquals(2, next($records)->id);
         $this->assertEquals(4, next($records)->id);
 
-        $this->assertSame(array(), $records = $DB->get_records_list($tablename, 'course', array())); /// Must return 0 rows without conditions. MDL-17645
+        $this->assertSame(array(), $records = $DB->get_records_list($tablename, 'course', array())); // Must return 0 rows without conditions. MDL-17645
         $this->assertEquals(0, count($records));
 
         // note: delegate limits testing to test_get_records_sql()
@@ -3070,7 +3067,7 @@ class dml_testcase extends database_driver_testcase {
         $this->assertTrue($DB->delete_records_list($tablename, 'course', array(2, 3)));
         $this->assertEquals(1, $DB->count_records($tablename));
 
-        $this->assertTrue($DB->delete_records_list($tablename, 'course', array())); /// Must delete 0 rows without conditions. MDL-17645
+        $this->assertTrue($DB->delete_records_list($tablename, 'course', array())); // Must delete 0 rows without conditions. MDL-17645
         $this->assertEquals(1, $DB->count_records($tablename));
     }
 
@@ -3560,13 +3557,13 @@ class dml_testcase extends database_driver_testcase {
     function test_coalesce() {
         $DB = $this->tdb;
 
-        // Testing not-null ocurrences, return 1st
+        // Testing not-null occurrences, return 1st
         $sql = "SELECT COALESCE('returnthis', 'orthis', 'orwhynotthis') AS test" . $DB->sql_null_from_clause();
         $this->assertEquals('returnthis', $DB->get_field_sql($sql, array()));
         $sql = "SELECT COALESCE(:paramvalue, 'orthis', 'orwhynotthis') AS test" . $DB->sql_null_from_clause();
         $this->assertEquals('returnthis', $DB->get_field_sql($sql, array('paramvalue' => 'returnthis')));
 
-        // Testing null ocurrences, return 2nd
+        // Testing null occurrences, return 2nd
         $sql = "SELECT COALESCE(null, 'returnthis', 'orthis') AS test" . $DB->sql_null_from_clause();
         $this->assertEquals('returnthis', $DB->get_field_sql($sql, array()));
         $sql = "SELECT COALESCE(:paramvalue, 'returnthis', 'orthis') AS test" . $DB->sql_null_from_clause();
@@ -3574,7 +3571,7 @@ class dml_testcase extends database_driver_testcase {
         $sql = "SELECT COALESCE(null, :paramvalue, 'orthis') AS test" . $DB->sql_null_from_clause();
         $this->assertEquals('returnthis', $DB->get_field_sql($sql, array('paramvalue' => 'returnthis')));
 
-        // Testing null ocurrences, return 3rd
+        // Testing null occurrences, return 3rd
         $sql = "SELECT COALESCE(null, null, 'returnthis') AS test" . $DB->sql_null_from_clause();
         $this->assertEquals('returnthis', $DB->get_field_sql($sql, array()));
         $sql = "SELECT COALESCE(null, :paramvalue, 'returnthis') AS test" . $DB->sql_null_from_clause();
@@ -3582,7 +3579,7 @@ class dml_testcase extends database_driver_testcase {
         $sql = "SELECT COALESCE(null, null, :paramvalue) AS test" . $DB->sql_null_from_clause();
         $this->assertEquals('returnthis', $DB->get_field_sql($sql, array('paramvalue' => 'returnthis')));
 
-        // Testing all null ocurrences, return null
+        // Testing all null occurrences, return null
         // Note: under mssql, if all elements are nulls, at least one must be a "typed" null, hence
         // we cannot test this in a cross-db way easily, so next 2 tests are using
         // different queries depending of the DB family
@@ -3603,7 +3600,7 @@ class dml_testcase extends database_driver_testcase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        /// Testing all sort of values
+        // Testing all sort of values
         $sql = "SELECT ".$DB->sql_concat("?", "?", "?")." AS fullname ". $DB->sql_null_from_clause();
         // string, some unicode chars
         $params = array('name', 'áéíóú', 'name3');
@@ -3621,7 +3618,7 @@ class dml_testcase extends database_driver_testcase {
         $params = array(123.45, null, 'test');
         $this->assertNull($DB->get_field_sql($sql, $params), 'ANSI behaviour: Concatenating NULL must return NULL - But in Oracle :-(. [%s]'); // Concatenate NULL with anything result = NULL
 
-        /// Testing fieldnames + values and also integer fieldnames
+        // Testing fieldnames + values and also integer fieldnames
         $table = $this->get_test_table();
         $tablename = $table->getName();
 
@@ -4328,7 +4325,7 @@ class dml_testcase extends database_driver_testcase {
         $DB2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
         $DB2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
 
-        // Testing that acquiring a lock efectively locks
+        // Testing that acquiring a lock effectively locks
         // Get a session lock on connection1
         $rowid = rand(100, 200);
         $timeout = 1;
@@ -4337,14 +4334,14 @@ class dml_testcase extends database_driver_testcase {
         // Try to get the same session lock on connection2
         try {
             $DB2->get_session_lock($rowid, $timeout);
-            $DB2->release_session_lock($rowid); // Should not be excuted, but here for safety
+            $DB2->release_session_lock($rowid); // Should not be executed, but here for safety
             $this->fail('An Exception is missing, expected due to session lock acquired.');
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_sessionwait_exception);
             $DB->release_session_lock($rowid); // Release lock on connection1
         }
 
-        // Testing that releasing a lock efectively frees
+        // Testing that releasing a lock effectively frees
         // Get a session lock on connection1
         $rowid = rand(100, 200);
         $timeout = 1;
@@ -4613,7 +4610,7 @@ class moodle_database_for_testing extends moodle_database {
 
 
 /**
- * Dumb test class with toString() returrning 1.
+ * Dumb test class with toString() returning 1.
  */
 class dml_test_object_one {
     public function __toString() {

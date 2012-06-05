@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,20 +21,21 @@
  * Also used to be able to retrieve temp table names included in the get_tables()
  * method of the DB.
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/dml/moodle_temptables.php');
+require_once(__DIR__.'/moodle_temptables.php');
 
 class oci_native_moodle_temptables extends moodle_temptables {
 
-    protected $unique_session_id; // To store unique_session_id. Needed for temp tables unique naming (upto 24cc)
-    protected $counter; // To get incrementally different temptable names on each add_temptable() request
+    /** @var int To store unique_session_id. Needed for temp tables unique naming (upto 24cc) */
+    protected $unique_session_id; //
+    /** @var int To get incrementally different temptable names on each add_temptable() request */
+    protected $counter;
 
     /**
      * Creates new moodle_temptables instance
@@ -50,7 +50,7 @@ class oci_native_moodle_temptables extends moodle_temptables {
     /**
      * Add one temptable to the store.
      *
-     * Overriden because OCI only support global temptables, so we need to change completely the name, based
+     * Overridden because OCI only support global temptables, so we need to change completely the name, based
      * in unique session identifier, to get local-like temp tables support
      * tables before the prefix.
      *

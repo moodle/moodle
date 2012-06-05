@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,27 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Native mysqli class representing moodle database interface.
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/dml/moodle_database.php');
-require_once($CFG->libdir.'/dml/mysqli_native_moodle_recordset.php');
-require_once($CFG->libdir.'/dml/mysqli_native_moodle_temptables.php');
+require_once(__DIR__.'/moodle_database.php');
+require_once(__DIR__.'/mysqli_native_moodle_recordset.php');
+require_once(__DIR__.'/mysqli_native_moodle_temptables.php');
 
 /**
  * Native mysqli class representing moodle database interface.
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -77,7 +73,7 @@ class mysqli_native_moodle_database extends moodle_database {
             $dbport = 3306;
         }
         ob_start();
-        $conn = new mysqli($dbhost, $dbuser, $dbpass, '', $dbport, $dbsocket); /// Connect without db
+        $conn = new mysqli($dbhost, $dbuser, $dbpass, '', $dbport, $dbsocket); // Connect without db
         $dberr = ob_get_contents();
         ob_end_clean();
         $errorno = @$conn->connect_errno;
@@ -324,7 +320,7 @@ class mysqli_native_moodle_database extends moodle_database {
             $this->query_end($result);
         }
 
-        // Connection stabilished and configured, going to instantiate the temptables controller
+        // Connection stabilised and configured, going to instantiate the temptables controller
         $this->temptables = new mysqli_native_moodle_temptables($this);
 
         return true;
@@ -736,7 +732,7 @@ class mysqli_native_moodle_database extends moodle_database {
         if (empty($params)) {
             return $sql;
         }
-        /// ok, we have verified sql statement with ? and correct number of params
+        // ok, we have verified sql statement with ? and correct number of params
         $parts = explode('?', $sql);
         $return = array_shift($parts);
         foreach ($params as $param) {
@@ -1264,7 +1260,6 @@ class mysqli_native_moodle_database extends moodle_database {
         return ' CAST(' . $fieldname . ' AS SIGNED) ';
     }
 
-/// session locking
     public function session_lock_supported() {
         return true;
     }
@@ -1273,7 +1268,7 @@ class mysqli_native_moodle_database extends moodle_database {
      * Obtain session lock
      * @param int $rowid id of the row with session record
      * @param int $timeout max allowed time to wait for the lock in seconds
-     * @return bool success
+     * @return void
      */
     public function get_session_lock($rowid, $timeout) {
         parent::get_session_lock($rowid, $timeout);
@@ -1309,7 +1304,6 @@ class mysqli_native_moodle_database extends moodle_database {
         }
     }
 
-/// transactions
     /**
      * Are transactions supported?
      * It is not responsible to run productions servers
