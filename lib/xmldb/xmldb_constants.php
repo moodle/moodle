@@ -57,13 +57,6 @@ define ('XMLDB_TYPE_DATETIME',    7);
 /** Timestamp */
 define ('XMLDB_TYPE_TIMESTAMP',   8);
 
-// TODO: delete these unused constants - can not be used in 2.3 upgrade
-define ('XMLDB_STATEMENT_INCORRECT',   0);  //Wrong Statement Type
-define ('XMLDB_STATEMENT_INSERT',      1);  //Insert Statements
-define ('XMLDB_STATEMENT_UPDATE',      2);  //Update Statements
-define ('XMLDB_STATEMENT_DELETE',      3);  //Delete Statements
-define ('XMLDB_STATEMENT_CUSTOM',      4);  //Custom Statements
-
 // ==== Now the allowed DB Keys ====
 /** Wrong DB Key */
 define ('XMLDB_KEY_INCORRECT',     0);
