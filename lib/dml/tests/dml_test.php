@@ -774,7 +774,7 @@ class dml_testcase extends database_driver_testcase {
                 $next_field  = next($fields);
             }
 
-            $this->assertEquals($next_column->name, $next_field->name);
+            $this->assertEquals($next_column->name, $next_field->getName());
         }
 
         // Test get_columns for non-existing table returns empty array. MDL-30147

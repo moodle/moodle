@@ -1,35 +1,40 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+/**
+ * This class represent one XMLDB table
+ *
+ * @package    core_xmldb
+ * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
+ *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-/// This class represent one XMLDB table
+defined('MOODLE_INTERNAL') || die();
+
 
 class xmldb_table extends xmldb_object {
 
+    /** @var array table columns */
     var $fields;
+
+    /** @var array keys */
     var $keys;
+
+    /** @var array indexes */
     var $indexes;
 
     /**
@@ -43,6 +48,7 @@ class xmldb_table extends xmldb_object {
 
     /**
      * Creates one new xmldb_table
+     * @param string $name
      */
     function __construct($name) {
         parent::__construct($name);
@@ -54,15 +60,18 @@ class xmldb_table extends xmldb_object {
     /**
      * Add one field to the table, allowing to specify the desired  order
      * If it's not specified, then the field is added at the end
+     * @param xmldb_field $field
+     * @param xmldb_object $after
+     * @return xmldb_field
      */
     function addField(&$field, $after=NULL) {
 
-    /// Detect duplicates first
+        // Detect duplicates first
         if ($this->getField($field->getName())) {
             throw new coding_exception('Duplicate field '.$field->getName().' specified in table '.$this->getName());
         }
 
-    /// Calculate the previous and next fields
+        // Calculate the previous and next fields
         $prevfield = NULL;
         $nextfield = NULL;
 
@@ -79,7 +88,7 @@ class xmldb_table extends xmldb_object {
             $nextfield =& $this->getField($prevfield->getNext());
         }
 
-    /// Set current field previous and next attributes
+        // Set current field previous and next attributes
         if ($prevfield) {
             $field->setPrevious($prevfield->getName());
             $prevfield->setNext($field->getName());
@@ -88,16 +97,16 @@ class xmldb_table extends xmldb_object {
             $field->setNext($nextfield->getName());
             $nextfield->setPrevious($field->getName());
         }
-    /// Some more attributes
+        // Some more attributes
         $field->setLoaded(true);
         $field->setChanged(true);
-    /// Add the new field
+        // Add the new field
         $this->fields[] = $field;
-    /// Reorder the field
+        // Reorder the field
         $this->orderFields($this->fields);
-    /// Recalculate the hash
+        // Recalculate the hash
         $this->calculateHash(true);
-    /// We have one new field, so the table has changed
+        // We have one new field, so the table has changed
         $this->setChanged(true);
 
         return $field;
@@ -106,15 +115,17 @@ class xmldb_table extends xmldb_object {
     /**
      * Add one key to the table, allowing to specify the desired  order
      * If it's not specified, then the key is added at the end
+     * @param xmldb_key $key
+     * @param xmldb_object $after
      */
     function addKey(&$key, $after=NULL) {
 
-    /// Detect duplicates first
+        // Detect duplicates first
         if ($this->getKey($key->getName())) {
             throw new coding_exception('Duplicate key '.$key->getName().' specified in table '.$this->getName());
         }
 
-    /// Calculate the previous and next keys
+        // Calculate the previous and next keys
         $prevkey = NULL;
         $nextkey = NULL;
 
@@ -131,7 +142,7 @@ class xmldb_table extends xmldb_object {
             $nextkey =& $this->getKey($prevkey->getNext());
         }
 
-    /// Set current key previous and next attributes
+        // Set current key previous and next attributes
         if ($prevkey) {
             $key->setPrevious($prevkey->getName());
             $prevkey->setNext($key->getName());
@@ -140,31 +151,33 @@ class xmldb_table extends xmldb_object {
             $key->setNext($nextkey->getName());
             $nextkey->setPrevious($key->getName());
         }
-    /// Some more attributes
+        // Some more attributes
         $key->setLoaded(true);
         $key->setChanged(true);
-    /// Add the new key
+        // Add the new key
         $this->keys[] = $key;
-    /// Reorder the keys
+        // Reorder the keys
         $this->orderKeys($this->keys);
-    /// Recalculate the hash
+        // Recalculate the hash
         $this->calculateHash(true);
-    /// We have one new field, so the table has changed
+        // We have one new field, so the table has changed
         $this->setChanged(true);
     }
 
     /**
      * Add one index to the table, allowing to specify the desired  order
      * If it's not specified, then the index is added at the end
+     * @param xmldb_index $index
+     * @param xmldb_object $after
      */
     function addIndex(&$index, $after=NULL) {
 
-    /// Detect duplicates first
+        // Detect duplicates first
         if ($this->getIndex($index->getName())) {
             throw new coding_exception('Duplicate index '.$index->getName().' specified in table '.$this->getName());
         }
 
-    /// Calculate the previous and next indexes
+        // Calculate the previous and next indexes
         $previndex = NULL;
         $nextindex = NULL;
 
@@ -181,7 +194,7 @@ class xmldb_table extends xmldb_object {
             $nextindex =& $this->getIndex($previndex->getNext());
         }
 
-    /// Set current index previous and next attributes
+        // Set current index previous and next attributes
         if ($previndex) {
             $index->setPrevious($previndex->getName());
             $previndex->setNext($index->getName());
@@ -191,21 +204,22 @@ class xmldb_table extends xmldb_object {
             $nextindex->setPrevious($index->getName());
         }
 
-    /// Some more attributes
+        // Some more attributes
         $index->setLoaded(true);
         $index->setChanged(true);
-    /// Add the new index
+        // Add the new index
         $this->indexes[] = $index;
-    /// Reorder the indexes
+        // Reorder the indexes
         $this->orderIndexes($this->indexes);
-    /// Recalculate the hash
+        // Recalculate the hash
         $this->calculateHash(true);
-    /// We have one new index, so the table has changed
+        // We have one new index, so the table has changed
         $this->setChanged(true);
     }
 
     /**
      * This function will return the array of fields in the table
+     * @return array
      */
     function &getFields() {
         return $this->fields;
@@ -213,6 +227,7 @@ class xmldb_table extends xmldb_object {
 
     /**
      * This function will return the array of keys in the table
+     * @return array
      */
     function &getKeys() {
         return $this->keys;
@@ -220,6 +235,7 @@ class xmldb_table extends xmldb_object {
 
     /**
      * This function will return the array of indexes in the table
+     * @return array
      */
     function &getIndexes() {
         return $this->indexes;
@@ -227,6 +243,8 @@ class xmldb_table extends xmldb_object {
 
     /**
      * Returns one xmldb_field
+     * @param string $fieldname
+     * @return mixed
      */
     function &getField($fieldname) {
         $i = $this->findFieldInArray($fieldname);
@@ -239,6 +257,8 @@ class xmldb_table extends xmldb_object {
 
     /**
      * Returns the position of one field in the array.
+     * @param string $fieldname
+     * @return mixed
      */
     function &findFieldInArray($fieldname) {
         foreach ($this->fields as $i => $field) {
@@ -252,6 +272,7 @@ class xmldb_table extends xmldb_object {
 
     /**
      * This function will reorder the array of fields
+     * @return bool
      */
     function orderFields() {
         $result = $this->orderElements($this->fields);
@@ -265,6 +286,8 @@ class xmldb_table extends xmldb_object {
 
     /**
      * Returns one xmldb_key
+     * @param string $keyname
+     * @return mixed
      */
     function &getKey($keyname) {
         $i = $this->findKeyInArray($keyname);
@@ -277,6 +300,8 @@ class xmldb_table extends xmldb_object {
 
     /**
      * Returns the position of one key in the array.
+     * @param string $keyname
+     * @return mixed
      */
     function &findKeyInArray($keyname) {
         foreach ($this->keys as $i => $key) {
@@ -290,6 +315,7 @@ class xmldb_table extends xmldb_object {
 
     /**
      * This function will reorder the array of keys
+     * @return bool
      */
     function orderKeys() {
         $result = $this->orderElements($this->keys);
@@ -303,6 +329,8 @@ class xmldb_table extends xmldb_object {
 
     /**
      * Returns one xmldb_index
+     * @param string $indexname
+     * @return mixed
      */
     function &getIndex($indexname) {
         $i = $this->findIndexInArray($indexname);
@@ -315,6 +343,8 @@ class xmldb_table extends xmldb_object {
 
     /**
      * Returns the position of one index in the array.
+     * @param string $idnexname
+     * @return mixed
      */
     function &findIndexInArray($indexname) {
         foreach ($this->indexes as $i => $index) {
@@ -328,6 +358,7 @@ class xmldb_table extends xmldb_object {
 
     /**
      * This function will reorder the array of indexes
+     * @return bool
      */
     function orderIndexes() {
         $result = $this->orderElements($this->indexes);
@@ -341,6 +372,7 @@ class xmldb_table extends xmldb_object {
 
     /**
      * This function will set the array of fields in the table
+     * @param array $fields
      */
     function setFields($fields) {
         $this->fields = $fields;
@@ -348,6 +380,7 @@ class xmldb_table extends xmldb_object {
 
     /**
      * This function will set the array of keys in the table
+     * @param array $keys
      */
     function setKeys($keys) {
         $this->keys = $keys;
@@ -355,6 +388,7 @@ class xmldb_table extends xmldb_object {
 
     /**
      * This function will set the array of indexes in the table
+     * @param array $indexes
      */
     function setIndexes($indexes) {
         $this->indexes = $indexes;
@@ -362,93 +396,98 @@ class xmldb_table extends xmldb_object {
 
     /**
      * Delete one field from the table
+     * @param string $fieldname
      */
     function deleteField($fieldname) {
 
         $field =& $this->getField($fieldname);
         if ($field) {
             $i = $this->findFieldInArray($fieldname);
-        /// Look for prev and next field
+            // Look for prev and next field
             $prevfield =& $this->getField($field->getPrevious());
             $nextfield =& $this->getField($field->getNext());
-        /// Change their previous and next attributes
+            // Change their previous and next attributes
             if ($prevfield) {
                 $prevfield->setNext($field->getNext());
             }
             if ($nextfield) {
                 $nextfield->setPrevious($field->getPrevious());
             }
-        /// Delete the field
+            // Delete the field
             unset($this->fields[$i]);
-        /// Reorder the whole structure
+            // Reorder the whole structure
             $this->orderFields($this->fields);
-        /// Recalculate the hash
+            // Recalculate the hash
             $this->calculateHash(true);
-        /// We have one deleted field, so the table has changed
+            // We have one deleted field, so the table has changed
             $this->setChanged(true);
         }
     }
 
     /**
      * Delete one key from the table
+     * @param string $keyname
      */
     function deleteKey($keyname) {
 
         $key =& $this->getKey($keyname);
         if ($key) {
             $i = $this->findKeyInArray($keyname);
-        /// Look for prev and next key
+            // Look for prev and next key
             $prevkey =& $this->getKey($key->getPrevious());
             $nextkey =& $this->getKey($key->getNext());
-        /// Change their previous and next attributes
+            // Change their previous and next attributes
             if ($prevkey) {
                 $prevkey->setNext($key->getNext());
             }
             if ($nextkey) {
                 $nextkey->setPrevious($key->getPrevious());
             }
-        /// Delete the key
+            // Delete the key
             unset($this->keys[$i]);
-        /// Reorder the Keys
+            // Reorder the Keys
             $this->orderKeys($this->keys);
-        /// Recalculate the hash
+            // Recalculate the hash
             $this->calculateHash(true);
-        /// We have one deleted key, so the table has changed
+            // We have one deleted key, so the table has changed
             $this->setChanged(true);
         }
     }
 
     /**
      * Delete one index from the table
+     * @param string $idnexname
      */
     function deleteIndex($indexname) {
 
         $index =& $this->getIndex($indexname);
         if ($index) {
             $i = $this->findIndexInArray($indexname);
-        /// Look for prev and next index
+            // Look for prev and next index
             $previndex =& $this->getIndex($index->getPrevious());
             $nextindex =& $this->getIndex($index->getNext());
-        /// Change their previous and next attributes
+            // Change their previous and next attributes
             if ($previndex) {
                 $previndex->setNext($index->getNext());
             }
             if ($nextindex) {
                 $nextindex->setPrevious($index->getPrevious());
             }
-        /// Delete the index
+            // Delete the index
             unset($this->indexes[$i]);
-        /// Reorder the indexes
+            // Reorder the indexes
             $this->orderIndexes($this->indexes);
-        /// Recalculate the hash
+            // Recalculate the hash
             $this->calculateHash(true);
-        /// We have one deleted index, so the table has changed
+            // We have one deleted index, so the table has changed
             $this->setChanged(true);
         }
     }
 
     /**
      * Load data from XML to the table
+     * @param array $xmlarr
+     * @return bool success
      */
     function arr2xmldb_table($xmlarr) {
 
@@ -456,12 +495,12 @@ class xmldb_table extends xmldb_object {
 
         $result = true;
 
-    /// Debug the table
-    /// traverse_xmlize($xmlarr);                   //Debug
-    /// print_object ($GLOBALS['traverse_array']);  //Debug
-    /// $GLOBALS['traverse_array']="";              //Debug
+        // Debug the table
+        // traverse_xmlize($xmlarr);                   //Debug
+        // print_object ($GLOBALS['traverse_array']);  //Debug
+        // $GLOBALS['traverse_array']="";              //Debug
 
-    /// Process table attributes (name, comment, previoustable and nexttable)
+        // Process table attributes (name, comment, previoustable and nexttable)
         if (isset($xmlarr['@']['NAME'])) {
             $this->name = trim($xmlarr['@']['NAME']);
         } else {
@@ -485,7 +524,7 @@ class xmldb_table extends xmldb_object {
             $this->next = trim($xmlarr['@']['NEXT']);
         }
 
-    /// Iterate over fields
+        // Iterate over fields
         if (isset($xmlarr['#']['FIELDS']['0']['#']['FIELD'])) {
             foreach ($xmlarr['#']['FIELDS']['0']['#']['FIELD'] as $xmlfield) {
                 if (!$result) { //Skip on error
@@ -507,22 +546,22 @@ class xmldb_table extends xmldb_object {
             $result = false;
         }
 
-    /// Perform some general checks over fields
+        // Perform some general checks over fields
         if ($result && $this->fields) {
-        /// Check field names are ok (lowercase, a-z _-)
+            // Check field names are ok (lowercase, a-z _-)
             if (!$this->checkNameValues($this->fields)) {
                 $this->errormsg = 'Some FIELDS name values are incorrect';
                 $this->debug($this->errormsg);
                 $result = false;
             }
-        /// Check previous & next are ok (duplicates and existing fields)
+            // Check previous & next are ok (duplicates and existing fields)
             $this->fixPrevNext($this->fields);
             if ($result && !$this->checkPreviousNextValues($this->fields)) {
                 $this->errormsg = 'Some FIELDS previous/next values are incorrect';
                 $this->debug($this->errormsg);
                 $result = false;
             }
-        /// Order fields
+            // Order fields
             if ($result && !$this->orderFields($this->fields)) {
                 $this->errormsg = 'Error ordering the fields';
                 $this->debug($this->errormsg);
@@ -530,7 +569,7 @@ class xmldb_table extends xmldb_object {
             }
         }
 
-    /// Iterate over keys
+        // Iterate over keys
         if (isset($xmlarr['#']['KEYS']['0']['#']['KEY'])) {
             foreach ($xmlarr['#']['KEYS']['0']['#']['KEY'] as $xmlkey) {
                 if (!$result) { //Skip on error
@@ -552,33 +591,33 @@ class xmldb_table extends xmldb_object {
             $result = false;
         }
 
-    /// Perform some general checks over keys
+        // Perform some general checks over keys
         if ($result && $this->keys) {
-        /// Check keys names are ok (lowercase, a-z _-)
+            // Check keys names are ok (lowercase, a-z _-)
             if (!$this->checkNameValues($this->keys)) {
                 $this->errormsg = 'Some KEYS name values are incorrect';
                 $this->debug($this->errormsg);
                 $result = false;
             }
-        /// Check previous & next are ok (duplicates and existing keys)
+            // Check previous & next are ok (duplicates and existing keys)
             $this->fixPrevNext($this->keys);
             if ($result && !$this->checkPreviousNextValues($this->keys)) {
                 $this->errormsg = 'Some KEYS previous/next values are incorrect';
                 $this->debug($this->errormsg);
                 $result = false;
             }
-        /// Order keys
+            // Order keys
             if ($result && !$this->orderKeys($this->keys)) {
                 $this->errormsg = 'Error ordering the keys';
                 $this->debug($this->errormsg);
                 $result = false;
             }
-        /// TODO: Only one PK
-        /// TODO: Not keys with repeated fields
-        /// TODO: Check fields and reffieds exist in table
+            // TODO: Only one PK
+            // TODO: Not keys with repeated fields
+            // TODO: Check fields and reffieds exist in table
         }
 
-    /// Iterate over indexes
+        // Iterate over indexes
         if (isset($xmlarr['#']['INDEXES']['0']['#']['INDEX'])) {
             foreach ($xmlarr['#']['INDEXES']['0']['#']['INDEX'] as $xmlindex) {
                 if (!$result) { //Skip on error
@@ -596,32 +635,32 @@ class xmldb_table extends xmldb_object {
             }
         }
 
-    /// Perform some general checks over indexes
+        // Perform some general checks over indexes
         if ($result && $this->indexes) {
-        /// Check field names are ok (lowercase, a-z _-)
+            // Check field names are ok (lowercase, a-z _-)
             if (!$this->checkNameValues($this->indexes)) {
                 $this->errormsg = 'Some INDEXES name values are incorrect';
                 $this->debug($this->errormsg);
                 $result = false;
             }
-        /// Check previous & next are ok (duplicates and existing INDEXES)
+            // Check previous & next are ok (duplicates and existing INDEXES)
             $this->fixPrevNext($this->indexes);
             if ($result && !$this->checkPreviousNextValues($this->indexes)) {
                 $this->errormsg = 'Some INDEXES previous/next values are incorrect';
                 $this->debug($this->errormsg);
                 $result = false;
             }
-        /// Order indexes
+            // Order indexes
             if ($result && !$this->orderIndexes($this->indexes)) {
                 $this->errormsg = 'Error ordering the indexes';
                 $this->debug($this->errormsg);
                 $result = false;
             }
-        /// TODO: Not indexes with repeated fields
-        /// TODO: Check fields exist in table
+            // TODO: Not indexes with repeated fields
+            // TODO: Check fields exist in table
         }
 
-    /// Set some attributes
+        // Set some attributes
         if ($result) {
             $this->loaded = true;
         }
@@ -631,6 +670,7 @@ class xmldb_table extends xmldb_object {
 
     /**
      * This function calculate and set the hash of one xmldb_table
+     * @param bool $recursive
      */
      function calculateHash($recursive = false) {
         if (!$this->loaded) {
@@ -689,8 +729,10 @@ class xmldb_table extends xmldb_object {
 
         return null;
     }
-        /**
+
+    /**
      * This function will output the XML text for one table
+     * @return string
      */
     function xmlOutput() {
         $o = '';
@@ -705,7 +747,7 @@ class xmldb_table extends xmldb_object {
             $o.= ' NEXT="' . $this->next . '"';
         }
             $o.= '>' . "\n";
-    /// Now the fields
+        // Now the fields
         if ($this->fields) {
             $o.= '      <FIELDS>' . "\n";
             foreach ($this->fields as $field) {
@@ -713,7 +755,7 @@ class xmldb_table extends xmldb_object {
             }
             $o.= '      </FIELDS>' . "\n";
         }
-    /// Now the keys
+        // Now the keys
         if ($this->keys) {
             $o.= '      <KEYS>' . "\n";
             foreach ($this->keys as $key) {
@@ -721,7 +763,7 @@ class xmldb_table extends xmldb_object {
             }
             $o.= '      </KEYS>' . "\n";
         }
-    /// Now the indexes
+        // Now the indexes
         if ($this->indexes) {
             $o.= '      <INDEXES>' . "\n";
             foreach ($this->indexes as $index) {
@@ -738,14 +780,14 @@ class xmldb_table extends xmldb_object {
      * This function will add one new field to the table with all
      * its attributes defined
      *
-     * @param string name name of the field
-     * @param string type XMLDB_TYPE_INTEGER, XMLDB_TYPE_NUMBER, XMLDB_TYPE_CHAR, XMLDB_TYPE_TEXT, XMLDB_TYPE_BINARY
-     * @param string precision length for integers and chars, two-comma separated numbers for numbers
-     * @param string unsigned XMLDB_UNSIGNED or null (or false)
-     * @param string notnull XMLDB_NOTNULL or null (or false)
-     * @param string sequence XMLDB_SEQUENCE or null (or false)
-     * @param string default meaningful default o null (or false)
-     * @param string previous name of the previous field in the table or null (or false)
+     * @param string $name name of the field
+     * @param int $type XMLDB_TYPE_INTEGER, XMLDB_TYPE_NUMBER, XMLDB_TYPE_CHAR, XMLDB_TYPE_TEXT, XMLDB_TYPE_BINARY
+     * @param string $precision length for integers and chars, two-comma separated numbers for numbers
+     * @param bool $unsigned XMLDB_UNSIGNED or null (or false)
+     * @param bool $notnull XMLDB_NOTNULL or null (or false)
+     * @param bool $sequence XMLDB_SEQUENCE or null (or false)
+     * @param mixed $default meaningful default o null (or false)
+     * @param xmldb_object $previous name of the previous field in the table or null (or false)
      */
     function add_field($name, $type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
         $field = new xmldb_field($name, $type, $precision, $unsigned, $notnull, $sequence, $default);
@@ -758,11 +800,11 @@ class xmldb_table extends xmldb_object {
      * This function will add one new key to the table with all
      * its attributes defined
      *
-     * @param string name name of the key
-     * @param string type XMLDB_KEY_PRIMARY, XMLDB_KEY_UNIQUE, XMLDB_KEY_FOREIGN
-     * @param array fields an array of fieldnames to build the key over
-     * @param string reftable name of the table the FK points to or null
-     * @param array reffields an array of fieldnames in the FK table or null
+     * @param string $name name of the key
+     * @param int $type XMLDB_KEY_PRIMARY, XMLDB_KEY_UNIQUE, XMLDB_KEY_FOREIGN
+     * @param array $fields an array of fieldnames to build the key over
+     * @param string $reftable name of the table the FK points to or null
+     * @param array $reffields an array of fieldnames in the FK table or null
      */
     function add_key($name, $type, $fields, $reftable=null, $reffields=null) {
         $key = new xmldb_key($name, $type, $fields, $reftable, $reffields);
@@ -773,9 +815,9 @@ class xmldb_table extends xmldb_object {
      * This function will add one new index to the table with all
      * its attributes defined
      *
-     * @param string name name of the index
-     * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
-     * @param array fields an array of fieldnames to build the index over
+     * @param string $name name of the index
+     * @param int $type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
+     * @param array $fields an array of fieldnames to build the index over
      */
     function add_index($name, $type, $fields) {
         $index = new xmldb_index($name, $type, $fields);
@@ -790,11 +832,11 @@ class xmldb_table extends xmldb_object {
     function getAllErrors() {
 
         $errors = array();
-    /// First the table itself
+        // First the table itself
         if ($this->getError()) {
             $errors[] = $this->getError();
         }
-    /// Delegate to fields
+        // Delegate to fields
         if ($fields = $this->getFields()) {
             foreach ($fields as $field) {
                 if ($field->getError()) {
@@ -802,7 +844,7 @@ class xmldb_table extends xmldb_object {
                 }
             }
         }
-    /// Delegate to keys
+        // Delegate to keys
         if ($keys = $this->getKeys()) {
             foreach ($keys as $key) {
                 if ($key->getError()) {
@@ -810,7 +852,7 @@ class xmldb_table extends xmldb_object {
                 }
             }
         }
-    /// Delegate to indexes
+        // Delegate to indexes
         if ($indexes = $this->getIndexes()) {
             foreach ($indexes as $index) {
                 if ($index->getError()) {
@@ -818,7 +860,7 @@ class xmldb_table extends xmldb_object {
                 }
             }
         }
-    /// Return decision
+        // Return decision
         if (count($errors)) {
             return $errors;
         } else {

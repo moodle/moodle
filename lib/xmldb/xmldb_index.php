@@ -1,34 +1,37 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+/**
+ * This class represent one XMLDB Index
+ *
+ * @package    core_xmldb
+ * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
+ *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-/// This class represent one XMLDB Index
+defined('MOODLE_INTERNAL') || die();
+
 
 class xmldb_index extends xmldb_object {
 
+    /** @var bool is unique? */
     var $unique;
+
+    /** @var array index fields */
     var $fields;
 
     /**
@@ -49,12 +52,16 @@ class xmldb_index extends xmldb_object {
 
     /**
      * Creates one new xmldb_index
+     *
+     * @param string $name
+     * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
+     * @param array fields an array of fieldnames to build the index over
      */
     function __construct($name, $type=null, $fields=array()) {
         $this->unique = false;
         $this->fields = array();
         parent::__construct($name);
-        return $this->set_attributes($type, $fields);
+        $this->set_attributes($type, $fields);
     }
 
     /**
@@ -70,6 +77,7 @@ class xmldb_index extends xmldb_object {
 
     /**
      * Get the index unique
+     * @return bool
      */
     function getUnique() {
         return $this->unique;
@@ -77,6 +85,7 @@ class xmldb_index extends xmldb_object {
 
     /**
      * Set the index unique
+     * @param bool $unique
      */
     function setUnique($unique = true) {
         $this->unique = $unique;
@@ -84,6 +93,7 @@ class xmldb_index extends xmldb_object {
 
     /**
      * Set the index fields
+     * @param array $fields
      */
     function setFields($fields) {
         $this->fields = $fields;
@@ -91,6 +101,7 @@ class xmldb_index extends xmldb_object {
 
     /**
      * Get the index fields
+     * @return array reference to fields array
      */
     function &getFields() {
         return $this->fields;
@@ -98,17 +109,19 @@ class xmldb_index extends xmldb_object {
 
     /**
      * Load data from XML to the index
+     * @param $xmlarr array
+     * @return bool
      */
     function arr2xmldb_index($xmlarr) {
 
         $result = true;
 
-    /// Debug the table
-    /// traverse_xmlize($xmlarr);                   //Debug
-    /// print_object ($GLOBALS['traverse_array']);  //Debug
-    /// $GLOBALS['traverse_array']="";              //Debug
+        // Debug the table
+        // traverse_xmlize($xmlarr);                   //Debug
+        // print_object ($GLOBALS['traverse_array']);  //Debug
+        // $GLOBALS['traverse_array']="";              //Debug
 
-    /// Process key attributes (name, unique, fields, comment, previous, next)
+        // Process key attributes (name, unique, fields, comment, previous, next)
         if (isset($xmlarr['@']['NAME'])) {
             $this->name = trim($xmlarr['@']['NAME']);
         } else {
@@ -157,7 +170,7 @@ class xmldb_index extends xmldb_object {
             $this->debug($this->errormsg);
             $result = false;
         }
-    /// Finally, set the array of fields
+        // Finally, set the array of fields
         $this->fields = $fieldsarr;
 
         if (isset($xmlarr['@']['COMMENT'])) {
@@ -172,7 +185,7 @@ class xmldb_index extends xmldb_object {
             $this->next = trim($xmlarr['@']['NEXT']);
         }
 
-    /// Set some attributes
+        // Set some attributes
         if ($result) {
             $this->loaded = true;
         }
@@ -182,6 +195,7 @@ class xmldb_index extends xmldb_object {
 
     /**
      * This function calculate and set the hash of one xmldb_index
+     * @retur nvoid, changes $this->hash
      */
      function calculateHash($recursive = false) {
         if (!$this->loaded) {
@@ -194,6 +208,7 @@ class xmldb_index extends xmldb_object {
 
     /**
      *This function will output the XML text for one index
+     * @return string
      */
     function xmlOutput() {
         $o = '';
@@ -222,56 +237,60 @@ class xmldb_index extends xmldb_object {
     /**
      * This function will set all the attributes of the xmldb_index object
      * based on information passed in one ADOindex
+     * @param array
+     * @return void
      */
     function setFromADOIndex($adoindex) {
 
-    /// Set the unique field
+        // Set the unique field
         $this->unique = false;
-    /// Set the fields, converting all them to lowercase
+        // Set the fields, converting all them to lowercase
         $fields = array_flip(array_change_key_case(array_flip($adoindex['columns'])));
         $this->fields = $fields;
-    /// Some more fields
+        // Some more fields
         $this->loaded = true;
         $this->changed = true;
     }
 
     /**
      * Returns the PHP code needed to define one xmldb_index
+     * @return string
      */
     function getPHP() {
 
         $result = '';
 
-    /// The type
+        // The type
         $unique = $this->getUnique();
         if (!empty($unique)) {
             $result .= 'XMLDB_INDEX_UNIQUE, ';
         } else {
             $result .= 'XMLDB_INDEX_NOTUNIQUE, ';
         }
-    /// The fields
+        // The fields
         $indexfields = $this->getFields();
         if (!empty($indexfields)) {
             $result .= 'array(' . "'".  implode("', '", $indexfields) . "')";
         } else {
             $result .= 'null';
         }
-    /// Return result
+        // Return result
         return $result;
     }
 
     /**
      * Shows info in a readable format
+     * @return string
      */
     function readableInfo() {
         $o = '';
-    /// unique
+        // unique
         if ($this->unique) {
             $o .= 'unique';
         } else {
             $o .= 'not unique';
         }
-    /// fields
+        // fields
         $o .= ' (' . implode(', ', $this->fields) . ')';
 
         return $o;
@@ -344,5 +363,4 @@ class xmldb_index extends xmldb_object {
 
         return null;
     }
-
 }

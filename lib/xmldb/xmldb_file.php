@@ -1,40 +1,48 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+/**
+ * This class represent one XMLDB file
+ *
+ * @package    core_xmldb
+ * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
+ *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-/// This class represents an entire XMLDB file
+defined('MOODLE_INTERNAL') || die();
+
 
 class xmldb_file extends xmldb_object {
 
+    /** @var string path to file */
     var $path;
+
+    /** @var string path to schema */
     var $schema;
+
+    /** @var  string document dtd */
     var $dtd;
+
+    /** @var xmldb_structure the structure stored in file */
     var $xmldb_structure;
 
     /**
      * Constructor of the xmldb_file
+     * @param string $path
      */
     function __construct($path) {
         parent::__construct($path);
@@ -44,6 +52,7 @@ class xmldb_file extends xmldb_object {
 
     /**
      * Determine if the XML file exists
+     * @return bool
      */
     function fileExists() {
         if (file_exists($this->path) && is_readable($this->path)) {
@@ -54,6 +63,7 @@ class xmldb_file extends xmldb_object {
 
     /**
      * Determine if the XML is writeable
+     * @return bool
      */
     function fileWriteable() {
         if (is_writeable(dirname($this->path))) {
@@ -70,10 +80,11 @@ class xmldb_file extends xmldb_object {
      * This function will check/validate the XML file for correctness
      * Dynamically if will use the best available checker/validator
      * (expat syntax checker or DOM schema validator
+     * @return true
      */
     function validateXMLStructure() {
 
-    /// Create and load XML file
+        // Create and load XML file
         $parser = new DOMDocument();
         $contents = file_get_contents($this->path);
         if (strpos($contents, '<STATEMENTS>')) {
@@ -89,30 +100,30 @@ class xmldb_file extends xmldb_object {
         libxml_clear_errors();
 
         $parser->loadXML($contents);
-    /// Only validate if we have a schema
+        // Only validate if we have a schema
         if (!empty($this->schema) && file_exists($this->schema)) {
             $parser->schemaValidate($this->schema);
         }
-    /// Check for errors
+        // Check for errors
         $errors = libxml_get_errors();
 
         // Stop capturing errors
         libxml_use_internal_errors($olderrormode);
 
-    /// Prepare errors
+        // Prepare errors
         if (!empty($errors)) {
-        /// Create one structure to store errors
+            // Create one structure to store errors
             $structure = new xmldb_structure($this->path);
-        /// Add errors to structure
+            // Add errors to structure
             $structure->errormsg = 'XML Error: ';
             foreach ($errors as $error) {
                 $structure->errormsg .= sprintf("%s at line %d. ",
                                                  trim($error->message, "\n\r\t ."),
                                                  $error->line);
             }
-        /// Add structure to file
+            // Add structure to file
             $this->xmldb_structure = $structure;
-        /// Check has failed
+            // Check has failed
             return false;
         }
 
@@ -121,10 +132,11 @@ class xmldb_file extends xmldb_object {
 
     /**
      * Load and the XMLDB structure from file
+     * @return true
      */
     function loadXMLStructure() {
         if ($this->fileExists()) {
-        /// Let's validate the XML file
+            // Let's validate the XML file
             if (!$this->validateXMLStructure()) {
                 return false;
             }
@@ -134,12 +146,12 @@ class xmldb_file extends xmldb_object {
                 $contents = preg_replace('|<STATEMENTS>.*</STATEMENTS>|s', '', $contents);
                 debugging('STATEMENTS section is not supported any more, please use db/install.php or db/log.php');
             }
-        /// File exists, so let's process it
-        /// Load everything to a big array
+            // File exists, so let's process it
+            // Load everything to a big array
             $xmlarr = xmlize($contents);
-        /// Convert array to xmldb structure
+            // Convert array to xmldb structure
             $this->xmldb_structure = $this->arr2xmldb_structure($xmlarr);
-        /// Analize results
+            // Analyze results
             if ($this->xmldb_structure->isLoaded()) {
                 $this->loaded = true;
                 return true;
@@ -152,6 +164,8 @@ class xmldb_file extends xmldb_object {
 
     /**
      * This function takes an xmlized array and put it into one xmldb_structure
+     * @param array $xmlarr
+     * @return xmldb_structure
      */
     function arr2xmldb_structure ($xmlarr) {
         $structure = new xmldb_structure($this->path);
@@ -161,6 +175,7 @@ class xmldb_file extends xmldb_object {
 
     /**
      * This function sets the DTD of the XML file
+     * @param string
      */
     function setDTD($path) {
         $this->dtd = $path;
@@ -168,6 +183,7 @@ class xmldb_file extends xmldb_object {
 
     /**
      * This function sets the schema of the XML file
+     * @param string
      */
     function setSchema($path) {
         $this->schema = $path;
@@ -175,6 +191,7 @@ class xmldb_file extends xmldb_object {
 
     /**
      * This function saves the whole xmldb_structure to its file
+     * @return int|bool false on failure, number of written bytes on success
      */
     function saveXMLFile() {
 
