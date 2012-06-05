@@ -29,13 +29,13 @@ defined('MOODLE_INTERNAL') || die();
 class xmldb_structure extends xmldb_object {
 
     /** @var string */
-    var $path;
+    protected $path;
 
     /** @var string */
-    var $version;
+    protected $version;
 
     /** @var array tables */
-    var $tables;
+    protected $tables;
 
     /**
      * Creates one new xmldb_structure

@@ -29,28 +29,28 @@ defined('MOODLE_INTERNAL') || die();
 class xmldb_object {
 
     /** @var string name of obejct */
-    var $name;
+    protected $name;
 
     /** @var string comment on object */
-    var $comment;
+    protected $comment;
 
     /** @var xmldb_object */
-    var $previous;
+    protected $previous;
 
     /** @var xmldb_object */
-    var $next;
+    protected $next;
 
     /** @var string hash of object */
-    var $hash;
+    protected $hash;
 
     /** @var bool is it loaded yet */
-    var $loaded;
+    protected $loaded;
 
     /** @var bool was object changed */
-    var $changed;
+    protected $changed;
 
     /** @var string error message */
-    var $errormsg;
+    protected $errormsg;
 
     /**
      * Creates one new xmldb_object

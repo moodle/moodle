@@ -29,13 +29,13 @@ defined('MOODLE_INTERNAL') || die();
 class xmldb_table extends xmldb_object {
 
     /** @var array table columns */
-    var $fields;
+    protected $fields;
 
     /** @var array keys */
-    var $keys;
+    protected $keys;
 
     /** @var array indexes */
-    var $indexes;
+    protected $indexes;
 
     /**
      * Note:

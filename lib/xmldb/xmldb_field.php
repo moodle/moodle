@@ -29,22 +29,22 @@ defined('MOODLE_INTERNAL') || die();
 class xmldb_field extends xmldb_object {
 
     /** @var int XMLDB_TYPE_ constants */
-    var $type;
+    protected $type;
 
     /** @var int size of field */
-    var $length;
+    protected $length;
 
     /** @var bool is null forbidden? XMLDB_NOTNULL */
-    var $notnull;
+    protected $notnull;
 
     /** @var mixed default value */
-    var $default;
+    protected $default;
 
     /** @var bool use automatic counter */
-    var $sequence;
+    protected $sequence;
 
     /** @var int number of decimals */
-    var $decimals;
+    protected $decimals;
 
     /**
      * Note:

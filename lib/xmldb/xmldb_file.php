@@ -29,16 +29,16 @@ defined('MOODLE_INTERNAL') || die();
 class xmldb_file extends xmldb_object {
 
     /** @var string path to file */
-    var $path;
+    protected $path;
 
     /** @var string path to schema */
-    var $schema;
+    protected $schema;
 
     /** @var  string document dtd */
-    var $dtd;
+    protected $dtd;
 
     /** @var xmldb_structure the structure stored in file */
-    var $xmldb_structure;
+    protected $xmldb_structure;
 
     /**
      * Constructor of the xmldb_file

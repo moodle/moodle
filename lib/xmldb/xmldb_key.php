@@ -29,16 +29,16 @@ defined('MOODLE_INTERNAL') || die();
 class xmldb_key extends xmldb_object {
 
     /** @var int type of key */
-    var $type;
+    protected $type;
 
     /** @var array of fields */
-    var $fields;
+    protected $fields;
 
     /** @var string referenced table */
-    var $reftable;
+    protected $reftable;
 
     /** @var array referenced fields */
-    var $reffields;
+    protected $reffields;
 
     /**
      * Creates one new xmldb_key

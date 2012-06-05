@@ -29,10 +29,10 @@ defined('MOODLE_INTERNAL') || die();
 class xmldb_index extends xmldb_object {
 
     /** @var bool is unique? */
-    var $unique;
+    protected $unique;
 
     /** @var array index fields */
-    var $fields;
+    protected $fields;
 
     /**
      * Note:
