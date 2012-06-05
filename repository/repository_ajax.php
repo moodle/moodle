@@ -209,30 +209,6 @@ switch ($action) {
             die;
         } else {
             $fs = get_file_storage();
-            // Some repository plugins are hosting moodle internal files, we cannot use get_file
-            // method, so we use copy_to_area method
-            // (local, user, coursefiles, recent)
-            if ($repo->has_moodle_files() && !$usefilereference) {
-                // check filesize against max allowed size
-                $filesize = $repo->get_file_size($source);
-                if (empty($filesize)) {
-                    $filesize = 0;
-                }
-                if (($maxbytes !== -1) && ($filesize > $maxbytes)) {
-                    throw new file_exception('maxbytes');
-                }
-                // If the moodle file is an alias to a file in external repository
-                // we copy this alias instead of create alias to alias
-                // {@link repository::copy_to_area()}.
-                $fileinfo = $repo->copy_to_area($source, $itemid, $saveas_path, $saveas_filename);
-
-                if (!isset($fileinfo['event'])) {
-                    $fileinfo['file'] = $fileinfo['title'];
-                }
-
-                echo json_encode($fileinfo);
-                die;
-            }
 
             // Prepare file record.
             $record = new stdClass();
@@ -240,21 +216,9 @@ switch ($action) {
             $record->filename = $saveas_filename;
             $record->component = 'user';
             $record->filearea = 'draft';
-            if (!is_numeric($itemid)) {
-                $record->itemid = 0;
-            } else {
-                $record->itemid   = $itemid;
-            }
-            if (!empty($file['license'])) {
-                $record->license  = $file['license'];
-            } else {
-                $record->license  = $license;
-            }
-            if (!empty($file['author'])) {
-                $record->author   = $file['author'];
-            } else {
-                $record->author   = $author;
-            }
+            $record->itemid = $itemid;
+            $record->license = $license;
+            $record->author = $author;
 
             if ($record->filepath !== '/') {
                 $record->filepath = trim($record->filepath, '/');
@@ -263,10 +227,9 @@ switch ($action) {
             $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
             $now = time();
             $record->contextid = $usercontext->id;
-            $record->timecreated  = $now;
+            $record->timecreated = $now;
             $record->timemodified = $now;
-            $record->userid       = $USER->id;
-
+            $record->userid = $USER->id;
 
             if ($usefilereference) {
                 $reference = $repo->get_file_reference($source);
@@ -291,21 +254,34 @@ switch ($action) {
                     $event['existingfile']->filepath = $saveas_path;
                     $event['existingfile']->filename = $saveas_filename;
                     $event['existingfile']->url      = moodle_url::make_draftfile_url($itemid, $saveas_path, $saveas_filename)->out();;
-                    echo json_encode($event);
-                    die;
+                } else {
+                    $storedfile = $fs->create_file_from_reference($record, $repo_id, $reference);
+                    $event = array(
+                        'url'=>moodle_url::make_draftfile_url($storedfile->get_itemid(), $storedfile->get_filepath(), $storedfile->get_filename())->out(),
+                        'id'=>$storedfile->get_itemid(),
+                        'file'=>$storedfile->get_filename(),
+                        'icon' => $OUTPUT->pix_url(file_file_icon($storedfile, 32))->out(),
+                    );
                 }
-                $storedfile = $fs->create_file_from_reference($record, $repo_id, $reference);
+                if ($maxbytes !== -1 && $storedfile->get_filesize() > $maxbytes) {
+                    $storedfile->delete();
+                    throw new file_exception('maxbytes');
+                }
                 // Repository plugin callback
                 // You can cache reository file in this callback
                 // or complete other tasks.
                 $repo->cache_file_by_reference($reference, $storedfile);
-                $info = array(
-                    'url'=>moodle_url::make_draftfile_url($storedfile->get_itemid(), $storedfile->get_filepath(), $storedfile->get_filename())->out(),
-                    'id'=>$storedfile->get_itemid(),
-                    'file'=>$storedfile->get_filename(),
-                    'icon' => $OUTPUT->pix_url(file_file_icon($storedfile, 32))->out(),
-                );
-                echo json_encode($info);
+                echo json_encode($event);
+                die;
+            } else if ($repo->has_moodle_files()) {
+                // Some repository plugins (local, user, coursefiles, recent) are hosting moodle
+                // internal files, we cannot use get_file method, so we use copy_to_area method
+
+                // If the moodle file is an alias we copy this alias, otherwise we copy the file
+                // {@link repository::copy_to_area()}.
+                $fileinfo = $repo->copy_to_area($source, $record, $maxbytes);
+
+                echo json_encode($fileinfo);
                 die;
             } else {
                 // Download file to moodle.

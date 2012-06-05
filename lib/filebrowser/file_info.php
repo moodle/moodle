@@ -303,15 +303,11 @@ abstract class file_info {
     /**
      * Copy content of this file to local storage, overriding current file if needed.
      *
-     * @param int $contextid context ID
-     * @param string $component component
-     * @param string $filearea file area
-     * @param int $itemid item ID
-     * @param string $filepath file path
-     * @param string $filename file name
-     * @return boolean success
+     * @param array|stdClass $filerecord contains contextid, component, filearea,
+     *    itemid, filepath, filename and optionally other attributes of the new file
+     * @return bool success
      */
-    public function copy_to_storage($contextid, $component, $filearea, $itemid, $filepath, $filename) {
+    public function copy_to_storage($filerecord) {
         return false;
     }
 
