@@ -92,12 +92,11 @@
     $loglabel = 'view';
     $infoid = $course->id;
     if(!empty($section)) {
-        $logparam .= '&section='. $section;
         $loglabel = 'view section';
         $sectionparams = array('course' => $course->id, 'section' => $section);
-        if ($coursesections = $DB->get_record('course_sections', $sectionparams, 'id', MUST_EXIST)) {
-            $infoid = $coursesections->id;
-    }
+        $coursesections = $DB->get_record('course_sections', $sectionparams, 'id', MUST_EXIST);
+        $infoid = $coursesections->id;
+        $logparam .= '&sectionid='. $infoid;
     }
     add_to_log($course->id, 'course', $loglabel, "view.php?". $logparam, $infoid);
 
