@@ -4618,7 +4618,7 @@ function forum_get_subscribed_forums($course) {
  */
 function forum_get_optional_subscribed_forums() {
     global $USER, $DB;
-    
+
     // Get courses that $USER is enrolled in and can see
     $courses = enrol_get_my_courses();
     if (empty($courses)) {
