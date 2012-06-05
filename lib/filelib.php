@@ -2535,7 +2535,6 @@ function fulldelete($location) {
         return false;
     }
     if (is_dir($location)) {
-        
         if (!$currdir = opendir($location)) {
             return false;
         }

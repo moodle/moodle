@@ -126,7 +126,7 @@ if ($formdata = $mform->get_data()) {
     fclose($fp);
 
     if (!$fp = fopen($filename, "r")) {
-    	print_error('cannotopenfile');
+        print_error('cannotopenfile');
     }
 
     // --- get header (field names) ---
