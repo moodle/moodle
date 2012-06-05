@@ -1515,7 +1515,33 @@ class css_rule {
         $advancedstyles = array();
         foreach ($this->styles as $style) {
             if (is_array($style)) {
-                $advancedstyles += $style;
+                $single = null;
+                $count = 0;
+                foreach ($style as $advstyle) {
+                    $key = $count++;
+                    $advancedstyles[$key] = $advstyle;
+                    if (!$advstyle->allows_multiple_values()) {
+                        if (!is_null($single)) {
+                            unset($advancedstyles[$single]);
+                        }
+                        $single = $key;
+                    }
+                }
+                if (!is_null($single)) {
+                    $style = $advancedstyles[$single];
+
+                    $consolidatetoclass = $style->consolidate_to();
+                    if (($style->is_valid() || $style->is_special_empty_value()) && !empty($consolidatetoclass) && class_exists('css_style_'.$consolidatetoclass)) {
+                        $class = 'css_style_'.$consolidatetoclass;
+                        if (!array_key_exists($class, $consolidate)) {
+                            $consolidate[$class] = array();
+                            $organisedstyles[$class] = true;
+                        }
+                        $consolidate[$class][] = $style;
+                        unset($advancedstyles[$single]);
+                    }
+                }
+
                 continue;
             }
             $consolidatetoclass = $style->consolidate_to();
@@ -2015,9 +2041,9 @@ abstract class css_style {
      *
      * @return string
      */
-    public function get_value() {
+    public function get_value($includeimportant = true) {
         $value = $this->value;
-        if ($this->important) {
+        if ($includeimportant && $this->important) {
             $value .= ' !important';
         }
         return $value;
@@ -2104,6 +2130,14 @@ abstract class css_style {
 
     public function allows_multiple_values() {
         return false;
+    }
+
+    public function is_important() {
+        return !empty($this->important);
+    }
+
+    public function set_important($important = true) {
+        $this->important = (bool) $important;
     }
 }
 
@@ -2325,25 +2359,72 @@ class css_style_margin extends css_style_width {
         if (count($styles) != 4) {
             return $styles;
         }
-        $top = $right = $bottom = $left = null;
+
+        $someimportant = false;
+        $allimportant = null;
+        $notimportantequal = null;
+        $firstvalue = null;
         foreach ($styles as $style) {
-            switch ($style->get_name()) {
-                case 'margin-top' : $top = $style->get_value();break;
-                case 'margin-right' : $right = $style->get_value();break;
-                case 'margin-bottom' : $bottom = $style->get_value();break;
-                case 'margin-left' : $left = $style->get_value();break;
+            if ($style->is_important()) {
+                $someimportant = true;
+                if ($allimportant === null) {
+                    $allimportant = true;
+                }
+            } else {
+                if ($allimportant === true) {
+                    $allimportant = false;
+                }
+                if ($firstvalue == null) {
+                    $firstvalue = $style->get_value(false);
+                    $notimportantequal = true;
+                } else if ($notimportantequal && $firstvalue !== $style->get_value(false)) {
+                    $notimportantequal = false;
+                }
             }
         }
-        if ($top == $bottom && $left == $right) {
-            if ($top == $left) {
-                return array(new css_style_margin('margin', $top));
-            } else {
-                return array(new css_style_margin('margin', "{$top} {$left}"));
+
+        if ($someimportant && !$allimportant && !$notimportantequal) {
+            return $styles;
+        }
+
+        if ($someimportant && !$allimportant && $notimportantequal) {
+            $return = array(
+                new css_style_margin('margin', $firstvalue)
+            );
+            foreach ($styles as $style) {
+                if ($style->is_important()) {
+                    $return[] = $style;
+                }
             }
-        } else if ($left == $right) {
-            return array(new css_style_margin('margin', "{$top} {$right} {$bottom}"));
+            return $return;
         } else {
-            return array(new css_style_margin('margin', "{$top} {$right} {$bottom} {$left}"));
+            $top = null;
+            $right = null;
+            $bottom = null;
+            $left = null;
+            foreach ($styles as $style) {
+                switch ($style->get_name()) {
+                    case 'margin-top' : $top = $style->get_value(false);break;
+                    case 'margin-right' : $right = $style->get_value(false);break;
+                    case 'margin-bottom' : $bottom = $style->get_value(false);break;
+                    case 'margin-left' : $left = $style->get_value(false);break;
+                }
+            }
+            if ($top == $bottom && $left == $right) {
+                if ($top == $left) {
+                    $returnstyle = new css_style_margin('margin', $top);
+                } else {
+                    $returnstyle = new css_style_margin('margin', "{$top} {$left}");
+                }
+            } else if ($left == $right) {
+                $returnstyle = new css_style_margin('margin', "{$top} {$right} {$bottom}");
+            } else {
+                $returnstyle = new css_style_margin('margin', "{$top} {$right} {$bottom} {$left}");
+            }
+            if ($allimportant) {
+                $returnstyle->set_important();
+            }
+            return array($returnstyle);
         }
     }
 }
@@ -2540,10 +2621,10 @@ class css_style_border extends css_style {
                 case 'border-bottom-style': $borderstyles['bottom'] = $style->get_value(); break;
                 case 'border-left-style': $borderstyles['left'] = $style->get_value(); break;
 
-                case 'border-top-color': $bordercolors['top'] = $style->get_value(); break;
-                case 'border-right-color': $bordercolors['right'] = $style->get_value(); break;
-                case 'border-bottom-color': $bordercolors['bottom'] = $style->get_value(); break;
-                case 'border-left-color': $bordercolors['left'] = $style->get_value(); break;
+                case 'border-top-color': $bordercolors['top'] = css_style_color::shrink_value($style->get_value()); break;
+                case 'border-right-color': $bordercolors['right'] = css_style_color::shrink_value($style->get_value()); break;
+                case 'border-bottom-color': $bordercolors['bottom'] = css_style_color::shrink_value($style->get_value()); break;
+                case 'border-left-color': $bordercolors['left'] = css_style_color::shrink_value($style->get_value()); break;
             }
         }
 
@@ -3527,6 +3608,12 @@ class css_style_background extends css_style {
             $value = str_replace($matches[1], '', $value);
         }
 
+        $important = (stripos($value, '!important') !== false);
+        if ($important) {
+            // Great some genius put !important in the background shorthand property
+            $value = str_replace('!important', '', $value);
+        }
+
         $value = preg_replace('#\s+#', ' ', $value);
         $bits = explode(' ', $value);
 
@@ -3575,7 +3662,9 @@ class css_style_background extends css_style {
                     $unknownbits[] = $bit;
                 }
             }
-            $position = join(' ',$widthbits);
+            if (count($widthbits)) {
+                $position = join(' ',$widthbits);
+            }
         }
         $return[] = new css_style_backgroundposition('background-position', $position);
 
@@ -3590,6 +3679,13 @@ class css_style_background extends css_style {
                 }
             }
         }
+
+        if ($important) {
+            foreach ($return as $style) {
+                $style->set_important();
+            }
+        }
+
         return $return;
     }
 
@@ -3614,20 +3710,41 @@ class css_style_background extends css_style {
         $origin = null;
         $clip = null;
 
+        $someimportant = false;
+        $allimportant = null;
+        foreach ($styles as $style) {
+            if ($style instanceof css_style_backgroundimage_advanced) {
+                continue;
+            }
+            if ($style->is_important()) {
+                $someimportant = true;
+                if ($allimportant === null) {
+                    $allimportant = true;
+                }
+            } else if ($allimportant === true) {
+                $allimportant = false;
+            }
+        }
+
         $organisedstyles = array();
         $advancedstyles = array();
+        $importantstyles = array();
         foreach ($styles as $style) {
             if ($style instanceof css_style_backgroundimage_advanced) {
                 $advancedstyles[] = $style;
                 continue;
             }
+            if ($someimportant && !$allimportant && $style->is_important()) {
+                $importantstyles[] = $style;
+                continue;
+            }
             $organisedstyles[$style->get_name()] = $style;
             switch ($style->get_name()) {
-                case 'background-color' : $color = css_style_color::shrink_value($style->get_value()); break;
-                case 'background-image' : $image = $style->get_value(); break;
-                case 'background-repeat' : $repeat = $style->get_value(); break;
-                case 'background-attachment' : $attachment = $style->get_value(); break;
-                case 'background-position' : $position = $style->get_value(); break;
+                case 'background-color' : $color = css_style_color::shrink_value($style->get_value(false)); break;
+                case 'background-image' : $image = $style->get_value(false); break;
+                case 'background-repeat' : $repeat = $style->get_value(false); break;
+                case 'background-attachment' : $attachment = $style->get_value(false); break;
+                case 'background-position' : $position = $style->get_value(false); break;
                 case 'background-clip' : $clip = $style->get_value(); break;
                 case 'background-origin' : $origin = $style->get_value(); break;
                 case 'background-size' : $size = $style->get_value(); break;
@@ -3663,7 +3780,11 @@ class css_style_background extends css_style {
         $return = array();
         // Single background style needs to come first;
         if (count($consolidatetosingle) > 0) {
-            $return[] = new css_style_background('background', join(' ', $consolidatetosingle));
+            $returnstyle = new css_style_background('background', join(' ', $consolidatetosingle));
+            if ($allimportant) {
+                $returnstyle->set_important();
+            }
+            $return[] = $returnstyle;
         }
         foreach ($styles as $style) {
             $value = null;
@@ -3681,7 +3802,7 @@ class css_style_background extends css_style {
                 $return[] = $style;
             }
         }
-        $return = array_merge($return, $advancedstyles);
+        $return = array_merge($return, $importantstyles, $advancedstyles);
         return $return;
     }
 }
@@ -3785,6 +3906,7 @@ class css_style_backgroundimage_advanced extends css_style_generic {
      * @return css_style_backgroundimage
      */
     public static function init($value) {
+        $value = preg_replace('#\s+#', ' ', $value);
         return new css_style_backgroundimage_advanced('background-image', $value);
     }
 
@@ -4075,25 +4197,72 @@ class css_style_padding extends css_style_width {
         if (count($styles) != 4) {
             return $styles;
         }
-        $top = $right = $bottom = $left = null;
+
+        $someimportant = false;
+        $allimportant = null;
+        $notimportantequal = null;
+        $firstvalue = null;
         foreach ($styles as $style) {
-            switch ($style->get_name()) {
-                case 'padding-top' : $top = $style->get_value();break;
-                case 'padding-right' : $right = $style->get_value();break;
-                case 'padding-bottom' : $bottom = $style->get_value();break;
-                case 'padding-left' : $left = $style->get_value();break;
+            if ($style->is_important()) {
+                $someimportant = true;
+                if ($allimportant === null) {
+                    $allimportant = true;
+                }
+            } else {
+                if ($allimportant === true) {
+                    $allimportant = false;
+                }
+                if ($firstvalue == null) {
+                    $firstvalue = $style->get_value(false);
+                    $notimportantequal = true;
+                } else if ($notimportantequal && $firstvalue !== $style->get_value(false)) {
+                    $notimportantequal = false;
+                }
             }
         }
-        if ($top == $bottom && $left == $right) {
-            if ($top == $left) {
-                return array(new css_style_padding('padding', $top));
-            } else {
-                return array(new css_style_padding('padding', "{$top} {$left}"));
+
+        if ($someimportant && !$allimportant && !$notimportantequal) {
+            return $styles;
+        }
+
+        if ($someimportant && !$allimportant && $notimportantequal) {
+            $return = array(
+                new css_style_padding('padding', $firstvalue)
+            );
+            foreach ($styles as $style) {
+                if ($style->is_important()) {
+                    $return[] = $style;
+                }
             }
-        } else if ($left == $right) {
-            return array(new css_style_padding('padding', "{$top} {$right} {$bottom}"));
+            return $return;
         } else {
-            return array(new css_style_padding('padding', "{$top} {$right} {$bottom} {$left}"));
+            $top = null;
+            $right = null;
+            $bottom = null;
+            $left = null;
+            foreach ($styles as $style) {
+                switch ($style->get_name()) {
+                    case 'padding-top' : $top = $style->get_value(false);break;
+                    case 'padding-right' : $right = $style->get_value(false);break;
+                    case 'padding-bottom' : $bottom = $style->get_value(false);break;
+                    case 'padding-left' : $left = $style->get_value(false);break;
+                }
+            }
+            if ($top == $bottom && $left == $right) {
+                if ($top == $left) {
+                    $returnstyle = new css_style_padding('padding', $top);
+                } else {
+                    $returnstyle = new css_style_padding('padding', "{$top} {$left}");
+                }
+            } else if ($left == $right) {
+                $returnstyle = new css_style_padding('padding', "{$top} {$right} {$bottom}");
+            } else {
+                $returnstyle = new css_style_padding('padding', "{$top} {$right} {$bottom} {$left}");
+            }
+            if ($allimportant) {
+                $returnstyle->set_important();
+            }
+            return array($returnstyle);
         }
     }
 }

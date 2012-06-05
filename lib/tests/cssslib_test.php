@@ -110,6 +110,10 @@ class css_optimiser_testcase extends advanced_testcase {
         $cssout = '.test{background-color:#123456;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
+        $cssin = '.test {background: #123456;}';
+        $cssout = '.test{background:#123456;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
         $cssin = '.test {background-image: url(\'test.png\');}';
         $cssout = '.test{background-image:url(\'test.png\');}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
@@ -170,6 +174,39 @@ class css_optimiser_testcase extends advanced_testcase {
 
         $cssin = '.test{background-image: -moz-linear-gradient(#3c3c3c, #111);background-image: -webkit-linear-gradient(#3c3c3c, #111);background-image: -o-linear-gradient(#3c3c3c, #111);background-image: linear-gradient(#3c3c3c, #111);background-image: url(/test.png);}';
         $cssout = '.test{background-image:-moz-linear-gradient(#3c3c3c, #111);background-image:-webkit-linear-gradient(#3c3c3c, #111);background-image:-o-linear-gradient(#3c3c3c, #111);background-image:linear-gradient(#3c3c3c, #111);background-image:url(/test.png);}';
+        $cssout = '.test{background-image:url(/test.png);background-image:-moz-linear-gradient(#3c3c3c, #111);background-image:-webkit-linear-gradient(#3c3c3c, #111);background-image:-o-linear-gradient(#3c3c3c, #111);background-image:linear-gradient(#3c3c3c, #111);}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test{background:#CCC; background-image: url(test.png);}';
+        $cssout = '.test{background:#CCC url(test.png);}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test{background:#CCC; background-image: linear-gradient(#3c3c3c, #111);}';
+        $cssout = '.test{background:#CCC;background-image:linear-gradient(#3c3c3c, #111);}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test{background:#CCC; background-image: -o-linear-gradient(#3c3c3c, #111);background-image: linear-gradient(#3c3c3c, #111);}';
+        $cssout = '.test{background:#CCC;background-image:-o-linear-gradient(#3c3c3c, #111);background-image:linear-gradient(#3c3c3c, #111);}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '#newmessageoverlay{font-weight: normal; border: 1px solid #222; background: #444; color: #ddd; text-shadow: 0 -1px 0px #000; background-image: -moz-linear-gradient(top, #333 0%, #333 5%, #444 15%, #444 60%, #222 100%); background-image: -webkit-gradient(linear, center top, center bottom, color-stop(0, #333), color-stop(5%, #333), color-stop(15%, #444), color-stop(60%, #444), color-stop(1, #222)); -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr=\'#333333\', EndColorStr=\'#222222\')"; padding:20px; padding-left: 0px; padding-right: 10px; position: inherit; z-index: 9999; width: 90%; margin-left: auto; margin-right: auto; height: 100%;}';
+        $cssout = '#newmessageoverlay{font-weight:normal;border:1px solid #222;background:#444;color:#DDD;text-shadow:0 -1px 0px #000;-ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorStr=\'#333333\', EndColorStr=\'#222222\')";padding:20px 10px 20px 0;position:inherit;z-index:9999;width:90%;margin-left:auto;margin-right:auto;height:100%;background-image:-moz-linear-gradient(top, #333 0%, #333 5%, #444 15%, #444 60%, #222 100%);background-image:-webkit-gradient(linear, center top, center bottom, color-stop(0, #333), color-stop(5%, #333), color-stop(15%, #444), color-stop(60%, #444), color-stop(1, #222));}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.userenrolment {background-color:inherit !important;background: inherit !important;}';
+        $cssout = '.userenrolment{background:inherit !important;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.userenrolment {background-image:url(test.png) !important;background: inherit !important;}';
+        $cssout = '.userenrolment{background:inherit !important;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.userenrolment {background: inherit !important;background-image:url(test.png) !important;}';
+        $cssout = '.userenrolment{background:inherit url(test.png) !important;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.userenrolment {background: inherit !important;background-image:url(test.png);}';
+        $cssout = '.userenrolment{background:inherit !important;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
@@ -183,19 +220,19 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one {border:1px solid red;}';
-        $cssout = '.one{border:1px solid #FF0000;}';
+        $cssout = '.one{border:1px solid #F00;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one {border:1px solid;} .one {border:2px dotted #DDD;}';
-        $cssout = '.one{border:2px dotted #DDDDDD;}';
+        $cssout = '.one{border:2px dotted #DDD;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one {border:2px dotted #DDD;}.one {border:1px solid;} ';
-        $cssout = '.one{border:1px solid #DDDDDD;}';
+        $cssout = '.one{border:1px solid #DDD;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one, .two {border:1px solid red;}';
-        $cssout = ".one, .two{border:1px solid #FF0000;}";
+        $cssout = ".one, .two{border:1px solid #F00;}";
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one, .two {border:0px;}';
@@ -207,19 +244,19 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one, .two {border: thin solid black;}';
-        $cssout = ".one, .two{border:thin solid #000000;}";
+        $cssout = ".one, .two{border:thin solid #000;}";
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one, .two {border-top: 5px solid white;}';
-        $cssout = ".one, .two{border-top:5px solid #FFFFFF;}";
+        $cssout = ".one, .two{border-top:5px solid #FFF;}";
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one {border:1px solid red;} .two {border:1px solid red;}';
-        $cssout = ".one, .two{border:1px solid #FF0000;}";
+        $cssout = ".one, .two{border:1px solid #F00;}";
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one {border:1px solid red;width:20px;} .two {border:1px solid red;height:20px;}';
-        $cssout = ".one{border:1px solid #FF0000;width:20px;} .two{border:1px solid #FF0000;height:20px;}";
+        $cssout = ".one{border:1px solid #F00;width:20px;} .two{border:1px solid #F00;height:20px;}";
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.test {border: 1px solid #123456;} .test {border-color: #654321}';
@@ -254,8 +291,8 @@ class css_optimiser_testcase extends advanced_testcase {
         $cssout = '.test{border:1px solid;border-color:#111 #444 #222 #333;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
-        $cssin = '.generaltable .cell {border-color:#EEEEEE;} .generaltable .cell {border-width: 1px;border-style: solid;}';
-        $cssout = '.generaltable .cell{border:1px solid #EEEEEE;}';
+        $cssin = '.generaltable .cell {border-color:#EEE;} .generaltable .cell {border-width: 1px;border-style: solid;}';
+        $cssout = '.generaltable .cell{border:1px solid #EEE;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '#page-admin-roles-override .rolecap {border:none;border-bottom:1px solid #CECECE;}';
@@ -413,6 +450,18 @@ class css_optimiser_testcase extends advanced_testcase {
         $cssin = '.one, .two, .one.two, .one .two {margin:0;} .one.two {margin:0 7px;}';
         $cssout = '.one, .two, .one .two{margin:0;} .one.two{margin:0 7px;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.block {margin-top: 0px !important;margin-bottom: 0px !important;}';
+        $cssout = '.block{margin-top:0 !important;margin-bottom:0 !important;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.block {margin: 0px !important;margin-bottom: 3px;}';
+        $cssout = '.block{margin:0 !important;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.block {margin: 5px;margin-right: 0 !important;}';
+        $cssout = '.block{margin:5px;margin-right:0 !important;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
     /**
@@ -421,36 +470,52 @@ class css_optimiser_testcase extends advanced_testcase {
      * @param css_optimiser $optimiser
      */
     protected function check_padding(css_optimiser $optimiser) {
-        $cssin = '.one {margin: 1px 2px 3px 4px}';
-        $cssout = '.one{margin:1px 2px 3px 4px;}';
+        $cssin = '.one {padding: 1px 2px 3px 4px}';
+        $cssout = '.one{padding:1px 2px 3px 4px;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
-        $cssin = '.one {margin-top:1px; margin-left:4px; margin-right:2px; margin-bottom: 3px;}';
-        $cssout = '.one{margin:1px 2px 3px 4px;}';
+        $cssin = '.one {padding-top:1px; padding-left:4px; padding-right:2px; padding-bottom: 3px;}';
+        $cssout = '.one{padding:1px 2px 3px 4px;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
-        $cssin = '.one {margin-top:1px; margin-left:4px;}';
-        $cssout = '.one{margin-top:1px;margin-left:4px;}';
+        $cssin = '.one {padding-top:1px; padding-left:4px;padding-bottom: 3px;}';
+        $cssout = '.one{padding-top:1px;padding-left:4px;padding-bottom:3px;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
-        $cssin = '.one {margin:1px; margin-left:4px;}';
-        $cssout = '.one{margin:1px 1px 1px 4px;}';
+        $cssin = '.one {padding-top:1px; padding-left:4px;}';
+        $cssout = '.one{padding-top:1px;padding-left:4px;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
-        $cssin = '.one {margin:1px; margin-bottom:4px;}';
-        $cssout = '.one{margin:1px 1px 4px;}';
+        $cssin = '.one {padding:1px; padding-left:4px;}';
+        $cssout = '.one{padding:1px 1px 1px 4px;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
-        $cssin = '.one {margin:0 !important;}';
-        $cssout = '.one{margin:0 !important;}';
+        $cssin = '.one {padding:1px; padding-bottom:4px;}';
+        $cssout = '.one{padding:1px 1px 4px;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one {padding:0 !important;}';
         $cssout = '.one{padding:0 !important;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
-        $cssin = '.one, .two, .one.two, .one .two {margin:0;} .one.two {margin:0 7px;}';
-        $cssout = '.one, .two, .one .two{margin:0;} .one.two{margin:0 7px;}';
+        $cssin = '.one {padding:0 !important;}';
+        $cssout = '.one{padding:0 !important;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one, .two, .one.two, .one .two {padding:0;} .one.two {padding:0 7px;}';
+        $cssout = '.one, .two, .one .two{padding:0;} .one.two{padding:0 7px;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.block {padding-top: 0px !important;padding-bottom: 0px !important;}';
+        $cssout = '.block{padding-top:0 !important;padding-bottom:0 !important;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.block {padding: 0px !important;padding-bottom: 3px;}';
+        $cssout = '.block{padding:0 !important;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $cssin = '.block {padding: 5px;padding-right: 0 !important;}';
+        $cssout = '.block{padding:5px;padding-right:0 !important;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
