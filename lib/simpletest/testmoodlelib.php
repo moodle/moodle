@@ -311,6 +311,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertidentical(1, fix_utf8(1));
         $this->assertidentical(1.1, fix_utf8(1.1));
         $this->assertidentical(true, fix_utf8(true));
+        $this->assertidentical('abc', fix_utf8('abc'));
         $this->assertidentical('', fix_utf8(''));
         $array = array('do', 're', 'mi');
         $this->assertidentical($array, fix_utf8($array));
@@ -323,7 +324,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertidentical("žlutý koníček přeskočil potůček \n\t\r\0", fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
 
         // invalid utf8 string
-        $this->assertidentical('aaabbb', fix_utf8('aaa'.chr(130).'bbb'));
+        $this->assertidentical('aš', fix_utf8('a'.chr(130).'š'), 'This fails with buggy iconv() when mbstring extenstion is not available as fallback.');
     }
 
     function test_optional_param() {
