@@ -1188,7 +1188,9 @@ class core_course_external extends external_api {
                             array(
                                 'name' => new external_value(PARAM_TEXT, 'new category name'),
                                 'parent' => new external_value(PARAM_INT,
-                                        'the parent category id inside which the new category will be created'),
+                                        'the parent category id inside which the new category will be created
+                                         - set to 0 for a root category',
+                                        VALUE_DEFAULT, 0),
                                 'idnumber' => new external_value(PARAM_RAW,
                                         'the new category idnumber', VALUE_OPTIONAL),
                                 'description' => new external_value(PARAM_RAW,
@@ -1232,6 +1234,23 @@ class core_course_external extends external_api {
             self::validate_context($context);
             require_capability('moodle/category:manage', $context);
 
+            // Check name.
+            if (textlib::strlen($category['name'])>255) {
+                throw new moodle_exception('categorytoolong');
+            }
+
+            $newcategory = new stdClass();
+            $newcategory->name = $category['name'];
+            $newcategory->parent = $category['parent'];
+            $newcategory->sortorder = 999; // Same as in the course/editcategory.php .
+            // Format the description.
+            if (!empty($category['description'])) {
+                $newcategory->description = $category['description'];
+            }
+            $newcategory->descriptionformat = FORMAT_HTML;
+            if (isset($category['theme']) and !empty($CFG->allowcategorythemes)) {
+                $newcategory->theme = $category['theme'];
+            }
             // Check id number.
             if (!empty($category['idnumber'])) { // Same as in course/editcategory_form.php .
                 if (textlib::strlen($category['idnumber'])>100) {
@@ -1242,24 +1261,7 @@ class core_course_external extends external_api {
                         throw new moodle_exception('idnumbertaken');
                     }
                 }
-            }
-            // Check name.
-            if (textlib::strlen($category['name'])>255) {
-                throw new moodle_exception('categorytoolong');
-            }
-
-            $newcategory = new stdClass();
-            $newcategory->name = $category['name'];
-            $newcategory->parent = $category['parent'];
-            $newcategory->idnumber = $category['idnumber'];
-            $newcategory->sortorder = 999; // Same as in the course/editcategory.php .
-            // Format the description.
-            if (!empty($category['description'])) {
-                $newcategory->description = $category['description'];
-            }
-            $newcategory->descriptionformat = FORMAT_HTML;
-            if (isset($category['theme']) and !empty($CFG->allowcategorythemes)) {
-                $newcategory->theme = $category['theme'];
+                $newcategory->idnumber = $category['idnumber'];
             }
 
             $newcategory = create_course_category($newcategory);
