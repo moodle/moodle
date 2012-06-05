@@ -46,8 +46,8 @@ if (isset($info->thumbnail)) {
 }
 
 $author = '';
-if (isset($info->author)) {
-    $author = s(clean_param($info->author, PARAM_NOTAGS));
+if (isset($info->owner)) {
+    $author = s(clean_param($info->owner, PARAM_NOTAGS));
 }
 
 $license = '';
