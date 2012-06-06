@@ -30,7 +30,7 @@
  */
 abstract class XMLDBCheckAction extends XMLDBAction {
     /**
-     * This string is displayed with a yes/no choice before the report is run.
+     * @var string This string is displayed with a yes/no choice before the report is run.
      * You must set this to the name of a lang string in xmldb.php before calling init.
      */
     protected $introstr = '';

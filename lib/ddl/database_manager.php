@@ -95,7 +95,7 @@ class database_manager {
      * Given one xmldb_table, check if it exists in DB (true/false).
      *
      * @param string|xmldb_table $table The table to be searched (string name or xmldb_table instance).
-     * @return bool true/false True is a table exists, false otherwise.
+     * @return bool True is a table exists, false otherwise.
      */
     public function table_exists($table) {
         if (!is_string($table) and !($table instanceof xmldb_table)) {
@@ -126,8 +126,8 @@ class database_manager {
     /**
      * Given one xmldb_field, check if it exists in DB (true/false).
      *
-     * @param mixed $table The table to be searched (string name or xmldb_table instance).
-     * @param mixed $field The field to be searched for (string name or xmldb_field instance).
+     * @param string|xmldb_table $table The table to be searched (string name or xmldb_table instance).
+     * @param string|xmldb_field $field The field to be searched for (string name or xmldb_field instance).
      * @return boolean true is exists false otherwise.
      * @throws ddl_table_missing_exception
      */
