@@ -43,8 +43,8 @@ class xmldb_structure extends xmldb_object {
      */
     public function __construct($name) {
         parent::__construct($name);
-        $this->path = NULL;
-        $this->version = NULL;
+        $this->path = null;
+        $this->version = null;
         $this->tables = array();
     }
 
@@ -71,7 +71,7 @@ class xmldb_structure extends xmldb_object {
      */
     public function getTable($tablename) {
         $i = $this->findTableInArray($tablename);
-        if ($i !== NULL) {
+        if ($i !== null) {
             return $this->tables[$i];
         }
         return null;
@@ -127,11 +127,11 @@ class xmldb_structure extends xmldb_object {
      * @param xmldb_table $table
      * @param mixed $after
      */
-    public function addTable($table, $after=NULL) {
+    public function addTable($table, $after=null) {
 
         // Calculate the previous and next tables
-        $prevtable = NULL;
-        $nexttable = NULL;
+        $prevtable = null;
+        $nexttable = null;
 
         if (!$after) {
             if ($this->tables) {
@@ -307,7 +307,7 @@ class xmldb_structure extends xmldb_object {
      */
      public function calculateHash($recursive = false) {
         if (!$this->loaded) {
-            $this->hash = NULL;
+            $this->hash = null;
         } else {
             $key = $this->name . $this->path . $this->comment;
             if ($this->tables) {

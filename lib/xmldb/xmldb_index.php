@@ -199,7 +199,7 @@ class xmldb_index extends xmldb_object {
      */
      public function calculateHash($recursive = false) {
         if (!$this->loaded) {
-            $this->hash = NULL;
+            $this->hash = null;
         } else {
             $key = $this->unique . implode (', ', $this->fields);
             $this->hash = md5($key);

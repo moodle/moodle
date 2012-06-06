@@ -58,13 +58,13 @@ class xmldb_object {
      */
     public function __construct($name) {
         $this->name = $name;
-        $this->comment = NULL;
-        $this->previous = NULL;
-        $this->next = NULL;
-        $this->hash = NULL;
+        $this->comment = null;
+        $this->previous = null;
+        $this->next = null;
+        $this->hash = null;
         $this->loaded = false;
         $this->changed = false;
-        $this->errormsg = NULL;
+        $this->errormsg = null;
     }
 
     /**
@@ -310,7 +310,7 @@ class xmldb_object {
             foreach($arr as $element) {
                 if ($element->getPrevious()) {
                     $i = $this->findObjectInArray($element->getPrevious(), $arr);
-                    if ($i === NULL) {
+                    if ($i === null) {
                         debugging('Object ' . $element->getName() . ' says PREVIOUS="' . $element->getPrevious() . '" but that other object does not exist.', DEBUG_DEVELOPER);
                         $result = false;
                     }
@@ -322,7 +322,7 @@ class xmldb_object {
             foreach($arr as $element) {
                 if ($element->getNext()) {
                     $i = $this->findObjectInArray($element->getNext(), $arr);
-                    if ($i === NULL) {
+                    if ($i === null) {
                         debugging('Object ' . $element->getName() . ' says NEXT="' . $element->getNext() . '" but that other object does not exist.', DEBUG_DEVELOPER);
                         $result = false;
                     }
@@ -389,7 +389,7 @@ class xmldb_object {
         // Create a new array
         $newarr = array();
         if (!empty($arr)) {
-            $currentelement = NULL;
+            $currentelement = null;
             // Get the element without previous
             foreach($arr as $key => $element) {
                 if (!$element->getPrevious()) {

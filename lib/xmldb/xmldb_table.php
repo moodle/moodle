@@ -64,7 +64,7 @@ class xmldb_table extends xmldb_object {
      * @param xmldb_object $after
      * @return xmldb_field
      */
-    public function addField($field, $after=NULL) {
+    public function addField($field, $after=null) {
 
         // Detect duplicates first
         if ($this->getField($field->getName())) {
@@ -72,8 +72,8 @@ class xmldb_table extends xmldb_object {
         }
 
         // Calculate the previous and next fields
-        $prevfield = NULL;
-        $nextfield = NULL;
+        $prevfield = null;
+        $nextfield = null;
 
         if (!$after) {
             $allfields = $this->getFields();
@@ -118,7 +118,7 @@ class xmldb_table extends xmldb_object {
      * @param xmldb_key $key
      * @param xmldb_object $after
      */
-    public function addKey($key, $after=NULL) {
+    public function addKey($key, $after=null) {
 
         // Detect duplicates first
         if ($this->getKey($key->getName())) {
@@ -126,8 +126,8 @@ class xmldb_table extends xmldb_object {
         }
 
         // Calculate the previous and next keys
-        $prevkey = NULL;
-        $nextkey = NULL;
+        $prevkey = null;
+        $nextkey = null;
 
         if (!$after) {
             $allkeys = $this->getKeys();
@@ -170,7 +170,7 @@ class xmldb_table extends xmldb_object {
      * @param xmldb_index $index
      * @param xmldb_object $after
      */
-    public function addIndex($index, $after=NULL) {
+    public function addIndex($index, $after=null) {
 
         // Detect duplicates first
         if ($this->getIndex($index->getName())) {
@@ -178,8 +178,8 @@ class xmldb_table extends xmldb_object {
         }
 
         // Calculate the previous and next indexes
-        $previndex = NULL;
-        $nextindex = NULL;
+        $previndex = null;
+        $nextindex = null;
 
         if (!$after) {
             $allindexes = $this->getIndexes();
@@ -248,7 +248,7 @@ class xmldb_table extends xmldb_object {
      */
     public function getField($fieldname) {
         $i = $this->findFieldInArray($fieldname);
-        if ($i !== NULL) {
+        if ($i !== null) {
             return $this->fields[$i];
         }
         return null;
@@ -289,7 +289,7 @@ class xmldb_table extends xmldb_object {
      */
     public function getKey($keyname) {
         $i = $this->findKeyInArray($keyname);
-        if ($i !== NULL) {
+        if ($i !== null) {
             return $this->keys[$i];
         }
         return null;
@@ -330,7 +330,7 @@ class xmldb_table extends xmldb_object {
      */
     public function getIndex($indexname) {
         $i = $this->findIndexInArray($indexname);
-        if ($i !== NULL) {
+        if ($i !== null) {
             return $this->indexes[$i];
         }
         return null;
@@ -668,7 +668,7 @@ class xmldb_table extends xmldb_object {
      */
      public function calculateHash($recursive = false) {
         if (!$this->loaded) {
-            $this->hash = NULL;
+            $this->hash = null;
         } else {
             $key = $this->name . $this->comment;
             if ($this->fields) {

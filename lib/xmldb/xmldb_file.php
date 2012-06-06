@@ -47,7 +47,7 @@ class xmldb_file extends xmldb_object {
     public function __construct($path) {
         parent::__construct($path);
         $this->path = $path;
-        $this->xmldb_structure = NULL;
+        $this->xmldb_structure = null;
     }
 
     /**

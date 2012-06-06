@@ -49,9 +49,9 @@ class xmldb_key extends xmldb_object {
      * @param array $reffields an array of fieldnames in the FK table or null
      */
     public function __construct($name, $type=null, $fields=array(), $reftable=null, $reffields=null) {
-        $this->type = NULL;
+        $this->type = null;
         $this->fields = array();
-        $this->reftable = NULL;
+        $this->reftable = null;
         $this->reffields = array();
         parent::__construct($name);
         $this->set_attributes($type, $fields, $reftable, $reffields);
@@ -355,7 +355,7 @@ class xmldb_key extends xmldb_object {
      */
      public function calculateHash($recursive = false) {
         if (!$this->loaded) {
-            $this->hash = NULL;
+            $this->hash = null;
         } else {
             $key = $this->type . implode(', ', $this->fields);
             if ($this->type == XMLDB_KEY_FOREIGN ||

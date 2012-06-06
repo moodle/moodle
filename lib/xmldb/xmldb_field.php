@@ -93,12 +93,12 @@ class xmldb_field extends xmldb_object {
      * @param xmldb_object $previous
      */
     public function __construct($name, $type=null, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
-        $this->type = NULL;
-        $this->length = NULL;
+        $this->type = null;
+        $this->length = null;
         $this->notnull = false;
-        $this->default = NULL;
+        $this->default = null;
         $this->sequence = false;
-        $this->decimals = NULL;
+        $this->decimals = null;
         parent::__construct($name);
         $this->set_attributes($type, $precision, $unsigned, $notnull, $sequence, $default, $previous);
     }
@@ -359,7 +359,7 @@ class xmldb_field extends xmldb_object {
             $this->setDefault(trim($xmlarr['@']['DEFAULT']));
         }
 
-        $decimals = NULL;
+        $decimals = null;
         if (isset($xmlarr['@']['DECIMALS'])) {
             $decimals = trim($xmlarr['@']['DECIMALS']);
             // Check for integer values
@@ -491,7 +491,7 @@ class xmldb_field extends xmldb_object {
      */
      public function calculateHash($recursive = false) {
         if (!$this->loaded) {
-            $this->hash = NULL;
+            $this->hash = null;
         } else {
             $key = $this->name . $this->type . $this->length .
                    $this->notnull . $this->sequence .
@@ -517,7 +517,7 @@ class xmldb_field extends xmldb_object {
             $notnull = 'false';
         }
         $o.= ' NOTNULL="' . $notnull . '"';
-        if (!$this->sequence && $this->default !== NULL) {
+        if (!$this->sequence && $this->default !== null) {
             $o.= ' DEFAULT="' . $this->default . '"';
         }
         if ($this->sequence) {
@@ -526,7 +526,7 @@ class xmldb_field extends xmldb_object {
             $sequence = 'false';
         }
         $o.= ' SEQUENCE="' . $sequence . '"';
-        if ($this->decimals !== NULL) {
+        if ($this->decimals !== null) {
             $o.= ' DECIMALS="' . $this->decimals . '"';
         }
         if ($this->comment) {
@@ -733,7 +733,7 @@ class xmldb_field extends xmldb_object {
                 $o .= ' (' . $this->length;
                 if ($this->type == XMLDB_TYPE_NUMBER  ||
                     $this->type == XMLDB_TYPE_FLOAT) {
-                    if ($this->decimals !== NULL) {
+                    if ($this->decimals !== null) {
                         $o .= ', ' . $this->decimals;
                     }
                 }
@@ -745,7 +745,7 @@ class xmldb_field extends xmldb_object {
             $o .= ' not null';
         }
         // default
-        if ($this->default !== NULL) {
+        if ($this->default !== null) {
             $o .= ' default ';
             if ($this->type == XMLDB_TYPE_CHAR ||
                 $this->type == XMLDB_TYPE_TEXT) {
