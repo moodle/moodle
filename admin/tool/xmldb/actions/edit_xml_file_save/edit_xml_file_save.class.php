@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,8 +23,7 @@
 /**
  * This class will save the changes performed to the comment of one file
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -76,16 +74,16 @@ class edit_xml_file_save extends XMLDBAction {
         $comment = $comment;
 
         // Set comment and recalculate hash
-        $editeddir =& $XMLDB->editeddirs[$dirpath];
-        $structure =& $editeddir->xml_file->getStructure();
+        $editeddir = $XMLDB->editeddirs[$dirpath];
+        $structure = $editeddir->xml_file->getStructure();
         $structure->setComment($comment);
         $structure->calculateHash(true);
 
 
         // If the hash has changed from the original one, change the version
         // and mark the structure as changed
-        $origdir =& $XMLDB->dbdirs[$dirpath];
-        $origstructure =& $origdir->xml_file->getStructure();
+        $origdir = $XMLDB->dbdirs[$dirpath];
+        $origstructure = $origdir->xml_file->getStructure();
         if ($structure->getHash() != $origstructure->getHash()) {
             $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
             $structure->setChanged(true);

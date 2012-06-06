@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,8 +23,7 @@
 /**
  * This class will delete completely one index
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -96,21 +94,21 @@ class delete_index extends XMLDBAction {
             // Get the edited dir
             if (!empty($XMLDB->editeddirs)) {
                 if (isset($XMLDB->editeddirs[$dirpath])) {
-                    $dbdir =& $XMLDB->dbdirs[$dirpath];
-                    $editeddir =& $XMLDB->editeddirs[$dirpath];
+                    $dbdir = $XMLDB->dbdirs[$dirpath];
+                    $editeddir = $XMLDB->editeddirs[$dirpath];
                     if ($editeddir) {
-                        $structure =& $editeddir->xml_file->getStructure();
+                        $structure = $editeddir->xml_file->getStructure();
                         // Move adjacent indexes prev and next attributes
-                        $tables =& $structure->getTables();
-                        $table =& $structure->getTable($tableparam);
-                        $indexes =& $table->getIndexes();
-                        $index =& $table->getIndex($indexparam);
+                        $tables = $structure->getTables();
+                        $table = $structure->getTable($tableparam);
+                        $indexes = $table->getIndexes();
+                        $index = $table->getIndex($indexparam);
                         if ($index->getPrevious()) {
-                            $prev =& $table->getIndex($index->getPrevious());
+                            $prev = $table->getIndex($index->getPrevious());
                             $prev->setNext($index->getNext());
                         }
                         if ($index->getNext()) {
-                            $next =& $table->getIndex($index->getNext());
+                            $next = $table->getIndex($index->getNext());
                             $next->setPrevious($index->getPrevious());
                         }
                         // Remove the index
@@ -121,7 +119,7 @@ class delete_index extends XMLDBAction {
 
                         // If the hash has changed from the original one, change the version
                         // and mark the structure as changed
-                        $origstructure =& $dbdir->xml_file->getStructure();
+                        $origstructure = $dbdir->xml_file->getStructure();
                         if ($structure->getHash() != $origstructure->getHash()) {
                             $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
                             $structure->setChanged(true);

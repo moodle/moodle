@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,8 +24,7 @@
  * This class verifies all the data introduced when editing a key for correctness,
  * performing changes / displaying errors depending of the results.
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -106,10 +104,10 @@ class edit_key_save extends XMLDBAction {
             $reffields = str_replace(' ', '', trim(strtolower($reffields)));
         }
 
-        $editeddir =& $XMLDB->editeddirs[$dirpath];
-        $structure =& $editeddir->xml_file->getStructure();
-        $table =& $structure->getTable($tableparam);
-        $key =& $table->getKey($keyparam);
+        $editeddir = $XMLDB->editeddirs[$dirpath];
+        $structure = $editeddir->xml_file->getStructure();
+        $table = $structure->getTable($tableparam);
+        $key = $table->getKey($keyparam);
         $oldhash = $key->getHash();
 
         $errors = array(); // To store all the errors found
@@ -254,16 +252,16 @@ class edit_key_save extends XMLDBAction {
         // Continue if we aren't under errors
         if (empty($errors)) {
             // If there is one name change, do it, changing the prev and next
-            // atributes of the adjacent fields
+            // attributes of the adjacent fields
             if ($keyparam != $name) {
                 $key->setName($name);
                 if ($key->getPrevious()) {
-                    $prev =& $table->getKey($key->getPrevious());
+                    $prev = $table->getKey($key->getPrevious());
                     $prev->setNext($name);
                     $prev->setChanged(true);
                 }
                 if ($key->getNext()) {
-                    $next =& $table->getKey($key->getNext());
+                    $next = $table->getKey($key->getNext());
                     $next->setPrevious($name);
                     $next->setChanged(true);
                 }

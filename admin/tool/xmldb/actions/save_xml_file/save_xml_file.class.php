@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,8 +28,7 @@
  * is going to continue (unload=false). Else (default) the
  * file is unloaded once saved.
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -76,18 +74,18 @@ class save_xml_file extends XMLDBAction {
         // Get the edited dir
         if (!empty($XMLDB->editeddirs)) {
             if (isset($XMLDB->editeddirs[$dirpath])) {
-                $editeddir =& $XMLDB->editeddirs[$dirpath];
+                $editeddir = $XMLDB->editeddirs[$dirpath];
             }
         }
         // Copy the edited dir over the original one
         if (!empty($XMLDB->dbdirs)) {
             if (isset($XMLDB->dbdirs[$dirpath])) {
                 $XMLDB->dbdirs[$dirpath] = unserialize(serialize($editeddir));
-                $dbdir =& $XMLDB->dbdirs[$dirpath];
+                $dbdir = $XMLDB->dbdirs[$dirpath];
             }
         }
 
-        // Chech for perms
+        // Check for perms
         if (!is_writeable($dirpath . '/install.xml')) {
             $this->errormsg = $this->str['filenotwriteable'] . '(' . $dirpath . '/install.xml)';
             return false;

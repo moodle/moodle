@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   xmldb-editor
+ * @package   tool_xmldb
  * @copyright 2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,7 +28,7 @@
  * them by changing to cross-db (CHAR) length semantics.
  * See MDL-29322 for more details.
  *
- * @package   xmldb-editor
+ * @package    tool_xmldb
  * @copyright 2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

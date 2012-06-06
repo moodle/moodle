@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,8 +23,7 @@
 /**
  * This class will load every XML file to memory if necessary
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -69,7 +67,7 @@ class load_xml_files extends XMLDBAction {
 
         // Iterate over $XMLDB->dbdirs, loading their XML data to memory
         if ($XMLDB->dbdirs) {
-            $dbdirs =& $XMLDB->dbdirs;
+            $dbdirs = $XMLDB->dbdirs;
             foreach ($dbdirs as $dbdir) {
                 // Set some defaults
                 $dbdir->xml_exists = false;

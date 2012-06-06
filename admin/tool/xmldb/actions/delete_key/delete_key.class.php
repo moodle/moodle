@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,8 +23,7 @@
 /**
  * This class will delete completely one key
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -96,21 +94,21 @@ class delete_key extends XMLDBAction {
             // Get the edited dir
             if (!empty($XMLDB->editeddirs)) {
                 if (isset($XMLDB->editeddirs[$dirpath])) {
-                    $dbdir =& $XMLDB->dbdirs[$dirpath];
-                    $editeddir =& $XMLDB->editeddirs[$dirpath];
+                    $dbdir = $XMLDB->dbdirs[$dirpath];
+                    $editeddir = $XMLDB->editeddirs[$dirpath];
                     if ($editeddir) {
-                        $structure =& $editeddir->xml_file->getStructure();
+                        $structure = $editeddir->xml_file->getStructure();
                         // Move adjacent keys prev and next attributes
-                        $tables =& $structure->getTables();
-                        $table =& $structure->getTable($tableparam);
-                        $keys =& $table->getKeys();
-                        $key =& $table->getKey($keyparam);
+                        $tables = $structure->getTables();
+                        $table = $structure->getTable($tableparam);
+                        $keys = $table->getKeys();
+                        $key = $table->getKey($keyparam);
                         if ($key->getPrevious()) {
-                            $prev =& $table->getKey($key->getPrevious());
+                            $prev = $table->getKey($key->getPrevious());
                             $prev->setNext($key->getNext());
                         }
                         if ($key->getNext()) {
-                            $next =& $table->getKey($key->getNext());
+                            $next = $table->getKey($key->getNext());
                             $next->setPrevious($key->getPrevious());
                         }
                         // Remove the key
@@ -121,7 +119,7 @@ class delete_key extends XMLDBAction {
 
                         // If the hash has changed from the original one, change the version
                         // and mark the structure as changed
-                        $origstructure =& $dbdir->xml_file->getStructure();
+                        $origstructure = $dbdir->xml_file->getStructure();
                         if ($structure->getHash() != $origstructure->getHash()) {
                             $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
                             $structure->setChanged(true);
