@@ -15,7 +15,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this feedback" NEXT="assignment"/>
         <KEY NAME="assignment" TYPE="foreign" FIELDS="assignment" REFTABLE="assign" REFFIELDS="id" COMMENT="The assignment instance this feedback relates to." PREVIOUS="primary" NEXT="grade"/>
-        <KEY NAME="grade" TYPE="foreign" FIELDS="grade" REFTABLE="assign_grade" REFFIELDS="id" COMMENT="The grade instance this feedback relates to." PREVIOUS="assignment"/>
+        <KEY NAME="grade" TYPE="foreign" FIELDS="grade" REFTABLE="assign_grades" REFFIELDS="id" COMMENT="The grade instance this feedback relates to." PREVIOUS="assignment"/>
       </KEYS>
     </TABLE>
   </TABLES>
