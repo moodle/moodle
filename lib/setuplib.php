@@ -133,7 +133,7 @@ class moodle_exception extends Exception {
         $this->module    = $module;
         $this->link      = $link;
         $this->a         = $a;
-        $this->debuginfo = $debuginfo;
+        $this->debuginfo = is_null($debuginfo) ? null : (string)$debuginfo;
 
         if (get_string_manager()->string_exists($errorcode, $module)) {
             $message = get_string($errorcode, $module, $a);
@@ -486,7 +486,7 @@ function get_exception_info($ex) {
         $module = 'error';
         $a = $ex->getMessage();
         $link = '';
-        $debuginfo = null;
+        $debuginfo = '';
     }
 
     // Append the error code to the debug info to make grepping and googling easier
