@@ -425,7 +425,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
     if ($attempts = $DB->get_records('quiz_attempts',
             array('userid' => $user->id, 'quiz' => $quiz->id), 'attempt')) {
         foreach ($attempts as $attempt) {
-            echo get_string('attempt', 'quiz').' '.$attempt->attempt.': ';
+            echo get_string('attempt', 'quiz', $attempt->attempt) . ': ';
             if ($attempt->state != quiz_attempt::FINISHED) {
                 echo quiz_attempt_state_name($attempt->state);
             } else {
