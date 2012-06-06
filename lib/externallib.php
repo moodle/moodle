@@ -644,7 +644,7 @@ class external_format_value extends external_value {
                 . FORMAT_PLAIN . ' = PLAIN or '
                 . FORMAT_MARKDOWN . ' = MARKDOWN)';
 
-        parent::__construct($type, $desc='', $required, $default);
+        parent::__construct(PARAM_INT, $desc, $required, $default);
     }
 }
 
