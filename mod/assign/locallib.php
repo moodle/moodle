@@ -39,12 +39,6 @@ define('ASSIGN_FILTER_SUBMITTED', 'submitted');
 define('ASSIGN_FILTER_SINGLE_USER', 'singleuser');
 define('ASSIGN_FILTER_REQUIRE_GRADING', 'require_grading');
 
-/**
- * File areas for assignment portfolio if enabled
- */
-define('ASSIGN_FILEAREA_PORTFOLIO_FILES', 'portfolio_files');
-
-
 /** Include accesslib.php */
 require_once($CFG->libdir.'/accesslib.php');
 /** Include formslib.php */
@@ -53,8 +47,6 @@ require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 /** Include local mod_form.php */
 require_once($CFG->dirroot.'/mod/assign/mod_form.php');
-/** Include portfoliolib.php */
-require_once($CFG->libdir . '/portfoliolib.php');
 /** gradelib.php */
 require_once($CFG->libdir.'/gradelib.php');
 /** grading lib.php */
@@ -2274,8 +2266,6 @@ class assign {
             $submission = $this->get_user_submission($USER->id,false);
             $submissionid = $submission->id;
         }
-
-
 
         $fs = get_file_storage();
         $browser = get_file_browser();
