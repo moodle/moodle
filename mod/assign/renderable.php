@@ -473,7 +473,7 @@ class assign_files implements renderable {
             require_once($CFG->libdir . '/portfoliolib.php');
             if (count($files) >= 1 && has_capability('mod/assign:exportownsubmission', $this->context)) {
                 $button = new portfolio_add_button();
-                $button->set_callback_options('assign_portfolio_caller', array('cmid' => $this->cm->id, 'sid'=>$sid, 'area'=>$filearea), '/mod/assign/portfolio_callback.php');
+                $button->set_callback_options('assign_portfolio_caller', array('cmid' => $this->cm->id, 'sid'=>$sid, 'area'=>$filearea, 'component'=>$component), '/mod/assign/portfolio_callback.php');
                 $button->reset_formats();
                 $this->portfolioform = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
             }
