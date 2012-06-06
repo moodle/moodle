@@ -540,7 +540,7 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
         return false;
     }
 
-    echo $OUTPUT->heading(get_string('newentries', 'glossary').':');
+    echo $OUTPUT->heading(get_string('newentries', 'glossary').':', 3);
     $strftimerecent = get_string('strftimerecent');
     $entrycount = 0;
     foreach ($entries as $entry) {
@@ -557,7 +557,7 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
             echo '<div class="date">'.userdate($entry->timemodified, $strftimerecent).'</div>';
             echo '<div class="name">'.fullname($entry, $viewfullnames).'</div>';
             echo '</div>';
-            echo '<div class="info"><a href="'.$link.'">'.format_text($entry->concept, true).'</a></div>';
+            echo '<div class="info"><a href="'.$link.'">'.format_string($entry->concept, true).'</a></div>';
             $entrycount += 1;
         } else {
             $numnewentries = $DB->count_records_sql($countsql.$joins[0].$clausesql.$approvalsql.')', $params);
