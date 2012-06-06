@@ -90,6 +90,7 @@ class assign_upgrade_manager {
         $data->grade = $oldassignment->grade;
         $data->submissiondrafts = $oldassignment->resubmit;
         $data->preventlatesubmissions = $oldassignment->preventlate;
+        $data->requiresubmissionstatement = 0;
 
         $newassignment = new assign(null, null, null);
 
