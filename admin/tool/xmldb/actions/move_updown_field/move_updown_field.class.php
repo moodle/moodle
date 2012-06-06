@@ -122,7 +122,7 @@ class move_updown_field extends XMLDBAction {
         $table->setChanged(true);
 
         // Reorder the fields
-        $table->orderFields($fields);
+        $table->orderFields();
 
         // Recalculate the hash
         $structure->calculateHash(true);

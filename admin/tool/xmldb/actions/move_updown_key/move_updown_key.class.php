@@ -122,7 +122,7 @@ class move_updown_key extends XMLDBAction {
         $table->setChanged(true);
 
         // Reorder the keys
-        $table->orderKeys($keys);
+        $table->orderKeys();
 
         // Recalculate the hash
         $structure->calculateHash(true);

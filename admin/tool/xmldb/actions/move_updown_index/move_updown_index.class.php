@@ -122,7 +122,7 @@ class move_updown_index extends XMLDBAction {
         $table->setChanged(true);
 
         // Reorder the indexes
-        $table->orderIndexes($indexes);
+        $table->orderIndexes();
 
         // Recalculate the hash
         $structure->calculateHash(true);

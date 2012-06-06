@@ -115,9 +115,8 @@ class move_updown_table extends XMLDBAction {
         $table->setChanged(true);
 
         // Reorder the structure
-        $structure->orderTables($tables);
-        // Send tables back to structure (the order above break refs)
-        $structure->setTables($tables);
+        $structure->orderTables();
+
         // Recalculate the hash
         $structure->calculateHash(true);
 
