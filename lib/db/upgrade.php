@@ -799,7 +799,7 @@ function xmldb_main_upgrade($oldversion) {
         $sql = "SELECT repositoryid, referencehash, MIN(id) AS minid
                   FROM {files_reference}
               GROUP BY repositoryid, referencehash
-                HAVING COUNT(*) > 1;";
+                HAVING COUNT(*) > 1";
         $duprs = $DB->get_recordset_sql($sql);
         foreach ($duprs as $duprec) {
             // get the list of all ids in {files_reference} that need to be remapped
