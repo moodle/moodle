@@ -41,14 +41,11 @@ abstract class feedback_item_base {
         return false;
     }
 
-    public function value_type() {
-        return PARAM_RAW;
-    }
-
     public function value_is_array() {
         return false;
     }
 
+    abstract public function value_type();
     abstract public function init();
     abstract public function build_editform($item, $feedback, $cm);
     abstract public function save_item();
@@ -128,6 +125,14 @@ abstract class feedback_item_base {
      */
     abstract public function print_item_show_value($item, $value = '');
 
+    /**     
+     * cleans the userinput while submitting the form
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    abstract function clean_input_value($value);
+
 }
 
 //a dummy class to realize pagebreaks
@@ -175,7 +180,9 @@ class feedback_item_pagebreak extends feedback_item_base {
     }
     public function can_switch_require() {
     }
+    public function value_type() {
+    }
+    public function clean_input_value($value) {
+    }
 
 }
-
-
