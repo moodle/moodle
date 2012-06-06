@@ -215,7 +215,7 @@ class feedback_item_textarea extends feedback_item_base {
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.$highlight.'">';
         echo '<span class="feedback_item_textarea">';
-        echo '<textarea name="'.$item->typ.'_'.$item->id.'" cols="'.$presentation[0].'" rows="'.$presentation[1].'">'.($value ? htmlspecialchars($value) : '').'</textarea>';
+        echo '<textarea name="'.$item->typ.'_'.$item->id.'" cols="'.$presentation[0].'" rows="'.$presentation[1].'">'.$value.'</textarea>';
         echo '</span>';
         echo '</div>';
     }
@@ -255,7 +255,7 @@ class feedback_item_textarea extends feedback_item_base {
     }
 
     function create_value($data) {
-        $data = clean_text($data);
+        $data = s($data);
         return $data;
     }
 
@@ -279,5 +279,9 @@ class feedback_item_textarea extends feedback_item_base {
     
     function can_switch_require() {
         return true;
+    }
+
+    function clean_input_value($value) {
+        return s($value);
     }
 }

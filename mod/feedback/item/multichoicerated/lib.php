@@ -589,4 +589,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         return true;
     }
 
+    function clean_input_value($value) {
+        return clean_param($value, PARAM_INT);
+    }
 }
