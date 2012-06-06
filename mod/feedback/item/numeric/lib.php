@@ -286,7 +286,7 @@ class feedback_item_numeric extends feedback_item_base {
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.$highlight.'">';
         echo '<span class="feedback_item_textfield">';
-        echo '<input type="text" name="'.$item->typ.'_'.$item->id.'" size="10" maxlength="10" value="'.($value ? $value : '').'" />';
+        echo '<input type="text" name="'.$item->typ.'_'.$item->id.'" size="10" maxlength="10" value="'.$value.'" />';
         echo '</span>';
         echo '</div>';
     }
@@ -419,5 +419,12 @@ class feedback_item_numeric extends feedback_item_base {
     
     function can_switch_require() {
         return true;
+    }
+    
+    function clean_input_value($value) {
+        if (!is_numeric($value)) {
+            return null;
+        }
+        return clean_param($value, PARAM_FLOAT);
     }
 }
