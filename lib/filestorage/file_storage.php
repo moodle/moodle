@@ -859,19 +859,13 @@ class file_storage {
             return $this->get_file_instance($newrecord);
         }
 
+        // note: referencefileid is copied from the original file so that
+        // creating a new file from an existing alias creates new alias implicitly.
+        // here we just check the database consistency.
         if (!empty($newrecord->repositoryid)) {
-            try {
-                $referencerecord = new stdClass;
-                $referencerecord->repositoryid = $newrecord->repositoryid;
-                $referencerecord->reference = $newrecord->reference;
-                $referencerecord->lastsync  = $newrecord->referencelastsync;
-                $referencerecord->lifetime  = $newrecord->referencelifetime;
-                $referencerecord->id = $DB->insert_record('files_reference', $referencerecord);
-            } catch (dml_exception $e) {
-                throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
-                                                         $newrecord->filepath, $newrecord->filename, $e->debuginfo);
+            if ($newrecord->referencefileid != $this->get_referencefileid($newrecord->repositoryid, $newrecord->reference, MUST_EXIST)) {
+                throw new file_reference_exception($newrecord->repositoryid, $newrecord->reference, $newrecord->referencefileid);
             }
-            $newrecord->referencefileid = $referencerecord->id;
         }
 
         try {
@@ -1180,12 +1174,12 @@ class file_storage {
     }
 
     /**
-     * Create a moodle file from file reference information
+     * Create a new alias/shortcut file from file reference information
      *
-     * @param stdClass $filerecord
-     * @param int $repositoryid
-     * @param string $reference
-     * @param array $options options for creating external file
+     * @param stdClass|array $filerecord object or array describing the new file
+     * @param int $repositoryid the id of the repository that provides the original file
+     * @param string $reference the information required by the repository to locate the original file
+     * @param array $options options for creating the new file
      * @return stored_file
      */
     public function create_file_from_reference($filerecord, $repositoryid, $reference, $options = array()) {
@@ -1268,19 +1262,12 @@ class file_storage {
 
         $transaction = $DB->start_delegated_transaction();
 
-        // Insert file reference record.
         try {
-            $referencerecord = new stdClass;
-            $referencerecord->repositoryid = $repositoryid;
-            $referencerecord->reference = $reference;
-            $referencerecord->lastsync = $filerecord->referencelastsync;
-            $referencerecord->lifetime = $filerecord->referencelifetime;
-            $referencerecord->id = $DB->insert_record('files_reference', $referencerecord);
-        } catch (dml_exception $e) {
-            throw $e;
+            $filerecord->referencefileid = $this->get_or_create_referencefileid($repositoryid, $reference,
+                $filerecord->referencelastsync, $filerecord->referencelifetime);
+        } catch (Exception $e) {
+            throw new file_reference_exception($repositoryid, $reference, null, null, $e->getMessage());
         }
-
-        $filerecord->referencefileid = $referencerecord->id;
 
         // External file doesn't have content in moodle.
         // So we create an empty file for it.
@@ -1672,59 +1659,74 @@ class file_storage {
     }
 
     /**
-     * Search references by providing reference content
+     * Returns all aliases that link to an external file identified by the given reference
      *
-     * @param string $str
-     * @return array
+     * Aliases in user draft areas are excluded from the returned list.
+     *
+     * @param string $reference identification of the referenced file
+     * @return array of stored_file indexed by its pathnamehash
      */
-    public function search_references($str) {
+    public function search_references($reference) {
         global $DB;
+
+        if (is_null($reference)) {
+            throw new coding_exception('NULL is not a valid reference to an external file');
+        }
+
+        $referencehash = sha1($reference);
+
         $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
-             LEFT JOIN {files_reference} r
-                       ON f.referencefileid = r.id
-                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
-                 AND (f.component <> ? OR f.filearea <> ?)";
+                  JOIN {files_reference} r ON f.referencefileid = r.id
+                  JOIN {repository_instances} ri ON r.repositoryid = ri.id
+                 WHERE r.referencehash = ?
+                       AND (f.component <> ? OR f.filearea <> ?)";
 
-        $rs = $DB->get_recordset_sql($sql, array($str, 'user', 'draft'));
+        $rs = $DB->get_recordset_sql($sql, array($referencehash, 'user', 'draft'));
         $files = array();
         foreach ($rs as $filerecord) {
-            $file = $this->get_file_instance($filerecord);
-            if ($file->is_external_file()) {
-                $files[$filerecord->pathnamehash] = $file;
-            }
+            $files[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
         }
 
         return $files;
     }
 
     /**
-     * Search references count by providing reference content
+     * Returns the number of aliases that link to an external file identified by the given reference
      *
-     * @param string $str
+     * Aliases in user draft areas are not counted.
+     *
+     * @param string $reference identification of the referenced file
      * @return int
      */
-    public function search_references_count($str) {
+    public function search_references_count($reference) {
         global $DB;
+
+        if (is_null($reference)) {
+            throw new coding_exception('NULL is not a valid reference to an external file');
+        }
+
+        $referencehash = sha1($reference);
+
         $sql = "SELECT COUNT(f.id)
                   FROM {files} f
-             LEFT JOIN {files_reference} r
-                       ON f.referencefileid = r.id
-                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
-                 AND (f.component <> ? OR f.filearea <> ?)";
+                  JOIN {files_reference} r ON f.referencefileid = r.id
+                  JOIN {repository_instances} ri ON r.repositoryid = ri.id
+                 WHERE r.referencehash = ?
+                       AND (f.component <> ? OR f.filearea <> ?)";
 
-        $count = $DB->count_records_sql($sql, array($str, 'user', 'draft'));
-        return $count;
+        return $DB->count_records_sql($sql, array($referencehash, 'user', 'draft'));
     }
 
     /**
-     * Return all files referring to provided stored_file instance
-     * This won't work for draft files
+     * Returns all aliases that link to the given stored_file
+     *
+     * Aliases in user draft areas are excluded from the returned list.
      *
      * @param stored_file $storedfile
-     * @return array
+     * @return array of stored_file
      */
-    public function get_references_by_storedfile($storedfile) {
+    public function get_references_by_storedfile(stored_file $storedfile) {
         global $DB;
 
         $params = array();
@@ -1734,37 +1736,19 @@ class file_storage {
         $params['itemid']    = $storedfile->get_itemid();
         $params['filename']  = $storedfile->get_filename();
         $params['filepath']  = $storedfile->get_filepath();
-        $params['userid']    = $storedfile->get_userid();
 
-        $reference = self::pack_reference($params);
-
-        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
-                  FROM {files} f
-             LEFT JOIN {files_reference} r
-                       ON f.referencefileid = r.id
-                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
-                   AND (f.component <> ? OR f.filearea <> ?)";
-
-        $rs = $DB->get_recordset_sql($sql, array($reference, 'user', 'draft'));
-        $files = array();
-        foreach ($rs as $filerecord) {
-            $file = $this->get_file_instance($filerecord);
-            if ($file->is_external_file()) {
-                $files[$filerecord->pathnamehash] = $file;
-            }
-        }
-
-        return $files;
+        return $this->search_references(self::pack_reference($params));
     }
 
     /**
-     * Return the count files referring to provided stored_file instance
-     * This won't work for draft files
+     * Returns the number of aliases that link to the given stored_file
+     *
+     * Aliases in user draft areas are not counted.
      *
      * @param stored_file $storedfile
      * @return int
      */
-    public function get_references_count_by_storedfile($storedfile) {
+    public function get_references_count_by_storedfile(stored_file $storedfile) {
         global $DB;
 
         $params = array();
@@ -1774,19 +1758,8 @@ class file_storage {
         $params['itemid']    = $storedfile->get_itemid();
         $params['filename']  = $storedfile->get_filename();
         $params['filepath']  = $storedfile->get_filepath();
-        $params['userid']    = $storedfile->get_userid();
 
-        $reference = self::pack_reference($params);
-
-        $sql = "SELECT COUNT(f.id)
-                  FROM {files} f
-             LEFT JOIN {files_reference} r
-                       ON f.referencefileid = r.id
-                 WHERE ".$DB->sql_compare_text('r.reference').' = '.$DB->sql_compare_text('?')."
-                 AND (f.component <> ? OR f.filearea <> ?)";
-
-        $count = $DB->count_records_sql($sql, array($reference, 'user', 'draft'));
-        return $count;
+        return $this->search_references_count(self::pack_reference($params));
     }
 
     /**
@@ -1795,7 +1768,7 @@ class file_storage {
      * @param stored_file $storedfile a stored_file instances
      * @return stored_file stored_file
      */
-    public function import_external_file($storedfile) {
+    public function import_external_file(stored_file $storedfile) {
         global $CFG;
         require_once($CFG->dirroot.'/repository/lib.php');
         // sync external file
@@ -1925,5 +1898,60 @@ class file_storage {
 
         return implode(', ', $fields);
     }
-}
 
+    /**
+     * Returns the id of the record in {files_reference} that matches the passed repositoryid and reference
+     *
+     * If the record already exists, its id is returned. If there is no such record yet,
+     * new one is created (using the lastsync and lifetime provided, too) and its id is returned.
+     *
+     * @param int $repositoryid
+     * @param string $reference
+     * @return int
+     */
+    private function get_or_create_referencefileid($repositoryid, $reference, $lastsync = null, $lifetime = null) {
+        global $DB;
+
+        $id = $this->get_referencefileid($repositoryid, $reference, IGNORE_MISSING);
+
+        if ($id !== false) {
+            // bah, that was easy
+            return $id;
+        }
+
+        // no such record yet, create one
+        try {
+            $id = $DB->insert_record('files_reference', array(
+                'repositoryid'  => $repositoryid,
+                'reference'     => $reference,
+                'referencehash' => sha1($reference),
+                'lastsync'      => $lastsync,
+                'lifetime'      => $lifetime));
+        } catch (dml_exception $e) {
+            // if inserting the new record failed, chances are that the race condition has just
+            // occured and the unique index did not allow to create the second record with the same
+            // repositoryid + reference combo
+            $id = $this->get_referencefileid($repositoryid, $reference, MUST_EXIST);
+        }
+
+        return $id;
+    }
+
+    /**
+     * Returns the id of the record in {files_reference} that matches the passed parameters
+     *
+     * Depending on the required strictness, false can be returned. The behaviour is consistent
+     * with standard DML methods.
+     *
+     * @param int $repositoryid
+     * @param string $reference
+     * @param int $strictness either {@link IGNORE_MISSING}, {@link IGNORE_MULTIPLE} or {@link MUST_EXIST}
+     * @return int|bool
+     */
+    private function get_referencefileid($repositoryid, $reference, $strictness) {
+        global $DB;
+
+        return $DB->get_field('files_reference', 'id',
+            array('repositoryid' => $repositoryid, 'referencehash' => sha1($reference)), $strictness);
+    }
+}

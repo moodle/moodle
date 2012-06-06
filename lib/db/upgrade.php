@@ -769,5 +769,66 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012052900.05);
     }
 
+    if ($oldversion < 2012060600.01) {
+        // Add field referencehash to files_reference
+        $table = new xmldb_table('files_reference');
+        $field = new xmldb_field('referencehash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, 'reference');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_main_savepoint(true, 2012060600.01);
+    }
+
+    if ($oldversion < 2012060600.02) {
+        // Populate referencehash field with SHA1 hash of the reference - this shoudl affect only 2.3dev sites
+        // that were using the feature for testing. Production sites have the table empty.
+        $rs = $DB->get_recordset('files_reference', null, '', 'id, reference');
+        foreach ($rs as $record) {
+            $hash = sha1($record->reference);
+            $DB->set_field('files_reference', 'referencehash', $hash, array('id' => $record->id));
+        }
+        $rs->close();
+
+        upgrade_main_savepoint(true, 2012060600.02);
+    }
+
+    if ($oldversion < 2012060600.03) {
+        // Merge duplicate records in files_reference that were created during the development
+        // phase at 2.3dev sites. This is needed so we can create the unique index over
+        // (repositoryid, referencehash) fields.
+        $sql = "SELECT repositoryid, referencehash, MIN(id) AS minid
+                  FROM {files_reference}
+              GROUP BY repositoryid, referencehash
+                HAVING COUNT(*) > 1;";
+        $duprs = $DB->get_recordset_sql($sql);
+        foreach ($duprs as $duprec) {
+            // get the list of all ids in {files_reference} that need to be remapped
+            $dupids = $DB->get_records_select('files_reference', "repositoryid = ? AND referencehash = ? AND id > ?",
+                array($duprec->repositoryid, $duprec->referencehash, $duprec->minid), '', 'id');
+            $dupids = array_keys($dupids);
+            // relink records in {files} that are now referring to a duplicate record
+            // in {files_reference} to refer to the first one
+            list($subsql, $subparams) = $DB->get_in_or_equal($dupids);
+            $DB->set_field_select('files', 'referencefileid', $duprec->minid, "referencefileid $subsql", $subparams);
+            // and finally remove all orphaned records from {files_reference}
+            $DB->delete_records_list('files_reference', 'id', $dupids);
+        }
+        $duprs->close();
+
+        upgrade_main_savepoint(true, 2012060600.03);
+    }
+
+    if ($oldversion < 2012060600.04) {
+        // Add a unique index over repositoryid and referencehash fields in files_reference table
+        $table = new xmldb_table('files_reference');
+        $index = new xmldb_index('uq_external_file', XMLDB_INDEX_UNIQUE, array('repositoryid', 'referencehash'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2012060600.04);
+    }
+
     return true;
 }
