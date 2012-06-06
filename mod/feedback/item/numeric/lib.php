@@ -364,7 +364,7 @@ class feedback_item_numeric extends feedback_item_base {
                      'name="'.$item->typ.'_'.$item->id.'" '.
                      'size="10" '.
                      'maxlength="10" '.
-                     'value="'.($value ? $value : '').'" />';
+                     'value="'.$value.'" />';
 
         echo '</span>';
         echo '</div>';
@@ -533,5 +533,16 @@ class feedback_item_numeric extends feedback_item_base {
 
     public function can_switch_require() {
         return true;
+    }
+    
+    public function value_type() {
+        return PARAM_FLOAT;
+    }
+
+    function clean_input_value($value) {
+        if (!is_numeric($value)) {
+            return null;
+        }
+        return clean_param($value, $this->value_type());
     }
 }

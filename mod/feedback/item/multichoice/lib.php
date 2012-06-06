@@ -826,4 +826,8 @@ class feedback_item_multichoice extends feedback_item_base {
     public function value_is_array() {
         return true;
     }
+
+    public function clean_input_value($value) {
+        return clean_param_array($value, $this->value_type());
+    }
 }
