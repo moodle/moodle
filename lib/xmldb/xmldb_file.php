@@ -44,7 +44,7 @@ class xmldb_file extends xmldb_object {
      * Constructor of the xmldb_file
      * @param string $path
      */
-    function __construct($path) {
+    public function __construct($path) {
         parent::__construct($path);
         $this->path = $path;
         $this->xmldb_structure = NULL;
@@ -54,7 +54,7 @@ class xmldb_file extends xmldb_object {
      * Determine if the XML file exists
      * @return bool
      */
-    function fileExists() {
+    public function fileExists() {
         if (file_exists($this->path) && is_readable($this->path)) {
             return true;
         }
@@ -65,14 +65,14 @@ class xmldb_file extends xmldb_object {
      * Determine if the XML is writeable
      * @return bool
      */
-    function fileWriteable() {
+    public function fileWriteable() {
         if (is_writeable(dirname($this->path))) {
             return true;
         }
         return false;
     }
 
-    function getStructure() {
+    public function getStructure() {
         return $this->xmldb_structure;
     }
 
@@ -82,7 +82,7 @@ class xmldb_file extends xmldb_object {
      * (expat syntax checker or DOM schema validator
      * @return true
      */
-    function validateXMLStructure() {
+    public function validateXMLStructure() {
 
         // Create and load XML file
         $parser = new DOMDocument();
@@ -134,7 +134,7 @@ class xmldb_file extends xmldb_object {
      * Load and the XMLDB structure from file
      * @return true
      */
-    function loadXMLStructure() {
+    public function loadXMLStructure() {
         if ($this->fileExists()) {
             // Let's validate the XML file
             if (!$this->validateXMLStructure()) {
@@ -167,7 +167,7 @@ class xmldb_file extends xmldb_object {
      * @param array $xmlarr
      * @return xmldb_structure
      */
-    function arr2xmldb_structure ($xmlarr) {
+    public function arr2xmldb_structure ($xmlarr) {
         $structure = new xmldb_structure($this->path);
         $structure->arr2xmldb_structure($xmlarr);
         return $structure;
@@ -177,7 +177,7 @@ class xmldb_file extends xmldb_object {
      * This function sets the DTD of the XML file
      * @param string
      */
-    function setDTD($path) {
+    public function setDTD($path) {
         $this->dtd = $path;
     }
 
@@ -185,7 +185,7 @@ class xmldb_file extends xmldb_object {
      * This function sets the schema of the XML file
      * @param string
      */
-    function setSchema($path) {
+    public function setSchema($path) {
         $this->schema = $path;
     }
 
@@ -193,7 +193,7 @@ class xmldb_file extends xmldb_object {
      * This function saves the whole xmldb_structure to its file
      * @return int|bool false on failure, number of written bytes on success
      */
-    function saveXMLFile() {
+    public function saveXMLFile() {
 
         $structure = $this->getStructure();
 

@@ -56,7 +56,7 @@ class xmldb_object {
      * Creates one new xmldb_object
      * @param string $name
      */
-    function __construct($name) {
+    public function __construct($name) {
         $this->name = $name;
         $this->comment = NULL;
         $this->previous = NULL;
@@ -71,7 +71,7 @@ class xmldb_object {
      * This function returns true/false, if the xmldb_object has been loaded
      * @return bool
      */
-    function isLoaded() {
+    public function isLoaded() {
         return $this->loaded;
     }
 
@@ -79,7 +79,7 @@ class xmldb_object {
      * This function returns true/false, if the xmldb_object has changed
      * @return bool
      */
-    function hasChanged() {
+    public function hasChanged() {
         return $this->changed;
     }
 
@@ -87,7 +87,7 @@ class xmldb_object {
      * This function returns the comment of one xmldb_object
      * @return string
      */
-    function getComment() {
+    public function getComment() {
         return $this->comment;
     }
 
@@ -95,7 +95,7 @@ class xmldb_object {
      * This function returns the hash of one xmldb_object
      * @return string
      */
-    function getHash() {
+    public function getHash() {
         return $this->hash;
     }
 
@@ -103,7 +103,7 @@ class xmldb_object {
      * This function will return the name of the previous xmldb_object
      * @return xmldb_object
      */
-    function getPrevious() {
+    public function getPrevious() {
         return $this->previous;
     }
 
@@ -111,7 +111,7 @@ class xmldb_object {
      * This function will return the name of the next xmldb_object
      * @return xmldb_object
      */
-    function getNext() {
+    public function getNext() {
         return $this->next;
     }
 
@@ -119,7 +119,7 @@ class xmldb_object {
      * This function will return the name of the xmldb_object
      * @return string
      */
-    function getName() {
+    public function getName() {
         return $this->name;
     }
 
@@ -127,7 +127,7 @@ class xmldb_object {
      * This function will return the error detected in the object
      * @return string
      */
-    function getError() {
+    public function getError() {
         return $this->errormsg;
     }
 
@@ -135,7 +135,7 @@ class xmldb_object {
      * This function will set the comment of the xmldb_object
      * @param string $comment
      */
-    function setComment($comment) {
+    public function setComment($comment) {
         $this->comment = $comment;
     }
 
@@ -143,7 +143,7 @@ class xmldb_object {
      * This function will set the previous of the xmldb_object
      * @param xmldb_object $previous
      */
-    function setPrevious($previous) {
+    public function setPrevious($previous) {
         $this->previous = $previous;
     }
 
@@ -151,7 +151,7 @@ class xmldb_object {
      * This function will set the next of the xmldb_object
      * @param xmldb_object $next
      */
-    function setNext($next) {
+    public function setNext($next) {
         $this->next = $next;
     }
 
@@ -159,7 +159,7 @@ class xmldb_object {
      * This function will set the hash of the xmldb_object
      * @param string $hash
      */
-    function setHash($hash) {
+    public function setHash($hash) {
         $this->hash = $hash;
     }
 
@@ -167,7 +167,7 @@ class xmldb_object {
      * This function will set the loaded field of the xmldb_object
      * @param bool $loaded
      */
-    function setLoaded($loaded = true) {
+    public function setLoaded($loaded = true) {
         $this->loaded = $loaded;
     }
 
@@ -175,14 +175,14 @@ class xmldb_object {
      * This function will set the changed field of the xmldb_object
      * @param bool $changed
      */
-    function setChanged($changed = true) {
+    public function setChanged($changed = true) {
         $this->changed = $changed;
     }
     /**
      * This function will set the name field of the xmldb_object
      * @param string $name
      */
-    function setName($name) {
+    public function setName($name) {
         $this->name = $name;
     }
 
@@ -192,7 +192,7 @@ class xmldb_object {
      * only lowercase a-z, 0-9 and _ are allowed
      * @return bool
      */
-    function checkName () {
+    public function checkName () {
         $result = true;
 
         if ($this->name != preg_replace('/[^a-z0-9_ -]/i', '', $this->name)) {
@@ -207,7 +207,7 @@ class xmldb_object {
      * @param array $arr
      * @return bool
      */
-    function checkNameValues($arr) {
+    public function checkNameValues($arr) {
         $result = true;
         // TODO: Perhaps, add support for reserved words
 
@@ -238,7 +238,7 @@ class xmldb_object {
      * @param array $arr
      * @return bool true if $arr modified
      */
-    function fixPrevNext(&$arr) {
+    public function fixPrevNext(&$arr) {
         global $CFG;
 
         if (empty($CFG->xmldbreconstructprevnext)) {
@@ -273,7 +273,7 @@ class xmldb_object {
      * @param array $arr
      * @return bool true means ok, false invalid prev/next present
      */
-    function checkPreviousNextValues($arr) {
+    public function checkPreviousNextValues($arr) {
         global $CFG;
         if (!empty($CFG->xmldbdisablenextprevchecking)) {
             return true;
@@ -380,7 +380,7 @@ class xmldb_object {
      * @param array $arr
      * @return array|bool
      */
-    function orderElements($arr) {
+    public function orderElements($arr) {
         global $CFG;
         $result = true;
         if (!empty($CFG->xmldbdisablenextprevchecking)) {
@@ -430,7 +430,7 @@ class xmldb_object {
      * @param array $arr
      * @return mixed
      */
-    function findObjectInArray($objectname, $arr) {
+    public function findObjectInArray($objectname, $arr) {
         foreach ($arr as $i => $object) {
             if ($objectname == $object->getName()) {
                 return $i;
@@ -444,7 +444,7 @@ class xmldb_object {
      * (should be implemented inside each XMLDBxxx object)
      * @return string
      */
-    function readableInfo() {
+    public function readableInfo() {
         return get_class($this);
     }
 
@@ -460,7 +460,7 @@ class xmldb_object {
      * defining XMLDB_SKIP_DEBUG_HOOK
      * @param string $message
      */
-    function debug($message) {
+    public function debug($message) {
 
         // Check for xmldb_debug($message, $xmldb_object)
         $funcname = 'xmldb_debug';
@@ -476,7 +476,7 @@ class xmldb_object {
      * @param string $string
      * @return array
      */
-    function comma2array($string) {
+    public function comma2array($string) {
 
         $foundquotes  = array();
         $foundconcats = array();
@@ -533,7 +533,7 @@ class xmldb_object {
      * @param xmldb_table $xmldb_table optional when object is table
      * @return string null if ok, error message if problem found
      */
-    function validateDefinition(xmldb_table $xmldb_table=null) {
+    public function validateDefinition(xmldb_table $xmldb_table=null) {
         return null;
     }
 }

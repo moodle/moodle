@@ -92,7 +92,7 @@ class xmldb_field extends xmldb_object {
      * @param mixed $default meaningful default o null (or false)
      * @param xmldb_object $previous
      */
-    function __construct($name, $type=null, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
+    public function __construct($name, $type=null, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
         $this->type = NULL;
         $this->length = NULL;
         $this->notnull = false;
@@ -114,7 +114,7 @@ class xmldb_field extends xmldb_object {
      * @param mixed $default meaningful default o null (or false)
      * @param xmldb_object $previous
      */
-    function set_attributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
+    public function set_attributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
         $this->type = $type;
     /// Try to split the precision into length and decimals and apply
     /// each one as needed
@@ -142,7 +142,7 @@ class xmldb_field extends xmldb_object {
      * Get the type
      * @return int
      */
-    function getType() {
+    public function getType() {
         return $this->type;
     }
 
@@ -150,7 +150,7 @@ class xmldb_field extends xmldb_object {
      * Get the length
      * @return int
      */
-    function getLength() {
+    public function getLength() {
         return $this->length;
     }
 
@@ -158,7 +158,7 @@ class xmldb_field extends xmldb_object {
      * Get the decimals
      * @return string
      */
-    function getDecimals() {
+    public function getDecimals() {
         return $this->decimals;
     }
 
@@ -166,7 +166,7 @@ class xmldb_field extends xmldb_object {
      * Get the notnull
      * @return bool
      */
-    function getNotNull() {
+    public function getNotNull() {
         return $this->notnull;
     }
 
@@ -175,7 +175,7 @@ class xmldb_field extends xmldb_object {
      * @deprecated since moodle 2.3
      * @return bool
      */
-    function getUnsigned() {
+    public function getUnsigned() {
         return false;
     }
 
@@ -183,7 +183,7 @@ class xmldb_field extends xmldb_object {
      * Get the sequence
      * @return bool
      */
-    function getSequence() {
+    public function getSequence() {
         return $this->sequence;
     }
 
@@ -191,7 +191,7 @@ class xmldb_field extends xmldb_object {
      * Get the default
      * @return mixed
      */
-    function getDefault() {
+    public function getDefault() {
         return $this->default;
     }
 
@@ -199,7 +199,7 @@ class xmldb_field extends xmldb_object {
      * Set the field type
      * @param int $type
      */
-    function setType($type) {
+    public function setType($type) {
         $this->type = $type;
     }
 
@@ -207,7 +207,7 @@ class xmldb_field extends xmldb_object {
      * Set the field length
      * @param int $length
      */
-    function setLength($length) {
+    public function setLength($length) {
         $this->length = $length;
     }
 
@@ -215,7 +215,7 @@ class xmldb_field extends xmldb_object {
      * Set the field decimals
      * @param string
      */
-    function setDecimals($decimals) {
+    public function setDecimals($decimals) {
         $this->decimals = $decimals;
     }
 
@@ -224,14 +224,14 @@ class xmldb_field extends xmldb_object {
      * @deprecated since moodle 2.3
      * @param bool $unsigned
      */
-    function setUnsigned($unsigned=true) {
+    public function setUnsigned($unsigned=true) {
     }
 
     /**
      * Set the field notnull
      * @param bool $notnull
      */
-    function setNotNull($notnull=true) {
+    public function setNotNull($notnull=true) {
         $this->notnull = $notnull;
     }
 
@@ -239,7 +239,7 @@ class xmldb_field extends xmldb_object {
      * Set the field sequence
      * @param bool $sequence
      */
-    function setSequence($sequence=true) {
+    public function setSequence($sequence=true) {
         $this->sequence = $sequence;
     }
 
@@ -247,7 +247,7 @@ class xmldb_field extends xmldb_object {
      * Set the field default
      * @param mixed $default
      */
-    function setDefault($default) {
+    public function setDefault($default) {
         // Check, warn and auto-fix '' (empty) defaults for CHAR NOT NULL columns, changing them
         // to NULL so XMLDB will apply the proper default
         if ($this->type == XMLDB_TYPE_CHAR && $this->notnull && $default === '') {
@@ -267,8 +267,9 @@ class xmldb_field extends xmldb_object {
     /**
      * Load data from XML to the table
      * @param array $xmlarr
+     * @return mixed
      */
-    function arr2xmldb_field($xmlarr) {
+    public function arr2xmldb_field($xmlarr) {
 
         $result = true;
 
@@ -415,7 +416,7 @@ class xmldb_field extends xmldb_object {
      * @param string $type
      * @return int
      */
-    function getXMLDBFieldType($type) {
+    public function getXMLDBFieldType($type) {
 
         $result = XMLDB_TYPE_INCORRECT;
 
@@ -452,7 +453,7 @@ class xmldb_field extends xmldb_object {
      * @param int $type
      * @return string
      */
-    function getXMLDBTypeName($type) {
+    public function getXMLDBTypeName($type) {
 
         $result = "";
 
@@ -488,7 +489,7 @@ class xmldb_field extends xmldb_object {
      * @param bool $recursive
      * @return void, modifies $this->hash
      */
-     function calculateHash($recursive = false) {
+     public function calculateHash($recursive = false) {
         if (!$this->loaded) {
             $this->hash = NULL;
         } else {
@@ -503,7 +504,7 @@ class xmldb_field extends xmldb_object {
      * This function will output the XML text for one field
      * @return string
      */
-    function xmlOutput() {
+    public function xmlOutput() {
         $o = '';
         $o.= '        <FIELD NAME="' . $this->name . '"';
         $o.= ' TYPE="' . $this->getXMLDBTypeName($this->type) . '"';
@@ -548,7 +549,7 @@ class xmldb_field extends xmldb_object {
      * @param string $adofield
      * @return void, sets $this->type
      */
-    function setFromADOField($adofield) {
+    public function setFromADOField($adofield) {
 
         // Calculate the XMLDB_TYPE
         switch (strtolower($adofield->type)) {
@@ -636,7 +637,7 @@ class xmldb_field extends xmldb_object {
      * @param bool $includeprevious
      * @return string
      */
-    function getPHP($includeprevious=true) {
+    public function getPHP($includeprevious=true) {
 
         $result = '';
 
@@ -719,7 +720,7 @@ class xmldb_field extends xmldb_object {
      * Shows info in a readable format
      * @return string
      */
-    function readableInfo() {
+    public function readableInfo() {
         $o = '';
         // type
         $o .= $this->getXMLDBTypeName($this->type);
@@ -770,7 +771,7 @@ class xmldb_field extends xmldb_object {
      * @param xmldb_table $xmldb_table optional when object is table
      * @return string null if ok, error message if problem found
      */
-    function validateDefinition(xmldb_table $xmldb_table=null) {
+    public function validateDefinition(xmldb_table $xmldb_table=null) {
         if (!$xmldb_table) {
             return 'Invalid xmldb_field->validateDefinition() call, $xmldb_table is required.';
         }

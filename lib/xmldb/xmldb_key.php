@@ -48,7 +48,7 @@ class xmldb_key extends xmldb_object {
      * @param string $reftable name of the table the FK points to or null
      * @param array $reffields an array of fieldnames in the FK table or null
      */
-    function __construct($name, $type=null, $fields=array(), $reftable=null, $reffields=null) {
+    public function __construct($name, $type=null, $fields=array(), $reftable=null, $reffields=null) {
         $this->type = NULL;
         $this->fields = array();
         $this->reftable = NULL;
@@ -65,7 +65,7 @@ class xmldb_key extends xmldb_object {
      * @param string $reftable name of the table the FK points to or null
      * @param array $reffields an array of fieldnames in the FK table or null
      */
-    function set_attributes($type, $fields, $reftable=null, $reffields=null) {
+    public function set_attributes($type, $fields, $reftable=null, $reffields=null) {
         $this->type = $type;
         $this->fields = $fields;
         $this->reftable = $reftable;
@@ -76,7 +76,7 @@ class xmldb_key extends xmldb_object {
      * Get the key type
      * @return int
      */
-    function getType() {
+    public function getType() {
         return $this->type;
     }
 
@@ -84,7 +84,7 @@ class xmldb_key extends xmldb_object {
      * Set the key type
      * @param int $type
      */
-    function setType($type) {
+    public function setType($type) {
         $this->type = $type;
     }
 
@@ -92,7 +92,7 @@ class xmldb_key extends xmldb_object {
      * Set the key fields
      * @param array $fields
      */
-    function setFields($fields) {
+    public function setFields($fields) {
         $this->fields = $fields;
     }
 
@@ -100,7 +100,7 @@ class xmldb_key extends xmldb_object {
      * Set the key reftable
      * @param string $reftable
      */
-    function setRefTable($reftable) {
+    public function setRefTable($reftable) {
         $this->reftable = $reftable;
     }
 
@@ -108,7 +108,7 @@ class xmldb_key extends xmldb_object {
      * Set the key reffields
      * @param array $reffields
      */
-    function setRefFields($reffields) {
+    public function setRefFields($reffields) {
         $this->reffields = $reffields;
     }
 
@@ -116,7 +116,7 @@ class xmldb_key extends xmldb_object {
      * Get the key fields
      * @return array
      */
-    function getFields() {
+    public function getFields() {
         return $this->fields;
     }
 
@@ -124,7 +124,7 @@ class xmldb_key extends xmldb_object {
      * Get the key reftable
      * @return string
      */
-    function getRefTable() {
+    public function getRefTable() {
         return $this->reftable;
     }
 
@@ -132,7 +132,7 @@ class xmldb_key extends xmldb_object {
      * Get the key reffields
      * @return array reference to ref fields
      */
-    function getRefFields() {
+    public function getRefFields() {
         return $this->reffields;
     }
 
@@ -141,7 +141,7 @@ class xmldb_key extends xmldb_object {
      * @param array $xmlarr
      * @return bool success
      */
-    function arr2xmldb_key($xmlarr) {
+    public function arr2xmldb_key($xmlarr) {
 
         $result = true;
 
@@ -293,7 +293,7 @@ class xmldb_key extends xmldb_object {
      * @param string $type
      * @return int
      */
-    function getXMLDBKeyType($type) {
+    public function getXMLDBKeyType($type) {
 
         $result = XMLDB_KEY_INCORRECT;
 
@@ -324,7 +324,7 @@ class xmldb_key extends xmldb_object {
      * @param int $type
      * @return string
      */
-    function getXMLDBKeyName($type) {
+    public function getXMLDBKeyName($type) {
 
         $result = '';
 
@@ -353,7 +353,7 @@ class xmldb_key extends xmldb_object {
      * This function calculate and set the hash of one xmldb_key
      * @param bool $recursive
      */
-     function calculateHash($recursive = false) {
+     public function calculateHash($recursive = false) {
         if (!$this->loaded) {
             $this->hash = NULL;
         } else {
@@ -371,7 +371,7 @@ class xmldb_key extends xmldb_object {
      *This function will output the XML text for one key
      * @return string
      */
-    function xmlOutput() {
+    public function xmlOutput() {
         $o = '';
         $o.= '        <KEY NAME="' . $this->name . '"';
         $o.= ' TYPE="' . $this->getXMLDBKeyName($this->type) . '"';
@@ -400,7 +400,7 @@ class xmldb_key extends xmldb_object {
      * based on information passed in one ADOkey
      * @oaram array $adokey
      */
-    function setFromADOKey($adokey) {
+    public function setFromADOKey($adokey) {
 
         // Calculate the XMLDB_KEY
         switch (strtolower($adokey['name'])) {
@@ -422,7 +422,7 @@ class xmldb_key extends xmldb_object {
      * Returns the PHP code needed to define one xmldb_key
      * @return string
      */
-    function getPHP() {
+    public function getPHP() {
 
         $result = '';
 
@@ -474,7 +474,7 @@ class xmldb_key extends xmldb_object {
      * Shows info in a readable format
      * @return string
      */
-    function readableInfo() {
+    public function readableInfo() {
         $o = '';
         // type
         $o .= $this->getXMLDBKeyName($this->type);

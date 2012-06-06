@@ -57,7 +57,7 @@ class xmldb_index extends xmldb_object {
      * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
      * @param array fields an array of fieldnames to build the index over
      */
-    function __construct($name, $type=null, $fields=array()) {
+    public function __construct($name, $type=null, $fields=array()) {
         $this->unique = false;
         $this->fields = array();
         parent::__construct($name);
@@ -70,7 +70,7 @@ class xmldb_index extends xmldb_object {
      * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
      * @param array fields an array of fieldnames to build the index over
      */
-    function set_attributes($type, $fields) {
+    public function set_attributes($type, $fields) {
         $this->unique = !empty($type) ? true : false;
         $this->fields = $fields;
     }
@@ -79,7 +79,7 @@ class xmldb_index extends xmldb_object {
      * Get the index unique
      * @return bool
      */
-    function getUnique() {
+    public function getUnique() {
         return $this->unique;
     }
 
@@ -87,7 +87,7 @@ class xmldb_index extends xmldb_object {
      * Set the index unique
      * @param bool $unique
      */
-    function setUnique($unique = true) {
+    public function setUnique($unique = true) {
         $this->unique = $unique;
     }
 
@@ -95,7 +95,7 @@ class xmldb_index extends xmldb_object {
      * Set the index fields
      * @param array $fields
      */
-    function setFields($fields) {
+    public function setFields($fields) {
         $this->fields = $fields;
     }
 
@@ -103,7 +103,7 @@ class xmldb_index extends xmldb_object {
      * Get the index fields
      * @return array
      */
-    function getFields() {
+    public function getFields() {
         return $this->fields;
     }
 
@@ -112,7 +112,7 @@ class xmldb_index extends xmldb_object {
      * @param $xmlarr array
      * @return bool
      */
-    function arr2xmldb_index($xmlarr) {
+    public function arr2xmldb_index($xmlarr) {
 
         $result = true;
 
@@ -197,7 +197,7 @@ class xmldb_index extends xmldb_object {
      * This function calculate and set the hash of one xmldb_index
      * @retur nvoid, changes $this->hash
      */
-     function calculateHash($recursive = false) {
+     public function calculateHash($recursive = false) {
         if (!$this->loaded) {
             $this->hash = NULL;
         } else {
@@ -210,7 +210,7 @@ class xmldb_index extends xmldb_object {
      *This function will output the XML text for one index
      * @return string
      */
-    function xmlOutput() {
+    public function xmlOutput() {
         $o = '';
         $o.= '        <INDEX NAME="' . $this->name . '"';
         if ($this->unique) {
@@ -240,7 +240,7 @@ class xmldb_index extends xmldb_object {
      * @param array
      * @return void
      */
-    function setFromADOIndex($adoindex) {
+    public function setFromADOIndex($adoindex) {
 
         // Set the unique field
         $this->unique = false;
@@ -256,7 +256,7 @@ class xmldb_index extends xmldb_object {
      * Returns the PHP code needed to define one xmldb_index
      * @return string
      */
-    function getPHP() {
+    public function getPHP() {
 
         $result = '';
 
@@ -282,7 +282,7 @@ class xmldb_index extends xmldb_object {
      * Shows info in a readable format
      * @return string
      */
-    function readableInfo() {
+    public function readableInfo() {
         $o = '';
         // unique
         if ($this->unique) {
@@ -305,7 +305,7 @@ class xmldb_index extends xmldb_object {
      * @param xmldb_table $xmldb_table optional when object is table
      * @return string null if ok, error message if problem found
      */
-    function validateDefinition(xmldb_table $xmldb_table=null) {
+    public function validateDefinition(xmldb_table $xmldb_table=null) {
         if (!$xmldb_table) {
             return 'Invalid xmldb_index->validateDefinition() call, $xmldb_table si required.';
         }

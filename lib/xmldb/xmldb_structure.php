@@ -41,7 +41,7 @@ class xmldb_structure extends xmldb_object {
      * Creates one new xmldb_structure
      * @param string $name
      */
-    function __construct($name) {
+    public function __construct($name) {
         parent::__construct($name);
         $this->path = NULL;
         $this->version = NULL;
@@ -52,7 +52,7 @@ class xmldb_structure extends xmldb_object {
      * Returns the path of the structure
      * @return string
      */
-    function getPath() {
+    public function getPath() {
         return $this->path;
     }
 
@@ -60,7 +60,7 @@ class xmldb_structure extends xmldb_object {
      * Returns the version of the structure
      * @return string
      */
-    function getVersion() {
+    public function getVersion() {
         return $this->version;
     }
 
@@ -69,7 +69,7 @@ class xmldb_structure extends xmldb_object {
      * @param string $tablename
      * @return xmldb_table
      */
-    function getTable($tablename) {
+    public function getTable($tablename) {
         $i = $this->findTableInArray($tablename);
         if ($i !== NULL) {
             return $this->tables[$i];
@@ -82,7 +82,7 @@ class xmldb_structure extends xmldb_object {
      * @param string $tablename
      * @return mixed
      */
-    function findTableInArray($tablename) {
+    public function findTableInArray($tablename) {
         foreach ($this->tables as $i => $table) {
             if ($tablename == $table->getName()) {
                 return $i;
@@ -95,7 +95,7 @@ class xmldb_structure extends xmldb_object {
      * This function will reorder the array of tables
      * @return bool success
      */
-    protected function orderTables() {
+    public function orderTables() {
         $result = $this->orderElements($this->tables);
         if ($result) {
             $this->setTables($result);
@@ -109,7 +109,7 @@ class xmldb_structure extends xmldb_object {
      * Returns the tables of the structure
      * @return array
      */
-    function getTables() {
+    public function getTables() {
         return $this->tables;
     }
 
@@ -117,7 +117,7 @@ class xmldb_structure extends xmldb_object {
      * Set the structure version
      * @param string version
      */
-    function setVersion($version) {
+    public function setVersion($version) {
         $this->version = $version;
     }
 
@@ -127,7 +127,7 @@ class xmldb_structure extends xmldb_object {
      * @param xmldb_table $table
      * @param mixed $after
      */
-    function addTable($table, $after=NULL) {
+    public function addTable($table, $after=NULL) {
 
         // Calculate the previous and next tables
         $prevtable = NULL;
@@ -136,7 +136,7 @@ class xmldb_structure extends xmldb_object {
         if (!$after) {
             if ($this->tables) {
                 end($this->tables);
-                $prevtable = $this->tables[key($alltables)];
+                $prevtable = $this->tables[key($this->tables)];
             }
         } else {
             $prevtable = $this->getTable($after);
@@ -172,7 +172,7 @@ class xmldb_structure extends xmldb_object {
      * Delete one table from the Structure
      * @param string $tablename
      */
-    function deleteTable($tablename) {
+    public function deleteTable($tablename) {
 
         $table = $this->getTable($tablename);
         if ($table) {
@@ -203,7 +203,7 @@ class xmldb_structure extends xmldb_object {
      * Set the tables
      * @param array $tables
      */
-    function setTables($tables) {
+    public function setTables($tables) {
         $this->tables = $tables;
     }
 
@@ -212,7 +212,7 @@ class xmldb_structure extends xmldb_object {
      * @param array $xmlarr
      * @return bool
      */
-    function arr2xmldb_structure($xmlarr) {
+    public function arr2xmldb_structure($xmlarr) {
 
         global $CFG;
 
@@ -305,7 +305,7 @@ class xmldb_structure extends xmldb_object {
      * This function calculate and set the hash of one xmldb_structure
      * @param bool $recursive
      */
-     function calculateHash($recursive = false) {
+     public function calculateHash($recursive = false) {
         if (!$this->loaded) {
             $this->hash = NULL;
         } else {
@@ -327,7 +327,7 @@ class xmldb_structure extends xmldb_object {
      * This function will output the XML text for one structure
      * @return string
      */
-    function xmlOutput() {
+    public function xmlOutput() {
         $o = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n";
         $o.= '<XMLDB PATH="' . $this->path . '"';
         $o.= ' VERSION="' . $this->version . '"';
@@ -359,7 +359,7 @@ class xmldb_structure extends xmldb_object {
      * @param string $tablename
      * @return mixed
      */
-    function getTableUses($tablename) {
+    public function getTableUses($tablename) {
 
         $uses = array();
 
@@ -396,7 +396,7 @@ class xmldb_structure extends xmldb_object {
      * @param string $fieldname
      * @return mixed
      */
-    function getFieldUses($tablename, $fieldname) {
+    public function getFieldUses($tablename, $fieldname) {
 
         $uses = array();
 
@@ -455,7 +455,7 @@ class xmldb_structure extends xmldb_object {
      * @param string $keyname
      * @return mixed
      */
-    function getKeyUses($tablename, $keyname) {
+    public function getKeyUses($tablename, $keyname) {
 
         $uses = array();
 
@@ -496,11 +496,11 @@ class xmldb_structure extends xmldb_object {
      * @param string $indexname
      * @return mixed
      */
-    function getIndexUses($tablename, $indexname) {
+    public function getIndexUses($tablename, $indexname) {
 
         $uses = array();
 
-        // Nothing to check, beause indexes haven't uses! Leave it here
+        // Nothing to check, because indexes haven't uses! Leave it here
         // for future checks...
 
         // Return result
@@ -517,7 +517,7 @@ class xmldb_structure extends xmldb_object {
      * an array of errors or false
      * @return mixed
      */
-    function getAllErrors() {
+    public function getAllErrors() {
 
         $errors = array();
         // First the structure itself
