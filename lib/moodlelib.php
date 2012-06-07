@@ -132,6 +132,14 @@ define('PARAM_FILE',   'file');
 
 /**
  * PARAM_FLOAT - a real/floating point number.
+ *
+ * Note that you should not use PARAM_FLOAT for numbers typed in by the user.
+ * It does not work for languages that use , as a decimal separator.
+ * Instead, do something like
+ *     $rawvalue = required_param('name', PARAM_RAW);
+ *     // ... other code including require_login, which sets current lang ...
+ *     $realvalue = unformat_float($rawvalue);
+ *     // ... then use $realvalue
  */
 define('PARAM_FLOAT',  'float');
 
