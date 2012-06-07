@@ -711,10 +711,10 @@ function notify_login_failures() {
             //emailing the admins directly rather than putting these through the messaging system
             email_to_user($admin,get_admin(), $subject, $body);
         }
-
-        // Update lastnotifyfailure with current time
-        set_config('lastnotifyfailure', time());
     }
+
+    // Update lastnotifyfailure with current time
+    set_config('lastnotifyfailure', time());
 
     // Finally, delete all the temp records we have created in cache_flags
     $DB->delete_records_select('cache_flags', "flagtype IN ('login_failure_by_ip', 'login_failure_by_info')");
