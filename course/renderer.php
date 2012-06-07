@@ -168,7 +168,7 @@ class core_course_renderer extends plugin_renderer_base {
 
         // Add the header
         $header = html_writer::tag('div', get_string('addresourceoractivity', 'moodle'),
-                array('id' => 'choosertitle', 'class' => 'hd'));
+                array('class' => 'hd choosertitle'));
 
         $formcontent = html_writer::start_tag('form', array('action' => new moodle_url('/course/jumpto.php'),
                 'id' => 'chooserform', 'method' => 'post'));
@@ -221,8 +221,8 @@ class core_course_renderer extends plugin_renderer_base {
         // Put all of the content together
         $content = $formcontent;
 
-        $content = html_writer::tag('div', $content, array('id' => 'choosercontainer'));
-        return $header . html_writer::tag('div', $content, array('id' => 'chooserdialogue'));
+        $content = html_writer::tag('div', $content, array('class' => 'choosercontainer'));
+        return $header . html_writer::tag('div', $content, array('class' => 'chooserdialoguebody'));
     }
 
     /**

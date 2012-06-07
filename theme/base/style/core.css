@@ -813,78 +813,120 @@ sup {vertical-align: super;}
  * without javascript enabled
  */
 /* Hide the dialog and it's title */
-#chooserdialogue,
-#choosertitle {
+.chooserdialoguebody,
+.choosertitle {
     display:none;
 }
 
-.modchooser .moodle-dialogue-hd {
-    text-align: center;
+.moodle-dialogue-base .moodle-dialogue {
+    background-color: transparent;
+    border: 0px solid transparent!important;
+}
+
+.chooserdialogue .moodle-dialogue-wrap {
+    height: auto;
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC!important;
+    border-radius:10px;
+    box-shadow: 5px 5px 20px 0px #666666;
+    -webkit-box-shadow: 5px 5px 20px 0px #666666;
+    -moz-box-shadow: 5px 5px 20px 0px #666666;
+}
+
+.chooserdialogue .moodle-dialogue-hd {
+    font-size:12px!important;
+    font-weight: normal!important;
+    letter-spacing: 1px;
+    color:#333333!important;
+    text-align: center!important;
+    text-shadow: 1px 1px 1px #FFFFFF;
+    padding:5px 5px 5px 5px;
+    border-radius: 10px 10px 0px 0px;
+    border-bottom: 1px solid #BBBBBB!important;
+    background: #CCCCCC;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC));
+    background: -moz-linear-gradient(top,  #FFFFFF,  #CCCCCC);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC')!important;
+    filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
+}
+
+.chooserdialogue .moodle-dialogue-bd {
+    font-size: 12px;
+    color: #555555;
+    overflow: auto;
+    padding: 0px;
+    background: #F2F2F2;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 /* Center the submit buttons within the area */
-#choosercontainer #chooseform .submitbuttons {
+.choosercontainer #chooseform .submitbuttons {
     margin: 0.7em 0;
     text-align: center;
 }
 
-#choosercontainer #chooseform .submitbuttons input {
+.choosercontainer #chooseform .submitbuttons input {
     min-width: 100px;
     margin: 0px 0.5em;
 }
 
 /* Various settings for the options area */
-#choosercontainer #chooseform .options {
+.choosercontainer #chooseform .options {
     position: relative;
-    border-bottom: 1px solid grey;
-    padding: 0.24em 0;
+    border-bottom: 1px solid #BBBBBB;
 }
 
 /* Only set these options if we're showing the js container */
-.jsenabled #choosercontainer #chooseform .alloptions {
-    max-height: 530px;
+.jsenabled .choosercontainer #chooseform .alloptions {
+    max-height: 550px;
     overflow-x: hidden;
     overflow-y: auto;
-    max-width: 18.15em;
+    max-width: 18.5em;
+    box-shadow: inset 0px 0px 30px 0px #CCCCCC;
+    -webkit-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
+    -moz-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
 }
 
 /* Settings for option rows and option subtypes */
-#choosercontainer #chooseform .moduletypetitle,
-#choosercontainer #chooseform .option,
-#choosercontainer #chooseform .nonoption {
+.choosercontainer #chooseform .moduletypetitle,
+.choosercontainer #chooseform .option,
+.choosercontainer #chooseform .nonoption {
     margin-bottom: 0;
-    padding: 0 0 0 0.3em;
+    padding: 0 1.6em 0 1.6em;
 }
 
-#choosercontainer #chooseform .moduletypetitle {
-    font-weight: bold;
-    text-align : center;
+.choosercontainer #chooseform .moduletypetitle {
+    text-transform: uppercase;
+    padding-top: 1.2em;
+    padding-bottom: 0.4em;
 }
 
-#choosercontainer #chooseform .subtype {
+.choosercontainer #chooseform .subtype {
     margin-bottom: 0;
     padding: 0 0 0 1em;
 }
 
-#choosercontainer #chooseform .option .typename,
-#choosercontainer #chooseform .option span.modicon img.icon {
-    padding: 0 0 0 0.3em;
+.choosercontainer #chooseform .option .typename,
+.choosercontainer #chooseform .option span.modicon img.icon {
+    padding: 0 0 0 0.5em;
 }
 
-#choosercontainer #chooseform .option input[type=radio],
-#choosercontainer #chooseform .option span.typename,
-#choosercontainer #chooseform .option span.modicon {
+.choosercontainer #chooseform .option input[type=radio],
+.choosercontainer #chooseform .option span.typename,
+.choosercontainer #chooseform .option span.modicon {
     vertical-align: middle;
 }
 
-#choosercontainer #chooseform .option label {
+.choosercontainer #chooseform .option label {
     display: block;
-    padding: 0.2em 0 0.2em 0;
+    padding: 0.3em 0 0.1em 0;
+    border-bottom: 1px solid #FFFFFF;
 }
 
 /* The instruction/help area */
-#choosercontainer #chooseform .instruction,
-.jsenabled #choosercontainer #chooseform .typesummary {
+.choosercontainer #chooseform .instruction,
+.jsenabled .choosercontainer #chooseform .typesummary {
     display: none;
     position: absolute;
     top: 0px;
@@ -892,20 +934,24 @@ sup {vertical-align: super;}
     bottom: 0px;
     left: 18.5em;
     margin: 0;
-    border-left: 1px solid grey;
-    padding: 0.3em 0.5em;
+    padding: 2em 2em 2em 2.4em;
     background-color: white;
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 550px;
+    line-height: 2em;
 }
 
 /* Selected option settings */
-.jsenabled #choosercontainer #chooseform .instruction,
-#choosercontainer #chooseform .selected .typesummary {
+.jsenabled .choosercontainer #chooseform .instruction,
+.choosercontainer #chooseform .selected .typesummary {
     display: block;
 }
-#choosercontainer #chooseform .selected {
-    background-color: #ddd;
+
+.choosercontainer #chooseform .selected {
+    background-color: #FFFFFF;
+    box-shadow: 0px 0px 10px 0px #CCCCCC;
+    -webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;
+    -moz-box-shadow: 0px 0px 10px 0px #CCCCCC;
 }
 

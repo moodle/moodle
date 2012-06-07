@@ -21,13 +21,12 @@ YUI.add('moodle-course-modchooser', function(Y) {
         jumplink : null,
 
         initializer : function(config) {
-            var dialogue = Y.one('#chooserdialogue');
-            var header = Y.one('#choosertitle');
+            var dialogue = Y.one('.chooserdialoguebody');
+            var header = Y.one('.choosertitle');
             var params = {
                 width: '540px'
             };
             this.setup_chooser_dialogue(dialogue, header, params);
-            this.overlay.get('boundingBox').addClass('modchooser');
 
             this.jumplink = this.container.one('#jump');
 
