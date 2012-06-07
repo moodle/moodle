@@ -196,11 +196,18 @@ class stored_file {
     }
 
     /**
-     * Delete file reference
+     * Unlink the stored file from the referenced file
      *
+     * This methods destroys the link to the record in files_reference table. This effectively
+     * turns the stored file from being an alias to a plain copy. However, the caller has
+     * to make sure that the actual file's content has beed synced prior to calling this method.
      */
     public function delete_reference() {
         global $DB;
+
+        if (!$this->is_external_file()) {
+            throw new coding_exception('An attempt to unlink a non-reference file.');
+        }
 
         // Remove repository info.
         $this->repository = null;
