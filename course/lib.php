@@ -1851,7 +1851,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         $modchooser.= html_writer::start_tag('div', array('class' => 'section-modchooser'));
         $icon = $OUTPUT->pix_icon('t/add', $straddeither);
         $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
-        $modchooser.= html_writer::link('#', $icon.$span, array('class' => 'section-modchooser-link'));
+        $modchooser .= html_writer::tag('span', $icon . $span, array('class' => 'section-modchooser-link'));
         $modchooser.= html_writer::end_tag('div');
         $modchooser.= html_writer::end_tag('div');
 
