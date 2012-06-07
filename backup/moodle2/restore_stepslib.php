@@ -1050,7 +1050,6 @@ class restore_section_structure_step extends restore_structure_step {
         global $CFG, $DB;
         $data = (object)$data;
         $oldid = $data->id; // We'll need this later
-        $oldsection = $data->number;
 
         $restorefiles = false;
 
@@ -1103,7 +1102,6 @@ class restore_section_structure_step extends restore_structure_step {
 
             $DB->update_record('course_sections', $section);
             $newitemid = $secrec->id;
-            $oldsection = $secrec->section;
         }
 
         // Annotate the section mapping, with restorefiles option if needed
@@ -2560,7 +2558,6 @@ class restore_module_structure_step extends restore_structure_step {
 
         $data = (object)$data;
         $oldid = $data->id;
-        $oldsection = $data->sectionnumber;
         $this->task->set_old_moduleversion($data->version);
 
         $data->course = $this->task->get_courseid();
