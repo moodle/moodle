@@ -140,9 +140,11 @@ M.mod_assign.init_grading_options = function(Y) {
             Y.one('form.gradingoptionsform').submit();
         });
         var quickgradingelement = Y.one('#id_quickgrading');
-        quickgradingelement.on('change', function(e) {
-            Y.one('form.gradingoptionsform').submit();
-        });
+        if (quickgradingelement) {
+            quickgradingelement.on('change', function(e) {
+                Y.one('form.gradingoptionsform').submit();
+            });
+        }
 
     });
 
