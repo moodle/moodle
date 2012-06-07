@@ -350,13 +350,13 @@ abstract class backup_cron_automated_helper {
 
             $bc->execute_plan();
             $results = $bc->get_results();
-            $file = $results['backup_destination'];
+            $file = $results['backup_destination']; // may be empty if file already moved to target location
             $dir = $config->backup_auto_destination;
             $storage = (int)$config->backup_auto_storage;
             if (!file_exists($dir) || !is_dir($dir) || !is_writable($dir)) {
                 $dir = null;
             }
-            if (!empty($dir) && $storage !== 0) {
+            if ($file && !empty($dir) && $storage !== 0) {
                 $filename = backup_plan_dbops::get_default_backup_filename($format, $type, $course->id, $users, $anonymised, !$config->backup_shortname);
                 $outcome = $file->copy_content_to($dir.'/'.$filename);
                 if ($outcome && $storage === 1) {
