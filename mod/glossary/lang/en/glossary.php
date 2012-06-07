@@ -224,7 +224,7 @@ Glossaries have many uses, such as
 * A ‘handy tips’ resource of best practice in a practical subject
 * A sharing area of useful videos, images or sound files
 * A revision resource of facts to remember';
-$string['modulename_link'] = 'mod/glosssary/view';
+$string['modulename_link'] = 'mod/glossary/view';
 $string['modulenameplural'] = 'Glossaries';
 $string['newentries'] = 'New glossary entries';
 $string['newglossary'] = 'New glossary';
