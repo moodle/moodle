@@ -207,36 +207,52 @@ class core_question_renderer extends plugin_renderer_base {
      */
     protected function question_flag(question_attempt $qa, $flagsoption) {
         global $CFG;
+
+        $divattributes = array('class' => 'questionflag');
+
         switch ($flagsoption) {
             case question_display_options::VISIBLE:
                 $flagcontent = $this->get_flag_html($qa->is_flagged());
                 break;
+
             case question_display_options::EDITABLE:
                 $id = $qa->get_flag_field_name();
-                if ($qa->is_flagged()) {
-                    $checked = 'checked="checked" ';
-                } else {
-                    $checked = '';
-                }
-                $postdata = question_flags::get_postdata($qa);
                 // The checkbox id must be different from any element name, because
                 // of a stupid IE bug:
                 // http://www.456bereastreet.com/archive/200802/beware_of_id_and_name_attribute_mixups_when_using_getelementbyid_in_internet_explorer/
-                $flagcontent = '<input type="hidden" name="' . $id . '" value="0" />' .
-                        '<input type="checkbox" id="' . $id . 'checkbox" name="' . $id .
-                                '" value="1" ' . $checked . ' />' .
-                        '<input type="hidden" value="' . s($postdata) .
-                                '" class="questionflagpostdata" />' .
-                        '<label id="' . $id . 'label" for="' . $id . 'checkbox">' .
-                                $this->get_flag_html($qa->is_flagged(), $id . 'img') .
-                                '</label>' . "\n";
+                $checkboxattributes = array(
+                    'type' => 'checkbox',
+                    'id' => $id . 'checkbox',
+                    'name' => $id,
+                    'value' => 1,
+                );
+                if ($qa->is_flagged()) {
+                    $checkboxattributes['checked'] = 'checked';
+                }
+                $postdata = question_flags::get_postdata($qa);
+
+                $flagcontent = html_writer::empty_tag('input',
+                                array('type' => 'hidden', 'name' => $id, 'value' => 0)) .
+                        html_writer::empty_tag('input', $checkboxattributes) .
+                        html_writer::empty_tag('input',
+                                array('type' => 'hidden', 'value' => $postdata, 'class' => 'questionflagpostdata')) .
+                        html_writer::tag('label', $this->get_flag_html($qa->is_flagged(), $id . 'img'),
+                                array('id' => $id . 'label', 'for' => $id . 'checkbox')) . "\n";
+
+                $divattributes = array(
+                    'class' => 'questionflag editable',
+                    'aria-atomic' => 'true',
+                    'aria-relevant' => 'text',
+                    'aria-live' => 'assertive',
+                );
+
                 break;
+
             default:
                 $flagcontent = '';
         }
-        if ($flagcontent) {
-            return '<div class="questionflag">' . $flagcontent . "</div>\n";
-        }
+
+        return html_writer::nonempty_tag('div', $flagcontent, $divattributes);
     }
 
     /**
