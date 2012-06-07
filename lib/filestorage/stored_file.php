@@ -266,15 +266,20 @@ class stored_file {
 
         $transaction = $DB->start_delegated_transaction();
 
-        // If other files referring to this file, we need convert them
+        // If there are other files referring to this file, convert them to copies.
         if ($files = $this->fs->get_references_by_storedfile($this)) {
             foreach ($files as $file) {
                 $this->fs->import_external_file($file);
             }
         }
-        // Now delete file records in DB
+
+        // If this file is a reference (alias) to another file, unlink it first.
+        if ($this->is_external_file()) {
+            $this->delete_reference();
+        }
+
+        // Now delete the file record.
         $DB->delete_records('files', array('id'=>$this->file_record->id));
-        $DB->delete_records('files_reference', array('id'=>$this->file_record->referencefileid));
 
         $transaction->allow_commit();
 
