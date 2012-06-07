@@ -3308,6 +3308,9 @@ class settings_navigation extends navigation_node {
             $this->add(get_string('returntooriginaluser', 'moodle', fullname($realuser, true)), $url, self::TYPE_SETTING, null, null, new pix_icon('t/left', ''));
         }
 
+        // At this point we give any local plugins the ability to extend/tinker with the navigation settings.
+        $this->load_local_plugin_settings();
+
         foreach ($this->children as $key=>$node) {
             if ($node->nodetype != self::NODETYPE_BRANCH || $node->children->count()===0) {
                 $node->remove();
@@ -4390,6 +4393,17 @@ class settings_navigation extends navigation_node {
             $frontpage->add(get_string('sitelegacyfiles'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/files', ''));
         }
         return $frontpage;
+    }
+
+    /**
+     * This function gives local plugins an opportunity to modify the settings navigation.
+     */
+    protected function load_local_plugin_settings() {
+        // Get all local plugins with an extend_settings_navigation function in their lib.php file
+        foreach (get_plugin_list_with_function('local', 'extend_settings_navigation') as $function) {
+            // Call each function providing this (the settings navigation) and the current context.
+            call_user_func($function, $this, $this->context);
+        }
     }
 
     /**
