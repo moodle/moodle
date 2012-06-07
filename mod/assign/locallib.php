@@ -895,7 +895,12 @@ class assign {
         if ($this->get_instance()->grade >= 0) {
             // Normal number
             if ($editing) {
-                $o = '<input type="text" name="quickgrade_' . $userid . '" value="' . format_float($grade) . '" size="6" maxlength="10" class="quickgrade"/>';
+                if ($grade < 0) {
+                    $displaygrade = '';
+                } else {
+                    $displaygrade = format_float($grade);
+                }
+                $o = '<input type="text" name="quickgrade_' . $userid . '" value="' . $displaygrade . '" size="6" maxlength
                 $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade,2);
                 $o .= '<input type="hidden" name="grademodified_' . $userid . '" value="' . $modified . '"/>';
                 return $o;
@@ -1636,7 +1641,7 @@ class assign {
         }
         if ($grade) {
             $data = new stdClass();
-            if ($grade->grade >= 0) {
+            if ($grade->grade !== NULL && $grade->grade >= 0) {
                 $data->grade = format_float($grade->grade,2);
             }
         } else {
@@ -1897,7 +1902,7 @@ class assign {
     private function is_graded($userid) {
         $grade = $this->get_user_grade($userid, false);
         if ($grade) {
-            return ($grade->grade != '');
+            return ($grade->grade !== NULL && $grade->grade >= 0);
         }
         return false;
     }
