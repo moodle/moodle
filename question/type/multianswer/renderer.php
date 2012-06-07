@@ -279,7 +279,8 @@ class qtype_multianswer_multichoice_inline_renderer
                 $response, array('' => ''), $inputattributes);
 
         $order = $subq->get_order($qa);
-        $rightanswer = $subq->answers[$order[reset($subq->get_correct_response())]];
+        $correctresponses = $subq->get_correct_response();
+        $rightanswer = $subq->answers[$order[reset($correctresponses)]];
         $feedbackpopup = $this->feedback_popup($subq, $matchinganswer->fraction,
                 $subq->format_text($matchinganswer->feedback, $matchinganswer->feedbackformat,
                         $qa, 'question', 'answerfeedback', $matchinganswer->id),
