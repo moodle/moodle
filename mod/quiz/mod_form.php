@@ -502,6 +502,14 @@ class mod_quiz_mod_form extends moodleform_mod {
             $errors['timeclose'] = get_string('closebeforeopen', 'quiz');
         }
 
+        // Check that the grace period is not too short.
+        if ($data['overduehandling'] == 'graceperiod') {
+            $graceperiodmin = get_config('quiz', 'graceperiodmin');
+            if ($data['graceperiod'] <= $graceperiodmin) {
+                $errors['graceperiod'] = get_string('graceperiodtoosmall', 'quiz', format_time($graceperiodmin));
+            }
+        }
+
         // Check the boundary value is a number or a percentage, and in range.
         $i = 0;
         while (!empty($data['feedbackboundaries'][$i] )) {
