@@ -67,7 +67,7 @@ $draftpath = optional_param('draftpath', '/',    PARAM_PATH);
 
 
 // user context
-$user_context = get_context_instance(CONTEXT_USER, $USER->id);
+$user_context = context_user::instance($USER->id);
 
 $PAGE->set_context($user_context);
 if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
@@ -298,7 +298,14 @@ case 'download':
         $record->itemid   = $itemid;
         $record->license  = '';
         $record->author   = '';
-        $record->source   = $thefile['url'];
+
+        $now = time();
+        $record->timecreated  = $now;
+        $record->timemodified = $now;
+        $record->userid       = $USER->id;
+        $record->contextid = $user_context->id;
+
+        $record->source = serialize((object)array('source' => $thefile['url']));
         try {
             $info = repository::move_to_filepool($thefile['path'], $record);
             redirect($home_url, get_string('downloadsucc', 'repository'));
