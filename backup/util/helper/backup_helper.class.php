@@ -176,8 +176,17 @@ abstract class backup_helper {
     /**
      * Given one backupid and the (FS) final generated file, perform its final storage
      * into Moodle file storage. For stored files it returns the complete file_info object
+     *
+     * Note: the $filepath is deleted if the backup file is created successfully
+     *
+     * @param int $backupid
+     * @param string $filepath zip file containing the backup
+     * @return stored_file if created, null otherwise
+     *
+     * @throws moodle_exception in case of any problems
      */
     static public function store_backup_file($backupid, $filepath) {
+        global $CFG;
 
         // First of all, get some information from the backup_controller to help us decide
         list($dinfo, $cinfo, $sinfo) = backup_controller_dbops::get_moodle_backup_information($backupid);
@@ -191,6 +200,7 @@ abstract class backup_helper {
         $userid    = $dinfo[0]->userid;                // User->id executing the backup
         $id        = $dinfo[0]->id;                    // Id of activity/section/course (depends of type)
         $courseid  = $dinfo[0]->courseid;              // Id of the course
+        $format    = $dinfo[0]->format;                // Type of backup file
 
         // Quick hack. If for any reason, filename is blank, fix it here.
         // TODO: This hack will be out once MDL-22142 - P26 gets fixed
@@ -200,7 +210,13 @@ abstract class backup_helper {
 
         // Backups of type IMPORT aren't stored ever
         if ($backupmode == backup::MODE_IMPORT) {
-            return false;
+            return null;
+        }
+
+        if (!is_readable($filepath)) {
+            // we have a problem if zip file does not exist
+            throw new coding_exception('backup_helper::store_backup_file() expects valid $filepath parameter');
+
         }
 
         // Calculate file storage options of id being backup
@@ -232,6 +248,25 @@ abstract class backup_helper {
         if ($backupmode == backup::MODE_AUTOMATED) {
             // Automated backups have there own special area!
             $filearea  = 'automated';
+
+            // If we're keeping the backup only in a chosen path, just move it there now
+            // this saves copying from filepool to here later and filling trashdir.
+            $config = get_config('backup');
+            $dir = $config->backup_auto_destination;
+            if ($config->backup_auto_storage == 1 and $dir and is_dir($dir) and is_writable($dir)) {
+                $filedest = $dir.'/'.backup_plan_dbops::get_default_backup_filename($format, $backuptype, $courseid, $hasusers, $isannon, !$config->backup_shortname);
+                // first try to move the file, if it is not possible copy and delete instead
+                if (@rename($filepath, $filedest)) {
+                    return null;
+                }
+                umask(0000);
+                if (copy($filepath, $filedest)) {
+                    @chmod($filedest, $CFG->filepermissions); // may fail because the permissions may not make sense outside of dataroot
+                    unlink($filepath);
+                    return null;
+                }
+                // bad luck, try to deal with the file the old way - keep backup in file area if we can not copy to ext system
+            }
         }
 
         // Backups of type HUB (by definition never have user info)
@@ -275,7 +310,9 @@ abstract class backup_helper {
             $sf = $fs->get_file_by_hash($pathnamehash);
             $sf->delete();
         }
-        return $fs->create_file_from_pathname($fr, $filepath);
+        $file = $fs->create_file_from_pathname($fr, $filepath);
+        unlink($filepath);
+        return $file;
     }
 
     /**
