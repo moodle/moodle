@@ -53,8 +53,7 @@ class core_files_external extends external_api {
                 'itemid'    => new external_value(PARAM_INT, 'associated id'),
                 'filepath'  => new external_value(PARAM_PATH, 'file path'),
                 'filename'  => new external_value(PARAM_FILE, 'file name'),
-                'modified' => new external_value(PARAM_INT, 'timestamp, return files which the last ' .
-                    'timemodified time is the same or later than the specified time', VALUE_DEFAULT, null)
+                'modified' => new external_value(PARAM_INT, 'timestamp to return files changed after this time.', VALUE_DEFAULT, null)
             )
         );
     }
@@ -68,8 +67,7 @@ class core_files_external extends external_api {
      * @param int $itemid item id
      * @param string $filepath file path
      * @param string $filename file name
-     * @param int $modified, timestamp, timestamp, 
-     *        return files which the last timemodified time is the same or later than the specified time
+     * @param int $modified timestamp to return files changed after this time.
      * @return array
      * @since Moodle 2.2
      */
@@ -123,7 +121,7 @@ class core_files_external extends external_api {
                 $timemodified = $child->get_timemodified();
 
                 if ($child->is_directory()) {
-                    if ((is_null($modified)) or ($modified <= $timemodified)) {
+                    if ((is_null($modified)) or ($modified < $timemodified)) {
                         $node = array(
                             'contextid' => $params['contextid'],
                             'component' => $params['component'],
@@ -138,7 +136,7 @@ class core_files_external extends external_api {
                            $list[] = $node;
                     }
                 } else {
-                    if ((is_null($modified)) or ($modified <= $timemodified)) {
+                    if ((is_null($modified)) or ($modified < $timemodified)) {
                         $node = array(
                             'contextid' => $params['contextid'],
                             'component' => $params['component'],
