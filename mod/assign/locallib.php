@@ -894,7 +894,7 @@ class assign {
 
         if ($this->get_instance()->grade >= 0) {
             // Normal number
-            if ($editing) {
+            if ($editing && $this->get_instance()->grade > 0) {
                 if ($grade < 0) {
                     $displaygrade = '';
                 } else {
