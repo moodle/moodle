@@ -461,6 +461,11 @@ abstract class backup_cron_automated_helper {
         $storage =  $config->backup_auto_storage;
         $dir =      $config->backup_auto_destination;
 
+        if ($keep == 0) {
+            // means keep all backup files
+            return true;
+        }
+
         $backupword = str_replace(' ', '_', textlib::strtolower(get_string('backupfilename')));
         $backupword = trim(clean_filename($backupword), '_');
 
