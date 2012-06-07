@@ -4400,9 +4400,9 @@ class settings_navigation extends navigation_node {
      */
     protected function load_local_plugin_settings() {
         // Get all local plugins with an extend_settings_navigation function in their lib.php file
-        foreach (get_plugin_list_with_function('local', 'extend_settings_navigation') as $function) {
+        foreach (get_plugin_list_with_function('local', 'extends_settings_navigation') as $function) {
             // Call each function providing this (the settings navigation) and the current context.
-            call_user_func($function, $this, $this->context);
+            $function($this, $this->context);
         }
     }
 
