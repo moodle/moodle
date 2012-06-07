@@ -318,7 +318,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
             // Parse input for question -> grades
             $questionid = $matches[1];
-            $quiz->grades[$questionid] = clean_param($value, PARAM_FLOAT);
+            $quiz->grades[$questionid] = unformat_float($value);
             quiz_update_question_instance($quiz->grades[$questionid], $questionid, $quiz);
             $deletepreviews = true;
             $recomputesummarks = true;
@@ -384,8 +384,8 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         $deletepreviews = true;
     }
 
-    // If rescaling is required save the new maximum
-    $maxgrade = optional_param('maxgrade', -1, PARAM_FLOAT);
+    // If rescaling is required save the new maximum.
+    $maxgrade = unformat_float(optional_param('maxgrade', -1, PARAM_RAW));
     if ($maxgrade >= 0) {
         quiz_set_grade($maxgrade, $quiz);
     }
