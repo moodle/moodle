@@ -1423,14 +1423,15 @@ class global_navigation extends navigation_node {
         }
 
         // Give the local plugins a chance to include some navigation if they want.
-        foreach (get_list_of_plugins('local') as $plugin) {
-            if (!file_exists($CFG->dirroot.'/local/'.$plugin.'/lib.php')) {
-                continue;
-            }
-            require_once($CFG->dirroot.'/local/'.$plugin.'/lib.php');
-            $function = $plugin.'_extends_navigation';
+        foreach (get_plugin_list_with_file('local', 'lib.php', true) as $plugin => $file) {
+            $function = "local_{$plugin}_extends_navigation";
+            $oldfunction = "{$plugin}_extends_navigation";
             if (function_exists($function)) {
+                // This is the preferred function name as there is less chance of conflicts
                 $function($this);
+            } else if (function_exists($oldfunction)) {
+                // We continue to support the old function name to ensure backwards compatability
+                $oldfunction($this);
             }
         }
 
