@@ -142,8 +142,10 @@ class stored_file {
                     }
                 }
 
-                if ($field == 'referencefileid' or $field == 'referencelastsync' or $field == 'referencelifetime') {
-                    $value = clean_param($value, PARAM_INT);
+                if ($field === 'referencefileid' or $field === 'referencelastsync' or $field === 'referencelifetime') {
+                    if (!is_null($value) and !is_number($value)) {
+                        throw new file_exception('storedfileproblem', 'Invalid reference info');
+                    }
                 }
 
                 // adding the field
@@ -196,36 +198,46 @@ class stored_file {
     }
 
     /**
-     * Delete file reference
+     * Unlink the stored file from the referenced file
      *
+     * This methods destroys the link to the record in files_reference table. This effectively
+     * turns the stored file from being an alias to a plain copy. However, the caller has
+     * to make sure that the actual file's content has beed synced prior to calling this method.
      */
     public function delete_reference() {
         global $DB;
 
-        // Remove repository info.
-        $this->repository = null;
+        if (!$this->is_external_file()) {
+            throw new coding_exception('An attempt to unlink a non-reference file.');
+        }
 
         $transaction = $DB->start_delegated_transaction();
 
-        // Remove reference info from DB.
-        $DB->delete_records('files_reference', array('id'=>$this->file_record->referencefileid));
+        // Are we the only one referring to the original file? If so, delete the
+        // referenced file record. Note we do not use file_storage::search_references_count()
+        // here because we want to count draft files too and we are at a bit lower access level here.
+        $countlinks = $DB->count_records('files',
+            array('referencefileid' => $this->file_record->referencefileid));
+        if ($countlinks == 1) {
+            $DB->delete_records('files_reference', array('id' => $this->file_record->referencefileid));
+        }
 
-        // Must refresh $this->file_record form DB
-        $filerecord = $DB->get_record('files', array('id'=>$this->get_id()));
-        // Update DB
-        $filerecord->referencelastsync = null;
-        $filerecord->referencelifetime = null;
-        $filerecord->referencefileid = null;
-        $this->update($filerecord);
+        // Update the underlying record in the database.
+        $update = new stdClass();
+        $update->referencefileid = null;
+        $update->referencelastsync = null;
+        $update->referencelifetime = null;
+        $this->update($update);
 
         $transaction->allow_commit();
 
-        // unset object variable
-        unset($this->file_record->repositoryid);
-        unset($this->file_record->reference);
-        unset($this->file_record->referencelastsync);
-        unset($this->file_record->referencelifetime);
-        unset($this->file_record->referencefileid);
+        // Update our properties and the record in the memory.
+        $this->repository = null;
+        $this->file_record->repositoryid = null;
+        $this->file_record->reference = null;
+        $this->file_record->referencefileid = null;
+        $this->file_record->referencelastsync = null;
+        $this->file_record->referencelifetime = null;
     }
 
     /**
@@ -254,15 +266,20 @@ class stored_file {
 
         $transaction = $DB->start_delegated_transaction();
 
-        // If other files referring to this file, we need convert them
+        // If there are other files referring to this file, convert them to copies.
         if ($files = $this->fs->get_references_by_storedfile($this)) {
             foreach ($files as $file) {
                 $this->fs->import_external_file($file);
             }
         }
-        // Now delete file records in DB
+
+        // If this file is a reference (alias) to another file, unlink it first.
+        if ($this->is_external_file()) {
+            $this->delete_reference();
+        }
+
+        // Now delete the file record.
         $DB->delete_records('files', array('id'=>$this->file_record->id));
-        $DB->delete_records('files_reference', array('id'=>$this->file_record->referencefileid));
 
         $transaction->allow_commit();
 
