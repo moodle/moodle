@@ -107,7 +107,7 @@ class core_files_renderer extends plugin_renderer_base {
         $module = array(
             'name'=>'form_filemanager',
             'fullpath'=>'/lib/form/filemanager.js',
-            'requires' => array('core_filepicker', 'base', 'io-base', 'node', 'json', 'core_dndupload', 'panel', 'resize-plugin', 'dd-plugin'),
+            'requires' => array('core_filepicker', 'base', 'io-base', 'node', 'json', 'core_dndupload', 'panel', 'resize-plugin', 'dd-plugin', 'resize'),
             'strings' => array(
                 array('error', 'moodle'), array('info', 'moodle'), array('confirmdeletefile', 'repository'),
                 array('draftareanofiles', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
@@ -123,6 +123,7 @@ class core_files_renderer extends plugin_renderer_base {
                     array($this->filemanager_js_templates()), true, $module);
         }
         $this->page->requires->js_init_call('M.form_filemanager.init', array($fm->options), true, $module);
+        user_preference_allow_ajax_update('filemanagerresizedto', PARAM_SEQUENCE);
 
         // non javascript file manager
         $html .= '<noscript>';
@@ -192,8 +193,17 @@ class core_files_renderer extends plugin_renderer_base {
         $strdndenabledinbox = get_string('dndenabled_inbox', 'moodle');
         $loading = get_string('loading', 'repository');
 
+        $resizedto = get_user_preferences('filemanagerresizedto', null);
+        $filemanagerstyle = '';
+        $containerstyletag = '';
+        if (!is_null($resizedto) && preg_match('#^\d+,\d+$#', $resizedto)) {
+            list($width, $height) = explode(',', $resizedto, 2);
+            $filemanagerstyle = " style='width:{$width}px;'";
+            $containerstyletag = " style='height:{$height}px;'";
+        }
+
         $html = '
-<div id="filemanager-'.$client_id.'" class="filemanager fm-loading">
+<div id="filemanager-'.$client_id.'" class="filemanager fm-loading"'.$filemanagerstyle.'>
     <div class="fp-restrictions">
         '.$restrictions.'
         <span class="dndupload-message"> - '.$strdndenabled.' </span>
@@ -216,7 +226,7 @@ class core_files_renderer extends plugin_renderer_base {
         </div>
     </div>
     <div class="filemanager-loading mdl-align">'.$icon_progress.'</div>
-    <div class="filemanager-container" >
+    <div class="filemanager-container"'.$containerstyletag.'>
         <div class="fm-content-wrapper">
             <div class="fp-content"></div>
             <div class="fm-empty-container <!--mdl-align-->">
@@ -227,6 +237,7 @@ class core_files_renderer extends plugin_renderer_base {
         </div>
         <div class="filemanager-updating">'.$icon_progress.'</div>
     </div>
+    <div class="fp-statusbar"></div>
 </div>';
         return preg_replace('/\{\!\}/', '', $html);
     }
