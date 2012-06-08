@@ -335,6 +335,7 @@ $string['graceperiod_desc'] = 'If what to do when time expires is set to \'Allow
 $string['graceperiod_help'] = 'If what to do when time expires is set to \'Allow a grace period to submit, but not change any responses\', the amount of extra time that is allowed.';
 $string['graceperiodmin'] = 'Last submission grace period';
 $string['graceperiodmin_desc'] = 'There is a potential problem right at the end of the quiz. On the one hand, we want to let students continue working right up until the last second - with the help of the timer that automatically submits the quiz when time runs out. On the other hand, the server may then be overloaded, and take some time to get to process the responses. Therefore, we will accept responses for up to this many seconds after time expires, so they are not penalised for the server being slow. However, the student could cheat and get this many seconds to answer the quiz. You have to make a trade-off based on how much you trust the performance of your server during quizzes.';
+$string['graceperiodtoosmall'] = 'The grace period must be at more than {$a}.';
 $string['grade'] = 'Grade';
 $string['gradeall'] = 'Grade all';
 $string['gradeaverage'] = 'Average grade';
