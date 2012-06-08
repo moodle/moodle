@@ -1,7 +1,7 @@
 /**
  * File Picker and File Manager
  */
-
+.filemanager {width: 680px; min-width: 410px;}
 .filemanager, .file-picker {font-size:11px;color: #555555;letter-spacing: .2px;}
 .filemanager a, .file-picker a {color:#555555;}
 .filemanager a:hover, .file-picker a:hover {color:#555555;text-decoration: none;}
@@ -288,8 +288,10 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 /*.filemanager-container ul{margin:0;padding:0;}
 .filemanager-container ul li{white-space:nowrap;list-style-type:none;}
 .filemanager-container ul li a{padding:0}*/
-.filemanager .fp-content{overflow: auto;max-height: 472px;}
+.filemanager .fp-content{overflow: auto;}
 .filemanager-container, .filepicker-filelist {overflow:hidden;}
+.filemanager.fm-loaded .fp-statusbar {background: #F2F2F2;border: 1px solid #BBB;border-top:0;min-height:2em;margin-bottom:5px;padding-right:2em;}
+.filemanager .yui3-resize-handle-inner-br {bottom:-2em;}
 
 /*
  * Icon view (File Manager only)
