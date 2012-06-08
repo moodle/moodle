@@ -426,16 +426,16 @@ $string['missingcorrectanswer'] = 'Correct answer must be specified';
 $string['missingitemtypename'] = 'Missing name';
 $string['missingquestion'] = 'This question no longer seems to exist';
 $string['modulename'] = 'Quiz';
-$string['modulename_help'] = 'The quiz activity module enables a teacher to design and set quizzes consisting of a variety of question types, including multiple choice, true-false, matching, short-answer and calculated.
+$string['modulename_help'] = 'Quizzes are automatically graded activities built from variety of question types, including multiple choice, matching, short-answer and numerical. There is a choice for how students complete the quiz, including
 
-A teacher can allow the quiz to be attempted multiple times with the order of questions randomly shuffled. A time limit for the quiz may be set if desired.
+* Deferred feedback - a classic exam where students record answers for all the questions which are graded at the end, or
+* Interactive - students submit questions as they go along and get feedback. If they are wrong, they can immediately try again for less marks.
 
-Each attempt is automatically marked, with the grade recorded in the gradebook. The teacher can choose whether to give feedback and/or show correct answers to the student during the attempt, immediately after the attempt or after the quiz is closed.
-
-A teacher can choose from a variety of question behaviours, including adaptive mode (providing hints before allowing the student to try again) and immediate feedback with certainty-based marking (where the student must indicate how sure they are of the answer).
+There are many options for controlling when students can attempt the quiz, how much time they are allowed, and so on. The teacher can also control when and if students can see the feedback, correct answers, numerical marks, etc.
 
 Quizzes may be used
 
+* As formal parts of the course assessment
 * As mini tests for reading assignments or at the end of a topic
 * As exam practice using questions from previous years’ exams
 * To provide feedback about performance
