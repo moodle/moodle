@@ -819,7 +819,7 @@ sup {vertical-align: super;}
 }
 
 .moodle-dialogue-base .moodle-dialogue {
-    background-color: transparent;
+    background-color: transparent!important;
     border: 0px solid transparent!important;
 }
 
@@ -843,9 +843,9 @@ sup {vertical-align: super;}
     padding:5px 5px 5px 5px;
     border-radius: 10px 10px 0px 0px;
     border-bottom: 1px solid #BBBBBB!important;
-    background: #CCCCCC;
-    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC));
-    background: -moz-linear-gradient(top,  #FFFFFF,  #CCCCCC);
+    background: #CCCCCC!important;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC))!important;
+    background: -moz-linear-gradient(top,  #FFFFFF,  #CCCCCC)!important;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC')!important;
     filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
 }
@@ -935,7 +935,7 @@ sup {vertical-align: super;}
     left: 18.5em;
     margin: 0;
     padding: 2em 2em 2em 2.4em;
-    background-color: white;
+    background-color: #FFFFFF;
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 550px;
