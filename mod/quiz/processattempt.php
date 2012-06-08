@@ -101,7 +101,7 @@ if ($attemptobj->is_finished()) {
 $becomingoverdue = false;
 $becomingabandoned = false;
 if ($timeup) {
-    if ($attemptobj->get_quiz()->overduehandling == 'graceperiod') {#
+    if ($attemptobj->get_quiz()->overduehandling == 'graceperiod') {
         if (is_null($graceperiodmin)) {
             $graceperiodmin = get_config('quiz', 'graceperiodmin');
         }
