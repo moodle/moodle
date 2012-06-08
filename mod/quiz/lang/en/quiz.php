@@ -246,6 +246,7 @@ $string['editingquiz_help'] = 'When creating a quiz, the main concepts are:
 * The question bank, which stores copies of all questions organised into categories
 * Random questions -  A student gets different questions each time they attempt the quiz and different students can get different questions';
 $string['editingquiz_link'] = 'mod/quiz/edit';
+$string['editingquizx'] = 'Editing quiz: {$a}';
 $string['editoverride'] = 'Edit override';
 $string['editqcats'] = 'Edit questions categories';
 $string['editquestions'] = 'Edit questions';
@@ -513,6 +514,7 @@ To add page breaks after particular questions, tick the checkboxes next to the q
 
 To arrange the questions over a number of pages, click the Repaginate button and select the desired number of questions per page.';
 $string['orderingquiz'] = 'Order and paging';
+$string['orderingquizx'] = 'Order and paging: {$a}';
 $string['outof'] = '{$a->grade} out of a maximum of {$a->maxgrade}';
 $string['outofpercent'] = '{$a->grade} out of a maximum of {$a->maxgrade} ({$a->percent}%)';
 $string['outofshort'] = '{$a->grade}/{$a->maxgrade}';
