@@ -319,6 +319,14 @@ class theme_config {
     protected $parent_configs = array();
 
     /**
+     * @var bool If set to true then the theme is safe to run through the optimiser (if it is enabled)
+     * If set to false then we know either the theme has already been optimised and the CSS optimiser is not needed
+     * or the theme is not compatible with the CSS optimiser. In both cases even if enabled the CSS optimiser will not
+     * be used with this theme if set to false.
+     */
+    public $supportscssoptimisation = true;
+
+    /**
      * Load the config.php file for a particular theme, and return an instance
      * of this class. (That is, this is a factory method.)
      *
@@ -381,7 +389,7 @@ class theme_config {
         }
 
         $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts', 'javascripts_footer',
-                              'parents_exclude_javascripts', 'layouts', 'enable_dock', 'enablecourseajax',
+                              'parents_exclude_javascripts', 'layouts', 'enable_dock', 'enablecourseajax', 'supportscssoptimisation',
                               'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'hidefromselector');
 
         foreach ($config as $key=>$value) {
@@ -618,9 +626,15 @@ class theme_config {
             if (!defined('THEME_DESIGNER_CACHE_LIFETIME')) {
                 define('THEME_DESIGNER_CACHE_LIFETIME', 4); // this can be also set in config.php
             }
+            // Prepare the CSS optimiser if it is to be used
+            $optimiser = null;
             $candidatesheet = "$CFG->cachedir/theme/$this->name/designer.ser";
+            if (!empty($CFG->enablecssoptimiser) && $this->supportscssoptimisation) {
+                require_once($CFG->dirroot.'/lib/csslib.php');
+                $optimiser = new css_optimiser;
+            }
             if (!file_exists($candidatesheet)) {
-                $css = $this->css_content();
+                $css = $this->css_content($optimiser);
                 check_dir_exists(dirname($candidatesheet));
                 file_put_contents($candidatesheet, serialize($css));
 
@@ -629,12 +643,12 @@ class theme_config {
                     $css = unserialize($css);
                 } else {
                     unlink($candidatesheet);
-                    $css = $this->css_content();
+                    $css = $this->css_content($optimiser);
                 }
 
             } else {
                 unlink($candidatesheet);
-                $css = $this->css_content();
+                $css = $this->css_content($optimiser);
                 file_put_contents($candidatesheet, serialize($css));
             }
 
@@ -739,11 +753,12 @@ class theme_config {
     /**
      * Returns the content of the one huge CSS merged from all style sheets.
      *
+     * @param css_optimiser|null $optimiser A CSS optimiser to use during on the content. Null = don't optimise
      * @return string
      */
-    public function css_content() {
+    public function css_content(css_optimiser $optimiser = null) {
         $files = array_merge($this->css_files(), array('editor'=>$this->editor_css_files()));
-        $css = $this->css_files_get_contents($files, array());
+        $css = $this->css_files_get_contents($files, array(), $optimiser);
         return $css;
     }
 
@@ -755,17 +770,28 @@ class theme_config {
      *
      * @param array|string $file An array of file paths or a single file path
      * @param array $keys An array of previous array keys [recursive addition]
+     * @param css_optimiser|null $optimiser A CSS optimiser to use during on the content. Null = don't optimise
      * @return The converted array or the contents of the single file ($file type)
      */
-    protected function css_files_get_contents($file, array $keys) {
+    protected function css_files_get_contents($file, array $keys, css_optimiser $optimiser = null) {
+        global $CFG;
         if (is_array($file)) {
             foreach ($file as $key=>$f) {
-                $file[$key] = $this->css_files_get_contents($f, array_merge($keys, array($key)));
+                $file[$key] = $this->css_files_get_contents($f, array_merge($keys, array($key)), $optimiser);
             }
             return $file;
         } else {
+            $contents = file_get_contents($file);
+            $contents = $this->post_process($contents);
             $comment = '/** Path: '.implode(' ', $keys).' **/'."\n";
-            return $comment.$this->post_process(file_get_contents($file));
+            $stats = '';
+            if (!is_null($optimiser)) {
+                $contents = $optimiser->process($contents);
+                if (!empty($CFG->cssoptimiserstats)) {
+                    $stats = $optimiser->output_stats_css();
+                }
+            }
+            return $comment.$stats.$contents;
         }
     }
 
