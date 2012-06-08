@@ -56,7 +56,7 @@ class core_course_external extends external_api {
      * @param array $options, not used yet, might be used in later version
      * @return array
      */
-    public static function get_course_contents($courseid, $options) {
+    public static function get_course_contents($courseid, $options = array()) {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
 
@@ -258,7 +258,7 @@ class core_course_external extends external_api {
      * @param array $options
      * @return array
      */
-    public static function get_courses($options) {
+    public static function get_courses($options = array()) {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
 
