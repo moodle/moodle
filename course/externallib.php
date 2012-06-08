@@ -66,7 +66,7 @@ class core_course_external extends external_api {
      * @return array
      * @since Moodle 2.2
      */
-    public static function get_course_contents($courseid, $options) {
+    public static function get_course_contents($courseid, $options = array()) {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
 
@@ -274,7 +274,7 @@ class core_course_external extends external_api {
      * @return array
      * @since Moodle 2.2
      */
-    public static function get_courses($options) {
+    public static function get_courses($options = array()) {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
 
@@ -698,7 +698,7 @@ class core_course_external extends external_api {
      * @return array New course info
      * @since Moodle 2.3
      */
-    public static function duplicate_course($courseid, $fullname, $shortname, $categoryid, $visible, $options) {
+    public static function duplicate_course($courseid, $fullname, $shortname, $categoryid, $visible = 1, $options = array()) {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
         require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
