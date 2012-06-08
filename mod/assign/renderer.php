@@ -265,6 +265,19 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $due = format_time($duedate - $time);
             }
             $this->add_table_row_tuple($t, get_string('timeremaining', 'assign'), $due);
+
+            if ($duedate < $time) {
+                $cutoffdate = $summary->cutoffdate;
+                if ($cutoffdate) {
+                    if ($cutoffdate > $time) {
+                        $late = get_string('latesubmissionsaccepted', 'assign');
+                    } else {
+                        $late = get_string('nomoresubmissionsaccepted', 'assign');
+                    }
+                    $this->add_table_row_tuple($t, get_string('latesubmissions', 'assign'), $late);
+                }
+            }
+
         }
 
         // all done - write the table
@@ -406,14 +419,33 @@ class mod_assign_renderer extends plugin_renderer_base {
 
 
         $duedate = $status->duedate;
-        if ($duedate >= 1) {
+        if ($duedate > 0) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('duedate', 'assign'));
             $cell2 = new html_table_cell(userdate($duedate));
             $row->cells = array($cell1, $cell2);
             $t->data[] = $row;
 
-            // time remaining
+            if ($status->view == assign_submission_status::GRADER_VIEW) {
+                if ($status->cutoffdate) {
+                    $row = new html_table_row();
+                    $cell1 = new html_table_cell(get_string('cutoffdate', 'assign'));
+                    $cell2 = new html_table_cell(userdate($status->cutoffdate));
+                    $row->cells = array($cell1, $cell2);
+                    $t->data[] = $row;
+                }
+            }
+
+            if ($status->extensionduedate) {
+                $row = new html_table_row();
+                $cell1 = new html_table_cell(get_string('extensionduedate', 'assign'));
+                $cell2 = new html_table_cell(userdate($status->extensionduedate));
+                $row->cells = array($cell1, $cell2);
+                $t->data[] = $row;
+                $duedate = $status->extensionduedate;
+            }
+
+            // Time remaining.
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('timeremaining', 'assign'));
             if ($duedate - $time <= 0) {
@@ -440,7 +472,22 @@ class mod_assign_renderer extends plugin_renderer_base {
             $t->data[] = $row;
         }
 
-        // last modified
+        // Show graders whether this submission is editable by students.
+        if ($status->view == assign_submission_status::GRADER_VIEW) {
+            $row = new html_table_row();
+            $cell1 = new html_table_cell(get_string('open', 'assign'));
+            if ($status->canedit) {
+                $cell2 = new html_table_cell(get_string('submissioneditable', 'assign'));
+                $cell2->attributes = array('class'=>'submissioneditable');
+            } else {
+                $cell2 = new html_table_cell(get_string('submissionnoteditable', 'assign'));
+                $cell2->attributes = array('class'=>'submissionnoteditable');
+            }
+            $row->cells = array($cell1, $cell2);
+            $t->data[] = $row;
+        }
+
+        // Last modified.
         if ($status->submission) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('timemodified', 'assign'));
@@ -452,7 +499,12 @@ class mod_assign_renderer extends plugin_renderer_base {
                 if ($plugin->is_enabled() && $plugin->is_visible() && !$plugin->is_empty($status->submission)) {
                     $row = new html_table_row();
                     $cell1 = new html_table_cell($plugin->get_name());
-                    $pluginsubmission = new assign_submission_plugin_submission($plugin, $status->submission, assign_submission_plugin_submission::SUMMARY, $status->coursemoduleid, $status->returnaction, $status->returnparams);
+                    $pluginsubmission = new assign_submission_plugin_submission($plugin,
+                                                                                $status->submission,
+                                                                                assign_submission_plugin_submission::SUMMARY,
+                                                                                $status->coursemoduleid,
+                                                                                $status->returnaction,
+                                                                                $status->returnparams);
                     $cell2 = new html_table_cell($this->render($pluginsubmission));
                     $row->cells = array($cell1, $cell2);
                     $t->data[] = $row;
@@ -464,24 +516,28 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o .= html_writer::table($t);
         $o .= $this->output->box_end();
 
-        // links
-        if ($status->canedit) {
-            if (!$status->submission) {
-                $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php',
-                    array('id' => $status->coursemoduleid, 'action' => 'editsubmission')), get_string('addsubmission', 'assign'), 'get');
-            } else {
-                $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php',
-                    array('id' => $status->coursemoduleid, 'action' => 'editsubmission')), get_string('editsubmission', 'assign'), 'get');
+        // Links.
+        if ($status->view == assign_submission_status::STUDENT_VIEW) {
+            if ($status->canedit) {
+                if (!$status->submission) {
+                    $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
+                    $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
+                                                       get_string('addsubmission', 'assign'), 'get');
+                } else {
+                    $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
+                    $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
+                                                       get_string('editsubmission', 'assign'), 'get');
+                }
             }
-        }
 
-        if ($status->cansubmit) {
-            // submission.php
-            $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php',
-                    array('id' => $status->coursemoduleid, 'action'=>'submit')), get_string('submitassignment', 'assign'), 'get');
-            $o .= $this->output->box_start('boxaligncenter submithelp');
-            $o .= get_string('submitassignment_help', 'assign');
-            $o .= $this->output->box_end();
+            if ($status->cansubmit) {
+                $urlparams = array('id' => $status->coursemoduleid, 'action'=>'submit');
+                $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
+                                                   get_string('submitassignment', 'assign'), 'get');
+                $o .= $this->output->box_start('boxaligncenter submithelp');
+                $o .= get_string('submitassignment_help', 'assign');
+                $o .= $this->output->box_end();
+            }
         }
 
         $o .= $this->output->container_end();
@@ -537,9 +593,10 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o .= $this->output->box_start('boxaligncenter gradingtable');
         $this->page->requires->js_init_call('M.mod_assign.init_grading_table', array());
         $this->page->requires->string_for_js('nousersselected', 'assign');
+        $this->page->requires->string_for_js('batchoperationconfirmgrantextension', 'assign');
         $this->page->requires->string_for_js('batchoperationconfirmlock', 'assign');
-        $this->page->requires->string_for_js('batchoperationconfirmunlock', 'assign');
         $this->page->requires->string_for_js('batchoperationconfirmreverttodraft', 'assign');
+        $this->page->requires->string_for_js('batchoperationconfirmunlock', 'assign');
         $this->page->requires->string_for_js('editaction', 'assign');
         // need to get from prefs
         $o .= $this->flexible_table($table, $table->get_rows_per_page(), true);

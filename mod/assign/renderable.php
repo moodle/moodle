@@ -297,6 +297,8 @@ class assign_submission_status implements renderable {
     var $graded = false;
     /** @var int duedate */
     var $duedate = 0;
+    /** @var int cutoffdate */
+    public $cutoffdate = 0;
     /** @var array submissionplugins - the list of submission plugins */
     var $submissionplugins = array();
     /** @var string returnaction */
@@ -311,6 +313,8 @@ class assign_submission_status implements renderable {
     var $canedit = false;
     /** @var bool cansubmit */
     var $cansubmit = false;
+    /** @var int extensionduedate */
+    public $extensionduedate = 0;
 
     /**
      * constructor
@@ -322,6 +326,7 @@ class assign_submission_status implements renderable {
      * @param bool $locked
      * @param bool $graded
      * @param int $duedate
+     * @param int $cutoffdate
      * @param array $submissionplugins
      * @param string $returnaction
      * @param array $returnparams
@@ -329,10 +334,11 @@ class assign_submission_status implements renderable {
      * @param string $view
      * @param bool $canedit
      * @param bool $cansubmit
+     * @param int $extensionduedate - Any extension to the due date granted for this user
      */
     public function __construct($allowsubmissionsfromdate, $alwaysshowdescription, $submission, $submissionsenabled,
-                                $locked, $graded, $duedate, $submissionplugins, $returnaction, $returnparams,
-                                $coursemoduleid, $view, $canedit, $cansubmit) {
+                                $locked, $graded, $duedate, $cutoffdate, $submissionplugins, $returnaction, $returnparams,
+                                $coursemoduleid, $view, $canedit, $cansubmit, $extensionduedate) {
         $this->allowsubmissionsfromdate = $allowsubmissionsfromdate;
         $this->alwaysshowdescription = $alwaysshowdescription;
         $this->submission = $submission;
@@ -340,6 +346,7 @@ class assign_submission_status implements renderable {
         $this->locked = $locked;
         $this->graded = $graded;
         $this->duedate = $duedate;
+        $this->cutoffdate = $cutoffdate;
         $this->submissionplugins = $submissionplugins;
         $this->returnaction = $returnaction;
         $this->returnparams = $returnparams;
@@ -347,6 +354,7 @@ class assign_submission_status implements renderable {
         $this->view = $view;
         $this->canedit = $canedit;
         $this->cansubmit = $cansubmit;
+        $this->extensionduedate = $extensionduedate;
     }
 
 }
@@ -412,6 +420,8 @@ class assign_grading_summary implements renderable {
     var $submissionsneedgradingcount = 0;
     /** @var int duedate - The assignment due date (if one is set) */
     var $duedate = 0;
+    /** @var int cutoffdate - The assignment cut off date (if one is set) */
+    var $cutoffdate = 0;
     /** @var int coursemoduleid - The assignment course module id */
     var $coursemoduleid = 0;
 
@@ -423,22 +433,24 @@ class assign_grading_summary implements renderable {
      * @param int $submissiondraftscount
      * @param bool $submissionsenabled
      * @param int $submissionssubmittedcount
+     * @param int $cutoffdate
      * @param int $duedate
      * @param int $coursemoduleid
+     * @param int $submissionsneedgradingcount
      */
     public function __construct($participantcount, $submissiondraftsenabled, $submissiondraftscount,
                                 $submissionsenabled, $submissionssubmittedcount,
-                                $duedate, $coursemoduleid, $submissionsneedgradingcount) {
+                                $cutoffdate, $duedate, $coursemoduleid, $submissionsneedgradingcount) {
         $this->participantcount = $participantcount;
         $this->submissiondraftsenabled = $submissiondraftsenabled;
         $this->submissiondraftscount = $submissiondraftscount;
         $this->submissionsenabled = $submissionsenabled;
         $this->submissionssubmittedcount = $submissionssubmittedcount;
         $this->duedate = $duedate;
+        $this->cutoffdate = $cutoffdate;
         $this->coursemoduleid = $coursemoduleid;
         $this->submissionsneedgradingcount = $submissionsneedgradingcount;
     }
-
 
 }
 

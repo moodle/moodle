@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/assign/db" VERSION="20120423" COMMENT="XMLDB file for Moodle mod/assign"
+<XMLDB PATH="mod/assign/db" VERSION="20120830" COMMENT="XMLDB file for Moodle mod/assign"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -12,9 +12,8 @@
         <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The description of the assignment. This field is used by feature MOD_INTRO." PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field of the assignment. This field is used by feature MOD_INTRO." PREVIOUS="intro" NEXT="alwaysshowdescription"/>
         <FIELD NAME="alwaysshowdescription" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If false the assignment intro will only be displayed after the allowsubmissionsfrom date. If true it will always be displayed." PREVIOUS="introformat" NEXT="nosubmissions"/>
-        <FIELD NAME="nosubmissions" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="This field is a cache for is_any_submission_plugin_enabled() which allows Moodle pages to distinguish offline assignment types without loading the assignment class." PREVIOUS="alwaysshowdescription" NEXT="preventlatesubmissions"/>
-        <FIELD NAME="preventlatesubmissions" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, submissions will not be accepted past the due date." PREVIOUS="nosubmissions" NEXT="submissiondrafts"/>
-        <FIELD NAME="submissiondrafts" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, assignment submissions will be considered drafts until the student clicks on the submit assignmnet button." PREVIOUS="preventlatesubmissions" NEXT="sendnotifications"/>
+        <FIELD NAME="nosubmissions" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="This field is a cache for is_any_submission_plugin_enabled() which allows Moodle pages to distinguish offline assignment types without loading the assignment class." PREVIOUS="alwaysshowdescription" NEXT="submissiondrafts"/>
+        <FIELD NAME="submissiondrafts" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, assignment submissions will be considered drafts until the student clicks on the submit assignmnet button." PREVIOUS="nosubmissions" NEXT="sendnotifications"/>
         <FIELD NAME="sendnotifications" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allows the disabling of email notifications in the assign module." PREVIOUS="submissiondrafts" NEXT="sendlatenotifications"/>
         <FIELD NAME="sendlatenotifications" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allows separate enabling of notifications for late assignment submissions." PREVIOUS="sendnotifications" NEXT="duedate"/>
         <FIELD NAME="duedate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The due date for the assignment. Displayed to students." PREVIOUS="sendlatenotifications" NEXT="allowsubmissionsfromdate"/>
@@ -22,7 +21,8 @@
         <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The maximum grade for this assignment. Can be negative to indicate the use of a scale." PREVIOUS="allowsubmissionsfromdate" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the settings for this assign module instance were last modified." PREVIOUS="grade" NEXT="requiresubmissionstatement"/>
         <FIELD NAME="requiresubmissionstatement" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Forces the student to accept a submission statement when submitting an assignment" PREVIOUS="timemodified" NEXT="completionsubmit"/>
-        <FIELD NAME="completionsubmit" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1, then the activity will be automatically marked as 'complete' once the user submits their assignment." PREVIOUS="requiresubmissionstatement"/>
+        <FIELD NAME="completionsubmit" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1, then the activity will be automatically marked as 'complete' once the user submits their assignment." PREVIOUS="requiresubmissionstatement" NEXT="cutoffdate"/>
+        <FIELD NAME="cutoffdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The final date after which submissions will no longer be accepted for this assignment without an extensions." PREVIOUS="completionsubmit"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this assignment instance."/>
@@ -58,7 +58,8 @@
         <FIELD NAME="grader" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="grade"/>
         <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The numerical grade for this assignment submission. Can be determined by scales/advancedgradingforms etc but will always be converted back to a floating point number." PREVIOUS="grader" NEXT="locked"/>
         <FIELD NAME="locked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="A flag to prevent changes for a single student submission." PREVIOUS="grade" NEXT="mailed"/>
-        <FIELD NAME="mailed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="locked"/>
+        <FIELD NAME="mailed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Has the student been sent a notification about this grade update?" PREVIOUS="locked" NEXT="extensionduedate"/>
+        <FIELD NAME="extensionduedate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="An extension date assigned to an individual student" PREVIOUS="mailed"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this grade." NEXT="assignment"/>

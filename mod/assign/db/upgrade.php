@@ -80,6 +80,45 @@ function xmldb_assign_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012081600, 'assign');
     }
 
+    // Individual extension dates support.
+    if ($oldversion < 2012082100) {
+
+        // Define field sendlatenotifications to be added to assign.
+        $table = new xmldb_table('assign');
+        $field = new xmldb_field('cutoffdate', XMLDB_TYPE_INTEGER, '10', null,
+                                 XMLDB_NOTNULL, null, '0', 'completionsubmit');
+
+        // Conditionally launch add field sendlatenotifications.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // If prevent late is on - set cutoffdate to due date.
+
+        // Now remove the preventlatesubmissions column.
+        $field = new xmldb_field('preventlatesubmissions', XMLDB_TYPE_INTEGER, '2', null,
+                                 XMLDB_NOTNULL, null, '0', 'nosubmissions');
+        if ($dbman->field_exists($table, $field)) {
+            // Set the cutoffdate to the duedate if preventlatesubmissions was enabled.
+            $sql = 'UPDATE {assign} SET cutoffdate = duedate WHERE preventlatesubmissions = 1';
+            $DB->execute($sql);
+
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field extensionduedate to be added to assign_grades
+        $table = new xmldb_table('assign_grades');
+        $field = new xmldb_field('extensionduedate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'mailed');
+
+        // Conditionally launch add field extensionduedate
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2012082100, 'assign');
+    }
+
+
     return true;
 }
 
