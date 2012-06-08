@@ -895,7 +895,7 @@ class assign {
         if ($this->get_instance()->grade >= 0) {
             // Normal number
             if ($editing) {
-                $o = '<input type="text" name="quickgrade_' . $userid . '" value="' . $grade . '" size="6" maxlength="10" class="quickgrade"/>';
+                $o = '<input type="text" name="quickgrade_' . $userid . '" value="' . format_float($grade) . '" size="6" maxlength="10" class="quickgrade"/>';
                 $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade,2);
                 $o .= '<input type="hidden" name="grademodified_' . $userid . '" value="' . $modified . '"/>';
                 return $o;
@@ -2531,7 +2531,7 @@ class assign {
                 // gather the userid, updated grade and last modified value
                 $record = new stdClass();
                 $record->userid = $userid;
-                $record->grade = required_param('quickgrade_' . $userid, PARAM_INT);
+                $record->grade = unformat_float(required_param('quickgrade_' . $record->userid, PARAM_TEXT));
                 $record->lastmodified = $modified;
                 $record->gradinginfo = grade_get_grades($this->get_course()->id, 'mod', 'assign', $this->get_instance()->id, array($userid));
                 $users[$userid] = $record;
@@ -2560,7 +2560,7 @@ class assign {
             if ($CFG->enableoutcomes) {
                 foreach ($modified->gradinginfo->outcomes as $outcomeid => $outcome) {
                     $oldoutcome = $outcome->grades[$modified->userid]->grade;
-                    $newoutcome = optional_param('outcome_' . $outcomeid . '_' . $modified->userid, -1, PARAM_INT);
+                    $newoutcome = optional_param('outcome_' . $outcomeid . '_' . $modified->userid, -1, PARAM_FLOAT);
                     if ($oldoutcome != $newoutcome) {
                         // can't check modified time for outcomes because it is not reported
                         $modifiedusers[$modified->userid] = $modified;
@@ -2605,7 +2605,7 @@ class assign {
         // ok - ready to process the updates
         foreach ($modifiedusers as $userid => $modified) {
             $grade = $this->get_user_grade($userid, true);
-            $grade->grade= grade_floatval($modified->grade);
+            $grade->grade= grade_floatval(unformat_float($modified->grade));
             $grade->grader= $USER->id;
 
             $this->update_grade($grade);
@@ -3180,7 +3180,7 @@ class assign {
             } else {
                 // handle the case when grade is set to No Grade
                 if (isset($formdata->grade)) {
-                    $grade->grade= grade_floatval($formdata->grade);
+                    $grade->grade= grade_floatval(unformat_float($formdata->grade));
                 }
             }
             $grade->grader= $USER->id;

@@ -73,11 +73,11 @@ class mod_assign_grade_form extends moodleform {
         }
 
         if ($this->assignment->get_instance()->grade > 0) {
-            if (!is_numeric($data['grade']) and (!empty($data['grade']))) {
+            if (unformat_float($data['grade']) === null && (!empty($data['grade']))) {
                 $errors['grade'] = get_string('invalidfloatforgrade', 'assign', $data['grade']);
-            } else if ($data['grade'] > $this->assignment->get_instance()->grade) {
+            } else if (unformat_float($data['grade']) > $this->assignment->get_instance()->grade) {
                 $errors['grade'] = get_string('gradeabovemaximum', 'assign', $this->assignment->get_instance()->grade);
-            } else if ($data['grade'] < 0) {
+            } else if (unformat_float($data['grade']) < 0) {
                 $errors['grade'] = get_string('gradebelowzero', 'assign');
             }
         } else {
