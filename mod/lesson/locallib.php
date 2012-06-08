@@ -2114,7 +2114,7 @@ abstract class lesson_page extends lesson_base {
             $context = $PAGE->context;
         }
         if ($maxbytes === null) {
-            $maxbytes =get_max_upload_file_size();
+            $maxbytes = get_user_max_upload_file_size($context);
         }
         $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$maxbytes), $context, 'mod_lesson', 'page_contents', $properties->id);
         $DB->update_record("lesson_pages", $properties);

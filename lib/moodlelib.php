@@ -5844,7 +5844,7 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
 /**
  * Returns the maximum size for uploading files for the current user
  *
- * This function calls @see:get_max_upload_file_size() then considers the user's capabilities
+ * This function takes in account @see:get_max_upload_file_size() the user's capabilities
  *
  * @param context $context The context in which to check user capabilities
  * @param int $sizebytes Set maximum size
