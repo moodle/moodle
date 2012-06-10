@@ -912,6 +912,10 @@ CSS;
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
+    /**
+     * Test keyframe declarations
+     * @param css_optimiser $optimiser
+     */
     public function try_keyframe_css_animation(css_optimiser $optimiser) {
         $css = '.dndupload-arrow{width:56px;height:47px;position:absolute;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;background:url(\'[[pix:theme|fp/dnd_arrow]]\') no-repeat center;margin-left:-28px;}';
         $this->assertEquals($css, $optimiser->process($css));
@@ -997,6 +1001,10 @@ CSS;
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
+    /**
+     * Test media declarations
+     * @param css_optimiser $optimiser
+     */
     public function try_media_rules(css_optimiser $optimiser) {
         $cssin = "@media print {\n  .test{background-color:#333;}\n}";
         $cssout = "@media print {\n  .test{background-color:#333;}\n}";

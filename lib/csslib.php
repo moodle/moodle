@@ -501,12 +501,16 @@ class css_optimiser {
     public function process($css) {
         global $CFG;
 
+        // Easiest win there is
         $css = trim($css);
 
         $this->reset_stats();
         $this->timestart = microtime(true);
         $this->rawstrlen = strlen($css);
 
+        // Don't try to process files with no content... it just doesn't make sense.
+        // But we should produce an error for them, an empty CSS file will lead to a
+        // useless request for those running theme designer mode.
         if ($this->rawstrlen === 0) {
             $this->errors[] = 'Skipping file as it has no content.';
             return '';
@@ -552,7 +556,7 @@ class css_optimiser {
                 $suspectatrule = true;
             }
             switch ($currentprocess) {
-                // Start processing an at rule e.g. @media, @page
+                // Start processing an @ rule e.g. @media, @page, @keyframes
                 case self::PROCESSING_ATRULE:
                     switch ($char) {
                         case ';':
@@ -593,6 +597,8 @@ class css_optimiser {
                                 $currentprocess = self::PROCESSING_SELECTORS;
                                 $buffer = '';
                             } else if ($currentatrule == 'keyframes' && preg_match('#@((\-moz\-|\-webkit\-)?keyframes)\s*([^\s]+)#', $buffer, $matches)) {
+                                // Keyframes declaration, we treat it exactly like a @media declaration except we don't allow
+                                // them to be overridden to ensure we don't mess anything up. (means we keep everything in order)
                                 $keyframefor = $matches[1];
                                 $keyframename = $matches[3];
                                 $keyframe = new css_keyframe($keyframefor, $keyframename);
@@ -633,6 +639,7 @@ class css_optimiser {
                                 continue 3;
                             }
                             if (!empty($buffer)) {
+                                // Check for known @ rules
                                 if ($suspectatrule && preg_match('#@(media|import|charset|(\-moz\-|\-webkit\-)?(keyframes))\s*#', $buffer, $matches)) {
                                     $currentatrule = (!empty($matches[3]))?$matches[3]:$matches[1];
                                     $currentprocess = self::PROCESSING_ATRULE;
@@ -778,6 +785,7 @@ class css_optimiser {
             $css .= "\n\n";
         }
 
+        // Process each media declaration individually
         foreach ($medias as $media) {
             $media->organise_rules_by_selectors();
             $this->optimisedrules += $media->count_rules();
@@ -785,7 +793,11 @@ class css_optimiser {
             if ($media->has_errors()) {
                 $this->errors += $media->get_errors();
             }
+            // If this declaration applies to all media types
             if (in_array('all', $media->get_types())) {
+                // Collect all rules that represet reset rules and remove them from the media object at the same time.
+                // We do this because we prioritise reset rules to the top of a CSS output. This ensures that they
+                // can't end up out of order because of optimisation.
                 $resetrules = $media->get_reset_rules(true);
                 if (!empty($resetrules)) {
                     $css .= css_writer::media('all', $resetrules);
@@ -793,10 +805,12 @@ class css_optimiser {
             }
         }
 
+        // Now process every media object and produce CSS for it.
         foreach ($medias as $media) {
             $css .= $media->out();
         }
 
+        // Finally if there are any keyframe declarations process them now.
         if (count($keyframes) > 0) {
             $css .= "\n";
             foreach ($keyframes as $keyframe) {
@@ -835,6 +849,7 @@ class css_optimiser {
             'improvementrules'     => '-',
             'improvementselectors'     => '-',
         );
+        // Avoid division by 0 errors by checking we have valid raw values
         if ($this->rawstrlen > 0) {
             $stats['improvementstrlen'] = round(100 - ($this->optimisedstrlen / $this->rawstrlen) * 100, 1).'%';
         }
@@ -1187,6 +1202,14 @@ abstract class css_writer {
         return $output;
     }
 
+    /**
+     * Returns CSS for a keyframe
+     *
+     * @param string $for The desired declaration. e.g. keyframes, -moz-keyframes, -webkit-keyframes
+     * @param string $name The name for the keyframe
+     * @param array $rules An array of rules belonging to the keyframe
+     * @return string
+     */
     public static function keyframe($for, $name, array &$rules) {
         $nl = self::get_separator();
 
@@ -1244,6 +1267,9 @@ abstract class css_writer {
     public static function styles(array $styles) {
         $bits = array();
         foreach ($styles as $style) {
+            // Check if the style is an array. If it is then we are outputing an advanced style.
+            // An advanced style is a style with one or more values, and can occur in situations like background-image
+            // where browse specific values are being used.
             if (is_array($style)) {
                 foreach ($style as $advstyle) {
                     $bits[] = $advstyle->out();
@@ -1298,7 +1324,8 @@ class css_selector {
     protected $count = 0;
 
     /**
-     * Is null if there are no selector, true if all selectors are basic and false otherwise.
+     * Is null if there are no selectors, true if all selectors are basic and false otherwise.
+     * A basic selector is one that consists of just the element type. e.g. div, span, td, a
      * @var bool|null
      */
     protected $isbasic = null;
@@ -1327,11 +1354,14 @@ class css_selector {
         if (strpos($selector, '.') !== 0 && strpos($selector, '#') !== 0) {
             $count ++;
         }
+        // If its already false then no need to continue, its not basic
         if ($this->isbasic !== false) {
+            // If theres more than one part making up this selector its not basic
             if ($count > 1) {
                 $this->isbasic = false;
             } else {
-                $this->isbasic = (preg_match('#^[a-z]+(:[a-zA-Z]+)?$#', $selector))?true:false;
+                // Check whether it is a basic element (a-z+) with possible psuedo selector
+                $this->isbasic = (bool)preg_match('#^[a-z]+(:[a-zA-Z]+)?$#', $selector);
             }
         }
         $this->count = $count;
@@ -1525,6 +1555,8 @@ class css_rule {
         $consolidate = array();
         $advancedstyles = array();
         foreach ($this->styles as $style) {
+            // If the style is an array then we are processing an advanced style. An advanced style is a style that can have
+            // one or more values. Background-image is one such example as it can have browser specific styles.
             if (is_array($style)) {
                 $single = null;
                 $count = 0;
@@ -1706,6 +1738,18 @@ class css_rule {
     }
 }
 
+/**
+ * An abstract CSS rule collection class.
+ *
+ * This class is extended by things such as media and keyframe declaration. They are declarations that
+ * group rules together for a purpose.
+ * When no declaration is specified rules accumulate into @media all.
+ *
+ * @package core_css
+ * @category css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class css_rule_collection {
     /**
      * An array of rules within this collection instance
@@ -2139,14 +2183,31 @@ abstract class css_style {
         return false;
     }
 
+    /**
+     * Returns true if this style permits multiple values.
+     *
+     * This occurs for styles such as background image that can have browser specific values that need to be maintained because
+     * of course we don't know what browser the user is using, and optimisation occurs before caching.
+     * Thus we must always server all values we encounter in the order we encounter them for when this is set to true.
+     *
+     * @return boolean False by default, true if the style supports muliple values.
+     */
     public function allows_multiple_values() {
         return false;
     }
 
+    /**
+     * Returns true if this style was marked important.
+     * @return bool
+     */
     public function is_important() {
         return !empty($this->important);
     }
 
+    /**
+     * Sets the important flag for this style and its current value.
+     * @param bool $important
+     */
     public function set_important($important = true) {
         $this->important = (bool) $important;
     }
@@ -3176,6 +3237,11 @@ class css_style_borderwidth extends css_style_width {
         return trim($value);
     }
 
+    /**
+     * Returns true if the provided value is a permitted border width
+     * @param string $value The value to check
+     * @return bool
+     */
     public static function is_border_width($value) {
         $altwidthvalues = array('thin', 'medium', 'thick');
         return css_is_width($value) || in_array($value, $altwidthvalues);
@@ -3925,6 +3991,14 @@ class css_style_backgroundimage extends css_style_generic {
     }
 }
 
+/**
+ * A background image style that supports mulitple values and masquerades as a background-image
+ *
+ * @package core_css
+ * @category css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_backgroundimage_advanced extends css_style_generic {
     /**
      * Creates a new background colour style
@@ -4438,13 +4512,34 @@ class css_style_paddingleft extends css_style_padding {
     }
 }
 
+/**
+ * A cursor style.
+ *
+ * @package core_css
+ * @category css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_cursor extends css_style_generic {
+    /**
+     * Initialises a new cursor style
+     * @param string $value
+     * @return css_style_cursor
+     */
     public static function init($value) {
         return new css_style_cursor('cursor', $value);
     }
+    /**
+     * Cleans the given value and returns it.
+     *
+     * @param string $value
+     * @return string
+     */
     protected function clean_value($value) {
+        // Allowed values for the cursor style
         $allowed = array('auto', 'crosshair', 'default', 'e-resize', 'help', 'move', 'n-resize', 'ne-resize', 'nw-resize',
                          'pointer', 'progress', 's-resize', 'se-resize', 'sw-resize', 'text', 'w-resize', 'wait', 'inherit');
+        // Has to be one of the allowed values of an image to use. Loosely match the image... doesn't need to be thorough
         if (!in_array($value, $allowed) && !preg_match('#\.[a-zA-Z0-9_\-]{1,5}$#', $value)) {
             $this->set_error('Invalid or unexpected cursor value specified: '.$value);
         }
@@ -4452,10 +4547,29 @@ class css_style_cursor extends css_style_generic {
     }
 }
 
+/**
+ * A vertical alignment style.
+ *
+ * @package core_css
+ * @category css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_verticalalign extends css_style_generic {
+    /**
+     * Initialises a new vertical alignment style
+     * @param string $value
+     * @return css_style_verticalalign
+     */
     public static function init($value) {
         return new css_style_verticalalign('vertical-align', $value);
     }
+    /**
+     * Cleans the given value and returns it.
+     *
+     * @param string $value
+     * @return string
+     */
     protected function clean_value($value) {
         $allowed = array('baseline', 'sub', 'super', 'top', 'text-top', 'middle', 'bottom', 'text-bottom', 'inherit');
         if (!css_is_width($value) && !in_array($value, $allowed)) {
@@ -4464,10 +4578,30 @@ class css_style_verticalalign extends css_style_generic {
         return trim($value);
     }
 }
+
+/**
+ * A float style.
+ *
+ * @package core_css
+ * @category css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_float extends css_style_generic {
+    /**
+     * Initialises a new float style
+     * @param string $value
+     * @return css_style_float
+     */
     public static function init($value) {
         return new css_style_float('float', $value);
     }
+    /**
+     * Cleans the given value and returns it.
+     *
+     * @param string $value
+     * @return string
+     */
     protected function clean_value($value) {
         $allowed = array('left', 'right', 'none', 'inherit');
         if (!css_is_width($value) && !in_array($value, $allowed)) {
