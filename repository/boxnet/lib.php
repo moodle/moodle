@@ -309,6 +309,23 @@ class repository_boxnet extends repository {
     }
 
     /**
+     * Return the source information
+     *
+     * @param stdClass $url
+     * @return string|null
+     */
+    public function get_file_source_info($url) {
+        $array = explode('/', $url);
+        $fileid = array_pop($array);
+        $fileinfo = $this->boxclient->get_file_info($fileid);
+        if (!empty($fileinfo)) {
+            return 'Box:' . (string)$fileinfo->file_name;
+        } else {
+            return $url;
+        }
+    }
+
+    /**
      * Repository method to serve the referenced file
      *
      * @param stored_file $storedfile the file that contains the reference

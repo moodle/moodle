@@ -152,6 +152,16 @@ class repository_filesystem extends repository {
         return array('path'=>$file, 'url'=>'');
     }
 
+    /**
+     * Return the source information
+     *
+     * @param stdClass $filepath
+     * @return string|null
+     */
+    public function get_file_source_info($filepath) {
+        return $filepath;
+    }
+
     public function logout() {
         return true;
     }

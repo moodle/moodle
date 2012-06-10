@@ -426,6 +426,16 @@ class repository_dropbox extends repository {
     }
 
     /**
+     * Return the source information
+     *
+     * @param stdClass $filepath
+     * @return string|null
+     */
+    public function get_file_source_info($filepath) {
+        return 'Dropbox:' . $filepath;
+    }
+
+    /**
      * Repository method to serve the referenced file
      *
      * This method is ivoked from {@link send_stored_file()}.

@@ -217,5 +217,15 @@ EOD;
     public function supported_returntypes() {
         return (FILE_INTERNAL | FILE_EXTERNAL);
     }
+
+    /**
+     * Return the source information
+     *
+     * @param stdClass $url
+     * @return string|null
+     */
+    public function get_file_source_info($url) {
+        return $url;
+    }
 }
 

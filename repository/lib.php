@@ -1227,6 +1227,16 @@ abstract class repository {
     }
 
     /**
+     * Return the source information
+     *
+     * @param stdClass $url
+     * @return string|null
+     */
+    public function get_file_source_info($url) {
+        return $url;
+    }
+
+    /**
      * Move file from download folder to file pool using FILE API
      *
      * @todo MDL-28637
@@ -2307,6 +2317,25 @@ abstract class repository {
         $file->set_synchronized($contenthash, $filesize);
         $synchronized[$file->get_id()] = true;
         return true;
+    }
+
+    /**
+     * Build draft file's source field
+     *
+     * {@link file_restore_source_field_from_draft_file()}
+     * XXX: This is a hack for file manager (MDL-28666)
+     * For newly created  draft files we have to construct
+     * source filed in php serialized data format.
+     * File manager needs to know the original file information before copying
+     * to draft area, so we append these information in mdl_files.source field
+     *
+     * @param string $source
+     * @return string serialised source field
+     */
+    public static function build_source_field($source) {
+        $sourcefield = new stdClass;
+        $sourcefield->source = $source;
+        return serialize($sourcefield);
     }
 }
 

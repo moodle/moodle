@@ -143,6 +143,9 @@ class repository_upload extends repository {
         self::antivir_scan_file($_FILES[$elname]['tmp_name'], $_FILES[$elname]['name'], true);
         @chmod($_FILES[$elname]['tmp_name'], $permissions);
 
+        // {@link repository::build_source_field()}
+        $record->source = self::build_source_field($_FILES[$elname]['name']);
+
         if (empty($saveas_filename)) {
             $record->filename = clean_param($_FILES[$elname]['name'], PARAM_FILE);
         } else {
@@ -186,7 +189,6 @@ class repository_upload extends repository {
         }
         $record->contextid = $context->id;
         $record->userid    = $USER->id;
-        $record->source    = '';
 
         if (repository::draftfile_exists($record->itemid, $record->filepath, $record->filename)) {
             $existingfilename = $record->filename;
