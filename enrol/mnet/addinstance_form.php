@@ -72,9 +72,10 @@ class enrol_mnet_addinstance_form extends moodleform {
      * Do not allow multiple instances for single remote host
      *
      * @param array $data raw form data
-     * @return array
+     * @param array $files
+     * @return array of errors
      */
-    function validation($data) {
+    function validation($data, $files) {
         global $DB;
 
         $errors = array();
