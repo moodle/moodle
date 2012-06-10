@@ -3861,6 +3861,14 @@ class css_style_backgroundcolor extends css_style_color {
     public function is_special_empty_value() {
         return ($this->value === self::NULL_VALUE);
     }
+
+    /**
+     * Returns true if the value for this style is valid
+     * @return bool
+     */
+    public function is_valid() {
+        return $this->is_special_empty_value() || parent::is_valid();
+    }
 }
 
 /**
@@ -3906,6 +3914,14 @@ class css_style_backgroundimage extends css_style_generic {
      */
     public function is_special_empty_value() {
         return ($this->value === self::NULL_VALUE);
+    }
+
+    /**
+     * Returns true if the value for this style is valid
+     * @return bool
+     */
+    public function is_valid() {
+        return $this->is_special_empty_value() || parent::is_valid();
     }
 }
 
@@ -3973,6 +3989,14 @@ class css_style_backgroundrepeat extends css_style_generic {
     public function is_special_empty_value() {
         return ($this->value === self::NULL_VALUE);
     }
+
+    /**
+     * Returns true if the value for this style is valid
+     * @return bool
+     */
+    public function is_valid() {
+        return $this->is_special_empty_value() || parent::is_valid();
+    }
 }
 
 /**
@@ -4016,6 +4040,14 @@ class css_style_backgroundattachment extends css_style_generic {
     public function is_special_empty_value() {
         return ($this->value === self::NULL_VALUE);
     }
+
+    /**
+     * Returns true if the value for this style is valid
+     * @return bool
+     */
+    public function is_valid() {
+        return $this->is_special_empty_value() || parent::is_valid();
+    }
 }
 
 /**
@@ -4058,6 +4090,14 @@ class css_style_backgroundposition extends css_style_generic {
      */
     public function is_special_empty_value() {
         return ($this->value === self::NULL_VALUE);
+    }
+
+    /**
+     * Returns true if the value for this style is valid
+     * @return bool
+     */
+    public function is_valid() {
+        return $this->is_special_empty_value() || parent::is_valid();
     }
 }
 
