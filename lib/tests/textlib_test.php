@@ -547,6 +547,25 @@ class collatorlib_testcase extends basic_testcase {
         }
         return $return;
     }
+
+    /**
+     * Tests the static ksort method
+     * @return void
+     */
+    public function test_ksort() {
+        $arr = array('b' => 'ab', 1 => 'aa', 0 => 'cc');
+        $result = collatorlib::ksort($arr);
+        $this->assertSame(array_keys($arr), array(0, 1, 'b'));
+        $this->assertSame(array_values($arr), array('cc', 'aa', 'ab'));
+        $this->assertTrue($result);
+
+        $obj = new stdClass();
+        $arr = array('1.1.1'=>array(), '1.2'=>$obj, '1.20.2'=>null);
+        $result = collatorlib::ksort($arr, collatorlib::SORT_NATURAL);
+        $this->assertSame(array_keys($arr), array('1.1.1', '1.2', '1.20.2'));
+        $this->assertSame(array_values($arr), array(array(), $obj, null));
+        $this->assertTrue($result);
+    }
 }
 
 

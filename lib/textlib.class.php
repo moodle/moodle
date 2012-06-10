@@ -856,4 +856,31 @@ class collatorlib {
         self::restore_array($objects, $original);
         return $result;
     }
+
+    /**
+     * Locale aware sorting, the key associations are kept, keys are sorted alphabetically.
+     *
+     * @param array $arr array to be sorted (reference)
+     * @param int $sortflag One of collatorlib::SORT_NUMERIC, collatorlib::SORT_STRING, collatorlib::SORT_NATURAL, collatorlib::SORT_REGULAR
+     *      optionally "|" collatorlib::CASE_SENSITIVE
+     * @return bool True on success
+     */
+    public static function ksort(array &$arr, $sortflag = collatorlib::SORT_STRING) {
+        $keys = array_keys($arr);
+        if (!self::asort($keys, $sortflag)) {
+            return false;
+        }
+        // This is a bit slow, but we need to keep the references
+        $original = $arr;
+        $count = count($arr);
+        for($i=0; $i<$count; $i++) {
+            array_pop($arr);
+        }
+        foreach ($keys as $key) {
+            $arr[$key] = $original[$key];
+        }
+
+        return true;
+    }
 }
+
