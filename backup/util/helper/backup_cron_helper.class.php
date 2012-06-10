@@ -508,7 +508,16 @@ abstract class backup_cron_automated_helper {
         if (!empty($dir) && ($storage == 1 || $storage == 2)) {
             // Calculate backup filename regex, ignoring the date/time/info parts that can be
             // variable, depending of languages, formats and automated backup settings
-            $filename = $backupword . '-' . backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' .$course->id . '-';
+
+            // MDL-33531: use different filenames depending on backup_shortname option
+            if ( $config->backup_shortname ) {
+                $courseref = $course->shortname;
+                $courseref = str_replace(' ', '_', $courseref);
+                $courseref = moodle_strtolower(trim(clean_filename($courseref), '_'));
+            } else {
+                $courseref = $course->id;
+            }
+            $filename = $backupword . '-' . backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' .$courseref . '-';
             $regex = '#^'.preg_quote($filename, '#').'.*\.mbz$#';
 
             // Store all the matching files into fullpath => timemodified array
