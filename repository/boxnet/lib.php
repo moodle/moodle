@@ -294,6 +294,16 @@ class repository_boxnet extends repository {
     }
 
     /**
+     * Return the source information
+     *
+     * @param stdClass $url
+     * @return string|null
+     */
+    public function get_file_source_info($url) {
+        return $url;
+    }
+
+    /**
      * Repository method to serve file
      *
      * @param stored_file $storedfile
