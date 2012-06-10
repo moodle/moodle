@@ -150,7 +150,8 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         foreach ($this->records as $record) {
             foreach ($record as $data) {
                 if (is_array($data) || is_object($data)) {
-                    $testkey = array_pop(array_keys($data));
+                    $keys = array_keys($data);
+                    $testkey = array_pop($keys);
                     if (is_array($data[$testkey]) || is_object($data[$testkey])) {
                         foreach ($data as $d) {
                             $str .= implode(',', (array)$d);
