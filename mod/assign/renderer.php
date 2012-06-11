@@ -232,8 +232,13 @@ class mod_assign_renderer extends plugin_renderer_base {
         $t = new html_table();
 
         // status
-        $this->add_table_row_tuple($t, get_string('numberofparticipants', 'assign'),
-                                   $summary->participantcount);
+        if ($summary->teamsubmission) {
+            $this->add_table_row_tuple($t, get_string('numberofteams', 'assign'),
+                                       $summary->participantcount);
+        } else {
+            $this->add_table_row_tuple($t, get_string('numberofparticipants', 'assign'),
+                                       $summary->participantcount);
+        }
 
         // drafts
         if ($summary->submissiondraftsenabled) {
@@ -378,20 +383,68 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         $t = new html_table();
 
+        if ($status->teamsubmissionenabled) {
+            $row = new html_table_row();
+            $cell1 = new html_table_cell(get_string('submissionteam', 'assign'));
+            $group = $status->submissiongroup;
+            if ($group) {
+                $cell2 = new html_table_cell(format_string($group->name, false, $status->context));
+            } else {
+                $cell2 = new html_table_cell(get_string('defaultteam', 'assign'));
+            }
+            $row->cells = array($cell1, $cell2);
+            $t->data[] = $row;
+        }
+
         $row = new html_table_row();
         $cell1 = new html_table_cell(get_string('submissionstatus', 'assign'));
-        if ($status->submission) {
-            $cell2 = new html_table_cell(get_string('submissionstatus_' . $status->submission->status, 'assign'));
-            $cell2->attributes = array('class'=>'submissionstatus' . $status->submission->status);
+        if (!$status->teamsubmissionenabled) {
+            if ($status->submission) {
+                $cell2 = new html_table_cell(get_string('submissionstatus_' . $status->submission->status, 'assign'));
+                $cell2->attributes = array('class'=>'submissionstatus' . $status->submission->status);
+            } else {
+                if (!$status->submissionsenabled) {
+                    $cell2 = new html_table_cell(get_string('noonlinesubmissions', 'assign'));
+                } else {
+                    $cell2 = new html_table_cell(get_string('nosubmission', 'assign'));
+                }
+            }
+            $row->cells = array($cell1, $cell2);
+            $t->data[] = $row;
         } else {
-            if (!$status->submissionsenabled) {
-                $cell2 = new html_table_cell(get_string('noonlinesubmissions', 'assign'));
+            $row = new html_table_row();
+            $cell1 = new html_table_cell(get_string('submissionstatus', 'assign'));
+            if ($status->teamsubmission) {
+                $submissionsummary = get_string('submissionstatus_' . $status->teamsubmission->status, 'assign');
+                $groupid = 0;
+                if ($status->submissiongroup) {
+                    $groupid = $status->submissiongroup->id;
+                }
+
+                $members = $status->submissiongroupmemberswhoneedtosubmit;
+                $userslist = array();
+                foreach ($members as $member) {
+                    $url = new moodle_url('/user/view.php', array('id' => $member->id, 'course'=>$status->courseid));
+                    $userslist[] = $this->output->action_link($url, fullname($member, $status->canviewfullnames));
+                }
+                if (count($userslist) > 0) {
+                    $userstr = join(', ', $userslist);
+                    $submissionsummary .= $this->output->container(get_string('userswhoneedtosubmit', 'assign', $userstr));
+                }
+
+                $cell2 = new html_table_cell($submissionsummary);
+                $cell2->attributes = array('class'=>'submissionstatus' . $status->teamsubmission->status);
             } else {
                 $cell2 = new html_table_cell(get_string('nosubmission', 'assign'));
+                if (!$status->submissionsenabled) {
+                    $cell2 = new html_table_cell(get_string('noonlinesubmissions', 'assign'));
+                } else {
+                    $cell2 = new html_table_cell(get_string('nosubmission', 'assign'));
+                }
             }
+            $row->cells = array($cell1, $cell2);
+            $t->data[] = $row;
         }
-        $row->cells = array($cell1, $cell2);
-        $t->data[] = $row;
 
         // status
         if ($status->locked) {
@@ -488,15 +541,16 @@ class mod_assign_renderer extends plugin_renderer_base {
         }
 
         // Last modified.
-        if ($status->submission) {
+        $submission = $status->teamsubmission ? $status->teamsubmission : $status->submission;
+        if ($submission) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('timemodified', 'assign'));
-            $cell2 = new html_table_cell(userdate($status->submission->timemodified));
+            $cell2 = new html_table_cell(userdate($submission->timemodified));
             $row->cells = array($cell1, $cell2);
             $t->data[] = $row;
 
             foreach ($status->submissionplugins as $plugin) {
-                if ($plugin->is_enabled() && $plugin->is_visible() && !$plugin->is_empty($status->submission)) {
+                if ($plugin->is_enabled() && $plugin->is_visible() && !$plugin->is_empty($submission)) {
                     $row = new html_table_row();
                     $cell1 = new html_table_cell($plugin->get_name());
                     $pluginsubmission = new assign_submission_plugin_submission($plugin,

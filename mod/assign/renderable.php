@@ -289,6 +289,14 @@ class assign_submission_status implements renderable {
     var $alwaysshowdescription = false;
     /** @var stdClass the submission info (may be null) */
     var $submission = null;
+    /** @var boolean teamsubmissionenabled - true or false */
+    public $teamsubmissionenabled = false;
+    /** @var stdClass teamsubmission the team submission info (may be null) */
+    public $teamsubmission = null;
+    /** @var stdClass submissiongroup the submission group info (may be null) */
+    public $submissiongroup = null;
+    /** @var array submissiongroupmemberswhoneedtosubmit list of users who still need to submit */
+    public $submissiongroupmemberswhoneedtosubmit = array();
     /** @var bool submissionsenabled */
     var $submissionsenabled = false;
     /** @var bool locked */
@@ -305,16 +313,22 @@ class assign_submission_status implements renderable {
     var $returnaction = '';
     /** @var string returnparams */
     var $returnparams = array();
+    /** @var int courseid */
+    public $courseid = 0;
     /** @var int coursemoduleid */
     var $coursemoduleid = 0;
     /** @var int the view (assign_submission_status::STUDENT_VIEW OR assign_submission_status::GRADER_VIEW) */
     var $view = self::STUDENT_VIEW;
+    /** @var bool canviewfullnames */
+    public $canviewfullnames = false;
     /** @var bool canedit */
     var $canedit = false;
     /** @var bool cansubmit */
     var $cansubmit = false;
     /** @var int extensionduedate */
     public $extensionduedate = 0;
+    /** @var context context */
+    public $context = 0;
 
     /**
      * constructor
@@ -322,6 +336,10 @@ class assign_submission_status implements renderable {
      * @param int $allowsubmissionsfromdate
      * @param bool $alwaysshowdescription
      * @param stdClass $submission
+     * @param bool $teamsubmissionenabled
+     * @param stdClass $teamsubmission
+     * @param int $submissiongroup
+     * @param array $submissiongroupmemberswhoneedtosubmit
      * @param bool $submissionsenabled
      * @param bool $locked
      * @param bool $graded
@@ -331,17 +349,27 @@ class assign_submission_status implements renderable {
      * @param string $returnaction
      * @param array $returnparams
      * @param int $coursemoduleid
+     * @param int $courseid
      * @param string $view
      * @param bool $canedit
      * @param bool $cansubmit
+     * @param bool $canviewfullnames
      * @param int $extensionduedate - Any extension to the due date granted for this user
+     * @param context $context - Any extension to the due date granted for this user
      */
-    public function __construct($allowsubmissionsfromdate, $alwaysshowdescription, $submission, $submissionsenabled,
+    public function __construct($allowsubmissionsfromdate, $alwaysshowdescription, $submission,
+                                $teamsubmissionenabled, $teamsubmission, $submissiongroup,
+                                $submissiongroupmemberswhoneedtosubmit, $submissionsenabled,
                                 $locked, $graded, $duedate, $cutoffdate, $submissionplugins, $returnaction, $returnparams,
-                                $coursemoduleid, $view, $canedit, $cansubmit, $extensionduedate) {
+                                $coursemoduleid, $courseid, $view, $canedit, $cansubmit, $canviewfullnames, $extensionduedate,
+                                $context) {
         $this->allowsubmissionsfromdate = $allowsubmissionsfromdate;
         $this->alwaysshowdescription = $alwaysshowdescription;
         $this->submission = $submission;
+        $this->teamsubmissionenabled = $teamsubmissionenabled;
+        $this->teamsubmission = $teamsubmission;
+        $this->submissiongroup = $submissiongroup;
+        $this->submissiongroupmemberswhoneedtosubmit = $submissiongroupmemberswhoneedtosubmit;
         $this->submissionsenabled = $submissionsenabled;
         $this->locked = $locked;
         $this->graded = $graded;
@@ -351,10 +379,13 @@ class assign_submission_status implements renderable {
         $this->returnaction = $returnaction;
         $this->returnparams = $returnparams;
         $this->coursemoduleid = $coursemoduleid;
+        $this->courseid = $courseid;
         $this->view = $view;
         $this->canedit = $canedit;
         $this->cansubmit = $cansubmit;
+        $this->canviewfullnames = $canviewfullnames;
         $this->extensionduedate = $extensionduedate;
+        $this->context = $context;
     }
 
 }
@@ -424,6 +455,8 @@ class assign_grading_summary implements renderable {
     var $cutoffdate = 0;
     /** @var int coursemoduleid - The assignment course module id */
     var $coursemoduleid = 0;
+    /** @var boolean teamsubmission - Are team submissions enabled for this assignment */
+    public $teamsubmission = false;
 
     /**
      * constructor
@@ -437,10 +470,12 @@ class assign_grading_summary implements renderable {
      * @param int $duedate
      * @param int $coursemoduleid
      * @param int $submissionsneedgradingcount
+     * @param bool $teamsubmission
      */
-    public function __construct($participantcount, $submissiondraftsenabled, $submissiondraftscount,
-                                $submissionsenabled, $submissionssubmittedcount,
-                                $cutoffdate, $duedate, $coursemoduleid, $submissionsneedgradingcount) {
+    public function __construct($participantcount, $submissiondraftsenabled,
+                                $submissiondraftscount, $submissionsenabled,
+                                $submissionssubmittedcount, $cutoffdate, $duedate,
+                                $coursemoduleid, $submissionsneedgradingcount, $teamsubmission) {
         $this->participantcount = $participantcount;
         $this->submissiondraftsenabled = $submissiondraftsenabled;
         $this->submissiondraftscount = $submissiondraftscount;
@@ -450,6 +485,7 @@ class assign_grading_summary implements renderable {
         $this->cutoffdate = $cutoffdate;
         $this->coursemoduleid = $coursemoduleid;
         $this->submissionsneedgradingcount = $submissionsneedgradingcount;
+        $this->teamsubmission = $teamsubmission;
     }
 
 }

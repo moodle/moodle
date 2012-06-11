@@ -22,13 +22,17 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the settings for this assign module instance were last modified." PREVIOUS="grade" NEXT="requiresubmissionstatement"/>
         <FIELD NAME="requiresubmissionstatement" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Forces the student to accept a submission statement when submitting an assignment" PREVIOUS="timemodified" NEXT="completionsubmit"/>
         <FIELD NAME="completionsubmit" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1, then the activity will be automatically marked as 'complete' once the user submits their assignment." PREVIOUS="requiresubmissionstatement" NEXT="cutoffdate"/>
-        <FIELD NAME="cutoffdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The final date after which submissions will no longer be accepted for this assignment without an extensions." PREVIOUS="completionsubmit"/>
+        <FIELD NAME="cutoffdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The final date after which submissions will no longer be accepted for this assignment without an extensions." PREVIOUS="completionsubmit" NEXT="teamsubmission"/>
+        <FIELD NAME="teamsubmission" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Do students submit in teams?" PREVIOUS="cutoffdate" NEXT="requireallteammemberssubmit"/>
+        <FIELD NAME="requireallteammemberssubmit" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If enabled, a submission will not be accepted until all team members have submitted it." PREVIOUS="teamsubmission" NEXT="teamsubmissiongroupingid"/>
+        <FIELD NAME="teamsubmissiongroupingid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="A grouping id to get groups for team submissions" PREVIOUS="requireallteammemberssubmit"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this assignment instance."/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="course" UNIQUE="false" FIELDS="course" COMMENT="The course this assignment instance belongs to."/>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course" COMMENT="The course this assignment instance belongs to." NEXT="teamsubmissiongroupingid"/>
+        <INDEX NAME="teamsubmissiongroupingid" UNIQUE="false" FIELDS="teamsubmissiongroupingid" COMMENT="The grouping id for team submissions" PREVIOUS="course"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="assign_submission" COMMENT="This table keeps information about student interactions with the mod/assign. This is limited to metadata about a student submission but does not include the submission itself which is stored by plugins." PREVIOUS="assign" NEXT="assign_grades">
@@ -38,7 +42,8 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assignment" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time of the first student submission to this assignment." PREVIOUS="userid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The last time this assignment submission was modified by a student." PREVIOUS="timecreated" NEXT="status"/>
-        <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The status of this assignment submission. The current statuses are DRAFT and SUBMITTED." PREVIOUS="timemodified"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The status of this assignment submission. The current statuses are DRAFT and SUBMITTED." PREVIOUS="timemodified" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The group id for team submissions" PREVIOUS="status"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this assignment submission." NEXT="assignment"/>

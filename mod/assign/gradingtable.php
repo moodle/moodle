@@ -153,6 +153,14 @@ class assign_grading_table extends table_sql implements renderable {
             $headers[] = get_string('status');
         }
 
+        // Team submission columns
+        if ($assignment->get_instance()->teamsubmission) {
+            $columns[] = 'team';
+            $headers[] = get_string('submissionteam', 'assign');
+
+            $columns[] = 'teamstatus';
+            $headers[] = get_string('teamsubmissionstatus', 'assign');
+        }
 
         // Grade
         $columns[] = 'grade';
@@ -205,6 +213,11 @@ class assign_grading_table extends table_sql implements renderable {
         $this->no_sorting('select');
         $this->no_sorting('outcomes');
 
+        if ($assignment->get_instance()->teamsubmission) {
+            $this->no_sorting('team');
+            $this->no_sorting('teamstatus');
+        }
+
         foreach ($this->assignment->get_submission_plugins() as $plugin) {
             if ($plugin->is_visible() && $plugin->is_enabled()) {
                 $this->no_sorting('assignsubmission_' . $plugin->get_type());
@@ -253,6 +266,36 @@ class assign_grading_table extends table_sql implements renderable {
         $o = $this->assignment->display_grade($grade, $editable, $userid, $modified);
         return $o;
     }
+
+    /**
+     * Get the team info for this user
+     *
+     * @param stdClass $row
+     * @return string The team name
+     */
+    function col_team(stdClass $row) {
+        $group = $this->assignment->get_submission_group($row->id);
+        if ($group) {
+            return $group->name;
+        }
+        return get_string('defaultteam', 'assign');
+    }
+
+    /**
+     * Get the team info for this user
+     *
+     * @param stdClass $row
+     * @return string The team name
+     */
+    function col_teamstatus(stdClass $row) {
+        $submission = $this->assignment->get_group_submission($row->id, 0, false);
+        $status = '';
+        if ($submission) {
+            $status = $submission->status;
+        }
+        return get_string('submissionstatus_' . $status, 'assign');
+    }
+
 
     /**
      * Format a list of outcomes
