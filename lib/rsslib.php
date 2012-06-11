@@ -406,7 +406,7 @@ function rss_get_userid_from_token($token) {
     $sql = 'SELECT u.id FROM {user} u
             JOIN {user_private_key} k ON u.id = k.userid
             WHERE u.deleted = 0 AND u.confirmed = 1
-            AND k.value = ?';
+            AND u.suspended = 0 AND k.value = ?';
     return $DB->get_field_sql($sql, array($token), IGNORE_MISSING);
 }
 
