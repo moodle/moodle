@@ -69,7 +69,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             }
         }
         if (!empty($options['maxbytes'])) {
-            $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
+            $this->_options['maxbytes'] = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $options['maxbytes']);
         }
         if (empty($options['return_types'])) {
             $this->_options['return_types'] = (FILE_INTERNAL | FILE_REFERENCE);
@@ -129,8 +129,8 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
      * @param int $maxbytes file size
      */
     function setMaxbytes($maxbytes) {
-        global $CFG;
-        $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $maxbytes);
+        global $CFG, $PAGE;
+        $this->_options['maxbytes'] = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $maxbytes);
     }
 
     /**
@@ -354,7 +354,7 @@ class form_filemanager implements renderable {
         if (!empty($this->options->maxbytes) && $this->options->maxbytes > 0) {
             $maxbytes = $this->options->maxbytes;
         }
-        $this->options->maxbytes = get_max_upload_file_size($CFG->maxbytes, $coursebytes, $maxbytes);
+        $this->options->maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $coursebytes, $maxbytes);
 
         // building file picker options
         $params = new stdClass();
