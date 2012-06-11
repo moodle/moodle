@@ -115,7 +115,7 @@ class repository_local extends repository {
      * @return int
      */
     public function supported_returntypes() {
-        return FILE_INTERNAL;
+        return FILE_INTERNAL | FILE_REFERENCE;
     }
 
     /**
@@ -125,6 +125,17 @@ class repository_local extends repository {
      */
     public function has_moodle_files() {
         return true;
+    }
+
+    /**
+     * Return reference file life time
+     *
+     * @param string $ref
+     * @return int
+     */
+    public function get_reference_file_lifetime($ref) {
+        // this should be realtime
+        return 0;
     }
 }
 
