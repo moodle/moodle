@@ -2504,6 +2504,16 @@ function initialise_filepicker($args) {
         $return->externallink = true;
     }
 
+    $return->userprefs = array();
+    $return->userprefs['recentrepository'] = get_user_preferences('filepicker_recentrepository', '');
+    $return->userprefs['recentlicense'] = get_user_preferences('filepicker_recentlicense', '');
+    $return->userprefs['recentviewmode'] = get_user_preferences('filepicker_recentviewmode', '');
+
+    user_preference_allow_ajax_update('filepicker_recentrepository', PARAM_INT);
+    user_preference_allow_ajax_update('filepicker_recentlicense', PARAM_SAFEDIR);
+    user_preference_allow_ajax_update('filepicker_recentviewmode', PARAM_INT);
+
+
     // provided by form element
     $return->accepted_types = file_get_typegroup('extension', $args->accepted_types);
     $return->return_types = $args->return_types;
