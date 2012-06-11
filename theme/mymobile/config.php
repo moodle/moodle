@@ -156,6 +156,7 @@ if ($thisdevice == "default" || $thisdevice == "tablet" || optional_param('mymob
 // Add the required JavaScript to the page
 $THEME->javascripts = array(
     'jquery-1.6.4.min',
+    'jquery-noconflict',
     'custom',
     'jquery.mobile-1.0',
     'scrollview',
