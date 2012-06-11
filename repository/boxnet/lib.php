@@ -300,7 +300,14 @@ class repository_boxnet extends repository {
      * @return string|null
      */
     public function get_file_source_info($url) {
-        return $url;
+        $array = explode('/', $url);
+        $fileid = array_pop($array);
+        $fileinfo = $this->boxclient->get_file_info($fileid);
+        if (!empty($fileinfo)) {
+            return 'boxnet:' . (string)$fileinfo->file_name;
+        } else {
+            return $url;
+        }
     }
 
     /**
