@@ -138,6 +138,11 @@ class repository_equella extends repository {
         $ref = base64_decode($reference->reference);
         $url = $this->appendtoken($ref);
 
+        if (!$url) {
+            // Occurs when the user isn't known..
+            return false;
+        }
+
         // We use this cache to get the correct file size.
         $cachedfilepath = cache_file::get($url, array('ttl' => 0));
         if ($cachedfilepath === false) {
@@ -160,7 +165,9 @@ class repository_equella extends repository {
     public function send_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
         $reference = base64_decode($stored_file->get_reference());
         $url = $this->appendtoken($reference);
-        header('Location: ' . $url);
+        if ($url) {
+            header('Location: ' . $url);
+        }
         die;
     }
 
@@ -251,7 +258,11 @@ class repository_equella extends repository {
      * @return string
      */
     private function appendtoken($url, $readwrite = null) {
-        return $url . (strpos($url, '?') != false ? '&' : '?') . 'token=' . urlencode($this->getssotoken($readwrite));
+        $ssotoken = $this->getssotoken($readwrite);
+        if (!$ssotoken) {
+            return false;
+        }
+        return $url . (strpos($url, '?') != false ? '&' : '?') . 'token=' . urlencode($ssotoken);
     }
 
     /**
@@ -262,6 +273,10 @@ class repository_equella extends repository {
      */
     private function getssotoken($readwrite = 'read') {
         global $USER;
+
+        if (empty($USER->username)) {
+            return false;
+        }
 
         if ($readwrite == 'write') {
 
