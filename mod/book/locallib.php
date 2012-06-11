@@ -268,7 +268,11 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                     }
                 } else {
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
-                        $title = "x.x $title";
+                        if (empty($chapters[$ch->parent]->hidden)) {
+                            $title = "$nch.x $title";
+                        } else {
+                            $title = "x.x $title";
+                        }
                     }
                     $title = '<span class="dimmed_text">'.$title.'</span>';
                 }
