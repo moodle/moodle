@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Version information for equella repository.
+ *
+ * @since 2.3
+ * @package    repository_equella
+ * @copyright  2012 Dongsheng Cai {@link http://dongsheng.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2012060100;        // The current plugin version (Date: YYYYMMDDXX).

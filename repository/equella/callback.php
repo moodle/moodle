@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * EQUELLA callback
+ * Callback for equella repository.
  *
- * @since 2.0
- * @package   repository
+ * @since 2.3
+ * @package   repository_equella
  * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

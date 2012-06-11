@@ -14,8 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This plugin is used to access equella repositories.
+ *
+ * @since 2.3
+ * @package    repository_equella
+ * @copyright  2012 Dongsheng Cai {@link http://dongsheng.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/repository/lib.php');
 
+/**
+ * repository_equella class implements equella_client
+ *
+ * @since 2.3
+ * @package    repository_equella
+ * @copyright  2012 Dongsheng Cai {@link http://dongsheng.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class repository_equella extends repository {
     /** @var array mimetype filter */
     private $mimetypes = array();
@@ -24,7 +43,7 @@ class repository_equella extends repository {
      * Constructor
      *
      * @param int $repositoryid repository instance id
-     * @param int|stdClass a context id or context object
+     * @param int|stdClass $context a context id or context object
      * @param array $options repository options
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
@@ -43,7 +62,7 @@ class repository_equella extends repository {
      *
      * @param string $path
      * @param mixed $page
-     * @param array
+     * @return array
      */
     public function get_listing($path = null, $page = null) {
         global $COURSE;
@@ -219,7 +238,7 @@ class repository_equella extends repository {
      * @return array
      */
     public static function get_instance_option_names() {
-        $rv = array('equella_url','equella_select_restriction', 'equella_options',
+        $rv = array('equella_url', 'equella_select_restriction', 'equella_options',
             'equella_shareid', 'equella_sharedsecret'
         );
 
