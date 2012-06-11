@@ -795,7 +795,7 @@ function assign_update_grades($assign, $userid=0, $nullifnone=true) {
  * @param stdClass $context
  * @return array
  */
-function mod_assign_get_file_areas($course, $cm, $context) {
+function assign_get_file_areas($course, $cm, $context) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
     $areas = array();
@@ -837,7 +837,7 @@ function mod_assign_get_file_areas($course, $cm, $context) {
  * @param string $filename
  * @return object file_info instance or null if not found
  */
-function mod_assign_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+function assign_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 

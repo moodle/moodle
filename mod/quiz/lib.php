@@ -1735,7 +1735,7 @@ function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
  * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function mod_quiz_question_pluginfile($course, $context, $component,
+function quiz_question_pluginfile($course, $context, $component,
         $filearea, $qubaid, $slot, $args, $forcedownload, array $options=array()) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
