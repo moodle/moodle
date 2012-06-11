@@ -3023,20 +3023,13 @@ function move_section_to($course, $section, $destination) {
         }
     }
 
-    // Adjust destination to reflect the actual section
-    $moveup = false;
-    if ($section > $destination) {
-        $destination++;
-        $moveup = true;
-    }
-
     // If we move the highlighted section itself, then just highlight the destination.
     // Adjust the higlighted section location if we move something over it either direction.
     if ($section == $course->marker) {
         course_set_marker($course->id, $destination);
-    } elseif ($moveup && $section > $course->marker && $course->marker >= $destination) {
+    } elseif ($section > $course->marker && $course->marker >= $destination) {
         course_set_marker($course->id, $course->marker+1);
-    } elseif (!$moveup && $section < $course->marker && $course->marker <= $destination) {
+    } elseif ($section < $course->marker && $course->marker <= $destination) {
         course_set_marker($course->id, $course->marker-1);
     }
 
