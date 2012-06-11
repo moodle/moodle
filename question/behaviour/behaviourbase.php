@@ -455,7 +455,8 @@ abstract class question_behaviour {
                 $fraction = null;
             } else if ($fraction > 1 || $fraction < $this->qa->get_min_fraction()) {
                 throw new coding_exception('Score out of range when processing ' .
-                        'a manual grading action.', $pendingstep);
+                        'a manual grading action.', 'Question ' . $this->qa->get_question()->id .
+                                ', slot ' . $this->qa->get_slot() . ', fraction ' . $fraction);
             }
             $pendingstep->set_fraction($fraction);
         }
@@ -463,6 +464,20 @@ abstract class question_behaviour {
         $pendingstep->set_state($this->qa->get_state()->corresponding_commented_state(
                 $pendingstep->get_fraction()));
         return question_attempt::KEEP;
+    }
+
+    /**
+     * Validate that the manual grade submitted for a particular question is in range.
+     * @param int $qubaid the question_usage id.
+     * @param int $slot the slot number within the usage.
+     * @return bool whether the submitted data is in range.
+     */
+    public static function is_manual_grade_in_range($qubaid, $slot) {
+        $prefix = 'q' . $qubaid . ':' . $slot . '_';
+        $mark = optional_param($prefix . '-mark', null, PARAM_NUMBER);
+        $maxmark = optional_param($prefix . '-maxmark', null, PARAM_NUMBER);
+        $minfraction = optional_param($prefix . ':minfraction', null, PARAM_NUMBER);
+        return is_null($mark) || ($mark >= $minfraction * $maxmark && $mark <= $maxmark);
     }
 
     /**
