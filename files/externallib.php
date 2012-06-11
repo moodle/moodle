@@ -103,6 +103,7 @@ class core_files_external extends external_api {
         $return = array();
         $return['parents'] = array();
         $return['files'] = array();
+        $list = array();
         if ($file = $browser->get_file_info(
             $context, $fileinfo['component'], $fileinfo['filearea'], $fileinfo['itemid'],
                 $fileinfo['filepath'], $fileinfo['filename'])) {
@@ -113,7 +114,6 @@ class core_files_external extends external_api {
                 array_unshift($return['parents'], $params);
                 $level = $level->get_parent();
             }
-            $list = array();
             $children = $file->get_children();
             foreach ($children as $child) {
 
