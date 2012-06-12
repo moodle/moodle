@@ -363,7 +363,7 @@ function folder_export_contents($cm, $baseurl) {
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-function mod_folder_dndupload_register() {
+function folder_dndupload_register() {
     return array('files' => array(
                      array('extension' => 'zip', 'message' => get_string('dnduploadmakefolder', 'mod_folder'))
                  ));
@@ -374,7 +374,7 @@ function mod_folder_dndupload_register() {
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
-function mod_folder_dndupload_handle($uploadinfo) {
+function folder_dndupload_handle($uploadinfo) {
     global $DB, $USER;
 
     // Gather the required info.

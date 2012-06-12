@@ -477,7 +477,7 @@ function page_export_contents($cm, $baseurl) {
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-function mod_page_dndupload_register() {
+function page_dndupload_register() {
     return array('types' => array(
                      array('identifier' => 'text/html', 'message' => get_string('createpage', 'page')),
                      array('identifier' => 'text', 'message' => get_string('createpage', 'page'))
@@ -489,7 +489,7 @@ function mod_page_dndupload_register() {
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
-function mod_page_dndupload_handle($uploadinfo) {
+function page_dndupload_handle($uploadinfo) {
     // Gather the required info.
     $data = new stdClass();
     $data->course = $uploadinfo->course->id;

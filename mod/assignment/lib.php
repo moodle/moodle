@@ -1113,7 +1113,7 @@ class assignment_base {
             }
         }
 
-        $submitform = new mod_assignment_grading_form( null, $mformdata );
+        $submitform = new assignment_grading_form( null, $mformdata );
 
          if (!$display) {
             $ret_data = new stdClass();
@@ -2422,7 +2422,7 @@ class assignment_base {
 } ////// End of the assignment_base class
 
 
-class mod_assignment_grading_form extends moodleform {
+class assignment_grading_form extends moodleform {
     /** @var stores the advaned grading instance (if used in grading) */
     private $advancegradinginstance;
 
@@ -3994,7 +3994,7 @@ function assignment_get_file_areas($course, $cm, $context) {
  * @param string $filename
  * @return file_info_stored file_info_stored instance or null if not found
  */
-function mod_assignment_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+function assignment_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG, $DB, $USER;
 
     if ($context->contextlevel != CONTEXT_MODULE || $filearea != 'submission') {
