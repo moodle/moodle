@@ -776,6 +776,16 @@ class css_optimiser {
             $buffer .= $char;
         }
 
+        foreach ($medias as $media) {
+            $this->optimise($media);
+        }
+        $css = $this->produce_css($charset, $imports, $medias, $keyframes);
+
+        $this->timecomplete = microtime(true);
+        return trim($css);
+    }
+
+    protected function produce_css($charset, array $imports, array $medias, array $keyframes) {
         $css = '';
         if (!empty($charset)) {
             $imports[] = $charset;
@@ -785,14 +795,12 @@ class css_optimiser {
             $css .= "\n\n";
         }
 
+        $cssreset = array();
+        $cssstandard = array();
+        $csskeyframes = array();
+
         // Process each media declaration individually
         foreach ($medias as $media) {
-            $media->organise_rules_by_selectors();
-            $this->optimisedrules += $media->count_rules();
-            $this->optimisedselectors +=  $media->count_selectors();
-            if ($media->has_errors()) {
-                $this->errors += $media->get_errors();
-            }
             // If this declaration applies to all media types
             if (in_array('all', $media->get_types())) {
                 // Collect all rules that represet reset rules and remove them from the media object at the same time.
@@ -800,33 +808,50 @@ class css_optimiser {
                 // can't end up out of order because of optimisation.
                 $resetrules = $media->get_reset_rules(true);
                 if (!empty($resetrules)) {
-                    $css .= css_writer::media('all', $resetrules);
+                    $cssreset[] = css_writer::media('all', $resetrules);
                 }
             }
-        }
-
-        // Now process every media object and produce CSS for it.
-        foreach ($medias as $media) {
-            $css .= $media->out();
+            // Get the standard cSS
+            $cssstandard[] = $media->out();
         }
 
         // Finally if there are any keyframe declarations process them now.
         if (count($keyframes) > 0) {
-            $css .= "\n";
             foreach ($keyframes as $keyframe) {
                 $this->optimisedrules += $keyframe->count_rules();
                 $this->optimisedselectors +=  $keyframe->count_selectors();
                 if ($keyframe->has_errors()) {
                     $this->errors += $keyframe->get_errors();
                 }
-                $css .= $keyframe->out();
+                $csskeyframes[] = $keyframe->out();
             }
         }
 
+        // Join it all together
+        $css .= join('', $cssreset);
+        $css .= join('', $cssstandard);
+        $css .= join('', $csskeyframes);
+
+        // Record the strlenght of the now optimised CSS.
         $this->optimisedstrlen = strlen($css);
 
-        $this->timecomplete = microtime(true);
-        return trim($css);
+        // Return the now produced CSS
+        return $css;
+    }
+
+    /**
+     * Optimises the CSS rules within a rule collection of one form or another
+     *
+     * @param css_rule_collection $media
+     * @return void This function acts in reference
+     */
+    protected function optimise(css_rule_collection $media) {
+        $media->organise_rules_by_selectors();
+        $this->optimisedrules += $media->count_rules();
+        $this->optimisedselectors +=  $media->count_selectors();
+        if ($media->has_errors()) {
+            $this->errors += $media->get_errors();
+        }
     }
 
     /**
@@ -1189,7 +1214,7 @@ abstract class css_writer {
 
         $output = '';
         if ($typestring !== 'all') {
-            $output .= $nl.$nl."@media {$typestring} {".$nl;
+            $output .= "\n@media {$typestring} {".$nl;
             self::increase_indent();
         }
         foreach ($rules as $rule) {
@@ -1213,7 +1238,7 @@ abstract class css_writer {
     public static function keyframe($for, $name, array &$rules) {
         $nl = self::get_separator();
 
-        $output = $nl."@{$for} {$name} {";
+        $output = "\n@{$for} {$name} {";
         foreach ($rules as $rule) {
             $output .= $rule->out();
         }
@@ -1796,17 +1821,24 @@ abstract class css_rule_collection {
     public function organise_rules_by_selectors() {
         $optimised = array();
         $beforecount = count($this->rules);
+        $lasthash = null;
+        $lastrule = null;
         foreach ($this->rules as $rule) {
             $hash = $rule->get_style_hash();
-            if (!array_key_exists($hash, $optimised)) {
-                $optimised[$hash] = clone($rule);
-            } else {
+            if ($lastrule !== null && $lasthash !== null && $hash === $lasthash) {
                 foreach ($rule->get_selectors() as $selector) {
-                    $optimised[$hash]->add_selector($selector);
+                    $lastrule->add_selector($selector);
                 }
+                continue;
             }
+            $lastrule = clone($rule);
+            $lasthash = $hash;
+            $optimised[] = $lastrule;
         }
-        $this->rules = $optimised;
+        $this->rules = array();
+        foreach ($optimised as $optimised) {
+            $this->rules[$optimised->get_selector_hash()] = $optimised;
+        }
         $aftercount = count($this->rules);
         return ($beforecount < $aftercount);
     }
@@ -3685,6 +3717,16 @@ class css_style_background extends css_style {
             $value = str_replace($matches[1], '', $value);
         }
 
+        // Switch out the brackets so that they don't get messed up when we explode
+        $brackets = array();
+        $bracketcount = 0;
+        while (preg_match('#\([^\)\(]+\)#', $value, $matches)) {
+            $key = "##BRACKET-{$bracketcount}##";
+            $bracketcount++;
+            $brackets[$key] = $matches[0];
+            $value = str_replace($matches[0], $key, $value);
+        }
+
         $important = (stripos($value, '!important') !== false);
         if ($important) {
             // Great some genius put !important in the background shorthand property
@@ -3693,6 +3735,12 @@ class css_style_background extends css_style {
 
         $value = preg_replace('#\s+#', ' ', $value);
         $bits = explode(' ', $value);
+
+        foreach ($bits as $key => $bit) {
+            $bits[$key] = self::replace_bracket_placeholders($bit, $brackets);
+        }
+        unset($bracketcount);
+        unset($brackets);
 
         $repeats = array('repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'inherit');
         $attachments = array('scroll' , 'fixed', 'inherit');
@@ -3705,7 +3753,6 @@ class css_style_background extends css_style {
         if (count($bits) > 0 && css_is_colour(reset($bits))) {
             $color = array_shift($bits);
         }
-        $return[] = new css_style_backgroundcolor('background-color', $color);
 
         $image = self::NULL_VALUE;
         if (count($bits) > 0 && preg_match('#^\s*(none|inherit|url\(\))\s*$#', reset($bits))) {
@@ -3714,20 +3761,17 @@ class css_style_background extends css_style {
                 $image = "url({$imageurl})";
             }
         }
-        $return[] = new css_style_backgroundimage('background-image', $image);
 
         $repeat = self::NULL_VALUE;
         if (count($bits) > 0 && in_array(reset($bits), $repeats)) {
             $repeat = array_shift($bits);
         }
-        $return[] = new css_style_backgroundrepeat('background-repeat', $repeat);
 
         $attachment = self::NULL_VALUE;
         if (count($bits) > 0 && in_array(reset($bits), $attachments)) {
             // scroll , fixed, inherit
             $attachment = array_shift($bits);
         }
-        $return[] = new css_style_backgroundattachment('background-attachment', $attachment);
 
         $position = self::NULL_VALUE;
         if (count($bits) > 0) {
@@ -3743,19 +3787,32 @@ class css_style_background extends css_style {
                 $position = join(' ',$widthbits);
             }
         }
-        $return[] = new css_style_backgroundposition('background-position', $position);
 
         if (count($unknownbits)) {
             foreach ($unknownbits as $bit) {
+                $bit = trim($bit);
                 if ($color === self::NULL_VALUE && css_is_colour($bit)) {
-                    $return[] = new css_style_backgroundcolor('background-color', $bit);
+                    $color = $bit;
                 } else if ($repeat === self::NULL_VALUE && in_array($bit, $repeats)) {
-                    $return[] = new css_style_backgroundrepeat('background-repeat', $bit);
+                    $repeat = $bit;
                 } else if ($attachment === self::NULL_VALUE && in_array($bit, $attachments)) {
-                    $return[] = new css_style_backgroundattachment('background-attachment', $bit);
+                    $attachment = $bit;
+                } else if ($bit !== '') {
+                    $return[] = css_style_background_advanced::init($bit);
                 }
             }
         }
+
+        if ($color === self::NULL_VALUE && $image === self::NULL_VALUE && $repeat === self::NULL_VALUE && $attachment === self::NULL_VALUE && $position === self::NULL_VALUE) {
+            // All primaries are null, return without doing anything else. There may be advanced madness there.
+            return $return;
+        }
+
+        $return[] = new css_style_backgroundcolor('background-color', $color);
+        $return[] = new css_style_backgroundimage('background-image', $image);
+        $return[] = new css_style_backgroundrepeat('background-repeat', $repeat);
+        $return[] = new css_style_backgroundattachment('background-attachment', $attachment);
+        $return[] = new css_style_backgroundposition('background-position', $position);
 
         if ($important) {
             foreach ($return as $style) {
@@ -3764,6 +3821,20 @@ class css_style_background extends css_style {
         }
 
         return $return;
+    }
+
+    /**
+     * Static helper method to switch in bracket replacements
+     *
+     * @param string $value
+     * @param array $placeholders
+     * @return string
+     */
+    protected static function replace_bracket_placeholders($value, array $placeholders) {
+        while (preg_match('/##BRACKET-\d+##/', $value, $matches)) {
+            $value = str_replace($matches[0], $placeholders[$matches[0]], $value);
+        }
+        return $value;
     }
 
     /**
@@ -3881,6 +3952,37 @@ class css_style_background extends css_style {
         }
         $return = array_merge($return, $importantstyles, $advancedstyles);
         return $return;
+    }
+}
+
+/**
+ * A advanced background style that allows multiple values to preserve unknown entities
+ *
+ * @package core_css
+ * @category css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_style_background_advanced extends css_style_generic {
+    /**
+     * Creates a new background colour style
+     *
+     * @param string $value The value of the style
+     * @return css_style_backgroundimage
+     */
+    public static function init($value) {
+        $value = preg_replace('#\s+#', ' ', $value);
+        return new css_style_background_advanced('background', $value);
+    }
+
+    /**
+     * Returns true because the advanced background image supports multiple values.
+     * e.g. -webkit-linear-gradient and -moz-linear-gradient.
+     *
+     * @return boolean
+     */
+    public function allows_multiple_values() {
+        return true;
     }
 }
 

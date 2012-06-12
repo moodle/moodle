@@ -39,6 +39,15 @@ require_once($CFG->libdir . '/csslib.php');
  */
 class css_optimiser_testcase extends advanced_testcase {
 
+    protected $optimiser;
+
+    public function get_optimiser() {
+        if (!$this->optimiser instanceof css_optimiser) {
+            $this->optimiser = new css_optimiser;
+        }
+        return $this->optimiser;
+    }
+
     /**
      * Sets up the test class
      */
@@ -59,21 +68,12 @@ class css_optimiser_testcase extends advanced_testcase {
     public function test_process() {
         $optimiser = new css_optimiser;
 
-        $this->check_background($optimiser);
-        $this->check_borders($optimiser);
-        $this->check_colors($optimiser);
-        $this->check_margins($optimiser);
-        $this->check_padding($optimiser);
-        $this->check_widths($optimiser);
-        $this->check_cursor($optimiser);
-        $this->check_vertical_align($optimiser);
-
-        $this->try_broken_css_found_in_moodle($optimiser);
-        $this->try_invalid_css_handling($optimiser);
-        $this->try_bulk_processing($optimiser);
-        $this->try_break_things($optimiser);
-        $this->try_media_rules($optimiser);
-        $this->try_keyframe_css_animation($optimiser);
+        $this->try_broken_css_found_in_moodle();
+        $this->try_invalid_css_handling();
+        $this->try_bulk_processing();
+        $this->try_break_things();
+        $this->try_media_rules();
+        $this->try_keyframe_css_animation();
     }
 
     /**
@@ -105,7 +105,8 @@ class css_optimiser_testcase extends advanced_testcase {
      *
      * @param css_optimiser $optimiser
      */
-    protected function check_background(css_optimiser $optimiser) {
+    public function test_background() {
+        $optimiser = $this->get_optimiser();
 
         $cssin = '.test {background-color: #123456;}';
         $cssout = '.test{background-color:#123456;}';
@@ -209,13 +210,18 @@ class css_optimiser_testcase extends advanced_testcase {
         $cssin = '.userenrolment {background: inherit !important;background-image:url(test.png);}';
         $cssout = '.userenrolment{background:inherit !important;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
+
+        $css = '#filesskin .yui3-widget-hd{background:#CCC;background:-webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC));background:-moz-linear-gradient(top, #FFFFFF, #CCCCCC);}';
+        $this->assertEquals($css, $optimiser->process($css));
     }
 
     /**
      * Border tests
      * @param css_optimiser $optimiser
      */
-    protected function check_borders(css_optimiser $optimiser) {
+    public function test_borders() {
+        $optimiser = $this->get_optimiser();
+
         $cssin = '.test {border: 1px solid #654321} .test {border-bottom-color: #123456}';
         $cssout = '.test{border:1px solid;border-color:#654321 #654321 #123456;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
@@ -305,7 +311,9 @@ class css_optimiser_testcase extends advanced_testcase {
      * Test colour styles
      * @param css_optimiser $optimiser
      */
-    protected function check_colors(css_optimiser $optimiser) {
+    public function test_colors() {
+        $optimiser = $this->get_optimiser();
+
         $css = '.css{}';
         $this->assertEquals($css, $optimiser->process($css));
 
@@ -397,7 +405,9 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($css, $optimiser->process($css));
     }
 
-    protected function check_widths(css_optimiser $optimiser) {
+    public function test_widths() {
+        $optimiser = $this->get_optimiser();
+
         $cssin  = '.css {width:0}';
         $cssout = '.css{width:0;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
@@ -427,7 +437,9 @@ class css_optimiser_testcase extends advanced_testcase {
      * Test margin styles
      * @param css_optimiser $optimiser
      */
-    protected function check_margins(css_optimiser $optimiser) {
+    public function test_margins() {
+        $optimiser = $this->get_optimiser();
+
         $cssin = '.one {margin: 1px 2px 3px 4px}';
         $cssout = '.one{margin:1px 2px 3px 4px;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
@@ -449,7 +461,7 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one, .two, .one.two, .one .two {margin:0;} .one.two {margin:0 7px;}';
-        $cssout = '.one, .two, .one .two{margin:0;} .one.two{margin:0 7px;}';
+        $cssout = '.one, .two{margin:0;} .one.two{margin:0 7px;} .one .two{margin:0;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.block {margin-top: 0px !important;margin-bottom: 0px !important;}';
@@ -470,7 +482,9 @@ class css_optimiser_testcase extends advanced_testcase {
      *
      * @param css_optimiser $optimiser
      */
-    protected function check_padding(css_optimiser $optimiser) {
+    public function test_padding() {
+        $optimiser = $this->get_optimiser();
+
         $cssin = '.one {padding: 1px 2px 3px 4px}';
         $cssout = '.one{padding:1px 2px 3px 4px;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
@@ -504,7 +518,7 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.one, .two, .one.two, .one .two {padding:0;} .one.two {padding:0 7px;}';
-        $cssout = '.one, .two, .one .two{padding:0;} .one.two{padding:0 7px;}';
+        $cssout = '.one, .two{padding:0;} .one.two{padding:0 7px;} .one .two{padding:0;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = '.block {padding-top: 0px !important;padding-bottom: 0px !important;}';
@@ -520,7 +534,9 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
-    protected function check_cursor(css_optimiser $optimiser) {
+    public function test_cursor() {
+        $optimiser = $this->get_optimiser();
+
         // Valid cursor
         $cssin = '.one {cursor: pointer;}';
         $cssout = '.one{cursor:pointer;}';
@@ -542,7 +558,9 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
-    protected function check_vertical_align(css_optimiser $optimiser) {
+    public function test_vertical_align() {
+        $optimiser = $this->get_optimiser();
+
         // Valid vertical aligns
         $cssin = '.one {vertical-align: baseline;}';
         $cssout = '.one{vertical-align:baseline;}';
@@ -563,7 +581,9 @@ class css_optimiser_testcase extends advanced_testcase {
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
-    protected function check_float(css_optimiser $optimiser) {
+    public function test_float() {
+        $optimiser = $this->get_optimiser();
+
         // Valid vertical aligns
         $cssin = '.one {float: inherit;}';
         $cssout = '.one{float:inherit;}';
@@ -589,7 +609,8 @@ class css_optimiser_testcase extends advanced_testcase {
      *
      * @param css_optimiser $optimiser
      */
-    protected function try_invalid_css_handling(css_optimiser $optimiser) {
+    protected function try_invalid_css_handling() {
+        $optimiser = $this->get_optimiser();
 
         $cssin = array(
             '.one{}',
@@ -655,7 +676,9 @@ class css_optimiser_testcase extends advanced_testcase {
      * Try to break some things
      * @param css_optimiser $optimiser
      */
-    protected function try_break_things(css_optimiser $optimiser) {
+    protected function try_break_things() {
+        $optimiser = $this->get_optimiser();
+
         // Wildcard test
         $cssin  = '* {color: black;}';
         $cssout = '*{color:#000;}';
@@ -717,7 +740,7 @@ class css_optimiser_testcase extends advanced_testcase {
      * A bulk processing test
      * @param css_optimiser $optimiser
      */
-    protected function try_bulk_processing(css_optimiser $optimiser) {
+    protected function try_bulk_processing() {
         global $CFG;
         $cssin = <<<CSS
 .test .one {
@@ -763,18 +786,16 @@ CSS;
 .test #one{margin:30px;}
 #new.style{color:#000;}
 
-
 @media print {
   #test .one{margin:40px;color:#123456;}
   #test #one{margin:45px;}
 }
-
 @media print,screen {
   #test .one{color:#654321;}
 }
 CSS;
         $CFG->cssoptimiserpretty = 1;
-        $this->assertEquals($optimiser->process($cssin), $cssout);
+        $this->assertEquals($this->get_optimiser()->process($cssin), $cssout);
     }
 
     /**
@@ -874,7 +895,9 @@ CSS;
      *
      * @param css_optimiser $optimiser
      */
-    public function try_broken_css_found_in_moodle(css_optimiser $optimiser) {
+    public function try_broken_css_found_in_moodle() {
+        $optimiser = $this->get_optimiser();
+
         // Notice how things are out of order here but that they get corrected
         $cssin = '.test {background:url([[pix:theme|pageheaderbgred]]) top center no-repeat}';
         $cssout = '.test{background:url([[pix:theme|pageheaderbgred]]) no-repeat top center;}';
@@ -916,7 +939,9 @@ CSS;
      * Test keyframe declarations
      * @param css_optimiser $optimiser
      */
-    public function try_keyframe_css_animation(css_optimiser $optimiser) {
+    public function try_keyframe_css_animation() {
+        $optimiser = $this->get_optimiser();
+
         $css = '.dndupload-arrow{width:56px;height:47px;position:absolute;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;background:url(\'[[pix:theme|fp/dnd_arrow]]\') no-repeat center;margin-left:-28px;}';
         $this->assertEquals($css, $optimiser->process($css));
 
@@ -954,11 +979,9 @@ CSS;
 .testtwo{color:#888;}
 .dndupload-arrow{width:56px;height:47px;position:absolute;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;background:url('[[pix:theme|fp/dnd_arrow]]') no-repeat center;margin-left:-28px;}
 
-
 @media print {
   .test{background-color:#333;}
 }
-
 @keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
 @-moz-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
 @-webkit-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
@@ -984,15 +1007,14 @@ CSS;
 CSS;
 
         $cssout = <<<CSS
-.dndupload-target,
-.filemanager.fp-select .fp-select-loading,
-.filemanager.fp-select.loading form{display:none;}
-.dndsupported .dndupload-ready .dndupload-target,
-.dndupload-uploading .dndupload-uploadinprogress,
-.filemanager.fp-select.loading .fp-select-loading{display:block;}
+.dndupload-target{display:none;}
+.dndsupported .dndupload-ready .dndupload-target{display:block;}
 .dndupload-uploadinprogress{display:none;text-align:center;}
+.dndupload-uploading .dndupload-uploadinprogress{display:block;}
 .dndupload-arrow{background:url('[[pix:theme|fp/dnd_arrow]]') no-repeat center;width:56px;height:47px;position:absolute;margin-left:-28px;animation:mymove 5s infinite;-moz-animation:mymove 5s infinite;-webkit-animation:mymove 5s infinite;}
-
+.filemanager.fp-select .fp-select-loading{display:none;}
+.filemanager.fp-select.loading .fp-select-loading{display:block;}
+.filemanager.fp-select.loading form{display:none;}
 
 @keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
 @-moz-keyframes mymove {0%{top:10px;}12%{top:40px;}30%{top:20px;}65%{top:35px;}100%{top:9px;}}
@@ -1005,7 +1027,9 @@ CSS;
      * Test media declarations
      * @param css_optimiser $optimiser
      */
-    public function try_media_rules(css_optimiser $optimiser) {
+    public function try_media_rules() {
+        $optimiser = $this->get_optimiser();
+
         $cssin = "@media print {\n  .test{background-color:#333;}\n}";
         $cssout = "@media print {\n  .test{background-color:#333;}\n}";
         $this->assertEquals($cssout, $optimiser->process($cssin));
@@ -1035,7 +1059,19 @@ CSS;
         $this->assertEquals($cssout, $optimiser->process($cssin));
 
         $cssin = "@media screen and (min-width:30px) {\n  #region-main-box{background-color:#000;}\n}\n@media screen and (min-width:31px) {\n  #region-main-box{background-color:#FFF;}\n}";
-        $cssout = "@media screen and (min-width:30px) {\n  #region-main-box{background-color:#000;}\n}\n\n@media screen and (min-width:31px) {\n  #region-main-box{background-color:#FFF;}\n}";
+        $cssout = "@media screen and (min-width:30px) {\n  #region-main-box{background-color:#000;}\n}\n@media screen and (min-width:31px) {\n  #region-main-box{background-color:#FFF;}\n}";
+        $this->assertEquals($cssout, $optimiser->process($cssin));
+    }
+
+
+    public function test_css_optimisation_ordering() {
+        $optimiser = $this->get_optimiser();
+
+        $css = '.test{display:none;} .dialogue{display:block;} .dialogue-hidden{display:none;}';
+        $this->assertEquals($css, $optimiser->process($css));
+
+        $cssin = '.test{display:none;} .dialogue-hidden{display:none;} .dialogue{display:block;}';
+        $cssout = '.test, .dialogue-hidden{display:none;} .dialogue{display:block;}';
         $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 }
