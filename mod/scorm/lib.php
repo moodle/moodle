@@ -1282,9 +1282,7 @@ function scorm_dndupload_handle($uploadinfo) {
     $files = $fs->get_area_files($context->id, 'mod_scorm', 'package', 0, 'sortorder, itemid, filepath, filename', false);
     $file = reset($files);
 
-    /*
-    * Validate the file, make sure it's a valid SCORM package!
-    */
+    // Validate the file, make sure it's a valid SCORM package!
     $packer = get_file_packer('application/zip');
     $filelist = $file->list_files($packer);
 
@@ -1311,9 +1309,7 @@ function scorm_dndupload_handle($uploadinfo) {
         }
     }
 
-    /*
-    * Create a default scorm object to pass to scorm_add_instance()!
-    */
+    // Create a default scorm object to pass to scorm_add_instance()!
     $scorm = get_config('scorm');
     $scorm->course = $uploadinfo->course->id;
     $scorm->coursemodule = $uploadinfo->coursemodule;
