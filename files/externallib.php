@@ -52,7 +52,8 @@ class core_files_external extends external_api {
                 'filearea'  => new external_value(PARAM_TEXT, 'file area'),
                 'itemid'    => new external_value(PARAM_INT, 'associated id'),
                 'filepath'  => new external_value(PARAM_PATH, 'file path'),
-                'filename'  => new external_value(PARAM_FILE, 'file name')
+                'filename'  => new external_value(PARAM_FILE, 'file name'),
+                'modified' => new external_value(PARAM_INT, 'timestamp to return files changed after this time.', VALUE_DEFAULT, null)
             )
         );
     }
@@ -66,12 +67,15 @@ class core_files_external extends external_api {
      * @param int $itemid item id
      * @param string $filepath file path
      * @param string $filename file name
+     * @param int $modified timestamp to return files changed after this time.
      * @return array
      * @since Moodle 2.2
      */
-    public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename) {
+    public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename, $modified = null) {
         global $CFG, $USER, $OUTPUT;
-        $fileinfo = self::validate_parameters(self::get_files_parameters(), array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename));
+        $fileinfo = self::validate_parameters(self::get_files_parameters(), array(
+                    'contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea,
+                    'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename, 'modified'=>$modified));
 
         $browser = get_file_browser();
 
@@ -99,7 +103,10 @@ class core_files_external extends external_api {
         $return = array();
         $return['parents'] = array();
         $return['files'] = array();
-        if ($file = $browser->get_file_info($context, $fileinfo['component'], $fileinfo['filearea'], $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'])) {
+        $list = array();
+        if ($file = $browser->get_file_info(
+            $context, $fileinfo['component'], $fileinfo['filearea'], $fileinfo['itemid'],
+                $fileinfo['filepath'], $fileinfo['filename'])) {
             $level = $file->get_parent();
             while ($level) {
                 $params = $level->get_params();
@@ -107,36 +114,42 @@ class core_files_external extends external_api {
                 array_unshift($return['parents'], $params);
                 $level = $level->get_parent();
             }
-            $list = array();
             $children = $file->get_children();
             foreach ($children as $child) {
 
                 $params = $child->get_params();
+                $timemodified = $child->get_timemodified();
 
                 if ($child->is_directory()) {
-                    $node = array(
-                        'contextid' => $params['contextid'],
-                        'component' => $params['component'],
-                        'filearea'  => $params['filearea'],
-                        'itemid'    => $params['itemid'],
-                        'filepath'  => $params['filepath'],
-                        'filename'  => $child->get_visible_name(),
-                        'url'       => null,
-                        'isdir'     => true
-                    );
-                    $list[] = $node;
+                    if ((is_null($modified)) or ($modified < $timemodified)) {
+                        $node = array(
+                            'contextid' => $params['contextid'],
+                            'component' => $params['component'],
+                            'filearea'  => $params['filearea'],
+                            'itemid'    => $params['itemid'],
+                            'filepath'  => $params['filepath'],
+                            'filename'  => $child->get_visible_name(),
+                            'url'       => null,
+                            'isdir'     => true,
+                            'timemodified' => $timemodified
+                           );
+                           $list[] = $node;
+                    }
                 } else {
-                    $node = array(
-                        'contextid' => $params['contextid'],
-                        'component' => $params['component'],
-                        'filearea'  => $params['filearea'],
-                        'itemid'    => $params['itemid'],
-                        'filepath'  => $params['filepath'],
-                        'filename'  => $child->get_visible_name(),
-                        'url'       => $child->get_url(),
-                        'isdir'     => false
-                    );
-                    $list[] = $node;
+                    if ((is_null($modified)) or ($modified < $timemodified)) {
+                        $node = array(
+                            'contextid' => $params['contextid'],
+                            'component' => $params['component'],
+                            'filearea'  => $params['filearea'],
+                            'itemid'    => $params['itemid'],
+                            'filepath'  => $params['filepath'],
+                            'filename'  => $child->get_visible_name(),
+                            'url'       => $child->get_url(),
+                            'isdir'     => false,
+                            'timemodified' => $timemodified
+                        );
+                           $list[] = $node;
+                    }
                 }
             }
         }
@@ -176,6 +189,7 @@ class core_files_external extends external_api {
                             'filename' => new external_value(PARAM_FILE, ''),
                             'isdir'    => new external_value(PARAM_BOOL, ''),
                             'url'      => new external_value(PARAM_TEXT, ''),
+                            'timemodified' => new external_value(PARAM_INT, ''),
                         )
                     )
                 )
@@ -219,12 +233,14 @@ class core_files_external extends external_api {
     public static function upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent) {
         global $USER, $CFG;
 
-        $fileinfo = self::validate_parameters(self::upload_parameters(), array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename, 'filecontent'=>$filecontent));
+        $fileinfo = self::validate_parameters(self::upload_parameters(), array(
+            'contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid,
+            'filepath'=>$filepath, 'filename'=>$filename, 'filecontent'=>$filecontent));
 
         if (!isset($fileinfo['filecontent'])) {
             throw new moodle_exception('nofile');
         }
-        // saving file
+        // Saving file.
         $dir = make_temp_directory('wsupload');
 
         if (empty($fileinfo['filename'])) {
@@ -239,7 +255,6 @@ class core_files_external extends external_api {
             $savedfilepath = $dir.$filename;
         }
 
-
         file_put_contents($savedfilepath, base64_decode($fileinfo['filecontent']));
         unset($fileinfo['filecontent']);
 
@@ -250,7 +265,7 @@ class core_files_external extends external_api {
         }
 
         if (isset($fileinfo['itemid'])) {
-            // TODO MDL-31116 in user private area, itemid is always 0
+            // TODO MDL-31116 in user private area, itemid is always 0.
             $itemid = 0;
         } else {
             throw new coding_exception('itemid cannot be empty');
@@ -265,19 +280,19 @@ class core_files_external extends external_api {
         if (!($fileinfo['component'] == 'user' and $fileinfo['filearea'] == 'private')) {
             throw new coding_exception('File can be uploaded to user private area only');
         } else {
-            // TODO MDL-31116 hard-coded to use user_private area
+            // TODO MDL-31116 hard-coded to use user_private area.
             $component = 'user';
             $filearea = 'private';
         }
 
         $browser = get_file_browser();
 
-        // check existing file
+        // Check existing file.
         if ($file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename)) {
             throw new moodle_exception('fileexist');
         }
 
-        // move file to filepool
+        // Move file to filepool.
         if ($dir = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, '.')) {
             $info = $dir->create_file_from_pathname($filename, $savedfilepath);
             $params = $info->get_params();
