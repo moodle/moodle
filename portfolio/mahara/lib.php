@@ -84,7 +84,7 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         return true;
     }
 
-    public function admin_config_form(&$mform) {
+    public static function admin_config_form(&$mform) {
         $strrequired = get_string('required');
         $hosts = self::get_mnet_hosts(); // this is called by sanity check but it's ok because it's cached
         foreach ($hosts as $host) {

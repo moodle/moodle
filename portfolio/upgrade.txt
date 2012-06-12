@@ -1,0 +1,9 @@
+This files describes API changes in /portfolio/ portfolio system,
+information provided here is intended especially for developers.
+
+=== 2.3 ===
+
+required changes:
+* The following methods must now be declared static for php5 compatibility:
+    - admin_config_form
+    - admin_config_validation
