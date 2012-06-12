@@ -45,7 +45,8 @@ class mod_forum_post_form extends moodleform {
             $forum->maxbytes = $course->maxbytes;
         }
         // TODO: add max files and max size support
-        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true, 'context'=>$modcontext);
+        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true,
+            'context'=>$modcontext, 'return_types'=>FILE_INTERNAL | FILE_EXTERNAL);
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params later using set_data
         $mform->addElement('text', 'subject', get_string('subject', 'forum'), 'size="48"');

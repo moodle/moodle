@@ -144,7 +144,8 @@ if ($edit) {
                         'subdirs'   => false,
                         'maxfiles'  => $maxfiles,
                         'maxbytes'  => $maxbytes,
-                        'context'   => $workshop->context
+                        'context'   => $workshop->context,
+                        'return_types' => FILE_INTERNAL | FILE_EXTERNAL
                       );
 
     $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes, 'return_types' => FILE_INTERNAL);

@@ -42,7 +42,8 @@ class assignment_online extends assignment_base {
                 'noclean'  => false,
                 'maxfiles' => EDITOR_UNLIMITED_FILES,
                 'maxbytes' => $this->course->maxbytes,
-                'context'  => $this->context
+                'context'  => $this->context,
+                'return_types' => FILE_INTERNAL | FILE_EXTERNAL
             );
 
             $data = new stdClass();

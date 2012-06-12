@@ -106,7 +106,8 @@ class assign_submission_onlinetext extends assign_submission_plugin {
            'noclean' => false,
            'maxfiles' => EDITOR_UNLIMITED_FILES,
            'maxbytes' => $this->assignment->get_course()->maxbytes,
-           'context' => $this->assignment->get_context()
+           'context' => $this->assignment->get_context(),
+           'return_types' => FILE_INTERNAL | FILE_EXTERNAL
         );
         return $editoroptions;
     }
