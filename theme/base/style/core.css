@@ -819,8 +819,8 @@ sup {vertical-align: super;}
 }
 
 .moodle-dialogue-base .moodle-dialogue {
-    background-color: transparent;
-    border: 0px solid transparent!important;
+    background: none!important;
+    border: 0 none!important;
 }
 
 .chooserdialogue .moodle-dialogue-wrap {
@@ -882,7 +882,7 @@ sup {vertical-align: super;}
     max-height: 550px;
     overflow-x: hidden;
     overflow-y: auto;
-    max-width: 18.5em;
+    max-width: 20.3em;
     box-shadow: inset 0px 0px 30px 0px #CCCCCC;
     -webkit-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
     -moz-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
@@ -902,13 +902,10 @@ sup {vertical-align: super;}
     padding-bottom: 0.4em;
 }
 
-.choosercontainer #chooseform .subtype {
-    margin-bottom: 0;
-    padding: 0 0 0 1em;
-}
-
 .choosercontainer #chooseform .option .typename,
-.choosercontainer #chooseform .option span.modicon img.icon {
+.choosercontainer #chooseform .option span.modicon img.icon,
+.choosercontainer #chooseform .nonoption .typename,
+.choosercontainer #chooseform .nonoption span.modicon img.icon {
     padding: 0 0 0 0.5em;
 }
 
@@ -924,6 +921,21 @@ sup {vertical-align: super;}
     border-bottom: 1px solid #FFFFFF;
 }
 
+.choosercontainer #chooseform .nonoption {
+    padding-left: 2.7em;
+    padding-top: 0.3em;
+    padding-bottom: 0.1em;
+}
+
+.choosercontainer #chooseform .subtype {
+    margin-bottom: 0;
+    padding: 0 1.6em 0 3.2em;
+}
+
+.choosercontainer #chooseform .subtype .typename {
+    margin: 0 0 0 0.2em;
+}
+
 /* The instruction/help area */
 .choosercontainer #chooseform .instruction,
 .jsenabled .choosercontainer #chooseform .typesummary {
@@ -932,7 +944,7 @@ sup {vertical-align: super;}
     top: 0px;
     right: 0px;
     bottom: 0px;
-    left: 18.5em;
+    left: 20.3em;
     margin: 0;
     padding: 2em 2em 2em 2.4em;
     background-color: white;
