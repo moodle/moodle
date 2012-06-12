@@ -152,7 +152,8 @@ class page_requirements_manager {
     public function __construct() {
         global $CFG;
 
-        $sep = empty($CFG->slasharguments) ? '?' : '/';
+        // You may need to set up URL rewrite rule because oversized URLs might not be allowed by web server.
+        $sep = empty($CFG->yuislasharguments) ? '?' : '/';
 
         require_once("$CFG->libdir/yui/phploader/phploader/loader.php");
 
