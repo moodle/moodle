@@ -340,8 +340,8 @@ class assign_grading_table extends table_sql implements renderable {
             $link = $this->output->action_link($url, $icon);
             $separator = $this->output->spacer(array(), true);
         }
-
-        $grade = $this->display_grade($row->grade, $this->quickgrading, $row->userid, $row->timemarked);
+        $gradingdisabled = $this->assignment->grading_disabled($row->id);
+        $grade = $this->display_grade($row->grade, $this->quickgrading && !$gradingdisabled, $row->userid, $row->timemarked);
 
         //return $grade . $separator . $link;
         return $link . $separator . $grade;
