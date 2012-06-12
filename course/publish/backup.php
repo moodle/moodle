@@ -81,7 +81,7 @@ if ($backup->get_stage() !== backup_ui::STAGE_COMPLETE) {
         echo $renderer->dependency_notification(get_string('dependenciesenforced', 'backup'));
     }
     echo $renderer->progress_bar($backup->get_progress_bar());
-    echo $backup->display();
+    echo $backup->display($renderer);
     echo $OUTPUT->footer();
     die();
 }
