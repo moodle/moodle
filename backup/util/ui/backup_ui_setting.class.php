@@ -129,7 +129,7 @@ class base_setting_ui {
      * @param string $label
      */
     public function set_label($label) {
-        if (empty($label) || $label !== clean_param($label, PARAM_TEXT)) {
+        if ((string)$label === '' || $label !== clean_param($label, PARAM_TEXT)) {
             throw new base_setting_ui_exception('setting_invalid_ui_label');
         }
         $this->label = $label;
