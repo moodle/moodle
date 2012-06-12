@@ -1258,3 +1258,72 @@ function scorm_get_completion_state($course, $cm, $userid, $type) {
 
     return $result;
 }
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function scorm_dndupload_register() {
+    return array('files' => array(
+        array('extension' => 'zip', 'message' => get_string('dnduploadscorm', 'scorm'))
+    ));
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function scorm_dndupload_handle($uploadinfo) {
+
+    $context = context_module::instance($uploadinfo->coursemodule);
+    file_save_draft_area_files($uploadinfo->draftitemid, $context->id, 'mod_scorm', 'package', 0);
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'mod_scorm', 'package', 0, 'sortorder, itemid, filepath, filename', false);
+    $file = reset($files);
+
+    /*
+    * Validate the file, make sure it's a valid SCORM package!
+    */
+    $packer = get_file_packer('application/zip');
+    $filelist = $file->list_files($packer);
+
+    if (!is_array($filelist)) {
+        return false;
+    } else {
+        $manifestpresent = false;
+        $aiccfound = false;
+
+        foreach ($filelist as $info) {
+            if ($info->pathname == 'imsmanifest.xml') {
+                $manifestpresent = true;
+                break;
+            }
+
+            if (preg_match('/\.cst$/', $info->pathname)) {
+                $aiccfound = true;
+                break;
+            }
+        }
+
+        if (!$manifestpresent && !$aiccfound) {
+            return false;
+        }
+    }
+
+    /*
+    * Create a default scorm object to pass to scorm_add_instance()!
+    */
+    $scorm = get_config('scorm');
+    $scorm->course = $uploadinfo->course->id;
+    $scorm->coursemodule = $uploadinfo->coursemodule;
+    $scorm->cmidnumber = '';
+    $scorm->name = $uploadinfo->displayname;
+    $scorm->scormtype = SCORM_TYPE_LOCAL;
+    $scorm->reference = $file->get_filename();
+    $scorm->intro = '';
+    $scorm->width = $scorm->framewidth;
+    $scorm->height = $scorm->frameheight;
+
+    return scorm_add_instance($scorm, null);
+}
