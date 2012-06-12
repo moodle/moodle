@@ -39,7 +39,7 @@ require_once($CFG->dirroot.'/course/lib.php');
 function dndupload_add_to_course($course, $modnames) {
     global $CFG, $PAGE;
 
-    $showstatus = optional_param('editingenabled', false, PARAM_BOOL);
+    $showstatus = optional_param('notifyeditingon', false, PARAM_BOOL);
 
     // Get all handlers.
     $handler = new dndupload_handler($course, $modnames);

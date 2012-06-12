@@ -130,7 +130,7 @@
             if ($course->id == SITEID) {
                 redirect($CFG->wwwroot .'/?redirect=0');
             } else {
-                $url = new moodle_url($PAGE->url, array('editingenabled' => 1));
+                $url = new moodle_url($PAGE->url, array('notifyeditingon' => 1));
                 redirect($url);
             }
         } else if (($edit == 0) and confirm_sesskey()) {
