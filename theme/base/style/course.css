@@ -8,6 +8,7 @@
 
 .course-content .section .activity img.activityicon {vertical-align:middle;height:16px;width:16px;}
 .course-content .section .activity .commands img.iconsmall {vertical-align: baseline;}
+.course-content .section .activity .commands img {padding: 0 2px;}
 .course-content .section-summary { border: 1px solid #DDD; margin-top: 5px; list-style: none; }
 .course-content .section-summary .section-title  { margin: 2px 5px 2px 5px; }
 .course-content .section-summary .summarytext { margin: 2px 5px 2px 5px; }
