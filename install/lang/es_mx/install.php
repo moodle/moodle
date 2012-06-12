@@ -30,15 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clianswerno'] = 'n';
-$string['cliansweryes'] = 's';
-$string['cliincorrectvalueerror'] = 'Error, valor incorrecto  "{$a->value}" para "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Valor incorrecto, por favor, inténtelo de nuevo';
-$string['clitypevalue'] = 'valor del tipo';
-$string['clitypevaluedefault'] = 'valor del tipo, pulse Enter para utilizar el valor por defecto ({$a})';
-$string['cliunknowoption'] = 'Opciones no reconocidas:
-{$a}
-Por favor, utilice la opción Ayuda.';
-$string['cliyesnoprompt'] = 'escriba s (sí) o n (no)';
-$string['environmentrequireinstall'] = 'debe estar instalado y activado';
-$string['environmentrequireversion'] = 'versión {$a->needed} es obligatoria y está ejecutando {$a->current}';
+$string['databasehost'] = 'host de la Base de Datos';
+$string['environmentsub2'] = 'Cada versión de Moodle tiene algún requisito mínimo de la versión de PHP y un número obligatorio de extensiones de PHP. Una comprobación del entorno completo se realiza antes de cada instalación y actualización. Por favor, póngase en contacto con el administrador del servidor si no sabe cómo instalar la nueva versión o habilitar las extensiones PHP.';
+$string['errorsinenvironment'] = '¡La comprobación del entorno falló!';
+$string['welcomep20'] = 'Si está viendo esta página es porque ha podido ejecutar el paquete <strong>{$a->packname} {$a->packversion}</strong> en su computadora. !Enhorabuena!';
+$string['welcomep30'] = 'Esta versión de <strong>{$a->installername}</strong> incluye las aplicaciones necesarias para que <strong>Moodle</strong> funcione en su computadora principalmente:';
+$string['welcomep60'] = 'Las siguientes páginas le guiarán a través de algunos sencillos pasos para configurar y ajustar <strong>Moodle</strong> en su computadora. Puede utilizar los valores por defecto sugeridos o, de forma opcional, modificarlos para que se ajusten a sus necesidades.';
