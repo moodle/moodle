@@ -93,6 +93,11 @@ class repository_equella extends repository {
                 . '&attachmentUuidUrls=true'
                 . '&options='.urlencode($this->get_option('equella_options') . $mimetypesstr)
                 . $restrict;
+
+        $manageurl = $this->get_option('equella_url');
+        $manageurl = str_ireplace('signon.do', 'logon.do', $manageurl);
+        $manageurl = $this->appendtoken($manageurl);
+
         $list = array();
         $list['object'] = array();
         $list['object']['type'] = 'text/html';
@@ -100,6 +105,7 @@ class repository_equella extends repository {
         $list['nologin']  = true;
         $list['nosearch'] = true;
         $list['norefresh'] = true;
+        $list['manage'] = $manageurl;
         return $list;
     }
 
