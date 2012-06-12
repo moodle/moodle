@@ -195,7 +195,7 @@ class repository_equella extends repository {
      *
      * @param moodleform $mform
      */
-    public function instance_config_form($mform) {
+    public static function instance_config_form($mform) {
         $mform->addElement('text', 'equella_url', get_string('equellaurl', 'repository_equella'));
         $mform->setType('equella_url', PARAM_URL);
 

@@ -459,7 +459,7 @@ class repository_flickr_public extends repository {
      * Add Instance settings input to Moodle form
      * @param object $mform
      */
-    public function instance_config_form($mform) {
+    public static function instance_config_form($mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr_public'));
         $mform->addElement('checkbox', 'usewatermarks', get_string('watermark', 'repository_flickr_public'));
         $mform->setDefault('usewatermarks', 0);
