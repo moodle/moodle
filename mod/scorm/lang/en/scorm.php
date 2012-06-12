@@ -143,7 +143,7 @@ $string['interactions'] = 'Interactions';
 $string['invalidactivity'] = 'Scorm activity is incorrect';
 $string['last'] = 'Last accessed on';
 $string['lastaccess'] = 'Last access';
-$string['lastattempt'] = 'Last attempt';
+$string['lastattempt'] = 'Last completed attempt';
 $string['lastattemptlock'] = 'Lock after final attempt';
 $string['lastattemptlock_help'] = 'If enabled, a student is prevented from launching the SCORM player after using up all their allocated attempts.';
 $string['lastattemptlockdesc'] = 'This preference sets the default value for the lock after final attempt setting';
@@ -281,7 +281,7 @@ $string['versionwarning'] = 'The manifest version is older than 1.3, warning at 
 $string['viewallreports'] = 'View reports for {$a} attempts';
 $string['viewalluserreports'] = 'View reports for {$a} users';
 $string['whatgrade'] = 'Attempts grading';
-$string['whatgrade_help'] = 'If multiple attempts are allowed, this setting specifies whether the highest, average (mean), first or last attempt is recorded in the gradebook.
+$string['whatgrade_help'] = 'If multiple attempts are allowed, this setting specifies whether the highest, average (mean), first or last completed attempt is recorded in the gradebook.
 
 Handling of Multiple Attempts
 
