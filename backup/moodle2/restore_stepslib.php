@@ -1027,7 +1027,7 @@ class restore_section_structure_step extends restore_structure_step {
         // Section exists, update non-empty information
         } else {
             $section->id = $secrec->id;
-            if (empty($secrec->name)) {
+            if ((string)$secrec->name === '') {
                 $section->name = $data->name;
             }
             if (empty($secrec->summary)) {
