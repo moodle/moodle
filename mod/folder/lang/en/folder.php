@@ -35,7 +35,7 @@ $string['modulename_help'] = 'The folder module enables a teacher to display a n
 
 A folder may be used
 
-* For a series of files on one topic, for example a set of past examination papers in pdf format
+* For a series of files on one topic, for example a set of past examination papers in pdf format or a collection of image files for use in student projects
 * To provide a shared uploading space for teachers on the course page (keeping the folder hidden so that only teachers can see it)';
 $string['modulename_link'] = 'mod/folder/view';
 $string['modulenameplural'] = 'Folders';

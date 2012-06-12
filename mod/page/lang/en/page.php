@@ -38,9 +38,11 @@ $string['modulename_help'] = 'The page module enables a teacher to create a web 
 
 Advantages of using the page module rather than the file module include the resource being more accessible (for example to users of mobile devices) and easier to update.
 
+For large amounts of content, it\'s recommended that a book is used rather than a page.
+
 A page may be used
 
-* To present the terms and conditions of a course or the course syllabus
+* To present the terms and conditions of a course or a summary of the course syllabus
 * To embed several videos or sound files together with some explanatory text';
 $string['modulename_link'] = 'mod/page/view';
 $string['modulenameplural'] = 'Pages';

@@ -234,24 +234,24 @@ $string['modeflatoldestfirst'] = 'Display replies flat, with oldest first';
 $string['modenested'] = 'Display replies in nested form';
 $string['modethreaded'] = 'Display replies in threaded form';
 $string['modulename'] = 'Forum';
-$string['modulename_help'] = 'The forum activity module enables participants to have asynchronous discussions.
+$string['modulename_help'] = 'The forum activity module enables participants to have asynchronous discussions i.e. discussions that take place over an extended period of time.
 
-There are several forum types to choose from, such as a standard forum where anyone can start a new discussion at any time, a forum where each student can post exactly one discussion, or a question and answer forum where students must first post before being able to view other students\' posts. A teacher can allow files to be attached to forum posts. Attached images are displayed in the forum post.
+There are several forum types to choose from, such as a standard forum where anyone can start a new discussion at any time; a forum where each student can post exactly one discussion; or a question and answer forum where students must first post before being able to view other students\' posts. A teacher can allow files to be attached to forum posts. Attached images are displayed in the forum post.
 
-Participants can subscribe to a forum to receive notifications of new forum posts. A teacher can set the subscription mode to optional, forced or auto, or prevent subscription completely. If required, students can be blocked from posting more than a given number of posts in a given time period to prevent individuals from dominating discussions.
+Participants can subscribe to a forum to receive notifications of new forum posts. A teacher can set the subscription mode to optional, forced or auto, or prevent subscription completely. If required, students can be blocked from posting more than a given number of posts in a given time period; this can prevent individuals from dominating discussions.
 
-Forum posts can be rated by teachers or students (peer evaluation). Ratings are aggregated to form a final grade which is recorded in the gradebook.
+Forum posts can be rated by teachers or students (peer evaluation). Ratings can be aggregated to form a final grade which is recorded in the gradebook.
 
 Forums have many uses, such as
 
-* An introductory space for students on the course to get to know each other
-* A place for course announcements (using a news forum with forced subscription)
-* A help centre where tutors and students can give advice
-* An informal method of sharing (and potentially peer assessing) documents between students
+* A social space for students to get to know each other
+* For course announcements (using a news forum with forced subscription)
+* For discussing course content or reading materials
 * For continuing online an issue raised previously in a face-to-face session
-* A place for teacher-only discussions (using a hidden forum)
-* For extension activities, for example ‘brain teasers’ for students to ponder and suggest solutions to
-* A social space for off-topic discussions';
+* For teacher-only discussions (using a hidden forum)
+* A help centre where tutors and students can give advice
+* A one-on-one support area for private student-teacher communications (using a forum with separate groups and with one student per group)
+* For extension activities, for example ‘brain teasers’ for students to ponder and suggest solutions to';
 $string['modulename_link'] = 'mod/forum/view';
 $string['modulenameplural'] = 'Forums';
 $string['more'] = 'more';
