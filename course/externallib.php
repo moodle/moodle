@@ -52,7 +52,7 @@ class moodle_course_external extends external_api {
      * @param array $options
      * @return array
      */
-    public static function get_courses($options) {
+    public static function get_courses($options = array()) {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
 
