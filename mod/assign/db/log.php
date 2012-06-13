@@ -30,6 +30,7 @@ $logs = array(
     array('module'=>'assign', 'action'=>'download all submissions', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'grade submission', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'lock submission', 'mtable'=>'assign', 'field'=>'name'),
+    array('module'=>'assign', 'action'=>'reveal identities', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'revert submission to draft', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'submission statement accepted', 'mtable'=>'assign', 'field'=>'name'),
     array('module'=>'assign', 'action'=>'submit', 'mtable'=>'assign', 'field'=>'name'),

@@ -131,12 +131,16 @@ class mod_assign_renderer extends plugin_renderer_base {
         }
         $o .= $this->output->container_start('usersummary');
         $o .= $this->output->box_start('boxaligncenter usersummarysection');
-        $o .= $this->output->user_picture($summary->user);
-        $o .= $this->output->spacer(array('width'=>30));
-        $o .= $this->output->action_link(new moodle_url('/user/view.php',
-                                                        array('id' => $summary->user->id,
-                                                              'course'=>$summary->courseid)),
-                                                              fullname($summary->user, $summary->viewfullnames));
+        if ($summary->blindmarking) {
+            $o .= get_string('hiddenuser', 'assign', $summary->uniqueidforuser);
+        } else {
+            $o .= $this->output->user_picture($summary->user);
+            $o .= $this->output->spacer(array('width'=>30));
+            $o .= $this->output->action_link(new moodle_url('/user/view.php',
+                                                            array('id' => $summary->user->id,
+                                                                  'course'=>$summary->courseid)),
+                                                                  fullname($summary->user, $summary->viewfullnames));
+        }
         $o .= $this->output->box_end();
         $o .= $this->output->container_end();
 
