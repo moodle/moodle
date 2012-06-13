@@ -645,6 +645,32 @@ abstract class repository {
     }
 
     /**
+     * Parses the 'source' returned by moodle repositories and returns an instance of stored_file
+     *
+     * @param string $source
+     * @return stored_file|null
+     */
+    public static function get_moodle_file($source) {
+        $params = unserialize(base64_decode($source));
+        if (empty($params) || !is_array($params)) {
+            return null;
+        }
+        foreach (array('contextid', 'itemid', 'filename', 'filepath', 'component') as $key) {
+            if (!array_key_exists($key, $params)) {
+                return null;
+            }
+        }
+        $contextid  = clean_param($params['contextid'], PARAM_INT);
+        $component  = clean_param($params['component'], PARAM_COMPONENT);
+        $filearea   = clean_param($params['filearea'],  PARAM_AREA);
+        $itemid     = clean_param($params['itemid'],    PARAM_INT);
+        $filepath   = clean_param($params['filepath'],  PARAM_PATH);
+        $filename   = clean_param($params['filename'],  PARAM_FILE);
+        $fs = get_file_storage();
+        return $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename);
+    }
+
+    /**
      * This function is used to copy a moodle file to draft area
      *
      * @param string $encoded The metainfo of file, it is base64 encoded php serialized data

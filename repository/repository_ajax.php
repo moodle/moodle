@@ -231,6 +231,16 @@ switch ($action) {
             $record->timemodified = $now;
             $record->userid = $USER->id;
 
+            // If file is already a reference, set $source = file source, $repo = file repository
+            if ($repo->has_moodle_files()) {
+                $file = repository::get_moodle_file($source);
+                if ($file && $file->is_external_file()) {
+                    $source = $file->get_reference();
+                    $repo_id = $file->get_repository_id();
+                    $repo = repository::get_repository_by_id($repo_id, $contextid, $repooptions);
+                }
+            }
+
             if ($usefilereference) {
                 $reference = $repo->get_file_reference($source);
                 // get reference life time from repo
