@@ -114,6 +114,46 @@ class file_info_stored extends file_info {
     }
 
     /**
+     * Returns the localised human-readable name of the file together with virtual path
+     *
+     * @return string
+     */
+    public function get_readable_fullname() {
+        global $CFG;
+        // retrieve the readable path with all parents (excluding the top most 'System')
+        $fpath = array();
+        for ($parent = $this; $parent && $parent->get_parent(); $parent = $parent->get_parent()) {
+            array_unshift($fpath, $parent->get_visible_name());
+        }
+
+        if ($this->lf->get_component() == 'user' && $this->lf->get_filearea() == 'private') {
+            // use the special syntax for user private files - 'USERNAME Private files: PATH'
+            $username = array_shift($fpath);
+            array_shift($fpath); // get rid of "Private Files/" in the beginning of the path
+            return get_string('privatefilesof', 'repository', $username). ': '. join('/', $fpath);
+        } else {
+            // for all other files (except user private files) return 'Server files: PATH'
+
+            // first, get and cache the name of the repository_local (will be used as prefix for file names):
+            static $replocalname = null;
+            if ($replocalname === null) {
+                require_once($CFG->dirroot . "/repository/lib.php");
+                $instances = repository::get_instances(array('type' => 'local'));
+                if (count($instances)) {
+                    $firstinstance = reset($instances);
+                    $replocalname = $firstinstance->get_name();
+                } else if (get_string_manager()->string_exists('pluginname', 'repository_local')) {
+                    $replocalname = get_string('pluginname', 'repository_local');
+                } else {
+                    $replocalname = get_string('arearoot', 'repository');
+                }
+            }
+
+            return $replocalname. ': '. join('/', $fpath);
+        }
+    }
+
+    /**
      * Returns file download url
      *
      * @param bool $forcedownload Whether or not force download

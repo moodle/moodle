@@ -203,83 +203,6 @@ class repository_coursefiles extends repository {
     }
 
     /**
-     * Unpack file info and pack it, mainly for data validation
-     *
-     * @param string $source
-     * @return string file referece
-     */
-    public function get_file_reference($source) {
-        $params = unserialize(base64_decode($source));
-
-        if (!is_array($params)) {
-            throw new repository_exception('invalidparams', 'repository');
-        }
-
-        $filename  = is_null($params['filename'])  ? null : clean_param($params['filename'], PARAM_FILE);
-        $filepath  = is_null($params['filepath'])  ? null : clean_param($params['filepath'], PARAM_PATH);;
-        $contextid = is_null($params['contextid']) ? null : clean_param($params['contextid'], PARAM_INT);
-
-        $reference = array();
-        // hard coded filearea, component and itemid for security
-        $reference['component'] = 'course';
-        $reference['filearea']  = 'legacy';
-        $reference['itemid']    = 0;
-        $reference['contextid'] = $contextid;
-        $reference['filepath']  = $filepath;
-        $reference['filename']  = $filename;
-
-        return file_storage::pack_reference($reference);
-    }
-
-    /**
-     * Get file from external repository by reference
-     * {@link repository::get_file_reference()}
-     * {@link repository::get_file()}
-     *
-     * @param stdClass $reference file reference db record
-     * @return stdClass|null|false
-     */
-    public function get_file_by_reference($reference) {
-        $fs = get_file_storage();
-        $ref = $reference->reference;
-        $params = file_storage::unpack_reference($ref);
-        if (!is_array($params)) {
-            throw new repository_exception('invalidparams', 'repository');
-        }
-        $filename  = is_null($params['filename'])  ? null : clean_param($params['filename'], PARAM_FILE);
-        $filepath  = is_null($params['filepath'])  ? null : clean_param($params['filepath'], PARAM_PATH);;
-        $contextid = is_null($params['contextid']) ? null : clean_param($params['contextid'], PARAM_INT);
-
-        // hard coded filearea, component and itemid for security
-        $storedfile = $fs->get_file($contextid, 'course', 'legacy', 0, $filepath, $filename);
-
-        $fileinfo = new stdClass;
-        $fileinfo->contenthash = $storedfile->get_contenthash();
-        $fileinfo->filesize    = $storedfile->get_filesize();
-        return $fileinfo;
-    }
-
-    /**
-     * Return human readable reference information
-     * {@link stored_file::get_reference()}
-     *
-     * @param string $reference
-     * @return string|null
-     */
-    public function get_reference_details($reference) {
-        $params = file_storage::unpack_reference($reference);
-        list($context, $course, $cm) = get_context_info_array($params['contextid']);
-        $coursename = '';
-        if (!empty($course)) {
-            $coursename = '"' . format_string($course->shortname, true, array('context' => get_course_context($context))) . '" ' . get_string('courselegacyfiles');
-        } else {
-            $coursename = get_string('courselegacyfiles');
-        }
-        // Indicate this is from user private area
-        return $coursename . ': ' . $params['filepath'] . $params['filename'];
-    }
-
-    /**
      * Return reference file life time
      *
      * @param string $ref
@@ -288,30 +211,5 @@ class repository_coursefiles extends repository {
     public function get_reference_file_lifetime($ref) {
         // this should be realtime
         return 0;
-    }
-
-    /**
-     * Repository method to serve file
-     *
-     * @param stored_file $storedfile
-     * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
-     * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
-     * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
-     * @param array $options additional options affecting the file serving
-     */
-    public function send_file($storedfile, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
-        $fs = get_file_storage();
-
-        $reference = $storedfile->get_reference();
-        $params = file_storage::unpack_reference($reference);
-
-        $filename  = is_null($params['filename'])  ? null : clean_param($params['filename'], PARAM_FILE);
-        $filepath  = is_null($params['filepath'])  ? null : clean_param($params['filepath'], PARAM_PATH);;
-        $contextid = is_null($params['contextid']) ? null : clean_param($params['contextid'], PARAM_INT);
-
-        // hard coded file area and component for security
-        $srcfile = $fs->get_file($contextid, 'course', 'legacy', 0, $filepath, $filename);
-
-        send_stored_file($srcfile, $lifetime, $filter, $forcedownload, $options);
     }
 }

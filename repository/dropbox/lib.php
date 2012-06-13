@@ -362,12 +362,14 @@ class repository_dropbox extends repository {
     }
 
     /**
-     * Get file from external repository by reference
+     * Returns information about file in this repository by reference
      * {@link repository::get_file_reference()}
      * {@link repository::get_file()}
      *
+     * Returns null if file not found or is not readable
+     *
      * @param stdClass $reference file reference db record
-     * @return stdClass|null|false
+     * @return null|stdClass that has 'filepath' property
      */
     public function get_file_by_reference($reference) {
         $reference  = unserialize($reference->reference);
@@ -379,11 +381,11 @@ class repository_dropbox extends repository {
             $path = $this->get_file($reference->path);
             $cachedfilepath = cache_file::create_from_file($reference, $path['path']);
         }
-
-        $fileinfo = new stdClass;
-        $fileinfo->filepath = $cachedfilepath;
-
-        return $fileinfo;
+        if ($cachedfilepath && is_readable($cachedfilepath)) {
+            return (object)array('filepath' => $cachedfilepath);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -406,36 +408,48 @@ class repository_dropbox extends repository {
      * {@link stored_file::get_reference()}
      *
      * @param string $reference
-     * @return string|null
+     * @param int $filestatus status of the file, 0 - ok, 666 - source missing
+     * @return string
      */
-    public function get_reference_details($reference) {
+    public function get_reference_details($reference, $filestatus = 0) {
         $ref  = unserialize($reference);
-        // Indicate this is from dropbox with path
-        return $this->get_name() . ': ' . $ref->path;
+        $details = $this->get_name();
+        if (isset($ref->path)) {
+            $details .=  ': '. $ref->path;
+        }
+        if (isset($ref->path) && !$filestatus) {
+            // Indicate this is from dropbox with path
+            return $details;
+        } else {
+            return get_string('lostsource', 'repository', $details);
+        }
     }
 
     /**
-     * Repository method to serve file
+     * Repository method to serve the referenced file
      *
-     * @param stored_file $storedfile
+     * This method is ivoked from {@link send_stored_file()}.
+     * Dropbox repository first caches the file by reading it into temporary folder and then
+     * serves from there.
+     *
+     * @param stored_file $storedfile the file that contains the reference
      * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
      * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
      * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
      * @param array $options additional options affecting the file serving
      */
     public function send_file($storedfile, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
-        $reference = unserialize($storedfile->get_reference());
-
-        $cachedfilepath = cache_file::get($reference, array('ttl' => $this->cachedfilettl));
-        if ($cachedfilepath === false) {
-            // Cache the file.
-            $this->set_access_key($reference->access_key);
-            $this->set_access_secret($reference->access_secret);
-            $path = $this->get_file($reference->path);
-            $cachedfilepath = cache_file::create_from_file($reference, $path['path']);
+        $fileinfo = $this->get_file_by_reference((object)array('reference' => $storedfile->get_reference()));
+        if ($fileinfo && !empty($fileinfo->filepath) && is_readable($fileinfo->filepath)) {
+            $filename = $storedfile->get_filename();
+            if ($options && isset($options['filename'])) {
+                $filename = $options['filename'];
+            }
+            $dontdie = ($options && isset($options['dontdie']));
+            send_file($fileinfo->filepath, $filename, $lifetime , $filter, false, $forcedownload, '', $dontdie);
+        } else {
+            send_file_not_found();
         }
-
-        send_file($cachedfilepath, $storedfile->get_filename(), 'default' , $filter, false, $forcedownload);
     }
 
     public function cron() {

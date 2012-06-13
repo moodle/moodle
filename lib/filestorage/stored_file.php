@@ -522,29 +522,16 @@ class stored_file {
     }
 
     /**
-     * Sync external files
+     * Synchronize file if it is a reference and needs synchronizing
      *
-     * @return bool true if file content changed, false if not
+     * Updates contenthash and filesize
      */
     public function sync_external_file() {
-        global $CFG, $DB;
-        if (empty($this->file_record->referencefileid)) {
-            return false;
-        }
-        if (empty($this->file_record->referencelastsync) or ($this->file_record->referencelastsync + $this->file_record->referencelifetime < time())) {
+        global $CFG;
+        if (!empty($this->file_record->referencefileid)) {
             require_once($CFG->dirroot.'/repository/lib.php');
-            if (repository::sync_external_file($this)) {
-                $prevcontent = $this->file_record->contenthash;
-                $sql = "SELECT f.*, r.repositoryid, r.reference
-                          FROM {files} f
-                     LEFT JOIN {files_reference} r
-                               ON f.referencefileid = r.id
-                         WHERE f.id = ?";
-                $this->file_record = $DB->get_record_sql($sql, array($this->file_record->id), MUST_EXIST);
-                return ($prevcontent !== $this->file_record->contenthash);
-            }
+            repository::sync_external_file($this);
         }
-        return false;
     }
 
     /**
@@ -858,7 +845,45 @@ class stored_file {
      * @return string
      */
     public function get_reference_details() {
-        return $this->repository->get_reference_details($this->get_reference());
+        return $this->repository->get_reference_details($this->get_reference(), $this->get_status());
+    }
+
+    /**
+     * Called after reference-file has been synchronized with the repository
+     *
+     * We update contenthash, filesize and status in files table if changed
+     * and we always update lastsync in files_reference table
+     *
+     * @param type $contenthash
+     * @param type $filesize
+     */
+    public function set_synchronized($contenthash, $filesize, $status = 0) {
+        global $DB;
+        if (!$this->is_external_file()) {
+            return;
+        }
+        $now = time();
+        $filerecord = new stdClass();
+        if ($this->get_contenthash() !== $contenthash) {
+            $filerecord->contenthash = $contenthash;
+        }
+        if ($this->get_filesize() != $filesize) {
+            $filerecord->filesize = $filesize;
+        }
+        if ($this->get_status() != $status) {
+            $filerecord->status = $status;
+        }
+        $filerecord->referencelastsync = $now; // TODO MDL-33416 remove this
+        if (!empty($filerecord)) {
+            $this->update($filerecord);
+        }
+
+        $DB->set_field('files_reference', 'lastsync', $now, array('id'=>$this->get_referencefileid()));
+        // $this->file_record->lastsync = $now; // TODO MDL-33416 uncomment or remove
+    }
+
+    public function set_missingsource() {
+        $this->set_synchronized($this->get_contenthash(), 0, 666);
     }
 
     /**

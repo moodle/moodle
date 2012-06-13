@@ -1652,10 +1652,22 @@ class file_storage {
      * Unpack reference field
      *
      * @param string $str
+     * @param bool $cleanparams if set to true, array elements will be passed through {@link clean_param()}
      * @return array
      */
-    public static function unpack_reference($str) {
-        return unserialize(base64_decode($str));
+    public static function unpack_reference($str, $cleanparams = false) {
+        $params = unserialize(base64_decode($str));
+        if (is_array($params) && $cleanparams) {
+            $params = array(
+                'component' => is_null($params['component']) ? ''   : clean_param($params['component'], PARAM_COMPONENT),
+                'filearea'  => is_null($params['filearea'])  ? ''   : clean_param($params['filearea'], PARAM_AREA),
+                'itemid'    => is_null($params['itemid'])    ? 0    : clean_param($params['itemid'], PARAM_INT),
+                'filename'  => is_null($params['filename'])  ? null : clean_param($params['filename'], PARAM_FILE),
+                'filepath'  => is_null($params['filepath'])  ? null : clean_param($params['filepath'], PARAM_PATH),
+                'contextid' => is_null($params['contextid']) ? null : clean_param($params['contextid'], PARAM_INT)
+            );
+        }
+        return $params;
     }
 
     /**
