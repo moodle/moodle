@@ -126,7 +126,7 @@ class repository_s3 extends repository {
      * @return string|null
      */
     public function get_file_source_info($filepath) {
-        return 's3:' . $filepath;
+        return 'Amazon S3:' . $filepath;
     }
 
     /**
