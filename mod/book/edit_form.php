@@ -29,10 +29,18 @@ require_once($CFG->libdir.'/formslib.php');
 class book_chapter_edit_form extends moodleform {
 
     function definition() {
-        global $CFG;
 
         $chapter = $this->_customdata['chapter'];
         $options = $this->_customdata['options'];
+
+        //Disabled subchapter option when editing first node
+        $disabledmsg = null;
+        $disabledarr = null;
+
+        if (!$chapter->id && $chapter->pagenum == 1 || $chapter->pagenum == 1) {
+            $disabledmsg = get_string('subchapternotice', 'book');
+            $disabledarr = array('group' => 1, 'disabled' => 'disabled');
+        }
 
         $mform = $this->_form;
 
@@ -42,7 +50,7 @@ class book_chapter_edit_form extends moodleform {
         $mform->setType('title', PARAM_RAW);
         $mform->addRule('title', null, 'required', null, 'client');
 
-        $mform->addElement('advcheckbox', 'subchapter', get_string('subchapter', 'mod_book'));
+        $mform->addElement('advcheckbox', 'subchapter', get_string('subchapter', 'mod_book'), $disabledmsg, $disabledarr);
 
         $mform->addElement('editor', 'content_editor', get_string('content', 'mod_book'), null, $options);
         $mform->setType('content_editor', PARAM_RAW);

@@ -45,9 +45,8 @@ $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$b
 
 
 // Header and strings.
-$PAGE->set_title(format_string($book->name));
-$PAGE->add_body_class('mod_book');
-$PAGE->set_heading(format_string($course->fullname));
+$PAGE->set_title($book->name);
+$PAGE->set_heading($course->fullname);
 
 // Form processing.
 if ($confirm) {  // the operation was confirmed.

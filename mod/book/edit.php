@@ -108,9 +108,8 @@ if ($mform->is_cancelled()) {
 }
 
 // Otherwise fill and print the form.
-$PAGE->set_title(format_string($book->name));
-$PAGE->add_body_class('mod_book');
-$PAGE->set_heading(format_string($course->fullname));
+$PAGE->set_title($book->name);
+$PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('editingchapter', 'mod_book'));

@@ -1,5 +1,5 @@
 
-.mod_book .book_chapter_title {
+.path-mod-book .book_chapter_title {
     font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
     text-align: left;
     font-size: large;
@@ -9,7 +9,7 @@
     margin-bottom: 20px;
 }
 
-.mod_book img.bigicon {
+.path-mod-book img.bigicon {
   vertical-align: middle;
   margin-right: 4px;
   margin-left: 4px;
@@ -18,7 +18,7 @@
   border: 0px;
 }
 
-.mod_book .navtop {
+.path-mod-book .navtop {
     text-align: right;
     margin-bottom: 0.5em;
 }

@@ -58,7 +58,6 @@ $string['numbering2'] = 'Bullets';
 $string['numbering3'] = 'Indented';
 $string['numberingoptions'] = 'Available options for chapter formatting';
 $string['numberingoptions_desc'] = 'Options for displaying chapters and subchapters in the table of contents';
-$string['chapterscount'] = 'Chapters';
 $string['addafter'] = 'Add new chapter';
 $string['confchapterdelete'] = 'Do you really want to delete this chapter?';
 $string['confchapterdeleteall'] = 'Do you really want to delete this chapter and all its subchapters?';
@@ -73,6 +72,6 @@ $string['book:viewhiddenchapters'] = 'View hidden book chapters';
 $string['errorchapter'] = 'Error reading chapter of book.';
 
 $string['page-mod-book-x'] = 'Any book module page';
-
+$string['subchapternotice'] = 'This option is disabled, because the first chapter cannot be a subchapter';
 $string['subplugintype_booktool'] = 'Book tool';
 $string['subplugintype_booktool_plural'] = 'Book tools';

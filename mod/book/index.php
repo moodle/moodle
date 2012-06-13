@@ -88,14 +88,14 @@ foreach ($books as $book) {
             $currentsection = $book->section;
         }
     } else {
-        $printsection = '<span class="smallinfo">'.userdate($book->timemodified)."</span>";
+        $printsection = html_writer::tag('span', userdate($book->timemodified), array('class' => 'smallinfo'));
     }
 
-    $class = $book->visible ? '' : 'class="dimmed"'; // hidden modules are dimmed
+    $class = $book->visible ? null : array('class' => 'dimmed'); // hidden modules are dimmed
 
     $table->data[] = array (
         $printsection,
-        "<a $class href=\"view.php?id=$cm->id\">".format_string($book->name)."</a>",
+        html_writer::link(new moodle_url('view.php', array('id' => $cm->id)), format_string($book->name), $class),
         format_module_intro('book', $book, $cm->id));
 }
 

@@ -31,11 +31,8 @@ defined('MOODLE_INTERNAL') || die;
  * @param navigation_node $node The node to add module settings to
  */
 function booktool_importhtml_extend_settings_navigation(settings_navigation $settings, navigation_node $node) {
-    global $USER, $PAGE, $CFG, $DB, $OUTPUT;
 
-    if ($PAGE->cm->modname !== 'book') {
-        return;
-    }
+    global $PAGE;
 
     if (has_capability('booktool/importhtml:import', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/book/tool/importhtml/index.php', array('id'=>$PAGE->cm->id));
