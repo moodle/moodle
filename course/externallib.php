@@ -1376,6 +1376,9 @@ class core_course_external extends external_api {
                 // Finally move the category.
                 move_category($category, $parent_cat);
                 $category->parent = $cat['parent'];
+                // Get updated path by move_category().
+                $category->path = $DB->get_field('course_categories', 'path',
+                        array('id' => $category->id));
             }
             $DB->update_record('course_categories', $category);
         }
