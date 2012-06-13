@@ -386,12 +386,13 @@ foreach($progress as $user) {
             ($activity->completion==COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual').
             '-'.$completiontype;
 
+        $modcontext = context_module::instance($activity->id);
         $describe = get_string('completion-' . $completiontype, 'completion');
         $a=new StdClass;
         $a->state=$describe;
         $a->date=$date;
         $a->user=fullname($user);
-        $a->activity=strip_tags($activity->name);
+        $a->activity = format_string($activity->name, true, array('context' => $modcontext));
         $fulldescribe=get_string('progress-title','completion',$a);
 
         if ($csv) {
