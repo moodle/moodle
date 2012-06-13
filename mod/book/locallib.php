@@ -77,11 +77,6 @@ function book_preload_chapters($book) {
             $first = false;
         }
         if (!$ch->subchapter) {
-            $ch->prev = $prev;
-            $ch->next = null;
-            if ($prev) {
-                $chapters[$prev]->next = $ch->id;
-            }
             if ($ch->hidden) {
                 if ($book->numbering == BOOK_NUM_NUMBERS) {
                     $ch->number = 'x';
@@ -99,11 +94,6 @@ function book_preload_chapters($book) {
             $ch->parent = null;
             $ch->subchapters = array();
         } else {
-            $ch->prev = $prevsub;
-            $ch->next = null;
-            if ($prevsub) {
-                $chapters[$prevsub]->next = $ch->id;
-            }
             $ch->parent = $parent;
             $ch->subchapters = null;
             $chapters[$parent]->subchapters[$ch->id] = $ch->id;
@@ -122,11 +112,20 @@ function book_preload_chapters($book) {
                 $ch->number = $j;
             }
         }
+
+        // assigning previous and next page id
+        $ch->prev = $prev;
+        $ch->next = null;
+        if ($prev) {
+            $chapters[$prev]->next = $ch->id;
+        }
+
         if ($oldch->subchapter != $ch->subchapter or $oldch->pagenum != $ch->pagenum or $oldch->hidden != $ch->hidden) {
             // update only if something changed
             $DB->update_record('book_chapters', $ch);
         }
         $chapters[$id] = $ch;
+        $prev = $ch->id;
     }
 
     return $chapters;
@@ -159,27 +158,6 @@ function book_get_chapter_title($chid, $chapters, $book, $context) {
     }
 
     return $title;
-}
-
-/**
- * General logging to table
- * @param string $str1
- * @param string $str2
- * @param int $level
- * @return void
- */
-function book_log($str1, $str2, $level = 0) {
-    switch ($level) {
-        case 1:
-            echo '<tr><td><span class="dimmed_text">'.$str1.'</span></td><td><span class="dimmed_text">'.$str2.'</span></td></tr>';
-            break;
-        case 2:
-            echo '<tr><td><span style="color: rgb(255, 0, 0);">'.$str1.'</span></td><td><span style="color: rgb(255, 0, 0);">'.$str2.'</span></td></tr>';
-            break;
-        default:
-            echo '<tr><td>'.$str1.'</class></td><td>'.$str2.'</td></tr>';
-            break;
-    }
 }
 
 /**
@@ -219,7 +197,7 @@ function book_add_fake_block($chapters, $chapter, $book, $cm, $edit) {
 function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
     global $USER, $OUTPUT;
 
-    $toc ='';
+    $toc = '';
     $nch = 0;   // Chapter number
     $ns = 0;    // Subchapter number
     $first = 1;
