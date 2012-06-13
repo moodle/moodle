@@ -1125,10 +1125,7 @@ M.core_filepicker.init = function(Y, options) {
                     if (origlicense) {
                         origlicense = origlicense.getContent();
                     }
-                    var newlicenseval = license.get('value');
-                    if (newlicenseval && this.options.licenses[newlicenseval] != origlicense) {
-                        Y.Cookie.set('recentlicense', newlicenseval);
-                    }
+                    this.set_preference('recentlicense', license.get('value'));
                 }
                 params['author'] = selectnode.one('.fp-setauthor input').get('value');
 
@@ -1219,7 +1216,7 @@ M.core_filepicker.init = function(Y, options) {
                 }
                 this.viewbar_set_enabled(true)
                 this.view_files();
-                Y.Cookie.set('recentviewmode', this.viewmode);
+                this.set_preference('recentviewmode', this.viewmode);
             }
         },
         render: function() {
@@ -1296,7 +1293,7 @@ M.core_filepicker.init = function(Y, options) {
                         set('id', 'fp-repo-'+client_id+'-'+repository.id).
                         on('click', function(e, repository_id) {
                             e.preventDefault();
-                            Y.Cookie.set('recentrepository', repository_id);
+                            this.set_preference('recentrepository', repository_id);
                             this.hide_header();
                             this.list({'repo_id':repository_id});
                         }, this /*handler running scope*/, repository.id/*second argument of handler*/);
@@ -1541,7 +1538,7 @@ M.core_filepicker.init = function(Y, options) {
             }
             node.setContent('');
             var licenses = this.options.licenses;
-            var recentlicense = Y.Cookie.get('recentlicense');
+            var recentlicense = this.get_preference('recentlicense');
             if (recentlicense) {
                 this.options.defaultlicense=recentlicense;
             }
@@ -1563,7 +1560,7 @@ M.core_filepicker.init = function(Y, options) {
             });
             if (!licenseset) {
                 // we did not find the value in the list
-                var recentlicense = Y.Cookie.get('recentlicense');
+                var recentlicense = this.get_preference('recentlicense');
                 node.all('option[selected]').set('selected', false);
                 node.all('option[value='+recentlicense+']').set('selected', true);
             }
@@ -1605,7 +1602,8 @@ M.core_filepicker.init = function(Y, options) {
             content.one('.fp-upload-btn').on('click', function(e) {
                 e.preventDefault();
                 var license = content.one('.fp-setlicense select');
-                Y.Cookie.set('recentlicense', license.get('value'));
+
+                this.set_preference('recentlicense', license.get('value'));
                 if (!content.one('.fp-file input').get('value')) {
                     scope.print_msg(M.str.repository.nofilesattached, 'error');
                     return false;
@@ -1824,13 +1822,26 @@ M.core_filepicker.init = function(Y, options) {
         show_recent_repository: function() {
             this.hide_header();
             this.viewbar_set_enabled(false);
-            var repository_id = Y.Cookie.get('recentrepository');
-            this.viewmode = Y.Cookie.get('recentviewmode', Number);
+            var repository_id = this.get_preference('recentrepository');
+            this.viewmode = this.get_preference('recentviewmode');
             if (this.viewmode != 2 && this.viewmode != 3) {
                 this.viewmode = 1;
             }
             if (this.options.repositories[repository_id]) {
                 this.list({'repo_id':repository_id});
+            }
+        },
+        get_preference: function (name) {
+            if (this.options.userprefs[name]) {
+                return this.options.userprefs[name];
+            } else {
+                return false;
+            }
+        },
+        set_preference: function(name, value) {
+            if (this.options.userprefs[name] != value) {
+                M.util.set_user_preference('filepicker_' + name, value);
+                this.options.userprefs[name] = value;
             }
         }
     });
