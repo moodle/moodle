@@ -427,19 +427,20 @@ $string['missingcorrectanswer'] = 'Correct answer must be specified';
 $string['missingitemtypename'] = 'Missing name';
 $string['missingquestion'] = 'This question no longer seems to exist';
 $string['modulename'] = 'Quiz';
-$string['modulename_help'] = 'Quizzes are automatically graded activities built from variety of question types, including multiple choice, matching, short-answer and numerical. There is a choice for how students complete the quiz, including
+$string['modulename_help'] = 'The quiz activity enables a teacher to create quizzes comprising questions of various types, including multiple choice, matching, short-answer and numerical.
 
-* Deferred feedback - a classic exam where students record answers for all the questions which are graded at the end, or
-* Interactive - students submit questions as they go along and get feedback. If they are wrong, they can immediately try again for less marks.
+The teacher can allow the quiz to be attempted multiple times, with the questions shuffled or randomly selected from the question bank. A time limit may be set.
 
-There are many options for controlling when students can attempt the quiz, how much time they are allowed, and so on. The teacher can also control when and if students can see the feedback, correct answers, numerical marks, etc.
+Each attempt is marked automatically, with the exception of essay questions, and the grade is recorded in the gradebook.
+
+The teacher can choose when and if hints, feedback and correct answers are shown to students.
 
 Quizzes may be used
 
-* As formal parts of the course assessment
+* As course exams
 * As mini tests for reading assignments or at the end of a topic
-* As exam practice using questions from previous years’ exams
-* To provide feedback about performance
+* As exam practice using questions from past exams
+* To deliver immediate feedback about performance
 * For self-assessment';
 $string['modulename_link'] = 'mod/quiz/view';
 $string['modulenameplural'] = 'Quizzes';
