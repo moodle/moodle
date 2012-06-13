@@ -74,29 +74,11 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
 
         $newitemid = lti_add_instance($data, null);
 
-        // insert the basiclti record
-        //$newitemid = $DB->insert_record('lti', $data);
         // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 
     protected function after_execute() {
-        global $DB;
-
-        $basicltis = $DB->get_records('lti');
-        foreach ($basicltis as $basiclti) {
-            if (!$DB->get_record('lti_types_config',
-                array('typeid' => $basiclti->typeid, 'name' => 'toolurl', 'value' => $basiclti->toolurl))) {
-
-                $basiclti->typeid = 0;
-            }
-
-            $basiclti->placementsecret = uniqid('', true);
-            $basiclti->timeplacementsecret = time();
-
-            $DB->update_record('lti', $basiclti);
-        }
-
         // Add basiclti related files, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_lti', 'intro', null);
     }
