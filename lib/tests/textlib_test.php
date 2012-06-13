@@ -476,6 +476,13 @@ class collatorlib_testcase extends basic_testcase {
         $this->assertSame(array_values($arr), array('aa', 'ab', 'áb', 'Áb', 'cc'), $this->error);
         $this->assertSame(array_keys($arr), array(1, 'b', 'a', 'x', 0), $this->error);
         $this->assertTrue($result);
+
+        $a = array(2=>'b', 1=>'c');
+        $c =& $a;
+        $b =& $a;
+        collatorlib::asort($b);
+        $this->assertSame($a, $b);
+        $this->assertSame($c, $b);
     }
 
     /**
@@ -565,6 +572,13 @@ class collatorlib_testcase extends basic_testcase {
         $this->assertSame(array_keys($arr), array('1.1.1', '1.2', '1.20.2'));
         $this->assertSame(array_values($arr), array(array(), $obj, null));
         $this->assertTrue($result);
+
+        $a = array(2=>'b', 1=>'c');
+        $c =& $a;
+        $b =& $a;
+        collatorlib::ksort($b);
+        $this->assertSame($a, $b);
+        $this->assertSame($c, $b);
     }
 }
 

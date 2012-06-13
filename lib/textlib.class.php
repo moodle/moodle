@@ -872,10 +872,7 @@ class collatorlib {
         }
         // This is a bit slow, but we need to keep the references
         $original = $arr;
-        $count = count($arr);
-        for($i=0; $i<$count; $i++) {
-            array_pop($arr);
-        }
+        $arr = array(); // Surprisingly this does not break references outside
         foreach ($keys as $key) {
             $arr[$key] = $original[$key];
         }
