@@ -152,7 +152,7 @@ class core_enrol_external extends external_api {
      *                               }
      * @return array An array of users
      */
-    public static function get_enrolled_users($courseid, $options) {
+    public static function get_enrolled_users($courseid, $options = array()) {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . "/user/lib.php");
 
