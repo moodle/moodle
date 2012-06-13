@@ -166,7 +166,7 @@ class repository_filesystem extends repository {
         return $ret;
     }
 
-    public function instance_config_form($mform) {
+    public static function instance_config_form($mform) {
         global $CFG, $PAGE;
         if (has_capability('moodle/site:config', get_system_context())) {
             $path = $CFG->dataroot . '/repository/';

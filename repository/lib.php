@@ -2002,7 +2002,7 @@ abstract class repository {
      *
      * @param moodleform $mform Moodle form (passed by reference)
      */
-    public function instance_config_form($mform) {
+    public static function instance_config_form($mform) {
     }
 
     /**
@@ -2257,20 +2257,17 @@ final class repository_instance_form extends moodleform {
         $mform =& $this->_form;
 
         $this->add_defaults();
-        //add fields
-        if (!$this->instance) {
-            $result = repository::static_function($this->plugin, 'instance_config_form', $mform);
-            if ($result === false) {
-                $mform->removeElement('name');
-            }
-        } else {
+
+        // Add instance config options.
+        $result = repository::static_function($this->plugin, 'instance_config_form', $mform);
+        if ($result === false) {
+            // Remove the name element if no other config options.
+            $mform->removeElement('name');
+        }
+        if ($this->instance) {
             $data = array();
             $data['name'] = $this->instance->name;
             if (!$this->instance->readonly) {
-                $result = $this->instance->instance_config_form($mform);
-                if ($result === false) {
-                    $mform->removeElement('name');
-                }
                 // and set the data if we have some.
                 foreach ($this->instance->get_instance_option_names() as $config) {
                     if (!empty($this->instance->options[$config])) {
