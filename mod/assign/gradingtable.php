@@ -414,7 +414,7 @@ class assign_grading_table extends table_sql implements renderable {
             if ($row->locked) {
                 $o .= $this->output->container(get_string('submissionslockedshort', 'assign'), 'lockedsubmission');
             }
-            if ($row->grade >= 0) {
+            if ($row->grade !== NULL && $row->grade >= 0) {
                 $o .= $this->output->container(get_string('graded', 'assign'), 'submissiongraded');
             }
         }
