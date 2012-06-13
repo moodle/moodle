@@ -667,6 +667,9 @@ body.tag .managelink {padding: 5px;}
 .resourcecontent .mediaplugin_mp3 object {height:25px; width: 600px}
 .resourcecontent audio.mediaplugin_html5audio {width: 600px}
 
+/** Large resource images should avoid hidden overflow **/
+.resourceimage {max-width: 100%;}
+
 /* Audio player size in 'inline' mode (can only change width, as above) */
 .mediaplugin_mp3 object {height:15px;width:300px}
 audio.mediaplugin_html5audio {width: 300px}
