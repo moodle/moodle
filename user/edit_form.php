@@ -18,6 +18,11 @@ class user_edit_form extends moodleform {
         } else {
             $editoroptions = null;
         }
+        if (is_array($this->_customdata) && array_key_exists('filemanageroptions', $this->_customdata)) {
+            $filemanageroptions = $this->_customdata['filemanageroptions'];
+        } else {
+            $filemanageroptions = null;
+        }
         //Accessibility: "Required" is bad legend text.
         $strgeneral  = get_string('general');
         $strrequired = get_string('required');
@@ -32,7 +37,7 @@ class user_edit_form extends moodleform {
         $mform->addElement('header', 'moodle', $strgeneral);
 
         /// shared fields
-        useredit_shared_definition($mform, $editoroptions);
+        useredit_shared_definition($mform, $editoroptions, $filemanageroptions);
 
         /// extra settigs
         if (!empty($CFG->gdversion) and !empty($CFG->disableuserimages)) {

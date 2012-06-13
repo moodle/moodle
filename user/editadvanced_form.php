@@ -19,6 +19,11 @@ class user_editadvanced_form extends moodleform {
         } else {
             $editoroptions = null;
         }
+        if (is_array($this->_customdata) && array_key_exists('filemanageroptions', $this->_customdata)) {
+            $filemanageroptions = $this->_customdata['filemanageroptions'];
+        } else {
+            $filemanageroptions = null;
+        }
 
         //Accessibility: "Required" is bad legend text.
         $strgeneral  = get_string('general');
@@ -58,7 +63,7 @@ class user_editadvanced_form extends moodleform {
         $mform->addElement('advcheckbox', 'preference_auth_forcepasswordchange', get_string('forcepasswordchange'));
         $mform->addHelpButton('preference_auth_forcepasswordchange', 'forcepasswordchange');
         /// shared fields
-        useredit_shared_definition($mform, $editoroptions);
+        useredit_shared_definition($mform, $editoroptions, $filemanageroptions);
 
         /// Next the customisable profile fields
         profile_definition($mform);

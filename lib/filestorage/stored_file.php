@@ -391,6 +391,29 @@ class stored_file {
     }
 
     /**
+     * Copy content of file to temporary folder and returns file path
+     *
+     * @param string $dir name of the temporary directory
+     * @param string $fileprefix prefix of temporary file.
+     * @return string|bool path of temporary file or false.
+     */
+    public function copy_content_to_temp($dir = 'files', $fileprefix = 'tempup_') {
+        $tempfile = false;
+        if (!$dir = make_temp_directory($dir)) {
+            return false;
+        }
+        if (!$tempfile = tempnam($dir, $fileprefix)) {
+            return false;
+        }
+        if (!$this->copy_content_to($tempfile)) {
+            // something went wrong
+            @unlink($tempfile);
+            return false;
+        }
+        return $tempfile;
+    }
+
+    /**
      * List contents of archive.
      *
      * @param file_packer $packer file packer instance
