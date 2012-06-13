@@ -84,7 +84,7 @@ abstract class file_packer {
     /**
      * Returns array of info about all files in archive
      *
-     * @param file_archive $archivefile
+     * @param string|file_archive $archivefile
      * @return array of file infos
      */
     public abstract function list_files($archivefile);
