@@ -1860,7 +1860,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
 
         // Okay, we're here so lets check for function without 'mod_'.
         if (strpos($module, 'mod_') === 0) {
-            $filefunctionold  = substr($module, 3) . '_question_pluginfile';
+            $filefunctionold  = substr($module, 4) . '_question_pluginfile';
             if (function_exists($filefunctionold)) {
                 $filefunctionold($course, $context, $component, $filearea, $qubaid, $slot,
                     $args, $forcedownload, $options);
