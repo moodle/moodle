@@ -1033,6 +1033,7 @@ class file_storage {
         $newrecord->source       = empty($filerecord->source) ? null : $filerecord->source;
         $newrecord->author       = empty($filerecord->author) ? null : $filerecord->author;
         $newrecord->license      = empty($filerecord->license) ? null : $filerecord->license;
+        $newrecord->status       = empty($filerecord->status) ? 0 : $filerecord->status;
         $newrecord->sortorder    = $filerecord->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_file_to_pool($pathname);
@@ -1149,6 +1150,7 @@ class file_storage {
         $newrecord->source       = empty($filerecord->source) ? null : $filerecord->source;
         $newrecord->author       = empty($filerecord->author) ? null : $filerecord->author;
         $newrecord->license      = empty($filerecord->license) ? null : $filerecord->license;
+        $newrecord->status       = empty($filerecord->status) ? 0 : $filerecord->status;
         $newrecord->sortorder    = $filerecord->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
@@ -1223,6 +1225,7 @@ class file_storage {
         $filerecord->source            = empty($filerecord->source) ? null : $filerecord->source;
         $filerecord->author            = empty($filerecord->author) ? null : $filerecord->author;
         $filerecord->license           = empty($filerecord->license) ? null : $filerecord->license;
+        $filerecord->status            = empty($filerecord->status) ? 0 : $filerecord->status;
         $filerecord->filepath          = clean_param($filerecord->filepath, PARAM_PATH);
         if (strpos($filerecord->filepath, '/') !== 0 or strrpos($filerecord->filepath, '/') !== strlen($filerecord->filepath)-1) {
             // Path must start and end with '/'.
