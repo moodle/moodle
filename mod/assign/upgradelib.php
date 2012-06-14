@@ -219,7 +219,6 @@ class assign_upgrade_manager {
             }
 
             $newassignment->update_calendar($newcoursemodule->id);
-            $newassignment->update_gradebook(false,$newcoursemodule->id);
 
             // copy the grades from the old assignment to the new one
             $DB->set_field('grade_items', 'itemmodule', 'assign', array('iteminstance'=>$oldassignment->id));
