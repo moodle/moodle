@@ -35,14 +35,50 @@ defined('MOODLE_INTERNAL') || die();
  */
 class filter_glossary extends moodle_text_filter {
 
+    /**
+     * Abuse the hash() method to fix MDL-32279 in 2.2 stable.
+     *
+     * For Moodle 2.3 the filters API has been extended to offer a
+     * setup() method, able to define all the page/init requirements
+     * for each filter.
+     *
+     * For this (2.2) version, where the setup() method is
+     * not available, we are abusing badly the hash() method because
+     * it's the unique point out from the caching mechanism where we
+     * can inject such requirements. Alternative solutions like
+     * backporting the API or add the requirements to all the pages
+     * have been considered worse than this abuse.
+     *
+     * Note, finally that this is not backportable to 2.1 because the
+     * glossary filter there is a legacy one, so it does not have the
+     * hash() facility either. Unique workaround there is to disable caching.
+     */
+    public function hash() {
+        global $PAGE;
+
+        // Don't forget it: this is bad abuse of the method to
+        // provide caching-independent requirements support to filters! MDL-32279.
+
+        // This only requires execution once per request.
+        static $jsinitialised = false;
+        if (empty($jsinitialised)) {
+            $PAGE->requires->yui_module(
+                    'moodle-filter_glossary-autolinker',
+                    'M.filter_glossary.init_filter_autolinking',
+                    array(array('courseid' => 0)));
+            $jsinitialised = true;
+        }
+        // Now return hash() normally.
+        return parent::hash();
+    }
+
     public function filter($text, array $options = array()) {
-        global $CFG, $DB, $GLOSSARY_EXCLUDECONCEPTS, $PAGE;
+        global $CFG, $DB, $GLOSSARY_EXCLUDECONCEPTS;
 
         // Trivial-cache - keyed on $cachedcontextid
         static $cachedcontextid;
         static $conceptlist;
 
-        static $jsinitialised;       // To control unique js init
         static $nothingtodo;         // To avoid processing if no glossaries / concepts are found
 
         // Try to get current course
@@ -185,16 +221,6 @@ class filter_glossary extends moodle_text_filter {
             }
 
             $conceptlist = filter_remove_duplicates($conceptlist);
-
-            if (empty($jsinitialised)) {
-                // Add a JavaScript event to open popup's here. This only ever need to be
-                // added once!
-                $PAGE->requires->yui_module(
-                        'moodle-filter_glossary-autolinker',
-                        'M.filter_glossary.init_filter_autolinking',
-                        array(array('courseid' => $courseid)));
-                $jsinitialised = true;
-            }
         }
 
         if (!empty($GLOSSARY_EXCLUDECONCEPTS)) {
