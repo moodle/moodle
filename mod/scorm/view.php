@@ -59,9 +59,32 @@ if (!empty($forcejs)) {
 require_login($course, false, $cm);
 
 if (!empty($scorm->popup)) {
-    $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,
-        'cheight'=>$scorm->height,
-        'popupoptions' => $scorm->options), true);
+    $launch = 0;
+    $orgidentifier = '';
+    $scoid = 0;
+    if ($scorm->skipview >= 1) {
+        // do we launch immediately and redirect the parent back ?
+        if ($scorm->skipview == 2 || (scorm_get_tracks($scoes[0]->id, $USER->id) === false)) {
+            $orgidentifier = '';
+            if ($sco = scorm_get_sco($scorm->launch, SCO_ONLY)) {
+                if (($sco->organization == '') && ($sco->launch == '')) {
+                    $orgidentifier = $sco->identifier;
+                } else {
+                    $orgidentifier = $sco->organization;
+                }
+                $scoid = $sco->id;
+            }
+            $launch = $scorm->skipview;
+        }
+    }
+    $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => $launch,
+                                                           'currentorg' => $orgidentifier,
+                                                           'sco' => $scoid,
+                                                           'scorm' => $scorm->id,
+                                                           'courseid' => $scorm->course,
+                                                           'cwidth' => $scorm->width,
+                                                           'cheight' => $scorm->height,
+                                                           'popupoptions' => $scorm->options), true);
     $PAGE->requires->js('/mod/scorm/view.js', true);
 }
 

@@ -180,9 +180,14 @@ if (empty($scorm->popup) || $displaymode=='popup') {
     $PAGE->set_button($exitlink);
 }
 
-$PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,
-                                                      'cheight'=>$scorm->height,
-                                                      'popupoptions' => $scorm->options), true);
+$PAGE->requires->data_for_js('scormplayerdata', Array('launch' => 0,
+                                                       'currentorg' => '',
+                                                       'sco' => 0,
+                                                       'scorm' => 0,
+                                                       'courseid' => $scorm->course,
+                                                       'cwidth' => $scorm->width,
+                                                       'cheight' => $scorm->height,
+                                                       'popupoptions' => $scorm->options), true);
 $PAGE->requires->js('/mod/scorm/request.js', true);
 $PAGE->requires->js('/lib/cookies.js', true);
 $PAGE->requires->css('/mod/scorm/styles.css');
