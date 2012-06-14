@@ -164,3 +164,7 @@ $THEME->javascripts = array(
 
 // Sets a custom render factory to use with the theme, used when working with custom renderers.
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
+
+// This theme doesn't support CSS optimisation. The JQuery CSS has already been optimised in a way that
+// is not compatible with the CSS optimiser in Moodle.
+$THEME->supportscssoptimisation = false;

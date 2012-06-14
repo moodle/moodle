@@ -39,7 +39,8 @@
 function css_store_css(theme_config $theme, $csspath, array $cssfiles) {
     global $CFG;
 
-    if (!empty($CFG->enablecssoptimiser)) {
+    // Check if both the CSS optimiser is enabled and the theme supports it.
+    if (!empty($CFG->enablecssoptimiser) && $theme->supportscssoptimisation) {
         // This is an experimental feature introduced in Moodle 2.3
         // The CSS optimiser organises the CSS in order to reduce the overall number
         // of rules and styles being sent to the client. It does this by collating
@@ -177,7 +178,7 @@ function css_send_cached_css($csspath, $etag) {
  *
  * @param string CSS
  */
-function css_send_uncached_css($css) {
+function css_send_uncached_css($css, $themesupportsoptimisation = true) {
     global $CFG;
 
     header('Content-Disposition: inline; filename="styles_debug.php"');
@@ -189,16 +190,6 @@ function css_send_uncached_css($css) {
 
     if (is_array($css)) {
         $css = implode("\n\n", $css);
-    }
-
-    if (!empty($CFG->enablecssoptimiser)) {
-        $css = str_replace("\n", "\r\n", $css);
-
-        $optimiser = new css_optimiser;
-        $css = $optimiser->process($css);
-        if (!empty($CFG->cssoptimiserstats)) {
-            $css = $optimiser->output_stats_css().$css;
-        }
     }
 
     echo $css;
