@@ -612,8 +612,11 @@ class phpunit_util {
         get_string_manager()->reset_caches();
         events_get_handlers('reset');
         textlib::reset_caches();
+        if (class_exists('repository')) {
+            repository::reset_caches();
+        }
         $GROUPLIB_CACHE = null;
-        //TODO: add more resets here and probably refactor them to new core function
+        //TODO MDL-25290: add more resets here and probably refactor them to new core function
 
         // purge dataroot directory
         self::reset_dataroot();

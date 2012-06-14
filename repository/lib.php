@@ -2191,21 +2191,31 @@ abstract class repository {
         }
     }
 
-
+    /**
+     * Called from phpunit between tests, resets whatever was cached
+     */
+    public static function reset_caches() {
+        self::sync_external_file(null, true);
+    }
 
     /**
      * Call to request proxy file sync with repository source.
      *
      * @param stored_file $file
+     * @param bool $resetsynchistory whether to reset all history of sync (used by phpunit)
      * @return bool success
      */
-    public static function sync_external_file(stored_file $file) {
+    public static function sync_external_file($file, $resetsynchistory = false) {
         global $DB;
+        // TODO MDL-25290 static should be replaced with MUC code.
         static $synchronized = array();
+        if ($resetsynchistory) {
+            $synchronized = array();
+        }
 
         $fs = get_file_storage();
 
-        if (!$file->get_referencefileid()) {
+        if (!$file || !$file->get_referencefileid()) {
             return false;
         }
         if (array_key_exists($file->get_id(), $synchronized)) {
