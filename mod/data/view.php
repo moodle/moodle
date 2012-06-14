@@ -566,10 +566,11 @@
             if ($record) {     // We need to just show one, so where is it in context?
                 $nowperpage = 1;
                 $mode = 'single';
-
-                $page = (int)array_search($record->id, $recordids);
-                unset($recordids);
-
+                $page = 0;
+                if ($allrecordids = get_fieldset_sql($sqlselect)) {
+                    $page = (int)array_search($record->id, $allrecordids);
+                    unset($allrecordids);
+                }
             } else if ($mode == 'single') {  // We rely on ambient $page settings
                 $nowperpage = 1;
 
