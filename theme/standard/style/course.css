@@ -40,6 +40,7 @@
 .path-course-view .weeks .current,
 .path-course-view .topics .current,
 .path-course-view .current td.side {background: #FFD991;}
+.path-course-view .section-summary.current {border-color: #FFD991;}
 .path-course-view .weeks .hidden,
 .path-course-view .topics .hidden,
 .path-course-view .hidden td.side {background: #DDDDDD;}

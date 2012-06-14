@@ -271,20 +271,27 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function section_summary($section, $course, $mods) {
+        $classattr = 'section main section-summary clearfix';
+        $linkclasses = '';
+
         // If section is hidden then display grey section link
-        $classattr = 'section-summary clearfix';
-        If (!$section->visible) {
-            $classattr .= ' dimmed_text';
+        if (!$section->visible) {
+            $classattr .= ' hidden';
+            $linkclasses .= ' dimmed_text';
+        } else if ($this->is_section_current($section, $course)) {
+            $classattr .= ' current';
         }
 
         $o = '';
-        $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
-            'class' => $classattr));
+        $o .= html_writer::start_tag('li', array('id' => 'section-'.$section->section, 'class' => $classattr));
 
-        $title = get_section_name($course, $section);
-        $o.= html_writer::start_tag('a', array('href' => course_get_url($course, $section->section)));
-        $o.= $this->output->heading($title, 3, 'header section-title');
-        $o.= html_writer::end_tag('a');
+        $o .= html_writer::tag('div', '', array('class' => 'left side'));
+        $o .= html_writer::tag('div', '', array('class' => 'right side'));
+        $o .= html_writer::start_tag('div', array('class' => 'content'));
+
+        $title = html_writer::tag('a', get_section_name($course, $section),
+                array('href' => course_get_url($course, $section->section), 'class' => $linkclasses));
+        $o .= $this->output->heading($title, 3, 'section-title');
 
         $o.= html_writer::start_tag('div', array('class' => 'summarytext'));
         $o.= $this->format_summary_text($section);
@@ -293,7 +300,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         $o.= $this->section_availability_message($section);
 
-        $o.= html_writer::end_tag('li');
+        $o .= html_writer::end_tag('div');
+        $o .= html_writer::end_tag('li');
 
         return $o;
     }
@@ -384,12 +392,10 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 )
             );
 
-            $strcancel= get_string('cancel');
-
-            $o.= html_writer::start_tag('li', array('class' => 'clipboard'));
+            $o.= html_writer::start_tag('div', array('class' => 'clipboard'));
             $o.= strip_tags(get_string('activityclipboard', '', $USER->activitycopyname));
             $o.= ' ('.html_writer::link($url, get_string('cancel')).')';
-            $o.= html_writer::end_tag('li');
+            $o.= html_writer::end_tag('div');
         }
 
         return $o;
@@ -518,6 +524,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             return;
         }
 
+        // Copy activity clipboard..
+        echo $this->course_activity_clipboard($course, $displaysection);
+
         // General section if non-empty.
         $thissection = $sections[0];
         if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
@@ -548,9 +557,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $sectiontitle .= html_writer::tag('div', get_section_name($course, $sections[$displaysection]), array('class' => $titleattr));
         $sectiontitle .= html_writer::end_tag('div');
         echo $sectiontitle;
-
-        // Copy activity clipboard..
-        echo $this->course_activity_clipboard($course, $displaysection);
 
         // Now the list of sections..
         echo $this->start_section_list();
