@@ -25,7 +25,8 @@
 define('CLI_SCRIPT', true);
 
 require(__DIR__.'/../../../../config.php');
-require_once($CFG->libdir.'/clilib.php');
+require_once("$CFG->libdir/clilib.php");
+require_once("$CFG->libdir/filestorage/zip_packer.php");
 
 if (count($_SERVER['argv']) != 2 or !file_exists($_SERVER['argv'][1])) {
     cli_error("This script expects zip file name as the only parameter");
@@ -46,25 +47,10 @@ if ($info['sig'] !== 0x04034b50) {
 }
 
 // Find end of central directory record.
-fseek($fp, $filesize - 22);
-$info = unpack('Vsig', fread($fp, 4));
-if ($info['sig'] === 0x06054b50) {
-    // There is no comment.
-    fseek($fp, $filesize - 22);
-    $data = fread($fp, 22);
-} else {
-    // There is some comment with 0xFF max size - that is 65557.
-    fseek($fp, $filesize - 65557);
-    $data = fread($fp, 65557);
+$centralend = zip_archive::zip_get_central_end($fp, $filesize);
+if ($centralend === false) {
+    cli_error("This is not a ZIP archive: $archive");
 }
-
-$pos = strpos($data, pack('V', 0x06054b50));
-if ($pos === false) {
-    // Borked ZIP structure!
-    fclose($fp);
-    cli_error("Can not find end of central directory in $archive");
-}
-$centralend = unpack('Vsig/vdisk/vdisk_start/vdisk_entries/ventries/Vsize/Voffset/vcomment_length', substr($data, $pos, 22));
 
 if ($centralend['disk'] !== 0 or $centralend['disk_start'] !== 0) {
     cli_error("Multi-disk archives are not supported: $archive");
@@ -74,43 +60,14 @@ if ($centralend['offset'] === 0xFFFFFFFF) {
     cli_error("ZIP64 archives are not supported: $archive");
 }
 
-if ($centralend['comment_length']) {
-    $centralend['comment'] = substr($data, 22, $centralend['comment_length']);
-} else {
-    $centralend['comment'] = '';
-}
-
 fseek($fp, $centralend['offset']);
 $data = fread($fp, $centralend['size']);
 $pos = 0;
 $files = array();
 for($i=0; $i<$centralend['entries']; $i++) {
-    $file = unpack('Vsig/vversion/vversion_req/vgeneral/vmethod/Vmodified/Vcrc/Vsize_compressed/Vsize/vname_length/vextra_length/vcomment_length/vdisk/vattr/Vattrext/Vlocal_offset', substr($data, $pos, 46));
-    $file['error'] = null;
-    $file['central_offset'] = $centralend['offset'] + $pos;
-    $pos = $pos + 46;
-    if ($file['sig'] !== 0x02014b50) {
-        $files[] = array('error'=>'Invalid central file signature');
-        continue;
-    }
-    $file['name'] = substr($data, $pos, $file['name_length']);
-    $pos = $pos + $file['name_length'];
-    $file['extra'] = array();
-    if ($file['extra_length']) {
-        $extradata = substr($data, $pos, $file['extra_length']);
-        while (strlen($extradata) > 4) {
-            $extra = unpack('vid/vsize', substr($extradata, 0, 4));
-            $extra['data'] = substr($extradata, 4, $extra['size']);
-            $extradata = substr($extradata, 4+$extra['size']);
-            $file['extra'][] = $extra;
-        }
-        $pos = $pos + $file['extra_length'];
-    }
-    if ($file['comment_length']) {
-        $file['comment'] = substr($data, $pos, $file['comment_length']);
-        $pos = $pos + $file['comment_length'];
-    } else {
-        $file['comment'] = '';
+    $file = zip_archive::zip_parse_file_header($data, $centralend, $pos);
+    if ($file === false) {
+        cli_error('Invalid Zip file header structure: '.$archive);
     }
 
     // Read local file header.
@@ -128,8 +85,10 @@ for($i=0; $i<$centralend['entries']; $i++) {
         $localfile['name'] = '';
     }
     $localfile['extra'] = array();
+    $localfile['extra_data'] = '';
     if ($localfile['extra_length']) {
         $extradata = fread($fp, $localfile['extra_length']);
+        $localfile['extra_data'] = $extradata;
         while (strlen($extradata) > 4) {
             $extra = unpack('vid/vsize', substr($extradata, 0, 4));
             $extra['data'] = substr($extradata, 4, $extra['size']);
@@ -147,9 +106,6 @@ echo "Number of files: {$centralend['entries']}\n";
 echo "Archive comment: \"{$centralend['comment']}\" ({$centralend['comment_length']} bytes)\n";
 foreach ($files as $i=>$file) {
     echo "======== File ".($i+1)." ==============================================\n";
-    if (!empty($file['error'])) {
-        echo "  ERROR:          {$file['error']}\n";
-    }
     echo "  Name:           ".zip_print_name($file['name'])."\n";
     if ($file['comment'] !== '') {
         echo "  Comment:        \"{$file['comment']}\" ({$file['comment_length']} bytes)\n";
@@ -161,13 +117,12 @@ foreach ($files as $i=>$file) {
     echo "  Modified:       ".userdate(zip_dos2unixtime($file['modified']))."\n";
     echo "  Size:           ".zip_print_sizes($file['size'], $file['size_compressed'])."\n";
     echo "  CRC-32:         {$file['crc']}\n";
-    if ($file['extra']) {
-        foreach($file['extra'] as $j=>$extra) {
-            echo "  Extra ".($j+1).":        ".zip_print_extra($extra)."\n";
-        }
+    foreach($file['extra'] as $j=>$extra) {
+        echo "  Extra ".($j+1).":        ".zip_print_extra($extra)."\n";
     }
     if (!empty($file['local']['error'])) {
         echo "  Local ERROR:    {$file['local']['error']}\n";
+        continue;
     }
     $localfile = $file['local'];
     if ($localfile['name'] !== $file['name']) {
@@ -191,10 +146,8 @@ foreach ($files as $i=>$file) {
     if ($localfile['crc'] !== $file['crc']) {
         echo "  Local CRC-32:   {$localfile['crc']}\n";
     }
-    if ($localfile['extra']) {
-        foreach($localfile['extra'] as $j=>$extra) {
-            echo "  Local extra ".($j+1).":  ".zip_print_extra($extra)."\n";
-        }
+    foreach($localfile['extra'] as $j=>$extra) {
+        echo "  Local extra ".($j+1).":  ".zip_print_extra($extra)."\n";
     }
 }
 
