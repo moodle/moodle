@@ -613,8 +613,12 @@ if ($showactivity) {
         if ($record) {     // We need to just show one, so where is it in context?
             $nowperpage = 1;
             $mode = 'single';
-            $page = (int)array_search($record->id, $recordids);
-
+            $page = 0;
+            // TODO MDL-33797 - Reduce this or consider redesigning the paging system.
+            if ($allrecordids = $DB->get_fieldset_sql($sqlselect, $allparams)) {
+                $page = (int)array_search($record->id, $allrecordids);
+                unset($allrecordids);
+            }
         } else if ($mode == 'single') {  // We rely on ambient $page settings
             $nowperpage = 1;
 
