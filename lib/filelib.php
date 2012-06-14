@@ -770,6 +770,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         $newhashes = array();
         foreach ($draftfiles as $file) {
             $newhash = $fs->get_pathname_hash($contextid, $component, $filearea, $itemid, $file->get_filepath(), $file->get_filename());
+            file_restore_source_field_from_draft_file($file);
             $newhashes[$newhash] = $file;
         }
         $filecount = 0;
@@ -790,7 +791,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 continue;
             }
 
-            file_restore_source_field_from_draft_file($newfile);
             // Replaced file content
             if ($oldfile->get_contenthash() != $newfile->get_contenthash()) {
                 $oldfile->replace_content_with($newfile);
