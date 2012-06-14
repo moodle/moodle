@@ -52,7 +52,7 @@ class cc_label extends entities {
                            '[#date_now#]');
 
         $title = isset($instance['title']) && !empty($instance['title']) ? $instance['title'] : 'Untitled';
-        $content = "<img src=\"$@FILEPHP@$$@SLASH@$"."folder.gif\" alt=\"Folder\" title=\"{$title}\" /> {$title}";
+        $content = "<img src=\"$@FILEPHP@$$@SLASH@$"."files.gif\" alt=\"Folder\" title=\"{$title}\" /> {$title}";
         $replace_values = array($instance['instance'],
                                 self::safexml($title),
                                 self::safexml($content),
