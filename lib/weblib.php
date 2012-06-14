@@ -1090,6 +1090,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
 
     if ($options['filter']) {
         $filtermanager = filter_manager::instance();
+        $filtermanager->setup_page_for_filters($PAGE, $context); // Setup global stuff filters may have.
     } else {
         $filtermanager = new null_filter_manager();
     }
@@ -1302,6 +1303,7 @@ function format_string($string, $striplinks = true, $options = NULL) {
 
     if (!empty($CFG->filterall)) {
         $string = filter_manager::instance()->filter_string($string, $options['context']);
+        $filtermanager->setup_page_for_filters($PAGE, $options['context']); // Setup global stuff filters may have.
     }
 
     // If the site requires it, strip ALL tags from this string

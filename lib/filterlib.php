@@ -222,6 +222,29 @@ class filter_manager {
         }
         return implode('-', $hashes);
     }
+
+    /**
+     * Setup page with filters requirements and other prepare stuff.
+     *
+     * This method is used by {@see format_text()} and {@see format_string()}
+     * in order to allow filters to setup any page requirement (js, css...)
+     * or perform any action needed to get them prepared before filtering itself
+     * happens by calling to each every active setup() method.
+     *
+     * Note it's executed for each piece of text filtered, so filter implementations
+     * are responsible of controlling the cardinality of the executions that may
+     * be different depending of the stuff to prepare.
+     *
+     * @param moodle_page $page the page we are going to add requirements to.
+     * @param context $context the context which contents are going to be filtered.
+     * @since 2.3
+     */
+    public function setup_page_for_filters($page, $context) {
+        $filters = $this->get_text_filters($context);
+        foreach ($filters as $filter) {
+            $filter->setup($page, $context);
+        }
+    }
 }
 
 /**
@@ -355,6 +378,24 @@ abstract class moodle_text_filter {
      */
     public function hash() {
         return __CLASS__;
+    }
+
+    /**
+     * Setup page with filter requirements and other prepare stuff.
+     *
+     * Override this method if the filter needs to setup page
+     * requirements or needs other stuff to be executed.
+     *
+     * Note this method is invoked from {@see setup_page_for_filters()}
+     * for each piece of text being filtered, so it is responsible
+     * for controlling its own execution cardinality.
+     *
+     * @param moodle_page $page the page we are going to add requirements to.
+     * @param context $context the context which contents are going to be filtered.
+     * @since 2.3
+     */
+    public function setup($page, $context) {
+        // Override me, if needed.
     }
 
     /**
