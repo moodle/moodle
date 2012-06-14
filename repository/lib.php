@@ -2211,8 +2211,8 @@ abstract class repository {
      * File manager needs to know the original file information before copying
      * to draft area, so we append these information in mdl_files.source field
      *
-     * @param string $sourcefield
-     * @param string
+     * @param string $source
+     * @return string serialised source field
      */
     public static function build_source_field($source) {
         $sourcefield = new stdClass;

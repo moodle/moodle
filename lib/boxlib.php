@@ -192,8 +192,7 @@ class boxclient {
      * Get box.net file info
      *
      * @param string $fileid
-     * @param array $params
-     * @return array|null
+     * @return string|null
      */
     function get_file_info($fileid) {
         $this->_clearErrors();
@@ -205,7 +204,7 @@ class boxclient {
         $http = new curl(array('debug'=>$this->debug, 'cache'=>true, 'module_cache'=>'repository'));
         $xml = $http->get($this->_box_api_url, $params);
         $o = simplexml_load_string(trim($xml));
-        if($o->status == 's_get_file_info') {
+        if ($o->status == 's_get_file_info') {
             return $o->info;
         } else {
             return null;

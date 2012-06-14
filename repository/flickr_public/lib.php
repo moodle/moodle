@@ -529,7 +529,7 @@ class repository_flickr_public extends repository {
     /**
      * Return the source information
      *
-     * @param stdClass $url
+     * @param string $photoid photo id
      * @return string|null
      */
     public function get_file_source_info($photoid) {
