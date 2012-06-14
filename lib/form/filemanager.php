@@ -124,7 +124,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $subdirs     = $this->_options['subdirs'];
         $maxbytes    = $this->_options['maxbytes'];
         $draftitemid = $this->getValue();
-        $accepted_types = $this->_options['accepted_types'];
+        $accepted_types = (array) $this->_options['accepted_types'];
 
         if (empty($draftitemid)) {
             // no existing area info provided - let's use fresh new draft area
