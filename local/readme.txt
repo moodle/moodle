@@ -213,10 +213,11 @@ These two functions both need to be defined within /local/nicehack/lib.php.
 
 sample code
 <?php
-function nicehack_extends_navigation(global_navigation $nav) {
+function local_nicehack_extends_navigation(global_navigation $nav) {
     // $nav is the global navigation instance.
     // Here you can add to and manipulate the navigation structure as you like.
-    // This callback was introduced in 2.0
+    // This callback was introduced in 2.0 as nicehack_extends_navigation(global_navigation $nav)
+    // In 2.3 support was added for the now preferred local_nicehack_extends_navigation(global_navigation $nav).
 }
 function local_nicehack_extends_settings_navigation(settings_navigation $nav, context $context) {
     // $nav is the settings navigation instance.
