@@ -316,6 +316,11 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         foreach ($modsequence as $cmid) {
             $thismod = $mods[$cmid];
 
+            if ($thismod->modname == 'label') {
+                // Labels are special (not interesting for students)!
+                continue;
+            }
+
             if ($thismod->uservisible) {
                 if (isset($sectionmods[$thismod->modname])) {
                     $sectionmods[$thismod->modname]['count']++;
