@@ -1743,6 +1743,14 @@ M.core_filepicker.init = function(Y, options) {
                         if (obj.repo_id == scope.active_repo.id && obj.form) {
                             // if we did not jump to another repository meanwhile
                             searchform.setContent(obj.form);
+                            // Highlight search text when user click for search.
+                            var searchnode = searchform.one('input[name="s"]');
+                            if (searchnode) {
+                                searchnode.once('click', function(e) {
+                                    e.preventDefault();
+                                    this.select();
+                                });
+                            }
                         }
                     }
                 }, false);
