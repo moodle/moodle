@@ -222,13 +222,9 @@ class repository_flickr extends repository {
         return $this->search('', $page);
     }
 
-    /**
-     * Return photo url by given photo id
-     * @param string $photoid
-     * @return string
-     */
-    private function build_photo_url($photoid) {
-        $result = $this->flickr->photos_getSizes($photoid);
+    public function get_link($photo_id) {
+        global $CFG;
+        $result = $this->flickr->photos_getSizes($photo_id);
         $url = '';
         if(!empty($result[4])) {
             $url = $result[4]['source'];
@@ -240,18 +236,23 @@ class repository_flickr extends repository {
         return $url;
     }
 
-    public function get_link($photoid) {
-        return $this->build_photo_url($photoid);
-    }
-
     /**
      *
-     * @param string $photoid
+     * @param string $photo_id
      * @param string $file
      * @return string
      */
-    public function get_file($photoid, $file = '') {
-        $url = $this->build_photo_url($photoid);
+    public function get_file($photo_id, $file = '') {
+        global $CFG;
+        $result = $this->flickr->photos_getSizes($photo_id);
+        $url = '';
+        if(!empty($result[4])) {
+            $url = $result[4]['source'];
+        } elseif(!empty($result[3])) {
+            $url = $result[3]['source'];
+        } elseif(!empty($result[2])) {
+            $url = $result[2]['source'];
+        }
         $path = $this->prepare_file($file);
         $fp = fopen($path, 'w');
         $c = new curl;
@@ -313,15 +314,5 @@ class repository_flickr extends repository {
     }
     public function supported_returntypes() {
         return (FILE_INTERNAL | FILE_EXTERNAL);
-    }
-
-    /**
-     * Return the source information
-     *
-     * @param string $photoid
-     * @return string|null
-     */
-    public function get_file_source_info($photoid) {
-        return $this->build_photo_url($photoid);
     }
 }

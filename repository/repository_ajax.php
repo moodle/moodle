@@ -265,11 +265,6 @@ switch ($action) {
                     $event['existingfile']->filename = $saveas_filename;
                     $event['existingfile']->url      = moodle_url::make_draftfile_url($itemid, $saveas_path, $saveas_filename)->out();;
                 } else {
-
-                    // {@link repository::build_source_field()}
-                    $sourcefield = $repo->get_file_source_info($source);
-                    $record->source = $repo::build_source_field($sourcefield);
-
                     $storedfile = $fs->create_file_from_reference($record, $repo_id, $reference);
                     $event = array(
                         'url'=>moodle_url::make_draftfile_url($storedfile->get_itemid(), $storedfile->get_filepath(), $storedfile->get_filename())->out(),
@@ -307,9 +302,14 @@ switch ($action) {
                     throw new file_exception('maxbytes');
                 }
 
-                // {@link repository::build_source_field()}
-                $sourcefield = $repo->get_file_source_info($source);
-                $record->source = $repo::build_source_field($sourcefield);
+                // {@link file_restore_source_field_from_draft_file()}
+                $sourcefield = '';
+                if (!empty($downloadedfile['url'])) {
+                    $source = new stdClass;
+                    $source->source = $downloadedfile['url'];
+                    $sourcefield = serialize($source);
+                }
+                $record->source = $sourcefield;
 
                 $info = repository::move_to_filepool($downloadedfile['path'], $record);
                 if (empty($info)) {
