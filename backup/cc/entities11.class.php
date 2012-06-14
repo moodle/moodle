@@ -62,13 +62,13 @@ class entities11 extends entities {
         if (!empty($labels) && ($labels->length > 0)) {
             $tname = 'course_files';
             $dpath = cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $tname;
-            $rfpath = 'folder.gif';
-            $fpath = $dpath . DIRECTORY_SEPARATOR . 'folder.gif';
+            $rfpath = 'files.gif';
+            $fpath = $dpath . DIRECTORY_SEPARATOR . 'files.gif';
             if (!file_exists($dpath)) {
                 mkdir($dpath);
             }
             //copy the folder.gif file
-            $folder_gif = "{$CFG->dirroot}/pix/f/folder.gif";
+            $folder_gif = "{$CFG->dirroot}/pix/i/files.gif";
             copy($folder_gif, $fpath);
             $all_files[] = $rfpath;
         }
