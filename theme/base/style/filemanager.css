@@ -243,6 +243,9 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager .fp-iconview .fp-file.fp-hasreferences .fp-reficons1 {background: url('[[pix:theme|fp/link]]') no-repeat;background-position:bottom right;}
 .filemanager .fp-iconview .fp-file.fp-isreference .fp-reficons2 {background: url('[[pix:theme|fp/alias]]') no-repeat;background-position:bottom left;}
 
+.filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail img {display:none;}
+.filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail {background: url([[pix:s/dead]]) no-repeat;background-position:center center;}
+
 /*
  * Table view (File Manager only)
  */

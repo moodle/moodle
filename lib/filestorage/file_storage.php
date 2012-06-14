@@ -1033,6 +1033,7 @@ class file_storage {
         $newrecord->source       = empty($filerecord->source) ? null : $filerecord->source;
         $newrecord->author       = empty($filerecord->author) ? null : $filerecord->author;
         $newrecord->license      = empty($filerecord->license) ? null : $filerecord->license;
+        $newrecord->status       = empty($filerecord->status) ? 0 : $filerecord->status;
         $newrecord->sortorder    = $filerecord->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_file_to_pool($pathname);
@@ -1149,6 +1150,7 @@ class file_storage {
         $newrecord->source       = empty($filerecord->source) ? null : $filerecord->source;
         $newrecord->author       = empty($filerecord->author) ? null : $filerecord->author;
         $newrecord->license      = empty($filerecord->license) ? null : $filerecord->license;
+        $newrecord->status       = empty($filerecord->status) ? 0 : $filerecord->status;
         $newrecord->sortorder    = $filerecord->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
@@ -1223,6 +1225,7 @@ class file_storage {
         $filerecord->source            = empty($filerecord->source) ? null : $filerecord->source;
         $filerecord->author            = empty($filerecord->author) ? null : $filerecord->author;
         $filerecord->license           = empty($filerecord->license) ? null : $filerecord->license;
+        $filerecord->status            = empty($filerecord->status) ? 0 : $filerecord->status;
         $filerecord->filepath          = clean_param($filerecord->filepath, PARAM_PATH);
         if (strpos($filerecord->filepath, '/') !== 0 or strrpos($filerecord->filepath, '/') !== strlen($filerecord->filepath)-1) {
             // Path must start and end with '/'.
@@ -1652,10 +1655,22 @@ class file_storage {
      * Unpack reference field
      *
      * @param string $str
+     * @param bool $cleanparams if set to true, array elements will be passed through {@link clean_param()}
      * @return array
      */
-    public static function unpack_reference($str) {
-        return unserialize(base64_decode($str));
+    public static function unpack_reference($str, $cleanparams = false) {
+        $params = unserialize(base64_decode($str));
+        if (is_array($params) && $cleanparams) {
+            $params = array(
+                'component' => is_null($params['component']) ? ''   : clean_param($params['component'], PARAM_COMPONENT),
+                'filearea'  => is_null($params['filearea'])  ? ''   : clean_param($params['filearea'], PARAM_AREA),
+                'itemid'    => is_null($params['itemid'])    ? 0    : clean_param($params['itemid'], PARAM_INT),
+                'filename'  => is_null($params['filename'])  ? null : clean_param($params['filename'], PARAM_FILE),
+                'filepath'  => is_null($params['filepath'])  ? null : clean_param($params['filepath'], PARAM_PATH),
+                'contextid' => is_null($params['contextid']) ? null : clean_param($params['contextid'], PARAM_INT)
+            );
+        }
+        return $params;
     }
 
     /**

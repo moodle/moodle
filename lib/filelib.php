@@ -596,6 +596,9 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
             $item->datemodified = $file->get_timemodified();
             $item->datecreated = $file->get_timecreated();
             $item->isref = $file->is_external_file();
+            if ($item->isref && $file->get_status() == 666) {
+                $item->originalmissing = true;
+            }
             // find the file this draft file was created from and count all references in local
             // system pointing to that file
             $source = unserialize($file->get_source());
@@ -2310,7 +2313,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     }
 
     // handle external resource
-    if ($stored_file->is_external_file()) {
+    if ($stored_file && $stored_file->is_external_file()) {
         $stored_file->send_file($lifetime, $filter, $forcedownload, $options);
         die;
     }

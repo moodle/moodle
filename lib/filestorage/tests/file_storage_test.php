@@ -159,9 +159,9 @@ class filestoragelib_testcase extends advanced_testcase {
         // create user
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
+        $this->setUser($user);
         $usercontext = context_user::instance($user->id);
         $syscontext = context_system::instance();
-        $USER = $DB->get_record('user', array('id'=>$user->id));
 
         $fs = get_file_storage();
 

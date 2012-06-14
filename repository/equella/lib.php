@@ -146,12 +146,14 @@ class repository_equella extends repository {
     }
 
     /**
-     * Get file from external repository by reference
+     * Returns information about file in this repository by reference
      * {@link repository::get_file_reference()}
      * {@link repository::get_file()}
      *
+     * Returns null if file not found or can not be accessed
+     *
      * @param stdClass $reference file reference db record
-     * @return stdClass|null|false
+     * @return null|stdClass containing attribute 'filepath'
      */
     public function get_file_by_reference($reference) {
         $ref = base64_decode($reference->reference);
@@ -159,7 +161,7 @@ class repository_equella extends repository {
 
         if (!$url) {
             // Occurs when the user isn't known..
-            return false;
+            return null;
         }
 
         // We use this cache to get the correct file size.
@@ -170,24 +172,29 @@ class repository_equella extends repository {
             $cachedfilepath = cache_file::create_from_file($url, $path['path']);
         }
 
-        $fileinfo = new stdClass;
-        $fileinfo->filepath = $cachedfilepath;
-
-        return $fileinfo;
+        if ($cachedfilepath && is_readable($cachedfilepath)) {
+            return (object)array('filepath' => $cachedfilepath);
+        }
+        return null;
     }
 
     /**
-     * Send equella file to browser
+     * Repository method to serve the referenced file
      *
-     * @param stored_file $stored_file
+     * @param stored_file $storedfile the file that contains the reference
+     * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+     * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
+     * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
+     * @param array $options additional options affecting the file serving
      */
     public function send_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
         $reference = base64_decode($stored_file->get_reference());
         $url = $this->appendtoken($reference);
         if ($url) {
             header('Location: ' . $url);
+        } else {
+            send_file_not_found();
         }
-        die;
     }
 
     /**

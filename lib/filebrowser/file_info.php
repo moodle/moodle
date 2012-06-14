@@ -227,17 +227,13 @@ abstract class file_info {
     }
 
     /**
-     * Returns the localised human-readable name of the file together with
-     * virtual path
+     * Returns the localised human-readable name of the file together with virtual path
      *
+     * @see file_info_stored::get_readable_fullname()
      * @return string
      */
     public function get_readable_fullname() {
-        $fpath = array();
-        for ($parent = $this; $parent; $parent = $parent->get_parent()) {
-            array_unshift($fpath, $parent->get_visible_name());
-        }
-        return join('/', $fpath);
+        return null;
     }
 
     /**

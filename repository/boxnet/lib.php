@@ -267,18 +267,24 @@ class repository_boxnet extends repository {
     }
 
     /**
-     * Get file from external repository by reference
+     * Returns information about file in this repository by reference
      * {@link repository::get_file_reference()}
      * {@link repository::get_file()}
      *
+     * Returns null if file not found or is not readable
+     *
      * @param stdClass $reference file reference db record
-     * @return stdClass|null|false
+     * @return null|stdClass with attribute 'filepath'
      */
     public function get_file_by_reference($reference) {
-        $fileinfo = new stdClass;
         $boxnetfile = $this->get_file($reference->reference);
-        $fileinfo->filepath = $boxnetfile['path'];
-        return $fileinfo;
+        // Please note that here we will ALWAYS receive a file
+        // If source file has been removed from external server, box.com still returns
+        // a plain/text file with content 'no such file' (filesize will be 12 bytes)
+        if (!empty($boxnetfile['path'])) {
+            return (object)array('filepath' => $boxnetfile['path']);
+        }
+        return null;
     }
 
     /**
@@ -286,17 +292,26 @@ class repository_boxnet extends repository {
      * {@link stored_file::get_reference()}
      *
      * @param string $reference
-     * @return string|null
+     * @param int $filestatus status of the file, 0 - ok, 666 - source missing
+     * @return string
      */
-    public function get_reference_details($reference) {
+    public function get_reference_details($reference, $filestatus = 0) {
         // Indicate it's from box.net repository + secure URL
-        return $this->get_name() . ': ' . $reference;
+        $details = $this->get_name() . ': ' . $reference;
+        if (!$filestatus) {
+            return $details;
+        } else {
+            // at the moment for box.net files we never can be sure that source is missing
+            // because box.com never returns 404 error.
+            // So we never change the status and actually this part is unreachable
+            return get_string('lostsource', 'repository', $details);
+        }
     }
 
     /**
-     * Repository method to serve file
+     * Repository method to serve the referenced file
      *
-     * @param stored_file $storedfile
+     * @param stored_file $storedfile the file that contains the reference
      * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
      * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
      * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
@@ -304,7 +319,8 @@ class repository_boxnet extends repository {
      */
     public function send_file($storedfile, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
         $ref = $storedfile->get_reference();
-        // Let box.net serve the file.
+        // Let box.net serve the file. It will return 'no such file' content if file not found
+        // also if file has the different name than alias, it will be returned with the box.net filename
         header('Location: ' . $ref);
     }
 }
