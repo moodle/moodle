@@ -120,6 +120,7 @@ $string['course:changeshortname'] = 'Change course short name';
 $string['course:changesummary'] = 'Change course summary';
 $string['course:enrolconfig'] = 'Configure enrol instances in courses';
 $string['course:enrolreview'] = 'Review course enrolments';
+$string['course:ignorefilesizelimits'] = 'Use files larger than any file size restrictions';
 $string['course:manageactivities'] = 'Manage activities';
 $string['course:managefiles'] = 'Manage files';
 $string['course:managegrades'] = 'Manage grades';

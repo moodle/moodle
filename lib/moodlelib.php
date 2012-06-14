@@ -5842,6 +5842,32 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
 }
 
 /**
+ * Returns the maximum size for uploading files for the current user
+ *
+ * This function takes in account @see:get_max_upload_file_size() the user's capabilities
+ *
+ * @param context $context The context in which to check user capabilities
+ * @param int $sizebytes Set maximum size
+ * @param int $coursebytes Current course $course->maxbytes (in bytes)
+ * @param int $modulebytes Current module ->maxbytes (in bytes)
+ * @param stdClass The user
+ * @return int The maximum size for uploading files.
+ */
+function get_user_max_upload_file_size($context, $sitebytes=0, $coursebytes=0, $modulebytes=0, $user=null) {
+    global $USER;
+
+    if (empty($user)) {
+        $user = $USER;
+    }
+
+    if (has_capability('moodle/course:ignorefilesizelimits', $context, $user)) {
+        return -1;
+    }
+
+    return get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes);
+}
+
+/**
  * Returns an array of possible sizes in local language
  *
  * Related to {@link get_max_upload_file_size()} - this function returns an
