@@ -3938,7 +3938,7 @@ class css_style_background extends css_style {
                 case 'background-color' :
                     $color = css_style_color::shrink_value($style->get_value(false));
                     break;
-                case 'background-image' : 
+                case 'background-image' :
                     $image = $style->get_value(false);
                     break;
                 case 'background-repeat' :
