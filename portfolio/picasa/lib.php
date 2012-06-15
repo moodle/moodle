@@ -102,7 +102,7 @@ class portfolio_plugin_picasa extends portfolio_plugin_push_base {
 
     public function admin_config_form(&$mform) {
         $a = new stdClass;
-        $a->docsurl = get_docs_url('Google_OAuth2_Setup');
+        $a->docsurl = get_docs_url('Google_OAuth_2.0_setup');
         $a->callbackurl = google_oauth::callback_url()->out(false);
 
         $mform->addElement('static', null, '', get_string('oauthinfo', 'portfolio_picasa', $a));

@@ -49,6 +49,8 @@ function portfolio_picasa_admin_upgrade_notification() {
         return;
     }
     $mainadmin = reset($admins);
+    $a = new stdClass;
+    $a->docsurl = get_docs_url('Google_OAuth_2.0_setup');
 
     foreach ($admins as $admin) {
         $message = new stdClass();
@@ -58,8 +60,8 @@ function portfolio_picasa_admin_upgrade_notification() {
         $message->userto            = $admin;
         $message->smallmessage      = get_string('oauth2upgrade_message_small', 'portfolio_picasa');
         $message->subject           = get_string('oauth2upgrade_message_subject', 'portfolio_picasa');
-        $message->fullmessage       = get_string('oauth2upgrade_message_content', 'portfolio_picasa');
-        $message->fullmessagehtml   = get_string('oauth2upgrade_message_content', 'portfolio_picasa');
+        $message->fullmessage       = get_string('oauth2upgrade_message_content', 'portfolio_picasa', $a);
+        $message->fullmessagehtml   = get_string('oauth2upgrade_message_content', 'portfolio_picasa', $a);
         $message->fullmessageformat = FORMAT_PLAIN;
         $message->notification      = 1;
         message_send($message);
