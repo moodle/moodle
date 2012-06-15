@@ -910,7 +910,7 @@ class core_course_external extends external_api {
                                          ' - user must have \'moodle/category:manage\' to search on theme'),
                             'value' => new external_value(PARAM_RAW, 'the value to match')
                         )
-                    ), VALUE_DEFAULT, array()
+                    ), 'criteria', VALUE_DEFAULT, array()
                 ),
                 'addsubcategories' => new external_value(PARAM_BOOL, 'return the sub categories infos
                                           (1 - default) otherwise only the category info (0)', VALUE_DEFAULT, 1)
