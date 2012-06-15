@@ -36,6 +36,7 @@ if ($showswatch == "light") {
     $databodytheme = 'c';
 }
 $mypagetype = $PAGE->pagetype;
+$bodyclasses = array();
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
