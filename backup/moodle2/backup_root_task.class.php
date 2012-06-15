@@ -70,12 +70,15 @@ class backup_root_task extends backup_task {
         $filename->set_ui_filename(get_string('filename', 'backup'), 'backup.mbz', array('size'=>50));
         $this->add_setting($filename);
 
-        //Sample custom settings
-        $converters = convert_helper::available_converters(false);
-        foreach ($converters as $cnv) {
-            $formatcnv = new backup_users_setting($cnv, base_setting::IS_BOOLEAN, false);
-            $formatcnv->set_ui(new backup_setting_ui_checkbox($formatcnv, get_string('backupformat'.$cnv, 'backup')));
-            $this->add_setting($formatcnv);
+        // Present converter settings only in type course and mode general backup operations.
+        $converters = array();
+        if ($this->plan->get_type() == backup::TYPE_1COURSE and $this->plan->get_mode() == backup::MODE_GENERAL) {
+            $converters = convert_helper::available_converters(false);
+            foreach ($converters as $cnv) {
+                $formatcnv = new backup_users_setting($cnv, base_setting::IS_BOOLEAN, false);
+                $formatcnv->set_ui(new backup_setting_ui_checkbox($formatcnv, get_string('backupformat'.$cnv, 'backup')));
+                $this->add_setting($formatcnv);
+            }
         }
 
         // Define users setting (keeping it on hand to define dependencies)

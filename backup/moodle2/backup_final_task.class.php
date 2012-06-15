@@ -113,26 +113,26 @@ class backup_final_task extends backup_task {
 
         require_once($CFG->dirroot . '/backup/util/helper/convert_helper.class.php');
 
-        //Checking if we have some converter involved in the process
-        $converters = convert_helper::available_converters(false);
-        //Conversion status
+        // Look for converter steps only in type course and mode general backup operations.
         $conversion = false;
-        foreach ($converters as $value) {
-            if ($this->get_setting_value($value)) {
-                //zip class
-                $zip_contents      = "{$value}_zip_contents";
-                $store_backup_file = "{$value}_store_backup_file";
-                $convert           = "{$value}_backup_convert";
+        if ($this->plan->get_type() == backup::TYPE_1COURSE and $this->plan->get_mode() == backup::MODE_GENERAL) {
+            $converters = convert_helper::available_converters(false);
+            foreach ($converters as $value) {
+                if ($this->get_setting_value($value)) {
+                    // Zip class.
+                    $zip_contents      = "{$value}_zip_contents";
+                    $store_backup_file = "{$value}_store_backup_file";
+                    $convert           = "{$value}_backup_convert";
 
-                $this->add_step(new $convert("package_convert_{$value}"));
-                $this->add_step(new $zip_contents("zip_contents_{$value}"));
-                $this->add_step(new $store_backup_file("save_backupfile_{$value}"));
-                if (!$conversion) {
-                    $conversion = true;
+                    $this->add_step(new $convert("package_convert_{$value}"));
+                    $this->add_step(new $zip_contents("zip_contents_{$value}"));
+                    $this->add_step(new $store_backup_file("save_backupfile_{$value}"));
+                    if (!$conversion) {
+                        $conversion = true;
+                    }
                 }
             }
         }
-
 
         // On backup::MODE_IMPORT, we don't have to zip nor store the the file, skip these steps
         if (($this->plan->get_mode() != backup::MODE_IMPORT) && !$conversion) {
