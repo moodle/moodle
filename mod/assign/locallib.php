@@ -2593,7 +2593,11 @@ class assign {
                 // different ways to indicate no grade
                 continue;
             }
-            if ($current->grade != $modified->grade) {
+            // Treat 0 and null as different values
+            if ($current->grade !== null) {
+                $current->grade = floatval($current->grade);
+            }
+            if ($current->grade !== $modified->grade) {
                 // grade changed
                 if ($this->grading_disabled($modified->userid)) {
                     continue;
