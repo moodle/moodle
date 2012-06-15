@@ -1303,8 +1303,8 @@ function format_string($string, $striplinks = true, $options = NULL) {
 
     if (!empty($CFG->filterall)) {
         $filtermanager = filter_manager::instance();
-        $string = $filtermanager->filter_string($string, $options['context']);
         $filtermanager->setup_page_for_filters($PAGE, $options['context']); // Setup global stuff filters may have.
+        $string = $filtermanager->filter_string($string, $options['context']);
     }
 
     // If the site requires it, strip ALL tags from this string
