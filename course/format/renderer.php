@@ -539,7 +539,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             echo $this->section_header($thissection, $course, true);
             print_section($course, $thissection, $mods, $modnamesused, true);
             if ($PAGE->user_is_editing()) {
-                print_section_add_menus($course, 0, $modnames);
+                print_section_add_menus($course, 0, $modnames, false, false, true);
             }
             echo $this->section_footer();
             echo $this->end_section_list();
@@ -575,7 +575,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         print_section($course, $thissection, $mods, $modnamesused, true, '100%', false, true);
         if ($PAGE->user_is_editing()) {
-            print_section_add_menus($course, $displaysection, $modnames);
+            print_section_add_menus($course, $displaysection, $modnames, false, false, true);
         }
         echo $this->section_footer();
         echo $this->end_section_list();
