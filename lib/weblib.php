@@ -1302,7 +1302,8 @@ function format_string($string, $striplinks = true, $options = NULL) {
     $string = replace_ampersands_not_followed_by_entity($string);
 
     if (!empty($CFG->filterall)) {
-        $string = filter_manager::instance()->filter_string($string, $options['context']);
+        $filtermanager = filter_manager::instance();
+        $string = $filtermanager->filter_string($string, $options['context']);
         $filtermanager->setup_page_for_filters($PAGE, $options['context']); // Setup global stuff filters may have.
     }
 
