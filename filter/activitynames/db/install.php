@@ -15,18 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Media filter post install hook
+ * Filter post install hook
  *
- * @package    filter
- * @subpackage mediaplugin
- * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @package    filter_activitynames
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function xmldb_filter_mediaplugin_install() {
+function xmldb_filter_activitynames_install() {
     global $CFG;
     require_once("$CFG->libdir/filterlib.php");
 
-    filter_set_global_state('filter/mediaplugin', TEXTFILTER_ON);
+    filter_set_global_state('filter/activitynames', TEXTFILTER_ON);
 }
 
