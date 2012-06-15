@@ -1247,8 +1247,10 @@ class question_possible_response {
      * {@link question_type::get_possible_responses()}.
      */
     public $responseclass;
-    /** @var string the actual response the student gave to this part. */
+
+    /** @var string the (partial) credit awarded for this responses. */
     public $fraction;
+
     /**
      * Constructor, just an easy way to set the fields.
      * @param string $responseclassid see the field descriptions above.
