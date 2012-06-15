@@ -5034,7 +5034,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                         break;
                     case CONTEXT_COURSECAT :
                     case CONTEXT_SYSTEM :
-                        $context = get_system_context();
+                        // Stored in the front-page course.
+                        $context = get_context_instance(CONTEXT_COURSE, get_site()->id);
                         break;
                     default :
                         continue;
