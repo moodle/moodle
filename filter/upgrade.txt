@@ -1,6 +1,13 @@
 This file describes API changes in core filter API and plugins,
 information provided here is intended especially for developers.
 
+=== 2.3 ===
+
+* new setup() method added to moodle_text_filter, invoked before
+  filtering happens, used to add all the requirements to the page
+  (js, css...) and/or other init tasks. See filter/glossary for
+  an example using the API (and MDL-32279 for its justification).
+
 === 2.2 ===
 
 * legacy filters and legacy locations have been deprecated, so any

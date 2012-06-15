@@ -35,14 +35,25 @@ defined('MOODLE_INTERNAL') || die();
  */
 class filter_glossary extends moodle_text_filter {
 
+    public function setup($page, $context) {
+        // This only requires execution once per request.
+        static $jsinitialised = false;
+        if (empty($jsinitialised)) {
+            $page->requires->yui_module(
+                    'moodle-filter_glossary-autolinker',
+                    'M.filter_glossary.init_filter_autolinking',
+                    array(array('courseid' => 0)));
+            $jsinitialised = true;
+        }
+    }
+
     public function filter($text, array $options = array()) {
-        global $CFG, $DB, $GLOSSARY_EXCLUDECONCEPTS, $PAGE;
+        global $CFG, $DB, $GLOSSARY_EXCLUDECONCEPTS;
 
         // Trivial-cache - keyed on $cachedcontextid
         static $cachedcontextid;
         static $conceptlist;
 
-        static $jsinitialised;       // To control unique js init
         static $nothingtodo;         // To avoid processing if no glossaries / concepts are found
 
         // Try to get current course
@@ -185,16 +196,6 @@ class filter_glossary extends moodle_text_filter {
             }
 
             $conceptlist = filter_remove_duplicates($conceptlist);
-
-            if (empty($jsinitialised)) {
-                // Add a JavaScript event to open popup's here. This only ever need to be
-                // added once!
-                $PAGE->requires->yui_module(
-                        'moodle-filter_glossary-autolinker',
-                        'M.filter_glossary.init_filter_autolinking',
-                        array(array('courseid' => $courseid)));
-                $jsinitialised = true;
-            }
         }
 
         if (!empty($GLOSSARY_EXCLUDECONCEPTS)) {
