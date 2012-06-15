@@ -67,6 +67,10 @@ class backup_plan extends base_plan implements loggable {
         return $this->controller->get_backupid();
     }
 
+    public function get_type() {
+        return $this->controller->get_type();
+    }
+
     public function get_mode() {
         return $this->controller->get_mode();
     }
