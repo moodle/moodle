@@ -385,6 +385,13 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
  *file picker search dialog
  */
 .file-picker div.bd {text-align:left;}
-.dir-rtl .file-picker div.bd {text-align:right;}
 
+/* RTL Overrides
+-------------------------*/
+.dir-rtl .file-picker div.bd {text-align: right;}
+.dir-rtl .file-picker .fp-pathbar {text-align: right;}
+.dir-rtl .file-picker .fp-list {text-align: right;}
+.dir-rtl .filepicker .yui-layout-unit-left {left: 500px;}
+.dir-rtl .filepicker .yui-layout-unit-center {left: 0;}
+.dir-rtl #filemenu .yuimenuitemlabel {text-align: right;}
 .dir-rtl .filemanager-container .yui3-skin-sam .yui3-datatable-header {text-align: right;}
