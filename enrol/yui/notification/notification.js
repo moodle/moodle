@@ -76,6 +76,7 @@ Y.extend(DIALOGUE, Y.Overlay, {
                 if (this.get('draggable')) {
                     var titlebar = '#' + this.get('id') + ' .' + CSS.HEADER;
                     this.plug(Y.Plugin.Drag, {handles : [titlebar]});
+                    this.dd.addInvalid('div.closebutton');
                     Y.one(titlebar).setStyle('cursor', 'move');
                 }
                 break;
