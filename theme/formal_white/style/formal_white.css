@@ -45,7 +45,7 @@ p {margin:0}
 #dock #dockeditempanel .dockeditempanel_hd .commands {position:absolute;right:0.3em;top:0.25em;}
 
 /* navbar */
-.navbar {width:auto;padding-top:0.35em;padding-bottom:0.15em;background-image:url([[pix:theme|bg_bread]]);background-color:#AB9D80;}
+.navbar {width:auto;background-image:url([[pix:theme|bg_bread]]);background-repeat:repeat-x;line-height:29px;} /* 30 pixel is the height if bg_bread */
 .navbar li span {color:#E3DFD4;}
 .navbar li a:link, .navbar li a:visited {color:white;}
 
