@@ -25,8 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/ddimageortext/simpletest/helper.php');
+global $CFG;
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
 
 
 /**
@@ -34,21 +35,22 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/simpletest/helper.php
  *
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      qtype_ddimageortext
  */
-class qtype_ddimageortext_test extends UnitTestCase {
+class qtype_ddimageortext_test extends basic_testcase {
     /** @var qtype_ddimageortext instance of the question type class to test. */
     protected $qtype;
 
-    public function setUp() {
+    protected function setUp() {
         $this->qtype = question_bank::get_qtype('ddimageortext');;
     }
 
-    public function tearDown() {
+    protected function tearDown() {
         $this->qtype = null;
     }
 
     public function test_name() {
-        $this->assertEqual($this->qtype->name(), 'ddimageortext');
+        $this->assertEquals($this->qtype->name(), 'ddimageortext');
     }
 
     public function test_can_analyse_responses() {
