@@ -802,7 +802,8 @@ class core_files_renderer extends plugin_renderer_base {
      * Must have one top element, CSS for this element must define width and height of the window;
      *
      * content of element with class 'fp-dlg-text' will be replaced with dialog text;
-     * elements with classes 'fp-dlg-butoverwrite', 'fp-dlg-butrename' and 'fp-dlg-butcancel' will
+     * elements with classes 'fp-dlg-butoverwrite', 'fp-dlg-butrename',
+     * 'fp-dlg-butoverwriteall', 'fp-dlg-butrenameall' and 'fp-dlg-butcancel' will
      * hold onclick events;
      *
      * content of element with class 'fp-dlg-butrename' will be substituted with appropriate string
@@ -817,6 +818,33 @@ class core_files_renderer extends plugin_renderer_base {
     <a class="{!}fp-dlg-butoverwrite fp-panel-button" href="#">'.get_string('overwrite', 'repository').'</a>
     <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
     <a class="{!}fp-dlg-butrename fp-panel-button" href="#"></a>
+</div>';
+        return preg_replace('/\{\!\}/', '', $rv);
+    }
+
+    /**
+     * FilePicker JS template for popup dialogue window asking for action when file with the same name already exists (multiple-file version).
+     *
+     * Must have one top element, CSS for this element must define width and height of the window;
+     *
+     * content of element with class 'fp-dlg-text' will be replaced with dialog text;
+     * elements with classes 'fp-dlg-butoverwrite', 'fp-dlg-butrename' and 'fp-dlg-butcancel' will
+     * hold onclick events;
+     *
+     * content of element with class 'fp-dlg-butrename' will be substituted with appropriate string
+     * (Note that it may have long text)
+     *
+     * @return string
+     */
+    private function fp_js_template_processexistingfilemultiple() {
+        $rv = '
+<div class="file-picker fp-dlg">
+    <p class="{!}fp-dlg-text"></p>
+    <a class="{!}fp-dlg-butoverwrite fp-panel-button" href="#">'.get_string('overwrite', 'repository').'</a>
+    <a class="{!}fp-dlg-butoverwriteall fp-panel-button" href="#">'.get_string('overwriteall', 'repository').'</a>
+    <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
+    <a class="{!}fp-dlg-butrename fp-panel-button" href="#"></a>
+    <a class="{!}fp-dlg-butrenameall fp-panel-button" href="#">'.get_string('renameall', 'repository').'</a>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
