@@ -69,6 +69,10 @@ class block_blog_recent extends block_base {
         require_once($CFG->dirroot .'/blog/lib.php');
         require_once($CFG->dirroot .'/blog/locallib.php');
 
+        if (empty($this->config)) {
+            $this->config = new stdClass();
+        }
+
         if (empty($this->config->recentbloginterval)) {
             $this->config->recentbloginterval = 8400;
         }
