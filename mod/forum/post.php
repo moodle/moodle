@@ -519,7 +519,7 @@ if ($USER->id != $post->userid) {   // Not the original author, so add a message
     if ($post->messageformat == FORMAT_HTML) {
         $data->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&course='.$post->course.'">'.
                        fullname($USER).'</a>';
-        $post->message .= '<p>(<span class="edited">'.get_string('editedby', 'forum', $data).'</span>)</p>';
+        $post->message .= '<p><span class="edited">('.get_string('editedby', 'forum', $data).')</span></p>';
     } else {
         $data->name = fullname($USER);
         $post->message .= "\n\n(".get_string('editedby', 'forum', $data).')';
