@@ -22,9 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $plugin->version   = 2012011600;
 $plugin->requires  = 2011110200;
-
-
 $plugin->component = 'assignfeedback_file';
 
