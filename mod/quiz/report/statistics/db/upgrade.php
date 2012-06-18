@@ -37,6 +37,32 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
     // Moodle v2.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2012061800) {
+
+        // Changing type of field subqid on table quiz_question_response_stats to char.
+        $table = new xmldb_table('quiz_question_response_stats');
+        $field = new xmldb_field('subqid', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'questionid');
+
+        // Launch change of type for field subqid.
+        $dbman->change_field_type($table, $field);
+
+        // Statistics savepoint reached.
+        upgrade_plugin_savepoint(true, 2012061800, 'quiz', 'statistics');
+    }
+
+    if ($oldversion < 2012061801) {
+
+        // Changing type of field aid on table quiz_question_response_stats to char.
+        $table = new xmldb_table('quiz_question_response_stats');
+        $field = new xmldb_field('aid', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'subqid');
+
+        // Launch change of type for field aid.
+        $dbman->change_field_type($table, $field);
+
+        // Statistics savepoint reached.
+        upgrade_plugin_savepoint(true, 2012061801, 'quiz', 'statistics');
+    }
+
     return true;
 }
 
