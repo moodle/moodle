@@ -57,8 +57,9 @@ class repository_upload extends repository {
         $itemid   = optional_param('itemid', 0, PARAM_INT);
         $license  = optional_param('license', $CFG->sitedefaultlicense, PARAM_TEXT);
         $author   = optional_param('author', '', PARAM_TEXT);
+        $overwriteexisting = optional_param('overwrite', false, PARAM_BOOL);
 
-        return $this->process_upload($saveas_filename, $maxbytes, $types, $savepath, $itemid, $license, $author);
+        return $this->process_upload($saveas_filename, $maxbytes, $types, $savepath, $itemid, $license, $author, $overwriteexisting);
     }
 
     /**
@@ -70,9 +71,10 @@ class repository_upload extends repository {
      * @param int $itemid optional the ID for this item within the file area
      * @param string $license optional the license to use for this file
      * @param string $author optional the name of the author of this file
+     * @param bool $overwriteexisting optional user has asked to overwrite the existing file
      * @return object containing details of the file uploaded
      */
-    public function process_upload($saveas_filename, $maxbytes, $types = '*', $savepath = '/', $itemid = 0, $license = null, $author = '') {
+    public function process_upload($saveas_filename, $maxbytes, $types = '*', $savepath = '/', $itemid = 0, $license = null, $author = '', $overwriteexisting = false) {
         global $USER, $CFG;
 
         if ((is_array($types) and in_array('*', $types)) or $types == '*') {
@@ -191,31 +193,36 @@ class repository_upload extends repository {
         $record->userid    = $USER->id;
 
         if (repository::draftfile_exists($record->itemid, $record->filepath, $record->filename)) {
-            $existingfilename = $record->filename;
-            $unused_filename = repository::get_unused_filename($record->itemid, $record->filepath, $record->filename);
-            $record->filename = $unused_filename;
-            $stored_file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
-            $event = array();
-            $event['event'] = 'fileexists';
-            $event['newfile'] = new stdClass;
-            $event['newfile']->filepath = $record->filepath;
-            $event['newfile']->filename = $unused_filename;
-            $event['newfile']->url = moodle_url::make_draftfile_url($record->itemid, $record->filepath, $unused_filename)->out(false);
+            if ($overwriteexisting) {
+                repository::delete_tempfile_from_draft($record->itemid, $record->filepath, $record->filename);
+            } else {
+                $existingfilename = $record->filename;
+                $unused_filename = repository::get_unused_filename($record->itemid, $record->filepath, $record->filename);
+                $record->filename = $unused_filename;
+                $stored_file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
+                $event = array();
+                $event['event'] = 'fileexists';
+                $event['newfile'] = new stdClass;
+                $event['newfile']->filepath = $record->filepath;
+                $event['newfile']->filename = $unused_filename;
+                $event['newfile']->url = moodle_url::make_draftfile_url($record->itemid, $record->filepath, $unused_filename)->out(false);
 
-            $event['existingfile'] = new stdClass;
-            $event['existingfile']->filepath = $record->filepath;
-            $event['existingfile']->filename = $existingfilename;
-            $event['existingfile']->url      = moodle_url::make_draftfile_url($record->itemid, $record->filepath, $existingfilename)->out(false);
-            return $event;
-        } else {
-            $stored_file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
-
-            return array(
-                'url'=>moodle_url::make_draftfile_url($record->itemid, $record->filepath, $record->filename)->out(false),
-                'id'=>$record->itemid,
-                'file'=>$record->filename);
+                $event['existingfile'] = new stdClass;
+                $event['existingfile']->filepath = $record->filepath;
+                $event['existingfile']->filename = $existingfilename;
+                $event['existingfile']->url      = moodle_url::make_draftfile_url($record->itemid, $record->filepath, $existingfilename)->out(false);
+                return $event;
+            }
         }
+
+        $stored_file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
+
+        return array(
+            'url'=>moodle_url::make_draftfile_url($record->itemid, $record->filepath, $record->filename)->out(false),
+            'id'=>$record->itemid,
+            'file'=>$record->filename);
     }
+
 
     /**
      * Checks the contents of the given file is not completely NULL - this can happen if a
