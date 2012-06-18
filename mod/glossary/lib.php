@@ -560,7 +560,7 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
             echo '<div class="info"><a href="'.$link.'">'.format_string($entry->concept, true).'</a></div>';
             $entrycount += 1;
         } else {
-            $numnewentries = $DB->count_records_sql($countsql.$joins[0].$clausesql.$approvalsql.')', $params);
+            $numnewentries = $DB->count_records_sql($countsql.$joins[0].$clausesql.$approvalsql, $params);
             echo '<div class="head"><div class="activityhead">'.get_string('andmorenewentries', 'glossary', $numnewentries - GLOSSARY_RECENT_ACTIVITY_LIMIT).'</div></div>';
             break;
         }
