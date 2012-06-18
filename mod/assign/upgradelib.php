@@ -221,8 +221,8 @@ class assign_upgrade_manager {
             $newassignment->update_calendar($newcoursemodule->id);
 
             // copy the grades from the old assignment to the new one
-            $DB->set_field('grade_items', 'itemmodule', 'assign', array('iteminstance'=>$oldassignment->id));
-            $DB->set_field('grade_items', 'iteminstance', $newassignment->get_instance()->id, array('iteminstance'=>$oldassignment->id));
+            $DB->set_field('grade_items', 'itemmodule', 'assign', array('iteminstance'=>$oldassignment->id, 'itemmodule'=>'assignment'));
+            $DB->set_field('grade_items', 'iteminstance', $newassignment->get_instance()->id, array('iteminstance'=>$oldassignment->id, 'itemmodule'=>'assign'));
             $gradesdone = true;
 
         } catch (Exception $exception) {
@@ -234,8 +234,8 @@ class assign_upgrade_manager {
             // roll back the grades changes
             if ($gradesdone) {
                 // copy the grades from the old assignment to the new one
-                $DB->set_field('grade_items', 'itemmodule', 'assignment', array('iteminstance'=>$newassignment->get_instance()->id));
-                $DB->set_field('grade_items', 'iteminstance', $oldassignment->id, array('iteminstance'=>$newassignment->get_instance()->id));
+                $DB->set_field('grade_items', 'itemmodule', 'assignment', array('iteminstance'=>$newassignment->get_instance()->id, 'itemmodule'=>'assign'));
+                $DB->set_field('grade_items', 'iteminstance', $oldassignment->id, array('iteminstance'=>$newassignment->get_instance()->id, 'itemmodule'=>'assignment'));
             }
             // roll back the completion changes
             if ($completiondone) {
