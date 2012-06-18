@@ -2,7 +2,7 @@ YUI.add('moodle-course-modchooser', function(Y) {
     var CSS = {
         PAGECONTENT : 'div#page-content',
         SECTION : 'li.section',
-        SECTIONMODCHOOSER : 'a.section-modchooser-link',
+        SECTIONMODCHOOSER : 'span.section-modchooser-link',
         SITEMENU : 'div.block_site_main_menu',
         SITETOPIC : 'div.sitetopic'
     };
@@ -99,7 +99,12 @@ YUI.add('moodle-course-modchooser', function(Y) {
             }, this);
         },
         _setup_for_section : function(section, sectionid) {
-            var chooserlink = section.one(CSS.SECTIONMODCHOOSER);
+            var chooserspan = section.one(CSS.SECTIONMODCHOOSER);
+            var chooserlink = Y.Node.create("<a href='#' />");
+            chooserspan.get('children').each(function(node) {
+                chooserlink.appendChild(node);
+            });
+            chooserspan.insertBefore(chooserlink);
             chooserlink.on('click', this.display_mod_chooser, this, sectionid);
         },
         /**
