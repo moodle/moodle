@@ -661,7 +661,7 @@ body.tag .managelink {padding: 5px;}
 .dir-rtl .mod-indent-huge {margin-right:300px;margin-left:0;}
 
 .dir-rtl .felement.feditor select {margin-right:18.75%;margin-left:auto;}
-.dir-rtl .mform .fitem .felement {margin-right: 16%;margin-left:auto;}
+.dir-rtl .mform .fitem .felement {margin-right: 16%;margin-left:auto;text-align: right;}
 
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
 .resourcecontent .mediaplugin_mp3 object {height:25px; width: 600px}
@@ -942,6 +942,12 @@ sup {vertical-align: super;}
     line-height: 2em;
 }
 
+.dir-rtl #choosercontainer #chooseform .instruction, .jsenabled #choosercontainer #chooseform .typesummary {
+    left: 0px;
+    right: 18.5em;
+    border-right: 1px solid grey;
+}
+
 /* Selected option settings */
 .jsenabled .choosercontainer #chooseform .instruction,
 .choosercontainer #chooseform .selected .typesummary {
@@ -955,3 +961,4 @@ sup {vertical-align: super;}
     -moz-box-shadow: 0px 0px 10px 0px #CCCCCC;
 }
 
+.initialbar a {padding-right: 2px;}
