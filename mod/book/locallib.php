@@ -24,8 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-global $CFG;
-
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
@@ -113,19 +111,11 @@ function book_preload_chapters($book) {
             }
         }
 
-        // assigning previous and next page id
-        $ch->prev = $prev;
-        $ch->next = null;
-        if ($prev) {
-            $chapters[$prev]->next = $ch->id;
-        }
-
         if ($oldch->subchapter != $ch->subchapter or $oldch->pagenum != $ch->pagenum or $oldch->hidden != $ch->hidden) {
             // update only if something changed
             $DB->update_record('book_chapters', $ch);
         }
         $chapters[$id] = $ch;
-        $prev = $ch->id;
     }
 
     return $chapters;

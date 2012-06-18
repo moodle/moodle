@@ -31,11 +31,9 @@ defined('MOODLE_INTERNAL') || die;
  * @param navigation_node $node The node to add module settings to
  */
 function booktool_print_extend_settings_navigation(settings_navigation $settings, navigation_node $node) {
-
-    global $PAGE;
+    global $USER, $PAGE, $CFG, $DB, $OUTPUT;
 
     $params = $PAGE->url->params();
-
     if (empty($params['id']) or empty($params['chapterid'])) {
         return;
     }

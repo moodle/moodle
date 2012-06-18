@@ -31,7 +31,6 @@ defined('MOODLE_INTERNAL') || die;
  * @param navigation_node $node The node to add module settings to
  */
 function booktool_exportimscp_extend_settings_navigation(settings_navigation $settings, navigation_node $node) {
-
     global $PAGE;
 
     if (has_capability('booktool/exportimscp:export', $PAGE->cm->context)) {

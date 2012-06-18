@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die;
  * @return array
  */
 function book_get_numbering_types() {
+    global $CFG; // required for the include
 
     require_once(dirname(__FILE__).'/locallib.php');
 
@@ -215,6 +216,7 @@ function book_scale_used_anywhere($scaleid) {
  * @return array
  */
 function book_get_view_actions() {
+    global $CFG; // necessary for includes
 
     $return = array('view', 'view all');
 
@@ -239,6 +241,7 @@ function book_get_view_actions() {
  * @return array
  */
 function book_get_post_actions() {
+    global $CFG; // necessary for includes
 
     $return = array('update');
 
@@ -289,11 +292,9 @@ function book_supports($feature) {
  * @return void
  */
 function book_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $booknode) {
-
     global $USER, $PAGE;
 
     $plugins = get_plugin_list('booktool');
-
     foreach ($plugins as $plugin => $dir) {
         if (file_exists("$dir/lib.php")) {
             require_once("$dir/lib.php");
