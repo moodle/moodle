@@ -122,8 +122,12 @@ class repository_coursefiles extends repository {
                         'datemodified' => $child->get_timemodified(),
                         'datecreated' => $child->get_timecreated(),
                         'source'=> $encodedpath,
+                        'isref' => $child->is_external_file(),
                         'thumbnail' => $OUTPUT->pix_url(file_file_icon($child, 90))->out(false)
                     );
+                    if ($child->get_status() == 666) {
+                        $node['originalmissing'] = true;
+                    }
                     if ($imageinfo = $child->get_imageinfo()) {
                         $fileurl = new moodle_url($child->get_url());
                         $node['realthumbnail'] = $fileurl->out(false, array('preview' => 'thumb', 'oid' => $child->get_timemodified()));

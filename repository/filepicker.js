@@ -885,6 +885,22 @@ M.core_filepicker.init = function(Y, options) {
                 }
             }, false);
         },
+       classnamecallback : function(node) {
+            var classname = '';
+            if (node.children) {
+                classname = classname + ' fp-folder';
+            }
+            if (node.isref) {
+                classname = classname + ' fp-isreference';
+            }
+            if (node.refcount) {
+                classname = classname + ' fp-hasreferences';
+            }
+            if (node.originalmissing) {
+                classname = classname + ' fp-originalmissing';
+            }
+            return Y.Lang.trim(classname);
+        },
         /** displays list of files in tree (list) view mode. If param appenditems is specified,
          * appends those items to the end of the list. Otherwise (default behaviour)
          * clears the contents and displays the items from this.filelist */
@@ -920,9 +936,7 @@ M.core_filepicker.init = function(Y, options) {
                         this.content_scrolled();
                     }
                 },
-                classnamecallback : function(node) {
-                    return node.children ? 'fp-folder' : '';
-                },
+                classnamecallback : this.classnamecallback,
                 dynload : this.active_repo.dynload,
                 filepath : this.filepath,
                 treeview_dynload : this.treeview_dynload
@@ -961,9 +975,7 @@ M.core_filepicker.init = function(Y, options) {
                         this.select_file(node);
                     }
                 },
-                classnamecallback : function(node) {
-                    return node.children ? 'fp-folder' : '';
-                }
+                classnamecallback : this.classnamecallback
             };
             this.fpnode.one('.fp-content').fp_display_filelist(options, list, this.lazyloading);
         },
@@ -998,9 +1010,7 @@ M.core_filepicker.init = function(Y, options) {
                         this.select_file(node);
                     }
                 },
-                classnamecallback : function(node) {
-                    return node.children ? 'fp-folder' : '';
-                }
+                classnamecallback : this.classnamecallback
             };
             this.fpnode.one('.fp-content').fp_display_filelist(options, list, this.lazyloading);
         },
