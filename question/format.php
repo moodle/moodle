@@ -539,7 +539,10 @@ class qformat_default {
         if (is_readable($filename)) {
             $filearray = file($filename);
 
-            /// Check for Macintosh OS line returns (ie file on one line), and fix
+            // If the first line of the file starts with a UTF-8 BOM, remove it.
+            $filearray[0] = textlib_get_instance()->trim_utf8_bom($filearray[0]);
+
+            // Check for Macintosh OS line returns (ie file on one line), and fix.
             if (preg_match("~\r~", $filearray[0]) AND !preg_match("~\n~", $filearray[0])) {
                 return explode("\r", $filearray[0]);
             } else {
