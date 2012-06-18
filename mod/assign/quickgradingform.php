@@ -55,8 +55,7 @@ class mod_assign_quick_grading_form extends moodleform {
         $mform->setType('action', PARAM_ALPHA);
 
         // buttons
-        $mform->addElement('header', 'general', get_string('quickgrading', 'assign'));
-        $mform->addElement('submit', 'savequickgrades', get_string('saveallchanges', 'assign'));
+        $mform->addElement('submit', 'savequickgrades', get_string('saveallquickgradingchanges', 'assign'));
     }
 }
 
