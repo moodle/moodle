@@ -1181,7 +1181,7 @@ class assign {
 
             // need to send this to the student
             $messagetype = 'feedbackavailable';
-            $eventtype = 'assign_student_notification';
+            $eventtype = 'assign_notification';
             $updatetime = $submission->lastmodified;
             $modulename = get_string('modulename', 'assign');
             self::send_assignment_notification($grader, $user, $messagetype, $eventtype, $updatetime, $mod, $contextmodule, $course, $modulename, $submission->name);
@@ -2438,7 +2438,7 @@ class assign {
             return;
         }
         $user = $DB->get_record('user', array('id'=>$submission->userid), '*', MUST_EXIST);
-        $this->send_notification($user, $user, 'submissionreceipt', 'assign_student_notification', $submission->timemodified);
+        $this->send_notification($user, $user, 'submissionreceipt', 'assign_notification', $submission->timemodified);
     }
 
     /**
@@ -2460,7 +2460,7 @@ class assign {
         $user = $DB->get_record('user', array('id'=>$submission->userid), '*', MUST_EXIST);
         if ($teachers = $this->get_graders($user->id)) {
             foreach ($teachers as $teacher) {
-                $this->send_notification($user, $teacher, 'gradersubmissionupdated', 'assign_grader_notification', $submission->timemodified);
+                $this->send_notification($user, $teacher, 'gradersubmissionupdated', 'assign_notification', $submission->timemodified);
             }
         }
     }
