@@ -25,6 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2010090501;
-$plugin->requires = 2010090501;  // Requires this Moodle version
+$plugin->version  = 2012061700;
+$plugin->requires = 2012061700;  // Requires this Moodle version
 $plugin->component = 'workshopeval_best';
