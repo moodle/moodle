@@ -248,15 +248,6 @@ class admin_uploaduser_form2 extends moodleform {
             $mform->setType('htmleditor', PARAM_INT);
         }
 
-        if (empty($CFG->enableajax)) {
-            $mform->addElement('static', 'ajax', get_string('ajaxuse'), get_string('ajaxno'));
-        } else {
-            $choices = array( 0 => get_string('ajaxno'), 1 => get_string('ajaxyes'));
-            $mform->addElement('select', 'ajax', get_string('ajaxuse'), $choices);
-            $mform->setDefault('ajax', 1);
-        }
-        $mform->setAdvanced('ajax');
-
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="100" size="25"');
         $mform->setType('city', PARAM_MULTILANG);
         if (empty($CFG->defaultcity)) {

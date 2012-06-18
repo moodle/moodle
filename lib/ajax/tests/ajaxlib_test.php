@@ -65,12 +65,11 @@ class ajax_testcase extends advanced_testcase {
      * Uses the array of user agents to test ajax_lib::ajaxenabled
      */
     function test_ajaxenabled() {
-        global $CFG, $USER;
+        global $CFG;
 
         $this->resetAfterTest(true);
 
         $CFG->enableajax = 1;
-        $USER->ajax      = 1;
 
         // Should be true
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['2.0']['Windows XP'];

@@ -196,16 +196,6 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $mform->setType('htmleditor', PARAM_INT);
     }
 
-    if (empty($CFG->enableajax)) {
-        $mform->addElement('static', 'ajaxdisabled', get_string('ajaxuse'), get_string('ajaxno'));
-    } else {
-        $choices = array();
-        $choices['0'] = get_string('ajaxno');
-        $choices['1'] = get_string('ajaxyes');
-        $mform->addElement('select', 'ajax', get_string('ajaxuse'), $choices);
-        $mform->setDefault('ajax', 1);
-    }
-
     $choices = array();
     $choices['0'] = get_string('screenreaderno');
     $choices['1'] = get_string('screenreaderyes');
