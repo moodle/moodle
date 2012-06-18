@@ -307,6 +307,15 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->timefinish = $this->apply_date_offset($data->timefinish);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
+        // Deals with up-grading pre-2.3 back-ups to 2.3+.
+        if (!isset($data->state)) {
+            if ($data->timefinish > 0) {
+                $data->state = 'finished';
+            } else {
+                $data->state = 'inprogress';
+            }
+        }
+
         // The data is actually inserted into the database later in inform_new_usage_id.
         $this->currentquizattempt = clone($data);
     }
