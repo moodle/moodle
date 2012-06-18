@@ -841,9 +841,10 @@ class core_files_renderer extends plugin_renderer_base {
 <div class="file-picker fp-dlg">
     <p class="{!}fp-dlg-text"></p>
     <a class="{!}fp-dlg-butoverwrite fp-panel-button" href="#">'.get_string('overwrite', 'repository').'</a>
-    <a class="{!}fp-dlg-butoverwriteall fp-panel-button" href="#">'.get_string('overwriteall', 'repository').'</a>
     <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
     <a class="{!}fp-dlg-butrename fp-panel-button" href="#"></a>
+    <br/>
+    <a class="{!}fp-dlg-butoverwriteall fp-panel-button" href="#">'.get_string('overwriteall', 'repository').'</a>
     <a class="{!}fp-dlg-butrenameall fp-panel-button" href="#">'.get_string('renameall', 'repository').'</a>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
