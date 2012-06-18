@@ -309,6 +309,9 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager .yui3-datatable-odd .yui3-datatable-cell {background-color: #F6F6F6!important;border-left: 0px solid #F6F6F6;}
 .filemanager .yui3-datatable-even .yui3-datatable-cell {background-color: #FFFFFF!important;border-left: 0px solid #FFFFFF;}
 
+.filemanager .fp-filename-icon.fp-hasreferences .fp-reficons1{position:absolute;height:100%;width:100%;bottom:-8px;left:10px;z-index:1000;background: url('[[pix:theme|fp/link]]') no-repeat;background-position:bottom left;}
+.filemanager .fp-filename-icon.fp-isreference .fp-reficons2 {position:absolute;height:100%;width:100%;bottom:-8px;left:-5px;z-index:1001;background: url('[[pix:theme|fp/alias]]') no-repeat;background-position:bottom left;}
+
 /*
  * Folder Context Menu (File Manager only)
  */

@@ -279,6 +279,8 @@ class core_files_renderer extends plugin_renderer_base {
 <span class="fp-filename-icon">
     <a href="#">
     <span class="{!}fp-icon"></span>
+    <span class="fp-reficons1"></span>
+    <span class="fp-reficons2"></span>
     <span class="{!}fp-filename"></span>
     </a>
     <a class="{!}fp-contextmenu" href="#" onclick="return false;">'.$this->pix_icon('i/menu', '▶').'</a>
