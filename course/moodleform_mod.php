@@ -690,6 +690,9 @@ abstract class moodleform_mod extends moodleform {
 
         $mform->addElement('hidden', 'return', 0);
         $mform->setType('return', PARAM_BOOL);
+
+        $mform->addElement('hidden', 'sr', 0);
+        $mform->setType('sr', PARAM_INT);
     }
 
     public function standard_grading_coursemodule_elements() {

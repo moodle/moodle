@@ -1762,7 +1762,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 /**
  * Prints the menus to add activities and resources.
  */
-function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false) {
+function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false, $sectionreturn = false) {
     global $CFG, $OUTPUT;
 
     // check to see if user can add menus
@@ -1780,13 +1780,20 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     // We need to add the section section to the link for each module
     $sectionlink = '&section=' . $section;
 
+    // We need to add the section to return to
+    if ($sectionreturn) {
+        $sectionreturnlink = '&sr=' . $section;
+    } else {
+        $sectionreturnlink = '&sr=0';
+    }
+
     foreach ($modules as $module) {
         if (isset($module->types)) {
             // This module has a subtype
             // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
             $subtypes = array();
             foreach ($module->types as $subtype) {
-                $subtypes[$subtype->link . $sectionlink] = $subtype->title;
+                $subtypes[$subtype->link . $sectionlink . $sectionreturnlink] = $subtype->title;
             }
 
             // Sort module subtypes into the list
@@ -1808,11 +1815,11 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         } else {
             // This module has no subtypes
             if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
-                $resources[$module->link . $sectionlink] = $module->title;
+                $resources[$module->link . $sectionlink . $sectionreturnlink] = $module->title;
             } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
                 // System modules cannot be added by user, do not add to dropdown
             } else {
-                $activities[$module->link . $sectionlink] = $module->title;
+                $activities[$module->link . $sectionlink . $sectionreturnlink] = $module->title;
             }
         }
     }
@@ -1880,10 +1887,11 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
  * @param object $course The Course
  * @param array $modnames An array containing the list of modules and their
  * names
+ * @param int $sectionreturn The section to return to
  * @return array A list of stdClass objects containing metadata about each
  * module
  */
-function get_module_metadata($course, $modnames) {
+function get_module_metadata($course, $modnames, $sectionreturn = 0) {
     global $CFG, $OUTPUT;
 
     // get_module_metadata will be called once per section on the page and courses may show
@@ -1894,7 +1902,7 @@ function get_module_metadata($course, $modnames) {
     }
 
     $return = array();
-    $urlbase = "/course/mod.php?id=$course->id&sesskey=".sesskey().'&add=';
+    $urlbase = "/course/mod.php?id=$course->id&sesskey=".sesskey().'&sr='.$sectionreturn.'&add=';
     foreach($modnames as $modname => $modnamestr) {
         if (!course_allowed_module($course, $modname)) {
             continue;

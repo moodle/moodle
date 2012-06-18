@@ -270,7 +270,7 @@
     if (include_course_ajax($course, $modnamesused)) {
         // Add the module chooser
         $renderer = $PAGE->get_renderer('core', 'course');
-        echo $renderer->course_modchooser(get_module_metadata($course, $modnames), $course);
+        echo $renderer->course_modchooser(get_module_metadata($course, $modnames, $displaysection), $course);
     }
 
     echo $OUTPUT->footer();
