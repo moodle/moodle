@@ -27,7 +27,7 @@
  * @param int $oldversion
  * @return bool
  */
-function xmldb_submission_onlinetext_upgrade($oldversion) {
+function xmldb_assignsubmission_onlinetext_upgrade($oldversion) {
     return true;
 }
 
