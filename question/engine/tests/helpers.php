@@ -481,16 +481,10 @@ abstract class question_testcase extends advanced_testcase {
             $compare = (array)$compare;
             foreach ($expect as $k=>$v) {
                 if (!array_key_exists($k, $compare)) {
-                    if (!$message) {
-                        $message = "Property $k does not exist";
-                    }
-                    $this->fail($message);
+                    $this->fail("Property $k does not exist");
                 }
                 if ($v != $compare[$k]) {
-                    if (!$message) {
-                        $message = "Property $k is different";
-                    }
-                    $this->fail($message);
+                    $this->fail("Property $k is different");
                 }
             }
             $this->assertTrue(true);
