@@ -110,27 +110,8 @@ M.mod_assign.init_grading_table = function(Y) {
     });
 };
 
-M.mod_assign.check_dirty_quickgrading_form = function(e) {
-    if (!M.core_formchangechecker.get_form_dirty_state()) {
-        // the form is not dirty, so don't display any message
-        return;
-    }
-
-    // This is the error message that we'll show to browsers which support it
-    var warningmessage = 'There are unsaved quickgrading changes. Do you really wanto to leave this page?';
-
-    // Most browsers are happy with the returnValue being set on the event
-    // But some browsers do not consistently pass the event
-    if (e) {
-        e.returnValue = warningmessage;
-    }
-
-    // But some require it to be returned instead
-    return warningmessage;
-}
 M.mod_assign.init_grading_options = function(Y) {
     Y.use('node', function(Y) {
-
         var paginationelement = Y.one('#id_perpage');
         paginationelement.on('change', function(e) {
             Y.one('form.gradingoptionsform').submit();
@@ -145,28 +126,5 @@ M.mod_assign.init_grading_options = function(Y) {
                 Y.one('form.gradingoptionsform').submit();
             });
         }
-
     });
-
-
 };
-// override the default dirty form behaviour to ignore any input with the class "ignoredirty"
-M.mod_assign.set_form_changed = M.core_formchangechecker.set_form_changed;
-M.core_formchangechecker.set_form_changed = function(e) {
-    var target = e.currentTarget;
-    if (!target.hasClass('ignoredirty')) {
-        M.mod_assign.set_form_changed(e);
-    }
-}
-
-M.mod_assign.get_form_dirty_state = M.core_formchangechecker.get_form_dirty_state;
-M.core_formchangechecker.get_form_dirty_state = function() {
-    var state = M.core_formchangechecker.stateinformation;
-    if (state.focused_element) {
-        if (state.focused_element.element.hasClass('ignoredirty')) {
-            state.focused_element.initial_value = state.focused_element.element.get('value')
-        }
-    }
-    return M.mod_assign.get_form_dirty_state();
-}
-
