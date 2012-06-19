@@ -10,6 +10,7 @@
 .filemanager input[type="text"], .file-picker input[type="text"] {border: 1px solid #BBBBBB;width: 265px;height: 18px;padding: 1px 6px;}
 .filemanager select, .file-picker select {height: 22px;padding: 2px 1px;}
 .fp-content-center {height: 100%;width: 100%;display:table-cell;vertical-align: middle;}
+.fp-content-hidden {visibility: hidden;}
 
 /*
  * Dialogue (File Picker and File Manager)

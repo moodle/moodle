@@ -1194,7 +1194,7 @@ M.core_filepicker.init = function(Y, options) {
             }
             // Prepare the root node we will set content for and the loading template we want to display as a YUI node.
             var root = this.fpnode.one('.fp-content');
-            var content = Y.Node.create(M.core_filepicker.templates.loading).setStyle('visibility', 'hidden').setStyle('opacity', 0);
+            var content = Y.Node.create(M.core_filepicker.templates.loading).addClass('fp-content-hidden').setStyle('opacity', 0);
             var count = 0;
             // Initiate an interval, we will have a count which will increment every 100 milliseconds.
             // Count 0 - the loading icon will have visibility set to hidden (invisible) and have an opacity of 0 (invisible also)
@@ -1207,7 +1207,7 @@ M.core_filepicker.init = function(Y, options) {
                     return true;
                 }
                 if (count == 5) {
-                    content.setStyle('visibility', 'visible');
+                    content.removeClass('fp-content-hidden');
                 } else if (count > 5) {
                     var opacity = parseFloat(content.getStyle('opacity'));
                     content.setStyle('opacity', opacity + 0.1);
