@@ -41,3 +41,5 @@ $string['showfullsizeimages_desc'] = 'Show full size images on site index and co
 $string['usetableview'] = 'Tablet View';
 $string['usetableview_desc'] = 'Use the tablet view for larger devices (yes by default).';
 $string['yes'] = 'Yes';
+$string['customcss'] = 'Custom CSS';
+$string['customcssdesc'] = 'Any CSS you enter here will be added to every page allowing your to easily customise this theme.';

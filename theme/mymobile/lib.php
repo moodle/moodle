@@ -41,3 +41,26 @@ function mymobile_initialise_colpos(moodle_page $page) {
 function mymobile_get_colpos($default = 'on') {
     return get_user_preferences('theme_mymobile_chosen_colpos', $default);
 }
+
+/**
+ * Makes our changes to the CSS
+ *
+ * @param string $css
+ * @param theme_config $theme
+ * @return string
+ */
+function mymobile_user_settings($css, $theme) {
+    if (!empty($theme->settings->customcss)) {
+        $customcss = $theme->settings->customcss;
+    } else {
+        $customcss = null;
+    }
+    $css = mymobile_set_customcss($css, $customcss);
+    return $css;
+}
+
+function mymobile_set_customcss($css, $customcss) {
+    $tag = '[[setting:customcss]]';
+    $css = str_replace($tag, $customcss, $css);
+    return $css;
+}

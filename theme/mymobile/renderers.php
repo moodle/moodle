@@ -179,8 +179,8 @@ class theme_mymobile_core_renderer extends core_renderer {
             $skipdest = html_writer::tag('span', '', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'));
         }
         $testb = $bc->attributes['class'];
-
-        // TODO: Find a better solution to this hardcoded block checks
+        $testc = $bc->attributes['id'];
+        // TODO: Find a better solution to this hardcoded block checks.
         if ($testb == "block_calendar_month2  block") {
             $output  = html_writer::start_tag('span');
         } else if ($testb == "block_course_overview  block") {
@@ -196,7 +196,12 @@ class theme_mymobile_core_renderer extends core_renderer {
             } else {
                 $dtheme = 'c';
             }
-            $output  = html_writer::start_tag('div', array('data-role' => 'collapsible', 'data-collapsed' => 'true', 'data-content-theme' => $dtheme));
+            if ($testc == "mod_quiz_navblock") {
+                $collap = 'false';
+            } else {
+                $collap = 'true';
+            }
+            $output  = html_writer::start_tag('div', array('data-role' => 'collapsible', 'data-collapsed' => $collap, 'data-content-theme' => $dtheme));
         }
 
         $output .= html_writer::tag('h1', $this->block_header($bc));
@@ -359,7 +364,7 @@ class theme_mymobile_core_renderer extends core_renderer {
                         } else {
                             $loggedinas .= get_string('failedloginattemptsall', '', $count);
                         }
-                        if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_SYSTEM))) {
+                        if (file_exists("$CFG->dirroot/report/log/index.php") and has_capability('report/log:view', get_context_instance(CONTEXT_SYSTEM))) {
                             $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                         }
                         $loggedinas .= '</div>';
@@ -442,7 +447,7 @@ class theme_mymobile_core_renderer extends core_renderer {
                         } else {
                             $loggedinas .= get_string('failedloginattemptsall', '', $count);
                         }
-                        if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_SYSTEM))) {
+                        if (has_capability('report/log:view', get_context_instance(CONTEXT_SYSTEM))) {
                             $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                         }
                         $loggedinas .= '</div>';
@@ -548,7 +553,7 @@ class theme_mymobile_core_renderer extends core_renderer {
         $attributes['id'] = $id;
         $attributes['rel'] = 'notexternal';
         $attributes['data-rel'] = 'dialog';
-        $attributes['data-transition'] = 'slideup';
+        $attributes['data-transition'] = 'flow';
         $output = html_writer::tag('a', $output, $attributes);
 
         // and finally span
@@ -758,7 +763,7 @@ class theme_mymobile_core_renderer extends core_renderer {
 
         //by john show go button to fix selects
         $go = '';
-        $output .= html_writer::empty_tag('input data-inline="true"', array('type' => 'submit', 'value' => get_string('go')));
+        $output .= html_writer::empty_tag('input data-inline="true"', array('type' => 'submit','value' => get_string('go')));
         $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('style' => 'inline'));
 
         $nothing = empty($select->nothing) ? false : key($select->nothing);
