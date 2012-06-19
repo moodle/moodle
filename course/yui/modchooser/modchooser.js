@@ -100,6 +100,9 @@ YUI.add('moodle-course-modchooser', function(Y) {
         },
         _setup_for_section : function(section, sectionid) {
             var chooserspan = section.one(CSS.SECTIONMODCHOOSER);
+            if (!chooserspan) {
+                return;
+            }
             var chooserlink = Y.Node.create("<a href='#' />");
             chooserspan.get('children').each(function(node) {
                 chooserlink.appendChild(node);
