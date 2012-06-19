@@ -122,9 +122,10 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
      * @param bool $onsectionpage true if being printed on a single-section page
+     * @param int $sectionreturn The section to return to after an action
      * @return string HTML to output.
      */
-    protected function section_header($section, $course, $onsectionpage) {
+    protected function section_header($section, $course, $onsectionpage, $sectionreturn=0) {
         global $PAGE;
 
         $o = '';
@@ -159,12 +160,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         $context = context_course::instance($course->id);
         if ($PAGE->user_is_editing() && has_capability('moodle/course:update', $context)) {
-            $url = new moodle_url('/course/editsection.php', array('id'=>$section->id));
-
-            if ($onsectionpage) {
-                $url->param('sectionreturn', 1);
-            }
-
+            $url = new moodle_url('/course/editsection.php', array('id'=>$section->id, 'sr'=>$sectionreturn));
             $o.= html_writer::link($url,
                 html_writer::empty_tag('img', array('src' => $this->output->pix_url('t/edit'), 'class' => 'iconsmall edit')),
                 array('title' => get_string('editsummary')));
@@ -560,10 +556,10 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $thissection = $sections[0];
         if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
             echo $this->start_section_list();
-            echo $this->section_header($thissection, $course, true);
-            print_section($course, $thissection, $mods, $modnamesused, true);
+            echo $this->section_header($thissection, $course, true, $displaysection);
+            print_section($course, $thissection, $mods, $modnamesused, true, "100%", false, $displaysection);
             if ($PAGE->user_is_editing()) {
-                print_section_add_menus($course, 0, $modnames, false, false, true);
+                print_section_add_menus($course, 0, $modnames, false, false, $displaysection);
             }
             echo $this->section_footer();
             echo $this->end_section_list();
@@ -592,14 +588,14 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         // The requested section page.
         $thissection = $sections[$displaysection];
-        echo $this->section_header($thissection, $course, true);
+        echo $this->section_header($thissection, $course, true, $displaysection);
         // Show completion help icon.
         $completioninfo = new completion_info($course);
         echo $completioninfo->display_help_icon();
 
-        print_section($course, $thissection, $mods, $modnamesused, true, '100%', false, true);
+        print_section($course, $thissection, $mods, $modnamesused, true, '100%', false, $displaysection);
         if ($PAGE->user_is_editing()) {
-            print_section_add_menus($course, $displaysection, $modnames, false, false, true);
+            print_section_add_menus($course, $displaysection, $modnames, false, false, $displaysection);
         }
         echo $this->section_footer();
         echo $this->end_section_list();
