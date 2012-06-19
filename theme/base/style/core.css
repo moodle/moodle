@@ -925,7 +925,7 @@ sup {vertical-align: super;}
 }
 
 /* The instruction/help area */
-.choosercontainer #chooseform .instruction,
+.jsenabled .choosercontainer #chooseform .instruction,
 .jsenabled .choosercontainer #chooseform .typesummary {
     display: none;
     position: absolute;
@@ -942,7 +942,8 @@ sup {vertical-align: super;}
     line-height: 2em;
 }
 
-.dir-rtl #choosercontainer #chooseform .instruction, .jsenabled #choosercontainer #chooseform .typesummary {
+.dir-rtl.jsenabled .choosercontainer #chooseform .instruction,
+.dir-rtl.jsenabled .choosercontainer #chooseform .typesummary {
     left: 0px;
     right: 18.5em;
     border-right: 1px solid grey;
