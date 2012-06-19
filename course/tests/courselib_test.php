@@ -66,7 +66,7 @@ class courselib_testcase extends advanced_testcase {
         $this->assertFalse($neworder);
     }
 
-    public function test_move_section() {
+    public function test_move_section_down() {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -78,6 +78,7 @@ class courselib_testcase extends advanced_testcase {
         }
         ksort($oldsections);
 
+        // Test move section down..
         move_section_to($course, 2, 4);
         $sections = array();
         foreach ($DB->get_records('course_sections', array('course'=>$course->id)) as $section) {
@@ -92,6 +93,77 @@ class courselib_testcase extends advanced_testcase {
         $this->assertEquals($oldsections[4], $sections[3]);
         $this->assertEquals($oldsections[5], $sections[5]);
         $this->assertEquals($oldsections[6], $sections[6]);
+    }
+
+    public function test_move_section_up() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $this->getDataGenerator()->create_course(array('numsections'=>5), array('createsections'=>true));
+        $course = $this->getDataGenerator()->create_course(array('numsections'=>10), array('createsections'=>true));
+        $oldsections = array();
+        foreach ($DB->get_records('course_sections', array('course'=>$course->id)) as $section) {
+            $oldsections[$section->section] = $section->id;
+        }
+        ksort($oldsections);
+
+        // Test move section up..
+        move_section_to($course, 6, 4);
+        $sections = array();
+        foreach ($DB->get_records('course_sections', array('course'=>$course->id)) as $section) {
+            $sections[$section->section] = $section->id;
+        }
+        ksort($sections);
+
+        $this->assertEquals($oldsections[0], $sections[0]);
+        $this->assertEquals($oldsections[1], $sections[1]);
+        $this->assertEquals($oldsections[2], $sections[2]);
+        $this->assertEquals($oldsections[3], $sections[3]);
+        $this->assertEquals($oldsections[4], $sections[5]);
+        $this->assertEquals($oldsections[5], $sections[6]);
+        $this->assertEquals($oldsections[6], $sections[4]);
+    }
+
+    public function test_move_section_marker() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $this->getDataGenerator()->create_course(array('numsections'=>5), array('createsections'=>true));
+        $course = $this->getDataGenerator()->create_course(array('numsections'=>10), array('createsections'=>true));
+
+        // Set course marker to the section we are going to move..
+        course_set_marker($course->id, 2);
+        // Verify that the course marker is set correctly.
+        $course = $DB->get_record('course', array('id' => $course->id));
+        $this->assertEquals(2, $course->marker);
+
+        // Test move the marked section down..
+        move_section_to($course, 2, 4);
+
+        // Verify that the coruse marker has been moved along with the section..
+        $course = $DB->get_record('course', array('id' => $course->id));
+        $this->assertEquals(4, $course->marker);
+
+        // Test move the marked section up..
+        move_section_to($course, 4, 3);
+
+        // Verify that the course marker has been moved along with the section..
+        $course = $DB->get_record('course', array('id' => $course->id));
+        $this->assertEquals(3, $course->marker);
+
+        // Test moving a non-marked section above the marked section..
+        move_section_to($course, 4, 2);
+
+        // Verify that the course marker has been moved down to accomodate..
+        $course = $DB->get_record('course', array('id' => $course->id));
+        $this->assertEquals(4, $course->marker);
+
+        // Test moving a non-marked section below the marked section..
+        move_section_to($course, 3, 6);
+
+        // Verify that the course marker has been up to accomodate..
+        $course = $DB->get_record('course', array('id' => $course->id));
+        $this->assertEquals(3, $course->marker);
     }
 
     public function test_get_course_display_name_for_list() {
