@@ -20,22 +20,24 @@
  *
  * @package    qtype
  * @subpackage gapselect
- * @copyright  2011 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
-require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/gapselect/simpletest/helper.php');
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/gapselect/tests/helper.php');
 
 
 /**
  * Unit tests for the gap-select question type.
  *
- * @copyright  2011 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      qtype_gapselect
  */
 class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_behaviour() {
@@ -99,7 +101,7 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
                         $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new PatternExpectation('/' . preg_quote(
+                new question_pattern_expectation('/' . preg_quote(
                         get_string('notcomplete', 'qbehaviour_interactive')) . '/'),
                 $this->get_contains_hint_expectation('This is the first hint'));
 
