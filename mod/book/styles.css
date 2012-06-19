@@ -1,5 +1,5 @@
 
-.mod_book .book_chapter_title {
+.path-mod-book .book_chapter_title {
     font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
     text-align: left;
     font-size: large;
@@ -9,7 +9,7 @@
     margin-bottom: 20px;
 }
 
-.mod_book img.bigicon {
+.path-mod-book img.bigicon {
   vertical-align: middle;
   margin-right: 4px;
   margin-left: 4px;
@@ -18,100 +18,100 @@
   border: 0px;
 }
 
-.mod_book .navtop {
+.path-mod-book .navtop {
     text-align: right;
     margin-bottom: 0.5em;
 }
 
-.mod_book .navbottom {
+.path-mod-book .navbottom {
     text-align: right;
 }
 
 /* == Fake toc block == */
 
 /* toc style NONE */
-.mod_book .book_toc_none {
+.path-mod-book .book_toc_none {
   font-size: 0.8em;
 }
-.mod_book .book_toc_none ul {
+.path-mod-book .book_toc_none ul {
     margin-left: 5px;
     padding-left: 0px;
 }
-.mod_book .book_toc_none ul ul {
+.path-mod-book .book_toc_none ul ul {
     margin-left: 0px;
     padding-left: 0px;
 }
-.mod_book .book_toc_none li {
+.path-mod-book .book_toc_none li {
     margin-top: 5px;
     list-style: none;
 }
-.mod_book .book_toc_none li li {
+.path-mod-book .book_toc_none li li {
     margin-top: 0px;
     list-style: none;
 }
 
 
 /* toc style NUMBERED */
-.mod_book .book_toc_numbered {
+.path-mod-book .book_toc_numbered {
   font-size: 0.8em;
 }
-.mod_book .book_toc_numbered ul {
+.path-mod-book .book_toc_numbered ul {
     margin-left: 5px;
     padding-left: 0px;
 }
-.mod_book .book_toc_numbered ul ul {
+.path-mod-book .book_toc_numbered ul ul {
     margin-left: 0px;
     padding-left: 0px;
 }
-.mod_book .book_toc_numbered li {
+.path-mod-book .book_toc_numbered li {
     margin-top: 5px;
     list-style: none;
 }
-.mod_book .book_toc_numbered li li {
+.path-mod-book .book_toc_numbered li li {
     margin-top: 0px;
     list-style: none;
 }
 
 
 /*toc style BULLETS */
-.mod_book .book_toc_bullets {
+.path-mod-book .book_toc_bullets {
   font-size: 0.8em;
 }
-.mod_book .book_toc_bullets ul {
+.path-mod-book .book_toc_bullets ul {
     margin-left: 5px;
     padding-left: 0px;
 }
-.mod_book .book_toc_bullets ul ul {
+.path-mod-book .book_toc_bullets ul ul {
     margin-left: 20px;
     padding-left: 0px;
 }
-.mod_book .book_toc_bullets li {
+.path-mod-book .book_toc_bullets li {
     margin-top: 5px;
     list-style: none;
 }
-.mod_book .book_toc_bullets li li {
+.path-mod-book .book_toc_bullets li li {
     margin-top: 0px;
     list-style: circle;
 }
 
 
 /* toc style INDENTED*/
-.mod_book .book_toc_indented {
+.path-mod-book .book_toc_indented {
   font-size: 0.8em;
 }
-.mod_book .book_toc_indented ul {
+.path-mod-book .book_toc_indented ul {
     margin-left: 5px;
     padding-left: 0px;
 }
-.mod_book .book_toc_indented ul ul {
+.path-mod-book .book_toc_indented ul ul {
     margin-left: 15px;
     padding-left: 0px;
 }
-.mod_book .book_toc_indented li {
+.path-mod-book .book_toc_indented li {
     margin-top: 5px;
     list-style: none;
 }
-.mod_book .book_toc_indented li li {
+.path-mod-book .book_toc_indented li li {
     margin-top: 0px;
     list-style: none;
 }

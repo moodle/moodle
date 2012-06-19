@@ -18,7 +18,6 @@
  * Define all the restore steps that will be used by the restore_book_activity_task
  *
  * @package    mod_book
- * @subpackage book
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -1,5 +1,5 @@
 <?php
-// This file is part of Book plugin for Moodle - http://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,43 +45,67 @@ function booktool_print_get_toc($chapters, $book, $cm) {
 
     switch ($book->numbering) {
         case BOOK_NUM_NONE:
-            $toc .= '<div class="book_toc_none">';
+            $toc .= html_writer::start_tag('div', array('class' => 'book_toc_none'));
             break;
         case BOOK_NUM_NUMBERS:
-            $toc .= '<div class="book_toc_numbered">';
+            $toc .= html_writer::start_tag('div', array('class' => 'book_toc_numbered'));
             break;
         case BOOK_NUM_BULLETS:
-            $toc .= '<div class="book_toc_bullets">';
+            $toc .= html_writer::start_tag('div', array('class' => 'book_toc_bullets'));
             break;
         case BOOK_NUM_INDENTED:
-            $toc .= '<div class="book_toc_indented">';
+            $toc .= html_writer::start_tag('div', array('class' => 'book_toc_indented'));
             break;
     }
 
-    $toc .= '<a name="toc"></a>'; // Representation of toc (HTML).
+    $toc .= html_writer::tag('a', '', array('name' => 'toc')); // Representation of toc (HTML).
 
     if ($book->customtitles) {
-        $toc .= '<h1>'.get_string('toc', 'mod_book').'</h1>';
+        $toc .= html_writer::tag('h1', get_string('toc', 'mod_book'));
     } else {
-        $toc .= '<p class="book_chapter_title">'.get_string('toc', 'mod_book').'</p>';
+        $toc .= html_writer::tag('p', get_string('toc', 'mod_book'), array('class' => 'book_chapter_title'));
     }
-    $toc .= '<ul>';
+    $toc .= html_writer::start_tag('ul');
     foreach ($chapters as $ch) {
         if (!$ch->hidden) {
             $title = book_get_chapter_title($ch->id, $chapters, $book, $context);
             if (!$ch->subchapter) {
-                $toc .= $first ? '<li>' : '</ul></li><li>';
+
+                if ($first) {
+                    $toc .= html_writer::start_tag('li');
+                } else {
+                    $toc .= html_writer::end_tag('ul');
+                    $toc .= html_writer::end_tag('li');
+                    $toc .= html_writer::start_tag('li');
+                }
+
             } else {
-                $toc .= $first ? '<li><ul><li>' : '<li>';
+
+                if ($first) {
+                    $toc .= html_writer::start_tag('li');
+                    $toc .= html_writer::start_tag('ul');
+                    $toc .= html_writer::start_tag('li');
+                } else {
+                    $toc .= html_writer::start_tag('li');
+                }
+
             }
             $titles[$ch->id] = $title;
-            $toc .= '<a title="'.s($title).'" href="#ch'.$ch->id.'">'.$title.'</a>';
-            $toc .= (!$ch->subchapter) ? '<ul>' : '</li>';
+            $toc .= html_writer::link(new moodle_url('#ch'.$ch->id), $title, array('title' => s($title)));
+            if (!$ch->subchapter) {
+                $toc .= html_writer::start_tag('ul');
+            } else {
+                $toc .= html_writer::end_tag('li');
+            }
             $first = false;
         }
     }
-    $toc .= '</ul></li></ul>';
-    $toc .= '</div>';
+
+    $toc .= html_writer::end_tag('ul');
+    $toc .= html_writer::end_tag('li');
+    $toc .= html_writer::end_tag('ul');
+    $toc .= html_writer::end_tag('div');
+
     $toc = str_replace('<ul></ul>', '', $toc); // Cleanup of invalid structures.
 
     return array($toc, $titles);

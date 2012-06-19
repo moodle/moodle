@@ -19,24 +19,6 @@ Created by:
 * Petr Skoda (skodak) - most of the coding & design
 * Mojmir Volf, Eloy Lafuente, Antonio Vicent and others
 
-
-
-Project page:
-
-* https://github.com/skodak/moodle-mod_book
-* http://moodle.org/plugins/view.php?plugin=mod_book
-
-
-Installation:
-
-* http://docs.moodle.org/20/en/Installing_contributed_modules_or_plugins
-
-
-Issue tracker:
-
-* https://github.com/skodak/moodle-mod_book/issues?milestone=&labels=
-
-
 Intentionally omitted features:
 
 * more chapter levels - it would encourage teachers to write too much complex and long books, better use standard standalone HTML editor and import it as Resource. DocBook format is another suitable solution.
@@ -44,8 +26,3 @@ Intentionally omitted features:
 * PDF export - there is no elegant way AFAIK to convert HTML to PDF, use virtual PDF printer or better use DocBook format for authoring
 * detailed student tracking (postponed till officially supported)
 * export as zipped set of HTML pages - instead use browser command Save page as... in print view
-
-
-Future:
-
-* No more development planned
