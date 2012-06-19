@@ -46,7 +46,7 @@ function xmldb_qtype_ddmarker_install() {
         $dragssql = 'SELECT drag.* '.$from.', {qtype_ddmarker_drags} drag'.$where.' AND drag.questionid = q.id';
         $drags = xmldb_qtype_ddmarker_index_array_of_records_by_key('questionid', $DB->get_records_sql($dragssql));
 
-        $dropssql = 'SELECT drop.* '.$from.', {qtype_ddmarker_drops} drop'.$where.' AND drop.questionid = q.id';
+        $dropssql = 'SELECT drp.* '.$from.', {qtype_ddmarker_drops} drp'.$where.' AND drp.questionid = q.id';
         $drops = xmldb_qtype_ddmarker_index_array_of_records_by_key('questionid', $DB->get_records_sql($dropssql));
 
         $answerssql = 'SELECT answer.* '.$from.', {question_answers} answer'.$where.' AND answer.question = q.id';
