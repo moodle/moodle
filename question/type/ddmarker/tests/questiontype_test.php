@@ -18,37 +18,39 @@
  * Unit tests for the drag-and-drop markers question definition class.
  *
  * @package    qtype_ddmarker
- * @copyright  2010 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
-require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/ddmarker/simpletest/helper.php');
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
 
 
 /**
  * Unit tests for the drag-and-drop markers question definition class.
  *
- * @copyright  2010 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      qtype_ddmarker
  */
-class qtype_ddmarker_test extends UnitTestCase {
+class qtype_ddmarker_test extends basic_testcase {
     /** @var qtype_ddmarker instance of the question type class to test. */
     protected $qtype;
 
-    public function setUp() {
+    protected function setUp() {
         $this->qtype = question_bank::get_qtype('ddmarker');;
     }
 
-    public function tearDown() {
+    protected function tearDown() {
         $this->qtype = null;
     }
 
     public function test_name() {
-        $this->assertEqual($this->qtype->name(), 'ddmarker');
+        $this->assertEquals($this->qtype->name(), 'ddmarker');
     }
 
     public function test_can_analyse_responses() {
