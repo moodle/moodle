@@ -1446,7 +1446,7 @@ abstract class repository {
             }
 
             $type = repository::get_type_by_id($i->options['typeid']);
-            $table->data[] = array($i->name, $type->get_readablename(), $settings, $delete);
+            $table->data[] = array(format_string($i->name), $type->get_readablename(), $settings, $delete);
 
             //display a grey row if the type is defined as not visible
             if (isset($type) && !$type->get_visible()) {
