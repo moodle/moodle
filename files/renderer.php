@@ -303,8 +303,8 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="filemanager fp-mkdir-dlg">
     <div class="fp-mkdir-dlg-text">'.get_string('newfoldername','repository').'<br/><input type="text" /></div>
-    <a class="{!}fp-dlg-butcreate fp-panel-button" href="#">'.get_string('makeafolder').'</a>
-    <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
+    <button class="{!}fp-dlg-butcreate">'.get_string('makeafolder').'</button>
+    <button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
@@ -370,12 +370,11 @@ class core_files_renderer extends plugin_renderer_base {
         <p>'.get_string('loading', 'repository').'</p>
     </div>
     <form>
-        <div><a class="{!}fp-file-download fp-panel-button" href="#">'.get_string('download').'</a>
-            <a class="{!}fp-file-delete fp-panel-button" href="#">'.get_string('delete').'</a>
-            <a class="{!}fp-file-setmain fp-panel-button" href="#">'.get_string('setmainfile', 'repository').'</a>
-            <a class="{!}fp-file-zip fp-panel-button" href="#">'.get_string('zip', 'editor').'</a>
-            <a class="{!}fp-file-unzip fp-panel-button" href="#">'.get_string('unzip').'</a>
-        </div>
+        <button class="{!}fp-file-download">'.get_string('download').'</button>
+        <button class="{!}fp-file-delete">'.get_string('delete').'</button>
+        <button class="{!}fp-file-setmain">'.get_string('setmainfile', 'repository').'</button>
+        <button class="{!}fp-file-zip">'.get_string('zip', 'editor').'</button>
+        <button class="{!}fp-file-unzip">'.get_string('unzip').'</button>
         <div class="fp-hr"></div>
         <table>
             <tr class="{!}fp-saveas"><td class="mdl-right"><label>'.get_string('name', 'moodle').'</label>:</td>
@@ -391,19 +390,20 @@ class core_files_renderer extends plugin_renderer_base {
             <tr class="{!}fp-reflist"><td class="mdl-right"><label>'.get_string('referenceslist', 'repository').'</label>:</td>
             <td class="mdl-left"><p class="{!}fp-refcount"></p><span class="fp-reflistloading">'.$icon_progress.' '.$strloading.'</span><ul class="fp-value"></ul></td></tr>
         </table>
-    </form>
-    <p class="{!}fp-thumbnail"></p>
-    <form>
-        <p class="fp-select-update">
-            <a class="{!}fp-file-update" href="#"><span>'.get_string('update', 'moodle').'</span></a>
-            <a class="{!}fp-file-cancel" href="#"><span>'.get_string('cancel').'</span></a>
-        </p>
-    </form>
-    <div class="fp-fileinfo">
-        <div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"></span></div>
-        <div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"></span></div>
-        <div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"></span></div>
-        <div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"></span></div>
+        <div class="fp-select-buttons">
+            <button class="{!}fp-file-update">'.get_string('update', 'moodle').'</button>
+            <button class="{!}fp-file-cancel">'.get_string('cancel').'</button>
+        </div>
+    </form>    
+    <div class="fp-info">
+        <div class="fp-hr"></div>
+        <p class="{!}fp-thumbnail"></p>
+        <div class="fp-fileinfo">
+            <div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"></span></div>
+            <div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"></span></div>
+            <div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"></span></div>
+            <div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"></span></div>
+        </div>
     </div>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
@@ -424,8 +424,8 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="filemanager fp-dlg">
     <div class="{!}fp-dlg-text"></div>
-    <a class="{!}fp-dlg-butconfirm fp-panel-button" href="#">'.get_string('ok').'</a>
-    <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
+    <button class="{!}fp-dlg-butconfirm">'.get_string('delete').'</button>
+    <button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
@@ -661,11 +661,6 @@ class core_files_renderer extends plugin_renderer_base {
         <p>'.get_string('loading', 'repository').'</p>
     </div>
     <form>
-        <div>
-            <a class="{!}fp-select-confirm fp-panel-button" href="#">'.get_string('getfile', 'repository').'</a>
-            <a class="{!}fp-select-cancel fp-panel-button" href="#">'.get_string('cancel').'</a>
-        </div>
-        <div class="fp-hr"></div>
         <table>
             <tr class="{!}fp-linktype-2">
                 <td></td>
@@ -686,16 +681,23 @@ class core_files_renderer extends plugin_renderer_base {
                 <td class="mdl-right"><label>'.get_string('chooselicense', 'repository').'</label>:</td>
                 <td class="mdl-left"><select></select></td></tr>
         </table>
+        <div class="fp-select-buttons">
+            <button class="{!}fp-select-confirm">'.get_string('getfile', 'repository').'</button>
+            <button class="{!}fp-select-cancel">'.get_string('cancel').'</button>
+        </div>
     </form>
-    <p class="{!}fp-thumbnail"></p>
-    <div class="fp-fileinfo">
-        <div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"></span></div>
-        <div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"></span></div>
-        <div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"></span></div>
-        <div class="{!}fp-license">'.get_string('license', 'moodle').': <span class="fp-value"></span></div>
-        <div class="{!}fp-author">'.get_string('author', 'repository').': <span class="fp-value"></span></div>
-        <div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"></span></div>
-    </div>
+    <div class="fp-info">
+        <div class="fp-hr"></div>
+        <p class="{!}fp-thumbnail"></p>
+        <div class="fp-fileinfo">
+            <div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"></span></div>
+            <div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"></span></div>
+            <div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"></span></div>
+            <div class="{!}fp-license">'.get_string('license', 'moodle').': <span class="fp-value"></span></div>
+            <div class="{!}fp-author">'.get_string('author', 'repository').': <span class="fp-value"></span></div>
+            <div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"></span></div>
+        </div>
+    <div>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
@@ -791,7 +793,7 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="file-picker fp-msg">
     <p class="{!}fp-msg-text"></p>
-    <a class="{!}fp-msg-butok fp-panel-button" href="#">'.get_string('ok').'</a>
+    <button class="{!}fp-msg-butok">'.get_string('ok').'</button>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
@@ -815,9 +817,11 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="file-picker fp-dlg">
     <p class="{!}fp-dlg-text"></p>
-    <a class="{!}fp-dlg-butoverwrite fp-panel-button" href="#">'.get_string('overwrite', 'repository').'</a>
-    <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
-    <a class="{!}fp-dlg-butrename fp-panel-button" href="#"></a>
+    <div class="fp-dlg-buttons">
+        <button class="{!}fp-dlg-butoverwrite">'.get_string('overwrite', 'repository').'</button>
+        <button class="{!}fp-dlg-butrename"></button>
+        <button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
+    </div>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
