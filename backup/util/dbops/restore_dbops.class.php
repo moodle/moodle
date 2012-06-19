@@ -808,6 +808,17 @@ abstract class restore_dbops {
      * Given one component/filearea/context and
      * optionally one source itemname to match itemids
      * put the corresponding files in the pool
+     *
+     * @param string $basepath the full path to the root of unzipped backup file
+     * @param string $restoreid the restore job's identification
+     * @param string $component
+     * @param string $filearea
+     * @param int $oldcontextid
+     * @param int $dfltuserid default $file->user if the old one can't be mapped
+     * @param string|null $itemname
+     * @param int|null $olditemid
+     * @param int|null $forcenewcontextid explicit value for the new contextid (skip mapping)
+     * @param bool $skipparentitemidctxmatch
      */
     public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null, $forcenewcontextid = null, $skipparentitemidctxmatch = false) {
         global $DB;
@@ -872,46 +883,72 @@ abstract class restore_dbops {
         foreach ($rs as $rec) {
             $file = (object)unserialize(base64_decode($rec->info));
 
-            $isreference = !empty($file->repositoryid);
-
             // ignore root dirs (they are created automatically)
             if ($file->filepath == '/' && $file->filename == '.') {
                 continue;
             }
+
             // set the best possible user
             $mappeduser = self::get_backup_ids_record($restoreid, 'user', $file->userid);
-            $file->userid = !empty($mappeduser) ? $mappeduser->newitemid : $dfltuserid;
-            // dir found (and not root one), let's create if
+            $mappeduserid = !empty($mappeduser) ? $mappeduser->newitemid : $dfltuserid;
+
+            // dir found (and not root one), let's create it
             if ($file->filename == '.') {
-                $fs->create_directory($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->userid);
+                $fs->create_directory($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $mappeduserid);
                 continue;
             }
 
-            // arrived here, file found
-            // Find file in backup pool
-            $backuppath = $basepath . backup_file_manager::get_backup_content_file_location($file->contenthash);
+            if (empty($file->repositoryid)) {
+                // this is a regular file, it must be present in the backup pool
+                $backuppath = $basepath . backup_file_manager::get_backup_content_file_location($file->contenthash);
 
-            if (!file_exists($backuppath) && !$isreference) {
-                throw new restore_dbops_exception('file_not_found_in_pool', $file);
-            }
-            if (!$fs->file_exists($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->filename)) {
-                $file_record = array(
-                    'contextid'   => $newcontextid,
-                    'component'   => $component,
-                    'filearea'    => $filearea,
-                    'itemid'      => $rec->newitemid,
-                    'filepath'    => $file->filepath,
-                    'filename'    => $file->filename,
-                    'timecreated' => $file->timecreated,
-                    'timemodified'=> $file->timemodified,
-                    'userid'      => $file->userid,
-                    'author'      => $file->author,
-                    'license'     => $file->license,
-                    'sortorder'   => $file->sortorder);
-                if ($isreference) {
-                    $fs->create_file_from_reference($file_record, $file->repositoryid, $file->reference);
-                } else {
+                if (!file_exists($backuppath)) {
+                    throw new restore_dbops_exception('file_not_found_in_pool', $file);
+                }
+
+                // create the file in the filepool if it does not exist yet
+                if (!$fs->file_exists($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->filename)) {
+                    $file_record = array(
+                        'contextid'   => $newcontextid,
+                        'component'   => $component,
+                        'filearea'    => $filearea,
+                        'itemid'      => $rec->newitemid,
+                        'filepath'    => $file->filepath,
+                        'filename'    => $file->filename,
+                        'timecreated' => $file->timecreated,
+                        'timemodified'=> $file->timemodified,
+                        'userid'      => $mappeduserid,
+                        'author'      => $file->author,
+                        'license'     => $file->license,
+                        'sortorder'   => $file->sortorder
+                    );
                     $fs->create_file_from_pathname($file_record, $backuppath);
+                }
+
+            } else {
+                // this is an alias - we can't create it yet so we stash it in a temp
+                // table and will let the final task to deal with it
+                if (!$fs->file_exists($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->filename)) {
+                    $info = new stdClass();
+                    // oldfile holds the raw information stored in MBZ (including reference-related info)
+                    $info->oldfile = $file;
+                    // newfile holds the info for the new file_record with the context, user and itemid mapped
+                    $info->newfile = (object)array(
+                        'contextid'   => $newcontextid,
+                        'component'   => $component,
+                        'filearea'    => $filearea,
+                        'itemid'      => $rec->newitemid,
+                        'filepath'    => $file->filepath,
+                        'filename'    => $file->filename,
+                        'timecreated' => $file->timecreated,
+                        'timemodified'=> $file->timemodified,
+                        'userid'      => $mappeduserid,
+                        'author'      => $file->author,
+                        'license'     => $file->license,
+                        'sortorder'   => $file->sortorder
+                    );
+
+                    restore_dbops::set_backup_ids_record($restoreid, 'file_aliases_queue', $file->id, 0, null, $info);
                 }
             }
         }
