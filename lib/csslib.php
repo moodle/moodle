@@ -3845,7 +3845,11 @@ class css_style_background extends css_style {
                 } else if ($attachment === self::NULL_VALUE && in_array($bit, $attachments)) {
                     $attachment = $bit;
                 } else if ($bit !== '') {
-                    $return[] = css_style_background_advanced::init($bit);
+                    $advanced = css_style_background_advanced::init($bit);
+                    if ($important) {
+                        $advanced->set_important();
+                    }
+                    $return[] = $advanced;
                 }
             }
         }

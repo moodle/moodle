@@ -213,6 +213,16 @@ class css_optimiser_testcase extends advanced_testcase {
 
         $css = '#filesskin .yui3-widget-hd{background:#CCC;background:-webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC));background:-moz-linear-gradient(top, #FFFFFF, #CCCCCC);}';
         $this->assertEquals($css, $optimiser->process($css));
+
+        $css = '.userenrolment{background:-moz-linear-gradient(top, #FFFFFF, #CCCCCC) !important;}';
+        $this->assertEquals($css, $optimiser->process($css));
+
+        $css = '.userenrolment{background:#CCC !important;background:-webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC)) !important;background:-moz-linear-gradient(top, #FFFFFF, #CCCCCC) !important;}';
+        $this->assertEquals($css, $optimiser->process($css));
+
+        $cssin = '.userenrolment{background:-moz-linear-gradient(top, #FFFFFF, #CCCCCC) !important;}.userenrolment {background: #CCCCCC!important;background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC))!important;}';
+        $cssout = '.userenrolment{background:#CCC !important;background:-moz-linear-gradient(top, #FFFFFF, #CCCCCC) !important;background:-webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC)) !important;}';
+        $this->assertEquals($cssout, $optimiser->process($cssin));
     }
 
     /**
