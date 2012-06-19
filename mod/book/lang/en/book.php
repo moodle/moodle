@@ -72,6 +72,6 @@ $string['book:viewhiddenchapters'] = 'View hidden book chapters';
 $string['errorchapter'] = 'Error reading chapter of book.';
 
 $string['page-mod-book-x'] = 'Any book module page';
-$string['subchapternotice'] = 'This option is disabled, because the first chapter cannot be a subchapter';
+$string['subchapternotice'] = '(Only available once the first chapter has been created)';
 $string['subplugintype_booktool'] = 'Book tool';
 $string['subplugintype_booktool_plural'] = 'Book tools';
