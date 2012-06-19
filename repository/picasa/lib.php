@@ -114,7 +114,7 @@ class repository_picasa extends repository {
 
     public static function type_config_form($mform, $classname = 'repository') {
         $a = new stdClass;
-        $a->docsurl = get_docs_url('Google_OAuth2_Setup');
+        $a->docsurl = get_docs_url('Google_OAuth_2.0_setup');
         $a->callbackurl = google_oauth::callback_url()->out(false);
 
         $mform->addElement('static', null, '', get_string('oauthinfo', 'repository_picasa', $a));
