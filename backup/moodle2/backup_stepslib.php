@@ -1404,7 +1404,8 @@ class backup_final_files_structure_step extends backup_structure_step {
             'contenthash', 'contextid', 'component', 'filearea', 'itemid',
             'filepath', 'filename', 'userid', 'filesize',
             'mimetype', 'status', 'timecreated', 'timemodified',
-            'source', 'author', 'license', 'sortorder', 'reference', 'repositoryid'));
+            'source', 'author', 'license', 'sortorder',
+            'repositorytype', 'repositoryid', 'reference'));
 
         // Build the tree
 
@@ -1412,12 +1413,12 @@ class backup_final_files_structure_step extends backup_structure_step {
 
         // Define sources
 
-        $file->set_source_sql("SELECT f.*, r.repositoryid, r.reference
+        $file->set_source_sql("SELECT f.*, r.type AS repositorytype, fr.repositoryid, fr.reference
                                  FROM {files} f
-                                 LEFT JOIN {files_reference} r
-                                      ON r.id = f.referencefileid
-                                 JOIN {backup_ids_temp} bi
-                                      ON f.id = bi.itemid
+                                      LEFT JOIN {files_reference} fr ON fr.id = f.referencefileid
+                                      LEFT JOIN {repository_instances} ri ON ri.id = fr.repositoryid
+                                      LEFT JOIN {repository} r ON r.id = ri.typeid
+                                      JOIN {backup_ids_temp} bi ON f.id = bi.itemid
                                 WHERE bi.backupid = ?
                                   AND bi.itemname = 'filefinal'", array(backup::VAR_BACKUPID));
 
