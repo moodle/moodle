@@ -58,6 +58,7 @@ class main_view extends XMLDBAction {
             'checkbigints' => 'tool_xmldb',
             'checkoraclesemantics' => 'tool_xmldb',
             'doc' => 'tool_xmldb',
+            'filemodifiedoutfromeditor' => 'tool_xmldb',
             'viewxml' => 'tool_xmldb',
             'pendingchangescannotbesavedreload' => 'tool_xmldb'
         ));
@@ -194,10 +195,8 @@ class main_view extends XMLDBAction {
                     $b .= '<a href="index.php?action=save_xml_file&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['save'] . ']</a>';
                     // Check if the file has been manually edited while being modified in the editor
                     if ($dbdir->filemtime != filemtime($key . '/install.xml')) {
-                        // File manually modified. Add to errors.
-                        if ($structure = $dbdir->xml_file->getStructure()) {
-                            $structure->errormsg = 'Warning: File locally modified while using the XMLDB Editor. Saving will overwrite local changes';
-                        }
+                        // File manually modified. Add to action error, will be displayed inline.
+                        $this->errormsg = $this->str['filemodifiedoutfromeditor'];
                     }
                 } else {
                     $b .= '[' . $this->str['save'] . ']';
@@ -266,7 +265,12 @@ class main_view extends XMLDBAction {
                 // show errors if they exist
                 if (isset($dbdir->xml_file)) {
                     if ($structure = $dbdir->xml_file->getStructure()) {
-                        if ($errors = $structure->getAllErrors()) {
+                        $errors = !empty($this->errormsg) ? array($this->errormsg) : array();
+                        $structureerrors = $structure->getAllErrors();
+                        if ($structureerrors) {
+                            $errors = array_merge($errors, $structureerrors);
+                        }
+                        if (!empty($errors)) {
                             if ($hithis) {
                                 $o .= '<tr class="highlight"><td class="error cell" colspan="10">' . implode (', ', $errors) . '</td></tr>';
                             } else {
