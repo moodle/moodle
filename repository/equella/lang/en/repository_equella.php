@@ -30,6 +30,7 @@ $string['breadcrumb'] = 'EQUELLA';
 $string['equellaurl'] = 'EQUELLA URL';
 $string['equellaaction'] = 'EQUELLA action';
 $string['equellaoptions'] = 'EQUELLA options';
+$string['equella:view'] = 'View EQUELLA repository';
 $string['sharedid'] = 'Shared secret ID';
 $string['sharedsecrets'] = 'Shared secret';
 
