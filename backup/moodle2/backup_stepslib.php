@@ -1069,7 +1069,7 @@ class backup_users_structure_step extends backup_structure_step {
             'lang', 'theme', 'timezone', 'firstaccess',
             'lastaccess', 'lastlogin', 'currentlogin',
             'mailformat', 'maildigest', 'maildisplay', 'htmleditor',
-            'ajax', 'autosubscribe', 'trackforums', 'timecreated',
+            'autosubscribe', 'trackforums', 'timecreated',
             'timemodified', 'trustbitmask', 'screenreader');
 
         // Then, the fields potentially needing anonymization

@@ -830,5 +830,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012060600.04);
     }
 
+    if ($oldversion < 2012061800.01) {
+
+        // Define field screenreader to be dropped from user
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('ajax');
+
+        // Conditionally launch drop field screenreader
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012061800.01);
+    }
+
+
     return true;
 }
