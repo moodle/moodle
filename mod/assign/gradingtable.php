@@ -373,7 +373,7 @@ class assign_grading_table extends table_sql implements renderable {
     function col_timemarked(stdClass $row) {
         $o = '-';
 
-        if ($row->timemarked) {
+        if ($row->timemarked && $row->grade !== NULL && $row->grade >= 0) {
             $o = userdate($row->timemarked);
         }
 

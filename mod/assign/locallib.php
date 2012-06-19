@@ -2121,7 +2121,9 @@ class assign {
         // trying to match those array keys in grade update function in gradelib.php
         // with keys in th database table assign_grades
         // starting around line 262
-        $gradebookgrade['rawgrade'] = $grade->grade;
+        if ($grade->grade >= 0) {
+            $gradebookgrade['rawgrade'] = $grade->grade;
+        }
         $gradebookgrade['userid'] = $grade->userid;
         $gradebookgrade['usermodified'] = $grade->grader;
         $gradebookgrade['datesubmitted'] = NULL;
