@@ -273,11 +273,12 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o .= $this->output->box_end();
 
         // link to the grading page
-        $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php',
+        $o .= $this->output->container_start('submissionlinks');
+        $o .= $this->output->action_link(new moodle_url('/mod/assign/view.php',
                                                           array('id' => $summary->coursemoduleid,
                                                                 'action'=>'grading')),
-                                                          get_string('viewgrading', 'assign'),
-                                                          'get');
+                                                          get_string('viewgrading', 'assign'));
+        $o .= $this->output->container_end();
 
         // close the container and insert a spacer
         $o .= $this->output->container_end();
