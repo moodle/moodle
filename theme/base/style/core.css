@@ -934,8 +934,8 @@ sup {vertical-align: super;}
     bottom: 0px;
     left: 18.5em;
     margin: 0;
-    padding: 2em 2em 2em 2.4em;
-    background-color: white;
+    padding: 1.6em;
+    background-color: #FFFFFF;
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 550px;
@@ -954,4 +954,3 @@ sup {vertical-align: super;}
     -webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;
     -moz-box-shadow: 0px 0px 10px 0px #CCCCCC;
 }
-

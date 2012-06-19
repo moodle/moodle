@@ -5,7 +5,7 @@
 .filemanager, .file-picker {font-size:11px;color: #555555;letter-spacing: .2px;}
 .filemanager a, .file-picker a {color:#555555;}
 .filemanager a:hover, .file-picker a:hover {color:#555555;text-decoration: none;}
-.filemanager select, .filemanager input, .filemanagerbutton, .filemanager textarea,
+.filemanager select, .filemanager input, .filemanager button, .filemanager textarea,
 .file-picker select, .file-picker input, .file-picker button, .file-picker textarea {color:#555555; letter-spacing: .2px;}
 .filemanager input[type="text"], .file-picker input[type="text"] {border: 1px solid #BBBBBB;width: 265px;height: 18px;padding: 1px 6px;}
 .filemanager select, .file-picker select {height: 22px;padding: 2px 1px;}
@@ -43,7 +43,7 @@ background: #CCCCCC;filter: progid:DXImageTransform.Microsoft.gradient(startColo
 /*
  * Tools, Path & View on fp-navbar (File Picker and File Manager)
  */
-.fp-toolbar {display: table-row;line-height: 22px;float:left;/*display: inline-block;*/}
+.fp-toolbar {display: table-row;line-height: 22px;float:left;}
 .fp-toolbar.empty {display:none;}
 .fp-toolbar .disabled {display:none;}
 .fp-toolbar div {display: inline-block;padding: 0px 2px;padding-right: 10px;}
@@ -51,7 +51,7 @@ background: #CCCCCC;filter: progid:DXImageTransform.Microsoft.gradient(startColo
 .fp-toolbar .fp-tb-search {width: 228px;height: 14px;}
 .fp-toolbar .fp-tb-search input {background:#FFFFFF url('[[pix:a/search]]') no-repeat 3px 3px;padding: 2px 6px 1px 20px;width: 200px;height: 16px;border: 1px solid #BBBBBB;}
 
-.fp-viewbar {float:right;width:69px;height:22px;margin-right:8px;/*display: inline-block;*/}
+.fp-viewbar {float:right;width:69px;height:22px;margin-right:8px;}
 .fp-vb-icons {background:url('[[pix:theme|fp/view_icon_active]]') no-repeat 0 0;width:22px;height:22px;display: inline-block;}
 .fp-vb-icons.checked {background:url('[[pix:theme|fp/view_icon_selected]]');}
 .fp-viewbar.disabled .fp-vb-icons {background:url('[[pix:theme|fp/view_icon_inactive]]');}
@@ -63,7 +63,7 @@ background: #CCCCCC;filter: progid:DXImageTransform.Microsoft.gradient(startColo
 .fp-viewbar.disabled .fp-vb-tree {background:url('[[pix:theme|fp/view_tree_inactive]]');}
 .file-picker .fp-clear-left {clear: left;}
 
-.file-picker .fp-pathbar {display: table-row;/*display: inline-block;*/}
+.file-picker .fp-pathbar {display: table-row;}
 .fp-pathbar.empty {display: none;}
 .fp-pathbar .fp-path-folder {background:url('[[pix:theme|fp/path_folder]]') no-repeat 0 0;width:27px;height:12px;margin-left: 4px;}
 .fp-pathbar .fp-path-folder-name {margin-left: 32px;line-height: 20px;}
@@ -154,7 +154,8 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
  * File exists dialogue on Upload (File Picker only)
  */
 .file-picker.fp-dlg {text-align: center;}
-.file-picker.fp-dlg .fp-dlg-text {padding: 40px 20px 10px 20px;font-size: 12px;}
+.file-picker.fp-dlg .fp-dlg-text {padding: 30px 20px 10px;font-size: 12px;}
+.file-picker.fp-dlg .fp-dlg-buttons {margin: 0 20px;}
 
 /*
  * Error dialogue on Upload (File Picker only)
@@ -182,18 +183,17 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
  * Select Dialogue (File Picker and File Manager)
  */
 .file-picker.fp-select {width:420px;}
+.fp-select form {padding: 20px 20px 0;}
 .fp-select .fp-select-loading {text-align: center;margin-top: 20px;}
-.fp-select .fp-hr {clear: both;height: 1px; background-color: #FFFFFF;border-bottom: 1px solid #BBBBBB;width: auto; margin: 5px 20px;}
-.fp-select table {margin: 10px 20px;}
-.fp-select-update {float:right;margin-right: 20px;}
-.fp-select .fp-file-update {background:url('[[pix:theme|fp/check]]') no-repeat left center;width:17px;height:17px;}
-.fp-select .fp-file-cancel {background:url('[[pix:theme|fp/cross]]') no-repeat left center;width:17px;height:17px;margin-left: 25px;}
-.fp-select .fp-select-update span {margin-left: 17px;}
-.fp-select .fp-thumbnail {float:left;min-width:110px;min-height:110px;line-height: 110px;text-align: center;margin: 10px 20px 0px 20px;background: #FFFFFF;border: 1px solid #DDDDDD;-webkit-box-shadow: inset 0px 0px 10px 0px #CCCCCC;-moz-box-shadow: inset 0px 0px 10px 0px #CCCCCC;box-shadow: inset 0px 0px 10px 0px #CCCCCC;}
+.fp-select .fp-hr {clear: both;height: 1px; background-color: #FFFFFF;border-bottom: 1px solid #BBBBBB;width: auto; margin: 10px 0;}
+.fp-select table {padding: 0 0 10px;}
+.fp-select .fp-select-buttons {float: right;}
+.fp-select .fp-info {display: block;clear: both;padding: 1px 20px 0;}
+.fp-select .fp-thumbnail {float:left;min-width:110px;min-height:110px;line-height: 110px;text-align: center;margin: 10px 20px 0 0;background: #FFFFFF;border: 1px solid #DDDDDD;-webkit-box-shadow: inset 0 0 10px 0 #CCCCCC;-moz-box-shadow: inset 0 0 10px 0 #CCCCCC;box-shadow: inset 0 0 10px 0 #CCCCCC;}
 .fp-select .fp-thumbnail img {border: 1px solid #DDDDDD;padding:3px;vertical-align: middle;margin: 10px;}
-.fp-select .fp-fileinfo {display: inline-block;margin-top: 4px;margin-right: 20px;}
+.fp-select .fp-fileinfo {display: inline-block;margin-top: 10px;}
 .file-picker.fp-select .fp-fileinfo {max-width:240px;}
-.fp-select .fp-fileinfo div {padding: 4px 0px;}
+.fp-select .fp-fileinfo div {padding-bottom: 5px;}
 
 .file-picker.fp-select .uneditable {display:none;}
 .file-picker.fp-select .fp-select-loading {display:none;}
@@ -313,7 +313,7 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
  * Create folder dialogue (File Manager only)
  */
 .filemanager.fp-mkdir-dlg {text-align: center;}
-.filemanager.fp-mkdir-dlg .fp-mkdir-dlg-text {text-align: left;margin: 40px 20px 20px;}
+.filemanager.fp-mkdir-dlg .fp-mkdir-dlg-text {text-align: left;margin: 20px;}
 
 /*
  * Confirm dialogue for delete (File Manager only)
