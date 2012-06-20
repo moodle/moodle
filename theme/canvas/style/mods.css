@@ -62,7 +62,7 @@
     text-align:right;
 }
 
-/* Database
+/* Folder
 ------------------------*/
 
 .path-mod-folder #pageintro {
@@ -72,9 +72,13 @@
 }
 
 .path-mod-folder .foldertree {
-    width: 60%;
+    width: 90%;
     margin: 1.5em auto;
     padding: 10px;
+}
+
+#page-mod-folder-edit .foldertree {
+    width: 100%;
 }
 
 /* Assignment
@@ -454,9 +458,6 @@
     margin-top: 1em;
 }
 
-#page-mod-folder-edit .foldertree {
-    width: 65%;
-}
 
 /* Quiz
 --------------------------------*/
