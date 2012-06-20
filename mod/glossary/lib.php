@@ -405,9 +405,11 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
         $tmpactivity->name                 = format_string($cm->name, true);
         $tmpactivity->sectionnum           = $cm->sectionnum;
         $tmpactivity->timestamp            = $entry->timemodified;
+        $tmpactivity->content              = new stdClass();
         $tmpactivity->content->entryid     = $entry->entryid;
         $tmpactivity->content->concept     = $entry->concept;
         $tmpactivity->content->definition  = $entry->definition;
+        $tmpactivity->user                 = new stdClass();
         $tmpactivity->user->id             = $entry->userid;
         $tmpactivity->user->firstname      = $entry->firstname;
         $tmpactivity->user->lastname       = $entry->lastname;

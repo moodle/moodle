@@ -87,7 +87,7 @@ if ($xml = glossary_read_imported_file($result)) {
         $xmlglossary = $xml['GLOSSARY']['#']['INFO'][0]['#'];
 
         if ( $xmlglossary['NAME'][0]['#'] ) {
-            unset($glossary);
+            $glossary = new stdClass();
             $glossary->name = ($xmlglossary['NAME'][0]['#']);
             $glossary->course = $course->id;
             $glossary->globalglossary = ($xmlglossary['GLOBALGLOSSARY'][0]['#']);
@@ -191,7 +191,7 @@ if ($xml = glossary_read_imported_file($result)) {
     for($i = 0; $i < $sizeofxmlentries; $i++) {
         // Inserting the entries
         $xmlentry = $xmlentries[$i];
-        unset($newentry);
+        $newentry = new stdClass();
         $newentry->concept = trim($xmlentry['#']['CONCEPT'][0]['#']);
         $newentry->definition = trusttext_strip($xmlentry['#']['DEFINITION'][0]['#']);
         if ( isset($xmlentry['#']['CASESENSITIVE'][0]['#']) ) {
