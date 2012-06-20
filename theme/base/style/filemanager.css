@@ -294,10 +294,10 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 /*
  * Icon view (File Manager only)
  */
-.filemanager .fp-iconview .fp-reficons1 {position:absolute;height:100%;width:100%;top:0;left:0;z-index:1000;}
-.filemanager .fp-iconview .fp-reficons2 {position:absolute;height:100%;width:100%;top:0;left:0;z-index:1001;}
-.filemanager .fp-iconview .fp-file.fp-hasreferences .fp-reficons1 {background: url('[[pix:theme|fp/link]]') no-repeat;background-position:bottom right;}
-.filemanager .fp-iconview .fp-file.fp-isreference .fp-reficons2 {background: url('[[pix:theme|fp/alias]]') no-repeat;background-position:bottom left;}
+.fp-iconview .fp-reficons1 {position:absolute;height:100%;width:100%;top:0;left:0;z-index:1000;}
+.fp-iconview .fp-reficons2 {position:absolute;height:100%;width:100%;top:0;left:0;z-index:1001;}
+.fp-iconview .fp-file.fp-hasreferences .fp-reficons1 {background: url('[[pix:theme|fp/link]]') no-repeat;background-position:bottom right;}
+.fp-iconview .fp-file.fp-isreference .fp-reficons2 {background: url('[[pix:theme|fp/alias]]') no-repeat;background-position:bottom left;}
 
 .filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail img {display:none;}
 .filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail {background: url([[pix:s/dead]]) no-repeat;background-position:center center;}

@@ -112,10 +112,14 @@ class repository_user extends repository {
                             'datecreated' => $child->get_timecreated(),
                             'author' => $child->get_author(),
                             'license' => $child->get_license(),
+                            'isref' => $child->is_external_file(),
                             'source'=> $encodedpath,
                             'icon' => $OUTPUT->pix_url(file_file_icon($child, 24))->out(false),
                             'thumbnail' => $OUTPUT->pix_url(file_file_icon($child, 90))->out(false)
                         );
+                        if ($child->get_status() == 666) {
+                            $node['originalmissing'] = true;
+                        }
                         if ($imageinfo = $child->get_imageinfo()) {
                             $fileurl = new moodle_url($child->get_url());
                             $node['realthumbnail'] = $fileurl->out(false, array('preview' => 'thumb', 'oid' => $child->get_timemodified()));

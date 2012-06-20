@@ -565,7 +565,11 @@ class core_files_renderer extends plugin_renderer_base {
     private function fp_js_template_iconfilename() {
         $rv = '
 <a class="fp-file" href="#" >
-    <div class="{!}fp-thumbnail"></div>
+    <div style="position:relative;">
+        <div class="{!}fp-thumbnail"></div>
+        <div class="fp-reficons1"></div>
+        <div class="fp-reficons2"></div>
+    </div>
     <div class="fp-filename-field">
         <p class="{!}fp-filename"></p>
     </div>

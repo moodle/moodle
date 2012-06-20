@@ -230,6 +230,10 @@ class repository_local_file {
             $node['size'] = $this->fileinfo->get_filesize();
             $node['author'] = $this->fileinfo->get_author();
             $node['license'] = $this->fileinfo->get_license();
+            $node['isref'] = $this->fileinfo->is_external_file();
+            if ($this->fileinfo->get_status() == 666) {
+                $node['originalmissing'] = true;
+            }
             $node['source'] = $encodedpath;
             $node['thumbnail'] = $OUTPUT->pix_url(file_file_icon($this->fileinfo, 90))->out(false);
             $node['icon'] = $OUTPUT->pix_url(file_file_icon($this->fileinfo, 24))->out(false);
