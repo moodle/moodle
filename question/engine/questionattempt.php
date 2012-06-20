@@ -1086,15 +1086,32 @@ class question_attempt {
         $first = true;
         foreach ($oldqa->get_step_iterator() as $step) {
             $this->observer->notify_step_deleted($step, $this);
+
             if ($first) {
+                // First step of the attempt.
                 $first = false;
                 $this->start($oldqa->behaviour, $oldqa->get_variant(), $step->get_all_data(),
                         $step->get_timecreated(), $step->get_user_id(), $step->get_id());
+
+            } else if ($step->has_behaviour_var('finish') && count($step->get_submitted_data()) > 1) {
+                // This case relates to MDL-32062. The upgrade code from 2.0
+                // generates attempts where the final submit of the question
+                // data, and the finish action, are in the same step. The system
+                // cannot cope with that, so convert the single old step into
+                // two new steps.
+                $submitteddata = $step->get_submitted_data();
+                unset($submitteddata['-finish']);
+                $this->process_action($submitteddata,
+                        $step->get_timecreated(), $step->get_user_id(), $step->get_id());
+                $this->finish($step->get_timecreated(), $step->get_user_id());
+
             } else {
+                // This is the normal case. Replay the next step of the attempt.
                 $this->process_action($step->get_submitted_data(),
                         $step->get_timecreated(), $step->get_user_id(), $step->get_id());
             }
         }
+
         if ($finished) {
             $this->finish();
         }
