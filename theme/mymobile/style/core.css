@@ -125,8 +125,8 @@ div.notifyproblem {
 }
 /*under footer */
 #underfooter {
-	padding: 1em 0em;
-	font-size: 90%;
+    padding: 1em 0em;
+    font-size: 90%;
 }
 #underfooter .logininfo  {
     text-align: center;
@@ -136,7 +136,7 @@ div.notifyproblem {
     font-weight: normal;
 }
 #underfooter #theme_switch_link {
-	padding-top: 0.5em;
+    padding-top: 0.5em;
     text-align: center;
 }
 
