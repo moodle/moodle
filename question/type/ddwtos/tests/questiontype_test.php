@@ -19,37 +19,39 @@
  *
  * @package    qtype
  * @subpackage ddwtos
- * @copyright  2010 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
-require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/ddwtos/simpletest/helper.php');
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
 
 
 /**
  * Unit tests for the drag-and-drop words into sentences question definition class.
  *
- * @copyright  2010 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      qtype_ddwtos
  */
-class qtype_ddwtos_test extends UnitTestCase {
+class qtype_ddwtos_test extends question_testcase {
     /** @var qtype_ddwtos instance of the question type class to test. */
     protected $qtype;
 
-    public function setUp() {
+    protected function setUp() {
         $this->qtype = question_bank::get_qtype('ddwtos');;
     }
 
-    public function tearDown() {
+    protected function tearDown() {
         $this->qtype = null;
     }
 
     public function assert_same_xml($expectedxml, $xml) {
-        $this->assertEqual(str_replace("\r\n", "\n", $expectedxml),
+        $this->assertEquals(str_replace("\r\n", "\n", $expectedxml),
                 str_replace("\r\n", "\n", $xml));
     }
 
@@ -83,6 +85,7 @@ class qtype_ddwtos_test extends UnitTestCase {
         $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
         $dd->qtype = 'ddwtos';
 
+        $dd->options = new stdClass();
         $dd->options->shuffleanswers = true;
 
         test_question_maker::set_standard_combined_feedback_fields($dd->options);
@@ -106,7 +109,7 @@ class qtype_ddwtos_test extends UnitTestCase {
     }
 
     public function test_name() {
-        $this->assertEqual($this->qtype->name(), 'ddwtos');
+        $this->assertEquals($this->qtype->name(), 'ddwtos');
     }
 
     public function test_can_analyse_responses() {
@@ -122,18 +125,18 @@ class qtype_ddwtos_test extends UnitTestCase {
 
         $q = $this->qtype->make_question($qdata);
 
-        $this->assertEqual($expected, $q);
+        $this->assertEquals($expected, $q);
     }
 
     public function test_get_random_guess_score() {
         $q = $this->get_test_question_data();
-        $this->assertWithinMargin(0.5, $this->qtype->get_random_guess_score($q), 0.0000001);
+        $this->assertEquals(0.5, $this->qtype->get_random_guess_score($q), '', 0.0000001);
     }
 
     public function test_get_possible_responses() {
         $q = $this->get_test_question_data();
 
-        $this->assertEqual(array(
+        $this->assertEquals(array(
             1 => array(
                 1 => new question_possible_response('quick', 1/3),
                 2 => new question_possible_response('slow', 0),
@@ -236,8 +239,8 @@ class qtype_ddwtos_test extends UnitTestCase {
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
 
-        $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
-        $this->assertEqual($expectedq->hint, $q->hint);
+        $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
+        $this->assertEquals($expectedq->hint, $q->hint);
     }
 
     public function test_xml_import_legacy() {
@@ -428,9 +431,9 @@ class qtype_ddwtos_test extends UnitTestCase {
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
 
-        $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
-        $this->assertEqual($expectedq->choices, $q->choices);
-        $this->assertEqual($expectedq->hint, $q->hint);
+        $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
+        $this->assertEquals($expectedq->choices, $q->choices);
+        $this->assertEquals($expectedq->hint, $q->hint);
     }
 
     public function test_xml_export() {
@@ -448,6 +451,7 @@ class qtype_ddwtos_test extends UnitTestCase {
         $qdata->penalty = 0.3333333;
         $qdata->hidden = 0;
 
+        $qdata->options = new stdClass();
         $qdata->options->shuffleanswers = 1;
         $qdata->options->correctfeedback = '<p>Your answer is correct.</p>';
         $qdata->options->correctfeedbackformat = FORMAT_MOODLE;

@@ -19,22 +19,24 @@
  *
  * @package    qtype
  * @subpackage ddwtos
- * @copyright  2010 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
-require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/ddwtos/simpletest/helper.php');
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
 
 
 /**
  * Unit tests for the drag-and-drop words into sentences question type.
  *
- * @copyright  2010 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      qtype_ddwtos
  */
 class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
@@ -50,7 +52,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
         }
         $expectedattrs['class'] = $class;
 
-        return new ContainsTagWithAttributes('span', $expectedattrs);
+        return new question_contains_tag_with_attributes('span', $expectedattrs);
     }
 
     public function test_interactive_behaviour() {
@@ -117,7 +119,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new PatternExpectation('/' .
+                new question_pattern_expectation('/' .
                         preg_quote(get_string('notcomplete', 'qbehaviour_interactive')) . '/'),
                 $this->get_contains_hint_expectation('This is the first hint'));
 
@@ -375,7 +377,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
-        $this->assertEqual('interactivecountback',
+        $this->assertEquals('interactivecountback',
                 $this->quba->get_question_attempt($this->slot)->get_behaviour_name());
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('1', 1, false),
@@ -406,7 +408,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new PatternExpectation('/' .
+                new question_pattern_expectation('/' .
                         preg_quote(get_string('notcomplete', 'qbehaviour_interactive')) . '/'),
                 $this->get_contains_hint_expectation('This is the first hint'),
                 $this->get_contains_num_parts_correct(2),
@@ -420,7 +422,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
         // Check that extract responses will return the reset data.
         $prefix = $this->quba->get_field_prefix($this->slot);
-        $this->assertEqual(array('p1' => '1', 'p2' => '1'),
+        $this->assertEquals(array('p1' => '1', 'p2' => '1'),
                 $this->quba->extract_responses($this->slot,
                 array($prefix . 'p1' => '1', $prefix . 'p2' => '1', '-tryagain' => 1)));
 
@@ -460,7 +462,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new PatternExpectation('/' .
+                new question_pattern_expectation('/' .
                         preg_quote(get_string('notcomplete', 'qbehaviour_interactive')) . '/'),
                 $this->get_contains_hint_expectation('This is the second hint'),
                 $this->get_contains_num_parts_correct(2),
@@ -746,7 +748,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
         // Verify.
         $this->displayoptions->rightanswer = question_display_options::VISIBLE;
-        $this->assertEqual('{quick} {fox} {lazy}', $dd->get_right_answer_summary());
+        $this->assertEquals('{quick} {fox} {lazy}', $dd->get_right_answer_summary());
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(3);
         $this->check_current_output(
@@ -754,7 +756,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_drop_box_expectation('2', 2, true, 'correct'),
                 $this->get_contains_drop_box_expectation('3', 3, true, 'correct'),
                 $this->get_contains_correct_expectation(),
-                new PatternExpectation('/' .
+                new question_pattern_expectation('/' .
                         preg_quote('The [quick] brown [fox] jumped over the [lazy] dog.') . '/'));
     }
 }

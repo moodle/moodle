@@ -19,35 +19,37 @@
  *
  * @package    qtype
  * @subpackage ddwtos
- * @copyright  2010 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
-require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/ddwtos/simpletest/helper.php');
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
 
 
 /**
  * Unit tests for the matching question definition class.
  *
- * @copyright  2009 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      qtype_ddwtos
  */
-class qtype_ddwtos_question_test extends UnitTestCase {
+class qtype_ddwtos_question_test extends basic_testcase {
 
     public function test_get_question_summary() {
         $dd = test_question_maker::make_question('ddwtos');
-        $this->assertEqual('The [[1]] brown [[2]] jumped over the [[3]] dog.; ' .
+        $this->assertEquals('The [[1]] brown [[2]] jumped over the [[3]] dog.; ' .
                 '[[1]] -> {quick / slow}; [[2]] -> {fox / dog}; [[3]] -> {lazy / assiduous}',
                 $dd->get_question_summary());
     }
 
     public function test_get_question_summary_maths() {
         $dd = test_question_maker::make_question('ddwtos', 'maths');
-        $this->assertEqual('Fill in the operators to make this equation work: ' .
+        $this->assertEquals('Fill in the operators to make this equation work: ' .
                 '7 [[1]] 11 [[2]] 13 [[1]] 17 [[2]] 19 = 3; [[1]] -> {+ / - / * / /}',
                 $dd->get_question_summary());
     }
@@ -57,7 +59,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual('{quick} {fox} {lazy}',
+        $this->assertEquals('{quick} {fox} {lazy}',
                 $dd->summarise_response(array('p1' => '1', 'p2' => '1', 'p3' => '1')));
     }
 
@@ -66,18 +68,18 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual('{+} {-} {+} {-}',
+        $this->assertEquals('{+} {-} {+} {-}',
                 $dd->summarise_response(array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
     }
 
     public function test_get_random_guess_score() {
         $dd = test_question_maker::make_question('ddwtos');
-        $this->assertEqual(0.5, $dd->get_random_guess_score());
+        $this->assertEquals(0.5, $dd->get_random_guess_score());
     }
 
     public function test_get_random_guess_score_maths() {
         $dd = test_question_maker::make_question('ddwtos', 'maths');
-        $this->assertEqual(0.25, $dd->get_random_guess_score());
+        $this->assertEquals(0.25, $dd->get_random_guess_score());
     }
 
     public function test_get_right_choice_for() {
@@ -85,8 +87,8 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(1, $dd->get_right_choice_for(1));
-        $this->assertEqual(1, $dd->get_right_choice_for(2));
+        $this->assertEquals(1, $dd->get_right_choice_for(1));
+        $this->assertEquals(1, $dd->get_right_choice_for(2));
     }
 
     public function test_get_right_choice_for_maths() {
@@ -94,8 +96,8 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(1, $dd->get_right_choice_for(1));
-        $this->assertEqual(2, $dd->get_right_choice_for(2));
+        $this->assertEquals(1, $dd->get_right_choice_for(1));
+        $this->assertEquals(2, $dd->get_right_choice_for(2));
     }
 
     public function test_clear_wrong_from_response() {
@@ -104,7 +106,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->start_attempt(new question_attempt_step(), 1);
 
         $initialresponse = array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1');
-        $this->assertEqual(array('p1' => '1', 'p2' => '0', 'p3' => '1', 'p4' => '0'),
+        $this->assertEquals(array('p1' => '1', 'p2' => '0', 'p3' => '1', 'p4' => '0'),
                 $dd->clear_wrong_from_response($initialresponse));
     }
 
@@ -113,9 +115,9 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(2, 3),
+        $this->assertEquals(array(2, 3),
                 $dd->get_num_parts_right(array('p1' => '1', 'p2' => '1', 'p3' => '2')));
-        $this->assertEqual(array(3, 3),
+        $this->assertEquals(array(3, 3),
                 $dd->get_num_parts_right(array('p1' => '1', 'p2' => '1', 'p3' => '1')));
     }
 
@@ -124,7 +126,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(2, 4),
+        $this->assertEquals(array(2, 4),
                 $dd->get_num_parts_right(array(
                         'p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
     }
@@ -133,7 +135,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd = test_question_maker::make_question('ddwtos');
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array('p1' => PARAM_INT, 'p2' => PARAM_INT, 'p3' => PARAM_INT),
+        $this->assertEquals(array('p1' => PARAM_INT, 'p2' => PARAM_INT, 'p3' => PARAM_INT),
                 $dd->get_expected_data());
     }
 
@@ -142,7 +144,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array('p1' => '1', 'p2' => '1', 'p3' => '1'),
+        $this->assertEquals(array('p1' => '1', 'p2' => '1', 'p3' => '1'),
                 $dd->get_correct_response());
     }
 
@@ -151,7 +153,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2'),
+        $this->assertEquals(array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2'),
                 $dd->get_correct_response());
     }
 
@@ -210,11 +212,11 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(1, question_state::$gradedright),
+        $this->assertEquals(array(1, question_state::$gradedright),
                 $dd->grade_response(array('p1' => '1', 'p2' => '1', 'p3' => '1')));
-        $this->assertEqual(array(1/3, question_state::$gradedpartial),
+        $this->assertEquals(array(1/3, question_state::$gradedpartial),
                 $dd->grade_response(array('p1' => '1')));
-        $this->assertEqual(array(0, question_state::$gradedwrong),
+        $this->assertEquals(array(0, question_state::$gradedwrong),
                 $dd->grade_response(array('p1' => '2', 'p2' => '2', 'p3' => '2')));
     }
 
@@ -223,11 +225,11 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(1, question_state::$gradedright),
+        $this->assertEquals(array(1, question_state::$gradedright),
                 $dd->grade_response(array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
-        $this->assertEqual(array(0.5, question_state::$gradedpartial),
+        $this->assertEquals(array(0.5, question_state::$gradedpartial),
                 $dd->grade_response(array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
-        $this->assertEqual(array(0, question_state::$gradedwrong),
+        $this->assertEquals(array(0, question_state::$gradedwrong),
                 $dd->grade_response(array('p1' => '0', 'p2' => '1', 'p3' => '2', 'p4' => '1')));
     }
 
@@ -236,12 +238,12 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(
+        $this->assertEquals(array(
                     1 => new question_classified_response(1, 'quick', 1/3),
                     2 => new question_classified_response(2, 'dog', 0),
                     3 => new question_classified_response(1, 'lazy', 1/3),
                 ), $dd->classify_response(array('p1' => '1', 'p2' => '2', 'p3' => '1')));
-        $this->assertEqual(array(
+        $this->assertEquals(array(
                     1 => question_classified_response::no_response(),
                     2 => new question_classified_response(1, 'fox', 1/3),
                     3 => new question_classified_response(2, 'assiduous', 0),
