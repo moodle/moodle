@@ -220,7 +220,7 @@ class feedback_item_numeric extends feedback_item_base {
         return $row_offset;
     }
 
-    /**     
+    /**
      * print the item at the edit-page of feedback
      *
      * @global object
@@ -296,7 +296,7 @@ class feedback_item_numeric extends feedback_item_base {
         echo '</div>';
     }
 
-    /**     
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -370,7 +370,7 @@ class feedback_item_numeric extends feedback_item_base {
         echo '</div>';
     }
 
-    /**     
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -534,7 +534,7 @@ class feedback_item_numeric extends feedback_item_base {
     public function can_switch_require() {
         return true;
     }
-    
+
     public function value_type() {
         return PARAM_FLOAT;
     }

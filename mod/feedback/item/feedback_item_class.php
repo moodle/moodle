@@ -98,7 +98,7 @@ abstract class feedback_item_base {
      */
     abstract public function get_analysed($item, $groupid = false, $courseid = false);
 
-    /**     
+    /**
      * print the item at the edit-page of feedback
      *
      * @global object
@@ -107,7 +107,7 @@ abstract class feedback_item_base {
      */
     abstract public function print_item_preview($item);
 
-    /**     
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -118,7 +118,7 @@ abstract class feedback_item_base {
      */
     abstract public function print_item_complete($item, $value = '', $highlightrequire = false);
 
-    /**     
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -128,7 +128,7 @@ abstract class feedback_item_base {
      */
     abstract public function print_item_show_value($item, $value = '');
 
-    /**     
+    /**
      * cleans the userinput while submitting the form
      *
      * @param mixed $value

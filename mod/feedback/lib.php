@@ -2058,7 +2058,7 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid 
 //functions to handle the values
 ////////////////////////////////////////////////
 
-/**     
+/**
  * cleans the userinput while submitting the form.
  *
  * @param mixed $value
