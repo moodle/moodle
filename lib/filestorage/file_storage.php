@@ -1659,7 +1659,14 @@ class file_storage {
      * @return array
      */
     public static function unpack_reference($str, $cleanparams = false) {
-        $params = unserialize(base64_decode($str));
+        $decoded = base64_decode($str, true);
+        if ($decoded === false) {
+            throw new file_reference_exception(null, $str, null, null, 'Invalid base64 format');
+        }
+        $params = @unserialize($decoded); // hide E_NOTICE
+        if ($params === false) {
+            throw new file_reference_exception(null, $decoded, null, null, 'Not an unserializeable value');
+        }
         if (is_array($params) && $cleanparams) {
             $params = array(
                 'component' => is_null($params['component']) ? ''   : clean_param($params['component'], PARAM_COMPONENT),
