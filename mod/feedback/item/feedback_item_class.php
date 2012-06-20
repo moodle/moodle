@@ -128,6 +128,14 @@ abstract class feedback_item_base {
      */
     abstract public function print_item_show_value($item, $value = '');
 
+    /**     
+     * cleans the userinput while submitting the form
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    abstract public function clean_input_value($value);
+
 }
 
 //a dummy class to realize pagebreaks
@@ -175,7 +183,9 @@ class feedback_item_pagebreak extends feedback_item_base {
     }
     public function can_switch_require() {
     }
+    public function value_type() {
+    }
+    public function clean_input_value($value) {
+    }
 
 }
-
-

@@ -388,4 +388,12 @@ class feedback_item_info extends feedback_item_base {
     public function can_switch_require() {
         return false;
     }
+
+    public function value_type() {
+        return PARAM_INT;
+    }
+
+    public function clean_input_value($value) {
+        return clean_param($value, $this->value_type());
+    }
 }

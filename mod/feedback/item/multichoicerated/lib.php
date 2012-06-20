@@ -678,4 +678,11 @@ class feedback_item_multichoicerated extends feedback_item_base {
         return true;
     }
 
+    public function value_type() {
+        return PARAM_INT;
+    }
+
+    public function clean_input_value($value) {
+        return clean_param($value, $this->value_type());
+    }
 }
