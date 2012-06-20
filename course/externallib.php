@@ -904,9 +904,10 @@ class core_course_external extends external_api {
                                          '"parent" (int) the parent category id,'.
                                          '"idnumber" (string) category idnumber'.
                                          ' - user must have \'moodle/category:manage\' to search on idnumber,'.
-                                         '"visible" (int) whether the category is visible or not'.
+                                         '"visible" (int) whether the returned categories must be visible or hidden. If the key is not passed,
+                                             then the function return all categories that the user can see.'.
                                          ' - user must have \'moodle/category:manage\' or \'moodle/category:viewhiddencategories\' to search on visible,'.
-                                         '"theme" (string) category theme'.
+                                         '"theme" (string) only return the categories having this theme'.
                                          ' - user must have \'moodle/category:manage\' to search on theme'),
                             'value' => new external_value(PARAM_RAW, 'the value to match')
                         )
@@ -1017,10 +1018,22 @@ class core_course_external extends external_api {
                 if ($categories and !empty($params['addsubcategories'])) {
                     $newcategories = array();
 
+                    // Check if we required visible/theme checks.
+                    $additionalselect = '';
+                    $additionalparams = array();
+                    if (isset($conditions['visible'])) {
+                        $additionalselect .= ' AND visible = :visible';
+                        $additionalparams['visible'] = $conditions['visible'];
+                    }
+                    if (isset($conditions['theme'])) {
+                        $additionalselect .= ' AND theme= :theme';
+                        $additionalparams['theme'] = $conditions['theme'];
+                    }
+
                     foreach ($categories as $category) {
-                        $sqllike = $DB->sql_like('path', ':path');
-                        $sqlparams = array('path' => $category->path.'/%'); // It will NOT include the specified category.
-                        $subcategories = $DB->get_records_select('course_categories', $sqllike, $sqlparams);
+                        $sqlselect = $DB->sql_like('path', ':path') . $additionalselect;
+                        $sqlparams = array('path' => $category->path.'/%') + $additionalparams; // It will NOT include the specified category.
+                        $subcategories = $DB->get_records_select('course_categories', $sqlselect, $sqlparams);
                         $newcategories = $newcategories + $subcategories;   // Both arrays have integer as keys.
                     }
                     $categories = $categories + $newcategories;
