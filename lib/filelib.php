@@ -601,7 +601,7 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
             }
             // find the file this draft file was created from and count all references in local
             // system pointing to that file
-            $source = unserialize($file->get_source());
+            $source = @unserialize($file->get_source());
             if (isset($source->original)) {
                 $item->refcount = $fs->search_references_count($source->original);
             }
@@ -679,7 +679,7 @@ function file_get_submitted_draft_itemid($elname) {
  * @return stored_file
  */
 function file_restore_source_field_from_draft_file($storedfile) {
-    $source = unserialize($storedfile->get_source());
+    $source = @unserialize($storedfile->get_source());
     if (!empty($source)) {
         if (is_object($source)) {
             $restoredsource = $source->source;

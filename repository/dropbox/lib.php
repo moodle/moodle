@@ -432,7 +432,7 @@ class repository_dropbox extends repository {
      * @return string|null
      */
     public function get_file_source_info($filepath) {
-        return 'Dropbox:' . $filepath;
+        return 'Dropbox: ' . $filepath;
     }
 
     /**

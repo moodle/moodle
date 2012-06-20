@@ -241,6 +241,10 @@ switch ($action) {
                 }
             }
 
+            // {@link repository::build_source_field()}
+            $sourcefield = $repo->get_file_source_info($source);
+            $record->source = $repo::build_source_field($sourcefield);
+
             if ($usefilereference) {
                 $reference = $repo->get_file_reference($source);
                 // get reference life time from repo
@@ -265,10 +269,6 @@ switch ($action) {
                     $event['existingfile']->filename = $saveas_filename;
                     $event['existingfile']->url      = moodle_url::make_draftfile_url($itemid, $saveas_path, $saveas_filename)->out();;
                 } else {
-
-                    // {@link repository::build_source_field()}
-                    $sourcefield = $repo->get_file_source_info($source);
-                    $record->source = $repo::build_source_field($sourcefield);
 
                     $storedfile = $fs->create_file_from_reference($record, $repo_id, $reference);
                     $event = array(
@@ -306,10 +306,6 @@ switch ($action) {
                 if (($maxbytes!==-1) && (filesize($downloadedfile['path']) > $maxbytes)) {
                     throw new file_exception('maxbytes');
                 }
-
-                // {@link repository::build_source_field()}
-                $sourcefield = $repo->get_file_source_info($source);
-                $record->source = $repo::build_source_field($sourcefield);
 
                 $info = repository::move_to_filepool($downloadedfile['path'], $record);
                 if (empty($info)) {
