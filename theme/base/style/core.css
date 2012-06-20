@@ -210,7 +210,7 @@ a.skip:active {position: static;display: block;}
 .mform .fitem .fitemtitle {width:15%;text-align:right;float:left;}
 .mform .fitem .fitemtitle div {display: inline;}
 .mform .fitem .felement {border-width: 0;width:80%;margin-left:16%;}
-.mform .fitem fieldset.felement {margin-left:15%;padding-left:1%;margin-bottom:0}
+.mform .fitem fieldset.felement {margin-left:0;padding-left:1%;margin-bottom:0}
 .mform .error,
 .mform .required {color:#A00;}
 .mform .required .fgroup span label {color:#000;}
@@ -723,8 +723,8 @@ sup {vertical-align: super;}
 .dir-rtl .ygtvcancel {background-position: 0 -8822px;}
 .dir-rtl .ygtvcancel:hover {background-position: 0 -8866px;}
 
-.dir-rtl #yui-gen4.yui-layout-unit-left  {left:500px !important;}
-.dir-rtl #yui-gen6.yui-layout-unit-center {left:0px !important;}
+.dir-rtl .file-picker .yui-layout-unit-left  {left:500px !important;}
+.dir-rtl .file-picker .yui-layout-unit-center {left:0px !important;}
 .dir-rtl.yui-skin-sam .yui-panel .hd {text-align:left;}
 .dir-rtl .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd {text-align:right;}
 
@@ -805,6 +805,7 @@ sup {vertical-align: super;}
 #page-admin-setting-enrolsettingsflatfile.dir-rtl .informationbox {direction: ltr;text-align: left;}
 
 #page-admin-grade-edit-scale-edit.dir-rtl .error input#id_name {margin-right: 170px;}
+.initialbar a {padding-right: 2px;}
 
 /**
  * Chooser Dialogue
@@ -973,5 +974,3 @@ sup {vertical-align: super;}
     -webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;
     -moz-box-shadow: 0px 0px 10px 0px #CCCCCC;
 }
-
-.initialbar a {padding-right: 2px;}
