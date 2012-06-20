@@ -296,7 +296,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o.= html_writer::start_tag('div', array('class' => 'summarytext'));
         $o.= $this->format_summary_text($section);
         $o.= html_writer::end_tag('div');
-        $o.= $this->section_activity_summary($section, $mods);
+        $o.= $this->section_activity_summary($section, $course, $mods);
 
         $o.= $this->section_availability_message($section);
 
@@ -310,16 +310,20 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * Generate a summary of the activites in a section
      *
      * @param stdClass $section The course_section entry from DB
+     * @param stdClass $course the course record from DB
      * @param array    $mods course modules indexed by id (from get_all_mods)
      * @return string HTML to output.
      */
-    private function section_activity_summary($section, $mods) {
+    private function section_activity_summary($section, $course, $mods) {
+        $completioninfo = new completion_info($course);
         if (empty($section->sequence)) {
             return '';
         }
 
         // Generate array with count of activities in this section:
         $sectionmods = array();
+        $total = 0;
+        $complete = 0;
         $modsequence = explode(',', $section->sequence);
         foreach ($modsequence as $cmid) {
             $thismod = $mods[$cmid];
@@ -336,6 +340,14 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                     $sectionmods[$thismod->modname]['name'] = $thismod->modplural;
                     $sectionmods[$thismod->modname]['count'] = 1;
                 }
+                if ($completioninfo->is_enabled($thismod) != COMPLETION_TRACKING_NONE && isloggedin() &&
+                                !isguestuser() && $thismod->uservisible) {
+                    $total++;
+                    $completiondata = $completioninfo->get_data($thismod,true);
+                    if ($completiondata->completionstate == COMPLETION_COMPLETE) {
+                        $complete++;
+                    }
+                }
             }
         }
 
@@ -350,6 +362,14 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         foreach ($sectionmods as $mod) {
             $o.= html_writer::start_tag('span', array('class' => 'activity-count'));
             $o.= $mod['name'].': '.$mod['count'];
+            $o.= html_writer::end_tag('span');
+        }
+
+        // Output section completion data
+        if ($completioninfo->is_enabled() != COMPLETION_TRACKING_NONE && isloggedin() &&
+                        !isguestuser()) {
+            $o.= html_writer::start_tag('span', array('class' => 'activity-count'));
+            $o.= get_string("completionstatus")." $complete / $total";
             $o.= html_writer::end_tag('span');
         }
         $o.= html_writer::end_tag('div');

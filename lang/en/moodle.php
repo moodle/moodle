@@ -252,6 +252,7 @@ $string['commentsrequirelogin'] = 'You need to login to view the comments';
 $string['comparelanguage'] = 'Compare and edit current language';
 $string['complete'] = 'Complete';
 $string['completereport'] = 'Complete report';
+$string['completionstatus'] = 'Completion status:';
 $string['configuration'] = 'Configuration';
 $string['confirm'] = 'Confirm';
 $string['confirmed'] = 'Your registration has been confirmed';
