@@ -19,35 +19,37 @@
  *
  * @package    qtype
  * @subpackage gapselect
- * @copyright  2011 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
-require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/gapselect/simpletest/helper.php');
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/gapselect/tests/helper.php');
 
 
 /**
  * Unit tests for the select missing words question definition class.
  *
- * @copyright  2009 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      qtype_gapselect
  */
-class qtype_gapselect_question_test extends UnitTestCase {
+class qtype_gapselect_question_test extends basic_testcase {
 
     public function test_get_question_summary() {
         $gapselect = qtype_gapselect_test_helper::make_a_gapselect_question();
-        $this->assertEqual('The [[1]] brown [[2]] jumped over the [[3]] dog.; ' .
+        $this->assertEquals('The [[1]] brown [[2]] jumped over the [[3]] dog.; ' .
                 '[[1]] -> {quick / slow}; [[2]] -> {fox / dog}; [[3]] -> {lazy / assiduous}',
                 $gapselect->get_question_summary());
     }
 
     public function test_get_question_summary_maths() {
         $gapselect = qtype_gapselect_test_helper::make_a_maths_gapselect_question();
-        $this->assertEqual('Fill in the operators to make this equation work: ' .
+        $this->assertEquals('Fill in the operators to make this equation work: ' .
                 '7 [[1]] 11 [[2]] 13 [[1]] 17 [[2]] 19 = 3; [[1]] -> {+ / - / * / /}',
                 $gapselect->get_question_summary());
     }
@@ -57,7 +59,7 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual('{quick} {fox} {lazy}',
+        $this->assertEquals('{quick} {fox} {lazy}',
                 $gapselect->summarise_response(array('p1' => '1', 'p2' => '1', 'p3' => '1')));
     }
 
@@ -66,18 +68,18 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual('{+} {-} {+} {-}', $gapselect->summarise_response(
+        $this->assertEquals('{+} {-} {+} {-}', $gapselect->summarise_response(
                 array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
     }
 
     public function test_get_random_guess_score() {
         $gapselect = qtype_gapselect_test_helper::make_a_gapselect_question();
-        $this->assertEqual(0.5, $gapselect->get_random_guess_score());
+        $this->assertEquals(0.5, $gapselect->get_random_guess_score());
     }
 
     public function test_get_random_guess_score_maths() {
         $gapselect = qtype_gapselect_test_helper::make_a_maths_gapselect_question();
-        $this->assertEqual(0.25, $gapselect->get_random_guess_score());
+        $this->assertEquals(0.25, $gapselect->get_random_guess_score());
     }
 
     public function test_get_right_choice_for() {
@@ -85,8 +87,8 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(1, $gapselect->get_right_choice_for(1));
-        $this->assertEqual(1, $gapselect->get_right_choice_for(2));
+        $this->assertEquals(1, $gapselect->get_right_choice_for(1));
+        $this->assertEquals(1, $gapselect->get_right_choice_for(2));
     }
 
     public function test_get_right_choice_for_maths() {
@@ -94,8 +96,8 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(1, $gapselect->get_right_choice_for(1));
-        $this->assertEqual(2, $gapselect->get_right_choice_for(2));
+        $this->assertEquals(1, $gapselect->get_right_choice_for(1));
+        $this->assertEquals(2, $gapselect->get_right_choice_for(2));
     }
 
     public function test_clear_wrong_from_response() {
@@ -104,7 +106,7 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
         $initialresponse = array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1');
-        $this->assertEqual(array('p1' => '1', 'p2' => '0', 'p3' => '1', 'p4' => '0'),
+        $this->assertEquals(array('p1' => '1', 'p2' => '0', 'p3' => '1', 'p4' => '0'),
                 $gapselect->clear_wrong_from_response($initialresponse));
     }
 
@@ -113,9 +115,9 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(2, 3),
+        $this->assertEquals(array(2, 3),
                 $gapselect->get_num_parts_right(array('p1' => '1', 'p2' => '1', 'p3' => '2')));
-        $this->assertEqual(array(3, 3),
+        $this->assertEquals(array(3, 3),
                 $gapselect->get_num_parts_right(array('p1' => '1', 'p2' => '1', 'p3' => '1')));
     }
 
@@ -124,7 +126,7 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(2, 4), $gapselect->get_num_parts_right(
+        $this->assertEquals(array(2, 4), $gapselect->get_num_parts_right(
                 array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
     }
 
@@ -132,7 +134,7 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect = qtype_gapselect_test_helper::make_a_gapselect_question();
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array('p1' => PARAM_INT, 'p2' => PARAM_INT, 'p3' => PARAM_INT),
+        $this->assertEquals(array('p1' => PARAM_INT, 'p2' => PARAM_INT, 'p3' => PARAM_INT),
                 $gapselect->get_expected_data());
     }
 
@@ -141,7 +143,7 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array('p1' => '1', 'p2' => '1', 'p3' => '1'),
+        $this->assertEquals(array('p1' => '1', 'p2' => '1', 'p3' => '1'),
                 $gapselect->get_correct_response());
     }
 
@@ -150,7 +152,7 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2'),
+        $this->assertEquals(array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2'),
                 $gapselect->get_correct_response());
     }
 
@@ -209,11 +211,11 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(1, question_state::$gradedright),
+        $this->assertEquals(array(1, question_state::$gradedright),
                 $gapselect->grade_response(array('p1' => '1', 'p2' => '1', 'p3' => '1')));
-        $this->assertEqual(array(1/3, question_state::$gradedpartial),
+        $this->assertEquals(array(1/3, question_state::$gradedpartial),
                 $gapselect->grade_response(array('p1' => '1')));
-        $this->assertEqual(array(0, question_state::$gradedwrong),
+        $this->assertEquals(array(0, question_state::$gradedwrong),
                 $gapselect->grade_response(array('p1' => '2', 'p2' => '2', 'p3' => '2')));
     }
 
@@ -222,11 +224,11 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(1, question_state::$gradedright), $gapselect->grade_response(
+        $this->assertEquals(array(1, question_state::$gradedright), $gapselect->grade_response(
                 array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
-        $this->assertEqual(array(0.5, question_state::$gradedpartial), $gapselect->grade_response(
+        $this->assertEquals(array(0.5, question_state::$gradedpartial), $gapselect->grade_response(
                 array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
-        $this->assertEqual(array(0, question_state::$gradedwrong), $gapselect->grade_response(
+        $this->assertEquals(array(0, question_state::$gradedwrong), $gapselect->grade_response(
                 array('p1' => '0', 'p2' => '1', 'p3' => '2', 'p4' => '1')));
     }
 
@@ -235,12 +237,12 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(
+        $this->assertEquals(array(
                     1 => new question_classified_response(1, 'quick', 1/3),
                     2 => new question_classified_response(2, 'dog', 0),
                     3 => new question_classified_response(1, 'lazy', 1/3),
                 ), $gapselect->classify_response(array('p1' => '1', 'p2' => '2', 'p3' => '1')));
-        $this->assertEqual(array(
+        $this->assertEquals(array(
                     1 => question_classified_response::no_response(),
                     2 => new question_classified_response(1, 'fox', 1/3),
                     3 => new question_classified_response(2, 'assiduous', 0),
