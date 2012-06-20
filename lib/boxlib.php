@@ -144,7 +144,7 @@ class boxclient {
             '__login'=>1
             );
         try {
-            $ret = $c->post($this->_box_api_auth_url.$ticket, $param);
+            $ret = $c->post($this->_box_api_auth_url.'/'.$ticket, $param);
         } catch (moodle_exception $e) {
             $this->setError(0, 'connection time-out or invalid url');
             return false;
@@ -245,7 +245,7 @@ class boxclient {
                         'size'=>display_size((int)$file->attributes()->size),
                         'thumbnail'=>$thumbnail,
                         'date'=>userdate((int)$file->attributes()->updated),
-                        'source'=> $this->_box_api_download_url
+                        'source'=> $this->_box_api_download_url .'/'
                             .$this->auth_token.'/'.(string)$file->attributes()->id,
                         'url'=>(string)$file->attributes()->shared_link);
                     $tree[] = $tmp;
