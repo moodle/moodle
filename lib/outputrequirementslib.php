@@ -713,7 +713,7 @@ class page_requirements_manager {
         if (!is_array($modules)) {
             $modules = array($modules);
         }
-        if (empty($CFG->useexternalyui) || true) {
+        if (empty($CFG->useexternalyui)) {
             // We need to set the M.yui.galleryversion to the correct version
             $jscode = 'M.yui.galleryversion='.json_encode($galleryversion).';';
         } else {
