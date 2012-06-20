@@ -25,6 +25,7 @@
  */
 
 require_once($CFG->libdir . '/portfolio/caller.php');
+require_once($CFG->libdir . '/filelib.php');
 
 /**
  * class to handle exporting an entire glossary database

@@ -110,7 +110,10 @@ function rss_delete_file($componentname, $instance) {
 
     $dirpath = "$CFG->cachedir/rss/$componentname";
     if (is_dir($dirpath)) {
-        $dh  = opendir($dirpath);
+        if (!$dh = opendir($dirpath)) {
+            error_log("Directory permission error. RSS directory store for component '{$componentname}' exists but cannot be opened.", DEBUG_DEVELOPER);
+            return;
+        }
         while (false !== ($filename = readdir($dh))) {
             if ($filename!='.' && $filename!='..') {
                 if (preg_match("/{$instance->id}_/", $filename)) {

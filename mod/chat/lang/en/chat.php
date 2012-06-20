@@ -75,17 +75,18 @@ $string['methoddaemon'] = 'Chat server daemon';
 $string['methodnormal'] = 'Normal method';
 $string['methodajax'] = 'Ajax method';
 $string['modulename'] = 'Chat';
-$string['modulename_help'] = 'The chat activity module enables participants to have real-time synchronous discussions.
+$string['modulename_help'] = 'The chat activity module enables participants to have text-based, real-time synchronous discussions.
 
-The chat may be a one-off activity or it may be repeated at the same time each day or each week. Chat sessions are saved and can be made available for everyone to view or restricted to users with the capability to view chat session logs.
+The chat may be a one-time activity or it may be repeated at the same time each day or each week. Chat sessions are saved and can be made available for everyone to view or restricted to users with the capability to view chat session logs.
 
 Chats are especially useful when the group chatting is not able to meet face-to-face, such as
 
-* Regular meetings of students doing online courses to enable them to share experiences with others on the same course but in a different city (or country)
+* Regular meetings of students participating in online courses to enable them to share experiences with others in the same course but in a different location
 * A student temporarily unable to attend in person chatting with their teacher to catch up with work
 * Students out on work experience getting together to discuss their experiences with each other and their teacher
 * Younger children using chat at home in the evenings as a controlled (monitored) introduction to the world of social networking
-* A question and answer session with an invited speaker in a different location';
+* A question and answer session with an invited speaker in a different location
+* Sessions to help students prepare for tests where the teacher, or other students, would pose sample questions';
 $string['modulename_link'] = 'mod/chat/view';
 $string['modulenameplural'] = 'Chats';
 $string['neverdeletemessages'] = 'Never delete messages';

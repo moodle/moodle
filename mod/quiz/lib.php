@@ -425,7 +425,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
     if ($attempts = $DB->get_records('quiz_attempts',
             array('userid' => $user->id, 'quiz' => $quiz->id), 'attempt')) {
         foreach ($attempts as $attempt) {
-            echo get_string('attempt', 'quiz').' '.$attempt->attempt.': ';
+            echo get_string('attempt', 'quiz', $attempt->attempt) . ': ';
             if ($attempt->state != quiz_attempt::FINISHED) {
                 echo quiz_attempt_state_name($attempt->state);
             } else {
@@ -446,6 +446,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
  */
 function quiz_cron() {
     global $CFG;
+    mtrace('');
 
     // Since the quiz specifies $module->cron = 60, so that the subplugins can
     // have frequent cron if they need it, we now need to do our own scheduling.
@@ -461,10 +462,15 @@ function quiz_cron() {
         $overduehander = new mod_quiz_overdue_attempt_updater();
 
         $processto = $timenow - $quizconfig->graceperiodmin;
-        $overduehander->update_overdue_attempts($timenow, $quizconfig->overduedoneto, $processto);
 
+        mtrace('  Looking for quiz overdue quiz attempts between ' .
+                userdate($quizconfig->overduedoneto) . ' and ' . userdate($processto) . '...');
+
+        list($count, $quizcount) = $overduehander->update_overdue_attempts($timenow, $quizconfig->overduedoneto, $processto);
         set_config('overduelastrun', $timenow, 'quiz');
         set_config('overduedoneto', $processto, 'quiz');
+
+        mtrace('  Considered ' . $count . ' attempts in ' . $quizcount . ' quizzes.');
     }
 
     // Run cron for our sub-plugin types.
@@ -1735,7 +1741,7 @@ function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
  * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function mod_quiz_question_pluginfile($course, $context, $component,
+function quiz_question_pluginfile($course, $context, $component,
         $filearea, $qubaid, $slot, $args, $forcedownload, array $options=array()) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');

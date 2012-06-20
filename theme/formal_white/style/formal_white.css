@@ -30,12 +30,13 @@ p {margin:0}
 #page-header{line-height:0;overflow:hidden;}
 
 /* headerlogo */
-#headerlogo {position:relative;margin:0.3em;}
+#headerlogo {position:relative;margin:0;}
   /* if I use: position:absolute; I even need height:105px; in #page-header */
   /* if I use: position:relative; z-index doesn't work*/
 
 /* headermenu */
-.headermenu {position:absolute;text-align:right;line-height:1.7em;font-size:90%;margin:0.3em;right:[[calculated:headermenuright]];top:15px;}
+.headermenu {position:absolute;text-align:right;line-height:1.7em;font-size:90%;margin:0.5em;right:[[calculated:headermenuright]];top:15px;}
+.langmenu {margin-right:0.4em}
 
 #dock {background-color:[[setting:blockcontentbgc]];border-right:1px dashed #000;}
 #dock .dockeditem_container {margin-top: 10px;}

@@ -365,6 +365,8 @@ class assign_header implements renderable {
     var $coursemoduleid = 0;
     /** @var string $subpage optional subpage (extra level in the breadcrumbs) */
     var $subpage = '';
+    /** @var string $preface optional preface (text to show before the heading) */
+    var $preface = '';
 
     /**
      * Constructor
@@ -374,13 +376,15 @@ class assign_header implements renderable {
      * @param bool $showintro  - show or hide the intro
      * @param int $coursemoduleid  - the course module id
      * @param string $subpage  - an optional sub page in the navigation
+     * @param string $preface  - an optional preface to show before the heading
      */
-    public function __construct(stdClass $assign, $context, $showintro, $coursemoduleid, $subpage='') {
+    public function __construct(stdClass $assign, $context, $showintro, $coursemoduleid, $subpage='', $preface='') {
         $this->assign = $assign;
         $this->context = $context;
         $this->showintro = $showintro;
         $this->coursemoduleid = $coursemoduleid;
         $this->subpage = $subpage;
+        $this->preface = $preface;
     }
 }
 
@@ -473,7 +477,7 @@ class assign_files implements renderable {
             require_once($CFG->libdir . '/portfoliolib.php');
             if (count($files) >= 1 && has_capability('mod/assign:exportownsubmission', $this->context)) {
                 $button = new portfolio_add_button();
-                $button->set_callback_options('assign_portfolio_caller', array('cmid' => $this->cm->id, 'sid'=>$sid, 'area'=>$filearea), '/mod/assign/portfolio_callback.php');
+                $button->set_callback_options('assign_portfolio_caller', array('cmid' => $this->cm->id, 'sid'=>$sid, 'area'=>$filearea, 'component'=>$component), '/mod/assign/portfolio_callback.php');
                 $button->reset_formats();
                 $this->portfolioform = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
             }

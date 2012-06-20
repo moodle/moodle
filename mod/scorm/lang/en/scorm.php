@@ -92,6 +92,7 @@ $string['displaycoursestructure_help'] = 'If enabled, the table of contents is d
 $string['displaycoursestructuredesc'] = 'This preference sets the default value for the display course structure on entry page setting';
 $string['displaydesc'] = 'This preference sets the default of whether to display the package or not for an activity';
 $string['displaysettings'] = 'Display Settings';
+$string['dnduploadscorm'] = 'Add a SCORM package';
 $string['domxml'] = 'DOMXML external library';
 $string['duedate'] = 'Due date';
 $string['element'] = 'Element';
@@ -180,7 +181,7 @@ $string['invalidhacpsession'] = 'Invalid HACP Session';
 $string['invalidmanifestresource'] = 'WARNING: The following resources were referenced in your manifest but couldn\'t be found:';
 $string['last'] = 'Last accessed on';
 $string['lastaccess'] = 'Last access';
-$string['lastattempt'] = 'Last attempt';
+$string['lastattempt'] = 'Last completed attempt';
 $string['lastattemptlock'] = 'Lock after final attempt';
 $string['lastattemptlock_help'] = 'If enabled, a student is prevented from launching the SCORM player after using up all their allocated attempts.';
 $string['lastattemptlockdesc'] = 'This preference sets the default value for the lock after final attempt setting';
@@ -334,7 +335,7 @@ $string['versionwarning'] = 'The manifest version is older than 1.3, warning at 
 $string['viewallreports'] = 'View reports for {$a} attempts';
 $string['viewalluserreports'] = 'View reports for {$a} users';
 $string['whatgrade'] = 'Attempts grading';
-$string['whatgrade_help'] = 'If multiple attempts are allowed, this setting specifies whether the highest, average (mean), first or last attempt is recorded in the gradebook.
+$string['whatgrade_help'] = 'If multiple attempts are allowed, this setting specifies whether the highest, average (mean), first or last completed attempt is recorded in the gradebook.
 
 Handling of Multiple Attempts
 

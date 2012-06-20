@@ -313,6 +313,31 @@ abstract class restore_dbops {
     }
 
     /**
+     * Reset the ids caches completely
+     *
+     * Any destructive operation (partial delete, truncate, drop or recreate) performed
+     * with the backup_ids table must cause the backup_ids caches to be
+     * invalidated by calling this method. See MDL-33630.
+     *
+     * Note that right now, the only operation of that type is the recreation
+     * (drop & restore) of the table that may happen once the prechecks have ended. All
+     * the rest of operations are always routed via {@link set_backup_ids_record()}, 1 by 1,
+     * keeping the caches on sync.
+     *
+     * @todo MDL-25290 static should be replaced with MUC code.
+     */
+    public static function reset_backup_ids_cached() {
+        // Reset the ids cache.
+        $cachetoadd = count(self::$backupidscache);
+        self::$backupidscache = array();
+        self::$backupidscachesize = self::$backupidscachesize + $cachetoadd;
+        // Reset the exists cache.
+        $existstoadd = count(self::$backupidsexist);
+        self::$backupidsexist = array();
+        self::$backupidsexistsize = self::$backupidsexistsize + $existstoadd;
+    }
+
+    /**
      * Given one role, as loaded from XML, perform the best possible matching against the assignable
      * roles, using different fallback alternatives (shortname, archetype, editingteacher => teacher, defaultcourseroleid)
      * returning the id of the best matching role or 0 if no match is found

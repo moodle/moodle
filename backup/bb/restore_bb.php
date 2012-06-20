@@ -8,7 +8,9 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot.'/backup/bb/xsl_emulate_xslt.inc');
 
 function get_subdirs($directory){
-    $opendirectory = opendir( $directory );
+    if (!$opendirectory = opendir( $directory )) {
+        return array();
+    }
     while(false !== ($filename = readdir($opendirectory))) {
         if (is_dir($directory.$filename) and $filename != ".." and $filename != "."){
             $subdirs[] = $filename;

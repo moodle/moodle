@@ -27,7 +27,7 @@
  * @param int $oldversion
  * @return bool
  */
-function xmldb_feedback_comments_upgrade($oldversion) {
+function xmldb_assignfeedback_comments_upgrade($oldversion) {
     // do the upgrades
     return true;
 }

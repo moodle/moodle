@@ -73,6 +73,12 @@ Y.extend(DIALOGUE, Y.Overlay, {
                 if (this.get('center') && !e.prevVal && e.newVal) {
                     this.centerDialogue();
                 }
+                if (this.get('draggable')) {
+                    var titlebar = '#' + this.get('id') + ' .' + CSS.HEADER;
+                    this.plug(Y.Plugin.Drag, {handles : [titlebar]});
+                    this.dd.addInvalid('div.closebutton');
+                    Y.one(titlebar).setStyle('cursor', 'move');
+                }
                 break;
         }
     },
@@ -110,6 +116,10 @@ Y.extend(DIALOGUE, Y.Overlay, {
         center : {
             validator : Y.Lang.isBoolean,
             value : true
+        },
+        draggable : {
+            validator : Y.Lang.isBoolean,
+            value : false
         }
     }
 });
@@ -372,4 +382,4 @@ M.core.confirm = CONFIRM;
 M.core.exception = EXCEPTION;
 M.core.ajaxException = AJAXEXCEPTION;
 
-}, '@VERSION@', {requires:['base','node','overlay','event-key', 'moodle-enrol-notification-skin']});
+}, '@VERSION@', {requires:['base','node','overlay','event-key', 'moodle-enrol-notification-skin', 'dd-plugin']});

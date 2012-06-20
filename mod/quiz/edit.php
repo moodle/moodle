@@ -145,10 +145,6 @@ $quizhasattempts = quiz_has_attempts($quiz->id);
 
 $PAGE->set_url($thispageurl);
 
-$pagetitle = get_string('editingquiz', 'quiz');
-if ($quiz_reordertool) {
-    $pagetitle = get_string('orderingquiz', 'quiz');
-}
 // Get the course object and related bits.
 $course = $DB->get_record('course', array('id' => $quiz->course));
 if (!$course) {
@@ -318,7 +314,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
             // Parse input for question -> grades.
             $questionid = $matches[1];
-            $quiz->grades[$questionid] = clean_param($value, PARAM_FLOAT);
+            $quiz->grades[$questionid] = unformat_float($value);
             quiz_update_question_instance($quiz->grades[$questionid], $questionid, $quiz);
             $deletepreviews = true;
             $recomputesummarks = true;
@@ -385,7 +381,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     }
 
     // If rescaling is required save the new maximum.
-    $maxgrade = optional_param('maxgrade', -1, PARAM_FLOAT);
+    $maxgrade = unformat_float(optional_param('maxgrade', -1, PARAM_RAW));
     if ($maxgrade >= 0) {
         quiz_set_grade($maxgrade, $quiz);
     }
@@ -412,7 +408,7 @@ $PAGE->requires->skip_link_to('questionbank',
         get_string('skipto', 'access', get_string('questionbank', 'question')));
 $PAGE->requires->skip_link_to('quizcontentsblock',
         get_string('skipto', 'access', get_string('questionsinthisquiz', 'quiz')));
-$PAGE->set_title($pagetitle);
+$PAGE->set_title(get_string('editingquizx', 'quiz', format_string($quiz->name)));
 $PAGE->set_heading($course->fullname);
 $node = $PAGE->settingsnav->find('mod_quiz_edit', navigation_node::TYPE_SETTING);
 if ($node) {
@@ -498,10 +494,10 @@ if ($quiz_reordertool) {
 }
 
 if ($quiz_reordertool) {
-    echo $OUTPUT->heading_with_help(get_string('orderingquiz', 'quiz') . ': ' . $quiz->name,
+    echo $OUTPUT->heading_with_help(get_string('orderingquizx', 'quiz', format_string($quiz->name)),
             'orderandpaging', 'quiz');
 } else {
-    echo $OUTPUT->heading(get_string('editingquiz', 'quiz') . ': ' . $quiz->name, 2);
+    echo $OUTPUT->heading(get_string('editingquizx', 'quiz', format_string($quiz->name)), 2);
     echo $OUTPUT->help_icon('editingquiz', 'quiz', get_string('basicideasofquiz', 'quiz'));
 }
 quiz_print_status_bar($quiz);

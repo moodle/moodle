@@ -960,6 +960,38 @@ abstract class webservice_server implements webservice_server_interface {
         return $user;
 
     }
+
+    /**
+     * Intercept some moodlewssettingXXX $_GET and $_POST parameter
+     * that are related to the web service call and are not the function parameters
+     */
+    protected function set_web_service_call_settings() {
+        global $CFG;
+
+        // Default web service settings.
+        // Must be the same XXX key name as the external_settings::set_XXX function.
+        // Must be the same XXX ws parameter name as 'moodlewssettingXXX'.
+        $externalsettings = array(
+            'raw' => false,
+            'fileurl' => true,
+            'filter' =>  false);
+
+        // Load the external settings with the web service settings.
+        $settings = external_settings::get_instance();
+        foreach ($externalsettings as $name => $default) {
+
+            $wsparamname = 'moodlewssetting' . $name;
+
+            // Retrieve and remove the setting parameter from the request.
+            $value = optional_param($wsparamname, $default, PARAM_BOOL);
+            unset($_GET[$wsparamname]);
+            unset($_POST[$wsparamname]);
+
+            $functioname = 'set_' . $name;
+            $settings->$functioname($value);
+        }
+
+    }
 }
 
 /**
@@ -1336,7 +1368,10 @@ class '.$classname.' {
      */
     protected function parse_request() {
 
-        //Get GET and POST paramters
+        // We are going to clean the POST/GET parameters from the parameters specific to the server.
+        parent::set_web_service_call_settings();
+
+        // Get GET and POST paramters.
         $methodvariables = array_merge($_GET,$_POST);
 
         if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {

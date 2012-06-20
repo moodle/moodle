@@ -43,6 +43,7 @@ class mod_quiz_overdue_attempt_updater {
      * @param int $processfrom the value of $processupto the last time update_overdue_attempts was
      *      called called and completed successfully.
      * @param int $processto only process attempt modifed longer ago than this.
+     * @return array with two elements, the number of attempt considered, and how many different quizzes that was.
      */
     public function update_overdue_attempts($timenow, $processfrom, $processto) {
         global $DB;
@@ -53,11 +54,14 @@ class mod_quiz_overdue_attempt_updater {
         $quiz = null;
         $cm = null;
 
+        $count = 0;
+        $quizcount = 0;
         foreach ($attemptstoprocess as $attempt) {
             // If we have moved on to a different quiz, fetch the new data.
             if (!$quiz || $attempt->quiz != $quiz->id) {
                 $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz), '*', MUST_EXIST);
                 $cm = get_coursemodule_from_instance('quiz', $attempt->quiz);
+                $quizcount += 1;
             }
 
             // If we have moved on to a different course, fetch the new data.
@@ -73,9 +77,11 @@ class mod_quiz_overdue_attempt_updater {
             // Trigger any transitions that are required.
             $attemptobj = new quiz_attempt($attempt, $quizforuser, $cm, $course);
             $attemptobj->handle_if_time_expired($timenow, false);
+            $count += 1;
         }
 
         $attemptstoprocess->close();
+        return array($count, $quizcount);
     }
 
     /**

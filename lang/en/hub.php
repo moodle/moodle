@@ -118,12 +118,6 @@ $string['licence_link'] = 'licenses';
 $string['logourl'] = 'Logo URL';
 $string['modulenumberaverage'] = 'Average number of course modules ({$a})';
 $string['moodleorg'] = 'Moodle.org';
-$string['moodleorgregistrationdetail'] = 'The main community hub is called MOOCH, at hub.moodle.org.  By registering your site with MOOCH you will contribute to the statistics of the worldwide Moodle community.  You can also join a low-volume mailing list providing early notifications of security fixes and new releases of Moodle.';
-$string['moodleorgregistrationdetail2'] = 'This option allows you to register your Moodle site with MOOCH, at hub.moodle.org.  Registration is free.
-The main benefit of registering is that you will be added to a low-volume mailing list for important notifications such as security alerts and new releases of Moodle.
-By default, your information will be kept private, and will never be sold or passed on to anyone else.  The only reason for collecting this information is for support purposes, and to help build up a statistical picture of the Moodle community as a whole.
-If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.
-All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time.';
 $string['mustselectsubject'] = 'You must select a subject';
 $string['name'] = 'Name';
 $string['name_help'] = 'This name will be showing in the course listing.';
@@ -165,11 +159,10 @@ $string['registeredcourses'] = 'Registered courses';
 $string['registeredsites'] = 'Registered sites';
 $string['registrationinfo'] = 'Registration information';
 $string['registeredmoodleorg'] = 'Moodle.org ({$a})';
-$string['registeredon'] = 'Registered with';
+$string['registeredon'] = 'Hubs with which you are registered';
+$string['registermoochtips'] = 'To be registered with Moodle.org Open Community Hub (MOOCH), your site must be registered with Moodle.org.';
 $string['registersite'] = 'Register with {$a}';
-$string['registeron'] = 'Register your site';
-$string['registeronmoodleorg'] = 'Register with Moodle.org (MOOCH)';
-$string['registeronspecifichub'] = 'Register with a specific hub';
+$string['registerwith'] = 'Register with a hub';
 $string['registrationconfirmed'] = 'Site registration confirmed';
 $string['registrationconfirmedon'] = 'You are now registered on the hub {$a}. You are now able to publish courses to this hub, using the "Publish" link in course administration menus.';
 $string['registrationupdated'] = 'Registration has been updated.';
@@ -237,7 +230,6 @@ $string['siteversion'] = 'Moodle version';
 $string['siteversion_help'] = 'The Moodle version of this site.';
 $string['subject'] = 'Subject';
 $string['subject_help'] = 'Select the main subject area which the course covers.';
-$string['specifichub'] = 'Specific hub';
 $string['specifichubregistrationdetail'] = 'You can also register your site with other community hubs.';
 $string['statistics'] = 'Statistics privacy';
 $string['status'] = 'Hub listing';

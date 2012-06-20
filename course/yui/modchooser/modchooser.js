@@ -2,7 +2,7 @@ YUI.add('moodle-course-modchooser', function(Y) {
     var CSS = {
         PAGECONTENT : 'div#page-content',
         SECTION : 'li.section',
-        SECTIONMODCHOOSER : 'a.section-modchooser-link',
+        SECTIONMODCHOOSER : 'span.section-modchooser-link',
         SITEMENU : 'div.block_site_main_menu',
         SITETOPIC : 'div.sitetopic'
     };
@@ -21,13 +21,12 @@ YUI.add('moodle-course-modchooser', function(Y) {
         jumplink : null,
 
         initializer : function(config) {
-            var dialogue = Y.one('#chooserdialogue');
-            var header = Y.one('#choosertitle');
+            var dialogue = Y.one('.chooserdialoguebody');
+            var header = Y.one('.choosertitle');
             var params = {
                 width: '540px'
             };
             this.setup_chooser_dialogue(dialogue, header, params);
-            this.overlay.get('boundingBox').addClass('modchooser');
 
             this.jumplink = this.container.one('#jump');
 
@@ -100,7 +99,12 @@ YUI.add('moodle-course-modchooser', function(Y) {
             }, this);
         },
         _setup_for_section : function(section, sectionid) {
-            var chooserlink = section.one(CSS.SECTIONMODCHOOSER);
+            var chooserspan = section.one(CSS.SECTIONMODCHOOSER);
+            var chooserlink = Y.Node.create("<a href='#' />");
+            chooserspan.get('children').each(function(node) {
+                chooserlink.appendChild(node);
+            });
+            chooserspan.insertBefore(chooserlink);
             chooserlink.on('click', this.display_mod_chooser, this, sectionid);
         },
         /**

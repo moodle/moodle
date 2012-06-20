@@ -142,8 +142,10 @@ class stored_file {
                     }
                 }
 
-                if ($field == 'referencefileid' or $field == 'referencelastsync' or $field == 'referencelifetime') {
-                    $value = clean_param($value, PARAM_INT);
+                if ($field === 'referencefileid' or $field === 'referencelastsync' or $field === 'referencelifetime') {
+                    if (!is_null($value) and !is_number($value)) {
+                        throw new file_exception('storedfileproblem', 'Invalid reference info');
+                    }
                 }
 
                 // adding the field
@@ -161,7 +163,7 @@ class stored_file {
                 throw new file_exception('storedfilecannotread', '', $pathname);
             }
         }
-        $mimetype = $this->fs->mimetype($pathname);
+        $mimetype = $this->fs->mimetype($pathname, $this->file_record->filename);
         $this->file_record->mimetype = $mimetype;
 
         $DB->update_record('files', $this->file_record);
@@ -196,36 +198,46 @@ class stored_file {
     }
 
     /**
-     * Delete file reference
+     * Unlink the stored file from the referenced file
      *
+     * This methods destroys the link to the record in files_reference table. This effectively
+     * turns the stored file from being an alias to a plain copy. However, the caller has
+     * to make sure that the actual file's content has beed synced prior to calling this method.
      */
     public function delete_reference() {
         global $DB;
 
-        // Remove repository info.
-        $this->repository = null;
+        if (!$this->is_external_file()) {
+            throw new coding_exception('An attempt to unlink a non-reference file.');
+        }
 
         $transaction = $DB->start_delegated_transaction();
 
-        // Remove reference info from DB.
-        $DB->delete_records('files_reference', array('id'=>$this->file_record->referencefileid));
+        // Are we the only one referring to the original file? If so, delete the
+        // referenced file record. Note we do not use file_storage::search_references_count()
+        // here because we want to count draft files too and we are at a bit lower access level here.
+        $countlinks = $DB->count_records('files',
+            array('referencefileid' => $this->file_record->referencefileid));
+        if ($countlinks == 1) {
+            $DB->delete_records('files_reference', array('id' => $this->file_record->referencefileid));
+        }
 
-        // Must refresh $this->file_record form DB
-        $filerecord = $DB->get_record('files', array('id'=>$this->get_id()));
-        // Update DB
-        $filerecord->referencelastsync = null;
-        $filerecord->referencelifetime = null;
-        $filerecord->referencefileid = null;
-        $this->update($filerecord);
+        // Update the underlying record in the database.
+        $update = new stdClass();
+        $update->referencefileid = null;
+        $update->referencelastsync = null;
+        $update->referencelifetime = null;
+        $this->update($update);
 
         $transaction->allow_commit();
 
-        // unset object variable
-        unset($this->file_record->repositoryid);
-        unset($this->file_record->reference);
-        unset($this->file_record->referencelastsync);
-        unset($this->file_record->referencelifetime);
-        unset($this->file_record->referencefileid);
+        // Update our properties and the record in the memory.
+        $this->repository = null;
+        $this->file_record->repositoryid = null;
+        $this->file_record->reference = null;
+        $this->file_record->referencefileid = null;
+        $this->file_record->referencelastsync = null;
+        $this->file_record->referencelifetime = null;
     }
 
     /**
@@ -254,15 +266,20 @@ class stored_file {
 
         $transaction = $DB->start_delegated_transaction();
 
-        // If other files referring to this file, we need convert them
+        // If there are other files referring to this file, convert them to copies.
         if ($files = $this->fs->get_references_by_storedfile($this)) {
             foreach ($files as $file) {
                 $this->fs->import_external_file($file);
             }
         }
-        // Now delete file records in DB
+
+        // If this file is a reference (alias) to another file, unlink it first.
+        if ($this->is_external_file()) {
+            $this->delete_reference();
+        }
+
+        // Now delete the file record.
         $DB->delete_records('files', array('id'=>$this->file_record->id));
-        $DB->delete_records('files_reference', array('id'=>$this->file_record->referencefileid));
 
         $transaction->allow_commit();
 
@@ -505,29 +522,16 @@ class stored_file {
     }
 
     /**
-     * Sync external files
+     * Synchronize file if it is a reference and needs synchronizing
      *
-     * @return bool true if file content changed, false if not
+     * Updates contenthash and filesize
      */
     public function sync_external_file() {
-        global $CFG, $DB;
-        if (empty($this->file_record->referencefileid)) {
-            return false;
-        }
-        if (empty($this->file_record->referencelastsync) or ($this->file_record->referencelastsync + $this->file_record->referencelifetime < time())) {
+        global $CFG;
+        if (!empty($this->file_record->referencefileid)) {
             require_once($CFG->dirroot.'/repository/lib.php');
-            if (repository::sync_external_file($this)) {
-                $prevcontent = $this->file_record->contenthash;
-                $sql = "SELECT f.*, r.repositoryid, r.reference
-                          FROM {files} f
-                     LEFT JOIN {files_reference} r
-                               ON f.referencefileid = r.id
-                         WHERE f.id = ?";
-                $this->file_record = $DB->get_record_sql($sql, array($this->file_record->id), MUST_EXIST);
-                return ($prevcontent !== $this->file_record->contenthash);
-            }
+            repository::sync_external_file($this);
         }
-        return false;
     }
 
     /**
@@ -841,7 +845,45 @@ class stored_file {
      * @return string
      */
     public function get_reference_details() {
-        return $this->repository->get_reference_details($this->get_reference());
+        return $this->repository->get_reference_details($this->get_reference(), $this->get_status());
+    }
+
+    /**
+     * Called after reference-file has been synchronized with the repository
+     *
+     * We update contenthash, filesize and status in files table if changed
+     * and we always update lastsync in files_reference table
+     *
+     * @param type $contenthash
+     * @param type $filesize
+     */
+    public function set_synchronized($contenthash, $filesize, $status = 0) {
+        global $DB;
+        if (!$this->is_external_file()) {
+            return;
+        }
+        $now = time();
+        $filerecord = new stdClass();
+        if ($this->get_contenthash() !== $contenthash) {
+            $filerecord->contenthash = $contenthash;
+        }
+        if ($this->get_filesize() != $filesize) {
+            $filerecord->filesize = $filesize;
+        }
+        if ($this->get_status() != $status) {
+            $filerecord->status = $status;
+        }
+        $filerecord->referencelastsync = $now; // TODO MDL-33416 remove this
+        if (!empty($filerecord)) {
+            $this->update($filerecord);
+        }
+
+        $DB->set_field('files_reference', 'lastsync', $now, array('id'=>$this->get_referencefileid()));
+        // $this->file_record->lastsync = $now; // TODO MDL-33416 uncomment or remove
+    }
+
+    public function set_missingsource() {
+        $this->set_synchronized($this->get_contenthash(), 0, 666);
     }
 
     /**

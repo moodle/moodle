@@ -69,6 +69,7 @@ class assign_portfolio_caller extends portfolio_module_caller_base {
             'cmid' => true,
             'sid' => false,
             'area' => false,
+            'component' => false,
             'fileid' => false,
             'plugin' => false,
             'editor' => false,
@@ -105,11 +106,10 @@ class assign_portfolio_caller extends portfolio_module_caller_base {
 
         }
 
-
         // export either an area of files or a single file (see function for more detail)
         // the first arg is an id or null. If it is an id, the rest of the args are ignored
         // if it is null, the rest of the args are used to load a list of files from get_areafiles
-        $this->set_file_and_format_data($this->fileid, $context->id, 'mod_assign', $this->area, $this->sid, 'timemodified', false);
+        $this->set_file_and_format_data($this->fileid, $context->id, $this->component, $this->area, $this->sid, 'timemodified', false);
 
     }
 

@@ -301,6 +301,7 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertSame(1.1, fix_utf8(1.1));
         $this->assertSame(true, fix_utf8(true));
         $this->assertSame('', fix_utf8(''));
+        $this->assertSame('abc', fix_utf8('abc'));
         $array = array('do', 're', 'mi');
         $this->assertSame($array, fix_utf8($array));
         $object = new stdClass();
@@ -312,7 +313,7 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertSame("žlutý koníček přeskočil potůček \n\t\r\0", fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
 
         // invalid utf8 string
-        $this->assertSame('aaabbb', fix_utf8('aaa'.chr(130).'bbb'));
+        $this->assertSame('aš', fix_utf8('a'.chr(130).'š'), 'This fails with buggy iconv() when mbstring extenstion is not available as fallback.');
     }
 
     function test_optional_param() {

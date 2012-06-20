@@ -152,7 +152,7 @@ class repository_webdav extends repository {
         return array('webdav_type', 'webdav_server', 'webdav_port', 'webdav_path', 'webdav_user', 'webdav_password', 'webdav_auth');
     }
 
-    public function instance_config_form($mform) {
+    public static function instance_config_form($mform) {
         $choices = array(0 => get_string('http', 'repository_webdav'), 1 => get_string('https', 'repository_webdav'));
         $mform->addElement('select', 'webdav_type', get_string('webdav_type', 'repository_webdav'), $choices);
         $mform->addRule('webdav_type', get_string('required'), 'required', null, 'client');

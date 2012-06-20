@@ -31,6 +31,23 @@
 class core_register_renderer extends plugin_renderer_base {
 
     /**
+     * Display Moodle.org registration message about benefit to register on Moodle.org
+     *
+     * @return string
+     */
+    public function moodleorg_registration_message() {
+        $moodleorgurl = html_writer::link('http://moodle.org', 'Moodle.org');
+        $moodleorgstatsurl = html_writer::link('http://moodle.org/stats', get_string('statsmoodleorg', 'admin'));
+        $moochurl = html_writer::link(HUB_MOODLEORGHUBURL, 'MOOCH');
+        $moodleorgregmsg = get_string('registermoodleorg', 'admin', $moodleorgurl);
+        $items = array(get_string('registermoodleorgli1', 'admin'),
+            get_string('registermoodleorgli2', 'admin', $moodleorgstatsurl),
+            get_string('registermoodleorgli3', 'admin', $moochurl));
+        $moodleorgregmsg .= html_writer::alist($items);
+        return $moodleorgregmsg;
+    }
+
+    /**
      * Display a box message confirming a site registration (add or update)
      * @param string $confirmationmessage
      * @return string
@@ -40,57 +57,6 @@ class core_register_renderer extends plugin_renderer_base {
                         array('href' => new moodle_url('/local/hub/index.php')));
         $message = $confirmationmessage . html_writer::empty_tag('br') . $linktositelist;
         return $this->output->box($message);
-    }
-
-    /**
-     * Display the page to register on Moodle.org or on a specific hub
-     */
-    public function registrationselector($updatemoodleorg = false) {
-        global $CFG;
-        $table = new html_table();
-        $table->head = array(get_string('moodleorg', 'hub'), get_string('specifichub', 'hub'));
-        $table->size = array('50%', '50%');
-        //$table->attributes['class'] = 'registerindextable';
-        //Moodle.org information cell
-        $moodleorgcell = get_string('moodleorgregistrationdetail', 'hub');
-        $moodleorgcell .= html_writer::empty_tag('br') . html_writer::empty_tag('br');
-        $moodleorgcell = html_writer::tag('div', $moodleorgcell, array('class' => 'justifytext'));
-
-        //Specific hub information cell
-        $specifichubcell = get_string('specifichubregistrationdetail', 'hub');
-        $specifichubcell .= html_writer::empty_tag('br') . html_writer::empty_tag('br');
-        $specifichubcell = html_writer::tag('div', $specifichubcell, array('class' => 'justifytext'));
-
-        //add information cells
-        $cells = array($moodleorgcell, $specifichubcell);
-        $row = new html_table_row($cells);
-        $table->data[] = $row;
-
-        //Moodle.org button cell
-        $registeronmoodleorgurl = new moodle_url("/" . $CFG->admin . "/registration/register.php",
-                        array('sesskey' => sesskey(), 'huburl' => HUB_MOODLEORGHUBURL
-                            , 'hubname' => 'Moodle.org'));
-        $registeronmoodleorgbutton = new single_button($registeronmoodleorgurl,
-                        $updatemoodleorg ? get_string('updatesite', 'hub', 'Moodle.org') : get_string('registeronmoodleorg', 'hub'));
-        $registeronmoodleorgbutton->class = 'centeredbutton';
-        $registeronmoodleorgbuttonhtml = $this->output->render($registeronmoodleorgbutton);
-        $moodleorgcell = $registeronmoodleorgbuttonhtml;
-
-        //Specific hub button cell
-        $registeronspecifichuburl = new moodle_url("/" . $CFG->admin . "/registration/hubselector.php",
-                        array('sesskey' => sesskey()));
-        $registeronspecifichubbutton = new single_button($registeronspecifichuburl,
-                        get_string('registeronspecifichub', 'hub'));
-        $registeronspecifichubbutton->class = 'centeredbutton';
-        $registeronspecifichubbuttonhtml = $this->output->render($registeronspecifichubbutton);
-        $specifichubcell = $registeronspecifichubbuttonhtml;
-
-        //add button cells
-        $cells = array($moodleorgcell, $specifichubcell);
-        $row = new html_table_row($cells);
-        $table->data[] = $row;
-
-        return html_writer::table($table);
     }
 
     /**

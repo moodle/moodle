@@ -396,9 +396,13 @@ class repository_flickr_public extends repository {
         return $str;
     }
 
-    public function get_link($photo_id) {
-        global $CFG;
-        $result = $this->flickr->photos_getSizes($photo_id);
+    /**
+     * Return photo url by given photo id
+     * @param string $photoid
+     * @return string
+     */
+    private function build_photo_url($photoid) {
+        $result = $this->flickr->photos_getSizes($photoid);
         $url = '';
         if(!empty($result[4])) {
             $url = $result[4]['source'];
@@ -410,23 +414,27 @@ class repository_flickr_public extends repository {
         return $url;
     }
 
+    public function get_link($photoid) {
+        return $this->build_photo_id($photoid);
+    }
+
     /**
      *
      * @global object $CFG
-     * @param string $photo_id
+     * @param string $photoid
      * @param string $file
      * @return string
      */
-    public function get_file($photo_id, $file = '') {
+    public function get_file($photoid, $file = '') {
         global $CFG;
-        $info = $this->flickr->photos_getInfo($photo_id);
+        $info = $this->flickr->photos_getInfo($photoid);
         if ($info['owner']['realname']) {
             $author = $info['owner']['realname'];
         } else {
             $author = $info['owner']['username'];
         }
         $copyright = get_string('author', 'repository') . ': ' . $author;
-        $result = $this->flickr->photos_getSizes($photo_id);
+        $result = $this->flickr->photos_getSizes($photoid);
         // download link
         $source = '';
         // flickr photo page
@@ -459,7 +467,7 @@ class repository_flickr_public extends repository {
      * Add Instance settings input to Moodle form
      * @param object $mform
      */
-    public function instance_config_form($mform) {
+    public static function instance_config_form($mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr_public'));
         $mform->addElement('checkbox', 'usewatermarks', get_string('watermark', 'repository_flickr_public'));
         $mform->setDefault('usewatermarks', 0);
@@ -516,5 +524,15 @@ class repository_flickr_public extends repository {
     }
     public function supported_returntypes() {
         return (FILE_INTERNAL | FILE_EXTERNAL);
+    }
+
+    /**
+     * Return the source information
+     *
+     * @param string $photoid photo id
+     * @return string|null
+     */
+    public function get_file_source_info($photoid) {
+        return $this->build_photo_url($photoid);
     }
 }

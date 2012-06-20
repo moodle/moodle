@@ -453,7 +453,7 @@ class gradingform_rubric_controller extends gradingform_controller {
         global $CFG;
         return array(
             'maxfiles' => -1,
-            'maxbytes' => get_max_upload_file_size($CFG->maxbytes),
+            'maxbytes' => get_user_max_upload_file_size($context, $CFG->maxbytes),
             'context'  => $context,
         );
     }

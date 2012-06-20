@@ -540,7 +540,7 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
         return false;
     }
 
-    echo $OUTPUT->heading(get_string('newentries', 'glossary').':');
+    echo $OUTPUT->heading(get_string('newentries', 'glossary').':', 3);
     $strftimerecent = get_string('strftimerecent');
     $entrycount = 0;
     foreach ($entries as $entry) {
@@ -557,7 +557,7 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
             echo '<div class="date">'.userdate($entry->timemodified, $strftimerecent).'</div>';
             echo '<div class="name">'.fullname($entry, $viewfullnames).'</div>';
             echo '</div>';
-            echo '<div class="info"><a href="'.$link.'">'.format_text($entry->concept, true).'</a></div>';
+            echo '<div class="info"><a href="'.$link.'">'.format_string($entry->concept, true).'</a></div>';
             $entrycount += 1;
         } else {
             $numnewentries = $DB->count_records_sql($countsql.$joins[0].$clausesql.$approvalsql.')', $params);
@@ -1108,9 +1108,8 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
  */
 function  glossary_print_entry_concept($entry, $return=false) {
     global $OUTPUT;
-    $options = new stdClass();
-    $options->para = false;
-    $text = format_text($OUTPUT->heading('<span class="nolink">' . $entry->concept . '</span>', 3, 'nolink'), FORMAT_MOODLE, $options);
+
+    $text = html_writer::tag('h3', format_string($entry->concept));
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
@@ -1152,6 +1151,7 @@ function glossary_print_entry_definition($entry, $glossary, $cm) {
     $options->trusted = $entry->definitiontrust;
     $options->context = $context;
     $options->overflowdiv = true;
+
     $text = format_text($definition, $entry->definitionformat, $options);
 
     // Stop excluding concepts from autolinking
@@ -1620,7 +1620,7 @@ function glossary_get_file_areas($course, $cm, $context) {
  * @param string $filename
  * @return file_info_stored file_info_stored instance or null if not found
  */
-function mod_glossary_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+function glossary_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {

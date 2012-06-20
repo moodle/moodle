@@ -596,6 +596,9 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
             $item->datemodified = $file->get_timemodified();
             $item->datecreated = $file->get_timecreated();
             $item->isref = $file->is_external_file();
+            if ($item->isref && $file->get_status() == 666) {
+                $item->originalmissing = true;
+            }
             // find the file this draft file was created from and count all references in local
             // system pointing to that file
             $source = unserialize($file->get_source());
@@ -613,7 +616,7 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
             } else {
                 // do NOT use file browser here!
                 $item->mimetype = get_mimetype_description($file);
-                if (file_mimetype_in_typegroup($item->mimetype, 'archive')) {
+                if (file_extension_in_typegroup($file->get_filename(), 'archive')) {
                     $item->type = 'zip';
                 } else {
                     $item->type = 'file';
@@ -770,6 +773,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         $newhashes = array();
         foreach ($draftfiles as $file) {
             $newhash = $fs->get_pathname_hash($contextid, $component, $filearea, $itemid, $file->get_filepath(), $file->get_filename());
+            file_restore_source_field_from_draft_file($file);
             $newhashes[$newhash] = $file;
         }
         $filecount = 0;
@@ -790,7 +794,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 continue;
             }
 
-            file_restore_source_field_from_draft_file($newfile);
             // Replaced file content
             if ($oldfile->get_contenthash() != $newfile->get_contenthash()) {
                 $oldfile->replace_content_with($newfile);
@@ -2310,7 +2313,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     }
 
     // handle external resource
-    if ($stored_file->is_external_file()) {
+    if ($stored_file && $stored_file->is_external_file()) {
         $stored_file->send_file($lifetime, $filter, $forcedownload, $options);
         die;
     }
@@ -2535,7 +2538,9 @@ function fulldelete($location) {
         return false;
     }
     if (is_dir($location)) {
-        $currdir = opendir($location);
+        if (!$currdir = opendir($location)) {
+            return false;
+        }
         while (false !== ($file = readdir($currdir))) {
             if ($file <> ".." && $file <> ".") {
                 $fullfile = $location."/".$file;

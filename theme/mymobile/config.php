@@ -156,6 +156,7 @@ if ($thisdevice == "default" || $thisdevice == "tablet" || optional_param('mymob
 // Add the required JavaScript to the page
 $THEME->javascripts = array(
     'jquery-1.6.4.min',
+    'jquery-noconflict',
     'custom',
     'jquery.mobile-1.0',
     'scrollview',
@@ -164,3 +165,7 @@ $THEME->javascripts = array(
 
 // Sets a custom render factory to use with the theme, used when working with custom renderers.
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
+
+// This theme doesn't support CSS optimisation. The JQuery CSS has already been optimised in a way that
+// is not compatible with the CSS optimiser in Moodle.
+$THEME->supportscssoptimisation = false;

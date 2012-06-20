@@ -267,32 +267,92 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      *
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
+     * @param array    $mods course modules indexed by id (from get_all_mods)
      * @return string HTML to output.
      */
-    protected function section_summary($section, $course) {
+    protected function section_summary($section, $course, $mods) {
+        $classattr = 'section main section-summary clearfix';
+        $linkclasses = '';
+
         // If section is hidden then display grey section link
-        $classattr = 'section-summary clearfix';
-        If (!$section->visible) {
-            $classattr .= ' dimmed_text';
+        if (!$section->visible) {
+            $classattr .= ' hidden';
+            $linkclasses .= ' dimmed_text';
+        } else if ($this->is_section_current($section, $course)) {
+            $classattr .= ' current';
         }
 
         $o = '';
-        $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
-            'class' => $classattr));
+        $o .= html_writer::start_tag('li', array('id' => 'section-'.$section->section, 'class' => $classattr));
 
-        $title = get_section_name($course, $section);
-        $o.= html_writer::start_tag('a', array('href' => course_get_url($course, $section->section)));
-        $o.= $this->output->heading($title, 3, 'header section-title');
-        $o.= html_writer::end_tag('a');
+        $o .= html_writer::tag('div', '', array('class' => 'left side'));
+        $o .= html_writer::tag('div', '', array('class' => 'right side'));
+        $o .= html_writer::start_tag('div', array('class' => 'content'));
+
+        $title = html_writer::tag('a', get_section_name($course, $section),
+                array('href' => course_get_url($course, $section->section), 'class' => $linkclasses));
+        $o .= $this->output->heading($title, 3, 'section-title');
 
         $o.= html_writer::start_tag('div', array('class' => 'summarytext'));
         $o.= $this->format_summary_text($section);
         $o.= html_writer::end_tag('div');
+        $o.= $this->section_activity_summary($section, $mods);
 
-        $o .= $this->section_availability_message($section);
+        $o.= $this->section_availability_message($section);
 
-        $o.= html_writer::end_tag('li');
+        $o .= html_writer::end_tag('div');
+        $o .= html_writer::end_tag('li');
 
+        return $o;
+    }
+
+    /**
+     * Generate a summary of the activites in a section
+     *
+     * @param stdClass $section The course_section entry from DB
+     * @param array    $mods course modules indexed by id (from get_all_mods)
+     * @return string HTML to output.
+     */
+    private function section_activity_summary($section, $mods) {
+        if (empty($section->sequence)) {
+            return '';
+        }
+
+        // Generate array with count of activities in this section:
+        $sectionmods = array();
+        $modsequence = explode(',', $section->sequence);
+        foreach ($modsequence as $cmid) {
+            $thismod = $mods[$cmid];
+
+            if ($thismod->modname == 'label') {
+                // Labels are special (not interesting for students)!
+                continue;
+            }
+
+            if ($thismod->uservisible) {
+                if (isset($sectionmods[$thismod->modname])) {
+                    $sectionmods[$thismod->modname]['count']++;
+                } else {
+                    $sectionmods[$thismod->modname]['name'] = $thismod->modplural;
+                    $sectionmods[$thismod->modname]['count'] = 1;
+                }
+            }
+        }
+
+        if (empty($sectionmods)) {
+            // No sections
+            return '';
+        }
+
+        // Output section activities summary:
+        $o = '';
+        $o.= html_writer::start_tag('div', array('class' => 'section-summary-activities mdl-right'));
+        foreach ($sectionmods as $mod) {
+            $o.= html_writer::start_tag('span', array('class' => 'activity-count'));
+            $o.= $mod['name'].': '.$mod['count'];
+            $o.= html_writer::end_tag('span');
+        }
+        $o.= html_writer::end_tag('div');
         return $o;
     }
 
@@ -337,12 +397,10 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 )
             );
 
-            $strcancel= get_string('cancel');
-
-            $o.= html_writer::start_tag('li', array('class' => 'clipboard'));
+            $o.= html_writer::start_tag('div', array('class' => 'clipboard'));
             $o.= strip_tags(get_string('activityclipboard', '', $USER->activitycopyname));
             $o.= ' ('.html_writer::link($url, get_string('cancel')).')';
-            $o.= html_writer::end_tag('li');
+            $o.= html_writer::end_tag('div');
         }
 
         return $o;
@@ -471,6 +529,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             return;
         }
 
+        // Copy activity clipboard..
+        echo $this->course_activity_clipboard($course, $displaysection);
+
         // General section if non-empty.
         $thissection = $sections[0];
         if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
@@ -478,7 +539,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             echo $this->section_header($thissection, $course, true);
             print_section($course, $thissection, $mods, $modnamesused, true);
             if ($PAGE->user_is_editing()) {
-                print_section_add_menus($course, 0, $modnames);
+                print_section_add_menus($course, 0, $modnames, false, false, true);
             }
             echo $this->section_footer();
             echo $this->end_section_list();
@@ -502,9 +563,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $sectiontitle .= html_writer::end_tag('div');
         echo $sectiontitle;
 
-        // Copy activity clipboard..
-        echo $this->course_activity_clipboard($course, $displaysection);
-
         // Now the list of sections..
         echo $this->start_section_list();
 
@@ -517,7 +575,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         print_section($course, $thissection, $mods, $modnamesused, true, '100%', false, true);
         if ($PAGE->user_is_editing()) {
-            print_section_add_menus($course, $displaysection, $modnames);
+            print_section_add_menus($course, $displaysection, $modnames, false, false, true);
         }
         echo $this->section_footer();
         echo $this->end_section_list();
@@ -604,7 +662,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
             if (!$PAGE->user_is_editing() && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
                 // Display section summary only.
-                echo $this->section_summary($thissection, $course);
+                echo $this->section_summary($thissection, $course, $mods);
             } else {
                 echo $this->section_header($thissection, $course, false);
                 if ($thissection->uservisible) {

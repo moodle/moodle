@@ -168,7 +168,7 @@ class core_course_renderer extends plugin_renderer_base {
 
         // Add the header
         $header = html_writer::tag('div', get_string('addresourceoractivity', 'moodle'),
-                array('id' => 'choosertitle', 'class' => 'hd'));
+                array('class' => 'hd choosertitle'));
 
         $formcontent = html_writer::start_tag('form', array('action' => new moodle_url('/course/jumpto.php'),
                 'id' => 'chooserform', 'method' => 'post'));
@@ -188,15 +188,7 @@ class core_course_renderer extends plugin_renderer_base {
         // Put all options into one tag 'alloptions' to allow us to handle scrolling
         $formcontent .= html_writer::start_tag('div', array('class' => 'alloptions'));
 
-        // First display Resources
-        $resources = array_filter($modules,
-                create_function('$mod', 'return ($mod->archetype === MOD_CLASS_RESOURCE);'));
-        if (count($resources)) {
-            $formcontent .= $this->course_modchooser_title('resources');
-            $formcontent .= $this->course_modchooser_module_types($resources);
-        }
-
-        // Then activities
+        // Activities
         $activities = array_filter($modules,
                 create_function('$mod', 'return ($mod->archetype !== MOD_CLASS_RESOURCE);'));
         if (count($activities)) {
@@ -204,14 +196,22 @@ class core_course_renderer extends plugin_renderer_base {
             $formcontent .= $this->course_modchooser_module_types($activities);
         }
 
+        // Resources
+        $resources = array_filter($modules,
+                create_function('$mod', 'return ($mod->archetype === MOD_CLASS_RESOURCE);'));
+        if (count($resources)) {
+            $formcontent .= $this->course_modchooser_title('resources');
+            $formcontent .= $this->course_modchooser_module_types($resources);
+        }
+
         $formcontent .= html_writer::end_tag('div'); // modoptions
         $formcontent .= html_writer::end_tag('div'); // types
 
         $formcontent .= html_writer::start_tag('div', array('class' => 'submitbuttons'));
         $formcontent .= html_writer::tag('input', '',
-                array('type' => 'submit', 'name' => 'addcancel', 'id' => 'addcancel', 'value' => get_string('cancel')));
-        $formcontent .= html_writer::tag('input', '',
                 array('type' => 'submit', 'name' => 'submitbutton', 'id' => 'submitbutton', 'value' => get_string('add')));
+        $formcontent .= html_writer::tag('input', '',
+                array('type' => 'submit', 'name' => 'addcancel', 'id' => 'addcancel', 'value' => get_string('cancel')));
         $formcontent .= html_writer::end_tag('div');
         $formcontent .= html_writer::end_tag('form');
 
@@ -221,8 +221,8 @@ class core_course_renderer extends plugin_renderer_base {
         // Put all of the content together
         $content = $formcontent;
 
-        $content = html_writer::tag('div', $content, array('id' => 'choosercontainer'));
-        return $header . html_writer::tag('div', $content, array('id' => 'chooserdialogue'));
+        $content = html_writer::tag('div', $content, array('class' => 'choosercontainer'));
+        return $header . html_writer::tag('div', $content, array('class' => 'chooserdialoguebody'));
     }
 
     /**

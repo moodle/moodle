@@ -73,12 +73,12 @@ if (!empty($add)) {
     $type        = optional_param('type', '', PARAM_ALPHA);
     $returntomod = optional_param('return', 0, PARAM_BOOL);
 
-    redirect("$CFG->wwwroot/course/modedit.php?add=$add&type=$type&course=$id&section=$section&return=$returntomod");
+    redirect("$CFG->wwwroot/course/modedit.php?add=$add&type=$type&course=$id&section=$section&return=$returntomod&sr=$sectionreturn");
 
 } else if (!empty($update)) {
     $cm = get_coursemodule_from_id('', $update, 0, true, MUST_EXIST);
     $returntomod = optional_param('return', 0, PARAM_BOOL);
-    redirect("$CFG->wwwroot/course/modedit.php?update=$update&return=$returntomod");
+    redirect("$CFG->wwwroot/course/modedit.php?update=$update&return=$returntomod&sr=$sectionreturn");
 
 } else if (!empty($duplicate)) {
     $cm     = get_coursemodule_from_id('', $duplicate, 0, true, MUST_EXIST);
@@ -104,7 +104,8 @@ if (!empty($add)) {
         echo $OUTPUT->confirm(
             get_string('duplicateconfirm', 'core', $a),
             new single_button(
-                new moodle_url('/course/modduplicate.php', array('cmid' => $cm->id, 'course' => $course->id)),
+                new moodle_url('/course/modduplicate.php', array(
+                    'cmid' => $cm->id, 'course' => $course->id, 'sr' => $sectionreturn)),
                 get_string('continue'),
                 'post'),
             new single_button(
@@ -130,8 +131,7 @@ if (!empty($add)) {
     if (!$confirm or !confirm_sesskey()) {
         $fullmodulename = get_string('modulename', $cm->modname);
 
-        $optionsyes = array('confirm'=>1, 'delete'=>$cm->id, 'sesskey'=>sesskey());
-        $optionsno  = array('id'=>$cm->course);
+        $optionsyes = array('confirm'=>1, 'delete'=>$cm->id, 'sesskey'=>sesskey(), 'sr' => $sectionreturn);
 
         $strdeletecheck = get_string('deletecheck', '', $fullmodulename);
         $strdeletecheckfull = get_string('deletecheckfull', '', "$fullmodulename '$cm->name'");
@@ -145,7 +145,7 @@ if (!empty($add)) {
         // print_simple_box_start('center', '60%', '#FFAAAA', 20, 'noticebox');
         echo $OUTPUT->box_start('noticebox');
         $formcontinue = new single_button(new moodle_url("$CFG->wwwroot/course/mod.php", $optionsyes), get_string('yes'));
-        $formcancel = new single_button(new moodle_url($return, $optionsno), get_string('no'), 'get');
+        $formcancel = new single_button($return, get_string('no'), 'get');
         echo $OUTPUT->confirm($strdeletecheckfull, $formcontinue, $formcancel);
         echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
@@ -226,9 +226,11 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
     moveto_module($cm, $section, $beforecm);
 
+    $sectionreturn = $USER->activitycopysectionreturn;
     unset($USER->activitycopy);
     unset($USER->activitycopycourse);
     unset($USER->activitycopyname);
+    unset($USER->activitycopysectionreturn);
 
     rebuild_course_cache($section->course);
 
@@ -340,9 +342,10 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
     $section = $DB->get_record('course_sections', array('id'=>$cm->section), '*', MUST_EXIST);
 
-    $USER->activitycopy       = $copy;
-    $USER->activitycopycourse = $cm->course;
-    $USER->activitycopyname   = $cm->name;
+    $USER->activitycopy              = $copy;
+    $USER->activitycopycourse        = $cm->course;
+    $USER->activitycopyname          = $cm->name;
+    $USER->activitycopysectionreturn = $sectionreturn;
 
     redirect(course_get_url($course, $sectionreturn));
 

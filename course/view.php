@@ -14,6 +14,7 @@
     $hide        = optional_param('hide', 0, PARAM_INT);
     $show        = optional_param('show', 0, PARAM_INT);
     $idnumber    = optional_param('idnumber', '', PARAM_RAW);
+    $sectionid   = optional_param('sectionid', 0, PARAM_INT);
     $section     = optional_param('section', 0, PARAM_INT);
     $move        = optional_param('move', 0, PARAM_INT);
     $marker      = optional_param('marker',-1 , PARAM_INT);
@@ -34,6 +35,11 @@
     $course = $DB->get_record('course', $params, '*', MUST_EXIST);
 
     $urlparams = array('id' => $course->id);
+
+    // Sectionid should get priority over section number
+    if ($sectionid) {
+        $section = $DB->get_field('course_sections', 'section', array('id' => $sectionid, 'course' => $course->id), MUST_EXIST);
+    }
     if ($section) {
         $urlparams['section'] = $section;
     }
@@ -92,12 +98,11 @@
     $loglabel = 'view';
     $infoid = $course->id;
     if(!empty($section)) {
-        $logparam .= '&section='. $section;
         $loglabel = 'view section';
         $sectionparams = array('course' => $course->id, 'section' => $section);
-        if ($coursesections = $DB->get_record('course_sections', $sectionparams, 'id', MUST_EXIST)) {
-            $infoid = $coursesections->id;
-    }
+        $coursesections = $DB->get_record('course_sections', $sectionparams, 'id', MUST_EXIST);
+        $infoid = $coursesections->id;
+        $logparam .= '&sectionid='. $infoid;
     }
     add_to_log($course->id, 'course', $loglabel, "view.php?". $logparam, $infoid);
 
@@ -125,7 +130,8 @@
             if ($course->id == SITEID) {
                 redirect($CFG->wwwroot .'/?redirect=0');
             } else {
-                redirect($PAGE->url);
+                $url = new moodle_url($PAGE->url, array('notifyeditingon' => 1));
+                redirect($url);
             }
         } else if (($edit == 0) and confirm_sesskey()) {
             $USER->editing = 0;
@@ -159,7 +165,10 @@
 
             if (!empty($section)) {
                 if (!empty($move) and confirm_sesskey()) {
-                    if (move_section($course, $section, $move)) {
+                    $destsection = $section + $move;
+                    if (move_section_to($course, $section, $destsection)) {
+                        // Rebuild course cache, after moving section
+                        rebuild_course_cache($course->id, true);
                         if ($course->id == SITEID) {
                             redirect($CFG->wwwroot . '/?redirect=0');
                         } else {
@@ -261,7 +270,7 @@
     if (include_course_ajax($course, $modnamesused)) {
         // Add the module chooser
         $renderer = $PAGE->get_renderer('core', 'course');
-        echo $renderer->course_modchooser(get_module_metadata($course, $modnames), $course);
+        echo $renderer->course_modchooser(get_module_metadata($course, $modnames, $displaysection), $course);
     }
 
     echo $OUTPUT->footer();

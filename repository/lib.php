@@ -645,16 +645,43 @@ abstract class repository {
     }
 
     /**
+     * Parses the 'source' returned by moodle repositories and returns an instance of stored_file
+     *
+     * @param string $source
+     * @return stored_file|null
+     */
+    public static function get_moodle_file($source) {
+        $params = unserialize(base64_decode($source));
+        if (empty($params) || !is_array($params)) {
+            return null;
+        }
+        foreach (array('contextid', 'itemid', 'filename', 'filepath', 'component') as $key) {
+            if (!array_key_exists($key, $params)) {
+                return null;
+            }
+        }
+        $contextid  = clean_param($params['contextid'], PARAM_INT);
+        $component  = clean_param($params['component'], PARAM_COMPONENT);
+        $filearea   = clean_param($params['filearea'],  PARAM_AREA);
+        $itemid     = clean_param($params['itemid'],    PARAM_INT);
+        $filepath   = clean_param($params['filepath'],  PARAM_PATH);
+        $filename   = clean_param($params['filename'],  PARAM_FILE);
+        $fs = get_file_storage();
+        return $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename);
+    }
+
+    /**
      * This function is used to copy a moodle file to draft area
      *
      * @param string $encoded The metainfo of file, it is base64 encoded php serialized data
-     * @param int $draftitemid itemid
-     * @param string $new_filepath the new path in draft area
-     * @param string $new_filename The intended name of file
+     * @param stdClass|array $filerecord contains itemid, filepath, filename and optionally other
+     *      attributes of the new file
+     * @param int $maxbytes maximum allowed size of file, -1 if unlimited. If size of file exceeds
+     *      the limit, the file_exception is thrown.
      * @return array The information of file
      */
-    public function copy_to_area($encoded, $draftitemid, $new_filepath, $new_filename) {
-        global $USER, $DB;
+    public function copy_to_area($encoded, $filerecord, $maxbytes = -1) {
+        global $USER;
         $fs = get_file_storage();
         $browser = get_file_browser();
 
@@ -662,9 +689,17 @@ abstract class repository {
             throw new coding_exception('Only repository used to browse moodle files can use repository::copy_to_area()');
         }
 
-
         $params = unserialize(base64_decode($encoded));
-        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+        $user_context = context_user::instance($USER->id);
+
+        $filerecord = (array)$filerecord;
+        // make sure the new file will be created in user draft area
+        $filerecord['component'] = 'user';
+        $filerecord['filearea'] = 'draft';
+        $filerecord['contextid'] = $user_context->id;
+        $draftitemid = $filerecord['itemid'];
+        $new_filepath = $filerecord['filepath'];
+        $new_filename = $filerecord['filename'];
 
         $contextid  = clean_param($params['contextid'], PARAM_INT);
         $fileitemid = clean_param($params['itemid'],    PARAM_INT);
@@ -676,11 +711,15 @@ abstract class repository {
         $context    = get_context_instance_by_id($contextid);
         // the file needs to copied to draft area
         $file_info  = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
+        if ($maxbytes !== -1 && $file_info->get_filesize() > $maxbytes) {
+            throw new file_exception('maxbytes');
+        }
 
         if (repository::draftfile_exists($draftitemid, $new_filepath, $new_filename)) {
             // create new file
             $unused_filename = repository::get_unused_filename($draftitemid, $new_filepath, $new_filename);
-            $file_info->copy_to_storage($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $unused_filename);
+            $filerecord['filename'] = $unused_filename;
+            $file_info->copy_to_storage($filerecord);
             $event = array();
             $event['event'] = 'fileexists';
             $event['newfile'] = new stdClass;
@@ -690,12 +729,13 @@ abstract class repository {
             $event['existingfile'] = new stdClass;
             $event['existingfile']->filepath = $new_filepath;
             $event['existingfile']->filename = $new_filename;
-            $event['existingfile']->url      = moodle_url::make_draftfile_url($draftitemid, $filepath, $filename)->out();;
+            $event['existingfile']->url      = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $new_filename)->out();;
             return $event;
         } else {
-            $file_info->copy_to_storage($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $new_filename);
+            $file_info->copy_to_storage($filerecord);
             $info = array();
             $info['itemid'] = $draftitemid;
+            $info['file']  = $new_filename;
             $info['title']  = $new_filename;
             $info['contextid'] = $user_context->id;
             $info['url'] = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $new_filename)->out();;
@@ -1050,16 +1090,39 @@ abstract class repository {
     }
 
     /**
-     * Repository method to serve file
+     * Repository method to serve the referenced file
      *
-     * @param stored_file $storedfile
+     * @see send_stored_file
+     *
+     * @param stored_file $storedfile the file that contains the reference
      * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
      * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
      * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
      * @param array $options additional options affecting the file serving
      */
     public function send_file($storedfile, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
-        throw new coding_exception("Repository plugin must implement send_file() method.");
+        if ($this->has_moodle_files()) {
+            $fs = get_file_storage();
+            $params = file_storage::unpack_reference($storedfile->get_reference(), true);
+            $srcfile = null;
+            if (is_array($params)) {
+                $srcfile = $fs->get_file($params['contextid'], $params['component'], $params['filearea'],
+                        $params['itemid'], $params['filepath'], $params['filename']);
+            }
+            if (empty($options)) {
+                $options = array();
+            }
+            if (!isset($options['filename'])) {
+                $options['filename'] = $storedfile->get_filename();
+            }
+            if (!$srcfile) {
+                send_file_not_found();
+            } else {
+                send_stored_file($srcfile, $lifetime, $filter, $forcedownload, $options);
+            }
+        } else {
+            throw new coding_exception("Repository plugin must implement send_file() method.");
+        }
     }
 
     /**
@@ -1088,10 +1151,35 @@ abstract class repository {
      * {@link stored_file::get_reference()}
      *
      * @param string $reference
-     * @return string|null
+     * @param int $filestatus status of the file, 0 - ok, 666 - source missing
+     * @return string
      */
-    public function get_reference_details($reference) {
-        return null;
+    public function get_reference_details($reference, $filestatus = 0) {
+        if ($this->has_moodle_files()) {
+            $fileinfo = null;
+            $params = file_storage::unpack_reference($reference, true);
+            if (is_array($params)) {
+                $context = get_context_instance_by_id($params['contextid']);
+                if ($context) {
+                    $browser = get_file_browser();
+                    $fileinfo = $browser->get_file_info($context, $params['component'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']);
+                }
+            }
+            if (empty($fileinfo)) {
+                if ($filestatus == 666) {
+                    if (is_siteadmin() || ($context && has_capability('moodle/course:managefiles', $context))) {
+                        return get_string('lostsource', 'repository',
+                                $params['contextid']. '/'. $params['component']. '/'. $params['filearea']. '/'. $params['itemid']. $params['filepath']. $params['filename']);
+                    } else {
+                        return get_string('lostsource', 'repository', '');
+                    }
+                }
+                return get_string('undisclosedsource', 'repository');
+            } else {
+                return $fileinfo->get_readable_fullname();
+            }
+        }
+        return '';
     }
 
     /**
@@ -1108,15 +1196,44 @@ abstract class repository {
     }
 
     /**
-     * Get file from external repository by reference
+     * Returns information about file in this repository by reference
      * {@link repository::get_file_reference()}
      * {@link repository::get_file()}
      *
+     * Returns null if file not found or is not readable
+     *
      * @param stdClass $reference file reference db record
-     * @return stdClass|null|false
+     * @return stdClass|null contains one of the following:
+     *   - 'contenthash' and 'filesize'
+     *   - 'filepath'
+     *   - 'handle'
+     *   - 'content'
      */
     public function get_file_by_reference($reference) {
+        if ($this->has_moodle_files() && isset($reference->reference)) {
+            $fs = get_file_storage();
+            $params = file_storage::unpack_reference($reference->reference, true);
+            if (!is_array($params) || !($storedfile = $fs->get_file($params['contextid'],
+                    $params['component'], $params['filearea'], $params['itemid'], $params['filepath'],
+                    $params['filename']))) {
+                return null;
+            }
+            return (object)array(
+                'contenthash' => $storedfile->get_contenthash(),
+                'filesize'    => $storedfile->get_filesize()
+            );
+        }
         return null;
+    }
+
+    /**
+     * Return the source information
+     *
+     * @param stdClass $url
+     * @return string|null
+     */
+    public function get_file_source_info($url) {
+        return $url;
     }
 
     /**
@@ -1393,6 +1510,13 @@ abstract class repository {
      * @return string file referece
      */
     public function get_file_reference($source) {
+        if ($this->has_moodle_files() && ($this->supported_returntypes() & FILE_REFERENCE)) {
+            $params = file_storage::unpack_reference($source);
+            if (!is_array($params)) {
+                throw new repository_exception('invalidparams', 'repository');
+            }
+            return file_storage::pack_reference($params);
+        }
         return $source;
     }
     /**
@@ -1444,16 +1568,22 @@ abstract class repository {
      *
      * @param string $url the url of file
      * @param string $filename save location
-     * @return string the location of the file
+     * @return array with elements:
+     *   path: internal location of the file
+     *   url: URL to the source (from parameters)
      */
     public function get_file($url, $filename = '') {
         global $CFG;
         $path = $this->prepare_file($filename);
         $fp = fopen($path, 'w');
         $c = new curl;
-        $c->download(array(array('url'=>$url, 'file'=>$fp)));
+        $result = $c->download(array(array('url'=>$url, 'file'=>$fp)));
         // Close file handler.
         fclose($fp);
+        if (empty($result)) {
+            unlink($path);
+            return null;
+        }
         return array('path'=>$path, 'url'=>$url);
     }
 
@@ -1464,6 +1594,7 @@ abstract class repository {
      * @return int file size in bytes
      */
     public function get_file_size($source) {
+        // TODO MDL-33297 remove this function completely?
         $browser    = get_file_browser();
         $params     = unserialize(base64_decode($source));
         $contextid  = clean_param($params['contextid'], PARAM_INT);
@@ -1987,7 +2118,7 @@ abstract class repository {
      *
      * @param moodleform $mform Moodle form (passed by reference)
      */
-    public function instance_config_form($mform) {
+    public static function instance_config_form($mform) {
     }
 
     /**
@@ -2096,25 +2227,47 @@ abstract class repository {
         }
     }
 
-
+    /**
+     * Called from phpunit between tests, resets whatever was cached
+     */
+    public static function reset_caches() {
+        self::sync_external_file(null, true);
+    }
 
     /**
      * Call to request proxy file sync with repository source.
      *
      * @param stored_file $file
+     * @param bool $resetsynchistory whether to reset all history of sync (used by phpunit)
      * @return bool success
      */
-    public static function sync_external_file(stored_file $file) {
+    public static function sync_external_file($file, $resetsynchistory = false) {
         global $DB;
+        // TODO MDL-25290 static should be replaced with MUC code.
+        static $synchronized = array();
+        if ($resetsynchistory) {
+            $synchronized = array();
+        }
 
         $fs = get_file_storage();
+
+        if (!$file || !$file->get_referencefileid()) {
+            return false;
+        }
+        if (array_key_exists($file->get_id(), $synchronized)) {
+            return $synchronized[$file->get_id()];
+        }
+
+        // remember that we already cached in current request to prevent from querying again
+        $synchronized[$file->get_id()] = false;
 
         if (!$reference = $DB->get_record('files_reference', array('id'=>$file->get_referencefileid()))) {
             return false;
         }
 
         if (!empty($reference->lastsync) and ($reference->lastsync + $reference->lifetime > time())) {
-            return false;
+            $synchronized[$file->get_id()] = true;
+            return true;
         }
 
         if (!$repository = self::get_repository_by_id($reference->repositoryid, SYSCONTEXTID)) {
@@ -2128,14 +2281,10 @@ abstract class repository {
         $fileinfo = $repository->get_file_by_reference($reference);
         if ($fileinfo === null) {
             // does not exist any more - set status to missing
-            $sql = "UPDATE {files} SET status = :missing WHERE referencefileid = :referencefileid";
-            $params = array('referencefileid'=>$reference->id, 'missing'=>666);
-            $DB->execute($sql, $params);
+            $file->set_missingsource();
             //TODO: purge content from pool if we set some other content hash and it is no used any more
+            $synchronized[$file->get_id()] = true;
             return true;
-        } else if ($fileinfo === false) {
-            // error
-            return false;
         }
 
         $contenthash = null;
@@ -2164,16 +2313,29 @@ abstract class repository {
             return false;
         }
 
-        $now = time();
         // update files table
-        $sql = "UPDATE {files} SET contenthash = :contenthash, filesize = :filesize, referencelastsync = :now, referencelifetime = :lifetime, timemodified = :now2 WHERE referencefileid = :referencefileid AND contenthash <> :contenthash2";
-        $params = array('contenthash'=>$contenthash, 'filesize'=>$filesize, 'now'=>$now, 'lifetime'=>$reference->lifetime,
-            'now2'=>$now, 'referencefileid'=>$reference->id, 'contenthash2'=>$contenthash);
-        $DB->execute($sql, $params);
-
-        $DB->set_field('files_reference', 'lastsync', $now, array('id'=>$reference->id));
-
+        $file->set_synchronized($contenthash, $filesize);
+        $synchronized[$file->get_id()] = true;
         return true;
+    }
+
+    /**
+     * Build draft file's source field
+     *
+     * {@link file_restore_source_field_from_draft_file()}
+     * XXX: This is a hack for file manager (MDL-28666)
+     * For newly created  draft files we have to construct
+     * source filed in php serialized data format.
+     * File manager needs to know the original file information before copying
+     * to draft area, so we append these information in mdl_files.source field
+     *
+     * @param string $source
+     * @return string serialised source field
+     */
+    public static function build_source_field($source) {
+        $sourcefield = new stdClass;
+        $sourcefield->source = $source;
+        return serialize($sourcefield);
     }
 }
 
@@ -2242,20 +2404,17 @@ final class repository_instance_form extends moodleform {
         $mform =& $this->_form;
 
         $this->add_defaults();
-        //add fields
-        if (!$this->instance) {
-            $result = repository::static_function($this->plugin, 'instance_config_form', $mform);
-            if ($result === false) {
-                $mform->removeElement('name');
-            }
-        } else {
+
+        // Add instance config options.
+        $result = repository::static_function($this->plugin, 'instance_config_form', $mform);
+        if ($result === false) {
+            // Remove the name element if no other config options.
+            $mform->removeElement('name');
+        }
+        if ($this->instance) {
             $data = array();
             $data['name'] = $this->instance->name;
             if (!$this->instance->readonly) {
-                $result = $this->instance->instance_config_form($mform);
-                if ($result === false) {
-                    $mform->removeElement('name');
-                }
                 // and set the data if we have some.
                 foreach ($this->instance->get_instance_option_names() as $config) {
                     if (!empty($this->instance->options[$config])) {
@@ -2488,6 +2647,16 @@ function initialise_filepicker($args) {
     } else {
         $return->externallink = true;
     }
+
+    $return->userprefs = array();
+    $return->userprefs['recentrepository'] = get_user_preferences('filepicker_recentrepository', '');
+    $return->userprefs['recentlicense'] = get_user_preferences('filepicker_recentlicense', '');
+    $return->userprefs['recentviewmode'] = get_user_preferences('filepicker_recentviewmode', '');
+
+    user_preference_allow_ajax_update('filepicker_recentrepository', PARAM_INT);
+    user_preference_allow_ajax_update('filepicker_recentlicense', PARAM_SAFEDIR);
+    user_preference_allow_ajax_update('filepicker_recentviewmode', PARAM_INT);
+
 
     // provided by form element
     $return->accepted_types = file_get_typegroup('extension', $args->accepted_types);

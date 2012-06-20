@@ -25,6 +25,8 @@
 
 function xmldb_filter_mediaplugin_install() {
     global $CFG;
+    require_once("$CFG->libdir/filterlib.php");
 
+    filter_set_global_state('filter/mediaplugin', TEXTFILTER_ON);
 }
 

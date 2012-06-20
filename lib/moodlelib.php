@@ -132,6 +132,14 @@ define('PARAM_FILE',   'file');
 
 /**
  * PARAM_FLOAT - a real/floating point number.
+ *
+ * Note that you should not use PARAM_FLOAT for numbers typed in by the user.
+ * It does not work for languages that use , as a decimal separator.
+ * Instead, do something like
+ *     $rawvalue = required_param('name', PARAM_RAW);
+ *     // ... other code including require_login, which sets current lang ...
+ *     $realvalue = unformat_float($rawvalue);
+ *     // ... then use $realvalue
  */
 define('PARAM_FLOAT',  'float');
 
@@ -1127,15 +1135,39 @@ function fix_utf8($value) {
             // shortcut
             return $value;
         }
-        // lower error reporting because glibc throws bogus notices
+
+        // Lower error reporting because glibc throws bogus notices.
         $olderror = error_reporting();
         if ($olderror & E_NOTICE) {
             error_reporting($olderror ^ E_NOTICE);
         }
-        $result = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+
+        // Note: this duplicates min_fix_utf8() intentionally.
+        static $buggyiconv = null;
+        if ($buggyiconv === null) {
+            $buggyiconv = (!function_exists('iconv') or iconv('UTF-8', 'UTF-8//IGNORE', '100'.chr(130).'€') !== '100€');
+        }
+
+        if ($buggyiconv) {
+            if (function_exists('mb_convert_encoding')) {
+                $subst = mb_substitute_character();
+                mb_substitute_character('');
+                $result = mb_convert_encoding($value, 'utf-8', 'utf-8');
+                mb_substitute_character($subst);
+
+            } else {
+                // Warn admins on admin/index.php page.
+                $result = $value;
+            }
+
+        } else {
+            $result = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+        }
+
         if ($olderror & E_NOTICE) {
             error_reporting($olderror);
         }
+
         return $result;
 
     } else if (is_array($value)) {
@@ -2013,8 +2045,17 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
 
     $timezone = get_user_timezone_offset($timezone);
 
+    // If we are running under Windows convert to windows encoding and then back to UTF-8
+    // (because it's impossible to specify UTF-8 to fetch locale info in Win32)
+
     if (abs($timezone) > 13) {   /// Server time
-        $datestring = strftime($format, $date);
+        if ($CFG->ostype == 'WINDOWS' and ($localewincharset = get_string('localewincharset', 'langconfig'))) {
+            $format = textlib::convert($format, 'utf-8', $localewincharset);
+            $datestring = strftime($format, $date);
+            $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
+        } else {
+            $datestring = strftime($format, $date);
+        }
         if ($fixday) {
             $daystring  = ltrim(str_replace(array(' 0', ' '), '', strftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
@@ -2023,9 +2064,16 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
             $hourstring = ltrim(str_replace(array(' 0', ' '), '', strftime(' %I', $date)));
             $datestring = str_replace('HH', $hourstring, $datestring);
         }
+
     } else {
         $date += (int)($timezone * 3600);
-        $datestring = gmstrftime($format, $date);
+        if ($CFG->ostype == 'WINDOWS' and ($localewincharset = get_string('localewincharset', 'langconfig'))) {
+            $format = textlib::convert($format, 'utf-8', $localewincharset);
+            $datestring = gmstrftime($format, $date);
+            $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
+        } else {
+            $datestring = gmstrftime($format, $date);
+        }
         if ($fixday) {
             $daystring  = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
@@ -2034,15 +2082,6 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
             $hourstring = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %I', $date)));
             $datestring = str_replace('HH', $hourstring, $datestring);
         }
-    }
-
-/// If we are running under Windows convert from windows encoding to UTF-8
-/// (because it's impossible to specify UTF-8 to fetch locale info in Win32)
-
-   if ($CFG->ostype == 'WINDOWS') {
-       if ($localewincharset = get_string('localewincharset', 'langconfig')) {
-           $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
-       }
     }
 
     return $datestring;
@@ -5803,6 +5842,33 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
 }
 
 /**
+ * Returns the maximum size for uploading files for the current user
+ *
+ * This function takes in account @see:get_max_upload_file_size() the user's capabilities
+ *
+ * @param context $context The context in which to check user capabilities
+ * @param int $sizebytes Set maximum size
+ * @param int $coursebytes Current course $course->maxbytes (in bytes)
+ * @param int $modulebytes Current module ->maxbytes (in bytes)
+ * @param stdClass The user
+ * @return int The maximum size for uploading files.
+ */
+function get_user_max_upload_file_size($context, $sitebytes=0, $coursebytes=0, $modulebytes=0, $user=null) {
+    global $USER;
+
+    if (empty($user)) {
+        $user = $USER;
+    }
+
+    // Temp. commenting this until MDL-27156 fixes it!
+    // if (has_capability('moodle/course:ignorefilesizelimits', $context, $user)) {
+    //     return -1;
+    // }
+
+    return get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes);
+}
+
+/**
  * Returns an array of possible sizes in local language
  *
  * Related to {@link get_max_upload_file_size()} - this function returns an
@@ -8005,7 +8071,10 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
     }
 
     if (file_exists($basedir) && filetype($basedir) == 'dir') {
-        $dirhandle = opendir($basedir);
+        if (!$dirhandle = opendir($basedir)) {
+            debugging("Directory permission error for plugin ({$directory}). Directory exists but cannot be read.", DEBUG_DEVELOPER);
+            return array();
+        }
         while (false !== ($dir = readdir($dirhandle))) {
             $firstchar = substr($dir, 0, 1);
             if ($firstchar === '.' or $dir === 'CVS' or $dir === '_vti_cnf' or $dir === 'simpletest' or $dir === 'yui' or $dir === 'phpunit' or $dir === $exclude) {
@@ -10201,7 +10270,7 @@ function apd_get_profiling() {
 }
 
 /**
- * Delete directory or only it's content
+ * Delete directory or only its content
  *
  * @param string $dir directory path
  * @param bool $content_only
@@ -10212,7 +10281,9 @@ function remove_dir($dir, $content_only=false) {
         // nothing to do
         return true;
     }
-    $handle = opendir($dir);
+    if (!$handle = opendir($dir)) {
+        return false;
+    }
     $result = true;
     while (false!==($item = readdir($handle))) {
         if($item != '.' && $item != '..') {

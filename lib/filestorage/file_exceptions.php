@@ -116,23 +116,31 @@ class file_pool_content_exception extends file_exception {
     }
 }
 
+
 /**
- * Exception related to external file support
+ * Problem with records in the {files_reference} table
  *
  * @package   core_files
- * @category  files
- * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
+ * @catehory  files
+ * @copyright 2012 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_file_exception extends file_exception {
+class file_reference_exception extends file_exception {
     /**
      * Constructor
      *
-     * @param string   $errorcode error code
-     * @param stdClass $a extra information
-     * @param string   $debuginfo extra debug info
+     * @param int $repositoryid the id of the repository that provides the referenced file
+     * @param string $reference the information for the repository to locate the file
+     * @param int|null $referencefileid the id of the record in {files_reference} if known
+     * @param int|null $fileid the id of the referrer's record in {files} if known
+     * @param string|null $debuginfo extra debug info
      */
-    public function __construct($errorcode, $a = null, $debuginfo = null) {
-        parent::__construct($errorcode, '', '', $a, $debuginfo);
+    function __construct($repositoryid, $reference, $referencefileid=null, $fileid=null, $debuginfo=null) {
+        $a = new stdClass();
+        $a->repositoryid = $repositoryid;
+        $a->reference = $reference;
+        $a->referencefileid = $referencefileid;
+        $a->fileid = $fileid;
+        parent::__construct('filereferenceproblem', $a, $debuginfo);
     }
 }

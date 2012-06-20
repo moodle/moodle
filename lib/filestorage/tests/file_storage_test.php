@@ -159,9 +159,9 @@ class filestoragelib_testcase extends advanced_testcase {
         // create user
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
+        $this->setUser($user);
         $usercontext = context_user::instance($user->id);
         $syscontext = context_system::instance();
-        $USER = $DB->get_record('user', array('id'=>$user->id));
 
         $fs = get_file_storage();
 
@@ -297,7 +297,7 @@ class filestoragelib_testcase extends advanced_testcase {
             $this->assertEquals($key, $file->get_pathnamehash());
         }
 
-        // Get area files ordered by id (was breaking on oracle).
+        // Get area files ordered by id.
         $filesbyid  = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'id', false);
         // Should be the two files without folder.
         $this->assertEquals(3, count($filesbyid));
@@ -405,8 +405,6 @@ class filestoragelib_testcase extends advanced_testcase {
         $fs = get_file_storage();
 
         $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
-        //Test get_file_by_hash
-
         $testfile = reset($areafiles);
         $references = $fs->get_references_by_storedfile($testfile);
         // TODO MDL-33368 Verify result!!
@@ -420,9 +418,57 @@ class filestoragelib_testcase extends advanced_testcase {
         $userrepository = reset($repos);
         $this->assertInstanceOf('repository', $userrepository);
 
-        // This should break on oracle.
-        $fs->get_external_files($userrepository->id, 'id');
-        // TODO MDL-33368 Verify result!!
+        // no aliases yet
+        $exfiles = $fs->get_external_files($userrepository->id, 'id');
+        $this->assertEquals(array(), $exfiles);
+
+        // create three aliases linking the same original: $aliasfile1 and $aliasfile2 are
+        // created via create_file_from_reference(), $aliasfile3 created from $aliasfile2
+        $originalfile = null;
+        foreach ($fs->get_area_files($user->ctxid, 'user', 'private') as $areafile) {
+            if (!$areafile->is_directory()) {
+                $originalfile = $areafile;
+                break;
+            }
+        }
+        $this->assertInstanceOf('stored_file', $originalfile);
+        $originalrecord = array(
+            'contextid' => $originalfile->get_contextid(),
+            'component' => $originalfile->get_component(),
+            'filearea'  => $originalfile->get_filearea(),
+            'itemid'    => $originalfile->get_itemid(),
+            'filepath'  => $originalfile->get_filepath(),
+            'filename'  => $originalfile->get_filename(),
+        );
+
+        $aliasrecord = $this->generate_file_record();
+        $aliasrecord->filepath = '/foo/';
+        $aliasrecord->filename = 'one.txt';
+
+        $ref = $fs->pack_reference($originalrecord);
+        $aliasfile1 = $fs->create_file_from_reference($aliasrecord, $userrepository->id, $ref);
+
+        $aliasrecord->filepath = '/bar/';
+        $aliasrecord->filename = 'uno.txt';
+        // change the order of the items in the array to make sure that it does not matter
+        ksort($originalrecord);
+        $ref = $fs->pack_reference($originalrecord);
+        $aliasfile2 = $fs->create_file_from_reference($aliasrecord, $userrepository->id, $ref);
+
+        $aliasrecord->filepath = '/bar/';
+        $aliasrecord->filename = 'jedna.txt';
+        $aliasfile3 = $fs->create_file_from_storedfile($aliasrecord, $aliasfile2);
+
+        // make sure we get three aliases now
+        $exfiles = $fs->get_external_files($userrepository->id, 'id');
+        $this->assertEquals(3, count($exfiles));
+        foreach ($exfiles as $exfile) {
+            $this->assertTrue($exfile->is_external_file());
+        }
+        // make sure they all link the same original (thence that all are linked with the same
+        // record in {files_reference})
+        $this->assertEquals($aliasfile1->get_referencefileid(), $aliasfile2->get_referencefileid());
+        $this->assertEquals($aliasfile3->get_referencefileid(), $aliasfile2->get_referencefileid());
     }
 
     public function test_create_directory_contextid_negative() {
@@ -1165,5 +1211,91 @@ class filestoragelib_testcase extends advanced_testcase {
         // Creating a file validating unique constraint.
         $this->setExpectedException('stored_file_creation_exception');
         $file2 = $fs->create_file_from_pathname($filerecord, $path);
+    }
+
+    /**
+     * Calling stored_file::delete_reference() on a non-reference file throws coding_exception
+     */
+    public function test_delete_reference_on_nonreference() {
+
+        $this->resetAfterTest(true);
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+        $repos = repository::get_instances(array('type'=>'user'));
+        $repo = reset($repos);
+
+        $file = null;
+        foreach ($fs->get_area_files($user->ctxid, 'user', 'private') as $areafile) {
+            if (!$areafile->is_directory()) {
+                $file = $areafile;
+                break;
+            }
+        }
+        $this->assertInstanceOf('stored_file', $file);
+        $this->assertFalse($file->is_external_file());
+
+        $this->setExpectedException('coding_exception');
+        $file->delete_reference();
+    }
+
+    /**
+     * Calling stored_file::delete_reference() on a reference file does not affect other
+     * symlinks to the same original
+     */
+    public function test_delete_reference_one_symlink_does_not_rule_them_all() {
+
+        $this->resetAfterTest(true);
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+        $repos = repository::get_instances(array('type'=>'user'));
+        $repo = reset($repos);
+
+        // create two aliases linking the same original
+
+        $originalfile = null;
+        foreach ($fs->get_area_files($user->ctxid, 'user', 'private') as $areafile) {
+            if (!$areafile->is_directory()) {
+                $originalfile = $areafile;
+                break;
+            }
+        }
+        $this->assertInstanceOf('stored_file', $originalfile);
+
+        // calling delete_reference() on a non-reference file
+
+        $originalrecord = array(
+            'contextid' => $originalfile->get_contextid(),
+            'component' => $originalfile->get_component(),
+            'filearea'  => $originalfile->get_filearea(),
+            'itemid'    => $originalfile->get_itemid(),
+            'filepath'  => $originalfile->get_filepath(),
+            'filename'  => $originalfile->get_filename(),
+        );
+
+        $aliasrecord = $this->generate_file_record();
+        $aliasrecord->filepath = '/A/';
+        $aliasrecord->filename = 'symlink.txt';
+
+        $ref = $fs->pack_reference($originalrecord);
+        $aliasfile1 = $fs->create_file_from_reference($aliasrecord, $repo->id, $ref);
+
+        $aliasrecord->filepath = '/B/';
+        $aliasrecord->filename = 'symlink.txt';
+        $ref = $fs->pack_reference($originalrecord);
+        $aliasfile2 = $fs->create_file_from_reference($aliasrecord, $repo->id, $ref);
+
+        // refetch A/symlink.txt
+        $symlink1 = $fs->get_file($aliasrecord->contextid, $aliasrecord->component,
+            $aliasrecord->filearea, $aliasrecord->itemid, '/A/', 'symlink.txt');
+        $this->assertTrue($symlink1->is_external_file());
+
+        // unlink the A/symlink.txt
+        $symlink1->delete_reference();
+        $this->assertFalse($symlink1->is_external_file());
+
+        // make sure that B/symlink.txt has not been affected
+        $symlink2 = $fs->get_file($aliasrecord->contextid, $aliasrecord->component,
+            $aliasrecord->filearea, $aliasrecord->itemid, '/B/', 'symlink.txt');
+        $this->assertTrue($symlink2->is_external_file());
     }
 }

@@ -114,6 +114,7 @@ if ($chapter) {
 } else {
     add_to_log($course->id, 'book', 'print', 'tool/print/index.php?id='.$cm->id, $book->id, $cm->id);
     $allchapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum');
+    $book->intro = file_rewrite_pluginfile_urls($book->intro, 'pluginfile.php', $context->id, 'mod_book', 'intro', null);
 
     // page header
     ?>

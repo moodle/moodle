@@ -33,3 +33,10 @@ body.has_dock {margin-left:30px;}
 
 /** Overide for RTL layout **/
 .dir-rtl #dockeditempanel {left:670%;}
+
+/* right align the DOCK panel
+------------------------------*/
+.dir-rtl #dockeditempanel {right: 100%;}
+.dir-rtl #dock {left:auto;right: 0%; border-left: 1px solid #DDD;}
+.dir-rtl #dock .dockedtitle { border-bottom: 1px solid #DDD;border-top: 1px solid #EEE;  cursor: pointer;}
+body.dir-rtl.has_dock  {margin-left: 0px; margin-right: 30px}

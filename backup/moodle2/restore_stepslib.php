@@ -207,21 +207,25 @@ class restore_gradebook_structure_step extends restore_structure_step {
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
+        $olduserid = $data->userid;
 
         $data->itemid = $this->get_new_parentid('grade_item');
 
-        $data->userid = $this->get_mappingid('user', $data->userid, NULL);
-        $data->usermodified = $this->get_mappingid('user', $data->usermodified, NULL);
-        $data->locktime     = $this->apply_date_offset($data->locktime);
-        // TODO: Ask, all the rest of locktime/exported... work with time... to be rolled?
-        $data->overridden = $this->apply_date_offset($data->overridden);
-        $data->timecreated  = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
+        $data->userid = $this->get_mappingid('user', $data->userid, null);
+        if (!empty($data->userid)) {
+            $data->usermodified = $this->get_mappingid('user', $data->usermodified, null);
+            $data->locktime     = $this->apply_date_offset($data->locktime);
+            // TODO: Ask, all the rest of locktime/exported... work with time... to be rolled?
+            $data->overridden = $this->apply_date_offset($data->overridden);
+            $data->timecreated  = $this->apply_date_offset($data->timecreated);
+            $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        $newitemid = $DB->insert_record('grade_grades', $data);
-        //$this->set_mapping('grade_grade', $oldid, $newitemid);
+            $newitemid = $DB->insert_record('grade_grades', $data);
+        } else {
+            debugging("Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'");
+        }
     }
+
     protected function process_grade_category($data) {
         global $DB;
 
@@ -1047,7 +1051,6 @@ class restore_section_structure_step extends restore_structure_step {
         global $CFG, $DB;
         $data = (object)$data;
         $oldid = $data->id; // We'll need this later
-        $oldsection = $data->number;
 
         $restorefiles = false;
 
@@ -1080,7 +1083,7 @@ class restore_section_structure_step extends restore_structure_step {
         // Section exists, update non-empty information
         } else {
             $section->id = $secrec->id;
-            if (empty($secrec->name)) {
+            if ((string)$secrec->name === '') {
                 $section->name = $data->name;
             }
             if (empty($secrec->summary)) {
@@ -1100,12 +1103,10 @@ class restore_section_structure_step extends restore_structure_step {
 
             $DB->update_record('course_sections', $section);
             $newitemid = $secrec->id;
-            $oldsection = $secrec->section;
         }
 
         // Annotate the section mapping, with restorefiles option if needed
         $this->set_mapping('course_section', $oldid, $newitemid, $restorefiles);
-        $this->set_mapping('course_sectionnumber', $oldsection, $section->section, $restorefiles);
 
         // set the new course_section id in the task
         $this->task->set_sectionid($newitemid);
@@ -1126,10 +1127,19 @@ class restore_section_structure_step extends restore_structure_step {
     public function process_availability($data) {
         global $DB;
         $data = (object)$data;
+
         $data->coursesectionid = $this->task->get_sectionid();
+
         // NOTE: Other values in $data need updating, but these (cm,
-        // grade items) have not yet been restored.
-        $DB->insert_record('course_sections_availability', $data);
+        // grade items) have not yet been restored, so are done later.
+
+        $newid = $DB->insert_record('course_sections_availability', $data);
+
+        // We do not need to map between old and new id but storing a mapping
+        // means it gets added to the backup_ids table to record which ones
+        // need updating. The mapping is stored with $newid => $newid for
+        // convenience.
+        $this->set_mapping('course_sections_availability', $newid, $newid);
     }
 
     protected function after_execute() {
@@ -1142,16 +1152,20 @@ class restore_section_structure_step extends restore_structure_step {
 
         $sectionid = $this->get_task()->get_sectionid();
 
-        // Get data object for current section availability (if any)
-        // TODO: This can be processing already existing records, we need to be able to know which ones
-        //       are the just restored ones, perhaps creating 'course_sections_availability' mappings for them.
-        // TODO: Also, this must avoid duplicates, so if one course module or one grade item already is being
-        //       used for some availability rule... we need to handle that carefully.
+        // Get data object for current section availability (if any).
         $data = $DB->get_record('course_sections_availability',
                 array('coursesectionid' => $sectionid), 'id, sourcecmid, gradeitemid', IGNORE_MISSING);
 
-        // Update mappings
+        // If it exists, update mappings.
         if ($data) {
+            // Only update mappings for entries which are created by this restore.
+            // Otherwise, when you restore to an existing course, it will mess up
+            // existing section availability entries.
+            if (!$this->get_mappingid('course_sections_availability', $data->id, false)) {
+                return;
+            }
+
+            // Update source cmid / grade id to new value.
             $data->sourcecmid = $this->get_mappingid('course_module', $data->sourcecmid);
             if (!$data->sourcecmid) {
                 $data->sourcecmid = null;
@@ -2357,18 +2371,24 @@ class restore_activity_grades_structure_step extends restore_structure_step {
 
     protected function process_grade_grade($data) {
         $data = (object)($data);
-
+        $olduserid = $data->userid;
         unset($data->id);
-        $data->itemid = $this->get_new_parentid('grade_item');
-        $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->usermodified = $this->get_mappingid('user', $data->usermodified);
-        $data->rawscaleid = $this->get_mappingid('scale', $data->rawscaleid);
-        // TODO: Ask, all the rest of locktime/exported... work with time... to be rolled?
-        $data->overridden = $this->apply_date_offset($data->overridden);
 
-        $grade = new grade_grade($data, false);
-        $grade->insert('restore');
-        // no need to save any grade_grade mapping
+        $data->itemid = $this->get_new_parentid('grade_item');
+
+        $data->userid = $this->get_mappingid('user', $data->userid, null);
+        if (!empty($data->userid)) {
+            $data->usermodified = $this->get_mappingid('user', $data->usermodified, null);
+            $data->rawscaleid = $this->get_mappingid('scale', $data->rawscaleid);
+            // TODO: Ask, all the rest of locktime/exported... work with time... to be rolled?
+            $data->overridden = $this->apply_date_offset($data->overridden);
+
+            $grade = new grade_grade($data, false);
+            $grade->insert('restore');
+            // no need to save any grade_grade mapping
+        } else {
+            debugging("Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'");
+        }
     }
 
     /**
@@ -2544,7 +2564,6 @@ class restore_module_structure_step extends restore_structure_step {
 
         $data = (object)$data;
         $oldid = $data->id;
-        $oldsection = $data->sectionnumber;
         $this->task->set_old_moduleversion($data->version);
 
         $data->course = $this->task->get_courseid();
@@ -2571,7 +2590,6 @@ class restore_module_structure_step extends restore_structure_step {
                 'course' => $this->get_courseid(),
                 'section' => 1);
             $data->section = $DB->insert_record('course_sections', $sectionrec); // section 1
-            $this->set_mapping('course_sectionnumber', $oldsection, $sectionrec->section, $restorefiles);
         }
         $data->groupingid= $this->get_mappingid('grouping', $data->groupingid);      // grouping
         if (!$CFG->enablegroupmembersonly) {                                         // observe groupsmemberonly

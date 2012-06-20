@@ -32,8 +32,9 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 require_once($CFG->libdir . '/filelib.php');
 
-$cmid       = required_param('cmid',    PARAM_INT);
-$courseid   = required_param('course',  PARAM_INT);
+$cmid           = required_param('cmid', PARAM_INT);
+$courseid       = required_param('course', PARAM_INT);
+$sectionreturn  = optional_param('sr', 0, PARAM_INT);
 
 $course     = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $cm         = get_coursemodule_from_id('', $cmid, $course->id, true, MUST_EXIST);
@@ -131,16 +132,14 @@ if ($newcmid) {
             get_string('duplicatecontedit'),
             'get'),
         new single_button(
-            new moodle_url('/course/view.php#section-' . $cm->sectionnum, array('id' => $cm->course)),
+            course_get_url($course, $sectionreturn),
             get_string('duplicatecontcourse'),
             'get')
     );
 
 } else {
     echo $output->notification(get_string('duplicatesuccess', 'core', $a), 'notifysuccess');
-    echo $output->continue_button(
-        new moodle_url('/course/view.php#section-' . $cm->sectionnum, array('id' => $course->id))
-    );
+    echo $output->continue_button(course_get_url($course, $sectionreturn));
 }
 
 echo $output->footer();

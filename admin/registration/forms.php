@@ -236,6 +236,7 @@ class site_registration_form extends moodleform {
         $geolocation = get_config('hub', 'site_geolocation_' . $cleanhuburl);
         $contactable = get_config('hub', 'site_contactable_' . $cleanhuburl);
         $emailalert = get_config('hub', 'site_emailalert_' . $cleanhuburl);
+        $emailalert = ($emailalert === 0) ? 0 : 1;
         $coursesnumber = get_config('hub', 'site_coursesnumber_' . $cleanhuburl);
         $usersnumber = get_config('hub', 'site_usersnumber_' . $cleanhuburl);
         $roleassignmentsnumber = get_config('hub', 'site_roleassignmentsnumber_' . $cleanhuburl);
@@ -279,9 +280,6 @@ class site_registration_form extends moodleform {
         $mform->setType('description', PARAM_TEXT);
         $mform->addHelpButton('description', 'sitedesc', 'hub');
 
-        $mform->addElement('static', 'urlstring', get_string('siteurl', 'hub'), $CFG->wwwroot);
-        $mform->addHelpButton('urlstring', 'siteurl', 'hub');
-
         $languages = get_string_manager()->get_list_of_languages();
         collatorlib::asort($languages);
         $mform->addElement('select', 'language', get_string('sitelang', 'hub'),
@@ -289,16 +287,6 @@ class site_registration_form extends moodleform {
         $mform->setType('language', PARAM_ALPHANUMEXT);
         $mform->addHelpButton('language', 'sitelang', 'hub');
         $mform->setDefault('language', $language);
-
-        $mform->addElement('static', 'versionstring', get_string('siteversion', 'hub'), $CFG->version);
-        $mform->addElement('hidden', 'moodleversion', $CFG->version);
-        $mform->setType('moodleversion', PARAM_INT);
-        $mform->addHelpButton('versionstring', 'siteversion', 'hub');
-
-        $mform->addElement('static', 'releasestring', get_string('siterelease', 'hub'), $CFG->release);
-        $mform->addElement('hidden', 'moodlerelease', $CFG->release);
-        $mform->setType('moodlerelease', PARAM_TEXT);
-        $mform->addHelpButton('releasestring', 'siterelease', 'hub');
 
         $mform->addElement('textarea', 'address', get_string('postaladdress', 'hub'),
                 array('rows' => 4, 'cols' => 41));
@@ -360,6 +348,20 @@ class site_registration_form extends moodleform {
         //TODO site logo
         $mform->addElement('hidden', 'imageurl', ''); //TODO: temporary
         $mform->setType('imageurl', PARAM_URL);
+
+        $mform->addElement('static', 'urlstring', get_string('siteurl', 'hub'), $CFG->wwwroot);
+        $mform->addHelpButton('urlstring', 'siteurl', 'hub');
+
+        $mform->addElement('static', 'versionstring', get_string('siteversion', 'hub'), $CFG->version);
+        $mform->addElement('hidden', 'moodleversion', $CFG->version);
+        $mform->setType('moodleversion', PARAM_INT);
+        $mform->addHelpButton('versionstring', 'siteversion', 'hub');
+
+        $mform->addElement('static', 'releasestring', get_string('siterelease', 'hub'), $CFG->release);
+        $mform->addElement('hidden', 'moodlerelease', $CFG->release);
+        $mform->setType('moodlerelease', PARAM_TEXT);
+        $mform->addHelpButton('releasestring', 'siterelease', 'hub');
+
         /// Display statistic that are going to be retrieve by the hub
         $coursecount = $DB->count_records('course') - 1;
         $usercount = $DB->count_records('user', array('deleted' => 0));

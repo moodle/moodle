@@ -298,10 +298,10 @@ function toolbook_importhtml_get_chapter_files($package, $type) {
             }
         }
     }
-    // TODO: natural dir sorting would be nice here...
-    textlib::asort($tophtmlfiles);
-    textlib::asort($subhtmlfiles);
-    textlib::asort($topdirs);
+
+    collatorlib::ksort($tophtmlfiles, collatorlib::SORT_NATURAL);
+    collatorlib::ksort($subhtmlfiles, collatorlib::SORT_NATURAL);
+    collatorlib::ksort($topdirs, collatorlib::SORT_NATURAL);
 
     $chapterfiles = array();
 
@@ -313,7 +313,7 @@ function toolbook_importhtml_get_chapter_files($package, $type) {
             if (empty($htmlfiles)) {
                 continue;
             }
-            textlib::asort($htmlfiles);
+            collatorlib::ksort($htmlfiles, collatorlib::SORT_NATURAL);
             if (isset($htmlfiles[$dir.'/index.html'])) {
                 $htmlfile = $htmlfiles[$dir.'/index.html'];
             } else if (isset($htmlfiles[$dir.'/index.htm'])) {

@@ -63,10 +63,12 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
             $text = "Moodle PHPUnit environment configuration warning:\n".$text;
             break;
         case PHPUNIT_EXITCODE_INSTALL:
-            $text = "Moodle PHPUnit environment is not initialised, please use:\n php admin/tool/phpunit/cli/init.php";
+            $path = phpunit_bootstrap_cli_argument_path('/admin/tool/phpunit/cli/init.php');
+            $text = "Moodle PHPUnit environment is not initialised, please use:\n php $path";
             break;
         case PHPUNIT_EXITCODE_REINSTALL:
-            $text = "Moodle PHPUnit environment was initialised for different version, please use:\n php admin/tool/phpunit/cli/init.php";
+            $path = phpunit_bootstrap_cli_argument_path('/admin/tool/phpunit/cli/init.php');
+            $text = "Moodle PHPUnit environment was initialised for different version, please use:\n php $path";
             break;
         default:
             $text = empty($text) ? '' : ': '.$text;
@@ -77,6 +79,32 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
     // do not write to error stream because we need the error message in PHP exec result from web ui
     echo($text."\n");
     exit($errorcode);
+}
+
+/**
+ * Returns relative path against current working directory,
+ * to be used for shell execution hints.
+ * @param string $moodlepath starting with "/", ex: "/admin/tool/cli/init.php"
+ * @return string path relative to current directory or absolute path
+ */
+function phpunit_bootstrap_cli_argument_path($moodlepath) {
+    global $CFG;
+
+    if (isset($CFG->admin) and $CFG->admin !== 'admin') {
+        $moodlepath = preg_replace('|^/admin/|', "/$CFG->admin/", $moodlepath);
+    }
+
+    $cwd = getcwd();
+    if (substr($cwd, -1) !== DIRECTORY_SEPARATOR) {
+        $cwd .= DIRECTORY_SEPARATOR;
+    }
+    $path = realpath($CFG->dirroot.$moodlepath);
+
+    if (strpos($path, $cwd) === 0) {
+        return substr($path, strlen($cwd));
+    }
+
+    return $path;
 }
 
 /**

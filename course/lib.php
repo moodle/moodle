@@ -1762,7 +1762,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 /**
  * Prints the menus to add activities and resources.
  */
-function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false) {
+function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false, $sectionreturn = false) {
     global $CFG, $OUTPUT;
 
     // check to see if user can add menus
@@ -1780,13 +1780,20 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     // We need to add the section section to the link for each module
     $sectionlink = '&section=' . $section;
 
+    // We need to add the section to return to
+    if ($sectionreturn) {
+        $sectionreturnlink = '&sr=' . $section;
+    } else {
+        $sectionreturnlink = '&sr=0';
+    }
+
     foreach ($modules as $module) {
         if (isset($module->types)) {
             // This module has a subtype
             // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
             $subtypes = array();
             foreach ($module->types as $subtype) {
-                $subtypes[$subtype->link . $sectionlink] = $subtype->title;
+                $subtypes[$subtype->link . $sectionlink . $sectionreturnlink] = $subtype->title;
             }
 
             // Sort module subtypes into the list
@@ -1808,11 +1815,11 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         } else {
             // This module has no subtypes
             if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
-                $resources[$module->link . $sectionlink] = $module->title;
+                $resources[$module->link . $sectionlink . $sectionreturnlink] = $module->title;
             } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
                 // System modules cannot be added by user, do not add to dropdown
             } else {
-                $activities[$module->link . $sectionlink] = $module->title;
+                $activities[$module->link . $sectionlink . $sectionreturnlink] = $module->title;
             }
         }
     }
@@ -1851,7 +1858,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         $modchooser.= html_writer::start_tag('div', array('class' => 'section-modchooser'));
         $icon = $OUTPUT->pix_icon('t/add', $straddeither);
         $span = html_writer::tag('span', $straddeither, array('class' => 'section-modchooser-text'));
-        $modchooser.= html_writer::link('#', $icon.$span, array('class' => 'section-modchooser-link'));
+        $modchooser .= html_writer::tag('span', $icon . $span, array('class' => 'section-modchooser-link'));
         $modchooser.= html_writer::end_tag('div');
         $modchooser.= html_writer::end_tag('div');
 
@@ -1880,10 +1887,11 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
  * @param object $course The Course
  * @param array $modnames An array containing the list of modules and their
  * names
+ * @param int $sectionreturn The section to return to
  * @return array A list of stdClass objects containing metadata about each
  * module
  */
-function get_module_metadata($course, $modnames) {
+function get_module_metadata($course, $modnames, $sectionreturn = 0) {
     global $CFG, $OUTPUT;
 
     // get_module_metadata will be called once per section on the page and courses may show
@@ -1894,7 +1902,7 @@ function get_module_metadata($course, $modnames) {
     }
 
     $return = array();
-    $urlbase = "/course/mod.php?id=$course->id&sesskey=".sesskey().'&add=';
+    $urlbase = "/course/mod.php?id=$course->id&sesskey=".sesskey().'&sr='.$sectionreturn.'&add=';
     foreach($modnames as $modname => $modnamestr) {
         if (!course_allowed_module($course, $modname)) {
             continue;
@@ -2145,6 +2153,11 @@ function get_course_category_tree($id = 0, $depth = 0) {
     if ($depth > 0) {
         // This is a recursive call so return the required array
         return array($categories, $categoryids);
+    }
+
+    if (empty($categoryids)) {
+        // No categories available (probably all hidden).
+        return array();
     }
 
     // The depth is 0 this function has just been called so we can finish it off
@@ -2948,8 +2961,11 @@ function delete_mod_from_section($mod, $section) {
  * @param int $section Section number (not id!!!)
  * @param int $move (-1 or 1)
  * @return boolean true if section moved successfully
+ * @todo MDL-33379 remove this function in 2.5
  */
 function move_section($course, $section, $move) {
+    debugging('This function will be removed before 2.5 is released please use move_section_to', DEBUG_DEVELOPER);
+
 /// Moves a whole course section up and down within the course
     global $USER, $DB;
 
@@ -2963,41 +2979,12 @@ function move_section($course, $section, $move) {
         return false;
     }
 
-    if (!$sectionrecord = $DB->get_record("course_sections", array("course"=>$course->id, "section"=>$section))) {
-        return false;
+    $retval = move_section_to($course, $section, $sectiondest);
+    // If section moved, then rebuild course cache.
+    if ($retval) {
+        rebuild_course_cache($course->id, true);
     }
-
-    if (!$sectiondestrecord = $DB->get_record("course_sections", array("course"=>$course->id, "section"=>$sectiondest))) {
-        return false;
-    }
-
-    // Three-step change ensures that the section always remains unique (there is
-    // a unique index now)
-    $DB->set_field("course_sections", "section", -$sectiondest, array("id"=>$sectionrecord->id));
-    $DB->set_field("course_sections", "section", $section, array("id"=>$sectiondestrecord->id));
-    $DB->set_field("course_sections", "section", $sectiondest, array("id"=>$sectionrecord->id));
-
-    // Update highlighting if the move affects highlighted section
-    if ($course->marker == $section) {
-        course_set_marker($course->id, $sectiondest);
-    } elseif ($course->marker == $sectiondest) {
-        course_set_marker($course->id, $section);
-    }
-
-
-    // Fix order if needed. The database prevents duplicate sections, but it is
-    // possible there could be a gap in the numbering.
-    $sections = $DB->get_records('course_sections', array('course'=>$course->id), 'section ASC');
-    $n = 0;
-    foreach ($sections as $section) {
-        if ($section->section != $n) {
-            $DB->set_field('course_sections', 'section', $n, array('id'=>$section->id));
-        }
-        $n++;
-    }
-    // After moving section, rebuild course cache.
-    rebuild_course_cache($course->id, true);
-    return true;
+    return $retval;
 }
 
 /**
@@ -3018,7 +3005,7 @@ function move_section_to($course, $section, $destination) {
         return true;
     }
 
-    if ($destination > $course->numsections) {
+    if (($destination > $course->numsections) || ($destination < 1)) {
         return false;
     }
 
@@ -3107,6 +3094,10 @@ function reorder_sections($sections, $origin_position, $target_position) {
             unset($sections[$id]);
         }
         if ($position == $target_position) {
+            if ($target_position < $origin_position) {
+                $append_array[$id] = $position;
+                unset($sections[$id]);
+            }
             $found = true;
         }
     }

@@ -66,7 +66,7 @@ function callback_weeks_definition() {
  */
 function callback_weeks_get_section_name($course, $section) {
     // We can't add a node without text
-    if (!empty($section->name)) {
+    if ((string)$section->name !== '') {
         // Return the name the user set.
         return format_string($section->name, true, array('context' => context_course::instance($course->id)));
     } else if ($section->section == 0) {

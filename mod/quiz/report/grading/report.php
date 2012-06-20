@@ -194,7 +194,7 @@ class quiz_grading_report extends quiz_default_report {
                 SELECT quiza.*, u.firstname, u.lastname, u.idnumber
                 FROM {quiz_attempts} quiza
                 JOIN {user} u ON u.id = quiza.userid
-                WHERE quiza.uniqueid $asql AND quiza.state == ? AND quiza.quiz = ?",
+                WHERE quiza.uniqueid $asql AND quiza.state = ? AND quiza.quiz = ?",
                 $params);
 
         $attempts = array();
@@ -461,11 +461,7 @@ class quiz_grading_report extends quiz_default_report {
 
         foreach ($qubaids as $qubaid) {
             foreach ($slots as $slot) {
-                $prefix = 'q' . $qubaid . ':' . $slot . '_';
-                $mark = optional_param($prefix . '-mark', null, PARAM_NUMBER);
-                $maxmark = optional_param($prefix . '-maxmark', null, PARAM_NUMBER);
-                $minfraction = optional_param($prefix . ':minfraction', null, PARAM_NUMBER);
-                if (!is_null($mark) && ($mark < $minfraction * $maxmark || $mark > $maxmark)) {
+                if (!question_behaviour::is_manual_grade_in_range($qubaid, $slot)) {
                     return false;
                 }
             }

@@ -336,7 +336,7 @@ function url_export_contents($cm, $baseurl) {
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-function mod_url_dndupload_register() {
+function url_dndupload_register() {
     return array('types' => array(
                      array('identifier' => 'url', 'message' => get_string('createurl', 'url'))
                  ));
@@ -347,7 +347,7 @@ function mod_url_dndupload_register() {
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
-function mod_url_dndupload_handle($uploadinfo) {
+function url_dndupload_handle($uploadinfo) {
     // Gather all the required data.
     $data = new stdClass();
     $data->course = $uploadinfo->course->id;

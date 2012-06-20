@@ -79,7 +79,9 @@ abstract class backup_general_helper extends backup_helper {
             return array();
         }
 
-        $dir = opendir($path);
+        if (!$dir = opendir($path)) {
+            return array();
+        }
         while (false !== ($file = readdir($dir))) {
             if ($file == '.' || $file == '..') { // Skip dots
                 continue;

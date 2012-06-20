@@ -854,6 +854,14 @@ $capabilities = array(
         )
     ),
 
+    'moodle/course:ignorefilesizelimits' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+        )
+    ),
+
     'moodle/course:manageactivities' => array(
 
         'riskbitmask' => RISK_XSS,
@@ -1679,6 +1687,7 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
         )
     ),
 

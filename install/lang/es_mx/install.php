@@ -31,6 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['databasehost'] = 'host de la Base de Datos';
+$string['datarootpermission'] = 'Permiso directorios de datos';
 $string['environmentsub2'] = 'Cada versión de Moodle tiene algún requisito mínimo de la versión de PHP y un número obligatorio de extensiones de PHP. Una comprobación del entorno completo se realiza antes de cada instalación y actualización. Por favor, póngase en contacto con el administrador del servidor si no sabe cómo instalar la nueva versión o habilitar las extensiones PHP.';
 $string['errorsinenvironment'] = '¡La comprobación del entorno falló!';
 $string['welcomep20'] = 'Si está viendo esta página es porque ha podido ejecutar el paquete <strong>{$a->packname} {$a->packversion}</strong> en su computadora. !Enhorabuena!';

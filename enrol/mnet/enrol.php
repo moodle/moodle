@@ -146,6 +146,7 @@ class enrol_mnet_mnetservice_enrol {
             $user = mnet_strip_user((object)$userdata, mnet_fields_to_import($client));
             $user->mnethostid = $client->id;
             $user->auth = 'mnet';
+            $user->confirmed = 1;
             try {
                 $user->id = $DB->insert_record('user', $user);
             } catch (Exception $e) {

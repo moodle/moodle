@@ -94,6 +94,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         // What to do with overdue attempts.
         $mform->addElement('select', 'overduehandling', get_string('overduehandling', 'quiz'),
                 quiz_get_overdue_handling_options());
+        $mform->addHelpButton('overduehandling', 'overduehandling', 'quiz');
         $mform->setAdvanced('overduehandling', $quizconfig->overduehandling_adv);
         $mform->setDefault('overduehandling', $quizconfig->overduehandling);
         // TODO Formslib does OR logic on disableif, and we need AND logic here.
@@ -500,6 +501,14 @@ class mod_quiz_mod_form extends moodleform_mod {
         if ($data['timeopen'] != 0 && $data['timeclose'] != 0 &&
                 $data['timeclose'] < $data['timeopen']) {
             $errors['timeclose'] = get_string('closebeforeopen', 'quiz');
+        }
+
+        // Check that the grace period is not too short.
+        if ($data['overduehandling'] == 'graceperiod') {
+            $graceperiodmin = get_config('quiz', 'graceperiodmin');
+            if ($data['graceperiod'] <= $graceperiodmin) {
+                $errors['graceperiod'] = get_string('graceperiodtoosmall', 'quiz', format_time($graceperiodmin));
+            }
         }
 
         // Check the boundary value is a number or a percentage, and in range.

@@ -34,4 +34,5 @@ require_once(__DIR__.'/classes/database_driver_testcase.php');
 require_once(__DIR__.'/classes/arraydataset.php');
 require_once(__DIR__.'/classes/advanced_testcase.php');
 require_once(__DIR__.'/classes/unittestcase.php');
+require_once(__DIR__.'/classes/hint_resultprinter.php'); // Loaded here because phpunit.xml does not support relative links for printerFile
 

@@ -56,9 +56,7 @@ $string['assignsubmission'] = 'Submission plugin';
 $string['assignsubmissionpluginname'] = 'Submission plugin';
 $string['availability'] = 'Availability';
 $string['backtoassignment'] = 'Back to assignment';
-$string['batchoperations'] = 'Batch operations';
-$string['batchoperationsdescription'] = 'Perform action on selected row(s)';
-$string['batchoperationsdescription_help'] = 'The selected operation will be performed on all of the selected rows in the grading table. ';
+$string['batchoperationsdescription'] = 'With selected...';
 $string['batchoperationconfirmlock'] = 'Lock all selected submissions?';
 $string['batchoperationconfirmunlock'] = 'Unlock all selected submissions?';
 $string['batchoperationconfirmreverttodraft'] = 'Revert selected submissions to draft?';
@@ -135,8 +133,7 @@ $string['gradeoutofhelp'] = 'Grade';
 $string['gradeoutofhelp_help'] = 'Enter the grade for the student\'s submission here. You may include decimals.';
 $string['gradestudent'] = 'Grade student: (id={$a->id}, fullname={$a->fullname}). ';
 $string['grading'] = 'Grading';
-$string['gradingoptions'] = 'Grade listing options';
-$string['gradingactions'] = 'Grading actions';
+$string['gradingoptions'] = 'Options';
 $string['gradingstatus'] = 'Grading status';
 $string['gradingstudentprogress'] = 'Grading student {$a->index} of {$a->count}';
 $string['gradingsummary'] = 'Grading summary';
@@ -150,12 +147,11 @@ $string['locksubmissionforstudent'] = 'Prevent any more submissions for student:
 $string['locksubmissions'] = 'Lock submissions';
 $string['manageassignfeedbackplugins'] = 'Manage assignment feedback plugins';
 $string['manageassignsubmissionplugins'] = 'Manage assignment submission plugins';
-$string['messageprovider:assign_student_notification'] = 'Assignment student notifications';
-$string['messageprovider:assign_grader_notification'] = 'Assignment grader notifications';
+$string['messageprovider:assign_notification'] = 'Assignment notifications';
 $string['modulename'] = 'Assignment';
-$string['modulename_help'] = 'The assignment activity module enables a teacher to assess students’ learning by setting work and then reviewing it and providing feedback and grades.
+$string['modulename_help'] = 'The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback.
 
-Students can submit any digital content (files), such as word-processed documents, spreadsheets, images, audio and video clips. Alternatively, or in addition, the assignment may require students to type text directly into a field using the text editor. An assignment can also be used to remind students of \'real-world\' assignments they need to complete, such as art work, and thus not require any digital content.
+Students can submit any digital content (files), such as word-processed documents, spreadsheets, images, or audio and video clips. Alternatively, or in addition, the assignment may require students to type text directly into the text editor. An assignment can also be used to remind students of \'real-world\' assignments they need to complete offline, such as art work, and thus not require any digital content.
 
 When reviewing assignments, teachers can leave feedback comments and upload files, such as marked-up student submissions, documents with comments or spoken audio feedback. Assignments can be graded using a numerical or custom scale or an advanced grading method such as a rubric. Final grades are recorded in the gradebook.';
 $string['modulename_link'] = 'mod/assignment/view';
@@ -183,7 +179,7 @@ $string['page-mod-assign-view'] = 'Assignment module main and submission page';
 $string['pluginadministration'] = 'Assignment administration';
 $string['pluginname'] = 'Assignment';
 $string['preventlatesubmissions'] = 'Prevent late submissions';
-$string['preventlatesubmissions_help'] = 'If enabled, students will not be able submit after the Due Date. If disabled, students will be able to submit assignments after the due date and before the final date (if set).';
+$string['preventlatesubmissions_help'] = 'If enabled, students will not be able submit after the Due Date. If disabled, students will be able to submit assignments after the due date.';
 $string['preventsubmissions'] = 'Prevent the user from making any more submissions to this assignment.';
 $string['preventsubmissionsshort'] = 'Prevent submission changes';
 $string['previous'] = 'Previous';
@@ -196,7 +192,7 @@ $string['reverttodraft'] = 'Revert the submission to draft status.';
 $string['reverttodraftshort'] = 'Revert the submission to draft';
 $string['reviewed'] = 'Reviewed';
 $string['savechanges'] = 'Save changes';
-$string['saveallchanges'] = 'Save all changes';
+$string['saveallquickgradingchanges'] = 'Save all quick grading changes';
 $string['savenext'] = 'Save and show next';
 $string['sendnotifications'] = 'Notify graders about submissions';
 $string['sendnotifications_help'] = 'If enabled, graders (usually teachers) receive a message whenever a student submits an assignment, early, on time and late. Message methods are configurable.';

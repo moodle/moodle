@@ -36,13 +36,18 @@
  * @return mixed
  */
 function min_optional_param($name, $default, $type) {
-    $value = $default;
     if (isset($_GET[$name])) {
         $value = $_GET[$name];
 
     } else if (isset($_GET['amp;'.$name])) {
         // very, very, very ugly hack, unfortunately $OUTPUT->pix_url() is not used properly in javascript code :-(
         $value = $_GET['amp;'.$name];
+
+    } else if (isset($_POST[$name])) {
+        $value = $_POST[$name];
+
+    } else {
+        return $default;
     }
 
     return min_clean_param($value, $type);
@@ -50,15 +55,16 @@ function min_optional_param($name, $default, $type) {
 
 /**
  * Minimalistic parameter cleaning function.
- * Can not use optional param because moodlelib.php is not loaded yet
- * @param string $name
- * @param mixed $default
+ *
+ * Note: Can not use optional param because moodlelib.php is not loaded yet.
+ *
+ * @param string $value
  * @param string $type
  * @return mixed
  */
 function min_clean_param($value, $type) {
     switch($type) {
-        case 'RAW':      $value = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+        case 'RAW':      $value = min_fix_utf8((string)$value);
                          break;
         case 'INT':      $value = (int)$value;
                          break;
@@ -72,6 +78,49 @@ function min_clean_param($value, $type) {
     }
 
     return $value;
+}
+
+/**
+ * Minimalistic UTF-8 sanitisation.
+ *
+ * Note: This duplicates fix_utf8() intentionally for now.
+ *
+ * @param string $value
+ * @return string
+ */
+function min_fix_utf8($value) {
+    // Lower error reporting because glibc throws bogus notices.
+    $olderror = error_reporting();
+    if ($olderror & E_NOTICE) {
+        error_reporting($olderror ^ E_NOTICE);
+    }
+
+    static $buggyiconv = null;
+    if ($buggyiconv === null) {
+        $buggyiconv = (!function_exists('iconv') or iconv('UTF-8', 'UTF-8//IGNORE', '100'.chr(130).'€') !== '100€');
+    }
+
+    if ($buggyiconv) {
+        if (function_exists('mb_convert_encoding')) {
+            $subst = mb_substitute_character();
+            mb_substitute_character('');
+            $result = mb_convert_encoding($value, 'utf-8', 'utf-8');
+            mb_substitute_character($subst);
+
+        } else {
+            // Warn admins on admin/index.php page.
+            $result = $value;
+        }
+
+    } else {
+        $result = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+    }
+
+    if ($olderror & E_NOTICE) {
+        error_reporting($olderror);
+    }
+
+    return $result;
 }
 
 /**
@@ -112,7 +161,9 @@ function min_enable_zlib_compression() {
 
 /**
  * Returns the slashargument part of the URL.
- * Note: ".php" is NOT allowed in slasharguments!
+ *
+ * Note: ".php" is NOT allowed in slasharguments,
+ *       it is intended for ASCII characters only.
  *
  * @return string
  */

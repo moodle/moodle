@@ -152,6 +152,16 @@ class repository_filesystem extends repository {
         return array('path'=>$file, 'url'=>'');
     }
 
+    /**
+     * Return the source information
+     *
+     * @param stdClass $filepath
+     * @return string|null
+     */
+    public function get_file_source_info($filepath) {
+        return $filepath;
+    }
+
     public function logout() {
         return true;
     }
@@ -166,7 +176,7 @@ class repository_filesystem extends repository {
         return $ret;
     }
 
-    public function instance_config_form($mform) {
+    public static function instance_config_form($mform) {
         global $CFG, $PAGE;
         if (has_capability('moodle/site:config', get_system_context())) {
             $path = $CFG->dataroot . '/repository/';
@@ -223,12 +233,18 @@ class repository_filesystem extends repository {
     }
 
     /**
-     * Get file from external repository by reference
+     * Returns information about file in this repository by reference
      * {@link repository::get_file_reference()}
      * {@link repository::get_file()}
      *
+     * Returns null if file not found or is not readable
+     *
      * @param stdClass $reference file reference db record
-     * @return stdClass|null|false
+     * @return stdClass|null contains one of the following:
+     *   - 'contenthash' and 'filesize'
+     *   - 'filepath'
+     *   - 'handle'
+     *   - 'content'
      */
     public function get_file_by_reference($reference) {
         $ref = $reference->reference;
@@ -237,15 +253,19 @@ class repository_filesystem extends repository {
         } else {
             $filepath = $this->root_path.$ref;
         }
-        $fileinfo = new stdClass;
-        $fileinfo->filepath = $filepath;
-        return $fileinfo;
+        if (file_exists($filepath) && is_readable($filepath)) {
+            return (object)array('filepath' => $filepath);
+        } else {
+            return null;
+        }
     }
 
     /**
-     * Repository method to serve file
+     * Repository method to serve the referenced file
      *
-     * @param stored_file $storedfile
+     * @see send_stored_file
+     *
+     * @param stored_file $storedfile the file that contains the reference
      * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
      * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
      * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
@@ -258,6 +278,15 @@ class repository_filesystem extends repository {
         } else {
             $file = $this->root_path.$reference;
         }
-        send_file($file, $storedfile->get_filename(), 'default' , $filter, false, $forcedownload);
+        if (is_readable($file)) {
+            $filename = $storedfile->get_filename();
+            if ($options && isset($options['filename'])) {
+                $filename = $options['filename'];
+            }
+            $dontdie = ($options && isset($options['dontdie']));
+            send_file($file, $filename, $lifetime , $filter, false, $forcedownload, '', $dontdie);
+        } else {
+            send_file_not_found();
+        }
     }
 }

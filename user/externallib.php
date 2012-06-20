@@ -473,7 +473,7 @@ class core_user_external extends external_api {
                     'timezone'    => new external_value(PARAM_TIMEZONE, 'Timezone code such as Australia/Perth, or 99 for default', VALUE_OPTIONAL),
                     'mailformat'  => new external_value(PARAM_INTEGER, 'Mail format code is 0 for plain text, 1 for HTML etc', VALUE_OPTIONAL),
                     'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
-                    'descriptionformat' => new external_value(PARAM_INT, 'User profile description format', VALUE_OPTIONAL),
+                    'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
                     'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
                     'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
                     'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
@@ -618,7 +618,7 @@ class core_user_external extends external_api {
                     'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
                     'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
                     'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
-                    'descriptionformat' => new external_value(PARAM_INT, 'User profile description format', VALUE_OPTIONAL),
+                    'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
                     'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
                     'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
                     'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
@@ -639,6 +639,7 @@ class core_user_external extends external_api {
                                 'id'  => new external_value(PARAM_INT, 'group id'),
                                 'name' => new external_value(PARAM_RAW, 'group name'),
                                 'description' => new external_value(PARAM_RAW, 'group description'),
+                                'descriptionformat' => new external_format_value('description'),
                             )
                         ), 'user groups', VALUE_OPTIONAL),
                     'roles' => new external_multiple_structure(

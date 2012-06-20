@@ -114,6 +114,46 @@ class file_info_stored extends file_info {
     }
 
     /**
+     * Returns the localised human-readable name of the file together with virtual path
+     *
+     * @return string
+     */
+    public function get_readable_fullname() {
+        global $CFG;
+        // retrieve the readable path with all parents (excluding the top most 'System')
+        $fpath = array();
+        for ($parent = $this; $parent && $parent->get_parent(); $parent = $parent->get_parent()) {
+            array_unshift($fpath, $parent->get_visible_name());
+        }
+
+        if ($this->lf->get_component() == 'user' && $this->lf->get_filearea() == 'private') {
+            // use the special syntax for user private files - 'USERNAME Private files: PATH'
+            $username = array_shift($fpath);
+            array_shift($fpath); // get rid of "Private Files/" in the beginning of the path
+            return get_string('privatefilesof', 'repository', $username). ': '. join('/', $fpath);
+        } else {
+            // for all other files (except user private files) return 'Server files: PATH'
+
+            // first, get and cache the name of the repository_local (will be used as prefix for file names):
+            static $replocalname = null;
+            if ($replocalname === null) {
+                require_once($CFG->dirroot . "/repository/lib.php");
+                $instances = repository::get_instances(array('type' => 'local'));
+                if (count($instances)) {
+                    $firstinstance = reset($instances);
+                    $replocalname = $firstinstance->get_name();
+                } else if (get_string_manager()->string_exists('pluginname', 'repository_local')) {
+                    $replocalname = get_string('pluginname', 'repository_local');
+                } else {
+                    $replocalname = get_string('arearoot', 'repository');
+                }
+            }
+
+            return $replocalname. ': '. join('/', $fpath);
+        }
+    }
+
+    /**
      * Returns file download url
      *
      * @param bool $forcedownload Whether or not force download
@@ -519,25 +559,21 @@ class file_info_stored extends file_info {
     /**
      * Copy content of this file to local storage, overriding current file if needed.
      *
-     * @param int $contextid context ID
-     * @param string $component file component
-     * @param string $filearea file area
-     * @param int $itemid item ID
-     * @param string $filepath file path
-     * @param string $filename file name
+     * @param array|stdClass $filerecord contains contextid, component, filearea,
+     *    itemid, filepath, filename and optionally other attributes of the new file
      * @return bool success
      */
-    public function copy_to_storage($contextid, $component, $filearea, $itemid, $filepath, $filename) {
+    public function copy_to_storage($filerecord) {
         if (!$this->is_readable() or $this->is_directory()) {
             return false;
         }
+        $filerecord = (array)$filerecord;
 
         $fs = get_file_storage();
-        if ($existing = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename)) {
+        if ($existing = $fs->get_file($filerecord['contextid'], $filerecord['component'], $filerecord['filearea'], $filerecord['itemid'], $filerecord['filepath'], $filerecord['filename'])) {
             $existing->delete();
         }
-        $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'filename'=>$filename);
-        $fs->create_file_from_storedfile($file_record, $this->lf);
+        $fs->create_file_from_storedfile($filerecord, $this->lf);
 
         return true;
     }

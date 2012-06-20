@@ -56,6 +56,15 @@ class google_docs {
      */
     public function __construct(google_oauth $googleoauth) {
         $this->googleoauth = $googleoauth;
+        $this->reset_curl_state();
+    }
+
+    /**
+     * Resets state on oauth curl object and set GData protocol
+     * version
+     */
+    private function reset_curl_state() {
+        $this->googleoauth->reset_state();
         $this->googleoauth->setHeader('GData-Version: 3.0');
     }
 
@@ -147,7 +156,7 @@ class google_docs {
         }
 
         // Reset the curl object for actually sending the file.
-        $this->googleoauth->clear_headers();
+        $this->reset_curl_state();
         $this->googleoauth->setHeader("Content-Length: ". $file->get_filesize());
         $this->googleoauth->setHeader("Content-Type: ". $file->get_mimetype());
 
@@ -163,6 +172,8 @@ class google_docs {
         unlink($tmpfilepath);
 
         if ($this->googleoauth->info['http_code'] === 201) {
+            // Clear headers for further requests.
+            $this->reset_curl_state();
             return true;
         } else {
             return false;
@@ -398,9 +409,10 @@ class google_oauth extends oauth2_client {
     }
 
     /**
-     * Clear any headers in the curl object
+     * Resets headers and response for multiple requests
      */
-    public function clear_headers() {
+    public function reset_state() {
         $this->header = array();
+        $this->response = array();
     }
 }

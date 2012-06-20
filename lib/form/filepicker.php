@@ -79,7 +79,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         if (!empty($PAGE->course)) {
             $coursemaxbytes = $PAGE->course->maxbytes;
         }
-        $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $coursemaxbytes, $fpmaxbytes);
+        $this->_options['maxbytes'] = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $coursemaxbytes, $fpmaxbytes);
         $this->_type = 'filepicker';
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
     }

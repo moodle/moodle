@@ -606,14 +606,30 @@ class textlib {
     }
 }
 
+
 /**
  * A collator class with static methods that can be used for sorting.
  *
  * @package   core
  * @copyright 2011 Sam Hemelryk
+ *            2012 Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class collatorlib {
+class collatorlib {
+    /** @const compare items as strings, equivalent to Collator::SORT_REGULAR */
+    const SORT_REGULAR = 0;
+
+    /** @const compare items as strings, equivalent to Collator::SORT_STRING */
+    const SORT_STRING = 1;
+
+    /** @const compare items as numbers, equivalent to Collator::SORT_NUMERIC */
+    const SORT_NUMERIC = 2;
+
+    /** @const compare items like natsort(), equivalent to SORT_NATURAL */
+    const SORT_NATURAL = 6;
+
+    /** @const do not ignore case when sorting, use bitwise "|" with SORT_NATURAL or SORT_STRING, equivalent to Collator::UPPER_FIRST */
+    const CASE_SENSITIVE = 64;
 
     /** @var Collator|false|null **/
     protected static $collator = null;
@@ -622,13 +638,17 @@ abstract class collatorlib {
     protected static $locale = null;
 
     /**
+     * Prevent class instances, all methods are static.
+     */
+    private function __construct() {
+    }
+
+    /**
      * Ensures that a collator is available and created
      *
      * @return bool Returns true if collation is available and ready
      */
     protected static function ensure_collator_available() {
-        global $CFG;
-
         $locale = get_string('locale', 'langconfig');
         if (is_null(self::$collator) || $locale != self::$locale) {
             self::$collator = false;
@@ -665,7 +685,7 @@ abstract class collatorlib {
                                 // to find the correct locale or to use UCA collation
                             }
                         } else {
-                            // We've recieved some other sort of non fatal warning - let the
+                            // We've received some other sort of non fatal warning - let the
                             // user know about it via debugging.
                             debugging('Problem with locale: "' . $locale . '", with message "' . $errormessage .
                                 '", falling back to "' . $collator->getLocale(Locale::VALID_LOCALE) . '"');
@@ -684,40 +704,119 @@ abstract class collatorlib {
     }
 
     /**
-     * Locale aware sorting, the key associations are kept, values are sorted alphabetically.
-     *
-     * @param array $arr array to be sorted (reference)
-     * @param int $sortflag One of Collator::SORT_REGULAR, Collator::SORT_NUMERIC, Collator::SORT_STRING
-     * @return void modifies parameter
+     * Restore array contents keeping new keys.
+     * @static
+     * @param array $arr
+     * @param array $original
+     * @return void modifies $arr
      */
-    public static function asort(array &$arr, $sortflag = null) {
-        if (self::ensure_collator_available()) {
-            if (!isset($sortflag)) {
-                $sortflag = Collator::SORT_REGULAR;
-            }
-            self::$collator->asort($arr, $sortflag);
-            return;
+    protected static function restore_array(array &$arr, array &$original) {
+        foreach ($arr as $key => $ignored) {
+            $arr[$key] = $original[$key];
         }
-        asort($arr, SORT_LOCALE_STRING);
     }
 
     /**
-     * Locale aware comparison of two strings.
-     *
-     * Returns:
-     *   1 if str1 is greater than str2
-     *   0 if str1 is equal to str2
-     *  -1 if str1 is less than str2
-     *
-     * @param string $str1 first string to compare
-     * @param string $str2 second string to compare
-     * @return int
+     * Normalise numbers in strings for natural sorting comparisons.
+     * @static
+     * @param string $string
+     * @return string string with normalised numbers
      */
-    public static function compare($str1, $str2) {
-        if (self::ensure_collator_available()) {
-            return self::$collator->compare($str1, $str2);
+    protected static function naturalise($string) {
+        return preg_replace_callback('/[0-9]+/', array('collatorlib', 'callback_naturalise'), $string);
+    }
+
+    /**
+     * @internal
+     * @static
+     * @param array $matches
+     * @return string
+     */
+    public static function callback_naturalise($matches) {
+        return str_pad($matches[0], 20, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Locale aware sorting, the key associations are kept, values are sorted alphabetically.
+     *
+     * @param array $arr array to be sorted (reference)
+     * @param int $sortflag One of collatorlib::SORT_NUMERIC, collatorlib::SORT_STRING, collatorlib::SORT_NATURAL, collatorlib::SORT_REGULAR
+     *      optionally "|" collatorlib::CASE_SENSITIVE
+     * @return bool True on success
+     */
+    public static function asort(array &$arr, $sortflag = collatorlib::SORT_STRING) {
+        if (empty($arr)) {
+            // nothing to do
+            return true;
         }
-        return strcmp($str1, $str2);
+
+        $original = null;
+
+        $casesensitive = (bool)($sortflag & collatorlib::CASE_SENSITIVE);
+        $sortflag = ($sortflag & ~collatorlib::CASE_SENSITIVE);
+        if ($sortflag != collatorlib::SORT_NATURAL and $sortflag != collatorlib::SORT_STRING) {
+            $casesensitive = false;
+        }
+
+        if (self::ensure_collator_available()) {
+            if ($sortflag == collatorlib::SORT_NUMERIC) {
+                $flag = Collator::SORT_NUMERIC;
+
+            } else if ($sortflag == collatorlib::SORT_REGULAR) {
+                $flag = Collator::SORT_REGULAR;
+
+            } else {
+                $flag = Collator::SORT_STRING;
+            }
+
+            if ($sortflag == collatorlib::SORT_NATURAL) {
+                $original = $arr;
+                if ($sortflag == collatorlib::SORT_NATURAL) {
+                    foreach ($arr as $key => $value) {
+                        $arr[$key] = self::naturalise((string)$value);
+                    }
+                }
+            }
+            if ($casesensitive) {
+                self::$collator->setAttribute(Collator::CASE_FIRST, Collator::UPPER_FIRST);
+            } else {
+                self::$collator->setAttribute(Collator::CASE_FIRST, Collator::OFF);
+            }
+            $result = self::$collator->asort($arr, $flag);
+            if ($original) {
+                self::restore_array($arr, $original);
+            }
+            return $result;
+        }
+
+        // try some fallback that works at least for English
+
+        if ($sortflag == collatorlib::SORT_NUMERIC) {
+            return asort($arr, SORT_NUMERIC);
+
+        } else if ($sortflag == collatorlib::SORT_REGULAR) {
+            return asort($arr, SORT_REGULAR);
+        }
+
+        if (!$casesensitive) {
+            $original = $arr;
+            foreach ($arr as $key => $value) {
+                $arr[$key] = textlib::strtolower($value);
+            }
+        }
+
+        if ($sortflag == collatorlib::SORT_NATURAL) {
+            $result = natsort($arr);
+
+        } else {
+            $result = asort($arr, SORT_LOCALE_STRING);
+        }
+
+        if ($original) {
+            self::restore_array($arr, $original);
+        }
+
+        return $result;
     }
 
     /**
@@ -725,11 +824,18 @@ abstract class collatorlib {
      *
      * @param array $objects An array of objects to sort (handled by reference)
      * @param string $property The property to use for comparison
+     * @param int $sortflag One of collatorlib::SORT_NUMERIC, collatorlib::SORT_STRING, collatorlib::SORT_NATURAL, collatorlib::SORT_REGULAR
+     *      optionally "|" collatorlib::CASE_SENSITIVE
      * @return bool True on success
      */
-    public static function asort_objects_by_property(array &$objects, $property) {
-        $comparison = new collatorlib_property_comparison($property);
-        return uasort($objects, array($comparison, 'compare'));
+    public static function asort_objects_by_property(array &$objects, $property, $sortflag = collatorlib::SORT_STRING) {
+        $original = $objects;
+        foreach ($objects as $key => $object) {
+            $objects[$key] = $object->$property;
+        }
+        $result = self::asort($objects, $sortflag);
+        self::restore_array($objects, $original);
+        return $result;
     }
 
     /**
@@ -737,118 +843,41 @@ abstract class collatorlib {
      *
      * @param array $objects An array of objects to sort (handled by reference)
      * @param string $method The method to call to generate a value for comparison
+     * @param int $sortflag One of collatorlib::SORT_NUMERIC, collatorlib::SORT_STRING, collatorlib::SORT_NATURAL, collatorlib::SORT_REGULAR
+     *      optionally "|" collatorlib::CASE_SENSITIVE
      * @return bool True on success
      */
-    public static function asort_objects_by_method(array &$objects, $method) {
-        $comparison = new collatorlib_method_comparison($method);
-        return uasort($objects, array($comparison, 'compare'));
+    public static function asort_objects_by_method(array &$objects, $method, $sortflag = collatorlib::SORT_STRING) {
+        $original = $objects;
+        foreach ($objects as $key => $object) {
+            $objects[$key] = $object->{$method}();
+        }
+        $result = self::asort($objects, $sortflag);
+        self::restore_array($objects, $original);
+        return $result;
+    }
+
+    /**
+     * Locale aware sorting, the key associations are kept, keys are sorted alphabetically.
+     *
+     * @param array $arr array to be sorted (reference)
+     * @param int $sortflag One of collatorlib::SORT_NUMERIC, collatorlib::SORT_STRING, collatorlib::SORT_NATURAL, collatorlib::SORT_REGULAR
+     *      optionally "|" collatorlib::CASE_SENSITIVE
+     * @return bool True on success
+     */
+    public static function ksort(array &$arr, $sortflag = collatorlib::SORT_STRING) {
+        $keys = array_keys($arr);
+        if (!self::asort($keys, $sortflag)) {
+            return false;
+        }
+        // This is a bit slow, but we need to keep the references
+        $original = $arr;
+        $arr = array(); // Surprisingly this does not break references outside
+        foreach ($keys as $key) {
+            $arr[$key] = $original[$key];
+        }
+
+        return true;
     }
 }
 
-/**
- * Object comparison using collator
- *
- * Abstract class to aid the sorting of objects with respect to proper language
- * comparison using collator
- *
- * @package   core
- * @copyright 2011 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-abstract class collatorlib_comparison {
-    /**
-     * This function will perform the actual comparison of values
-     * It must be overridden by the deriving class.
-     *
-     * Returns:
-     *   1 if str1 is greater than str2
-     *   0 if str1 is equal to str2
-     *  -1 if str1 is less than str2
-     *
-     * @param mixed $a The first something to compare
-     * @param mixed $b The second something to compare
-     * @return int
-     */
-    public abstract function compare($a, $b);
-}
-
-/**
- * Compare properties of two objects
- *
- * A comparison helper for comparing properties of two objects
- *
- * @package   core
- * @category  string
- * @copyright 2011 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class collatorlib_property_comparison extends collatorlib_comparison {
-
-    /** @var string The property to sort by **/
-    protected $property;
-
-    /**
-     * Constructor
-     *
-     * @param string $property
-     */
-    public function __construct($property) {
-        $this->property = $property;
-    }
-
-    /**
-     * Returns:
-     *   1 if str1 is greater than str2
-     *   0 if str1 is equal to str2
-     *  -1 if str1 is less than str2
-     *
-     * @param mixed $obja The first object to compare
-     * @param mixed $objb The second object to compare
-     * @return int
-     */
-    public function compare($obja, $objb) {
-        $resulta = $obja->{$this->property};
-        $resultb = $objb->{$this->property};
-        return collatorlib::compare($resulta, $resultb);
-    }
-}
-
-/**
- * Compare method of two objects
- *
- * A comparison helper for comparing the result of a method on two objects
- *
- * @package   core
- * @copyright 2011 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class collatorlib_method_comparison extends collatorlib_comparison {
-
-    /** @var string The method to use for comparison **/
-    protected $method;
-
-    /**
-     * Constructor
-     *
-     * @param string $method The method to call against each object
-     */
-    public function __construct($method) {
-        $this->method = $method;
-    }
-
-    /**
-     * Returns:
-     *   1 if str1 is greater than str2
-     *   0 if str1 is equal to str2
-     *  -1 if str1 is less than str2
-     *
-     * @param mixed $obja The first object to compare
-     * @param mixed $objb The second object to compare
-     * @return int
-     */
-    public function compare($obja, $objb) {
-        $resulta = $obja->{$this->method}();
-        $resultb = $objb->{$this->method}();
-        return collatorlib::compare($resulta, $resultb);
-    }
-}

@@ -488,8 +488,6 @@ if (PHPUNIT_TEST and !PHPUNIT_UTIL) {
         if ($dbhash) {
             // we ned to reinit if reset fails
             $DB->set_field('config', 'value', 'na', array('name'=>'phpunittest'));
-        } else {
-            throw $e;
         }
     }
     unset($dbhash);

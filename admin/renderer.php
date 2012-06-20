@@ -242,13 +242,15 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param bool $cronoverdue warn cron not running
      * @param bool $dbproblems warn db has problems
      * @param bool $maintenancemode warn in maintenance mode
+     * @param bool $buggyiconvnomb warn iconv problems
      * @param array|null $availableupdates array of available_update_info objects or null
      * @param int|null $availableupdatesfetch timestamp of the most recent updates fetch or null (unknown)
      *
      * @return string HTML to output.
      */
     public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
-            $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch) {
+            $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch,
+            $buggyiconvnomb, $registered) {
         global $CFG;
         $output = '';
 
@@ -257,9 +259,11 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= empty($CFG->disableupdatenotifications) ? $this->available_updates($availableupdates, $availableupdatesfetch) : '';
         $output .= $this->insecure_dataroot_warning($insecuredataroot);
         $output .= $this->display_errors_warning($errorsdisplayed);
+        $output .= $this->buggy_iconv_warning($buggyiconvnomb);
         $output .= $this->cron_overdue_warning($cronoverdue);
         $output .= $this->db_problems($dbproblems);
         $output .= $this->maintenance_mode_warning($maintenancemode);
+        $output .= $this->registration_warning($registered);
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
@@ -379,6 +383,19 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         return $this->warning(get_string('displayerrorswarning', 'admin'));
+    }
+
+    /**
+     * Render an appropriate message if iconv is buggy and mbstring missing.
+     * @param bool $buggyiconvnomb
+     * @return string HTML to output.
+     */
+    protected function buggy_iconv_warning($buggyiconvnomb) {
+        if (!$buggyiconvnomb) {
+            return '';
+        }
+
+        return $this->warning(get_string('warningiconvbuggy', 'admin'));
     }
 
     /**
@@ -510,6 +527,27 @@ class core_admin_renderer extends plugin_renderer_base {
         $updateinfo .= $this->box_end();
 
         return $updateinfo;
+    }
+
+    /**
+     * Display a warning about not being registered on Moodle.org if necesary.
+     *
+     * @param boolean $registered true if the site is registered on Moodle.org
+     * @return string HTML to output.
+     */
+    protected function registration_warning($registered) {
+
+        if (!$registered) {
+
+            $registerbutton = $this->single_button(new moodle_url('registration/register.php',
+                    array('huburl' =>  HUB_MOODLEORGHUBURL, 'hubname' => 'Moodle.org')),
+                    get_string('register', 'admin'));
+
+            return $this->warning( get_string('registrationwarning', 'admin')
+                    . '&nbsp;' . $this->help_icon('registration', 'admin') . $registerbutton );
+        }
+
+        return '';
     }
 
     /**
