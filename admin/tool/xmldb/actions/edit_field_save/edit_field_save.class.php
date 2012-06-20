@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,8 +24,7 @@
  * This class verifies all the data introduced when editing a field for correctness,
  * performing changes / displaying errors depending of the results.
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -99,10 +97,10 @@ class edit_field_save extends XMLDBAction {
         $default    = optional_param('default', NULL, PARAM_PATH);
         $default    = trim($default);
 
-        $editeddir =& $XMLDB->editeddirs[$dirpath];
-        $structure =& $editeddir->xml_file->getStructure();
-        $table =& $structure->getTable($tableparam);
-        $field =& $table->getField($fieldparam);
+        $editeddir = $XMLDB->editeddirs[$dirpath];
+        $structure = $editeddir->xml_file->getStructure();
+        $table = $structure->getTable($tableparam);
+        $field = $table->getField($fieldparam);
         $oldhash = $field->getHash();
 
         $errors = array(); // To store all the errors found
@@ -225,12 +223,12 @@ class edit_field_save extends XMLDBAction {
             if ($fieldparam != $name) {
                 $field->setName($name);
                 if ($field->getPrevious()) {
-                    $prev =& $table->getField($field->getPrevious());
+                    $prev = $table->getField($field->getPrevious());
                     $prev->setNext($name);
                     $prev->setChanged(true);
                 }
                 if ($field->getNext()) {
-                    $next =& $table->getField($field->getNext());
+                    $next = $table->getField($field->getNext());
                     $next->setPrevious($name);
                     $next->setChanged(true);
                 }

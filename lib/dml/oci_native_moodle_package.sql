@@ -14,8 +14,7 @@
 -- along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @version    20091010 (plz, keep this updated for easier reference)

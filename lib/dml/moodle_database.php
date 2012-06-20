@@ -14,24 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Abstract database driver class.
  *
- * @package core
- * @category dml
- * @subpackage dml
- * @copyright 2008 Petr Skoda (http://skodak.org)
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_dml
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/dml/database_column_info.php');
-require_once($CFG->libdir.'/dml/moodle_recordset.php');
-require_once($CFG->libdir.'/dml/moodle_transaction.php');
-
-/// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
+require_once(__DIR__.'/database_column_info.php');
+require_once(__DIR__.'/moodle_recordset.php');
+require_once(__DIR__.'/moodle_transaction.php');
 
 /** SQL_PARAMS_NAMED - Bitmask, indicates :name type parameters are supported by db backend. */
 define('SQL_PARAMS_NAMED', 1);
@@ -61,8 +56,7 @@ define('SQL_QUERY_AUX', 5);
  * Abstract class representing moodle database interface.
  * @link http://docs.moodle.org/dev/DML_functions
  *
- * @package    core
- * @category   dml
+ * @package    core_dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -89,7 +83,7 @@ abstract class moodle_database {
     /** @var string Prefix added to table names. */
     protected $prefix;
 
-    /** @var array Database or driver specific options, such as sockets or TCPIP db connections. */
+    /** @var array Database or driver specific options, such as sockets or TCP/IP db connections. */
     protected $dboptions;
 
     /** @var bool True means non-moodle external database used.*/
@@ -324,7 +318,7 @@ abstract class moodle_database {
             $backtrace = $lowesttransaction->get_backtrace();
 
             if (defined('PHPUNIT_TEST') and PHPUNIT_TEST) {
-                //no need to log sudden exits in our PHPunit test cases
+                //no need to log sudden exits in our PHPUnit test cases
             } else {
                 error_log('Potential coding error - active database transaction detected when disposing database:'."\n".format_backtrace($backtrace, true));
             }
@@ -422,7 +416,7 @@ abstract class moodle_database {
 
     /**
      * This logs the last query based on 'logall', 'logslow' and 'logerrors' options configured via $CFG->dboptions .
-     * @param string $error or false if not error
+     * @param string|bool $error or false if not error
      * @return void
      */
     public function query_log($error=false) {
@@ -463,7 +457,7 @@ abstract class moodle_database {
 
     /**
      * Returns database server info array
-     * @return array Array containing 'description' and 'version' atleast.
+     * @return array Array containing 'description' and 'version' at least.
      */
     public abstract function get_server_info();
 
@@ -687,6 +681,7 @@ abstract class moodle_database {
      * Internal private utitlity function used to fix parameters.
      * Used with {@link preg_replace_callback()}
      * @param array $match Refer to preg_replace_callback usage for description.
+     * @return string
      */
     private function _fix_sql_params_dollar_callback($match) {
         $this->fix_sql_params_i++;
@@ -697,6 +692,7 @@ abstract class moodle_database {
      * Detects object parameters and throws exception if found
      * @param mixed $value
      * @return void
+     * @throws coding_exception if object detected
      */
     protected function detect_objects($value) {
         if (is_object($value)) {
@@ -723,7 +719,7 @@ abstract class moodle_database {
             $params[$key] = is_bool($value) ? (int)$value : $value;
         }
 
-        // NICOLAS C: Fixed regexp for negative backwards lookahead of double colons. Thanks for Sam Marshall's help
+        // NICOLAS C: Fixed regexp for negative backwards look-ahead of double colons. Thanks for Sam Marshall's help
         $named_count = preg_match_all('/(?<!:):[a-z][a-z0-9_]*/', $sql, $named_matches); // :: used in pgsql casts
         $dollar_count = preg_match_all('/\$[1-9][0-9]*/', $sql, $dollar_matches);
         $q_count     = substr_count($sql, '?');
@@ -1509,7 +1505,6 @@ abstract class moodle_database {
      */
     public abstract function update_record($table, $dataobject, $bulk=false);
 
-
     /**
      * Set a single field in every table record where all the given conditions met.
      *
@@ -1685,9 +1680,6 @@ abstract class moodle_database {
      */
     public abstract function delete_records_select($table, $select, array $params=null);
 
-
-
-// sql constructs
     /**
      * Returns the FROM clause required by some DBs in all SELECT statements.
      *
@@ -1907,7 +1899,7 @@ abstract class moodle_database {
      * because it's really slooooooow.
      *
      * @param string $fieldname The name of the TEXT field we need to order by.
-     * @param string $numchars The number of chars to use for the ordering (defaults to 32).
+     * @param int $numchars The number of chars to use for the ordering (defaults to 32).
      * @return string The piece of SQL code to be used in your statement.
      */
     public function sql_order_by_text($fieldname, $numchars=32) {
@@ -2050,8 +2042,6 @@ abstract class moodle_database {
         return '';
     }
 
-// transactions
-
     /**
      * Checks and returns true if transactions are supported.
      *
@@ -2079,6 +2069,7 @@ abstract class moodle_database {
      * This is a test that throws an exception if transaction in progress.
      * This test does not force rollback of active transactions.
      * @return void
+     * @throws dml_transaction_exception if stansaction active
      */
     public function transactions_forbidden() {
         if ($this->is_transaction_started()) {
@@ -2232,7 +2223,6 @@ abstract class moodle_database {
         $this->force_rollback = false;
     }
 
-// session locking
     /**
      * Is session lock supported in this driver?
      * @return bool
@@ -2261,7 +2251,6 @@ abstract class moodle_database {
     public function release_session_lock($rowid) {
     }
 
-// performance and logging
     /**
      * Returns the number of reads done by this database.
      * @return int Number of reads.

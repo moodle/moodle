@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,23 +17,21 @@
 /**
  * Native sqlsrv class representing moodle database interface.
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/dml/moodle_database.php');
-require_once($CFG->libdir.'/dml/sqlsrv_native_moodle_recordset.php');
-require_once($CFG->libdir.'/dml/sqlsrv_native_moodle_temptables.php');
+require_once(__DIR__.'/moodle_database.php');
+require_once(__DIR__.'/sqlsrv_native_moodle_recordset.php');
+require_once(__DIR__.'/sqlsrv_native_moodle_temptables.php');
 
 /**
  * Native sqlsrv class representing moodle database interface.
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
  */
@@ -331,29 +328,32 @@ class sqlsrv_native_moodle_database extends moodle_database {
         return $errorMessage;
     }
 
-    /***
-     * Bound variables *are* supported. Until I can get it to work, emulate the bindings
-     * The challenge/problem/bug is that although they work, doing a SELECT SCOPE_IDENTITY()
-     * doesn't return a value (no result set)
-     */
-
     /**
      * Prepare the query binding and do the actual query.
      *
      * @param string $sql The sql statement
-     * @param mixed $params array of params for binding. If NULL, they are ignored.
-     * @param mixed $sql_query_type - Type of operation
-     * @param mixed $free_result - Default true, transaction query will be freed.
-     * @param mixed $scrollable - Default false, to use for quickly seeking to target records
+     * @param array $params array of params for binding. If NULL, they are ignored.
+     * @param int $sql_query_type - Type of operation
+     * @param bool $free_result - Default true, transaction query will be freed.
+     * @param bool $scrollable - Default false, to use for quickly seeking to target records
+     * @return resource|bool result
      */
     private function do_query($sql, $params, $sql_query_type, $free_result = true, $scrollable = false) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
+
+        /*
+         * Bound variables *are* supported. Until I can get it to work, emulate the bindings
+         * The challenge/problem/bug is that although they work, doing a SELECT SCOPE_IDENTITY()
+         * doesn't return a value (no result set)
+         *
+         * -- somebody from MS
+         */
 
         $sql = $this->emulate_bound_params($sql, $params);
         $this->query_start($sql, $params, $sql_query_type);
         if (!$scrollable) { // Only supporting next row
             $result = sqlsrv_query($this->sqlsrv, $sql);
-        } else { // Suporting absolute/relative rows
+        } else { // Supporting absolute/relative rows
             $result = sqlsrv_query($this->sqlsrv, $sql, array(), array('Scrollable' => SQLSRV_CURSOR_STATIC));
         }
 
@@ -575,7 +575,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
     protected function normalise_value($column, $value) {
         $this->detect_objects($value);
 
-        if (is_bool($value)) {                               /// Always, convert boolean to int
+        if (is_bool($value)) {                               // Always, convert boolean to int
             $value = (int)$value;
         }                                                    // And continue processing because text columns with numeric info need special handling below
 
@@ -585,9 +585,9 @@ class sqlsrv_native_moodle_database extends moodle_database {
                 $value = unpack('H*hex', $value); // we leave it as array, so emulate_bound_params() can detect it
             }                                                // easily and "bind" the param ok.
 
-        } else if ($column->meta_type == 'X') {             // sqlsrv doesn't cast from int to text, so if text column
+        } else if ($column->meta_type == 'X') {              // sqlsrv doesn't cast from int to text, so if text column
             if (is_numeric($value)) { // and is numeric value then cast to string
-                $value = array('numstr' => (string)$value); // and put into array, so emulate_bound_params() will know how
+                $value = array('numstr' => (string)$value);  // and put into array, so emulate_bound_params() will know how
             }                                                // to "bind" the param ok, avoiding reverse conversion to number
         } else if ($value === '') {
 
@@ -602,6 +602,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * Selectively call sqlsrv_free_stmt(), avoiding some warnings without using the horrible @
      *
      * @param sqlsrv_resource $resource resource to be freed if possible
+     * @return bool
      */
     private function free_result($resource) {
         if (!is_bool($resource)) { // true/false resources cannot be freed
@@ -688,7 +689,6 @@ class sqlsrv_native_moodle_database extends moodle_database {
         return null;
     }
 
-
     /**
      * Workaround for SQL*Server Native driver similar to MSSQL driver for
      * consistent behavior.
@@ -698,7 +698,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         if (empty($params)) {
             return $sql;
         }
-        /// ok, we have verified sql statement with ? and correct number of params
+        // ok, we have verified sql statement with ? and correct number of params
         $parts = explode('?', $sql);
         $return = array_shift($parts);
         foreach ($params as $param) {
@@ -1099,7 +1099,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         // convert params to ? types
         list($select, $params, $type) = $this->fix_sql_params($select, $params);
 
-        /// Get column metadata
+        // Get column metadata
         $columns = $this->get_columns($table);
         $column = $columns[$newfield];
 
@@ -1140,8 +1140,6 @@ class sqlsrv_native_moodle_database extends moodle_database {
         return true;
     }
 
-
-    /// SQL helper functions
 
     public function sql_cast_char2int($fieldname, $text = false) {
         if (!$text) {
@@ -1300,8 +1298,6 @@ class sqlsrv_native_moodle_database extends moodle_database {
         }
     }
 
-    /// session locking
-
     public function session_lock_supported() {
         return true;
     }
@@ -1310,7 +1306,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * Obtain session lock
      * @param int $rowid id of the row with session record
      * @param int $timeout max allowed time to wait for the lock in seconds
-     * @return bool success
+     * @return void
      */
     public function get_session_lock($rowid, $timeout) {
         if (!$this->session_lock_supported()) {
@@ -1360,14 +1356,6 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $this->query_end($result);
         $this->free_result($result);
     }
-
-
-    /// transactions
-
-    // NOTE:
-    // TODO -- should these be wrapped in query start/end? They arn't a query
-    // but information and error capture is nice. msk
-
 
     /**
      * Driver specific start of real database transaction,

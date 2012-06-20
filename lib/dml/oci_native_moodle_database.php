@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,21 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Native oci class representing moodle database interface.
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/dml/moodle_database.php');
-require_once($CFG->libdir.'/dml/oci_native_moodle_recordset.php');
-require_once($CFG->libdir.'/dml/oci_native_moodle_temptables.php');
+require_once(__DIR__.'/moodle_database.php');
+require_once(__DIR__.'/oci_native_moodle_recordset.php');
+require_once(__DIR__.'/oci_native_moodle_temptables.php');
 
 /**
  * Native oci class representing moodle database interface.
@@ -37,8 +34,7 @@ require_once($CFG->libdir.'/dml/oci_native_moodle_temptables.php');
  * One complete reference for PHP + OCI:
  * http://www.oracle.com/technology/tech/php/underground-php-oracle-manual.html
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -809,7 +805,7 @@ class oci_native_moodle_database extends moodle_database {
         // of empties will need to use the sql_empty() and sql_isempty() helper functions.
         // MDL-17491.
 
-        // If the field ins't VARCHAR or CLOB, skip
+        // If the field isn't VARCHAR or CLOB, skip
         if ($column->meta_type != 'C' and $column->meta_type != 'X') {
             return $value;
         }
@@ -835,7 +831,7 @@ class oci_native_moodle_database extends moodle_database {
             return '0'; // Transform 0 to '0' that evaluates the same for PHP
 
         } else if ($value === '') {
-            return ' '; // Transform '' to ' ' that DONT'T EVALUATE THE SAME
+            return ' '; // Transform '' to ' ' that DON'T EVALUATE THE SAME
                         // (we'll transform back again on get_records_XXX functions and others)!!
         }
 
@@ -1449,7 +1445,6 @@ class oci_native_moodle_database extends moodle_database {
         return ' FROM dual';
     }
 
-// Bitwise operations
    protected function bitwise_supported() {
         if (isset($this->bitwise_supported)) { // Use cached value if available
             return $this->bitwise_supported;
@@ -1551,11 +1546,11 @@ class oci_native_moodle_database extends moodle_database {
         }
     }
 
-    // NOTE: Oracle concat implementation isn't ANSI compliant when using NULLs (the result of
-    // any concatenation with NULL must return NULL) because of his inability to differentiate
-    // NULLs and empty strings. So this function will cause some tests to fail. Hopefully
-    // it's only a side case and it won't affect normal concatenation operations in Moodle.
     public function sql_concat() {
+        // NOTE: Oracle concat implementation isn't ANSI compliant when using NULLs (the result of
+        // any concatenation with NULL must return NULL) because of his inability to differentiate
+        // NULLs and empty strings. So this function will cause some tests to fail. Hopefully
+        // it's only a side case and it won't affect normal concatenation operations in Moodle.
         $arr = func_get_args();
         $s = implode(' || ', $arr);
         if ($s === '') {
@@ -1604,7 +1599,6 @@ class oci_native_moodle_database extends moodle_database {
         return 'dbms_lob.substr(' . $fieldname . ', ' . $numchars . ',1)';
     }
 
-/// session locking
     public function session_lock_supported() {
         if (isset($this->dblocks_supported)) { // Use cached value if available
             return $this->dblocks_supported;
@@ -1629,7 +1623,7 @@ class oci_native_moodle_database extends moodle_database {
      * Obtain session lock
      * @param int $rowid id of the row with session record
      * @param int $timeout max allowed time to wait for the lock in seconds
-     * @return bool success
+     * @return void
      */
     public function get_session_lock($rowid, $timeout) {
         if (!$this->session_lock_supported()) {
@@ -1668,7 +1662,6 @@ class oci_native_moodle_database extends moodle_database {
         oci_free_statement($stmt);
     }
 
-/// transactions
     /**
      * Driver specific start of real database transaction,
      * this can not be used directly in code.

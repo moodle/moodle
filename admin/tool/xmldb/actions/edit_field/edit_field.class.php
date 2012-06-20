@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,8 +23,7 @@
 /**
  * This class will provide the interface for all the edit field actions
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -75,30 +73,30 @@ class edit_field extends XMLDBAction {
 
         // Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
-            $dbdir =& $XMLDB->dbdirs[$dirpath];
+            $dbdir = $XMLDB->dbdirs[$dirpath];
         } else {
             return false;
         }
         if (!empty($XMLDB->editeddirs)) {
-            $editeddir =& $XMLDB->editeddirs[$dirpath];
-            $structure =& $editeddir->xml_file->getStructure();
+            $editeddir = $XMLDB->editeddirs[$dirpath];
+            $structure = $editeddir->xml_file->getStructure();
         }
 
         // Fetch request data
         $tableparam = required_param('table', PARAM_CLEAN);
-        if (!$table =& $structure->getTable($tableparam)) {
+        if (!$table = $structure->getTable($tableparam)) {
             $this->errormsg = 'Wrong table specified: ' . $tableparam;
             return false;
         }
         $fieldparam = required_param('field', PARAM_CLEAN);
-        if (!$field =& $table->getField($fieldparam)) {
+        if (!$field = $table->getField($fieldparam)) {
             // Arriving here from a name change, looking for the new field name
             $fieldparam = required_param('name', PARAM_CLEAN);
-            $field =& $table->getField($fieldparam);
+            $field = $table->getField($fieldparam);
         }
 
-        $dbdir =& $XMLDB->dbdirs[$dirpath];
-        $origstructure =& $dbdir->xml_file->getStructure();
+        $dbdir = $XMLDB->dbdirs[$dirpath];
+        $origstructure = $dbdir->xml_file->getStructure();
 
         $o = ''; // Output starts
 
@@ -136,9 +134,9 @@ class edit_field extends XMLDBAction {
                               XMLDB_TYPE_CHAR    => $field->getXMLDBTypeName(XMLDB_TYPE_CHAR),
                               XMLDB_TYPE_TEXT    => $field->getXMLDBTypeName(XMLDB_TYPE_TEXT),
                               XMLDB_TYPE_BINARY  => $field->getXMLDBTypeName(XMLDB_TYPE_BINARY));
-        // If current field isnt float, delete such column type to avoid its creation from the interface
+        // If current field isn't float, delete such column type to avoid its creation from the interface
         // Note that float fields are supported completely but it's possible than in a next future
-        // we delete them completely from Moodle DB, using, exlusively, number(x,y) types
+        // we delete them completely from Moodle DB, using, exclusively, number(x,y) types
         if ($field->getType() != XMLDB_TYPE_FLOAT) {
             unset ($typeoptions[XMLDB_TYPE_FLOAT]);
         }

@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,8 +23,7 @@
 /**
  * This class will will move table up/down
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -69,31 +67,31 @@ class move_updown_table extends XMLDBAction {
 
         // Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
-            $dbdir =& $XMLDB->dbdirs[$dirpath];
+            $dbdir = $XMLDB->dbdirs[$dirpath];
         } else {
             return false;
         }
         if (!empty($XMLDB->editeddirs)) {
-            $editeddir =& $XMLDB->editeddirs[$dirpath];
-            $structure =& $editeddir->xml_file->getStructure();
+            $editeddir = $XMLDB->editeddirs[$dirpath];
+            $structure = $editeddir->xml_file->getStructure();
         }
 
         $prev = NULL;
         $next = NULL;
         $tableparam = required_param('table', PARAM_CLEAN);
         $direction  = required_param('direction', PARAM_ALPHA);
-        $tables =& $structure->getTables();
+        $tables = $structure->getTables();
         if ($direction == 'down') {
-            $table =& $structure->getTable($tableparam);
-            $swap  =& $structure->getTable($table->getNext());
+            $table = $structure->getTable($tableparam);
+            $swap  = $structure->getTable($table->getNext());
         } else {
-            $swap  =& $structure->getTable($tableparam);
-            $table =& $structure->getTable($swap->getPrevious());
+            $swap  = $structure->getTable($tableparam);
+            $table = $structure->getTable($swap->getPrevious());
         }
 
         // Change the table before the pair
         if ($table->getPrevious()) {
-            $prev =& $structure->getTable($table->getPrevious());
+            $prev = $structure->getTable($table->getPrevious());
             $prev->setNext($swap->getName());
             $swap->setPrevious($prev->getName());
             $prev->setChanged(true);
@@ -102,7 +100,7 @@ class move_updown_table extends XMLDBAction {
         }
         // Change the table after the pair
         if ($swap->getNext()) {
-            $next =& $structure->getTable($swap->getNext());
+            $next = $structure->getTable($swap->getNext());
             $next->setPrevious($table->getName());
             $table->setNext($next->getName());
             $next->setChanged(true);
@@ -117,15 +115,14 @@ class move_updown_table extends XMLDBAction {
         $table->setChanged(true);
 
         // Reorder the structure
-        $structure->orderTables($tables);
-        // Send tables back to structure (the order above break refs)
-        $structure->setTables($tables);
+        $structure->orderTables();
+
         // Recalculate the hash
         $structure->calculateHash(true);
 
         // If the hash has changed from the original one, change the version
         // and mark the structure as changed
-        $origstructure =& $dbdir->xml_file->getStructure();
+        $origstructure = $dbdir->xml_file->getStructure();
         if ($structure->getHash() != $origstructure->getHash()) {
             $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
             $structure->setChanged(true);

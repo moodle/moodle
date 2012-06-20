@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,27 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Native pgsql class representing moodle database interface.
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/dml/moodle_database.php');
-require_once($CFG->libdir.'/dml/pgsql_native_moodle_recordset.php');
-require_once($CFG->libdir.'/dml/pgsql_native_moodle_temptables.php');
+require_once(__DIR__.'/moodle_database.php');
+require_once(__DIR__.'/pgsql_native_moodle_recordset.php');
+require_once(__DIR__.'/pgsql_native_moodle_temptables.php');
 
 /**
  * Native pgsql class representing moodle database interface.
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -566,7 +562,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return bool
      */
     public function setup_is_unicodedb() {
-    /// Get PostgreSQL server_encoding value
+        // Get PostgreSQL server_encoding value
         $sql = "SHOW server_encoding";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
@@ -1044,13 +1040,13 @@ class pgsql_native_moodle_database extends moodle_database {
         list($select, $params, $type) = $this->fix_sql_params($select, $params);
         $i = count($params)+1;
 
-    /// Get column metadata
+        // Get column metadata
         $columns = $this->get_columns($table);
         $column = $columns[$newfield];
 
         $normalised_value = $this->normalise_value($column, $newvalue);
         if (is_array($normalised_value) && array_key_exists('blob', $normalised_value)) {
-        /// Update BYTEA and return
+            // Update BYTEA and return
             $normalised_value = pg_escape_bytea($this->pgsql, $normalised_value['blob']);
             $sql = "UPDATE {$this->prefix}$table SET $newfield = '$normalised_value'::bytea $select";
             $this->query_start($sql, NULL, SQL_QUERY_UPDATE);
@@ -1152,7 +1148,7 @@ class pgsql_native_moodle_database extends moodle_database {
             return " '' ";
         }
         // Add always empty string element so integer-exclusive concats
-        // will work without needing to cast each element explicity
+        // will work without needing to cast each element explicitly
         return " '' || $s ";
     }
 
@@ -1175,7 +1171,6 @@ class pgsql_native_moodle_database extends moodle_database {
         return $positivematch ? '~*' : '!~*';
     }
 
-/// session locking
     public function session_lock_supported() {
         return true;
     }
@@ -1252,7 +1247,6 @@ class pgsql_native_moodle_database extends moodle_database {
         }
     }
 
-/// transactions
     /**
      * Driver specific start of real database transaction,
      * this can not be used directly in code.

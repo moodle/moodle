@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,26 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Experimental pdo database class
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/dml/moodle_database.php');
-require_once($CFG->libdir.'/dml/pdo_moodle_recordset.php');
+require_once(__DIR__.'/moodle_database.php');
+require_once(__DIR__.'/pdo_moodle_recordset.php');
 
 /**
  * Experimental pdo database class
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -102,7 +98,7 @@ abstract class pdo_moodle_database extends moodle_database {
     }
 
     protected function configure_dbconnection() {
-        ///TODO: not needed preconfigure_dbconnection() stuff for PDO drivers?
+        //TODO: not needed preconfigure_dbconnection() stuff for PDO drivers?
     }
 
     /**

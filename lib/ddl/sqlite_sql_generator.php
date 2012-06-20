@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,12 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Experimental SQLite specific SQL code generator.
  *
- * @package    core
- * @subpackage ddl_generator
+ * @package    core_ddl
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,31 +34,41 @@ class sqlite_sql_generator extends sql_generator {
 
 /// Only set values that are different from the defaults present in XMLDBgenerator
 
-    public $drop_default_value_required = true; //To specify if the generator must use some DEFAULT clause to drop defaults
-    public $drop_default_value = NULL; //The DEFAULT clause required to drop defaults
+    /** @var bool To specify if the generator must use some DEFAULT clause to drop defaults.*/
+    public $drop_default_value_required = true;
 
-    public $drop_primary_key = 'ALTER TABLE TABLENAME DROP PRIMARY KEY'; // Template to drop PKs
-                // with automatic replace for TABLENAME and KEYNAME
+    /** @var string The DEFAULT clause required to drop defaults.*/
+    public $drop_default_value = NULL;
 
-    public $drop_unique_key = 'ALTER TABLE TABLENAME DROP KEY KEYNAME'; // Template to drop UKs
-                // with automatic replace for TABLENAME and KEYNAME
+    /** @var string Template to drop PKs. 'TABLENAME' and 'KEYNAME' will be replaced from this template.*/
+    public $drop_primary_key = 'ALTER TABLE TABLENAME DROP PRIMARY KEY';
 
-    public $drop_foreign_key = 'ALTER TABLE TABLENAME DROP FOREIGN KEY KEYNAME'; // Template to drop FKs
-                // with automatic replace for TABLENAME and KEYNAME
-    public $default_for_char = '';       // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
+    /** @var string Template to drop UKs. 'TABLENAME' and 'KEYNAME' will be replaced from this template.*/
+    public $drop_unique_key = 'ALTER TABLE TABLENAME DROP KEY KEYNAME';
 
-    public $sequence_only = true; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name publiciable
-    public $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
-    public $sequence_name = 'INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL'; //Particular name for inline sequences in this generator
+    /** @var string Template to drop FKs. 'TABLENAME' and 'KEYNAME' will be replaced from this template.*/
+    public $drop_foreign_key = 'ALTER TABLE TABLENAME DROP FOREIGN KEY KEYNAME';
 
-    public $drop_index_sql = 'ALTER TABLE TABLENAME DROP INDEX INDEXNAME'; //SQL sentence to drop one index
-                                                               //TABLENAME, INDEXNAME are dynamically replaced
+    /** @var string To define the default to set for NOT NULLs CHARs without default (null=do nothing).*/
+    public $default_for_char = '';
 
-    public $rename_index_sql = null; //SQL sentence to rename one index (MySQL doesn't support this!)
-                                      //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dynamically replaced
+    /** @var bool To avoid outputting the rest of the field specs, leaving only the name and the sequence_name returned.*/
+    public $sequence_only = true;
 
-    public $rename_key_sql = null; //SQL sentence to rename one key (MySQL doesn't support this!)
-                                      //TABLENAME, OLDKEYNAME, NEWKEYNAME are dynamically replaced
+    /** @var bool True if the generator needs to add extra code to generate the sequence fields.*/
+    public $sequence_extra_code = false;
+
+    /** @var string The particular name for inline sequences in this generator.*/
+    public $sequence_name = 'INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL';
+
+    /** @var string SQL sentence to drop one index where 'TABLENAME', 'INDEXNAME' keywords are dynamically replaced.*/
+    public $drop_index_sql = 'ALTER TABLE TABLENAME DROP INDEX INDEXNAME';
+
+    /** @var string SQL sentence to rename one index where 'TABLENAME', 'OLDINDEXNAME' and 'NEWINDEXNAME' are dynamically replaced.*/
+    public $rename_index_sql = null;
+
+    /** @var string SQL sentence to rename one key 'TABLENAME', 'OLDKEYNAME' and 'NEWKEYNAME' are dynamically replaced.*/
+    public $rename_key_sql = null;
 
     /**
      * Creates one new XMLDBmysql
@@ -72,8 +79,9 @@ class sqlite_sql_generator extends sql_generator {
 
     /**
      * Reset a sequence to the id field of a table.
-     * @param string $table name of table or xmldb_object
-     * @return bool success
+     *
+     * @param xmldb_table|string $table name of table or the table object.
+     * @return array of sql statements
      */
     public function getResetSequenceSQL($table) {
 
@@ -125,7 +133,12 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDB Type, length and decimals, returns the DB proper SQL type
+     * Given one XMLDB Type, length and decimals, returns the DB proper SQL type.
+     *
+     * @param int $xmldb_type The xmldb_type defined constant. XMLDB_TYPE_INTEGER and other XMLDB_TYPE_* constants.
+     * @param int $xmldb_length The length of that data type.
+     * @param int $xmldb_decimals The decimal places of precision of the data type.
+     * @return string The DB defined data type.
      */
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
 
@@ -263,7 +276,14 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to alter the field in the table.
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_field.
+     * @param xmldb_field $xmldb_field The instance of xmldb_field to create the SQL from.
+     * @param string $skip_type_clause The type clause on alter columns, NULL by default.
+     * @param string $skip_default_clause The default clause on alter columns, NULL by default.
+     * @param string $skip_notnull_clause The null/notnull clause on alter columns, NULL by default.
+     * @return string The field altering SQL statement.
      */
     public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
         return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
@@ -279,8 +299,12 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to add its default
      * (usually invoked from getModifyDefaultSQL()
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param xmldb_field $xmldb_field The xmldb_field object instance.
+     * @return array Array of SQL statements to create a field's default.
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
         return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
@@ -288,8 +312,12 @@ class sqlite_sql_generator extends sql_generator {
 
     /**
      * Given one correct xmldb_field and the new name, returns the SQL statements
-     * to rename it (inside one array)
-     * SQLite is pretty different from the standard to justify this overloading
+     * to rename it (inside one array).
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_field.
+     * @param xmldb_field $xmldb_field The instance of xmldb_field to get the renamed field from.
+     * @param string $newname The new name to rename the field to.
+     * @return array The SQL statements for renaming the field.
      */
     public function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
         $oldfield = clone($xmldb_field);
@@ -321,7 +349,11 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop the field from the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop the field from the table.
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_field.
+     * @param xmldb_field $xmldb_field The instance of xmldb_field to create the SQL from.
+     * @return array The SQL statement for dropping a field from the table.
      */
     public function getDropFieldSQL($xmldb_table, $xmldb_field) {
         return $this->getAlterTableSchema($xmldb_table, NULL, $xmldb_field);
@@ -346,31 +378,50 @@ class sqlite_sql_generator extends sql_generator {
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its default
      * (usually invoked from getModifyDefaultSQL()
+     *
+     * Note that this method may be dropped in future.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param xmldb_field $xmldb_field The xmldb_field object instance.
+     * @return array Array of SQL statements to create a field's default.
+     *
+     * @todo MDL-31147 Moodle 2.1 - Drop getDropDefaultSQL()
      */
     public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
         return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
     }
 
     /**
-     * Returns the code (in array) needed to add one comment to the table
+     * Returns the code (array of statements) needed to add one comment to the table.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @return array Array of SQL statements to add one comment to the table.
      */
     function getCommentSQL ($xmldb_table) {
         return array();
     }
 
     /**
-     * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg)
-     * return if such name is currently in use (true) or no (false)
-     * (invoked from getNameForObject()
+     * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg).
+     *
+     * (MySQL requires the whole xmldb_table object to be specified, so we add it always)
+     *
+     * This is invoked from getNameForObject().
+     * Only some DB have this implemented.
+     *
+     * @param string $object_name The object's name to check for.
+     * @param string $type The object's type (pk, uk, fk, ck, ix, uix, seq, trg).
+     * @param string $table_name The table's name to check in
+     * @return bool If such name is currently in use (true) or no (false)
      */
     public function isNameInUse($object_name, $type, $table_name) {
         // TODO: add introspection code
         return false; //No name in use found
     }
 
-
     /**
      * Returns an array of reserved words (lowercase) for this DB
+     * @return array An array of database specific reserved words
      */
     public static function getReservedWords() {
     /// From http://www.sqlite.org/lang_keywords.html
@@ -399,6 +450,11 @@ class sqlite_sql_generator extends sql_generator {
         return $reserved_words;
     }
 
+    /**
+     * Adds slashes to string.
+     * @param string $s
+     * @return string The escaped string.
+     */
     public function addslashes($s) {
         // do not use php addslashes() because it depends on PHP quote settings!
         $s = str_replace("'",  "''", $s);

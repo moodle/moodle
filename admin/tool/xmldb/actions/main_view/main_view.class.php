@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,8 +26,7 @@
  * From here, files can be created, edited, saved and deleted, plus some
  * extra utilities like displaying docs, xml info and performing various consistency tests
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -134,9 +132,9 @@ class main_view extends XMLDBAction {
                 if (!isset($dbdir->has_changed) && isset($dbdir->xml_loaded)) {
                     $dbdir->xml_changed = false;
                     if (isset($XMLDB->editeddirs[$key])) {
-                        $editeddir =& $XMLDB->editeddirs[$key];
+                        $editeddir = $XMLDB->editeddirs[$key];
                         if (isset($editeddir->xml_file)) {
-                            $structure =& $editeddir->xml_file->getStructure();
+                            $structure = $editeddir->xml_file->getStructure();
                             if ($structure->hasChanged()) {
                                 $dbdir->xml_changed = true;
                                 $editeddir->xml_changed = true;
@@ -197,7 +195,7 @@ class main_view extends XMLDBAction {
                     // Check if the file has been manually edited while being modified in the editor
                     if ($dbdir->filemtime != filemtime($key . '/install.xml')) {
                         // File manually modified. Add to errors.
-                        if ($structure =& $dbdir->xml_file->getStructure()) {
+                        if ($structure = $dbdir->xml_file->getStructure()) {
                             $structure->errormsg = 'Warning: File locally modified while using the XMLDB Editor. Saving will overwrite local changes';
                         }
                     }
@@ -267,7 +265,7 @@ class main_view extends XMLDBAction {
                 $row = ($row + 1) % 2;
                 // show errors if they exist
                 if (isset($dbdir->xml_file)) {
-                    if ($structure =& $dbdir->xml_file->getStructure()) {
+                    if ($structure = $dbdir->xml_file->getStructure()) {
                         if ($errors = $structure->getAllErrors()) {
                             if ($hithis) {
                                 $o .= '<tr class="highlight"><td class="error cell" colspan="10">' . implode (', ', $errors) . '</td></tr>';

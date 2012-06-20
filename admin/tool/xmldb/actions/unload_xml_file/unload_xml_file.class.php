@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,8 +23,7 @@
 /**
  * This class will unload one loaded file completely
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -71,7 +69,7 @@ class unload_xml_file extends XMLDBAction {
         // Get the original dir and delete some elements
         if (!empty($XMLDB->dbdirs)) {
             if (isset($XMLDB->dbdirs[$dirpath])) {
-                $dbdir =& $XMLDB->dbdirs[$dirpath];
+                $dbdir = $XMLDB->dbdirs[$dirpath];
                 if ($dbdir) {
                     unset($dbdir->xml_file);
                     unset($dbdir->xml_loaded);
