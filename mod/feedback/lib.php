@@ -1928,6 +1928,17 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid 
 ////////////////////////////////////////////////
 
 /**
+ * cleans the userinput while submitting the form.
+ *
+ * @param mixed $value
+ * @return mixed
+ */
+function feedback_clean_input_value($item, $value) {
+    $itemobj = feedback_get_item_class($item->typ);
+    return $itemobj->clean_input_value($value);
+}
+
+/**
  * this saves the values of an completed.
  * if the param $tmp is set true so the values are saved temporary in table feedback_valuetmp.
  * if there is already a completed and the userid is set so the values are updated.

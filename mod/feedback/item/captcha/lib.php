@@ -280,4 +280,8 @@ class feedback_item_captcha extends feedback_item_base {
     function can_switch_require() {
         return false;
     }
+
+    function clean_input_value($value) {
+        return clean_param($value, PARAM_RAW);
+    }
 }

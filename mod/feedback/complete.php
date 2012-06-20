@@ -241,7 +241,7 @@
                 $tracking->completed = $new_completed_id;
                 $DB->insert_record('feedback_tracking', $tracking);
                 unset($SESSION->feedback->is_started);
-                
+
                 // Update completion state
                 $completion = new completion_info($course);
                 if ($completion->is_enabled($cm) && $feedback->completionsubmit) {
@@ -434,7 +434,8 @@
                         //get the value
                         $frmvaluename = $feedbackitem->typ . '_'. $feedbackitem->id;
                         if(isset($savereturn)) {
-                            $value =  isset($formdata->{$frmvaluename})?$formdata->{$frmvaluename}:NULL;
+                            $value = isset($formdata->{$frmvaluename})?$formdata->{$frmvaluename}:NULL;
+                            $value = feedback_clean_input_value($feedbackitem, $value);
                         }else {
                             if(isset($feedbackcompletedtmp->id)) {
                                 $value = feedback_get_item_value($feedbackcompletedtmp->id, $feedbackitem->id, true);
