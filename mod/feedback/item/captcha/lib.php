@@ -326,4 +326,12 @@ class feedback_item_captcha extends feedback_item_base {
     public function can_switch_require() {
         return false;
     }
+
+    public function value_type() {
+        return PARAM_RAW;
+    }
+
+    public function clean_input_value($value) {
+        return clean_param($value, $this->value_type());
+    }
 }
