@@ -850,17 +850,17 @@ abstract class restore_dbops {
 
         // itemname = null, we are going to match only by context, no need to use itemid (all them are 0)
         if ($itemname == null) {
-            $sql = 'SELECT contextid, component, filearea, itemid, itemid AS newitemid, info
+            $sql = "SELECT id AS bftid, contextid, component, filearea, itemid, itemid AS newitemid, info
                       FROM {backup_files_temp}
                      WHERE backupid = ?
                        AND contextid = ?
                        AND component = ?
-                       AND filearea  = ?';
+                       AND filearea  = ?";
             $params = array($restoreid, $oldcontextid, $component, $filearea);
 
         // itemname not null, going to join with backup_ids to perform the old-new mapping of itemids
         } else {
-            $sql = "SELECT f.contextid, f.component, f.filearea, f.itemid, i.newitemid, f.info
+            $sql = "SELECT f.id AS bftid, f.contextid, f.component, f.filearea, f.itemid, i.newitemid, f.info
                       FROM {backup_files_temp} f
                       JOIN {backup_ids_temp} i ON i.backupid = f.backupid
                                               $parentitemctxmatchsql
@@ -924,6 +924,13 @@ abstract class restore_dbops {
                     );
                     $fs->create_file_from_pathname($file_record, $backuppath);
                 }
+
+                // store the the new contextid and the new itemid in case we need to remap
+                // references to this file later
+                $DB->update_record('backup_files_temp', array(
+                    'id' => $rec->bftid,
+                    'newcontextid' => $newcontextid,
+                    'newitemid' => $rec->newitemid), true);
 
             } else {
                 // this is an alias - we can't create it yet so we stash it in a temp
