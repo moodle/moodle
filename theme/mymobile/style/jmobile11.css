@@ -24,9 +24,9 @@
 	background-image:         linear-gradient( #3c3c3c /*{a-bar-background-start}*/, #111 /*{a-bar-background-end}*/);
 }
 .ui-bar-a,
-.ui-bar-a input, 
+.ui-bar-a input,
 .ui-bar-a select,
-.ui-bar-a textarea, 
+.ui-bar-a textarea,
 .ui-bar-a button {
 	font-family: Helvetica, Arial, sans-serif /*{global-font-family}*/;
 }
@@ -58,7 +58,7 @@
 	background-image:    -moz-linear-gradient( #444 /*{a-body-background-start}*/, #222 /*{a-body-background-end}*/); /* FF3.6 */
 	background-image:     -ms-linear-gradient( #444 /*{a-body-background-start}*/, #222 /*{a-body-background-end}*/); /* IE10 */
 	background-image:      -o-linear-gradient( #444 /*{a-body-background-start}*/, #222 /*{a-body-background-end}*/); /* Opera 11.10+ */
-	background-image:         linear-gradient( #444 /*{a-body-background-start}*/, #222 /*{a-body-background-end}*/);	
+	background-image:         linear-gradient( #444 /*{a-body-background-start}*/, #222 /*{a-body-background-end}*/);
 }
 .ui-overlay-a {
 	background-image: none;
@@ -814,7 +814,7 @@ a.ui-link-inherit {
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
        only screen and (min--moz-device-pixel-ratio: 1.5),
        only screen and (min-resolution: 240dpi) {
-	
+
 	.ui-icon-plus, .ui-icon-minus, .ui-icon-delete, .ui-icon-arrow-r,
 	.ui-icon-arrow-l, .ui-icon-arrow-u, .ui-icon-arrow-d, .ui-icon-check,
 	.ui-icon-gear, .ui-icon-refresh, .ui-icon-forward, .ui-icon-back,
@@ -909,7 +909,7 @@ a.ui-link-inherit {
 }
 .ui-icon-checkbox-off,
 .ui-icon-radio-off {
-	background-color: transparent;	
+	background-color: transparent;
 }
 .ui-checkbox-on .ui-icon,
 .ui-radio-on .ui-icon {
@@ -985,7 +985,7 @@ a.ui-link-inherit {
 .ui-corner-bl,
 .ui-corner-br,
 .ui-corner-top,
-.ui-corner-bottom, 
+.ui-corner-bottom,
 .ui-corner-right,
 .ui-corner-left,
 .ui-corner-all,
@@ -994,7 +994,7 @@ a.ui-link-inherit {
 .ui-btn-corner-bl,
 .ui-btn-corner-br,
 .ui-btn-corner-top,
-.ui-btn-corner-bottom, 
+.ui-btn-corner-bottom,
 .ui-btn-corner-right,
 .ui-btn-corner-left,
 .ui-btn-corner-all {
@@ -1534,7 +1534,6 @@ div.ui-mobile-viewport { overflow-x: hidden; }
 	-moz-animation-name: flipintoright;
 	-webkit-animation-duration: 250ms;
 	-moz-animation-duration: 250ms;
-	
 }
 .turn.out.reverse {
 	-webkit-transform: rotateY(90deg) scale(.9);
@@ -1587,7 +1586,7 @@ div.ui-mobile-viewport { overflow-x: hidden; }
 }
 .ui-dialog.flow {
 	-webkit-transform-origin: none;
-	-moz-transform-origin: none;	
+	-moz-transform-origin: none;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 }
@@ -1846,7 +1845,7 @@ div.ui-mobile-viewport { overflow-x: hidden; }
 @media all and (min-width: 450px){
 	.ui-field-contain .ui-controlgroup-label { vertical-align: top; display: inline-block;  width: 20%;  margin: 0 2% 0 0;  }
 	.ui-field-contain .ui-controlgroup-controls { width: 60%; display: inline-block; }
-	.ui-field-contain .ui-controlgroup .ui-select { width: 100%; } 
+	.ui-field-contain .ui-controlgroup .ui-select { width: 100%; }
 	.ui-field-contain .ui-controlgroup-horizontal .ui-select { width: auto; }
 }
 .ui-dialog {
@@ -1858,25 +1857,25 @@ div.ui-mobile-viewport { overflow-x: hidden; }
 	border: none;
 	overflow: hidden;
 }
-.ui-dialog .ui-header, 
+.ui-dialog .ui-header,
 .ui-dialog .ui-content,
-.ui-dialog .ui-footer { 
+.ui-dialog .ui-footer {
 	display: block;
 	position: relative;
 	width: auto;
 }
-.ui-dialog .ui-header, 
+.ui-dialog .ui-header,
 .ui-dialog .ui-footer  {
-	z-index: 10; 
+	z-index: 10;
 	padding: 0;
 }
 .ui-dialog .ui-footer {
 	padding: 0 15px;
 }
-.ui-dialog .ui-content { 
+.ui-dialog .ui-content {
 	padding: 15px;
 }
-.ui-dialog { 
+.ui-dialog {
 	margin-top: -15px;
 }
 .ui-checkbox, .ui-radio { position: relative; clear: both; margin: .2em 0 .5em; z-index: 1;  }
@@ -1924,7 +1923,7 @@ div.ui-mobile-viewport { overflow-x: hidden; }
 .ui-select .ui-disabled { opacity: .3; }
 @-moz-document url-prefix() {.ui-select .ui-btn select { opacity: 0.0001; }}
 .ui-select .ui-btn select.ui-select-nativeonly { opacity: 1; text-indent: 0; }
-.ui-select .ui-btn-icon-right .ui-btn-inner { padding-right: 45px; } 
+.ui-select .ui-btn-icon-right .ui-btn-inner { padding-right: 45px; }
 .ui-select .ui-btn-icon-right .ui-icon { right: 15px;  }
 .ui-select .ui-mini.ui-btn-icon-right .ui-icon { right: 7px;  }
 /* labels */
@@ -1945,7 +1944,7 @@ label.ui-select { font-size: 16px; line-height: 1.4;  font-weight: normal; margi
 @media all and (min-width: 450px){
 	.ui-field-contain label.ui-select { vertical-align: top;  display: inline-block;  width: 20%;  margin: 0 2% 0 0; }
 	.ui-field-contain .ui-select { width: 60%; display: inline-block; }
-}	
+}
 /* when no placeholder is defined in a multiple select, the header height doesn't even extend past the close button.  this shim's content in there */
 .ui-selectmenu .ui-header h1:after { content: '.'; visibility: hidden; }
 label.ui-input-text { font-size: 16px; line-height: 1.4; display: block; font-weight: normal; margin: 0 0 .3em; }
@@ -1969,9 +1968,9 @@ textarea.ui-mini { height: 45px; }
 	.ui-field-contain textarea.ui-input-text,
 	.ui-field-contain .ui-input-search { width: 60%; display: inline-block; }
 	.ui-field-contain .ui-input-search { width: 50%; }
-	.ui-hide-label input.ui-input-text, 
+	.ui-hide-label input.ui-input-text,
 	.ui-hide-label textarea.ui-input-text,
-	.ui-hide-label .ui-input-search { padding: .4em; width: 97%; } 
+	.ui-hide-label .ui-input-search { padding: .4em; width: 97%; }
 	.ui-input-search input.ui-input-text { width: 98%; /*echos rule from above*/ }
 }
 .ui-listview { margin: 0; counter-reset: listnumbering; }
