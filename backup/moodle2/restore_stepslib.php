@@ -3093,6 +3093,281 @@ class restore_create_question_files extends restore_execution_step {
     }
 }
 
+
+/**
+ * Try to restore aliases and references to external files.
+ *
+ * The queue of these files was prepared for us in {@link restore_dbops::send_files_to_pool()}.
+ * We expect that all regular (non-alias) files have already been restored. Make sure
+ * there is no restore step executed after this one that would call send_files_to_pool() again.
+ *
+ * You may notice we have hardcoded support for Server files, Legacy course files
+ * and user Private files here at the moment. This could be eventually replaced with a set of
+ * callbacks in the future if needed.
+ *
+ * @copyright 2012 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class restore_process_file_aliases_queue extends restore_execution_step {
+
+    /**
+     * What to do when this step is executed.
+     */
+    protected function define_execution() {
+        global $DB;
+
+        $this->log('processing file aliases queue', backup::LOG_INFO);
+
+        $fs = get_file_storage();
+
+        // Load the queue.
+        $rs = $DB->get_recordset('backup_ids_temp',
+            array('backupid' => $this->get_restoreid(), 'itemname' => 'file_aliases_queue'),
+            '', 'info');
+
+        // Iterate over aliases in the queue.
+        foreach ($rs as $record) {
+            $info = unserialize(base64_decode($record->info));
+
+            // Try to pick a repository instance that should serve the alias.
+            $repository = $this->choose_repository($info);
+
+            if (is_null($repository)) {
+                $this->notify_failure($info, 'unable to find a matching repository instance');
+                continue;
+            }
+
+            if ($info->oldfile->repositorytype === 'local' or $info->oldfile->repositorytype === 'coursefiles') {
+                // Aliases to Server files and Legacy course files may refer to a file
+                // contained in the backup file or to some existing file (if we are on the
+                // same site).
+                try {
+                    $reference = file_storage::unpack_reference($info->oldfile->reference);
+                } catch (Exception $e) {
+                    $this->notify_failure($info, 'invalid reference field format');
+                    continue;
+                }
+
+                // Let's see if the referred source file was also included in the backup.
+                $candidates = $DB->get_recordset('backup_files_temp', array(
+                        'backupid' => $this->get_restoreid(),
+                        'contextid' => $reference['contextid'],
+                        'component' => $reference['component'],
+                        'filearea' => $reference['filearea'],
+                        'itemid' => $reference['itemid'],
+                    ), '', 'info, newcontextid, newitemid');
+
+                $source = null;
+
+                foreach ($candidates as $candidate) {
+                    $candidateinfo = unserialize(base64_decode($candidate->info));
+                    if ($candidateinfo->filename === $reference['filename']
+                            and $candidateinfo->filepath === $reference['filepath']
+                            and !is_null($candidate->newcontextid)
+                            and !is_null($candidate->newitemid) ) {
+                        $source = $candidateinfo;
+                        $source->contextid = $candidate->newcontextid;
+                        $source->itemid = $candidate->newitemid;
+                        break;
+                    }
+                }
+                $candidates->close();
+
+                if ($source) {
+                    // We have an alias that refers to another file also included in
+                    // the backup. Let us change the reference field so that it refers
+                    // to the restored copy of the original file.
+                    $reference = file_storage::pack_reference($source);
+
+                    // Send the new alias to the filepool.
+                    $fs->create_file_from_reference($info->newfile, $repository->id, $reference);
+                    $this->notify_success($info);
+                    continue;
+
+                } else {
+                    // This is a reference to some moodle file that was not contained in the backup
+                    // file. If we are restoring to the same site, keep the reference untouched
+                    // and restore the alias as is if the referenced file exists.
+                    if ($this->task->is_samesite()) {
+                        if ($fs->file_exists($reference['contextid'], $reference['component'], $reference['filearea'],
+                                $reference['itemid'], $reference['filepath'], $reference['filename'])) {
+                            $reference = file_storage::pack_reference($reference);
+                            $fs->create_file_from_reference($info->newfile, $repository->id, $reference);
+                            $this->notify_success($info);
+                            continue;
+                        } else {
+                            $this->notify_failure($info, 'referenced file not found');
+                            continue;
+                        }
+
+                    // If we are at other site, we can't restore this alias.
+                    } else {
+                        $this->notify_failure($info, 'referenced file not included');
+                        continue;
+                    }
+                }
+
+            } else if ($info->oldfile->repositorytype === 'user') {
+                if ($this->task->is_samesite()) {
+                    // For aliases to user Private files at the same site, we have a chance to check
+                    // if the referenced file still exists.
+                    try {
+                        $reference = file_storage::unpack_reference($info->oldfile->reference);
+                    } catch (Exception $e) {
+                        $this->notify_failure($info, 'invalid reference field format');
+                        continue;
+                    }
+                    if ($fs->file_exists($reference['contextid'], $reference['component'], $reference['filearea'],
+                            $reference['itemid'], $reference['filepath'], $reference['filename'])) {
+                        $reference = file_storage::pack_reference($reference);
+                        $fs->create_file_from_reference($info->newfile, $repository->id, $reference);
+                        $this->notify_success($info);
+                        continue;
+                    } else {
+                        $this->notify_failure($info, 'referenced file not found');
+                        continue;
+                    }
+
+                // If we are at other site, we can't restore this alias.
+                } else {
+                    $this->notify_failure($info, 'restoring at another site');
+                    continue;
+                }
+
+            } else {
+                // This is a reference to some external file such as in boxnet or dropbox.
+                // If we are restoring to the same site, keep the reference untouched and
+                // restore the alias as is.
+                if ($this->task->is_samesite()) {
+                    $fs->create_file_from_reference($info->newfile, $repository->id, $info->oldfile->reference);
+                    $this->notify_success($info);
+                    continue;
+
+                // If we are at other site, we can't restore this alias.
+                } else {
+                    $this->notify_failure($info, 'restoring at another site');
+                    continue;
+                }
+            }
+        }
+        $rs->close();
+    }
+
+    /**
+     * Choose the repository instance that should handle the alias.
+     *
+     * At the same site, we can rely on repository instance id and we just
+     * check it still exists. On other site, try to find matching Server files or
+     * Legacy course files repository instance. Return null if no matching
+     * repository instance can be found.
+     *
+     * @param stdClass $info
+     * @return repository|null
+     */
+    private function choose_repository(stdClass $info) {
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
+
+        if ($this->task->is_samesite()) {
+            // We can rely on repository instance id.
+            try {
+                return repository::get_repository_by_id($info->oldfile->repositoryid, SYSCONTEXTID);
+            } catch (Exception $e) {
+                return null;
+            }
+
+        } else {
+            // We can rely on repository type only.
+            if (empty($info->oldfile->repositorytype)) {
+                return null;
+            }
+
+            // Both Server files and Legacy course files repositories have a single
+            // instance at the system context to use. Let us try to find it.
+            if ($info->oldfile->repositorytype === 'local' or $info->oldfile->repositorytype === 'coursefiles') {
+                $sql = "SELECT ri.id
+                          FROM {repository} r
+                          JOIN {repository_instances} ri ON ri.typeid = r.id
+                         WHERE r.type = ? AND ri.contextid = ?";
+                $ris = $DB->get_records_sql($sql, array($info->oldfile->repositorytype, SYSCONTEXTID));
+                if (empty($ris)) {
+                    return null;
+                }
+                $repoid = reset(array_keys($ris));
+                try {
+                    return repository::get_repository_by_id($repoid, SYSCONTEXTID);
+                } catch (Exception $e) {
+                    return null;
+                }
+            }
+
+            return null;
+        }
+    }
+
+    /**
+     * Let the user know that the given alias was successfully restored
+     *
+     * @param stdClass $info
+     */
+    private function notify_success(stdClass $info) {
+        $filedesc = $this->describe_alias($info);
+        $this->log('successfully restored alias', backup::LOG_DEBUG, $filedesc, 1);
+    }
+
+    /**
+     * Let the user know that the given alias can't be restored
+     *
+     * @param stdClass $info
+     * @param string $reason detailed reason to be logged
+     */
+    private function notify_failure(stdClass $info, $reason = '') {
+        $filedesc = $this->describe_alias($info);
+        if ($reason) {
+            $reason = ' ('.$reason.')';
+        }
+        $this->log('unable to restore alias'.$reason, backup::LOG_WARNING, $filedesc, 1);
+    }
+
+    /**
+     * Return a human readable description of the alias file
+     *
+     * @param stdClass $info
+     * @return string
+     */
+    private function describe_alias(stdClass $info) {
+
+        $filedesc = $this->expected_alias_location($info->newfile);
+
+        if (!is_null($info->oldfile->source)) {
+            $filedesc .= ' ('.$info->oldfile->source.')';
+        }
+
+        return $filedesc;
+    }
+
+    /**
+     * Return the expected location of a file
+     *
+     * Please note this may and may not work as a part of URL to pluginfile.php
+     * (depends on how the given component/filearea deals with the itemid).
+     *
+     * @param stdClass $filerecord
+     * @return string
+     */
+    private function expected_alias_location($filerecord) {
+
+        $filedesc = '/'.$filerecord->contextid.'/'.$filerecord->component.'/'.$filerecord->filearea;
+        if (!is_null($filerecord->itemid)) {
+            $filedesc .= '/'.$filerecord->itemid;
+        }
+        $filedesc .= $filerecord->filepath.$filerecord->filename;
+
+        return $filedesc;
+    }
+}
+
+
 /**
  * Abstract structure step, to be used by all the activities using core questions stuff
  * (like the quiz module), to support qtype plugins, states and sessions

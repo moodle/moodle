@@ -83,8 +83,14 @@ class restore_final_task extends restore_task {
         // executing it to perform some final adjustments of information
         // not available when the task was executed.
         // This step is always the last one performing modifications on restored information
-        // Don't add any new step after it. Only cache rebuild and clean are allowed.
+        // Don't add any new step after it. Only aliases queue, cache rebuild and clean are allowed.
         $this->add_step(new restore_execute_after_restore('executing_after_restore'));
+
+        // All files were sent to the filepool by now. We need to process
+        // the aliases yet as they were not actually created but stashed for us instead.
+        // We execute this step after executing_after_restore so that there can't be no
+        // more files sent to the filepool after this.
+        $this->add_step(new restore_process_file_aliases_queue('process_file_aliases_queue'));
 
         // Rebuild course cache to see results, whoah!
         $this->add_step(new restore_rebuild_course_cache('rebuild_course_cache'));
