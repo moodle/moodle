@@ -17,8 +17,7 @@
 /**
  * Unit tests for the drag-and-drop words shape code.
  *
- * @package    qtype
- * @subpackage ddmarker
+ * @package    qtype_ddmarker
  * @copyright  2012 The Open University
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,6 +25,7 @@
 
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
 require_once($CFG->dirroot . '/question/type/ddmarker/shapes.php');
 
@@ -33,10 +33,11 @@ require_once($CFG->dirroot . '/question/type/ddmarker/shapes.php');
 /**
  * Unit tests for shape code
  *
- * @copyright  2009 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      qtype_ddmarker
  */
-class qtype_ddmarker_shapes_test extends UnitTestCase {
+class qtype_ddmarker_shapes_test extends basic_testcase {
 
     public function test_polygon_hit_test() {
         $shape = new qtype_ddmarker_shape_polygon('10,10;20,10;20,20;10,20');

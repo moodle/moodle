@@ -17,8 +17,7 @@
 /**
  * Unit tests for the drag-and-drop markers question type.
  *
- * @package    qtype
- * @subpackage ddmarker
+ * @package    qtype_ddmarker
  * @copyright  2012 The Open University
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,16 +25,18 @@
 
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
-require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/ddmarker/simpletest/helper.php');
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
 
 
 /**
  * Unit tests for the drag-and-drop markers question type.
  *
- * @copyright  2010 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      qtype_ddmarker
  */
 class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
@@ -48,7 +49,7 @@ class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $expectedattrs = array();
         $expectedattrs['class'] = $class;
 
-        return new ContainsTagWithAttributes('span', $expectedattrs);
+        return new question_contains_tag_with_attributes('span', $expectedattrs);
     }
 
     protected function get_contains_hidden_expectation($choiceno, $value = null) {
@@ -58,7 +59,7 @@ class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
         if (!is_null($value)) {
             $expectedattributes['value'] = s($value);
         }
-        return new ContainsTagWithAttributes('input', $expectedattributes);
+        return new question_contains_tag_with_attributes('input', $expectedattributes);
     }
 
     public function test_interactive_behaviour() {
@@ -122,7 +123,7 @@ class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_hidden_expectation(2, '100,250'),
                 $this->get_contains_hidden_expectation(3, '150,250'),
                 $this->get_contains_try_again_button_expectation(true),
-                new PatternExpectation('/' .
+                new question_pattern_expectation('/' .
                         preg_quote(get_string('notcomplete', 'qbehaviour_interactive')) . '/'),
                 $this->get_contains_hint_expectation('This is the first hint'));
 
@@ -365,7 +366,7 @@ class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
-        $this->assertEqual('interactivecountback',
+        $this->assertEquals('interactivecountback',
                 $this->quba->get_question_attempt($this->slot)->get_behaviour_name());
         $this->check_current_output(
                 $this->get_contains_draggable_marker_home_expectation(1, false),
@@ -394,7 +395,7 @@ class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new PatternExpectation('/' .
+                new question_pattern_expectation('/' .
                         preg_quote(get_string('notcomplete', 'qbehaviour_interactive')) . '/'),
                 $this->get_contains_hint_expectation('This is the first hint'),
                 $this->get_contains_num_parts_correct(2),
@@ -405,7 +406,7 @@ class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
         // Check that extract responses will return the reset data.
         $prefix = $this->quba->get_field_prefix($this->slot);
-        $this->assertEqual(array('c1' => '50,50', 'c2' => '150,50'),
+        $this->assertEquals(array('c1' => '50,50', 'c2' => '150,50'),
                 $this->quba->extract_responses($this->slot,
                 array($prefix . 'c1' => '50,50', $prefix . 'c2' => '150,50', '-tryagain' => 1)));
 
@@ -445,7 +446,7 @@ class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new PatternExpectation('/' .
+                new question_pattern_expectation('/' .
                         preg_quote(get_string('notcomplete', 'qbehaviour_interactive')) . '/'),
                 $this->get_contains_hint_expectation('This is the second hint'),
                 $this->get_contains_num_parts_correct(2),
@@ -708,7 +709,7 @@ class qtype_ddmarker_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
         // Verify.
         $this->displayoptions->rightanswer = question_display_options::VISIBLE;
-        $this->assertEqual('{Drop zone 1 -> quick}, '.
+        $this->assertEquals('{Drop zone 1 -> quick}, '.
                             '{Drop zone 2 -> fox}, '.
                             '{Drop zone 3 -> lazy}',
                             $dd->get_right_answer_summary());

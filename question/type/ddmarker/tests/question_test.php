@@ -17,8 +17,7 @@
 /**
  * Unit tests for the drag-and-drop markers question definition class.
  *
- * @package    qtype
- * @subpackage ddmarker
+ * @package    qtype_ddmarker
  * @copyright  2012 The Open University
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,22 +25,24 @@
 
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
-require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/ddmarker/simpletest/helper.php');
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
 
 
 /**
  * Unit tests for the drag-and-drop markers question definition class.
  *
- * @copyright  2009 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @group      qtype_ddmarker
  */
-class qtype_ddmarker_question_test extends UnitTestCase {
+class qtype_ddmarker_question_test extends basic_testcase {
 
     public function test_get_question_summary() {
         $dd = test_question_maker::make_question('ddmarker');
-        $this->assertEqual('The quick brown fox jumped over the lazy dog.; '.
+        $this->assertEquals('The quick brown fox jumped over the lazy dog.; '.
                             '[[Drop zone 1]] -> {quick / fox / lazy}; '.
                             '[[Drop zone 2]] -> {quick / fox / lazy}; '.
                             '[[Drop zone 3]] -> {quick / fox / lazy}',
@@ -50,7 +51,7 @@ class qtype_ddmarker_question_test extends UnitTestCase {
 
     public function test_get_question_summary_maths() {
         $dd = test_question_maker::make_question('ddmarker', 'maths');
-        $this->assertEqual('Fill in the operators to make this equation work:; '.
+        $this->assertEquals('Fill in the operators to make this equation work:; '.
                             '[[Drop zone 1]] -> {+ / - / * / /}; '.
                             '[[Drop zone 2]] -> {+ / - / * / /}; '.
                             '[[Drop zone 3]] -> {+ / - / * / /}',
@@ -62,7 +63,7 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual('{Drop zone 1 -> quick}, '.
+        $this->assertEquals('{Drop zone 1 -> quick}, '.
                             '{Drop zone 2 -> fox}, '.
                             '{Drop zone 3 -> lazy}',
                 $dd->summarise_response(array('c1' => '50,50',
@@ -75,7 +76,7 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual('{Drop zone 1 -> +}, '.
+        $this->assertEquals('{Drop zone 1 -> +}, '.
                             '{Drop zone 2 -> +}, '.
                             '{Drop zone 3 -> +}',
                 $dd->summarise_response(array('c1' => '50,50;150,50;50,150',
@@ -85,12 +86,12 @@ class qtype_ddmarker_question_test extends UnitTestCase {
 
     public function test_get_random_guess_score() {
         $dd = test_question_maker::make_question('ddmarker');
-        $this->assertEqual(null, $dd->get_random_guess_score());
+        $this->assertEquals(null, $dd->get_random_guess_score());
     }
 
     public function test_get_random_guess_score_maths() {
         $dd = test_question_maker::make_question('ddmarker', 'maths');
-        $this->assertEqual(null, $dd->get_random_guess_score());
+        $this->assertEquals(null, $dd->get_random_guess_score());
     }
 
     public function test_get_right_choice_for() {
@@ -98,9 +99,9 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(1, $dd->get_right_choice_for(1));
-        $this->assertEqual(2, $dd->get_right_choice_for(2));
-        $this->assertEqual(3, $dd->get_right_choice_for(3));
+        $this->assertEquals(1, $dd->get_right_choice_for(1));
+        $this->assertEquals(2, $dd->get_right_choice_for(2));
+        $this->assertEquals(3, $dd->get_right_choice_for(3));
     }
 
     public function test_get_right_choice_for_maths() {
@@ -108,9 +109,9 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(1, $dd->get_right_choice_for(1));
-        $this->assertEqual(1, $dd->get_right_choice_for(2));
-        $this->assertEqual(1, $dd->get_right_choice_for(3));
+        $this->assertEquals(1, $dd->get_right_choice_for(1));
+        $this->assertEquals(1, $dd->get_right_choice_for(2));
+        $this->assertEquals(1, $dd->get_right_choice_for(3));
     }
 
     public function test_clear_wrong_from_response() {
@@ -119,7 +120,7 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd->start_attempt(new question_attempt_step(), 1);
 
         $initialresponse = array('c1' => '50,50', 'c2' => '100,100', 'c3' => '100,100;200,200');
-        $this->assertEqual(array('c1' => '50,50', 'c2' => '', 'c3' => ''),
+        $this->assertEquals(array('c1' => '50,50', 'c2' => '', 'c3' => ''),
                 $dd->clear_wrong_from_response($initialresponse));
     }
 
@@ -131,15 +132,15 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         //second returned param in array is the max of correct choices or the actual number of
         //items dragged.
         $response1 = array('c1' => '50,50', 'c2' => '100,100', 'c3' => '100,100;200,200');
-        $this->assertEqual(array(1, 4), $dd->get_num_parts_right($response1));
+        $this->assertEquals(array(1, 4), $dd->get_num_parts_right($response1));
         $response2 = array('c1' => '50,50;150,50;50,150',
                             'c2' => '100,100',
                             'c3' => '100,100;200,200');
-        $this->assertEqual(array(1, 6), $dd->get_num_parts_right($response2));
+        $this->assertEquals(array(1, 6), $dd->get_num_parts_right($response2));
         $response3 = array('c1' => '50,50;150,50;50,150',
                             'c2' => '',
                             'c3' => '');
-        $this->assertEqual(array(1, 3), $dd->get_num_parts_right($response3));
+        $this->assertEquals(array(1, 3), $dd->get_num_parts_right($response3));
     }
 
     public function test_get_num_parts_right_maths() {
@@ -147,7 +148,7 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(3, 3),
+        $this->assertEquals(array(3, 3),
                 $dd->get_num_parts_right(array(
                         'c1' => '50,50;150,50;50,150', 'c2' => '', 'c3' => '')));
     }
@@ -156,7 +157,7 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd = test_question_maker::make_question('ddmarker');
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(
+        $this->assertEquals(
             array('c1' => PARAM_NOTAGS, 'c2' => PARAM_NOTAGS, 'c3' => PARAM_NOTAGS),
             $dd->get_expected_data()
         );
@@ -167,7 +168,7 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array('c1' => '50,50', 'c2' => '150,50', 'c3' => '100,150'),
+        $this->assertEquals(array('c1' => '50,50', 'c2' => '150,50', 'c3' => '100,150'),
                             $dd->get_correct_response());
     }
 
@@ -176,7 +177,7 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array('c1' => '50,50;150,50;50,150'), $dd->get_correct_response());
+        $this->assertEquals(array('c1' => '50,50;150,50;50,150'), $dd->get_correct_response());
     }
 
     public function test_is_same_response() {
@@ -258,11 +259,11 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(1, question_state::$gradedright),
+        $this->assertEquals(array(1, question_state::$gradedright),
                 $dd->grade_response(array('c1' => '50,50', 'c2' => '150,50', 'c3' => '100,150')));
-        $this->assertEqual(array(2/3, question_state::$gradedpartial),
+        $this->assertEquals(array(2/3, question_state::$gradedpartial),
                 $dd->grade_response(array('c1' => '50,50', 'c2' => '50,50', 'c3' => '100,150')));
-        $this->assertEqual(array(0, question_state::$gradedwrong),
+        $this->assertEquals(array(0, question_state::$gradedwrong),
                 $dd->grade_response(array('c1' => '150,50', 'c2' => '50,50', 'c3' => '100,50')));
     }
 
@@ -271,14 +272,14 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(1, question_state::$gradedright),
+        $this->assertEquals(array(1, question_state::$gradedright),
                 $dd->grade_response(array('c1' => '50,50;150,50;50,150', 'c2' => '', 'c3' => '')));
-        $this->assertEqual(array(0.75, question_state::$gradedpartial),
+        $this->assertEquals(array(0.75, question_state::$gradedpartial),
                 $dd->grade_response(array('c1' => '50,50;150,50;50,150',
                                             'c2' => '', 'c3' => '50,150')));
-        $this->assertEqual(array(0, question_state::$gradedwrong),
+        $this->assertEquals(array(0, question_state::$gradedwrong),
                 $dd->grade_response(array('c1' => '', 'c2' => '50,50;150,50', 'c3' => '100,50')));
-        $this->assertEqual(array(0, question_state::$gradedwrong),
+        $this->assertEquals(array(0, question_state::$gradedwrong),
                             $dd->grade_response(array('c1' => '300,300',
                                                         'c2' => '50,50;150,50',
                                                         'c3' => '100,50')));
@@ -289,13 +290,13 @@ class qtype_ddmarker_question_test extends UnitTestCase {
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
-        $this->assertEqual(array(
+        $this->assertEquals(array(
                                     1 => new question_classified_response(1, 'quick', 1/3),
                                     2 => new question_classified_response(2, 'fox', 1/3),
                                     3 => new question_classified_response(3, 'lazy', 1/3)),
             $dd->classify_response(array('c1' => '50,50', 'c2' => '150,50', 'c3' => '100,150')));
 
-        $this->assertEqual(array(
+        $this->assertEquals(array(
                                     1 => new question_classified_response(1, 'quick', 1/3),
                                     2 => question_classified_response::no_response(),
                                     3 => question_classified_response::no_response()),
