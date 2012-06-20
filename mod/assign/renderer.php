@@ -467,8 +467,13 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         // links
         if ($status->canedit) {
-            $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php',
-                array('id' => $status->coursemoduleid, 'action' => 'editsubmission')), get_string('editsubmission', 'assign'), 'get');
+            if (!$status->submission) {
+                $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php',
+                    array('id' => $status->coursemoduleid, 'action' => 'editsubmission')), get_string('addsubmission', 'assign'), 'get');
+            } else {
+                $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php',
+                    array('id' => $status->coursemoduleid, 'action' => 'editsubmission')), get_string('editsubmission', 'assign'), 'get');
+            }
         }
 
         if ($status->cansubmit) {
