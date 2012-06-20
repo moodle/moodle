@@ -105,7 +105,7 @@ $usercol = (mymobile_get_colpos() == 'on');
 $renderer = $PAGE->get_renderer('theme_mymobile');
 
 echo $OUTPUT->doctype() ?>
-<html <?php echo $OUTPUT->htmlattributes() ?>>
+<html id="mymobile" <?php echo $OUTPUT->htmlattributes() ?>>
 <head>
     <title><?php echo $PAGE->title ?></title>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
@@ -122,7 +122,7 @@ echo $OUTPUT->doctype() ?>
     <?php echo $OUTPUT->standard_top_of_body_html() ?>
     <div id="<?php p($PAGE->bodyid) ?>PAGE" data-role="page" class="generalpage <?php echo 'ajaxedclass '; p($PAGE->bodyclasses.' '.join(' ', $bodyclasses));  ?> <?php if ($hasmyblocks && $usercol) { echo 'has-myblocks'; } ?> " data-title="<?php p($SITE->shortname) ?>">
         <!-- start header -->
-        <div data-role="header" <?php echo($datatheme);?> class="mymobileheader">
+        <div data-role="header" <?php echo($datatheme);?> class="mymobileheader" data-position="fixed">
             <h1><?php echo $PAGE->heading ?></h1>
             <?php if (isloggedin() && $mypagetype != 'site-index') { ?>
             <a class="ui-btn-right" data-icon="home" href="<?php p($CFG->wwwroot) ?>" data-iconpos="notext" data-ajax="false"><?php p(get_string('home')); ?></a>
@@ -210,7 +210,7 @@ echo $OUTPUT->doctype() ?>
 
                 <div data-role="fieldcontain" id="sliderdiv">
                     <label for="slider"><?php p(get_string('mtoggle','theme_mymobile')); ?>:</label>
-                    <select name="slider" class="slider" data-role="slider" data-track-theme="b">
+                    <select name="slider" class="slider" data-role="slider">
                         <option value="on">On</option>
                         <option value="off">Off</option>
                     </select>

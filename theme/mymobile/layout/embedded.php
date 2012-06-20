@@ -35,11 +35,11 @@ if ($showswatch == "light") {
     $datatheme = 'a';
     $databodytheme = 'c';
 }
-$mypagetype = $PAGE->pagetype;
 $bodyclasses = array();
+$mypagetype = $PAGE->pagetype;
 
 echo $OUTPUT->doctype() ?>
-<html <?php echo $OUTPUT->htmlattributes() ?>>
+<html id="mymobile" <?php echo $OUTPUT->htmlattributes() ?>>
 <head>
     <title><?php echo $PAGE->title ?></title>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
@@ -64,7 +64,7 @@ echo $OUTPUT->doctype() ?>
                 <a class="ui-btn-right" data-ajax="false" data-icon="home" href="<?php p($CFG->wwwroot) ?>" data-iconpos="notext"><?php p(get_string('home')); ?></a>
             <?php } ?>
         </div>
-        <div data-role="content" data-theme="<?php echo $databodytheme;?>">
+        <div data-role="content" class="mymobilecontent" data-theme="<?php echo $databodytheme;?>">
             <?php echo $OUTPUT->main_content(); ?>
         </div>
     </div>
