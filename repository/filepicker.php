@@ -306,7 +306,8 @@ case 'download':
         $record->userid       = $USER->id;
         $record->contextid = $user_context->id;
 
-        $record->source = serialize((object)array('source' => $thefile['url']));
+        $sourcefield = $repo->get_file_source_info($thefile['url']);
+        $record->source = repository::build_source_field($sourcefield);
         try {
             $info = repository::move_to_filepool($thefile['path'], $record);
             redirect($home_url, get_string('downloadsucc', 'repository'));

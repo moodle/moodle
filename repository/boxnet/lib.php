@@ -319,7 +319,7 @@ class repository_boxnet extends repository {
         $fileid = array_pop($array);
         $fileinfo = $this->boxclient->get_file_info($fileid);
         if (!empty($fileinfo)) {
-            return 'Box:' . (string)$fileinfo->file_name;
+            return 'Box: ' . (string)$fileinfo->file_name;
         } else {
             return $url;
         }

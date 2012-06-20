@@ -1233,6 +1233,9 @@ abstract class repository {
      * @return string|null
      */
     public function get_file_source_info($url) {
+        if ($this->has_moodle_files()) {
+            return $this->get_reference_details($url, 0);
+        }
         return $url;
     }
 

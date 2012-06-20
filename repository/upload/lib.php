@@ -146,7 +146,8 @@ class repository_upload extends repository {
         @chmod($_FILES[$elname]['tmp_name'], $permissions);
 
         // {@link repository::build_source_field()}
-        $record->source = self::build_source_field($_FILES[$elname]['name']);
+        $sourcefield = $this->get_file_source_info($_FILES[$elname]['name']);
+        $record->source = self::build_source_field($sourcefield);
 
         if (empty($saveas_filename)) {
             $record->filename = clean_param($_FILES[$elname]['name'], PARAM_FILE);
