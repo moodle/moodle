@@ -18,7 +18,8 @@
  *
  * @package    qtype
  * @subpackage ddmarker
- * @copyright  2011 The Open University
+ * @copyright  2012 The Open University
+ * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,7 +27,9 @@ $string['addmoreitems'] = 'Blanks for {no} more markers';
 $string['alttext'] = 'Alt text';
 $string['answer'] = 'Answer';
 $string['bgimage'] = 'Background image';
+$string['confirmimagetargetconversion'] = 'You are about to convert the above image target questions to the drag and drop markers question type.';
 $string['coords'] = 'Coords';
+$string['convertingimagetargetquestion'] = 'Converted question "{$a->name}"';
 $string['correctansweris'] = 'The correct answer is: {$a}';
 $string['draggableimage'] = 'Draggable image';
 $string['draggableitem'] = 'Draggable item';
@@ -48,11 +51,22 @@ $string['formerror_shapeoutsideboundsofbgimage'] = 'The shape you have defined g
 $string['formerror_toomanysemicolons'] = 'There are too many semi colon separated parts to the coordinates you have specified. Your coordinates for a {$a->shape} should be expressed as - {$a->coordsstring}.';
 $string['formerror_unrecognisedwidthheightpart'] = 'We do not recognise the width and height you have specified. Your coordinates for a {$a->shape} should be expressed as - {$a->coordsstring}.';
 $string['formerror_unrecognisedxypart'] = 'We do not recognise the x,y coordinates you have specified. Your coordinates for a {$a->shape} should be expressed as - {$a->coordsstring}.';
+$string['imagetargetconverter'] = 'Convert image target questions to drag and drop marker';
 $string['infinite'] = 'Infinite';
+$string['listitemconfirmcategory'] = 'About to convert all imagetarget questions in category "{$a->name}" (contains {$a->qcount} imagetarget questions)';
+$string['listitemconfirmcontext'] = 'About to convert all imagetarget questions in context "{$a->name}" (contains {$a->qcount} imagetarget questions)';
+$string['listitemconfirmquestion'] = 'About to convert question "{$a->name}"';
+$string['listitemlistallcategory'] = 'Select all imagetarget questions in category "{$a->name}" (contains {$a->qcount} imagetarget questions)';
+$string['listitemlistallcontext'] = 'Select all imagetarget questions in context "{$a->name}" (contains {$a->qcount} imagetarget questions)';
+$string['listitemlistallquestion'] = 'Select question "{$a->name}"';
+$string['listitemprocessingcategory'] = 'Converting all imagetarget questions in category "{$a->name}" (contains {$a->qcount} imagetarget questions)';
+$string['listitemprocessingcontext'] = 'Converting all imagetarget questions in context "{$a->name}" (contains {$a->qcount} imagetarget questions)';
+$string['listitemprocessingquestion'] = 'Converted question "{$a->name}"';
 $string['marker'] = 'Marker';
 $string['marker_n'] = 'Marker {no}';
 $string['markers'] = 'Markers';
 $string['nolabel'] = 'No label text';
+$string['noquestionsfound'] = 'No questions found to convert here.';
 $string['pleasedragatleastonemarker'] = 'Your answer is not complete, you must place at least one marker on the image.';
 $string['pluginname'] = 'Drag and drop markers';
 $string['pluginname_help'] = 'select a background image file, enter text labels for markers and define the drop zones on the background image to which they must be dragged.';

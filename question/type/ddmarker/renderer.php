@@ -17,14 +17,17 @@
 /**
  * Drag-and-drop markers question renderer class.
  *
- * @package    qtype_ddmarker
- * @copyright  2010 The Open University
+ * @package    qtype
+ * @subpackage ddmarker
+ * @copyright  2012 The Open University
+ * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/rendererbase.php');
 require_once($CFG->dirroot . '/question/type/ddimageortext/rendererbase.php');
 
 
@@ -155,5 +158,37 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         }
         $output .= parent::hint($qa, $hint);
         return $output;
+    }
+
+}
+class qtype_ddmarker_list_renderer extends plugin_renderer_base {
+
+    public function render_qtype_ddmarker_list(qtype_ddmarker_list_item $top) {
+        $list = html_writer::tag('ul', html_writer::tag('li', $this->render_qtype_ddmarker_list_item($top)));
+        return $this->output->container($list, 'listofquestions');
+    }
+    public function render_qtype_ddmarker_list_item(qtype_ddmarker_list_item $listitem) {
+        return $this->item($listitem).$this->children($listitem);
+    }
+
+    public function item(qtype_ddmarker_list_item $item) {
+        global $PAGE;
+        $a = new stdClass();
+        $a->qcount = $item->get_q_count();
+        $a->name = $item->item_name();
+        $thisitem = get_string('listitem'.$item->get_string_identifier().$item->get_list_type(), 'qtype_ddmarker', $a);
+        if ($item->get_linked()) {
+            $actionurl = new moodle_url($PAGE->url, array($item->id_param_name() => $item->get_id()));
+            $thisitem = html_writer::tag('a', $thisitem, array('href' => $actionurl));
+        }
+        return $thisitem;
+    }
+
+    protected function children(qtype_ddmarker_list_item $item) {
+        $children = array();
+        foreach ($item->get_children() as $child) {
+            $children[] = $this->render_qtype_ddmarker_list_item($child);
+        }
+        return html_writer::alist($children);
     }
 }

@@ -15,7 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the drag-and-drop markers question type.
  *
  * @package    qtype
  * @subpackage ddmarker
@@ -24,16 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2011051200;
-$plugin->requires  = 2011120500;
-$plugin->cron      = 0;
-$plugin->component = 'qtype_ddmarker';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.0';
-
-$plugin->dependencies = array(
-    'qtype_gapselect'     => 2011020100,
-    'qtype_ddimageortext' => 2011020100,
-);
+$settings = new admin_externalpage('qtypeddmarkerfromimagetarget',
+        get_string('imagetargetconverter', 'qtype_ddmarker'),
+        new moodle_url('/question/type/ddmarker/imagetargetconverter.php'),
+        'moodle/question:config');

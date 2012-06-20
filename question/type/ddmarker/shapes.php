@@ -17,8 +17,10 @@
 /**
  * Drag-and-drop markers classes for dealing with shapes on the server side.
  *
- * @package    qtype_ddmarker
- * @copyright  2009 The Open University
+ * @package    qtype
+ * @subpackage ddmarker
+ * @copyright  2012 The Open University
+ * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qtype_ddmarker_shape {
