@@ -3349,8 +3349,10 @@ class assign {
             // now get the feedback
             if ($gradebookplugin) {
                 $grade = $this->get_user_grade($result->userid, false);
-                $gradebookgrade->feedbacktext = $gradebookplugin->text_for_gradebook($grade);
-                $gradebookgrade->feedbackformat = $gradebookplugin->format_for_gradebook($grade);
+                if ($grade) {
+                    $gradebookgrade->feedbacktext = $gradebookplugin->text_for_gradebook($grade);
+                    $gradebookgrade->feedbackformat = $gradebookplugin->format_for_gradebook($grade);
+                }
             }
             $grades[$gradebookgrade->userid] = $gradebookgrade;
         }
