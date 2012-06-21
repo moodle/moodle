@@ -60,6 +60,19 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012032101, 'scorm');
     }
 
+    //rename config var from maxattempts to maxattempt
+    if ($oldversion < 2012061701) {
+        $maxattempts = get_config('scorm', 'maxattempts');
+        $maxattempts_adv = get_config('scorm', 'maxattempts_adv');
+        set_config('maxattempt', $maxattempts, 'scorm');
+        set_config('maxattempt_adv', $maxattempts_adv, 'scorm');
+
+        unset_config('maxattempts', 'scorm'); //remove old setting.
+        unset_config('maxattempts_adv', 'scorm'); //remove old setting.
+        upgrade_mod_savepoint(true, 2012061701, 'scorm');
+    }
+
+
     return true;
 }
 
