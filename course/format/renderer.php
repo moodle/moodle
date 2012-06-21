@@ -367,7 +367,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         // Output section completion data
         if ($completioninfo->is_enabled() != COMPLETION_TRACKING_NONE && isloggedin() &&
-                        !isguestuser()) {
+                        !isguestuser() && $total !== 0) {
             $o.= html_writer::start_tag('span', array('class' => 'activity-count'));
             $o.= get_string("completionstatus")." $complete / $total";
             $o.= html_writer::end_tag('span');
