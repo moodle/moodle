@@ -53,7 +53,7 @@
                         startNode = el_new_tree;
                     }
                     //var sXML = new XMLSerializer().serializeToString(startNode);
-                    scorm_tree_node.buildTreeFromMarkup(startNode);
+                    scorm_tree_node.buildTreeFromMarkup('scormtree123');
                     var el = document.getElementById('scormtree123');
                     el.parentNode.removeChild(el);
                     scorm_tree_node.expandAll();
