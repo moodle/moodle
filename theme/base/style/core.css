@@ -461,6 +461,8 @@ body.tag .managelink {padding: 5px;}
 .path-backup .backup_progress .backup_stage.backup_stage_current {font-weight:bold;color:inherit;}
 .path-backup .backup_progress .backup_stage.backup_stage_next {}
 .path-backup .backup_progress span.backup_stage.backup_stage_complete {color:inherit;}
+#page-backup-restore .filealiasesfailures {background-color:#ffd3d9}
+#page-backup-restore .filealiasesfailures .aliaseslist {width:90%;margin:0.8em auto;background-color:white;border:1px dotted #666;}
 
 /**
  * Web Service

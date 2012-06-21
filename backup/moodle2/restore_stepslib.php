@@ -3353,6 +3353,7 @@ class restore_process_file_aliases_queue extends restore_execution_step {
             $reason = ' ('.$reason.')';
         }
         $this->log('unable to restore alias'.$reason, backup::LOG_WARNING, $filedesc, 1);
+        $this->add_result_item('file_aliases_restore_failures', $filedesc);
     }
 
     /**
@@ -3390,6 +3391,29 @@ class restore_process_file_aliases_queue extends restore_execution_step {
         $filedesc .= $filerecord->filepath.$filerecord->filename;
 
         return $filedesc;
+    }
+
+    /**
+     * Append a value to the given resultset
+     *
+     * @param string $name name of the result containing a list of values
+     * @param mixed $value value to add as another item in that result
+     */
+    private function add_result_item($name, $value) {
+
+        $results = $this->task->get_results();
+
+        if (isset($results[$name])) {
+            if (!is_array($results[$name])) {
+                throw new coding_exception('Unable to append a result item into a non-array structure.');
+            }
+            $current = $results[$name];
+            $current[] = $value;
+            $this->task->add_result(array($name => $current));
+
+        } else {
+            $this->task->add_result(array($name => array($value)));
+        }
     }
 }
 

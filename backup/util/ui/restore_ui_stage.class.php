@@ -757,6 +757,20 @@ class restore_ui_stage_complete extends restore_ui_stage_process {
     public function display(core_backup_renderer $renderer) {
 
         $html  = '';
+        if (!empty($this->results['file_aliases_restore_failures'])) {
+            $html .= $renderer->box_start('generalbox filealiasesfailures');
+            $html .= $renderer->heading_with_help(get_string('filealiasesrestorefailures', 'core_backup'),
+                'filealiasesrestorefailures', 'core_backup');
+            $html .= $renderer->container(get_string('filealiasesrestorefailuresinfo', 'core_backup'));
+            $html .= $renderer->container_start('aliaseslist');
+            $html .= html_writer::start_tag('ul');
+            foreach ($this->results['file_aliases_restore_failures'] as $alias) {
+                $html .= html_writer::tag('li', s($alias));
+            }
+            $html .= html_writer::end_tag('ul');
+            $html .= $renderer->container_end();
+            $html .= $renderer->box_end();
+        }
         $html .= $renderer->box_start();
         $html .= $renderer->notification(get_string('restoreexecutionsuccess', 'backup'), 'notifysuccess');
         $html .= $renderer->continue_button(new moodle_url('/course/view.php', array(
