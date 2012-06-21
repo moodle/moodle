@@ -33,6 +33,6 @@ defined('MOODLE_INTERNAL') || die();
 function qtype_ddwtos_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG;
     require_once($CFG->libdir . '/questionlib.php');
-    question_pluginfile($course, $context, 'qtype_ddmarker', $filearea, $args, $forcedownload);
+    question_pluginfile($course, $context, 'qtype_ddwtos', $filearea, $args, $forcedownload);
 }
 
