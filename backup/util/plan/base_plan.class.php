@@ -75,10 +75,27 @@ abstract class base_plan implements checksumable, executable {
         return $this->tasks;
     }
 
+    /**
+     * Add the passed info to the plan results
+     *
+     * At the moment we expect an associative array structure to be merged into
+     * the current results. In the future, some sort of base_result class may
+     * be introduced.
+     *
+     * @param array $result associative array describing a result of a task/step
+     */
     public function add_result($result) {
+        if (!is_array($result)) {
+            throw new coding_exception('Associative array is expected as a parameter of add_result()');
+        }
         $this->results = array_merge($this->results, $result);
     }
 
+    /**
+     * Return the results collected via {@link self::add_result()} method
+     *
+     * @return array
+     */
     public function get_results() {
         return $this->results;
     }

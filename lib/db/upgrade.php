@@ -847,6 +847,30 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012061800.01);
     }
 
+    if ($oldversion < 2012062000.00) {
+        // Add field newcontextid to backup_files_template
+        $table = new xmldb_table('backup_files_template');
+        $field = new xmldb_field('newcontextid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'info');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2012062000.00);
+    }
+
+    if ($oldversion < 2012062000.01) {
+        // Add field newitemid to backup_files_template
+        $table = new xmldb_table('backup_files_template');
+        $field = new xmldb_field('newitemid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'newcontextid');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2012062000.01);
+    }
+
 
     return true;
 }

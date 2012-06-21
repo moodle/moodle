@@ -117,6 +117,12 @@ $string['errorinvalidformat'] = 'Unknown backup format';
 $string['errorinvalidformatinfo'] = 'The selected file is not a valid Moodle backup file and can\'t be restored.';
 $string['executionsuccess'] = 'The backup file was successfully created.';
 $string['filename'] = 'Filename';
+$string['filealiasesrestorefailures'] = 'Aliases restore failures';
+$string['filealiasesrestorefailuresinfo'] = 'Some aliases included in the backup file could not be restored. The following list contains their expected location and the source file they were referring to at the original site.';
+$string['filealiasesrestorefailures_help'] = 'Aliases are symbolic links to other files, including those stored in external repositories. In some cases, Moodle cannot restore them - for example when restoring the backup at another site or when the referenced file does not exist.
+
+More details and the actual reason of the failure can be found in the restore log file.';
+$string['filealiasesrestorefailures_link'] = 'restore/filealiases';
 $string['filereferencesincluded'] = 'File references to external contents included in backup package, they won\'t work on other sites.';
 $string['filereferencessamesite'] = 'Backup is from the same site, file references can be restored';
 $string['filereferencesnotsamesite'] = 'Backup is from other site, file references cannot be restored';
