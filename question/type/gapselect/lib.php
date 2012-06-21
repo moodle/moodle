@@ -30,9 +30,9 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Checks file access for gapselect questions.
  */
-function qtype_gapselect_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function qtype_gapselect_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG;
     require_once($CFG->libdir . '/questionlib.php');
-    question_pluginfile($course, $context, 'qtype_ddmarker', $filearea, $args, $forcedownload);
+    question_pluginfile($course, $context, 'qtype_ddmarker', $filearea, $args, $forcedownload, $options);
 }
 
