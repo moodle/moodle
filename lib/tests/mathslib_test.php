@@ -231,4 +231,10 @@ class mathsslib_testcase extends basic_testcase {
         $this->assertEquals($formula->evaluate(), 1e22, '', 1e22*1e-15);
 
     }
+
+    public function test_rand_float() {
+        $formula = new calc_formula('=rand_float()');
+        $result = $formula->evaluate();
+        $this->assertTrue(is_float($result));
+    }
 }
