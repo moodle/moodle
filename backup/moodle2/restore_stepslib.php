@@ -3315,7 +3315,8 @@ class restore_process_file_aliases_queue extends restore_execution_step {
                 if (empty($ris)) {
                     return null;
                 }
-                $repoid = reset(array_keys($ris));
+                $repoids = array_keys($ris);
+                $repoid = reset($repoids);
                 try {
                     $this->cachereposbytype[$info->oldfile->repositorytype] = repository::get_repository_by_id($repoid, SYSCONTEXTID);
                     return $this->cachereposbytype[$info->oldfile->repositorytype];
