@@ -132,4 +132,4 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
         return new AUTOLINKER(config);
     }
 
-}, '@VERSION@', {requires:['base','node','event-delegate','overlay','moodle-enrol-notification']});
+}, '@VERSION@', {requires:['base','node','io-base','json-parse','event-delegate','overlay','moodle-enrol-notification']});
