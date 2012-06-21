@@ -88,6 +88,11 @@ YUI.add('moodle-course-modchooser', function(Y) {
             Y.one(baseselector).all(CSS.SECTION).each(function(section) {
                 this._setup_for_section(section);
             }, this);
+
+            // Setup for the block site menu
+            Y.one(baseselector).all(CSS.SITEMENU).each(function(section) {
+                this._setup_for_section(section);
+            }, this);
         },
         _setup_for_section : function(section, sectionid) {
             var chooserspan = section.one(CSS.SECTIONMODCHOOSER);
@@ -116,6 +121,9 @@ YUI.add('moodle-course-modchooser', function(Y) {
             } else if (e.target.ancestor(CSS.SECTION)) {
                 var section = e.target.ancestor(CSS.SECTION);
                 this.sectionid = section.get('id').replace('section-', '');
+            } else if (e.target.ancestor(CSS.SITEMENU)) {
+                // The block site menu has a sectionid of 0
+                this.sectionid = 0;
             }
             this.display_chooser(e);
         },
