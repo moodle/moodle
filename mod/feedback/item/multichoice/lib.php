@@ -492,6 +492,9 @@ class feedback_item_multichoice extends feedback_item_base {
 
     function create_value($data) {
         $vallist = $data;
+        if (is_array($vallist)) {
+            $vallist = array_unique($vallist);
+        }
         return trim($this->item_arrayToString($vallist));
     }
 
