@@ -3110,6 +3110,12 @@ class restore_create_question_files extends restore_execution_step {
  */
 class restore_process_file_aliases_queue extends restore_execution_step {
 
+    /** @var array internal cache for {@link choose_repository() */
+    private $cachereposbyid = array();
+
+    /** @var array internal cache for {@link choose_repository() */
+    private $cachereposbytype = array();
+
     /**
      * What to do when this step is executed.
      */
@@ -3270,17 +3276,33 @@ class restore_process_file_aliases_queue extends restore_execution_step {
 
         if ($this->task->is_samesite()) {
             // We can rely on repository instance id.
+
+            if (array_key_exists($info->oldfile->repositoryid, $this->cachereposbyid)) {
+                return $this->cachereposbyid[$info->oldfile->repositoryid];
+            }
+
+            $this->log('looking for repository instance by id', backup::LOG_DEBUG, $info->oldfile->repositoryid, 1);
+
             try {
-                return repository::get_repository_by_id($info->oldfile->repositoryid, SYSCONTEXTID);
+                $this->cachereposbyid[$info->oldfile->repositoryid] = repository::get_repository_by_id($info->oldfile->repositoryid, SYSCONTEXTID);
+                return $this->cachereposbyid[$info->oldfile->repositoryid];
             } catch (Exception $e) {
+                $this->cachereposbyid[$info->oldfile->repositoryid] = null;
                 return null;
             }
 
         } else {
             // We can rely on repository type only.
+
             if (empty($info->oldfile->repositorytype)) {
                 return null;
             }
+
+            if (array_key_exists($info->oldfile->repositorytype, $this->cachereposbytype)) {
+                return $this->cachereposbytype[$info->oldfile->repositorytype];
+            }
+
+            $this->log('looking for repository instance by type', backup::LOG_DEBUG, $info->oldfile->repositorytype, 1);
 
             // Both Server files and Legacy course files repositories have a single
             // instance at the system context to use. Let us try to find it.
@@ -3295,12 +3317,15 @@ class restore_process_file_aliases_queue extends restore_execution_step {
                 }
                 $repoid = reset(array_keys($ris));
                 try {
-                    return repository::get_repository_by_id($repoid, SYSCONTEXTID);
+                    $this->cachereposbytype[$info->oldfile->repositorytype] = repository::get_repository_by_id($repoid, SYSCONTEXTID);
+                    return $this->cachereposbytype[$info->oldfile->repositorytype];
                 } catch (Exception $e) {
+                    $this->cachereposbytype[$info->oldfile->repositorytype] = null;
                     return null;
                 }
             }
 
+            $this->cachereposbytype[$info->oldfile->repositorytype] = null;
             return null;
         }
     }
