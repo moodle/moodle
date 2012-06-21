@@ -315,7 +315,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @return string HTML to output.
      */
     private function section_activity_summary($section, $course, $mods) {
-        $completioninfo = new completion_info($course);
         if (empty($section->sequence)) {
             return '';
         }
@@ -324,6 +323,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $sectionmods = array();
         $total = 0;
         $complete = 0;
+        $cancomplete = isloggedin() && !isguestuser();
+        $completioninfo = new completion_info($course);
         $modsequence = explode(',', $section->sequence);
         foreach ($modsequence as $cmid) {
             $thismod = $mods[$cmid];
@@ -340,10 +341,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                     $sectionmods[$thismod->modname]['name'] = $thismod->modplural;
                     $sectionmods[$thismod->modname]['count'] = 1;
                 }
-                if ($completioninfo->is_enabled($thismod) != COMPLETION_TRACKING_NONE && isloggedin() &&
-                                !isguestuser() && $thismod->uservisible) {
+                if ($cancomplete && $completioninfo->is_enabled($thismod) != COMPLETION_TRACKING_NONE) {
                     $total++;
-                    $completiondata = $completioninfo->get_data($thismod,true);
+                    $completiondata = $completioninfo->get_data($thismod, true);
                     if ($completiondata->completionstate == COMPLETION_COMPLETE) {
                         $complete++;
                     }
@@ -367,12 +367,13 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o.= html_writer::end_tag('div');
 
         // Output section completion data
-        if ($completioninfo->is_enabled() != COMPLETION_TRACKING_NONE && isloggedin() &&
-                        !isguestuser() && $total !== 0) {
+        if ($total > 0) {
+            $a = new stdClass;
+            $a->complete = $complete;
+            $a->total = $total;
+
             $o.= html_writer::start_tag('div', array('class' => 'section-summary-activities mdl-right'));
-            $o.= html_writer::start_tag('span', array('class' => 'activity-count'));
-            $o.= get_string("progress")." $complete / $total";
-            $o.= html_writer::end_tag('span');
+            $o.= html_writer::tag('span', get_string('progresstotal', 'completion', $a), array('class' => 'activity-count'));
             $o.= html_writer::end_tag('div');
         }
 
