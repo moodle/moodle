@@ -455,11 +455,9 @@ class core_files_renderer extends plugin_renderer_base {
         $maxbytes = display_size($fm->options->maxbytes);
         if (empty($options->maxfiles) || $options->maxfiles == -1) {
             $maxsize = get_string('maxfilesize', 'moodle', $maxbytes);
-            //$string['maxfilesize'] = 'Maximum size for new files: {$a}';
         } else {
             $strparam = (object)array('size' => $maxbytes, 'attachments' => $options->maxfiles);
             $maxsize = get_string('maxsizeandattachments', 'moodle', $strparam);
-            //$string['maxsizeandattachments'] = 'Maximum size for new files: {$a->size}, maximum attachments: {$a->attachments}';
         }
         // TODO MDL-32020 also should say about 'File types accepted'
         return '<span>'. $maxsize. '</span>';
