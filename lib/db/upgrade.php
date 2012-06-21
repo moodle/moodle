@@ -385,7 +385,9 @@ function xmldb_main_upgrade($oldversion) {
                         AND older.id < cs.id');
         foreach ($rs as $rec) {
             $DB->delete_records('course_sections', array('id' => $rec->id));
-            rebuild_course_cache($rec->course, true);
+            // We can't use rebuild_course_cache() here because introducing sectioncache later
+            // so reset modinfo manually.
+            $DB->set_field('course', 'modinfo', null, array('id' => $rec->course));
         }
         $rs->close();
         $transaction->allow_commit();
