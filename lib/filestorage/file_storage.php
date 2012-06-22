@@ -1656,6 +1656,7 @@ class file_storage {
      *
      * @param string $str
      * @param bool $cleanparams if set to true, array elements will be passed through {@link clean_param()}
+     * @throws file_reference_exception if the $str does not have the expected format
      * @return array
      */
     public static function unpack_reference($str, $cleanparams = false) {
@@ -1681,7 +1682,13 @@ class file_storage {
     }
 
     /**
-     * Returns all aliases that link to an external file identified by the given reference
+     * Returns all aliases that refer to some stored_file via the given reference
+     *
+     * All repositories that provide access to a stored_file are expected to use
+     * {@link self::pack_reference()}. This method can't be used if the given reference
+     * does not use this format or if you are looking for references to an external file
+     * (for example it can't be used to search for all aliases that refer to a given
+     * Dropbox or Box.net file).
      *
      * Aliases in user draft areas are excluded from the returned list.
      *
@@ -1694,6 +1701,10 @@ class file_storage {
         if (is_null($reference)) {
             throw new coding_exception('NULL is not a valid reference to an external file');
         }
+
+        // Give {@link self::unpack_reference()} a chance to throw exception if the
+        // reference is not in a valid format.
+        self::unpack_reference($reference);
 
         $referencehash = sha1($reference);
 
@@ -1714,7 +1725,13 @@ class file_storage {
     }
 
     /**
-     * Returns the number of aliases that link to an external file identified by the given reference
+     * Returns the number of aliases that refer to some stored_file via the given reference
+     *
+     * All repositories that provide access to a stored_file are expected to use
+     * {@link self::pack_reference()}. This method can't be used if the given reference
+     * does not use this format or if you are looking for references to an external file
+     * (for example it can't be used to count aliases that refer to a given Dropbox or
+     * Box.net file).
      *
      * Aliases in user draft areas are not counted.
      *
@@ -1728,6 +1745,10 @@ class file_storage {
             throw new coding_exception('NULL is not a valid reference to an external file');
         }
 
+        // Give {@link self::unpack_reference()} a chance to throw exception if the
+        // reference is not in a valid format.
+        self::unpack_reference($reference);
+
         $referencehash = sha1($reference);
 
         $sql = "SELECT COUNT(f.id)
@@ -1737,7 +1758,7 @@ class file_storage {
                  WHERE r.referencehash = ?
                        AND (f.component <> ? OR f.filearea <> ?)";
 
-        return $DB->count_records_sql($sql, array($referencehash, 'user', 'draft'));
+        return (int)$DB->count_records_sql($sql, array($referencehash, 'user', 'draft'));
     }
 
     /**
