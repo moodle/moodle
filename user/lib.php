@@ -199,6 +199,8 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     $currentuser = ($user->id == $USER->id);
     $isadmin = is_siteadmin($USER);
 
+    $showuseridentityfields = get_extra_user_fields($context);
+
     if (!empty($course)) {
         $canviewhiddenuserfields = has_capability('moodle/course:viewhiddenuserfields', $context);
     } else {
@@ -281,14 +283,17 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         if ($user->address && in_array('address', $userfields)) {
             $userdetails['address'] = $user->address;
         }
-        if ($user->phone1 && in_array('phone1', $userfields)) {
-            $userdetails['phone1'] = $user->phone1;
-        }
-        if ($user->phone2 && in_array('phone2', $userfields)) {
-            $userdetails['phone2'] = $user->phone2;
-        }
     } else {
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+    }
+
+    if ($user->phone1 && in_array('phone1', $userfields) &&
+            (isset($showuseridentityfields['phone1']) or $canviewhiddenuserfields)) {
+        $userdetails['phone1'] = $user->phone1;
+    }
+    if ($user->phone2 && in_array('phone2', $userfields) &&
+            (isset($showuseridentityfields['phone2']) or $canviewhiddenuserfields)) {
+        $userdetails['phone2'] = $user->phone2;
     }
 
     if (isset($user->description) && (!isset($hiddenfields['description']) or $isadmin)) {
@@ -356,6 +361,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     if (in_array('email', $userfields) && ($isadmin // The admin is allowed the users email
       or $currentuser // Of course the current user is as well
       or $canviewuseremail  // this is a capability in course context, it will be false in usercontext
+      or isset($showuseridentityfields['email'])
       or $user->maildisplay == 1
       or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))) {
         $userdetails['email'] = $user->email;
@@ -369,13 +375,17 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     }
 
     //Departement/Institution/Idnumber are not displayed on any profile, however you can get them from editing profile.
-    if ($isadmin or $currentuser) {
-    if (in_array('idnumber', $userfields) && $user->idnumber) {
+    if ($isadmin or $currentuser or isset($showuseridentityfields['idnumber'])) {
+        if (in_array('idnumber', $userfields) && $user->idnumber) {
             $userdetails['idnumber'] = $user->idnumber;
         }
+    }
+    if ($isadmin or $currentuser or isset($showuseridentityfields['institution'])) {
         if (in_array('institution', $userfields) && $user->institution) {
             $userdetails['institution'] = $user->institution;
         }
+    }
+    if ($isadmin or $currentuser or isset($showuseridentityfields['department'])) {
         if (in_array('department', $userfields) && isset($user->department)) { //isset because it's ok to have department 0
             $userdetails['department'] = $user->department;
         }
