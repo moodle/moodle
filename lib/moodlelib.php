@@ -6049,6 +6049,10 @@ function display_size($size) {
 
     static $gb, $mb, $kb, $b;
 
+    if ($size === USER_CAN_IGNORE_FILE_SIZE_LIMITS) {
+        return get_string('unlimited');
+    }
+
     if (empty($gb)) {
         $gb = get_string('sizegb');
         $mb = get_string('sizemb');
