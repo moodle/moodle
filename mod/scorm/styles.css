@@ -28,6 +28,7 @@
 #page-mod-scorm-player.pagelayout-popup #page-content .region-content {padding: 0px; }
 #page-mod-scorm-player.pagelayout-popup #page-wrapper {width:100%;}
 #page-mod-scorm-player .yui-layout-scroll div.yui-layout-bd {overflow:visible;}
+#page-mod-scorm-player .yui-layout-unit-left div.yui-layout-bd {overflow:auto;}
 
 .path-mod-scorm.forcejavascript .scorm-center { display:none;}
 .path-mod-scorm.forcejavascript .toc { display:none;}
