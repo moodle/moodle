@@ -217,7 +217,7 @@ You can see the status of your assignment submission:
     {$a->url}';
 $string['submissionreceipthtml'] = 'You have submitted an
 assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
-You can the status of your <a href="{$a->url}">assignment submission</a>.';
+You can see the status of your <a href="{$a->url}">assignment submission</a>.';
 $string['submissionreceiptsmall'] = 'You have submitted your assignment submission for {$a->assignment}';
 $string['submissionslocked'] = 'This assignment is not accepting submissions';
 $string['submissionslockedshort'] = 'Submission changes not allowed';
