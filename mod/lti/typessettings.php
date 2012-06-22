@@ -53,41 +53,42 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/mod/lti/edit_form.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-$section      = 'modsettinglti';
-$return       = optional_param('return', '', PARAM_ALPHA);
-$adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 $action       = optional_param('action', null, PARAM_ACTION);
 $id           = optional_param('id', null, PARAM_INT);
-$useexisting  = optional_param('useexisting', null, PARAM_INT);
-$definenew    = optional_param('definenew', null, PARAM_INT);
+$tab          = optional_param('tab', '', PARAM_ALPHAEXT);
 
 // no guest autologin
 require_login(0, false);
+
 $pageurl = new moodle_url('/mod/lti/typessettings.php');
+if (!empty($id)) {
+    $pageurl->param('id', $id);
+}
 $PAGE->set_url($pageurl);
 
 admin_externalpage_setup('managemodules'); // Hacky solution for printing the admin page
 
-$tab = optional_param('tab', '', PARAM_ALPHAEXT);
 $redirect = "$CFG->wwwroot/$CFG->admin/settings.php?section=modsettinglti&tab={$tab}";
 
-// WRITING SUBMITTED DATA (IF ANY)
+require_sesskey();
 
-$statusmsg = '';
-$errormsg  = '';
-$focus = '';
-
-$data = data_submitted();
-
-// Any posted data & any action
-if (!empty($data) || !empty($action)) {
-    require_sesskey();
+if ($action == 'accept') {
+    lti_set_state_for_type($id, LTI_TOOL_STATE_CONFIGURED);
+    redirect($redirect);
+} else if ($action == 'reject') {
+    lti_set_state_for_type($id, LTI_TOOL_STATE_REJECTED);
+    redirect($redirect);
+} else if ($action == 'delete') {
+    lti_delete_type($id);
+    redirect($redirect);
 }
 
-if (isset($data->submitbutton)) {
+$form = new mod_lti_edit_types_form($pageurl, (object)array('isadmin' => true));
+
+if ($data = $form->get_data()) {
     $type = new stdClass();
 
-    if (isset($id)) {
+    if (!empty($id)) {
         $type->id = $id;
 
         lti_update_type($type, $data);
@@ -100,94 +101,22 @@ if (isset($data->submitbutton)) {
 
         redirect($redirect);
     }
-
-} else if (isset($data->cancel)) {
-    redirect($redirect);
-
-} else if ($action == 'accept') {
-    lti_set_state_for_type($id, LTI_TOOL_STATE_CONFIGURED);
-    redirect($redirect);
-
-} else if ($action == 'reject') {
-    lti_set_state_for_type($id, LTI_TOOL_STATE_REJECTED);
-    redirect($redirect);
-
-} else if ($action == 'delete') {
-    lti_delete_type($id);
+} else if ($form->is_cancelled()) {
     redirect($redirect);
 }
 
-// print header stuff
-$PAGE->set_focuscontrol($focus);
-if (empty($SITE->fullname)) {
-    $PAGE->set_title($settingspage->visiblename);
-    $PAGE->set_heading($settingspage->visiblename);
+$PAGE->set_title("$SITE->shortname: " . get_string('toolsetup', 'lti'));
+$PAGE->navbar->add(get_string('lti_administration', 'lti'), $CFG->wwwroot.'/admin/settings.php?section=modsettinglti');
 
-    $PAGE->navbar->add(get_string('lti_administration', 'lti'), $CFG->wwwroot.'/admin/settings.php?section=modsettinglti');
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('toolsetup', 'lti'));
+echo $OUTPUT->box_start('generalbox');
 
-    echo $OUTPUT->header();
-
-    echo $OUTPUT->box(get_string('configintrosite', 'admin'));
-
-    if ($errormsg !== '') {
-        echo $OUTPUT->notification($errormsg);
-
-    } else if ($statusmsg !== '') {
-        echo $OUTPUT->notification($statusmsg, 'notifysuccess');
-    }
-
-    echo '<form action="typesettings.php" method="post" id="'.$id.'" >';
-    echo '<div class="settingsform clearfix">';
-    echo html_writer::input_hidden_params($PAGE->url);
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo '<input type="hidden" name="return" value="'.$return.'" />';
-
-    echo $settingspage->output_html();
-
-    echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges', 'admin').'" /></div>';
-
-    echo '</div>';
-    echo '</form>';
-
-} else {
-    if ($PAGE->user_allowed_editing()) {
-        $url = clone($PAGE->url);
-        if ($PAGE->user_is_editing()) {
-            $caption = get_string('blockseditoff');
-            $url->param('adminedit', 'off');
-        } else {
-            $caption = get_string('blocksediton');
-            $url->param('adminedit', 'on');
-        }
-        $buttons = $OUTPUT->single_button($url, $caption, 'get');
-    }
-
-    $PAGE->set_title("$SITE->shortname: " . get_string('toolsetup', 'lti'));
-
-    $PAGE->navbar->add(get_string('lti_administration', 'lti'), $CFG->wwwroot.'/admin/settings.php?section=modsettinglti');
-
-    echo $OUTPUT->header();
-
-    if ($errormsg !== '') {
-        echo $OUTPUT->notification($errormsg);
-
-    } else if ($statusmsg !== '') {
-        echo $OUTPUT->notification($statusmsg, 'notifysuccess');
-    }
-
-    echo $OUTPUT->heading(get_string('toolsetup', 'lti'));
-    echo $OUTPUT->box_start('generalbox');
-    if ($action == 'add') {
-        $form = new mod_lti_edit_types_form($pageurl, (object)array('isadmin' => true));
-        $form->display();
-    } else if ($action == 'update') {
-        $form = new mod_lti_edit_types_form('typessettings.php?id='.$id, (object)array('isadmin' => true));
-        $type = lti_get_type_type_config($id);
-        $form->set_data($type);
-        $form->display();
-    }
-
-    echo $OUTPUT->box_end();
+if ($action == 'update') {
+    $type = lti_get_type_type_config($id);
+    $form->set_data($type);
 }
 
+$form->display();
+echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
