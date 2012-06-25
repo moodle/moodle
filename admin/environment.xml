@@ -563,7 +563,7 @@
       </FEEDBACK>
     </UNICODE>
     <DATABASE level="required">
-      <VENDOR name="mysql" version="5.0.25">
+      <VENDOR name="mysql" version="5.1.33">
         <FEEDBACK>
           <ON_ERROR message="mysql416required" />
         </FEEDBACK>
