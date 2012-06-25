@@ -85,7 +85,7 @@ class repository_equella extends repository {
                 . '&returnprefix=tle'
                 . '&template=standard'
                 . '&token='.urlencode($this->getssotoken('write'))
-                . '&courseId='.urlencode($COURSE->id)
+                . '&courseId='.urlencode($COURSE->idnumber)
                 . '&courseCode='.urlencode($COURSE->shortname)
                 . '&action=searchThin'
                 . '&forcePost=true'
