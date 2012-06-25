@@ -326,7 +326,6 @@ class page_requirements_manager {
         );
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->M_cfg['developerdebug'] = true;
-            $this->yui2_lib('logger');
         }
 
         // accessibility stuff
