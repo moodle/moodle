@@ -1130,7 +1130,8 @@
       <INDEXES>
         <INDEX NAME="sortorder" UNIQUE="false" FIELDS="sortorder" NEXT="rolecontext"/>
         <INDEX NAME="rolecontext" UNIQUE="false" FIELDS="roleid, contextid" COMMENT="Index on roleid and contextid" PREVIOUS="sortorder" NEXT="usercontextrole"/>
-        <INDEX NAME="usercontextrole" UNIQUE="false" FIELDS="userid, contextid, roleid" COMMENT="Index on userid, contextid and roleid" PREVIOUS="rolecontext"/>
+        <INDEX NAME="usercontextrole" UNIQUE="false" FIELDS="userid, contextid, roleid" COMMENT="Index on userid, contextid and roleid" PREVIOUS="rolecontext" NEXT="component-itemid-userid"/>
+        <INDEX NAME="component-itemid-userid" UNIQUE="false" FIELDS="component, itemid, userid" PREVIOUS="usercontextrole"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="role_capabilities" COMMENT="permission has to be signed, overriding a capability for a particular role in a particular context" PREVIOUS="role_assignments" NEXT="role_names">
