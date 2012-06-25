@@ -944,6 +944,9 @@ abstract class moodleform {
             $value = $elementclone->_text;
             $elementclone->setValue(str_replace('{no}', ($i+1), $value));
 
+        } else if (is_a($elementclone, 'HTML_QuickForm_submit') || is_a($elementclone, 'HTML_QuickForm_button')) {
+            $elementclone->setValue(str_replace('{no}', ($i+1), $elementclone->getValue()));
+
         } else {
             $value=$elementclone->getLabel();
             $elementclone->setLabel(str_replace('{no}', ($i+1), $value));
