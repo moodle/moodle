@@ -1662,12 +1662,14 @@ abstract class repository {
     }
 
     /**
-     * Does it return a file url or a item_id
+     * Tells how the file can be picked from this repository
      *
-     * @return string
+     * Maximum value is FILE_INTERNAL | FILE_EXTERNAL | FILE_REFERENCE
+     *
+     * @return int
      */
     public function supported_returntypes() {
-        return (FILE_INTERNAL | FILE_EXTERNAL | FILE_REFERENCE);
+        return (FILE_INTERNAL | FILE_EXTERNAL);
     }
 
     /**
