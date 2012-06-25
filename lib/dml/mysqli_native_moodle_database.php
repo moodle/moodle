@@ -235,7 +235,7 @@ class mysqli_native_moodle_database extends moodle_database {
     public function diagnose() {
         $sloppymyisamfound = false;
         $prefix = str_replace('_', '\\_', $this->prefix);
-        $sql = "SHOW TABLE STATUS WHERE Name LIKE BINARY '$prefix%'";
+        $sql = "SELECT Engine FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = DATABASE() AND table_name LIKE BINARY '$prefix%'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
