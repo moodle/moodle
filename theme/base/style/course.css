@@ -171,5 +171,3 @@ input.titleeditor {
 .dndupload-progress-outer {width:70px;border:solid black 1px;height:10px;display:inline-block;margin:0;padding:0;overflow:hidden;position:relative;}
 .dndupload-progress-inner {width:0%;height:100%;background-color:green;display:inline-block;margin:0;padding:0;float:left;}
 .dndupload-hidden {display:none;}
-
-.dir-rtl.path-course-view li.activity form.togglecompletion, .dir-rtl.path-course-view li.activity span.autocompletion
