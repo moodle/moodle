@@ -1,0 +1,20 @@
+This files describes API changes in /repository/ repository system,
+information provided here is intended especially for developers. Full
+details of the repository API are available on Moodle docs:
+http://docs.moodle.org/dev/Repository_API
+
+=== 2.3 ===
+
+* instance_config_form() must now be declared static for php5.4 compatibility.
+
+* get_listing() and search() file metadata details are now now more prominently
+  displayed in the interface. Dates and timestamos are now able to be sorted on in
+  the filepicker interface so plugin authors are asked to ensure:
+    - Dates are defined as UNIX timestamps
+    - Filesize is an integer in bytes
+
+* It is recomended to define function get_file_source_info() to provide more rich
+  infromation about the source of a file.
+
+* The API was extended to allow repositories can now support external references, please
+  see http://docs.moodle.org/dev/Repository_API for further details.
