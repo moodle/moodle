@@ -426,7 +426,7 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="filemanager fp-dlg">
     <div class="{!}fp-dlg-text"></div>
-    <button class="{!}fp-dlg-butconfirm">'.get_string('delete').'</button>
+    <button class="{!}fp-dlg-butconfirm">'.get_string('ok').'</button>
     <button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
