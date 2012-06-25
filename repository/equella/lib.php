@@ -119,7 +119,7 @@ class repository_equella extends repository {
      * @return string file referece
      */
     public function get_file_reference($source) {
-        return base64_encode($source);
+        return $source;
     }
 
     /**
@@ -156,8 +156,8 @@ class repository_equella extends repository {
      * @return null|stdClass containing attribute 'filepath'
      */
     public function get_file_by_reference($reference) {
-        $ref = base64_decode($reference->reference);
-        $url = $this->appendtoken($ref);
+        $ref = unserialize(base64_decode($reference->reference));
+        $url = $this->appendtoken($ref->url);
 
         if (!$url) {
             // Occurs when the user isn't known..
@@ -188,8 +188,8 @@ class repository_equella extends repository {
      * @param array $options additional options affecting the file serving
      */
     public function send_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
-        $reference = base64_decode($stored_file->get_reference());
-        $url = $this->appendtoken($reference);
+        $reference  = unserialize(base64_decode($stored_file->get_reference()));
+        $url = $this->appendtoken($reference->url);
         if ($url) {
             header('Location: ' . $url);
         } else {
@@ -336,5 +336,33 @@ class repository_equella extends repository {
      */
     private static function to_mime_type($value) {
         return mimeinfo('type', $value);
+    }
+
+    /**
+     * Return the source information
+     *
+     * @param stdClass $url
+     * @return string|null
+     */
+    public function get_file_source_info($url) {
+        $ref = unserialize(base64_decode($url));
+        return 'EQUELLA: ' . $ref->filename;
+    }
+
+    /**
+     * Return human readable reference information
+     * {@link stored_file::get_reference()}
+     *
+     * @param string $reference
+     * @param int $filestatus status of the file, 0 - ok, 666 - source missing
+     * @return string
+     */
+    public function get_reference_details($reference, $filestatus = 0) {
+        if (!$filestatus) {
+            $ref = unserialize(base64_decode($reference));
+            return $this->get_name(). ': '. $ref->filename;
+        } else {
+            return get_string('lostsource', 'repository', '');
+        }
     }
 }
