@@ -164,9 +164,6 @@ include_once("sql.php");
 
 $entriesshown = 0;
 $currentpivot = '';
-if ( $hook == 'SPECIAL' ) {
-    $alphabet = explode(",", get_string("alphabet"));
-}
 
 $site = $DB->get_record("course", array("id"=>1));
 echo '<p style="text-align:right"><span style="font-size:0.75em">' . userdate(time()) . '</span></p>';
