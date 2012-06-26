@@ -721,8 +721,15 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
     if (!isset($options['maxfiles'])) {
         $options['maxfiles'] = -1; // unlimited
     }
-    if (!isset($options['maxbytes'])) {
+    if (!isset($options['maxbytes']) || $options['maxbytes'] == USER_CAN_IGNORE_FILE_SIZE_LIMITS) {
         $options['maxbytes'] = 0; // unlimited
+    }
+    $allowreferences = true;
+    if (isset($options['return_types']) && !($options['return_types'] & FILE_REFERENCE)) {
+        // we assume that if $options['return_types'] is NOT specified, we DO allow references.
+        // this is not exactly right. BUT there are many places in code where filemanager options
+        // are not passed to file_save_draft_area_files()
+        $allowreferences = false;
     }
 
     $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
@@ -755,6 +762,9 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             }
 
             if ($file->is_external_file()) {
+                if (!$allowreferences) {
+                    continue;
+                }
                 $repoid = $file->get_repository_id();
                 if (!empty($repoid)) {
                     $file_record['repositoryid'] = $repoid;
@@ -856,6 +866,9 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             }
 
             if ($file->is_external_file()) {
+                if (!$allowreferences) {
+                    continue;
+                }
                 $repoid = $file->get_repository_id();
                 if (!empty($repoid)) {
                     $file_record['repositoryid'] = $repoid;
