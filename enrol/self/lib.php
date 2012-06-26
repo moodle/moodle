@@ -291,7 +291,7 @@ class enrol_self_plugin extends enrol_plugin {
         if ($rusers) {
             $contact = reset($rusers);
         } else {
-            $contact = get_admin();
+            $contact = generate_email_supportuser();
         }
 
         //directly emailing welcome message rather than using messaging
