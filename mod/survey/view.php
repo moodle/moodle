@@ -122,7 +122,7 @@ $completion->set_module_viewed($cm);
                         $table->align = array ("left");
                         $table->data[] = array(s($answer->answer1));//no html here, just plain text
                         echo html_writer::table($table);
-                        echo $OUTPUT->spacer(clone($spacer)) . '<br />';
+                        echo $OUTPUT->spacer(array('height'=>30, 'width'=>1), true);
                     }
                 }
             }
