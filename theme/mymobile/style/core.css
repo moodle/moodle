@@ -124,17 +124,22 @@ div.notifyproblem {
     cursor:default !important;
 }
 /*under footer */
+#underfooter {
+    padding: 1em 0em;
+    font-size: 90%;
+}
 #underfooter .logininfo  {
     text-align: center;
-    padding-top: .8em !important;
-    padding-bottom: .8em;
-    font-size: .8em;
-    font-weight: 400;
+    padding-top: .0em !important;
+    padding-bottom: .0em;
+    font-size: inherit;
+    font-weight: normal;
 }
-#underfooter div {
+#underfooter #theme_switch_link {
+    padding-top: 0.5em;
     text-align: center;
-    font-size: .8em;
 }
+
 #underfooter .noajax {
     padding-bottom: .2em;
 }
@@ -583,9 +588,6 @@ table.forumheaderlist2 td.topic a {
 }
 div.discussioncontrols {
     display: none;
-}
-.path-mod-forum .indent {
-    margin-left: 0px;
 }
 .path-mod-forum div.subject {
     font-size: 120%;
@@ -1274,7 +1276,7 @@ li.reportoption, #page-mod-choice-report .downloadreport ul li {
     width:100%;
     overflow: auto;
 }
-.path-mod-choice .ui-scrollview-clip .names {
+.path-mod-choice .names {
     max-width: 1500px;
     min-width: 480px;
 }
@@ -1441,94 +1443,16 @@ overflow:auto !important;
 .course_category_tree .controls {
     display: none;
 }
-/*scrollview */
-.ui-scrollview-clip {
-}
-.ui-scrollview-view {
-}
-.ui-scrolllistview .ui-li-divider {
-    z-index: 10;
-}
-.ui-scrollbar {
-    position: absolute;
-    overflow: hidden;
-    -webkit-transition: opacity 500ms;
-    -moz-transition: opacity 500ms;
-    transition: opacity 500ms;
-    opacity: .3;
-}
-.ui-scrollbar-visible {
-    opacity: 1;
-}
-.ui-scrollbar-y {
-    top: 2px;
-    right: 2px;
-    bottom: 8px;
-    width: 5px;
-}
-.ui-scrollbar-x {
-    right: 8px;
-    bottom: 2px;
-    left: 2px;
-    height: 5px;
-}
-.ui-scrollbar-track {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-.ui-scrollbar-thumb {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.3);
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-}
-.ui-scrollbar-y .ui-scrollbar-thumb {
-    width: 5px;
-    height: 100%;
-}
-.ui-scrollbar-x .ui-scrollbar-thumb {
-    width: 100%;
-    height: 5px;
+/*touch overflow to allow scrolling of divs, replaces old scrollview method*/
+.gradeparent, .pagelayout-report .no-overflow, .path-mod-choice .response, .resourcecontent.resourceimg, .usersubmissions .no-overflow, .path-course-report-log .generaltable, table.results.anonymous, table.surveytable, div.resultgraph, div.reportsummary a, #completion-progress, #attempts {
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
 }
 /*some loader overrides to hide the loading message */
-body .ui-loader {
-    background: none;
-    border: none;
-    padding: 1em;
-    background-color: #000;
-    opacity: 1;
-    background-position: center center;
-    -webkit-border-top-left-radius: 0.7em;
-    -webkit-border-top-right-radius: 0.7em;
-    -webkit-border-bottom-right-radius: 0.7em;
-    -webkit-border-bottom-left-radius: 0.7em;
-    -moz-border-radius-topleft: 0.7em;
-    -moz-border-radius-topright: 0.7em;
-    -moz-border-radius-bottomright: 0.7em;
-    -moz-border-radius-bottomleft: 0.7em;
-    border-top-left-radius: 0.7em;
-    border-top-right-radius: 0.7em;
-    border-bottom-right-radius: 0.7em;
-    border-bottom-left-radius: 0.7em;
-    width: 35px;
-    margin-left: -35px;
+.ui-loader-default {
+    background: #000000;
+    opacity: 0.8;
 }
-body .ui-loader.ui-body-e {
-    width: inherit;
-    color: #fff;
-    padding: 2em;
-}
-body .ui-loader h1 {
-    display: none;
-}
-body .ui-loader.ui-body-e h1 {
-    display: inherit;
-}
-.ui-loader .ui-icon { opacity: 1; }
 /*current highlight */
 .weeks .current .headingwrap, .topics .current div.headingwrap, .current .ui-bar-b, .current .left.side, .tabtree ul.tabrow0 li.selected a, .ui-btn-active, #page-course-view-topcollPAGE .current {
     border: 1px solid #F7C942;
@@ -1569,8 +1493,12 @@ body .ui-loader.ui-body-e h1 {
 .ui-navbar .ui-select2 .ui-btn-corner-all, .ui-navbar .ui-select .ui-btn-inner {
     border-radius: 0em 0em 0em 0em;
 }
-.ui-navbar .ui-select .ui-btn-icon-right .ui-btn-inner {
+.ui-navbar .ui-select .ui-btn-icon-right .ui-btn-inner2 {
     padding-right: 5px;
+}
+.ui-navbar .ui-select .ui-btn-icon-right .ui-btn-inner {
+    padding-right: 15px;
+    padding-left: 15px;
 }
 .ui-header .ui-navbar li .ui-btn {
     -webkit-border-radius:              .4em /*{global-radii-blocks}*/;
@@ -1594,10 +1522,21 @@ body .ui-loader.ui-body-e h1 {
     padding-bottom: 0.6em;
     padding-top: 0.5em;
 }
+.ui-header .ui-fullsize .ui-btn-inner, .ui-footer .ui-fullsize .ui-btn-inner {
+    font-size: 12.5px;
+}
 /*split page stuff for tablets */
-    div.tablets, #sliderdiv, .has-myblocks .jsetsbar {
-        display: none;
+div.tablets, #sliderdiv, .has-myblocks .jsetsbar {
+    display: none;
+}
+@media all and (max-width: 480px){
+    .ui-footer.mobilefooter .ui-btn-icon-top .ui-btn-inner, .mobilefooter .ui-mini .ui-btn-icon-top .ui-btn-inner {
+    padding: 0.7em 3px 0.7em;
     }
+    .ui-footer.mobilefooter .ui-btn-icon-top .ui-icon, .mobilefooter .ui-mini.ui-btn-icon-top .ui-icon, .mobilefooter .ui-mini .ui-btn-icon-top .ui-icon {
+    display: none;
+    }
+}
 @media all and (min-width: 650px){
     .has-myblocks div.tablets, .content-secondary, #sliderdiv {
         display: block;
@@ -1711,3 +1650,5 @@ body .ui-loader.ui-body-e h1 {
     max-width: 100px;
     max-height: 100px;
 }
+/** Custom CSS **/
+[[setting:customcss]]

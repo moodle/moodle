@@ -78,6 +78,7 @@ $string['err_system'] = 'An internal error occurred in the completion system. (S
 $string['excelcsvdownload'] = 'Download in Excel-compatible format (.csv)';
 $string['progress'] = 'Student progress';
 $string['progress-title'] = '{$a->user}, {$a->activity}: {$a->state} {$a->date}';
+$string['progresstotal'] = 'Progress: {$a->complete} / {$a->total}';
 $string['reportpage'] = 'Showing users {$a->from} to {$a->to} of {$a->total}.';
 $string['restoringcompletiondata'] = 'Writing completion data';
 $string['saved'] = 'Saved';

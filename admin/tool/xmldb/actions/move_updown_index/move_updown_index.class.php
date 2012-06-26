@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,8 +23,7 @@
 /**
  * This class will will move one index up/down
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -69,13 +67,13 @@ class move_updown_index extends XMLDBAction {
 
         // Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
-            $dbdir =& $XMLDB->dbdirs[$dirpath];
+            $dbdir = $XMLDB->dbdirs[$dirpath];
         } else {
             return false;
         }
         if (!empty($XMLDB->editeddirs)) {
-            $editeddir =& $XMLDB->editeddirs[$dirpath];
-            $structure =& $editeddir->xml_file->getStructure();
+            $editeddir = $XMLDB->editeddirs[$dirpath];
+            $structure = $editeddir->xml_file->getStructure();
         }
 
         $prev = NULL;
@@ -83,20 +81,20 @@ class move_updown_index extends XMLDBAction {
         $tableparam = required_param('table', PARAM_CLEAN);
         $indexparam = required_param('index', PARAM_CLEAN);
         $direction  = required_param('direction', PARAM_ALPHA);
-        $tables =& $structure->getTables();
-        $table =& $structure->getTable($tableparam);
-        $indexes =& $table->getIndexes();
+        $tables = $structure->getTables();
+        $table = $structure->getTable($tableparam);
+        $indexes = $table->getIndexes();
         if ($direction == 'down') {
-            $index =& $table->getIndex($indexparam);
-            $swap  =& $table->getIndex($index->getNext());
+            $index = $table->getIndex($indexparam);
+            $swap  = $table->getIndex($index->getNext());
         } else {
-            $swap  =& $table->getIndex($indexparam);
-            $index =& $table->getIndex($swap->getPrevious());
+            $swap  = $table->getIndex($indexparam);
+            $index = $table->getIndex($swap->getPrevious());
         }
 
         // Change the index before the pair
         if ($index->getPrevious()) {
-            $prev =& $table->getIndex($index->getPrevious());
+            $prev = $table->getIndex($index->getPrevious());
             $prev->setNext($swap->getName());
             $swap->setPrevious($prev->getName());
             $prev->setChanged(true);
@@ -105,7 +103,7 @@ class move_updown_index extends XMLDBAction {
         }
         // Change the field after the pair
         if ($swap->getNext()) {
-            $next =& $table->getIndex($swap->getNext());
+            $next = $table->getIndex($swap->getNext());
             $next->setPrevious($index->getName());
             $index->setNext($next->getName());
             $next->setChanged(true);
@@ -124,14 +122,14 @@ class move_updown_index extends XMLDBAction {
         $table->setChanged(true);
 
         // Reorder the indexes
-        $table->orderIndexes($indexes);
+        $table->orderIndexes();
 
         // Recalculate the hash
         $structure->calculateHash(true);
 
         // If the hash has changed from the original one, change the version
         // and mark the structure as changed
-        $origstructure =& $dbdir->xml_file->getStructure();
+        $origstructure = $dbdir->xml_file->getStructure();
         if ($structure->getHash() != $origstructure->getHash()) {
             $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
             $structure->setChanged(true);

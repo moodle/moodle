@@ -17,8 +17,7 @@
 /**
  * Strings for component 'tool_xmldb', language 'en', branch 'MOODLE_22_STABLE'
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -91,6 +90,7 @@ $string['fields'] = 'Fields';
 $string['fieldsnotintable'] = 'Field doesn\'t exist in table';
 $string['fieldsusedinindex'] = 'This field is used as index';
 $string['fieldsusedinkey'] = 'This field is used as key.';
+$string['filemodifiedoutfromeditor'] = 'Warning: File locally modified while using the XMLDB Editor. Saving will overwrite local changes.';
 $string['filenotwriteable'] = 'File not writeable';
 $string['fkviolationdetails'] = 'Foreign key {$a->keyname} on table {$a->tablename} is violated by {$a->numviolations} out of {$a->numrows} rows.';
 $string['floatincorrectdecimals'] = 'Incorrect number of decimals for float field';

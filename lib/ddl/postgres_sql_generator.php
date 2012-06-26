@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,12 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * PostgreSQL specific SQL code generator.
  *
- * @package    core
- * @subpackage ddl_generator
+ * @package    core_ddl
  * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
  *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,35 +27,53 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/ddl/sql_generator.php');
 
-/// This class generate SQL code to be used against PostgreSQL
-/// It extends XMLDBgenerator so everything can be
-/// overridden as needed to generate correct SQL.
+/**
+ * This class generate SQL code to be used against PostgreSQL
+ * It extends XMLDBgenerator so everything can be
+ * overridden as needed to generate correct SQL.
+ *
+ * @package    core_ddl
+ * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
+ *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 class postgres_sql_generator extends sql_generator {
 
-/// Only set values that are different from the defaults present in XMLDBgenerator
+    // Only set values that are different from the defaults present in XMLDBgenerator
 
-    public $number_type = 'NUMERIC';    // Proper type for NUMBER(x) in this DB
+    /** @var string Proper type for NUMBER(x) in this DB. */
+    public $number_type = 'NUMERIC';
 
-    public $default_for_char = '';      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
+    /** @var string To define the default to set for NOT NULLs CHARs without default (null=do nothing).*/
+    public $default_for_char = '';
 
-    public $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
-    public $sequence_name = 'BIGSERIAL'; //Particular name for inline sequences in this generator
-    public $sequence_name_small = 'SERIAL'; //Particular name for inline sequences in this generator
-    public $sequence_only = true; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name variable
+    /** @var bool True if the generator needs to add extra code to generate the sequence fields.*/
+    public $sequence_extra_code = false;
 
-    public $rename_index_sql = 'ALTER TABLE OLDINDEXNAME RENAME TO NEWINDEXNAME'; //SQL sentence to rename one index
-                                      //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dynamically replaced
+    /** @var string The particular name for inline sequences in this generator.*/
+    public $sequence_name = 'BIGSERIAL';
 
-    public $rename_key_sql = null; //SQL sentence to rename one key (PostgreSQL doesn't support this!)
-                                          //TABLENAME, OLDKEYNAME, NEWKEYNAME are dynamically replaced
+    /** @var string The particular name for inline sequences in this generator.*/
+    public $sequence_name_small = 'SERIAL';
 
-    protected $std_strings = null;  // '' or \' quotes
+    /** @var bool To avoid outputting the rest of the field specs, leaving only the name and the sequence_name returned.*/
+    public $sequence_only = true;
+
+    /** @var string SQL sentence to rename one index where 'TABLENAME', 'OLDINDEXNAME' and 'NEWINDEXNAME' are dynamically replaced.*/
+    public $rename_index_sql = 'ALTER TABLE OLDINDEXNAME RENAME TO NEWINDEXNAME';
+
+    /** @var string SQL sentence to rename one key 'TABLENAME', 'OLDKEYNAME' and 'NEWKEYNAME' are dynamically replaced.*/
+    public $rename_key_sql = null;
+
+    /** @var string type of string quoting used - '' or \' quotes*/
+    protected $std_strings = null;
 
     /**
      * Reset a sequence to the id field of a table.
-     * @param string $table name of table or xmldb_table object
-     * @return array sql commands to execute
+     *
+     * @param xmldb_table|string $table name of table or the table object.
+     * @return array of sql statements
      */
     public function getResetSequenceSQL($table) {
 
@@ -76,7 +91,10 @@ class postgres_sql_generator extends sql_generator {
 
     /**
      * Given one correct xmldb_table, returns the SQL statements
-     * to create temporary table (inside one array)
+     * to create temporary table (inside one array).
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @return array of sql statements
      */
     public function getCreateTempTableSQL($xmldb_table) {
         $this->temptables->add_temptable($xmldb_table->getName());
@@ -101,7 +119,12 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one XMLDB Type, length and decimals, returns the DB proper SQL type
+     * Given one XMLDB Type, length and decimals, returns the DB proper SQL type.
+     *
+     * @param int $xmldb_type The xmldb_type defined constant. XMLDB_TYPE_INTEGER and other XMLDB_TYPE_* constants.
+     * @param int $xmldb_length The length of that data type.
+     * @param int $xmldb_decimals The decimal places of precision of the data type.
+     * @return string The DB defined data type.
      */
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
 
@@ -157,7 +180,10 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Returns the code (in array) needed to add one comment to the table
+     * Returns the code (array of statements) needed to add one comment to the table.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @return array Array of SQL statements to add one comment to the table.
      */
     function getCommentSQL ($xmldb_table) {
 
@@ -168,7 +194,11 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
-     * Returns the code (array of statements) needed to execute extra statements on table rename
+     * Returns the code (array of statements) needed to execute extra statements on table rename.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param string $newname The new name for the table.
+     * @return array Array of extra SQL statements to rename a table.
      */
     public function getRenameTableExtraSQL($xmldb_table, $newname) {
 
@@ -181,29 +211,37 @@ class postgres_sql_generator extends sql_generator {
         $oldseqname = $this->getTableName($xmldb_table) . '_' . $xmldb_field->getName() . '_seq';
         $newseqname = $this->getTableName($newt) . '_' . $xmldb_field->getName() . '_seq';
 
-    /// Rename de sequence
+        // Rename de sequence
         $results[] = 'ALTER TABLE ' . $oldseqname . ' RENAME TO ' . $newseqname;
 
         return $results;
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to alter the field in the table.
+     *
      * PostgreSQL has some severe limits:
      *     - Any change of type or precision requires a new temporary column to be created, values to
      *       be transfered potentially casting them, to apply defaults if the column is not null and
      *       finally, to rename it
      *     - Changes in null/not null require the SET/DROP NOT NULL clause
      *     - Changes in default require the SET/DROP DEFAULT clause
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_field.
+     * @param xmldb_field $xmldb_field The instance of xmldb_field to create the SQL from.
+     * @param string $skip_type_clause The type clause on alter columns, NULL by default.
+     * @param string $skip_default_clause The default clause on alter columns, NULL by default.
+     * @param string $skip_notnull_clause The null/notnull clause on alter columns, NULL by default.
+     * @return string The field altering SQL statement.
      */
     public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
-        $results = array(); /// To store all the needed SQL commands
+        $results = array();     // To store all the needed SQL commands
 
-    /// Get the normla names of the table and field
+        // Get the normal names of the table and field
         $tablename = $xmldb_table->getName();
         $fieldname = $xmldb_field->getName();
 
-    /// Take a look to field metadata
+        // Take a look to field metadata
         $meta = $this->mdb->get_columns($tablename);
         $metac = $meta[$xmldb_field->getName()];
         $oldmetatype = $metac->meta_type;
@@ -218,7 +256,7 @@ class postgres_sql_generator extends sql_generator {
         $defaultchanged = true;  //By default, assume that the column default has changed
         $notnullchanged = true;  //By default, assume that the column notnull has changed
 
-    /// Detect if we are changing the type of the column
+        // Detect if we are changing the type of the column
         if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER && $oldmetatype == 'I') ||
             ($xmldb_field->getType() == XMLDB_TYPE_NUMBER  && $oldmetatype == 'N') ||
             ($xmldb_field->getType() == XMLDB_TYPE_FLOAT   && $oldmetatype == 'F') ||
@@ -227,14 +265,14 @@ class postgres_sql_generator extends sql_generator {
             ($xmldb_field->getType() == XMLDB_TYPE_BINARY  && $oldmetatype == 'B')) {
             $typechanged = false;
         }
-    /// Detect if we are changing the precision
+        // Detect if we are changing the precision
         if (($xmldb_field->getType() == XMLDB_TYPE_TEXT) ||
             ($xmldb_field->getType() == XMLDB_TYPE_BINARY) ||
             ($oldlength == -1) ||
             ($xmldb_field->getLength() == $oldlength)) {
             $precisionchanged = false;
         }
-    /// Detect if we are changing the decimals
+        // Detect if we are changing the decimals
         if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER) ||
             ($xmldb_field->getType() == XMLDB_TYPE_CHAR) ||
             ($xmldb_field->getType() == XMLDB_TYPE_TEXT) ||
@@ -244,32 +282,32 @@ class postgres_sql_generator extends sql_generator {
             ($xmldb_field->getDecimals() == $olddecimals)) {
             $decimalchanged = false;
         }
-    /// Detect if we are changing the default
+        // Detect if we are changing the default
         if (($xmldb_field->getDefault() === null && $olddefault === null) ||
             ($xmldb_field->getDefault() === $olddefault)) {
             $defaultchanged = false;
         }
-    /// Detect if we are changing the nullability
+        // Detect if we are changing the nullability
         if (($xmldb_field->getNotnull() === $oldnotnull)) {
             $notnullchanged = false;
         }
 
-    /// Get the quoted name of the table and field
+        // Get the quoted name of the table and field
         $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
-    /// Decide if we have changed the column specs (type/precision/decimals)
+        // Decide if we have changed the column specs (type/precision/decimals)
         $specschanged = $typechanged || $precisionchanged || $decimalchanged;
 
-    /// if specs have changed, need to alter column
+        // if specs have changed, need to alter column
         if ($specschanged) {
-        /// Always drop any exiting default before alter column (some type changes can cause casting error in default for column)
+            // Always drop any exiting default before alter column (some type changes can cause casting error in default for column)
             if ($olddefault !== null) {
-                $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' DROP DEFAULT'; /// Drop default clause
+                $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' DROP DEFAULT';     // Drop default clause
             }
             $alterstmt = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $this->getEncQuoted($xmldb_field->getName()) .
                          ' TYPE' . $this->getFieldSQL($xmldb_table, $xmldb_field, null, true, true, null, false);
-        /// Some castings must be performed explicity (mainly from text|char to numeric|integer)
+            // Some castings must be performed explicitly (mainly from text|char to numeric|integer)
             if (($oldmetatype == 'C' || $oldmetatype == 'X') &&
                 ($xmldb_field->getType() == XMLDB_TYPE_NUMBER || $xmldb_field->getType() == XMLDB_TYPE_FLOAT)) {
                 $alterstmt .= ' USING CAST('.$fieldname.' AS NUMERIC)'; // from char or text to number or float
@@ -280,20 +318,20 @@ class postgres_sql_generator extends sql_generator {
             $results[] = $alterstmt;
         }
 
-    /// If the default has changed or we have performed one change in specs
+        // If the default has changed or we have performed one change in specs
         if ($defaultchanged || $specschanged) {
             $default_clause = $this->getDefaultClause($xmldb_field);
             if ($default_clause) {
-                $sql = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET' . $default_clause; /// Add default clause
+                $sql = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET' . $default_clause;     // Add default clause
                 $results[] = $sql;
             } else {
-                if (!$specschanged) { /// Only drop default if we haven't performed one specs change
-                    $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' DROP DEFAULT'; /// Drop default clause
+                if (!$specschanged) {     // Only drop default if we haven't performed one specs change
+                    $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' DROP DEFAULT';     // Drop default clause
                 }
             }
         }
 
-    /// If the not null has changed
+        // If the not null has changed
         if ($notnullchanged) {
             if ($xmldb_field->getNotnull()) {
                 $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' SET NOT NULL';
@@ -302,30 +340,47 @@ class postgres_sql_generator extends sql_generator {
             }
         }
 
-    /// Return the results
+        // Return the results
         return $results;
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its default
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to add its default
      * (usually invoked from getModifyDefaultSQL()
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param xmldb_field $xmldb_field The xmldb_field object instance.
+     * @return array Array of SQL statements to create a field's default.
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
-    /// Just a wrapper over the getAlterFieldSQL() function for PostgreSQL that
-    /// is capable of handling defaults
+        // Just a wrapper over the getAlterFieldSQL() function for PostgreSQL that
+        // is capable of handling defaults
         return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
     }
 
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its default
      * (usually invoked from getModifyDefaultSQL()
+     *
+     * Note that this method may be dropped in future.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param xmldb_field $xmldb_field The xmldb_field object instance.
+     * @return array Array of SQL statements to create a field's default.
+     *
+     * @todo MDL-31147 Moodle 2.1 - Drop getDropDefaultSQL()
      */
     public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
-    /// Just a wrapper over the getAlterFieldSQL() function for PostgreSQL that
-    /// is capable of handling defaults
+        // Just a wrapper over the getAlterFieldSQL() function for PostgreSQL that
+        // is capable of handling defaults
         return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
     }
 
+    /**
+     * Adds slashes to string.
+     * @param string $s
+     * @return string The escaped string.
+     */
     public function addslashes($s) {
         // Postgres is gradually switching to ANSI quotes, we need to check what is expected
         if (!isset($this->std_strings)) {
@@ -344,33 +399,43 @@ class postgres_sql_generator extends sql_generator {
         return $s;
     }
 
-/**
- * Given one xmldb_table returns one string with the sequence of the table
- * in the table (fetched from DB)
- * The sequence name for Postgres has one standard name convention:
- *     tablename_fieldname_seq
- * so we just calculate it and confirm it's present in pg_class
- * If no sequence is found, returns false
- */
-function getSequenceFromDB($xmldb_table) {
+    /**
+     * Given one xmldb_table returns one string with the sequence of the table
+     * in the table (fetched from DB)
+     * The sequence name for Postgres has one standard name convention:
+     *     tablename_fieldname_seq
+     * so we just calculate it and confirm it's present in pg_class
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @return string|bool If no sequence is found, returns false
+     */
+    function getSequenceFromDB($xmldb_table) {
 
-    $tablename = $this->getTableName($xmldb_table);
-    $sequencename = $tablename . '_id_seq';
+        $tablename = $this->getTableName($xmldb_table);
+        $sequencename = $tablename . '_id_seq';
 
-    if (!$this->mdb->get_record_sql("SELECT *
-                                       FROM pg_class
-                                      WHERE relname = ? AND relkind = 'S'",
-                                    array($sequencename))) {
-        $sequencename = false;
+        if (!$this->mdb->get_record_sql("SELECT *
+                                           FROM pg_class
+                                          WHERE relname = ? AND relkind = 'S'",
+                                        array($sequencename))) {
+            $sequencename = false;
+        }
+
+        return $sequencename;
     }
 
-    return $sequencename;
-}
-
     /**
-     * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg)
-     * return if such name is currently in use (true) or no (false)
-     * (invoked from getNameForObject()
+     * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg).
+     *
+     * (MySQL requires the whole xmldb_table object to be specified, so we add it always)
+     *
+     * This is invoked from getNameForObject().
+     * Only some DB have this implemented.
+     *
+     * @param string $object_name The object's name to check for.
+     * @param string $type The object's type (pk, uk, fk, ck, ix, uix, seq, trg).
+     * @param string $table_name The table's name to check in
+     * @return bool If such name is currently in use (true) or no (false)
      */
     public function isNameInUse($object_name, $type, $table_name) {
         switch($type) {
@@ -406,10 +471,11 @@ function getSequenceFromDB($xmldb_table) {
 
     /**
      * Returns an array of reserved words (lowercase) for this DB
+     * @return array An array of database specific reserved words
      */
     public static function getReservedWords() {
-    /// This file contains the reserved words for PostgreSQL databases
-    /// http://www.postgresql.org/docs/current/static/sql-keywords-appendix.html
+        // This file contains the reserved words for PostgreSQL databases
+        // http://www.postgresql.org/docs/current/static/sql-keywords-appendix.html
         $reserved_words = array (
             'all', 'analyse', 'analyze', 'and', 'any', 'array', 'as', 'asc',
             'asymmetric', 'authorization', 'between', 'binary', 'both', 'case',

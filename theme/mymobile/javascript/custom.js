@@ -1,8 +1,7 @@
 $(document).bind("mobileinit", function(){
 //mobile init stuff 11/12/10
 //turn off ajax forms...
-//$.mobile.defaultPageTransition = "fade";
-//$.mobile.touchOverflowEnabled = true;
+$.mobile.defaultPageTransition = "slide";
 });
 
 $(document).ready(function() {
@@ -49,7 +48,7 @@ $(document).ready(function() {
 
         //scroll to top
         $('a#uptotop').live('tap', function() {
-            var position = $(".ui-page-active .ui-header").position();
+            var position = $(".ui-page-active").position();
             $.mobile.silentScroll(position.top);
             $(this).removeClass("ui-btn-active");
             return false;
@@ -62,7 +61,7 @@ $(document).ready(function() {
         });
 
         //calendar and other links that need to be external
-        $('.maincalendar .filters a, li.activity.scorm a, div.files a, #page-user-filesPAGE li div a, .maincalendar .bottom a, .section li.url.modtype_url a, .resourcecontent .resourcemediaplugin a, #underfooter .noajax a, .block_mnet_hosts .content a, .block_private_files .content a, a.portfolio-add-link').attr("data-ajax", "false");
+        $('.maincalendar .filters a, li.activity.scorm a, div.files a, #page-user-filesPAGE li div a, .maincalendar .bottom a, .section li.url.modtype_url a, .resourcecontent .resourcemediaplugin a, #underfooter .noajax a, .block_mnet_hosts .content a, .block_private_files .content a, a.portfolio-add-link, #attempts td a').attr("data-ajax", "false");
 
         //add blank to open in window for some
         $('#page-mod-url-viewPAGE div.urlworkaround a, #page-mod-resource-viewPAGE div.resourceworkaround a, .mediaplugin a.mediafallbacklink, #page-mod-resource-viewPAGE .resourcemp3 a, .foldertree li a').attr("target", "_blank").attr("data-role", "button").attr("data-icon", "plus");
@@ -226,7 +225,7 @@ $(document).ready(function() {
     });
 
     //quiz page only js
-    $('div#page-mod-quiz-viewPAGE, div#page-mod-quiz-attemptPAGE, div#page-mod-quiz-summaryPAGE, div#page-mod-quiz-reviewPAGE').live('pagebeforecreate',function(event, ui){
+    $('div#page-mod-quiz-viewPAGE, div#page-mod-quiz-attemptPAGE, div#page-mod-quiz-summaryPAGE, div#page-mod-quiz-reviewPAGE, #page-mod-quiz-attempt #content2').live('pagebeforecreate',function(event, ui){
         //add quiz timer into quiz page
         $('#quiz-timer').remove();
         $('.mymobilecontent').prepend('<div id="quiz-timer" > <span id="quiz-time-left"></span></div>');
@@ -251,19 +250,12 @@ $(document).ready(function() {
     $('div#page-course-view-topcollPAGE').live('pagebeforecreate',function(event, ui){
         $('#page-course-view-topcollPAGE ul.section').attr("data-role", "none");
         $('.section li img').removeClass("ui-li-icon");
-        $.getScript('../course/format/topcoll/lib.js');
+        $.getScript('../course/format/topcoll/module.js');
         $('#page-course-view-topcollPAGE tr.cps a').attr("data-role", "button").attr("data-icon", "arrow-r");
         $('#page-course-view-topcollPAGE #thetopics').attr("data-role", "controlgroup");
         $('#page-course-view-topcollPAGE td.cps_centre').each(function(index) {
             var cpsc = $(this).text().replace('<br>','').replace(')','');
             $(this).prev('td').find('a').append('<span class="ui-li-count ui-btn-up-a ui-btn-corner-all">' + cpsc + '</span>');
-        });
-        $('tr.cps').click(function() {
-            if ($(this).hasClass('opencps')) {
-                $(this).removeClass("opencps");
-            } else {
-                $(this).addClass("opencps");
-            }
         });
     });
 
@@ -272,8 +264,6 @@ $(document).ready(function() {
         $('.path-calendar div.ui-radio label:first-child, .path-mod-lesson div.ui-radio label:first-child, #page-mod-wiki-createPAGE div.ui-radio label:first-child').addClass("afirst");
         $('.forumpost div.author a').removeAttr('data-role');
         //$('.questionflagimage2').removeClass("ui-btn-hidden");a#notificationyes
-        //scrollview 2/7/11 testing remove if remove scrollview
-        $('.gradeparent, .pagelayout-report .no-overflow, .path-mod-choice .response, .resourcecontent.resourceimg, .usersubmissions .no-overflow, .path-course-report-log .generaltable, table.results.anonymous, table.surveytable, div.resultgraph, div.reportsummary a, #completion-progress').scrollview();
         //image replacement
         $(this).find(".ithumb .course-content .summary img, .ithumb .course-content .activity.label img, .ithumb .sitetopic .no-overflow img").click(function() {
             var turl = $(this).attr("src");

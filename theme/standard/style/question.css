@@ -12,8 +12,6 @@
 #chooseqtype .qtypename {font-weight: bold;}
 
 #qtypechoicecontainer #chooseqtype .qtypename {font-weight: normal;}
-#qtypechoicecontainer #chooseqtype .qtypes {border-bottom-color: gray;}
-#qtypechoicecontainer #chooseqtype .selected {background: #dddddd;}
 #qtypechoicecontainer #chooseqtype .instruction,
 #qtypechoicecontainer #chooseqtype .qtypesummary {border-left-color: gray;}
 

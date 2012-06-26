@@ -136,7 +136,7 @@ class repository_boxnet extends repository {
                     $list[] = array('title'=>$v,
                             'size'=>$filesizes[$n],
                             'date'=>$filedates[$n],
-                            'source'=>'http://box.net/api/1.0/download/'
+                            'source'=>'https://www.box.com/api/1.0/download/'
                                 .$this->auth_token.'/'.$fileids[$n],
                             'thumbnail' => $OUTPUT->pix_url(file_extension_icon($v, 90))->out(false));
                 }
@@ -158,7 +158,7 @@ class repository_boxnet extends repository {
         $ret  = array();
         $ret['list'] = array();
         $tree = $this->boxclient->getfiletree($path);
-        $ret['manage'] = 'http://www.box.net/files';
+        $ret['manage'] = 'http://www.box.com/files';
         $ret['path'] = array(array('name'=>'Root', 'path'=>0));
         if(!empty($tree)) {
             $ret['list'] = array_filter($tree, array($this, 'filter'));
@@ -176,7 +176,7 @@ class repository_boxnet extends repository {
         if ($this->options['ajax']) {
             $popup_btn = new stdClass();
             $popup_btn->type = 'popup';
-            $popup_btn->url = ' https://www.box.net/api/1.0/auth/' . $t['ticket'];
+            $popup_btn->url = ' https://www.box.com/api/1.0/auth/' . $t['ticket'];
 
             $ret = array();
             $ret['login'] = array($popup_btn);
@@ -319,7 +319,7 @@ class repository_boxnet extends repository {
         $fileid = array_pop($array);
         $fileinfo = $this->boxclient->get_file_info($fileid);
         if (!empty($fileinfo)) {
-            return 'Box:' . (string)$fileinfo->file_name;
+            return 'Box: ' . (string)$fileinfo->file_name;
         } else {
             return $url;
         }

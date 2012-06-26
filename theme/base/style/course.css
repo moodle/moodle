@@ -107,6 +107,9 @@
 .course_category_tree .category .courses .course_link {display:block;background-image:url([[pix:moodle|i/course]]);background-repeat: no-repeat;padding-left:18px;}
 .course_category_tree .category .course {position:relative;}
 .course_category_tree .category .course_info {position:absolute;right:0;top:0;}
+.dir-rtl .course_category_tree .category .course_info { position: static; }
+.dir-rtl .course_category_tree .category .course_info a, .dir-rtl .course_category_tree .category .course_info div {float: right;}
+.dir-rtl .course_category_tree .controls div {padding: 7px;}
 .course_category_tree .category .course_info a,
 .course_category_tree .category .course_info div {float:left;width:16px;height:16px;}
 .jsenabled .course_category_tree .controls {visibility: visible;}
@@ -163,10 +166,8 @@ input.titleeditor {
 }
 
 /* Course drag and drop upload styles */
-#dndupload-status {width:40%;margin:0 30%;padding:6px;border:1px solid #ddd;text-align:center;background:#ffc;position:absolute;z-index:9999;box-shadow:2px 2px 5px 1px #ccc;border-radius:0px 0px 8px 8px;}
+#dndupload-status {width:40%;margin:0 30%;padding:6px;border:1px solid #ddd;text-align:center;background:#ffc;position:absolute;z-index:9999;box-shadow:2px 2px 5px 1px #ccc;border-radius:0px 0px 8px 8px;z-index: 0;}
 .dndupload-preview {color:#909090;border:1px dashed #909090;}
 .dndupload-progress-outer {width:70px;border:solid black 1px;height:10px;display:inline-block;margin:0;padding:0;overflow:hidden;position:relative;}
 .dndupload-progress-inner {width:0%;height:100%;background-color:green;display:inline-block;margin:0;padding:0;float:left;}
 .dndupload-hidden {display:none;}
-
-.dir-rtl.path-course-view li.activity form.togglecompletion, .dir-rtl.path-course-view li.activity span.autocompletion

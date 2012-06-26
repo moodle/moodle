@@ -461,6 +461,8 @@ body.tag .managelink {padding: 5px;}
 .path-backup .backup_progress .backup_stage.backup_stage_current {font-weight:bold;color:inherit;}
 .path-backup .backup_progress .backup_stage.backup_stage_next {}
 .path-backup .backup_progress span.backup_stage.backup_stage_complete {color:inherit;}
+#page-backup-restore .filealiasesfailures {background-color:#ffd3d9}
+#page-backup-restore .filealiasesfailures .aliaseslist {width:90%;margin:0.8em auto;background-color:white;border:1px dotted #666;}
 
 /**
  * Web Service
@@ -723,8 +725,8 @@ sup {vertical-align: super;}
 .dir-rtl .ygtvcancel {background-position: 0 -8822px;}
 .dir-rtl .ygtvcancel:hover {background-position: 0 -8866px;}
 
-.dir-rtl #yui-gen4.yui-layout-unit-left  {left:500px !important;}
-.dir-rtl #yui-gen6.yui-layout-unit-center {left:0px !important;}
+.dir-rtl .file-picker .yui-layout-unit-left  {left:500px !important;}
+.dir-rtl .file-picker .yui-layout-unit-center {left:0px !important;}
 .dir-rtl.yui-skin-sam .yui-panel .hd {text-align:left;}
 .dir-rtl .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd {text-align:right;}
 
@@ -805,6 +807,7 @@ sup {vertical-align: super;}
 #page-admin-setting-enrolsettingsflatfile.dir-rtl .informationbox {direction: ltr;text-align: left;}
 
 #page-admin-grade-edit-scale-edit.dir-rtl .error input#id_name {margin-right: 170px;}
+.initialbar a {padding-right: 2px;}
 
 /**
  * Chooser Dialogue
@@ -819,8 +822,8 @@ sup {vertical-align: super;}
 }
 
 .moodle-dialogue-base .moodle-dialogue {
-    background-color: transparent!important;
-    border: 0px solid transparent!important;
+    background: none!important;
+    border: 0 none!important;
 }
 
 .chooserdialogue .moodle-dialogue-wrap {
@@ -882,7 +885,7 @@ sup {vertical-align: super;}
     max-height: 550px;
     overflow-x: hidden;
     overflow-y: auto;
-    max-width: 18.5em;
+    max-width: 20.3em;
     box-shadow: inset 0px 0px 30px 0px #CCCCCC;
     -webkit-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
     -moz-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
@@ -902,13 +905,10 @@ sup {vertical-align: super;}
     padding-bottom: 0.4em;
 }
 
-.choosercontainer #chooseform .subtype {
-    margin-bottom: 0;
-    padding: 0 0 0 1em;
-}
-
 .choosercontainer #chooseform .option .typename,
-.choosercontainer #chooseform .option span.modicon img.icon {
+.choosercontainer #chooseform .option span.modicon img.icon,
+.choosercontainer #chooseform .nonoption .typename,
+.choosercontainer #chooseform .nonoption span.modicon img.icon {
     padding: 0 0 0 0.5em;
 }
 
@@ -924,17 +924,32 @@ sup {vertical-align: super;}
     border-bottom: 1px solid #FFFFFF;
 }
 
+.choosercontainer #chooseform .nonoption {
+    padding-left: 2.7em;
+    padding-top: 0.3em;
+    padding-bottom: 0.1em;
+}
+
+.choosercontainer #chooseform .subtype {
+    margin-bottom: 0;
+    padding: 0 1.6em 0 3.2em;
+}
+
+.choosercontainer #chooseform .subtype .typename {
+    margin: 0 0 0 0.2em;
+}
+
 /* The instruction/help area */
-.choosercontainer #chooseform .instruction,
+.jsenabled .choosercontainer #chooseform .instruction,
 .jsenabled .choosercontainer #chooseform .typesummary {
     display: none;
     position: absolute;
     top: 0px;
     right: 0px;
     bottom: 0px;
-    left: 18.5em;
+    left: 20.3em;
     margin: 0;
-    padding: 2em 2em 2em 2.4em;
+    padding: 1.6em;
     background-color: #FFFFFF;
     overflow-x: hidden;
     overflow-y: auto;
@@ -942,7 +957,8 @@ sup {vertical-align: super;}
     line-height: 2em;
 }
 
-.dir-rtl #choosercontainer #chooseform .instruction, .jsenabled #choosercontainer #chooseform .typesummary {
+.dir-rtl.jsenabled .choosercontainer #chooseform .instruction,
+.dir-rtl.jsenabled .choosercontainer #chooseform .typesummary {
     left: 0px;
     right: 18.5em;
     border-right: 1px solid grey;
@@ -960,5 +976,3 @@ sup {vertical-align: super;}
     -webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;
     -moz-box-shadow: 0px 0px 10px 0px #CCCCCC;
 }
-
-.initialbar a {padding-right: 2px;}

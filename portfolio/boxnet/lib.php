@@ -106,7 +106,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         }
     }
 
-    public function admin_config_form(&$mform) {
+    public static function admin_config_form(&$mform) {
         global $CFG;
 
         $mform->addElement('text', 'apikey', get_string('apikey', 'portfolio_boxnet'));

@@ -102,8 +102,10 @@ class delete_category_form extends moodleform {
         /// Give the options for what to do.
             $mform->addElement('select', 'fulldelete', get_string('whattodo'), $options);
             if (count($options) == 1) {
+                $optionkeys = array_keys($options);
+                $option = reset($optionkeys);
                 $mform->hardFreeze('fulldelete');
-                $mform->setConstant('fulldelete', reset(array_keys($options)));
+                $mform->setConstant('fulldelete', $option);
             }
 
             if ($displaylist) {

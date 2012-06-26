@@ -385,7 +385,9 @@ function xmldb_main_upgrade($oldversion) {
                         AND older.id < cs.id');
         foreach ($rs as $rec) {
             $DB->delete_records('course_sections', array('id' => $rec->id));
-            rebuild_course_cache($rec->course, true);
+            // We can't use rebuild_course_cache() here because introducing sectioncache later
+            // so reset modinfo manually.
+            $DB->set_field('course', 'modinfo', null, array('id' => $rec->course));
         }
         $rs->close();
         $transaction->allow_commit();
@@ -829,6 +831,46 @@ function xmldb_main_upgrade($oldversion) {
 
         upgrade_main_savepoint(true, 2012060600.04);
     }
+
+    if ($oldversion < 2012061800.01) {
+
+        // Define field screenreader to be dropped from user
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('ajax');
+
+        // Conditionally launch drop field screenreader
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012061800.01);
+    }
+
+    if ($oldversion < 2012062000.00) {
+        // Add field newcontextid to backup_files_template
+        $table = new xmldb_table('backup_files_template');
+        $field = new xmldb_field('newcontextid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'info');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2012062000.00);
+    }
+
+    if ($oldversion < 2012062000.01) {
+        // Add field newitemid to backup_files_template
+        $table = new xmldb_table('backup_files_template');
+        $field = new xmldb_field('newitemid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'newcontextid');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2012062000.01);
+    }
+
 
     return true;
 }

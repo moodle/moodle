@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,8 +24,7 @@
  * This class will ask and retrofit all the information from one
  * mysql table present in the Moodle DB to one xmldb_table structure
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -72,13 +70,13 @@ class new_table_from_mysql extends XMLDBAction {
 
         // Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
-            $dbdir =& $XMLDB->dbdirs[$dirpath];
+            $dbdir = $XMLDB->dbdirs[$dirpath];
         } else {
             return false;
         }
         if (!empty($XMLDB->editeddirs)) {
-            $editeddir =& $XMLDB->editeddirs[$dirpath];
-            $structure =& $editeddir->xml_file->getStructure();
+            $editeddir = $XMLDB->editeddirs[$dirpath];
+            $structure = $editeddir->xml_file->getStructure();
         }
 
         $tableparam = optional_param('table', NULL, PARAM_CLEAN);
@@ -98,7 +96,7 @@ class new_table_from_mysql extends XMLDBAction {
             }
             // Get list of after tables
             $aftertables = array();
-            if ($tables =& $structure->getTables()) {
+            if ($tables = $structure->getTables()) {
                 foreach ($tables as $aftertable) {
                     $aftertables[$aftertable->getName()] = $aftertable->getName();
                 }

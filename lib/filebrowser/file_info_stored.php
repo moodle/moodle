@@ -310,6 +310,24 @@ class file_info_stored extends file_info {
     }
 
     /**
+     * Whether or not this is a external resource
+     *
+     * @return bool
+     */
+    public function is_external_file() {
+        return $this->lf->is_external_file();
+    }
+
+    /**
+     * Returns file status flag.
+     *
+     * @return int 0 means file OK, anything else is a problem and file can not be used
+     */
+    public function get_status() {
+        return $this->lf->get_status();
+    }
+
+    /**
      * Returns list of children.
      *
      * @return array of file_info instances

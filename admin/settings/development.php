@@ -14,7 +14,10 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('enablegroupmembersonly', new lang_string('enablegroupmembersonly', 'admin'), new lang_string('configenablegroupmembersonly', 'admin'), 0));
 
     $temp->add(new admin_setting_configcheckbox('dndallowtextandlinks', new lang_string('dndallowtextandlinks', 'admin'), new lang_string('configdndallowtextandlinks', 'admin'), 0));
-    $temp->add(new admin_setting_configcheckbox('enablecssoptimiser', new lang_string('enablecssoptimiser','admin'), new lang_string('enablecssoptimiser_desc','admin'), 0));
+    // The CSS optimiser setting. When changed we need to reset the theme caches in order to ensure they are regenerated through the optimiser.
+    $enablecssoptimiser = new admin_setting_configcheckbox('enablecssoptimiser', new lang_string('enablecssoptimiser','admin'), new lang_string('enablecssoptimiser_desc','admin'), 0);
+    $enablecssoptimiser->set_updatedcallback('theme_reset_all_caches');
+    $temp->add($enablecssoptimiser);
 
     $ADMIN->add('experimental', $temp);
 

@@ -134,8 +134,19 @@ if ($user->id !== -1) {
     );
 }
 
+// Prepare filemanager draft area.
+$draftitemid = 0;
+$filemanagercontext = $editoroptions['context'];
+$filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
+                             'subdirs'        => 0,
+                             'maxfiles'       => 1,
+                             'accepted_types' => 'web_image');
+file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'user', 'newicon', 0, $filemanageroptions);
+$user->imagefile = $draftitemid;
 //create form
-$userform = new user_editadvanced_form(null, array('editoroptions'=>$editoroptions));
+$userform = new user_editadvanced_form(null, array(
+    'editoroptions' => $editoroptions,
+    'filemanageroptions' => $filemanageroptions));
 $userform->set_data($user);
 
 if ($usernew = $userform->get_data()) {
@@ -203,7 +214,7 @@ if ($usernew = $userform->get_data()) {
 
     //update user picture
     if (!empty($CFG->gdversion) and empty($USER->newadminuser)) {
-        useredit_update_picture($usernew, $userform);
+        useredit_update_picture($usernew, $userform, $filemanageroptions);
     }
 
     // update mail bounces

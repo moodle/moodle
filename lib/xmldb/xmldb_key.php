@@ -1,45 +1,57 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+/**
+ * This class represent one XMLDB Key
+ *
+ * @package    core_xmldb
+ * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
+ *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-/// This class represent one XMLDB Key
+defined('MOODLE_INTERNAL') || die();
+
 
 class xmldb_key extends xmldb_object {
 
-    var $type;
-    var $fields;
-    var $reftable;
-    var $reffields;
+    /** @var int type of key */
+    protected $type;
+
+    /** @var array of fields */
+    protected $fields;
+
+    /** @var string referenced table */
+    protected $reftable;
+
+    /** @var array referenced fields */
+    protected $reffields;
 
     /**
      * Creates one new xmldb_key
+     * @param string $name
+     * @param string $type XMLDB_KEY_[PRIMARY|UNIQUE|FOREIGN|FOREIGN_UNIQUE]
+     * @param array $fields an array of fieldnames to build the key over
+     * @param string $reftable name of the table the FK points to or null
+     * @param array $reffields an array of fieldnames in the FK table or null
      */
-    function __construct($name, $type=null, $fields=array(), $reftable=null, $reffields=null) {
-        $this->type = NULL;
+    public function __construct($name, $type=null, $fields=array(), $reftable=null, $reffields=null) {
+        $this->type = null;
         $this->fields = array();
-        $this->reftable = NULL;
+        $this->reftable = null;
         $this->reffields = array();
         parent::__construct($name);
         $this->set_attributes($type, $fields, $reftable, $reffields);
@@ -48,12 +60,12 @@ class xmldb_key extends xmldb_object {
     /**
      * Set all the attributes of one xmldb_key
      *
-     * @param string type XMLDB_KEY_[PRIMARY|UNIQUE|FOREIGN|FOREIGN_UNIQUE]
-     * @param array fields an array of fieldnames to build the key over
-     * @param string reftable name of the table the FK points to or null
-     * @param array reffields an array of fieldnames in the FK table or null
+     * @param string $type XMLDB_KEY_[PRIMARY|UNIQUE|FOREIGN|FOREIGN_UNIQUE]
+     * @param array $fields an array of fieldnames to build the key over
+     * @param string $reftable name of the table the FK points to or null
+     * @param array $reffields an array of fieldnames in the FK table or null
      */
-    function set_attributes($type, $fields, $reftable=null, $reffields=null) {
+    public function set_attributes($type, $fields, $reftable=null, $reffields=null) {
         $this->type = $type;
         $this->fields = $fields;
         $this->reftable = $reftable;
@@ -62,74 +74,84 @@ class xmldb_key extends xmldb_object {
 
     /**
      * Get the key type
+     * @return int
      */
-    function getType() {
+    public function getType() {
         return $this->type;
     }
 
     /**
      * Set the key type
+     * @param int $type
      */
-    function setType($type) {
+    public function setType($type) {
         $this->type = $type;
     }
 
     /**
      * Set the key fields
+     * @param array $fields
      */
-    function setFields($fields) {
+    public function setFields($fields) {
         $this->fields = $fields;
     }
 
     /**
      * Set the key reftable
+     * @param string $reftable
      */
-    function setRefTable($reftable) {
+    public function setRefTable($reftable) {
         $this->reftable = $reftable;
     }
 
     /**
      * Set the key reffields
+     * @param array $reffields
      */
-    function setRefFields($reffields) {
+    public function setRefFields($reffields) {
         $this->reffields = $reffields;
     }
 
     /**
      * Get the key fields
+     * @return array
      */
-    function &getFields() {
+    public function getFields() {
         return $this->fields;
     }
 
     /**
      * Get the key reftable
+     * @return string
      */
-    function &getRefTable() {
+    public function getRefTable() {
         return $this->reftable;
     }
 
     /**
      * Get the key reffields
+     * @return array reference to ref fields
      */
-    function &getRefFields() {
+    public function getRefFields() {
         return $this->reffields;
     }
 
     /**
      * Load data from XML to the key
+     * @param array $xmlarr
+     * @return bool success
      */
-    function arr2xmldb_key($xmlarr) {
+    public function arr2xmldb_key($xmlarr) {
 
         $result = true;
 
-    /// Debug the table
-    /// traverse_xmlize($xmlarr);                   //Debug
-    /// print_object ($GLOBALS['traverse_array']);  //Debug
-    /// $GLOBALS['traverse_array']="";              //Debug
+        // Debug the table
+        // traverse_xmlize($xmlarr);                   //Debug
+        // print_object ($GLOBALS['traverse_array']);  //Debug
+        // $GLOBALS['traverse_array']="";              //Debug
 
-    /// Process key attributes (name, type, fields, reftable,
-    /// reffields, comment, previous, next)
+        // Process key attributes (name, type, fields, reftable,
+        // reffields, comment, previous, next)
         if (isset($xmlarr['@']['NAME'])) {
             $this->name = trim($xmlarr['@']['NAME']);
         } else {
@@ -139,7 +161,7 @@ class xmldb_key extends xmldb_object {
         }
 
         if (isset($xmlarr['@']['TYPE'])) {
-        /// Check for valid type
+            // Check for valid type
             $type = $this->getXMLDBKeyType(trim($xmlarr['@']['TYPE']));
             if ($type) {
                 $this->type = $type;
@@ -177,11 +199,11 @@ class xmldb_key extends xmldb_object {
             $this->debug($this->errormsg);
             $result = false;
         }
-    /// Finally, set the array of fields
+        // Finally, set the array of fields
         $this->fields = $fieldsarr;
 
         if (isset($xmlarr['@']['REFTABLE'])) {
-        /// Check we are in a FK
+            // Check we are in a FK
             if ($this->type == XMLDB_KEY_FOREIGN ||
                 $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
                 $reftable = strtolower(trim($xmlarr['@']['REFTABLE']));
@@ -201,14 +223,14 @@ class xmldb_key extends xmldb_object {
             $this->debug($this->errormsg);
             $result = false;
         }
-    /// Finally, set the reftable
+        // Finally, set the reftable
         if ($this->type == XMLDB_KEY_FOREIGN ||
             $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
             $this->reftable = $reftable;
         }
 
         if (isset($xmlarr['@']['REFFIELDS'])) {
-        /// Check we are in a FK
+            // Check we are in a FK
             if ($this->type == XMLDB_KEY_FOREIGN ||
                 $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
                 $reffields = strtolower(trim($xmlarr['@']['REFFIELDS']));
@@ -239,7 +261,7 @@ class xmldb_key extends xmldb_object {
             $this->debug($this->errormsg);
             $result = false;
         }
-    /// Finally, set the array of reffields
+        // Finally, set the array of reffields
         if ($this->type == XMLDB_KEY_FOREIGN ||
             $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
             $this->reffields = $reffieldsarr;
@@ -257,7 +279,7 @@ class xmldb_key extends xmldb_object {
             $this->next = trim($xmlarr['@']['NEXT']);
         }
 
-    /// Set some attributes
+        // Set some attributes
         if ($result) {
             $this->loaded = true;
         }
@@ -268,8 +290,10 @@ class xmldb_key extends xmldb_object {
     /**
      * This function returns the correct XMLDB_KEY_XXX value for the
      * string passed as argument
+     * @param string $type
+     * @return int
      */
-    function getXMLDBKeyType($type) {
+    public function getXMLDBKeyType($type) {
 
         $result = XMLDB_KEY_INCORRECT;
 
@@ -286,23 +310,25 @@ class xmldb_key extends xmldb_object {
             case 'foreign-unique':
                 $result = XMLDB_KEY_FOREIGN_UNIQUE;
                 break;
-        /// case 'check':  //Not supported
-        ///     $result = XMLDB_KEY_CHECK;
-        ///     break;
+            // case 'check':  //Not supported
+            //     $result = XMLDB_KEY_CHECK;
+            //     break;
         }
-    /// Return the normalized XMLDB_KEY
+        // Return the normalized XMLDB_KEY
         return $result;
     }
 
     /**
      * This function returns the correct name value for the
      * XMLDB_KEY_XXX passed as argument
+     * @param int $type
+     * @return string
      */
-    function getXMLDBKeyName($type) {
+    public function getXMLDBKeyName($type) {
 
         $result = '';
 
-        switch (strtolower($type)) {
+        switch ($type) {
             case XMLDB_KEY_PRIMARY:
                 $result = 'primary';
                 break;
@@ -315,20 +341,21 @@ class xmldb_key extends xmldb_object {
             case XMLDB_KEY_FOREIGN_UNIQUE:
                 $result = 'foreign-unique';
                 break;
-        /// case XMLDB_KEY_CHECK:  //Not supported
-        ///     $result = 'check';
-        ///     break;
+            // case XMLDB_KEY_CHECK:  //Not supported
+            //     $result = 'check';
+            //     break;
         }
-    /// Return the normalized name
+        // Return the normalized name
         return $result;
     }
 
     /**
      * This function calculate and set the hash of one xmldb_key
+     * @param bool $recursive
      */
-     function calculateHash($recursive = false) {
+     public function calculateHash($recursive = false) {
         if (!$this->loaded) {
-            $this->hash = NULL;
+            $this->hash = null;
         } else {
             $key = $this->type . implode(', ', $this->fields);
             if ($this->type == XMLDB_KEY_FOREIGN ||
@@ -342,8 +369,9 @@ class xmldb_key extends xmldb_object {
 
     /**
      *This function will output the XML text for one key
+     * @return string
      */
-    function xmlOutput() {
+    public function xmlOutput() {
         $o = '';
         $o.= '        <KEY NAME="' . $this->name . '"';
         $o.= ' TYPE="' . $this->getXMLDBKeyName($this->type) . '"';
@@ -370,10 +398,11 @@ class xmldb_key extends xmldb_object {
     /**
      * This function will set all the attributes of the xmldb_key object
      * based on information passed in one ADOkey
+     * @oaram array $adokey
      */
-    function setFromADOKey($adokey) {
+    public function setFromADOKey($adokey) {
 
-    /// Calculate the XMLDB_KEY
+        // Calculate the XMLDB_KEY
         switch (strtolower($adokey['name'])) {
             case 'primary':
                 $this->type = XMLDB_KEY_PRIMARY;
@@ -381,22 +410,23 @@ class xmldb_key extends xmldb_object {
             default:
                 $this->type = XMLDB_KEY_UNIQUE;
         }
-    /// Set the fields, converting all them to lowercase
+        // Set the fields, converting all them to lowercase
         $fields = array_flip(array_change_key_case(array_flip($adokey['columns'])));
         $this->fields = $fields;
-    /// Some more fields
+        // Some more fields
         $this->loaded = true;
         $this->changed = true;
     }
 
     /**
      * Returns the PHP code needed to define one xmldb_key
+     * @return string
      */
-    function getPHP() {
+    public function getPHP() {
 
         $result = '';
 
-    /// The type
+        // The type
         switch ($this->getType()) {
             case XMLDB_KEY_PRIMARY:
                 $result .= 'XMLDB_KEY_PRIMARY' . ', ';
@@ -411,24 +441,24 @@ class xmldb_key extends xmldb_object {
                 $result .= 'XMLDB_KEY_FOREIGN_UNIQUE' . ', ';
                 break;
         }
-    /// The fields
+        // The fields
         $keyfields = $this->getFields();
         if (!empty($keyfields)) {
             $result .= 'array(' . "'".  implode("', '", $keyfields) . "')";
         } else {
             $result .= 'null';
         }
-    /// The FKs attributes
+        // The FKs attributes
         if ($this->getType() == XMLDB_KEY_FOREIGN ||
             $this->getType() == XMLDB_KEY_FOREIGN_UNIQUE) {
-        /// The reftable
+            // The reftable
             $reftable = $this->getRefTable();
             if (!empty($reftable)) {
                 $result .= ", '" . $reftable . "', ";
             } else {
                 $result .= 'null, ';
             }
-        /// The reffields
+            // The reffields
             $reffields = $this->getRefFields();
             if (!empty($reffields)) {
                 $result .= 'array(' . "'".  implode("', '", $reffields) . "')";
@@ -436,20 +466,21 @@ class xmldb_key extends xmldb_object {
                 $result .= 'null';
             }
         }
-    /// Return result
+        // Return result
         return $result;
     }
 
     /**
      * Shows info in a readable format
+     * @return string
      */
-    function readableInfo() {
+    public function readableInfo() {
         $o = '';
-    /// type
+        // type
         $o .= $this->getXMLDBKeyName($this->type);
-    /// fields
+        // fields
         $o .= ' (' . implode(', ', $this->fields) . ')';
-    /// foreign key
+        // foreign key
         if ($this->type == XMLDB_KEY_FOREIGN ||
             $this->type == XMLDB_KEY_FOREIGN_UNIQUE) {
             $o .= ' references ' . $this->reftable . ' (' . implode(', ', $this->reffields) . ')';

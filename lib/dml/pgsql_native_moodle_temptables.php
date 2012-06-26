@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,15 +19,14 @@
  * are named differently than normal tables. Also used to be able to retrieve
  * temp table names included in the get_tables() method of the DB.
  *
- * @package    core
- * @subpackage dml_driver
+ * @package    core_dml
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/dml/moodle_temptables.php');
+require_once(__DIR__.'/moodle_temptables.php');
 
 class pgsql_native_moodle_temptables extends moodle_temptables {
     // I love these classes :-P

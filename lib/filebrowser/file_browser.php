@@ -93,6 +93,7 @@ class file_browser {
 
     /**
      * Returns info about the files at System context
+     * @todo MDL-33372 - Provide a way of displaying recent files for blog entries.
      *
      * @param object $context context object
      * @param string $component component

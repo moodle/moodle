@@ -410,7 +410,7 @@ if ($config->stage == INSTALL_DATABASE) {
 
     $disabled = empty($distro->dbhost) ? '' : 'disabled="disabled';
     echo '<div class="formrow"><label for="id_dbhost" class="formlabel">'.$strdbhost.'</label>';
-    echo '<input id="id_dbhost" name="dbhost" '.$disabled.' type="text" value="'.s($config->dbhost).'" size="50" class="forminput" />';
+    echo '<input id="id_dbhost" name="dbhost" '.$disabled.' type="text" value="'.s($config->dbhost).'" size="30" class="forminput" />';
     echo '</div>';
 
     echo '<div class="formrow"><label for="id_dbname" class="formlabel">'.$strdbname.'</label>';

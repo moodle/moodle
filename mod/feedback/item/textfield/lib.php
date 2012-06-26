@@ -252,7 +252,7 @@ class feedback_item_textfield extends feedback_item_base {
                     'name="'.$item->typ.'_'.$item->id.'" '.
                     'size="'.$presentation[0].'" '.
                     'maxlength="'.$presentation[1].'" '.
-                    'value="'.($value ? htmlspecialchars($value) : '').'" />';
+                    'value="'.$value.'" />';
         echo '</span>';
         echo '</div>';
     }
@@ -295,7 +295,7 @@ class feedback_item_textfield extends feedback_item_base {
     }
 
     public function create_value($data) {
-        $data = clean_text($data);
+        $data = s($data);
         return $data;
     }
 
@@ -319,5 +319,13 @@ class feedback_item_textfield extends feedback_item_base {
 
     public function can_switch_require() {
         return true;
+    }
+
+    public function value_type() {
+        return PARAM_RAW;
+    }
+
+    public function clean_input_value($value) {
+        return s($value);
     }
 }

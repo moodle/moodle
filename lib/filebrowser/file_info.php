@@ -227,6 +227,24 @@ abstract class file_info {
     }
 
     /**
+     * Whether or not this is a external resource
+     *
+     * @return bool
+     */
+    public function is_external_file() {
+        return false;
+    }
+
+    /**
+     * Returns file status flag.
+     *
+     * @return int 0 means file OK, anything else is a problem and file can not be used
+     */
+    public function get_status() {
+        return 0;
+    }
+
+    /**
      * Returns the localised human-readable name of the file together with virtual path
      *
      * @see file_info_stored::get_readable_fullname()

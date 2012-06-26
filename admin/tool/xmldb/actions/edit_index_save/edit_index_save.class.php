@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,8 +24,7 @@
  * This class verifies all the data introduced when editing an index for correctness,
  * performing changes / displaying errors depending of the results.
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -93,10 +91,10 @@ class edit_index_save extends XMLDBAction {
         $fields = required_param('fields', PARAM_CLEAN);
         $fields = str_replace(' ', '', trim(strtolower($fields)));
 
-        $editeddir =& $XMLDB->editeddirs[$dirpath];
-        $structure =& $editeddir->xml_file->getStructure();
-        $table =& $structure->getTable($tableparam);
-        $index =& $table->getIndex($indexparam);
+        $editeddir = $XMLDB->editeddirs[$dirpath];
+        $structure = $editeddir->xml_file->getStructure();
+        $table = $structure->getTable($tableparam);
+        $index = $table->getIndex($indexparam);
         $oldhash = $index->getHash();
 
         $errors = array(); // To store all the errors found
@@ -182,12 +180,12 @@ class edit_index_save extends XMLDBAction {
             if ($indexparam != $name) {
                 $index->setName($name);
                 if ($index->getPrevious()) {
-                    $prev =& $table->getIndex($index->getPrevious());
+                    $prev = $table->getIndex($index->getPrevious());
                     $prev->setNext($name);
                     $prev->setChanged(true);
                 }
                 if ($index->getNext()) {
-                    $next =& $table->getIndex($index->getNext());
+                    $next = $table->getIndex($index->getNext());
                     $next->setPrevious($name);
                     $next->setChanged(true);
                 }

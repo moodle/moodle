@@ -96,7 +96,7 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
         return true;
     }
 
-    public function admin_config_form(&$mform) {
+    public static function admin_config_form(&$mform) {
         global $CFG;
 
         $strrequired = get_string('required');

@@ -49,7 +49,7 @@ function user_preference_allow_ajax_update($name, $paramtype) {
  * @return bool
  */
 function ajaxenabled(array $browsers = null) {
-    global $CFG, $USER;
+    global $CFG;
 
     if (!empty($browsers)) {
         $valid = false;
@@ -77,7 +77,7 @@ function ajaxenabled(array $browsers = null) {
         return false;
     }
 
-    if (!empty($CFG->enableajax) && (!empty($USER->ajax) || !isloggedin())) {
+    if (!empty($CFG->enableajax)) {
         return true;
     } else {
         return false;

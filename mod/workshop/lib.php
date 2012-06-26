@@ -1310,11 +1310,6 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
     /** @var array internal cache for author names */
     static $submissionauthors = array();
 
-    // this is enforced by {@link file_info_context_course} currently
-    if (!has_capability('moodle/course:managefiles', $context)) {
-        return null;
-    }
-
     $fs = get_file_storage();
 
     if ($filearea === 'submission_content' or $filearea === 'submission_attachment') {
@@ -1361,6 +1356,12 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
                 // not found
                 return null;
             }
+        }
+
+        // Checks to see if the user can manage files or is the owner.
+        // TODO MDL-33805 - Do not use userid here and move the capability check above.
+        if (!has_capability('moodle/course:managefiles', $context) && $storedfile->get_userid() != $USER->id) {
+            return null;
         }
 
         // let us display the author's name instead of itemid (submission id)

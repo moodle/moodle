@@ -74,6 +74,13 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
 
+    $name = 'theme_mymobile/customcss';
+    $title = get_string('customcss','theme_mymobile');
+    $description = get_string('customcssdesc', 'theme_mymobile');
+    $default = '';
+    $setting = new admin_setting_configtextarea($name, $title, $description, $default);
+    $settings->add($setting);
+
     unset($yesstr);
     unset($nostr);
 }

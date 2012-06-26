@@ -76,7 +76,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
             $fpmaxbytes = $options['maxbytes'];
         }
         $coursemaxbytes = 0;
-        if (!empty($PAGE->course)) {
+        if (!empty($PAGE->course->maxbytes)) {
             $coursemaxbytes = $PAGE->course->maxbytes;
         }
         $this->_options['maxbytes'] = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $coursemaxbytes, $fpmaxbytes);
@@ -207,7 +207,10 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
             $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
             if ($files = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id DESC', false)) {
                 $file = array_shift($files);
-                if ($this->_options['maxbytes'] and $file->get_filesize() > $this->_options['maxbytes']) {
+                if ($this->_options['maxbytes']
+                    and $this->_options['maxbytes'] !== USER_CAN_IGNORE_FILE_SIZE_LIMITS
+                    and $file->get_filesize() > $this->_options['maxbytes']) {
+
                     // bad luck, somebody tries to sneak in oversized file
                     $file->delete();
                 }

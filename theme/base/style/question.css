@@ -15,14 +15,18 @@
 #qtypechoicecontainer {display: none;}
 body.jsenabled #qtypechoicecontainer {display: block;}
 
-#qtypechoicecontainer {background: white;}
-#qtypechoicecontainer #chooseqtype {width: 30em;}
-#qtypechoicecontainer #chooseqtypehead h3 {margin: 0;}
-#qtypechoicecontainer #chooseqtype .qtypes {position: relative;border-bottom: 1px solid grey;padding: 0.24em 0;}
-#qtypechoicecontainer #chooseqtype .qtypeoption {margin-bottom: 0; padding: 0.2em 0 0.2em 0.3em;}
-#qtypechoicecontainer #chooseqtype .qtypeoption img {vertical-align: middle;}
+#qtypechoicecontainer_c.yui-panel-container.shadow .underlay {background: none;}
+#qtypechoicecontainer.yui-panel .hd {color:#333333;letter-spacing: 1px;text-shadow: 1px 1px 1px #FFFFFF;border-radius: 10px 10px 0 0;border: 1px solid #CCCCCC;border-bottom: 1px solid #BBBBBB;background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC));background: -moz-linear-gradient(top,  #FFFFFF,  #CCCCCC);}
+
+#qtypechoicecontainer {font-size: 12px;color: #333333;background: #F2F2F2;border-radius: 10px;border:1px solid #CCCCCC;border-top:0 none;-webkit-box-shadow: 5px 5px 20px 0px #666666;-moz-box-shadow: 5px 5px 20px 0px #666666;box-shadow: 5px 5px 20px 0px #666666;}
+#qtypechoicecontainer #chooseqtype {width: 35em;}
+#qtypechoicecontainer #chooseqtypehead h3 {margin: 0;font-weight: normal;}
+#qtypechoicecontainer #chooseqtype .qtypes {position: relative;border-bottom: 1px solid #BBBBBB;padding: 0.24em 0;}
+#qtypechoicecontainer #chooseqtype .qtypeoption {margin-bottom: 0; padding: 0.3em 0 0.3em 1.6em;}
+#qtypechoicecontainer #chooseqtype .qtypeoption img {vertical-align: middle;padding-left: 1em;padding-right: 0.5em;}
+#qtypechoicecontainer #chooseqtype .selected {background-color: #FFFFFF;box-shadow: 0px 0px 10px 0px #CCCCCC;-webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;-moz-box-shadow: 0px 0px 10px 0px #CCCCCC;}
 #qtypechoicecontainer #chooseqtype .instruction,
-#qtypechoicecontainer #chooseqtype .qtypesummary {display: none;position: absolute;top: 0px;right: 0px;bottom: 0px;left: 60%;margin: 0;border-left: 1px solid grey;padding: 0.3em 0.5em;background-color: white;}
+#qtypechoicecontainer #chooseqtype .qtypesummary {display: none;position: absolute;top: 0px;right: 0px;bottom: 0px;left: 60%;margin: 0;padding: 1.5em 1.6em;background-color: #FFFFFF;}
 #qtypechoicecontainer #chooseqtype .instruction,
 #qtypechoicecontainer #chooseqtype .selected .qtypesummary {display: block;}
 

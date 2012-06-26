@@ -557,9 +557,8 @@ class EvalMathFuncs {
         return $min + $randomno;
     }
 
-    static function rand_float(){
-        $randomvalue = array_shift(unpack('v', md5(self::get_random_seed(), true)));
-        return $randomvalue / 65536;
+    static function rand_float() {
+        $randomvalues = unpack('v', md5(self::get_random_seed(), true));
+        return array_shift($randomvalues) / 65536;
     }
-
 }

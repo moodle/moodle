@@ -500,8 +500,8 @@ class page_requirements_manager {
                 case 'core_dndupload':
                     $module = array('name'     => 'core_dndupload',
                                     'fullpath' => '/lib/form/dndupload.js',
-                                    'requires' => array('node', 'event', 'json'),
-                                    'strings'  => array(array('uploadformlimit', 'moodle'), array('droptoupload', 'moodle'), array('maxfilesreached', 'moodle'), array('dndenabled_inbox', 'moodle')));
+                                    'requires' => array('node', 'event', 'json', 'core_filepicker'),
+                                    'strings'  => array(array('uploadformlimit', 'moodle'), array('droptoupload', 'moodle'), array('maxfilesreached', 'moodle'), array('dndenabled_inbox', 'moodle'), array('fileexists', 'moodle')));
                     break;
             }
 
@@ -749,7 +749,7 @@ class page_requirements_manager {
         if (!is_array($modules)) {
             $modules = array($modules);
         }
-        if (empty($CFG->useexternalyui) || true) {
+        if (empty($CFG->useexternalyui)) {
             // We need to set the M.yui.galleryversion to the correct version
             $jscode = 'M.yui.galleryversion='.json_encode($galleryversion).';';
         } else {

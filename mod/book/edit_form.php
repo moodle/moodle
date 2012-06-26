@@ -1,5 +1,5 @@
 <?php
-// This file is part of Book module for Moodle - http://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,6 +34,12 @@ class book_chapter_edit_form extends moodleform {
         $chapter = $this->_customdata['chapter'];
         $options = $this->_customdata['options'];
 
+        // Disabled subchapter option when editing first node.
+        $disabledmsg = null;
+        if ($chapter->pagenum == 1) {
+            $disabledmsg = get_string('subchapternotice', 'book');
+        }
+
         $mform = $this->_form;
 
         $mform->addElement('header', 'general', get_string('edit'));
@@ -42,7 +48,7 @@ class book_chapter_edit_form extends moodleform {
         $mform->setType('title', PARAM_RAW);
         $mform->addRule('title', null, 'required', null, 'client');
 
-        $mform->addElement('advcheckbox', 'subchapter', get_string('subchapter', 'mod_book'));
+        $mform->addElement('advcheckbox', 'subchapter', get_string('subchapter', 'mod_book'), $disabledmsg);
 
         $mform->addElement('editor', 'content_editor', get_string('content', 'mod_book'), null, $options);
         $mform->setType('content_editor', PARAM_RAW);
@@ -61,5 +67,13 @@ class book_chapter_edit_form extends moodleform {
 
         // set the defaults
         $this->set_data($chapter);
+    }
+
+    function definition_after_data(){
+        $mform = $this->_form;
+        $pagenum = $mform->getElement('pagenum');
+        if ($pagenum->getValue() == 1) {
+            $mform->hardFreeze('subchapter');
+        }
     }
 }

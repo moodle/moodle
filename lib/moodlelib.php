@@ -473,6 +473,11 @@ define('HUB_MOODLEORGHUBURL', "http://hub.moodle.org");
  */
 define('MOODLE_OFFICIAL_MOBILE_SERVICE', 'moodle_mobile_app');
 
+/**
+ * Indicates the user has the capabilities required to ignore activity and course file size restrictions
+ */
+define('USER_CAN_IGNORE_FILE_SIZE_LIMITS', -1);
+
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
 /**
@@ -5860,10 +5865,9 @@ function get_user_max_upload_file_size($context, $sitebytes=0, $coursebytes=0, $
         $user = $USER;
     }
 
-    // Temp. commenting this until MDL-27156 fixes it!
-    // if (has_capability('moodle/course:ignorefilesizelimits', $context, $user)) {
-    //     return -1;
-    // }
+    if (has_capability('moodle/course:ignorefilesizelimits', $context, $user)) {
+        return USER_CAN_IGNORE_FILE_SIZE_LIMITS;
+    }
 
     return get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes);
 }
@@ -6044,6 +6048,10 @@ function get_directory_size($rootdir, $excludefile='') {
 function display_size($size) {
 
     static $gb, $mb, $kb, $b;
+
+    if ($size === USER_CAN_IGNORE_FILE_SIZE_LIMITS) {
+        return get_string('unlimited');
+    }
 
     if (empty($gb)) {
         $gb = get_string('sizegb');

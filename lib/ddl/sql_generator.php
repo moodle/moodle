@@ -14,16 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This class represent the base generator class where all the needed functions to generate proper SQL are defined.
  *
  * The rest of classes will inherit, by default, the same logic.
  * Functions will be overridden as needed to generate correct SQL.
  *
- * @package    core
- * @category   ddl
- * @subpackage ddl
+ * @package    core_ddl
  * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
  *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,19 +31,17 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Abstract sql generator class, base for all db specific implementations.
  *
- * @package    core
- * @category   ddl
- * @subpackage ddl
+ * @package    core_ddl
  * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
  *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class sql_generator {
 
-/// Please, avoid editing this defaults in this base class!
-/// It could change the behaviour of the rest of generators
-/// that, by default, inherit this configuration.
-/// To change any of them, do it in extended classes instead.
+    // Please, avoid editing this defaults in this base class!
+    // It could change the behaviour of the rest of generators
+    // that, by default, inherit this configuration.
+    // To change any of them, do it in extended classes instead.
 
     /** @var string Used to quote names. */
     public $quote_string = '"';
@@ -55,10 +50,11 @@ abstract class sql_generator {
     public $statement_end = ';';
 
     /** @var bool To decide if we want to quote all the names or only the reserved ones. */
-    public $quote_all    = false;
+    public $quote_all = false;
 
     /** @var bool To create all the integers as NUMBER(x) (also called DECIMAL, NUMERIC...). */
     public $integer_to_number = false;
+
     /** @var bool To create all the floats as NUMBER(x) (also called DECIMAL, NUMERIC...). */
     public $float_to_number   = false;
 
@@ -70,16 +66,14 @@ abstract class sql_generator {
 
     /** @var bool To specify if the generator must use some DEFAULT clause to drop defaults.*/
     public $drop_default_value_required = false;
+
     /** @var string The DEFAULT clause required to drop defaults.*/
     public $drop_default_value = '';
 
     /** @var bool To decide if the default clause of each field must go after the null clause.*/
     public $default_after_null = true;
 
-    /**
-     * @var bool To force the generator if NULL clauses must be specified. It shouldn't be necessary.
-     * note: some mssql drivers require them or everything is created as NOT NULL :-(
-     */
+    /** @var bool To force the generator if NULL clauses must be specified. It shouldn't be necessary.*/
     public $specify_nulls = false;
 
     /** @var string To force primary key names to one string (null=no force).*/
@@ -87,34 +81,31 @@ abstract class sql_generator {
 
     /** @var bool True if the generator builds primary keys.*/
     public $primary_keys = true;
+
     /** @var bool True if the generator builds unique keys.*/
     public $unique_keys = false;
+
     /** @var bool True if the generator builds foreign keys.*/
     public $foreign_keys = false;
 
-    /**
-     * @var string Template to drop PKs.
-     * 'TABLENAME' and 'KEYNAME' will be replaced from this template.
-     */
+    /** @var string Template to drop PKs. 'TABLENAME' and 'KEYNAME' will be replaced from this template.*/
     public $drop_primary_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME';
 
-    /**
-     * @var string Template to drop UKs.
-     * 'TABLENAME' and 'KEYNAME' will be replaced from this template.
-     */
+    /** @var string Template to drop UKs. 'TABLENAME' and 'KEYNAME' will be replaced from this template.*/
     public $drop_unique_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME';
 
-    /** @var string Template to drop FKs.
-     * 'TABLENAME' and 'KEYNAME' will be replaced from this template.
-     */
+    /** @var string Template to drop FKs. 'TABLENAME' and 'KEYNAME' will be replaced from this template.*/
     public $drop_foreign_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME';
 
     /** @var bool True if the generator needs to add extra code to generate the sequence fields.*/
     public $sequence_extra_code = true;
+
     /** @var string The particular name for inline sequences in this generator.*/
     public $sequence_name = 'auto_increment';
+
     /** @var string|bool Different name for small (4byte) sequences or false if same.*/
     public $sequence_name_small = false;
+
     /**
      * @var bool To avoid outputting the rest of the field specs, leaving only the name and the sequence_name returned.
      * @see getFieldSQL()
@@ -136,9 +127,7 @@ abstract class sql_generator {
     /** @var int Maximum length for key/index/sequence/trigger/check names (keep 30 for all!).*/
     public $names_max_length = 30;
 
-    /** @var string Characters to be used as concatenation operator.
-     * If not defined, MySQL CONCAT function will be used.
-     */
+    /** @var string Characters to be used as concatenation operator. If not defined, MySQL CONCAT function will be used.*/
     public $concat_character = '||';
 
     /** @var string SQL sentence to rename one table, both 'OLDNAME' and 'NEWNAME' keywords are dynamically replaced.*/
@@ -179,6 +168,7 @@ abstract class sql_generator {
 
     /** @var moodle_database The moodle_database instance.*/
     public $mdb;
+
     /** @var Control existing temptables.*/
     protected $temptables;
 
@@ -207,6 +197,7 @@ abstract class sql_generator {
      * @see $statement_end
      *
      * @param array|string $input SQL statement(s).
+     * @return array|string
      */
     public function getEndedStatements($input) {
 
@@ -231,11 +222,11 @@ abstract class sql_generator {
         if (is_string($table)) {
             $tablename = $table;
         } else {
-        /// Calculate the name of the table
+            // Calculate the name of the table
             $tablename = $table->getName();
         }
 
-    /// get all tables in moodle database
+        // get all tables in moodle database
         $tables = $this->mdb->get_tables();
         $exists = in_array($tablename, $tables);
 
@@ -244,10 +235,10 @@ abstract class sql_generator {
 
     /**
      * This function will return the SQL code needed to create db tables and statements.
+     * @see xmldb_structure
      *
      * @param xmldb_structure $xmldb_structure An xmldb_structure instance.
-     *
-     * @see xmldb_structure
+     * @return array
      */
     public function getCreateStructureSQL($xmldb_structure) {
         $results = array();
@@ -272,10 +263,10 @@ abstract class sql_generator {
      * @return string The correct name of the table.
      */
     public function getTableName(xmldb_table $xmldb_table, $quoted=true) {
-    /// Get the name
+        // Get the name
         $tablename = $this->prefix.$xmldb_table->getName();
 
-    /// Apply quotes optionally
+        // Apply quotes optionally
         if ($quoted) {
             $tablename = $this->getEncQuoted($tablename);
         }
@@ -298,7 +289,7 @@ abstract class sql_generator {
 
         $results = array();  //Array where all the sentences will be stored
 
-    /// Table header
+        // Table header
         $table = 'CREATE TABLE ' . $this->getTableName($xmldb_table) . ' (';
 
         if (!$xmldb_fields = $xmldb_table->getFields()) {
@@ -307,7 +298,7 @@ abstract class sql_generator {
 
         $sequencefield = null;
 
-    /// Add the fields, separated by commas
+        // Add the fields, separated by commas
         foreach ($xmldb_fields as $xmldb_field) {
             if ($xmldb_field->getSequence()) {
                 $sequencefield = $xmldb_field->getName();
@@ -315,68 +306,69 @@ abstract class sql_generator {
             $table .= "\n    " . $this->getFieldSQL($xmldb_table, $xmldb_field);
             $table .= ',';
         }
-    /// Add the keys, separated by commas
+        // Add the keys, separated by commas
         if ($xmldb_keys = $xmldb_table->getKeys()) {
             foreach ($xmldb_keys as $xmldb_key) {
                 if ($keytext = $this->getKeySQL($xmldb_table, $xmldb_key)) {
                     $table .= "\nCONSTRAINT " . $keytext . ',';
                 }
-            /// If the key is XMLDB_KEY_FOREIGN_UNIQUE, create it as UNIQUE too
+                // If the key is XMLDB_KEY_FOREIGN_UNIQUE, create it as UNIQUE too
                 if ($xmldb_key->getType() == XMLDB_KEY_FOREIGN_UNIQUE) {
-                ///Duplicate the key
+                    //Duplicate the key
                     $xmldb_key->setType(XMLDB_KEY_UNIQUE);
                     if ($keytext = $this->getKeySQL($xmldb_table, $xmldb_key)) {
                         $table .= "\nCONSTRAINT " . $keytext . ',';
                     }
                 }
-            /// make sure sequence field is unique
+                // make sure sequence field is unique
                 if ($sequencefield and $xmldb_key->getType() == XMLDB_KEY_PRIMARY) {
-                    $field = reset($xmldb_key->getFields());
+                    $fields = $xmldb_key->getFields();
+                    $field = reset($fields);
                     if ($sequencefield === $field) {
                         $sequencefield = null;
                     }
                 }
             }
         }
-    /// throw error if sequence field does not have unique key defined
+        // throw error if sequence field does not have unique key defined
         if ($sequencefield) {
             throw new ddl_exception('ddsequenceerror', $xmldb_table->getName());
         }
 
-    /// Table footer, trim the latest comma
+        // Table footer, trim the latest comma
         $table = trim($table,',');
         $table .= "\n)";
 
-    /// Add the CREATE TABLE to results
+        // Add the CREATE TABLE to results
         $results[] = $table;
 
-    /// Add comments if specified and it exists
+        // Add comments if specified and it exists
         if ($this->add_table_comments && $xmldb_table->getComment()) {
             $comment = $this->getCommentSQL($xmldb_table);
-        /// Add the COMMENT to results
+            // Add the COMMENT to results
             $results = array_merge($results, $comment);
         }
 
-    /// Add the indexes (each one, one statement)
+        // Add the indexes (each one, one statement)
         if ($xmldb_indexes = $xmldb_table->getIndexes()) {
             foreach ($xmldb_indexes as $xmldb_index) {
-            ///tables do not exist yet, which means indexed can not exist yet
+                //tables do not exist yet, which means indexed can not exist yet
                 if ($indextext = $this->getCreateIndexSQL($xmldb_table, $xmldb_index)) {
                     $results = array_merge($results, $indextext);
                 }
             }
         }
 
-    /// Also, add the indexes needed from keys, based on configuration (each one, one statement)
+        // Also, add the indexes needed from keys, based on configuration (each one, one statement)
         if ($xmldb_keys = $xmldb_table->getKeys()) {
             foreach ($xmldb_keys as $xmldb_key) {
-            /// If we aren't creating the keys OR if the key is XMLDB_KEY_FOREIGN (not underlying index generated
-            /// automatically by the RDBMS) create the underlying (created by us) index (if doesn't exists)
+                // If we aren't creating the keys OR if the key is XMLDB_KEY_FOREIGN (not underlying index generated
+                // automatically by the RDBMS) create the underlying (created by us) index (if doesn't exists)
                 if (!$this->getKeySQL($xmldb_table, $xmldb_key) || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
-                /// Create the interim index
+                    // Create the interim index
                     $index = new xmldb_index('anyname');
                     $index->setFields($xmldb_key->getFields());
-                ///tables do not exist yet, which means indexed can not exist yet
+                    //tables do not exist yet, which means indexed can not exist yet
                     $createindex = false; //By default
                     switch ($xmldb_key->getType()) {
                         case XMLDB_KEY_UNIQUE:
@@ -391,7 +383,7 @@ abstract class sql_generator {
                     }
                     if ($createindex) {
                         if ($indextext = $this->getCreateIndexSQL($xmldb_table, $index)) {
-                        /// Add the INDEX to the array
+                            // Add the INDEX to the array
                             $results = array_merge($results, $indextext);
                         }
                     }
@@ -399,14 +391,14 @@ abstract class sql_generator {
             }
         }
 
-    /// Add sequence extra code if needed
+        // Add sequence extra code if needed
         if ($this->sequence_extra_code) {
-        /// Iterate over fields looking for sequences
+            // Iterate over fields looking for sequences
             foreach ($xmldb_fields as $xmldb_field) {
                 if ($xmldb_field->getSequence()) {
-                /// returns an array of statements needed to create one sequence
+                    // returns an array of statements needed to create one sequence
                     $sequence_sentences = $this->getCreateSequenceSQL($xmldb_table, $xmldb_field);
-                /// Add the SEQUENCE to the array
+                    // Add the SEQUENCE to the array
                     $results = array_merge($results, $sequence_sentences);
                 }
             }
@@ -467,13 +459,13 @@ abstract class sql_generator {
         $skip_notnull_clause = is_null($skip_notnull_clause) ? $this->alter_column_skip_notnull : $skip_notnull_clause;
         $specify_nulls_clause = is_null($specify_nulls_clause) ? $this->specify_nulls : $specify_nulls_clause;
 
-    /// First of all, convert integers to numbers if defined
+        // First of all, convert integers to numbers if defined
         if ($this->integer_to_number) {
             if ($xmldb_field->getType() == XMLDB_TYPE_INTEGER) {
                 $xmldb_field->setType(XMLDB_TYPE_NUMBER);
             }
         }
-    /// Same for floats
+        // Same for floats
         if ($this->float_to_number) {
             if ($xmldb_field->getType() == XMLDB_TYPE_FLOAT) {
                 $xmldb_field->setType(XMLDB_TYPE_NUMBER);
@@ -481,19 +473,19 @@ abstract class sql_generator {
         }
 
         $field = ''; // Let's accumulate the whole expression based on params and settings
-    /// The name
+        // The name
         if ($specify_field_name) {
             $field .= $this->getEncQuoted($xmldb_field->getName());
         }
-    /// The type and length only if we don't want to skip it
+        // The type and length only if we don't want to skip it
         if (!$skip_type_clause) {
-        /// The type and length
+            // The type and length
             $field .= ' ' . $this->getTypeSQL($xmldb_field->getType(), $xmldb_field->getLength(), $xmldb_field->getDecimals());
         }
-    /// note: unsigned is not supported any more since moodle 2.3, all numbers are signed
-    /// Calculate the not null clause
+        // note: unsigned is not supported any more since moodle 2.3, all numbers are signed
+        // Calculate the not null clause
         $notnull = '';
-    /// Only if we don't want to skip it
+        // Only if we don't want to skip it
         if (!$skip_notnull_clause) {
             if ($xmldb_field->getNotNull()) {
                 $notnull = ' NOT NULL';
@@ -503,18 +495,18 @@ abstract class sql_generator {
                 }
             }
         }
-    /// Calculate the default clause
+        // Calculate the default clause
         $default_clause = '';
         if (!$skip_default_clause) { //Only if we don't want to skip it
             $default_clause = $this->getDefaultClause($xmldb_field);
         }
-    /// Based on default_after_null, set both clauses properly
+        // Based on default_after_null, set both clauses properly
         if ($this->default_after_null) {
             $field .= $notnull . $default_clause;
         } else {
             $field .= $default_clause . $notnull;
         }
-    /// The sequence
+        // The sequence
         if ($xmldb_field->getSequence()) {
             if($xmldb_field->getLength()<=9 && $this->sequence_name_small) {
                 $sequencename=$this->sequence_name_small;
@@ -523,8 +515,8 @@ abstract class sql_generator {
             }
             $field .= ' ' . $sequencename;
             if ($this->sequence_only) {
-            /// We only want the field name and sequence name to be printed
-            /// so, calculate it and return
+                // We only want the field name and sequence name to be printed
+                // so, calculate it and return
                 $sql = $this->getEncQuoted($xmldb_field->getName()) . ' ' . $sequencename;
                 return $sql;
             }
@@ -596,15 +588,15 @@ abstract class sql_generator {
                 $default = $xmldb_field->getDefault();
             }
         } else {
-        /// We force default '' for not null char columns without proper default
-        /// some day this should be out!
+            // We force default '' for not null char columns without proper default
+            // some day this should be out!
             if ($this->default_for_char !== NULL &&
                 $xmldb_field->getType() == XMLDB_TYPE_CHAR &&
                 $xmldb_field->getNotNull()) {
                 $default = "'" . $this->default_for_char . "'";
             } else {
-            /// If the DB requires to explicity define some clause to drop one default, do it here
-            /// never applying defaults to TEXT and BINARY fields
+                // If the DB requires to explicity define some clause to drop one default, do it here
+                // never applying defaults to TEXT and BINARY fields
                 if ($this->drop_default_value_required &&
                     $xmldb_field->getType() != XMLDB_TYPE_TEXT &&
                     $xmldb_field->getType() != XMLDB_TYPE_BINARY && !$xmldb_field->getNotNull()) {
@@ -651,7 +643,7 @@ abstract class sql_generator {
 
         $results[] = $rename;
 
-    /// Call to getRenameTableExtraSQL() override if needed
+        // Call to getRenameTableExtraSQL() override if needed
         $extra_sentences = $this->getRenameTableExtraSQL($xmldb_table, $newname);
         $results = array_merge($results, $extra_sentences);
 
@@ -673,7 +665,7 @@ abstract class sql_generator {
 
         $results[] = $drop;
 
-    /// call to getDropTableExtraSQL(), override if needed
+        // call to getDropTableExtraSQL(), override if needed
         $extra_sentences = $this->getDropTableExtraSQL($xmldb_table);
         $results = array_merge($results, $extra_sentences);
 
@@ -698,15 +690,15 @@ abstract class sql_generator {
 
         $results = array();
 
-    /// Get the quoted name of the table and field
+        // Get the quoted name of the table and field
         $tablename = $this->getTableName($xmldb_table);
 
-    /// Build the standard alter table add
+        // Build the standard alter table add
         $sql = $this->getFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause,
                                   $skip_default_clause,
                                   $skip_notnull_clause);
         $altertable = 'ALTER TABLE ' . $tablename . ' ADD ' . $sql;
-    /// Add the after clause if necesary
+        // Add the after clause if necessary
         if ($this->add_after_clause && $xmldb_field->getPrevious()) {
             $altertable .= ' AFTER ' . $this->getEncQuoted($xmldb_field->getPrevious());
         }
@@ -726,11 +718,11 @@ abstract class sql_generator {
 
         $results = array();
 
-    /// Get the quoted name of the table and field
+        // Get the quoted name of the table and field
         $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
-    /// Build the standard alter table drop
+        // Build the standard alter table drop
         $results[] = 'ALTER TABLE ' . $tablename . ' DROP COLUMN ' . $fieldname;
 
         return $results;
@@ -754,11 +746,11 @@ abstract class sql_generator {
 
         $results = array();
 
-    /// Get the quoted name of the table and field
+        // Get the quoted name of the table and field
         $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
-    /// Build de alter sentence using the alter_column_sql template
+        // Build de alter sentence using the alter_column_sql template
         $alter = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->alter_column_sql);
         $colspec = $this->getFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause,
                                       $skip_default_clause,
@@ -766,12 +758,12 @@ abstract class sql_generator {
                                       true);
         $alter = str_replace('COLUMNSPECS', $colspec, $alter);
 
-    /// Add the after clause if necesary
+        // Add the after clause if necessary
         if ($this->add_after_clause && $xmldb_field->getPrevious()) {
             $alter .= ' after ' . $this->getEncQuoted($xmldb_field->getPrevious());
         }
 
-    /// Build the standard alter table modify
+        // Build the standard alter table modify
         $results[] = $alter;
 
         return $results;
@@ -788,11 +780,11 @@ abstract class sql_generator {
 
         $results = array();
 
-    /// Get the quoted name of the table and field
+        // Get the quoted name of the table and field
         $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
-    /// Decide if we are going to create/modify or to drop the default
+        // Decide if we are going to create/modify or to drop the default
         if ($xmldb_field->getDefault() === null) {
             $results = $this->getDropDefaultSQL($xmldb_table, $xmldb_field); //Drop
         } else {
@@ -815,13 +807,13 @@ abstract class sql_generator {
 
         $results = array();  //Array where all the sentences will be stored
 
-    /// Although this is checked in database_manager::rename_field() - double check
-    /// that we aren't trying to rename one "id" field. Although it could be
-    /// implemented (if adding the necessary code to rename sequences, defaults,
-    /// triggers... and so on under each getRenameFieldExtraSQL() function, it's
-    /// better to forbid it, mainly because this field is the default PK and
-    /// in the future, a lot of FKs can be pointing here. So, this field, more
-    /// or less, must be considered immutable!
+        // Although this is checked in database_manager::rename_field() - double check
+        // that we aren't trying to rename one "id" field. Although it could be
+        // implemented (if adding the necessary code to rename sequences, defaults,
+        // triggers... and so on under each getRenameFieldExtraSQL() function, it's
+        // better to forbid it, mainly because this field is the default PK and
+        // in the future, a lot of FKs can be pointing here. So, this field, more
+        // or less, must be considered immutable!
         if ($xmldb_field->getName() == 'id') {
             return array();
         }
@@ -832,7 +824,7 @@ abstract class sql_generator {
 
         $results[] = $rename;
 
-    /// Call to getRenameFieldExtraSQL(), override if needed
+        // Call to getRenameFieldExtraSQL(), override if needed
         $extra_sentences = $this->getRenameFieldExtraSQL($xmldb_table, $xmldb_field, $newname);
         $results = array_merge($results, $extra_sentences);
 
@@ -851,18 +843,18 @@ abstract class sql_generator {
 
         $results = array();
 
-    /// Just use the CreateKeySQL function
+        // Just use the CreateKeySQL function
         if ($keyclause = $this->getKeySQL($xmldb_table, $xmldb_key)) {
             $key = 'ALTER TABLE ' . $this->getTableName($xmldb_table) .
                ' ADD CONSTRAINT ' . $keyclause;
             $results[] = $key;
         }
 
-    /// If we aren't creating the keys OR if the key is XMLDB_KEY_FOREIGN (not underlying index generated
-    /// automatically by the RDBMS) create the underlying (created by us) index (if doesn't exists)
+        // If we aren't creating the keys OR if the key is XMLDB_KEY_FOREIGN (not underlying index generated
+        // automatically by the RDBMS) create the underlying (created by us) index (if doesn't exists)
         if (!$keyclause || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
-        /// Only if they don't exist
-            if ($xmldb_key->getType() == XMLDB_KEY_FOREIGN) {  ///Calculate type of index based on type ok key
+            // Only if they don't exist
+            if ($xmldb_key->getType() == XMLDB_KEY_FOREIGN) {      //Calculate type of index based on type ok key
                 $indextype = XMLDB_INDEX_NOTUNIQUE;
             } else {
                 $indextype = XMLDB_INDEX_UNIQUE;
@@ -873,14 +865,14 @@ abstract class sql_generator {
             }
         }
 
-    /// If the key is XMLDB_KEY_FOREIGN_UNIQUE, create it as UNIQUE too
+        // If the key is XMLDB_KEY_FOREIGN_UNIQUE, create it as UNIQUE too
         if ($xmldb_key->getType() == XMLDB_KEY_FOREIGN_UNIQUE && $this->unique_keys) {
-        ///Duplicate the key
+            //Duplicate the key
             $xmldb_key->setType(XMLDB_KEY_UNIQUE);
             $results = array_merge($results, $this->getAddKeySQL($xmldb_table, $xmldb_key));
         }
 
-    /// Return results
+        // Return results
         return $results;
     }
 
@@ -895,14 +887,14 @@ abstract class sql_generator {
 
         $results = array();
 
-    /// Get the key name (note that this doesn't introspect DB, so could cause some problems sometimes!)
-    /// TODO: We'll need to overwrite the whole getDropKeySQL() method inside each DB to do the proper queries
-    /// against the dictionary or require ADOdb to support it or change the find_key_name() method to
-    /// perform DB introspection directly. But, for now, as we aren't going to enable referential integrity
-    /// it won't be a problem at all
+        // Get the key name (note that this doesn't introspect DB, so could cause some problems sometimes!)
+        // TODO: We'll need to overwrite the whole getDropKeySQL() method inside each DB to do the proper queries
+        // against the dictionary or require ADOdb to support it or change the find_key_name() method to
+        // perform DB introspection directly. But, for now, as we aren't going to enable referential integrity
+        // it won't be a problem at all
         $dbkeyname = $this->mdb->get_manager()->find_key_name($xmldb_table, $xmldb_key);
 
-    /// Only if such type of key generation is enabled
+        // Only if such type of key generation is enabled
         $dropkey = false;
         switch ($xmldb_key->getType()) {
             case XMLDB_KEY_PRIMARY:
@@ -925,33 +917,33 @@ abstract class sql_generator {
                 }
                 break;
         }
-    /// If we have decided to drop the key, let's do it
+        // If we have decided to drop the key, let's do it
         if ($dropkey) {
-        /// Replace TABLENAME, CONSTRAINTTYPE and KEYNAME as needed
+            // Replace TABLENAME, CONSTRAINTTYPE and KEYNAME as needed
             $dropsql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $template);
             $dropsql = str_replace('KEYNAME', $dbkeyname, $dropsql);
 
             $results[] = $dropsql;
         }
 
-    /// If we aren't dropping the keys OR if the key is XMLDB_KEY_FOREIGN (not underlying index generated
-    /// automatically by the RDBMS) drop the underlying (created by us) index (if exists)
+        // If we aren't dropping the keys OR if the key is XMLDB_KEY_FOREIGN (not underlying index generated
+        // automatically by the RDBMS) drop the underlying (created by us) index (if exists)
         if (!$dropkey || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
-        /// Only if they exist
+            // Only if they exist
             $xmldb_index = new xmldb_index('anyname', XMLDB_INDEX_UNIQUE, $xmldb_key->getFields());
             if ($this->mdb->get_manager()->index_exists($xmldb_table, $xmldb_index)) {
                 $results = array_merge($results, $this->getDropIndexSQL($xmldb_table, $xmldb_index));
             }
         }
 
-    /// If the key is XMLDB_KEY_FOREIGN_UNIQUE, drop the UNIQUE too
+        // If the key is XMLDB_KEY_FOREIGN_UNIQUE, drop the UNIQUE too
         if ($xmldb_key->getType() == XMLDB_KEY_FOREIGN_UNIQUE && $this->unique_keys) {
-        ///Duplicate the key
+            //Duplicate the key
             $xmldb_key->setType(XMLDB_KEY_UNIQUE);
             $results = array_merge($results, $this->getDropKeySQL($xmldb_table, $xmldb_key));
         }
 
-    /// Return results
+        // Return results
         return $results;
     }
 
@@ -968,27 +960,27 @@ abstract class sql_generator {
 
         $results = array();
 
-    /// Get the real key name
+        // Get the real key name
         $dbkeyname = $this->mdb->get_manager()->find_key_name($xmldb_table, $xmldb_key);
 
-    /// Check we are really generating this type of keys
+        // Check we are really generating this type of keys
         if (($xmldb_key->getType() == XMLDB_KEY_PRIMARY && !$this->primary_keys) ||
             ($xmldb_key->getType() == XMLDB_KEY_UNIQUE && !$this->unique_keys) ||
             ($xmldb_key->getType() == XMLDB_KEY_FOREIGN && !$this->foreign_keys) ||
             ($xmldb_key->getType() == XMLDB_KEY_FOREIGN_UNIQUE && !$this->unique_keys && !$this->foreign_keys)) {
-        /// We aren't generating this type of keys, delegate to child indexes
+            // We aren't generating this type of keys, delegate to child indexes
             $xmldb_index = new xmldb_index($xmldb_key->getName());
             $xmldb_index->setFields($xmldb_key->getFields());
             return $this->getRenameIndexSQL($xmldb_table, $xmldb_index, $newname);
         }
 
-    /// Arrived here so we are working with keys, lets rename them
-    /// Replace TABLENAME and KEYNAME as needed
+        // Arrived here so we are working with keys, lets rename them
+        // Replace TABLENAME and KEYNAME as needed
         $renamesql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->rename_key_sql);
         $renamesql = str_replace('OLDKEYNAME', $dbkeyname, $renamesql);
         $renamesql = str_replace('NEWKEYNAME', $newname, $renamesql);
 
-    /// Some DB doesn't support key renaming so this can be empty
+        // Some DB doesn't support key renaming so this can be empty
         if ($renamesql) {
             $results[] = $renamesql;
         }
@@ -1005,7 +997,7 @@ abstract class sql_generator {
      */
     public function getAddIndexSQL($xmldb_table, $xmldb_index) {
 
-    /// Just use the CreateIndexSQL function
+        // Just use the CreateIndexSQL function
         return $this->getCreateIndexSQL($xmldb_table, $xmldb_index);
     }
 
@@ -1020,10 +1012,10 @@ abstract class sql_generator {
 
         $results = array();
 
-    /// Get the real index name
+        // Get the real index name
         $dbindexname = $this->mdb->get_manager()->find_index_name($xmldb_table, $xmldb_index);
 
-    /// Replace TABLENAME and INDEXNAME as needed
+        // Replace TABLENAME and INDEXNAME as needed
         $dropsql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->drop_index_sql);
         $dropsql = str_replace('INDEXNAME', $this->getEncQuoted($dbindexname), $dropsql);
 
@@ -1042,14 +1034,14 @@ abstract class sql_generator {
      * @return array An array of SQL statements to rename the index.
      */
     function getRenameIndexSQL($xmldb_table, $xmldb_index, $newname) {
-    /// Some DB doesn't support index renaming (MySQL) so this can be empty
+        // Some DB doesn't support index renaming (MySQL) so this can be empty
         if (empty($this->rename_index_sql)) {
             return array();
         }
 
-    /// Get the real index name
+        // Get the real index name
         $dbindexname = $this->mdb->get_manager()->find_index_name($xmldb_table, $xmldb_index);
-    /// Replace TABLENAME and INDEXNAME as needed
+        // Replace TABLENAME and INDEXNAME as needed
         $renamesql = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->rename_index_sql);
         $renamesql = str_replace('OLDINDEXNAME', $this->getEncQuoted($dbindexname), $renamesql);
         $renamesql = str_replace('NEWINDEXNAME', $this->getEncQuoted($newname), $renamesql);
@@ -1073,14 +1065,14 @@ abstract class sql_generator {
 
         $name = '';
 
-    /// Implement one basic cache to avoid object name duplication
-    /// along all the request life, but never to return cached results
-    /// We need this because sql statements are created before executing
-    /// them, hence names doesn't exist "physically" yet in DB, so we need
-    /// to known which ones have been used
+        // Implement one basic cache to avoid object name duplication
+        // along all the request life, but never to return cached results
+        // We need this because sql statements are created before executing
+        // them, hence names doesn't exist "physically" yet in DB, so we need
+        // to known which ones have been used
         static $used_names = array();
 
-    /// Use standard naming. See http://docs.moodle.org/en/XMLDB_key_and_index_naming
+        // Use standard naming. See http://docs.moodle.org/en/XMLDB_key_and_index_naming
         $tablearr = explode ('_', $tablename);
         foreach ($tablearr as $table) {
             $name .= substr(trim($table),0,4);
@@ -1090,24 +1082,24 @@ abstract class sql_generator {
         foreach ($fieldsarr as $field) {
             $name .= substr(trim($field),0,3);
         }
-    /// Prepend the prefix
+        // Prepend the prefix
         $name = $this->prefix . $name;
 
         $name = substr(trim($name), 0, $this->names_max_length - 1 - strlen($suffix)); //Max names_max_length
 
-    /// Add the suffix
+        // Add the suffix
         $namewithsuffix = $name;
         if ($suffix) {
             $namewithsuffix = $namewithsuffix . '_' . $suffix;
         }
 
-    /// If the calculated name is in the cache, or if we detect it by introspecting the DB let's modify if
+        // If the calculated name is in the cache, or if we detect it by introspecting the DB let's modify if
         if (in_array($namewithsuffix, $used_names) || $this->isNameInUse($namewithsuffix, $suffix, $tablename)) {
             $counter = 2;
-        /// If have free space, we add 2
+            // If have free space, we add 2
             if (strlen($namewithsuffix) < $this->names_max_length) {
                 $newname = $name . $counter;
-        /// Else replace the last char by 2
+            // Else replace the last char by 2
             } else {
                 $newname = substr($name, 0, strlen($name)-1) . $counter;
             }
@@ -1115,7 +1107,7 @@ abstract class sql_generator {
             if ($suffix) {
                 $newnamewithsuffix = $newnamewithsuffix . '_' . $suffix;
             }
-        /// Now iterate until not used name is found, incrementing the counter
+            // Now iterate until not used name is found, incrementing the counter
             while (in_array($newnamewithsuffix, $used_names) || $this->isNameInUse($newnamewithsuffix, $suffix, $tablename)) {
                 $counter++;
                 $newname = substr($name, 0, strlen($newname)-1) . $counter;
@@ -1127,10 +1119,10 @@ abstract class sql_generator {
             $namewithsuffix = $newnamewithsuffix;
         }
 
-    /// Add the name to the cache
+        // Add the name to the cache
         $used_names[] = $namewithsuffix;
 
-    /// Quote it if necessary (reserved words)
+        // Quote it if necessary (reserved words)
         $namewithsuffix = $this->getEncQuoted($namewithsuffix);
 
         return $namewithsuffix;
@@ -1141,7 +1133,7 @@ abstract class sql_generator {
      * if it's a reserved word
      *
      * @param string|array $input String to quote.
-     * @return Quoted string.
+     * @return string Quoted string.
      */
     public function getEncQuoted($input) {
 
@@ -1151,9 +1143,9 @@ abstract class sql_generator {
             }
             return $input;
         } else {
-        /// Always lowercase
+            // Always lowercase
             $input = strtolower($input);
-        /// if reserved or quote_all or has hyphens, quote it
+            // if reserved or quote_all or has hyphens, quote it
             if ($this->quote_all || in_array($input, $this->reserved_words) || strpos($input, '-') !== false) {
                 $input = $this->quote_string . $input . $this->quote_string;
             }
@@ -1173,39 +1165,39 @@ abstract class sql_generator {
 
          if ($sentences = $statement->getSentences()) {
              foreach ($sentences as $sentence) {
-             /// Get the list of fields
+                 // Get the list of fields
                  $fields = $statement->getFieldsFromInsertSentence($sentence);
-             /// Get the values of fields
+                 // Get the values of fields
                  $values = $statement->getValuesFromInsertSentence($sentence);
-             /// Look if we have some CONCAT value and transform it dynamically
+                 // Look if we have some CONCAT value and transform it dynamically
                  foreach($values as $key => $value) {
-                 /// Trim single quotes
+                     // Trim single quotes
                      $value = trim($value,"'");
                      if (stristr($value, 'CONCAT') !== false){
-                     /// Look for data between parenthesis
+                         // Look for data between parenthesis
                          preg_match("/CONCAT\s*\((.*)\)$/is", trim($value), $matches);
                          if (isset($matches[1])) {
                              $part = $matches[1];
-                         /// Convert the comma separated string to an array
+                             // Convert the comma separated string to an array
                              $arr = xmldb_object::comma2array($part);
                              if ($arr) {
                                  $value = $this->getConcatSQL($arr);
                              }
                          }
                      }
-                 /// Values to be sent to DB must be properly escaped
+                     // Values to be sent to DB must be properly escaped
                      $value = $this->addslashes($value);
-                 /// Back trimmed quotes
+                     // Back trimmed quotes
                      $value = "'" . $value . "'";
-                 /// Back to the array
+                     // Back to the array
                      $values[$key] = $value;
                  }
 
-             /// Iterate over fields, escaping them if necessary
+                 // Iterate over fields, escaping them if necessary
                  foreach($fields as $key => $field) {
                      $fields[$key] = $this->getEncQuoted($field);
                  }
-             /// Build the final SQL sentence and add it to the array of results
+                 // Build the final SQL sentence and add it to the array of results
              $sql = 'INSERT INTO ' . $this->getEncQuoted($this->prefix . $statement->getTable()) .
                          '(' . implode(', ', $fields) . ') ' .
                          'VALUES (' . implode(', ', $values) . ')';
@@ -1228,7 +1220,7 @@ abstract class sql_generator {
      */
     public function getConcatSQL($elements) {
 
-    /// Replace double quoted elements by single quotes
+        // Replace double quoted elements by single quotes
         foreach($elements as $key => $element) {
             $element = trim($element);
             if (substr($element, 0, 1) == '"' &&
@@ -1237,7 +1229,7 @@ abstract class sql_generator {
             }
         }
 
-    /// Now call the standard $DB->sql_concat() DML function
+        // Now call the standard $DB->sql_concat() DML function
         return call_user_func_array(array($this->mdb, 'sql_concat'), $elements);
     }
 
@@ -1271,22 +1263,22 @@ abstract class sql_generator {
     }
 
 
-/// ALL THESE FUNCTION MUST BE CUSTOMISED BY ALL THE XMLDGenerator classes
+// ====== FOLLOWING FUNCTION MUST BE CUSTOMISED BY ALL THE XMLDGenerator classes ========
 
     /**
      * Reset a sequence to the id field of a table.
      *
-     * @param string $tablename name of table.
-     * @return success
+     * @param xmldb_table|string $table name of table or the table object.
+     * @return array of sql statements
      */
-    public abstract function getResetSequenceSQL($tablename);
+    public abstract function getResetSequenceSQL($table);
 
     /**
      * Given one correct xmldb_table, returns the SQL statements
      * to create temporary table (inside one array).
      *
      * @param xmldb_table $xmldb_table The xmldb_table object instance.
-     * @return array SQL statements.
+     * @return array of sql statements
      */
     abstract public function getCreateTempTableSQL($xmldb_table);
 
@@ -1360,6 +1352,7 @@ abstract class sql_generator {
      *
      * @param xmldb_table $xmldb_table The xmldb_table object instance.
      * @param xmldb_field $xmldb_field The xmldb_field object instance.
+     * @return array Array of SQL statements to create a field's default.
      *
      * @todo MDL-31147 Moodle 2.1 - Drop getDropDefaultSQL()
      */

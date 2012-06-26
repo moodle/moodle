@@ -518,7 +518,7 @@ M.core_filepicker.init = function(Y, options) {
     Y.extend(FilePickerHelper, Y.Base, {
         api: M.cfg.wwwroot+'/repository/repository_ajax.php',
         cached_responses: {},
-
+        waitinterval : null, // When the loading template is being displayed and its animation is running this will be an interval instance.
         initializer: function(options) {
             this.options = options;
             if (!this.options.savepath) {
@@ -885,6 +885,22 @@ M.core_filepicker.init = function(Y, options) {
                 }
             }, false);
         },
+       classnamecallback : function(node) {
+            var classname = '';
+            if (node.children) {
+                classname = classname + ' fp-folder';
+            }
+            if (node.isref) {
+                classname = classname + ' fp-isreference';
+            }
+            if (node.refcount) {
+                classname = classname + ' fp-hasreferences';
+            }
+            if (node.originalmissing) {
+                classname = classname + ' fp-originalmissing';
+            }
+            return Y.Lang.trim(classname);
+        },
         /** displays list of files in tree (list) view mode. If param appenditems is specified,
          * appends those items to the end of the list. Otherwise (default behaviour)
          * clears the contents and displays the items from this.filelist */
@@ -920,9 +936,7 @@ M.core_filepicker.init = function(Y, options) {
                         this.content_scrolled();
                     }
                 },
-                classnamecallback : function(node) {
-                    return node.children ? 'fp-folder' : '';
-                },
+                classnamecallback : this.classnamecallback,
                 dynload : this.active_repo.dynload,
                 filepath : this.filepath,
                 treeview_dynload : this.treeview_dynload
@@ -961,9 +975,7 @@ M.core_filepicker.init = function(Y, options) {
                         this.select_file(node);
                     }
                 },
-                classnamecallback : function(node) {
-                    return node.children ? 'fp-folder' : '';
-                }
+                classnamecallback : this.classnamecallback
             };
             this.fpnode.one('.fp-content').fp_display_filelist(options, list, this.lazyloading);
         },
@@ -998,9 +1010,7 @@ M.core_filepicker.init = function(Y, options) {
                         this.select_file(node);
                     }
                 },
-                classnamecallback : function(node) {
-                    return node.children ? 'fp-folder' : '';
-                }
+                classnamecallback : this.classnamecallback
             };
             this.fpnode.one('.fp-content').fp_display_filelist(options, list, this.lazyloading);
         },
@@ -1188,7 +1198,37 @@ M.core_filepicker.init = function(Y, options) {
             }, this);
         },
         wait: function() {
-            this.fpnode.one('.fp-content').setContent(M.core_filepicker.templates.loading);
+            // First check there isn't already an interval in play, and if there is kill it now.
+            if (this.waitinterval != null) {
+                clearInterval(this.waitinterval);
+            }
+            // Prepare the root node we will set content for and the loading template we want to display as a YUI node.
+            var root = this.fpnode.one('.fp-content');
+            var content = Y.Node.create(M.core_filepicker.templates.loading).addClass('fp-content-hidden').setStyle('opacity', 0);
+            var count = 0;
+            // Initiate an interval, we will have a count which will increment every 100 milliseconds.
+            // Count 0 - the loading icon will have visibility set to hidden (invisible) and have an opacity of 0 (invisible also)
+            // Count 5 - the visiblity will be switched to visible but opacity will still be at 0 (inivisible)
+            // Counts 6 - 15 opacity will be increased by 0.1 making the loading icon visible over the period of a second
+            // Count 16 - The interval will be cancelled.
+            var interval = setInterval(function(){
+                if (!content || !root.contains(content) || count >= 15) {
+                    clearInterval(interval);
+                    return true;
+                }
+                if (count == 5) {
+                    content.removeClass('fp-content-hidden');
+                } else if (count > 5) {
+                    var opacity = parseFloat(content.getStyle('opacity'));
+                    content.setStyle('opacity', opacity + 0.1);
+                }
+                count++;
+                return false;
+            }, 100);
+            // Store the wait interval so that we can check it in the future.
+            this.waitinterval = interval;
+            // Set the content to the loading template.
+            root.setContent(content);
         },
         viewbar_set_enabled: function(mode) {
             var viewbar = this.fpnode.one('.fp-viewbar')
@@ -1741,6 +1781,14 @@ M.core_filepicker.init = function(Y, options) {
                         if (obj.repo_id == scope.active_repo.id && obj.form) {
                             // if we did not jump to another repository meanwhile
                             searchform.setContent(obj.form);
+                            // Highlight search text when user click for search.
+                            var searchnode = searchform.one('input[name="s"]');
+                            if (searchnode) {
+                                searchnode.once('click', function(e) {
+                                    e.preventDefault();
+                                    this.select();
+                                });
+                            }
                         }
                     }
                 }, false);

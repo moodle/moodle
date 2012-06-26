@@ -4068,7 +4068,7 @@ function forum_get_file_areas($course, $cm, $context) {
  * @return file_info instance or null if not found
  */
 function forum_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return null;
@@ -4076,11 +4076,6 @@ function forum_get_file_info($browser, $areas, $course, $cm, $context, $filearea
 
     // filearea must contain a real area
     if (!isset($areas[$filearea])) {
-        return null;
-    }
-
-    // this is enforced by {@link file_info_context_course} currently
-    if (!has_capability('moodle/course:managefiles', $context)) {
         return null;
     }
 
@@ -4115,6 +4110,11 @@ function forum_get_file_info($browser, $areas, $course, $cm, $context, $filearea
         return null;
     }
 
+    // Checks to see if the user can manage files or is the owner.
+    // TODO MDL-33805 - Do not use userid here and move the capability check above.
+    if (!has_capability('moodle/course:managefiles', $context) && $storedfile->get_userid() != $USER->id) {
+        return null;
+    }
     // Make sure groups allow this user to see this file
     if ($discussion->groupid > 0) {
         $groupmode = groups_get_activity_groupmode($cm, $course);

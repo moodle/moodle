@@ -55,6 +55,8 @@ if (isset($info->license)) {
     $license = s(clean_param($info->license, PARAM_ALPHAEXT));
 }
 
+$source = base64_encode(serialize((object)array('url'=>$url,'filename'=>$filename)));
+
 $js =<<<EOD
 <html>
 <head>
@@ -63,7 +65,7 @@ $js =<<<EOD
     window.onload = function() {
         var resource = {};
         resource.title = "$filename";
-        resource.source = "$url";
+        resource.source = "$source";
         resource.thumbnail = '$thumbnail';
         resource.author = "$author";
         resource.license = "$license";

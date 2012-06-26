@@ -36,8 +36,10 @@ class boxclient {
     /** @var string */
     public $auth_token = '';
     /** @var string */
-    private $_box_api_url = 'http://box.net/api/1.0/rest';
-    private $_box_api_upload_url = 'http://upload.box.net/api/1.0/upload';
+    private $_box_api_url = 'https://www.box.com/api/1.0/rest';
+    private $_box_api_upload_url = 'http://upload.box.com/api/1.0/upload';
+    private $_box_api_download_url = 'http://www.box.com/api/1.0/download';
+    private $_box_api_auth_url = 'http://www.box.com/api/1.0/auth';
     private $_error_code = '';
     private $_error_msg = '';
     /** @var bool */
@@ -67,6 +69,7 @@ class boxclient {
     function makeRequest($method, $params = array()) {
         $this->_clearErrors();
         $c = new curl(array('debug'=>$this->debug, 'cache'=>true, 'module_cache'=>'repository'));
+        $c->setopt(array('CURLOPT_FOLLOWLOCATION'=>1));
         try {
             if ($method == 'upload'){
                 $request = $this->_box_api_upload_url.'/'.
@@ -141,7 +144,7 @@ class boxclient {
             '__login'=>1
             );
         try {
-            $ret = $c->post('http://www.box.net/api/1.0/auth/'.$ticket, $param);
+            $ret = $c->post($this->_box_api_auth_url.'/'.$ticket, $param);
         } catch (moodle_exception $e) {
             $this->setError(0, 'connection time-out or invalid url');
             return false;
@@ -174,6 +177,7 @@ class boxclient {
         $params['onelevel']   = 1;
         $params['params[]']   = 'nozip';
         $c = new curl(array('debug'=>$this->debug, 'cache'=>true, 'module_cache'=>'repository'));
+        $c->setopt(array('CURLOPT_FOLLOWLOCATION'=>1));
         try {
             $args = array();
             $xml = $c->get($this->_box_api_url, $params);
@@ -224,7 +228,7 @@ class boxclient {
                 foreach($o->folder as $z){
                     $tmp = array('title'=>(string)$z->attributes()->name,
                         'size'=>0, 'date'=>userdate(time()),
-                        'thumbnail'=>'http://www.box.net/img/small_folder_icon.gif',
+                        'thumbnail'=>'https://www.box.com/img/small_folder_icon.gif',
                         'path'=>array('name'=>(string)$z->attributes()->name, 'path'=>(int)$z->attributes()->id));
                     $tmp['children'] = array();
                     $this->buildtree($z, $tmp['children']);
@@ -235,13 +239,13 @@ class boxclient {
                 foreach($val as $file){
                     $thumbnail = (string)$file->attributes()->thumbnail;
                     if (!preg_match('#^(?:http://)?([^/]+)#i', $thumbnail)) {
-                        $thumbnail =  'http://www.box.net'.$thumbnail;
+                        $thumbnail =  'http://www.box.com'.$thumbnail;
                     }
                     $tmp = array('title'=>(string)$file->attributes()->file_name,
                         'size'=>display_size((int)$file->attributes()->size),
                         'thumbnail'=>$thumbnail,
                         'date'=>userdate((int)$file->attributes()->updated),
-                        'source'=>'http://box.net/api/1.0/download/'
+                        'source'=> $this->_box_api_download_url .'/'
                             .$this->auth_token.'/'.(string)$file->attributes()->id,
                         'url'=>(string)$file->attributes()->shared_link);
                     $tree[] = $tmp;
@@ -290,7 +294,7 @@ class boxclient {
                     if (preg_match('#^(?:http://)?([^/]+)#i', $a['attributes']['THUMBNAIL'])) {
                         @$ret_array['thumbnail'][$i] =  $a['attributes']['THUMBNAIL'];
                     } else {
-                        @$ret_array['thumbnail'][$i] =  'http://www.box.net'.$a['attributes']['THUMBNAIL'];
+                        @$ret_array['thumbnail'][$i] =  'http://www.box.com'.$a['attributes']['THUMBNAIL'];
                     }
                     $entry_count++;
                 }

@@ -25,10 +25,10 @@
 $string['clientid'] = 'Client ID';
 $string['configplugin'] = 'Configure Google Docs plugin';
 $string['googledocs:view'] = 'View google docs repository';
-$string['oauthinfo'] = '<p>To use the Google Docs repository you must be registered with Google. Instructions for registing your installation with Google are described in <a href="{$a->docsurl}">Moodle Docs</a>. The redirect url should be set to:</p><p>{$a->callbackurl}</p>';
+$string['oauthinfo'] = '<p>To use this plugin, you must register your site with Google, as described in the documentation <a href="{$a->docsurl}">Google OAuth 2.0 setup</a>.</p><p>As part of the registration process, you will need to enter the following URL as \'Authorized Redirect URIs\':</p><p>{$a->callbackurl}</p>Once registered, you will be provided with a client ID and secret which can be used to configure all Google Docs and Picasa plugins.</p>';
 $string['oauth2upgrade_message_subject'] = 'Important information regarding Google Docs repository plugin';
-$string['oauth2upgrade_message_content'] = 'As part of the upgrade to Moodle 2.3, the Google Docs repository plugin has been disabled due to changes in Googles API. To re-enable your plugin, you must add and reconfigure configure oauth credentials of this plugin.';
-$string['oauth2upgrade_message_small'] = 'The Google Docs repository plugin has been disabled until configured with OAuth2';
+$string['oauth2upgrade_message_content'] = 'As part of the upgrade to Moodle 2.3, the Google Docs portfolio plugin has been disabled. To re-enable it, your Moodle site needs to be registered with Google, as described in the documentation {$a->docsurl}, in order to obtain a client ID and secret. The client ID and secret can then be used to configure all Google Docs and Picasa plugins.';
+$string['oauth2upgrade_message_small'] = 'This plugin has been disabled, as it requires configuration as described in the documentation Google OAuth 2.0 setup.';
 $string['pluginname'] = 'Google Docs';
 $string['secret'] = 'Secret';
 

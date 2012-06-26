@@ -279,6 +279,8 @@ class core_files_renderer extends plugin_renderer_base {
 <span class="fp-filename-icon">
     <a href="#">
     <span class="{!}fp-icon"></span>
+    <span class="fp-reficons1"></span>
+    <span class="fp-reficons2"></span>
     <span class="{!}fp-filename"></span>
     </a>
     <a class="{!}fp-contextmenu" href="#" onclick="return false;">'.$this->pix_icon('i/menu', '▶').'</a>
@@ -303,8 +305,8 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="filemanager fp-mkdir-dlg">
     <div class="fp-mkdir-dlg-text">'.get_string('newfoldername','repository').'<br/><input type="text" /></div>
-    <a class="{!}fp-dlg-butcreate fp-panel-button" href="#">'.get_string('makeafolder').'</a>
-    <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
+    <button class="{!}fp-dlg-butcreate">'.get_string('makeafolder').'</button>
+    <button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
@@ -370,12 +372,11 @@ class core_files_renderer extends plugin_renderer_base {
         <p>'.get_string('loading', 'repository').'</p>
     </div>
     <form>
-        <div><a class="{!}fp-file-download fp-panel-button" href="#">'.get_string('download').'</a>
-            <a class="{!}fp-file-delete fp-panel-button" href="#">'.get_string('delete').'</a>
-            <a class="{!}fp-file-setmain fp-panel-button" href="#">'.get_string('setmainfile', 'repository').'</a>
-            <a class="{!}fp-file-zip fp-panel-button" href="#">'.get_string('zip', 'editor').'</a>
-            <a class="{!}fp-file-unzip fp-panel-button" href="#">'.get_string('unzip').'</a>
-        </div>
+        <button class="{!}fp-file-download">'.get_string('download').'</button>
+        <button class="{!}fp-file-delete">'.get_string('delete').'</button>
+        <button class="{!}fp-file-setmain">'.get_string('setmainfile', 'repository').'</button>
+        <button class="{!}fp-file-zip">'.get_string('zip', 'editor').'</button>
+        <button class="{!}fp-file-unzip">'.get_string('unzip').'</button>
         <div class="fp-hr"></div>
         <table>
             <tr class="{!}fp-saveas"><td class="mdl-right"><label>'.get_string('name', 'moodle').'</label>:</td>
@@ -391,19 +392,20 @@ class core_files_renderer extends plugin_renderer_base {
             <tr class="{!}fp-reflist"><td class="mdl-right"><label>'.get_string('referenceslist', 'repository').'</label>:</td>
             <td class="mdl-left"><p class="{!}fp-refcount"></p><span class="fp-reflistloading">'.$icon_progress.' '.$strloading.'</span><ul class="fp-value"></ul></td></tr>
         </table>
+        <div class="fp-select-buttons">
+            <button class="{!}fp-file-update">'.get_string('update', 'moodle').'</button>
+            <button class="{!}fp-file-cancel">'.get_string('cancel').'</button>
+        </div>
     </form>
-    <p class="{!}fp-thumbnail"></p>
-    <form>
-        <p class="fp-select-update">
-            <a class="{!}fp-file-update" href="#"><span>'.get_string('update', 'moodle').'</span></a>
-            <a class="{!}fp-file-cancel" href="#"><span>'.get_string('cancel').'</span></a>
-        </p>
-    </form>
-    <div class="fp-fileinfo">
-        <div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"></span></div>
-        <div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"></span></div>
-        <div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"></span></div>
-        <div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"></span></div>
+    <div class="fp-info">
+        <div class="fp-hr"></div>
+        <p class="{!}fp-thumbnail"></p>
+        <div class="fp-fileinfo">
+            <div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"></span></div>
+            <div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"></span></div>
+            <div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"></span></div>
+            <div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"></span></div>
+        </div>
     </div>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
@@ -424,8 +426,8 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="filemanager fp-dlg">
     <div class="{!}fp-dlg-text"></div>
-    <a class="{!}fp-dlg-butconfirm fp-panel-button" href="#">'.get_string('ok').'</a>
-    <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
+    <button class="{!}fp-dlg-butconfirm">'.get_string('ok').'</button>
+    <button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
@@ -455,11 +457,9 @@ class core_files_renderer extends plugin_renderer_base {
         $maxbytes = display_size($fm->options->maxbytes);
         if (empty($options->maxfiles) || $options->maxfiles == -1) {
             $maxsize = get_string('maxfilesize', 'moodle', $maxbytes);
-            //$string['maxfilesize'] = 'Maximum size for new files: {$a}';
         } else {
             $strparam = (object)array('size' => $maxbytes, 'attachments' => $options->maxfiles);
             $maxsize = get_string('maxsizeandattachments', 'moodle', $strparam);
-            //$string['maxsizeandattachments'] = 'Maximum size for new files: {$a->size}, maximum attachments: {$a->attachments}';
         }
         // TODO MDL-32020 also should say about 'File types accepted'
         return '<span>'. $maxsize. '</span>';
@@ -565,7 +565,11 @@ class core_files_renderer extends plugin_renderer_base {
     private function fp_js_template_iconfilename() {
         $rv = '
 <a class="fp-file" href="#" >
-    <div class="{!}fp-thumbnail"></div>
+    <div style="position:relative;">
+        <div class="{!}fp-thumbnail"></div>
+        <div class="fp-reficons1"></div>
+        <div class="fp-reficons2"></div>
+    </div>
     <div class="fp-filename-field">
         <p class="{!}fp-filename"></p>
     </div>
@@ -661,11 +665,6 @@ class core_files_renderer extends plugin_renderer_base {
         <p>'.get_string('loading', 'repository').'</p>
     </div>
     <form>
-        <div>
-            <a class="{!}fp-select-confirm fp-panel-button" href="#">'.get_string('getfile', 'repository').'</a>
-            <a class="{!}fp-select-cancel fp-panel-button" href="#">'.get_string('cancel').'</a>
-        </div>
-        <div class="fp-hr"></div>
         <table>
             <tr class="{!}fp-linktype-2">
                 <td></td>
@@ -686,16 +685,23 @@ class core_files_renderer extends plugin_renderer_base {
                 <td class="mdl-right"><label>'.get_string('chooselicense', 'repository').'</label>:</td>
                 <td class="mdl-left"><select></select></td></tr>
         </table>
+        <div class="fp-select-buttons">
+            <button class="{!}fp-select-confirm">'.get_string('getfile', 'repository').'</button>
+            <button class="{!}fp-select-cancel">'.get_string('cancel').'</button>
+        </div>
     </form>
-    <p class="{!}fp-thumbnail"></p>
-    <div class="fp-fileinfo">
-        <div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"></span></div>
-        <div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"></span></div>
-        <div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"></span></div>
-        <div class="{!}fp-license">'.get_string('license', 'moodle').': <span class="fp-value"></span></div>
-        <div class="{!}fp-author">'.get_string('author', 'repository').': <span class="fp-value"></span></div>
-        <div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"></span></div>
-    </div>
+    <div class="fp-info">
+        <div class="fp-hr"></div>
+        <p class="{!}fp-thumbnail"></p>
+        <div class="fp-fileinfo">
+            <div class="{!}fp-datemodified">'.get_string('lastmodified', 'moodle').': <span class="fp-value"></span></div>
+            <div class="{!}fp-datecreated">'.get_string('datecreated', 'repository').': <span class="fp-value"></span></div>
+            <div class="{!}fp-size">'.get_string('size', 'repository').': <span class="fp-value"></span></div>
+            <div class="{!}fp-license">'.get_string('license', 'moodle').': <span class="fp-value"></span></div>
+            <div class="{!}fp-author">'.get_string('author', 'repository').': <span class="fp-value"></span></div>
+            <div class="{!}fp-dimensions">'.get_string('dimensions', 'repository').': <span class="fp-value"></span></div>
+        </div>
+    <div>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
@@ -791,13 +797,41 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="file-picker fp-msg">
     <p class="{!}fp-msg-text"></p>
-    <a class="{!}fp-msg-butok fp-panel-button" href="#">'.get_string('ok').'</a>
+    <button class="{!}fp-msg-butok">'.get_string('ok').'</button>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }
 
     /**
      * FilePicker JS template for popup dialogue window asking for action when file with the same name already exists.
+     *
+     * Must have one top element, CSS for this element must define width and height of the window;
+     *
+     * content of element with class 'fp-dlg-text' will be replaced with dialog text;
+     * elements with classes 'fp-dlg-butoverwrite', 'fp-dlg-butrename',
+     * 'fp-dlg-butoverwriteall', 'fp-dlg-butrenameall' and 'fp-dlg-butcancel' will
+     * hold onclick events;
+     *
+     * content of element with class 'fp-dlg-butrename' will be substituted with appropriate string
+     * (Note that it may have long text)
+     *
+     * @return string
+     */
+    private function fp_js_template_processexistingfile() {
+        $rv = '
+<div class="file-picker fp-dlg">
+    <p class="{!}fp-dlg-text"></p>
+    <div class="fp-dlg-buttons">
+        <button class="{!}fp-dlg-butoverwrite">'.get_string('overwrite', 'repository').'</button>
+        <button class="{!}fp-dlg-butrename"></button>
+        <button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
+    </div>
+</div>';
+        return preg_replace('/\{\!\}/', '', $rv);
+    }
+
+    /**
+     * FilePicker JS template for popup dialogue window asking for action when file with the same name already exists (multiple-file version).
      *
      * Must have one top element, CSS for this element must define width and height of the window;
      *
@@ -810,13 +844,16 @@ class core_files_renderer extends plugin_renderer_base {
      *
      * @return string
      */
-    private function fp_js_template_processexistingfile() {
+    private function fp_js_template_processexistingfilemultiple() {
         $rv = '
 <div class="file-picker fp-dlg">
     <p class="{!}fp-dlg-text"></p>
     <a class="{!}fp-dlg-butoverwrite fp-panel-button" href="#">'.get_string('overwrite', 'repository').'</a>
     <a class="{!}fp-dlg-butcancel fp-panel-button" href="#">'.get_string('cancel').'</a>
     <a class="{!}fp-dlg-butrename fp-panel-button" href="#"></a>
+    <br/>
+    <a class="{!}fp-dlg-butoverwriteall fp-panel-button" href="#">'.get_string('overwriteall', 'repository').'</a>
+    <a class="{!}fp-dlg-butrenameall fp-panel-button" href="#">'.get_string('renameall', 'repository').'</a>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
     }

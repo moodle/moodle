@@ -1,5 +1,5 @@
 <?php
-// This file is part of Book plugin for Moodle - http://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,10 +43,6 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/book:read', $context);
 require_capability('booktool/exportimscp:export', $context);
-
-$strbooks = get_string('modulenameplural', 'book');
-$strbook  = get_string('modulename', 'book');
-$strtop  = get_string('top', 'book');
 
 add_to_log($course->id, 'book', 'exportimscp', 'tool/exportimscp/index.php?id='.$cm->id, $book->id, $cm->id);
 

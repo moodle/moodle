@@ -91,7 +91,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                             // Keep it inside the .course-content
                             constrain: '#'+CSS.PAGECONTENT,
                             stickY: true
-                        });
+                        }).plug(Y.Plugin.DDWinScroll);
                     }
                 }
             }, this);
@@ -306,7 +306,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                     }).plug(Y.Plugin.DDConstrained, {
                         // Keep it inside the .course-content
                         constrain: '#'+CSS.PAGECONTENT
-                    });
+                    }).plug(Y.Plugin.DDWinScroll);
                 }
             }, this);
         },
@@ -411,4 +411,4 @@ YUI.add('moodle-course-dragdrop', function(Y) {
     M.course.init_section_dragdrop = function(params) {
         new DRAGSECTION(params);
     }
-}, '@VERSION@', {requires:['base', 'node', 'io', 'dom', 'dd', 'moodle-core-dragdrop', 'moodle-enrol-notification', 'moodle-course-coursebase']});
+}, '@VERSION@', {requires:['base', 'node', 'io', 'dom', 'dd', 'dd-scroll', 'moodle-core-dragdrop', 'moodle-enrol-notification', 'moodle-course-coursebase']});

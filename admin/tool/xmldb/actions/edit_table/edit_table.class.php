@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,8 +27,7 @@
  * can be invoked, plus links to PHP code generator, view SQL, rearrange
  * elements and so on.
  *
- * @package    tool
- * @subpackage xmldb
+ * @package    tool_xmldb
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -93,7 +91,7 @@ class edit_table extends XMLDBAction {
 
         // Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
-            $dbdir =& $XMLDB->dbdirs[$dirpath];
+            $dbdir = $XMLDB->dbdirs[$dirpath];
         } else {
             return false;
         }
@@ -104,19 +102,19 @@ class edit_table extends XMLDBAction {
         }
 
         if (!empty($XMLDB->editeddirs)) {
-            $editeddir =& $XMLDB->editeddirs[$dirpath];
-            $structure =& $editeddir->xml_file->getStructure();
+            $editeddir = $XMLDB->editeddirs[$dirpath];
+            $structure = $editeddir->xml_file->getStructure();
         }
 
         $tableparam = required_param('table', PARAM_CLEAN);
-        if (!$table =& $structure->getTable($tableparam)) {
+        if (!$table = $structure->getTable($tableparam)) {
             // Arriving here from a name change, looking for the new table name
             $tableparam = required_param('name', PARAM_CLEAN);
-            $table =& $structure->getTable($tableparam);
+            $table = $structure->getTable($tableparam);
         }
 
-        $dbdir =& $XMLDB->dbdirs[$dirpath];
-        $origstructure =& $dbdir->xml_file->getStructure();
+        $dbdir = $XMLDB->dbdirs[$dirpath];
+        $origstructure = $dbdir->xml_file->getStructure();
 
         // Add the main form
         $o = '<form id="form" action="index.php" method="post">';
@@ -193,7 +191,7 @@ class edit_table extends XMLDBAction {
         $table->deleteIndex('changeme');
 
         // Add the fields list
-        $fields =& $table->getFields();
+        $fields = $table->getFields();
         if (!empty($fields)) {
             $o .= '<h3 class="main">' . $this->str['fields'] . '</h3>';
             $o .= '<table id="listfields" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
@@ -251,7 +249,7 @@ class edit_table extends XMLDBAction {
             $o .= '</table>';
         }
         // Add the keys list
-        $keys =& $table->getKeys();
+        $keys = $table->getKeys();
         if (!empty($keys)) {
             $o .= '<h3 class="main">' . $this->str['keys'] . '</h3>';
             $o .= '<table id="listkeys" border="0"  cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
@@ -304,7 +302,7 @@ class edit_table extends XMLDBAction {
             $o .= '</table>';
         }
        // Add the indexes list
-        $indexes =& $table->getIndexes();
+        $indexes = $table->getIndexes();
         if (!empty($indexes)) {
             $o .= '<h3 class="main">' . $this->str['indexes'] . '</h3>';
             $o .= '<table id="listindexes" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';

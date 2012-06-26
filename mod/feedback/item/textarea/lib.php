@@ -262,7 +262,7 @@ class feedback_item_textarea extends feedback_item_base {
         echo '<textarea name="'.$item->typ.'_'.$item->id.'" '.
                        'cols="'.$presentation[0].'" '.
                        'rows="'.$presentation[1].'">';
-        echo ($value ? htmlspecialchars($value) : '');
+        echo $value;
         echo '</textarea>';
         echo '</span>';
         echo '</div>';
@@ -308,7 +308,7 @@ class feedback_item_textarea extends feedback_item_base {
     }
 
     public function create_value($data) {
-        $data = clean_text($data);
+        $data = s($data);
         return $data;
     }
 
@@ -332,5 +332,13 @@ class feedback_item_textarea extends feedback_item_base {
 
     public function can_switch_require() {
         return true;
+    }
+
+    public function value_type() {
+        return PARAM_RAW;
+    }
+
+    public function clean_input_value($value) {
+        return s($value);
     }
 }

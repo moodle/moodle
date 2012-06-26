@@ -405,9 +405,11 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
         $tmpactivity->name                 = format_string($cm->name, true);
         $tmpactivity->sectionnum           = $cm->sectionnum;
         $tmpactivity->timestamp            = $entry->timemodified;
+        $tmpactivity->content              = new stdClass();
         $tmpactivity->content->entryid     = $entry->entryid;
         $tmpactivity->content->concept     = $entry->concept;
         $tmpactivity->content->definition  = $entry->definition;
+        $tmpactivity->user                 = new stdClass();
         $tmpactivity->user->id             = $entry->userid;
         $tmpactivity->user->firstname      = $entry->firstname;
         $tmpactivity->user->lastname       = $entry->lastname;
@@ -560,7 +562,7 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
             echo '<div class="info"><a href="'.$link.'">'.format_string($entry->concept, true).'</a></div>';
             $entrycount += 1;
         } else {
-            $numnewentries = $DB->count_records_sql($countsql.$joins[0].$clausesql.$approvalsql.')', $params);
+            $numnewentries = $DB->count_records_sql($countsql.$joins[0].$clausesql.$approvalsql, $params);
             echo '<div class="head"><div class="activityhead">'.get_string('andmorenewentries', 'glossary', $numnewentries - GLOSSARY_RECENT_ACTIVITY_LIMIT).'</div></div>';
             break;
         }
@@ -1621,17 +1623,13 @@ function glossary_get_file_areas($course, $cm, $context) {
  * @return file_info_stored file_info_stored instance or null if not found
  */
 function glossary_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return null;
     }
 
     if (!isset($areas[$filearea])) {
-        return null;
-    }
-
-    if (!has_capability('moodle/course:managefiles', $context)) {
         return null;
     }
 
@@ -1670,6 +1668,13 @@ function glossary_get_file_info($browser, $areas, $course, $cm, $context, $filea
     if (!($storedfile = $fs->get_file($filecontext->id, 'mod_glossary', $filearea, $itemid, $filepath, $filename))) {
         return null;
     }
+
+    // Checks to see if the user can manage files or is the owner.
+    // TODO MDL-33805 - Do not use userid here and move the capability check above.
+    if (!has_capability('moodle/course:managefiles', $context) && $storedfile->get_userid() != $USER->id) {
+        return null;
+    }
+
     $urlbase = $CFG->wwwroot.'/pluginfile.php';
 
     return new file_info_stored($browser, $filecontext, $storedfile, $urlbase, s($entry->concept), true, true, false, false);
