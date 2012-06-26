@@ -45,6 +45,9 @@ class assign_portfolio_caller extends portfolio_module_caller_base {
     /** @var int callback arg - the id of submission we export */
     protected $sid;
 
+    /** @var string component of the submission files we export*/
+    protected $component;
+
     /** @var string callback arg - the area of submission files we export */
     protected $area;
 
@@ -59,7 +62,6 @@ class assign_portfolio_caller extends portfolio_module_caller_base {
 
     /** @var string callback arg - the name of the editor field we export */
     protected $editor;
-
 
    /**
     * callback arg for a single file export
