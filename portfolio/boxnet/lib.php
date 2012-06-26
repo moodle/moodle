@@ -37,8 +37,9 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
                 )
             );
             if (array_key_exists('status', $return) && $return['status'] == 'upload_ok'
-                && array_key_exists('id', $return) && count($return['id']) == 1) {
-                $this->rename_file($return['id'][array_pop(array_keys($return['id']))], $file->get_filename());
+                    && array_key_exists('id', $return) && count($return['id']) == 1) {
+                $returnid = array_keys($return['id']);
+                $this->rename_file($return['id'][array_pop($returnid)], $file->get_filename());
                 // if this fails, the file was sent but not renamed - this triggers a warning but is not fatal.
             }
         }
