@@ -811,7 +811,7 @@ class available_update_checker {
         }
 
         if (empty($response['forbranch']) or $response['forbranch'] !== moodle_major_version(true)) {
-            throw new available_update_checker_exception('err_response_target_version', $response['target']);
+            throw new available_update_checker_exception('err_response_target_version', $response['forbranch']);
         }
     }
 
