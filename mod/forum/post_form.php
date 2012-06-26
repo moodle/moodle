@@ -29,6 +29,41 @@ require_once($CFG->libdir.'/formslib.php');
 
 class mod_forum_post_form extends moodleform {
 
+    /**
+     * Returns the options array to use in filemanager for forum attachments
+     *
+     * @param stdClass $forum
+     * @return array
+     */
+    public static function attachment_options($forum) {
+        global $COURSE, $PAGE, $CFG;
+        $maxbytes = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $COURSE->maxbytes, $forum->maxbytes);
+        return array(
+            'subdirs' => 0,
+            'maxbytes' => $maxbytes,
+            'maxfiles' => $forum->maxattachments,
+            'accepted_types' => '*',
+            'return_types' => FILE_INTERNAL
+        );
+    }
+
+    /**
+     * Returns the options array to use in forum text editor
+     *
+     * @return array
+     */
+    public static function editor_options() {
+        global $COURSE, $PAGE, $CFG;
+        // TODO: add max files and max size support
+        $maxbytes = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $COURSE->maxbytes);
+        return array(
+            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'maxbytes' => $maxbytes,
+            'trusttext'=> true,
+            'return_types'=> FILE_INTERNAL | FILE_EXTERNAL
+        );
+    }
+
     function definition() {
 
         global $CFG;
@@ -40,13 +75,6 @@ class mod_forum_post_form extends moodleform {
         $modcontext    = $this->_customdata['modcontext'];
         $forum         = $this->_customdata['forum'];
         $post          = $this->_customdata['post'];
-        // if $forum->maxbytes == '0' means we should use $course->maxbytes
-        if ($forum->maxbytes == '0') {
-            $forum->maxbytes = $course->maxbytes;
-        }
-        // TODO: add max files and max size support
-        $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true,
-            'context'=>$modcontext, 'return_types'=>FILE_INTERNAL | FILE_EXTERNAL);
 
         $mform->addElement('header', 'general', '');//fill in the data depending on page params later using set_data
         $mform->addElement('text', 'subject', get_string('subject', 'forum'), 'size="48"');
@@ -54,7 +82,7 @@ class mod_forum_post_form extends moodleform {
         $mform->addRule('subject', get_string('required'), 'required', null, 'client');
         $mform->addRule('subject', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $mform->addElement('editor', 'message', get_string('message', 'forum'), null, $editoroptions);
+        $mform->addElement('editor', 'message', get_string('message', 'forum'), null, self::editor_options());
         $mform->setType('message', PARAM_RAW);
         $mform->addRule('message', get_string('required'), 'required', null, 'client');
 
@@ -82,12 +110,7 @@ class mod_forum_post_form extends moodleform {
             }
 
         if (!empty($forum->maxattachments) && $forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
-            $mform->addElement('filemanager', 'attachments', get_string('attachment', 'forum'), null,
-                array('subdirs'=>0,
-                      'maxbytes'=>$forum->maxbytes,
-                      'maxfiles'=>$forum->maxattachments,
-                      'accepted_types'=>'*',
-                      'return_types'=>FILE_INTERNAL));
+            $mform->addElement('filemanager', 'attachments', get_string('attachment', 'forum'), null, self::attachment_options($forum));
             $mform->addHelpButton('attachments', 'attachment', 'forum');
         }
 
