@@ -252,8 +252,8 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 
 .file-picker.fp-select .uneditable {display:none;}
 .file-picker.fp-select .fp-select-loading {display:none;}
-.file-picker .fp-select.loading .fp-select-loading {display:block;}
-.file-picker .fp-select.loading form {display:none;}
+.file-picker.fp-select.loading .fp-select-loading {display:block;}
+.file-picker.fp-select.loading form {display:none;}
 
  /*
  * File Manager
