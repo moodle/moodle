@@ -109,7 +109,7 @@ $completion->set_module_viewed($cm);
         } else {
 
             echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox', 'intro');
-            echo $OUTPUT->spacer(array('height'=>30, 'width'=>1, 'br'=>true)); // should be done with CSS instead
+            echo $OUTPUT->spacer(array('height'=>30, 'width'=>1), true);  // should be done with CSS instead
 
             $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
             $questionorder = explode(",", $survey->questions);
