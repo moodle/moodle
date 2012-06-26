@@ -15,6 +15,11 @@ required changes in code:
 * most resourcelib_embed_* functions are replaced with core_media_renderer;
   for an example, see mod/resource/locallib.php, resource_display_embed()
 
+optional - no changes needed:
+
+* add support for handling course drag and drop types - functions
+  xxx_dndupload_register() and xxx_dndupload_handle($uploadinfo) see:
+  http://docs.moodle.org/dev/Implementing_Course_drag_and_drop_upload_support_in_a_module
 
 === 2.2 ===
 
