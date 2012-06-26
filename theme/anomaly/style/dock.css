@@ -2,23 +2,21 @@
 -----------------*/
 
 body.has_dock {
-    margin:0;
+    margin: 0;
 }
-
 #dock {
-    width:3%;
-    position:fixed;
-    top:0px;
-    right:0;
-    height:100%;
-    z-index:11000;
+    width: 3%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 11000;
     background-color: #C8C9C7;
     border-right: 0 none;
 }
-
 #dock.nothingdocked {
     visibility: hidden;
-    display:none;
+    display: none;
 }
 #dock .controls {
     bottom: auto;
@@ -36,11 +34,11 @@ body.has_dock {
 #dock .dockeditem {
     background-color: #C8C9C7;
     padding: 2px;
-    padding-right: 0px;
+    padding-right: 0;
 }
 #dock .dockedtitle {
-    padding-bottom: 5px;
-    cursor:pointer;
+    padding-bottom: 8px;
+    cursor: pointer;
     background-color: #222;
     -webkit-border-top-left-radius: 10px;
     -moz-border-radius-topleft: 10px;
@@ -50,13 +48,13 @@ body.has_dock {
     border-bottom-left-radius: 10px;
 }
 #dock .dockedtitle h2 {
-    margin: 0;
-    padding: 10px 3px;
+    margin: 8px 0;
+    padding: 0 3px;
     color: #fff;
     font-family: sans-serif;
 }
 .dockedtitle.activeitem h2 {
-    color: #fff !important;
+    color: #fff;
 }
 #dock .dockedtitle.activeitem {
     background-color: #697F55;
@@ -68,7 +66,7 @@ body.has_dock {
     border-bottom-left-radius: 10px;
 }
 #dock .controls img {
-    cursor:pointer;
+    cursor: pointer;
     margin-left: 10px;
 }
 /*
@@ -81,11 +79,11 @@ Docked Item Panel
     left: 100%;
 }
 #dockeditempanel.dockitempanel_hidden {
-    display:none;
+    display: none;
 }
 #dockeditempanel .dockeditempanel_content {
     background-color: #eee;
-    margin: 0 3px;
+    margin: 0 3px 0 0;
     position: relative;
     min-height: 100px;
     border-color: #697F55;
@@ -97,7 +95,6 @@ Docked Item Panel
     -webkit-border-top-left-radius: 0;
     -moz-border-top-left-radius: 0;
     border-top-left-radius: 0;
-
 }
 #dockeditempanel .dockeditempanel_hd {
     border-color: #eee;
@@ -105,7 +102,7 @@ Docked Item Panel
     padding: 2px;
 }
 #dockeditempanel .dockeditempanel_bd .block_docked {
-    margin:10px;
+    margin: 10px;
 }
 #dockeditempanel .block_calendar_month.block_docked {
     text-align: center;
@@ -117,21 +114,22 @@ Docked Item Panel
     border-top-right-radius: 10px;
 }
 #dockeditempanel .dockeditempanel_hd h2 {
-    display:inline;
+    display: inline;
     margin: 0;
     padding-right: 2em;
     color: #000;
-    float: left;
 }
-
 #dockeditempanel .dockeditempanel_hd .commands {
-    display:inline;
+    display: inline;
 }
 #dockeditempanel .dockeditempanel_hd .commands img {
     margin-right: 3px;
     vertical-align: middle;
 }
 #dockeditempanel .dockeditempanel_bd {
-    overflow:auto;
-    width:auto; /* adds scroll to dock panel */
+    overflow: auto;
+    width: auto; /* adds scroll to dock panel */
+}
+#dockeditempanel .dockeditempanel_bd .block_navigation .block_tree li {
+    overflow: visible;
 }
