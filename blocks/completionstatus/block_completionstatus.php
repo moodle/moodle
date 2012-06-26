@@ -168,7 +168,7 @@ class block_completionstatus extends block_base {
             $a = new stdClass();
             $a->first = $prerequisites_complete;
             $a->second = count($prerequisites);
-            $shtml .= get_string('firstofsecond', 'block_completionstatus', $a);
+            $phtml .= get_string('firstofsecond', 'block_completionstatus', $a);
             $phtml .= '</td></tr>';
 
             $shtml = $phtml . $shtml;
