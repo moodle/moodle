@@ -65,7 +65,7 @@ class course_completion_form extends moodleform {
         $mform->setDefault('overall_aggregation', $completion->get_aggregation_method());
 
         // Course prerequisite completion criteria
-        $mform->addElement('header', 'courseprerequisites', get_string('courseprerequisites', 'completion'));
+        $mform->addElement('header', 'courseprerequisites', get_string('completiondependencies', 'completion'));
 
         // Get applicable courses
         $courses = $DB->get_records_sql(
