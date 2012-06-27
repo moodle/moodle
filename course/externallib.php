@@ -722,7 +722,7 @@ class core_course_external extends external_api {
         // Context validation.
 
         if (! ($course = $DB->get_record('course', array('id'=>$params['courseid'])))) {
-            throw new moodle_exception('invalidcourseid', 'error', '', $params['courseid']);
+            throw new moodle_exception('invalidcourseid', 'error');
         }
 
         // Category where duplicated course is going to be created.
