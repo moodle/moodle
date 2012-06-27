@@ -1,0 +1,33 @@
+My Course Overview Block for Moodle 2
+
+== Main feautres ==
+
+Provides a user configurable list of the courses a user is enrolled in on their My Moodle page.
+
+The user can set the number of courses to have visible.
+
+Courses can be reordered in editing mode via drag and drop (with appropriate fallback when ajax disabled for the user).
+
+Each course can be expanded to show a list of activity icons alerting the user to updated modules or modules requiring attention.
+
+Optionally can display the shortnames of child courses under the heading of the course (site-wide option).
+
+Optionally can display a welcome area above the courses that welcomes the user and alerts them of any pending messages.
+
+== Installing and configuring ==
+
+Place the code for the block under /blocks/my_course_overview and install the block via the Moodle upgrade process.
+
+== Credits ==
+
+Coding: NetSpot (http://www.netspot.com.au)
+
+Jointly Funded and Designed by:
+ - Flinders University (http://www.flinders.edu.au)
+ - University of Canberra (http://www.canberra.edu.au)
+
+== See also ==
+
+[https://github.com/netspotau/moodle-block_my_course_overview Github page]
+
+[[Category: Contributed code]]

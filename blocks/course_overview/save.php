@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,17 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Version details
- *
- * @package    block
- * @subpackage course_overview
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+define('AJAX_SCRIPT', true);
 
-defined('MOODLE_INTERNAL') || die();
+/** Include config */
+require_once(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(__FILE__) . '/locallib.php');
 
-$plugin->version   = 2012062800;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2012061700;        // Requires this Moodle version
-$plugin->component = 'block_course_overview'; // Full name of the plugin (used for diagnostics)
+if (!confirm_sesskey()) {
+    throw new moodle_exception('invalidsesskey', 'error');
+}
+
+$sortorder = required_param('sortorder', PARAM_INT);
+$sortorder = implode(',', $sortorder);
+
+block_course_overview_update_myorder($sortorder);
