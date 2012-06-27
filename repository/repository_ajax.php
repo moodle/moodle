@@ -230,6 +230,7 @@ switch ($action) {
             $record->timecreated = $now;
             $record->timemodified = $now;
             $record->userid = $USER->id;
+            $record->sortorder = 0;
 
             // If file is already a reference, set $source = file source, $repo = file repository
             if ($repo->has_moodle_files()) {
