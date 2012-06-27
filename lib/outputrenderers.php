@@ -228,12 +228,12 @@ class plugin_renderer_base extends renderer_base {
      */
     public function __call($method, $arguments) {
         if (method_exists('renderer_base', $method)) {
-            throw new coding_exception('Protected method called against '.__CLASS__.' :: '.$method);
+            throw new coding_exception('Protected method called against '.get_class($this).' :: '.$method);
         }
         if (method_exists($this->output, $method)) {
             return call_user_func_array(array($this->output, $method), $arguments);
         } else {
-            throw new coding_exception('Unknown method called against '.__CLASS__.' :: '.$method);
+            throw new coding_exception('Unknown method called against '.get_class($this).' :: '.$method);
         }
     }
 }

@@ -7179,7 +7179,7 @@ function get_string($identifier, $component = '', $a = NULL, $lazyload = false) 
 
     $identifier = clean_param($identifier, PARAM_STRINGID);
     if (empty($identifier)) {
-        throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please fix your get_string() call and string definition');
+        throw new coding_exception('Invalid string identifier. The identifier cannot be empty. Please fix your get_string() call.');
     }
 
     // There is now a forth argument again, this time it is a boolean however so
