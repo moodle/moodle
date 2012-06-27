@@ -216,4 +216,116 @@ class qbehaviour_adaptive extends question_behaviour_with_save {
     public function is_state_improvable(question_state $state) {
         return $state == question_state::$todo;
     }
+
+    /**
+     * @return qbehaviour_adaptive_mark_details the information about the current state-of-play, scoring-wise,
+     * for this adaptive attempt.
+     */
+    public function get_adaptive_marks() {
+
+        // Try to find the last graded step.
+        $gradedstep = $this->get_graded_step();
+        if (is_null($gradedstep) || $this->qa->get_max_mark() == 0) {
+            // No score yet.
+            return new qbehaviour_adaptive_mark_details(question_state::$todo);
+        }
+
+        // Work out the applicable state.
+        if ($this->qa->get_state()->is_commented()) {
+            $state = $this->qa->get_state();
+        } else {
+            $state = question_state::graded_state_for_fraction(
+                                $gradedstep->get_behaviour_var('_rawfraction'));
+        }
+
+        // Prepare the grading details.
+        $details = $this->adaptive_mark_details_from_step($gradedstep, $state, $this->qa->get_max_mark(), $this->question->penalty);
+        $details->improvable = $this->is_state_improvable($this->qa->get_state());
+        return $details;
+    }
+
+    /**
+     * Actually populate the qbehaviour_adaptive_mark_details object.
+     * @param question_attempt_step $gradedstep the step that holds the relevant mark details.
+     * @param question_state $state the state corresponding to $gradedstep.
+     * @param unknown_type $maxmark the maximum mark for this question_attempt.
+     * @param unknown_type $penalty the penalty for this question, as a fraction.
+     */
+    protected function adaptive_mark_details_from_step(question_attempt_step $gradedstep,
+            question_state $state, $maxmark, $penalty) {
+
+        $details = new qbehaviour_adaptive_mark_details($state);
+        $details->maxmark    = $maxmark;
+        $details->actualmark = $gradedstep->get_fraction() * $details->maxmark;
+        $details->rawmark    = $gradedstep->get_behaviour_var('_rawfraction') * $details->maxmark;
+
+        $details->currentpenalty = $penalty * $details->maxmark;
+        $details->totalpenalty   = $details->currentpenalty * $this->qa->get_last_behaviour_var('_try', 0);
+
+        $details->improvable = $this->is_state_improvable($gradedstep->get_state());
+
+        return $details;
+    }
+}
+
+
+/**
+ * This class encapsulates all the information about the current state-of-play
+ * scoring-wise. It is used to communicate between the beahviour and the renderer.
+ *
+ * @copyright  2012 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qbehaviour_adaptive_mark_details {
+    /** @var question_state the current state of the question. */
+    public $state;
+
+    /** @var float the maximum mark for this question. */
+    public $maxmark;
+
+    /** @var float the current mark for this question. */
+    public $actualmark;
+
+    /** @var float the raw mark for this question before penalties were applied. */
+    public $rawmark;
+
+    /** @var float the the amount of additional penalty this attempt attracted. */
+    public $currentpenalty;
+
+    /** @var float the total that will apply to future attempts. */
+    public $totalpenalty;
+
+    /** @var bool whether it is possible for this mark to be improved in future. */
+    public $improvable;
+
+    /**
+     * Constructor.
+     * @param question_state $state
+     */
+    public function __construct($state, $maxmark = null, $actualmark = null, $rawmark = null,
+            $currentpenalty = null, $totalpenalty = null, $improvable = null) {
+        $this->state          = $state;
+        $this->maxmark        = $maxmark;
+        $this->actualmark     = $actualmark;
+        $this->rawmark        = $rawmark;
+        $this->currentpenalty = $currentpenalty;
+        $this->totalpenalty   = $totalpenalty;
+        $this->improvable     = $improvable;
+    }
+
+    /**
+     * Get the marks, formatted to a certain number of decimal places, in the
+     * form required by calls like get_string('gradingdetails', 'qbehaviour_adaptive', $a).
+     * @param int $markdp the number of decimal places required.
+     * @return array ready to substitute into language strings.
+     */
+    public function get_formatted_marks($markdp) {
+        return array(
+            'max'          => format_float($this->maxmark,        $markdp),
+            'cur'          => format_float($this->actualmark,     $markdp),
+            'raw'          => format_float($this->rawmark,        $markdp),
+            'penalty'      => format_float($this->currentpenalty, $markdp),
+            'totalpenalty' => format_float($this->totalpenalty,   $markdp),
+        );
+    }
 }

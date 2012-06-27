@@ -42,85 +42,70 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
     }
 
     public function feedback(question_attempt $qa, question_display_options $options) {
+
+        // If the latest answer was invalid, display an informative message.
         if ($qa->get_state() == question_state::$invalid) {
-            // If the latest answer was invalid, display an informative message
-            $output = '';
-            $info = $this->disregarded_info();
-            if ($info) {
-                $output = html_writer::tag('div', $info, array('class' => 'gradingdetails'));
-            }
-            return $output;
+            return html_writer::nonempty_tag('div', $this->disregarded_info(),
+                    array('class' => 'gradingdetails'));
         }
 
-        // Try to find the last graded step.
+        // Otherwise get the details.
+        return $this->render_adaptive_marks(
+                $qa->get_behaviour()->get_adaptive_marks(), $options);
+    }
 
-        $gradedstep = $qa->get_behaviour()->get_graded_step($qa);
-        if (is_null($gradedstep) || $qa->get_max_mark() == 0 ||
-                $options->marks < question_display_options::MARK_AND_MAX) {
+    /**
+     * Display the scoring information about an adaptive attempt.
+     * @param qbehaviour_adaptive_mark_details contains all the score details we need.
+     * @param question_display_options $options display options.
+     */
+    public function render_adaptive_marks(qbehaviour_adaptive_mark_details $details, question_display_options $options) {
+        if ($details->state == question_state::$todo || $options->marks < question_display_options::MARK_AND_MAX) {
+            // No grades yet.
             return '';
         }
 
-        // Display the grading details from the last graded state
-        $mark = new stdClass();
-        $mark->max = $qa->format_max_mark($options->markdp);
-
-        $actualmark = $gradedstep->get_fraction() * $qa->get_max_mark();
-        $mark->cur = format_float($actualmark, $options->markdp);
-
-        $rawmark = $gradedstep->get_behaviour_var('_rawfraction') * $qa->get_max_mark();
-        $mark->raw = format_float($rawmark, $options->markdp);
-
-        // let student know wether the answer was correct
-        if ($qa->get_state()->is_commented()) {
-            $class = $qa->get_state()->get_feedback_class();
-        } else {
-            $class = question_state::graded_state_for_fraction(
-                    $gradedstep->get_behaviour_var('_rawfraction'))->get_feedback_class();
-        }
-
-        $gradingdetails = get_string('gradingdetails', 'qbehaviour_adaptive', $mark);
-
-        $gradingdetails .= $this->penalty_info($qa, $mark, $options);
-
-        $output = '';
-        $output .= html_writer::tag('div', get_string($class, 'question'),
-                array('class' => 'correctness ' . $class));
-        $output .= html_writer::tag('div', $gradingdetails,
-                array('class' => 'gradingdetails'));
-        return $output;
+        // Display the grading details from the last graded state.
+        $class = $details->state->get_feedback_class();
+        return html_writer::tag('div', get_string($class, 'question'),
+                        array('class' => 'correctness ' . $class))
+                . html_writer::tag('div', $this->grading_details($details, $options),
+                        array('class' => 'gradingdetails'));
     }
 
     /**
      * Display the information about the penalty calculations.
-     * @param question_attempt $qa the question attempt.
-     * @param object $mark contains information about the current mark.
+     * @param qbehaviour_adaptive_mark_details contains all the score details we need.
      * @param question_display_options $options display options.
+     * @return string html fragment
      */
-    protected function penalty_info(question_attempt $qa, $mark,
-            question_display_options $options) {
+    protected function grading_details(qbehaviour_adaptive_mark_details $details, question_display_options $options) {
 
-        $currentpenalty = $qa->get_question()->penalty * $qa->get_max_mark();
-        $totalpenalty = $currentpenalty * $qa->get_last_behaviour_var('_try', 0);
+        $mark = $details->get_formatted_marks($options->markdp);
 
-        if ($currentpenalty == 0) {
-            return '';
+        if ($details->currentpenalty == 0 && $details->totalpenalty == 0) {
+            return get_string('gradingdetails', 'qbehaviour_adaptive', $mark);
         }
+
         $output = '';
 
         // Print details of grade adjustment due to penalties
-        if ($mark->raw != $mark->cur) {
-            $output .= ' ' . get_string('gradingdetailsadjustment', 'qbehaviour_adaptive', $mark);
-        }
+        if ($details->rawmark != $details->actualmark) {
+            if (!$details->improvable) {
+                return get_string('gradingdetailswithadjustment', 'qbehaviour_adaptive', $mark);
+            } else if ($details->totalpenalty > $details->currentpenalty) {
+                return get_string('gradingdetailswithadjustmenttotalpenalty', 'qbehaviour_adaptive', $mark);
+            } else {
+                return get_string('gradingdetailswithadjustmentpenalty', 'qbehaviour_adaptive', $mark);
+            }
 
-        // Print information about any new penalty, only relevant if the answer can be improved.
-        if ($qa->get_behaviour()->is_state_improvable($qa->get_state())) {
-            $output .= ' ' . get_string('gradingdetailspenalty', 'qbehaviour_adaptive',
-                    format_float($currentpenalty, $options->markdp));
-
-            // Print information about total penalties so far, if larger than current penalty.
-            if ($totalpenalty > $currentpenalty) {
-                $output .= ' ' . get_string('gradingdetailspenaltytotal', 'qbehaviour_adaptive',
-                        format_float($totalpenalty, $options->markdp));
+        } else {
+            if (!$details->improvable) {
+                return get_string('gradingdetails', 'qbehaviour_adaptive', $mark);
+            } else if ($details->totalpenalty > $details->currentpenalty) {
+                return get_string('gradingdetailswithtotalpenalty', 'qbehaviour_adaptive', $mark);
+            } else {
+                return get_string('gradingdetailswithpenalty', 'qbehaviour_adaptive', $mark);
             }
         }
 
@@ -133,5 +118,4 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
     protected function disregarded_info() {
         return get_string('disregardedwithoutpenalty', 'qbehaviour_adaptive');
     }
-
 }
