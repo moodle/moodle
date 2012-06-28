@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,17 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Save course order in course_overview block
+ *
+ * @package    block_course_overview
+ * @copyright  2012 Adam Olley <adam.olley@netspot.com.au>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 define('AJAX_SCRIPT', true);
 
-/** Include config */
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 
-if (!confirm_sesskey()) {
-    throw new moodle_exception('invalidsesskey', 'error');
-}
+require_sesskey();
+require_login();
 
-$sortorder = required_param('sortorder', PARAM_INT);
-$sortorder = implode(',', $sortorder);
+$sortorder = required_param_array('sortorder', PARAM_INT);
 
 block_course_overview_update_myorder($sortorder);

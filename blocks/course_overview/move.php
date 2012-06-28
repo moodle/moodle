@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,44 +14,60 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Move/order course functionality for course_overview block.
+ *
+ * @package    block_course_overview
+ * @copyright  2012 Adam Olley <adam.olley@netspot.com.au>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
-require_once($CFG->dirroot.'/user/profile/lib.php');
 
+require_sesskey();
 require_login();
 
 $source = required_param('source', PARAM_INT);
-$target = required_param('target', PARAM_INT);
+$move = required_param('move', PARAM_INT);
 
-profile_load_custom_fields($USER);
-
-//get current sortorder
-$sortorder = array();
-if (isset($USER->profile['myorder'])) {
-    $mysortorder = explode(',', $USER->profile['myorder']);
-}
-
-$courses_sorted = block_course_overview_get_sorted_courses();
+list($courses_sorted, $sitecourses, $coursecount) = block_course_overview_get_sorted_courses();
 $sortorder = array_keys($courses_sorted);
-
-//now resort based on new weight for chosen course
+// Now resort based on new weight for chosen course.
 $neworder = array();
-reset($sortorder);
-foreach ($sortorder as $key => $value) {
-    if ($value == $source) {
-        unset($sortorder[$key]);
-        break;
-    }
-}
-for ($i = 0; $i <= count($sortorder) + 1; $i++) {
-    if ($i == $target) {
-        $neworder[] = $source;
-    }
-    if (isset($sortorder[$i])) {
-        $neworder[] = $sortorder[$i];
-    }
-}
-$neworder = implode(',', $neworder);
-block_course_overview_update_myorder($neworder);
 
+$sourcekey = array_search($source, $sortorder);
+if ($sourcekey === false) {
+    print_error("invalidcourseid", null, null, $source);
+}
+
+$destination = $sourcekey + $move;
+if ($destination < 0) {
+    print_error("listcantmoveup");
+} else if ($destination >= count($courses_sorted)) {
+    print_error("listcantmovedown");
+}
+
+// Create neworder list for courses.
+unset($sortorder[$sourcekey]);
+if ($move == -1) {
+    if ($destination > 0) {
+        $neworder = array_slice($sortorder, 0, $destination, true);
+    }
+    $neworder[] = $source;
+    $remaningcourses = array_slice($sortorder, $destination);
+    foreach ($remaningcourses as $courseid) {
+        $neworder[] = $courseid;
+    }
+} else if (($move == 1)) {
+    $neworder = array_slice($sortorder, 0, $destination);
+    $neworder[] = $source;
+    if (($destination) < count($courses_sorted)) {
+        $remaningcourses = array_slice($sortorder, $destination);
+        foreach ($remaningcourses as $courseid) {
+            $neworder[] = $courseid;
+        }
+    }
+}
+
+block_course_overview_update_myorder($neworder);
 redirect(new moodle_url('/my/index.php'));

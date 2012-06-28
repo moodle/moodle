@@ -17,25 +17,29 @@
 /**
  * Course overview block
  *
- * @package    block
- * @subpackage course_overview
+ * @package    block_course_overview
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once($CFG->dirroot.'/blocks/course_overview/locallib.php');
-
+/**
+ * Course overview block
+ *
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class block_course_overview extends block_base {
     /**
-     * block initializations
+     * Block initialization
      */
     public function init() {
-        $this->title   = get_string('displaytitle', 'block_course_overview');
+        $this->title   = get_string('pluginname', 'block_course_overview');
     }
 
     /**
-     * block contents
+     * Return contents of course_overview block
      *
-     * @return object
+     * @return stdClass contents of block
      */
     public function get_content() {
         global $USER, $CFG, $DB;
@@ -53,34 +57,34 @@ class block_course_overview extends block_base {
 
         $content = array();
 
-        $moving = optional_param('course_moveid', 0, PARAM_INT);
-        $updatemynumber = optional_param('mynumber', null, PARAM_INT);
-        if (!is_null($updatemynumber)) {
+        $updatemynumber = optional_param('mynumber', -1, PARAM_INT);
+        if ($updatemynumber >= 0) {
             block_course_overview_update_mynumber($updatemynumber);
         }
 
         profile_load_custom_fields($USER);
-        list($courses_sorted, $courses_total) = block_course_overview_get_sorted_courses();
-        $overviews = block_course_overview_get_overviews($courses_sorted);
+        list($sortedcourses, $sitecourses, $totalcourses) = block_course_overview_get_sorted_courses();
+        $overviews = block_course_overview_get_overviews($sitecourses);
 
         $renderer = $this->page->get_renderer('block_course_overview');
-        if (!isset($config->showwelcomearea) || $config->showwelcomearea) {
-            $this->content->text = $renderer->welcome_area();
+        if (!empty($config->showwelcomearea)) {
+            require_once($CFG->dirroot.'/message/lib.php');
+            $msgcount = message_count_unread_messages();
+            $this->content->text = $renderer->welcome_area($msgcount);
         }
 
-        //number of sites to display
-        if ($this->page->user_is_editing()) {
-            $count = count(enrol_get_my_courses('id'));
-            $this->content->text .= $renderer->editing_bar_head($count);
+        // Number of sites to display.
+        if ($this->page->user_is_editing() && empty($config->forcedefaultmaxcourses)) {
+            $this->content->text .= $renderer->editing_bar_head($totalcourses);
         }
 
-        if (empty($courses_sorted)) {
+        if (empty($sortedcourses)) {
             $this->content->text .= get_string('nocourses','my');
         } else {
-            //for each course, build category cache
-            $this->content->text .= $renderer->course_overview($courses_sorted, $overviews, $moving);
-            $this->content->text .= $renderer->hidden_courses($courses_total - count($courses_sorted));
-            if ($this->page->user_is_editing() && ajaxenabled() && !$moving) {
+            // For each course, build category cache.
+            $this->content->text .= $renderer->course_overview($sortedcourses, $overviews);
+            $this->content->text .= $renderer->hidden_courses($totalcourses - count($sortedcourses));
+            if ($this->page->user_is_editing() && ajaxenabled()) {
                 $this->page->requires->js_init_call('M.block_course_overview.add_handles');
             }
         }
@@ -89,7 +93,7 @@ class block_course_overview extends block_base {
     }
 
     /**
-     * allow the block to have a configuration page
+     * Allow the block to have a configuration page
      *
      * @return boolean
      */
@@ -98,7 +102,7 @@ class block_course_overview extends block_base {
     }
 
     /**
-     * locations where block can be displayed
+     * Locations where block can be displayed
      *
      * @return array
      */
@@ -106,12 +110,14 @@ class block_course_overview extends block_base {
         return array('my-index' => true);
     }
 
-    public function instance_can_be_hidden() {
-        return false;
-    }
-
+    /**
+     * Sets block header to be hidden or visible
+     *
+     * @return bool if true then header will be visible.
+     */
     public function hide_header() {
-        return true;
+        // Hide header if welcome area is show.
+        $config = get_config('block_course_overview');
+        return !empty($config->showwelcomearea);
     }
 }
-?>
