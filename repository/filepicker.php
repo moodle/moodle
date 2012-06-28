@@ -285,40 +285,65 @@ case 'sign':
     break;
 
 case 'download':
-    $thefile = $repo->get_file($fileurl, $filename);
-    $filesize = filesize($thefile['path']);
-    if (($maxbytes!=-1) && ($filesize>$maxbytes)) {
-        print_error('maxbytes');
+    // Check that user has permission to access this file
+    if (!$repo->file_is_accessible($fileurl)) {
+        print_error('storedfilecannotread');
     }
-    if (!empty($thefile)) {
-        $record = new stdClass();
-        $record->filepath = $savepath;
-        $record->filename = $filename;
-        $record->component = 'user';
-        $record->filearea = 'draft';
-        $record->itemid   = $itemid;
-        $record->license  = '';
-        $record->author   = '';
 
-        $now = time();
-        $record->timecreated  = $now;
-        $record->timemodified = $now;
-        $record->userid       = $USER->id;
-        $record->contextid = $user_context->id;
-
-        $sourcefield = $repo->get_file_source_info($thefile['url']);
-        $record->source = repository::build_source_field($sourcefield);
-        try {
-            $info = repository::move_to_filepool($thefile['path'], $record);
-            redirect($home_url, get_string('downloadsucc', 'repository'));
-        } catch (moodle_exception $e) {
-            // inject target URL
-            $e->link = $PAGE->url->out();
-            echo $OUTPUT->header(); // hack: we need the embedded header here, standard error printing would not use it
-            throw $e;
+    // If file is already a reference, set $fileurl = file source, $repo = file repository
+    // note that in this case user may not have permission to access the source file directly
+    // so no file_browser/file_info can be used below
+    if ($repo->has_moodle_files()) {
+        $file = repository::get_moodle_file($fileurl);
+        if ($file && $file->is_external_file()) {
+            $fileurl = $file->get_reference();
+            $repo_id = $file->get_repository_id();
+            $repo = repository::get_repository_by_id($repo_id, $contextid, $repooptions);
         }
+    }
+
+    $record = new stdClass();
+    $record->filepath = $savepath;
+    $record->filename = $filename;
+    $record->component = 'user';
+    $record->filearea = 'draft';
+    $record->itemid   = $itemid;
+    $record->license  = '';
+    $record->author   = '';
+
+    $now = time();
+    $record->timecreated  = $now;
+    $record->timemodified = $now;
+    $record->userid       = $USER->id;
+    $record->contextid = $user_context->id;
+    $record->sortorder = 0;
+
+    $sourcefield = $repo->get_file_source_info($fileurl);
+    $record->source = repository::build_source_field($sourcefield);
+
+    if ($repo->has_moodle_files()) {
+        $fileinfo = $repo->copy_to_area($fileurl, $record, $maxbytes);
+        redirect($home_url, get_string('downloadsucc', 'repository'));
     } else {
-        print_error('cannotdownload', 'repository');
+        $thefile = $repo->get_file($fileurl, $filename);
+        if (!empty($thefile['path'])) {
+            $filesize = filesize($thefile['path']);
+            if ($maxbytes != -1 && $filesize>$maxbytes) {
+                unlink($thefile['path']);
+                print_error('maxbytes');
+            }
+            try {
+                $info = repository::move_to_filepool($thefile['path'], $record);
+                redirect($home_url, get_string('downloadsucc', 'repository'));
+            } catch (moodle_exception $e) {
+                // inject target URL
+                $e->link = $PAGE->url->out();
+                echo $OUTPUT->header(); // hack: we need the embedded header here, standard error printing would not use it
+                throw $e;
+            }
+        } else {
+            print_error('cannotdownload', 'repository');
+        }
     }
 
     break;
