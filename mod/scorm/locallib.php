@@ -469,7 +469,7 @@ function scorm_get_tracks($scoid, $userid, $attempt='') {
                     $usertrack->progress = $track->value;
                     break;
                 case 'cmi.progress_measure':
-                    if(!empty($track->value) && (empty($usertrack->progress) || $usertrack->progress == 'unknown') ) {
+                    if (!empty($track->value) && (empty($usertrack->progress) || $usertrack->progress == 'unknown') ) {
                         $usertrack->progress = $track->value;
                     }
                     break;

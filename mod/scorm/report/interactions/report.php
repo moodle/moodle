@@ -456,13 +456,8 @@ class scorm_interactions_report extends scorm_default_report {
                                 if ($trackdata->score_raw != '') {
                                     $score = $trackdata->score_raw;
                                     // add max score if it exists
-                                    if ($scorm->version == 'SCORM_1.3') {
-                                        $maxkey = 'cmi.score.max';
-                                    } else {
-                                        $maxkey = 'cmi.core.score.max';
-                                    }
-                                    if (isset($trackdata->$maxkey)) {
-                                        $score .= '/'.$trackdata->$maxkey;
+                                    if (isset($trackdata->score_max)) {
+                                        $score .= '/'.$trackdata->score_max;
                                     }
                                 // else print out status
                                 } else {

@@ -279,16 +279,16 @@ if (!empty($b)) {
         $printedelements[]=$objectiveid;
 
         // Merge 2004 and 1.2 SCORM formats
-        if (!scorm_version_check($scorm->version, SCORM_13)) {
+        if (scorm_version_check($scorm->version, SCORM_13)) {
             $sucstatuskey = 'cmi.objectives.'.$i.'.success_status';
             $progstatuskey = 'cmi.objectives.'.$i.'.progress_measure';
             $compstatuskey = 'cmi.objectives.'.$i.'.completion_status';
             $statuskey = 'cmi.objectives.'.$i.'.status';
-            if(isset($trackdata->$sucstatuskey)) {
+            if (isset($trackdata->$sucstatuskey)) {
                 $trackdata->$statuskey = $trackdata->$sucstatuskey;
-            } elseif(isset($trackdata->$progstatuskey)) {
+            } elseif (isset($trackdata->$progstatuskey)) {
                 $trackdata->$statuskey = $trackdata->$progstatuskey;
-            } elseif(isset($trackdata->$compstatuskey)) {
+            } elseif (isset($trackdata->$compstatuskey)) {
                 $trackdata->$statuskey = $trackdata->$compstatuskey;
             }
         }
