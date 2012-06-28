@@ -335,7 +335,7 @@ class mssql_native_moodle_database extends moodle_database {
         }
         $this->tables = array();
         $sql = "SELECT table_name
-                  FROM information_schema.tables
+                  FROM INFORMATION_SCHEMA.TABLES
                  WHERE table_name LIKE '$this->prefix%'
                    AND table_type = 'BASE TABLE'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
@@ -427,7 +427,7 @@ class mssql_native_moodle_database extends moodle_database {
                            columnproperty(object_id(quotename(table_schema) + '.' +
                                quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
                            column_default AS default_value
-                      FROM information_schema.columns
+                      FROM INFORMATION_SCHEMA.COLUMNS
                      WHERE table_name = '{" . $table . "}'
                   ORDER BY ordinal_position";
         } else { // temp table, get metadata from tempdb schema
@@ -440,7 +440,7 @@ class mssql_native_moodle_database extends moodle_database {
                            columnproperty(object_id(quotename(table_schema) + '.' +
                                quotename(table_name)), column_name, 'IsIdentity') AS auto_increment,
                            column_default AS default_value
-                      FROM tempdb.information_schema.columns
+                      FROM tempdb.INFORMATION_SCHEMA.COLUMNS
                       JOIN tempdb..sysobjects ON name = table_name
                      WHERE id = object_id('tempdb..{" . $table . "}')
                   ORDER BY ordinal_position";
