@@ -127,7 +127,11 @@ if ($scoes = $DB->get_records_select('scorm_scoes', "scorm=? ORDER BY id", array
                     $score = $trackdata->score_raw;
                 }
                 if ($trackdata->status == '') {
-                    $trackdata->status = 'notattempted';
+                    if (!empty($trackdata->progress)) {
+                        $trackdata->status = $trackdata->progress;
+                    } else {
+                        $trackdata->status = 'notattempted';
+                    }
                 }
                 $detailslink = '<a href="userreport.php?b='.$sco->id.'&amp;user='.$user.'&amp;attempt='.$attempt.'" title="'.
                 get_string('details', 'scorm').'">'.get_string('details', 'scorm').'</a>';

@@ -450,6 +450,7 @@ function scorm_get_tracks($scoid, $userid, $attempt='') {
         // Defined in order to unify scorm1.2 and scorm2004
         $usertrack->score_raw = '';
         $usertrack->status = '';
+        $usertrack->progress = '';
         $usertrack->total_time = '00:00:00';
         $usertrack->session_time = '00:00:00';
         $usertrack->timemodified = 0;
@@ -463,7 +464,15 @@ function scorm_get_tracks($scoid, $userid, $attempt='') {
                         $track->value = 'notattempted';
                     }
                     $usertrack->status = $track->value;
-                break;
+                    break;
+                case 'cmi.success_status':
+                    $usertrack->progress = $track->value;
+                    break;
+                case 'cmi.progress_measure':
+                    if(!empty($track->value) && (empty($usertrack->progress) || $usertrack->progress == 'unknown') ) {
+                        $usertrack->progress = $track->value;
+                    }
+                    break;
                 case 'cmi.core.score.raw':
                 case 'cmi.score.raw':
                     $usertrack->score_raw = (float) sprintf('%2.2f', $track->value);
