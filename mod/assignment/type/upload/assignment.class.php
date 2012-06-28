@@ -378,8 +378,8 @@ class assignment_upload extends assignment_base {
 
     /**
      * Counts all complete (real) assignment submissions by enrolled students. This overrides assignment_base::count_real_submissions().
-     * This is necessary for advanced file uploads where we need to check that the data2 field is equal to "submitted" to determine
-     * if a submission is complete.
+     * This is necessary for tracked advanced file uploads where we need to check that the data2 field is equal to ASSIGNMENT_STATUS_SUBMITTED
+     * to determine if a submission is complete.
      *
      * @param  int $groupid (optional) If nonzero then count is restricted to this group
      * @return int          The number of submissions
@@ -394,13 +394,19 @@ class assignment_upload extends assignment_base {
         list($enroledsql, $params) = get_enrolled_sql($context, 'mod/assignment:view', $groupid);
         $params['assignmentid'] = $this->cm->instance;
 
-        // Get ids of users enrolled in the given course.
+        $query = '';
+        if ($this->drafts_tracked() and $this->isopen()) {
+            $query = ' AND ' . $DB->sql_compare_text('s.data2') . " = '"  . ASSIGNMENT_STATUS_SUBMITTED . "'";
+        } else {
+            // Count on submissions with files actually uploaded
+            $query = " AND s.numfiles > 0";
+        }
         return $DB->count_records_sql("SELECT COUNT('x')
                                          FROM {assignment_submissions} s
                                     LEFT JOIN {assignment} a ON a.id = s.assignment
                                    INNER JOIN ($enroledsql) u ON u.id = s.userid
-                                        WHERE s.assignment = :assignmentid AND
-                                              s.data2 = 'submitted'", $params);
+                                        WHERE s.assignment = :assignmentid" .
+                                              $query, $params);
     }
 
     function print_responsefiles($userid, $return=false) {
@@ -564,6 +570,7 @@ class assignment_upload extends assignment_base {
             $formdata = file_postupdate_standard_filemanager($formdata, 'files', $options, $this->context, 'mod_assignment', 'submission', $submission->id);
             $updates = new stdClass();
             $updates->id = $submission->id;
+            $updates->numfiles = count($fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, 'sortorder', false));
             $updates->timemodified = time();
             $DB->update_record('assignment_submissions', $updates);
             add_to_log($this->course->id, 'assignment', 'upload',
