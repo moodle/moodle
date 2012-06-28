@@ -180,21 +180,12 @@ if (!empty($b)) {
     $table->width = '100%';
     $table->size = array('*', '*');
     $existelements = false;
-    if (scorm_version_check($scorm->version, SCORM_13)) {
-        $elements = array(
-                'raw' => 'cmi.score.raw',
-                'min' => 'cmi.score.min',
-                'max' => 'cmi.score.max',
-                'status' => 'cmi.completion_status',
-                'time' => 'cmi.total_time');
-    } else {
-        $elements = array(
-                'raw' => 'cmi.core.score.raw',
-                'min' => 'cmi.core.score.min',
-                'max' => 'cmi.core.score.max',
-                'status' => 'cmi.core.lesson_status',
-                'time' => 'cmi.core.total_time');
-    }
+    $elements = array(
+            'min'    => 'score_min',
+            'raw'    => 'score_raw',
+            'max'    => 'score_max',
+            'status' => 'status',
+            'time'   => 'total_time');
     $printedelements = array();
     foreach ($elements as $key => $element) {
         if (isset($trackdata->$element)) {

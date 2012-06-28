@@ -467,15 +467,23 @@ function scorm_get_tracks($scoid, $userid, $attempt='') {
                 case 'cmi.core.score.raw':
                 case 'cmi.score.raw':
                     $usertrack->score_raw = (float) sprintf('%2.2f', $track->value);
-                break;
+                    break;
+                case 'cmi.core.score.max':
+                case 'cmi.score.max':
+                    $usertrack->score_max = (float) sprintf('%2.2f', $track->value);
+                    break;
+                case 'cmi.core.score.min':
+                case 'cmi.score.min':
+                    $usertrack->score_min = (float) sprintf('%2.2f', $track->value);
+                    break;
                 case 'cmi.core.session_time':
                 case 'cmi.session_time':
                     $usertrack->session_time = $track->value;
-                break;
+                    break;
                 case 'cmi.core.total_time':
                 case 'cmi.total_time':
                     $usertrack->total_time = $track->value;
-                break;
+                    break;
             }
             if (isset($track->timemodified) && ($track->timemodified > $usertrack->timemodified)) {
                 $usertrack->timemodified = $track->timemodified;
