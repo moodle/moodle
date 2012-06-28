@@ -33,6 +33,43 @@ function xmldb_assignment_upgrade($oldversion) {
     // Put any upgrade step following this
 
 
+    if ($oldversion < 2012062800) {
+        // Fixed/updated numfiles field in assignment_submissions table to count the actual
+        // number of files has been uploaded.
+        upgrade_set_timeout(600);  // increase excution time for in large sites
+        $fs = get_file_storage();
+
+        $selectcount = 'SELECT COUNT(s.id), cm.id AS cmid';
+        $select      = 'SELECT s.id, cm.id AS cmid';
+        $query       = "  FROM {assignment_submissions} s
+                    INNER JOIN {course_modules} cm
+                            ON s.assignment = cm.instance
+                          JOIN {assignment} a
+                            ON a.id = s.assignment
+                         WHERE a.assignmenttype in ('upload', 'uploadsingle') AND
+                               cm.module = (SELECT id
+                                              FROM {modules}
+                                             WHERE name = 'assignment')";
+
+        $countsubmissions = $DB->count_records_sql($selectcount. $query);
+        $submissions = $DB->get_recordset_sql($select. $query);
+
+        $pbar = new progress_bar('assignmentupgradenumfiles', 500, true);
+        $i = 0;
+        foreach ($submissions as $sub) {
+            $i++;
+            if ($context = context_module::instance($sub->cmid)) {
+                $sub->numfiles = count($fs->get_area_files($context->id, 'mod_assignment', 'submission', $sub->id, 'sortorder', false));
+                $DB->update_record('assignment_submissions', $sub);
+            }
+            $pbar->update($i, $countsubmissions, "Counting files of submissions ($i/$countsubmissions)");
+        }
+        $submissions->close();
+
+        // assignment savepoint reached
+        upgrade_mod_savepoint(true, 2012062800, 'assignment');
+    }
+
     return true;
 }
 
