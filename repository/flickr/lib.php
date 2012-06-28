@@ -277,6 +277,8 @@ class repository_flickr extends repository {
             $secret = '';
         }
 
+        parent::type_config_form($mform);
+
         $strrequired = get_string('required');
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr'), array('value'=>$api_key,'size' => '40'));
         $mform->addElement('text', 'secret', get_string('secret', 'repository_flickr'), array('value'=>$secret,'size' => '40'));
