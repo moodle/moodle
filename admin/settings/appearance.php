@@ -183,6 +183,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // "documentation" settingpage
     $temp = new admin_settingpage('documentation', new lang_string('moodledocs'));
     $temp->add(new admin_setting_configtext('docroot', new lang_string('docroot', 'admin'), new lang_string('configdocroot', 'admin'), 'http://docs.moodle.org', PARAM_URL));
+    $ltemp = array('' => get_string('forceno'));
+    $ltemp += get_string_manager()->get_list_of_translations(true);
+    $temp->add(new admin_setting_configselect('doclang', get_string('doclang', 'admin'), get_string('configdoclang', 'admin'), '', $ltemp));
     $temp->add(new admin_setting_configcheckbox('doctonewwindow', new lang_string('doctonewwindow', 'admin'), new lang_string('configdoctonewwindow', 'admin'), 0));
     $ADMIN->add('appearance', $temp);
 
