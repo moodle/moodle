@@ -76,5 +76,9 @@ function xmldb_theme_formal_white_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2012051503, 'theme', 'formal_white');
     }
 
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
+
+
     return true;
 }
