@@ -3478,8 +3478,23 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     /**
      * Attach below $element (usually attempts) the needed restore_path_elements
      * to restore question_usages and all they contain.
+     *
+     * If you use the $nameprefix parameter, then you will need to implement some
+     * extra methods in your class, like
+     *
+     * protected function process_{$nameprefix}_question_attempt($data) {
+     *     $this->process_question_attempt($data);
+     * }
+     *
+     * You need three methods like this, for question_usage, question_attempt and
+     * question_attempt_step.
+     *
+     * @param restore_path_element $element the parent element that the usages are stored inside.
+     * @param array $paths the paths array that is being built.
+     * @param string $nameprefix should match the prefix passed to the corresponding
+     *      backup_questions_activity_structure_step::add_question_usages call.
      */
-    protected function add_question_usages($element, &$paths) {
+    protected function add_question_usages($element, &$paths, $nameprefix = '') {
         // Check $element is restore_path_element
         if (! $element instanceof restore_path_element) {
             throw new restore_step_exception('element_must_be_restore_path_element', $element);
@@ -3488,15 +3503,15 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         if (!is_array($paths)) {
             throw new restore_step_exception('paths_must_be_array', $paths);
         }
-        $paths[] = new restore_path_element('question_usage',
-                $element->get_path() . '/question_usage');
-        $paths[] = new restore_path_element('question_attempt',
-                $element->get_path() . '/question_usage/question_attempts/question_attempt');
-        $paths[] = new restore_path_element('question_attempt_step',
-                $element->get_path() . '/question_usage/question_attempts/question_attempt/steps/step',
+        $paths[] = new restore_path_element($nameprefix . 'question_usage',
+                $element->get_path() . "/{$nameprefix}question_usage");
+        $paths[] = new restore_path_element($nameprefix . 'question_attempt',
+                $element->get_path() . "/{$nameprefix}question_usage/{$nameprefix}question_attempts/{$nameprefix}question_attempt");
+        $paths[] = new restore_path_element($nameprefix . 'question_attempt_step',
+                $element->get_path() . "/{$nameprefix}question_usage/{$nameprefix}question_attempts/{$nameprefix}question_attempt/{$nameprefix}steps/{$nameprefix}step",
                 true);
-        $paths[] = new restore_path_element('question_attempt_step_data',
-                $element->get_path() . '/question_usage/question_attempts/question_attempt/steps/step/response/variable');
+        $paths[] = new restore_path_element($nameprefix . 'question_attempt_step_data',
+                $element->get_path() . "/{$nameprefix}question_usage/{$nameprefix}question_attempts/{$nameprefix}question_attempt/{$nameprefix}steps/{$nameprefix}step/{$nameprefix}response/{$nameprefix}variable");
     }
 
     /**
