@@ -63,6 +63,10 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2012061801, 'quiz', 'statistics');
     }
 
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
+
+
     return true;
 }
 
