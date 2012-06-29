@@ -32,7 +32,6 @@ $custommenu = $OUTPUT->custom_menu();
 $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
 splash_check_colourswitch();
-splash_initialise_colourswitcher($PAGE);
 
 $bodyclasses = array();
 $bodyclasses[] = 'splash-'.splash_get_colour();
@@ -107,7 +106,12 @@ echo $OUTPUT->doctype() ?>
         alt="orange" /></a></li>
         </ul>
         </div>
-        <?php echo $OUTPUT->lang_menu();?>
+        <?php
+        if (!empty($PAGE->layout_options['langmenu'])) {
+            echo $OUTPUT->lang_menu();
+        }
+            echo $PAGE->headingmenu
+        ?>
         </div>
         <div id="logobox">
         <?php
