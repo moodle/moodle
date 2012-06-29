@@ -77,7 +77,7 @@ if (!during_initial_install()) { //do not use during installation
 
         $ADMIN->add('frontpage', new admin_externalpage('frontpagebackup', get_string('frontpagebackup', 'admin'), $CFG->wwwroot.'/backup/backup.php?id='.SITEID, 'moodle/backup:backupcourse', false, $frontpagecontext));
 
-        $ADMIN->add('frontpage', new admin_externalpage('frontpagerestore', get_string('frontpagerestore', 'admin'), $CFG->wwwroot.'/files/index.php?id='.SITEID.'&amp;wdir=/backupdata', 'moodle/restore:restorecourse', false, $frontpagecontext));
+        $ADMIN->add('frontpage', new admin_externalpage('frontpagerestore', get_string('frontpagerestore', 'admin'), $CFG->wwwroot.'/backup/restorefile.php?contextid='.$frontpagecontext->id, 'moodle/restore:restorecourse', false, $frontpagecontext));
 
         $questioncapabilities = array(
                 'moodle/question:add',
