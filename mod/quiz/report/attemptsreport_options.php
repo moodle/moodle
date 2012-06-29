@@ -105,7 +105,7 @@ class mod_quiz_attempts_report_options {
         $this->cm     = $cm;
         $this->course = $course;
 
-        $this->usercanseegrades = quiz_report_should_show_grades($quiz);
+        $this->usercanseegrades = quiz_report_should_show_grades($quiz, context_module::instance($cm->id));
     }
 
     /**

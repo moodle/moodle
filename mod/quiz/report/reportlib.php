@@ -401,9 +401,10 @@ function quiz_no_questions_message($quiz, $cm, $context) {
  * Should the grades be displayed in this report. That depends on the quiz
  * display options, and whether the quiz is graded.
  * @param object $quiz the quiz settings.
+ * @param context $context the quiz context.
  * @return bool
  */
-function quiz_report_should_show_grades($quiz) {
+function quiz_report_should_show_grades($quiz, context $context) {
     if ($quiz->timeclose && time() > $quiz->timeclose) {
         $when = mod_quiz_display_options::AFTER_CLOSE;
     } else {
@@ -413,5 +414,5 @@ function quiz_report_should_show_grades($quiz) {
 
     return quiz_has_grades($quiz) &&
             ($reviewoptions->marks >= question_display_options::MARK_AND_MAX ||
-            has_capability('moodle/grade:viewhidden', $this->context));
+            has_capability('moodle/grade:viewhidden', $context));
 }
