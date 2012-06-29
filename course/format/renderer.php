@@ -151,7 +151,13 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o.= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
         $o.= html_writer::start_tag('div', array('class' => 'content'));
 
-        if (!$onsectionpage) {
+        // When not on a section page, we display the section titles except the general section if null
+        $hasnamenotsecpg = (!$onsectionpage && ($section->section != 0 || !is_null($section->name)));
+
+        // When on a section page, we only display the general section title, if title is not the default one
+        $hasnamesecpg = ($onsectionpage && ($section->section == 0 && !is_null($section->name)));
+
+        if ($hasnamenotsecpg || $hasnamesecpg) {
             $o.= $this->output->heading($this->section_title($section, $course), 3, 'sectionname');
         }
 
@@ -642,7 +648,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $thissection = $sections[0];
         unset($sections[0]);
         if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
-            echo $this->section_header($thissection, $course, true);
+            echo $this->section_header($thissection, $course, false);
             print_section($course, $thissection, $mods, $modnamesused, true);
             if ($PAGE->user_is_editing()) {
                 print_section_add_menus($course, 0, $modnames);
