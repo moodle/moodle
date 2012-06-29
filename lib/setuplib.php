@@ -590,7 +590,12 @@ function get_docs_url($path=null) {
         $branch = '.';
     }
     if (!empty($CFG->docroot)) {
-        return $CFG->docroot . '/' . $branch . '/' . current_language() . '/' . $path;
+        if (isset($CFG->doclang) && !empty($CFG->doclang)) {
+            $lang = $CFG->doclang;
+        } else {
+            $lang = current_language();
+        }
+        return $CFG->docroot . '/' . $branch . '/' . $lang . '/' . $path;
     } else {
         return 'http://docs.moodle.org/'. $branch . '/en/' . $path;
     }
