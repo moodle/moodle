@@ -212,7 +212,7 @@ function cron_run() {
                                                  p.id as prefid
                                             FROM {user} u
                                             JOIN {user_preferences} p ON u.id=p.userid
-                                           WHERE p.name='create_password' AND p.value='1' AND u.email !='' AND u.suspended = 0 AND u.auth != 'nologin'");
+                                           WHERE p.name='create_password' AND p.value='1' AND u.email !='' AND u.suspended = 0 AND u.auth != 'nologin' AND u.deleted = 0");
 
         // note: we can not send emails to suspended accounts
         foreach ($newusers as $newuser) {
