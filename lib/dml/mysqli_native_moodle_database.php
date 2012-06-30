@@ -235,15 +235,19 @@ class mysqli_native_moodle_database extends moodle_database {
     public function diagnose() {
         $sloppymyisamfound = false;
         $prefix = str_replace('_', '\\_', $this->prefix);
-        $sql = "SELECT Engine FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = DATABASE() AND table_name LIKE BINARY '$prefix%'";
+        $sql = "SELECT COUNT('x')
+                  FROM INFORMATION_SCHEMA.TABLES
+                 WHERE table_schema = DATABASE()
+                       AND table_name LIKE BINARY '$prefix%'
+                       AND Engine = 'MyISAM'";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($result) {
-            while ($arr = $result->fetch_assoc()) {
-                if ($arr['Engine'] === 'MyISAM') {
+            if ($arr = $result->fetch_assoc()) {
+                $count = reset($arr);
+                if ($count) {
                     $sloppymyisamfound = true;
-                    break;
                 }
             }
             $result->close();
