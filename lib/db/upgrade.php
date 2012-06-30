@@ -7089,5 +7089,28 @@ FROM
         upgrade_main_savepoint(true, 2011120503.03);
     }
 
+    if ($oldversion < 2011120503.08) {
+        // Drop some old backup tables, not used anymore
+
+        // Define table backup_files to be dropped
+        $table = new xmldb_table('backup_files');
+
+        // Conditionally launch drop table for backup_files
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Define table backup_ids to be dropped
+        $table = new xmldb_table('backup_ids');
+
+        // Conditionally launch drop table for backup_ids
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011120503.08);
+    }
+
     return true;
 }
