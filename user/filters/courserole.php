@@ -84,7 +84,7 @@ class user_filter_courserole extends user_filter_type {
     function get_sql_filter($data) {
         global $CFG, $DB;
         static $counter = 0;
-        $name = 'ex_courserole'.$counter++;
+        $pref = 'ex_courserole'.($counter++).'_';
 
         $value      = $data['value'];
         $roleid     = $data['roleid'];
@@ -98,17 +98,16 @@ class user_filter_courserole extends user_filter_type {
 
         $where = "b.contextlevel=50";
         if ($roleid) {
-            $where .= " AND a.roleid = :roleid";
-            $params['roleid'] = $roleid;
-
+            $where .= " AND a.roleid = :{$pref}roleid";
+            $params[$pref.'roleid'] = $roleid;
         }
         if ($categoryid) {
-            $where .= " AND c.category = :categoryid";
-            $params['categoryid'] = $categoryid;
+            $where .= " AND c.category = :{$pref}categoryid";
+            $params[$pref.'categoryid'] = $categoryid;
         }
         if ($value) {
-            $where .= " AND c.shortname = :$name";
-            $params[$name] = $value;
+            $where .= " AND c.shortname = :{$pref}course";
+            $params[$pref.'course'] = $value;
         }
         return array("id IN (SELECT userid
                                FROM {role_assignments} a
