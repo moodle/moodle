@@ -152,3 +152,5 @@ $THEME->layouts = array(
 );
 
 $THEME->csspostprocess = 'splash_process_css';
+
+$THEME->javascripts = array('colourswitcher');
