@@ -32,6 +32,7 @@ $custommenu = $OUTPUT->custom_menu();
 $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
 splash_check_colourswitch();
+splash_initialise_colourswitcher($PAGE);
 
 $bodyclasses = array();
 $bodyclasses[] = 'splash-'.splash_get_colour();
