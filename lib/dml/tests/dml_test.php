@@ -921,12 +921,12 @@ class dml_testcase extends database_driver_testcase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $data = array(array('id' => 1, 'course' => 3, 'name' => 'record1', 'onetext'=>'abc'),
-            array('id' => 2, 'course' => 3, 'name' => 'record2', 'onetext'=>'abcd'),
-            array('id' => 3, 'course' => 5, 'name' => 'record3', 'onetext'=>'abcde'));
+        $data = array(array('course' => 3, 'name' => 'record1', 'onetext'=>'abc'),
+            array('course' => 3, 'name' => 'record2', 'onetext'=>'abcd'),
+            array('course' => 5, 'name' => 'record3', 'onetext'=>'abcde'));
 
-        foreach ($data as $record) {
-            $DB->insert_record($tablename, $record);
+        foreach ($data as $key=>$record) {
+            $data[$key]['id'] = $DB->insert_record($tablename, $record);
         }
 
         // standard recordset iteration
@@ -1009,11 +1009,11 @@ class dml_testcase extends database_driver_testcase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $data = array(array('id'=> 1, 'course' => 3, 'name' => 'record1'),
-            array('id'=> 2, 'course' => 3, 'name' => 'record2'),
-            array('id'=> 3, 'course' => 5, 'name' => 'record3'));
-        foreach ($data as $record) {
-            $DB->insert_record($tablename, $record);
+        $data = array(array('course' => 3, 'name' => 'record1'),
+            array('course' => 3, 'name' => 'record2'),
+            array('course' => 5, 'name' => 'record3'));
+        foreach ($data as $key=>$record) {
+            $data[$key]['id'] = $DB->insert_record($tablename, $record);
         }
 
         // Test repeated numeric keys are returned ok
