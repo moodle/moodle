@@ -90,12 +90,14 @@ function splash_set_customcss($css, $customcss) {
 /**
  * Adds the JavaScript for the colour switcher to the page.
  *
+ * The colour switcher is a YUI moodle module that is located in
+ *     theme/splash/yui/splash/splash.js
+ *
  * @param moodle_page $page
  */
 function splash_initialise_colourswitcher(moodle_page $page) {
     user_preference_allow_ajax_update('theme_splash_chosen_colour', PARAM_ALPHA);
-    $page->requires->yui_module('moodle-theme_splash-colourswitcher',
-     'M.theme_splash.initColourSwitcher', array(array('div'=>'#colourswitcher')));
+    $page->requires->yui_module('moodle-theme_splash-colourswitcher', 'M.theme_splash.initColourSwitcher', array(array('div'=>'#colourswitcher')));
 }
 
 /**
