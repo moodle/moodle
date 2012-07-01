@@ -107,7 +107,12 @@ echo $OUTPUT->doctype() ?>
         alt="orange" /></a></li>
         </ul>
         </div>
-        <?php echo $OUTPUT->lang_menu();?>
+        <?php
+        if (!empty($PAGE->layout_options['langmenu'])) {
+            echo $OUTPUT->lang_menu();
+        }
+            echo $PAGE->headingmenu
+        ?>
         </div>
         <div id="logobox">
         <?php
