@@ -1011,6 +1011,58 @@ class dml_testcase extends database_driver_testcase {
         //  * where_clause() is used internally and is tested in test_get_records()
     }
 
+    public function test_get_recordset_static() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $DB->insert_record($tablename, array('course' => 1));
+        $DB->insert_record($tablename, array('course' => 2));
+        $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 4));
+
+        $rs = $DB->get_recordset($tablename, array(), 'id');
+
+        $DB->set_field($tablename, 'course', 666, array('course'=>1));
+        $DB->delete_records($tablename, array('course'=>2));
+
+        $i = 0;
+        foreach($rs as $record) {
+            $i++;
+            $this->assertEquals($i, $record->course);
+        }
+        $rs->close();
+        $this->assertEquals(4, $i);
+
+        // Now repeat with limits because it may use different code.
+        $DB->delete_records($tablename, array());
+
+        $DB->insert_record($tablename, array('course' => 1));
+        $DB->insert_record($tablename, array('course' => 2));
+        $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 4));
+
+        $rs = $DB->get_recordset($tablename, array(), 'id', '*', 0, 3);
+
+        $DB->set_field($tablename, 'course', 666, array('course'=>1));
+        $DB->delete_records($tablename, array('course'=>2));
+
+        $i = 0;
+        foreach($rs as $record) {
+            $i++;
+            $this->assertEquals($i, $record->course);
+        }
+        $rs->close();
+        $this->assertEquals(3, $i);
+    }
+
     public function test_get_recordset_iterator_keys() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
