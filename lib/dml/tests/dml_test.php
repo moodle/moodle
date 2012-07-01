@@ -308,6 +308,7 @@ class dml_testcase extends database_driver_testcase {
 
     function test_fix_sql_params() {
         $DB = $this->tdb;
+        $prefix = $DB->get_prefix();
 
         $table = $this->get_test_table();
         $tablename = $table->getName();
@@ -315,13 +316,13 @@ class dml_testcase extends database_driver_testcase {
         // Correct table placeholder substitution
         $sql = "SELECT * FROM {{$tablename}}";
         $sqlarray = $DB->fix_sql_params($sql);
-        $this->assertEquals("SELECT * FROM {$DB->get_prefix()}".$tablename, $sqlarray[0]);
+        $this->assertEquals("SELECT * FROM {$prefix}".$tablename, $sqlarray[0]);
 
         // Conversions of all param types
         $sql = array();
-        $sql[SQL_PARAMS_NAMED]  = "SELECT * FROM {$DB->get_prefix()}testtable WHERE name = :param1, course = :param2";
-        $sql[SQL_PARAMS_QM]     = "SELECT * FROM {$DB->get_prefix()}testtable WHERE name = ?, course = ?";
-        $sql[SQL_PARAMS_DOLLAR] = "SELECT * FROM {$DB->get_prefix()}testtable WHERE name = \$1, course = \$2";
+        $sql[SQL_PARAMS_NAMED]  = "SELECT * FROM {$prefix}testtable WHERE name = :param1, course = :param2";
+        $sql[SQL_PARAMS_QM]     = "SELECT * FROM {$prefix}testtable WHERE name = ?, course = ?";
+        $sql[SQL_PARAMS_DOLLAR] = "SELECT * FROM {$prefix}testtable WHERE name = \$1, course = \$2";
 
         $params = array();
         $params[SQL_PARAMS_NAMED]  = array('param1'=>'first record', 'param2'=>1);
