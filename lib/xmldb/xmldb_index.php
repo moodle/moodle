@@ -66,7 +66,7 @@ class xmldb_index extends xmldb_object {
         $this->fields = array();
         $this->hints = array();
         parent::__construct($name);
-        return $this->set_attributes($type, $fields, $hints);
+        $this->set_attributes($type, $fields, $hints);
     }
 
     /**
