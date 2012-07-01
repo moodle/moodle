@@ -179,10 +179,13 @@ class course_completion_form extends moodleform {
         $criteria->config_form_display($mform);
 
         // Completion on course grade
-        $mform->addElement('header', 'grade', get_string('grade'));
+        $mform->addElement('header', 'grade', get_string('coursegrade', 'completion'));
 
         // Grade enable and passing grade
         $course_grade = $DB->get_field('grade_items', 'gradepass', array('courseid' => $course->id, 'itemtype' => 'course'));
+        if (!$course_grade) {
+            $course_grade = '0.00000';
+        }
         $criteria = new completion_criteria_grade($params);
         $criteria->config_form_display($mform, $course_grade);
 
