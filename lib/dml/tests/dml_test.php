@@ -4176,6 +4176,7 @@ class dml_testcase extends database_driver_testcase {
                 $t->allow_commit();
                 $j++;
             }
+            $rs2->close();
             $this->assertEquals(4, $j);
         }
         $rs1->close();
