@@ -4144,6 +4144,42 @@ class dml_testcase extends database_driver_testcase {
         $this->assertEquals(0, $DB->count_records($tablename)); // finally rolled back
 
         $DB->delete_records($tablename);
+
+        // Test interactions of recordset and transactions - this causes problems in SQL Server.
+        $table2 = $this->get_test_table('2');
+        $tablename2 = $table2->getName();
+
+        $table2->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table2->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table2->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table2);
+
+        $DB->insert_record($tablename, array('course'=>1));
+        $DB->insert_record($tablename, array('course'=>2));
+        $DB->insert_record($tablename, array('course'=>3));
+
+        $DB->insert_record($tablename2, array('course'=>5));
+        $DB->insert_record($tablename2, array('course'=>6));
+        $DB->insert_record($tablename2, array('course'=>7));
+        $DB->insert_record($tablename2, array('course'=>8));
+
+        $rs1 = $DB->get_recordset($tablename);
+        $i = 0;
+        foreach ($rs1 as $record1) {
+            $i++;
+            $rs2 = $DB->get_recordset($tablename2);
+            $j = 0;
+            foreach ($rs2 as $record2) {
+                $t = $DB->start_delegated_transaction();
+                $DB->set_field($tablename, 'course', $record1->course+1, array('id'=>$record1->id));
+                $DB->set_field($tablename2, 'course', $record2->course+1, array('id'=>$record2->id));
+                $t->allow_commit();
+                $j++;
+            }
+            $this->assertEquals(4, $j);
+        }
+        $rs1->close();
+        $this->assertEquals(3, $i);
     }
 
     function test_transactions_forbidden() {
