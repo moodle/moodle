@@ -990,6 +990,22 @@ class dml_testcase extends database_driver_testcase {
             $this->assertEquals($e->errorcode, 'textconditionsnotallowed');
         }
 
+        // Test nested iteration.
+        $rs1 = $DB->get_recordset($tablename);
+        $i = 0;
+        foreach($rs1 as $record1) {
+            $rs2 = $DB->get_recordset($tablename);
+            $i++;
+            $j = 0;
+            foreach($rs2 as $record2) {
+                $j++;
+            }
+            $rs2->close();
+            $this->assertEquals($j, count($data));
+        }
+        $rs1->close();
+        $this->assertEquals($i, count($data));
+
         // notes:
         //  * limits are tested in test_get_recordset_sql()
         //  * where_clause() is used internally and is tested in test_get_records()
