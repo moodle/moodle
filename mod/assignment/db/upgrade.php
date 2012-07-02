@@ -157,6 +157,42 @@ function xmldb_assignment_upgrade($oldversion) {
     // Moodle v2.1.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2010102601) {
+        // Fixed/updated numfiles field in assignment_submissions table to count the actual
+        // number of files has been uploaded when sendformarking is disabled
+        upgrade_set_timeout(600); // increase excution time for in large sites
+        $fs = get_file_storage();
+
+        // Fetch the moduleid for use in the course_modules table
+        $moduleid = $DB->get_field('modules', 'id', array('name' => 'assignment'), MUST_EXIST);
+
+        $selectcount = 'SELECT COUNT(s.id) ';
+        $select      = 'SELECT s.id, cm.id AS cmid ';
+        $query       = 'FROM {assignment_submissions} s
+                        JOIN {assignment} a ON a.id = s.assignment
+                        JOIN {course_modules} cm ON a.id = cm.instance AND cm.module = :moduleid
+                        WHERE assignmenttype = :assignmenttype';
+
+        $params = array('moduleid' => $moduleid, 'assignmenttype' => 'upload');
+
+        $countsubmissions = $DB->count_records_sql($selectcount.$query, $params);
+        $submissions = $DB->get_recordset_sql($select.$query, $params);
+
+        $pbar = new progress_bar('assignmentupgradenumfiles', 500, true);
+        $i = 0;
+        foreach ($submissions as $sub) {
+            $i++;
+            if ($context = get_context_instance(CONTEXT_MODULE, $sub->cmid)) {
+                $sub->numfiles = count($fs->get_area_files($context->id, 'mod_assignment', 'submission', $sub->id, 'sortorder', false));
+                $DB->update_record('assignment_submissions', $sub);
+            }
+            $pbar->update($i, $countsubmissions, "Counting files of submissions ($i/$countsubmissions)");
+        }
+        $submissions->close();
+        // assignment savepoint reached
+        upgrade_mod_savepoint(true, 2010102601, 'assignment');
+    }
+
     return true;
 }
 
