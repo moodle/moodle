@@ -2410,7 +2410,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="repository_instance_config" COMMENT="The config for intances" PREVIOUS="repository_instances" NEXT="backup_files">
+    <TABLE NAME="repository_instance_config" COMMENT="The config for intances" PREVIOUS="repository_instances" NEXT="backup_courses">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="instanceid"/>
         <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
@@ -2421,35 +2421,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="backup_files" COMMENT="To store and recode ids to user and course files" PREVIOUS="repository_instance_config" NEXT="backup_ids">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="backup_code"/>
-        <FIELD NAME="backup_code" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="file_type"/>
-        <FIELD NAME="file_type" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="backup_code" NEXT="path"/>
-        <FIELD NAME="path" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="file_type" NEXT="old_id"/>
-        <FIELD NAME="old_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="path" NEXT="new_id"/>
-        <FIELD NAME="new_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="old_id"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="backup_code-file_type-path"/>
-        <KEY NAME="backup_code-file_type-path" TYPE="unique" FIELDS="backup_code, file_type, path" PREVIOUS="primary"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="backup_ids" COMMENT="To store and convert ids in backup/restore" PREVIOUS="backup_files" NEXT="backup_courses">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="backup_code"/>
-        <FIELD NAME="backup_code" TYPE="int" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="table_name"/>
-        <FIELD NAME="table_name" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="backup_code" NEXT="old_id"/>
-        <FIELD NAME="old_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="table_name" NEXT="new_id"/>
-        <FIELD NAME="new_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="old_id" NEXT="info"/>
-        <FIELD NAME="info" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="new_id"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="backup_code-table_name-old_id"/>
-        <KEY NAME="backup_code-table_name-old_id" TYPE="unique" FIELDS="backup_code, table_name, old_id" PREVIOUS="primary"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="backup_courses" COMMENT="To store every course backup status" PREVIOUS="backup_ids" NEXT="block">
+    <TABLE NAME="backup_courses" COMMENT="To store every course backup status" PREVIOUS="repository_instance_config" NEXT="block">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="laststarttime"/>
