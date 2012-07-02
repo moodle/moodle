@@ -871,7 +871,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012062000.01);
     }
 
-    if ($oldversion < 2012062500.01) {
+
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
+
+
+    if ($oldversion < 2012062500.02) {
         // Drop some old backup tables, not used anymore
 
         // Define table backup_files to be dropped
@@ -891,12 +896,8 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2012062500.01);
+        upgrade_main_savepoint(true, 2012062500.02);
     }
-
-
-    // Moodle v2.3.0 release upgrade line
-    // Put any upgrade step following this
 
 
     return true;
