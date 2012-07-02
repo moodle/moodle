@@ -44,7 +44,7 @@ class core_group_external extends external_api {
                             'courseid' => new external_value(PARAM_INT, 'id of course'),
                             'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                             'description' => new external_value(PARAM_RAW, 'group description text'),
-                            'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
+                            'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase', VALUE_OPTIONAL),
                         )
                     ), 'List of group object. A group has a courseid, a name, a description and an enrolment key.'
                 )
