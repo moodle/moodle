@@ -452,7 +452,7 @@ function get_used_table_names() {
 
         if ($loaded and $tables = $structure->getTables()) {
             foreach($tables as $table) {
-                $table_names[] = strtolower($table->name);
+                $table_names[] = strtolower($table->getName());
             }
         }
     }
