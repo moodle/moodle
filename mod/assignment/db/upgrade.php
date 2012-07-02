@@ -160,7 +160,7 @@ function xmldb_assignment_upgrade($oldversion) {
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this
 
-    if ($oldversion < 2012062800) {
+    if ($oldversion < 2011112901) {
         // Fixed/updated numfiles field in assignment_submissions table to count the actual
         // number of files has been uploaded when sendformarking is disabled
         upgrade_set_timeout(600);  // increase excution time for in large sites
@@ -194,7 +194,7 @@ function xmldb_assignment_upgrade($oldversion) {
         $submissions->close();
 
         // assignment savepoint reached
-        upgrade_mod_savepoint(true, 2012062800, 'assignment');
+        upgrade_mod_savepoint(true, 2011112901, 'assignment');
     }
 
     return true;
