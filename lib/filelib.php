@@ -1405,7 +1405,7 @@ function &get_mimetypes_array() {
         'hqx'  => array ('type'=>'application/mac-binhex40', 'icon'=>'archive', 'groups'=>array('archive'), 'string'=>'archive'),
         'htc'  => array ('type'=>'text/x-component', 'icon'=>'markup'),
         'html' => array ('type'=>'text/html', 'icon'=>'html', 'groups'=>array('web_file')),
-        'xhtml'=> array ('type'=>'application/xhtml+xml', 'icon'=>'markup', 'groups'=>array('web_file')),
+        'xhtml'=> array ('type'=>'application/xhtml+xml', 'icon'=>'html', 'groups'=>array('web_file')),
         'htm'  => array ('type'=>'text/html', 'icon'=>'html', 'groups'=>array('web_file')),
         'ico'  => array ('type'=>'image/vnd.microsoft.icon', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
         'ics'  => array ('type'=>'text/calendar', 'icon'=>'text'),
