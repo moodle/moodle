@@ -133,11 +133,11 @@ class postgres_sql_generator extends sql_generator {
         $hints = $xmldb_index->getHints();
         $fields = $xmldb_index->getFields();
         if (in_array('varchar_pattern_ops', $hints) and count($fields) == 1) {
-            // Add the pattern index and keep the normal one.
+            // Add the pattern index and keep the normal one, keep unique only the standard index to improve perf.
             foreach ($sqls as $sql) {
                 $field = reset($fields);
                 $count = 0;
-                $newindex = preg_replace("/^CREATE INDEX ([a-z0-9_]+) ON ([a-z0-9_]+) \($field\)$/", "CREATE INDEX \\1_pattern ON \\2 USING btree ($field varchar_pattern_ops)", $sql, -1, $count);
+                $newindex = preg_replace("/^CREATE( UNIQUE)? INDEX ([a-z0-9_]+) ON ([a-z0-9_]+) \($field\)$/", "CREATE INDEX \\2_pattern ON \\3 USING btree ($field varchar_pattern_ops)", $sql, -1, $count);
                 if ($count != 1) {
                     debugging('Unexpected getCreateIndexSQL() structure.');
                     continue;

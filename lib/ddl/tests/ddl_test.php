@@ -1676,6 +1676,21 @@ class ddl_testcase extends database_driver_testcase {
         $table = new xmldb_table('testtable');
         $index = new xmldb_index('path', XMLDB_INDEX_NOTUNIQUE, array('path'), array('varchar_pattern_ops'));
         $this->assertTrue($dbman->index_exists($table, $index));
+
+        // Try unique indexes too.
+        $dbman->drop_table($this->tables[$tablename]);
+
+        $table = new xmldb_table('testtable');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('path', XMLDB_TYPE_CHAR, 255, null, XMLDB_NOTNULL, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('path', XMLDB_INDEX_UNIQUE, array('path'), array('varchar_pattern_ops'));
+        $dbman->create_table($table);
+        $this->tables[$tablename] = $table;
+
+        $table = new xmldb_table('testtable');
+        $index = new xmldb_index('path', XMLDB_INDEX_UNIQUE, array('path'), array('varchar_pattern_ops'));
+        $this->assertTrue($dbman->index_exists($table, $index));
     }
 
     public function test_index_max_bytes() {
