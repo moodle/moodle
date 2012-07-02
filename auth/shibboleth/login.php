@@ -63,6 +63,7 @@ $PAGE->https_required();
     $loginsite = get_string("loginsite");
 
     $PAGE->set_url('/auth/shibboleth/login.php');
+    $PAGE->set_context(context_system::instance());
     $PAGE->navbar->add($loginsite);
     $PAGE->set_title("$site->fullname: $loginsite");
     $PAGE->set_heading($site->fullname);
