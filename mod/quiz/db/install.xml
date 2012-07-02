@@ -67,7 +67,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="uniqueid"/>
-        <KEY NAME="uniqueid" TYPE="foreign-unique" FIELDS="uniqueid" REFTABLE="question_attempts" REFFIELDS="id" PREVIOUS="primary" NEXT="quiz"/>
+        <KEY NAME="uniqueid" TYPE="foreign-unique" FIELDS="uniqueid" REFTABLE="question_usages" REFFIELDS="id" PREVIOUS="primary" NEXT="quiz"/>
         <KEY NAME="quiz" TYPE="foreign" FIELDS="quiz" REFTABLE="quiz" REFFIELDS="id" PREVIOUS="uniqueid"/>
       </KEYS>
       <INDEXES>
