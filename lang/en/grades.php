@@ -117,6 +117,7 @@ $string['categorytotalname'] = 'Category total name';
 $string['categorytotalfull'] = '{$a->category} total';
 $string['combo'] = 'Tabs and Dropdown menu';
 $string['compact'] = 'Compact';
+$string['componentcontrolsvisibility'] = 'Whether this grade item is hidden is controlled by the activity settings.';
 $string['contract'] = 'Contract category';
 $string['controls'] = 'Controls';
 $string['courseavg'] = 'Course average';
