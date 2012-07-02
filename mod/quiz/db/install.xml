@@ -74,7 +74,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="quiz"/>
         <KEY NAME="quiz" TYPE="foreign" FIELDS="quiz" REFTABLE="quiz" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="quiz" NEXT="uniqueid"/>
-        <KEY NAME="uniqueid" TYPE="foreign-unique" FIELDS="uniqueid" REFTABLE="question_attempts" REFFIELDS="id" PREVIOUS="userid"/>
+        <KEY NAME="uniqueid" TYPE="foreign-unique" FIELDS="uniqueid" REFTABLE="question_usages" REFFIELDS="id" PREVIOUS="userid"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="quiz-userid-attempt" UNIQUE="true" FIELDS="quiz, userid, attempt"/>
