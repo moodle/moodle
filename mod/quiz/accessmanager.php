@@ -445,7 +445,7 @@ class quiz_access_manager {
      */
     public function back_to_view_page($output, $message = '') {
         if ($this->attempt_must_be_in_popup()) {
-            echo $output->close_attempt_popup($message, $this->quizobj->view_url());
+            echo $output->close_attempt_popup($this->quizobj->view_url(), $message);
             die();
         } else {
             redirect($this->quizobj->view_url(), $message);
