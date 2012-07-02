@@ -49,7 +49,7 @@ class cohort_edit_form extends moodleform {
         $mform->addElement('select', 'contextid', get_string('context', 'role'), $options);
 
         $mform->addElement('text', 'idnumber', get_string('idnumber', 'cohort'), 'maxlength="254" size="50"');
-        $mform->setType('name', PARAM_RAW); // idnumbers are plain text, must not be changed
+        $mform->setType('idnumber', PARAM_RAW); // idnumbers are plain text, must not be changed
 
         $mform->addElement('editor', 'description_editor', get_string('description', 'cohort'), null, $editoroptions);
         $mform->setType('description_editor', PARAM_RAW);
