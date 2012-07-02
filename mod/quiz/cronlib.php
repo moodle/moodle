@@ -125,10 +125,19 @@ class mod_quiz_overdue_attempt_updater {
         ) group_by_results
            JOIN {quiz_attempts} quiza ON quiza.id = group_by_results.attemptid
 
-          WHERE (state = 'inprogress' AND (:timenow1 > usertimeclose OR
-                                           :timenow2 > quiza.timestart + usertimelimit))
-             OR (state = 'overdue'    AND (:timenow3 > graceperiod + usertimeclose OR
-                                           :timenow4 > graceperiod + quiza.timestart + usertimelimit))
+          WHERE (
+                state = 'inprogress' AND (
+                    (usertimeclose > 0 AND :timenow1 > usertimeclose) OR
+                    (usertimelimit > 0 AND :timenow2 > quiza.timestart + usertimelimit)
+                )
+            )
+          OR
+            (
+                state = 'overdue' AND (
+                    (usertimeclose > 0 AND :timenow3 > graceperiod + usertimeclose) OR
+                    (usertimelimit > 0 AND :timenow4 > graceperiod + quiza.timestart + usertimelimit)
+                )
+            )
 
        ORDER BY course, quiz",
 
