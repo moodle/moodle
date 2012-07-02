@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class externallib_testcase extends advanced_testcase {
+abstract class externallib_advanced_testcase extends advanced_testcase {
 
     /**
      * Assign a capability to $USER
