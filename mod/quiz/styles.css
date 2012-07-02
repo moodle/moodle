@@ -48,7 +48,7 @@ body.jsenabled .questionflagcheckbox {display: none;}
 .path-mod-quiz .qnbutton.incorrect .trafficlight {border-top: 3px solid #800;}
 
 .path-mod-quiz .qnbutton.free:hover {text-decoration: underline;}
-.path-mod-quiz .qnbutton.free span {cursor: pointer; cursor: hand;}
+.path-mod-quiz .qnbutton.free span {cursor: pointer;}
 
 .path-mod-quiz .othernav {clear: both; margin: 0.5em 0;}
 .path-mod-quiz .othernav a,
@@ -192,7 +192,7 @@ table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #page-mod-quiz-edit div.quizwhenbankcollapsed {width:100%;}
 #page-mod-quiz-edit div.quizpage {display:block;clear:both;width:100%;}
 #page-mod-quiz-edit div.quizpage span.pagetitle {margin-top:0.3em;float:left;display:block;color:#006;}
-#page-mod-quiz-edit div.quizpage .pagecontent {margin-top:0.3em;display:block;float:left;position:relative;margin-left:0.3em;margin-bottom:0.2em;border-left:solid #777 thin;line-height:1.3em;-webkit-border-radius:0.6em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.6em;border-radius-bottomleft:0;border-radius-topleft:0;width:88%;padding:0.15em 0 0.3em;background-color:#d6d6d6;}
+#page-mod-quiz-edit div.quizpage .pagecontent {margin-top:0.3em;display:block;float:left;position:relative;margin-left:0.3em;margin-bottom:0.2em;border-left:thin solid #777;line-height:1.3em;-webkit-border-radius:0.6em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.6em;border-radius-bottomleft:0;border-radius-topleft:0;width:88%;padding:0.15em 0 0.3em;background-color:#d6d6d6;}
 #page-mod-quiz-edit div.quizpage .pagecontent .pagestatus {-webkit-border-radius-bottomright:0.3em;-webkit-border-radius-topright:0.3em;border-radius-bottomright:0.3em;border-radius-topright:0.3em;margin:0.3em;padding:0.1em 0.1em 0.1em 0.3em;background-color:#eee;font-weight:bold;}
 #page-mod-quiz-edit div.quizpage .pagecontent form#addquestion{background-color:#fff;}
 #page-mod-quiz-edit div.quizpage .pagecontent form.randomquestionform div {/* it is a mystery why this has to be inline-table but otherwise the layout gets screwed, even if it is "inline" */display: inline-table;}
@@ -237,7 +237,7 @@ table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #page-mod-quiz-edit div.question div.qnum {display:block;float:left;width:1.4em;padding-right:0.3em;padding-left:0;z-index:99;text-align:right;color:#333;}
 #page-mod-quiz-edit div.question div.questioncontainer{background-color:#ffc;}
 #page-mod-quiz-edit div.editq div.question div.content{width:87%;float:left;position:relative;-webkit-border-radius:0.6em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.6em;border-radius-bottomleft:0;border-radius-topleft:0;line-height:1.4em;padding:0.5em;}
-#page-mod-quiz-edit div.question div.content div.points{top:0.5em;border-left:#FFF solid 0.4em;width:8.5em;padding:0.2em;line-height:1em;max-width:30%;position:absolute;right:50px;-webkit-border-radius:0.2em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.2em;border-radius-bottomleft:0;border-radius-topleft:0;z-index:900;display:block;margin:0;background-color:#ddf;}
+#page-mod-quiz-edit div.question div.content div.points{top:0.5em;border-left:0.4em solid #FFF;width:8.5em;padding:0.2em;line-height:1em;max-width:30%;position:absolute;right:50px;-webkit-border-radius:0.2em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.2em;border-radius-bottomleft:0;border-radius-topleft:0;z-index:900;display:block;margin:0;background-color:#ddf;}
 #page-mod-quiz-edit div.question div.content div.points input{width:2em;padding:0;}
 #page-mod-quiz-edit div.question div.content div.points input.pointssubmitbutton{width:auto;}
 #page-mod-quiz-edit div.question div.content div.qorder {line-height:1em;max-width:30%;position:absolute;right:50px;-webkit-border-radius:0.2em;-webkit-border-radius-bottomleft:0;-webkit-border-radius-topleft:0;border-radius:0.2em;border-radius-bottomleft:0;border-radius-topleft:0;z-index:900;display:block;margin:0;background-color:#ddf;}
