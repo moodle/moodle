@@ -7089,7 +7089,7 @@ FROM
         upgrade_main_savepoint(true, 2011120503.03);
     }
 
-    if ($oldversion < 2011120503.08) {
+    if ($oldversion < 2011120503.09) {
         // Drop some old backup tables, not used anymore
 
         // Define table backup_files to be dropped
@@ -7109,7 +7109,7 @@ FROM
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2011120503.08);
+        upgrade_main_savepoint(true, 2011120503.09);
     }
 
     return true;
