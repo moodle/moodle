@@ -143,11 +143,18 @@ class edit_item_form extends moodleform {
         }
 
         /// hiding
-        // advcheckbox is not compatible with disabledIf!
-        $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
+        if ($item->cancontrolvisibility) {
+            // advcheckbox is not compatible with disabledIf!
+            $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
+            $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddenuntil', 'grades'), array('optional'=>true));
+            $mform->disabledIf('hidden', 'hiddenuntil[off]', 'notchecked');
+        } else {
+            $mform->addElement('static', 'hidden', get_string('hidden', 'grades'),
+                    get_string('componentcontrolsvisibility', 'grades'));
+            // Unset hidden to avoid data override.
+            unset($item->hidden);
+        }
         $mform->addHelpButton('hidden', 'hidden', 'grades');
-        $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddenuntil', 'grades'), array('optional'=>true));
-        $mform->disabledIf('hidden', 'hiddenuntil[off]', 'notchecked');
 
         /// locking
         $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));

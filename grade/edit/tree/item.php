@@ -97,6 +97,7 @@ if ($parent_category->aggregation == GRADE_AGGREGATE_SUM or $parent_category->ag
 } else {
     $item->aggregationcoef = format_float($item->aggregationcoef, 4);
 }
+$item->cancontrolvisibility = $grade_item->can_control_visibility();
 
 $mform = new edit_item_form(null, array('current'=>$item, 'gpr'=>$gpr));
 
