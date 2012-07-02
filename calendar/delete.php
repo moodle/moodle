@@ -121,7 +121,10 @@ echo $OUTPUT->box_end();
 
 // Print the event so that people can visually confirm they have the correct event
 $event->time = calendar_format_event_time($event, time(), null, false);
-calendar_print_event($event, false);
+$renderer = $PAGE->get_renderer('core_calendar');
+echo $renderer->start_layout();
+echo $renderer->event($event);
+echo $renderer->complete_layout();
 
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
