@@ -150,7 +150,7 @@ function scorm_add_instance($scorm, $mform=null) {
 
     scorm_parse($record, true);
 
-    scorm_grade_item_update($record);
+    scorm_grade_item_update($record, null, false);
 
     return $record->id;
 }
@@ -646,9 +646,10 @@ function scorm_upgrade_grades() {
  * @uses GRADE_TYPE_NONE
  * @param object $scorm object with extra cmidnumber
  * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @param boolean $updatecompletion  set whether to update completion stuff
  * @return object grade_item
  */
-function scorm_grade_item_update($scorm, $grades=null) {
+function scorm_grade_item_update($scorm, $grades=null, $updatecompletion=true) {
     global $CFG, $DB;
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
@@ -680,15 +681,16 @@ function scorm_grade_item_update($scorm, $grades=null) {
     }
 
     // Update activity completion if applicable
-    // Get course info
-    $course = new object();
-    $course->id = $scorm->course;
+    if ($updatecompletion) {
+        // Get course info
+        $course = new stdClass();
+        $course->id = $scorm->course;
 
-    $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id);
-    // CM will be false if this has been run from scorm_add_instance
-    if ($cm) {
-        $completion = new completion_info($course);
-        $completion->update_state($cm, COMPLETION_COMPLETE);
+        $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id);
+        if (!empty($cm)) {
+            $completion = new completion_info($course);
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        }
     }
 
     return grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, $grades, $params);
