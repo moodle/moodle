@@ -173,7 +173,7 @@
     bottom:0;
     right:0;
     opacity:0.35;
-    filter:alpha(opacity:35);
+    filter:alpha(opacity=35);
     background:#000;
 }
 

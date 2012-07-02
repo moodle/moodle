@@ -142,7 +142,7 @@
 }
 
 .wiki_modifieduser img {
-    border: thin black solid;
+    border: thin solid black;
 }
 
 .wiki_restore_yes, .wiki_deletecomment_yes {
