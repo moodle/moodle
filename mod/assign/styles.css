@@ -21,6 +21,8 @@ div.gradingsummary .generaltable {
     width: 100%;
 }
 
+#page-mod-assign-view table.generaltable table td { border: 0px none; }
+
 .gradingsummarytable,
 .feedbacktable,
 .lockedsubmission,
