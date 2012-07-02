@@ -1961,6 +1961,9 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
             $coursecontext->reload_if_dirty();
             if (isset($USER->enrol['enrolled'][$coursecontext->instanceid])) {
                 if ($USER->enrol['enrolled'][$coursecontext->instanceid] > time()) {
+                    if ($withcapability and !has_capability($withcapability, $context, $userid)) {
+                        return false;
+                    }
                     return true;
                 }
             }
