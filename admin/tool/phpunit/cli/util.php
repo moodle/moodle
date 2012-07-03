@@ -123,7 +123,7 @@ Options:
 -h, --help     Print out this help
 
 Example:
-\$/usr/bin/php lib/phpunit/tool.php --install
+\$ php ".phpunit_bootstrap_cli_argument_path('/admin/tool/phpunit/cli/util.php')." --install
 ";
     echo $help;
     exit(0);

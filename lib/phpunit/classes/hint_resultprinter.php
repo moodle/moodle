@@ -74,6 +74,12 @@ class Hint_ResultPrinter extends PHPUnit_TextUI_ResultPrinter {
             $file = substr($file, strlen($cwd)+1);
         }
 
-        $this->write("\nTo re-run:\n phpunit $testName $file\n");
+        $executable = 'phpunit';
+        if (phpunit_bootstrap_is_cygwin()) {
+            $file = str_replace('\\', '/', $file);
+            $executable = 'phpunit.bat';
+        }
+
+        $this->write("\nTo re-run:\n $executable $testName $file\n");
     }
 }
