@@ -477,11 +477,10 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
     $sql = "SELECT ue.*
               FROM {user_enrolments} ue
               JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'meta' $onecourse)
-         LEFT JOIN (SELECT xpue.userid, xpe.courseid
-                      FROM {user_enrolments} xpue
+         LEFT JOIN ({user_enrolments} xpue
                       JOIN {enrol} xpe ON (xpe.id = xpue.enrolid AND xpe.enrol <> 'meta' AND xpe.enrol $enabled)
-                   ) pue ON (pue.courseid = e.customint1 AND pue.userid = ue.userid)
-             WHERE pue.userid IS NULL";
+                   ) ON (xpe.courseid = e.customint1 AND xpue.userid = ue.userid)
+             WHERE xpue.userid IS NULL";
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $ue) {
         if (!isset($instances[$ue->enrolid])) {
