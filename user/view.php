@@ -348,7 +348,7 @@ echo $OUTPUT->footer();
 /// Functions ///////
 
 function print_row($left, $right) {
-    echo "\n<tr><td class=\"label c0\">$left</td><td class=\"info c1\">$right</td></tr>\n";
+    echo "\n<tr><th class=\"label c0\">$left</th><td class=\"info c1\">$right</td></tr>\n";
 }
 
 
