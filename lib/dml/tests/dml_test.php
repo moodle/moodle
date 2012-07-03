@@ -1137,7 +1137,7 @@ class dml_testcase extends database_driver_testcase {
         $tablename = $table->getName();
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0');
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
@@ -1146,14 +1146,64 @@ class dml_testcase extends database_driver_testcase {
         $DB->insert_record($tablename, array('course' => 3));
         $DB->insert_record($tablename, array('course' => 5));
         $DB->insert_record($tablename, array('course' => 2));
+        $DB->insert_record($tablename, array('course' => null));
+        $DB->insert_record($tablename, array('course' => 1));
+        $DB->insert_record($tablename, array('course' => 0));
 
         $rs = $DB->get_recordset_list($tablename, 'course', array(3, 2));
-
         $counter = 0;
         foreach ($rs as $record) {
             $counter++;
         }
         $this->assertEquals(3, $counter);
+        $rs->close();
+
+        $rs = $DB->get_recordset_list($tablename, 'course', array(3));
+        $counter = 0;
+        foreach ($rs as $record) {
+            $counter++;
+        }
+        $this->assertEquals(2, $counter);
+        $rs->close();
+
+        $rs = $DB->get_recordset_list($tablename, 'course', array(null));
+        $counter = 0;
+        foreach ($rs as $record) {
+            $counter++;
+        }
+        $this->assertEquals(1, $counter);
+        $rs->close();
+
+        $rs = $DB->get_recordset_list($tablename, 'course', array(6, null));
+        $counter = 0;
+        foreach ($rs as $record) {
+            $counter++;
+        }
+        $this->assertEquals(1, $counter);
+        $rs->close();
+
+        $rs = $DB->get_recordset_list($tablename, 'course', array(null, 5, 5, 5));
+        $counter = 0;
+        foreach ($rs as $record) {
+            $counter++;
+        }
+        $this->assertEquals(2, $counter);
+        $rs->close();
+
+        $rs = $DB->get_recordset_list($tablename, 'course', array(true));
+        $counter = 0;
+        foreach ($rs as $record) {
+            $counter++;
+        }
+        $this->assertEquals(1, $counter);
+        $rs->close();
+
+        $rs = $DB->get_recordset_list($tablename, 'course', array(false));
+        $counter = 0;
+        foreach ($rs as $record) {
+            $counter++;
+        }
+        $this->assertEquals(1, $counter);
         $rs->close();
 
         $rs = $DB->get_recordset_list($tablename, 'course',array()); // Must return 0 rows without conditions. MDL-17645
