@@ -153,7 +153,7 @@ $editoroptions = array(
 );
 
 $user = file_prepare_standard_editor($user, 'description', $editoroptions, $personalcontext, 'user', 'profile', 0);
-$userform = new user_edit_form(null, array('editoroptions'=>$editoroptions));
+$userform = new user_edit_form(null, array('editoroptions'=>$editoroptions, 'userid' => $user->id));
 if (empty($user->country)) {
     // MDL-16308 - we must unset the value here so $CFG->country can be used as default one
     unset($user->country);

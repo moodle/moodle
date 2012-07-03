@@ -13,11 +13,16 @@ class user_editadvanced_form extends moodleform {
         global $USER, $CFG, $COURSE;
 
         $mform =& $this->_form;
+        $editoroptions = null;
+        $userid = $USER->id;
 
-        if (is_array($this->_customdata) && array_key_exists('editoroptions', $this->_customdata)) {
-            $editoroptions = $this->_customdata['editoroptions'];
-        } else {
-            $editoroptions = null;
+        if (is_array($this->_customdata)) {
+            if (array_key_exists('editoroptions', $this->_customdata)) {
+                $editoroptions = $this->_customdata['editoroptions'];
+            }
+            if (array_key_exists('userid', $this->_customdata)) {
+                $userid = $this->_customdata['userid'];
+            }
         }
 
         //Accessibility: "Required" is bad legend text.
@@ -61,7 +66,7 @@ class user_editadvanced_form extends moodleform {
         useredit_shared_definition($mform, $editoroptions);
 
         /// Next the customisable profile fields
-        profile_definition($mform);
+        profile_definition($mform, $userid);
 
         $this->add_action_buttons(false, get_string('updatemyprofile'));
     }

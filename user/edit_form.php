@@ -10,13 +10,19 @@ class user_edit_form extends moodleform {
 
     // Define the form
     function definition () {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $USER;
 
         $mform =& $this->_form;
-        if (is_array($this->_customdata) && array_key_exists('editoroptions', $this->_customdata)) {
-            $editoroptions = $this->_customdata['editoroptions'];
-        } else {
-            $editoroptions = null;
+        $editoroptions = null;
+        $userid = $USER->id;
+
+        if (is_array($this->_customdata)) {
+            if (array_key_exists('editoroptions', $this->_customdata)) {
+                $editoroptions = $this->_customdata['editoroptions'];
+            }
+            if (array_key_exists('userid', $this->_customdata)) {
+                $userid = $this->_customdata['userid'];
+            }
         }
         //Accessibility: "Required" is bad legend text.
         $strgeneral  = get_string('general');
@@ -42,7 +48,7 @@ class user_edit_form extends moodleform {
         }
 
         /// Next the customisable profile fields
-        profile_definition($mform);
+        profile_definition($mform, $userid);
 
         $this->add_action_buttons(false, get_string('updatemyprofile'));
     }
