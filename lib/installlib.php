@@ -454,7 +454,7 @@ h2 {
 .formrow label.formlabel {
   display:block;
   float:left;
-  width: 260px;
+  width: 160px;
   margin-right:5px;
   text-align:right;
 }
