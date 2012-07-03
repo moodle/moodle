@@ -82,7 +82,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('scorm/othersettings', get_string('defaultothersettings', 'scorm'), ''));
 
     //default attempts settings.
-    $settings->add(new admin_setting_configselect_with_advanced('scorm/maxattempts',
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/maxattempt',
         get_string('maximumattempts', 'scorm'), '',
         array('value' => '0', 'adv' => false), scorm_get_attempts_array()));
 
