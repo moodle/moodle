@@ -62,7 +62,7 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addElement('header', 'setup', get_string('tool_settings', 'lti'));
 
         $mform->addElement('text', 'lti_typename', get_string('typename', 'lti'));
-        $mform->setType('lti_typename', PARAM_INT);
+        $mform->setType('lti_typename', PARAM_TEXT);
         $mform->addHelpButton('lti_typename', 'typename', 'lti');
         $mform->addRule('lti_typename', null, 'required', null, 'client');
 
