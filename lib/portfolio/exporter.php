@@ -722,15 +722,18 @@ class portfolio_exporter {
         if ($this->get('user')->id != $USER->id) { // make sure it belongs to the right user
             throw new portfolio_exception('notyours', 'portfolio');
         }
-        if (!$readonly && $this->get('instance') && !$this->get('instance')->allows_multiple_exports()
-            && ($already = portfolio_existing_exports($this->get('user')->id, $this->get('instance')->get('plugin')))
-            && array_shift(array_keys($already)) != $this->get('id')
-        ) {
-            $a = (object)array(
-                'plugin'  => $this->get('instance')->get('plugin'),
-                'link'    => $CFG->wwwroot . '/user/portfoliologs.php',
-            );
-            throw new portfolio_exception('nomultipleexports', 'portfolio', '', $a);
+        if (!$readonly && $this->get('instance') && !$this->get('instance')->allows_multiple_exports()) {
+            $already = portfolio_existing_exports($this->get('user')->id, $this->get('instance')->get('plugin'));
+            $already = array_keys($already);
+
+            if (array_shift($already) != $this->get('id')) {
+
+                $a = (object)array(
+                    'plugin'  => $this->get('instance')->get('plugin'),
+                    'link'    => $CFG->wwwroot . '/user/portfoliologs.php',
+                );
+                throw new portfolio_exception('nomultipleexports', 'portfolio', '', $a);
+            }
         }
         if (!$this->caller->check_permissions()) { // recall the caller permission check
             throw new portfolio_caller_exception('nopermissions', 'portfolio', $this->caller->get_return_url());
