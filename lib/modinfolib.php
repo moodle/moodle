@@ -202,9 +202,17 @@ class course_modinfo extends stdClass {
     /**
      * Gets data about specific numbered section.
      * @param int $sectionnumber Number (not id) of section
-     * @return section_info Information for numbered section
+     * @param int $strictness Use MUST_EXIST to throw exception if it doesn't
+     * @return section_info Information for numbered section or null if not found
      */
-    public function get_section_info($sectionnumber) {
+    public function get_section_info($sectionnumber, $strictness = IGNORE_MISSING) {
+        if (!array_key_exists($sectionnumber, $this->sectioninfo)) {
+            if ($strictness === MUST_EXIST) {
+                throw new moodle_exception('sectionnotexist');
+            } else {
+                return null;
+            }
+        }
         return $this->sectioninfo[$sectionnumber];
     }
 
