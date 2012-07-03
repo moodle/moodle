@@ -135,7 +135,7 @@ if ($user->id !== -1) {
 }
 
 //create form
-$userform = new user_editadvanced_form(null, array('editoroptions'=>$editoroptions));
+$userform = new user_editadvanced_form(null, array('editoroptions'=>$editoroptions, 'userid' => $user->id));
 $userform->set_data($user);
 
 if ($usernew = $userform->get_data()) {
