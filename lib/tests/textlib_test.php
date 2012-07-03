@@ -471,6 +471,12 @@ class collatorlib_testcase extends basic_testcase {
         $this->assertSame(array_keys($arr), array(0, 'b', 1));
         $this->assertTrue($result);
 
+        // test sorting of array of arrays - first element should be used for actual comparison
+        $arr = array(0=>array('bb', 'z'), 1=>array('ab', 'a'), 2=>array('zz', 'x'));
+        $result = collatorlib::asort($arr, collatorlib::SORT_REGULAR);
+        $this->assertSame(array_keys($arr), array(1, 0, 2));
+        $this->assertTrue($result);
+
         $arr = array('a' => 'áb', 'b' => 'ab', 1 => 'aa', 0=>'cc', 'x' => 'Áb',);
         $result = collatorlib::asort($arr);
         $this->assertSame(array_values($arr), array('aa', 'ab', 'áb', 'Áb', 'cc'), $this->error);
