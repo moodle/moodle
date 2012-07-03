@@ -616,7 +616,7 @@ class textlib {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class collatorlib {
-    /** @const compare items as strings, equivalent to Collator::SORT_REGULAR */
+    /** @const compare items using general PHP comparison, equivalent to Collator::SORT_REGULAR, this may bot be locale aware! */
     const SORT_REGULAR = 0;
 
     /** @const compare items as strings, equivalent to Collator::SORT_STRING */
