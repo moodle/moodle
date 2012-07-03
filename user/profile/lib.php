@@ -169,7 +169,8 @@ class profile_field_base {
      * @param   object   instance of the moodleform class
      */
     function edit_field_set_required($mform) {
-        if ($this->is_required() and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
+        global $USER;
+        if ($this->is_required() && ($this->userid == $USER->id)) {
             $mform->addRule($this->inputname, get_string('required'), 'required', null, 'client');
         }
     }
@@ -352,8 +353,9 @@ function profile_load_data($user) {
 /**
  * Print out the customisable categories and fields for a users profile
  * @param  object   instance of the moodleform class
+ * @param int $userid id of user whose profile is being edited.
  */
-function profile_definition($mform) {
+function profile_definition($mform, $userid = 0) {
     global $CFG, $DB;
 
     // if user is "admin" fields are displayed regardless
@@ -377,7 +379,7 @@ function profile_definition($mform) {
                     foreach ($fields as $field) {
                         require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
                         $newfield = 'profile_field_'.$field->datatype;
-                        $formfield = new $newfield($field->id);
+                        $formfield = new $newfield($field->id, $userid);
                         $formfield->edit_field($mform);
                     }
                 }

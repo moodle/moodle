@@ -146,7 +146,8 @@ $user->imagefile = $draftitemid;
 //create form
 $userform = new user_editadvanced_form(null, array(
     'editoroptions' => $editoroptions,
-    'filemanageroptions' => $filemanageroptions));
+    'filemanageroptions' => $filemanageroptions,
+    'userid' => $user->id));
 $userform->set_data($user);
 
 if ($usernew = $userform->get_data()) {
