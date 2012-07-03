@@ -521,9 +521,10 @@ abstract class repository {
      *
      * @param int $repositoryid repository ID
      * @param stdClass|int $context context instance or context ID
+     * @param array $options additional repository options
      * @return repository
      */
-    public static function get_repository_by_id($repositoryid, $context) {
+    public static function get_repository_by_id($repositoryid, $context, $options = array()) {
         global $CFG, $DB;
 
         $sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id=? AND i.typeid=r.id';
@@ -539,10 +540,15 @@ abstract class repository {
                 if (is_object($context)) {
                     $contextid = $context->id;
                 }
-                $repository = new $classname($repositoryid, $contextid, array('type'=>$type));
+                $options['type'] = $type;
+                $options['typeid'] = $record->typeid;
+                if (empty($options['name'])) {
+                    $options['name'] = $record->name;
+                }
+                $repository = new $classname($repositoryid, $contextid, $options);
                 return $repository;
             } else {
-                throw new moodle_exception('error');
+                throw new repository_exception('invalidplugin', 'repository');
             }
         }
     }
@@ -609,16 +615,16 @@ abstract class repository {
     }
 
     /**
-     * To check if the context id is valid
+     * Checks if user has a capability to view the current repository in current context
      *
-     * @static
-     * @param int $contextid
-     * @param stdClass $instance
      * @return bool
      */
-    public static function check_capability($contextid, $instance) {
-        $context = get_context_instance_by_id($contextid);
-        $capability = has_capability('repository/'.$instance->type.':view', $context);
+    public final function check_capability() {
+        $capability = false;
+        if (preg_match("/^repository_(.*)$/", get_class($this), $matches)) {
+            $type = $matches[1];
+            $capability = has_capability('repository/'.$type.':view', $this->context);
+        }
         if (!$capability) {
             throw new repository_exception('nopermissiontoaccess', 'repository');
         }
@@ -674,7 +680,7 @@ abstract class repository {
                 return false;
             }
             $browser = get_file_browser();
-            $context = get_context_instance_by_id($params['contextid']);
+            $context = context::instance_by_id($params['contextid']);
             $file_info = $browser->get_file_info($context, $params['component'], $params['filearea'],
                     $params['itemid'], $params['filepath'], $params['filename']);
             return !empty($file_info);

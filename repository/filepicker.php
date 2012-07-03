@@ -59,6 +59,7 @@ $search_text = optional_param('s', '',             PARAM_CLEANHTML);
 $maxfiles    = optional_param('maxfiles', -1,      PARAM_INT);    // maxfiles
 $maxbytes    = optional_param('maxbytes',  0,      PARAM_INT);    // maxbytes
 $subdirs     = optional_param('subdirs',  0,       PARAM_INT);    // maxbytes
+$accepted_types = optional_param_array('accepted_types', '*', PARAM_RAW);
 
 // the path to save files
 $savepath = optional_param('savepath', '/',    PARAM_PATH);
@@ -75,22 +76,16 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
 }
 $PAGE->set_course($course);
 
-// init repository plugin
-$sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i '.
-       'WHERE i.id=? AND i.typeid=r.id';
-if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
-    $type = $repository->type;
-    if (file_exists($CFG->dirroot.'/repository/'.$type.'/lib.php')) {
-        require_once($CFG->dirroot.'/repository/'.$type.'/lib.php');
-        $classname = 'repository_' . $type;
-        try {
-            $repo = new $classname($repo_id, $contextid, array('ajax'=>false, 'name'=>$repository->name, 'type'=>$type));
-        } catch (repository_exception $e){
-            print_error('pluginerror', 'repository');
-        }
-    } else {
-        print_error('invalidplugin', 'repository');
-    }
+if ($repo_id) {
+    // Get repository instance information
+    $repooptions = array(
+        'ajax' => false,
+        'mimetypes' => $accepted_types
+    );
+    $repo = repository::get_repository_by_id($repo_id, $contextid, $repooptions);
+
+    // Check permissions
+    $repo->check_capability();
 }
 
 $context = context::instance_by_id($contextid);
