@@ -578,7 +578,7 @@ function get_exception_info($ex) {
  * This is the only option that should be used in standard Moodle code. The other
  * two options have been implemented because they are useful for third-party plugins.
  *
- * 2. $path may be an absolute URL, starting http:// or http://. In this case,
+ * 2. $path may be an absolute URL, starting http:// or https://. In this case,
  * the link is used as is.
  *
  * 3. $path may start %%WWWROOT%%, in which case that is replaced by
