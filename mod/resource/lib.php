@@ -514,6 +514,7 @@ function resource_dndupload_handle($uploadinfo) {
     $data->printintro = $config->printintro;
     $data->showsize = $config->showsize;
     $data->showtype = $config->showtype;
+    $data->filterfiles = $config->filterfiles;
 
     return resource_add_instance($data, null);
 }
