@@ -229,7 +229,7 @@ class core_files_renderer extends plugin_renderer_base {
     <div class="filemanager-container"'.$containerstyletag.'>
         <div class="fm-content-wrapper">
             <div class="fp-content"></div>
-            <div class="fm-empty-container <!--mdl-align-->">
+            <div class="fm-empty-container">
                 <span class="dndupload-message">'.$strdndenabledinbox.'<br/><span class="dndupload-arrow"></span></span>
             </div>
             <div class="dndupload-target">'.$strdroptoupload.'<br/><span class="dndupload-arrow"></span></div>
@@ -379,8 +379,7 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="filemanager fp-select">
     <div class="fp-select-loading">
-        <img src="'.$this->pix_url('i/loading').'" />
-        <p>'.get_string('loading', 'repository').'</p>
+        <img src="'.$this->pix_url('i/loading_small').'" />
     </div>
     <form>
         <button class="{!}fp-file-download">'.get_string('download').'</button>
@@ -633,8 +632,7 @@ class core_files_renderer extends plugin_renderer_base {
 <div class="{!}fp-nextpage">
     <div class="fp-nextpage-link"><a href="#">'.get_string('more').'</a></div>
     <div class="fp-nextpage-loading">
-        <img src="'.$this->pix_url('i/loading').'" />
-        <p>'.get_string('loading', 'repository').'</p>
+        <img src="'.$this->pix_url('i/loading_small').'" />
     </div>
 </div>';
         return preg_replace('/\{\!\}/', '', $rv);
@@ -672,19 +670,18 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="file-picker fp-select">
     <div class="fp-select-loading">
-        <img src="'.$this->pix_url('i/loading').'" />
-        <p>'.get_string('loading', 'repository').'</p>
+        <img src="'.$this->pix_url('i/loading_small').'" />
     </div>
     <form>
         <table>
             <tr class="{!}fp-linktype-2">
-                <td></td>
+                <td class="mdl-right"></td>
                 <td class="mdl-left"><input type="radio"/><label>&nbsp;'.get_string('makefileinternal', 'repository').'</label></td></tr>
             <tr class="{!}fp-linktype-1">
-                <td></td>
+                <td class="mdl-right"></td>
                 <td class="mdl-left"><input type="radio"/><label>&nbsp;'.get_string('makefilelink', 'repository').'</label></td></tr>
             <tr class="{!}fp-linktype-4">
-                <td></td>
+                <td class="mdl-right"></td>
                 <td class="mdl-left"><input type="radio"/><label>&nbsp;'.get_string('makefilereference', 'repository').'</label></td></tr>
             <tr class="{!}fp-saveas">
                 <td class="mdl-right"><label>'.get_string('saveas', 'repository').'</label>:</td>
@@ -770,8 +767,7 @@ class core_files_renderer extends plugin_renderer_base {
         return '
 <div class="fp-content-loading">
     <div class="fp-content-center">
-        <img src="'.$this->pix_url('i/loading').'" />
-        <p>'.get_string('loading', 'repository').'</p>
+        <img src="'.$this->pix_url('i/loading_small').'" />
     </div>
 </div>';
     }

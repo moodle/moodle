@@ -241,6 +241,8 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .fp-select .fp-select-loading {text-align: center;margin-top: 20px;}
 .fp-select .fp-hr {clear: both;height: 1px; background-color: #FFFFFF;border-bottom: 1px solid #BBBBBB;width: auto; margin: 10px 0;}
 .fp-select table {padding: 0 0 10px;}
+.fp-select table .mdl-right {min-width: 84px;}
+.fp-select .fp-reflist .mdl-right {vertical-align: top;}
 .fp-select .fp-select-buttons {float: right;}
 .fp-select .fp-info {display: block;clear: both;padding: 1px 20px 0;}
 .fp-select .fp-thumbnail {float:left;min-width:110px;min-height:110px;line-height: 110px;text-align: center;margin: 10px 20px 0 0;background: #FFFFFF;border: 1px solid #DDDDDD;-webkit-box-shadow: inset 0 0 10px 0 #CCCCCC;-moz-box-shadow: inset 0 0 10px 0 #CCCCCC;box-shadow: inset 0 0 10px 0 #CCCCCC;}
@@ -253,6 +255,7 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .file-picker.fp-select .fp-select-loading {display:none;}
 .file-picker.fp-select.loading .fp-select-loading {display:block;}
 .file-picker.fp-select.loading form {display:none;}
+.fp-select .fp-dimensions.fp-unknown {display: none;}
 
  /*
  * File Manager
@@ -269,7 +272,7 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager .fm-empty-container {display:none;}
 .filemanager.fm-noitems .filemanager-container .fp-content {display:none;}
 .filemanager .filemanager-updating {display:none;text-align:center;}
-.filemanager.fm-updating .filemanager-updating {display:block;}
+.filemanager.fm-updating .filemanager-updating {display:block;margin-top: 37px;}
 .filemanager.fm-updating .fm-content-wrapper {display:none;}
 .filemanager.fm-nomkdir .fp-btn-mkdir {display:none;}
 
@@ -368,7 +371,7 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager.fp-select .fp-reflist .fp-reflistloading {display:none;}
 .filemanager.fp-select .fp-refcount {max-width: 265px;}
 .filemanager.fp-select .fp-reflist.fp-loading .fp-reflistloading {display:inline;}
-.filemanager.fp-select .fp-reflist .fp-value {background: #FFFFFF;border: 1px solid #BBBBBB;padding: 8px 7px;margin: 0px;max-width: 265px;max-height: 75px;overflow:auto;}
+.filemanager.fp-select .fp-reflist .fp-value {background: #F9F9F9;border: 1px solid #BBBBBB;padding: 8px 7px;margin: 0px;max-width: 265px;max-height: 75px;overflow:auto;}
 .filemanager.fp-select .fp-reflist .fp-value li {padding-bottom: 7px;}
 
 /*
