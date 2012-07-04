@@ -228,5 +228,13 @@ EOD;
     public function get_file_source_info($url) {
         return $url;
     }
-}
 
+    /**
+     * file types supported by url downloader plugin
+     *
+     * @return array
+     */
+    public function supported_filetypes() {
+        return array('web_image');
+    }
+}
