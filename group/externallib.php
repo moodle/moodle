@@ -105,6 +105,9 @@ class core_group_external extends external_api {
 
             // finally create the group
             $group->id = groups_create_group($group, false);
+            if (!isset($group->enrolmentkey)) {
+                $group->enrolmentkey = '';
+            }
             $groups[] = (array)$group;
         }
 
