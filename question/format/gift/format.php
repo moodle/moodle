@@ -553,8 +553,8 @@ class qformat_gift extends qformat_default {
     protected function repchar($text, $notused = 0) {
         // Escapes 'reserved' characters # = ~ {) :
         // Removes new lines
-        $reserved = array( '#', '=', '~', '{', '}', ':', "\n", "\r");
-        $escaped =  array('\#','\=','\~','\{','\}','\:', '\n', '' );
+        $reserved = array(  '\\',  '#', '=', '~', '{', '}', ':', "\n", "\r");
+        $escaped =  array('\\\\', '\#','\=','\~','\{','\}','\:', '\n', '' );
 
         $newtext = str_replace($reserved, $escaped, $text);
         return $newtext;
