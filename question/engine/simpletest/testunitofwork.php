@@ -125,7 +125,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233720, 1, '-_triesleft', 1),
         array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 3, 2, 'todo',             null, 1256233740, 1, '-tryagain',   1),
         array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 3, 'gradedright',      null, 1256233790, 1, 'answer',     'frog'),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 3, 'gradedright', 1.0000000, 1256233790, 1, '-finish',     1),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 3, 'gradedright', 1.0000000, 1256233790, 1, '-submit',     1),
         );
     }
 
@@ -196,7 +196,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
     public function test_regrade_same_steps() {
 
         // Change the question in a minor way and regrade.
-        $this->quba->get_question($this->slot)->answer[14]->fraction = 0.5;
+        $this->quba->get_question($this->slot)->answers[14]->fraction = 0.5;
         $this->quba->regrade_all_questions();
 
         // Here, the qa, and all the steps, should be marked as updated.
@@ -252,7 +252,7 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         $this->assertEqual(array('-tryagain' => 1), $firstdeletedstep->get_all_data());
 
         $seconddeletedstep = end($deletedsteps);
-        $this->assertEqual(array('answer' => 'frog', '-finish' => 1),
+        $this->assertEqual(array('answer' => 'frog', '-submit' => 1),
                 $seconddeletedstep->get_all_data());
     }
 
