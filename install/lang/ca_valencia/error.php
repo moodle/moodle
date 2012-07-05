@@ -30,6 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = '';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '简体中文';
+$string['cannotsavemd5file'] = 'No s\'ha pogut alçar el fitxer md5';
+$string['cannotsavezipfile'] = 'No s\'ha pogut alçar el fitxer zip';
