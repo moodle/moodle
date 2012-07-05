@@ -878,22 +878,66 @@ class grade_category extends grade_object {
             asort($grade_values, SORT_NUMERIC);
             $dropped = 0;
 
-            foreach ($grade_values as $itemid=>$value) {
+            // If we have fewer grade items available to drop than $this->droplow, use this flag to escape the loop
+            // May occur because of "extra credit" or if droplow is higher than the number of grade items
+            $droppedsomething = true;
 
-                if ($dropped < $this->droplow) {
+            while ($dropped < $this->droplow && $droppedsomething) {
+                $droppedsomething = false;
 
-                    if ($extraused and $items[$itemid]->aggregationcoef > 0) {
-                        // no drop low for extra credits
-
-                    } else {
-                        unset($grade_values[$itemid]);
-                        $dropped++;
-                    }
-
-                } else {
-                    // we have dropped enough
+                $grade_keys = array_keys($grade_values);
+                if (count($grade_keys) === 0) {
+                    //We've dropped all grade items
                     break;
                 }
+
+                $originalindex = $founditemid = $foundmax = null;
+
+                // Find the first remaining grade item that is available to be dropped
+                foreach ($grade_keys as $gradekeyindex=>$gradekey) {
+                    if (!$extraused || $items[$gradekey]->aggregationcoef <= 0) {
+                        // Found a non-extra credit grade item that is eligible to be dropped
+                        $originalindex = $gradekeyindex;
+                        $founditemid = $grade_keys[$originalindex];
+                        $foundmax = $items[$founditemid]->grademax;
+                        break;
+                    }
+                }
+
+                if (empty($founditemid)) {
+                    // No grade items available to drop
+                    break;
+                }
+
+                // Now iterate over the remaining grade items
+                // We're looking for other grade items with the same grade value but a higher grademax
+                $i = 1;
+                while ($originalindex+$i < count($grade_keys)) {
+                    $possibleitemid = $grade_keys[$originalindex+$i];
+                    if ($grade_values[$founditemid] != $grade_values[$possibleitemid]) {
+                        // The next grade item has a different grade value. Stop looking.
+                        break;
+                    }
+
+                    if ($extraused && $items[$possibleitemid]->aggregationcoef > 0) {
+                        // Don't drop extra credit grade items. Continue the search.
+                        continue;
+                    }
+
+                    if ($foundmax < $items[$possibleitemid]->grademax) {
+                        // Found a grade item with the same grade value and a higher grademax
+                        $foundmax = $items[$possibleitemid]->grademax;
+                        $founditemid = $possibleitemid;
+                        // Continue searching to see if there is an even higher grademax
+                    }
+
+                    $i++;
+                }
+
+                // Now drop whatever grade item we have found
+                unset($grade_values[$founditemid]);
+                $dropped++;
+                $droppedsomething = true;
             }
 
         } else if (!empty($this->keephigh)) {
