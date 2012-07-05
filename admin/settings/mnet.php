@@ -29,7 +29,7 @@ if (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode !== 'off') 
             new admin_externalpage(
                 'mnetpeer' . $host->id,
                 $host->name,
-                $CFG->wwwroot . '/admin/mnet/peers.php?step=update&hostid=' . $host->id,
+                $CFG->wwwroot . '/'.$CFG->admin.'/mnet/peers.php?step=update&hostid=' . $host->id,
                 'moodle/site:config'
             )
         );
