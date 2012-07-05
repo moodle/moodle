@@ -183,7 +183,6 @@ class scorm_interactions_report extends scorm_default_report {
             $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'st.attempt').')) AS nbattempts, ';
             $countsql .= 'COUNT(DISTINCT(u.id)) AS nbusers ';
             $countsql .= $from.$where;
-            $attempts = $DB->get_records_sql($select.$from.$where, $params);
             $questioncount = get_scorm_question_count($scorm->id);
             for($id = 0; $id < $questioncount; $id++) {
                 if ($displayoptions['qtext']) {
