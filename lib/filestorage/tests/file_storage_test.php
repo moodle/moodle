@@ -400,16 +400,6 @@ class filestoragelib_testcase extends advanced_testcase {
         $this->assertFalse($doesntexist);
     }
 
-    public function test_get_references_by_storedfile() {
-        $user = $this->setup_three_private_files();
-        $fs = get_file_storage();
-
-        $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
-        $testfile = reset($areafiles);
-        $references = $fs->get_references_by_storedfile($testfile);
-        // TODO MDL-33368 Verify result!!
-    }
-
     public function test_get_external_files() {
         $user = $this->setup_three_private_files();
         $fs = get_file_storage();
@@ -583,15 +573,75 @@ class filestoragelib_testcase extends advanced_testcase {
     }
 
     public function test_search_references() {
+        $user = $this->setup_three_private_files();
         $fs = get_file_storage();
-        $references = $fs->search_references('testsearch');
-        // TODO MDL-33368 Verify result!!
-    }
+        $repos = repository::get_instances(array('type'=>'user'));
+        $repo = reset($repos);
 
-    public function test_search_references_count() {
-        $fs = get_file_storage();
-        $references = $fs->search_references_count('testsearch');
-        // TODO MDL-33368 Verify result!!
+        $alias1 = array(
+            'contextid' => $user->ctxid,
+            'component' => 'user',
+            'filearea'  => 'private',
+            'itemid'    => 0,
+            'filepath'  => '/aliases/',
+            'filename'  => 'alias-to-1.txt'
+        );
+
+        $alias2 = array(
+            'contextid' => $user->ctxid,
+            'component' => 'user',
+            'filearea'  => 'private',
+            'itemid'    => 0,
+            'filepath'  => '/aliases/',
+            'filename'  => 'another-alias-to-1.txt'
+        );
+
+        $reference = file_storage::pack_reference(array(
+            'contextid' => $user->ctxid,
+            'component' => 'user',
+            'filearea'  => 'private',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => '1.txt'
+        ));
+
+        // There are no aliases now.
+        $result = $fs->search_references($reference);
+        $this->assertEquals(array(), $result);
+
+        $result = $fs->search_references_count($reference);
+        $this->assertSame($result, 0);
+
+        // Create two aliases and make sure they are returned.
+        $fs->create_file_from_reference($alias1, $repo->id, $reference);
+        $fs->create_file_from_reference($alias2, $repo->id, $reference);
+
+        $result = $fs->search_references($reference);
+        $this->assertTrue(is_array($result));
+        $this->assertEquals(count($result), 2);
+        foreach ($result as $alias) {
+            $this->assertTrue($alias instanceof stored_file);
+        }
+
+        $result = $fs->search_references_count($reference);
+        $this->assertSame($result, 2);
+
+        // The method can't be used for references to files outside the filepool
+        $exceptionthrown = false;
+        try {
+            $fs->search_references('http://dl.dropbox.com/download/1234567/naked-dougiamas.jpg');
+        } catch (file_reference_exception $e) {
+            $exceptionthrown = true;
+        }
+        $this->assertTrue($exceptionthrown);
+
+        $exceptionthrown = false;
+        try {
+            $fs->search_references_count('http://dl.dropbox.com/download/1234567/naked-dougiamas.jpg');
+        } catch (file_reference_exception $e) {
+            $exceptionthrown = true;
+        }
+        $this->assertTrue($exceptionthrown);
     }
 
     public function test_delete_area_files() {
