@@ -265,6 +265,12 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
             $fs->get_area_files($context->id, 'mod_glossary', 'attachment', $this->entry->id, "timemodified", false),
             $fs->get_area_files($context->id, 'mod_glossary', 'entry', $this->entry->id, "timemodified", false)
         );
+
+        if (!empty($this->multifiles)) {
+            $this->add_format(PORTFOLIO_FORMAT_RICHHTML);
+        } else {
+            $this->add_format(PORTFOLIO_FORMAT_PLAINHTML);
+        }
     }
 
     /**
