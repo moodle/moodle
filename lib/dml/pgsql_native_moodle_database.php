@@ -278,12 +278,21 @@ class pgsql_native_moodle_database extends moodle_database {
         }
         $this->tables = array();
         $prefix = str_replace('_', '|_', $this->prefix);
-        // Get them from information_schema instead of catalog as far as
-        // we want to get only own session temp objects (catalog returns all)
-        $sql = "SELECT table_name
-                  FROM information_schema.tables
-                 WHERE table_name LIKE '$prefix%' ESCAPE '|'
-                   AND table_type IN ('BASE TABLE', 'LOCAL TEMPORARY')";
+        if ($this->is_min_version('9.1')) {
+            // Use ANSI standard information_schema in recent versions where it is fast enough.
+            $sql = "SELECT table_name
+                      FROM information_schema.tables
+                     WHERE table_name LIKE '$prefix%' ESCAPE '|'
+                       AND table_type IN ('BASE TABLE', 'LOCAL TEMPORARY')";
+        } else {
+            // information_schema is horribly slow in <= 9.0, so use pg internals.
+            // Note the pg_is_other_temp_schema. We only want temp objects from our own session.
+            $sql = "SELECT c.relname
+                      FROM pg_class c
+                     WHERE c.relname LIKE '$prefix%' ESCAPE '|'
+                       AND c.relkind = 'r'
+                       AND NOT pg_is_other_temp_schema(c.relnamespace)";
+        }
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);
