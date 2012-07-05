@@ -141,7 +141,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $table->cellspacing = 0;
         $table->attributes['class'] = 'results names ';
         $table->tablealign = 'center';
-        $table->summary = get_string('responsesto', 'choice', $choices->name);
+        $table->summary = get_string('responsesto', 'choice', format_string($choices->name));
         $table->data = array();
 
         $count = 0;
@@ -206,6 +206,7 @@ class mod_choice_renderer extends plugin_renderer_base {
 
             if ($choices->showunanswered || $optionid > 0) {
                 if (!empty($options->user)) {
+                    $optionusers = '';
                     foreach ($options->user as $user) {
                         $data = '';
                         if (empty($user->imagealt)){
@@ -223,8 +224,9 @@ class mod_choice_renderer extends plugin_renderer_base {
                         $name = html_writer::tag('a', fullname($user, $choices->fullnamecapability), array('href'=>$userlink, 'class'=>'username'));
                         $data .= html_writer::tag('div', $name, array('class'=>'fullname'));
                         $data .= html_writer::tag('div','', array('class'=>'clearfloat'));
-                        $cell->text = html_writer::tag('div', $data, array('class'=>'user'));
+                        $optionusers .= html_writer::tag('div', $data, array('class'=>'user'));
                     }
+                    $cell->text = $optionusers;
                 }
             }
             $columns[] = $cell;
@@ -277,7 +279,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $table->cellpadding = 5;
         $table->cellspacing = 0;
         $table->attributes['class'] = 'results anonymous ';
-        $table->summary = get_string('responsesto', 'choice', $choices->name);
+        $table->summary = get_string('responsesto', 'choice', format_string($choices->name));
         $table->data = array();
 
         $count = 0;
@@ -380,7 +382,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $table->cellpadding = 5;
         $table->cellspacing = 0;
         $table->attributes['class'] = 'results anonymous ';
-        $table->summary = get_string('responsesto', 'choice', $choices->name);
+        $table->summary = get_string('responsesto', 'choice', format_string($choices->name));
         $table->data = array();
 
         $columnheaderdefault = new html_table_cell();
