@@ -247,11 +247,11 @@ M.mod_chat_ajax.init = function(Y, cfg) {
                     li.all('td').item(1).append(Y.Node.create('<strong><a target="_blank" href="'+users[i].url+'">'+ users[i].name+'</a></strong>'));
                 } else {
                     li.all('td').item(1).append(Y.Node.create('<div><a target="_blank" href="'+users[i].url+'">'+users[i].name+'</a></div>'));
-                    var talk = Y.Node.create('<a href="###">'+M.str.chat.talk+'</a>&nbsp;');
+                    var talk = Y.Node.create('<a href="###">'+M.str.chat.talk+'</a>');
                     talk.on('click', this.talkto, this, users[i].name);
                     var beep = Y.Node.create('<a href="###">'+M.str.chat.beep+'</a>');
                     beep.on('click', this.send, this, users[i].id);
-                    li.all('td').item(1).append(Y.Node.create('<div></div>').append(talk).append(beep));
+                    li.all('td').item(1).append(Y.Node.create('<div></div>').append(talk).append('&nbsp;').append(beep));
                 }
                 list.append(li);
             }
