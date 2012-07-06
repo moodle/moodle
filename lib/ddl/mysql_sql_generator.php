@@ -333,18 +333,14 @@ class mysql_sql_generator extends sql_generator {
      */
     public function isNameInUse($object_name, $type, $table_name) {
 
-        // Calculate the real table name
-        $xmldb_table = new xmldb_table($table_name);
-        $tname = $this->getTableName($xmldb_table);
-
         switch($type) {
             case 'ix':
             case 'uix':
                 // First of all, check table exists
                 $metatables = $this->mdb->get_tables();
-                if (isset($metatables[$tname])) {
+                if (isset($metatables[$table_name])) {
                     // Fetch all the indexes in the table
-                    if ($indexes = $this->mdb->get_indexes($tname)) {
+                    if ($indexes = $this->mdb->get_indexes($table_name)) {
                         // Look for existing index in array
                         if (isset($indexes[$object_name])) {
                             return true;
