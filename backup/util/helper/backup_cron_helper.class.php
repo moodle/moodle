@@ -511,7 +511,7 @@ abstract class backup_cron_automated_helper {
 
 
             // MDL-33531: use different filenames depending on backup_shortname option
-            if ( $config->backup_shortname ) {
+            if ( !empty($config->backup_shortname) ) {
                 $courseref = $course->shortname;
                 $courseref = str_replace(' ', '_', $courseref);
                 $courseref = textlib::strtolower(trim(clean_filename($courseref), '_'));
