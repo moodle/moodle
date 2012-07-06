@@ -510,7 +510,7 @@ abstract class backup_cron_automated_helper {
             // variable, depending of languages, formats and automated backup settings
 
             // MDL-33531: use different filenames depending on backup_shortname option
-            if ( $config->backup_shortname ) {
+            if ( !empty($config->backup_shortname) ) {
                 $courseref = $course->shortname;
                 $courseref = str_replace(' ', '_', $courseref);
                 $courseref = moodle_strtolower(trim(clean_filename($courseref), '_'));
