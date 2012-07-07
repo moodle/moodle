@@ -514,7 +514,7 @@ M.course_dndupload = {
             namespan: document.createElement('span')
         };
 
-        preview.li.className = 'dndupload-preview activity resource modtype_resource dndupload-hidden';
+        preview.li.className = 'dndupload-preview dndupload-hidden';
 
         preview.div.className = 'mod-indent';
         preview.li.appendChild(preview.div);
