@@ -23,6 +23,8 @@
 
 .path-mod-choice .results.anonymous .graph.vertical,
 .path-mod-choice .cell {vertical-align: bottom; text-align: center; }
+.path-mod-choice .results.anonymous th.header {border: 1px solid inherit;}
+
 .path-mod-choice .results.names .header{width:10%; white-space: normal;}
 .path-mod-choice .results.names .cell{vertical-align: top; text-align: left;}
 .path-mod-choice .results.names .user,
