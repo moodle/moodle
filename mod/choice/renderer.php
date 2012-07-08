@@ -214,7 +214,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                         }
 
                         if ($choices->viewresponsecapability && $choices->deleterepsonsecapability  && $optionid > 0) {
-                            $attemptaction = html_writer::checkbox('attemptid[]', $user->id,'');
+                            $attemptaction = html_writer::checkbox('attemptid[]', $user->id,'', null, array('id' => 'attempt-user'.$user->id));
                             $data .= html_writer::tag('div', $attemptaction, array('class'=>'attemptaction'));
                         }
                         $userimage = $this->output->user_picture($user, array('courseid'=>$choices->courseid));
@@ -222,6 +222,7 @@ class mod_choice_renderer extends plugin_renderer_base {
 
                         $userlink = new moodle_url('/user/view.php', array('id'=>$user->id,'course'=>$choices->courseid));
                         $name = html_writer::tag('a', fullname($user, $choices->fullnamecapability), array('href'=>$userlink, 'class'=>'username'));
+                        $name = html_writer::label($name, 'attempt-user'.$user->id);
                         $data .= html_writer::tag('div', $name, array('class'=>'fullname'));
                         $data .= html_writer::tag('div','', array('class'=>'clearfloat'));
                         $optionusers .= html_writer::tag('div', $data, array('class'=>'user'));
