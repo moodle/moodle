@@ -322,7 +322,7 @@ class backup_module_structure_step extends backup_structure_step {
         $availinfo = new backup_nested_element('availability_info');
         $availability = new backup_nested_element('availability', array('id'), array(
             'sourcecmid', 'requiredcompletion', 'gradeitemid', 'grademin', 'grademax'));
-        $availability_field = new backup_nested_element('availability_field', array('id'), array(
+        $availabilityfield = new backup_nested_element('availability_field', array('id'), array(
             'userfield', 'customfieldid', 'operator', 'value'));
 
         // attach format plugin structure to $module element, only one allowed
@@ -335,7 +335,7 @@ class backup_module_structure_step extends backup_structure_step {
         // Define the tree
         $module->add_child($availinfo);
         $availinfo->add_child($availability);
-        $availinfo->add_child($availability_field);
+        $availinfo->add_child($availabilityfield);
 
         // Set the sources
         $module->set_source_sql('
@@ -346,7 +346,7 @@ class backup_module_structure_step extends backup_structure_step {
              WHERE cm.id = ?', array(backup::VAR_MODID));
 
         $availability->set_source_table('course_modules_availability', array('coursemoduleid' => backup::VAR_MODID));
-        $availability_field->set_source_table('course_modules_avail_fields', array('coursemoduleid' => backup::VAR_MODID));
+        $availabilityfield->set_source_table('course_modules_avail_fields', array('coursemoduleid' => backup::VAR_MODID));
 
         // Define annotations
         $module->annotate_ids('grouping', 'groupingid');
@@ -376,15 +376,15 @@ class backup_section_structure_step extends backup_structure_step {
         // Add nested elements for _availability table
         $avail = new backup_nested_element('availability', array('id'), array(
                 'sourcecmid', 'requiredcompletion', 'gradeitemid', 'grademin', 'grademax'));
-        $avail_field = new backup_nested_element('availability_field', array('id'), array(
+        $availfield = new backup_nested_element('availability_field', array('id'), array(
             'userfield', 'customfieldid', 'operator', 'value'));
         $section->add_child($avail);
-        $section->add_child($avail_field);
+        $section->add_child($availfield);
 
         // Define sources
         $section->set_source_table('course_sections', array('id' => backup::VAR_SECTIONID));
         $avail->set_source_table('course_sections_availability', array('coursesectionid' => backup::VAR_SECTIONID));
-        $avail_field->set_source_table('course_sections_avail_fields', array('coursesectionid' => backup::VAR_SECTIONID));
+        $availfield->set_source_table('course_sections_avail_fields', array('coursesectionid' => backup::VAR_SECTIONID));
 
         // Aliases
         $section->set_source_alias('section', 'number');

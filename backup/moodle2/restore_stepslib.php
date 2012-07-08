@@ -546,7 +546,6 @@ class restore_process_course_modules_availability extends restore_execution_step
                 $DB->insert_record('course_modules_availability', $availability);
             }
         }
-
         $rs->close();
     }
 }
@@ -1148,13 +1147,13 @@ class restore_section_structure_step extends restore_structure_step {
         }
         if ($passed) {
             // Create the object to insert into the database
-            $avail_field = new stdClass();
-            $avail_field->coursesectionid = $this->task->get_sectionid();
-            $avail_field->userfield = $data->userfield;
-            $avail_field->customfieldid = $data->customfieldid;
-            $avail_field->operator = $data->operator;
-            $avail_field->value = $data->value;
-            $DB->insert_record('course_sections_avail_fields', $avail_field);
+            $availfield = new stdClass();
+            $availfield->coursesectionid = $this->task->get_sectionid();
+            $availfield->userfield = $data->userfield;
+            $availfield->customfieldid = $data->customfieldid;
+            $availfield->operator = $data->operator;
+            $availfield->value = $data->value;
+            $DB->insert_record('course_sections_avail_fields', $availfield);
         }
     }
 
@@ -2680,14 +2679,14 @@ class restore_module_structure_step extends restore_structure_step {
         }
         if ($passed) {
             // Create the object to insert into the database
-            $avail_field = new stdClass();
-            $avail_field->coursemoduleid = $this->task->get_moduleid(); // Lets add the availability cmid
-            $avail_field->userfield = $data->userfield;
-            $avail_field->customfieldid = $data->customfieldid;
-            $avail_field->operator = $data->operator;
-            $avail_field->value = $data->value;
+            $availfield = new stdClass();
+            $availfield->coursemoduleid = $this->task->get_moduleid(); // Lets add the availability cmid
+            $availfield->userfield = $data->userfield;
+            $availfield->customfieldid = $data->customfieldid;
+            $availfield->operator = $data->operator;
+            $availfield->value = $data->value;
             // Insert into the database
-            $DB->insert_record('course_modules_avail_fields', $avail_field);
+            $DB->insert_record('course_modules_avail_fields', $availfield);
         }
     }
 }

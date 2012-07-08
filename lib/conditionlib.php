@@ -363,8 +363,17 @@ class condition_info_section extends condition_info_base {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class condition_info_base {
-    /** @var object, bool, string, string, array */
-     protected $item, $gotdata, $availtable, $availfieldtable, $idfieldname, $usergroupings;
+    protected $item;
+    /** @var bool */
+    protected $gotdata;
+    /** @var string */
+    protected $availtable;
+    /** @var string */
+    protected $availfieldtable;
+    /** @var string */
+    protected $idfieldname;
+    /** @var array */
+    protected $usergroupings;
 
     /**
      * Constructs with item details.
@@ -441,8 +450,7 @@ abstract class condition_info_base {
         $this->gotdata = true;
 
         // Missing extra data
-        if (!isset($item->conditionsgrade) || !isset($item->conditionscompletion)
-                || !isset($item->conditionsfield)) {
+        if (!isset($item->conditionsgrade) || !isset($item->conditionscompletion) || !isset($item->conditionsfield)) {
             if ($expectingmissing<CONDITION_MISSING_EXTRATABLE) {
                 debugging('Performance warning: condition_info constructor is ' .
                         'faster if you pass in a $item from get_fast_modinfo or ' .
@@ -480,8 +488,7 @@ abstract class condition_info_base {
         }
 
         // Does nothing if the variables are already present
-        if (!isset($item->conditionsgrade) || !isset($item->conditionscompletion)
-            || !isset($item->conditionsfield)) {
+        if (!isset($item->conditionsgrade) || !isset($item->conditionscompletion) || !isset($item->conditionsfield)) {
             $item->conditionsgrade = array();
             $item->conditionscompletion = array();
             $item->conditionsfield = array();
@@ -510,33 +517,30 @@ abstract class condition_info_base {
             // For user fields
             $sql = "SELECT a.id as cmaid, a.*, uf.*
                       FROM {" . $tableprefix . "_avail_fields} a
-                 LEFT JOIN {user_info_field} uf
-                        ON a.customfieldid =  uf.id
+                 LEFT JOIN {user_info_field} uf ON a.customfieldid =  uf.id
                      WHERE " . $idfield . " = :itemid";
-            if ($conditions = $DB->get_records_sql($sql, array('itemid' => $item->id))) {
-                foreach ($conditions as $condition) {
-                    // If the custom field is not empty, then
-                    // we have a custom profile field
-                    if (!empty($condition->customfieldid)) {
-                        $field = $condition->customfieldid;
-                        // Check if the profile field name is not empty, if it is
-                        // then the custom profile field no longer exists, so
-                        // display !missing instead.
-                        if (!empty($condition->name)) {
-                            $fieldname = $condition->name;
-                        } else {
-                            $fieldname = '!missing';
-                        }
+            $conditions = $DB->get_records_sql($sql, array('itemid' => $item->id));
+            foreach ($conditions as $condition) {
+                // If the custom field is not empty, then we have a custom profile field
+                if (!empty($condition->customfieldid)) {
+                    $field = $condition->customfieldid;
+                    // Check if the profile field name is not empty, if it is
+                    // then the custom profile field no longer exists, so
+                    // display !missing instead.
+                    if (!empty($condition->name)) {
+                        $fieldname = $condition->name;
                     } else {
-                        $field = $condition->userfield;
-                        $fieldname = $condition->userfield;
+                        $fieldname = '!missing';
                     }
-                    $details = new stdClass;
-                    $details->fieldname = $fieldname;
-                    $details->operator = $condition->operator;
-                    $details->value = $condition->value;
-                    $item->conditionsfield[$field] = $details;
+                } else {
+                    $field = $condition->userfield;
+                    $fieldname = $condition->userfield;
                 }
+                $details = new stdClass;
+                $details->fieldname = $fieldname;
+                $details->operator = $condition->operator;
+                $details->value = $condition->value;
+                $item->conditionsfield[$field] = $details;
             }
         }
     }
@@ -591,7 +595,7 @@ abstract class condition_info_base {
     /**
      * The user fields we can compare
      *
-     * @global $DB
+     * @global moodle_database $DB
      * @return array Associative array from user field constants to display name
      */
     public static function get_condition_user_fields() {
@@ -1175,9 +1179,9 @@ abstract class condition_info_base {
     /**
      * Returns true if a field meets the required conditions, false otherwise.
      *
-     * @param char $operator the requirement/condition
-     * @param char $uservalue the user's value
-     * @param char $value the value required
+     * @param string $operator the requirement/condition
+     * @param string $uservalue the user's value
+     * @param string $value the value required
      * @return boolean
      */
     private function is_field_condition_met($operator, $uservalue, $value) {
@@ -1227,11 +1231,9 @@ abstract class condition_info_base {
     /**
      * Return the value for a user's profile field
      *
-     * @param int $userid set if requesting grade for a different user (does
-     *   not use cache)
+     * @param int $userid set if requesting grade for a different user (does not use cache)
      * @param int $fieldid the user profile field id
-     * @param bool $grabthelot If true, grabs all the user profile fields for
-     *  current user on this course, so that later ones come from cache
+     * @param bool $grabthelot If true, grabs all the user profile fields for current user on this course, so that later ones come from cache
      * @return string the user value, or false if user does not have a user field value yet
      */
     private function get_cached_user_profile_field($userid, $fieldid, $grabthelot) {
