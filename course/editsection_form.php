@@ -38,6 +38,8 @@ class editsection_form extends moodleform {
         $course = $this->_customdata['course'];
 
         if (!empty($CFG->enableavailability)) {
+            // String used by conditions more than once
+            $strcondnone = get_string('none', 'condition');
             // Grouping conditions - only if grouping is enabled at site level
             if (!empty($CFG->enablegroupmembersonly)) {
                 $options = array();
@@ -68,7 +70,7 @@ class editsection_form extends moodleform {
                 $gradeoptions[$id] = $item->get_name();
             }
             asort($gradeoptions);
-            $gradeoptions = array(0 => get_string('none', 'condition')) + $gradeoptions;
+            $gradeoptions = array(0 => $strcondnone) + $gradeoptions;
 
             $grouparray = array();
             $grouparray[] = $mform->createElement('select', 'conditiongradeitemid', '', $gradeoptions);
@@ -92,6 +94,25 @@ class editsection_form extends moodleform {
                     'conditiongradeadds', 2, get_string('addgrades', 'condition'), true);
             $mform->addHelpButton('conditiongradegroup[0]', 'gradecondition', 'condition');
 
+            // Conditions based on user fields
+            $operators = condition_info::get_condition_user_field_operators();
+            $useroptions = condition_info::get_condition_user_fields();
+            asort($useroptions);
+
+            $useroptions = array(0 => $strcondnone) + $useroptions;
+            $grouparray = array();
+            $grouparray[] =& $mform->createElement('select', 'conditionfield', '', $useroptions);
+            $grouparray[] =& $mform->createElement('select', 'conditionfieldoperator', '', $operators);
+            $grouparray[] =& $mform->createElement('text', 'conditionfieldvalue');
+            $mform->setType('conditionfieldvalue', PARAM_RAW);
+            $group = $mform->createElement('group', 'conditionfieldgroup', get_string('userfield', 'condition'), $grouparray);
+
+            $fieldcount = count($fullcs->conditionsfield) + 1;
+
+            $this->repeat_elements(array($group), $fieldcount, array(), 'conditionfieldrepeats', 'conditionfieldadds', 2,
+                                   get_string('adduserfields', 'condition'), true);
+            $mform->addHelpButton('conditionfieldgroup[0]', 'userfield', 'condition');
+
             // Conditions based on completion
             $completion = new completion_info($course);
             if ($completion->is_enabled()) {
@@ -106,7 +127,7 @@ class editsection_form extends moodleform {
                     }
                 }
                 asort($completionoptions);
-                $completionoptions = array(0 => get_string('none', 'condition')) +
+                $completionoptions = array(0 => $strcondnone) +
                         $completionoptions;
 
                 $completionvalues = array(
@@ -145,6 +166,18 @@ class editsection_form extends moodleform {
                     $num++;
                 }
 
+                $num = 0;
+                foreach ($fullcs->conditionsfield as $fieldid => $data) {
+                    $groupelements = $mform->getElement(
+                            'conditionfieldgroup[' . $num . ']')->getElements();
+                    $groupelements[0]->setValue($fieldid);
+                    $groupelements[1]->setValue(is_null($data->operator) ? '' :
+                            $data->operator);
+                    $groupelements[2]->setValue(is_null($data->value) ? '' :
+                            $data->value);
+                    $num++;
+                }
+
                 if ($completion->is_enabled()) {
                     $num = 0;
                     foreach ($fullcs->conditionscompletion as $othercmid => $state) {
@@ -176,6 +209,25 @@ class editsection_form extends moodleform {
                 $data['availablefrom'] && $data['availableuntil'] &&
                 $data['availablefrom'] > $data['availableuntil']) {
             $errors['availablefrom'] = get_string('badavailabledates', 'condition');
+        }
+
+        // Conditions: Verify that the user profile field has not been declared more than once
+        if (array_key_exists('conditionfieldgroup', $data)) {
+            // Array to store the existing fields
+            $arrcurrentfields = array();
+            // Error message displayed if any condition is declared more than once. We use lang string because
+            // this way we don't actually generate the string unless there is an error.
+            $stralreadydeclaredwarning = new lang_string('fielddeclaredmultipletimes', 'condition');
+            foreach ($data['conditionfieldgroup'] as $i => $fielddata) {
+                if ($fielddata['conditionfield'] == 0) { // Don't need to bother if none is selected
+                    continue;
+                }
+                if (in_array($fielddata['conditionfield'], $arrcurrentfields)) {
+                    $errors["conditionfieldgroup[{$i}]"] = $stralreadydeclaredwarning->out();
+                }
+                // Add the field to the array
+                $arrcurrentfields[] = $fielddata['conditionfield'];
+            }
         }
 
         return $errors;

@@ -3581,6 +3581,12 @@ function get_user_field_name($field) {
     // Some fields have language strings which are not the same as field name
     switch ($field) {
         case 'phone1' : return get_string('phone');
+        case 'url' : return get_string('webpage');
+        case 'icq' : return get_string('icqnumber');
+        case 'skype' : return get_string('skypeid');
+        case 'aim' : return get_string('aimid');
+        case 'yahoo' : return get_string('yahooid');
+        case 'msn' : return get_string('msnid');
     }
     // Otherwise just use the same lang string
     return get_string($field);
@@ -4509,6 +4515,15 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         echo $OUTPUT->notification($strdeleted.get_string('completion', 'completion'), 'notifysuccess');
     }
 
+    // Remove all data from availability and completion tables that is associated
+    // with course-modules belonging to this course. Note this is done even if the
+    // features are not enabled now, in case they were enabled previously
+    $subquery = 'coursemoduleid IN (SELECT id from {course_modules} WHERE course = ?)';
+    $subqueryparam = array($courseid);
+    $DB->delete_records_select('course_modules_completion', $subquery, $subqueryparam);
+    $DB->delete_records_select('course_modules_availability', $subquery, $subqueryparam);
+    $DB->delete_records_select('course_modules_avail_fields', $subquery, $subqueryparam);
+
     // Remove all data from gradebook - this needs to be done before course modules
     // because while deleting this information, the system may need to reference
     // the course modules that own the grades.
@@ -4584,6 +4599,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $DB->delete_records_select('course_modules_availability',
            'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
            array($courseid));
+    $DB->delete_records_select('course_modules_avail_fields',
+           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
+           array($courseid));
 
     // Remove course-module data.
     $cms = $DB->get_records('course_modules', array('course'=>$course->id));
@@ -4598,7 +4616,6 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
         context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
         $DB->delete_records('course_modules', array('id'=>$cm->id));
     }
-
     if ($showfeedback) {
         echo $OUTPUT->notification($strdeleted.get_string('type_mod_plural', 'plugin'), 'notifysuccess');
     }
@@ -4692,6 +4709,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
 
     // Delete course sections and availability options.
     $DB->delete_records_select('course_sections_availability',
+           'coursesectionid IN (SELECT id from {course_sections} WHERE course=?)',
+           array($course->id));
+    $DB->delete_records_select('course_sections_avail_fields',
            'coursesectionid IN (SELECT id from {course_sections} WHERE course=?)',
            array($course->id));
     $DB->delete_records('course_sections', array('course'=>$course->id));

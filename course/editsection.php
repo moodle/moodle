@@ -54,6 +54,7 @@ if (!empty($CFG->enableavailability)) {
     $sectioninfo = $modinfo->get_section_info($section->section);
     $section->conditionsgrade = $sectioninfo->conditionsgrade;
     $section->conditionscompletion = $sectioninfo->conditionscompletion;
+    $section->conditionsfield = $sectioninfo->conditionsfield;
 }
 
 $mform = new editsection_form($PAGE->url, array('course' => $course, 'editoroptions' => $editoroptions,

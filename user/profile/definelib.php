@@ -289,6 +289,13 @@ function profile_delete_field($id) {
         print_error('cannotdeletecustomfield');
     }
 
+    // Delete any module dependencies for this field
+    $DB->delete_records('course_modules_avail_fields', array('customfieldid' => $id));
+    $DB->delete_records('course_sections_avail_fields', array('customfieldid' => $id));
+
+    // Need to rebuild course cache to update the info
+    rebuild_course_cache();
+
     /// Try to remove the record from the database
     $DB->delete_records('user_info_field', array('id'=>$id));
 

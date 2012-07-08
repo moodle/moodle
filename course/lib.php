@@ -1111,6 +1111,7 @@ function get_array_of_activities($courseid) {
                        condition_info::fill_availability_conditions($rawmods[$seq]);
                        $mod[$seq]->conditionscompletion = $rawmods[$seq]->conditionscompletion;
                        $mod[$seq]->conditionsgrade  = $rawmods[$seq]->conditionsgrade;
+                       $mod[$seq]->conditionsfield  = $rawmods[$seq]->conditionsfield;
                    }
 
                    $modname = $mod[$seq]->mod;
@@ -2928,6 +2929,7 @@ function delete_course_module($id) {
     // very quick on an empty table)
     $DB->delete_records('course_modules_completion', array('coursemoduleid' => $cm->id));
     $DB->delete_records('course_modules_availability', array('coursemoduleid'=> $cm->id));
+    $DB->delete_records('course_modules_avail_fields', array('coursemoduleid' => $cm->id));
     $DB->delete_records('course_completion_criteria', array('moduleinstance' => $cm->id,
                                                             'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY));
 
