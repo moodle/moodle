@@ -33,4 +33,7 @@
 .qce-panel .qce-search input {width:70%;}
 
 .qce-panel .qce-cohort.headings {font-weight:bold;border-width:0;}
-.qce-panel .qce-cohort.headings .qce-cohort-button {display:none;}
+.qe-panel .qce-cohort.headings .qce-cohort-button {display:none;}
+
+.ie7 .qce-panel .qce-cohort div,
+.ie7 .qce-panel .canenrolusers .qce-cohort .qce-cohort-name {float:left;}
