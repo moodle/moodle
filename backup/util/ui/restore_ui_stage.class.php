@@ -772,6 +772,9 @@ class restore_ui_stage_complete extends restore_ui_stage_process {
             $html .= $renderer->box_end();
         }
         $html .= $renderer->box_start();
+        if (array_key_exists('file_missing_in_backup', $this->results)) {
+            $html .= $renderer->notification(get_string('restorefileweremissing', 'backup'), 'notifyproblem');
+        }
         $html .= $renderer->notification(get_string('restoreexecutionsuccess', 'backup'), 'notifysuccess');
         $html .= $renderer->continue_button(new moodle_url('/course/view.php', array(
             'id' => $this->get_ui()->get_controller()->get_courseid())), 'get');
