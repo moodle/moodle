@@ -153,6 +153,7 @@ $string['lockedbypermission'] = 'You don\'t have sufficient permissions to chang
 $string['lockedbyconfig'] = 'This setting has been locked by the default backup settings';
 $string['lockedbyhierarchy'] = 'Locked by dependencies';
 $string['managefiles'] = 'Manage backup files';
+$string['missingfilesinpool'] = 'Some files could not be saved during the backup, it won\'t be possible to restore them.';
 $string['moodleversion'] = 'Moodle version';
 $string['moreresults'] = 'There are too many results, enter a more specific search.';
 $string['nomatchingcourses'] = 'There are no courses to display';
