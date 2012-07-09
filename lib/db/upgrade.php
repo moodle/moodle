@@ -891,10 +891,15 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('backup_ids');
 
         // Conditionally launch drop table for backup_ids
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table);
+        // Conditionally launch drop field deleted from course_completion_crit_compl
+        if ($dbman->field_exists($table2, $field)) {
+            $dbman->drop_field($table2, $field);
         }
 
+        // Drop unused table "course_completion_notify"
+        $table = new xmldb_table('course_completion_notify');
+
+        // Conditionally launch drop table course_completion_notify
         // Main savepoint reached
         upgrade_main_savepoint(true, 2012062500.02);
     }
@@ -948,6 +953,54 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached
         upgrade_main_savepoint(true, 2012062500.05);
     }
+
+    if ($oldversion < 2012062500.06) {
+
+        // Drop "deleted" fields
+        $table = new xmldb_table('course_completions');
+        $field = new xmldb_field('timenotified');
+        $field = new xmldb_field('deleted');
+
+        // Conditionally launch drop field deleted from course_completions
+        if ($dbman->field_exists($table, $field)) {
+        $dbman->drop_field($table, $field);
+        }
+
+        $field = new xmldb_field('timenotified');
+        // Conditionally launch drop field timenotified from course_completions
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012062500.06);
+    }
+
+    if ($oldversion < 2012062500.07) {
+        $table = new xmldb_table('course_completion_crit_compl');
+        $field = new xmldb_field('deleted');
+
+        // Conditionally launch drop field deleted from course_completion_crit_compl
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012062500.07);
+    }
+
+    if ($oldversion < 2012062500.08) {
+
+        // Drop unused table "course_completion_notify"
+        $table = new xmldb_table('course_completion_notify');
+
+        // Conditionally launch drop table course_completion_notify
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012062500.08);
+     }
 
     return true;
 }

@@ -2025,15 +2025,11 @@ class backup_course_completion_structure_step extends backup_structure_step {
         $criteriacompletions = new backup_nested_element('course_completion_crit_completions');
 
         $criteriacomplete = new backup_nested_element('course_completion_crit_compl', array('id'), array(
-            'criteriaid', 'userid','gradefinal','unenrolled','deleted','timecompleted'
+            'criteriaid', 'userid', 'gradefinal', 'unenrolled', 'timecompleted'
         ));
 
         $coursecompletions = new backup_nested_element('course_completions', array('id'), array(
-            'userid', 'course', 'deleted', 'timenotified', 'timeenrolled','timestarted','timecompleted','reaggregate'
-        ));
-
-        $notify = new backup_nested_element('course_completion_notify', array('id'), array(
-            'course','role','message','timesent'
+            'userid', 'course', 'timeenrolled', 'timestarted', 'timecompleted', 'reaggregate'
         ));
 
         $aggregatemethod = new backup_nested_element('course_completion_aggr_methd', array('id'), array(
@@ -2044,7 +2040,6 @@ class backup_course_completion_structure_step extends backup_structure_step {
             $criteria->add_child($criteriacompletions);
                 $criteriacompletions->add_child($criteriacomplete);
         $cc->add_child($coursecompletions);
-        $cc->add_child($notify);
         $cc->add_child($aggregatemethod);
 
         // We need to get the courseinstances shortname rather than an ID for restore
@@ -2054,7 +2049,6 @@ class backup_course_completion_structure_step extends backup_structure_step {
                                    WHERE ccc.course = ?", array(backup::VAR_COURSEID));
 
 
-        $notify->set_source_table('course_completion_notify', array('course' => backup::VAR_COURSEID));
         $aggregatemethod->set_source_table('course_completion_aggr_methd', array('course' => backup::VAR_COURSEID));
 
         if ($userinfo) {
@@ -2065,7 +2059,6 @@ class backup_course_completion_structure_step extends backup_structure_step {
         $criteria->annotate_ids('role', 'role');
         $criteriacomplete->annotate_ids('user', 'userid');
         $coursecompletions->annotate_ids('user', 'userid');
-        $notify->annotate_ids('role', 'role');
 
         return $cc;
 

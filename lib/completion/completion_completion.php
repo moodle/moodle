@@ -42,7 +42,7 @@ class completion_completion extends data_object {
     public $table = 'course_completions';
 
     /* @var array $required_fields Array of required table fields, must start with 'id'. */
-    public $required_fields = array('id', 'userid', 'course', 'deleted', 'timenotified',
+    public $required_fields = array('id', 'userid', 'course',
         'timeenrolled', 'timestarted', 'timecompleted', 'reaggregate');
 
     /* @var int $userid User ID */
@@ -50,12 +50,6 @@ class completion_completion extends data_object {
 
     /* @var int $course Course ID */
     public $course;
-
-    /* @var int $deleted set to 1 if this record has been deleted */
-    public $deleted;
-
-    /* @var int Timestamp the interested parties were notified of this user's completion. */
-    public $timenotified;
 
     /* @var int Time of course enrolment {@link completion_completion::mark_enrolled()} */
     public $timeenrolled;
@@ -80,7 +74,6 @@ class completion_completion extends data_object {
      * @return data_object instance of data_object or false if none found.
      */
     public static function fetch($params) {
-        $params['deleted'] = null;
         return self::fetch_helper('course_completions', __CLASS__, $params);
     }
 
