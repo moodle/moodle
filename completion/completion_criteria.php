@@ -25,8 +25,8 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->libdir.'/completion/data_object.php');
-require_once($CFG->libdir.'/completion/completion_criteria_completion.php');
+require_once($CFG->dirroot.'/completion/data_object.php');
+require_once($CFG->dirroot.'/completion/completion_criteria_completion.php');
 
 /**
  * Self completion criteria type
@@ -172,7 +172,7 @@ abstract class completion_criteria extends data_object {
         }
 
         $class = 'completion_criteria_'.$COMPLETION_CRITERIA_TYPES[$params['criteriatype']];
-        require_once($CFG->libdir.'/completion/'.$class.'.php');
+        require_once($CFG->dirroot.'/completion/'.$class.'.php');
 
         return new $class($params, false);
     }

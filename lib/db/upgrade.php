@@ -405,7 +405,7 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012042300.02) {
-        require_once($CFG->libdir . '/completion/completion_criteria.php');
+        require_once($CFG->dirroot.'/completion/completion_criteria.php');
         // Delete orphaned criteria which were left when modules were removed
         if ($DB->get_dbfamily() === 'mysql') {
             $sql = "DELETE cc FROM {course_completion_criteria} cc
