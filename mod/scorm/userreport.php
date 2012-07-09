@@ -127,11 +127,16 @@ if ($scoes = $DB->get_records_select('scorm_scoes', "scorm=? ORDER BY id", array
                     $score = $trackdata->score_raw;
                 }
                 if ($trackdata->status == '') {
-                    $trackdata->status = 'notattempted';
+                    if (!empty($trackdata->progress)) {
+                        $trackdata->status = $trackdata->progress;
+                    } else {
+                        $trackdata->status = 'notattempted';
+                    }
                 }
                 $detailslink = '<a href="userreport.php?b='.$sco->id.'&amp;user='.$user.'&amp;attempt='.$attempt.'" title="'.
                 get_string('details', 'scorm').'">'.get_string('details', 'scorm').'</a>';
             } else {
+                $trackdata = new stdClass();
                 $trackdata->status = 'notattempted';
                 $trackdata->total_time = '&nbsp;';
                 $detailslink = '&nbsp;';
@@ -180,21 +185,12 @@ if (!empty($b)) {
     $table->width = '100%';
     $table->size = array('*', '*');
     $existelements = false;
-    if (scorm_version_check($scorm->version, SCORM_13)) {
-        $elements = array(
-                'raw' => 'cmi.score.raw',
-                'min' => 'cmi.score.min',
-                'max' => 'cmi.score.max',
-                'status' => 'cmi.completion_status',
-                'time' => 'cmi.total_time');
-    } else {
-        $elements = array(
-                'raw' => 'cmi.core.score.raw',
-                'min' => 'cmi.core.score.min',
-                'max' => 'cmi.core.score.max',
-                'status' => 'cmi.core.lesson_status',
-                'time' => 'cmi.core.total_time');
-    }
+    $elements = array(
+            'min'    => 'score_min',
+            'raw'    => 'score_raw',
+            'max'    => 'score_max',
+            'status' => 'status',
+            'time'   => 'total_time');
     $printedelements = array();
     foreach ($elements as $key => $element) {
         if (isset($trackdata->$element)) {
@@ -281,11 +277,26 @@ if (!empty($b)) {
     while (isset($trackdata->$objectiveid)) {
         $existobjective = true;
         $printedelements[]=$objectiveid;
+
+        // Merge 2004 and 1.2 SCORM formats
+        if (scorm_version_check($scorm->version, SCORM_13)) {
+            $sucstatuskey = 'cmi.objectives.'.$i.'.success_status';
+            $progstatuskey = 'cmi.objectives.'.$i.'.progress_measure';
+            $compstatuskey = 'cmi.objectives.'.$i.'.completion_status';
+            $statuskey = 'cmi.objectives.'.$i.'.status';
+            if (isset($trackdata->$sucstatuskey)) {
+                $trackdata->$statuskey = $trackdata->$sucstatuskey;
+            } elseif (isset($trackdata->$progstatuskey)) {
+                $trackdata->$statuskey = $trackdata->$progstatuskey;
+            } elseif (isset($trackdata->$compstatuskey)) {
+                $trackdata->$statuskey = $trackdata->$compstatuskey;
+            }
+        }
         $elements = array(
                 $objectiveid,
                 'cmi.objectives.'.$i.'.status',
-                'cmi.objectives.'.$i.'.score.raw',
                 'cmi.objectives.'.$i.'.score.min',
+                'cmi.objectives.'.$i.'.score.raw',
                 'cmi.objectives.'.$i.'.score.max');
         $row = array();
         foreach ($elements as $element) {
