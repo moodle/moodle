@@ -1310,26 +1310,33 @@ function forum_print_overview($courses,&$htmlarray) {
         return;
     }
 
-
-    // look for new posts since lastaccess
-    $course_tuples = join(
-        ' OR ',
-        array_fill(0, count($visited_courses), '(f.course = ? AND p.created > ?)')
-    );
-
-    $sql = "SELECT f.id, COUNT(*) "
-                .'FROM {forum_posts} p, {forum_discussions} d, {forum} f '
-                .'WHERE p.discussion = d.id AND d.forum = f.id '
-                ."AND ($course_tuples) "
-                ."AND p.userid != ? "
-                ."GROUP BY f.id";
-
+    // Courses to search for new posts
+    $coursessqls = array();
     $params = array();
     foreach ($courses as $course) {
-        $params[] = $course->id;
-        $params[] = $course->lastaccess;
+
+        // If the user has never entered into the course all posts are pending
+        if ($course->lastaccess == 0) {
+            $coursessqls[] = '(f.course = ?)';
+            $params[] = $course->id;
+
+        // Only posts created after the course last access
+        } else {
+            $coursessqls[] = '(f.course = ? AND p.created > ?)';
+            $params[] = $course->id;
+            $params[] = $course->lastaccess;
+        }
     }
     $params[] = $USER->id;
+    $coursessql = implode(' OR ', $coursessqls);
+
+    $sql = "SELECT f.id, COUNT(*) as count "
+                .'FROM {forum} f '
+                .'JOIN {forum_discussions} d ON d.forum  = f.id '
+                .'JOIN {forum_posts} p ON p.discussion = d.id '
+                ."WHERE ($coursessql) "
+                .'AND p.userid != ? '
+                .'GROUP BY f.id';
 
     if (!$new = $DB->get_records_sql($sql, $params)) {
         $new = array(); // avoid warnings
