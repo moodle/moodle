@@ -2067,4 +2067,16 @@ class grade_item extends grade_object {
             return false;
         }
     }
+
+    /**
+     * Returns whether the grade item can control the visibility of the grades
+     *
+     * @return bool
+     */
+    public function can_control_visibility() {
+        if (get_plugin_directory($this->itemtype, $this->itemmodule)) {
+            return !plugin_supports($this->itemtype, $this->itemmodule, FEATURE_CONTROLS_GRADE_VISIBILITY, false);
+        }
+        return true;
+    }
 }
