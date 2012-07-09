@@ -818,9 +818,12 @@ abstract class restore_dbops {
      * @param int|null $olditemid
      * @param int|null $forcenewcontextid explicit value for the new contextid (skip mapping)
      * @param bool $skipparentitemidctxmatch
+     * @return array of result object
      */
     public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null, $forcenewcontextid = null, $skipparentitemidctxmatch = false) {
         global $DB;
+
+        $results = array();
 
         if ($forcenewcontextid) {
             // Some components can have "forced" new contexts (example: questions can end belonging to non-standard context mappings,
@@ -901,8 +904,14 @@ abstract class restore_dbops {
                 // this is a regular file, it must be present in the backup pool
                 $backuppath = $basepath . backup_file_manager::get_backup_content_file_location($file->contenthash);
 
+                // The file is not found in the backup.
                 if (!file_exists($backuppath)) {
-                    throw new restore_dbops_exception('file_not_found_in_pool', $file);
+                    $result = new stdClass();
+                    $result->code = 'file_missing_in_backup';
+                    $result->message = sprintf('missing file %s%s in backup', $file->filepath, $file->filename);
+                    $result->level = backup::LOG_WARNING;
+                    $results[] = $result;
+                    continue;
                 }
 
                 // create the file in the filepool if it does not exist yet
@@ -959,6 +968,7 @@ abstract class restore_dbops {
             }
         }
         $rs->close();
+        return $results;
     }
 
     /**
