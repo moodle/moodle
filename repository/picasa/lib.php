@@ -98,9 +98,6 @@ class repository_picasa extends repository {
         return parent::logout();
     }
 
-    public function get_name() {
-        return get_string('pluginname', 'repository_picasa');
-    }
     public function supported_filetypes() {
         return array('web_image');
     }
