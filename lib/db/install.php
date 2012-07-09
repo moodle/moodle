@@ -72,7 +72,7 @@ function xmldb_main_install() {
     $newsite->shortname    = '';
     $newsite->summary      = NULL;
     $newsite->newsitems    = 3;
-    $newsite->numsections  = 0;
+    $newsite->numsections  = 1;
     $newsite->category     = 0;
     $newsite->format       = 'site';  // Only for this course
     $newsite->timecreated  = time();
