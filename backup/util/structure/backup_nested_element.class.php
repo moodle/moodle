@@ -37,6 +37,8 @@ class backup_nested_element extends base_nested_element implements processable {
     protected $aliases;   // Define DB->final element aliases
     protected $fileannotations;   // array of file areas to be searched by file annotations
     protected $counter;   // Number of instances of this element that have been processed
+    protected $results;  // Logs the results we encounter during the process.
+    protected $logs;     // Some log messages that could be retrieved later.
 
     /**
      * Constructor - instantiates one backup_nested_element, specifying its basic info.
@@ -55,8 +57,16 @@ class backup_nested_element extends base_nested_element implements processable {
         $this->aliases   = array();
         $this->fileannotations = array();
         $this->counter   = 0;
+        $this->results  = array();
+        $this->logs     = array();
     }
 
+    /**
+     * Process the nested element
+     *
+     * @param object $processor the processor
+     * @return void
+     */
     public function process($processor) {
         if (!$processor instanceof base_processor) { // No correct processor, throw exception
             throw new base_element_struct_exception('incorrect_processor');
@@ -111,6 +121,69 @@ class backup_nested_element extends base_nested_element implements processable {
         }
         // Close the iterator (DB recordset / array iterator)
         $iterator->close();
+    }
+
+    /**
+     * Saves a log message to an array
+     *
+     * @see backup_helper::log()
+     * @param string $message to add to the logs
+     * @param int $level level of importance {@link backup::LOG_DEBUG} and other constants
+     * @param mixed $a to be included in $message
+     * @param int $depth of the message
+     * @param display $bool supporting translation via get_string() if true
+     * @return void
+     */
+    protected function add_log($message, $level, $a = null, $depth = null, $display = false) {
+        // Adding the result to the oldest parent.
+        if ($this->get_parent()) {
+            $parent = $this->get_grandparent();
+            $parent->add_log($message, $level, $a, $depth, $display);
+        } else {
+            $log = new stdClass();
+            $log->message = $message;
+            $log->level = $level;
+            $log->a = $a;
+            $log->depth = $depth;
+            $log->display = $display;
+            $this->logs[] = $log;
+        }
+    }
+
+    /**
+     * Saves the results to an array
+     *
+     * @param array $result associative array
+     * @return void
+     */
+    protected function add_result($result) {
+        if (is_array($result)) {
+            // Adding the result to the oldest parent.
+            if ($this->get_parent()) {
+                $parent = $this->get_grandparent();
+                $parent->add_result($result);
+            } else {
+                $this->results = array_merge($this->results, $result);
+            }
+        }
+    }
+
+    /**
+     * Returns the logs
+     *
+     * @return array of log objects
+     */
+    public function get_logs() {
+        return $this->logs;
+    }
+
+    /**
+     * Returns the results
+     *
+     * @return associative array of results
+     */
+    public function get_results() {
+        return $this->results;
     }
 
     public function set_source_array($arr) {
