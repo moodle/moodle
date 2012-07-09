@@ -167,6 +167,7 @@ $string['restoreactivity'] = 'Restore activity';
 $string['restorecourse'] = 'Restore course';
 $string['restorecoursesettings'] = 'Course settings';
 $string['restoreexecutionsuccess'] = 'The course was restored successfully, clicking the continue button below will take you to view the course you restored.';
+$string['restorefileweremissing'] = 'Some files could not be restored because they were missing in the backup.';
 $string['restorenewcoursefullname'] = 'New course name';
 $string['restorenewcourseshortname'] = 'New course short name';
 $string['restorenewcoursestartdate'] = 'New start date';
