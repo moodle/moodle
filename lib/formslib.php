@@ -406,6 +406,22 @@ abstract class moodleform {
                 }
             }
         }
+        // Check all the filemanager elements to make sure they do not have too many
+        // files in them.
+        foreach ($mform->_elements as $element) {
+            if ($element->_type == 'filemanager') {
+                $maxfiles = $element->getMaxfiles();
+                if ($maxfiles > 0) {
+                    $draftid = (int)$element->getValue();
+                    $fs = get_file_storage();
+                    $context = context_user::instance($USER->id);
+                    $files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, '', false);
+                    if (count($files) > $maxfiles) {
+                        $errors[$element->getName()] = get_string('err_maxfiles', 'form', $maxfiles);
+                    }
+                }
+            }
+        }
         if (empty($errors)) {
             return true;
         } else {
