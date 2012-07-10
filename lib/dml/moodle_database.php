@@ -1578,11 +1578,11 @@ abstract class moodle_database {
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function count_records_sql($sql, array $params=null) {
-        if ($count = $this->get_field_sql($sql, $params)) {
-            return $count;
-        } else {
-            return 0;
+        $count = $this->get_field_sql($sql, $params);
+        if ($count === false or !is_number($count) or $count < 0) {
+            throw new coding_exception("count_records_sql() expects the first field to contain non-negative number from COUNT(), '$count' found instead.");
         }
+        return (int)$count;
     }
 
     /**
