@@ -229,7 +229,7 @@ class course_edit_form extends moodleform {
             if (!empty($course->id)) {
                 $mform->setConstant('visible', $course->visible);
             } else {
-                $mform->setConstant('visible', $category->visible);
+                $mform->setConstant('visible', $courseconfig->visible);
             }
         }
 
