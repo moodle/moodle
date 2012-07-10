@@ -1223,7 +1223,7 @@ class accesslib_testcase extends advanced_testcase {
      */
     public function test_get_role_users() {
         global $DB;
-        
+
         $this->resetAfterTest();
 
         $systemcontext = context_system::instance();
