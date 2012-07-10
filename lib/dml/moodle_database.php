@@ -574,21 +574,38 @@ abstract class moodle_database {
      * @return array An array containing sql 'where' part and 'params'
      */
     protected function where_clause_list($field, array $values) {
+        if (empty($values)) {
+            return array("1 = 2", array());
+        }
+
+        // Note: Do not use get_in_or_equal() because it can not deal with bools and nulls.
+
         $params = array();
-        $select = array();
+        $select = "";
         $values = (array)$values;
         foreach ($values as $value) {
             if (is_bool($value)) {
                 $value = (int)$value;
             }
             if (is_null($value)) {
-                $select[] = "$field IS NULL";
+                $select = "$field IS NULL";
             } else {
-                $select[] = "$field = ?";
                 $params[] = $value;
             }
         }
-        $select = implode(" OR ", $select);
+        if ($params) {
+            if ($select !== "") {
+                $select = "$select OR ";
+            }
+            $count = count($params);
+            if ($count == 1) {
+                $select = $select."$field = ?";
+            } else {
+                $qs = str_repeat(',?', $count);
+                $qs = ltrim($qs, ',');
+                $select = $select."$field IN ($qs)";
+            }
+        }
         return array($select, $params);
     }
 
@@ -1034,10 +1051,6 @@ abstract class moodle_database {
      */
     public function get_recordset_list($table, $field, array $values, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
         list($select, $params) = $this->where_clause_list($field, $values);
-        if (empty($select)) {
-            $select = '1 = 2'; // Fake condition, won't return rows ever. MDL-17645
-            $params = array();
-        }
         return $this->get_recordset_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
     }
 
@@ -1132,10 +1145,6 @@ abstract class moodle_database {
      */
     public function get_records_list($table, $field, array $values, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
         list($select, $params) = $this->where_clause_list($field, $values);
-        if (empty($select)) {
-            // nothing to return
-            return array();
-        }
         return $this->get_records_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
     }
 
@@ -1662,10 +1671,6 @@ abstract class moodle_database {
      */
     public function delete_records_list($table, $field, array $values) {
         list($select, $params) = $this->where_clause_list($field, $values);
-        if (empty($select)) {
-            // nothing to delete
-            return true;
-        }
         return $this->delete_records_select($table, $select, $params);
     }
 
