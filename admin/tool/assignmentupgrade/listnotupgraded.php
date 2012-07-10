@@ -24,10 +24,10 @@
 
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->dirroot . '/admin/tool/assignmentupgrade/locallib.php');
-require_once($CFG->dirroot . '/admin/tool/assignmentupgrade/upgradableassignmentstable.php');
-require_once($CFG->dirroot . '/admin/tool/assignmentupgrade/upgradableassignmentsbatchform.php');
-require_once($CFG->dirroot . '/admin/tool/assignmentupgrade/paginationform.php');
+require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/assignmentupgrade/locallib.php');
+require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/assignmentupgrade/upgradableassignmentstable.php');
+require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/assignmentupgrade/upgradableassignmentsbatchform.php');
+require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/assignmentupgrade/paginationform.php');
 
 // admin_externalpage_setup calls require_login and checks moodle/site:config
 admin_externalpage_setup('assignmentupgrade', '', array(), tool_assignmentupgrade_url('listnotupgraded'));

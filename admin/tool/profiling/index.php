@@ -142,7 +142,7 @@ if (isset($script)) {
 
     // The flexitable that will root listings
     $table = new xhprof_table_sql('profiling-list-table');
-    $baseurl = $CFG->wwwroot . '/admin/tool/profiling/index.php';
+    $baseurl = $CFG->wwwroot . '/'.$CFG->admin.'/tool/profiling/index.php';
 
     // Check if we are listing all or some URL ones
     $sqlconditions = '';
