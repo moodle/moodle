@@ -281,23 +281,25 @@ abstract class backup_cron_automated_helper {
         $midnight = usergetmidnight($now, $timezone);
         $date = usergetdate($now, $timezone);
 
-        //Get number of days (from today) to execute backups
-        $automateddays = substr($config->backup_auto_weekdays,$date['wday']) . $config->backup_auto_weekdays;
-        $daysfromtoday = strpos($automateddays, "1");
+        // Get number of days (from today) to execute backups
+        $automateddays = substr($config->backup_auto_weekdays, $date['wday']) . $config->backup_auto_weekdays;
+        $daysfromtoday = strpos($automateddays, "1", 1);
+
+        // If we can't find the next day, we set it to tomorrow
         if (empty($daysfromtoday)) {
             $daysfromtoday = 1;
         }
 
-        //If some day has been found
+        // If some day has been found
         if ($daysfromtoday !== false) {
-            //Calculate distance
-            $dist = ($daysfromtoday * 86400) +                //Days distance
-                    ($config->backup_auto_hour * 3600) +      //Hours distance
-                    ($config->backup_auto_minute * 60);       //Minutes distance
+            // Calculate distance
+            $dist = ($daysfromtoday * 86400) +                // Days distance
+                    ($config->backup_auto_hour * 3600) +      // Hours distance
+                    ($config->backup_auto_minute * 60);       // Minutes distance
             $result = $midnight + $dist;
         }
 
-        //If that time is past, call the function recursively to obtain the next valid day
+        // If that time is past, call the function recursively to obtain the next valid day
         if ($result > 0 && $result < time()) {
             $result = self::calculate_next_automated_backup($timezone, $result);
         }
