@@ -899,7 +899,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012062500.02);
     }
 
-    if ($oldversion < 2012062500.04) {
+    if ($oldversion < 2012070600.04) {
         // Define table course_modules_avail_fields to be created
         $table = new xmldb_table('course_modules_avail_fields');
 
@@ -921,10 +921,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2012062500.04);
+        upgrade_main_savepoint(true, 2012070600.04);
     }
 
-    if ($oldversion < 2012062500.05) {
+    if ($oldversion < 2012070600.05) {
         // Define table course_sections_avail_fields to be created
         $table = new xmldb_table('course_sections_avail_fields');
 
@@ -946,10 +946,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2012062500.05);
+        upgrade_main_savepoint(true, 2012070600.05);
     }
 
-    if ($oldversion < 2012062500.06) {
+    if ($oldversion < 2012070600.06) {
 
         // Drop "deleted" fields
         $table = new xmldb_table('course_completions');
@@ -968,10 +968,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2012062500.06);
+        upgrade_main_savepoint(true, 2012070600.06);
     }
 
-    if ($oldversion < 2012062500.07) {
+    if ($oldversion < 2012070600.07) {
         $table = new xmldb_table('course_completion_crit_compl');
         $field = new xmldb_field('deleted');
 
@@ -980,10 +980,10 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->drop_field($table, $field);
         }
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2012062500.07);
+        upgrade_main_savepoint(true, 2012070600.07);
     }
 
-    if ($oldversion < 2012062500.08) {
+    if ($oldversion < 2012070600.08) {
 
         // Drop unused table "course_completion_notify"
         $table = new xmldb_table('course_completion_notify');
@@ -994,10 +994,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2012062500.08);
+        upgrade_main_savepoint(true, 2012070600.08);
      }
 
-    if ($oldversion < 2012062500.09) {
+    if ($oldversion < 2012070600.09) {
 
         // Define index path (not unique) to be added to context
         $table = new xmldb_table('context');
@@ -1012,10 +1012,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2012062500.09);
+        upgrade_main_savepoint(true, 2012070600.09);
     }
 
-    if ($oldversion < 2012062500.10) {
+    if ($oldversion < 2012070600.10) {
 
         // Define index name (unique) to be dropped form role
         $table = new xmldb_table('role');
@@ -1027,7 +1027,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2012062500.10);
+        upgrade_main_savepoint(true, 2012070600.10);
     }
 
 
