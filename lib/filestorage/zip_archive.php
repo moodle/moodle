@@ -46,8 +46,11 @@ class zip_archive extends file_archive {
     /** @var int Iteration position */
     protected $pos = 0;
 
-    /** @var zip_archive TipArchive instance */
+    /** @var ZipArchive instance */
     protected $za;
+
+    /** @var bool was this archive modified? */
+    protected $modified = false;
 
     /**
      * Open or create archive (depending on $mode)
@@ -87,7 +90,7 @@ class zip_archive extends file_archive {
         } else {
             $this->za = null;
             $this->archivepathname = null;
-            $this->encooding       = 'utf-8';
+            $this->encoding        = 'utf-8';
             // TODO: maybe we should return some error info
             return false;
         }
@@ -105,6 +108,11 @@ class zip_archive extends file_archive {
 
         $res = $this->za->close();
         $this->za = null;
+
+        if ($this->modified) {
+            $this->fix_utf8_flags();
+            $this->modified = false;
+        }
 
         return $res;
     }
@@ -241,7 +249,11 @@ class zip_archive extends file_archive {
             }
         }
 
-        return $this->za->addFile($pathname, $localname);
+        if (!$this->za->addFile($pathname, $localname)) {
+            return false;
+        }
+        $this->modified = true;
+        return true;
     }
 
     /**
@@ -274,8 +286,11 @@ class zip_archive extends file_archive {
         }
         $this->usedmem += strlen($contents);
 
-        return $this->za->addFromString($localname, $contents);
-
+        if (!$this->za->addFromString($localname, $contents)) {
+            return false;
+        }
+        $this->modified = true;
+        return true;
     }
 
     /**
@@ -296,7 +311,11 @@ class zip_archive extends file_archive {
             return false;
         }
 
-        return $this->za->addEmptyDir($localname);
+        if (!$this->za->addEmptyDir($localname)) {
+            return false;
+        }
+        $this->modified = true;
+        return true;
     }
 
     /**
@@ -346,5 +365,142 @@ class zip_archive extends file_archive {
         }
 
         return ($this->pos < $this->count());
+    }
+
+    /**
+     * Add unicode flag to all files in archive.
+     *
+     * NOTE: single disk archives only, no ZIP64 support.
+     *
+     * @return bool success, modifies the file contents
+     */
+    protected function fix_utf8_flags() {
+        if ($this->encoding !== 'utf-8') {
+            return true;
+        }
+
+        if (!file_exists($this->archivepathname)) {
+            return true;
+        }
+
+        // Note: the ZIP structure is described at http://www.pkware.com/documents/casestudies/APPNOTE.TXT
+        if (!$fp = fopen($this->archivepathname, 'rb+')) {
+            return false;
+        }
+        if (!$filesize = filesize($this->archivepathname)) {
+            return false;
+        }
+
+        // Find end of central directory record.
+        fseek($fp, $filesize - 22);
+        $info = unpack('Vsig', fread($fp, 4));
+        if ($info['sig'] === 0x06054b50) {
+            // There is no comment.
+            fseek($fp, $filesize - 22);
+            $data = fread($fp, 22);
+        } else {
+            // There is some comment with 0xFF max size - that is 65557.
+            fseek($fp, $filesize - 65557);
+            $data = fread($fp, 65557);
+        }
+
+        $pos = strpos($data, pack('V', 0x06054b50));
+        if ($pos === false) {
+            // Borked ZIP structure!
+            fclose($fp);
+            return false;
+        }
+        $centralend = unpack('Vsig/vdisk/vdisk_start/vdisk_entries/ventries/Vsize/Voffset/vcomment_length', substr($data, $pos, 22));
+
+        if ($centralend['disk'] !== 0 or $centralend['disk_start'] !== 0) {
+            // Single disk archives only, sorry.
+            fclose($fp);
+            return false;
+        }
+
+        if ($centralend['offset'] === 0xFFFFFFFF) {
+            // No support for ZIP64, sorry!
+            fclose($fp);
+            return false;
+        }
+
+        fseek($fp, $centralend['offset']);
+        $data = fread($fp, $centralend['size']);
+        $pos = 0;
+        $files = array();
+        for($i=0; $i<$centralend['entries']; $i++) {
+            $file = unpack('Vsig/vversion/vversion_req/vgeneral/vmethod/vmtime/vmdate/Vcrc/Vsize_compressed/Vsize/vname_length/vextra_length/vcomment_length/vdisk/vattr/Vattrext/Vlocal_offset', substr($data, $pos, 46));
+            $file['central_offset'] = $centralend['offset'] + $pos;
+            $pos = $pos + 46;
+            if ($file['sig'] !== 0x02014b50) {
+                // Borked file!
+                fclose($fp);
+                return false;
+            }
+            $file['name'] = substr($data, $pos, $file['name_length']);
+            $pos = $pos + $file['name_length'];
+            if ($file['extra_length']) {
+                $file['extra'] = substr($data, $pos, $file['extra_length']);
+                $pos = $pos + $file['extra_length'];
+            } else {
+                $file['extra'] = '';
+            }
+            if ($file['comment_length']) {
+                $file['comment'] = substr($data, $pos, $file['comment_length']);
+                $pos = $pos + $file['comment_length'];
+            } else {
+                $file['comment'] = '';
+            }
+
+            $newgeneral = $file['general'] | pow(2, 11);
+            if ($newgeneral === $file['general']) {
+                // Nothing to do with this file.
+                continue;
+            }
+
+            if (preg_match('/^[a-zA-Z0-9_\-\.]*$/', $file['name'])) {
+                // ASCII file names are always ok.
+                continue;
+            }
+            if ($file['extra'] !== '') {
+                // Most probably not created by php zip ext, better to skip it.
+                continue;
+            }
+            if (fix_utf8($file['name']) !== $file['name']) {
+                // Does not look like a valid utf-8 encoded file name, skip it.
+                continue;
+            }
+
+            // Read local file header.
+            fseek($fp, $file['local_offset']);
+            $localfile = unpack('Vsig/vversion_req/vgeneral/vmethod/vmtime/vmdate/Vcrc/Vsize_compressed/Vsize/vname_length/vextra_length', fread($fp, 30));
+            if ($localfile['sig'] !== 0x04034b50) {
+                // Borked file!
+                fclose($fp);
+                return false;
+            }
+
+            $file['local'] = $localfile;
+            $files[] = $file;
+        }
+
+        foreach ($files as $file) {
+            $localfile = $file['local'];
+            // Add the unicode flag in central file header.
+            fseek($fp, $file['central_offset'] + 8);
+            if (ftell($fp) === $file['central_offset'] + 8) {
+                $newgeneral = $file['general'] | pow(2, 11);
+                fwrite($fp, pack('v', $newgeneral));
+            }
+            // Modify local file header too.
+            fseek($fp, $file['local_offset'] + 6);
+            if (ftell($fp) === $file['local_offset'] + 6) {
+                $newgeneral = $localfile['general'] | pow(2, 11);
+                fwrite($fp, pack('v', $newgeneral));
+            }
+        }
+
+        fclose($fp);
+        return true;
     }
 }
