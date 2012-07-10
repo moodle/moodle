@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * Include the required completion libraries
  */
 require_once $CFG->dirroot.'/completion/completion_aggregation.php';
-require_once $CFG->dirroot.'/completion/completion_criteria.php';
+require_once $CFG->dirroot.'/completion/criteria/completion_criteria.php';
 require_once $CFG->dirroot.'/completion/completion_completion.php';
 require_once $CFG->dirroot.'/completion/completion_criteria_completion.php';
 

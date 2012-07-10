@@ -172,7 +172,7 @@ abstract class completion_criteria extends data_object {
         }
 
         $class = 'completion_criteria_'.$COMPLETION_CRITERIA_TYPES[$params['criteriatype']];
-        require_once($CFG->dirroot.'/completion/'.$class.'.php');
+        require_once($CFG->dirroot.'/completion/criteria/'.$class.'.php');
 
         return new $class($params, false);
     }
