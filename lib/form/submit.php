@@ -87,7 +87,7 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit {
         if ($this->_flagFrozen){
             return 'nodisplay';
         } else {
-            return 'default';
+            return 'actionbuttons';
         }
     }
 
