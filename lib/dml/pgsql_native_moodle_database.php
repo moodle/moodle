@@ -353,7 +353,14 @@ class pgsql_native_moodle_database extends moodle_database {
                     continue;
                 }
                 $columns = explode(',', $matches[4]);
-                $columns = array_map(array($this, 'trim_quotes'), $columns);
+                foreach ($columns as $k=>$column) {
+                    $column = trim($column);
+                    if ($pos = strpos($column, ' ')) {
+                        // index type is separated by space
+                        $column = substr($column, 0, $pos);
+                    }
+                    $columns[$k] = $this->trim_quotes($column);
+                }
                 $indexes[$row['indexname']] = array('unique'=>!empty($matches[1]),
                                               'columns'=>$columns);
             }
