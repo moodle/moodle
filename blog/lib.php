@@ -608,11 +608,14 @@ function blog_get_options_for_module($module, $user=null) {
     $canparticipate = (is_enrolled($modcontext) or is_viewing($modcontext));
 
     if (has_capability('moodle/blog:view', $modcontext)) {
+        // Save the correct module name for later usage
+        $module_name = strtolower(get_string('modulename', $module->modname)); 
+
         // We can view!
         if ($CFG->bloglevel >= BLOG_SITE_LEVEL) {
             // View all entries about this module
             $a = new stdClass;
-            $a->type = $module->modname;
+            $a->type = $module_name;
             $options['moduleview'] = array(
                 'string' => get_string('viewallmodentries', 'blog', $a),
                 'link' => new moodle_url('/blog/index.php', array('modid'=>$module->id))
@@ -620,13 +623,13 @@ function blog_get_options_for_module($module, $user=null) {
         }
         // View MY entries about this module
         $options['moduleviewmine'] = array(
-            'string' => get_string('viewmyentriesaboutmodule', 'blog', $module->modname),
+            'string' => get_string('viewmyentriesaboutmodule', 'blog', $module_name),
             'link' => new moodle_url('/blog/index.php', array('modid'=>$module->id, 'userid'=>$USER->id))
         );
         if (!empty($user) && ($CFG->bloglevel >= BLOG_SITE_LEVEL)) {
             // View the given users entries about this module
             $a = new stdClass;
-            $a->mod = $module->modname;
+            $a->mod = $module_name;
             $a->user = fullname($user);
             $options['moduleviewuser'] = array(
                 'string' => get_string('blogentriesbyuseraboutmodule', 'blog', $a),
@@ -638,7 +641,7 @@ function blog_get_options_for_module($module, $user=null) {
     if (has_capability('moodle/blog:create', $sitecontext) and $canparticipate) {
         // The user can blog about this module
         $options['moduleadd'] = array(
-            'string' => get_string('blogaboutthismodule', 'blog', $module->modname),
+            'string' => get_string('blogaboutthismodule', 'blog', $module_name),
             'link' => new moodle_url('/blog/edit.php', array('action'=>'add', 'modid'=>$module->id))
         );
     }
