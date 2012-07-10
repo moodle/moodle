@@ -153,7 +153,7 @@ class completion_criteria_completion extends data_object {
 
             $record = $DB->get_record('course_completion_criteria', $params);
 
-            $this->attach_criteria(completion_criteria::factory($record));
+            $this->attach_criteria(completion_criteria::factory((array) $record));
         }
 
         return $this->_criteria;
