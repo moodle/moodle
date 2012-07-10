@@ -67,24 +67,55 @@ class zip_packer_testcase extends advanced_testcase {
      */
     public function test_list_files() {
         $this->resetAfterTest(false);
-        $moodle22 = __DIR__.'/fixtures/test_moodle_22.zip';
-        $moodle = __DIR__.'/fixtures/test_moodle.zip';
+
+        $files = array(
+            __DIR__.'/fixtures/test_moodle_22.zip',
+            __DIR__.'/fixtures/test_moodle.zip',
+            __DIR__.'/fixtures/test_tc_8.zip',
+            __DIR__.'/fixtures/test_7zip_927.zip',
+            __DIR__.'/fixtures/test_winzip_165.zip',
+            __DIR__.'/fixtures/test_winrar_421.zip',
+        );
+
+        if (function_exists('normalizer_normalize')) {
+            // Unfortunately there is no way to standardise UTF-8 strings without INTL extension
+            $files[] = __DIR__.'/fixtures/test_infozip_3.zip';
+            $files[] = __DIR__.'/fixtures/test_osx_1074.zip';
+        }
 
         $packer = get_file_packer('application/zip');
 
-        $archivefiles22 = $packer->list_files($moodle22);
-        $this->assertTrue(is_array($archivefiles22));
-        $this->assertEquals(count($this->files), count($archivefiles22));
-        foreach($archivefiles22 as $file) {
-            $this->assertArrayHasKey($file->pathname, $this->files);
+        foreach ($files as $archive) {
+            $archivefiles = $packer->list_files($archive);
+            $this->assertTrue(is_array($archivefiles), "Archive not extracted properly: ".basename($archive).' ');
+            $this->assertTrue(count($this->files) === count($archivefiles) or count($this->files) === count($archivefiles) - 1); // Some zippers create empty dirs.
+            foreach($archivefiles as $file) {
+                if ($file->pathname === 'Žluťoučký/') {
+                    // Some zippers create empty dirs.
+                    continue;
+                }
+                $this->assertArrayHasKey($file->pathname, $this->files, "File $file->pathname not extracted properly: ".basename($archive).' ');
+            }
         }
 
-        $archivefiles = $packer->list_files($moodle);
-        $this->assertTrue(is_array($archivefiles));
-        $this->assertEquals(count($this->files), count($archivefiles));
+        // Windows packer supports only DOS encoding
+        $archive = __DIR__.'/fixtures/test_win8_de.zip';
+        $archivefiles = $packer->list_files($archive);
+        $this->assertTrue(is_array($archivefiles), "Archive not extracted properly: ".basename($archive).' ');
+        $this->assertEquals(2, count($archivefiles));
         foreach($archivefiles as $file) {
-            $this->assertArrayHasKey($file->pathname, $this->files);
+            $this->assertTrue($file->pathname === 'Prüfung.txt' or $file->pathname === 'test.test');
         }
+
+        $zip_archive = new zip_archive();
+        $zip_archive->open(__DIR__.'/fixtures/test_win8_cz.zip', file_archive::OPEN, 'cp852');
+        $archivefiles = $zip_archive->list_files();
+        $this->assertTrue(is_array($archivefiles), "Archive not extracted properly: ".basename($archive).' ');
+        $this->assertEquals(3, count($archivefiles));
+        foreach($archivefiles as $file) {
+            $this->assertTrue($file->pathname === 'Žluťoučký/Koníček.txt' or $file->pathname === 'testíček.txt' or $file->pathname === 'test.test');
+        }
+        $zip_archive->close();
     }
 
     /**
