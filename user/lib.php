@@ -166,6 +166,22 @@ function user_get_users_by_id($userids) {
     return $DB->get_records_list('user', 'id', $userids);
 }
 
+/**
+ * Returns the list of default 'displayable' fields
+ *
+ * Contains database field names but also names used to generate information, such as enrolledcourses
+ *
+ * @return array of user fields
+ */
+function user_get_default_fields() {
+    return array( 'id', 'username', 'fullname', 'firstname', 'lastname', 'email',
+        'address', 'phone1', 'phone2', 'icq', 'skype', 'yahoo', 'aim', 'msn', 'department',
+        'institution', 'interests', 'firstaccess', 'lastaccess', 'auth', 'confirmed',
+        'idnumber', 'lang', 'theme', 'timezone', 'mailformat', 'description', 'descriptionformat',
+        'city', 'url', 'country', 'profileimageurlsmall', 'profileimageurl', 'customfields',
+        'groups', 'roles', 'preferences', 'enrolledcourses'
+    );
+}
 
 /**
  *
@@ -186,13 +202,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     require_once($CFG->dirroot . "/user/profile/lib.php"); //custom field library
     require_once($CFG->dirroot . "/lib/filelib.php");      // file handling on description and friends
 
-    $defaultfields = array( 'id', 'username', 'fullname', 'firstname', 'lastname', 'email',
-        'address', 'phone1', 'phone2', 'icq', 'skype', 'yahoo', 'aim', 'msn', 'department',
-        'institution', 'interests', 'firstaccess', 'lastaccess', 'auth', 'confirmed',
-        'idnumber', 'lang', 'theme', 'timezone', 'mailformat', 'description', 'descriptionformat',
-        'city', 'url', 'country', 'profileimageurlsmall', 'profileimageurl', 'customfields',
-        'groups', 'roles', 'preferences', 'enrolledcourses'
-    );
+    $defaultfields = user_get_default_fields();
 
     if (empty($userfields)) {
         $userfields = $defaultfields;

@@ -23,8 +23,20 @@ class grade_export_txt extends grade_export {
 
     public $separator; // default separator
 
-    public function __construct($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2, $separator = 'comma', $onlyactive = false) {
-        parent::__construct($course, $groupid, $itemlist, $export_feedback, $updatedgradesonly, $displaytype, $decimalpoints, $onlyactive);
+    /**
+     * Constructor should set up all the private variables ready to be pulled
+     * @param object $course
+     * @param int $groupid id of selected group, 0 means all
+     * @param string $itemlist comma separated list of item ids, empty means all
+     * @param boolean $export_feedback
+     * @param boolean $updatedgradesonly
+     * @param string $displaytype
+     * @param int $decimalpoints
+     * @param boolean $onlyactive
+     * @param boolean $usercustomfields include user custom field in export
+     */
+    public function __construct($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2, $separator = 'comma', $onlyactive = false, $usercustomfields = false) {
+        parent::__construct($course, $groupid, $itemlist, $export_feedback, $updatedgradesonly, $displaytype, $decimalpoints, $onlyactive, $usercustomfields);
         $this->separator = $separator;
     }
 
@@ -40,7 +52,7 @@ class grade_export_txt extends grade_export {
         $export_tracking = $this->track_exports();
 
         $strgrades = get_string('grades');
-        $profilefields = get_user_profile_fields();
+        $profilefields = grade_helper::get_user_profile_fields($this->course->id, $this->usercustomfields);
 
         switch ($this->separator) {
             case 'comma':
@@ -76,17 +88,18 @@ class grade_export_txt extends grade_export {
         foreach ($this->columns as $grade_item) {
             echo $separator.$this->format_column_name($grade_item);
 
-            // Add a feedback column
+            // Add a feedback column.
             if ($this->export_feedback) {
                 echo $separator.$this->format_column_name($grade_item, true);
             }
         }
         echo "\n";
 
-/// Print all the lines of data.
+        // Print all the lines of data.
         $geub = new grade_export_update_buffer();
         $gui = new graded_users_iterator($this->course, $this->columns, $this->groupid);
         $gui->require_active_enrolment($this->onlyactive);
+        $gui->allow_user_custom_fields($this->usercustomfields);
         $gui->init();
         while ($userdata = $gui->next_user()) {
 
@@ -94,7 +107,8 @@ class grade_export_txt extends grade_export {
 
             $items = array();
             foreach ($profilefields as $field) {
-                $items[] = $user->{$field->shortname};
+                $fieldvalue = grade_helper::get_user_field_value($user, $field);
+                $items[] = $fieldvalue;
             }
             echo implode($separator, $items);
 
