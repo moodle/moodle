@@ -1030,6 +1030,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012070600.10);
     }
 
+    if ($oldversion < 2012070600.11) {
+
+        // Define index component-itemid-userid (not unique) to be added to role_assignments
+        $table = new xmldb_table('role_assignments');
+        $index = new xmldb_index('component-itemid-userid', XMLDB_INDEX_NOTUNIQUE, array('component', 'itemid', 'userid'));
+
+        // Conditionally launch add index component-itemid-userid
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012070600.11);
+    }
+
 
     return true;
 }
