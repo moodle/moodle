@@ -1326,11 +1326,11 @@ class accesslib_testcase extends advanced_testcase {
         $user3 = $this->getDataGenerator()->create_user();
 
         $roles = get_user_roles_in_course($user1->id, $course->id);
-        $this->assertEquals(1, preg_match_all('/,/', $roles));
+        $this->assertEquals(1, preg_match_all('/,/', $roles, $matches));
         $this->assertTrue(strpos($roles, role_get_name($teacherrole, $coursecontext)) !== false);
 
         $roles = get_user_roles_in_course($user2->id, $course->id);
-        $this->assertEquals(0, preg_match_all('/,/', $roles));
+        $this->assertEquals(0, preg_match_all('/,/', $roles, $matches));
         $this->assertTrue(strpos($roles, role_get_name($studentrole, $coursecontext)) !== false);
 
         $roles = get_user_roles_in_course($user3->id, $course->id);
