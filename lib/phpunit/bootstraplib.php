@@ -101,7 +101,11 @@ function phpunit_bootstrap_cli_argument_path($moodlepath) {
     $path = realpath($CFG->dirroot.$moodlepath);
 
     if (strpos($path, $cwd) === 0) {
-        return substr($path, strlen($cwd));
+        $path = substr($path, strlen($cwd));
+    }
+
+    if (phpunit_bootstrap_is_cygwin()) {
+        $path = str_replace('\\', '/', $path);
     }
 
     return $path;
@@ -139,4 +143,15 @@ function phpunit_boostrap_fix_file_permissions($file) {
     }
 
     return true;
+}
+
+/**
+ * Find out if running under Cygwin on Windows.
+ * @return bool
+ */
+function phpunit_bootstrap_is_cygwin() {
+    if (empty($_SERVER['SHELL']) or empty($_SERVER['OS'])) {
+        return false;
+    }
+    return ($_SERVER['OS'] === 'Windows_NT' and $_SERVER['SHELL'] === '/bin/bash');
 }
