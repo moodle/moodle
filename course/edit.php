@@ -69,6 +69,12 @@ if (!empty($course)) {
     $editoroptions['context'] = $coursecontext;
     $course = file_prepare_standard_editor($course, 'summary', $editoroptions, $coursecontext, 'course', 'summary', 0);
 
+    // Inject current aliases
+    $aliases = $DB->get_records('role_names', array('contextid'=>$coursecontext->id));
+    foreach($aliases as $alias) {
+        $course->{'role_'.$alias->roleid} = $alias->name;
+    }
+
 } else {
     //editor should respect category context if course context is not set.
     $editoroptions['context'] = $catcontext;

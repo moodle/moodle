@@ -1015,5 +1015,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012062500.09);
     }
 
+    if ($oldversion < 2012062500.10) {
+
+        // Define index name (unique) to be dropped form role
+        $table = new xmldb_table('role');
+        $index = new xmldb_index('name', XMLDB_INDEX_UNIQUE, array('name'));
+
+        // Conditionally launch drop index name
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012062500.10);
+    }
+
+
     return true;
 }

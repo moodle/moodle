@@ -97,7 +97,7 @@ if (!$problems) {
     $data = array();
     foreach ($problems as $problem) {
         $levelname = get_contextlevel_name($problem->contextlevel);
-        $rolename = format_string($roles[$problem->roleid]->name);
+        $rolename = role_get_name($roles[$problem->roleid]);
         //TODO: show list of users if count low
         $count = $problem->racount;
         $edit = array();

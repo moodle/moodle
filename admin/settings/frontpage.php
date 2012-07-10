@@ -54,9 +54,10 @@ if (!during_initial_install()) { //do not use during installation
         // front page default role
         $options = array(0=>new lang_string('none')); // roles to choose from
         $defaultfrontpageroleid = 0;
-        foreach (get_all_roles() as $role) {
+        $roles = role_fix_names(get_all_roles(), null, ROLENAME_ORIGINALANDSHORT);
+        foreach ($roles as $role) {
             if (empty($role->archetype) or $role->archetype === 'guest' or $role->archetype === 'frontpage' or $role->archetype === 'student') {
-                $options[$role->id] = strip_tags(format_string($role->name)) . ' ('. $role->shortname . ')';
+                $options[$role->id] = $role->localname;
                 if ($role->archetype === 'frontpage') {
                     $defaultfrontpageroleid = $role->id;
                 }

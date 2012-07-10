@@ -244,11 +244,8 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                 $roles = array();
                 $times = array();
                 $missedlines = array();
-                $rolenames = get_all_roles();
-                foreach ($rolenames as $r) {
-                    $rolenames[$r->id] = $r->name;
-                }
-                $rolenames = role_fix_names($rolenames, get_context_instance(CONTEXT_COURSE, $course->id));
+                $coursecontext = context_course::instance($course->id);
+                $rolenames = role_fix_names(get_all_roles($coursecontext), $coursecontext, ROLENAME_ALIAS, true);
                 foreach ($stats as $stat) {
                     if (!empty($stat->zerofixed)) {
                         $missedlines[] = $stat->timeend;

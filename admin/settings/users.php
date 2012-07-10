@@ -45,8 +45,9 @@ if ($hassiteconfig
             $defaultuserid    = null;
             $defaultguestid   = null;
 
-            foreach (get_all_roles() as $role) {
-                $rolename = strip_tags(format_string($role->name)) . ' ('. $role->shortname . ')';
+            $roles = role_fix_names(get_all_roles(), null, ROLENAME_ORIGINALANDSHORT);
+            foreach ($roles as $role) {
+                $rolename = $role->localname;
                 switch ($role->archetype) {
                     case 'manager':
                         $creatornewroles[$role->id] = $rolename;
