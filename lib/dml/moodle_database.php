@@ -575,7 +575,7 @@ abstract class moodle_database {
      */
     protected function where_clause_list($field, array $values) {
         if (empty($values)) {
-            return array("1 = 2", array());
+            return array("1 = 2", array()); // Fake condition, won't return rows ever. MDL-17645
         }
 
         // Note: Do not use get_in_or_equal() because it can not deal with bools and nulls.
