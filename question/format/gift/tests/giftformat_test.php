@@ -885,4 +885,73 @@ FALSE#42 is the Ultimate Answer.#You gave the right answer.}";
 
         $this->assert_same_gift($expectedgift, $gift);
     }
+
+    public function test_export_backslash() {
+        // There was a bug (MDL-34171) where \\ was getting exported as \\, not
+        // \\\\, and on import, \\ in converted to \.
+        // We need \\\\ in the test code, because of PHPs string escaping rules.
+        $qdata = (object) array(
+            'id' => 666 ,
+            'name' => 'backslash',
+            'questiontext' => 'A \\ B \\\\ C',
+            'questiontextformat' => FORMAT_MOODLE,
+            'generalfeedback' => '',
+            'generalfeedbackformat' => FORMAT_MOODLE,
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
+            'length' => 1,
+            'qtype' => 'essay',
+            'options' => (object) array(
+                'responseformat' => 'editor',
+                'responsefieldlines' => 15,
+                'attachments' => 0,
+                'graderinfo' => '',
+                'graderinfoformat' => FORMAT_HTML,
+            ),
+        );
+
+        $exporter = new qformat_gift();
+        $gift = $exporter->writequestion($qdata);
+
+        $expectedgift = "// question: 666  name: backslash
+::backslash::A \\\\ B \\\\\\\\ C{}
+
+";
+
+        $this->assert_same_gift($expectedgift, $gift);
+    }
+
+    public function test_import_backslash() {
+        // There was a bug (MDL-34171) where \\ in the import was getting changed
+        // to \. This test checks for that.
+        // We need \\\\ in the test code, because of PHPs string escaping rules.
+        $gift = '
+// essay
+::double backslash:: A \\\\ B \\\\\\\\ C{}';
+        $lines = preg_split('/[\\n\\r]/', str_replace("\r\n", "\n", $gift));
+
+        $importer = new qformat_gift();
+        $q = $importer->readquestion($lines);
+
+        $expectedq = (object) array(
+            'name' => 'double backslash',
+            'questiontext' => 'A \\ B \\\\ C',
+            'questiontextformat' => FORMAT_MOODLE,
+            'generalfeedback' => '',
+            'generalfeedbackformat' => FORMAT_MOODLE,
+            'qtype' => 'essay',
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
+            'length' => 1,
+            'responseformat' => 'editor',
+            'responsefieldlines' => 15,
+            'attachments' => 0,
+            'graderinfo' => array(
+                'text' => '',
+                'format' => FORMAT_HTML,
+                'files' => array()),
+        );
+
+        $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
+    }
 }
