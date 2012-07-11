@@ -821,7 +821,7 @@ abstract class restore_dbops {
      * @return array of result object
      */
     public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null, $forcenewcontextid = null, $skipparentitemidctxmatch = false) {
-        global $DB;
+        global $DB, $CFG;
 
         $results = array();
 
@@ -916,6 +916,12 @@ abstract class restore_dbops {
 
                 // create the file in the filepool if it does not exist yet
                 if (!$fs->file_exists($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->filename)) {
+
+                    // If no license found, use default.
+                    if ($file->license == null){
+                        $file->license = $CFG->sitedefaultlicense;
+                    }
+
                     $file_record = array(
                         'contextid'   => $newcontextid,
                         'component'   => $component,
