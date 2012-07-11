@@ -25,7 +25,7 @@
 class data_field_url extends data_field_base {
     var $type = 'url';
 
-    function display_add_field($recordid=0) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $PAGE;
 
         require_once($CFG->dirroot. '/repository/lib.php'); // necessary for the constants used in args
@@ -43,13 +43,25 @@ class data_field_url extends data_field_base {
         $straddlink = get_string('choosealink', 'repository');
         $url = '';
         $text = '';
-        if ($recordid) {
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id . '_0';
+            $url = $formdata->$fieldname;
+            $fieldname = 'field_' . $this->field->id . '_1';
+            if (isset($formdata->$fieldname)) {
+                $text = $formdata->$fieldname;
+            }
+        } else if ($recordid) {
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
                 $url  = $content->content;
                 $text = $content->content1;
             }
         }
-        $str = '<div title="'.s($this->field->description).'">';
+        $str = '';
+        if ($this->field->required) {
+            $str .= '<div title="' . get_string('requiredfieldhint', 'data', s($this->field->description)) . '">';
+        } else {
+            $str .= '<div title="' . s($this->field->description) . '">';
+        }
         if (!empty($this->field->param1) and empty($this->field->param2)) {
             $str .= '<table><tr><td align="right">';
             $str .= get_string('url','data').':</td><td>';
@@ -73,6 +85,9 @@ class data_field_url extends data_field_base {
         $module = array('name'=>'data_urlpicker', 'fullpath'=>'/mod/data/data.js', 'requires'=>array('core_filepicker'));
         $PAGE->requires->js_init_call('M.data_urlpicker.init', array($options), true, $module);
 
+        if ($this->field->required) {
+            $str .= '<span class="requiredfield">' . get_string('requiredfieldshort', 'data') . '</span>';
+        }
         $str .= '</div>';
         return $str;
     }
@@ -178,5 +193,3 @@ class data_field_url extends data_field_base {
     }
 
 }
-
-

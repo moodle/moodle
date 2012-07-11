@@ -302,12 +302,16 @@ $string['recordsnotsaved'] = 'No entry was saved. Please check the format of the
 $string['recordssaved'] = 'entries saved';
 $string['requireapproval'] = 'Approval required';
 $string['requireapproval_help'] = 'If enabled, entries require approving by a teacher before they are viewable by everyone.';
+$string['required'] = 'Required';
 $string['requiredentries'] = 'Entries required for completion';
 $string['requiredentries_help'] = 'The number of entries a student is required to submit before the activity can be considered complete.';
 $string['requiredentriestoview'] = 'Entries required before viewing';
 $string['requiredentriestoview_help'] = 'The number of entries a student is required to submit before they can view entries from other students.
 
 Note: If entries are required before viewing, the database auto-linking filter should be disabled. This is because the database auto-linking filter can\'t determine whether a user has submitted the required number of entries.';
+$string['requiredfield'] = 'Required field';
+$string['requiredfieldhint'] = '{$a} (required field)';
+$string['requiredfieldshort'] = ' *';
 $string['resetsettings'] = 'Reset filters';
 $string['resettemplate'] = 'Reset template';
 $string['resizingimages'] = 'Resizing image thumbnails...';

@@ -26,10 +26,13 @@ class data_field_multimenu extends data_field_base {
 
     var $type = 'multimenu';
 
-    function display_add_field($recordid=0) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $DB;
 
-        if ($recordid){
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id;
+            $content = $formdata->$fieldname;
+        } else if ($recordid){
             $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
             $content = explode('##', $content);
         } else {
@@ -239,4 +242,3 @@ class data_field_multimenu extends data_field_base {
         return false;
     }
 }
-

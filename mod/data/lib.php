@@ -137,6 +137,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         $this->field->param3 = '';
         $this->field->name = '';
         $this->field->description = '';
+        $this->field->required = false;
 
         return true;
     }
@@ -152,6 +153,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
         $this->field->name        = trim($data->name);
         $this->field->description = trim($data->description);
+        $this->field->required    = !empty($data->required)?1:0;
 
         if (isset($data->param1)) {
             $this->field->param1 = trim($data->param1);
@@ -268,10 +270,13 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      * @param int $recordid
      * @return string
      */
-    function display_add_field($recordid=0){
+    function display_add_field($recordid=0, $formdata=null){
         global $DB;
 
-        if ($recordid){
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id;
+            $content = $formdata->$fieldname;
+        } else if ($recordid){
             $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
         } else {
             $content = '';
@@ -282,9 +287,17 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
             $content='';
         }
 
-        $str = '<div title="'.s($this->field->description).'">';
+        $str = '';
+        if ($this->field->required) {
+            $str .= '<div title="' . get_string('requiredfieldhint', 'data', s($this->field->description)) . '">';
+        } else {
+            $str .= '<div title="' . s($this->field->description) . '">';
+        }
         $str .= '<label class="accesshide" for="field_'.$this->field->id.'">'.$this->field->description.'</label>';
         $str .= '<input class="basefieldinput" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id.'" value="'.s($content).'" />';
+        if ($this->field->required) {
+            $str .= '<span class="requiredfield">' . get_string('requiredfieldshort', 'data') . '</span>';
+        }
         $str .= '</div>';
 
         return $str;
@@ -548,7 +561,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
         foreach ($fields as $field) {
             if ($form) {   // Print forms instead of data
                 $fieldobj = data_get_field($field, $data);
-                $token = $fieldobj->display_add_field($recordid);
+                $token = $fieldobj->display_add_field($recordid, null);
             } else {           // Just print the tag
                 $token = '[['.$field->name.']]';
             }
@@ -3750,4 +3763,96 @@ function data_delete_record($recordid, $data, $courseid, $cmid) {
         }
     }
     return false;
+}
+
+/**
+ * Check for required fields, and build a list of fields to be updated in a
+ * submission.
+ *
+ * @param $mod stdClass The current recordid - provided as an optimisation.
+ * @param $fields array The field data
+ * @param $datarecord stdClass The submitted data.
+ * @return stdClass containing:
+ * * string[] generalnotifications Notifications for the form as a whole.
+ * * string[] fieldnotifications Notifications for a specific field.
+ * * bool validated Whether the field was validated successfully.
+ * * data_field_base[] fields The field objects to be update.
+ */
+function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
+    $result = new stdClass();
+
+    // Empty form checking - you can't submit an empty form.
+    $emptyform = true;
+    $requiredfieldsfilled = true;
+
+    // Store the notifications.
+    $result->generalnotifications = array();
+    $result->fieldnotifications = array();
+
+    // Store the instantiated classes as an optimisation when processing the result.
+    // This prevents the fields being re-initialised when updating.
+    $result->fields = array();
+
+    $submitteddata = array();
+    foreach ($datarecord as $fieldname => $fieldvalue) {
+        if (strpos($fieldname, '_')) {
+            $namearray = explode('_', $fieldname, 3);
+            $fieldid = $namearray[1];
+            if (!isset($submitteddata[$fieldid])) {
+                $submitteddata[$fieldid] = array();
+            }
+            if (count($namearray) === 2) {
+                $subfieldid = 0;
+            } else {
+                $subfieldid = $namearray[2];
+            }
+
+            $fielddata = new stdClass();
+            $fielddata->fieldname = $fieldname;
+            $fielddata->value = $fieldvalue;
+            $submitteddata[$fieldid][$subfieldid] = $fielddata;
+        }
+    }
+
+    // Check all form fields which have the required are filled.
+    foreach ($fields as $fieldrecord) {
+        // Check whether the field has any data.
+        $fieldhascontent = false;
+
+        $field = data_get_field($fieldrecord, $mod);
+        if (isset($submitteddata[$fieldrecord->id])) {
+            foreach ($submitteddata[$fieldrecord->id] as $fieldname => $value) {
+                if ($field->notemptyfield($value->value, $value->fieldname)) {
+                    // The field has content and the form is not empty.
+                    $fieldhascontent = true;
+                    $emptyform = false;
+                }
+            }
+        }
+
+        // If the field is required, add a notification to that effect.
+        if ($field->field->required && !$fieldhascontent) {
+            if (!isset($result->fieldnotifications[$field->field->name])) {
+                $result->fieldnotifications[$field->field->name] = array();
+            }
+            $result->fieldnotifications[$field->field->name][] = get_string('required');
+            $requiredfieldsfilled = false;
+        }
+
+        if ($fieldhascontent) {
+            // The field has content so it should be updatable.
+            foreach ($submitteddata[$fieldrecord->id] as $value) {
+                $result->fields[$value->fieldname] = $field;
+            }
+        }
+    }
+
+    if ($emptyform) {
+        // The form is empty.
+        $result->generalnotifications[] = get_string('emptyaddform','data');
+    }
+
+    $result->validated = $requiredfieldsfilled && !$emptyform;
+
+    return $result;
 }

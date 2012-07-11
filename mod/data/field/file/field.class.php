@@ -25,7 +25,7 @@
 class data_field_file extends data_field_base {
     var $type = 'file';
 
-    function display_add_field($recordid=0) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER;
 
         $file        = false;
@@ -36,7 +36,10 @@ class data_field_file extends data_field_base {
         $itemid = null;
 
         // editing an existing database entry
-        if ($recordid){
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id . '_file';
+            $itemid = $formdata->$fieldname;
+        } else if ($recordid){
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
 
                 file_prepare_draft_area($itemid, $this->context->id, 'mod_data', 'content', $content->id);
@@ -64,7 +67,11 @@ class data_field_file extends data_field_base {
 
         $html = '';
         // database entry label
-        $html .= '<div title="'.s($this->field->description).'">';
+        if ($this->field->required) {
+            $html .= '<div title="' . get_string('requiredfieldhint', 'data', s($this->field->description)) . '">';
+        } else {
+            $html .= '<div title="' . s($this->field->description) . '">';
+        }
         $html .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
 
         // itemid element
@@ -84,6 +91,9 @@ class data_field_file extends data_field_base {
         $output = $PAGE->get_renderer('core', 'files');
         $html .= $output->render($fm);
 
+        if ($this->field->required) {
+            $html .= '<span class="requiredfield">' . get_string('requiredfieldshort', 'data') . '</span>';
+        }
         $html .= '</fieldset>';
         $html .= '</div>';
 
@@ -204,6 +214,24 @@ class data_field_file extends data_field_base {
         return true;
     }
 
+    /**
+     * Custom notempty function
+     *
+     * @param string $value
+     * @param string $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        global $USER;
+
+        $names = explode('_', $name);
+        if ($names[2] == 'file') {
+            $usercontext = context_user::instance($USER->id);
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $value);
+            return count($files) >= 2;
+        }
+        return false;
+    }
+
 }
-
-

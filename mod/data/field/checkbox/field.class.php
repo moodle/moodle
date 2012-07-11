@@ -26,19 +26,27 @@ class data_field_checkbox extends data_field_base {
 
     var $type = 'checkbox';
 
-    function display_add_field($recordid=0) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB;
 
         $content = array();
 
-        if ($recordid) {
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id;
+            $content = $formdata->$fieldname;
+        } else if ($recordid) {
             $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
             $content = explode('##', $content);
         } else {
             $content = array();
         }
 
-        $str = '<div title="'.s($this->field->description).'">';
+        $str = '';
+        if ($this->field->required) {
+            $str .= '<div title="' . get_string('requiredfieldhint', 'data', s($this->field->description)) . '">';
+        } else {
+            $str .= '<div title="' . s($this->field->description) . '">';
+        }
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
 
         $i = 0;
@@ -211,5 +219,22 @@ class data_field_checkbox extends data_field_base {
         return implode('##', $vals);
     }
 
-}
+    /**
+     * Check whether any boxes in the checkbox where checked.
+     *
+     * @param mixed $value The submitted values
+     * @param mixed $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        $found = false;
+        foreach ($value as $checkboxitem) {
+            if (!empty($checkboxitem)) {
+                $found = true;
+                break;
+            }
+        }
+        return $found;
+    }
 
+}
