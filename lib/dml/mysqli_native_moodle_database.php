@@ -145,22 +145,28 @@ class mysqli_native_moodle_database extends moodle_database {
             return $this->dboptions['dbengine'];
         }
 
-        $engine = null;
-
-        if (!$this->external) {
-            // look for current engine of our config table (the first table that gets created),
-            // so that we create all tables with the same engine
-            $sql = "SELECT engine FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}config'";
-            $this->query_start($sql, NULL, SQL_QUERY_AUX);
-            $result = $this->mysqli->query($sql);
-            $this->query_end($result);
-            if ($rec = $result->fetch_assoc()) {
-                $engine = $rec['engine'];
-            }
-            $result->close();
+        if ($this->external) {
+            return null;
         }
 
+        $engine = null;
+
+        // Look for current engine of our config table (the first table that gets created),
+        // so that we create all tables with the same engine.
+        $sql = "SELECT engine
+                  FROM INFORMATION_SCHEMA.TABLES
+                 WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}config'";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+        if ($rec = $result->fetch_assoc()) {
+            $engine = $rec['engine'];
+        }
+        $result->close();
+
         if ($engine) {
+            // Cache the result to improve performance.
+            $this->dboptions['dbengine'] = $engine;
             return $engine;
         }
 
@@ -174,7 +180,7 @@ class mysqli_native_moodle_database extends moodle_database {
         }
         $result->close();
 
-        if (!$this->external and $engine === 'MyISAM') {
+        if ($engine === 'MyISAM') {
             // we really do not want MyISAM for Moodle, InnoDB or XtraDB is a reasonable defaults if supported
             $sql = "SHOW STORAGE ENGINES";
             $this->query_start($sql, NULL, SQL_QUERY_AUX);
@@ -195,6 +201,8 @@ class mysqli_native_moodle_database extends moodle_database {
             }
         }
 
+        // Cache the result to improve performance.
+        $this->dboptions['dbengine'] = $engine;
         return $engine;
     }
 
