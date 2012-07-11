@@ -9,7 +9,7 @@
 
 .message .author {font-weight: bold;}
 .message .time {font-style: italic;}
-.message .content {}
+.message .text {}
 
 #page-message-user .commands span {font-size:0.7em;}
 #page-message-user .name {font-weight: bold;font-size:1.1em;}
