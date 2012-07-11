@@ -26,5 +26,9 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
 
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
+
+
     return true;
 }

@@ -258,6 +258,7 @@ class repository_flickr extends repository {
         $c->download(array(
             array('url'=>$url, 'file'=>$fp)
         ));
+        fclose($fp);
         return array('path'=>$path, 'url'=>$url);
     }
 

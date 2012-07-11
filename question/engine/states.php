@@ -206,7 +206,7 @@ abstract class question_state {
      * Appropriate allowance is made for rounding float values.
      *
      * @param number $fraction the grade, on the fraction scale.
-     * @return int one of the state constants.
+     * @return question_state one of the state constants.
      */
     public static function graded_state_for_fraction($fraction) {
         if ($fraction < 0.000001) {

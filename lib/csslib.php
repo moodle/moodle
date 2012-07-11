@@ -171,7 +171,7 @@ function css_send_cached_css($csspath, $etag) {
  *
  * This function takes a raw CSS string, optimises it if required, and then
  * serves it.
- * Turning both themedesignermode and CSS optimiser on at the same time is aweful
+ * Turning both themedesignermode and CSS optimiser on at the same time is awful
  * for performance because of the optimiser running here. However it was done so
  * that theme designers could utilise the optimised output during development to
  * help them optimise their CSS... not that they should write lazy CSS.

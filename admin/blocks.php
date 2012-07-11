@@ -131,12 +131,25 @@
     $table->setup();
     $tablerows = array();
 
+    // Sort blocks using current locale.
+    $blocknames = array();
     foreach ($blocks as $blockid=>$block) {
+        $blockname = $block->name;
+        if (file_exists("$CFG->dirroot/blocks/$blockname/block_$blockname.php")) {
+            $blocknames[$blockid] = get_string('pluginname', 'block_'.$blockname);
+        } else {
+            $blocknames[$blockid] = $blockname;
+        }
+    }
+    collatorlib::asort($blocknames);
+
+    foreach ($blocknames as $blockid=>$strblockname) {
+        $block = $blocks[$blockid];
         $blockname = $block->name;
 
         if (!file_exists("$CFG->dirroot/blocks/$blockname/block_$blockname.php")) {
             $blockobject  = false;
-            $strblockname = '<span class="notifyproblem">'.$blockname.' ('.get_string('missingfromdisk').')</span>';
+            $strblockname = '<span class="notifyproblem">'.$strblockname.' ('.get_string('missingfromdisk').')</span>';
             $plugin = new stdClass();
             $plugin->version = $block->version;
 
@@ -151,7 +164,6 @@
                 $incompatible[] = $block;
                 continue;
             }
-            $strblockname = get_string('pluginname', 'block_'.$blockname);
         }
 
         $delete = '<a href="blocks.php?delete='.$blockid.'&amp;sesskey='.sesskey().'">'.$strdelete.'</a>';
@@ -222,12 +234,7 @@
             $delete,
             $settings
         );
-        $tablerows[] = array(strip_tags($strblockname), $row); // first element will be used for sorting
-    }
-
-    collatorlib::asort($tablerows);
-    foreach ($tablerows as $row) {
-        $table->add_data($row[1]);
+        $table->add_data($row);
     }
 
     $table->print_html();

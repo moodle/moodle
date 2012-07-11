@@ -1577,9 +1577,10 @@ class html_writer {
                     if (!($row instanceof html_table_row)) {
                         $newrow = new html_table_row();
 
-                        foreach ($row as $item) {
-                            $cell = new html_table_cell();
-                            $cell->text = $item;
+                        foreach ($row as $cell) {
+                            if (!($cell instanceof html_table_cell)) {
+                                $cell = new html_table_cell($cell);
+                            }
                             $newrow->cells[] = $cell;
                         }
                         $row = $newrow;

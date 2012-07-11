@@ -872,5 +872,33 @@ function xmldb_main_upgrade($oldversion) {
     }
 
 
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
+
+
+    if ($oldversion < 2012062500.02) {
+        // Drop some old backup tables, not used anymore
+
+        // Define table backup_files to be dropped
+        $table = new xmldb_table('backup_files');
+
+        // Conditionally launch drop table for backup_files
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Define table backup_ids to be dropped
+        $table = new xmldb_table('backup_ids');
+
+        // Conditionally launch drop table for backup_ids
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012062500.02);
+    }
+
+
     return true;
 }

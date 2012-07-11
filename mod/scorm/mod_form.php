@@ -177,8 +177,8 @@ class mod_scorm_mod_form extends moodleform_mod {
         // Max Attempts
         $mform->addElement('select', 'maxattempt', get_string('maximumattempts', 'scorm'), scorm_get_attempts_array());
         $mform->addHelpButton('maxattempt', 'maximumattempts', 'scorm');
-        $mform->setDefault('maxattempt', $cfg_scorm->maxattempts);
-        $mform->setAdvanced('maxattempt', $cfg_scorm->maxattempts_adv);
+        $mform->setDefault('maxattempt', $cfg_scorm->maxattempt);
+        $mform->setAdvanced('maxattempt', $cfg_scorm->maxattempt_adv);
 
         // What Grade
         $mform->addElement('select', 'whatgrade', get_string('whatgrade', 'scorm'),  scorm_get_what_grade_array());

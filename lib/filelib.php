@@ -721,8 +721,15 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
     if (!isset($options['maxfiles'])) {
         $options['maxfiles'] = -1; // unlimited
     }
-    if (!isset($options['maxbytes'])) {
+    if (!isset($options['maxbytes']) || $options['maxbytes'] == USER_CAN_IGNORE_FILE_SIZE_LIMITS) {
         $options['maxbytes'] = 0; // unlimited
+    }
+    $allowreferences = true;
+    if (isset($options['return_types']) && !($options['return_types'] & FILE_REFERENCE)) {
+        // we assume that if $options['return_types'] is NOT specified, we DO allow references.
+        // this is not exactly right. BUT there are many places in code where filemanager options
+        // are not passed to file_save_draft_area_files()
+        $allowreferences = false;
     }
 
     $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
@@ -755,6 +762,9 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             }
 
             if ($file->is_external_file()) {
+                if (!$allowreferences) {
+                    continue;
+                }
                 $repoid = $file->get_repository_id();
                 if (!empty($repoid)) {
                     $file_record['repositoryid'] = $repoid;
@@ -856,6 +866,9 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             }
 
             if ($file->is_external_file()) {
+                if (!$allowreferences) {
+                    continue;
+                }
                 $repoid = $file->get_repository_id();
                 if (!empty($repoid)) {
                     $file_record['repositoryid'] = $repoid;
@@ -1405,7 +1418,7 @@ function &get_mimetypes_array() {
         'hqx'  => array ('type'=>'application/mac-binhex40', 'icon'=>'archive', 'groups'=>array('archive'), 'string'=>'archive'),
         'htc'  => array ('type'=>'text/x-component', 'icon'=>'markup'),
         'html' => array ('type'=>'text/html', 'icon'=>'html', 'groups'=>array('web_file')),
-        'xhtml'=> array ('type'=>'application/xhtml+xml', 'icon'=>'markup', 'groups'=>array('web_file')),
+        'xhtml'=> array ('type'=>'application/xhtml+xml', 'icon'=>'html', 'groups'=>array('web_file')),
         'htm'  => array ('type'=>'text/html', 'icon'=>'html', 'groups'=>array('web_file')),
         'ico'  => array ('type'=>'image/vnd.microsoft.icon', 'icon'=>'image', 'groups'=>array('image'), 'string'=>'image'),
         'ics'  => array ('type'=>'text/calendar', 'icon'=>'text'),
@@ -2993,14 +3006,36 @@ class curl {
      * Calls {@link multi()} with specific download headers
      *
      * <code>
-     * $c = new curl;
+     * $c = new curl();
+     * $file1 = fopen('a', 'wb');
+     * $file2 = fopen('b', 'wb');
      * $c->download(array(
-     *              array('url'=>'http://localhost/', 'file'=>fopen('a', 'wb')),
-     *              array('url'=>'http://localhost/20/', 'file'=>fopen('b', 'wb'))
+     *     array('url'=>'http://localhost/', 'file'=>$file1),
+     *     array('url'=>'http://localhost/20/', 'file'=>$file2)
+     * ));
+     * fclose($file1);
+     * fclose($file2);
+     * </code>
+     *
+     * or
+     *
+     * <code>
+     * $c = new curl();
+     * $c->download(array(
+     *              array('url'=>'http://localhost/', 'filepath'=>'/tmp/file1.tmp'),
+     *              array('url'=>'http://localhost/20/', 'filepath'=>'/tmp/file2.tmp')
      *              ));
      * </code>
      *
-     * @param array $requests An array of files to request
+     * @param array $requests An array of files to request {
+     *                  url => url to download the file [required]
+     *                  file => file handler, or
+     *                  filepath => file path
+     * }
+     * If 'file' and 'filepath' parameters are both specified in one request, the
+     * open file handle in the 'file' parameter will take precedence and 'filepath'
+     * will be ignored.
+     *
      * @param array $options An array of options to set
      * @return array An array of results
      */
@@ -3024,11 +3059,15 @@ class curl {
         $results = array();
         $main    = curl_multi_init();
         for ($i = 0; $i < $count; $i++) {
-            $url = $requests[$i];
-            foreach($url as $n=>$v){
-                $options[$n] = $url[$n];
+            if (!empty($requests[$i]['filepath']) and empty($requests[$i]['file'])) {
+                // open file
+                $requests[$i]['file'] = fopen($requests[$i]['filepath'], 'w');
+                $requests[$i]['auto-handle'] = true;
             }
-            $handles[$i] = curl_init($url['url']);
+            foreach($requests[$i] as $n=>$v){
+                $options[$n] = $v;
+            }
+            $handles[$i] = curl_init($requests[$i]['url']);
             $this->apply_opt($handles[$i], $options);
             curl_multi_add_handle($main, $handles[$i]);
         }
@@ -3045,6 +3084,13 @@ class curl {
             curl_multi_remove_handle($main, $handles[$i]);
         }
         curl_multi_close($main);
+
+        for ($i = 0; $i < $count; $i++) {
+            if (!empty($requests[$i]['filepath']) and !empty($requests[$i]['auto-handle'])) {
+                // close file handler if file is opened in this function
+                fclose($requests[$i]['file']);
+            }
+        }
         return $results;
     }
 

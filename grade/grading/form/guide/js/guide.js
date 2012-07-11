@@ -4,7 +4,7 @@ M.gradingform_guide = {};
  * This function is called for each guide on page.
  */
 M.gradingform_guide.init = function(Y, options) {
-    var currentfocus = null;
+    var currentfocus = Y.one('.markingguideremark');
 
     Y.all('.markingguideremark').on('blur', function(e) {
         currentfocus = e.currentTarget;

@@ -11,7 +11,7 @@ $offset        = optional_param('offset', 0, PARAM_INT);              // number 
 $displayformat = optional_param('displayformat',-1, PARAM_INT);
 
 $mode    = required_param('mode', PARAM_ALPHA);             // mode to show the entries
-$hook    = optional_param('hook','ALL', PARAM_ALPHANUM);   // what to show
+$hook    = optional_param('hook','ALL', PARAM_CLEAN);       // what to show
 $sortkey = optional_param('sortkey','UPDATE', PARAM_ALPHA); // Sorting key
 
 $url = new moodle_url('/mod/glossary/print.php', array('id'=>$id));
@@ -164,9 +164,6 @@ include_once("sql.php");
 
 $entriesshown = 0;
 $currentpivot = '';
-if ( $hook == 'SPECIAL' ) {
-    $alphabet = explode(",", get_string("alphabet"));
-}
 
 $site = $DB->get_record("course", array("id"=>1));
 echo '<p style="text-align:right"><span style="font-size:0.75em">' . userdate(time()) . '</span></p>';

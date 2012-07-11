@@ -1470,9 +1470,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             // 2. the activity has dates set which do not include current, or
             // 3. the activity has any other conditions set (regardless of whether
             //    current user meets them)
-            $canviewhidden = has_capability(
-                'moodle/course:viewhiddenactivities',
-                get_context_instance(CONTEXT_MODULE, $mod->id));
+            $modcontext = context_module::instance($mod->id);
+            $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $modcontext);
             $accessiblebutdim = false;
             if ($canviewhidden) {
                 $accessiblebutdim = !$mod->visible;
@@ -1684,9 +1683,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
                 if ($completionicon) {
                     $imgsrc = $OUTPUT->pix_url('i/completion-'.$completionicon);
-                    $imgalt = s(get_string('completion-alt-'.$completionicon, 'completion', $mod->name));
+                    $formattedname = format_string($mod->name, true, array('context' => $modcontext));
+                    $imgalt = get_string('completion-alt-' . $completionicon, 'completion', $formattedname);
                     if ($completion == COMPLETION_TRACKING_MANUAL && !$isediting) {
-                        $imgtitle = s(get_string('completion-title-'.$completionicon, 'completion', $mod->name));
+                        $imgtitle = get_string('completion-title-' . $completionicon, 'completion', $formattedname);
                         $newstate =
                             $completiondata->completionstate==COMPLETION_COMPLETE
                             ? COMPLETION_INCOMPLETE

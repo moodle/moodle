@@ -74,6 +74,7 @@ $string['couldnotconvertsubmission'] = 'Could not convert assignment submission 
 $string['couldnotcreatecoursemodule'] = 'Could not create course module.';
 $string['couldnotcreatenewassignmentinstance'] = 'Could not create new assignment instance.';
 $string['couldnotfindassignmenttoupgrade'] = 'Could not find old assignment instance to upgrade.';
+$string['currentgrade'] = 'Current grade in gradebook';
 $string['defaultplugins'] = 'Default assignment settings';
 $string['defaultplugins_help'] = 'These settings define the defaults for all new assignments.';
 $string['deletepluginareyousure'] = 'Delete assignment plugin {$a}: are you sure?';

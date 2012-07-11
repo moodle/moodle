@@ -308,6 +308,7 @@ class dml_testcase extends database_driver_testcase {
 
     function test_fix_sql_params() {
         $DB = $this->tdb;
+        $prefix = $DB->get_prefix();
 
         $table = $this->get_test_table();
         $tablename = $table->getName();
@@ -315,13 +316,13 @@ class dml_testcase extends database_driver_testcase {
         // Correct table placeholder substitution
         $sql = "SELECT * FROM {{$tablename}}";
         $sqlarray = $DB->fix_sql_params($sql);
-        $this->assertEquals("SELECT * FROM {$DB->get_prefix()}".$tablename, $sqlarray[0]);
+        $this->assertEquals("SELECT * FROM {$prefix}".$tablename, $sqlarray[0]);
 
         // Conversions of all param types
         $sql = array();
-        $sql[SQL_PARAMS_NAMED]  = "SELECT * FROM {$DB->get_prefix()}testtable WHERE name = :param1, course = :param2";
-        $sql[SQL_PARAMS_QM]     = "SELECT * FROM {$DB->get_prefix()}testtable WHERE name = ?, course = ?";
-        $sql[SQL_PARAMS_DOLLAR] = "SELECT * FROM {$DB->get_prefix()}testtable WHERE name = \$1, course = \$2";
+        $sql[SQL_PARAMS_NAMED]  = "SELECT * FROM {$prefix}testtable WHERE name = :param1, course = :param2";
+        $sql[SQL_PARAMS_QM]     = "SELECT * FROM {$prefix}testtable WHERE name = ?, course = ?";
+        $sql[SQL_PARAMS_DOLLAR] = "SELECT * FROM {$prefix}testtable WHERE name = \$1, course = \$2";
 
         $params = array();
         $params[SQL_PARAMS_NAMED]  = array('param1'=>'first record', 'param2'=>1);
@@ -921,12 +922,12 @@ class dml_testcase extends database_driver_testcase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $data = array(array('id' => 1, 'course' => 3, 'name' => 'record1', 'onetext'=>'abc'),
-            array('id' => 2, 'course' => 3, 'name' => 'record2', 'onetext'=>'abcd'),
-            array('id' => 3, 'course' => 5, 'name' => 'record3', 'onetext'=>'abcde'));
+        $data = array(array('course' => 3, 'name' => 'record1', 'onetext'=>'abc'),
+            array('course' => 3, 'name' => 'record2', 'onetext'=>'abcd'),
+            array('course' => 5, 'name' => 'record3', 'onetext'=>'abcde'));
 
-        foreach ($data as $record) {
-            $DB->insert_record($tablename, $record);
+        foreach ($data as $key=>$record) {
+            $data[$key]['id'] = $DB->insert_record($tablename, $record);
         }
 
         // standard recordset iteration
@@ -990,9 +991,77 @@ class dml_testcase extends database_driver_testcase {
             $this->assertEquals($e->errorcode, 'textconditionsnotallowed');
         }
 
+        // Test nested iteration.
+        $rs1 = $DB->get_recordset($tablename);
+        $i = 0;
+        foreach($rs1 as $record1) {
+            $rs2 = $DB->get_recordset($tablename);
+            $i++;
+            $j = 0;
+            foreach($rs2 as $record2) {
+                $j++;
+            }
+            $rs2->close();
+            $this->assertEquals($j, count($data));
+        }
+        $rs1->close();
+        $this->assertEquals($i, count($data));
+
         // notes:
         //  * limits are tested in test_get_recordset_sql()
         //  * where_clause() is used internally and is tested in test_get_records()
+    }
+
+    public function test_get_recordset_static() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $DB->insert_record($tablename, array('course' => 1));
+        $DB->insert_record($tablename, array('course' => 2));
+        $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 4));
+
+        $rs = $DB->get_recordset($tablename, array(), 'id');
+
+        $DB->set_field($tablename, 'course', 666, array('course'=>1));
+        $DB->delete_records($tablename, array('course'=>2));
+
+        $i = 0;
+        foreach($rs as $record) {
+            $i++;
+            $this->assertEquals($i, $record->course);
+        }
+        $rs->close();
+        $this->assertEquals(4, $i);
+
+        // Now repeat with limits because it may use different code.
+        $DB->delete_records($tablename, array());
+
+        $DB->insert_record($tablename, array('course' => 1));
+        $DB->insert_record($tablename, array('course' => 2));
+        $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 4));
+
+        $rs = $DB->get_recordset($tablename, array(), 'id', '*', 0, 3);
+
+        $DB->set_field($tablename, 'course', 666, array('course'=>1));
+        $DB->delete_records($tablename, array('course'=>2));
+
+        $i = 0;
+        foreach($rs as $record) {
+            $i++;
+            $this->assertEquals($i, $record->course);
+        }
+        $rs->close();
+        $this->assertEquals(3, $i);
     }
 
     public function test_get_recordset_iterator_keys() {
@@ -1009,11 +1078,11 @@ class dml_testcase extends database_driver_testcase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $data = array(array('id'=> 1, 'course' => 3, 'name' => 'record1'),
-            array('id'=> 2, 'course' => 3, 'name' => 'record2'),
-            array('id'=> 3, 'course' => 5, 'name' => 'record3'));
-        foreach ($data as $record) {
-            $DB->insert_record($tablename, $record);
+        $data = array(array('course' => 3, 'name' => 'record1'),
+            array('course' => 3, 'name' => 'record2'),
+            array('course' => 5, 'name' => 'record3'));
+        foreach ($data as $key=>$record) {
+            $data[$key]['id'] = $DB->insert_record($tablename, $record);
         }
 
         // Test repeated numeric keys are returned ok
@@ -4128,6 +4197,43 @@ class dml_testcase extends database_driver_testcase {
         $this->assertEquals(0, $DB->count_records($tablename)); // finally rolled back
 
         $DB->delete_records($tablename);
+
+        // Test interactions of recordset and transactions - this causes problems in SQL Server.
+        $table2 = $this->get_test_table('2');
+        $tablename2 = $table2->getName();
+
+        $table2->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table2->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table2->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table2);
+
+        $DB->insert_record($tablename, array('course'=>1));
+        $DB->insert_record($tablename, array('course'=>2));
+        $DB->insert_record($tablename, array('course'=>3));
+
+        $DB->insert_record($tablename2, array('course'=>5));
+        $DB->insert_record($tablename2, array('course'=>6));
+        $DB->insert_record($tablename2, array('course'=>7));
+        $DB->insert_record($tablename2, array('course'=>8));
+
+        $rs1 = $DB->get_recordset($tablename);
+        $i = 0;
+        foreach ($rs1 as $record1) {
+            $i++;
+            $rs2 = $DB->get_recordset($tablename2);
+            $j = 0;
+            foreach ($rs2 as $record2) {
+                $t = $DB->start_delegated_transaction();
+                $DB->set_field($tablename, 'course', $record1->course+1, array('id'=>$record1->id));
+                $DB->set_field($tablename2, 'course', $record2->course+1, array('id'=>$record2->id));
+                $t->allow_commit();
+                $j++;
+            }
+            $rs2->close();
+            $this->assertEquals(4, $j);
+        }
+        $rs1->close();
+        $this->assertEquals(3, $i);
     }
 
     function test_transactions_forbidden() {

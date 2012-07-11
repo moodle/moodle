@@ -131,7 +131,7 @@ table.mod_index {width:90%;margin:1em auto;}
 #page-mod-glossary-import table.glossaryimportexport {text-align: center;}
 .path-mod-glossary .glossarydisplay {width: 90%;text-align:center;}
 .path-mod-glossary .entrybox {border-width: 0px 1px 1px 1px;border-style: solid;border-color: #BBB;}
-.path-mod-glossary .entrybox hr {border-left:none;border-right:none;}
+.path-mod-glossary .entrybox hr {border-left:0;border-right:0;}
 #page-mod-glossary-report table tr.teacher {background: #F0F0F0;}
 #page-mod-glossary-view table.glossarycategoryheader {background-color: #DDD;}
 #page-mod-glossary-view table.glossarycategoryheader h2 {font-size: 1em;margin: 0;}

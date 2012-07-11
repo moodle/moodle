@@ -565,20 +565,49 @@ function get_exception_info($ex) {
 }
 
 /**
- * Returns the Moodle Docs URL in the users language
+ * Returns the Moodle Docs URL in the users language for a given 'More help' link.
  *
- * @global object
- * @param string $path the end of the URL.
- * @return string The MoodleDocs URL in the user's language. for example {@link http://docs.moodle.org/en/ http://docs.moodle.org/en/$path}
+ * There are three cases:
+ *
+ * 1. In the normal case, $path will be a short relative path 'component/thing',
+ * like 'mod/folder/view' 'group/import'. This gets turned into an link to
+ * MoodleDocs in the user's language, and for the appropriate Moodle version.
+ * E.g. 'group/import' may become 'http://docs.moodle.org/2x/en/group/import'.
+ * The 'http://docs.moodle.org' bit comes from $CFG->docroot.
+ *
+ * This is the only option that should be used in standard Moodle code. The other
+ * two options have been implemented because they are useful for third-party plugins.
+ *
+ * 2. $path may be an absolute URL, starting http:// or https://. In this case,
+ * the link is used as is.
+ *
+ * 3. $path may start %%WWWROOT%%, in which case that is replaced by
+ * $CFG->wwwroot to make the link.
+ *
+ * @param string $path the place to link to. See above for details.
+ * @return string The MoodleDocs URL in the user's language. for example @link http://docs.moodle.org/2x/en/$path}
  */
-function get_docs_url($path=null) {
+function get_docs_url($path = null) {
     global $CFG;
+
+    // Absolute URLs are used unmodified.
+    if (substr($path, 0, 7) === 'http://' || substr($path, 0, 8) === 'https://') {
+        return $path;
+    }
+
+    // Paths starting %%WWWROOT%% have that replaced by $CFG->wwwroot.
+    if (substr($path, 0, 11) === '%%WWWROOT%%') {
+        return $CFG->wwwroot . substr($path, 11);
+    }
+
+    // Otherwise we do the normal case, and construct a MoodleDocs URL relative to $CFG->docroot.
+
     // Check that $CFG->branch has been set up, during installation it won't be.
     if (empty($CFG->branch)) {
-        // It's not there yet so look at version.php
+        // It's not there yet so look at version.php.
         include($CFG->dirroot.'/version.php');
     } else {
-        // We can use $CFG->branch and avoid having to include version.php
+        // We can use $CFG->branch and avoid having to include version.php.
         $branch = $CFG->branch;
     }
     // ensure branch is valid.
@@ -592,7 +621,7 @@ function get_docs_url($path=null) {
     if (!empty($CFG->docroot)) {
         return $CFG->docroot . '/' . $branch . '/' . current_language() . '/' . $path;
     } else {
-        return 'http://docs.moodle.org/'. $branch . '/en/' . $path;
+        return 'http://docs.moodle.org/'. $branch . '/' . current_language() . '/' . $path;
     }
 }
 

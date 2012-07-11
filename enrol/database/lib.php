@@ -445,8 +445,9 @@ class enrol_database_plugin extends enrol_plugin {
             $sql = $this->db_get_sql($table, array($coursefield=>$course->mapping), $sqlfields);
             if ($rs = $extdb->Execute($sql)) {
                 if (!$rs->EOF) {
+                    $usersearch = array('deleted' => 0);
                     if ($localuserfield === 'username') {
-                        $usersearch = array('mnethostid'=>$CFG->mnet_localhost_id, 'deleted' =>0);
+                        $usersearch['mnethostid'] = $CFG->mnet_localhost_id;
                     }
                     while ($fields = $rs->FetchRow()) {
                         $fields = array_change_key_case($fields, CASE_LOWER);

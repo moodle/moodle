@@ -109,7 +109,7 @@ $completion->set_module_viewed($cm);
         } else {
 
             echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox', 'intro');
-            echo $OUTPUT->spacer(array('height'=>30, 'width'=>1, 'br'=>true)); // should be done with CSS instead
+            echo $OUTPUT->spacer(array('height'=>30, 'width'=>1), true);  // should be done with CSS instead
 
             $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
             $questionorder = explode(",", $survey->questions);
@@ -122,7 +122,7 @@ $completion->set_module_viewed($cm);
                         $table->align = array ("left");
                         $table->data[] = array(s($answer->answer1));//no html here, just plain text
                         echo html_writer::table($table);
-                        echo $OUTPUT->spacer(clone($spacer)) . '<br />';
+                        echo $OUTPUT->spacer(array('height'=>30, 'width'=>1), true);
                     }
                 }
             }

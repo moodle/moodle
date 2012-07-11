@@ -199,7 +199,6 @@ p.prolog a:link {
     margin:10px 0 0 15px;
 }
 .logininfo{
-    background:url([[pix:theme|loginicon]]) left no-repeat;
     color:#fff;
     margin:0;
     padding:10px 10px 10px 40px;
@@ -213,7 +212,7 @@ p.prolog a:link {
 }
 #headermenu .langmenu{
     position:relative;
-    top:35px;
+    top:30px;
     width:210px;
 }
 a,

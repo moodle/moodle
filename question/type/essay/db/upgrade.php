@@ -90,6 +90,10 @@ function xmldb_qtype_essay_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2011102702, 'qtype', 'essay');
     }
 
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
+
+
     return true;
 }
 
