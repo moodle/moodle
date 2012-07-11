@@ -1744,7 +1744,7 @@ class assign {
         if (!empty($CFG->enableplagiarism)) {
             /** Include plagiarismlib.php */
             require_once($CFG->libdir . '/plagiarismlib.php');
-            plagiarism_update_status($this->get_course(), $this->get_course_module());
+            $o .= plagiarism_update_status($this->get_course(), $this->get_course_module());
         }
 
         $actionformtext = $this->output->render($gradingactions);
@@ -1808,11 +1808,8 @@ class assign {
         if (!empty($CFG->enableplagiarism)) {
             /** Include plagiarismlib.php */
             require_once($CFG->libdir . '/plagiarismlib.php');
-            ob_start();
 
-            plagiarism_print_disclosure($this->get_course_module()->id);
-            $o = ob_get_contents();
-            ob_end_clean();
+            $o .= plagiarism_print_disclosure($this->get_course_module()->id);
         }
 
         return $o;
