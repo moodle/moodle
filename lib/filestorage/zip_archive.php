@@ -613,7 +613,7 @@ class zip_archive extends file_archive {
                 // ASCII file names are always ok.
                 continue;
             }
-            if ($file['extra'] !== '') {
+            if ($file['extra']) {
                 // Most probably not created by php zip ext, better to skip it.
                 continue;
             }
