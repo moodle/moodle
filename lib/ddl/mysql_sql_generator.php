@@ -117,23 +117,16 @@ class mysql_sql_generator extends sql_generator {
      * by any of its comments, indexes and sequence creation SQL statements.
      */
     public function getCreateTableSQL($xmldb_table) {
-        // first find out if want some special db engine
-        $engine = null;
-        if (method_exists($this->mdb, 'get_dbengine')) {
-            $engine = $this->mdb->get_dbengine();
-        }
-
+        // First find out if want some special db engine.
+        $engine = $this->mdb->get_dbengine();
         $sqlarr = parent::getCreateTableSQL($xmldb_table);
 
-        if (!$engine) {
-            // we rely on database defaults
-            return $sqlarr;
-        }
-
-        // let's inject the engine into SQL
+        // Let's inject the extra MySQL tweaks.
         foreach ($sqlarr as $i=>$sql) {
             if (strpos($sql, 'CREATE TABLE ') === 0) {
-                $sqlarr[$i] .= " ENGINE = $engine";
+                if ($engine) {
+                    $sqlarr[$i] .= " ENGINE = $engine";
+                }
             }
         }
 
