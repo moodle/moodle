@@ -30,7 +30,7 @@
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/mnet/lib.php');
-require_once($CFG->dirroot.'/admin/mnet/peer_forms.php');
+require_once($CFG->dirroot.'/'.$CFG->admin.'/mnet/peer_forms.php');
 
 require_login();
 
