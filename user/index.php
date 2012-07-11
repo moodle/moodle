@@ -66,9 +66,9 @@
 
     $rolenames = role_fix_names(get_profile_roles($context), $context, ROLENAME_ALIAS, true);
     if ($isfrontpage) {
-        $rolenames = array(0=>get_string('allsiteusers', 'role'));
+        $rolenames[0] = get_string('allsiteusers', 'role');
     } else {
-        $rolenames = array(0=>get_string('allparticipants'));
+        $rolenames[0] = get_string('allparticipants');
     }
 
     // make sure other roles may not be selected by any means
