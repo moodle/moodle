@@ -33,16 +33,23 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Directori d\'administració';
 $string['availablelangs'] = 'Llista d\'idiomes disponibles';
 $string['chooselanguagehead'] = 'Trieu un idioma';
-$string['chooselanguagesub'] = 'Trieu un idioma NOMÉS per a la instal·lació. En una pantalla posterior podreu triar idiomes per al lloc i per als usuaris.';
+$string['chooselanguagesub'] = 'Trieu un idioma per a la instal·lació. S\'utilitzarà també com a idioma per defecte del lloc, tot i que després podeu canviar-lo.';
+$string['clialreadyconfigured'] = 'El fitxer config.php ja existeix, feu servir dmin/cli/install_database.php si voleu instal·lar aquest lloc web.';
+$string['clialreadyinstalled'] = 'El fitxer config.php ja existeix, feu servir admin/cli/upgrade.php si voleu actualitzar aquest lloc web.';
+$string['cliinstallheader'] = 'Programa d\'instal·lació de línia d\'ordres de Moodle {$a}';
 $string['databasehost'] = 'Servidor de base de dades:';
 $string['databasename'] = 'Nom de la base de dades:';
+$string['databasetypehead'] = 'Trieu el controlador de la base de dades';
 $string['dataroot'] = 'Directori de dades';
+$string['datarootpermission'] = 'Permisos dels directoris de dades';
 $string['dbprefix'] = 'Prefix de taules';
 $string['dirroot'] = 'Directori de Moodle';
 $string['environmenthead'] = 'S\'està comprovant el vostre entorn';
-$string['errorsinenvironment'] = 'Hi ha errors en l\'entorn.';
+$string['environmentsub2'] = 'Cada versió de Moodle té uns requeriments mínims de versió de PHP i un nombre d\'extensions de PHP necessàries.
+Abans de cada instal·lació o actualització es realitza una comprovació exhaustiva de l\'entorn. Contacteu amb l\'administrador si no sabeu com instal·lar una nova versió de PHP o com habilitar les extensions.';
+$string['errorsinenvironment'] = 'La comprovació de l\'entorn ha fallat.';
 $string['installation'] = 'Instal·lació';
-$string['langdownloaderror'] = 'Dissortadament l\'idioma "{$a}" no està instal·lat. La instal·lació prosseguirà en anglès.';
+$string['langdownloaderror'] = 'Dissortadament l\'idioma "{$a}" no es pot baixar. La instal·lació prosseguirà en anglès.';
 $string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servidor actualment està definit en {$a}.</p>
 
 <p>Això pot causar que Moodle tingui problemes de memòria més endavant, especialment si teniu molts mòduls habilitats i/o molts usuaris.</p>
@@ -55,13 +62,23 @@ $string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servid
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Tanmateix, en alguns servidors això farà que no funcioni <b>cap</b> pàgina PHP (es visualitzaran errors) en el qual cas hauríeu de suprimir el fitxer .htaccess.</p></li>
 </ol>';
+$string['paths'] = 'Camins';
+$string['pathserrcreatedataroot'] = 'L\'instal·lador no pot crear el directori de dades ({$a->dataroot}).';
+$string['pathshead'] = 'Confirmeu els camins';
+$string['pathsrodataroot'] = 'No es pot escriure en el directori dataroot.';
+$string['pathsroparentdataroot'] = 'No es pot escriure en el directori pare ({$a->parent}). L\'instal·lador no pot crear el directori ({$a->dataroot}).';
+$string['pathssubadmindir'] = 'Alguns serveis d\'allotjament web (pocs) utilitzen un URL especial /admin p. ex. per a accedir a un tauler de control o quelcom semblant. Malauradament això entra en conflicte amb la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu arreglar aquest problema canviant el nom del directori d\'administració de Moodle en la vostra instal·lació i posant el nou nom aquí. Per exemple <em>moodleadmin</em>. Això modificarà els enllaços d\'administració de Moodle.';
 $string['pathssubdataroot'] = 'Necessiteu un espai on Moodle pugui desar els fitxers penjats. Aquest directori hauria de tenir permisos de lectura I ESCRIPTURA per a l\'usuari del servidor web (normalment \'nobody\' o \'apache\'), però no cal que sigui accessible directament via web. L\'instal·lador provarà de crear-lo si no existeix.';
+$string['pathssubdirroot'] = 'Camí complet del directori d\'instal·lació de Moodle.';
+$string['pathsunsecuredataroot'] = 'La ubicació del dataroot no és segura.';
+$string['pathswrongadmindir'] = 'No existeix el directori d\'administració';
+$string['phpextension'] = 'Extensió PHP {$a}';
 $string['phpversion'] = 'Versió PHP';
-$string['phpversionhelp'] = '<p>Moodle necessita la versió de PHP 4.1.0 o posterior.</p>
+$string['phpversionhelp'] = '<p>Moodle necessita una versió de PHP 4.3.0 o 5.1.0 (les versions 5.0.x tenien uns quants problemes coneguts).</p>
 <p>A hores d\'ara esteu utilitzant la versió {$a}.</p>
-<p>Us caldrà actualitzar el PHP o traslladar Moodle a un ordinador amb una versió de PHP més recent.</p>';
+<p>Us cal actualitzar el PHP o traslladar Moodle a un ordinador amb una versió de PHP més recent.<br />(Si esteu utilitzant la versió 5.0.x, alternativament també podríeu tornar enrere a la 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Esteu veient aquesta pàgina perquè heu instal·lat amb èxit i heu executat el paquet <strong>{$a->packname} {$a->packversion}</strong>. Felicitacions!';
+$string['welcomep20'] = 'Esteu veient aquesta pàgina perquè heu instal·lat amb èxit i heu executat el paquet <strong>{$a->packname} {$a->packversion}</strong>. Felicitacions.';
 $string['welcomep30'] = 'Aquesta versió de <strong>{$a->installername}</strong> inclou les aplicacions necessàries per crear un entorn en el qual funcioni <strong>Moodle</strong>:';
 $string['welcomep40'] = 'El paquet inclou també <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'L\'ús de totes les aplicacions d\'aquest paquet és governat per les seves llicències respectives. El paquet <strong>{$a->installername}</strong> complet és
