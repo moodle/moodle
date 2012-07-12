@@ -53,6 +53,8 @@ $attemptobj->check_review_capability();
 
 // Create an object to manage all the other (non-roles) access rules.
 $accessmanager = $attemptobj->get_access_manager(time());
+$accessmanager->setup_attempt_page($PAGE);
+
 $options = $attemptobj->get_display_options(true);
 
 // Check permissions.
@@ -104,7 +106,6 @@ if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
 $headtags = $attemptobj->get_html_head_contributions($page, $showall);
 $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
-$accessmanager->setup_attempt_page($PAGE);
 
 // Summary table start ============================================================================
 
