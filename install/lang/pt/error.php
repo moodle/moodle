@@ -30,19 +30,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatelangdir'] = 'Não é possível criar o diretório para pacotes linguísticos';
-$string['cannotcreatetempdir'] = 'Não é possível criar o diretório temporário';
-$string['cannotdownloadcomponents'] = 'Não é possível descarregar  componentes';
-$string['cannotdownloadzipfile'] = 'Não é possível descarregar o ficheiro ZIP';
-$string['cannotfindcomponent'] = 'O componente não foi encontrado';
-$string['cannotsavemd5file'] = 'Não é possível gravar ficheiro md5';
-$string['cannotsavezipfile'] = 'Não  é possível gravar ficheiro ZIP';
-$string['cannotunzipfile'] = 'Não é possível descompatar ficheiro ZIP';
-$string['componentisuptodate'] = 'O componente está atualizado';
-$string['downloadedfilecheckfailed'] = 'Falhou a verificação do ficheiro descarregado.';
+$string['cannotcreatelangdir'] = 'Não é possível criar a pasta de pacotes linguísticos';
+$string['cannotcreatetempdir'] = 'Não é possível criar a pasta de ficheiros temporários';
+$string['cannotdownloadcomponents'] = 'Não é possível descarregar os componentes.';
+$string['cannotdownloadzipfile'] = 'Não é possível descarregar o ficheiro ZIP.';
+$string['cannotfindcomponent'] = 'Não é possível encontrar o componente';
+$string['cannotsavemd5file'] = 'Não é possível gravar o ficheiro md5';
+$string['cannotsavezipfile'] = 'Não é possível gravar o ficheiro ZIP';
+$string['cannotunzipfile'] = 'Não é possível descompactar o ficheiro ZIP';
+$string['componentisuptodate'] = 'O componente está atualizado.';
+$string['downloadedfilecheckfailed'] = 'A verificação do ficheiro descarregado falhou.';
 $string['invalidmd5'] = 'md5 inválido';
-$string['missingrequiredfield'] = 'Falta algum campo necessário';
-$string['remotedownloaderror'] = 'Não foi possível descarregar algum componente para o seu servidor; verifique as definições do proxy; recomenda-se fortemente o uso da extensão cURL do PHP.<br /><br />Deverá descarregar o ficheiro <a href="{$a->url}">{$a->url}</a> manualmente, copiá-lo para "{$a->dest}" no seu servidor, e descomprimi-lo nesse local.';
+$string['missingrequiredfield'] = 'Um dos campos obrigatórios está em falta';
+$string['remotedownloaderror'] = 'O download do componente para o servidor falhou. Verifique as configurações do proxy. A instalação da extensão cURL do PHP é muito recomendada.<br /><br />Terá que descarregar o ficheiro <a href="{$a->url}">{$a->url}</a> manualmente, copiá-lo para a pasta "{$a->dest}" no seu servidor e descompactá-lo.';
 $string['wrongdestpath'] = 'Caminho de destino errado.';
-$string['wrongsourcebase'] = 'URL errado para a fonte.';
+$string['wrongsourcebase'] = 'Base do URL de origem errada';
 $string['wrongzipfilename'] = 'Nome de ficheiro ZIP errado.';
