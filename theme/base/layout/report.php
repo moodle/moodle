@@ -83,6 +83,7 @@ echo $OUTPUT->doctype() ?>
         ?>
     </div>
     <?php } ?>
+    <div class="clearfix"></div>
 </div>
 <?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>
