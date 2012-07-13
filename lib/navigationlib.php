@@ -73,6 +73,12 @@ class navigation_node implements renderable {
     const TYPE_USER =       80;
     /** @var int Setting node type, used for containers of no importance 90 */
     const TYPE_CONTAINER =  90;
+    /** var int Course the current user is not enrolled in */
+    const COURSE_OTHER = 0;
+    /** var int Course the current user is enrolled in but not viewing */
+    const COURSE_MY = 1;
+    /** var int Course the current user is currently viewing */
+    const COURSE_CURRENT = 2;
 
     /** @var int Parameter to aid the coder in tracking [optional] */
     public $id = null;
@@ -1050,6 +1056,7 @@ class global_navigation extends navigation_node {
         }
         $this->rootnodes['site']      = $this->add_course($SITE);
         $this->rootnodes['myprofile'] = $this->add(get_string('myprofile'), null, self::TYPE_USER, null, 'myprofile');
+        $this->rootnodes['currentcourse'] = $this->add(get_string('currentcourse'), null, self::TYPE_ROOTNODE, null, 'currentcourse');
         $this->rootnodes['mycourses'] = $this->add(get_string('mycourses'), null, self::TYPE_ROOTNODE, null, 'mycourses');
         $this->rootnodes['courses']   = $this->add(get_string('courses'), new moodle_url('/course/index.php'), self::TYPE_ROOTNODE, null, 'courses');
         $this->rootnodes['users']     = $this->add(get_string('users'), null, self::TYPE_ROOTNODE, null, 'users');
@@ -1067,6 +1074,10 @@ class global_navigation extends navigation_node {
         $issite = ($this->page->course->id == $SITE->id);
         // $ismycourse gets set to true if the user is enrolled in the current pages course.
         $ismycourse = !$issite && (array_key_exists($this->page->course->id, $mycourses));
+
+        if ($ismycourse) {
+            unset($mycourses[$this->page->course->id]);
+        }
 
         // Check if any courses were returned.
         if (count($mycourses) > 0) {
@@ -1149,7 +1160,7 @@ class global_navigation extends navigation_node {
             // Add all of the users courses to the navigation.
             // First up we need to add to the mycourses section.
             foreach ($mycourses as $course) {
-                $course->coursenode = $this->add_course($course, false, true);
+                $course->coursenode = $this->add_course($course, false, self::COURSE_MY);
             }
 
             if (!empty($CFG->navshowallcourses)) {
@@ -1180,6 +1191,8 @@ class global_navigation extends navigation_node {
                     }
                 }
             }
+        } else if ($this->page->course) {
+            // Do nothing - handled later.
         } else if (!empty($CFG->navshowallcourses) || !$this->show_categories()) {
             // Load all courses
             $this->load_all_courses();
@@ -1211,14 +1224,12 @@ class global_navigation extends navigation_node {
                     }
                     break;
                 }
-                // Load the course associated with the page into the navigation
+
+                // Load the course associated with the current page into the navigation.
                 $course = $this->page->course;
-                if ($this->show_categories() && !$ismycourse) {
-                    // The user isn't enrolled in the course and we need to show categories in which case we need
-                    // to load the category relating to the course and depending up $showcategories all of the root categories as well.
-                    $this->load_all_categories($course->category, $showcategories);
-                }
-                $coursenode = $this->load_course($course);
+                $coursecontext = context_course::instance($course->id);
+
+                $coursenode = $this->add_course($course, false, self::COURSE_CURRENT);
 
                 // If the course wasn't added then don't try going any further.
                 if (!$coursenode) {
@@ -1243,13 +1254,13 @@ class global_navigation extends navigation_node {
                             }
                         }
                     }
-
                     if (!$isparent) {
                         $coursenode->make_active();
                         $canviewcourseprofile = false;
                         break;
                     }
                 }
+
                 // Add the essentials such as reports etc...
                 $this->add_course_essentials($coursenode, $course);
                 // Extend course navigation with it's sections/activities
@@ -1257,6 +1268,7 @@ class global_navigation extends navigation_node {
                 if (!$coursenode->contains_active_node() && !$coursenode->search_for_active_node()) {
                     $coursenode->make_active();
                 }
+
                 break;
             case CONTEXT_MODULE :
                 if ($issite) {
@@ -1410,7 +1422,7 @@ class global_navigation extends navigation_node {
                     }
                 }
             }
-        } else if ((!empty($CFG->navshowallcourses) || empty($mycourses)) && !$this->can_add_more_courses_to_category($this->rootnodes['courses'])) {
+        } else if ((!empty($CFG->navshowallcourses) || (empty($mycourses) && !$ismycourse)) && !$this->can_add_more_courses_to_category($this->rootnodes['courses'])) {
             $this->rootnodes['courses']->add(get_string('viewallcoursescategories'), new moodle_url('/course/index.php'), self::TYPE_SETTING);
         }
 
@@ -1636,6 +1648,10 @@ class global_navigation extends navigation_node {
             foreach ($coursesrs as $course) {
                 if ($course->id == $SITE->id) {
                     // frotpage is not wanted here
+                    continue;
+                }
+                if ($this->page->course && ($this->page->course->id == $course->id)) {
+                    // Don't include the currentcourse in this nodelist - it's displayed in the Current course node
                     continue;
                 }
                 context_instance_preload($course);
@@ -2431,7 +2447,7 @@ class global_navigation extends navigation_node {
      * @param bool $ismycourse
      * @return navigation_node
      */
-    public function add_course(stdClass $course, $forcegeneric = false, $ismycourse = false) {
+    public function add_course(stdClass $course, $forcegeneric = false, $coursetype = self::COURSE_OTHER) {
         global $CFG, $SITE;
 
         // We found the course... we can return it now :)
@@ -2458,7 +2474,10 @@ class global_navigation extends navigation_node {
             if (empty($CFG->usesitenameforsitepages)) {
                 $shortname = get_string('sitepages');
             }
-        } else if ($ismycourse && !$forcegeneric) {
+        } else if ($coursetype == self::COURSE_CURRENT) {
+            $parent = $this->rootnodes['currentcourse'];
+            $url = new moodle_url('/course/view.php', array('id'=>$course->id));
+        } else if ($coursetype == self::COURSE_MY && !$forcegeneric) {
             if (!empty($CFG->navshowmycoursecategories) && ($parent = $this->rootnodes['mycourses']->find($course->category, self::TYPE_CATEGORY))) {
                 // Nothing to do here the above statement set $parent to the category within mycourses.
             } else {
