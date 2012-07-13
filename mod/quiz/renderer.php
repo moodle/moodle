@@ -509,8 +509,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $output .= html_writer::tag('p', get_string('pleaseclose', 'quiz'));
             $delay = 0;
         }
-        $this->page->requires->js_function_call('M.mod_quiz.secure_window.close',
-                array($url, $delay));
+        $this->page->requires->js_init_call('M.mod_quiz.secure_window.close',
+                array($url, $delay), false, quiz_get_js_module());
 
         $output .= $this->box_end();
         $output .= $this->footer();

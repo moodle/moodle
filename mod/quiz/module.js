@@ -275,7 +275,7 @@ M.mod_quiz.secure_window = {
         }, '#secureclosebutton');
     },
 
-    close: function(url, delay) {
+    close: function(Y, url, delay) {
         setTimeout(function() {
             if (window.opener) {
                 window.opener.document.location.reload();
