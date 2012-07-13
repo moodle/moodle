@@ -35,7 +35,7 @@ $string['cliansweryes'] = 's';
 $string['cliincorrectvalueerror'] = 'Erro. Valor "{$a->value}" incorreto para "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Valor incorreto, por favor tente novamente';
 $string['clitypevalue'] = 'valor do tipo';
-$string['clitypevaluedefault'] = 'Escreva o valor. Ou Enter para usar o valor  por omissão ({$a}).';
+$string['clitypevaluedefault'] = 'valor do tipo, pressione a tecla Enter para usar o valor predefinido ({$a})';
 $string['cliunknowoption'] = 'Opções desconhecidas:
 {$a}
 Por favor use a opção --help';
