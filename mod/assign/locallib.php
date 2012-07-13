@@ -1724,6 +1724,7 @@ class assign {
                                                                   array('cm'=>$this->get_course_module()->id,
                                                                         'contextid'=>$this->context->id,
                                                                         'userid'=>$USER->id,
+                                                                        'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
                                                                         'showquickgrading'=>$showquickgrading,
                                                                         'quickgrading'=>$quickgrading),
                                                                   'post', '',
@@ -2654,7 +2655,11 @@ class assign {
         // Need submit permission to submit an assignment
         require_capability('mod/assign:grade', $this->context);
 
-        $mform = new mod_assign_grading_options_form(null, array('cm'=>$this->get_course_module()->id, 'contextid'=>$this->context->id, 'userid'=>$USER->id, 'showquickgrading'=>false));
+        $mform = new mod_assign_grading_options_form(null, array('cm'=>$this->get_course_module()->id,
+                                                                 'contextid'=>$this->context->id,
+                                                                 'userid'=>$USER->id,
+                                                                 'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
+                                                                 'showquickgrading'=>false));
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
             set_user_preference('assign_filter', $formdata->filter);
