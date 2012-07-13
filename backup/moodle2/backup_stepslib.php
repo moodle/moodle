@@ -323,7 +323,7 @@ class backup_module_structure_step extends backup_structure_step {
         $availability = new backup_nested_element('availability', array('id'), array(
             'sourcecmid', 'requiredcompletion', 'gradeitemid', 'grademin', 'grademax'));
         $availabilityfield = new backup_nested_element('availability_field', array('id'), array(
-            'userfield', 'customfieldid', 'operator', 'value'));
+            'userfield', 'customfield', 'customfieldtype', 'operator', 'value'));
 
         // attach format plugin structure to $module element, only one allowed
         $this->add_plugin_structure('format', $module, false);
@@ -346,7 +346,11 @@ class backup_module_structure_step extends backup_structure_step {
              WHERE cm.id = ?', array(backup::VAR_MODID));
 
         $availability->set_source_table('course_modules_availability', array('coursemoduleid' => backup::VAR_MODID));
-        $availabilityfield->set_source_table('course_modules_avail_fields', array('coursemoduleid' => backup::VAR_MODID));
+        $availabilityfield->set_source_sql('
+            SELECT cmaf.*, uif.shortname AS customfield, uif.datatype AS customfieldtype
+              FROM {course_modules_avail_fields} cmaf
+         LEFT JOIN {user_info_field} uif ON uif.id = cmaf.customfieldid
+             WHERE cmaf.coursemoduleid = ?', array(backup::VAR_MODID));
 
         // Define annotations
         $module->annotate_ids('grouping', 'groupingid');
@@ -377,14 +381,18 @@ class backup_section_structure_step extends backup_structure_step {
         $avail = new backup_nested_element('availability', array('id'), array(
                 'sourcecmid', 'requiredcompletion', 'gradeitemid', 'grademin', 'grademax'));
         $availfield = new backup_nested_element('availability_field', array('id'), array(
-            'userfield', 'customfieldid', 'operator', 'value'));
+            'userfield', 'operator', 'value', 'customfield', 'customfieldtype'));
         $section->add_child($avail);
         $section->add_child($availfield);
 
         // Define sources
         $section->set_source_table('course_sections', array('id' => backup::VAR_SECTIONID));
         $avail->set_source_table('course_sections_availability', array('coursesectionid' => backup::VAR_SECTIONID));
-        $availfield->set_source_table('course_sections_avail_fields', array('coursesectionid' => backup::VAR_SECTIONID));
+        $availfield->set_source_sql('
+            SELECT csaf.*, uif.shortname AS customfield, uif.datatype AS customfieldtype
+              FROM {course_sections_avail_fields} csaf
+         LEFT JOIN {user_info_field} uif ON uif.id = csaf.customfieldid
+             WHERE csaf.coursesectionid = ?', array(backup::VAR_SECTIONID));
 
         // Aliases
         $section->set_source_alias('section', 'number');
