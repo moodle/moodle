@@ -668,7 +668,7 @@ class core_course_external extends external_api {
                 'options' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                                'name' => new external_value(PARAM_ALPHA, 'The backup option name:
+                                'name' => new external_value(PARAM_ALPHAEXT, 'The backup option name:
                                             "activities" (int) Include course activites (default to 1 that is equal to yes),
                                             "blocks" (int) Include course blocks (default to 1 that is equal to yes),
                                             "filters" (int) Include course filters  (default to 1 that is equal to yes),
