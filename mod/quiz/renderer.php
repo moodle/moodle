@@ -1108,6 +1108,24 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 'id' => $cm->id, 'mode' => quiz_report_default_report($context)));
         return html_writer::link($url, $summary);
     }
+
+    /**
+     * Output a graph, or a message saying that GD is required.
+     * @param moodle_url $url the URL of the graph.
+     * @param string $title the title to display above the graph.
+     * @return string HTML fragment for the graph.
+     */
+    public function graph(moodle_url $url, $title) {
+        global $CFG;
+
+        if (empty($CFG->gdversion)) {
+            $graph = get_string('gdneed');
+        } else {
+            $graph = html_writer::empty_tag('img', array('src' => $url, 'alt' => $title));
+        }
+
+        return $this->heading($title) . html_writer::tag('div', $graph, array('class' => 'graph'));
+    }
 }
 
 class mod_quiz_links_to_other_attempts implements renderable {
