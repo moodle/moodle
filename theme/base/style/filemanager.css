@@ -290,7 +290,7 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 /*.filemanager-container ul{margin:0;padding:0;}
 .filemanager-container ul li{white-space:nowrap;list-style-type:none;}
 .filemanager-container ul li a{padding:0}*/
-.filemanager .fp-content{overflow: auto;max-height: 472px;}
+.filemanager .fp-content{overflow: auto;max-height: 472px;min-height: 157px;}
 .filemanager-container, .filepicker-filelist {overflow:hidden;}
 
 /*
