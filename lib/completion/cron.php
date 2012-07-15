@@ -377,10 +377,11 @@ function completion_cron_completions() {
         SET
             reaggregate = 0
         WHERE
-            reaggregate < {$timestarted}
+            reaggregate < :timestarted
+        AND reaggregate > 0
     ";
 
-    $DB->execute($sql);
+    $DB->execute($sql, array('timestarted' => $timestarted));
 }
 
 /**
