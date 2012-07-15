@@ -118,7 +118,9 @@ class repository_picasa extends repository {
 
         parent::type_config_form($mform);
         $mform->addElement('text', 'clientid', get_string('clientid', 'repository_picasa'));
+        $mform->setType('clientid', PARAM_RAW_TRIMMED);
         $mform->addElement('text', 'secret', get_string('secret', 'repository_picasa'));
+        $mform->setType('secret', PARAM_RAW_TRIMMED);
 
         $strrequired = get_string('required');
         $mform->addRule('clientid', $strrequired, 'required', null, 'client');

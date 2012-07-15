@@ -108,7 +108,9 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
         $mform->addElement('static', null, '', get_string('oauthinfo', 'portfolio_googledocs', $a));
 
         $mform->addElement('text', 'clientid', get_string('clientid', 'portfolio_googledocs'));
+        $mform->setType('clientid', PARAM_RAW_TRIMMED);
         $mform->addElement('text', 'secret', get_string('secret', 'portfolio_googledocs'));
+        $mform->setType('secret', PARAM_RAW_TRIMMED);
 
         $strrequired = get_string('required');
         $mform->addRule('clientid', $strrequired, 'required', null, 'client');
