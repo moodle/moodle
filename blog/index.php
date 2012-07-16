@@ -143,7 +143,7 @@ if (!empty($groupid)) {
     }
 
     if (!$course = $DB->get_record('course', array('id'=>$group->courseid))) {
-        print_error(get_string('invalidcourseid', 'blog'));
+        print_error('invalidcourseid');
     }
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
