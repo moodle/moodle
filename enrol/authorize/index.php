@@ -53,7 +53,7 @@
 
 /// Get course
     if (!($course = $DB->get_record('course', array('id'=>$courseid)))) {
-        print_error('invalidcourseid', '', '', $courseid);
+        print_error('invalidcourseid');
     }
 
 /// Only SITE users can access to this page
