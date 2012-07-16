@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_table.php');
 class quiz_overview_report extends quiz_attempts_report {
 
     public function display($quiz, $cm, $course) {
-        global $CFG, $DB, $OUTPUT;
+        global $CFG, $DB, $OUTPUT, $PAGE;
 
         list($currentgroup, $students, $groupstudents, $allowed) =
                 $this->init('overview', 'quiz_overview_settings_form', $quiz, $cm, $course);
@@ -237,30 +237,25 @@ class quiz_overview_report extends quiz_attempts_report {
         }
 
         if (!$table->is_downloading() && $options->usercanseegrades) {
+            $output = $PAGE->get_renderer('mod_quiz');
             if ($currentgroup && $groupstudents) {
                 list($usql, $params) = $DB->get_in_or_equal($groupstudents);
                 $params[] = $quiz->id;
                 if ($DB->record_exists_select('quiz_grades', "userid $usql AND quiz = ?",
                         $params)) {
-                     $imageurl = new moodle_url('/mod/quiz/report/overview/overviewgraph.php',
+                    $imageurl = new moodle_url('/mod/quiz/report/overview/overviewgraph.php',
                             array('id' => $quiz->id, 'groupid' => $currentgroup));
-                     $graphname = get_string('overviewreportgraphgroup', 'quiz_overview',
+                    $graphname = get_string('overviewreportgraphgroup', 'quiz_overview',
                             groups_get_group_name($currentgroup));
-                     echo $OUTPUT->heading($graphname);
-                     echo html_writer::tag('div', html_writer::empty_tag('img',
-                            array('src' => $imageurl, 'alt' => $graphname)),
-                            array('class' => 'graph'));
+                    echo $output->graph($imageurl, $graphname);
                 }
             }
 
             if ($DB->record_exists('quiz_grades', array('quiz'=> $quiz->id))) {
-                 $graphname = get_string('overviewreportgraph', 'quiz_overview');
-                 $imageurl = new moodle_url('/mod/quiz/report/overview/overviewgraph.php',
+                $imageurl = new moodle_url('/mod/quiz/report/overview/overviewgraph.php',
                         array('id' => $quiz->id));
-                 echo $OUTPUT->heading($graphname);
-                 echo html_writer::tag('div', html_writer::empty_tag('img',
-                        array('src' => $imageurl, 'alt' => $graphname)),
-                        array('class' => 'graph'));
+                $graphname = get_string('overviewreportgraph', 'quiz_overview');
+                echo $output->graph($imageurl, $graphname);
             }
         }
         return true;
