@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20120709" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20120717" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1018,9 +1018,9 @@
     <TABLE NAME="role" COMMENT="moodle roles" PREVIOUS="post" NEXT="context">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" COMMENT="Empty names are automatically localised" NEXT="shortname"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Empty names are automatically localised" PREVIOUS="id" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" COMMENT="Empty descriptions may be automatically localised" NEXT="sortorder"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Empty descriptions may be automatically localised" PREVIOUS="shortname" NEXT="sortorder"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="archetype"/>
         <FIELD NAME="archetype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="Role archetype is used during install and role reset, marks admin role and helps in site settings" PREVIOUS="sortorder"/>
       </FIELDS>
