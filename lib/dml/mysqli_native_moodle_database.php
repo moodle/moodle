@@ -81,7 +81,13 @@ class mysqli_native_moodle_database extends moodle_database {
             throw new dml_connection_exception($dberr);
         }
 
-        $result = $conn->query("CREATE DATABASE $dbname DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci");
+        if (isset($dboptions['dbcollation']) and strpos($dboptions['dbcollation'], 'utf8_') === 0) {
+            $collation = $dboptions['dbcollation'];
+        } else {
+            $collation = 'utf8_unicode_ci';
+        }
+
+        $result = $conn->query("CREATE DATABASE $dbname DEFAULT CHARACTER SET utf8 DEFAULT COLLATE ".$collation);
 
         $conn->close();
 
@@ -145,22 +151,28 @@ class mysqli_native_moodle_database extends moodle_database {
             return $this->dboptions['dbengine'];
         }
 
-        $engine = null;
-
-        if (!$this->external) {
-            // look for current engine of our config table (the first table that gets created),
-            // so that we create all tables with the same engine
-            $sql = "SELECT engine FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}config'";
-            $this->query_start($sql, NULL, SQL_QUERY_AUX);
-            $result = $this->mysqli->query($sql);
-            $this->query_end($result);
-            if ($rec = $result->fetch_assoc()) {
-                $engine = $rec['engine'];
-            }
-            $result->close();
+        if ($this->external) {
+            return null;
         }
 
+        $engine = null;
+
+        // Look for current engine of our config table (the first table that gets created),
+        // so that we create all tables with the same engine.
+        $sql = "SELECT engine
+                  FROM INFORMATION_SCHEMA.TABLES
+                 WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}config'";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+        if ($rec = $result->fetch_assoc()) {
+            $engine = $rec['engine'];
+        }
+        $result->close();
+
         if ($engine) {
+            // Cache the result to improve performance.
+            $this->dboptions['dbengine'] = $engine;
             return $engine;
         }
 
@@ -174,7 +186,7 @@ class mysqli_native_moodle_database extends moodle_database {
         }
         $result->close();
 
-        if (!$this->external and $engine === 'MyISAM') {
+        if ($engine === 'MyISAM') {
             // we really do not want MyISAM for Moodle, InnoDB or XtraDB is a reasonable defaults if supported
             $sql = "SHOW STORAGE ENGINES";
             $this->query_start($sql, NULL, SQL_QUERY_AUX);
@@ -195,7 +207,75 @@ class mysqli_native_moodle_database extends moodle_database {
             }
         }
 
+        // Cache the result to improve performance.
+        $this->dboptions['dbengine'] = $engine;
         return $engine;
+    }
+
+    /**
+     * Returns the current MySQL db collation.
+     *
+     * This is an ugly workaround for MySQL default collation problems.
+     *
+     * @return string or null MySQL collation name
+     */
+    public function get_dbcollation() {
+        if (isset($this->dboptions['dbcollation'])) {
+            return $this->dboptions['dbcollation'];
+        }
+        if ($this->external) {
+            return null;
+        }
+
+        $collation = null;
+
+        // Look for current collation of our config table (the first table that gets created),
+        // so that we create all tables with the same collation.
+        $sql = "SELECT collation_name
+                  FROM INFORMATION_SCHEMA.COLUMNS
+                 WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}config' AND column_name = 'value'";
+        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $result = $this->mysqli->query($sql);
+        $this->query_end($result);
+        if ($rec = $result->fetch_assoc()) {
+            $collation = $rec['collation_name'];
+        }
+        $result->close();
+
+        if (!$collation) {
+            // Get the default database collation, but only if using UTF-8.
+            $sql = "SELECT @@collation_database";
+            $this->query_start($sql, NULL, SQL_QUERY_AUX);
+            $result = $this->mysqli->query($sql);
+            $this->query_end($result);
+            if ($rec = $result->fetch_assoc()) {
+                if (strpos($rec['@@collation_database'], 'utf8_') === 0) {
+                    $collation = $rec['@@collation_database'];
+                }
+            }
+            $result->close();
+        }
+
+        if (!$collation) {
+            // We want only utf8 compatible collations.
+            $collation = null;
+            $sql = "SHOW COLLATION WHERE Collation LIKE 'utf8\_%' AND Charset = 'utf8'";
+            $this->query_start($sql, NULL, SQL_QUERY_AUX);
+            $result = $this->mysqli->query($sql);
+            $this->query_end($result);
+            while ($res = $result->fetch_assoc()) {
+                $collation = $res['Collation'];
+                if (strtoupper($res['Default']) === 'YES') {
+                    $collation = $res['Collation'];
+                    break;
+                }
+            }
+            $result->close();
+        }
+
+        // Cache the result to improve performance.
+        $this->dboptions['dbcollation'] = $collation;
+        return $collation;
     }
 
     /**

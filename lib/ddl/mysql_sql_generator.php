@@ -98,26 +98,32 @@ class mysql_sql_generator extends sql_generator {
 
     /**
      * Given one correct xmldb_table, returns the SQL statements
-     * to create it (inside one array)
+     * to create it (inside one array).
+     *
+     * @param xmldb_table $xmldb_table An xmldb_table instance.
+     * @return array An array of SQL statements, starting with the table creation SQL followed
+     * by any of its comments, indexes and sequence creation SQL statements.
      */
     public function getCreateTableSQL($xmldb_table) {
-        // first find out if want some special db engine
-        $engine = null;
-        if (method_exists($this->mdb, 'get_dbengine')) {
-            $engine = $this->mdb->get_dbengine();
-        }
+        // First find out if want some special db engine.
+        $engine = $this->mdb->get_dbengine();
+        // Do we know collation?
+        $collation = $this->mdb->get_dbcollation();
 
         $sqlarr = parent::getCreateTableSQL($xmldb_table);
 
-        if (!$engine) {
-            // we rely on database defaults
-            return $sqlarr;
-        }
-
-        // let's inject the engine into SQL
+        // Let's inject the extra MySQL tweaks.
         foreach ($sqlarr as $i=>$sql) {
             if (strpos($sql, 'CREATE TABLE ') === 0) {
-                $sqlarr[$i] .= " ENGINE = $engine";
+                if ($engine) {
+                    $sqlarr[$i] .= " ENGINE = $engine";
+                }
+                if ($collation) {
+                    if (strpos($collation, 'utf8_') === 0) {
+                        $sqlarr[$i] .= " DEFAULT CHARACTER SET utf8";
+                    }
+                    $sqlarr[$i] .= " DEFAULT COLLATE = $collation";
+                }
             }
         }
 
@@ -126,12 +132,32 @@ class mysql_sql_generator extends sql_generator {
 
     /**
      * Given one correct xmldb_table, returns the SQL statements
-     * to create temporary table (inside one array)
+     * to create temporary table (inside one array).
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @return array of sql statements
      */
     public function getCreateTempTableSQL($xmldb_table) {
+        // Do we know collation?
+        $collation = $this->mdb->get_dbcollation();
         $this->temptables->add_temptable($xmldb_table->getName());
-        $sqlarr = parent::getCreateTableSQL($xmldb_table); // we do not want the engine hack included in create table SQL
-        $sqlarr = preg_replace('/^CREATE TABLE (.*)/s', 'CREATE TEMPORARY TABLE $1', $sqlarr);
+
+        $sqlarr = parent::getCreateTableSQL($xmldb_table);
+
+        // Let's inject the extra MySQL tweaks.
+        foreach ($sqlarr as $i=>$sql) {
+            if (strpos($sql, 'CREATE TABLE ') === 0) {
+                // We do not want the engine hack included in create table SQL.
+                $sqlarr[$i] = preg_replace('/^CREATE TABLE (.*)/s', 'CREATE TEMPORARY TABLE $1', $sql);
+                if ($collation) {
+                    if (strpos($collation, 'utf8_') === 0) {
+                        $sqlarr[$i] .= " DEFAULT CHARACTER SET utf8";
+                    }
+                    $sqlarr[$i] .= " DEFAULT COLLATE $collation";
+                }
+            }
+        }
+
         return $sqlarr;
     }
 
@@ -202,6 +228,12 @@ class mysql_sql_generator extends sql_generator {
                     $xmldb_length='255';
                 }
                 $dbtype .= '(' . $xmldb_length . ')';
+                if ($collation = $this->mdb->get_dbcollation()) {
+                    if (strpos($collation, 'utf8_') === 0) {
+                        $dbtype .= " CHARACTER SET utf8";
+                    }
+                    $dbtype .= " COLLATE $collation";
+                }
                 break;
             case XMLDB_TYPE_TEXT:
                 if (empty($xmldb_length)) {
@@ -213,6 +245,12 @@ class mysql_sql_generator extends sql_generator {
                     $dbtype = 'MEDIUMTEXT';
                 } else {
                     $dbtype = 'LONGTEXT';
+                }
+                if ($collation = $this->mdb->get_dbcollation()) {
+                    if (strpos($collation, 'utf8_') === 0) {
+                        $dbtype .= " CHARACTER SET utf8";
+                    }
+                    $dbtype .= " COLLATE $collation";
                 }
                 break;
             case XMLDB_TYPE_BINARY:
