@@ -104,20 +104,45 @@ switch ($context->contextlevel) {
         break;
 }
 
+// Get the list of the reported-on user's role assignments - must be after
+// the page setup code above, or the language might be wrong.
+$reportuser = $userselector->get_selected_user();
+if (!is_null($reportuser)) {
+    $roleassignments = get_user_roles_with_special($context, $reportuser->id);
+    $rolenames = role_get_names($context);
+}
+
 echo $OUTPUT->header();
-// These are needed early because of tabs.php
-$assignableroles = get_assignable_roles($context, ROLENAME_BOTH);
-$overridableroles = get_overridable_roles($context, ROLENAME_BOTH);
 
 // Print heading.
 echo $OUTPUT->heading($title);
 
 // If a user has been chosen, show all the permissions for this user.
-$reportuser = $userselector->get_selected_user();
 if (!is_null($reportuser)) {
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-    echo $OUTPUT->heading(get_string('permissionsforuser', 'role', fullname($reportuser)), 3);
 
+    if (!empty($roleassignments)) {
+        echo $OUTPUT->heading(get_string('rolesforuser', 'role', fullname($reportuser)), 3);
+        echo html_writer::start_tag('ul');
+
+        $systemcontext = context_system::instance();
+        foreach ($roleassignments as $ra) {
+            $racontext = context::instance_by_id($ra->contextid);
+            $link = html_writer::link($racontext->get_url(), $racontext->get_context_name());
+
+            $rolename = $rolenames[$ra->roleid]->localname;
+            if (has_capability('moodle/role:manage', $systemcontext)) {
+                $rolename = html_writer::link(new moodle_url('/admin/roles/define.php',
+                        array('action' => 'view', 'roleid' => $ra->roleid)), $rolename);
+            }
+
+            echo html_writer::tag('li', get_string('roleincontext', 'role',
+                    array('role' => $rolename, 'context' => $link)));
+        }
+        echo html_writer::end_tag('ul');
+    }
+
+    echo $OUTPUT->heading(get_string('permissionsforuser', 'role', fullname($reportuser)), 3);
     $table = new check_capability_table($context, $reportuser, $contextname);
     $table->display();
     echo $OUTPUT->box_end();
