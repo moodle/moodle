@@ -487,6 +487,7 @@ $string['duplicate'] = 'Duplicate';
 $string['duplicateconfirm'] = 'Are you sure you want to duplicate {$a->modtype} \'{$a->modname}\' ?';
 $string['duplicatecontcourse'] = 'Return to the course';
 $string['duplicatecontedit'] = 'Edit the new copy';
+$string['duplicatenosupport'] = '\'{$a->modname}\' activity could not be duplicated because the {$a->modtype} module does not support backup and restore.';
 $string['duplicatesuccess'] = '{$a->modtype} \'{$a->modname}\' has been duplicated successfully';
 $string['duplicatinga'] = 'Duplicating: {$a}';
 $string['edhelpaspellpath'] = 'To use spell-checking within the editor, you MUST have <strong>aspell 0.50</strong> or later installed on your server, and you must specify the correct path to access the aspell binary.  On Unix/Linux systems, this path is usually <strong>/usr/bin/aspell</strong>, but it might be something else.';
