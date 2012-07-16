@@ -1737,7 +1737,7 @@ M.core_filepicker.init = function(Y, options) {
                 setAttrs({id:'fp-tb-help-'+client_id+'-link', target:'_blank'}).
                 setStyle('display', 'none');
             toolbar.append(helplnk);
-            toolbar.one('.fp-tb-manage').one('a,button').
+            toolbar.one('.fp-tb-help').one('a,button').
                 on('click', function(e) {
                     e.preventDefault();
                     helplnk.simulate('click')
