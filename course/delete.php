@@ -18,11 +18,11 @@
     $strcategories = get_string("categories");
 
     if (! $course = $DB->get_record("course", array("id"=>$id))) {
-        print_error("invalidcourseid", 'error', '', $id);
+        print_error("invalidcourseid");
     }
     if ($site->id == $course->id) {
         // can not delete frontpage!
-        print_error("invalidcourseid", 'error', '', $id);
+        print_error("invalidcourseid");
     }
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);

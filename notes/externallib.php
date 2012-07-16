@@ -110,7 +110,7 @@ class core_notes_external extends external_api {
             //check the course exists
             if (empty($courses[$note['courseid']])) {
                 $success = false;
-                $errormessage = get_string('invalidcourseid', 'notes', $note['courseid']);
+                $errormessage = get_string('invalidcourseid', 'error');
             } else {
                 // Ensure the current user is allowed to run this function
                 $context = get_context_instance(CONTEXT_COURSE, $note['courseid']);
