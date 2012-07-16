@@ -86,17 +86,20 @@ class block_blog_recent extends block_base {
 
         $context = $this->page->context;
 
+        $url = new moodle_url('/blog/index.php');
         $filter = array();
         if ($context->contextlevel == CONTEXT_MODULE) {
             $filter['module'] = $context->instanceid;
             $a = new stdClass;
             $a->type = get_string('modulename', $this->page->cm->modname);
             $strview = get_string('viewallmodentries', 'blog', $a);
+            $url->param('modid', $context->instanceid);
         } else if ($context->contextlevel == CONTEXT_COURSE) {
             $filter['course'] = $context->instanceid;
             $a = new stdClass;
             $a->type = get_string('course');
             $strview = get_string('viewblogentries', 'blog', $a);
+            $url->param('courseid', $context->instanceid);
         } else {
             $strview = get_string('viewsiteentries', 'blog');
         }
@@ -104,7 +107,6 @@ class block_blog_recent extends block_base {
 
         $bloglisting = new blog_listing($filter);
         $entries = $bloglisting->get_entries(0, $this->config->numberofrecentblogentries, 4);
-        $url = new moodle_url('/blog/index.php', $filter);
 
         if (!empty($entries)) {
             $entrieslist = array();
