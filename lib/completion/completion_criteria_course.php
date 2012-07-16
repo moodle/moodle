@@ -123,7 +123,7 @@ class completion_criteria_course extends completion_criteria {
      * @return string
      */
     public function get_title() {
-        return get_string('prerequisitescompleted', 'completion');
+        return get_string('dependenciescompleted', 'completion');
     }
 
     /**
@@ -146,7 +146,7 @@ class completion_criteria_course extends completion_criteria {
      * @return string
      */
     public function get_type_title() {
-        return get_string('prerequisites', 'completion');
+        return get_string('dependencies', 'completion');
     }
 
     /**
