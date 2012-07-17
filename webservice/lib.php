@@ -979,7 +979,7 @@ abstract class webservice_zend_server extends webservice_server {
                   FROM {external_services} s
                   JOIN {external_services_functions} sf ON (sf.externalserviceid = s.id AND s.restrictedusers = 1)
                   JOIN {external_services_users} su ON (su.externalserviceid = s.id AND su.userid = :userid)
-                 WHERE s.enabled = 1 AND su.validuntil IS NULL OR su.validuntil < :now $wscond2";
+                 WHERE s.enabled = 1 AND (su.validuntil IS NULL OR su.validuntil < :now) $wscond2";
 
         $params = array_merge($params, array('userid'=>$USER->id, 'now'=>time()));
 
