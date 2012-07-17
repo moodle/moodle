@@ -32,50 +32,49 @@ class grade_export_xls extends grade_export {
 
         $strgrades = get_string('grades');
 
-    /// Calculate file name
+        // Calculate file name
         $shortname = format_string($this->course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $this->course->id)));
         $downloadfilename = clean_filename("$shortname $strgrades.xls");
-    /// Creating a workbook
+        // Creating a workbook
         $workbook = new MoodleExcelWorkbook("-");
-    /// Sending HTTP headers
+        // Sending HTTP headers
         $workbook->send($downloadfilename);
-    /// Adding the worksheet
+        // Adding the worksheet
         $myxls =& $workbook->add_worksheet($strgrades);
 
-    /// Print names of all the fields
-        $myxls->write_string(0,0,get_string("firstname"));
-        $myxls->write_string(0,1,get_string("lastname"));
-        $myxls->write_string(0,2,get_string("idnumber"));
-        $myxls->write_string(0,3,get_string("institution"));
-        $myxls->write_string(0,4,get_string("department"));
-        $myxls->write_string(0,5,get_string("email"));
-        $pos=6;
+        // Print names of all the fields
+        $profilefields = grade_helper::get_user_profile_fields($this->course->id, $this->usercustomfields);
+        foreach ($profilefields as $id => $field) {
+            $myxls->write_string(0, $id, $field->fullname);
+        }
+        $pos = count($profilefields);
+
         foreach ($this->columns as $grade_item) {
             $myxls->write_string(0, $pos++, $this->format_column_name($grade_item));
 
-            /// add a column_feedback column
+            // Add a column_feedback column
             if ($this->export_feedback) {
                 $myxls->write_string(0, $pos++, $this->format_column_name($grade_item, true));
             }
         }
 
-    /// Print all the lines of data.
+        // Print all the lines of data.
         $i = 0;
         $geub = new grade_export_update_buffer();
         $gui = new graded_users_iterator($this->course, $this->columns, $this->groupid);
         $gui->require_active_enrolment($this->onlyactive);
+        $gui->allow_user_custom_fields($this->usercustomfields);
         $gui->init();
         while ($userdata = $gui->next_user()) {
             $i++;
             $user = $userdata->user;
 
-            $myxls->write_string($i,0,$user->firstname);
-            $myxls->write_string($i,1,$user->lastname);
-            $myxls->write_string($i,2,$user->idnumber);
-            $myxls->write_string($i,3,$user->institution);
-            $myxls->write_string($i,4,$user->department);
-            $myxls->write_string($i,5,$user->email);
-            $j=6;
+            foreach ($profilefields as $id => $field) {
+                $fieldvalue = grade_helper::get_user_field_value($user, $field);
+                $myxls->write_string($i, $id, $fieldvalue);
+            }
+            $j = count($profilefields);
+
             foreach ($userdata->grades as $itemid => $grade) {
                 if ($export_tracking) {
                     $status = $geub->track($grade);
