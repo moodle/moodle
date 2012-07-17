@@ -67,7 +67,7 @@ class enrol_self_enrol_form extends moodleform {
         if ($instance->password) {
             //change the id of self enrolment key input as there can be multiple self enrolment methods
             $mform->addElement('passwordunmask', 'enrolpassword', get_string('password', 'enrol_self'),
-                    array('id' => $instance->id."_enrolpassword"));
+                    array('id' => 'enrolpassword_'.$instance->id));
         } else {
             $mform->addElement('static', 'nokey', '', get_string('nopassword', 'enrol_self'));
         }
