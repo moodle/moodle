@@ -85,14 +85,6 @@ define('CALENDAR_EVENT_GROUP', 4);
  */
 define('CALENDAR_EVENT_USER', 8);
 
-/**
- * CALENDAR_STARTING_WEEKDAY - has since been deprecated please call calendar_get_starting_weekday() instead
- *
- * @deprecated Moodle 2.0 MDL-24284- please do not use this function any more.
- * @todo MDL-31132 This will be deleted in Moodle 2.3.
- * @see calendar_get_starting_weekday()
- */
-define('CALENDAR_STARTING_WEEKDAY', CALENDAR_DEFAULT_STARTING_WEEKDAY);
 
 /**
  * Return the days of the week
