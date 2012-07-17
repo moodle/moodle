@@ -221,6 +221,18 @@ class scorm_interactions_report extends scorm_default_report {
                 $table->no_sorting('finish');
                 $table->no_sorting('score');
 
+                for($id = 0; $id < $questioncount; $id++) {
+                    if ($displayoptions['qtext']) {
+                        $table->no_sorting('question'.$id);
+                    }
+                    if ($displayoptions['resp']) {
+                        $table->no_sorting('response'.$id);
+                    }
+                    if ($displayoptions['right']) {
+                        $table->no_sorting('right'.$id);
+                    }
+                }
+
                 foreach ($scoes as $sco) {
                     if ($sco->launch != '') {
                         $table->no_sorting('scograde'.$sco->id);
