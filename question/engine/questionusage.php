@@ -714,6 +714,14 @@ class question_usage_by_activity {
 
         $quba->observer = new question_engine_unit_of_work($quba);
 
+        // If slot is null then the current pointer in $records will not be
+        // advanced in the while loop below, and we get stuck in an infinite loop,
+        // since this method is supposed to always consume at least one record.
+        // Therefore, in this case, advance the record here.
+        if (is_null($record->slot)) {
+            $records->next();
+        }
+
         while ($record && $record->qubaid == $qubaid && !is_null($record->slot)) {
             $quba->questionattempts[$record->slot] =
                     question_attempt::load_from_records($records,
