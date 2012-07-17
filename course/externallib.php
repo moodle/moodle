@@ -668,13 +668,12 @@ class core_course_external extends external_api {
                 'options' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                                'name' => new external_value(PARAM_ALPHA, 'The backup option name:
+                                'name' => new external_value(PARAM_ALPHAEXT, 'The backup option name:
                                             "activities" (int) Include course activites (default to 1 that is equal to yes),
                                             "blocks" (int) Include course blocks (default to 1 that is equal to yes),
                                             "filters" (int) Include course filters  (default to 1 that is equal to yes),
                                             "users" (int) Include users (default to 0 that is equal to no),
                                             "role_assignments" (int) Include role assignments  (default to 0 that is equal to no),
-                                            "user_files" (int) Include user files  (default to 0 that is equal to no),
                                             "comments" (int) Include user comments  (default to 0 that is equal to no),
                                             "completion_information" (int) Include user course completion information  (default to 0 that is equal to no),
                                             "logs" (int) Include course logs  (default to 0 that is equal to no),
@@ -739,7 +738,6 @@ class core_course_external extends external_api {
             'filters' => 1,
             'users' => 0,
             'role_assignments' => 0,
-            'user_files' => 0,
             'comments' => 0,
             'completion_information' => 0,
             'logs' => 0,
