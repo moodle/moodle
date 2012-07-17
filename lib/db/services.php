@@ -534,6 +534,15 @@ $functions = array(
         'capabilities'=> 'moodle/category:manage',
     ),
 
+    'core_course_import_course' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'import_course',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Import course data from a course into another course. Does not include any user data.',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/backup:backuptargetimport, moodle/restore:restoretargetimport',
+    ),
+
     // === message related functions ===
 
     'moodle_message_send_instantmessages' => array(
