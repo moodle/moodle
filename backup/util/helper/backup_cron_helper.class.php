@@ -255,7 +255,7 @@ abstract class backup_cron_automated_helper {
             self::BACKUP_STATUS_SKIPPED => 0,
         );
 
-        $statuses = $DB->get_records_sql('SELECT DISTINCT bc.laststatus, COUNT(bc.courseid) statuscount FROM {backup_courses} bc GROUP BY bc.laststatus');
+        $statuses = $DB->get_records_sql('SELECT DISTINCT bc.laststatus, COUNT(bc.courseid) AS statuscount FROM {backup_courses} bc GROUP BY bc.laststatus');
 
         foreach ($statuses as $status) {
             if (empty($status->statuscount)) {
