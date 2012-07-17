@@ -85,7 +85,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool always true
  */
 function xmldb_main_upgrade($oldversion) {
-    global $CFG, $USER, $DB, $OUTPUT;
+    global $CFG, $USER, $DB, $OUTPUT, $SITE;
 
     require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions
 
@@ -1069,5 +1069,25 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012072401.00);
     }
 
+    if ($oldversion < 2012072600.01) {
+        $rs = $DB->get_recordset('event', array( 'eventtype' => ''), '', 'id, courseid, groupid, userid, modulename');
+        foreach ($rs as $event) {
+            if ($event->courseid == $SITE->id) {                                // Site event
+                $DB->set_field('event', 'eventtype', 'site', array('id' => $event->id));
+            } else if ($event->courseid != 0 && $event->groupid == 0 && ($event->modulename == 'assignment' || $event->modulename == 'assign')) {
+                // Course assingment event
+                $DB->set_field('event', 'eventtype', 'due', array('id' => $event->id));
+            } else if ($event->courseid != 0 && $event->groupid == 0) {      // Course event
+                $DB->set_field('event', 'eventtype', 'course', array('id' => $event->id));
+            } else if ($event->groupid) {                                      // Group event
+                $DB->set_field('event', 'eventtype', 'group', array('id' => $event->id));
+            } else if ($event->userid) {                                       // User event
+                $DB->set_field('event', 'eventtype', 'user', array('id' => $event->id));
+            }
+        }
+        $rs->close();
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012072600.01);
+    }
     return true;
 }
