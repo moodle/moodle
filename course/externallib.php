@@ -945,11 +945,11 @@ class core_course_external extends external_api {
         // Context validation.
 
         if (! ($importfrom = $DB->get_record('course', array('id'=>$params['importfrom'])))) {
-            throw new moodle_exception('invalidcourseid', 'error', '', $params['importfrom']);
+            throw new moodle_exception('invalidcourseid', 'error');
         }
 
         if (! ($importto = $DB->get_record('course', array('id'=>$params['importto'])))) {
-            throw new moodle_exception('invalidcourseid', 'error', '', $params['importto']);
+            throw new moodle_exception('invalidcourseid', 'error');
         }
 
         $importfromcontext = context_course::instance($importfrom->id);
