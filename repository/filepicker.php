@@ -89,9 +89,9 @@ if ($repo_id) {
 }
 
 $context = context::instance_by_id($contextid);
-$moodle_maxbytes = get_user_max_upload_file_size($context);
+$moodle_maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $course->maxbytes);
 // to prevent maxbytes greater than moodle maxbytes setting
-if ($maxbytes == 0 || $maxbytes>=$moodle_maxbytes) {
+if (($maxbytes <= 0) || ($maxbytes >= $moodle_maxbytes)) {
     $maxbytes = $moodle_maxbytes;
 }
 
