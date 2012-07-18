@@ -64,20 +64,11 @@
 
     $rolenamesurl = new moodle_url("$CFG->wwwroot/user/index.php?contextid=$context->id&sifirst=&silast=");
 
-    $allroles = get_all_roles();
-    $roles = get_profile_roles($context);
-    $allrolenames = array();
+    $rolenames = role_fix_names(get_profile_roles($context), $context, ROLENAME_ALIAS, true);
     if ($isfrontpage) {
-        $rolenames = array(0=>get_string('allsiteusers', 'role'));
+        $rolenames[0] = get_string('allsiteusers', 'role');
     } else {
-        $rolenames = array(0=>get_string('allparticipants'));
-    }
-
-    foreach ($allroles as $role) {
-        $allrolenames[$role->id] = strip_tags(role_get_name($role, $context));   // Used in menus etc later on
-        if (isset($roles[$role->id])) {
-            $rolenames[$role->id] = $allrolenames[$role->id];
-        }
+        $rolenames[0] = get_string('allparticipants');
     }
 
     // make sure other roles may not be selected by any means

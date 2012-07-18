@@ -38,7 +38,7 @@ $roleids = optional_param_array('roles', array('0'), PARAM_INTEGER);
 
 // Clean the passed in list of role ids. If 'All' selected as an option, or
 // if none were selected, do all roles.
-$allroles = get_all_roles();
+$allroles = role_fix_names(get_all_roles());
 $cleanedroleids = array();
 foreach ($roleids as $roleid) {
     if ($roleid == 0) {
@@ -73,7 +73,7 @@ foreach ($allcapabilities as $cap) {
 // Prepare the list of roles to choose from
 $rolechoices = array('0' => get_string('all'));
 foreach ($allroles as $role) {
-    $rolechoices[$role->id] = $role->name;
+    $rolechoices[$role->id] = $role->localname;
 }
 if (count($cleanedroleids) == count($allroles)) {
     // Select 'All', rather than each role individually.
@@ -162,7 +162,7 @@ if ($capability) {
     if (count($cleanedroleids) != count($allroles)) {
         $rolenames = array();
         foreach ($cleanedroleids as $roleid) {
-            $rolenames[] = $allroles[$roleid]->name;
+            $rolenames[] = $allroles[$roleid]->localname;
         }
         echo '<p>', get_string('forroles', 'tool_capability', implode(', ', $rolenames)), '</p>';
     }
@@ -207,7 +207,7 @@ function print_report_tree($contextid, $contexts, $allroles) {
         foreach ($allroles as $role) {
             if (isset($contexts[$contextid]->rolecapabilities[$role->id])) {
                 $permission = $contexts[$contextid]->rolecapabilities[$role->id];
-                echo '<tr class="r' . ($rowcounter % 2) . '"><th class="cell">', $role->name,
+                echo '<tr class="r' . ($rowcounter % 2) . '"><th class="cell">', $role->localname,
                         '</th><td class="cell">' . $strpermissions[$permission] . '</td></tr>';
                 $rowcounter++;
             }

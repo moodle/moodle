@@ -177,91 +177,22 @@ class repository_recent extends repository {
     public function supported_returntypes() {
         return FILE_INTERNAL;
     }
+
     /**
-     * This function overwrite the default implement to copying file using file_storage
+     * Repository method to make sure that user can access particular file.
      *
-     * @param string $encoded The information of file, it is base64 encoded php serialized data
-     * @param stdClass|array $filerecord contains itemid, filepath, filename and optionally other
-     *      attributes of the new file
-     * @param int $maxbytes maximum allowed size of file, -1 if unlimited. If size of file exceeds
-     *      the limit, the file_exception is thrown.
-     * @return array The information of file
+     * This is checked when user tries to pick the file from repository to deal with
+     * potential parameter substitutions is request
+     *
+     * @todo MDL-33805 remove this function when recent files are managed correctly
+     *
+     * @param string $source
+     * @return bool whether the file is accessible by current user
      */
-    public function copy_to_area($encoded, $filerecord, $maxbytes = -1) {
+    public function file_is_accessible($source) {
         global $USER;
-
-        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-
-        $filerecord = (array)$filerecord;
-        // make sure the new file will be created in user draft area
-        $filerecord['component'] = 'user'; // make sure
-        $filerecord['filearea'] = 'draft'; // make sure
-        $filerecord['contextid'] = $user_context->id;
-        $filerecord['sortorder'] = 0;
-        $draftitemid = $filerecord['itemid'];
-        $new_filepath = $filerecord['filepath'];
-        $new_filename = $filerecord['filename'];
-
-        $fs = get_file_storage();
-
-        $params = unserialize(base64_decode($encoded));
-
-        $contextid  = clean_param($params['contextid'], PARAM_INT);
-        $fileitemid = clean_param($params['itemid'],    PARAM_INT);
-        $filename   = clean_param($params['filename'],  PARAM_FILE);
-        $filepath   = clean_param($params['filepath'],  PARAM_PATH);;
-        $filearea   = clean_param($params['filearea'],  PARAM_AREA);
-        $component  = clean_param($params['component'], PARAM_COMPONENT);
-
-        // XXX:
-        // When user try to pick a file from other filearea, normally file api will use file browse to
-        // operate the files with capability check, but in some areas, users don't have permission to
-        // browse the files (for example, forum_attachment area).
-        //
-        // To get 'recent' plugin working, we need to use lower level file_stoarge class to bypass the
-        // capability check, we will use a better workaround to improve it.
-        // TODO MDL-33297 apply here
-        if ($stored_file = $fs->get_file($contextid, $component, $filearea, $fileitemid, $filepath, $filename)) {
-            // verify user id
-            if ($USER->id != $stored_file->get_userid()) {
-                throw new moodle_exception('errornotyourfile', 'repository');
-            }
-            if ($maxbytes !== -1 && $stored_file->get_filesize() > $maxbytes) {
-                throw new file_exception('maxbytes');
-            }
-
-            // test if file already exists
-            if (repository::draftfile_exists($draftitemid, $new_filepath, $new_filename)) {
-                // create new file
-                $unused_filename = repository::get_unused_filename($draftitemid, $new_filepath, $new_filename);
-                $filerecord['filename'] = $unused_filename;
-                // create a tmp file
-                $fs->create_file_from_storedfile($filerecord, $stored_file);
-                $event = array();
-                $event['event'] = 'fileexists';
-                $event['newfile'] = new stdClass;
-                $event['newfile']->filepath = $new_filepath;
-                $event['newfile']->filename = $unused_filename;
-                $event['newfile']->url = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $unused_filename)->out();
-                $event['existingfile'] = new stdClass;
-                $event['existingfile']->filepath = $new_filepath;
-                $event['existingfile']->filename = $new_filename;
-                $event['existingfile']->url      = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $new_filename)->out();;
-                return $event;
-            } else {
-                $fs->create_file_from_storedfile($filerecord, $stored_file);
-                $info = array();
-                $info['title']  = $new_filename;
-                $info['file']  = $new_filename;
-                $info['itemid'] = $draftitemid;
-                $info['filesize']  = $stored_file->get_filesize();
-                $info['url'] = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $new_filename)->out();;
-                $info['contextid'] = $user_context->id;
-                return $info;
-            }
-        }
-        return false;
-
+        $file = self::get_moodle_file($source);
+        return (!empty($file) && $file->get_userid() == $USER->id);
     }
 
     /**

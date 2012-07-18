@@ -71,7 +71,7 @@ class conditionlib_testcase extends advanced_testcase {
             (object)array('id'=>$id,'showavailability'=>1,
                 'availablefrom'=>17,'availableuntil'=>398,'course'=>64,
                 'conditionsgrade'=>array(), 'conditionscompletion'=>array(),
-                'visible' => 1),
+                'visible' => 1, 'conditionsfield' => array()),
             $test->get_full_course_module());
 
         // just the course_modules stuff; check it doesn't request that from db
@@ -85,7 +85,7 @@ class conditionlib_testcase extends advanced_testcase {
             (object)array('id'=>$id,'showavailability'=>0,
                 'availablefrom'=>2,'availableuntil'=>74,'course'=>38,
                 'conditionsgrade' => array(), 'conditionscompletion' => array(),
-                'visible' => 1),
+                'visible' => 1, 'conditionsfield' => array()),
             $test->get_full_course_module());
 
         // Now let's add some actual grade/completion conditions
@@ -140,7 +140,7 @@ class conditionlib_testcase extends advanced_testcase {
                 (object)array('id' => $id, 'showavailability' => 1, 'groupingid' => 13,
                     'availablefrom' => 17, 'availableuntil' => 398, 'course' => 64,
                     'conditionsgrade' => array(), 'conditionscompletion' => array(),
-                    'visible' => 1),
+                    'visible' => 1, 'conditionsfield' => array()),
                 $test->get_full_section());
 
         // Just the course_sections stuff; check it doesn't request that from db
@@ -156,7 +156,7 @@ class conditionlib_testcase extends advanced_testcase {
                 (object)array('id' => $id, 'showavailability' => 0, 'groupingid' => 99,
                     'availablefrom' => 2, 'availableuntil' => 74, 'course' => 38,
                     'conditionsgrade' => array(), 'conditionscompletion' => array(),
-                    'visible' => 1),
+                    'visible' => 1, 'conditionsfield' => array()),
                 $test->get_full_section());
 
         // Now let's add some actual grade/completion conditions

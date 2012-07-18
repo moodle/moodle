@@ -229,7 +229,7 @@ class course_edit_form extends moodleform {
             if (!empty($course->id)) {
                 $mform->setConstant('visible', $course->visible);
             } else {
-                $mform->setConstant('visible', $category->visible);
+                $mform->setConstant('visible', $courseconfig->visible);
             }
         }
 
@@ -268,15 +268,10 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('rolerenaming', 'rolerenaming');
 
         if ($roles = get_all_roles()) {
-            if ($coursecontext) {
-                $roles = role_fix_names($roles, $coursecontext, ROLENAME_ALIAS_RAW);
-            }
+            $roles = role_fix_names($roles, null, ROLENAME_ORIGINAL);
             $assignableroles = get_roles_for_contextlevels(CONTEXT_COURSE);
             foreach ($roles as $role) {
-                $mform->addElement('text', 'role_'.$role->id, get_string('yourwordforx', '', $role->name));
-                if (isset($role->localname)) {
-                    $mform->setDefault('role_'.$role->id, $role->localname);
-                }
+                $mform->addElement('text', 'role_'.$role->id, get_string('yourwordforx', '', $role->localname));
                 $mform->setType('role_'.$role->id, PARAM_TEXT);
                 if (!in_array($role->id, $assignableroles)) {
                     $mform->setAdvanced('role_'.$role->id);

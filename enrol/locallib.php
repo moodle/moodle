@@ -450,7 +450,7 @@ class course_enrolment_manager {
      */
     public function get_all_roles() {
         if ($this->_roles === null) {
-            $this->_roles = role_fix_names(get_all_roles(), $this->context);
+            $this->_roles = role_fix_names(get_all_roles($this->context), $this->context);
         }
         return $this->_roles;
     }

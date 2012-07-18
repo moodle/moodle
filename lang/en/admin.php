@@ -1010,8 +1010,24 @@ $string['upgradelogs'] = 'For full functionality, your old logs need to be upgra
 $string['upgradelogsinfo'] = 'Some changes have recently been made in the way logs are stored.  To be able to view all of your old logs on a per-activity basis, your old logs need to be upgraded.  Depending on your site this can take a long time (eg several hours) and can be quite taxing on the database for large sites.  Once you start this process you should let it finish (by keeping the browser window open).  Don\'t worry - your site will work fine for other people while the logs are being upgraded.<br /><br />Do you want to upgrade your logs now?';
 $string['upgradesettings'] = 'New settings';
 $string['upgradesettingsintro'] = 'The settings shown below were added during your last Moodle upgrade. Make any changes necessary to the defaults and then click the &quot;Save changes&quot; button at the bottom of this page.';
-$string['upgradestalefiles'] = 'Invalid installation files detected, upgrade cannot continue';
-$string['upgradestalefilesinfo'] = 'Some old PHP scripts have been detected which may indicate that you installed this version over an older one. Please fix the installation directory by removing all old scripts (except config.php) before installing the new version and then try the upgrade again. You can find more information in upgrade documentation at <a href="{$a}">{$a}</a>';
+$string['upgradestalefiles'] = 'Mixed Moodle versions detected, upgrade cannot continue';
+$string['upgradestalefilesinfo'] = 'The Moodle update process has been paused because PHP scripts from at least two major versions of Moodle have been detected in the Moodle directory.
+
+This can cause significant problems later, so in order to continue you must ensure that the Moodle directory contains only files for a single version of Moodle.
+
+The recommended way to clean your Moodle directory is as follows:
+
+* rename the current Moodle directory to "moodle_old"
+* create a new Moodle directory containing only files from either a standard Moodle package download, or from the Moodle CVS or GIT repositories
+* move the original config.php file and any non-standard plugins from the "moodle_old" directory to the new Moodle directory
+
+When you have a clean Moodle directory, refresh this page to resume the Moodle update process.
+
+This warning is often caused by unzipping a standard Moodle package over a previous version of Moodle. While this is OK for minor upgrades, it is strongly discouraged for major Moodle upgrades.
+
+This warning can also be caused by an incomplete checkout or update operation from a CVS, SVN or GIT repository, in which case you may just have to wait for the operation complete, or perhaps run the appropriate clean up command and retry the operation.
+
+You can find more information in upgrade documentation at <a href="{$a}">{$a}</a>';
 $string['upgradesure'] = 'Your Moodle files have been changed, and you are about to automatically upgrade your server to this version: <br /><br />
 <strong>{$a}</strong> <br /><br />
 Once you do this you can not go back again. <br /><br />

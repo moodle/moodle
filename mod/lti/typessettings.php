@@ -106,7 +106,7 @@ if ($data = $form->get_data()) {
 }
 
 $PAGE->set_title("$SITE->shortname: " . get_string('toolsetup', 'lti'));
-$PAGE->navbar->add(get_string('lti_administration', 'lti'), $CFG->wwwroot.'/admin/settings.php?section=modsettinglti');
+$PAGE->navbar->add(get_string('lti_administration', 'lti'), $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=modsettinglti');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('toolsetup', 'lti'));

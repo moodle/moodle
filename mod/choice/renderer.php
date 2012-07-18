@@ -141,36 +141,72 @@ class mod_choice_renderer extends plugin_renderer_base {
         $table->cellspacing = 0;
         $table->attributes['class'] = 'results names ';
         $table->tablealign = 'center';
+        $table->summary = get_string('responsesto', 'choice', format_string($choices->name));
         $table->data = array();
 
         $count = 0;
         ksort($choices->options);
 
         $columns = array();
+        $celldefault = new html_table_cell();
+        $celldefault->attributes['class'] = 'data';
+
+        // This extra cell is needed in order to support accessibility for screenreader. MDL-30816
+        $accessiblecell = new html_table_cell();
+        $accessiblecell->scope = 'row';
+        $accessiblecell->text = get_string('choiceoptions', 'choice');
+        $columns['options'][] = $accessiblecell;
+
+        $usernumberheader = clone($celldefault);
+        $usernumberheader->header = true;
+        $usernumberheader->attributes['class'] = 'header data';
+        $usernumberheader->text = get_string('numberofuser', 'choice');
+        $columns['usernumber'][] = $usernumberheader;
+
+
         foreach ($choices->options as $optionid => $options) {
-            $coldata = '';
+            $celloption = clone($celldefault);
+            $cellusernumber = clone($celldefault);
+            $cellusernumber->style = 'text-align: center;';
+
+            $celltext = '';
             if ($choices->showunanswered && $optionid == 0) {
-                $coldata .= html_writer::tag('div', format_string(get_string('notanswered', 'choice')), array('class'=>'option'));
+                $celltext = format_string(get_string('notanswered', 'choice'));
             } else if ($optionid > 0) {
-                $coldata .= html_writer::tag('div', format_string($choices->options[$optionid]->text), array('class'=>'option'));
+                $celltext = format_string($choices->options[$optionid]->text);
             }
             $numberofuser = 0;
             if (!empty($options->user) && count($options->user) > 0) {
                 $numberofuser = count($options->user);
             }
 
-            $coldata .= html_writer::tag('div', ' ('.$numberofuser. ')', array('class'=>'numberofuser', 'title' => get_string('numberofuser', 'choice')));
-            $columns[] = $coldata;
+            $celloption->text = $celltext;
+            $cellusernumber->text = $numberofuser;
+
+            $columns['options'][] = $celloption;
+            $columns['usernumber'][] = $cellusernumber;
         }
 
-        $table->head = $columns;
+        $table->head = $columns['options'];
+        $table->data[] = new html_table_row($columns['usernumber']);
 
-        $coldata = '';
         $columns = array();
+
+        // This extra cell is needed in order to support accessibility for screenreader. MDL-30816
+        $accessiblecell = new html_table_cell();
+        $accessiblecell->text = get_string('userchoosethisoption', 'choice');
+        $accessiblecell->header = true;
+        $accessiblecell->scope = 'row';
+        $accessiblecell->attributes['class'] = 'header data';
+        $columns[] = $accessiblecell;
+
         foreach ($choices->options as $optionid => $options) {
-            $coldata = '';
+            $cell = new html_table_cell();
+            $cell->attributes['class'] = 'data';
+
             if ($choices->showunanswered || $optionid > 0) {
                 if (!empty($options->user)) {
+                    $optionusers = '';
                     foreach ($options->user as $user) {
                         $data = '';
                         if (empty($user->imagealt)){
@@ -188,19 +224,17 @@ class mod_choice_renderer extends plugin_renderer_base {
                         $name = html_writer::tag('a', fullname($user, $choices->fullnamecapability), array('href'=>$userlink, 'class'=>'username'));
                         $data .= html_writer::tag('div', $name, array('class'=>'fullname'));
                         $data .= html_writer::tag('div','', array('class'=>'clearfloat'));
-                        $coldata .= html_writer::tag('div', $data, array('class'=>'user'));
+                        $optionusers .= html_writer::tag('div', $data, array('class'=>'user'));
                     }
+                    $cell->text = $optionusers;
                 }
             }
-
-            $columns[] = $coldata;
+            $columns[] = $cell;
             $count++;
         }
+        $row = new html_table_row($columns);
+        $table->data[] = $row;
 
-        $table->data[] = $columns;
-        foreach ($columns as $d) {
-            $table->colclasses[] = 'data';
-        }
         $html .= html_writer::tag('div', html_writer::table($table), array('class'=>'response'));
 
         $actiondata = '';
@@ -245,71 +279,88 @@ class mod_choice_renderer extends plugin_renderer_base {
         $table->cellpadding = 5;
         $table->cellspacing = 0;
         $table->attributes['class'] = 'results anonymous ';
+        $table->summary = get_string('responsesto', 'choice', format_string($choices->name));
         $table->data = array();
+
         $count = 0;
         ksort($choices->options);
         $columns = array();
         $rows = array();
 
-        foreach ($choices->options as $optionid => $options) {
-            $numberofuser = 0;
-            if (!empty($options->user)) {
-               $numberofuser = count($options->user);
+        $headercelldefault = new html_table_cell();
+        $headercelldefault->scope = 'row';
+        $headercelldefault->header = true;
+        $headercelldefault->attributes = array('class'=>'header data');
+
+        // column header
+        $tableheader = clone($headercelldefault);
+        $tableheader->text = html_writer::tag('div', get_string('choiceoptions', 'choice'), array('class' => 'accesshide'));
+        $rows['header'][] = $tableheader;
+
+        // graph row header
+        $graphheader = clone($headercelldefault);
+        $graphheader->text = html_writer::tag('div', get_string('responsesresultgraphheader', 'choice'), array('class' => 'accesshide'));
+        $rows['graph'][] = $graphheader;
+
+        // user number row header
+        $usernumberheader = clone($headercelldefault);
+        $usernumberheader->text = get_string('numberofuser', 'choice');
+        $rows['usernumber'][] = $usernumberheader;
+
+        // user percentage row header
+        $userpercentageheader = clone($headercelldefault);
+        $userpercentageheader->text = get_string('numberofuserinpercentage', 'choice');
+        $rows['userpercentage'][] = $userpercentageheader;
+
+        $contentcelldefault = new html_table_cell();
+        $contentcelldefault->attributes = array('class'=>'data');
+
+        foreach ($choices->options as $optionid => $option) {
+            // calculate display length
+            $height = $percentageamount = $numberofuser = 0;
+            $usernumber = $userpercentage = '';
+
+            if (!empty($option->user)) {
+               $numberofuser = count($option->user);
             }
-            $height = 0;
-            $percentageamount = 0;
+
             if($choices->numberofuser > 0) {
                $height = ($CHOICE_COLUMN_HEIGHT * ((float)$numberofuser / (float)$choices->numberofuser));
                $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
             }
 
-            $displaydiagram = html_writer::tag('img','', array('style'=>'height:'.$height.'px;width:49px;', 'alt'=>'', 'src'=>$this->output->pix_url('column', 'choice')));
+            $displaygraph = html_writer::tag('img','', array('style'=>'height:'.$height.'px;width:49px;', 'alt'=>'', 'src'=>$this->output->pix_url('column', 'choice')));
 
-            $cell = new html_table_cell();
-            $cell->text = $displaydiagram;
-            $cell->attributes = array('class'=>'graph vertical data');
-            $columns[] = $cell;
+            // header
+            $headercell = clone($contentcelldefault);
+            $headercell->text = $option->text;
+            $rows['header'][] = $headercell;
+
+            // Graph
+            $graphcell = clone($contentcelldefault);
+            $graphcell->attributes = array('class'=>'graph vertical data');
+            $graphcell->text = $displaygraph;
+            $rows['graph'][] = $graphcell;
+
+            $usernumber .= html_writer::tag('div', ' '.$numberofuser.'', array('class'=>'numberofuser', 'title'=> get_string('numberofuser', 'choice')));
+            $userpercentage .= html_writer::tag('div', format_float($percentageamount,1). '%', array('class'=>'percentage'));
+
+            // number of user
+            $usernumbercell = clone($contentcelldefault);
+            $usernumbercell->text = $usernumber;
+            $rows['usernumber'][] = $usernumbercell;
+
+            // percentage of user
+            $numbercell = clone($contentcelldefault);
+            $numbercell->text = $userpercentage;
+            $rows['userpercentage'][] = $numbercell;
         }
-        $rowgraph = new html_table_row();
-        $rowgraph->cells = $columns;
-        $rows[] = $rowgraph;
 
-        $columns = array();
-        $printskiplink = true;
-        foreach ($choices->options as $optionid => $options) {
-            $columndata = '';
-            $numberofuser = 0;
-            if (!empty($options->user)) {
-               $numberofuser = count($options->user);
-            }
-
-            if ($printskiplink) {
-                $columndata .= html_writer::tag('div', '', array('class'=>'skip-block-to', 'id'=>'skipresultgraph'));
-                $printskiplink = false;
-            }
-
-            if ($choices->showunanswered && $optionid == 0) {
-                $columndata .= html_writer::tag('div', format_string(get_string('notanswered', 'choice')), array('class'=>'option'));
-            } else if ($optionid > 0) {
-                $columndata .= html_writer::tag('div', format_string($choices->options[$optionid]->text), array('class'=>'option'));
-            }
-            $columndata .= html_writer::tag('div', ' ('.$numberofuser.')', array('class'=>'numberofuser', 'title'=> get_string('numberofuser', 'choice')));
-
-            if($choices->numberofuser > 0) {
-               $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
-            }
-            $columndata .= html_writer::tag('div', format_float($percentageamount,1). '%', array('class'=>'percentage'));
-
-            $cell = new html_table_cell();
-            $cell->text = $columndata;
-            $cell->attributes = array('class'=>'data header');
-            $columns[] = $cell;
-        }
-        $rowdata = new html_table_row();
-        $rowdata->cells = $columns;
-        $rows[] = $rowdata;
-
-        $table->data = $rows;
+        $table->head = $rows['header'];
+        $trgraph = new html_table_row($rows['graph']);
+        $trusernumber = new html_table_row($rows['usernumber']);
+        $truserpercentage = new html_table_row($rows['userpercentage']);
+        $table->data = array($trgraph, $trusernumber, $truserpercentage);
 
         $header = html_writer::tag('h2',format_string(get_string("responses", "choice")));
         $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));
@@ -331,52 +382,76 @@ class mod_choice_renderer extends plugin_renderer_base {
         $table->cellpadding = 5;
         $table->cellspacing = 0;
         $table->attributes['class'] = 'results anonymous ';
+        $table->summary = get_string('responsesto', 'choice', format_string($choices->name));
         $table->data = array();
+
+        $columnheaderdefault = new html_table_cell();
+        $columnheaderdefault->scope = 'col';
+
+        $tableheadertext = clone($columnheaderdefault);
+        $tableheadertext->text = get_string('choiceoptions', 'choice');
+
+        $tableheadernumber = clone($columnheaderdefault);
+        $tableheadernumber->text = get_string('numberofuser', 'choice');
+
+        $tableheaderpercentage = clone($columnheaderdefault);
+        $tableheaderpercentage->text = get_string('numberofuserinpercentage', 'choice');
+
+        $tableheadergraph = clone($columnheaderdefault);
+        $tableheadergraph->text = get_string('responsesresultgraphheader', 'choice');
+
+        $table->head = array($tableheadertext, $tableheadernumber, $tableheaderpercentage, $tableheadergraph);
 
         $count = 0;
         ksort($choices->options);
 
+        $columndefault = new html_table_cell();
+        $columndefault->attributes['class'] = 'data';
+
+        $colheaderdefault = new html_table_cell();
+        $colheaderdefault->scope = 'row';
+        $colheaderdefault->header = true;
+        $colheaderdefault->attributes['class'] = 'header data';
+
         $rows = array();
         foreach ($choices->options as $optionid => $options) {
-            $numberofuser = 0;
-            $graphcell = new html_table_cell();
+            $colheader = clone($colheaderdefault);
+            $colheader->text = $options->text;
+
+            $graphcell = clone($columndefault);
+            $datacellnumber = clone($columndefault);
+            $datacellpercentage = clone($columndefault);
+
+            $numberofuser = $width = $percentageamount = 0;
+
             if (!empty($options->user)) {
                $numberofuser = count($options->user);
             }
 
-            $width = 0;
-            $percentageamount = 0;
-            $columndata = '';
             if($choices->numberofuser > 0) {
                $width = ($CHOICE_COLUMN_WIDTH * ((float)$numberofuser / (float)$choices->numberofuser));
                $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
             }
-            $displaydiagram = html_writer::tag('img','', array('style'=>'height:50px; width:'.$width.'px', 'alt'=>'', 'src'=>$this->output->pix_url('row', 'choice')));
 
-            $skiplink = html_writer::tag('a', get_string('skipresultgraph', 'choice'), array('href'=>'#skipresultgraph'. $optionid, 'class'=>'skip-block'));
-            $skiphandler = html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipresultgraph'.$optionid));
+            $attributes = array();
+            $attributes['style'] = 'height:50px; width:'.$width.'px';
+            $attributes['alt'] = '';
+            $attributes['src'] = $this->output->pix_url('row', 'choice');
+            $displaydiagram = html_writer::tag('img','', $attributes);
 
-            $graphcell->text = $skiplink . $displaydiagram . $skiphandler;
+            $graphcell->text = $displaydiagram;
             $graphcell->attributes = array('class'=>'graph horizontal');
-
-            $datacell = new html_table_cell();
-            if ($choices->showunanswered && $optionid == 0) {
-                $columndata .= html_writer::tag('div', format_string(get_string('notanswered', 'choice')), array('class'=>'option'));
-            } else if ($optionid > 0) {
-                $columndata .= html_writer::tag('div', format_string($choices->options[$optionid]->text), array('class'=>'option'));
-            }
-            $columndata .= html_writer::tag('div', ' ('.$numberofuser.')', array('title'=> get_string('numberofuser', 'choice'), 'class'=>'numberofuser'));
 
             if($choices->numberofuser > 0) {
                $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
             }
-            $columndata .= html_writer::tag('div', format_float($percentageamount,1). '%', array('class'=>'percentage'));
 
-            $datacell->text = $columndata;
-            $datacell->attributes = array('class'=>'header');
+            $datacellnumber->text = $numberofuser;
+            $datacellpercentage->text = format_float($percentageamount,1). '%';
+
 
             $row = new html_table_row();
-            $row->cells = array($datacell, $graphcell);
+            $row->cells = array($colheader, $datacellnumber, $datacellpercentage, $graphcell);
             $rows[] = $row;
         }
 

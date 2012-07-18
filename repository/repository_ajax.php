@@ -70,17 +70,14 @@ if (!confirm_sesskey()) {
 }
 
 // Get repository instance information
-$sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id=? AND i.typeid=r.id';
-
-if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
-    $err->error = get_string('invalidrepositoryid', 'repository');
-    die(json_encode($err));
-} else {
-    $type = $repository->type;
-}
+$repooptions = array(
+    'ajax' => true,
+    'mimetypes' => $accepted_types
+);
+$repo = repository::get_repository_by_id($repo_id, $contextid, $repooptions);
 
 // Check permissions
-repository::check_capability($contextid, $repository);
+$repo->check_capability();
 
 $moodle_maxbytes = get_user_max_upload_file_size($context);
 // to prevent maxbytes greater than moodle maxbytes setting
@@ -119,21 +116,6 @@ switch ($action) {
         $cache->refresh();
         $action = 'list';
         break;
-}
-
-if (file_exists($CFG->dirroot.'/repository/'.$type.'/lib.php')) {
-    require_once($CFG->dirroot.'/repository/'.$type.'/lib.php');
-    $classname = 'repository_' . $type;
-    $repooptions = array(
-        'ajax' => true,
-        'name' => $repository->name,
-        'type' => $type,
-        'mimetypes' => $accepted_types
-    );
-    $repo = new $classname($repo_id, $contextid, $repooptions);
-} else {
-    $err->error = get_string('invalidplugin', 'repository', $type);
-    die(json_encode($err));
 }
 
 // These actions all occur on the currently active repository instance
@@ -232,7 +214,14 @@ switch ($action) {
             $record->userid = $USER->id;
             $record->sortorder = 0;
 
+            // Check that user has permission to access this file
+            if (!$repo->file_is_accessible($source)) {
+                throw new file_exception('storedfilecannotread');
+            }
+
             // If file is already a reference, set $source = file source, $repo = file repository
+            // note that in this case user may not have permission to access the source file directly
+            // so no file_browser/file_info can be used below
             if ($repo->has_moodle_files()) {
                 $file = repository::get_moodle_file($source);
                 if ($file && $file->is_external_file()) {
@@ -298,13 +287,13 @@ switch ($action) {
             } else {
                 // Download file to moodle.
                 $downloadedfile = $repo->get_file($source, $saveas_filename);
-                if ($downloadedfile['path'] === false) {
+                if (empty($downloadedfile['path'])) {
                     $err->error = get_string('cannotdownload', 'repository');
                     die(json_encode($err));
                 }
 
                 // Check if exceed maxbytes.
-                if (($maxbytes!==-1) && (filesize($downloadedfile['path']) > $maxbytes)) {
+                if ($maxbytes != -1 && filesize($downloadedfile['path']) > $maxbytes) {
                     throw new file_exception('maxbytes');
                 }
 

@@ -510,15 +510,20 @@ class mod_lesson_renderer extends plugin_renderer_base {
                 $ntries = 0;  // may not be necessary
             }
 
-
             $viewedpageids = array();
-            if ($attempts = $lesson->get_attempts($ntries, true)) {
-                $viewedpageids = array_merge($viewedpageids, array_keys($attempts));
+            if ($attempts = $lesson->get_attempts($ntries, false)) {
+                foreach($attempts as $attempt) {
+                    $viewedpageids[$attempt->pageid] = $attempt;
+                }
             }
 
+            $viewedbranches = array();
             // collect all of the branch tables viewed
-            if ($viewedbranches = $DB->get_records("lesson_branch", array ("lessonid"=>$lesson->id, "userid"=>$USER->id, "retry"=>$ntries), 'timeseen DESC', 'id, pageid')) {
-                $viewedpageids = array_merge($viewedpageids, array_keys($viewedbranches));
+            if ($branches = $DB->get_records("lesson_branch", array ("lessonid"=>$lesson->id, "userid"=>$USER->id, "retry"=>$ntries), 'timeseen ASC', 'id, pageid')) {
+                foreach($branches as $branch) {
+                    $viewedbranches[$branch->pageid] = $branch;
+                }
+                $viewedpageids = array_merge($viewedpageids, $viewedbranches);
             }
 
             // Filter out the following pages:

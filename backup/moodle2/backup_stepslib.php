@@ -322,6 +322,8 @@ class backup_module_structure_step extends backup_structure_step {
         $availinfo = new backup_nested_element('availability_info');
         $availability = new backup_nested_element('availability', array('id'), array(
             'sourcecmid', 'requiredcompletion', 'gradeitemid', 'grademin', 'grademax'));
+        $availabilityfield = new backup_nested_element('availability_field', array('id'), array(
+            'userfield', 'customfieldid', 'operator', 'value'));
 
         // attach format plugin structure to $module element, only one allowed
         $this->add_plugin_structure('format', $module, false);
@@ -333,9 +335,9 @@ class backup_module_structure_step extends backup_structure_step {
         // Define the tree
         $module->add_child($availinfo);
         $availinfo->add_child($availability);
+        $availinfo->add_child($availabilityfield);
 
         // Set the sources
-
         $module->set_source_sql('
             SELECT cm.*, m.version, m.name AS modulename, s.id AS sectionid, s.section AS sectionnumber
               FROM {course_modules} cm
@@ -344,6 +346,7 @@ class backup_module_structure_step extends backup_structure_step {
              WHERE cm.id = ?', array(backup::VAR_MODID));
 
         $availability->set_source_table('course_modules_availability', array('coursemoduleid' => backup::VAR_MODID));
+        $availabilityfield->set_source_table('course_modules_avail_fields', array('coursemoduleid' => backup::VAR_MODID));
 
         // Define annotations
         $module->annotate_ids('grouping', 'groupingid');
@@ -373,11 +376,15 @@ class backup_section_structure_step extends backup_structure_step {
         // Add nested elements for _availability table
         $avail = new backup_nested_element('availability', array('id'), array(
                 'sourcecmid', 'requiredcompletion', 'gradeitemid', 'grademin', 'grademax'));
+        $availfield = new backup_nested_element('availability_field', array('id'), array(
+            'userfield', 'customfieldid', 'operator', 'value'));
         $section->add_child($avail);
+        $section->add_child($availfield);
 
         // Define sources
         $section->set_source_table('course_sections', array('id' => backup::VAR_SECTIONID));
         $avail->set_source_table('course_sections_availability', array('coursesectionid' => backup::VAR_SECTIONID));
+        $availfield->set_source_table('course_sections_avail_fields', array('coursesectionid' => backup::VAR_SECTIONID));
 
         // Aliases
         $section->set_source_alias('section', 'number');
@@ -2018,15 +2025,11 @@ class backup_course_completion_structure_step extends backup_structure_step {
         $criteriacompletions = new backup_nested_element('course_completion_crit_completions');
 
         $criteriacomplete = new backup_nested_element('course_completion_crit_compl', array('id'), array(
-            'criteriaid', 'userid','gradefinal','unenrolled','deleted','timecompleted'
+            'criteriaid', 'userid', 'gradefinal', 'unenrolled', 'timecompleted'
         ));
 
         $coursecompletions = new backup_nested_element('course_completions', array('id'), array(
-            'userid', 'course', 'deleted', 'timenotified', 'timeenrolled','timestarted','timecompleted','reaggregate'
-        ));
-
-        $notify = new backup_nested_element('course_completion_notify', array('id'), array(
-            'course','role','message','timesent'
+            'userid', 'course', 'timeenrolled', 'timestarted', 'timecompleted', 'reaggregate'
         ));
 
         $aggregatemethod = new backup_nested_element('course_completion_aggr_methd', array('id'), array(
@@ -2037,7 +2040,6 @@ class backup_course_completion_structure_step extends backup_structure_step {
             $criteria->add_child($criteriacompletions);
                 $criteriacompletions->add_child($criteriacomplete);
         $cc->add_child($coursecompletions);
-        $cc->add_child($notify);
         $cc->add_child($aggregatemethod);
 
         // We need to get the courseinstances shortname rather than an ID for restore
@@ -2047,7 +2049,6 @@ class backup_course_completion_structure_step extends backup_structure_step {
                                    WHERE ccc.course = ?", array(backup::VAR_COURSEID));
 
 
-        $notify->set_source_table('course_completion_notify', array('course' => backup::VAR_COURSEID));
         $aggregatemethod->set_source_table('course_completion_aggr_methd', array('course' => backup::VAR_COURSEID));
 
         if ($userinfo) {
@@ -2058,7 +2059,6 @@ class backup_course_completion_structure_step extends backup_structure_step {
         $criteria->annotate_ids('role', 'role');
         $criteriacomplete->annotate_ids('user', 'userid');
         $coursecompletions->annotate_ids('user', 'userid');
-        $notify->annotate_ids('role', 'role');
 
         return $cc;
 

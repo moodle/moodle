@@ -119,6 +119,37 @@ class postgres_sql_generator extends sql_generator {
     }
 
     /**
+     * Given one correct xmldb_index, returns the SQL statements
+     * needed to create it (in array).
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table instance to create the index on.
+     * @param xmldb_index $xmldb_index The xmldb_index to create.
+     * @return array An array of SQL statements to create the index.
+     * @throws coding_exception Thrown if the xmldb_index does not validate with the xmldb_table.
+     */
+    public function getCreateIndexSQL($xmldb_table, $xmldb_index) {
+        $sqls = parent::getCreateIndexSQL($xmldb_table, $xmldb_index);
+
+        $hints = $xmldb_index->getHints();
+        $fields = $xmldb_index->getFields();
+        if (in_array('varchar_pattern_ops', $hints) and count($fields) == 1) {
+            // Add the pattern index and keep the normal one, keep unique only the standard index to improve perf.
+            foreach ($sqls as $sql) {
+                $field = reset($fields);
+                $count = 0;
+                $newindex = preg_replace("/^CREATE( UNIQUE)? INDEX ([a-z0-9_]+) ON ([a-z0-9_]+) \($field\)$/", "CREATE INDEX \\2_pattern ON \\3 USING btree ($field varchar_pattern_ops)", $sql, -1, $count);
+                if ($count != 1) {
+                    debugging('Unexpected getCreateIndexSQL() structure.');
+                    continue;
+                }
+                $sqls[] = $newindex;
+            }
+        }
+
+        return $sqls;
+    }
+
+    /**
      * Given one XMLDB Type, length and decimals, returns the DB proper SQL type.
      *
      * @param int $xmldb_type The xmldb_type defined constant. XMLDB_TYPE_INTEGER and other XMLDB_TYPE_* constants.
@@ -306,7 +337,7 @@ class postgres_sql_generator extends sql_generator {
                 $results[] = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $fieldname . ' DROP DEFAULT';     // Drop default clause
             }
             $alterstmt = 'ALTER TABLE ' . $tablename . ' ALTER COLUMN ' . $this->getEncQuoted($xmldb_field->getName()) .
-                         ' TYPE' . $this->getFieldSQL($xmldb_table, $xmldb_field, null, true, true, null, false);
+                ' TYPE' . $this->getFieldSQL($xmldb_table, $xmldb_field, null, true, true, null, false);
             // Some castings must be performed explicitly (mainly from text|char to numeric|integer)
             if (($oldmetatype == 'C' || $oldmetatype == 'X') &&
                 ($xmldb_field->getType() == XMLDB_TYPE_NUMBER || $xmldb_field->getType() == XMLDB_TYPE_FLOAT)) {
@@ -417,7 +448,7 @@ class postgres_sql_generator extends sql_generator {
         if (!$this->mdb->get_record_sql("SELECT *
                                            FROM pg_class
                                           WHERE relname = ? AND relkind = 'S'",
-                                        array($sequencename))) {
+            array($sequencename))) {
             $sequencename = false;
         }
 
@@ -475,6 +506,7 @@ class postgres_sql_generator extends sql_generator {
      */
     public static function getReservedWords() {
         // This file contains the reserved words for PostgreSQL databases
+                // This file contains the reserved words for PostgreSQL databases
         // http://www.postgresql.org/docs/current/static/sql-keywords-appendix.html
         $reserved_words = array (
             'all', 'analyse', 'analyze', 'and', 'any', 'array', 'as', 'asc',

@@ -385,6 +385,8 @@ define('FEATURE_GRADE_HAS_GRADE', 'grade_has_grade');
 define('FEATURE_GRADE_OUTCOMES', 'outcomes');
 /** True if module supports advanced grading methods */
 define('FEATURE_ADVANCED_GRADING', 'grade_advanced_grading');
+/** True if module controls the grade visibility over the gradebook */
+define('FEATURE_CONTROLS_GRADE_VISIBILITY', 'controlsgradevisbility');
 
 /** True if module has code to track whether somebody viewed it */
 define('FEATURE_COMPLETION_TRACKS_VIEWS', 'completion_tracks_views');
@@ -3581,6 +3583,12 @@ function get_user_field_name($field) {
     // Some fields have language strings which are not the same as field name
     switch ($field) {
         case 'phone1' : return get_string('phone');
+        case 'url' : return get_string('webpage');
+        case 'icq' : return get_string('icqnumber');
+        case 'skype' : return get_string('skypeid');
+        case 'aim' : return get_string('aimid');
+        case 'yahoo' : return get_string('yahooid');
+        case 'msn' : return get_string('msnid');
     }
     // Otherwise just use the same lang string
     return get_string($field);
@@ -4037,9 +4045,16 @@ function authenticate_user_login($username, $password) {
         $auths = array($auth);
 
     } else {
-        // check if there's a deleted record (cheaply)
-        if ($DB->get_field('user', 'id', array('username'=>$username, 'deleted'=>1))) {
+        // Check if there's a deleted record (cheaply), this should not happen because we mangle usernames in delete_user().
+        if ($DB->get_field('user', 'id', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id,  'deleted'=>1))) {
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            return false;
+        }
+
+        // Do not try to authenticate non-existent accounts when user creation is not disabled.
+        if (!empty($CFG->authpreventaccountcreation)) {
+            add_to_log(SITEID, 'login', 'error', 'index.php', $username);
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Unknown user, can not create new accounts:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
 
@@ -4074,12 +4089,8 @@ function authenticate_user_login($username, $password) {
                 $user = update_user_record($username);
             }
         } else {
-            // if user not found and user creation is not disabled, create it
-            if (empty($CFG->authpreventaccountcreation)) {
-                $user = create_user_record($username, $password, $auth);
-            } else {
-                continue;
-            }
+            // Create account, we verified above that user creation is allowed.
+            $user = create_user_record($username, $password, $auth);
         }
 
         $authplugin->sync_roles($user);
@@ -4584,6 +4595,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $DB->delete_records_select('course_modules_availability',
            'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
            array($courseid));
+    $DB->delete_records_select('course_modules_avail_fields',
+           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
+           array($courseid));
 
     // Remove course-module data.
     $cms = $DB->get_records('course_modules', array('course'=>$course->id));
@@ -4692,6 +4706,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
 
     // Delete course sections and availability options.
     $DB->delete_records_select('course_sections_availability',
+           'coursesectionid IN (SELECT id from {course_sections} WHERE course=?)',
+           array($course->id));
+    $DB->delete_records_select('course_sections_avail_fields',
            'coursesectionid IN (SELECT id from {course_sections} WHERE course=?)',
            array($course->id));
     $DB->delete_records('course_sections', array('course'=>$course->id));

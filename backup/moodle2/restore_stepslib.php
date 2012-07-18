@@ -1030,6 +1030,7 @@ class restore_section_structure_step extends restore_structure_step {
         $paths[] = $section;
         if ($CFG->enableavailability) {
             $paths[] = new restore_path_element('availability', '/section/availability');
+            $paths[] = new restore_path_element('availability_field', '/section/availability_field');
         }
 
         // Apply for 'format' plugins optional paths at section level
@@ -1131,6 +1132,29 @@ class restore_section_structure_step extends restore_structure_step {
         // need updating. The mapping is stored with $newid => $newid for
         // convenience.
         $this->set_mapping('course_sections_availability', $newid, $newid);
+    }
+
+    public function process_availability_field($data) {
+        global $DB;
+        $data = (object)$data;
+        // Mark it is as passed by default
+        $passed = true;
+        // Ok, if it is a profile field we need to check it exists
+        if (!is_null($data->customfieldid)) {
+            if (!$DB->record_exists('user_info_field', array('id' => $data->customfieldid))) {
+                $passed = false;
+            }
+        }
+        if ($passed) {
+            // Create the object to insert into the database
+            $availfield = new stdClass();
+            $availfield->coursesectionid = $this->task->get_sectionid();
+            $availfield->userfield = $data->userfield;
+            $availfield->customfieldid = $data->customfieldid;
+            $availfield->operator = $data->operator;
+            $availfield->value = $data->value;
+            $DB->insert_record('course_sections_avail_fields', $availfield);
+        }
     }
 
     protected function after_execute() {
@@ -1835,7 +1859,6 @@ class restore_course_completion_structure_step extends restore_structure_step {
 
         $paths = array();
         $paths[] = new restore_path_element('course_completion_criteria', '/course_completion/course_completion_criteria');
-        $paths[] = new restore_path_element('course_completion_notify', '/course_completion/course_completion_notify');
         $paths[] = new restore_path_element('course_completion_aggr_methd', '/course_completion/course_completion_aggr_methd');
 
         if ($userinfo) {
@@ -1939,9 +1962,6 @@ class restore_course_completion_structure_step extends restore_structure_step {
             if (isset($data->unenroled)) {
                 $params['unenroled'] = $data->unenroled;
             }
-            if (isset($data->deleted)) {
-                $params['deleted'] = $data->deleted;
-            }
             $DB->insert_record('course_completion_crit_compl', $params);
         }
     }
@@ -1964,8 +1984,6 @@ class restore_course_completion_structure_step extends restore_structure_step {
             $params = array(
                 'userid' => $data->userid,
                 'course' => $data->course,
-                'deleted' => $data->deleted,
-                'timenotified' => $this->apply_date_offset($data->timenotified),
                 'timeenrolled' => $this->apply_date_offset($data->timeenrolled),
                 'timestarted' => $this->apply_date_offset($data->timestarted),
                 'timecompleted' => $this->apply_date_offset($data->timecompleted),
@@ -1973,34 +1991,6 @@ class restore_course_completion_structure_step extends restore_structure_step {
             );
             $DB->insert_record('course_completions', $params);
         }
-    }
-
-    /**
-     * Process course completion notification records.
-     *
-     * Note: As of Moodle 2.0 this table is not being used however it has been
-     * left in in the hopes that one day the functionality there will be completed
-     *
-     * @global moodle_database $DB
-     * @param stdClass $data
-     */
-    public function process_course_completion_notify($data) {
-        global $DB;
-
-        $data = (object)$data;
-
-        $data->course = $this->get_courseid();
-        if (!empty($data->role)) {
-            $data->role = $this->get_mappingid('role', $data->role);
-        }
-
-        $params = array(
-            'course' => $data->course,
-            'role' => $data->role,
-            'message' => $data->message,
-            'timesent' => $this->apply_date_offset($data->timesent),
-        );
-        $DB->insert_record('course_completion_notify', $params);
     }
 
     /**
@@ -2539,6 +2529,7 @@ class restore_module_structure_step extends restore_structure_step {
         $paths[] = $module;
         if ($CFG->enableavailability) {
             $paths[] = new restore_path_element('availability', '/module/availability_info/availability');
+            $paths[] = new restore_path_element('availability_field', '/module/availability_info/availability_field');
         }
 
         // Apply for 'format' plugins optional paths at module level
@@ -2632,14 +2623,37 @@ class restore_module_structure_step extends restore_structure_step {
         $DB->set_field('course_sections', 'sequence', $sequence, array('id' => $data->section));
     }
 
-
     protected function process_availability($data) {
         $data = (object)$data;
         // Simply going to store the whole availability record now, we'll process
-        // all them later in the final task (once all actvivities have been restored)
+        // all them later in the final task (once all activities have been restored)
         // Let's call the low level one to be able to store the whole object
         $data->coursemoduleid = $this->task->get_moduleid(); // Let add the availability cmid
         restore_dbops::set_backup_ids_record($this->get_restoreid(), 'module_availability', $data->id, 0, null, $data);
+    }
+
+    protected function process_availability_field($data) {
+        global $DB;
+        $data = (object)$data;
+        // Mark it is as passed by default
+        $passed = true;
+        // Ok, if it is a profile field we need to check it exists
+        if (!is_null($data->customfieldid)) {
+            if (!$DB->record_exists('user_info_field', array('id' => $data->customfieldid))) {
+                $passed = false;
+            }
+        }
+        if ($passed) {
+            // Create the object to insert into the database
+            $availfield = new stdClass();
+            $availfield->coursemoduleid = $this->task->get_moduleid(); // Lets add the availability cmid
+            $availfield->userfield = $data->userfield;
+            $availfield->customfieldid = $data->customfieldid;
+            $availfield->operator = $data->operator;
+            $availfield->value = $data->value;
+            // Insert into the database
+            $DB->insert_record('course_modules_avail_fields', $availfield);
+        }
     }
 }
 

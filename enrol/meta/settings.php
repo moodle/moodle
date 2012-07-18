@@ -31,11 +31,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('enrol_meta_settings', '', get_string('pluginname_desc', 'enrol_meta')));
 
     if (!during_initial_install()) {
-        $allroles = array();
-        foreach (get_all_roles() as $role) {
-                $rolename = strip_tags(format_string($role->name)) . ' ('. $role->shortname . ')';
-                $allroles[$role->id] = $rolename;
-        }
+        $allroles = role_fix_names(get_all_roles(), null, ROLENAME_ORIGINALANDSHORT, true);
         $settings->add(new admin_setting_configmultiselect('enrol_meta/nosyncroleids', get_string('nosyncroleids', 'enrol_meta'), get_string('nosyncroleids_desc', 'enrol_meta'), array(), $allroles));
 
         $settings->add(new admin_setting_configcheckbox('enrol_meta/syncall', get_string('syncall', 'enrol_meta'), get_string('syncall_desc', 'enrol_meta'), 1));

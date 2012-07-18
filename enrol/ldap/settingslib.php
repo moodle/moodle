@@ -89,13 +89,13 @@ class admin_setting_ldap_rolemapping extends admin_setting {
      * @return mixed null if null, else an array
      */
     public function get_setting() {
-        $roles = get_all_roles();
+        $roles = role_fix_names(get_all_roles());
         $result = array();
         foreach ($roles as $role) {
             $contexts = $this->config_read('contexts_role'.$role->id);
             $memberattribute = $this->config_read('memberattribute_role'.$role->id);
             $result[] = array('id' => $role->id,
-                              'name' => $role->name,
+                              'name' => $role->localname,
                               'contexts' => $contexts,
                               'memberattribute' => $memberattribute);
         }

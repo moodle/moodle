@@ -34,6 +34,9 @@ class xmldb_index extends xmldb_object {
     /** @var array index fields */
     protected $fields;
 
+    /** @var array index hints */
+    protected $hints;
+
     /**
      * Note:
      *  - MySQL: MyISAM has a limit of 1000 bytes for any key including composed, InnoDB has limit 3500 bytes.
@@ -54,14 +57,16 @@ class xmldb_index extends xmldb_object {
      * Creates one new xmldb_index
      *
      * @param string $name
-     * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
-     * @param array fields an array of fieldnames to build the index over
+     * @param string $type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
+     * @param array $fields an array of fieldnames to build the index over
+     * @param array $hints an array of optional hints
      */
-    public function __construct($name, $type=null, $fields=array()) {
+    public function __construct($name, $type=null, $fields=array(), $hints=array()) {
         $this->unique = false;
         $this->fields = array();
+        $this->hints = array();
         parent::__construct($name);
-        $this->set_attributes($type, $fields);
+        $this->set_attributes($type, $fields, $hints);
     }
 
     /**
@@ -69,10 +74,12 @@ class xmldb_index extends xmldb_object {
      *
      * @param string type XMLDB_INDEX_UNIQUE, XMLDB_INDEX_NOTUNIQUE
      * @param array fields an array of fieldnames to build the index over
+     * @param array $hints array of optional hints
      */
-    public function set_attributes($type, $fields) {
+    public function set_attributes($type, $fields, $hints = array()) {
         $this->unique = !empty($type) ? true : false;
         $this->fields = $fields;
+        $this->hints = $hints;
     }
 
     /**
@@ -105,6 +112,22 @@ class xmldb_index extends xmldb_object {
      */
     public function getFields() {
         return $this->fields;
+    }
+
+    /**
+     * Set optional index hints.
+     * @param array $hints
+     */
+    public function setHints($hints) {
+        $this->hints = $hints;
+    }
+
+    /**
+     * Returns optional index hints.
+     * @return array
+     */
+    public function getHints() {
+        return $this->hints;
     }
 
     /**
@@ -173,6 +196,15 @@ class xmldb_index extends xmldb_object {
         // Finally, set the array of fields
         $this->fields = $fieldsarr;
 
+        if (isset($xmlarr['@']['HINTS'])) {
+            $this->hints = array();
+            $hints = strtolower(trim($xmlarr['@']['HINTS']));
+            if ($hints !== '') {
+                $hints = explode(',', $hints);
+                $this->hints = array_map('trim', $hints);
+            }
+        }
+
         if (isset($xmlarr['@']['COMMENT'])) {
             $this->comment = trim($xmlarr['@']['COMMENT']);
         }
@@ -201,7 +233,7 @@ class xmldb_index extends xmldb_object {
         if (!$this->loaded) {
             $this->hash = null;
         } else {
-            $key = $this->unique . implode (', ', $this->fields);
+            $key = $this->unique . implode (', ', $this->fields) . implode (', ', $this->hints);
             $this->hash = md5($key);
         }
     }
@@ -220,6 +252,9 @@ class xmldb_index extends xmldb_object {
         }
         $o.= ' UNIQUE="' . $unique . '"';
         $o.= ' FIELDS="' . implode(', ', $this->fields) . '"';
+        if ($this->hints) {
+            $o.= ' HINTS="' . implode(', ', $this->hints) . '"';
+        }
         if ($this->comment) {
             $o.= ' COMMENT="' . htmlspecialchars($this->comment) . '"';
         }
@@ -274,6 +309,12 @@ class xmldb_index extends xmldb_object {
         } else {
             $result .= 'null';
         }
+        // Hints
+        $hints = $this->getHints();
+        if (!empty($hints)) {
+            $result .= ', array(' . "'".  implode("', '", $hints) . "')";
+        }
+
         // Return result
         return $result;
     }
@@ -292,6 +333,10 @@ class xmldb_index extends xmldb_object {
         }
         // fields
         $o .= ' (' . implode(', ', $this->fields) . ')';
+
+        if ($this->hints) {
+            $o .= ' [' . implode(', ', $this->hints) . ']';
+        }
 
         return $o;
     }

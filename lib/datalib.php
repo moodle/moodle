@@ -652,12 +652,13 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
          *
          */
         $sql = "SELECT ctx.path, ctx.instanceid, ctx.contextlevel,
-                       r.id AS roleid, r.name as rolename,
-                       u.id AS userid, u.firstname, u.lastname
+                       r.id AS roleid, r.name AS rolename, r.shortname AS roleshortname,
+                       rn.name AS rolecoursealias, u.id AS userid, u.firstname, u.lastname
                   FROM {role_assignments} ra
                   JOIN {context} ctx ON ra.contextid = ctx.id
                   JOIN {user} u ON ra.userid = u.id
                   JOIN {role} r ON ra.roleid = r.id
+             LEFT JOIN {role_names} rn ON (rn.contextid = ctx.id AND rn.roleid = r.id)
                   LEFT OUTER JOIN {course} c
                        ON (ctx.instanceid=c.id AND ctx.contextlevel=".CONTEXT_COURSE.")
                 WHERE ( c.id IS NOT NULL";

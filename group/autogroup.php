@@ -55,13 +55,8 @@ $strautocreategroups = get_string('autocreategroups', 'group');
 $preview = '';
 $error = '';
 
-/// Get applicable roles
-$rolenames = array();
-if ($roles = get_profile_roles($context)) {
-    foreach ($roles as $role) {
-        $rolenames[$role->id] = strip_tags(role_get_name($role, $context));   // Used in menus etc later on
-    }
-}
+/// Get applicable roles - used in menus etc later on
+$rolenames = role_fix_names(get_profile_roles($context), $context, ROLENAME_ALIAS, true);
 
 /// Create the form
 $editform = new autogroup_form(null, array('roles' => $rolenames));

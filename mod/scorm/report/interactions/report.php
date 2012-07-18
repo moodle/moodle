@@ -183,8 +183,8 @@ class scorm_interactions_report extends scorm_default_report {
             $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'st.attempt').')) AS nbattempts, ';
             $countsql .= 'COUNT(DISTINCT(u.id)) AS nbusers ';
             $countsql .= $from.$where;
-            $attempts = $DB->get_records_sql($select.$from.$where, $params);
             $questioncount = get_scorm_question_count($scorm->id);
+            $nbmaincolumns = count($columns);
             for($id = 0; $id < $questioncount; $id++) {
                 if ($displayoptions['qtext']) {
                     $columns[] = 'question' . $id;
@@ -456,13 +456,8 @@ class scorm_interactions_report extends scorm_default_report {
                                 if ($trackdata->score_raw != '') {
                                     $score = $trackdata->score_raw;
                                     // add max score if it exists
-                                    if ($scorm->version == 'SCORM_1.3') {
-                                        $maxkey = 'cmi.score.max';
-                                    } else {
-                                        $maxkey = 'cmi.core.score.max';
-                                    }
-                                    if (isset($trackdata->$maxkey)) {
-                                        $score .= '/'.$trackdata->$maxkey;
+                                    if (isset($trackdata->score_max)) {
+                                        $score .= '/'.$trackdata->score_max;
                                     }
                                 // else print out status
                                 } else {
@@ -476,9 +471,7 @@ class scorm_interactions_report extends scorm_default_report {
                                     $row[] = $score;
                                 }
                                 // interaction data
-                                $i=0;
-                                $element='cmi.interactions_'.$i.'.id';
-                                while(isset($trackdata->$element)) {
+                                for ($i=0; $i < $questioncount; $i++) {
                                     if ($displayoptions['qtext']) {
                                         $element='cmi.interactions_'.$i.'.id';
                                         if (isset($trackdata->$element)) {
@@ -513,8 +506,6 @@ class scorm_interactions_report extends scorm_default_report {
                                             $row[] = '&nbsp;';
                                         }
                                     }
-                                    $i++;
-                                    $element = 'cmi.interactions_'.$i.'.id';
                                 }
                             //---end of interaction data*/
                             } else {
@@ -524,6 +515,10 @@ class scorm_interactions_report extends scorm_default_report {
                                     $row[] = '<img src="'.$OUTPUT->pix_url('notattempted', 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" /><br/>'.$strstatus;
                                 } else {
                                     $row[] = $strstatus;
+                                }
+                                // complete the empty cells
+                                for ($i=0; $i < count($columns) - $nbmaincolumns; $i++) {
+                                    $row[] = '&nbsp;';
                                 }
                             }
                         }

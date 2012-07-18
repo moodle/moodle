@@ -59,12 +59,15 @@
     if (!empty($CFG->coursecontact)) {
         $coursecontactroles = explode(',', $CFG->coursecontact);
         foreach ($coursecontactroles as $roleid) {
-            $role = $DB->get_record('role', array('id'=>$roleid));
-            $roleid = (int) $roleid;
             if ($users = get_role_users($roleid, $context, true)) {
                 foreach ($users as $teacher) {
+                    $role = new stdClass();
+                    $role->id = $teacher->roleid;
+                    $role->name = $teacher->rolename;
+                    $role->shortname = $teacher->roleshortname;
+                    $role->coursealias = $teacher->rolecoursealias;
                     $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context));
-                    $namesarray[] = format_string(role_get_name($role, $context)).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
+                    $namesarray[] = role_get_name($role, $context).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
                                     $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
                 }
             }

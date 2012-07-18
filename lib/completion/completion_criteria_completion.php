@@ -42,7 +42,7 @@ class completion_criteria_completion extends data_object {
     public $table = 'course_completion_crit_compl';
 
     /* @var array Array of required table fields, must start with 'id'. */
-    public $required_fields = array('id', 'userid', 'course', 'criteriaid', 'gradefinal', 'rpl', 'deleted', 'unenroled', 'timecompleted');
+    public $required_fields = array('id', 'userid', 'course', 'criteriaid', 'gradefinal', 'rpl', 'unenroled', 'timecompleted');
 
     /* @var array Array of unique fields, used in where clauses */
     public $unique_fields = array('userid', 'course', 'criteriaid');
@@ -62,9 +62,6 @@ class completion_criteria_completion extends data_object {
     /* @var string Record of prior learning, leave blank if none */
     public $rpl;
 
-    /* @var bool Course deleted flag */
-    public $deleted;
-
     /* @var int Timestamp of user unenrolment (if completing a unenrol criteria) */
     public $unenroled;
 
@@ -81,7 +78,6 @@ class completion_criteria_completion extends data_object {
      * @return data_object instance of data_object or false if none found.
      */
     public static function fetch($params) {
-        $params['deleted'] = null;
         return self::fetch_helper('course_completion_crit_compl', __CLASS__, $params);
     }
 

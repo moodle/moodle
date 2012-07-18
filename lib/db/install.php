@@ -72,7 +72,7 @@ function xmldb_main_install() {
     $newsite->shortname    = '';
     $newsite->summary      = NULL;
     $newsite->newsitems    = 3;
-    $newsite->numsections  = 0;
+    $newsite->numsections  = 1;
     $newsite->category     = 0;
     $newsite->format       = 'site';  // Only for this course
     $newsite->timecreated  = time();
@@ -243,14 +243,14 @@ function xmldb_main_install() {
 
 
     // Install the roles system.
-    $managerrole        = create_role(get_string('manager', 'role'), 'manager', get_string('managerdescription', 'role'), 'manager');
-    $coursecreatorrole  = create_role(get_string('coursecreators'), 'coursecreator', get_string('coursecreatorsdescription'), 'coursecreator');
-    $editteacherrole    = create_role(get_string('defaultcourseteacher'), 'editingteacher', get_string('defaultcourseteacherdescription'), 'editingteacher');
-    $noneditteacherrole = create_role(get_string('noneditingteacher'), 'teacher', get_string('noneditingteacherdescription'), 'teacher');
-    $studentrole        = create_role(get_string('defaultcoursestudent'), 'student', get_string('defaultcoursestudentdescription'), 'student');
-    $guestrole          = create_role(get_string('guest'), 'guest', get_string('guestdescription'), 'guest');
-    $userrole           = create_role(get_string('authenticateduser'), 'user', get_string('authenticateduserdescription'), 'user');
-    $frontpagerole      = create_role(get_string('frontpageuser', 'role'), 'frontpage', get_string('frontpageuserdescription', 'role'), 'frontpage');
+    $managerrole        = create_role('', 'manager', '', 'manager');
+    $coursecreatorrole  = create_role('', 'coursecreator', '', 'coursecreator');
+    $editteacherrole    = create_role('', 'editingteacher', '', 'editingteacher');
+    $noneditteacherrole = create_role('', 'teacher', '', 'teacher');
+    $studentrole        = create_role('', 'student', '', 'student');
+    $guestrole          = create_role('', 'guest', '', 'guest');
+    $userrole           = create_role('', 'user', '', 'user');
+    $frontpagerole      = create_role('', 'frontpage', '', 'frontpage');
 
     // Now is the correct moment to install capabilities - after creation of legacy roles, but before assigning of roles
     update_capabilities('moodle');

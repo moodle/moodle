@@ -822,7 +822,7 @@ class group_non_members_selector extends groups_user_selector_base {
 
         // Build the SQL
         list($enrolsql, $enrolparams) = get_enrolled_sql($context);
-        $fields = "SELECT r.id AS roleid, r.shortname AS roleshortname, r.name AS rolename, u.id AS userid,
+        $fields = "SELECT r.id AS roleid, u.id AS userid,
                           " . $this->required_fields_sql('u') . ",
                           (SELECT count(igm.groupid)
                              FROM {groups_members} igm

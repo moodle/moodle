@@ -450,6 +450,7 @@ function scorm_get_tracks($scoid, $userid, $attempt='') {
         // Defined in order to unify scorm1.2 and scorm2004
         $usertrack->score_raw = '';
         $usertrack->status = '';
+        $usertrack->progress = '';
         $usertrack->total_time = '00:00:00';
         $usertrack->session_time = '00:00:00';
         $usertrack->timemodified = 0;
@@ -463,19 +464,35 @@ function scorm_get_tracks($scoid, $userid, $attempt='') {
                         $track->value = 'notattempted';
                     }
                     $usertrack->status = $track->value;
-                break;
+                    break;
+                case 'cmi.success_status':
+                    $usertrack->progress = $track->value;
+                    break;
+                case 'cmi.progress_measure':
+                    if (!empty($track->value) && (empty($usertrack->progress) || $usertrack->progress == 'unknown') ) {
+                        $usertrack->progress = $track->value;
+                    }
+                    break;
                 case 'cmi.core.score.raw':
                 case 'cmi.score.raw':
                     $usertrack->score_raw = (float) sprintf('%2.2f', $track->value);
-                break;
+                    break;
+                case 'cmi.core.score.max':
+                case 'cmi.score.max':
+                    $usertrack->score_max = (float) sprintf('%2.2f', $track->value);
+                    break;
+                case 'cmi.core.score.min':
+                case 'cmi.score.min':
+                    $usertrack->score_min = (float) sprintf('%2.2f', $track->value);
+                    break;
                 case 'cmi.core.session_time':
                 case 'cmi.session_time':
                     $usertrack->session_time = $track->value;
-                break;
+                    break;
                 case 'cmi.core.total_time':
                 case 'cmi.total_time':
                     $usertrack->total_time = $track->value;
-                break;
+                    break;
             }
             if (isset($track->timemodified) && ($track->timemodified > $usertrack->timemodified)) {
                 $usertrack->timemodified = $track->timemodified;

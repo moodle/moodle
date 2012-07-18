@@ -605,6 +605,12 @@ class cm_info extends stdClass {
     public $conditionsgrade;
 
     /**
+     * Availability conditions for this course-module based on user fields
+     * @var array
+     */
+    public $conditionsfield;
+
+    /**
      * Plural name of module type, e.g. 'Forums' - from lang file
      * @deprecated Do not use this value (you can obtain it by calling get_string instead); it
      *   will be removed in a future version (see later TODO in this file)
@@ -1004,6 +1010,8 @@ class cm_info extends stdClass {
                 ? $mod->conditionscompletion : array();
         $this->conditionsgrade = isset($mod->conditionsgrade)
                 ? $mod->conditionsgrade : array();
+        $this->conditionsfield = isset($mod->conditionsfield)
+                ? $mod->conditionsfield : array();
 
         // Get module plural name.
         // TODO This was a very old performance hack and should now be removed as the information
@@ -1503,6 +1511,8 @@ class section_info extends stdClass {
                 ? $data->conditionscompletion : array();
         $this->conditionsgrade = isset($data->conditionsgrade)
                 ? $data->conditionsgrade : array();
+        $this->conditionsfield = isset($data->conditionsfield)
+                ? $data->conditionsfield : array();
 
         // Other data from other places
         $this->course = $courseid;
