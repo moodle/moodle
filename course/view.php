@@ -162,7 +162,7 @@
             set_user_preference('usemodchooser', $modchooser);
         }
 
-        if (has_capability('moodle/course:update', $context)) {
+        if (has_capability('moodle/course:sectionvisibility', $context)) {
             if ($hide && confirm_sesskey()) {
                 set_section_visible($course->id, $hide, '0');
                 redirect($PAGE->url);
@@ -172,7 +172,9 @@
                 set_section_visible($course->id, $show, '1');
                 redirect($PAGE->url);
             }
+        }
 
+        if (has_capability('moodle/course:update', $context)) {
             if (!empty($section)) {
                 if (!empty($move) and confirm_sesskey()) {
                     $destsection = $section + $move;
