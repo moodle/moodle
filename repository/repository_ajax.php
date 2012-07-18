@@ -78,10 +78,13 @@ $repo = repository::get_repository_by_id($repo_id, $contextid, $repooptions);
 
 // Check permissions
 $repo->check_capability();
-
-$moodle_maxbytes = get_user_max_upload_file_size($context);
+$coursemaxbytes = 0;
+if (!empty($course)) {
+    $coursemaxbytes = $course->maxbytes;
+}
+$moodle_maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $coursemaxbytes);
 // to prevent maxbytes greater than moodle maxbytes setting
-if ($maxbytes == 0 || $maxbytes>=$moodle_maxbytes) {
+if (($maxbytes <= 0) || ($maxbytes >= $moodle_maxbytes)) {
     $maxbytes = $moodle_maxbytes;
 }
 
