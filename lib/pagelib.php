@@ -313,14 +313,6 @@ class moodle_page {
     protected $_periodicrefreshdelay = null;
 
     /**
-     * @var stdClass This is simply to improve backwards compatibility. If old
-     * code relies on a page class that implements print_header, or complex logic
-     * in user_allowed_editing then we stash an instance of that other class here,
-     * and delegate to it in certain situations.
-     */
-    protected $_legacypageobject = null;
-
-    /**
      * @var array Associative array of browser shortnames (as used by check_browser_version)
      * and their minimum required versions
      */
@@ -792,9 +784,6 @@ class moodle_page {
      * @return bool
      */
     public function user_allowed_editing() {
-        if ($this->_legacypageobject) {
-            return $this->_legacypageobject->user_allowed_editing();
-        }
         return has_any_capability($this->all_editing_caps(), $this->_context);
     }
 
@@ -1157,9 +1146,6 @@ class moodle_page {
 
         if (is_null($this->_pagetype)) {
             $this->initialise_default_pagetype($shorturl);
-        }
-        if (!is_null($this->_legacypageobject)) {
-            $this->_legacypageobject->set_url($url, $params);
         }
     }
 
