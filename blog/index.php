@@ -34,7 +34,7 @@ foreach ($url_params as $var => $val) {
 }
 $PAGE->set_url('/blog/index.php', $url_params);
 
-if (empty($CFG->bloglevel)) {
+if (empty($CFG->enableblogs)) {
     print_error('blogdisable', 'blog');
 }
 

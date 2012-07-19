@@ -69,7 +69,7 @@ if ($action == 'edit') {
     $id = required_param('entryid', PARAM_INT);
 }
 
-if (empty($CFG->bloglevel)) {
+if (empty($CFG->enableblogs)) {
     print_error('blogdisable', 'blog');
 }
 

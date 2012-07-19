@@ -3451,7 +3451,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
             send_file_not_found();
         }
 
-        if (empty($CFG->bloglevel)) {
+        if (empty($CFG->enableblogs)) {
             print_error('siteblogdisable', 'blog');
         }
 

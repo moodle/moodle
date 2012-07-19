@@ -1081,5 +1081,25 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached
         upgrade_main_savepoint(true, 2012072600.01);
     }
+
+    if ($oldversion < 2012080600.00) {
+        // Move the ability to disable blogs to its own setting MDL-25012.
+
+        if (isset($CFG->bloglevel)) {
+            // Only change settings if existing setting was set.
+            if (empty($CFG->bloglevel)) {
+                set_config('enableblogs', 0);
+                // Now set the bloglevel to a valid setting as the disabled setting has been removed.
+                // This prevents confusing results when users enable the blog system in future.
+                set_config('bloglevel', BLOG_USER_LEVEL);
+            } else {
+                set_config('enableblogs', 1);
+            }
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012080600.00);
+    }
+
     return true;
 }

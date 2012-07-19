@@ -64,7 +64,7 @@ if ($courseid == SITEID) {
     $context = context_course::instance($courseid);
 }
 
-if (empty($CFG->bloglevel)) {
+if (empty($CFG->enableblogs)) {
     print_error('blogdisable', 'blog');
 }
 

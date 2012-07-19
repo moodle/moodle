@@ -75,8 +75,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('useblogassociations', new lang_string('useblogassociations', 'blog'), new lang_string('configuseblogassociations','blog'), 1));
     $temp->add(new admin_setting_bloglevel('bloglevel', new lang_string('bloglevel', 'admin'), new lang_string('configbloglevel', 'admin'), 4, array(BLOG_GLOBAL_LEVEL => new lang_string('worldblogs','blog'),
                                                                                                                                            BLOG_SITE_LEVEL => new lang_string('siteblogs','blog'),
-                                                                                                                                           BLOG_USER_LEVEL => new lang_string('personalblogs','blog'),
-                                                                                                                                           0 => new lang_string('disableblogs','blog'))));
+                                                                                                                                           BLOG_USER_LEVEL => new lang_string('personalblogs','blog'))));
     $temp->add(new admin_setting_configcheckbox('useexternalblogs', new lang_string('useexternalblogs', 'blog'), new lang_string('configuseexternalblogs','blog'), 1));
     $temp->add(new admin_setting_configselect('externalblogcrontime', new lang_string('externalblogcrontime', 'blog'), new lang_string('configexternalblogcrontime', 'blog'), 86400,
         array(43200 => new lang_string('numhours', '', 12),
