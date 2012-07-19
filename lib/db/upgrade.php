@@ -914,6 +914,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012062501.01);
     }
 
+    if ($oldversion < 2012062501.04) {
+
+        // Saves orphaned questions from the Dark Side
+        upgrade_save_orphaned_questions();
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012062501.04);
+    }
 
     return true;
 }
