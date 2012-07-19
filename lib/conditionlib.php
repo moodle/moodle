@@ -806,9 +806,8 @@ abstract class condition_info_base {
             foreach ($this->item->conditionsfield as $field => $details) {
                 $a = new stdclass;
                 $a->field = $details->fieldname;
-                $a->operator = get_string($details->operator, 'condition');
                 $a->value = $details->value;
-                $information .= get_string('requires_user_field', 'condition', $a) . ' ';
+                $information .= get_string('requires_user_field_'.$details->operator, 'condition', $a) . ' ';
             }
         }
 
