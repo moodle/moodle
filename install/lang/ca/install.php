@@ -70,6 +70,11 @@ $string['pathsroparentdataroot'] = 'No es pot escriure en el directori pare ({$a
 $string['pathssubadmindir'] = 'Alguns serveis d\'allotjament web (pocs) utilitzen un URL especial /admin p. ex. per a accedir a un tauler de control o quelcom semblant. Malauradament això entra en conflicte amb la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu arreglar aquest problema canviant el nom del directori d\'administració de Moodle en la vostra instal·lació i posant el nou nom aquí. Per exemple <em>moodleadmin</em>. Això modificarà els enllaços d\'administració de Moodle.';
 $string['pathssubdataroot'] = 'Necessiteu un espai on Moodle pugui desar els fitxers penjats. Aquest directori hauria de tenir permisos de lectura I ESCRIPTURA per a l\'usuari del servidor web (normalment \'nobody\' o \'apache\'), però no cal que sigui accessible directament via web. L\'instal·lador provarà de crear-lo si no existeix.';
 $string['pathssubdirroot'] = 'Camí complet del directori d\'instal·lació de Moodle.';
+$string['pathssubwwwroot'] = 'L\'adreça web completa on s\'accedirà a Moodle.
+No és possible accedir a Moodle en diferents adreces.
+Si el vostre lloc té múltiples adreces públiques haureu de configurar redireccions permanents per a totes excepte aquesta.
+Si el vostre lloc és accessible tant des d\'Internet com des d\'una intranet, utilitzeu aquí l\'adreça pública i configureu el DNS de manera que els usuaris de la intranet puguin utilitzar també l\'adreça pública.
+Si l\'adreça no és correcta, canvieu l\'URL en el vostre navegador per reiniciar la instal·lació amb un altre valor.';
 $string['pathsunsecuredataroot'] = 'La ubicació del dataroot no és segura.';
 $string['pathswrongadmindir'] = 'No existeix el directori d\'administració';
 $string['phpextension'] = 'Extensió PHP {$a}';
