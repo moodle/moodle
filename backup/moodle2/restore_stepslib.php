@@ -3499,6 +3499,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         if (! $element instanceof restore_path_element) {
             throw new restore_step_exception('element_must_be_restore_path_element', $element);
         }
+
         // Check $paths is one array
         if (!is_array($paths)) {
             throw new restore_step_exception('paths_must_be_array', $paths);
@@ -3517,7 +3518,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     /**
      * Process question_usages
      */
-    protected function process_question_usage($data) {
+    protected function process_question_usage($data, $nameprefix = '') {
         global $DB;
 
         // Clear our caches.
@@ -3535,7 +3536,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
 
         $this->inform_new_usage_id($newitemid);
 
-        $this->set_mapping('question_usage', $oldid, $newitemid, false);
+        $this->set_mapping($nameprefix . 'question_usage', $oldid, $newitemid, false);
     }
 
     /**
@@ -3549,20 +3550,20 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     /**
      * Process question_attempts
      */
-    protected function process_question_attempt($data) {
+    protected function process_question_attempt($data, $nameprefix = '') {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
         $question = $this->get_mapping('question', $data->questionid);
 
-        $data->questionusageid = $this->get_new_parentid('question_usage');
+        $data->questionusageid = $this->get_new_parentid($nameprefix . 'question_usage');
         $data->questionid      = $question->newitemid;
         $data->timemodified    = $this->apply_date_offset($data->timemodified);
 
         $newitemid = $DB->insert_record('question_attempts', $data);
 
-        $this->set_mapping('question_attempt', $oldid, $newitemid);
+        $this->set_mapping($nameprefix . 'question_attempt', $oldid, $newitemid);
         $this->qtypes[$newitemid] = $question->info->qtype;
         $this->newquestionids[$newitemid] = $data->questionid;
     }
@@ -3570,7 +3571,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     /**
      * Process question_attempt_steps
      */
-    protected function process_question_attempt_step($data) {
+    protected function process_question_attempt_step($data, $nameprefix = '') {
         global $DB;
 
         $data = (object)$data;
@@ -3578,14 +3579,14 @@ abstract class restore_questions_activity_structure_step extends restore_activit
 
         // Pull out the response data.
         $response = array();
-        if (!empty($data->response['variable'])) {
-            foreach ($data->response['variable'] as $variable) {
+        if (!empty($data->{$nameprefix . 'response'}[$nameprefix . 'variable'])) {
+            foreach ($data->{$nameprefix . 'response'}[$nameprefix . 'variable'] as $variable) {
                 $response[$variable['name']] = $variable['value'];
             }
         }
         unset($data->response);
 
-        $data->questionattemptid = $this->get_new_parentid('question_attempt');
+        $data->questionattemptid = $this->get_new_parentid($nameprefix . 'question_attempt');
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->userid      = $this->get_mappingid('user', $data->userid);
 
@@ -3598,6 +3599,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
                 $this->qtypes[$data->questionattemptid],
                 $this->newquestionids[$data->questionattemptid],
                 $data->sequencenumber, $response);
+
         foreach ($response as $name => $value) {
             $row = new stdClass();
             $row->attemptstepid = $newitemid;
