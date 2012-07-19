@@ -18,13 +18,13 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'Store.php';
-require_once 'ChildAssociation.php';
-require_once 'Association.php';
-require_once 'NamespaceMap.php';
-require_once 'ContentData.php';
-require_once 'VersionHistory.php';
-require_once 'Version.php';
+require_once $CFG->libdir.'/alfresco/Service/Store.php';
+require_once $CFG->libdir.'/alfresco/Service/ChildAssociation.php';
+require_once $CFG->libdir.'/alfresco/Service/Association.php';
+require_once $CFG->libdir.'/alfresco/Service/NamespaceMap.php';
+require_once $CFG->libdir.'/alfresco/Service/ContentData.php';
+require_once $CFG->libdir.'/alfresco/Service/VersionHistory.php';
+require_once $CFG->libdir.'/alfresco/Service/Version.php';
 
 class Node extends BaseObject 
 {

@@ -18,8 +18,8 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
  
-require_once 'Store.php';
-require_once 'Node.php';
+require_once $CFG->libdir.'/alfresco/Service/Store.php';
+require_once $CFG->libdir.'/alfresco/Service/Node.php';
 
 class SpacesStore extends Store
 {

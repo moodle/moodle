@@ -18,8 +18,8 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
  
-require_once 'BaseObject.php';
-require_once 'Node.php';
+require_once $CFG->libdir.'/alfresco/Service/BaseObject.php';
+require_once $CFG->libdir.'/alfresco/Service/Node.php';
 
 class Store extends BaseObject
 {

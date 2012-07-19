@@ -18,7 +18,7 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
  
- require_once "LoggerConfig.php";
+ require_once $CFG->libdir."/alfresco/Service/Logger/LoggerConfig.php";
  
  class Logger
  { 	

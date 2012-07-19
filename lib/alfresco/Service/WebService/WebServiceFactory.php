@@ -19,7 +19,7 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'AlfrescoWebService.php';
+require_once $CFG->libdir.'/alfresco/Service/WebService/AlfrescoWebService.php';
 
 class WebServiceFactory
 {

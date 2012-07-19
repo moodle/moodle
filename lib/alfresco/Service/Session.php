@@ -18,9 +18,9 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
  
-require_once 'Store.php';
-require_once 'Node.php';
-require_once 'WebService/WebServiceFactory.php';
+require_once $CFG->libdir.'/alfresco/Service/Store.php';
+require_once $CFG->libdir.'/alfresco/Service/Node.php';
+require_once $CFG->libdir.'/alfresco/Service/WebService/WebServiceFactory.php';
 
 class Session extends BaseObject
 {
@@ -98,7 +98,7 @@ class Session extends BaseObject
 	 */
 	public function getStoreFromString($value)
 	{
-		list($scheme, $address) = split("://", $value);
+		list($scheme, $address) = explode("://", $value);
     	return new Store($this, $address, $scheme);		
 	}	
 	

@@ -18,8 +18,8 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'Alfresco/Service/WebService/WebServiceFactory.php';
-require_once 'Alfresco/Service/BaseObject.php';
+require_once $CFG->libdir.'/alfresco/Service/WebService/WebServiceFactory.php';
+require_once $CFG->libdir.'/alfresco/Service/BaseObject.php';
 
 if (isset($_SESSION) == false)
 {
@@ -27,7 +27,7 @@ if (isset($_SESSION) == false)
    session_start();
 }   
  
-class Repository extends BaseObject
+class Alfresco_Repository extends BaseObject
 {
 	private $_connectionUrl;	
 	private $_host;
@@ -38,7 +38,11 @@ class Repository extends BaseObject
 		$this->_connectionUrl = $connectionUrl;			
 		$parts = parse_url($connectionUrl);
 		$this->_host = $parts["host"];
-		$this->_port = $parts["port"];
+		if (empty($parts["port"])) {
+			$this->_port = 80;
+		} else {
+			$this->_port = $parts["port"];
+		}
 	}
 	
 	public function getConnectionUrl()
