@@ -1431,6 +1431,7 @@ class global_navigation extends navigation_node {
                 $function($this);
             } else if (function_exists($oldfunction)) {
                 // We continue to support the old function name to ensure backwards compatability
+                debugging("Deprecated local plugin navigation callback: Please rename '{$oldfunction}' to '{$function}'. Support for the old callback will be dropped after the release of 2.4", DEBUG_DEVELOPER);
                 $oldfunction($this);
             }
         }

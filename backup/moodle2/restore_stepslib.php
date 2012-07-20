@@ -1139,18 +1139,26 @@ class restore_section_structure_step extends restore_structure_step {
         $data = (object)$data;
         // Mark it is as passed by default
         $passed = true;
-        // Ok, if it is a profile field we need to check it exists
-        if (!is_null($data->customfieldid)) {
-            if (!$DB->record_exists('user_info_field', array('id' => $data->customfieldid))) {
-                $passed = false;
-            }
+        $customfieldid = null;
+
+        // If a customfield has been used in order to pass we must be able to match an existing
+        // customfield by name (data->customfield) and type (data->customfieldtype)
+        if (is_null($data->customfield) xor is_null($data->customfieldtype)) {
+            // xor is sort of uncommon. If either customfield is null or customfieldtype is null BUT not both.
+            // If one is null but the other isn't something clearly went wrong and we'll skip this condition.
+            $passed = false;
+        } else if (!is_null($data->customfield)) {
+            $params = array('shortname' => $data->customfield, 'datatype' => $data->customfieldtype);
+            $customfieldid = $DB->get_field('user_info_field', 'id', $params);
+            $passed = ($customfieldid !== false);
         }
+
         if ($passed) {
             // Create the object to insert into the database
             $availfield = new stdClass();
             $availfield->coursesectionid = $this->task->get_sectionid();
             $availfield->userfield = $data->userfield;
-            $availfield->customfieldid = $data->customfieldid;
+            $availfield->customfieldid = $customfieldid;
             $availfield->operator = $data->operator;
             $availfield->value = $data->value;
             $DB->insert_record('course_sections_avail_fields', $availfield);
@@ -2637,18 +2645,26 @@ class restore_module_structure_step extends restore_structure_step {
         $data = (object)$data;
         // Mark it is as passed by default
         $passed = true;
-        // Ok, if it is a profile field we need to check it exists
-        if (!is_null($data->customfieldid)) {
-            if (!$DB->record_exists('user_info_field', array('id' => $data->customfieldid))) {
-                $passed = false;
-            }
+        $customfieldid = null;
+
+        // If a customfield has been used in order to pass we must be able to match an existing
+        // customfield by name (data->customfield) and type (data->customfieldtype)
+        if (!empty($data->customfield) xor !empty($data->customfieldtype)) {
+            // xor is sort of uncommon. If either customfield is null or customfieldtype is null BUT not both.
+            // If one is null but the other isn't something clearly went wrong and we'll skip this condition.
+            $passed = false;
+        } else if (!empty($data->customfield)) {
+            $params = array('shortname' => $data->customfield, 'datatype' => $data->customfieldtype);
+            $customfieldid = $DB->get_field('user_info_field', 'id', $params);
+            $passed = ($customfieldid !== false);
         }
+
         if ($passed) {
             // Create the object to insert into the database
             $availfield = new stdClass();
             $availfield->coursemoduleid = $this->task->get_moduleid(); // Lets add the availability cmid
             $availfield->userfield = $data->userfield;
-            $availfield->customfieldid = $data->customfieldid;
+            $availfield->customfieldid = $customfieldid;
             $availfield->operator = $data->operator;
             $availfield->value = $data->value;
             // Insert into the database

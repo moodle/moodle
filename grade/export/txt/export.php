@@ -46,7 +46,7 @@ if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('
 }
 
 // print all the exported data here
-$export = new grade_export_txt($course, $groupid, $itemids, $export_feedback, $updatedgradesonly, $displaytype, $decimalpoints, $separator, $onlyactive);
+$export = new grade_export_txt($course, $groupid, $itemids, $export_feedback, $updatedgradesonly, $displaytype, $decimalpoints, $separator, $onlyactive, true);
 $export->print_grades();
 
 

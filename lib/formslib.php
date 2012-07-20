@@ -79,7 +79,28 @@ function form_init_date_js() {
     if (!$done) {
         $module   = 'moodle-form-dateselector';
         $function = 'M.form.dateselector.init_date_selectors';
-        $config = array(array('firstdayofweek'=>get_string('firstdayofweek', 'langconfig')));
+        $config = array(array(
+            'firstdayofweek'    =>  get_string('firstdayofweek', 'langconfig'),
+            'mon'               => strftime('%a', 360000),      // 5th Jan 1970 at 12pm
+            'tue'               => strftime('%a', 446400),
+            'wed'               => strftime('%a', 532800),
+            'thu'               => strftime('%a', 619200),
+            'fri'               => strftime('%a', 705600),
+            'sat'               => strftime('%a', 792000),
+            'sun'               => strftime('%a', 878400),
+            'january'           => strftime('%B', 14400),       // 1st Jan 1970 at 12pm
+            'february'          => strftime('%B', 2692800),
+            'march'             => strftime('%B', 5112000),
+            'april'             => strftime('%B', 7790400),
+            'may'               => strftime('%B', 10382400),
+            'june'              => strftime('%B', 13060800),
+            'july'              => strftime('%B', 15652800),
+            'august'            => strftime('%B', 18331200),
+            'september'         => strftime('%B', 21009600),
+            'october'           => strftime('%B', 23601600),
+            'november'          => strftime('%B', 26280000),
+            'december'          => strftime('%B', 28872000)
+        ));
         $PAGE->requires->yui_module($module, $function, $config);
         $done = true;
     }
@@ -406,19 +427,6 @@ abstract class moodleform {
             $default_values = (array)$default_values;
         }
         $this->_form->setDefaults($default_values);
-    }
-
-    /**
-     * Sets file upload manager
-     *
-     * @deprecated since Moodle 2.0 Please don't used this API
-     * @todo MDL-31300 this api will be removed.
-     * @see MoodleQuickForm_filepicker
-     * @see MoodleQuickForm_filemanager
-     * @param bool $um upload manager
-     */
-    function set_upload_manager($um=false) {
-        debugging('Old file uploads can not be used any more, please use new filepicker element');
     }
 
     /**

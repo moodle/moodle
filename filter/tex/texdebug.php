@@ -244,7 +244,7 @@
         chdir($latex->temp_dir);
 
         // step 1: latex command
-        $cmd = "$CFG->filter_tex_pathlatex --interaction=nonstopmode $tex";
+        $cmd = "$CFG->filter_tex_pathlatex --interaction=nonstopmode --halt-on-error $tex";
         $output .= execute($cmd);
 
         // step 2: dvips command

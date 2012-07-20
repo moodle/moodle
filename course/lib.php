@@ -1377,8 +1377,18 @@ function get_print_section_cm_text(cm_info $cm, $course) {
 
 /**
  * Prints a section full of activity modules
+ *
+ * @param stdClass $course The course
+ * @param stdClass $section The section
+ * @param array $mods The modules in the section
+ * @param array $modnamesused An array containing the list of modules and their names
+ * @param bool $absolute All links are absolute
+ * @param string $width Width of the container
+ * @param bool $hidecompletion Hide completion status
+ * @param int $sectionreturn The section to return to
+ * @return void
  */
-function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false, $sectionreturn = false) {
+function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false, $sectionreturn=0) {
     global $CFG, $USER, $DB, $PAGE, $OUTPUT;
 
     static $initialised;
@@ -1638,12 +1648,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $mod->groupmode = false;
                 }
                 echo '&nbsp;&nbsp;';
-
-                if ($sectionreturn) {
-                    echo make_editing_buttons($mod, $absolute, true, $mod->indent, $section->section);
-                } else {
-                    echo make_editing_buttons($mod, $absolute, true, $mod->indent, 0);
-                }
+                echo make_editing_buttons($mod, $absolute, true, $mod->indent, $sectionreturn);
                 echo $mod->get_after_edit_icons();
             }
 
@@ -1762,8 +1767,16 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
 /**
  * Prints the menus to add activities and resources.
+ *
+ * @param stdClass $course The course
+ * @param stdClass $section The section
+ * @param array $modnames An array containing the list of modules and their names
+ * @param bool $vertical Vertical orientation
+ * @param bool $return Return the menus or send them to output
+ * @param int $sectionreturn The section to link back to
+ * @return void|string depending on $return
  */
-function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false, $sectionreturn = false) {
+function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false, $sectionreturn=0) {
     global $CFG, $OUTPUT;
 
     // check to see if user can add menus
@@ -1779,14 +1792,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     $activities = array();
 
     // We need to add the section section to the link for each module
-    $sectionlink = '&section=' . $section;
-
-    // We need to add the section to return to
-    if ($sectionreturn) {
-        $sectionreturnlink = '&sr=' . $section;
-    } else {
-        $sectionreturnlink = '&sr=0';
-    }
+    $sectionlink = '&section=' . $section . '&sr=' . $sectionreturn;
 
     foreach ($modules as $module) {
         if (isset($module->types)) {
@@ -1794,7 +1800,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
             // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
             $subtypes = array();
             foreach ($module->types as $subtype) {
-                $subtypes[$subtype->link . $sectionlink . $sectionreturnlink] = $subtype->title;
+                $subtypes[$subtype->link . $sectionlink] = $subtype->title;
             }
 
             // Sort module subtypes into the list
@@ -1816,11 +1822,11 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         } else {
             // This module has no subtypes
             if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
-                $resources[$module->link . $sectionlink . $sectionreturnlink] = $module->title;
+                $resources[$module->link . $sectionlink] = $module->title;
             } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
                 // System modules cannot be added by user, do not add to dropdown
             } else {
-                $activities[$module->link . $sectionlink . $sectionreturnlink] = $module->title;
+                $activities[$module->link . $sectionlink] = $module->title;
             }
         }
     }
@@ -4032,7 +4038,7 @@ function average_number_of_participants() {
         WHERE ue.enrolid = e.id
             AND e.courseid <> :siteid
             AND c.id = e.courseid
-            AND c.visible = 1) as total';
+            AND c.visible = 1)';
     $params = array('siteid' => $SITE->id);
     $enrolmenttotal = $DB->count_records_sql($sql, $params);
 
@@ -4065,7 +4071,7 @@ function average_number_of_courses_modules() {
         WHERE c.id = cm.course
             AND c.id <> :siteid
             AND cm.visible = 1
-            AND c.visible = 1) as total';
+            AND c.visible = 1)';
     $params = array('siteid' => $SITE->id);
     $moduletotal = $DB->count_records_sql($sql, $params);
 

@@ -383,7 +383,7 @@ WHERE
  * @return string A unique message-id
  */
 function forum_get_email_message_id($postid, $usertoid, $hostname) {
-    return '<'.hash('sha256',$postid.'to'.$usertoid.'@'.$hostname).'>';
+    return '<'.hash('sha256',$postid.'to'.$usertoid).'@'.$hostname.'>';
 }
 
 /**
@@ -3177,6 +3177,14 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $post->course = $course->id;
     $post->forum  = $forum->id;
     $post->message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php', $modcontext->id, 'mod_forum', 'post', $post->id);
+    if (!empty($CFG->enableplagiarism)) {
+        require_once($CFG->libdir.'/plagiarismlib.php');
+        $post->message .= plagiarism_get_links(array('userid' => $post->userid,
+            'content' => $post->message,
+            'cmid' => $cm->id,
+            'course' => $post->course,
+            'forum' => $post->forum));
+    }
 
     // caching
     if (!isset($cm->cache)) {
@@ -4022,6 +4030,16 @@ function forum_print_attachments($post, $cm, $type) {
                     $output .= '<br />';
                 }
             }
+
+            if (!empty($CFG->enableplagiarism)) {
+                require_once($CFG->libdir.'/plagiarismlib.php');
+                $output .= plagiarism_get_links(array('userid' => $post->userid,
+                    'file' => $file,
+                    'cmid' => $cm->id,
+                    'course' => $post->course,
+                    'forum' => $post->forum));
+                $output .= '<br />';
+            }
         }
     }
 
@@ -4279,6 +4297,9 @@ function forum_add_new_post($post, $mform, &$message) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
 
+    // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
+    forum_trigger_content_uploaded_event($post, $cm, 'forum_add_new_post');
+
     return $post->id;
 }
 
@@ -4324,6 +4345,9 @@ function forum_update_post($post, $mform, &$message) {
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
+
+    // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
+    forum_trigger_content_uploaded_event($post, $cm, 'forum_update_post');
 
     return true;
 }
@@ -4401,6 +4425,9 @@ function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
+
+    // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
+    forum_trigger_content_uploaded_event($post, $cm, 'forum_add_discussion');
 
     return $post->discussion;
 }
@@ -4522,6 +4549,33 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
         return true;
     }
     return false;
+}
+
+/**
+ * Sends post content to plagiarism plugin
+ * @param object $post Forum post object
+ * @param object $cm Course-module
+ * @param string $name
+ * @return bool
+*/
+function forum_trigger_content_uploaded_event($post, $cm, $name) {
+    $context = context_module::instance($cm->id);
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'mod_forum', 'attachment', $post->id, "timemodified", false);
+    $eventdata = new stdClass();
+    $eventdata->modulename   = 'forum';
+    $eventdata->name         = $name;
+    $eventdata->cmid         = $cm->id;
+    $eventdata->itemid       = $post->id;
+    $eventdata->courseid     = $post->course;
+    $eventdata->userid       = $post->userid;
+    $eventdata->content      = $post->message;
+    if ($files) {
+        $eventdata->pathnamehashes = array_keys($files);
+    }
+    events_trigger('assessable_content_uploaded', $eventdata);
+
+    return true;
 }
 
 /**

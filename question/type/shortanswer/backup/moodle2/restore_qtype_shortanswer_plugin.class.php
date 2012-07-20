@@ -68,8 +68,8 @@ class restore_qtype_shortanswer_plugin extends restore_qtype_plugin {
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
         // If the question has been created by restore, we need to create its
-        // question_shortanswer too
-        if ($questioncreated) {
+        // question_shortanswer too, if they are defined (the gui should ensure this).
+        if ($questioncreated && !empty($data->answers)) {
             // Adjust some columns
             $data->question = $newquestionid;
             // Map sequence of question_answer ids

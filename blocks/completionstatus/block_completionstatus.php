@@ -166,7 +166,7 @@ class block_completionstatus extends block_base {
         if (!empty($prerequisites)) {
 
             $phtml  = '<tr><td>';
-            $phtml .= get_string('prerequisitescompleted', 'completion');
+            $phtml .= get_string('dependenciescompleted', 'completion');
             $phtml .= '</td><td style="text-align: right">';
             $a = new stdClass();
             $a->first = $prerequisites_complete;

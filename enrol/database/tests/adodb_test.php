@@ -70,7 +70,11 @@ class core_adodb_testcase extends advanced_testcase {
                 set_config('dbsetupsql', 'SET NAMES \'UTF-8\'', 'enrol_database');
                 set_config('dbsybasequoting', '0', 'enrol_database');
                 if (!empty($CFG->dboptions['dbsocket']) and ($CFG->dbhost === 'localhost' or $CFG->dbhost === '127.0.0.1')) {
-                    set_config('dbhost', $CFG->dboptions['dbsocket'], 'enrol_database');
+                    if (strpos($CFG->dboptions['dbsocket'], '/') !== false) {
+                      set_config('dbhost', $CFG->dboptions['dbsocket'], 'enrol_database');
+                    } else {
+                      set_config('dbhost', '', 'enrol_database');
+                    }
                 }
                 break;
 
