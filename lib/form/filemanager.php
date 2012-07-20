@@ -170,19 +170,6 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     }
 
     /**
-     * Sets help button for filemanager
-     *
-     * @param mixed $helpbuttonargs arguments to create help button
-     * @param string $function name of the callback function
-     * @deprecated since Moodle 2.0. Please do not call this function any more.
-     * @todo MDL-31047 this api will be removed.
-     * @see MoodleQuickForm::setHelpButton()
-     */
-    function setHelpButton($helpbuttonargs, $function='helpbutton'){
-        debugging('component setHelpButton() is not used any more, please use $mform->setHelpButton() instead');
-    }
-
-    /**
      * Returns html for help button.
      *
      * @return string html for help button
