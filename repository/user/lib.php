@@ -56,6 +56,8 @@ class repository_user extends repository {
         $ret['dynload'] = true;
         $ret['nosearch'] = true;
         $ret['nologin'] = true;
+        $manageurl = new moodle_url('/user/files.php');
+        $ret['manage'] = $manageurl->out();
         $list = array();
 
         if (!empty($encodedpath)) {
