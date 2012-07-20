@@ -454,3 +454,15 @@ tab styles for ie6 & ie7
 body#page-course-view-topics.path-course div.moodle-dialogue-base div.yui3-widget{
     z-index: 600!important;
 }
+/* Filemanager
+-------------------------*/
+.filemanager select,
+.filemanager input,
+.filemanager button,
+.filemanager textarea,
+.file-picker select,
+.file-picker input,
+.file-picker button,
+.file-picker textarea {
+    background-color: #EEE;
+}
