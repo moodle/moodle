@@ -265,7 +265,7 @@ class completionlib_test extends UnitTestCaseUsingDatabase {
         // viewed, still do nothing
         $c->expectAt(1,'is_enabled',array($cm));
         $c->setReturnValueAt(1,'is_enabled',true);
-        $c->expectAt(0,'get_data',array($cm,0));
+        $c->expectAt(0,'get_data',array($cm,false,0));
         $hasviewed=(object)array('viewed'=>COMPLETION_VIEWED);
         $c->setReturnValueAt(0,'get_data',$hasviewed);
         $c->set_module_viewed($cm);
@@ -275,7 +275,7 @@ class completionlib_test extends UnitTestCaseUsingDatabase {
         $c->expectAt(2,'is_enabled',array($cm));
         $c->setReturnValueAt(2,'is_enabled',true);
         $notviewed=(object)array('viewed'=>COMPLETION_NOT_VIEWED);
-        $c->expectAt(1,'get_data',array($cm,1337));
+        $c->expectAt(1,'get_data',array($cm,false,1337));
         $c->setReturnValueAt(1,'get_data',$notviewed);
         $c->expectOnce('internal_set_data',array($cm,$hasviewed));
         $c->expectOnce('update_state',array($cm,COMPLETION_COMPLETE,1337));
@@ -434,6 +434,7 @@ WHERE
     cm.course=? AND cmc.userid=?"),array(42,314159)));
 
         // There are two CMids in total, the one we had data for and another one
+        $modinfo = new stdClass();
         $modinfo->cms=array((object)array('id'=>13),(object)array('id'=>14));
         $result=$c->get_data($cm,true,0,$modinfo);
 
