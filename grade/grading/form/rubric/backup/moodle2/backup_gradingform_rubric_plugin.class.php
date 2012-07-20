@@ -106,8 +106,13 @@ class backup_gradingform_rubric_plugin extends backup_gradingform_plugin {
 
         // Set sources to populate the data
 
-        $filling->set_source_table('gradingform_rubric_fillings',
-            array('instanceid' => backup::VAR_PARENTID));
+        // MDL-32499 Binding criterionid to ensure it's existence
+        $filling->set_source_sql('SELECT rf.*
+                FROM {gradingform_rubric_fillings} rf
+                JOIN {grading_instances} gi ON gi.id = rf.instanceid
+                JOIN {gradingform_rubric_criteria} rc ON rc.id = rf.criterionid AND gi.definitionid = rc.definitionid
+                WHERE rf.instanceid = :instanceid',
+                array('instanceid' => backup::VAR_PARENTID));
 
         // no need to annotate ids or files yet (one day when remark field supports
         // embedded fileds, they must be annotated here)
