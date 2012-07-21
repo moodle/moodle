@@ -158,17 +158,14 @@ abstract class moodleform {
      */
     function moodleform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true) {
         global $CFG, $FULLME;
-        if (empty($CFG->xmlstrictheaders)) {
-            // no standard mform in moodle should allow autocomplete with the exception of user signup
-            // this is valid attribute in html5, sorry, we have to ignore validation errors in legacy xhtml 1.0
-            if (empty($attributes)) {
-                $attributes = array('autocomplete'=>'off');
-            } else if (is_array($attributes)) {
-                $attributes['autocomplete'] = 'off';
-            } else {
-                if (strpos($attributes, 'autocomplete') === false) {
-                    $attributes .= ' autocomplete="off" ';
-                }
+        // no standard mform in moodle should allow autocomplete with the exception of user signup
+        if (empty($attributes)) {
+            $attributes = array('autocomplete'=>'off');
+        } else if (is_array($attributes)) {
+            $attributes['autocomplete'] = 'off';
+        } else {
+            if (strpos($attributes, 'autocomplete') === false) {
+                $attributes .= ' autocomplete="off" ';
             }
         }
 

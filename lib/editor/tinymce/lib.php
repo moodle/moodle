@@ -172,7 +172,7 @@ class tinymce_texteditor extends texteditor {
             $params['moodleemoticon_emoticons'] = json_encode($imgs);
         }
 
-        if (empty($CFG->xmlstrictheaders) and (!empty($options['legacy']) or !empty($options['noclean']) or !empty($options['trusted']))) {
+        if (!empty($options['legacy']) or !empty($options['noclean']) or !empty($options['trusted'])) {
             // now deal somehow with non-standard tags, people scream when we do not make moodle code xtml strict,
             // but they scream even more when we strip all tags that are not strict :-(
             $params['valid_elements'] = 'script[src|type],*[*]'; // for some reason the *[*] does not inlcude javascript src attribute MDL-25836

@@ -104,10 +104,6 @@ if (!$version or !$release) {
     print_error('withoutversion', 'debug'); // without version, stop
 }
 
-// Turn off xmlstrictheaders during upgrade.
-$origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
-$CFG->xmlstrictheaders = false;
-
 if (!core_tables_exist()) {
     $PAGE->set_pagelayout('maintenance');
     $PAGE->set_popup_notification_allowed(false);
@@ -379,10 +375,6 @@ if (during_initial_install()) {
     // just make sure upgrade logging is properly terminated
     upgrade_finished('upgradesettings.php');
 }
-
-// Turn xmlstrictheaders back on now.
-$CFG->xmlstrictheaders = $origxmlstrictheaders;
-unset($origxmlstrictheaders);
 
 // Check for valid admin user - no guest autologin
 require_login(0, false);

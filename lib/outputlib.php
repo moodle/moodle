@@ -275,6 +275,14 @@ class theme_config {
      */
     public $enablecourseajax = true;
 
+    /**
+     * @var string Determines served document types
+     *  - 'html5' the only officially supported doctype in Moodle
+     *  - 'xhtml5' may be used in development for validation (not intended for production servers!)
+     *  - 'xhtml' XHTML 1.0 Strict for legacy themes only
+     */
+    public $doctype = 'html5';
+
     //==Following properties are not configurable from theme config.php==
 
     /**
@@ -390,7 +398,7 @@ class theme_config {
 
         $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts', 'javascripts_footer',
                               'parents_exclude_javascripts', 'layouts', 'enable_dock', 'enablecourseajax', 'supportscssoptimisation',
-                              'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'hidefromselector');
+                              'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'hidefromselector', 'doctype');
 
         foreach ($config as $key=>$value) {
             if (in_array($key, $configurable)) {

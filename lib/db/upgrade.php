@@ -1045,6 +1045,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012070600.11);
     }
 
+    if ($oldversion < 2012071900.01) {
+        // Remove obsolete xhtml strict setting - use THEME->doctype in theme config if necessary,
+        // see theme_config->doctype in lib/outputlib.php for more details.
+        unset_config('xmlstrictheaders');
+        upgrade_main_savepoint(true, 2012071900.01);
+    }
+
 
     return true;
 }
