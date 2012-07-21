@@ -1045,6 +1045,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012070600.11);
     }
 
+    if ($oldversion < 2012071900.01) {
+        // Cleanup after simpeltests tool
+        capabilities_cleanup('tool_unittest');
+        unset_all_config_for_plugin('tool_unittest');
+
+        upgrade_main_savepoint(true, 2012071900.01);
+    }
+
 
     return true;
 }
