@@ -24,5 +24,5 @@
 
 $settings->add(new admin_setting_configcheckbox('assignfeedback_comments/default',
                    new lang_string('default', 'assignfeedback_comments'),
-                   new lang_string('default_help', 'assignfeedback_comments'), 0));
+                   new lang_string('default_help', 'assignfeedback_comments'), 1));
 
