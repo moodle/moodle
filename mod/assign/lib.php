@@ -212,16 +212,13 @@ function assign_print_overview($courses, &$htmlarray) {
     // Do assignment_base::isopen() here without loading the whole thing for speed
     foreach ($assignments as $key => $assignment) {
         $time = time();
+        $isopen = $assignment->allowsubmissionsfromdate <= $time;
         if ($assignment->duedate) {
             if ($assignment->preventlatesubmissions) {
-                $isopen = ($assignment->allowsubmissionsfromdate <= $time && $time <= $assignment->duedate);
-            } else {
-                $isopen = ($assignment->allowsubmissionsfromdate <= $time);
+                $isopen = ($isopen && $time <= $assignment->duedate);
             }
         }
-        if (empty($isopen) || empty($assignment->duedate)) {
-            $assignmentids[] = $assignment->id;
-        } else {
+        if ($isopen) {
             $assignmentids[] = $assignment->id;
         }
     }
@@ -265,6 +262,10 @@ function assign_print_overview($courses, &$htmlarray) {
                             AND a.id $sqlassignmentids", array_merge(array($USER->id, $USER->id), $assignmentidparams));
 
     foreach ($assignments as $assignment) {
+        // Do not show assignments that are not open
+        if (!in_array($assignment->id, $assignmentids)) {
+            continue;
+        }
         $str = '<div class="assign overview"><div class="name">'.$strassignment. ': '.
                '<a '.($assignment->visible ? '':' class="dimmed"').
                'title="'.$strassignment.'" href="'.$CFG->wwwroot.
