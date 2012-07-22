@@ -17,9 +17,8 @@
 /**
  * Transfer tool
  *
- * @package    tool
- * @subpackage dbtransfer
- * @copyright  2008 Petr Skoda
+ * @package    tool_dbtransfer
+ * @copyright  2008 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +31,7 @@ require_once('database_transfer_form.php');
 require_login();
 admin_externalpage_setup('tooldbtransfer');
 
-// Create the form
+// Create the form.
 $form = new database_transfer_form();
 
 // If we have valid input.
@@ -61,7 +60,7 @@ if ($data = $form->get_data()) {
 
     // Do the transfer.
     $feedback = new html_list_progress_trace();
-    dbtransfer_transfer_database($DB, $targetdb, $feedback);
+    tool_dbtransfer_transfer_database($DB, $targetdb, $feedback);
     $feedback->finished();
 
     // Finish up.

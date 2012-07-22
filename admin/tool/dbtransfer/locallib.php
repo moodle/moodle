@@ -17,9 +17,8 @@
 /**
  * Export db content to file.
  *
- * @package    tool
- * @subpackage dbtransfer
- * @copyright  2008 Petr Skoda {@link http://skodak.org}
+ * @package    tool_dbtransfer
+ * @copyright  2008 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -44,8 +43,13 @@ TODO:
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/dtllib.php');
 
-
-function dbtransfer_export_xml_database($description, $mdb) {
+/**
+ * Initiate database export.
+ * @param string $description
+ * @param moodle_database $mdb
+ * @return does not return, calls die()
+ */
+function tool_dbtransfer_export_xml_database($description, $mdb) {
     @set_time_limit(0);
 
     session_get_instance()->write_close(); // release session
@@ -65,8 +69,14 @@ function dbtransfer_export_xml_database($description, $mdb) {
     die;
 }
 
-
-function dbtransfer_transfer_database($sourcedb, $targetdb, $feedback = null) {
+/**
+ * Initiate database transfer.
+ * @param moodle_database $sourcedb
+ * @param moodle_database $targetdb
+ * @param progress_trace $feedback
+ * @return void
+ */
+function tool_dbtransfer_transfer_database(moodle_database $sourcedb, moodle_database $targetdb, progress_trace $feedback = null) {
     @set_time_limit(0);
 
     session_get_instance()->write_close(); // release session
