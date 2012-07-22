@@ -186,7 +186,7 @@ class moodle_page {
      * @var array List of theme layout options, these are ignored by core.
      * To be used in individual theme layout files only.
      */
-    protected $_layout_options = array();
+    protected $_layout_options = null;
 
     /**
      * @var string An optional arbitrary parameter that can be set on pages where the context
@@ -496,6 +496,9 @@ class moodle_page {
      * @return array returns arrys with options for layout file
      */
     protected function magic_get_layout_options() {
+        if (!is_array($this->_layout_options)) {
+            $this->_layout_options = $this->_theme->pagelayout_options($this->pagelayout);
+        }
         return $this->_layout_options;
     }
 
@@ -1433,7 +1436,6 @@ class moodle_page {
         if (is_null($this->_theme)) {
             $themename = $this->resolve_theme();
             $this->_theme = theme_config::load($themename);
-            $this->_layout_options = $this->_theme->pagelayout_options($this->pagelayout);
         }
 
         $this->_theme->setup_blocks($this->pagelayout, $this->blocks);
