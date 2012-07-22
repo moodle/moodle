@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['convertinglogdisplay'] = 'Converting log display actions';
 $string['dbexport'] = 'Database export';
 $string['dbtransfer'] = 'Database transfer';
 $string['exportdata'] = 'Export data';

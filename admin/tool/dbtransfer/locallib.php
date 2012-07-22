@@ -83,6 +83,43 @@ function tool_dbtransfer_transfer_database(moodle_database $sourcedb, moodle_dat
 
     $var = new database_mover($sourcedb, $targetdb, true, $feedback);
     $var->export_database(null);
+
+    tool_dbtransfer_rebuild_target_log_actions($targetdb, $feedback);
+}
+
+/**
+ * Very hacky function for rebuilding of log actions in target database.
+ * @param moodle_database $target
+ * @param progress_trace $feedback
+ * @return void
+ * @throws Exception on conversion error
+ */
+function tool_dbtransfer_rebuild_target_log_actions(moodle_database $target, progress_trace $feedback = null) {
+    global $DB, $CFG;
+    require_once("$CFG->libdir/upgradelib.php");
+
+    $feedback->output(get_string('convertinglogdisplay', 'tool_dbtransfer'));
+
+    $olddb = $DB;
+    $DB = $target;
+    try {
+        $DB->delete_records('log_display', array('component'=>'moodle'));
+        log_update_descriptions('moodle');
+        $plugintypes = get_plugin_types();
+        foreach ($plugintypes as $type=>$location) {
+            $plugs = get_plugin_list($type);
+            foreach ($plugs as $plug=>$fullplug) {
+                $component = $type.'_'.$plug;
+                $DB->delete_records('log_display', array('component'=>$component));
+                log_update_descriptions($component);
+            }
+        }
+    } catch (Exception $e) {
+        $DB = $olddb;
+        throw $e;
+    }
+    $DB = $olddb;
+    $feedback->output(get_string('done', 'core_dbtransfer', null), 1);
 }
 
 /**
@@ -105,7 +142,7 @@ function tool_dbtransfer_get_drivers() {
         $dblibrary = $matches[2];
 
         if ($dbtype === 'sqlite3') {
-            // Ignored unfinished.
+            // Blacklist unfinished drivers.
             continue;
         }
 
