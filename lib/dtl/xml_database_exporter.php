@@ -48,7 +48,7 @@ abstract class xml_database_exporter extends database_exporter {
     public function begin_database_export($version, $release, $timestamp, $description) {
         $this->output('<?xml version="1.0" encoding="utf-8"?>');
         //TODO add xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" and schema information
-        $this->output('<moodle_database version="'.$version.'" release="'.$release.'" timestamp="'.$timestamp.'"'.(empty ($description) ? '' : ' comment="'.htmlspecialchars($description, ENT_QUOTES).'"').'>');
+        $this->output('<moodle_database version="'.$version.'" release="'.$release.'" timestamp="'.$timestamp.'"'.(empty ($description) ? '' : ' comment="'.htmlspecialchars($description, ENT_QUOTES, 'UTF-8').'"').'>');
     }
 
     /**
@@ -90,7 +90,7 @@ abstract class xml_database_exporter extends database_exporter {
             if (is_null($value)) {
                 $this->output('<field name="'.$key.'" value="null" />');
             } else {
-                $this->output('<field name="'.$key.'">'.htmlspecialchars($value, ENT_NOQUOTES).'</field>');
+                $this->output('<field name="'.$key.'">'.htmlspecialchars($value, ENT_NOQUOTES, 'UTF-8').'</field>');
             }
         }
         $this->output('</record>');
