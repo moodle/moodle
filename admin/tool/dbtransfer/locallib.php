@@ -84,3 +84,40 @@ function tool_dbtransfer_transfer_database(moodle_database $sourcedb, moodle_dat
     $var = new database_mover($sourcedb, $targetdb, true, $feedback);
     $var->export_database(null);
 }
+
+/**
+ * Returns list of fully working database drivers present in system.
+ * @return array
+ */
+function tool_dbtransfer_get_drivers() {
+    global $CFG;
+
+    $files = new RegexIterator(new DirectoryIterator("$CFG->libdir/dml"), '|^.*_moodle_database\.php$|');
+    $drivers = array();
+
+    foreach ($files as $file) {
+        $matches = null;
+        preg_match('|^([a-z0-9]+)_([a-z]+)_moodle_database\.php$|', $file->getFilename(), $matches);
+        if (!$matches) {
+            continue;
+        }
+        $dbtype = $matches[1];
+        $dblibrary = $matches[2];
+
+        if ($dbtype === 'sqlite3') {
+            // Ignored unfinished.
+            continue;
+        }
+
+        $targetdb = moodle_database::get_driver_instance($dbtype, $dblibrary, false);
+        if ($targetdb->driver_installed() !== true) {
+            continue;
+        }
+
+        $driver = $dbtype.'/'.$dblibrary;
+
+        $drivers[$driver] = $targetdb->get_name();
+    };
+
+    return $drivers;
+}

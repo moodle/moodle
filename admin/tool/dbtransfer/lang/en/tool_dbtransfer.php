@@ -27,6 +27,7 @@ $string['dbtransfer'] = 'Database transfer';
 $string['exportdata'] = 'Export data';
 $string['notargetconectexception'] = 'Can not connect target database, sorry.';
 $string['pluginname'] = 'Database transfer';
+$string['targetdatabasenotempty'] = 'Target database must not contain any tables with given prefix!';
 $string['transferdata'] = 'Transfer data';
 $string['transferdbintro'] = 'This script will transfer the entire contents of this database to another database server.';
 $string['transferdbtoserver'] = 'Transfer this Moodle database to another server';
