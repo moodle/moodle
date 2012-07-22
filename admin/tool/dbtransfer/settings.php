@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Link to InnoDB conversion tool
+ * Add hidden links db transfer tool
  *
- * @package    tool
- * @subpackage dbtransfer
- * @copyright  2011 Petr Skoda {@link http://skodak.org}
+ * @package    tool_dbtransfer
+ * @copyright  2011 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

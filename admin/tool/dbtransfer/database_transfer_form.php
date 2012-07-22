@@ -17,9 +17,8 @@
 /**
  * Transfer form
  *
- * @package    tool
- * @subpackage dbtransfer
- * @copyright  2008 Petr Skoda
+ * @package    tool_dbtransfer
+ * @copyright  2008 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,6 +26,10 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once $CFG->libdir.'/formslib.php';
 
+
+/**
+ * Definition of db transfer settings form.
+ */
 class database_transfer_form extends moodleform {
 
     function definition() {
