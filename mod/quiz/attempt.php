@@ -103,7 +103,7 @@ if ($attemptobj->get_currentpage() != $page) {
         // Prevent out of sequence access.
         redirect($attemptobj->start_attempt_url(null, $attemptobj->get_currentpage()));
     }
-    $DB->set_field('quiz_attempts', 'currentpage', $page);
+    $DB->set_field('quiz_attempts', 'currentpage', $page, array('id' => $attemptid));
 }
 
 // Initialise the JavaScript.
