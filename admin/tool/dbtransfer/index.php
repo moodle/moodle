@@ -69,6 +69,7 @@ if ($data = $form->get_data()) {
         // Start output.
         echo $OUTPUT->header();
         $data->dbtype = $dbtype;
+        $data->dbtypefrom = $CFG->dbtype;
         echo $OUTPUT->heading(get_string('transferringdbto', 'tool_dbtransfer', $data));
 
         // Do the transfer.

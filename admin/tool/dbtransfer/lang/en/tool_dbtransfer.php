@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clidriverlist'] = 'Available database drivers for migration';
+$string['cliheading'] = 'Database migration - make sure nobody is accessing the server during migration!';
 $string['climigrationnotice'] = 'Database migration in progress, please wait until the migration completes and server administrator updates configuration and deletes the $CFG->dataroot/climaintenance.html file.';
 $string['convertinglogdisplay'] = 'Converting log display actions';
 $string['dbexport'] = 'Database export';
@@ -37,5 +39,5 @@ $string['targetdatabasenotempty'] = 'Target database must not contain any tables
 $string['transferdata'] = 'Transfer data';
 $string['transferdbintro'] = 'This script will transfer the entire contents of this database to another database server. It is often used for migration of data to different database type.';
 $string['transferdbtoserver'] = 'Transfer this Moodle database to another server';
-$string['transferringdbto'] = 'Transferring this database to {$a->dbtype} database {$a->dbname} on {$a->dbhost}';
+$string['transferringdbto'] = 'Transferring this {$a->dbtypefrom} database to {$a->dbtype} database "{$a->dbname}" on "{$a->dbhost}"';
 
