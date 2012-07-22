@@ -58,6 +58,9 @@ if ($data = $form->get_data()) {
     }
 
     if ($problem === '') {
+        // Scroll down to the bottom when finished.
+        $PAGE->requires->js_init_code("window.scrollTo(0, 5000000);");
+
         // Start output.
         echo $OUTPUT->header();
         $data->dbtype = $dbtype;
