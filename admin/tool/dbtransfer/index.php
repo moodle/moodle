@@ -53,13 +53,18 @@ if ($data = $form->get_data()) {
             $problem .= get_string('targetdatabasenotempty', 'tool_dbtransfer');
         }
     } catch (moodle_exception $e) {
-        $problem .= html_writer::tag('h3', get_string('notargetconectexception', 'tool_dbtransfer'));
-        $problem .= $e->getMessage().'<br />'.$e->debuginfo;
+        $problem .= get_string('notargetconectexception', 'tool_dbtransfer').'<br />'.$e->debuginfo;
     }
 
     if ($problem === '') {
         // Scroll down to the bottom when finished.
         $PAGE->requires->js_init_code("window.scrollTo(0, 5000000);");
+
+        // Enable CLI maintenance mode if requested.
+        if ($data->enablemaintenance) {
+            $PAGE->set_pagelayout('maintenance');
+            tool_dbtransfer_create_maintenance_file();
+        }
 
         // Start output.
         echo $OUTPUT->header();
@@ -67,9 +72,19 @@ if ($data = $form->get_data()) {
         echo $OUTPUT->heading(get_string('transferringdbto', 'tool_dbtransfer', $data));
 
         // Do the transfer.
-        $feedback = new html_list_progress_trace();
-        tool_dbtransfer_transfer_database($DB, $targetdb, $feedback);
-        $feedback->finished();
+        $CFG->tool_dbransfer_migration_running = true;
+        try {
+            $feedback = new html_list_progress_trace();
+            tool_dbtransfer_transfer_database($DB, $targetdb, $feedback);
+            $feedback->finished();
+        } catch (Exception $e) {
+            if ($data->enablemaintenance) {
+                tool_dbtransfer_maintenance_callback();
+            }
+            unset($CFG->tool_dbransfer_migration_running);
+            throw $e;
+        }
+        unset($CFG->tool_dbransfer_migration_running);
 
         // Finish up.
         echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
@@ -82,7 +97,10 @@ if ($data = $form->get_data()) {
 // Otherwise display the settings form.
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('transferdbtoserver', 'tool_dbtransfer'));
-echo '<p>', get_string('transferdbintro', 'tool_dbtransfer'), "</p>\n\n";
+
+$info = format_text(get_string('transferdbintro', 'tool_dbtransfer'), FORMAT_MARKDOWN);
+echo $OUTPUT->box($info);
+
 $form->display();
 if ($problem !== '') {
     echo $OUTPUT->box($problem, 'generalbox error');
