@@ -24,7 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once $CFG->libdir.'/formslib.php';
+require_once($CFG->libdir.'/formslib.php');
+require_once(__DIR__.'/locallib.php');
 
 
 /**
@@ -32,43 +33,60 @@ require_once $CFG->libdir.'/formslib.php';
  */
 class database_transfer_form extends moodleform {
 
-    function definition() {
+    /**
+     * Define transfer form.
+     */
+    protected function definition() {
+        global $CFG;
+
         $mform = $this->_form;
 
         $mform->addElement('header', 'database', get_string('dbtransfer', 'tool_dbtransfer'));
 
-        $supported = array (
-            'mysqli/native',
-            'pgsql/native',
-            'mssql/native',
-            'oci/native',
-            'sqlsrv/native',
-        );
-        $drivers = array();
-        foreach($supported as $driver) {
-            list($dbtype, $dblibrary) = explode('/', $driver);
-            $targetdb = moodle_database::get_driver_instance($dbtype, $dblibrary);
-            if ($targetdb->driver_installed() !== true) {
-                continue;
-            }
-            $drivers[$driver] = $driver;
-        }
+        $drivers = tool_dbtransfer_get_drivers();
+        $drivers = array_reverse($drivers, true);
+        $drivers[''] = get_string('choosedots');
+        $drivers = array_reverse($drivers, true);
 
         $mform->addElement('select', 'driver', get_string('dbtype', 'install'), $drivers);
         $mform->addElement('text', 'dbhost', get_string('dbhost', 'install'));
         $mform->addElement('text', 'dbname', get_string('database', 'install'));
         $mform->addElement('text', 'dbuser', get_string('user'));
-        $mform->addElement('text', 'dbpass', get_string('password'));
+        $mform->addElement('passwordunmask', 'dbpass', get_string('password'));
         $mform->addElement('text', 'prefix', get_string('dbprefix', 'install'));
         $mform->addElement('text', 'dbport', get_string('dbport', 'install'));
-        $mform->addElement('text', 'dbsocket', get_string('databasesocket', 'install'));
+        if ($CFG->ostype !== 'WINDOWS') {
+            $mform->addElement('text', 'dbsocket', get_string('databasesocket', 'install'));
+        } else {
+            $mform->addElement('hidden', 'dbsocket');
+        }
 
+        $mform->addRule('driver', get_string('required'), 'required', null);
         $mform->addRule('dbhost', get_string('required'), 'required', null);
         $mform->addRule('dbname', get_string('required'), 'required', null);
         $mform->addRule('dbuser', get_string('required'), 'required', null);
         $mform->addRule('dbpass', get_string('required'), 'required', null);
-        $mform->addRule('prefix', get_string('required'), 'required', null);
+        if (!isset($drivers['mysqli/native'])) {
+            $mform->addRule('prefix', get_string('required'), 'required', null);
+        }
 
         $this->add_action_buttons(false, get_string('transferdata', 'tool_dbtransfer'));
+    }
+
+    /**
+     * Validate prefix is present for non-mysql drivers.
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        if ($data['driver'] !== 'mysqli/native') {
+            // This is a bloody hack, let's pretend we do not need to look at db family...
+            if ($data['prefix'] === '') {
+                $errors['prefix'] = get_string('required');
+            }
+        }
+        return $errors;
     }
 }
