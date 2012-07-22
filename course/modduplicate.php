@@ -56,6 +56,15 @@ $PAGE->set_pagelayout('incourse');
 
 $output = $PAGE->get_renderer('core', 'backup');
 
+$a          = new stdClass();
+$a->modtype = get_string('modulename', $cm->modname);
+$a->modname = format_string($cm->name);
+
+if (!plugin_supports('mod', $cm->modname, FEATURE_BACKUP_MOODLE2)) {
+    $url = new moodle_url('/course/view.php#section-' . $cm->sectionnum, array('id' => $course->id));
+    print_error('duplicatenosupport', 'core', $url, $a);
+}
+
 // backup the activity
 
 $bc = new backup_controller(backup::TYPE_1ACTIVITY, $cm->id, backup::FORMAT_MOODLE,
@@ -117,10 +126,6 @@ $rc->destroy();
 if (empty($CFG->keeptempdirectoriesonbackup)) {
     fulldelete($backupbasepath);
 }
-
-$a          = new stdClass();
-$a->modtype = get_string('modulename', $cm->modname);
-$a->modname = format_string($cm->name);
 
 echo $output->header();
 
