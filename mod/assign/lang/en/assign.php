@@ -173,6 +173,7 @@ $string['nousersselected'] = 'No users selected';
 $string['numberofdraftsubmissions'] = 'Drafts';
 $string['numberofparticipants'] = 'Participants';
 $string['numberofsubmittedassignments'] = 'Submitted';
+$string['numberofsubmissionsneedgrading'] = 'Needs grading';
 $string['offline'] = 'No online submissions required';
 $string['overdue'] = '<font color="red">Assignment is overdue by: {$a}</font>';
 $string['outlinegrade'] = 'Grade: {$a}';
