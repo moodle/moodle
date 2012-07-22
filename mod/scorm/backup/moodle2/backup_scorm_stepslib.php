@@ -127,25 +127,72 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
         // Define sources
         $scorm->set_source_table('scorm', array('id' => backup::VAR_ACTIVITYID));
 
-        $sco->set_source_table('scorm_scoes', array('scorm' => backup::VAR_PARENTID));
+        // Use set_source_sql for other calls as set_source_table returns records in reverse order
+        // and order is important for several SCORM fields - esp scorm_scoes.
+        $sco->set_source_sql('
+                SELECT *
+                FROM {scorm_scoes}
+                WHERE scorm = :scorm
+                ORDER BY id',
+            array('scorm' => backup::VAR_PARENTID));
 
-        $scodata->set_source_table('scorm_scoes_data', array('scoid' => backup::VAR_PARENTID));
+        $scodata->set_source_sql('
+                SELECT *
+                FROM {scorm_scoes_data}
+                WHERE scoid = :scoid
+                ORDER BY id',
+            array('scoid' => backup::VAR_PARENTID));
 
-        $seqrulecond->set_source_table('scorm_seq_ruleconds', array('scoid' => backup::VAR_PARENTID));
+        $seqrulecond->set_source_sql('
+                SELECT *
+                FROM {scorm_seq_ruleconds}
+                WHERE scoid = :scoid
+                ORDER BY id',
+            array('scoid' => backup::VAR_PARENTID));
 
-        $seqrulecondsdata->set_source_table('scorm_seq_rulecond', array('ruleconditionsid' => backup::VAR_PARENTID));
+        $seqrulecondsdata->set_source_sql('
+                SELECT *
+                FROM {scorm_seq_rulecond}
+                WHERE ruleconditionsid = :ruleconditionsid
+                ORDER BY id',
+            array('ruleconditionsid' => backup::VAR_PARENTID));
 
-        $seqrolluprule->set_source_table('scorm_seq_rolluprule', array('scoid' => backup::VAR_PARENTID));
+        $seqrolluprule->set_source_sql('
+                SELECT *
+                FROM {scorm_seq_rolluprule}
+                WHERE scoid = :scoid
+                ORDER BY id',
+            array('scoid' => backup::VAR_PARENTID));
 
-        $seqrolluprulecond->set_source_table('scorm_seq_rolluprulecond', array('rollupruleid' => backup::VAR_PARENTID));
+        $seqrolluprulecond->set_source_sql('
+                SELECT *
+                FROM {scorm_seq_rolluprulecond}
+                WHERE rollupruleid = :rollupruleid
+                ORDER BY id',
+            array('rollupruleid' => backup::VAR_PARENTID));
 
-        $seqobjective->set_source_table('scorm_seq_objective', array('scoid' => backup::VAR_PARENTID));
+        $seqobjective->set_source_sql('
+                SELECT *
+                FROM {scorm_seq_objective}
+                WHERE scoid = :scoid
+                ORDER BY id',
+            array('scoid' => backup::VAR_PARENTID));
 
-        $seqmapinfo->set_source_table('scorm_seq_mapinfo', array('objectiveid' => backup::VAR_PARENTID));
+        $seqmapinfo->set_source_sql('
+                SELECT *
+                FROM {scorm_seq_mapinfo}
+                WHERE objectiveid = :objectiveid
+                ORDER BY id',
+            array('objectiveid' => backup::VAR_PARENTID));
 
         // All the rest of elements only happen if we are including user info
         if ($userinfo) {
-            $scotrack->set_source_table('scorm_scoes_track', array('scoid' => backup::VAR_PARENTID));
+            $scotrack->set_source_sql('
+                SELECT *
+                FROM {scorm_scoes_track}
+                WHERE scoid = :scoid
+                ORDER BY id',
+                array('scoid' => backup::VAR_PARENTID));
         }
 
         // Define id annotations
