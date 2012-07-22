@@ -41,7 +41,7 @@ class database_transfer_form extends moodleform {
 
         $mform = $this->_form;
 
-        $mform->addElement('header', 'database', get_string('dbtransfer', 'tool_dbtransfer'));
+        $mform->addElement('header', 'database', get_string('targetdatabase', 'tool_dbtransfer'));
 
         $drivers = tool_dbtransfer_get_drivers();
         $drivers = array_reverse($drivers, true);
@@ -49,10 +49,10 @@ class database_transfer_form extends moodleform {
         $drivers = array_reverse($drivers, true);
 
         $mform->addElement('select', 'driver', get_string('dbtype', 'install'), $drivers);
-        $mform->addElement('text', 'dbhost', get_string('dbhost', 'install'));
-        $mform->addElement('text', 'dbname', get_string('database', 'install'));
-        $mform->addElement('text', 'dbuser', get_string('user'));
-        $mform->addElement('passwordunmask', 'dbpass', get_string('password'));
+        $mform->addElement('text', 'dbhost', get_string('databasehost', 'install'));
+        $mform->addElement('text', 'dbname', get_string('databasename', 'install'));
+        $mform->addElement('text', 'dbuser', get_string('databaseuser', 'install'));
+        $mform->addElement('passwordunmask', 'dbpass', get_string('databasepass', 'install'));
         $mform->addElement('text', 'prefix', get_string('dbprefix', 'install'));
         $mform->addElement('text', 'dbport', get_string('dbport', 'install'));
         if ($CFG->ostype !== 'WINDOWS') {
@@ -69,6 +69,11 @@ class database_transfer_form extends moodleform {
         if (!isset($drivers['mysqli/native'])) {
             $mform->addRule('prefix', get_string('required'), 'required', null);
         }
+
+        $mform->addElement('header', 'database', get_string('options', 'tool_dbtransfer'));
+
+        $mform->addElement('advcheckbox', 'enablemaintenance', get_string('enablemaintenance', 'tool_dbtransfer'));
+        $mform->addHelpButton('enablemaintenance', 'enablemaintenance', 'tool_dbtransfer');
 
         $this->add_action_buttons(false, get_string('transferdata', 'tool_dbtransfer'));
     }

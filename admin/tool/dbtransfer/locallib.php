@@ -158,3 +158,52 @@ function tool_dbtransfer_get_drivers() {
 
     return $drivers;
 }
+
+/**
+ * Create CLI maintenance file to prevent all access.
+ */
+function tool_dbtransfer_create_maintenance_file() {
+    global $CFG;
+
+    register_shutdown_function('tool_dbtransfer_maintenance_callback');
+
+    $options = new stdClass();
+    $options->trusted = false;
+    $options->noclean = false;
+    $options->smiley = false;
+    $options->filter = false;
+    $options->para = true;
+    $options->newlines = false;
+
+    $message = format_text(get_string('climigrationnotice', 'tool_dbtransfer'), FORMAT_MARKDOWN, $options);
+    $message = bootstrap_renderer::early_error_content($message, '', '', array());
+    $html = <<<OET
+<!DOCTYPE html>
+<html>
+<header><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><header/>
+<body>$message</body>
+</html>
+OET;
+
+    file_put_contents("$CFG->dataroot/climaintenance.html", $html);
+    @chmod("$CFG->dataroot/climaintenance.html", $CFG->filepermissions);
+}
+
+/**
+ * This callback is responsible for unsetting maintenance mode
+ * if the migration is interrupted.
+ */
+function tool_dbtransfer_maintenance_callback() {
+    global $CFG;
+
+    if (empty($CFG->tool_dbransfer_migration_running)) {
+        // Migration was finished properly - keep the maintenance file in place.
+        return;
+    }
+
+    if (file_exists("$CFG->dataroot/climaintenance.html")) {
+        // Failed migration, revert to normal site operation.
+        unlink("$CFG->dataroot/climaintenance.html");
+        error_log('tool_dbtransfer: Interrupted database migration detected, switching off CLI maintenance mode.');
+    }
+}
