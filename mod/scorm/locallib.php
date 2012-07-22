@@ -22,6 +22,10 @@ define('SCORM_UPDATE_NEVER', '0');
 define('SCORM_UPDATE_EVERYDAY', '2');
 define('SCORM_UPDATE_EVERYTIME', '3');
 
+define('SCORM_SKIPVIEW_NEVER', '0');
+define('SCORM_SKIPVIEW_FIRST', '1');
+define('SCORM_SKIPVIEW_ALWAYS', '2');
+
 define('SCO_ALL', 0);
 define('SCO_DATA', 1);
 define('SCO_ONLY', 2);
@@ -109,9 +113,9 @@ function scorm_get_what_grade_array() {
  * @return array an array of skip view options
  */
 function scorm_get_skip_view_array() {
-    return array(0 => get_string('never'),
-                 1 => get_string('firstaccess', 'scorm'),
-                 2 => get_string('always'));
+    return array(SCORM_SKIPVIEW_NEVER => get_string('never'),
+                 SCORM_SKIPVIEW_FIRST => get_string('firstaccess', 'scorm'),
+                 SCORM_SKIPVIEW_ALWAYS => get_string('always'));
 }
 
 /**
