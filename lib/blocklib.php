@@ -1961,35 +1961,6 @@ function blocks_delete_all_on_page($pagetype, $pageid) {
 }
 
 /**
- * Dispite what this function is called, it seems to be mostly used to populate
- * the default blocks when a new course (or whatever) is created.
- *
- * @deprecated since 2.0
- *
- * @param object $page the page to add default blocks to.
- * @return boolean success or failure.
- */
-function blocks_repopulate_page($page) {
-    global $CFG;
-
-    debugging('Call to deprecated function blocks_repopulate_page. ' .
-            'Use a more specific method like blocks_add_default_course_blocks, ' .
-            'or just call $PAGE->blocks->add_blocks()', DEBUG_DEVELOPER);
-
-    /// If the site override has been defined, it is the only valid one.
-    if (!empty($CFG->defaultblocks_override)) {
-        $blocknames = $CFG->defaultblocks_override;
-    } else {
-        $blocknames = $page->blocks_get_default();
-    }
-
-    $blocks = blocks_parse_default_blocks_list($blocknames);
-    $page->blocks->add_blocks($blocks);
-
-    return true;
-}
-
-/**
  * Get the block record for a particular blockid - that is, a particular type os block.
  *
  * @param $int blockid block type id. If null, an array of all block types is returned.
