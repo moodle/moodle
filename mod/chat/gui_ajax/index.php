@@ -11,6 +11,7 @@ if ($groupid !== 0) {
     $url->param('groupid', $groupid);
 }
 $PAGE->set_url($url);
+$PAGE->set_popup_notification_allowed(false); // No popup notifications in the chat window
 
 $chat = $DB->get_record('chat', array('id'=>$id), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$chat->course), '*', MUST_EXIST);
