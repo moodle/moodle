@@ -187,7 +187,7 @@ if ($id) {
 
     // Getting subwiki instance. If it does not exists, redirect to create page
     if (!$subwiki = wiki_get_subwiki_by_group($wiki->id, $gid, $uid)) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
 
         $modeanduser = $wiki->wikimode == 'individual' && $uid != $USER->id;
         $modeandgroupmember = $wiki->wikimode == 'collaborative' && !groups_is_member($gid);
@@ -269,7 +269,7 @@ if ($id) {
 }
 require_login($course, true, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/wiki:viewpage', $context);
 
 // Update 'viewed' state if required by completion system
