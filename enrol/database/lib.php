@@ -214,7 +214,7 @@ class enrol_database_plugin extends enrol_plugin {
                 $this->enrol_user($instance, $user->id, $roleid, 0, 0, ENROL_USER_ACTIVE);
             }
 
-            if (!$context = get_context_instance(CONTEXT_COURSE, $instance->courseid)) {
+            if (!$context = context_course::instance($instance->courseid, IGNORE_MISSING)) {
                 //weird
                 continue;
             }
@@ -247,7 +247,7 @@ class enrol_database_plugin extends enrol_plugin {
                 continue;
             }
 
-            if (!$context = get_context_instance(CONTEXT_COURSE, $instance->courseid)) {
+            if (!$context = context_course::instance($instance->courseid, IGNORE_MISSING)) {
                 //weird
                 continue;
             }
@@ -416,7 +416,7 @@ class enrol_database_plugin extends enrol_plugin {
             if (!$instance = $DB->get_record('enrol', array('id'=>$course->enrolid))) {
                 continue; //weird
             }
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $context = context_course::instance($course->id);
 
             // get current list of enrolled users with their roles
             $current_roles  = array();

@@ -635,7 +635,7 @@ function process_membership_tag($tagcontents){
                 // The actual processing (ensuring a group record exists, etc) occurs below, in the enrol-a-student clause
             }
 
-            $rolecontext = get_context_instance(CONTEXT_COURSE, $ship->courseid);
+            $rolecontext = context_course::instance($ship->courseid);
             $rolecontext = $rolecontext->id; // All we really want is the ID
 //$this->log_line("Context instance for course $ship->courseid is...");
 //print_r($rolecontext);

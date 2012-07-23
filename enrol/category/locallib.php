@@ -48,7 +48,7 @@ class enrol_category_handler {
 
         // make sure the role is to be actually synchronised
         // please note we are ignoring overrides of the synchronised capability (for performance reasons in full sync)
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext = context_system::instance();
         if (!$DB->record_exists('role_capabilities', array('contextid'=>$syscontext->id, 'roleid'=>$ra->roleid, 'capability'=>'enrol/category:synchronised', 'permission'=>CAP_ALLOW))) {
             return true;
         }
@@ -98,7 +98,7 @@ class enrol_category_handler {
         }
 
         // now this is going to be a bit slow, take all enrolments in child courses and verify each separately
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext = context_system::instance();
         if (!$roles = get_roles_with_capability('enrol/category:synchronised', CAP_ALLOW, $syscontext)) {
             return true;
         }
@@ -117,7 +117,7 @@ class enrol_category_handler {
         $params['userid'] = $ra->userid;
 
         foreach ($rs as $instance) {
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+            $coursecontext = context_course::instance($instance->courseid);
             $contextids = get_parent_contexts($coursecontext);
             array_pop($contextids); // remove system context, we are interested in categories only
 
@@ -152,7 +152,7 @@ function enrol_category_sync_course($course) {
 
     $plugin = enrol_get_plugin('category');
 
-    $syscontext = get_context_instance(CONTEXT_SYSTEM);
+    $syscontext = context_system::instance();
     $roles = get_roles_with_capability('enrol/category:synchronised', CAP_ALLOW, $syscontext);
 
     if (!$roles) {
@@ -166,7 +166,7 @@ function enrol_category_sync_course($course) {
     }
 
     // first find out if any parent category context contains interesting role assignments
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $coursecontext = context_course::instance($course->id);
     $contextids = get_parent_contexts($coursecontext);
     array_pop($contextids); // remove system context, we are interested in categories only
 
@@ -246,7 +246,7 @@ function enrol_category_sync_full() {
 
     $plugin = enrol_get_plugin('category');
 
-    $syscontext = get_context_instance(CONTEXT_SYSTEM);
+    $syscontext = context_system::instance();
 
     // any interesting roles worth synchronising?
     if (!$roles = get_roles_with_capability('enrol/category:synchronised', CAP_ALLOW, $syscontext)) {

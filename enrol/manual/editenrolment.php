@@ -57,7 +57,7 @@ if ($course->id == SITEID) {
 // Obviously
 require_login($course);
 // Make sure the user can manage manual enrolments for this course
-require_capability("enrol/manual:manage", get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST));
+require_capability("enrol/manual:manage", context_course::instance($course->id, MUST_EXIST));
 
 // Get the enrolment manager for this course
 $manager = new course_enrolment_manager($PAGE, $course, $filter);

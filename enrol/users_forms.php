@@ -36,7 +36,7 @@ class enrol_users_assign_form extends moodleform {
 
         $user       = $this->_customdata['user'];
         $course     = $this->_customdata['course'];
-        $context    = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context    = context_course::instance($course->id);
         $assignable = $this->_customdata['assignable'];
         $assignable = array_reverse($assignable, true); // students first
 
@@ -87,7 +87,7 @@ class enrol_users_addmember_form extends moodleform {
 
         $user     = $this->_customdata['user'];
         $course   = $this->_customdata['course'];
-        $context  = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context  = context_course::instance($course->id, IGNORE_MISSING);
         $allgroups = $this->_customdata['allgroups'];
         $usergroups = groups_get_all_groups($course->id, $user->id, 0, 'g.id');
 

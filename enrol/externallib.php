@@ -73,7 +73,7 @@ class core_enrol_external extends external_api {
         $result = array();
 
         foreach ($courses as $course) {
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $context = context_course::instance($course->id, IGNORE_MISSING);
             try {
                 self::validate_context($context);
             } catch (Exception $e) {
@@ -195,7 +195,7 @@ class core_enrol_external extends external_api {
         }
 
         $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+        $coursecontext = context_course::instance($courseid, IGNORE_MISSING);
         if ($courseid == SITEID) {
             $context = get_system_context();
         } else {
@@ -531,9 +531,9 @@ class moodle_enrol_external extends external_api {
             'onlyactive'=>$onlyactive)
         );
 
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $params['courseid']);
+        $coursecontext = context_course::instance($params['courseid'], IGNORE_MISSING);
         if ($courseid == SITEID) {
-            $context = get_context_instance(CONTEXT_SYSTEM);
+            $context = context_system::instance();
         } else {
             $context = $coursecontext;
         }

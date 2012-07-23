@@ -34,7 +34,7 @@ class enrol_cohort_addinstance_form extends moodleform {
 
         $mform  = $this->_form;
         $course = $this->_customdata;
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $coursecontext = context_course::instance($course->id);
 
         $enrol = enrol_get_plugin('cohort');
 

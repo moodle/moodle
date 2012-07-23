@@ -57,7 +57,7 @@ if ($course->id == SITEID) {
 // Obvioulsy
 require_login($course);
 // The user must be able to manage self enrolments within the course
-require_capability("enrol/self:manage", get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST));
+require_capability("enrol/self:manage", context_course::instance($course->id, MUST_EXIST));
 
 // Get the enrolment manager for this course
 $manager = new course_enrolment_manager($PAGE, $course, $filter);
