@@ -102,8 +102,8 @@ if ($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL)
 function bloglevelupgrade_entries($blogentries, $forum, $cm, $groupid=-1) {
     $count = 0;
 
-    $forumcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $forumcontext = context_module::instance($cm->id);
+    $sitecontext = context_system::instance();
 
     foreach ($blogentries as $blogentry) {
         $discussion = new stdClass();

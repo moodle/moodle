@@ -31,7 +31,7 @@ require_once(dirname(__FILE__) . '/locallib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 require_login();
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+require_capability('moodle/site:config', context_system::instance());
 tool_qeupgradehelper_require_upgraded();
 
 admin_externalpage_setup('qeupgradehelper', '', array(),

@@ -82,7 +82,7 @@ class external_service_form extends moodleform {
         }
 
         // Prepare the list of capabilities to choose from
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $systemcontext = context_system::instance();
         $allcapabilities = fetch_context_capabilities($systemcontext);
         $capabilitychoices = array();
         $capabilitychoices['norequiredcapability'] = get_string('norequiredcapability',
@@ -216,7 +216,7 @@ class web_service_token_form extends moodleform {
         //service selector
         $services = $DB->get_records('external_services');
         $options = array();
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $systemcontext = context_system::instance();
         foreach ($services as $serviceid => $service) {
             //check that the user has the required capability
             //(only for generation by the profile page)

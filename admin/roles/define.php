@@ -56,7 +56,7 @@
     }
 
 /// Check access permissions.
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    $systemcontext = context_system::instance();
     require_login();
     require_capability('moodle/role:manage', $systemcontext);
     admin_externalpage_setup('defineroles', '', array('action' => $action, 'roleid' => $roleid), $defineurl);
