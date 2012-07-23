@@ -15,15 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Save course order in course_overview block
  *
  * @package    block_course_overview
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @copyright  2012 Adam Olley <adam.olley@netspot.com.au>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+define('AJAX_SCRIPT', true);
 
-defined('MOODLE_INTERNAL') || die();
+require_once(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(__FILE__) . '/locallib.php');
 
-$plugin->version   = 2012062800;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2012061700;        // Requires this Moodle version
-$plugin->component = 'block_course_overview'; // Full name of the plugin (used for diagnostics)
+require_sesskey();
+require_login();
+
+$sortorder = required_param_array('sortorder', PARAM_INT);
+
+block_course_overview_update_myorder($sortorder);

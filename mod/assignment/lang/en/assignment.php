@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['activityoverview'] = 'You have assignments that need attention';
 $string['allowdeleting'] = 'Allow deleting';
 $string['allowdeleting_help'] = 'If enabled, students may delete uploaded files at any time before submitting for grading.';
 $string['allowmaxfiles'] = 'Maximum number of uploaded files';
