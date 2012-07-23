@@ -123,4 +123,40 @@ abstract class assign_feedback_plugin extends assign_plugin {
         return false;
     }
 
+    /**
+     * Return a list of the batch grading operations supported by this plugin
+     *
+     * @return array - An array of action and description strings. The action will be passed to grading_batch_operation.
+     */
+    public function get_grading_batch_operations() {
+        return array();
+    }
+
+    /**
+     * Return a list of the grading actions supported by this plugin
+     *
+     * A grading action is a page that is not specific to a user but to the whole assignment.
+     * @return array - An array of action and description strings. The action will be passed to grading_action.
+     */
+    public function get_grading_actions() {
+        return array();
+    }
+
+    /**
+     * Show a grading action form
+     *
+     * @return string The page containing the form
+     */
+    public function grading_action($action) {
+        return '';
+    }
+
+    /**
+     * Show a batch operations form
+     *
+     * @return string The page containing the form
+     */
+    public function grading_batch_operation($action, $users) {
+        return '';
+    }
 }
