@@ -1,6 +1,10 @@
 This files describes API changes in core lbraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.4 ===
+
+* Pagelib: Numerous deprecated functions were removed as classes page_base, page_course
+  and page_generic_activity.
 
 === 2.3 ===
 
