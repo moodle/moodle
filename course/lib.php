@@ -1870,7 +1870,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         $modchooser.= html_writer::end_tag('div');
 
         // Wrap the normal output in a noscript div
-        $usemodchooser = get_user_preferences('usemodchooser', 1);
+        $usemodchooser = get_user_preferences('usemodchooser', $CFG->modchooserdefault);
         if ($usemodchooser) {
             $output = html_writer::tag('div', $output, array('class' => 'hiddenifjs addresourcedropdown'));
             $modchooser = html_writer::tag('div', $modchooser, array('class' => 'visibleifjs addresourcemodchooser'));
