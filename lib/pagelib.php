@@ -492,8 +492,8 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->layout_tions syntax. {@link moodle_page::__get()}.
-     * @return array returns arrys with options for layout file
+     * Please do not call this method directly, use the ->layout_options syntax. {@link moodle_page::__get()}.
+     * @return array returns arrays with options for layout file
      */
     protected function magic_get_layout_options() {
         if (!is_array($this->_layout_options)) {
