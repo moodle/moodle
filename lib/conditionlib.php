@@ -79,6 +79,10 @@ define('OP_ENDS_WITH', 'endswith');
  * OP_IS_EMPTY - comparison operator that determines whether a specified user field is empty
  */
 define('OP_IS_EMPTY', 'isempty');
+/**
+ * OP_IS_NOT_EMPTY - comparison operator that determines whether a specified user field is not empty
+ */
+define('OP_IS_NOT_EMPTY', 'isnotempty');
 
 require_once($CFG->libdir.'/completionlib.php');
 
@@ -584,12 +588,13 @@ abstract class condition_info_base {
      */
     public static function get_condition_user_field_operators() {
         return array(
-            OP_CONTAINS => get_string('contains', 'filters'),
-            OP_DOES_NOT_CONTAIN => get_string('doesnotcontain', 'filters'),
-            OP_IS_EQUAL_TO => get_string('isequalto', 'filters'),
-            OP_STARTS_WITH => get_string('startswith', 'filters'),
-            OP_ENDS_WITH => get_string('endswith', 'filters'),
-            OP_IS_EMPTY => get_string('isempty', 'filters')
+            OP_CONTAINS => get_string('contains', 'condition'),
+            OP_DOES_NOT_CONTAIN => get_string('doesnotcontain', 'condition'),
+            OP_IS_EQUAL_TO => get_string('isequalto', 'condition'),
+            OP_STARTS_WITH => get_string('startswith', 'condition'),
+            OP_ENDS_WITH => get_string('endswith', 'condition'),
+            OP_IS_EMPTY => get_string('isempty', 'condition'),
+            OP_IS_NOT_EMPTY => get_string('isnotempty', 'condition'),
         );
     }
 
@@ -802,9 +807,8 @@ abstract class condition_info_base {
             foreach ($this->item->conditionsfield as $field => $details) {
                 $a = new stdclass;
                 $a->field = $details->fieldname;
-                $a->operator = get_string($details->operator, 'filters');
                 $a->value = $details->value;
-                $information .= get_string('requires_user_field_restriction', 'condition', $a) . ' ';
+                $information .= get_string('requires_user_field_'.$details->operator, 'condition', $a) . ' ';
             }
         }
 
@@ -1009,9 +1013,8 @@ abstract class condition_info_base {
                     $available = false;
                     $a = new stdClass();
                     $a->field = $details->fieldname;
-                    $a->operator = get_string($details->operator, 'filters');
                     $a->value = $details->value;
-                    $information .= get_string('requires_user_field_restriction', 'condition', $a) . ' ';
+                    $information .= get_string('requires_user_field_'.$details->operator, 'condition', $a) . ' ';
                 }
             }
         }
@@ -1230,6 +1233,11 @@ abstract class condition_info_base {
                 break;
             case OP_IS_EMPTY: // is empty
                 if (!empty($uservalue)) {
+                    $fieldconditionmet = false;
+                }
+                break;
+            case OP_IS_NOT_EMPTY: // is not empty
+                if (empty($uservalue)) {
                     $fieldconditionmet = false;
                 }
                 break;
