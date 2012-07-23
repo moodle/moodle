@@ -176,7 +176,7 @@ class core_course_renderer extends plugin_renderer_base {
         $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'id' => 'course',
                 'name' => 'course', 'value' => $course->id));
         $formcontent .= html_writer::tag('input', '',
-                array('type' => 'hidden', 'id' => 'jump', 'name' => 'jump', 'value' => ''));
+                array('type' => 'hidden', 'class' => 'jump', 'name' => 'jump', 'value' => ''));
         $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'name' => 'sesskey',
                 'value' => sesskey()));
         $formcontent .= html_writer::end_tag('div');
@@ -209,9 +209,9 @@ class core_course_renderer extends plugin_renderer_base {
 
         $formcontent .= html_writer::start_tag('div', array('class' => 'submitbuttons'));
         $formcontent .= html_writer::tag('input', '',
-                array('type' => 'submit', 'name' => 'submitbutton', 'id' => 'submitbutton', 'value' => get_string('add')));
+                array('type' => 'submit', 'name' => 'submitbutton', 'class' => 'submitbutton', 'value' => get_string('add')));
         $formcontent .= html_writer::tag('input', '',
-                array('type' => 'submit', 'name' => 'addcancel', 'id' => 'addcancel', 'value' => get_string('cancel')));
+                array('type' => 'submit', 'name' => 'addcancel', 'class' => 'addcancel', 'value' => get_string('cancel')));
         $formcontent .= html_writer::end_tag('div');
         $formcontent .= html_writer::end_tag('form');
 
