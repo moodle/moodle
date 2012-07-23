@@ -165,9 +165,9 @@ class repository_alfresco extends repository {
             $file_filter = "{http://www.alfresco.org/model/content/1.0}content";
 
             // top level sites folder
-            $sites_filter = "{http://www.alfresco.org/model/content/1.0}sites";
+            $sites_filter = "{http://www.alfresco.org/model/site/1.0}sites";
             // individual site
-            $site_filter = "{http://www.alfresco.org/model/content/1.0}site";
+            $site_filter = "{http://www.alfresco.org/model/site/1.0}site";
 
             foreach ($this->current_node->children as $child)
             {
