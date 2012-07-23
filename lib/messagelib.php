@@ -370,11 +370,12 @@ function message_set_default_message_preference($component, $messagename, $filep
  *
  * @see message_get_providers_for_user()
  * @deprecated since 2.1
- * @todo Remove in 2.2 (MDL-31031)
+ * @todo Remove in 2.5 (MDL-34454)
  * @return array An array of message providers
  */
 function message_get_my_providers() {
     global $USER;
+    debugging('message_get_my_providers is deprecated please update your code', DEBUG_DEVELOPER);
     return message_get_providers_for_user($USER->id);
 }
 
