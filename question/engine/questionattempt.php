@@ -1213,6 +1213,15 @@ class question_attempt {
         $qa->behaviour = question_engine::make_behaviour(
                 $record->behaviour, $qa, $preferredbehaviour);
 
+        // If attemptstepid is null (which should not happen, but has happened
+        // due to corrupt data, see MDL-34251) then the current pointer in $records
+        // will not be advanced in the while loop below, and we get stuck in an
+        // infinite loop, since this method is supposed to always consume at
+        // least one record. Therefore, in this case, advance the record here.
+        if (is_null($record->attemptstepid)) {
+            $records->next();
+        }
+
         $i = 0;
         while ($record && $record->questionattemptid == $questionattemptid && !is_null($record->attemptstepid)) {
             $qa->steps[$i] = question_attempt_step::load_from_records($records, $record->attemptstepid);
