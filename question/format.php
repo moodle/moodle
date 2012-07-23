@@ -849,7 +849,7 @@ class qformat_default {
      * Convert a string, as returned by {@link assemble_category_path()},
      * back into an array of category names.
      *
-     * Each category name is cleaned by a call to clean_param(, PARAM_MULTILANG),
+     * Each category name is cleaned by a call to clean_param(, PARAM_TEXT),
      * which matches the cleaning in question/category_form.php.
      *
      * @param string $path
@@ -859,7 +859,7 @@ class qformat_default {
         $rawnames = preg_split('~(?<!/)/(?!/)~', $path);
         $names = array();
         foreach ($rawnames as $rawname) {
-            $names[] = clean_param(trim(str_replace('//', '/', $rawname)), PARAM_MULTILANG);
+            $names[] = clean_param(trim(str_replace('//', '/', $rawname)), PARAM_TEXT);
         }
         return $names;
     }

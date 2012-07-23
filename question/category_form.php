@@ -57,11 +57,11 @@ class question_category_edit_form extends moodleform {
         $mform->addElement('text', 'name', get_string('name'),'maxlength="254" size="50"');
         $mform->setDefault('name', '');
         $mform->addRule('name', get_string('categorynamecantbeblank', 'question'), 'required', null, 'client');
-        $mform->setType('name', PARAM_MULTILANG);
+        $mform->setType('name', PARAM_TEXT);
 
         $mform->addElement('textarea', 'info', get_string('categoryinfo', 'question'), array('rows'=> '10', 'cols'=>'45'));
         $mform->setDefault('info', '');
-        $mform->setType('info', PARAM_MULTILANG);
+        $mform->setType('info', PARAM_TEXT);
 
         $this->add_action_buttons(false, get_string('addcategory', 'question'));
 
