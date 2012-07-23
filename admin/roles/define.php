@@ -38,7 +38,7 @@
         throw new moodle_exception('invalidaccess');
     }
     if ($action != 'add') {
-        $roleid = required_param('roleid', PARAM_INTEGER);
+        $roleid = required_param('roleid', PARAM_INT);
     } else {
         $roleid = 0;
     }

@@ -68,7 +68,7 @@
     switch ($action) {
 
     case 'setstate':
-        if ($newstate = optional_param('newstate', '', PARAM_INTEGER)) {
+        if ($newstate = optional_param('newstate', '', PARAM_INT)) {
             filter_set_global_state($filterpath, $newstate);
             if ($newstate == TEXTFILTER_DISABLED) {
                 filter_set_applies_to_strings($filterpath, false);

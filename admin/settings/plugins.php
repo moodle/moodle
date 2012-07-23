@@ -264,13 +264,13 @@ if ($hassiteconfig) {
         'portfolio_moderate_db_threshold',
         new lang_string('moderatedbsizethreshold', 'portfolio'),
         new lang_string('moderatedbsizethresholddesc', 'portfolio'),
-        20, PARAM_INTEGER, 3));
+        20, PARAM_INT, 3));
 
     $temp->add(new admin_setting_configtext(
         'portfolio_high_db_threshold',
         new lang_string('highdbsizethreshold', 'portfolio'),
         new lang_string('highdbsizethresholddesc', 'portfolio'),
-        50, PARAM_INTEGER, 3));
+        50, PARAM_INT, 3));
 
     $ADMIN->add('portfoliosettings', $temp);
     $ADMIN->add('portfoliosettings', new admin_externalpage('portfolionew', new lang_string('addnewportfolio', 'portfolio'), $url, 'moodle/site:config', true), '', $url);

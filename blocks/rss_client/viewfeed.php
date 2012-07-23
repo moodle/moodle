@@ -32,8 +32,8 @@ if (isguestuser()) {
 }
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
-$courseid = optional_param('courseid', 0, PARAM_INTEGER);
-$rssid = required_param('rssid', PARAM_INTEGER);
+$courseid = optional_param('courseid', 0, PARAM_INT);
+$rssid = required_param('rssid', PARAM_INT);
 
 if ($courseid = SITEID) {
     $courseid = 0;
