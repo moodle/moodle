@@ -24,12 +24,12 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_configtext('block_course_overview/defaultmaxcourses', get_string('defaultmaxcourses', 'block_course_overview'),
-        get_string('defaultmaxcoursesdesc', 'block_course_overview'), 10, PARAM_INT));
-    $settings->add(new admin_setting_configcheckbox('block_course_overview/forcedefaultmaxcourses', get_string('forcedefaultmaxcourses', 'block_course_overview'),
-        get_string('forcedefaultmaxcoursesdesc', 'block_course_overview'), 1, PARAM_INT));
-    $settings->add(new admin_setting_configcheckbox('block_course_overview/showchildren', get_string('showchildren', 'block_course_overview'),
-        get_string('showchildrendesc', 'block_course_overview'), 1, PARAM_INT));
-    $settings->add(new admin_setting_configcheckbox('block_course_overview/showwelcomearea', get_string('showwelcomearea', 'block_course_overview'),
-        get_string('showwelcomeareadesc', 'block_course_overview'), 1, PARAM_INT));
+    $settings->add(new admin_setting_configtext('block_course_overview/defaultmaxcourses', new lang_string('defaultmaxcourses', 'block_course_overview'),
+        new lang_string('defaultmaxcoursesdesc', 'block_course_overview'), 10, PARAM_INT));
+    $settings->add(new admin_setting_configcheckbox('block_course_overview/forcedefaultmaxcourses', new lang_string('forcedefaultmaxcourses', 'block_course_overview'),
+        new lang_string('forcedefaultmaxcoursesdesc', 'block_course_overview'), 1, PARAM_INT));
+    $settings->add(new admin_setting_configcheckbox('block_course_overview/showchildren', new lang_string('showchildren', 'block_course_overview'),
+        new lang_string('showchildrendesc', 'block_course_overview'), 1, PARAM_INT));
+    $settings->add(new admin_setting_configcheckbox('block_course_overview/showwelcomearea', new lang_string('showwelcomearea', 'block_course_overview'),
+        new lang_string('showwelcomeareadesc', 'block_course_overview'), 1, PARAM_INT));
 }

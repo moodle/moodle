@@ -8,7 +8,7 @@
 }
 
 .block_course_overview .coursebox {
-    padding: 15px 0px 10px 10px;
+    padding: 15px 0 10px 10px;
     width: 98%;
 }
 
@@ -47,7 +47,7 @@
 
 .editing .block_course_overview .move {
     float: left;
-    padding: 2px 10px 0px 0px;
+    padding: 2px 10px 0 0;
 }
 
 .editing .block_course_overview .moveicons {
