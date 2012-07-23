@@ -320,6 +320,8 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // removed in 2.4dev
+        '/admin/tool/unittest/simpletestlib.php',
         // removed in 2.3dev
         '/lib/minify/builder/',
         // removed in 2.2dev
