@@ -580,7 +580,7 @@ function calendar_add_event_metadata($event) {
         }
         $icon = $OUTPUT->pix_url('icon', $event->modulename) . '';
 
-        $context = get_context_instance(CONTEXT_COURSE, $module->course);
+        $context = context_course::instance($module->course);
         $fullname = format_string($coursecache[$module->course]->fullname, true, array('context' => $context));
 
         $event->icon = '<img height="16" width="16" src="'.$icon.'" alt="'.$eventtype.'" title="'.$modulename.'" style="vertical-align: middle;" />';
@@ -595,7 +595,7 @@ function calendar_add_event_metadata($event) {
     } else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {          // Course event
         calendar_get_course_cached($coursecache, $event->courseid);
 
-        $context = get_context_instance(CONTEXT_COURSE, $event->courseid);
+        $context = context_course::instance($event->courseid);
         $fullname = format_string($coursecache[$event->courseid]->fullname, true, array('context' => $context));
 
         $event->icon = '<img height="16" width="16" src="'.$OUTPUT->pix_url('c/course') . '" alt="'.get_string('courseevent', 'calendar').'" style="vertical-align: middle;" />';
@@ -1374,7 +1374,7 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
 
         if (count($courseeventsfrom)==1) {
             $course = reset($courseeventsfrom);
-            if (has_any_capability($allgroupscaps, get_context_instance(CONTEXT_COURSE, $course->id))) {
+            if (has_any_capability($allgroupscaps, context_course::instance($course->id))) {
                 $coursegroups = groups_get_all_groups($course->id, 0, 0, 'g.id');
                 $group = array_keys($coursegroups);
             }
@@ -1430,7 +1430,7 @@ function calendar_edit_event_allowed($event) {
         return false;
     }
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $sitecontext = context_system::instance();
     // if user has manageentries at site level, return true
     if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
         return true;
@@ -1698,14 +1698,14 @@ function calendar_get_allowed_types(&$allowed, $course = null) {
     $allowed->user = has_capability('moodle/calendar:manageownentries', get_system_context());
     $allowed->groups = false; // This may change just below
     $allowed->courses = false; // This may change just below
-    $allowed->site = has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, SITEID));
+    $allowed->site = has_capability('moodle/calendar:manageentries', context_course::instance(SITEID));
 
     if (!empty($course)) {
         if (!is_object($course)) {
             $course = $DB->get_record('course', array('id' => $course), '*', MUST_EXIST);
         }
         if ($course->id != SITEID) {
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $coursecontext = context_course::instance($course->id);
             $allowed->user = has_capability('moodle/calendar:manageownentries', $coursecontext);
 
             if (has_capability('moodle/calendar:manageentries', $coursecontext)) {
@@ -1752,7 +1752,7 @@ function calendar_add_event_allowed($event) {
         return false;
     }
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $sitecontext = context_system::instance();
     // if user has manageentries at site level, always return true
     if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
         return true;
@@ -1953,20 +1953,20 @@ class calendar_event {
 
         $context = null;
         if (isset($data->courseid) && $data->courseid > 0) {
-            $context =  get_context_instance(CONTEXT_COURSE, $data->courseid);
+            $context =  context_course::instance($data->courseid);
         } else if (isset($data->course) && $data->course > 0) {
-            $context =  get_context_instance(CONTEXT_COURSE, $data->course);
+            $context =  context_course::instance($data->course);
         } else if (isset($data->groupid) && $data->groupid > 0) {
             $group = $DB->get_record('groups', array('id'=>$data->groupid));
-            $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+            $context = context_course::instance($group->courseid);
         } else if (isset($data->userid) && $data->userid > 0 && $data->userid == $USER->id) {
-            $context =  get_context_instance(CONTEXT_USER, $data->userid);
+            $context =  context_user::instance($data->userid);
         } else if (isset($data->userid) && $data->userid > 0 && $data->userid != $USER->id &&
                    isset($data->instance) && $data->instance > 0) {
             $cm = get_coursemodule_from_instance($data->modulename, $data->instance, 0, false, MUST_EXIST);
-            $context =  get_context_instance(CONTEXT_COURSE, $cm->course);
+            $context =  context_course::instance($cm->course);
         } else {
-            $context =  get_context_instance(CONTEXT_USER);
+            $context =  context_user::instance();
         }
 
         return $context;
