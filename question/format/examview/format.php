@@ -58,6 +58,10 @@ class qformat_examview extends qformat_default {
         return true;
     }
 
+    public function mime_type() {
+        return 'application/xml';
+    }
+
     /**
      * unxmlise reconstructs part of the xml data structure in order
      * to identify the actual data therein
@@ -83,6 +87,26 @@ class qformat_examview extends qformat_default {
         // currently we throw the tags we found
         $text = strip_tags($text);
         return $text;
+    }
+    protected function text_field($text) {
+        return array(
+            'text' => htmlspecialchars(trim($text), ENT_NOQUOTES),
+            'format' => FORMAT_HTML,
+            'files' => array(),
+        );
+    }
+
+    protected function add_blank_combined_feedback($question) {
+        $question->correctfeedback['text'] = '';
+        $question->correctfeedback['format'] = $question->questiontextformat;
+        $question->correctfeedback['files'] = array();
+        $question->partiallycorrectfeedback['text'] = '';
+        $question->partiallycorrectfeedback['format'] = $question->questiontextformat;
+        $question->partiallycorrectfeedback['files'] = array();
+        $question->incorrectfeedback['text'] = '';
+        $question->incorrectfeedback['format'] = $question->questiontextformat;
+        $question->incorrectfeedback['files'] = array();
+        return $question;
     }
 
     function parse_matching_groups($matching_groups)
@@ -115,7 +139,7 @@ class qformat_examview extends qformat_default {
         $phrase = trim($this->unxmlise($qrec['text']['0']['#']));
         $answer = trim($this->unxmlise($qrec['answer']['0']['#']));
         $answer = strip_tags( $answer );
-        $match_group->subquestions[] = $phrase;
+        $match_group->subquestions[] = $this->text_field($phrase);
         $match_group->subanswers[] = $match_group->subchoices[$answer];
         $this->matching_questions[$groupname] = $match_group;
         return NULL;
@@ -130,8 +154,11 @@ class qformat_examview extends qformat_default {
             $question = $this->defaultquestion();
             $htmltext = s($match_group->questiontext);
             $question->questiontext = $htmltext;
-            $question->name = $question->questiontext;
+            $question->questiontextformat = FORMAT_HTML;
+            $question->questiontextfiles = array();
+            $question->name = shorten_text( $question->questiontext, 250 );
             $question->qtype = MATCH;
+            $question = $this->add_blank_combined_feedback($question);
             $question->subquestions = array();
             $question->subanswers = array();
             foreach($match_group->subquestions as $key => $value) {
@@ -192,6 +219,8 @@ class qformat_examview extends qformat_default {
         // Only one answer is allowed
         $htmltext = $this->unxmlise($qrec['#']['text'][0]['#']);
         $question->questiontext = $htmltext;
+        $question->questiontextformat = FORMAT_HTML;
+        $question->questiontextfiles = array();
         $question->name = shorten_text( $question->questiontext, 250 );
 
         switch ($question->qtype) {
@@ -232,30 +261,31 @@ class qformat_examview extends qformat_default {
         $question->answer = $choices[$answer];
         $question->correctanswer = $question->answer;
         if ($question->answer == 1) {
-            $question->feedbacktrue = 'Correct';
-            $question->feedbackfalse = 'Incorrect';
+            $question->feedbacktrue = $this->text_field('Correct');
+            $question->feedbackfalse = $this->text_field('Incorrect');
         } else {
-            $question->feedbacktrue = 'Incorrect';
-            $question->feedbackfalse = 'Correct';
+            $question->feedbacktrue = $this->text_field('Incorrect');
+            $question->feedbackfalse = $this->text_field('Correct');
         }
         return $question;
     }
 
     function parse_mc($qrec, $question)
     {
+        $question = $this->add_blank_combined_feedback($question);
         $answer = 'choice-'.strtolower(trim($qrec['answer'][0]['#']));
 
         $choices = $qrec['choices'][0]['#'];
         foreach($choices as $key => $value) {
             if (strpos(trim($key),'choice-') !== FALSE) {
 
-                $question->answer[$key] = s($this->unxmlise($value[0]['#']));
+                $question->answer[$key] = $this->text_field(s($this->unxmlise($value[0]['#'])));
                 if (strcmp($key, $answer) == 0) {
                     $question->fraction[$key] = 1;
-                    $question->feedback[$key] = 'Correct';
+                    $question->feedback[$key] = $this->text_field('Correct');
                 } else {
                     $question->fraction[$key] = 0;
-                    $question->feedback[$key] = 'Incorrect';
+                    $question->feedback[$key] = $this->text_field('Incorrect');
                 }
             }
         }
@@ -274,7 +304,7 @@ class qformat_examview extends qformat_default {
             if (strlen($value) > 0) {
                 $question->answer[$key] = $value;
                 $question->fraction[$key] = 1;
-                $question->feedback[$key] = "Correct";
+                $question->feedback[$key] = $this->text_field("Correct");
             }
         }
         return $question;
@@ -299,7 +329,7 @@ class qformat_examview extends qformat_default {
                 $errormargin = 0;
                 $question->answer[$key] = $value;
                 $question->fraction[$key] = 1;
-                $question->feedback[$key] = "Correct";
+                $question->feedback[$key] = $this->text_field("Correct");
                 $question->min[$key] = $question->answer[$key] - $errormargin;
                 $question->max[$key] = $question->answer[$key] + $errormargin;
             }
