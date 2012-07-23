@@ -93,7 +93,7 @@ class block_course_overview_renderer extends plugin_renderer_base {
                 // Add an arrow to move course down.
                 if ($courseordernumber <= $maxcourses-2) {
                     $url->param('move', 1);
-                    $html .= html_writer::link($url, html_writer::empty_tag('img', 
+                    $html .= html_writer::link($url, html_writer::empty_tag('img',
                         array('src' => $movedown['icon'], 'class' => 'down', 'alt' => $movedown['str'])),
                         array('title' => $movedown['str'], 'class' => 'movedown'));
                 }
