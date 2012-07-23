@@ -318,7 +318,7 @@ function cron_run() {
     if ($CFG->enablecompletion) {
         // Completion cron
         mtrace('Starting the completion cron...');
-        require_once($CFG->libdir . '/completion/cron.php');
+        require_once($CFG->dirroot.'/completion/cron.php');
         completion_cron();
         mtrace('done');
     }

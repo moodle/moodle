@@ -25,7 +25,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->libdir.'/completion/data_object.php');
+require_once($CFG->dirroot.'/completion/data_object.php');
 
 /**
  * Completion data for a specific user, course and critieria

@@ -207,7 +207,7 @@ function completion_cron_criteria() {
     foreach ($COMPLETION_CRITERIA_TYPES as $type) {
 
         $object = 'completion_criteria_'.$type;
-        require_once $CFG->libdir.'/completion/'.$object.'.php';
+        require_once $CFG->dirroot.'/completion/criteria/'.$object.'.php';
 
         $class = new $object();
 
