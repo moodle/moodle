@@ -724,3 +724,43 @@ function upgrade_populate_default_messaging_prefs() {
     }
     $transaction->allow_commit();
 }
+
+/**
+* Find questions missing an existing category and associate them with
+* a category which purpose is to gather them.
+*
+* @return void
+*/
+function upgrade_save_orphaned_questions() {
+    global $DB;
+
+    // Looking for orphaned questions
+    $orphans = $DB->record_exists_select('question',
+            'NOT EXISTS (SELECT 1 FROM {question_categories} WHERE {question_categories}.id = {question}.category)');
+    if (!$orphans) {
+        return;
+    }
+
+    // Generate a unique stamp for the orphaned questions category, easier to identify it later on
+    $uniquestamp = "unknownhost+120719170400+orphan";
+    $systemcontext = context_system::instance();
+
+    // Create the orphaned category at system level
+    $cat = $DB->get_record('question_categories', array('stamp' => $uniquestamp,
+            'contextid' => $systemcontext->id));
+    if (!$cat) {
+        $cat = new stdClass();
+        $cat->parent = 0;
+        $cat->contextid = $systemcontext->id;
+        $cat->name = get_string('orphanedquestionscategory', 'question');
+        $cat->info = get_string('orphanedquestionscategoryinfo', 'question');
+        $cat->sortorder = 999;
+        $cat->stamp = $uniquestamp;
+        $cat->id = $DB->insert_record("question_categories", $cat);
+    }
+
+    // Set a category to those orphans
+    $params = array('catid' => $cat->id);
+    $DB->execute('UPDATE {question} SET category = :catid WHERE NOT EXISTS
+        (SELECT 1 FROM {question_categories} WHERE {question_categories}.id = {question}.category)', $params);
+}
