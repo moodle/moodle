@@ -199,7 +199,7 @@ class qtype_multichoice_single_question extends qtype_multichoice_base {
     }
 
     public function is_complete_response(array $response) {
-        return array_key_exists('answer', $response);
+        return array_key_exists('answer', $response) && $response['answer'] !== '';
     }
 
     public function is_gradable_response(array $response) {
