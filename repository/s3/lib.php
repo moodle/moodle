@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once($CFG->dirroot . '/repository/lib.php');
-require_once('S3.php');
+require_once($CFG->dirroot . '/repository/s3/S3.php');
 
 /**
  * This is a repository class used to browse Amazon S3 content.
