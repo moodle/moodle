@@ -51,7 +51,7 @@ class block_selfcompletion extends block_base {
         $this->content = new stdClass;
 
         // Can edit settings?
-        $can_edit = has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $this->page->course->id));
+        $can_edit = has_capability('moodle/course:update', context_course::instance($this->page->course->id));
 
         // Get course completion data
         $info = new completion_info($this->page->course);

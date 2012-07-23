@@ -28,7 +28,7 @@ class block_calendar_upcoming extends block_base {
             $this->content->footer = '<div class="gotocal"><a href="'.$CFG->wwwroot.
                                      '/calendar/view.php?view=upcoming&amp;course='.$courseshown.'">'.
                                       get_string('gotocalendar', 'calendar').'</a>...</div>';
-            $context = get_context_instance(CONTEXT_COURSE, $courseshown);
+            $context = context_course::instance($courseshown);
             if (has_any_capability(array('moodle/calendar:manageentries', 'moodle/calendar:manageownentries'), $context)) {
                 $this->content->footer .= '<div class="newevent"><a href="'.$CFG->wwwroot.
                                           '/calendar/event.php?action=new&amp;course='.$courseshown.'">'.

@@ -41,7 +41,7 @@ class block_news_items extends block_base {
                 return '';
             }
 
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $context = context_module::instance($cm->id);
 
         /// User must have perms to view discussions in that forum
             if (!has_capability('mod/forum:viewdiscussion', $context)) {

@@ -10,7 +10,7 @@ class block_mnet_hosts extends block_list {
     }
 
     function applicable_formats() {
-        if (has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM), NULL, false)) {
+        if (has_capability('moodle/site:mnetlogintoremote', context_system::instance(), NULL, false)) {
             return array('all' => true, 'mod' => false, 'tag' => false);
         } else {
             return array('site' => true);
@@ -59,7 +59,7 @@ class block_mnet_hosts extends block_list {
             }
         }
 
-        if (!has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM), NULL, false)) {
+        if (!has_capability('moodle/site:mnetlogintoremote', context_system::instance(), NULL, false)) {
             if (debugging() and !empty($CFG->debugdisplay)) {
                 $this->content = new stdClass();
                 $this->content->footer = html_writer::tag('span',

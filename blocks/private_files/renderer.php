@@ -85,7 +85,7 @@ class private_files_tree implements renderable {
     public $dir;
     public function __construct() {
         global $USER;
-        $this->context = get_context_instance(CONTEXT_USER, $USER->id);
+        $this->context = context_user::instance($USER->id);
         $fs = get_file_storage();
         $this->dir = $fs->get_area_tree($this->context->id, 'user', 'private', 0);
     }

@@ -27,7 +27,7 @@ class block_site_main_menu extends block_list {
 
         $course = $this->page->course;
         require_once($CFG->dirroot.'/course/lib.php');
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
         $isediting = $this->page->user_is_editing() && has_capability('moodle/course:manageactivities', $context);
         $modinfo = get_fast_modinfo($course);
 

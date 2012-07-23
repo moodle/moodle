@@ -33,7 +33,7 @@ if (isguestuser()) {
 }
 //TODO: add capability check here!
 
-$context = get_context_instance(CONTEXT_USER, $USER->id);
+$context = context_user::instance($USER->id);
 $title = get_string('privatefiles', 'block_private_files');
 $struser = get_string('user');
 

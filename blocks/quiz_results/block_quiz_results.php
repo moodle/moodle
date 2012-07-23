@@ -151,7 +151,7 @@ class block_quiz_results extends block_base {
                 $context = $this->page->context;
             } else {
                 $cm = get_coursemodule_from_instance('quiz', $quizid, $courseid);
-                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $context = context_module::instance($cm->id);
             }
             $groupmode = groups_get_activity_groupmode($cm);
 
