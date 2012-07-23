@@ -80,6 +80,10 @@ if ($courseid != SITEID && !empty($courseid)) {
 }
 require_course_login($course);
 
+if (calendar_user_can_add_event($course)) {
+    $importresults = calendar_process_subscription_form($courseid);
+}
+
 $calendar = new calendar_information($day, $mon, $yr);
 $calendar->prepare_for_view($course, $courses);
 
@@ -147,6 +151,9 @@ switch($view) {
 
 //Link to calendar export page
 echo $OUTPUT->container_start('bottom');
+if (calendar_user_can_add_event($course)) {
+    echo calendar_show_subscriptions($courseid, $importresults);
+}
 if (!empty($CFG->enablecalendarexport)) {
     echo $OUTPUT->single_button(new moodle_url('export.php', array('course'=>$courseid)), get_string('exportcalendar', 'calendar'));
     if (isloggedin()) {
