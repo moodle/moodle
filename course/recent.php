@@ -39,7 +39,7 @@ require_login($course);
 
 add_to_log($course->id, "course", "recent", "recent.php?id=$course->id", $course->id);
 
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 
 $lastlogin = time() - COURSE_MAX_RECENT_PERIOD;
 if (!isguestuser() and !empty($USER->lastcourseaccess[$COURSE->id])) {
@@ -248,7 +248,7 @@ if (!empty($activities)) {
         } else {
 
             if (!isset($viewfullnames[$activity->cmid])) {
-                $cm_context = get_context_instance(CONTEXT_MODULE, $activity->cmid);
+                $cm_context = context_module::instance($activity->cmid);
                 $viewfullnames[$activity->cmid] = has_capability('moodle/site:viewfullnames', $cm_context);
             }
 

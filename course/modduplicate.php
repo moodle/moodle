@@ -38,8 +38,8 @@ $sectionreturn  = optional_param('sr', 0, PARAM_INT);
 
 $course     = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $cm         = get_coursemodule_from_id('', $cmid, $course->id, true, MUST_EXIST);
-$cmcontext  = get_context_instance(CONTEXT_MODULE, $cm->id);
-$context    = get_context_instance(CONTEXT_COURSE, $courseid);
+$cmcontext  = context_module::instance($cm->id);
+$context    = context_course::instance($courseid);
 $section    = $DB->get_record('course_sections', array('id' => $cm->section, 'course' => $cm->course));
 
 require_login($course);

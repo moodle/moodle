@@ -36,8 +36,8 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
 /// User must be logged in
 
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
-$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+$systemcontext = context_system::instance();
+$coursecontext = context_course::instance($course->id);
 
 require_login();
 
