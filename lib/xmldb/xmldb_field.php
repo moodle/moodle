@@ -493,9 +493,10 @@ class xmldb_field extends xmldb_object {
         if (!$this->loaded) {
             $this->hash = null;
         } else {
+            $defaulthash = is_null($this->default) ? '' : sha1($this->default);
             $key = $this->name . $this->type . $this->length .
                    $this->notnull . $this->sequence .
-                   $this->decimals . $this->comment;
+                   $this->decimals . $this->comment . $defaulthash;
             $this->hash = md5($key);
         }
     }
