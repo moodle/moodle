@@ -134,7 +134,7 @@ class course_completion_form extends moodleform {
         // Role completion criteria
         $mform->addElement('header', 'roles', get_string('manualcompletionby', 'completion'));
 
-        $roles = get_roles_with_capability('moodle/course:markcomplete', CAP_ALLOW, context_course::instance($course->id));
+        $roles = get_roles_with_capability('moodle/course:markcomplete', CAP_ALLOW, context_course::instance($course->id, IGNORE_MISSING));
 
         if (!empty($roles)) {
             $mform->addElement('select', 'role_aggregation', get_string('aggregationmethod', 'completion'), $aggregation_methods);

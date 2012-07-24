@@ -4340,7 +4340,7 @@ class course_request {
         $data->lang               = $courseconfig->lang;
 
         $course = create_course($data);
-        $context = context_course(course->id, MUST_EXIST);
+        $context = context_course::instance($course->id, MUST_EXIST);
 
         // add enrol instances
         if (!$DB->record_exists('enrol', array('courseid'=>$course->id, 'enrol'=>'manual'))) {

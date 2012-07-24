@@ -85,7 +85,7 @@ class core_course_external extends external_api {
         }
 
         // now security checks
-        $context = context_course::instance($course->id);
+        $context = context_course::instance($course->id, IGNORE_MISSING);
         try {
             self::validate_context($context);
         } catch (Exception $e) {
@@ -297,7 +297,7 @@ class core_course_external extends external_api {
         foreach ($courses as $course) {
 
             // now security checks
-            $context = context_course::instance($course->id);
+            $context = context_course::instance($course->id, IGNORE_MISSING);
             try {
                 self::validate_context($context);
             } catch (Exception $e) {
@@ -511,7 +511,7 @@ class core_course_external extends external_api {
         foreach ($params['courses'] as $course) {
 
             // Ensure the current user is allowed to run this function
-            $context = context_coursecat::instance($course['categoryid']);
+            $context = context_coursecat::instance($course['categoryid'], IGNORE_MISSING);
             try {
                 self::validate_context($context);
             } catch (Exception $e) {
