@@ -220,10 +220,10 @@ function url_display_frame($url, $cm, $course) {
 
     } else {
         $config = get_config('url');
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
         $exteurl = url_get_full_url($url, $cm, $course, $config);
         $navurl = "$CFG->wwwroot/mod/url/view.php?id=$cm->id&amp;frameset=top";
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $coursecontext = context_course::instance($course->id);
         $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
         $title = strip_tags($courseshortname.': '.format_string($url->name));
         $framesize = $config->framesize;
@@ -462,7 +462,7 @@ function url_get_variable_values($url, $cm, $course, $config) {
 
     $site = get_site();
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $coursecontext = context_course::instance($course->id);
 
     $values = array (
         'courseid'        => $course->id,
@@ -509,7 +509,7 @@ function url_get_variable_values($url, $cm, $course, $config) {
 
     //hmm, this is pretty fragile and slow, why do we need it here??
     if ($config->rolesinparams) {
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $coursecontext = context_course::instance($course->id);
         $roles = role_fix_names(get_all_roles($coursecontext), $coursecontext, ROLENAME_ALIAS);
         foreach ($roles as $role) {
             $values['course'.$role->shortname] = $role->localname;
