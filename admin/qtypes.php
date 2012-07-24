@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/tablelib.php');
 
 // Check permissions.
 require_login();
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = context_system::instance();
 require_capability('moodle/question:config', $systemcontext);
 $canviewreports = has_capability('report/questioninstances:view', $systemcontext);
 

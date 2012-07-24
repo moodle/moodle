@@ -41,7 +41,7 @@ if (!isset($classformode[$mode])) {
 $baseurl = new moodle_url('/admin/roles/allow.php', array('mode'=>$mode));
 admin_externalpage_setup('defineroles', '', array(), $baseurl);
 
-$syscontext = get_context_instance(CONTEXT_SYSTEM);
+$syscontext = context_system::instance();
 require_capability('moodle/role:manage', $syscontext);
 
 $controller = new $classformode[$mode]();

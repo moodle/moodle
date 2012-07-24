@@ -38,7 +38,7 @@ admin_externalpage_setup('tooluploaduserpictures');
 
 require_login();
 
-require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM));
+require_capability('moodle/site:uploadusers', context_system::instance());
 
 $site = get_site();
 
@@ -247,7 +247,7 @@ function process_file ($file, $userfield, $overwrite) {
  * @return mixed new unique revision number or false if not saved
  */
 function my_save_profile_image($id, $originalfile) {
-    $context = get_context_instance(CONTEXT_USER, $id);
+    $context = context_user::instance($id);
     return process_new_icon($context, 'user', 'icon', 0, $originalfile);
 }
 

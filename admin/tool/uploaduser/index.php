@@ -40,7 +40,7 @@ raise_memory_limit(MEMORY_HUGE);
 
 require_login();
 admin_externalpage_setup('tooluploaduser');
-require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM));
+require_capability('moodle/site:uploadusers', context_system::instance());
 
 $struserrenamed             = get_string('userrenamed', 'tool_uploaduser');
 $strusernotrenamedexists    = get_string('usernotrenamedexists', 'error');
@@ -731,7 +731,7 @@ if ($formdata = $mform2->is_cancelled()) {
             $usersnew++;
 
             // make sure user context exists
-            get_context_instance(CONTEXT_USER, $user->id);
+            context_user::instance($user->id);
 
             events_trigger('user_created', $user);
 
@@ -805,7 +805,7 @@ if ($formdata = $mform2->is_cancelled()) {
                 $ccache[$shortname]->groups = null;
             }
             $courseid      = $ccache[$shortname]->id;
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+            $coursecontext = context_course::instance($courseid);
             if (!isset($manualcache[$courseid])) {
                 $manualcache[$courseid] = false;
                 if ($manual) {

@@ -9,7 +9,7 @@
     require_login();
     admin_externalpage_setup('net');
 
-    $context = get_context_instance(CONTEXT_SYSTEM);
+    $context = context_system::instance();
 
     require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 

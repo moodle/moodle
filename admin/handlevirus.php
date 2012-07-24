@@ -49,7 +49,7 @@ while(!feof($fd)) {
     $a->date = userdate($log->time);
 
     $a->action = $action;
-    $a->course = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+    $a->course = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
     $a->user = fullname($user);
 
     notify_user($user,$subject,$a);

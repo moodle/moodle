@@ -29,7 +29,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 // Check permissions.
 require_login();
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = context_system::instance();
 require_capability('moodle/role:manage', $systemcontext);
 
 // Get URL parameters.

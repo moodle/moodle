@@ -29,7 +29,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 
-$syscontext = get_context_instance(CONTEXT_SYSTEM);
+$syscontext = context_system::instance();
 
 require_login();
 admin_externalpage_setup('toolunsuproles'); // checks permissions specified in settings.php
