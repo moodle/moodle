@@ -1543,63 +1543,6 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     }
 
     /**
-     * Add an array of buttons to the form
-     *
-     * @param array $buttons An associative array representing help button to attach to
-     *        to the form. keys of array correspond to names of elements in form.
-     * @param bool $suppresscheck if true then string check will be suppressed
-     * @param string $function callback function to dispaly help button.
-     * @deprecated since Moodle 2.0 use addHelpButton() call on each element manually
-     * @todo MDL-31047 this api will be removed.
-     * @see MoodleQuickForm::addHelpButton()
-     */
-    function setHelpButtons($buttons, $suppresscheck=false, $function='helpbutton'){
-
-        debugging('function moodle_form::setHelpButtons() is deprecated');
-        //foreach ($buttons as $elementname => $button){
-        //    $this->setHelpButton($elementname, $button, $suppresscheck, $function);
-        //}
-    }
-
-    /**
-     * Add a help button to element
-     *
-     * @param string $elementname name of the element to add the item to
-     * @param array $buttonargs arguments to pass to function $function
-     * @param bool $suppresscheck whether to throw an error if the element
-     *        doesn't exist.
-     * @param string $function - function to generate html from the arguments in $button
-     * @deprecated since Moodle 2.0 - use addHelpButton() call on each element manually
-     * @todo MDL-31047 this api will be removed.
-     * @see MoodleQuickForm::addHelpButton()
-     */
-    function setHelpButton($elementname, $buttonargs, $suppresscheck=false, $function='helpbutton'){
-        global $OUTPUT;
-
-        debugging('function moodle_form::setHelpButton() is deprecated');
-        if ($function !== 'helpbutton') {
-            //debugging('parameter $function in moodle_form::setHelpButton() is not supported any more');
-        }
-
-        $buttonargs = (array)$buttonargs;
-
-        if (array_key_exists($elementname, $this->_elementIndex)) {
-            //_elements has a numeric index, this code accesses the elements by name
-            $element = $this->_elements[$this->_elementIndex[$elementname]];
-
-            $page     = isset($buttonargs[0]) ? $buttonargs[0] : null;
-            $text     = isset($buttonargs[1]) ? $buttonargs[1] : null;
-            $module   = isset($buttonargs[2]) ? $buttonargs[2] : 'moodle';
-            $linktext = isset($buttonargs[3]) ? $buttonargs[3] : false;
-
-            $element->_helpbutton = $OUTPUT->old_help_icon($page, $text, $module, $linktext);
-
-        } else if (!$suppresscheck) {
-            print_error('nonexistentformelements', 'form', '', $elementname);
-        }
-    }
-
-    /**
      * Add a help button to element, only one button per element is allowed.
      *
      * This is new, simplified and preferable method of setting a help icon on form elements.
@@ -2575,10 +2518,8 @@ MoodleQuickForm::registerElementType('date_selector', "$CFG->libdir/form/datesel
 MoodleQuickForm::registerElementType('date_time_selector', "$CFG->libdir/form/datetimeselector.php", 'MoodleQuickForm_date_time_selector');
 MoodleQuickForm::registerElementType('duration', "$CFG->libdir/form/duration.php", 'MoodleQuickForm_duration');
 MoodleQuickForm::registerElementType('editor', "$CFG->libdir/form/editor.php", 'MoodleQuickForm_editor');
-MoodleQuickForm::registerElementType('file', "$CFG->libdir/form/file.php", 'MoodleQuickForm_file');
 MoodleQuickForm::registerElementType('filemanager', "$CFG->libdir/form/filemanager.php", 'MoodleQuickForm_filemanager');
 MoodleQuickForm::registerElementType('filepicker', "$CFG->libdir/form/filepicker.php", 'MoodleQuickForm_filepicker');
-MoodleQuickForm::registerElementType('format', "$CFG->libdir/form/format.php", 'MoodleQuickForm_format');
 MoodleQuickForm::registerElementType('grading', "$CFG->libdir/form/grading.php", 'MoodleQuickForm_grading');
 MoodleQuickForm::registerElementType('group', "$CFG->libdir/form/group.php", 'MoodleQuickForm_group');
 MoodleQuickForm::registerElementType('header', "$CFG->libdir/form/header.php", 'MoodleQuickForm_header');
