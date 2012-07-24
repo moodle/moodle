@@ -74,7 +74,7 @@ class repository_coursefiles extends repository {
             $filepath = null;
             list($context, $course, $cm) = get_context_info_array($this->context->id);
             $courseid = is_object($course) ? $course->id : SITEID;
-            $context = get_context_instance(CONTEXT_COURSE, $courseid);
+            $context = context_course::instance($courseid);
         }
 
         if ($fileinfo = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename)) {

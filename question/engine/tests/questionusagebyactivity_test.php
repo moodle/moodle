@@ -42,7 +42,7 @@ class question_usage_by_activity_test extends advanced_testcase {
     public function test_set_get_preferred_model() {
         // Set up
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
 
         // Exercise SUT and verify.
         $quba->set_preferred_behaviour('deferredfeedback');
@@ -52,7 +52,7 @@ class question_usage_by_activity_test extends advanced_testcase {
     public function test_set_get_id() {
         // Set up
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
 
         // Exercise SUT and verify
         $quba->set_id_from_database(123);
@@ -62,7 +62,7 @@ class question_usage_by_activity_test extends advanced_testcase {
     public function test_fake_id() {
         // Set up
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
 
         // Exercise SUT and verify
         $this->assertNotEmpty($quba->get_id());
@@ -70,7 +70,7 @@ class question_usage_by_activity_test extends advanced_testcase {
 
     public function test_create_usage_and_add_question() {
         // Exercise SUT
-        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context = context_system::instance();
         $quba = question_engine::make_questions_usage_by_activity('unit_test', $context);
         $quba->set_preferred_behaviour('deferredfeedback');
         $tf = test_question_maker::make_question('truefalse', 'true');
@@ -87,7 +87,7 @@ class question_usage_by_activity_test extends advanced_testcase {
     public function test_get_question() {
         // Set up.
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
         $tf = test_question_maker::make_question('truefalse', 'true');
         $slot = $quba->add_question($tf);
@@ -103,7 +103,7 @@ class question_usage_by_activity_test extends advanced_testcase {
         // Start a deferred feedback attempt with CBM and add the question to it.
         $tf = test_question_maker::make_question('truefalse', 'true');
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
         $quba->set_preferred_behaviour('deferredcbm');
         $slot = $quba->add_question($tf);
         $quba->start_all_questions();
@@ -129,7 +129,7 @@ class question_usage_by_activity_test extends advanced_testcase {
         // Start a deferred feedback attempt with CBM and add the question to it.
         $tf = test_question_maker::make_question('truefalse', 'true');
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
         $quba->set_preferred_behaviour('deferredcbm');
         $slot = $quba->add_question($tf);
         $quba->start_all_questions();

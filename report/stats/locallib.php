@@ -41,7 +41,7 @@ function report_stats_mode_menu($course, $mode, $time, $url) {
     $options = array();
     $options[STATS_MODE_GENERAL] = get_string('statsmodegeneral');
     $options[STATS_MODE_DETAILED] = get_string('statsmodedetailed');
-    if (has_capability('report/stats:view', get_context_instance(CONTEXT_SYSTEM))) {
+    if (has_capability('report/stats:view', context_system::instance())) {
         $options[STATS_MODE_RANKED] = get_string('reports');
     }
     $popupurl = $url."?course=$course->id&time=$time";
@@ -88,7 +88,7 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
     $courseoptions = array();
 
     foreach ($courses as $c) {
-        $context = get_context_instance(CONTEXT_COURSE, $c->id);
+        $context = context_course::instance($c->id);
 
         if (has_capability('report/stats:view', $context)) {
             $courseoptions[$c->id] = format_string($c->shortname, true, array('context' => $context));
@@ -228,7 +228,7 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                         $a[] = $stat->line2;
                     }
                     if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
-                        if (has_capability('report/log:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                        if (has_capability('report/log:view', context_course::instance($course->id))) {
                             $a[] = '<a href="'.$CFG->wwwroot.'/report/log/index.php?id='.
                                 $course->id.'&amp;chooselog=1&amp;showusers=1&amp;showcourses=1&amp;user='
                                 .$userid.'&amp;date='.usergetmidnight($stat->timeend-(60*60*24)).'">'
@@ -282,7 +282,7 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                     krsort($rolesdata);
                     $row = array_merge(array($times[$time]),$rolesdata);
                     if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
-                        if (has_capability('report/log:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                        if (has_capability('report/log:view', context_course::instance($course->id))) {
                             $row[] = '<a href="'.$CFG->wwwroot.'/report/log/index.php?id='
                                 .$course->id.'&amp;chooselog=1&amp;showusers=1&amp;showcourses=1&amp;user='.$userid
                                 .'&amp;date='.usergetmidnight($time-(60*60*24)).'">'

@@ -34,7 +34,7 @@ $PAGE->set_url('/report/outline/index.php', array('id'=>$id));
 $PAGE->set_pagelayout('report');
 
 require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 require_capability('report/outline:view', $context);
 
 add_to_log($course->id, 'course', 'report outline', "report/outline/index.php?id=$course->id", $course->id);
