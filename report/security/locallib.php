@@ -781,7 +781,7 @@ function report_security_check_riskbackup($detailed=false) {
     $result->status  = null;
     $result->link    = null;
 
-    $syscontext = get_context_instance(CONTEXT_SYSTEM);
+    $syscontext = context_system::instance();
 
     $params = array('capability'=>'moodle/backup:userinfo', 'permission'=>CAP_ALLOW, 'contextid'=>$syscontext->id);
     $sql = "SELECT DISTINCT r.id, r.name, r.shortname, r.sortorder, r.archetype

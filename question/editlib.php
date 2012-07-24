@@ -1586,7 +1586,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         $courseid = $cm->course;
         $thispageurl->params(compact('cmid'));
         require_login($courseid, false, $cm);
-        $thiscontext = get_context_instance(CONTEXT_MODULE, $cmid);
+        $thiscontext = context_module::instance($cmid);
     } else {
         $module = null;
         $cm = null;
@@ -1598,7 +1598,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         if ($courseid){
             $thispageurl->params(compact('courseid'));
             require_login($courseid, false);
-            $thiscontext = get_context_instance(CONTEXT_COURSE, $courseid);
+            $thiscontext = context_course::instance($courseid);
         } else {
             $thiscontext = null;
         }

@@ -74,7 +74,7 @@ class repository_local extends repository {
             if (!empty($this->context)) {
                 list($context, $course, $cm) = get_context_info_array($this->context->id);
                 if (is_object($course)) {
-                    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+                    $context = context_course::instance($course->id);
                 } else {
                     $context = get_system_context();
                 }
@@ -373,7 +373,7 @@ class repository_local_file {
             } else if ($this->fileinfo instanceof file_info_context_coursecat) {
                 // This is a course category. For non-admins we do not display categories
                 $this->skip = empty($CFG->navshowmycoursecategories) &&
-                        !has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM));
+                        !has_capability('moodle/course:update', context_system::instance());
             }
         }
         return $this->skip;

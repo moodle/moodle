@@ -50,11 +50,11 @@ $question = question_bank::load_question($id);
 if ($cmid = optional_param('cmid', 0, PARAM_INT)) {
     $cm = get_coursemodule_from_id(false, $cmid);
     require_login($cm->course, false, $cm);
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
 
 } else if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
     require_login($courseid);
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
 
 } else {
     require_login();

@@ -47,11 +47,11 @@ if (!$category = $DB->get_record('question_categories', array('id' => $categoryi
 if ($cmid) {
     list($module, $cm) = get_module_from_cmid($cmid);
     require_login($cm->course, false, $cm);
-    $thiscontext = get_context_instance(CONTEXT_MODULE, $cmid);
+    $thiscontext = context_module::instance($cmid);
     $hiddenparams['cmid'] = $cmid;
 } else if ($courseid) {
     require_login($courseid, false);
-    $thiscontext = get_context_instance(CONTEXT_COURSE, $courseid);
+    $thiscontext = context_course::instance($courseid);
     $module = null;
     $cm = null;
     $hiddenparams['courseid'] = $courseid;

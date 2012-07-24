@@ -1240,7 +1240,7 @@ class question_file_saver {
         global $USER;
 
         $fs = get_file_storage();
-        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+        $usercontext = context_user::instance($USER->id);
 
         $files = $fs->get_area_files($usercontext->id, 'user', 'draft',
                 $draftitemid, 'sortorder, filepath, filename', false);
