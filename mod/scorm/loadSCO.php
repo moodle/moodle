@@ -61,7 +61,7 @@ if ($scorm->timeclose !=0) {
     }
 }
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 if (!empty($scoid)) {
     //
