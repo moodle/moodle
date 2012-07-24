@@ -40,7 +40,7 @@ if ($id) {
         print_error('unknowcategory');
     }
     $PAGE->set_url('/course/editcategory.php', array('id' => $id));
-    $categorycontext = get_context_instance(CONTEXT_COURSECAT, $id);
+    $categorycontext = context_coursecat::instance($id);
     $PAGE->set_context($categorycontext);
     require_capability('moodle/category:manage', $categorycontext);
     $strtitle = get_string('editcategorysettings');
@@ -54,7 +54,7 @@ if ($id) {
         if (!$DB->record_exists('course_categories', array('id' => $parent))) {
             print_error('unknowcategory');
         }
-        $context = get_context_instance(CONTEXT_COURSECAT, $parent);
+        $context = context_coursecat::instance($parent);
     } else {
         $context = get_system_context();
     }

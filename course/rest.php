@@ -54,11 +54,11 @@ $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 if (in_array($class, array('resource'))) {
     $cm = get_coursemodule_from_id(null, $id, $course->id, false, MUST_EXIST);
     require_login($course, false, $cm);
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $modcontext = context_module::instance($cm->id);
 } else {
     require_login($course);
 }
-$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+$coursecontext = context_course::instance($course->id);
 require_sesskey();
 
 echo $OUTPUT->header(); // send headers

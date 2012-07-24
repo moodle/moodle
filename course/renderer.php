@@ -152,7 +152,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $classes[] = 'collapsed';
             }
         }
-        $categoryname = format_string($category->name, true, array('context' => get_context_instance(CONTEXT_COURSECAT, $category->id)));
+        $categoryname = format_string($category->name, true, array('context' => context_coursecat::instance($category->id)));
 
         $content .= html_writer::start_tag('div', array('class'=>join(' ', $classes)));
         $content .= html_writer::start_tag('div', array('class'=>'category_label'));

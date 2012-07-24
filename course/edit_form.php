@@ -19,11 +19,11 @@ class course_edit_form extends moodleform {
         $editoroptions = $this->_customdata['editoroptions'];
         $returnto = $this->_customdata['returnto'];
 
-        $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-        $categorycontext = get_context_instance(CONTEXT_COURSECAT, $category->id);
+        $systemcontext   = context_system::instance();
+        $categorycontext = context_coursecat::instance($category->id);
 
         if (!empty($course->id)) {
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $coursecontext = context_course::instance($course->id);
             $context = $coursecontext;
         } else {
             $coursecontext = null;

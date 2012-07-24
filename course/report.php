@@ -9,7 +9,7 @@
     $PAGE->set_pagelayout('standard');
     require_login($course);
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     require_capability('moodle/site:viewreports', $context); // basic capability for listing of reports
 
     $strreports = get_string('reports');

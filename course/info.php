@@ -28,7 +28,7 @@
         require_login();
     }
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
         print_error('coursehidden', '', $CFG->wwwroot .'/');
     }

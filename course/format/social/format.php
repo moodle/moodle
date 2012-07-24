@@ -9,7 +9,7 @@
     if ($forum = forum_get_course_forum($course->id, 'social')) {
 
         $cm = get_coursemodule_from_instance('forum', $forum->id);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
 
     /// Print forum intro above posts  MDL-18483
         if (trim($forum->intro) != '') {

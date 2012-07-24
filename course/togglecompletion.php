@@ -41,7 +41,7 @@ if ($courseid) {
 
     // Check user is logged in
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     require_login($course);
 
     $completion = new completion_info($course);

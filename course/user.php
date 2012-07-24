@@ -52,8 +52,8 @@ if ($mode === 'coursecompletions' or $mode === 'coursecompletion') {
     redirect($url);
 }
 
-$coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
-$personalcontext = get_context_instance(CONTEXT_USER, $user->id);
+$coursecontext   = context_course::instance($course->id);
+$personalcontext = context_user::instance($user->id);
 
 $PAGE->set_url('/course/user.php', array('id'=>$id, 'user'=>$user->id, 'mode'=>$mode));
 
