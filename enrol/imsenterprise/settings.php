@@ -56,7 +56,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('enrol_imsenterprise_usersettings_roles', get_string('roles', 'enrol_imsenterprise'), get_string('imsrolesdescription', 'enrol_imsenterprise')));
 
     if (!during_initial_install()) {
-        $coursecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+        $coursecontext = context_course::instance(SITEID);
         $assignableroles = get_assignable_roles($coursecontext);
         $assignableroles = array('0' => get_string('ignore', 'enrol_imsenterprise')) + $assignableroles;
         $imsroles = new imsenterprise_roles();

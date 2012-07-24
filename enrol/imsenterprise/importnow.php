@@ -1,12 +1,12 @@
 <?php
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_login(0, false);
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+require_capability('moodle/site:config', context_system::instance());
 
 $site = get_site();
 
 /// get language strings
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 
 $PAGE->set_url('/enrol/imsenterprise/importnow.php');
 $PAGE->set_title(get_string('importimsfile', 'enrol_imsenterprise'));

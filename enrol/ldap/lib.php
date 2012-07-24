@@ -250,7 +250,7 @@ class enrol_ldap_plugin extends enrol_plugin {
             // Deal with unenrolments.
             $transaction = $DB->start_delegated_transaction();
             foreach ($enrolments[$role->id]['current'] as $course) {
-                $context = get_context_instance(CONTEXT_COURSE, $course->courseid);
+                $context = context_course::instance($course->courseid);
                 $instance = $DB->get_record('enrol', array('id'=>$course->enrolid));
                 switch ($this->get_config('unenrolaction')) {
                     case ENROL_EXT_REMOVED_UNENROL:
@@ -448,7 +448,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                                  JOIN {enrol} e ON (e.id = ue.enrolid)
                                 WHERE u.deleted = 0 AND e.courseid = :courseid ";
                         $params = array('roleid'=>$role->id, 'courseid'=>$course_obj->id);
-                        $context = get_context_instance(CONTEXT_COURSE, $course_obj->id);
+                        $context = context_course::instance($course_obj->id);
                         if (!empty($ldapmembers)) {
                             list($ldapml, $params2) = $DB->get_in_or_equal($ldapmembers, SQL_PARAMS_NAMED, 'm', false);
                             $sql .= "AND u.idnumber $ldapml";

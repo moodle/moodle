@@ -47,7 +47,7 @@ class enrol_mnet_plugin extends enrol_plugin {
         } else if (empty($instance->name)) {
             $enrol = $this->get_name();
             if ($role = $DB->get_record('role', array('id'=>$instance->roleid))) {
-                $role = role_get_name($role, get_context_instance(CONTEXT_COURSE, $instance->courseid));
+                $role = role_get_name($role, context_course::instance($instance->courseid, IGNORE_MISSING));
             } else {
                 $role = get_string('error');
             }
@@ -79,7 +79,7 @@ class enrol_mnet_plugin extends enrol_plugin {
         if (!$service->is_available()) {
             return null;
         }
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+        $coursecontext = context_course::instance($courseid);
         if (!has_capability('moodle/course:enrolconfig', $coursecontext)) {
             return null;
         }

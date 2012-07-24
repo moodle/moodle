@@ -32,7 +32,7 @@ $courseid   = required_param('courseid', PARAM_INT);
 $instanceid = optional_param('id', 0, PARAM_INT); // instanceid
 
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-$context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
+$context = context_course::instance($course->id, MUST_EXIST);
 
 require_login($course);
 require_capability('enrol/self:config', $context);

@@ -31,7 +31,7 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 $instance = $DB->get_record('enrol', array('id'=>$enrolid, 'enrol'=>'paypal'), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
-$context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
+$context = context_course::instance($course->id, MUST_EXIST);
 
 require_login();
 if (!is_enrolled($context)) {

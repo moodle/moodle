@@ -229,7 +229,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
         unset($elog);
 
         // Create/resurrect a context object
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
 
         if ($action == 'add') {
             $instance = $DB->get_record('enrol',

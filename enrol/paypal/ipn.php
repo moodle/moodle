@@ -76,7 +76,7 @@ if (! $course = $DB->get_record("course", array("id"=>$data->courseid))) {
     die;
 }
 
-if (! $context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+if (! $context = context_course::instance($course->id, IGNORE_MISSING)) {
     message_paypal_error_to_admin("Not a valid context id", $data);
     die;
 }
@@ -187,7 +187,7 @@ while (!feof($fp)) {
             die;
         }
 
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $coursecontext = context_course::instance($course->id, IGNORE_MISSING);
 
         // Check that amount paid is the correct amount
         if ( (float) $plugin_instance->cost <= 0 ) {
