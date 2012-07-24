@@ -98,7 +98,7 @@ class cohort_edit_form extends moodleform {
             $options[$syscontext->id] = print_context_name($syscontext);
         }
         foreach ($displaylist as $cid=>$name) {
-            $context = context_coursecat::instance($cid, MUST_EXIST);
+            $context = context_coursecat::instance($cid);
             $options[$context->id] = $name;
         }
         // always add current - this is not likely, but if the logic gets changed it might be a problem
