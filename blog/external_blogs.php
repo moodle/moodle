@@ -29,7 +29,7 @@ require_once('../config.php');
 require_once('lib.php');
 
 require_login();
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/blog/external_blogs.php'));
 require_capability('moodle/blog:manageexternal', $context);

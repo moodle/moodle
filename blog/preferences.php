@@ -57,11 +57,11 @@ $PAGE->set_pagelayout('standard');
 
 if ($courseid == SITEID) {
     require_login();
-    $context = get_context_instance(CONTEXT_SYSTEM);
+    $context = context_system::instance();
     $PAGE->set_context($context);
 } else {
     require_login($courseid);
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
 }
 
 if (empty($CFG->bloglevel)) {
