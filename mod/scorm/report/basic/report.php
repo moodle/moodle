@@ -33,7 +33,7 @@ class scorm_basic_report extends scorm_default_report {
      */
     function display($scorm, $cm, $course, $download) {
         global $CFG, $DB, $OUTPUT, $PAGE;
-        $contextmodule= get_context_instance(CONTEXT_MODULE, $cm->id);
+        $contextmodule= context_module::instance($cm->id);
         $action = optional_param('action', '', PARAM_ALPHA);
         $attemptids = optional_param_array('attemptid', array(), PARAM_RAW);
         $attemptsmode = optional_param('attemptsmode', SCORM_REPORT_ATTEMPTS_ALL_STUDENTS, PARAM_INT);

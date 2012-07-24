@@ -98,7 +98,7 @@ function scorm_add_instance($scorm, $mform=null) {
     $cmidnumber = $scorm->cmidnumber;
     $courseid   = $scorm->course;
 
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
 
     $scorm = scorm_option2text($scorm);
     $scorm->width  = (int)str_replace('%', '', $scorm->width);
@@ -189,7 +189,7 @@ function scorm_update_instance($scorm, $mform=null) {
 
     $scorm->id = $scorm->instance;
 
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
 
     if ($scorm->scormtype === SCORM_TYPE_LOCAL) {
         if ($mform) {

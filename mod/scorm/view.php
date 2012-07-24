@@ -65,8 +65,8 @@ if (!empty($scorm->popup)) {
     $PAGE->requires->js('/mod/scorm/view.js', true);
 }
 
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
-$contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_course::instance($course->id);
+$contextmodule = context_module::instance($cm->id);
 
 if (isset($SESSION->scorm)) {
     unset($SESSION->scorm);

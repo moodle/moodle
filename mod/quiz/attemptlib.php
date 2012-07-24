@@ -87,7 +87,7 @@ class quiz {
         $this->quiz->cmid = $this->cm->id;
         $this->course = $course;
         if ($getcontext && !empty($cm->id)) {
-            $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $this->context = context_module::instance($cm->id);
         }
         $questionids = quiz_questions_in_quiz($this->quiz->questions);
         if ($questionids) {

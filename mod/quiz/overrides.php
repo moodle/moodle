@@ -62,7 +62,7 @@ $PAGE->set_url($url);
 
 require_login($course, false, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 // Check the user has the required capabilities to list overrides.
 require_capability('mod/quiz:manageoverrides', $context);

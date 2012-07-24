@@ -87,7 +87,7 @@ $strscorm  = get_string('modulename', 'scorm');
 $strpopup = get_string('popup', 'scorm');
 $strexit = get_string('exitactivity', 'scorm');
 
-$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+$coursecontext = context_course::instance($course->id);
 
 if ($displaymode == 'popup') {
     $PAGE->set_pagelayout('popup');

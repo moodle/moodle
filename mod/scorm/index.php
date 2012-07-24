@@ -74,7 +74,7 @@ if ($usesections) {
 }
 
 foreach ($scorms as $scorm) {
-    $context = get_context_instance(CONTEXT_MODULE, $scorm->coursemodule);
+    $context = context_module::instance($scorm->coursemodule);
     $tt = "";
     if ($usesections) {
         if ($scorm->section) {
