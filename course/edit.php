@@ -85,6 +85,13 @@ if (!empty($course)) {
     //editor should respect category context if course context is not set.
     $editoroptions['context'] = $catcontext;
     $course = file_prepare_standard_editor($course, 'summary', $editoroptions, null, 'course', 'summary', null);
+
+    // Set up the default restricted module list
+    if (!empty($CFG->restrictbydefault)) {
+        if (!empty($CFG->defaultallowedmodules)) {
+            $course->allowedmods = explode(',', $CFG->defaultallowedmodules);
+        }
+    }
 }
 
 // first create the form
