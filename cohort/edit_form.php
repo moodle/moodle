@@ -93,12 +93,12 @@ class cohort_edit_form extends moodleform {
         $parentlist = array();
         make_categories_list($displaylist, $parentlist, 'moodle/cohort:manage');
         $options = array();
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext = context_system::instance();
         if (has_capability('moodle/cohort:manage', $syscontext)) {
             $options[$syscontext->id] = print_context_name($syscontext);
         }
         foreach ($displaylist as $cid=>$name) {
-            $context = get_context_instance(CONTEXT_COURSECAT, $cid, MUST_EXIST);
+            $context = context_coursecat::instance($cid, MUST_EXIST);
             $options[$context->id] = $name;
         }
         // always add current - this is not likely, but if the logic gets changed it might be a problem
