@@ -36,7 +36,7 @@ require_login();
 $courseid = required_param('courseid', PARAM_INT); //if no courseid is given
 $parentcourse = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$context = context_course::instance($courseid);
 $PAGE->set_course($parentcourse);
 $PAGE->set_url('/blocks/community/communitycourse.php');
 $PAGE->set_heading($SITE->fullname);

@@ -113,7 +113,7 @@ class block_community_manager {
 
         $fs = get_file_storage();
         $record = new stdClass();
-        $record->contextid = get_context_instance(CONTEXT_USER, $USER->id)->id;
+        $record->contextid = context_user::instance($USER->id)->id;
         $record->component = 'user';
         $record->filearea = 'private';
         $record->itemid = 0;

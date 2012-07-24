@@ -418,7 +418,7 @@ class block_base {
             $this->config = unserialize(base64_decode($instance->configdata));
         }
         $this->instance = $instance;
-        $this->context = get_context_instance(CONTEXT_BLOCK, $instance->id);
+        $this->context = context_block::instance($instance->id);
         $this->page = $page;
         $this->specialization();
     }

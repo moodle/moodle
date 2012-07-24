@@ -52,8 +52,8 @@ if ($userid) {
 // Check permissions
 require_login($course);
 
-$coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
-$personalcontext = get_context_instance(CONTEXT_USER, $user->id);
+$coursecontext   = context_course::instance($course->id);
+$personalcontext = context_user::instance($user->id);
 
 $can_view = false;
 

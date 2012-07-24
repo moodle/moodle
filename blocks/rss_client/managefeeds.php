@@ -40,7 +40,7 @@ if ($courseid) {
     $PAGE->set_course($course);
     $context = $PAGE->context;
 } else {
-    $context = get_context_instance(CONTEXT_SYSTEM);
+    $context = context_system::instance();
     $PAGE->set_context($context);
 }
 
