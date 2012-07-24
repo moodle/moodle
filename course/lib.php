@@ -1994,7 +1994,7 @@ function get_module_metadata($course, $modnames, $sectionreturn = 0) {
  */
 function get_category_or_system_context($categoryid) {
     if ($categoryid) {
-        return context_coursecat::instance($categoryid);
+        return context_coursecat::instance($categoryid, IGNORE_MISSING);
     } else {
         return context_system::instance();
     }
