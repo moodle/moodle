@@ -101,6 +101,7 @@ class blog_edit_form extends moodleform {
                     $a = new stdClass();
                     $a->modtype = $DB->get_field('modules', 'name', array('id' => $cm->module));
                     $a->modname = $DB->get_field($a->modtype, 'name', array('id' => $cm->instance));
+                    $modid = $context->instanceid;
                 }
 
                 $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
