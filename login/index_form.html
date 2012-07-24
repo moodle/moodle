@@ -5,7 +5,7 @@ if ($show_instructions) {
     $columns = 'onecolumn';
 }
 
-if (empty($CFG->xmlstrictheaders) and !empty($CFG->loginpasswordautocomplete)) {
+if (!empty($CFG->loginpasswordautocomplete)) {
     $autocomplete = 'autocomplete="off"';
 } else {
     $autocomplete = '';
