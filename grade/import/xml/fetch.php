@@ -29,7 +29,7 @@ if (empty($CFG->gradepublishing)) {
     print_error('gradepubdisable');
 }
 
-$context = get_context_instance(CONTEXT_COURSE, $id);
+$context = context_course::instance($id);
 require_capability('gradeimport/xml:publish', $context);
 
 // use the same page parameters as import.php and append &key=sdhakjsahdksahdkjsahksadjksahdkjsadhksa

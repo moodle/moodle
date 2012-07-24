@@ -39,7 +39,7 @@ $newvalue = optional_param('newvalue', false, PARAM_MULTILANG);
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 require_login($course);
 
 switch ($action) {

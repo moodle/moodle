@@ -40,8 +40,7 @@ class grader_report_preferences_form extends moodleform {
         $mform    =& $this->_form;
         $course   = $this->_customdata['course'];
 
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $context = context_course::instance($course->id);
 
         $canviewhidden = has_capability('moodle/grade:viewhidden', $context);
 

@@ -121,7 +121,7 @@ class edit_outcome_form extends moodleform {
             if (empty($courseid)) {
                 $mform->hardFreeze('standard');
 
-            } else if (empty($outcome->courseid) and !has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM))) {
+            } else if (empty($outcome->courseid) and !has_capability('moodle/grade:manage', context_system::instance())) {
                 $mform->hardFreeze('standard');
 
             } else if ($coursecount and empty($outcome->courseid)) {
@@ -130,7 +130,7 @@ class edit_outcome_form extends moodleform {
 
 
         } else {
-            if (empty($courseid) or !has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM))) {
+            if (empty($courseid) or !has_capability('moodle/grade:manage', context_system::instance())) {
                 $mform->hardFreeze('standard');
             }
         }

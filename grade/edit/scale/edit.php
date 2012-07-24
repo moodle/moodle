@@ -33,7 +33,7 @@ $id       = optional_param('id', 0, PARAM_INT);
 $PAGE->set_url('/grade/edit/scale/edit.php', array('id' => $id, 'courseid' => $courseid));
 $PAGE->set_pagelayout('admin');
 
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = context_system::instance();
 $heading = '';
 
 // a bit complex access control :-O
@@ -50,7 +50,7 @@ if ($id) {
             print_error('invalidcourseid');
         }
         require_login($course);
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
         require_capability('moodle/course:managescales', $context);
         $courseid = $course->id;
     } else {
@@ -75,7 +75,7 @@ if ($id) {
     $scale_rec->standard = 0;
     $scale_rec->courseid = $courseid;
     require_login($course);
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     require_capability('moodle/course:managescales', $context);
 
 } else {
