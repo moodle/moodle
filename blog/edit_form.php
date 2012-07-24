@@ -111,7 +111,7 @@ class blog_edit_form extends moodleform {
 
         $this->add_action_buttons();
         $mform->addElement('hidden', 'action');
-        $mform->setType('action', PARAM_ACTION);
+        $mform->setType('action', PARAM_ALPHANUMEXT);
         $mform->setDefault('action', '');
 
         $mform->addElement('hidden', 'entryid');

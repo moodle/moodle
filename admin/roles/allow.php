@@ -28,7 +28,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 
-$mode = required_param('mode', PARAM_ACTION);
+$mode = required_param('mode', PARAM_ALPHANUMEXT);
 $classformode = array(
     'assign' => 'role_allow_assign_page',
     'override' => 'role_allow_override_page',

@@ -30,7 +30,7 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 
 $edit    = optional_param('edit', 0, PARAM_INT);
-$new     = optional_param('new', '', PARAM_FORMAT);
+$new     = optional_param('new', '', PARAM_ALPHANUMEXT);
 $delete  = optional_param('delete', 0, PARAM_INT);
 $sure    = optional_param('sure', '', PARAM_ALPHA);
 $contextid = optional_param('contextid', 0, PARAM_INT);

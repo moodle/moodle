@@ -19,7 +19,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $repository       = optional_param('repos', '', PARAM_ALPHANUMEXT);
-$action           = optional_param('action', '', PARAM_ACTION);
+$action           = optional_param('action', '', PARAM_ALPHANUMEXT);
 $sure             = optional_param('sure', '', PARAM_ALPHA);
 $downloadcontents = optional_param('downloadcontents', false, PARAM_BOOL);
 

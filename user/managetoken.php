@@ -44,7 +44,7 @@ if ( !is_siteadmin($USER->id)
     && has_capability('moodle/webservice:createtoken', $usercontext )) {
     require($CFG->dirroot.'/webservice/lib.php');
 
-    $action  = optional_param('action', '', PARAM_ACTION);
+    $action  = optional_param('action', '', PARAM_ALPHANUMEXT);
     $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
@@ -83,7 +83,7 @@ if ( !is_siteadmin($USER->id)
 if (!empty($CFG->enablerssfeeds)) {
     require_once($CFG->dirroot.'/lib/rsslib.php');
 
-    $action  = optional_param('action', '', PARAM_ACTION);
+    $action  = optional_param('action', '', PARAM_ALPHANUMEXT);
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
     $rssrenderer = $PAGE->get_renderer('core', 'rss');

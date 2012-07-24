@@ -34,7 +34,7 @@
     require_once(dirname(__FILE__) . '/../config.php');
     require_once($CFG->libdir . '/adminlib.php');
 
-    $action = optional_param('action', '', PARAM_ACTION);
+    $action = optional_param('action', '', PARAM_ALPHANUMEXT);
     $filterpath = optional_param('filterpath', '', PARAM_PATH);
 
     require_login();

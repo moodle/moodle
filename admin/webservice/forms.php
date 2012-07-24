@@ -168,7 +168,7 @@ class external_service_functions_form extends moodleform {
         $mform->setType('id', PARAM_INT);
 
         $mform->addElement('hidden', 'action');
-        $mform->setType('action', PARAM_ACTION);
+        $mform->setType('action', PARAM_ALPHANUMEXT);
 
         $this->add_action_buttons(true, get_string('addfunctions', 'webservice'));
 
@@ -236,7 +236,7 @@ class web_service_token_form extends moodleform {
                 get_string('validuntil', 'webservice'), array('optional' => true));
 
         $mform->addElement('hidden', 'action');
-        $mform->setType('action', PARAM_ACTION);
+        $mform->setType('action', PARAM_ALPHANUMEXT);
 
         $this->add_action_buttons(true);
 

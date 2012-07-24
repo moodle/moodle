@@ -56,7 +56,7 @@ class enrol_users_assign_form extends moodleform {
         $mform->setType('user', PARAM_INT);
 
         $mform->addElement('hidden', 'action');
-        $mform->setType('action', PARAM_ACTION);
+        $mform->setType('action', PARAM_ALPHANUMEXT);
 
         $mform->addElement('hidden', 'ifilter');
         $mform->setType('ifilter', PARAM_ALPHA);
@@ -110,7 +110,7 @@ class enrol_users_addmember_form extends moodleform {
         $mform->setType('user', PARAM_INT);
 
         $mform->addElement('hidden', 'action');
-        $mform->setType('action', PARAM_ACTION);
+        $mform->setType('action', PARAM_ALPHANUMEXT);
 
         $mform->addElement('hidden', 'ifilter');
         $mform->setType('ifilter', PARAM_ALPHA);

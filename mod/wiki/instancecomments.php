@@ -38,7 +38,7 @@ require_once($CFG->dirroot . "/mod/wiki/locallib.php");
 require_once($CFG->dirroot . '/mod/wiki/comments_form.php');
 
 $pageid = required_param('pageid', PARAM_TEXT);
-$action = optional_param('action', '', PARAM_ACTION);
+$action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $id = optional_param('id', 0, PARAM_INT);
 $commentid = optional_param('commentid', 0, PARAM_INT);
 $newcontent = optional_param('newcontent', '', PARAM_CLEANHTML);

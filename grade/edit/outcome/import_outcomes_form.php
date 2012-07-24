@@ -36,7 +36,7 @@ class import_outcomes_form extends moodleform {
         $mform =& $this->_form;
 
         $mform->addElement('hidden', 'action', 'upload');
-        $mform->setType('action', PARAM_ACTION);
+        $mform->setType('action', PARAM_ALPHANUMEXT);
         $mform->addElement('hidden', 'courseid', $PAGE->course->id);
         $mform->setType('id', PARAM_INT);
 

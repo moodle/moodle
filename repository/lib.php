@@ -2395,7 +2395,7 @@ final class repository_instance_form extends moodleform {
         $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->id : 0);
         $mform->setType('edit', PARAM_INT);
         $mform->addElement('hidden', 'new',   $this->plugin);
-        $mform->setType('new', PARAM_FORMAT);
+        $mform->setType('new', PARAM_ALPHANUMEXT);
         $mform->addElement('hidden', 'plugin', $this->plugin);
         $mform->setType('plugin', PARAM_PLUGIN);
         $mform->addElement('hidden', 'typeid', $this->typeid);

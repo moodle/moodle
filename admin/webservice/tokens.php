@@ -28,7 +28,7 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/webservice/forms.php');
 require_once($CFG->libdir . '/externallib.php');
 
-$action = optional_param('action', '', PARAM_ACTION);
+$action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 

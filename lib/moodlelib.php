@@ -266,12 +266,14 @@ define('PARAM_NUMBER',  'float');
 /**
  * PARAM_ACTION - deprecated alias for PARAM_ALPHANUMEXT, use for various actions in forms and urls
  * NOTE: originally alias for PARAM_APLHA
+ * @deprecated since 2.0
  */
 define('PARAM_ACTION',   'alphanumext');
 
 /**
  * PARAM_FORMAT - deprecated alias for PARAM_ALPHANUMEXT, use for names of plugins, formats, etc.
  * NOTE: originally alias for PARAM_APLHA
+ * @deprecated since 2.0
  */
 define('PARAM_FORMAT',   'alphanumext');
 
