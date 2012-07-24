@@ -84,6 +84,9 @@ $PAGE->navbar->add(get_string('enrolmentoptions','enrol'));
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('enrolmentoptions','enrol'));
 
+$courserenderer = $PAGE->get_renderer('core', 'course');
+echo $courserenderer->course_info_box($course);
+
 //TODO: find if future enrolments present and display some info
 
 foreach ($forms as $form) {
