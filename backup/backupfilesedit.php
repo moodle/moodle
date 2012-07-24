@@ -36,7 +36,7 @@ $filearea   = optional_param('filearea', null, PARAM_AREA);
 $returnurl  = optional_param('returnurl', null, PARAM_URL);
 
 list($context, $course, $cm) = get_context_info_array($currentcontext);
-$filecontext = get_context_instance_by_id($contextid);
+$filecontext = context::instance_by_id($contextid, IGNORE_MISSING);
 
 $url = new moodle_url('/backup/backupfilesedit.php', array('currentcontext'=>$currentcontext, 'contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea));
 

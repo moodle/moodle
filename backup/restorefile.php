@@ -43,7 +43,7 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 
 // will be used when restore
 if (!empty($filecontextid)) {
-    $filecontext = get_context_instance_by_id($filecontextid);
+    $filecontext = context::instance_by_id($filecontextid);
 }
 
 $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$contextid));
@@ -116,7 +116,7 @@ if ($context->contextlevel == CONTEXT_MODULE) {
     echo $OUTPUT->heading_with_help(get_string('choosefilefromactivitybackup', 'backup'), 'choosefilefromuserbackup', 'backup');
     echo $OUTPUT->container_start();
     $treeview_options = array();
-    $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+    $user_context = context_user::instance($USER->id);
     $treeview_options['filecontext'] = $context;
     $treeview_options['currentcontext'] = $context;
     $treeview_options['component']   = 'backup';
@@ -142,7 +142,7 @@ echo $OUTPUT->container_end();
 echo $OUTPUT->heading_with_help(get_string('choosefilefromuserbackup', 'backup'), 'choosefilefromuserbackup', 'backup');
 echo $OUTPUT->container_start();
 $treeview_options = array();
-$user_context = get_context_instance(CONTEXT_USER, $USER->id);
+$user_context = context_user::instance($USER->id);
 $treeview_options['filecontext'] = $user_context;
 $treeview_options['currentcontext'] = $context;
 $treeview_options['component']   = 'user';
@@ -157,7 +157,7 @@ if (!empty($automatedbackups)) {
     echo $OUTPUT->heading_with_help(get_string('choosefilefromautomatedbackup', 'backup'), 'choosefilefromautomatedbackup', 'backup');
     echo $OUTPUT->container_start();
     $treeview_options = array();
-    $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+    $user_context = context_user::instance($USER->id);
     $treeview_options['filecontext'] = $context;
     $treeview_options['currentcontext'] = $context;
     $treeview_options['component']   = 'backup';

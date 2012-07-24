@@ -6,6 +6,6 @@
 
     require_login();
 
-    require_capability('moodle/backup:backupcourse', get_context_instance(CONTEXT_SYSTEM));
+    require_capability('moodle/backup:backupcourse', context_system::instance());
 
     redirect("$CFG->wwwroot/report/backups/index.php", '', 'admin', 1);
