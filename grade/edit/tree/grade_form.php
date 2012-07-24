@@ -139,7 +139,7 @@ class edit_grade_form extends moodleform {
     function definition_after_data() {
         global $CFG, $COURSE, $DB;
 
-        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        $context = context_course::instance($COURSE->id);
 
         $mform =& $this->_form;
         $grade_item = $this->_customdata['grade_item'];

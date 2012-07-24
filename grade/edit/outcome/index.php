@@ -36,7 +36,7 @@ $PAGE->set_pagelayout('admin');
 if ($courseid) {
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     require_login($course);
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     require_capability('moodle/grade:manageoutcomes', $context);
 
     if (empty($CFG->enableoutcomes)) {
@@ -76,7 +76,7 @@ switch ($action) {
         }
 
         if (empty($outcome->courseid)) {
-            require_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM));
+            require_capability('moodle/grade:manage', context_system::instance());
         } else if ($outcome->courseid != $courseid) {
             print_error('invalidcourseid');
         }
@@ -105,7 +105,7 @@ switch ($action) {
         break;
 }
 
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = context_system::instance();
 $caneditsystemscales = has_capability('moodle/course:managescales', $systemcontext);
 
 if ($courseid) {
@@ -138,7 +138,7 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
             } else if ($scale->courseid == $courseid) {
                 $caneditthisscale = $caneditcoursescales;
             } else {
-                $context = get_context_instance(CONTEXT_COURSE, $scale->courseid);
+                $context = context_course::instance($scale->courseid);
                 $caneditthisscale = has_capability('moodle/course:managescales', $context);
             }
             if ($caneditthisscale) {
@@ -187,7 +187,7 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
             } else if ($scale->courseid == $courseid) {
                 $caneditthisscale = $caneditcoursescales;
             } else {
-                $context = get_context_instance(CONTEXT_COURSE, $scale->courseid);
+                $context = context_course::instance($scale->courseid);
                 $caneditthisscale = has_capability('moodle/course:managescales', $context);
             }
             if ($caneditthisscale) {
@@ -201,10 +201,10 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
         $line[] = $outcome->get_item_uses_count();
 
         $buttons = "";
-        if (has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('moodle/grade:manage', context_system::instance())) {
             $buttons .= grade_button('edit', $courseid, $outcome);
         }
-        if (has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM)) and $outcome->can_delete()) {
+        if (has_capability('moodle/grade:manage', context_system::instance()) and $outcome->can_delete()) {
             $buttons .= grade_button('delete', $courseid, $outcome);
         }
         $line[] = $buttons;
