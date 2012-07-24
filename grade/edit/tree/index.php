@@ -272,7 +272,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
             $aid   = $matches[2];
 
             $value = unformat_float($value);
-            $value = clean_param($value, PARAM_NUMBER);
+            $value = clean_param($value, PARAM_FLOAT);
 
             $grade_item = grade_item::fetch(array('id'=>$aid, 'courseid'=>$courseid));
 

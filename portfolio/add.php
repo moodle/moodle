@@ -165,7 +165,7 @@ if (!empty($dataid)) {
     foreach (array_keys(array_merge($_GET, $_POST)) as $key) {
         if (strpos($key, 'ca_') === 0) {
             if (!$value =  optional_param($key, false, PARAM_ALPHAEXT)) {
-                if (!$value = optional_param($key, false, PARAM_NUMBER)) {
+                if (!$value = optional_param($key, false, PARAM_FLOAT)) {
                     $value = optional_param($key, false, PARAM_PATH);
                 }
             }

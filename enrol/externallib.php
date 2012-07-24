@@ -257,7 +257,7 @@ class core_enrol_external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'id'    => new external_value(PARAM_NUMBER, 'ID of the user'),
+                    'id'    => new external_value(PARAM_INT, 'ID of the user'),
                     'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config', VALUE_OPTIONAL),
                     'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
                     'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
