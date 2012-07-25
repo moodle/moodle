@@ -87,8 +87,8 @@ class block_course_overview_renderer extends plugin_renderer_base {
                         array('title' => $moveup['str'], 'class' => 'moveup'));
                 } else {
                     // Add a spacer to keep keep down arrow icons at right position.
-                    $html .= html_writer::empty_tag('img', array('src' => $this->pix_url('t/spacer'),
-                        'class' => 'moveup spacer'));
+                    $html .= html_writer::empty_tag('img', array('src' => $this->pix_url('spacer'),
+                        'class' => 'movedownspacer'));
                 }
                 // Add an arrow to move course down.
                 if ($courseordernumber <= $maxcourses-2) {
@@ -96,6 +96,10 @@ class block_course_overview_renderer extends plugin_renderer_base {
                     $html .= html_writer::link($url, html_writer::empty_tag('img', 
                         array('src' => $movedown['icon'], 'class' => 'down', 'alt' => $movedown['str'])),
                         array('title' => $movedown['str'], 'class' => 'movedown'));
+                } else {
+                    // Add a spacer to keep keep up arrow icons at right position.
+                    $html .= html_writer::empty_tag('img', array('src' => $this->pix_url('spacer'),
+                        'class' => 'moveupspacer'));
                 }
                 $html .= html_writer::end_tag('div');
             }

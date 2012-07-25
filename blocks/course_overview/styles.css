@@ -53,14 +53,20 @@
 .editing .block_course_overview .moveicons {
     display: block;
     float: left;
+    padding-right: 5px;
 }
 
 .editing .block_course_overview .moveup {
     padding-right: 5px;
 }
 
-.editing .block_course_overview .spacer {
+.editing .block_course_overview .movedownspacer {
     float: left;
+    width: 14px;
+}
+
+.editing .block_course_overview .moveupspacer {
+    float: right;
     width: 14px;
 }
 
