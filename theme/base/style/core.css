@@ -200,6 +200,7 @@ a.skip:active {position: static;display: block;}
 .navbutton {text-align:right;}
 .breadcrumb ul {padding:0;margin:0;text-indent:0;list-style:none;}
 .navbutton {float: right;}
+.navbutton .singlebutton {margin-left: 4px}
 .breadcrumb li,
 .navbutton div,
 .navbutton form {display:inline;}
@@ -758,6 +759,7 @@ body.tag .managelink {padding: 5px;}
 .dir-rtl .headermenu {float:left;}
 .dir-rtl .breadcrumb {float:right;}
 .dir-rtl .navbutton {float: left;}
+.dir-rtl .navbutton .singlebutton {margin-right: 4px}
 .dir-rtl .breadcrumb ul li { float: right; margin-left: 5px;}
 .dir-rtl .mform .fitem .fitemtitle {float:right;}
 .dir-rtl .loginbox .loginform .form-label {float:right;text-align:left;}

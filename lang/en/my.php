@@ -12,3 +12,5 @@ $string['defaultprofilepage'] = 'Default profile page';
 $string['addpage'] = 'Add page';
 $string['delpage'] = 'Delete page';
 $string['managepages'] = 'Manage pages';
+$string['resetpage'] = 'Reset page to default';
+$string['reseterror'] = 'There was an error resetting your page';

@@ -42,6 +42,7 @@ require_once($CFG->libdir.'/filelib.php');
 
 $userid = optional_param('id', 0, PARAM_INT);
 $edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off
+$reset  = optional_param('reset', null, PARAM_BOOL);
 
 $PAGE->set_url('/user/profile.php', array('id'=>$userid));
 
@@ -149,7 +150,14 @@ if ($node = $PAGE->settingsnav->get('root')) {
 
 // Toggle the editing state and switches
 if ($PAGE->user_allowed_editing()) {
-    if ($edit !== null) {             // Editing state was specified
+    if ($reset !== null) {
+        if (!is_null($userid)) {
+            if (!$currentpage = my_reset_page($userid, MY_PAGE_PUBLIC, 'user-profile')){
+                print_error('reseterror', 'my');
+            }
+            redirect(new moodle_url('/user/profile.php'));
+        }
+    } else if ($edit !== null) {             // Editing state was specified
         $USER->editing = $edit;       // Change editing state
         if (!$currentpage->userid && $edit) {
             // If we are viewing a system page as ordinary user, and the user turns
@@ -176,19 +184,25 @@ if ($PAGE->user_allowed_editing()) {
     // Add button for editing page
     $params = array('edit' => !$edit);
 
+    $resetbutton = '';
+    $resetstring = get_string('resetpage', 'my');
+    $reseturl = new moodle_url("$CFG->wwwroot/user/profile.php", array('edit' => 1, 'reset' => 1));
+
     if (!$currentpage->userid) {
         // viewing a system page -- let the user customise it
         $editstring = get_string('updatemymoodleon');
         $params['edit'] = 1;
     } else if (empty($edit)) {
         $editstring = get_string('updatemymoodleon');
+        $resetbutton = $OUTPUT->single_button($reseturl, $resetstring);
     } else {
         $editstring = get_string('updatemymoodleoff');
+        $resetbutton = $OUTPUT->single_button($reseturl, $resetstring);
     }
 
     $url = new moodle_url("$CFG->wwwroot/user/profile.php", $params);
     $button = $OUTPUT->single_button($url, $editstring);
-    $PAGE->set_button($button);
+    $PAGE->set_button($resetbutton . $button);
 
 } else {
     $USER->editing = $edit = 0;

@@ -98,6 +98,38 @@ function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
     return $page;
 }
 
+/*
+ * For a given user, this deletes their My Moodle page and returns them to the system default.
+ *
+ * @param int $userid the id of the user whose page should be reset
+ * @param int $private either MY_PAGE_PRIVATE or MY_PAGE_PUBLIC
+ * @param string $pagetype either my-index or user-profile
+ * @return mixed system page, or false on error
+ */
+function my_reset_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
+    global $DB, $CFG;
+
+    $page = my_get_page($userid, $private);
+    if ($page->userid == $userid) {
+        $context = context_user::instance($userid);
+        if ($blocks = $DB->get_records('block_instances', array('parentcontextid' => $context->id,
+                'pagetypepattern' => $pagetype))) {
+            foreach ($blocks as $block) {
+                if (is_null($block->subpagepattern) || $block->subpagepattern == $page->id) {
+                    blocks_delete_instance($block);
+                }
+            }
+        }
+        $DB->delete_records('my_pages', array('id' => $page->id));
+    }
+
+    // Get the system default page
+    if (!$systempage = $DB->get_record('my_pages', array('userid' => null, 'private' => $private))) {
+        return false; // error
+    }
+    return $systempage;
+}
+
 class my_syspage_block_manager extends block_manager {
     // HACK WARNING!
     // TODO: figure out a better way to do this
