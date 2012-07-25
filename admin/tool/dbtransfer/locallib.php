@@ -52,7 +52,7 @@ require_once($CFG->libdir.'/dtllib.php');
 function tool_dbtransfer_export_xml_database($description, $mdb) {
     @set_time_limit(0);
 
-    session_get_instance()->write_close(); // release session
+    session_get_instance()->write_close(); // Release session.
 
     header('Content-Type: application/xhtml+xml; charset=utf-8');
     header('Content-Disposition: attachment; filename=database.xml');
@@ -65,7 +65,7 @@ function tool_dbtransfer_export_xml_database($description, $mdb) {
     $var = new file_xml_database_exporter('php://output', $mdb);
     $var->export_database($description);
 
-    // no more output
+    // No more output.
     die;
 }
 
@@ -79,7 +79,7 @@ function tool_dbtransfer_export_xml_database($description, $mdb) {
 function tool_dbtransfer_transfer_database(moodle_database $sourcedb, moodle_database $targetdb, progress_trace $feedback = null) {
     @set_time_limit(0);
 
-    session_get_instance()->write_close(); // release session
+    session_get_instance()->write_close(); // Release session.
 
     $var = new database_mover($sourcedb, $targetdb, true, $feedback);
     $var->export_database(null);
@@ -106,9 +106,9 @@ function tool_dbtransfer_rebuild_target_log_actions(moodle_database $target, pro
         $DB->delete_records('log_display', array('component'=>'moodle'));
         log_update_descriptions('moodle');
         $plugintypes = get_plugin_types();
-        foreach ($plugintypes as $type=>$location) {
+        foreach ($plugintypes as $type => $location) {
             $plugs = get_plugin_list($type);
-            foreach ($plugs as $plug=>$fullplug) {
+            foreach ($plugs as $plug => $fullplug) {
                 $component = $type.'_'.$plug;
                 $DB->delete_records('log_display', array('component'=>$component));
                 log_update_descriptions($component);

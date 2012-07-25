@@ -40,6 +40,6 @@ if ($data = $form->get_data()) {
 }
 
 echo $OUTPUT->header();
-// TODO: add some more info here
+// TODO: add some more info here.
 $form->display();
 echo $OUTPUT->footer();
