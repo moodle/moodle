@@ -1737,6 +1737,23 @@ class restore_calendarevents_structure_step extends restore_structure_step {
                 return;
             }
         }
+        // Handle events with empty eventtype //MDL-32827
+        if(empty($data->eventtype)) {
+            if ($data->courseid == $SITE->id) {                                // Site event
+                $data->eventtype = "site";
+            } else if ($data->courseid != 0 && $data->groupid == 0 && ($data->modulename == 'assignment' || $data->modulename == 'assign')) {
+                // Course assingment event
+                $data->eventtype = "due";
+            } else if ($data->courseid != 0 && $data->groupid == 0) {      // Course event
+                $data->eventtype = "course";
+            } else if ($data->groupid) {                                      // Group event
+                $data->eventtype = "group";
+            } else if ($data->userid) {                                       // User event
+                $data->eventtype = "user";
+            } else {
+                return;
+            }
+        }
 
         $params = array(
                 'name'           => $data->name,
