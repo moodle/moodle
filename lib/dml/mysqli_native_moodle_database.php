@@ -380,6 +380,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $errorno = @$this->mysqli->connect_errno;
 
         if ($errorno !== 0) {
+            $this->mysqli = null;
             throw new dml_connection_exception($dberr);
         }
 
