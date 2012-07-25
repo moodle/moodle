@@ -7118,7 +7118,7 @@ FROM
         upgrade_save_orphaned_questions();
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2012062501.04);
+        upgrade_main_savepoint(true, 2011120504.03);
     }
 
     return true;
