@@ -526,7 +526,7 @@ function set_cron_lock($name, $until, $ignorecurrent=false) {
 function admin_critical_warnings_present() {
     global $SESSION;
 
-    if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+    if (!has_capability('moodle/site:config', context_system::instance())) {
         return 0;
     }
 
@@ -1164,7 +1164,7 @@ class admin_externalpage implements part_of_admin_tree {
      */
     public function check_access() {
         global $CFG;
-        $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
+        $context = empty($this->context) ? context_system::instance() : $this->context;
         foreach($this->req_capability as $cap) {
             if (has_capability($cap, $context)) {
                 return true;
@@ -1340,7 +1340,7 @@ class admin_settingpage implements part_of_admin_tree {
      */
     public function check_access() {
         global $CFG;
-        $context = empty($this->context) ? get_context_instance(CONTEXT_SYSTEM) : $this->context;
+        $context = empty($this->context) ? context_system::instance() : $this->context;
         foreach($this->req_capability as $cap) {
             if (has_capability($cap, $context)) {
                 return true;
@@ -2854,7 +2854,7 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
         if (is_array($this->choices)) {
             return true;
         }
-        $users = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM),
+        $users = get_users_by_capability(context_system::instance(),
             $this->capability, 'u.id,u.username,u.firstname,u.lastname', 'u.lastname,u.firstname');
         $this->choices = array(
             '$@NONE@$' => get_string('nobody'),

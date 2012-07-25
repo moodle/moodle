@@ -388,7 +388,7 @@ function message_get_my_providers() {
 function message_get_providers_for_user($userid) {
     global $DB, $CFG;
 
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    $systemcontext = context_system::instance();
 
     $providers = get_message_providers();
 

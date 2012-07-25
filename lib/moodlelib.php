@@ -1443,7 +1443,7 @@ function get_users_from_config($value, $capability, $includeadmins = true) {
     // we have to make sure that users still have the necessary capability,
     // it should be faster to fetch them all first and then test if they are present
     // instead of validating them one-by-one
-    $users = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM), $capability);
+    $users = get_users_by_capability(context_system::instance(), $capability);
     if ($includeadmins) {
         $admins = get_admins();
         foreach ($admins as $admin) {
@@ -2864,10 +2864,10 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
     }
 
     // Fetch the system context, the course context, and prefetch its child contexts
-    $sysctx = get_context_instance(CONTEXT_SYSTEM);
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
+    $sysctx = context_system::instance();
+    $coursecontext = context_course::instance($course->id, MUST_EXIST);
     if ($cm) {
-        $cmcontext = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
+        $cmcontext = context_module::instance($cm->id, MUST_EXIST);
     } else {
         $cmcontext = null;
     }
@@ -4452,7 +4452,7 @@ function delete_course($courseorid, $showfeedback = true) {
             return false;
         }
     }
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
 
     // frontpage course can not be deleted!!
     if ($courseid == SITEID) {
@@ -4788,7 +4788,7 @@ function reset_course_userdata($data) {
     require_once($CFG->dirroot.'/group/lib.php');
 
     $data->courseid = $data->id;
-    $context = get_context_instance(CONTEXT_COURSE, $data->courseid);
+    $context = context_course::instance($data->courseid);
 
     // calculate the time shift of dates
     if (!empty($data->reset_start_date)) {
@@ -5618,7 +5618,7 @@ function send_password_change_info($user) {
 
     $site = get_site();
     $supportuser = generate_email_supportuser();
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    $systemcontext = context_system::instance();
 
     $data = new stdClass();
     $data->firstname = $user->firstname;

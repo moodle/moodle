@@ -92,7 +92,7 @@ class file_picker implements renderable {
         $options->currentfile = '';
         if (!empty($options->itemid)) {
             $fs = get_file_storage();
-            $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+            $usercontext = context_user::instance($USER->id);
             if (empty($options->filename)) {
                 if ($files = $fs->get_area_files($usercontext->id, 'user', 'draft', $options->itemid, 'id DESC', false)) {
                     $file = reset($files);

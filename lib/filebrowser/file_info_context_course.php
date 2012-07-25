@@ -383,7 +383,7 @@ class file_info_context_course extends file_info {
             if (empty($cminfo->uservisible)) {
                 continue;
             }
-            $modcontext = get_context_instance(CONTEXT_MODULE, $cminfo->id);
+            $modcontext = context_module::instance($cminfo->id, IGNORE_MISSING);
             if ($child = $this->browser->get_file_info($modcontext)) {
                 $children[] = $child;
             }

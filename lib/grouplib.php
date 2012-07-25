@@ -455,7 +455,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
         }
     }
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     $aag = has_capability('moodle/site:accessallgroups', $context);
 
     if ($groupmode == VISIBLEGROUPS or $aag) {
@@ -548,7 +548,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
         }
     }
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     $aag = has_capability('moodle/site:accessallgroups', $context);
 
     if ($groupmode == VISIBLEGROUPS or $aag) {
@@ -617,7 +617,7 @@ function groups_get_course_group($course, $update=false, $allowedgroups=null) {
         return false;
     }
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     if (has_capability('moodle/site:accessallgroups', $context)) {
         $groupmode = 'aag';
     }
@@ -669,7 +669,7 @@ function groups_get_activity_group($cm, $update=false, $allowedgroups=null) {
         return false;
     }
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     if (has_capability('moodle/site:accessallgroups', $context)) {
         $groupmode = 'aag';
     }
@@ -725,7 +725,7 @@ function groups_get_activity_allowed_groups($cm,$userid=0) {
 
     // If visible groups mode, or user has the accessallgroups capability,
     // then they can access all groups for the activity...
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
         return groups_get_all_groups($cm->course, 0, $cm->groupingid);
     } else {
@@ -756,7 +756,7 @@ function groups_course_module_visible($cm, $userid=null) {
     if (empty($cm->groupmembersonly)) {
         return true;
     }
-    if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id), $userid) or groups_has_membership($cm, $userid)) {
+    if (has_capability('moodle/site:accessallgroups', context_module::instance($cm->id), $userid) or groups_has_membership($cm, $userid)) {
         return true;
     }
     return false;
