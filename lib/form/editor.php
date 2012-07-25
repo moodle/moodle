@@ -209,7 +209,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
      * @param string $function name of the callback function
      * @deprecated since Moodle 2.0. Please do not call this function any more.
      * @todo MDL-34508 this api will be removed.
-     * @see MoodleQuickForm::setHelpButton()
+     * @see MoodleQuickForm::addHelpButton()
      */
     function setHelpButton($_helpbuttonargs, $function='_helpbutton') {
         debugging('setHelpButton() is deprecated, please use $mform->addHelpButton() instead');
