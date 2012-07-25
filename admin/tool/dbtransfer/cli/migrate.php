@@ -83,8 +83,11 @@ if ($options['help']) {
     exit(0);
 }
 
-echo "\n".get_string('cliheading', 'tool_dbtransfer')."\n\n";
+if (empty($CFG->version)) {
+    cli_error(get_string('missingconfigversion', 'debug'));
+}
 
+echo "\n".get_string('cliheading', 'tool_dbtransfer')."\n\n";
 
 $drivers = tool_dbtransfer_get_drivers();
 
