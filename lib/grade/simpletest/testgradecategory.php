@@ -429,6 +429,7 @@ class grade_category_test extends grade_test {
         $items[$this->grade_items[2]->id] = new grade_item($this->grade_items[2], false);
         $items[$this->grade_items[4]->id] = new grade_item($this->grade_items[4], false);
 
+        // Test excluding the lowest 2 out of 4 grades from aggregation with no 0 grades
         $category = new grade_category();
         $category->droplow = 2;
         $grades = array($this->grade_items[0]->id=>5.374,
@@ -440,6 +441,7 @@ class grade_category_test extends grade_test {
         $this->assertEqual($grades[$this->grade_items[1]->id], 9.4743);
         $this->assertEqual($grades[$this->grade_items[4]->id], 7.3754);
 
+        // Test aggregating only the highest 1 out of 4 grades
         $category = new grade_category();
         $category->keephigh = 1;
         $category->droplow = 0;
@@ -452,25 +454,28 @@ class grade_category_test extends grade_test {
         $grade = reset($grades);
         $this->assertEqual(9.4743, $grade);
 
+        // Test excluding the lowest 2 out of 4 grades from aggregation with no 0 grades
+        // An extra credit grade item should be kept even if droplow means it would otherwise be excluded
         $category = new grade_category();
         $category->droplow     = 2;
         $category->aggregation = GRADE_AGGREGATE_SUM;
-        $items[$this->grade_items[2]->id]->aggregationcoef = 1;
+        $items[$this->grade_items[2]->id]->aggregationcoef = 1; // Mark grade item 2 as "extra credit"
         $grades = array($this->grade_items[0]->id=>5.374,
                         $this->grade_items[1]->id=>9.4743,
                         $this->grade_items[2]->id=>2.5474,
                         $this->grade_items[4]->id=>7.3754);
-
         $category->apply_limit_rules($grades, $items);
         $this->assertEqual(count($grades), 2);
         $this->assertEqual($grades[$this->grade_items[1]->id], 9.4743);
         $this->assertEqual($grades[$this->grade_items[2]->id], 2.5474);
 
+        // Test only aggregating the highest 1 out of 4 grades
+        // An extra credit grade item is retained in addition to the highest grade
         $category = new grade_category();
         $category->keephigh = 1;
         $category->droplow = 0;
         $category->aggregation = GRADE_AGGREGATE_SUM;
-        $items[$this->grade_items[2]->id]->aggregationcoef = 1;
+        $items[$this->grade_items[2]->id]->aggregationcoef = 1; // Mark grade item 2 as "extra credit"
         $grades = array($this->grade_items[0]->id=>5.374,
                         $this->grade_items[1]->id=>9.4743,
                         $this->grade_items[2]->id=>2.5474,
@@ -479,6 +484,60 @@ class grade_category_test extends grade_test {
         $this->assertEqual(count($grades), 2);
         $this->assertEqual($grades[$this->grade_items[1]->id], 9.4743);
         $this->assertEqual($grades[$this->grade_items[2]->id], 2.5474);
+
+
+        // Test excluding the lowest 1 out of 4 grades from aggregation with two 0 grades
+        $items[$this->grade_items[2]->id]->aggregationcoef = 0; // Undo marking grade item 2 as "extra credit"
+        $category = new grade_category();
+        $category->droplow     = 1;
+        $category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2; // simple weighted mean
+        $grades = array($this->grade_items[0]->id=>0, // 0 out of 110. Should be excluded from aggregation.
+                        $this->grade_items[1]->id=>5, // 5 out of 100
+                        $this->grade_items[2]->id=>2, // 0 out of 6
+                        $this->grade_items[4]->id=>0); // 0 out of 100
+        $category->apply_limit_rules($grades, $items);
+        $this->assertEqual(count($grades), 3);
+        $this->assertEqual($grades[$this->grade_items[1]->id], 5);
+        $this->assertEqual($grades[$this->grade_items[2]->id], 2);
+        $this->assertEqual($grades[$this->grade_items[4]->id], 0);
+
+        // Test excluding the lowest 2 out of 4 grades from aggregation with three 0 grades
+        $category = new grade_category();
+        $category->droplow     = 2;
+        $category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2; // simple weighted mean
+        $grades = array($this->grade_items[0]->id=>0, // 0 out of 110. Should be excluded from aggregation.
+                        $this->grade_items[1]->id=>5, // 5 out of 100
+                        $this->grade_items[2]->id=>0, // 0 out of 6
+                        $this->grade_items[4]->id=>0); // 0 out of 100. Should be excluded from aggregation.
+        $category->apply_limit_rules($grades, $items);
+        $this->assertEqual(count($grades), 2);
+        $this->assertEqual($grades[$this->grade_items[1]->id], 5);
+        $this->assertEqual($grades[$this->grade_items[2]->id], 0);
+
+        // Test excluding the lowest 5 out of 4 grades from aggregation
+        // Just to check we handle this sensibly
+        $category = new grade_category();
+        $category->droplow     = 5;
+        $category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2; // simple weighted mean
+        $grades = array($this->grade_items[0]->id=>0, // 0 out of 110. Should be excluded from aggregation.
+                        $this->grade_items[1]->id=>5, // 5 out of 100
+                        $this->grade_items[2]->id=>6, // 6 out of 6
+                        $this->grade_items[4]->id=>1);// 1 out of 100. Should be excluded from aggregation.
+        $category->apply_limit_rules($grades, $items);
+        $this->assertEqual(count($grades), 0);
+
+        // Test excluding the lowest 4 out of 4 grades from aggregation with one marked as extra credit
+        $category = new grade_category();
+        $category->droplow     = 4;
+        $category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2; // simple weighted mean
+        $items[$this->grade_items[2]->id]->aggregationcoef = 1; // Mark grade item 2 as "extra credit"
+        $grades = array($this->grade_items[0]->id=>0, // 0 out of 110. Should be excluded from aggregation.
+                        $this->grade_items[1]->id=>5, // 5 out of 100. Should be excluded from aggregation.
+                        $this->grade_items[2]->id=>6, // 6 out of 6. Extra credit. Should be retained.
+                        $this->grade_items[4]->id=>1);// 1 out of 100. Should be excluded from aggregation.
+        $category->apply_limit_rules($grades, $items);
+        $this->assertEqual(count($grades), 1);
+        $this->assertEqual($grades[$this->grade_items[2]->id], 6);
     }
 
     /**
