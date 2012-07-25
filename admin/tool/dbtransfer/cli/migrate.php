@@ -90,7 +90,7 @@ $drivers = tool_dbtransfer_get_drivers();
 
 if (!isset($options['dbtype'])) {
     $choose = array();
-    foreach ($drivers as $driver=>$name) {
+    foreach ($drivers as $driver => $name) {
         list($dbtype, $dblibrary) = explode('/', $driver);
         $choose[$dbtype] = $dbtype;
     }
@@ -100,7 +100,7 @@ if (!isset($options['dbtype'])) {
 }
 
 $choose = array();
-foreach ($drivers as $driver=>$name) {
+foreach ($drivers as $driver => $name) {
     list($dbtype, $dblibrary) = explode('/', $driver);
     if ($dbtype === $options['dbtype']) {
         $choose[$dblibrary] = $dblibrary;
@@ -108,7 +108,7 @@ foreach ($drivers as $driver=>$name) {
 }
 if (!isset($options['dblibrary']) or !isset($choose[$options['dblibrary']])) {
     $optionsstr = implode(', ', $choose);
-    cli_heading('Database library'." ($optionsstr)"); // note: no need to localise unless we add real PDO drivers
+    cli_heading('Database library'." ($optionsstr)"); // Note: no need to localise unless we add real PDO drivers.
     $options['dblibrary'] = cli_input(get_string('clitypevalue', 'admin'), '', $choose, true);
 }
 
@@ -149,7 +149,8 @@ if ($CFG->ostype !== 'WINDOWS') {
     }
 }
 
-$a = (object)array('dbtypefrom'=>$CFG->dbtype, 'dbtype'=>$options['dbtype'], 'dbname'=>$options['dbname'], 'dbhost'=>$options['dbhost']);
+$a = (object)array('dbtypefrom' => $CFG->dbtype, 'dbtype' => $options['dbtype'],
+    'dbname' => $options['dbname'], 'dbhost' => $options['dbhost']);
 cli_heading(get_string('transferringdbto', 'tool_dbtransfer', $a));
 
 // Try target DB connection.
@@ -164,7 +165,8 @@ if ($options['dbsocket']) {
     $dboptions['dbsocket'] = $options['dbsocket'];
 }
 try {
-    $targetdb->connect($options['dbhost'], $options['dbuser'], $options['dbpass'], $options['dbname'], $options['prefix'], $dboptions);
+    $targetdb->connect($options['dbhost'], $options['dbuser'], $options['dbpass'], $options['dbname'],
+        $options['prefix'], $dboptions);
     if ($targetdb->get_tables()) {
         $problem .= get_string('targetdatabasenotempty', 'tool_dbtransfer');
     }

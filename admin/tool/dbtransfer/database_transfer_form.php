@@ -30,6 +30,9 @@ require_once(__DIR__.'/locallib.php');
 
 /**
  * Definition of db transfer settings form.
+ *
+ * @copyright  2008 Petr Skoda {@link http://skodak.org/}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class database_transfer_form extends moodleform {
 
