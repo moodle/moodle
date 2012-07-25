@@ -815,6 +815,9 @@ abstract class repository {
         $ft = new filetype_parser();
         if (isset($args['accepted_types'])) {
             $accepted_types = $args['accepted_types'];
+            if (is_array($accepted_types) && in_array('*', $accepted_types)) {
+                $accepted_types = '*';
+            }
         } else {
             $accepted_types = '*';
         }
