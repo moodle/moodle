@@ -61,9 +61,7 @@ $url = new moodle_url('/mod/feedback/show_entries.php', array('id'=>$cm->id, 'do
 
 $PAGE->set_url($url);
 
-if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
-        print_error('badcontext');
-}
+$context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
 

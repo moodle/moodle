@@ -216,7 +216,7 @@ class feedback_item_info extends feedback_item_base {
                 $itemshowvalue = userdate($itemvalue);
                 break;
             case 2:
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                $coursecontext = context_course::instance($course->id);
                 $itemvalue = format_string($course->shortname,
                                            true,
                                            array('context' => $coursecontext));
@@ -225,7 +225,7 @@ class feedback_item_info extends feedback_item_base {
                 break;
             case 3:
                 if ($coursecategory) {
-                    $category_context = get_context_instance(CONTEXT_COURSECAT, $coursecategory->id);
+                    $category_context = context_coursecat::instance($coursecategory->id);
                     $itemvalue = format_string($coursecategory->name,
                                                true,
                                                array('context' => $category_context));
@@ -293,7 +293,7 @@ class feedback_item_info extends feedback_item_base {
                 $itemshowvalue = userdate($itemvalue);
                 break;
             case 2:
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                $coursecontext = context_course::instance($course->id);
                 $itemvalue = format_string($course->shortname,
                                            true,
                                            array('context' => $coursecontext));
@@ -302,7 +302,7 @@ class feedback_item_info extends feedback_item_base {
                 break;
             case 3:
                 if ($coursecategory) {
-                    $category_context = get_context_instance(CONTEXT_COURSECAT, $coursecategory->id);
+                    $category_context = context_coursecat::instance($coursecategory->id);
                     $itemvalue = format_string($coursecategory->name,
                                                true,
                                                array('context' => $category_context));
