@@ -44,7 +44,7 @@
         $dataid = clean_param($args[3], PARAM_INT);
         $cm = get_coursemodule_from_instance('data', $dataid, 0, false, MUST_EXIST);
         if ($cm) {
-            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $modcontext = context_module::instance($cm->id);
 
             //context id from db should match the submitted one
             if ($context->id != $modcontext->id || !has_capability('mod/data:viewentry', $modcontext)) {
@@ -107,7 +107,7 @@
                 array_push($items, $item);
             }
             $course = $DB->get_record('course', array('id'=>$data->course));
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $coursecontext = context_course::instance($course->id);
             $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
 
             // First all rss feeds common headers.

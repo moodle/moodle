@@ -49,9 +49,7 @@ $data->course     = $cm->course;
 $data->cmidnumber = $cm->idnumber;
 $data->instance   = $cm->instance;
 
-if (! $context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
-    print_error('invalidcontext', '');
-}
+$context = context_module::instance($cm->id);
 
 require_login($course, false, $cm);
 require_capability(DATA_CAP_EXPORT, $context);
@@ -60,7 +58,6 @@ require_capability(DATA_CAP_EXPORT, $context);
 $fieldrecords = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id');
 
 if(empty($fieldrecords)) {
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (has_capability('mod/data:managetemplates', $context)) {
         redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);
     } else {
