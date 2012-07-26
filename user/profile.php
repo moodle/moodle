@@ -59,7 +59,7 @@ $userid = $userid ? $userid : $USER->id;       // Owner of the page
 $user = $DB->get_record('user', array('id' => $userid));
 
 if ($user->deleted) {
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $PAGE->set_context(context_system::instance());
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('userdeleted'));
     echo $OUTPUT->footer();
@@ -67,7 +67,7 @@ if ($user->deleted) {
 }
 
 $currentuser = ($user->id == $USER->id);
-$context = $usercontext = get_context_instance(CONTEXT_USER, $userid, MUST_EXIST);
+$context = $usercontext = context_user::instance($userid, MUST_EXIST);
 
 if (!$currentuser &&
     !empty($CFG->forceloginforprofiles) &&
@@ -76,7 +76,7 @@ if (!$currentuser &&
 
     // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
     $struser = get_string('user');
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $PAGE->set_context(context_system::instance());
     $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name
     $PAGE->set_heading("$SITE->shortname: $struser");
     $PAGE->set_url('/user/profile.php', array('id'=>$userid));
@@ -93,7 +93,7 @@ if (!$currentpage = my_get_page($userid, MY_PAGE_PUBLIC)) {
 }
 
 if (!$currentpage->userid) {
-    $context = get_context_instance(CONTEXT_SYSTEM);  // A trick so that we even see non-sticky blocks
+    $context = context_system::instance();  // A trick so that we even see non-sticky blocks
 }
 
 $PAGE->set_context($context);
@@ -306,7 +306,7 @@ if (!isset($hiddenfields['mycourses'])) {
             if ($mycourse->category) {
                 $class = '';
                 if ($mycourse->visible == 0) {
-                    $ccontext = get_context_instance(CONTEXT_COURSE, $mycourse->id);
+                    $ccontext = context_course::instance($mycourse->id);
                     if (!has_capability('moodle/course:viewhiddencourses', $ccontext)) {
                         continue;
                     }
