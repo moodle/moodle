@@ -405,7 +405,7 @@ class assignment_upload extends assignment_base {
         global $DB;
 
         // Grab the context assocated with our course module
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $context = context_module::instance($this->cm->id);
 
         // Get ids of users enrolled in the given course.
         list($enroledsql, $params) = get_enrolled_sql($context, 'mod/assignment:view', $groupid);
@@ -1081,7 +1081,7 @@ class assignment_upload extends assignment_base {
         $mform->addHelpButton('var4', 'trackdrafts', 'assignment');
         $mform->setDefault('var4', 1);
 
-        $course_context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        $course_context = context_course::instance($COURSE->id);
         plagiarism_get_form_elements_module($mform, $course_context);
     }
 
