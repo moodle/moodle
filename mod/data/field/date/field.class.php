@@ -44,9 +44,12 @@ class data_field_date extends data_field_base {
         }
 
         $str = '<div title="'.s($this->field->description).'">';
-        $dayselector = html_writer::select_time('days', 'field_'.$this->field->id.'_day', $content);
-        $monthselector = html_writer::select_time('months', 'field_'.$this->field->id.'_month', $content);
-        $yearselector = html_writer::select_time('years', 'field_'.$this->field->id.'_year', $content);
+        $dayselector = html_writer::label(get_string('day'), 'menufield_'.$this->field->id.'_day', false, array('class' => 'accesshide'))
+                     . html_writer::select_time('days', 'field_'.$this->field->id.'_day', $content);
+        $monthselector = html_writer::label(get_string('month'), 'menufield_'.$this->field->id.'_month', false, array('class' => 'accesshide'))
+                       . html_writer::select_time('months', 'field_'.$this->field->id.'_month', $content);
+        $yearselector = html_writer::label(get_string('year'), 'menufield_'.$this->field->id.'_year', false, array('class' => 'accesshide'))
+                      . html_writer::select_time('years', 'field_'.$this->field->id.'_year', $content);
         $str .= $dayselector . $monthselector . $yearselector;
         $str .= '</div>';
 
@@ -55,8 +58,11 @@ class data_field_date extends data_field_base {
 
     //Enable the following three functions once core API issues have been addressed.
     function display_search_field($value=0) {
-        $selectors = html_writer::select_time('days', 'f_'.$this->field->id.'_d', $value)
+        $selectors = html_writer::label(get_string('day'), 'menuf_'.$this->field->id.'_d', false, array('class' => 'accesshide'))
+           . html_writer::select_time('days', 'f_'.$this->field->id.'_d', $value)
+           . html_writer::label(get_string('month'), 'menuf_'.$this->field->id.'_m', false, array('class' => 'accesshide'))
            . html_writer::select_time('months', 'f_'.$this->field->id.'_m', $value)
+           . html_writer::label(get_string('year'), 'menuf_'.$this->field->id.'_y', false, array('class' => 'accesshide'))
            . html_writer::select_time('years', 'f_'.$this->field->id.'_y', $value);
        return $selectors;
 
