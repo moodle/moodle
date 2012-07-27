@@ -101,7 +101,7 @@ function imscp_add_instance($data, $mform) {
 
     // we need to use context now, so we need to make sure all needed info is already in db
     $DB->set_field('course_modules', 'instance', $data->id, array('id'=>$cmid));
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
     $imscp = $DB->get_record('imscp', array('id'=>$data->id), '*', MUST_EXIST);
 
     if ($filename = $mform->get_new_filename('package')) {
@@ -136,7 +136,7 @@ function imscp_update_instance($data, $mform) {
 
     $DB->update_record('imscp', $data);
 
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
     $imscp = $DB->get_record('imscp', array('id'=>$data->id), '*', MUST_EXIST);
 
     if ($filename = $mform->get_new_filename('package')) {
