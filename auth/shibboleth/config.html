@@ -20,17 +20,17 @@
 <table cellspacing="0" cellpadding="5" border="0">
 
 <tr valign="top" class="required">
-    <td align="right"><?php print_string("username") ?>:</td>
+    <td align="right"><label for="user_attribute"><?php print_string("username") ?>: </label></td>
     <td>
-        <input name="user_attribute" type="text" size="30" value="<?php echo $config->user_attribute ?>" />
+        <input id="user_attribute" name="user_attribute" type="text" size="30" value="<?php echo $config->user_attribute ?>" />
     </td>
     <td><?php print_string("auth_shib_username_description", "auth_shibboleth") ?></td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string("auth_shib_convert_data", "auth_shibboleth") ?>:</td>
+    <td align="right"><label for="convert_data"><?php print_string("auth_shib_convert_data", "auth_shibboleth") ?>: </label></td>
     <td>
-        <input name="convert_data" type="text" size="30" value="<?php echo $config->convert_data?>" />
+        <input name="convert_data" id="convert_data" type="text" size="30" value="<?php echo $config->convert_data?>" />
         <?php
 
         if ($config->convert_data and $config->convert_data != '' and !is_readable($config->convert_data)) {
@@ -82,9 +82,9 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string("auth_shib_logout_url", "auth_shibboleth") ?>:</td>
+    <td align="right"><label for="logout_handler"><?php print_string("auth_shib_logout_url", "auth_shibboleth") ?>: </label></td>
     <td>
-        <input name="logout_handler" type="text" size="30" value="<?php
+        <input name="logout_handler" id="logout_handler" type="text" size="30" value="<?php
         if ( isset($config->logout_handler) and !empty($config->logout_handler)){
             echo $config->logout_handler;
         }
@@ -94,9 +94,9 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string("auth_shib_logout_return_url", "auth_shibboleth") ?>:</td>
+    <td align="right"><label for="logout_return_url"><?php print_string("auth_shib_logout_return_url", "auth_shibboleth") ?>: </label></td>
     <td>
-        <input name="logout_return_url" type="text" size="30" value="<?php
+        <input name="logout_return_url" id="logout_return_url" type="text" size="30" value="<?php
         if ( isset($config->logout_return_url) and !empty($config->logout_return_url)){
             echo $config->logout_return_url;
         }
@@ -106,9 +106,9 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string("auth_shib_auth_method", "auth_shibboleth") ?>:</td>
+    <td align="right"><label for="login_name"><?php print_string("auth_shib_auth_method", "auth_shibboleth") ?>: </label></td>
     <td>
-        <input name="login_name" type="text" size="30" value="<?php
+        <input name="login_name" id="login_name" type="text" size="30" value="<?php
         if ( isset($config->login_name) and !empty($config->login_name)){
             echo htmlentities($config->login_name);
         } else {
@@ -120,9 +120,9 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
 </tr>
 
 <tr valign="top">
-    <td align="right"><?php print_string('auth_shib_changepasswordurl', 'auth_shibboleth') ?>: </td>
+    <td align="right"><label for="changepasswordurl"><?php print_string('auth_shib_changepasswordurl', 'auth_shibboleth') ?>: </label></td>
     <td>
-        <input name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
+        <input name="changepasswordurl" id="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
         <?php
 
         if (isset($err['changepasswordurl'])) {
