@@ -287,7 +287,7 @@ $url = new moodle_url('/admin/tool/langimport/index.php', array('mode' => DELETI
 echo html_writer::start_tag('td', array('valign' => 'top'));
 echo html_writer::start_tag('form', array('id' => 'uninstallform', 'action' => $url->out(), 'method' => 'post'));
 echo html_writer::start_tag('fieldset');
-echo html_writer::label(get_string('installedlangs', 'tool_langimport'), 'uninstalllang');
+echo html_writer::label(get_string('installedlangs', 'tool_langimport'), 'menuuninstalllang');
 echo html_writer::empty_tag('br');
 echo html_writer::select($installedlangs, 'uninstalllang', '', false, array('size' => 15));
 echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
@@ -315,7 +315,7 @@ if (!empty($options)) {
     $url = new moodle_url('/admin/tool/langimport/index.php', array('mode' => INSTALLATION_OF_SELECTED_LANG));
     echo html_writer::start_tag('form', array('id' => 'installform', 'action' => $url->out(), 'method' => 'post'));
     echo html_writer::start_tag('fieldset');
-    echo html_writer::label(get_string('availablelangs','install'), 'pack');
+    echo html_writer::label(get_string('availablelangs','install'), 'menupack');
     echo html_writer::empty_tag('br');
     echo html_writer::select($options, 'pack[]', '', false, array('size' => 15, 'multiple' => 'multiple'));
     echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));

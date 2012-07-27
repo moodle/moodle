@@ -352,7 +352,7 @@ if (($action == 'edit') || ($action == 'new')) {
             }
 
             $select = new single_select(repository_action_url($typename, 'repos'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . basename($typename));
-
+            $select->set_label(get_string('action'), array('class' => 'accesshide'));
             // Display up/down link
             $updown = '';
             $spacer = $OUTPUT->spacer(array('height'=>15, 'width'=>15)); // should be done with CSS instead
@@ -389,6 +389,7 @@ if (($action == 'edit') || ($action == 'new')) {
             // Check that it has not already been listed
             if (!in_array($plugin, $alreadyplugins)) {
                 $select = new single_select(repository_action_url($plugin, 'repos'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . basename($plugin));
+                $select->set_label(get_string('action'), array('class' => 'accesshide'));
                 $table->data[] = array(get_string('pluginname', 'repository_'.$plugin), $OUTPUT->render($select), '', '');
             }
         }
