@@ -28,7 +28,7 @@ class field_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'action', 'editfield');
-        $mform->setType('action', PARAM_ACTION);
+        $mform->setType('action', PARAM_ALPHANUMEXT);
         $mform->addElement('hidden', 'datatype', $datatype);
         $mform->setType('datatype', PARAM_ALPHA);
 

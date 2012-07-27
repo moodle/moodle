@@ -36,12 +36,12 @@ class import_outcomes_form extends moodleform {
         $mform =& $this->_form;
 
         $mform->addElement('hidden', 'action', 'upload');
-        $mform->setType('action', PARAM_ACTION);
+        $mform->setType('action', PARAM_ALPHANUMEXT);
         $mform->addElement('hidden', 'courseid', $PAGE->course->id);
         $mform->setType('id', PARAM_INT);
 
         $scope = array();
-        if (($PAGE->course->id > 1) && has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM))) {
+        if (($PAGE->course->id > 1) && has_capability('moodle/grade:manage', context_system::instance())) {
             $mform->addElement('radio', 'scope', get_string('importcustom', 'grades'), null, 'custom');
             $mform->addElement('radio', 'scope', get_string('importstandard', 'grades'), null, 'global');
             $mform->setDefault('scope', 'custom');

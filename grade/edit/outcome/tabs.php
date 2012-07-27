@@ -24,7 +24,7 @@
 
     $row = $tabs = array();
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
 
     $row[] = new tabobject('courseoutcomes',
                            $CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$courseid,

@@ -53,7 +53,7 @@ $PAGE->set_heading($course->fullname);
 if (!extension_loaded('xmlrpc')) {
     $errornotification = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
     $errornotification .= get_string('xmlrpcdisabledpublish', 'hub');
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     $shortname = format_string($course->shortname, true, array('context' => $context));
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('publishcourse', 'hub', $shortname), 3, 'main');
@@ -62,7 +62,7 @@ if (!extension_loaded('xmlrpc')) {
     die();
 }
 
-if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE, $id))) {
+if (has_capability('moodle/course:publish', context_course::instance($id))) {
 
     //retrieve hub name and hub url
     $huburl = optional_param('huburl', '', PARAM_URL);
@@ -135,7 +135,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         }
 
         //retrieve the content information from the course
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $coursecontext = context_course::instance($course->id);
         $courseblocks = $publicationmanager->get_block_instances_by_context($coursecontext->id, 'blockname');
 
         if (!empty($courseblocks)) {
@@ -177,7 +177,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         if (!empty($fromform->screenshots)) {
             $screenshots = $fromform->screenshots;
             $fs = get_file_storage();
-            $files = $fs->get_area_files(get_context_instance(CONTEXT_USER, $USER->id)->id, 'user', 'draft', $screenshots);
+            $files = $fs->get_area_files(context_user::instance($USER->id)->id, 'user', 'draft', $screenshots);
             if (!empty($files)) {
                 $courseinfo->screenshots = $courseinfo->screenshots + count($files) - 1; //minus the ./ directory
             }

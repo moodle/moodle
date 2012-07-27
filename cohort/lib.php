@@ -110,14 +110,14 @@ function cohort_delete_category($category) {
     global $DB;
     // TODO: make sure that cohorts are really, really not used anywhere and delete, for now just move to parent or system context
 
-    $oldcontext = get_context_instance(CONTEXT_COURSECAT, $category->id, MUST_EXIST);
+    $oldcontext = context_coursecat::instance($category->id);
 
     if ($category->parent and $parent = $DB->get_record('course_categories', array('id'=>$category->parent))) {
-        $parentcontext = get_context_instance(CONTEXT_COURSECAT, $parent->id, MUST_EXIST);
+        $parentcontext = context_coursecat::instance($parent->id);
         $sql = "UPDATE {cohort} SET contextid = :newcontext WHERE contextid = :oldcontext";
         $params = array('oldcontext'=>$oldcontext->id, 'newcontext'=>$parentcontext->id);
     } else {
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext = context_system::instance();
         $sql = "UPDATE {cohort} SET contextid = :newcontext WHERE contextid = :oldcontext";
         $params = array('oldcontext'=>$oldcontext->id, 'newcontext'=>$syscontext->id);
     }
@@ -165,7 +165,7 @@ function cohort_remove_member($cohortid, $userid) {
 function cohort_get_visible_list($course) {
     global $DB, $USER;
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
+    $context = context_course::instance($course->id);
     list($esql, $params) = get_enrolled_sql($context);
     $parentsql = get_related_contexts_string($context);
 

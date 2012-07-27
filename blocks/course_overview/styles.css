@@ -1,0 +1,100 @@
+.block_course_overview .coursechildren {
+    font-weight: normal;
+    font-style: italic;
+}
+
+.block_course_overview .content {
+    margin-left: 20px;
+}
+
+.block_course_overview .coursebox {
+    padding: 15px 0 10px 10px;
+    width: 98%;
+}
+
+.block_course_overview .profilepicture {
+    float: left;
+}
+
+.block_course_overview .welcome_area {
+    width: 100%;
+    padding-bottom: 5px;
+}
+
+.block_course_overview .welcome_message {
+    float: left;
+    padding: 10px;
+    vertical-align: middle;
+    border-collapse: separate;
+    clear: none;
+}
+
+.block_course_overview .content h2.title {
+    float: left;
+    margin-bottom: 0;
+    margin-top: 0;
+    position: relative;
+}
+
+.block_course_overview .course_title {
+    position: relative;
+}
+
+.editing .block_course_overview .coursebox .cursor {
+    cursor: move;
+    margin-bottom: 2px;
+}
+
+.editing .block_course_overview .move {
+    float: left;
+    padding: 2px 10px 0 0;
+}
+
+.editing .block_course_overview .moveicons {
+    display: block;
+    float: left;
+    padding-right: 5px;
+}
+
+.editing .block_course_overview .moveup {
+    padding-right: 5px;
+}
+
+.editing .block_course_overview .movedownspacer {
+    float: left;
+    width: 14px;
+}
+
+.editing .block_course_overview .moveupspacer {
+    float: right;
+    width: 14px;
+}
+
+.block_course_overview #course_list {
+    width: 100%;
+}
+
+.block_course_overview div.flush {
+    clear: both;
+}
+
+.block_course_overview .activity_info {
+    clear: both;
+}
+
+.block_course_overview .activity_overview {
+    padding: 2px;
+}
+
+.block_course_overview .singleselect {
+    text-align: left;
+    margin: 0;
+}
+
+.block_course_overview .coursemovetarget {
+    display: block;
+    height: 1em;
+    margin-bottom: 1em;
+    border-width: 2px;
+    border-style: dashed;
+}

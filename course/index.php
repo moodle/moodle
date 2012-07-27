@@ -38,7 +38,7 @@ $movedown = optional_param('movedown',0,PARAM_INT);
 
 $site = get_site();
 
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = context_system::instance();
 
 $PAGE->set_url('/course/index.php');
 $PAGE->set_context($systemcontext);
@@ -121,7 +121,7 @@ if (!empty($delete) and confirm_sesskey()) {
     if (!$deletecat = $DB->get_record('course_categories', array('id'=>$delete))) {
         print_error('invalidcategoryid');
     }
-    $context = get_context_instance(CONTEXT_COURSECAT, $delete);
+    $context = context_coursecat::instance($delete);
     require_capability('moodle/category:manage', $context);
     require_capability('moodle/category:manage', get_category_or_system_context($deletecat->parent));
 
@@ -174,7 +174,7 @@ if (!$categories = get_categories()) {    /// No category yet!
     $tempcat = new stdClass();
     $tempcat->name = get_string('miscellaneous');
     $tempcat->id = $DB->insert_record('course_categories', $tempcat);
-    $tempcat->context = get_context_instance(CONTEXT_COURSECAT, $tempcat->id);
+    $tempcat->context = context_coursecat::instance($tempcat->id);
     mark_context_dirty('/'.SYSCONTEXTID);
     fix_course_sortorder(); // Required to build course_categories.depth and .path.
     set_config('defaultrequestcategory', $tempcat->id);
@@ -215,14 +215,14 @@ if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
     $swapcategory = NULL;
 
     if (!empty($moveup)) {
-        require_capability('moodle/category:manage', get_context_instance(CONTEXT_COURSECAT, $moveup));
+        require_capability('moodle/category:manage', context_coursecat::instance($moveup));
         if ($movecategory = $DB->get_record('course_categories', array('id'=>$moveup))) {
             if ($swapcategory = $DB->get_records_select('course_categories', "sortorder<? AND parent=?", array($movecategory->sortorder, $movecategory->parent), 'sortorder DESC', '*', 0, 1)) {
                 $swapcategory = reset($swapcategory);
             }
         }
     } else {
-        require_capability('moodle/category:manage', get_context_instance(CONTEXT_COURSECAT, $movedown));
+        require_capability('moodle/category:manage', context_coursecat::instance($movedown));
         if ($movecategory = $DB->get_record('course_categories', array('id'=>$movedown))) {
             if ($swapcategory = $DB->get_records_select('course_categories', "sortorder>? AND parent=?", array($movecategory->sortorder, $movecategory->parent), 'sortorder ASC', '*', 0, 1)) {
                 $swapcategory = reset($swapcategory);
@@ -306,7 +306,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
     if (!empty($category)) {
 
         if (!isset($category->context)) {
-            $category->context = get_context_instance(CONTEXT_COURSECAT, $category->id);
+            $category->context = context_coursecat::instance($category->id);
         }
 
         echo '<tr><td align="left" class="name">';

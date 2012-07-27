@@ -72,7 +72,7 @@ class block_section_links extends block_base {
         }
 
         $course = $this->page->course;
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
 
         if ($course->format == 'weeks' or $course->format == 'weekscss') {
             $highlight = ceil((time()-$course->startdate)/604800);

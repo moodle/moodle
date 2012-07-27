@@ -105,7 +105,7 @@ class blog_entry {
             require_once($CFG->dirroot . '/comment/lib.php');
             // Comments
             $cmt = new stdClass();
-            $cmt->context = get_context_instance(CONTEXT_USER, $user->id);
+            $cmt->context = context_user::instance($user->id);
             $cmt->courseid = $PAGE->course->id;
             $cmt->area = 'format_blog';
             $cmt->itemid = $this->id;
@@ -159,7 +159,7 @@ class blog_entry {
         $topiccell->text = $OUTPUT->container($titlelink, 'subject');
         $topiccell->text .= $OUTPUT->container_start('author');
 
-        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $PAGE->course->id)));
+        $fullname = fullname($user, has_capability('moodle/site:viewfullnames', context_course::instance($PAGE->course->id)));
         $by = new stdClass();
         $by->name =  html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $PAGE->course->id)), $fullname);
         $by->date = $template['created'];
@@ -247,7 +247,7 @@ class blog_entry {
 
             // First find and show the associated course
             foreach ($blogassociations as $assocrec) {
-                $context = get_context_instance_by_id($assocrec->contextid);
+                $context = context::instance_by_id($assocrec->contextid);
                 if ($context->contextlevel ==  CONTEXT_COURSE) {
                     $assocurl = new moodle_url('/course/view.php', array('id' => $context->instanceid));
                     $text = $DB->get_field('course', 'shortname', array('id' => $context->instanceid)); //TODO: performance!!!!
@@ -259,7 +259,7 @@ class blog_entry {
 
             // Now show mod association
             foreach ($blogassociations as $assocrec) {
-                $context = get_context_instance_by_id($assocrec->contextid);
+                $context = context::instance_by_id($assocrec->contextid);
 
                 if ($context->contextlevel ==  CONTEXT_MODULE) {
                     if ($hascourseassocs) {
@@ -375,7 +375,7 @@ class blog_entry {
     public function edit($params=array(), $form=null, $summaryoptions=array(), $attachmentoptions=array()) {
         global $CFG, $USER, $DB, $PAGE;
 
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        $sitecontext = context_system::instance();
         $entry = $this;
 
         $this->form = $form;
@@ -447,7 +447,7 @@ class blog_entry {
         $assocobject->blogid = $this->id;
         $DB->insert_record('blog_association', $assocobject);
 
-        $context = get_context_instance_by_id($contextid);
+        $context = context::instance_by_id($contextid);
         $courseid = null;
 
         if ($context->contextlevel == CONTEXT_COURSE) {
@@ -495,7 +495,7 @@ class blog_entry {
 
         $fs = get_file_storage();
 
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext = context_system::instance();
 
         $files = $fs->get_area_files($syscontext->id, 'blog', 'attachment', $this->id);
 
@@ -576,7 +576,7 @@ class blog_entry {
             $userid = $USER->id;
         }
 
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        $sitecontext = context_system::instance();
 
         if (has_capability('moodle/blog:manageentries', $sitecontext)) {
             return true; // can edit any blog entry
@@ -600,7 +600,7 @@ class blog_entry {
      */
     public function can_user_view($targetuserid) {
         global $CFG, $USER, $DB;
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        $sitecontext = context_system::instance();
 
         if (empty($CFG->bloglevel) || !has_capability('moodle/blog:view', $sitecontext)) {
             return false; // blog system disabled or user has no blog view capability
@@ -638,7 +638,7 @@ class blog_entry {
 
             case BLOG_USER_LEVEL:
             default:
-                $personalcontext = get_context_instance(CONTEXT_USER, $targetuserid);
+                $personalcontext = context_user::instance($targetuserid);
                 return has_capability('moodle/user:readuserblogs', $personalcontext);
                 break;
         }
@@ -753,11 +753,11 @@ class blog_listing {
 
         // fix for MDL-9165, use with readuserblogs capability in a user context can read that user's private blogs
         // admins can see all blogs regardless of publish states, as described on the help page
-        if (has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('moodle/user:readuserblogs', context_system::instance())) {
             // don't add permission constraints
 
         } else if(!empty($this->filters['user']) && has_capability('moodle/user:readuserblogs',
-                get_context_instance(CONTEXT_USER, (empty($this->filters['user']->id) ? 0 : $this->filters['user']->id)))) {
+                context_user::instance((empty($this->filters['user']->id) ? 0 : $this->filters['user']->id)))) {
             // don't add permission constraints
 
         } else {
@@ -808,7 +808,7 @@ class blog_listing {
      */
     public function print_entries() {
         global $CFG, $USER, $DB, $OUTPUT;
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        $sitecontext = context_system::instance();
 
         $page  = optional_param('blogpage', 0, PARAM_INT);
         $limit = optional_param('limit', get_user_preferences('blogpagesize', 10), PARAM_INT);
@@ -1020,7 +1020,7 @@ class blog_filter_context extends blog_filter {
                 // Ignore course filter if blog associations are not enabled
                 if ($this->id != $SITE->id && !empty($CFG->useblogassociations)) {
                     $this->overrides = array('site');
-                    $context = get_context_instance(CONTEXT_COURSE, $this->id);
+                    $context = context_course::instance($this->id);
                     $this->tables['ba'] = 'blog_association';
                     $this->conditions[] = 'p.id = ba.blogid';
                     $this->conditions[] = 'ba.contextid = '.$context->id;
@@ -1036,7 +1036,7 @@ class blog_filter_context extends blog_filter {
                 if (!empty($CFG->useblogassociations)) {
                     $this->overrides = array('course', 'site');
 
-                    $context = get_context_instance(CONTEXT_MODULE, $this->id);
+                    $context = context_module::instance($this->id);
                     $this->tables['ba'] = 'blog_association';
                     $this->tables['p']  = 'post';
                     $this->conditions = array('p.id = ba.blogid', 'ba.contextid = ?');
@@ -1086,7 +1086,7 @@ class blog_filter_user extends blog_filter {
             $this->params[]     = $this->id;
 
             if (!empty($CFG->useblogassociations)) {  // only show blog entries associated with this course
-                $coursecontext     = get_context_instance(CONTEXT_COURSE, $DB->get_field('groups', 'courseid', array('id' => $this->id)));
+                $coursecontext     = context_course::instance($DB->get_field('groups', 'courseid', array('id' => $this->id)));
                 $this->tables['ba'] = 'blog_association';
                 $this->conditions[] = 'gm.groupid = ?';
                 $this->conditions[] = 'ba.contextid = ?';

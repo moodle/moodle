@@ -265,7 +265,7 @@ class block_edit_form extends moodleform {
             $defaults->bui_subpagepattern = '%@NULL@%';
         }
 
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $systemcontext = context_system::instance();
         if ($defaults->parentcontextid == $systemcontext->id) {
             $defaults->bui_contexts = BUI_CONTEXTS_ENTIRE_SITE; // System-wide and sticky
         } else {

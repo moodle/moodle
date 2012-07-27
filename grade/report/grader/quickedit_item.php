@@ -52,7 +52,7 @@ if (!$item = $DB->get_record('grade_items', array('id' => $itemid))) {
 }
 
 require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 
 require_capability('gradereport/grader:view', $context);
 require_capability('moodle/grade:viewall', $context);

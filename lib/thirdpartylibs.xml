@@ -176,20 +176,6 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>simpletestlib</location>
-    <name>Simpletest</name>
-    <license>LGPL</license>
-    <version>1.1.0</version>
-    <licenseversion>2.1</licenseversion>
-  </library>
-  <library>
-    <location>spikephpcoverage</location>
-    <name>Spike PHPCoverage</name>
-    <license>LGPL</license>
-    <version>0.8.2</version>
-    <licenseversion>2.1</licenseversion>
-  </library>
-  <library>
     <location>tcpdf</location>
     <name>TCPDF</name>
     <license>LGPL</license>

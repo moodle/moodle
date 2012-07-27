@@ -32,8 +32,8 @@ if (isguestuser()) {
 }
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
-$courseid = optional_param('courseid', 0, PARAM_INTEGER);
-$rssid = required_param('rssid', PARAM_INTEGER);
+$courseid = optional_param('courseid', 0, PARAM_INT);
+$rssid = required_param('rssid', PARAM_INT);
 
 if ($courseid = SITEID) {
     $courseid = 0;
@@ -43,7 +43,7 @@ if ($courseid) {
     $PAGE->set_course($course);
     $context = $PAGE->context;
 } else {
-    $context = get_context_instance(CONTEXT_SYSTEM);
+    $context = context_system::instance();
     $PAGE->set_context($context);
 }
 

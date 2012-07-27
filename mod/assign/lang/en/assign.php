@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['activityoverview'] = 'You have assignments that need attention';
 $string['addsubmission'] = 'Add submission';
 $string['allowsubmissions'] = 'Allow the user to continue making submissions to this assignment.';
 $string['allowsubmissionsshort'] = 'Allow submission changes';
@@ -173,6 +174,7 @@ $string['nousersselected'] = 'No users selected';
 $string['numberofdraftsubmissions'] = 'Drafts';
 $string['numberofparticipants'] = 'Participants';
 $string['numberofsubmittedassignments'] = 'Submitted';
+$string['numberofsubmissionsneedgrading'] = 'Needs grading';
 $string['offline'] = 'No online submissions required';
 $string['overdue'] = '<font color="red">Assignment is overdue by: {$a}</font>';
 $string['outlinegrade'] = 'Grade: {$a}';

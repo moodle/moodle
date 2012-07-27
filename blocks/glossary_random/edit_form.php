@@ -38,7 +38,7 @@ class block_glossary_random_edit_form extends block_edit_form {
 
         $mform->addElement('text', 'config_title', get_string('title', 'block_glossary_random'));
         $mform->setDefault('config_title', get_string('pluginname','block_glossary_random'));
-        $mform->setType('config_title', PARAM_MULTILANG);
+        $mform->setType('config_title', PARAM_TEXT);
 
         // Select glossaries to put in dropdown box ...
         $glossaries = $DB->get_records_menu('glossary', array('course' => $this->block->course->id), 'name', 'id,name');
@@ -49,7 +49,7 @@ class block_glossary_random_edit_form extends block_edit_form {
 
         $mform->addElement('text', 'config_refresh', get_string('refresh', 'block_glossary_random'), array('size' => 5));
         $mform->setDefault('config_refresh', 0);
-        $mform->setType('config_refresh', PARAM_INTEGER);
+        $mform->setType('config_refresh', PARAM_INT);
 
         // and select quotetypes to put in dropdown box
         $types = array(

@@ -7,7 +7,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $query = trim(optional_param('query', '', PARAM_NOTAGS));  // Search string
 
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 
 admin_externalpage_setup('search', '', array('query' => $query)); // now hidden page
 

@@ -34,7 +34,7 @@ if ($hassiteconfig
     $temp = new admin_settingpage('userpolicies', new lang_string('userpolicies', 'admin'));
     if ($ADMIN->fulltree) {
         if (!during_initial_install()) {
-            $context = get_context_instance(CONTEXT_SYSTEM);
+            $context = context_system::instance();
 
             $otherroles      = array();
             $guestroles      = array();

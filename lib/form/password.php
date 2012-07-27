@@ -51,34 +51,18 @@ class MoodleQuickForm_password extends HTML_QuickForm_password{
      */
     function MoodleQuickForm_password($elementName=null, $elementLabel=null, $attributes=null) {
         global $CFG;
-        if (empty($CFG->xmlstrictheaders)) {
-            // no standard mform in moodle should allow autocomplete of passwords
-            // this is valid attribute in html5, sorry, we have to ignore validation errors in legacy xhtml 1.0
-            if (empty($attributes)) {
-                $attributes = array('autocomplete'=>'off');
-            } else if (is_array($attributes)) {
-                $attributes['autocomplete'] = 'off';
-            } else {
-                if (strpos($attributes, 'autocomplete') === false) {
-                    $attributes .= ' autocomplete="off" ';
-                }
+        // no standard mform in moodle should allow autocomplete of passwords
+        if (empty($attributes)) {
+            $attributes = array('autocomplete'=>'off');
+        } else if (is_array($attributes)) {
+            $attributes['autocomplete'] = 'off';
+        } else {
+            if (strpos($attributes, 'autocomplete') === false) {
+                $attributes .= ' autocomplete="off" ';
             }
         }
 
         parent::HTML_QuickForm_password($elementName, $elementLabel, $attributes);
-    }
-
-    /**
-     * set html for help button
-     *
-     * @param array $helpbuttonargs array of arguments to make a help button
-     * @param string $function function name to call to get html
-     * @deprecated since Moodle 2.0. Please do not call this function any more.
-     * @todo MDL-31047 this api will be removed.
-     * @see MoodleQuickForm::setHelpButton()
-     */
-    function setHelpButton($helpbuttonargs, $function='helpbutton'){
-        debugging('component setHelpButton() is not used any more, please use $mform->setHelpButton() instead');
     }
 
     /**

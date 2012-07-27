@@ -269,7 +269,7 @@ class assign_plugin_manager {
 
         if ($confirm) {
             // Delete any configuration records.
-            if (!unset_all_config_for_plugin('assignsubmission_' . $plugin)) {
+            if (!unset_all_config_for_plugin($this->subtype . '_' . $plugin)) {
                 $this->error = $OUTPUT->notification(get_string('errordeletingconfig', 'admin', $this->subtype . '_' . $plugin));
             }
 
@@ -282,7 +282,8 @@ class assign_plugin_manager {
             $DB->delete_records('assign_plugin_config', array('plugin'=>$plugin, 'subtype'=>$this->subtype));
 
             // Then the tables themselves
-            drop_plugin_tables($this->subtype . '_' . $plugin, $CFG->dirroot . '/mod/assign/' . $this->subtype . '/' .$plugin. '/db/install.xml', false);
+            $shortsubtype = substr($this->subtype, strlen('assign'));
+            drop_plugin_tables($this->subtype . '_' . $plugin, $CFG->dirroot . '/mod/assign/' . $shortsubtype . '/' .$plugin. '/db/install.xml', false);
 
             // Remove event handlers and dequeue pending events
             events_uninstall($this->subtype . '_' . $plugin);

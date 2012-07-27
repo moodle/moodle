@@ -92,7 +92,7 @@ function filter_text_image($imagefile, $tex, $height, $width, $align, $alt) {
     }
     $anchorcontents .= "\" $style/>";
 
-    if (!file_exists("$CFG->dataroot/filter/tex/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+    if (!file_exists("$CFG->dataroot/filter/tex/$imagefile") && has_capability('moodle/site:config', context_system::instance())) {
         $link = '/filter/tex/texdebug.php';
         $action = null;
     } else {

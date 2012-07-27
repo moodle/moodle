@@ -32,7 +32,7 @@ $PAGE->set_url('/mod/quiz/index.php', array('id'=>$id));
 if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('invalidcourseid');
 }
-$coursecontext = get_context_instance(CONTEXT_COURSE, $id);
+$coursecontext = context_course::instance($id);
 require_login($course);
 $PAGE->set_pagelayout('incourse');
 
@@ -124,7 +124,7 @@ $table->align = $align;
 $currentsection = '';
 foreach ($quizzes as $quiz) {
     $cm = get_coursemodule_from_instance('quiz', $quiz->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     $data = array();
 
     // Section number if necessary.

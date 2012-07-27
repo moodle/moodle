@@ -175,7 +175,7 @@ foreach ($courses as $type => $infos) {
 
             // Get course info
             $c_course = $DB->get_record('course', array('id' => $c_info->course_id));
-            $course_context = get_context_instance(CONTEXT_COURSE, $c_course->id, MUST_EXIST);
+            $course_context = context_course::instance($c_course->id, MUST_EXIST);
             $course_name = format_string($c_course->fullname, true, array('context' => $course_context));
 
             // Get completions

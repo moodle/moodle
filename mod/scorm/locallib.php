@@ -22,6 +22,10 @@ define('SCORM_UPDATE_NEVER', '0');
 define('SCORM_UPDATE_EVERYDAY', '2');
 define('SCORM_UPDATE_EVERYTIME', '3');
 
+define('SCORM_SKIPVIEW_NEVER', '0');
+define('SCORM_SKIPVIEW_FIRST', '1');
+define('SCORM_SKIPVIEW_ALWAYS', '2');
+
 define('SCO_ALL', 0);
 define('SCO_DATA', 1);
 define('SCO_ONLY', 2);
@@ -109,9 +113,9 @@ function scorm_get_what_grade_array() {
  * @return array an array of skip view options
  */
 function scorm_get_skip_view_array() {
-    return array(0 => get_string('never'),
-                 1 => get_string('firstaccess', 'scorm'),
-                 2 => get_string('always'));
+    return array(SCORM_SKIPVIEW_NEVER => get_string('never'),
+                 SCORM_SKIPVIEW_FIRST => get_string('firstaccess', 'scorm'),
+                 SCORM_SKIPVIEW_ALWAYS => get_string('always'));
 }
 
 /**
@@ -177,7 +181,7 @@ function scorm_parse($scorm, $full) {
         $cm = get_coursemodule_from_instance('scorm', $scorm->id);
         $scorm->cmid = $cm->id;
     }
-    $context = get_context_instance(CONTEXT_MODULE, $scorm->cmid);
+    $context = context_module::instance($scorm->cmid);
     $newhash = $scorm->sha1hash;
 
     if ($scorm->scormtype === SCORM_TYPE_LOCAL or $scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
@@ -693,7 +697,7 @@ function scorm_course_format_display($user, $course) {
     global $CFG, $DB, $PAGE, $OUTPUT;
 
     $strupdate = get_string('update');
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
 
     echo '<div class="mod-scorm">';
     if ($scorms = get_all_instances_in_course('scorm', $course)) {
@@ -702,7 +706,7 @@ function scorm_course_format_display($user, $course) {
         if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
             print_error('invalidcoursemodule');
         }
-        $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $contextmodule = context_module::instance($cm->id);
         if ((has_capability('mod/scorm:skipview', $contextmodule))) {
             scorm_simple_play($scorm, $user, $contextmodule, $cm->id);
         }
@@ -1422,7 +1426,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                                 $scoid = $sco->id;
                             }
                         }
-                        if ($usertrack->score_raw != '' && has_capability('mod/scorm:viewscores', get_context_instance(CONTEXT_MODULE,$cmid))) {
+                        if ($usertrack->score_raw != '' && has_capability('mod/scorm:viewscores', context_module::instance($cmid))) {
                             $score = '('.get_string('score','scorm').':&nbsp;'.$usertrack->score_raw.')';
                         }
                         $strsuspended = get_string('suspended','scorm');

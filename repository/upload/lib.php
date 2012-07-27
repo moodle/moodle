@@ -97,7 +97,7 @@ class repository_upload extends repository {
         $record->license  = $license;
         $record->author   = $author;
 
-        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $context = context_user::instance($USER->id);
         $elname = 'repo_upload_file';
 
         $fs = get_file_storage();

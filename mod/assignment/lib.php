@@ -1820,10 +1820,10 @@ class assignment_base {
      *
      * @global object
      * @global object
-     * @param $userid int The id of the user whose submission we want or 0 in which case USER->id is used
-     * @param $createnew boolean optional Defaults to false. If set to true a new submission object will be created in the database
+     * @param int $userid int The id of the user whose submission we want or 0 in which case USER->id is used
+     * @param bool $createnew boolean optional Defaults to false. If set to true a new submission object will be created in the database
      * @param bool $teachermodified student submission set if false
-     * @return object The submission
+     * @return object|bool The submission or false (if $createnew is false and there is no existing submission).
      */
     function get_submission($userid=0, $createnew=false, $teachermodified=false) {
         global $USER, $DB;
@@ -1834,8 +1834,10 @@ class assignment_base {
 
         $submission = $DB->get_record('assignment_submissions', array('assignment'=>$this->assignment->id, 'userid'=>$userid));
 
-        if ($submission || !$createnew) {
+        if ($submission) {
             return $submission;
+        } else if (!$createnew) {
+            return false;
         }
         $newsubmission = $this->prepare_new_submission($userid, $teachermodified);
         $DB->insert_record("assignment_submissions", $newsubmission);

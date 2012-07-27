@@ -58,7 +58,7 @@ blockquote {
     font-size: 1.2em;
     border: 1px solid #eee;
     padding: 2px 5px;
-    background: #fff;
+    background-color: #fff;
 }
 
 img{
@@ -276,12 +276,20 @@ h2.headingblock {
     margin-left: 0;
 }
 
+.editing .course-content .weeks .section.main .content {
+    margin-left: 40px;
+}
+
 .course-content .weeks .section.main .left {
     display: none;
 }
 
+.editing .course-content .weeks .section.main .left {
+    display: block;
+}
+
 .course-content .section.main.current {
-    background:#fffcdc;
+    background-color: #fffcdc;
 }
 
 .course-content .weeks .section.main h3.weekdates {
@@ -289,9 +297,10 @@ h2.headingblock {
 }
 
 .course-content .current .left,
-.course-content .current h3.weekdates {
-    color: #2d83d5 !important;
+.course-content .current h3.sectionname {
+    color: #2d83d5;
 }
+
 /* Forum
 --------------------------*/
 
@@ -318,12 +327,11 @@ h2.headingblock {
     padding: 5px 10px 10px;
 }
 
-
 /* Dock
 ----------------------*/
 
 #dock {
-    background: #eee;
+    background-color: #eee;
     border: none;
 }
 
@@ -354,7 +362,7 @@ h2.headingblock {
 #dockeditempanel .dockeditempanel_hd {
     border-bottom: none;
     padding: 3px 5px;
-    background: #eee;
+    background-color: #eee;
     text-align: left;
 }
 

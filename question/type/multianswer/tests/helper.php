@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/type/multianswer/question.php');
  */
 class qtype_multianswer_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('twosubq');
+        return array('twosubq', 'fourmc');
     }
 
     /**
@@ -54,6 +54,14 @@ class qtype_multianswer_test_helper extends question_test_helper {
                 'Complete this opening line of verse: "The {#1} and the {#2} went to sea".';
         $q->generalfeedback = 'General feedback: It\'s from "The Owl and the Pussy-cat" by Lear: ' .
                 '"The owl and the pussycat went to sea';
+        $q->qtype = question_bank::get_qtype('multianswer');
+
+        $q->textfragments = array(
+            'Complete this opening line of verse: "The ',
+            ' and the ',
+            ' went to sea".',
+        );
+        $q->places = array('1' => '1', '2' => '2');
 
         // Shortanswer subquestion.
         question_bank::load_question_definition_classes('shortanswer');
@@ -213,5 +221,70 @@ class qtype_multianswer_test_helper extends question_test_helper {
         );
 
         return $formdata;
+    }
+
+    /**
+     * Makes a multianswer question about completing two blanks in some text.
+     * @return qtype_multianswer_question
+     */
+    public function make_multianswer_question_fourmc() {
+        question_bank::load_question_definition_classes('multianswer');
+        $q = new qtype_multianswer_question();
+        test_question_maker::initialise_a_question($q);
+        $q->name = 'Multianswer four multi-choice';
+        $q->questiontext = '<p>Match the following cities with the correct state:</p>
+                <ul>
+                <li>San Francisco: {#1}</li>
+                <li>Tucson: {#2}</li>
+                <li>Los Angeles: {#3}</li>
+                <li>Phoenix: {#4}</li>
+                </ul>';
+        $q->questiontextformat = FORMAT_HTML;
+        $q->generalfeedback = '';
+        $q->qtype = question_bank::get_qtype('multianswer');
+
+        $q->textfragments = array('<p>Match the following cities with the correct state:</p>
+                <ul>
+                <li>San Francisco: ', '</li>
+                <li>Tucson: ', '</li>
+                <li>Los Angeles: ', '</li>
+                <li>Phoenix: ', '</li>
+                </ul>');
+        $q->places = array('1' => '1', '2' => '2', '3' => '3', '4' => '4');
+
+        $subqdata = array(
+            1 => array('qt' => '{1:MULTICHOICE:=California#OK~Arizona#Wrong}', 'California' => 'OK', 'Arizona' => 'Wrong'),
+            2 => array('qt' => '{1:MULTICHOICE:%0%California#Wrong~=Arizona#OK}', 'California' => 'Wrong', 'Arizona' => 'OK'),
+            3 => array('qt' => '{1:MULTICHOICE:=California#OK~Arizona#Wrong}', 'California' => 'OK', 'Arizona' => 'Wrong'),
+            4 => array('qt' => '{1:MULTICHOICE:%0%California#Wrong~=Arizona#OK}', 'California' => 'Wrong', 'Arizona' => 'OK'),
+        );
+
+        foreach ($subqdata as $i => $data) {
+            // Multiple-choice subquestion.
+            question_bank::load_question_definition_classes('multichoice');
+            $mc = new qtype_multichoice_single_question();
+            test_question_maker::initialise_a_question($mc);
+            $mc->name = 'Multianswer four multi-choice';
+            $mc->questiontext = $data['qt'];
+            $mc->questiontextformat = FORMAT_HTML;
+            $mc->generalfeedback = '';
+            $mc->generalfeedbackformat = FORMAT_HTML;
+
+            $mc->shuffleanswers = 0; // TODO this is a cheat to make the unit tests easier to write.
+            // In reality, multianswer questions always shuffle.
+            $mc->answernumbering = 'none';
+            $mc->layout = qtype_multichoice_base::LAYOUT_DROPDOWN;
+
+            $mc->answers = array(
+                10 * $i     => new question_answer(13, 'California', $data['California'] == 'OK', $data['California'], FORMAT_HTML),
+                10 * $i + 1 => new question_answer(14, 'Arizona', $data['Arizona'] == 'OK', $data['Arizona'], FORMAT_HTML),
+            );
+            $mc->qtype = question_bank::get_qtype('multichoice');
+            $mc->maxmark = 1;
+
+            $q->subquestions[$i] = $mc;
+        }
+
+        return $q;
     }
 }

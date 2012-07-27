@@ -161,7 +161,7 @@ function wiki_reset_userdata($data) {
             if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
                 continue;
             }
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $context = context_module::instance($cm->id);
             $DB->delete_records_select('comments', "contextid = ? AND commentarea='wiki_page'", array($context->id));
             $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
         }
@@ -303,7 +303,7 @@ function wiki_print_recent_activity($course, $viewfullnames, $timestart) {
         if (!$cm->uservisible) {
             continue;
         }
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
 
         if (!has_capability('mod/wiki:viewpage', $context)) {
             continue;
@@ -490,7 +490,7 @@ function wiki_extend_navigation(navigation_node $navref, $course, $module, $cm) 
 
     require_once($CFG->dirroot . '/mod/wiki/locallib.php');
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     $url = $PAGE->url;
     $userid = 0;
     if ($module->wikimode == 'individual') {
@@ -633,7 +633,7 @@ function wiki_comment_validate($comment_param) {
     if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id, $course->id)) {
         throw new comment_exception('invalidcoursemodule');
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     // group access
     if ($subwiki->groupid) {
         $groupmode = groups_get_activity_groupmode($cm, $course);

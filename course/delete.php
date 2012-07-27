@@ -8,7 +8,7 @@
     $delete = optional_param('delete', '', PARAM_ALPHANUM); // delete confirmation hash
 
     $PAGE->set_url('/course/delete.php', array('id' => $id));
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $PAGE->set_context(context_system::instance());
     require_login();
 
     $site = get_site();
@@ -25,15 +25,15 @@
         print_error("invalidcourseid");
     }
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $coursecontext = context_course::instance($course->id);
 
     if (!can_delete_course($id)) {
         print_error('cannotdeletecourse');
     }
 
     $category = $DB->get_record("course_categories", array("id"=>$course->category));
-    $courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
-    $categoryname = format_string($category->name, true, array('context' => get_context_instance(CONTEXT_COURSECAT, $category->id)));
+    $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
+    $categoryname = format_string($category->name, true, array('context' => context_coursecat::instance($category->id)));
 
     $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php/'));
     $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));

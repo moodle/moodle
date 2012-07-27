@@ -75,7 +75,7 @@ class blog_edit_form extends moodleform {
                 if (!empty($courseid)) {
                     $course = $DB->get_record('course', array('id' => $courseid));
                     $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
-                    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+                    $context = context_course::instance($courseid);
                     $a = new stdClass();
                     $a->coursename = format_string($course->fullname, true, array('context' => $context));
                     $contextid = $context->id;
@@ -94,9 +94,9 @@ class blog_edit_form extends moodleform {
                     $a = new stdClass();
                     $a->modtype = get_string('modulename', $mod->modname);
                     $a->modname = $mod->name;
-                    $context = get_context_instance(CONTEXT_MODULE, $modid);
+                    $context = context_module::instance($modid);
                 } else {
-                    $context = get_context_instance_by_id($entry->modassoc);
+                    $context = context::instance_by_id($entry->modassoc);
                     $cm = $DB->get_record('course_modules', array('id' => $context->instanceid));
                     $a = new stdClass();
                     $a->modtype = $DB->get_field('modules', 'name', array('id' => $cm->module));
@@ -111,7 +111,7 @@ class blog_edit_form extends moodleform {
 
         $this->add_action_buttons();
         $mform->addElement('hidden', 'action');
-        $mform->setType('action', PARAM_ACTION);
+        $mform->setType('action', PARAM_ALPHANUMEXT);
         $mform->setDefault('action', '');
 
         $mform->addElement('hidden', 'entryid');
@@ -131,7 +131,7 @@ class blog_edit_form extends moodleform {
         global $CFG, $DB, $USER;
 
         $errors = array();
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        $sitecontext = context_system::instance();
 
         // validate course association
         if (!empty($data['courseassoc']) && has_capability('moodle/blog:associatecourse', $sitecontext)) {

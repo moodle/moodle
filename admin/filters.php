@@ -34,11 +34,11 @@
     require_once(dirname(__FILE__) . '/../config.php');
     require_once($CFG->libdir . '/adminlib.php');
 
-    $action = optional_param('action', '', PARAM_ACTION);
+    $action = optional_param('action', '', PARAM_ALPHANUMEXT);
     $filterpath = optional_param('filterpath', '', PARAM_PATH);
 
     require_login();
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    $systemcontext = context_system::instance();
     require_capability('moodle/site:config', $systemcontext);
 
     $returnurl = "$CFG->wwwroot/$CFG->admin/filters.php";
@@ -68,7 +68,7 @@
     switch ($action) {
 
     case 'setstate':
-        if ($newstate = optional_param('newstate', '', PARAM_INTEGER)) {
+        if ($newstate = optional_param('newstate', '', PARAM_INT)) {
             filter_set_global_state($filterpath, $newstate);
             if ($newstate == TEXTFILTER_DISABLED) {
                 filter_set_applies_to_strings($filterpath, false);

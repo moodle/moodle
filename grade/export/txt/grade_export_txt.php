@@ -74,7 +74,7 @@ class grade_export_txt extends grade_export {
             @header('Pragma: no-cache');
         }
         header("Content-Type: application/download\n");
-        $shortname = format_string($this->course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $this->course->id)));
+        $shortname = format_string($this->course->shortname, true, array('context' => context_course::instance($this->course->id)));
         $downloadfilename = clean_filename("$shortname $strgrades");
         header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
 

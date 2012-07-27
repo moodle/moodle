@@ -138,7 +138,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 $name = get_string('wildcard', 'qtype_calculated', $datasetdef->name);
             }
             $mform->addElement('text', "number[$j]", $name);
-            $mform->setType("number[$j]", PARAM_NUMBER);
+            $mform->setType("number[$j]", PARAM_FLOAT);
             $this->qtypeobj->custom_generator_tools_part($mform, $idx, $j);
             $idx++;
             $mform->addElement('hidden', "definition[$j]");
@@ -288,7 +288,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 } else {
                     $mform->addElement('hidden', "number[$j]" , '');
                 }
-                $mform->setType("number[$j]", PARAM_NUMBER);
+                $mform->setType("number[$j]", PARAM_FLOAT);
                 $mform->addElement('hidden', "itemid[$j]");
                 $mform->setType("itemid[$j]", PARAM_INT);
 

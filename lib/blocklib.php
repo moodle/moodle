@@ -1108,7 +1108,7 @@ class block_manager {
      * @return boolean true if anything was done. False if not.
      */
     public function process_url_delete() {
-        $blockid = optional_param('bui_deleteid', null, PARAM_INTEGER);
+        $blockid = optional_param('bui_deleteid', null, PARAM_INT);
         if (!$blockid) {
             return false;
         }
@@ -1134,9 +1134,9 @@ class block_manager {
      * @return boolean true if anything was done. False if not.
      */
     public function process_url_show_hide() {
-        if ($blockid = optional_param('bui_hideid', null, PARAM_INTEGER)) {
+        if ($blockid = optional_param('bui_hideid', null, PARAM_INT)) {
             $newvisibility = 0;
-        } else if ($blockid = optional_param('bui_showid', null, PARAM_INTEGER)) {
+        } else if ($blockid = optional_param('bui_showid', null, PARAM_INT)) {
             $newvisibility = 1;
         } else {
             return false;
@@ -1169,7 +1169,7 @@ class block_manager {
     public function process_url_edit() {
         global $CFG, $DB, $PAGE, $OUTPUT;
 
-        $blockid = optional_param('bui_editid', null, PARAM_INTEGER);
+        $blockid = optional_param('bui_editid', null, PARAM_INT);
         if (!$blockid) {
             return false;
         }
@@ -1367,7 +1367,7 @@ class block_manager {
     public function process_url_move() {
         global $CFG, $DB, $PAGE;
 
-        $blockid = optional_param('bui_moveid', null, PARAM_INTEGER);
+        $blockid = optional_param('bui_moveid', null, PARAM_INT);
         if (!$blockid) {
             return false;
         }
@@ -1958,35 +1958,6 @@ function blocks_delete_all_on_page($pagetype, $pageid) {
             'This function cannot work any more. Doing nothing. ' .
             'Please update your code to use a block_manager method $PAGE->blocks->....', DEBUG_DEVELOPER);
     return false;
-}
-
-/**
- * Dispite what this function is called, it seems to be mostly used to populate
- * the default blocks when a new course (or whatever) is created.
- *
- * @deprecated since 2.0
- *
- * @param object $page the page to add default blocks to.
- * @return boolean success or failure.
- */
-function blocks_repopulate_page($page) {
-    global $CFG;
-
-    debugging('Call to deprecated function blocks_repopulate_page. ' .
-            'Use a more specific method like blocks_add_default_course_blocks, ' .
-            'or just call $PAGE->blocks->add_blocks()', DEBUG_DEVELOPER);
-
-    /// If the site override has been defined, it is the only valid one.
-    if (!empty($CFG->defaultblocks_override)) {
-        $blocknames = $CFG->defaultblocks_override;
-    } else {
-        $blocknames = $page->blocks_get_default();
-    }
-
-    $blocks = blocks_parse_default_blocks_list($blocknames);
-    $page->blocks->add_blocks($blocks);
-
-    return true;
 }
 
 /**

@@ -34,7 +34,7 @@ class recent_form extends moodleform {
         global $CFG, $COURSE, $USER;
 
         $mform =& $this->_form;
-        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        $context = context_course::instance($COURSE->id);
         $modinfo = get_fast_modinfo($COURSE);
         $sections = get_all_sections($COURSE->id);
 
@@ -65,13 +65,13 @@ class recent_form extends moodleform {
         }
 
         if ($COURSE->id == SITEID) {
-            $viewparticipants = has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM));
+            $viewparticipants = has_capability('moodle/site:viewparticipants', context_system::instance());
         } else {
             $viewparticipants = has_capability('moodle/course:viewparticipants', $context);
         }
 
         if ($viewparticipants) {
-            $viewfullnames = has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $COURSE->id));
+            $viewfullnames = has_capability('moodle/site:viewfullnames', context_course::instance($COURSE->id));
 
             $options = array();
             $options[0] = get_string('allparticipants');

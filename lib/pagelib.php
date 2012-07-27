@@ -186,7 +186,7 @@ class moodle_page {
      * @var array List of theme layout options, these are ignored by core.
      * To be used in individual theme layout files only.
      */
-    protected $_layout_options = array();
+    protected $_layout_options = null;
 
     /**
      * @var string An optional arbitrary parameter that can be set on pages where the context
@@ -311,14 +311,6 @@ class moodle_page {
      * If set to null(default) the page is not refreshed
      */
     protected $_periodicrefreshdelay = null;
-
-    /**
-     * @var stdClass This is simply to improve backwards compatibility. If old
-     * code relies on a page class that implements print_header, or complex logic
-     * in user_allowed_editing then we stash an instance of that other class here,
-     * and delegate to it in certain situations.
-     */
-    protected $_legacypageobject = null;
 
     /**
      * @var array Associative array of browser shortnames (as used by check_browser_version)
@@ -492,10 +484,13 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->layout_tions syntax. {@link moodle_page::__get()}.
-     * @return array returns arrys with options for layout file
+     * Please do not call this method directly, use the ->layout_options syntax. {@link moodle_page::__get()}.
+     * @return array returns arrays with options for layout file
      */
     protected function magic_get_layout_options() {
+        if (!is_array($this->_layout_options)) {
+            $this->_layout_options = $this->_theme->pagelayout_options($this->pagelayout);
+        }
         return $this->_layout_options;
     }
 
@@ -651,16 +646,6 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->legacythemeinuse syntax. {@link moodle_page::__get()}.
-     * @deprecated since 2.1
-     * @return bool
-     */
-    protected function magic_get_legacythemeinuse() {
-        debugging('$PAGE->legacythemeinuse is a deprecated property - please use $PAGE->devicetypeinuse and check if it is equal to legacy.', DEBUG_DEVELOPER);
-        return ($this->devicetypeinuse == 'legacy');
-    }
-
-    /**
      * Please do not call this method directly use the ->periodicrefreshdelay syntax
      * {@link moodle_page::__get()}
      * @return int The periodic refresh delay to use with meta refresh
@@ -802,9 +787,6 @@ class moodle_page {
      * @return bool
      */
     public function user_allowed_editing() {
-        if ($this->_legacypageobject) {
-            return $this->_legacypageobject->user_allowed_editing();
-        }
         return has_any_capability($this->all_editing_caps(), $this->_context);
     }
 
@@ -1168,9 +1150,6 @@ class moodle_page {
         if (is_null($this->_pagetype)) {
             $this->initialise_default_pagetype($shorturl);
         }
-        if (!is_null($this->_legacypageobject)) {
-            $this->_legacypageobject->set_url($url, $params);
-        }
     }
 
     /**
@@ -1433,7 +1412,6 @@ class moodle_page {
         if (is_null($this->_theme)) {
             $themename = $this->resolve_theme();
             $this->_theme = theme_config::load($themename);
-            $this->_layout_options = $this->_theme->pagelayout_options($this->pagelayout);
         }
 
         $this->_theme->setup_blocks($this->pagelayout, $this->blocks);
@@ -1779,192 +1757,6 @@ class moodle_page {
         return $caps;
     }
 
-    // Deprecated fields and methods for backwards compatibility ==================
-
-    /**
-     * Returns the page type.
-     *
-     * @deprecated since Moodle 2.0 - use $PAGE->pagetype instead.
-     * @return string page type.
-     */
-    public function get_type() {
-        debugging('Call to deprecated method moodle_page::get_type. Please use $PAGE->pagetype instead.');
-        return $this->get_pagetype();
-    }
-
-    /**
-     * Returns the page type.
-     *
-     * @deprecated since Moodle 2.0 - use $PAGE->pagetype instead.
-     * @return string this is what page_id_and_class used to return via the $getclass parameter.
-     */
-    public function get_format_name() {
-        return $this->get_pagetype();
-    }
-
-    /**
-     * Returns the course associated with this page.
-     *
-     * @deprecated since Moodle 2.0 - use $PAGE->course instead.
-     * @return stdClass course.
-     */
-    public function get_courserecord() {
-        debugging('Call to deprecated method moodle_page::get_courserecord. Please use $PAGE->course instead.');
-        return $this->get_course();
-    }
-
-    /**
-     * Returns the legacy page class.
-     *
-     * @deprecated since Moodle 2.0
-     * @return string this is what page_id_and_class used to return via the $getclass parameter.
-     */
-    public function get_legacyclass() {
-        if (is_null($this->_legacyclass)) {
-            $this->initialise_standard_body_classes();
-        }
-        debugging('Call to deprecated method moodle_page::get_legacyclass.');
-        return $this->_legacyclass;
-    }
-
-    /**
-     * Returns an array of block regions on this page.
-     *
-     * @deprecated since Moodle 2.0 - use $PAGE->blocks->get_regions() instead
-     * @return array the places on this page where blocks can go.
-     */
-    function blocks_get_positions() {
-        debugging('Call to deprecated method moodle_page::blocks_get_positions. Use $PAGE->blocks->get_regions() instead.');
-        return $this->blocks->get_regions();
-    }
-
-    /**
-     * Returns the default block region.
-     *
-     * @deprecated since Moodle 2.0 - use $PAGE->blocks->get_default_region() instead
-     * @return string the default place for blocks on this page.
-     */
-    function blocks_default_position() {
-        debugging('Call to deprecated method moodle_page::blocks_default_position. Use $PAGE->blocks->get_default_region() instead.');
-        return $this->blocks->get_default_region();
-    }
-
-    /**
-     * Returns the default block to use of the page.
-     * This function no longer does anything. DO NOT USE.
-     *
-     * @deprecated since Moodle 2.0 - no longer used.
-     */
-    function blocks_get_default() {
-        debugging('Call to deprecated method moodle_page::blocks_get_default. This method has no function any more.');
-    }
-
-    /**
-     * Moves a block.
-     * This function no longer does anything. DO NOT USE.
-     *
-     * @deprecated since Moodle 2.0 - no longer used.
-     */
-    function blocks_move_position(&$instance, $move) {
-        debugging('Call to deprecated method moodle_page::blocks_move_position. This method has no function any more.');
-    }
-
-    /**
-     * Returns the URL parameters for the current page.
-     *
-     * @deprecated since Moodle 2.0 - use $this->url->params() instead.
-     * @return array URL parameters for this page.
-     */
-    function url_get_parameters() {
-        debugging('Call to deprecated method moodle_page::url_get_parameters. Use $this->url->params() instead.');
-        return $this->url->params();
-    }
-
-    /**
-     * Returns the URL path of the current page.
-     *
-     * @deprecated since Moodle 2.0 - use $this->url->params() instead.
-     * @return string URL for this page without parameters.
-     */
-    function url_get_path() {
-        debugging('Call to deprecated method moodle_page::url_get_path. Use $this->url->out() instead.');
-        return $this->url->out();
-    }
-
-    /**
-     * Returns the full URL for this page.
-     *
-     * @deprecated since Moodle 2.0 - use $this->url->out() instead.
-     * @return string full URL for this page.
-     */
-    function url_get_full($extraparams = array()) {
-        debugging('Call to deprecated method moodle_page::url_get_full. Use $this->url->out() instead.');
-        return $this->url->out(true, $extraparams);
-    }
-
-    /**
-     * Returns the legacy page object.
-     *
-     * @deprecated since Moodle 2.0 - just a backwards compatibility hook.
-     * @return moodle_page
-     */
-    function set_legacy_page_object($pageobject) {
-        return $this->_legacypageobject = $pageobject;
-    }
-
-    /**
-     * Prints a header... DO NOT USE!
-     *
-     * @deprecated since Moodle 2.0 - page objects should no longer be doing print_header.
-     * @param mixed $_ ...
-     */
-    function print_header($_) {
-        if (is_null($this->_legacypageobject)) {
-            throw new coding_exception('You have called print_header on $PAGE when there is not a legacy page class present.');
-        }
-        debugging('You should not longer be doing print_header via a page class.', DEBUG_DEVELOPER);
-        $args = func_get_args();
-        call_user_func_array(array($this->_legacypageobject, 'print_header'), $args);
-    }
-
-    /**
-     * Returns the ID for this page. DO NOT USE!
-     *
-     * @deprecated since Moodle 2.0
-     * @return the 'page id'. This concept no longer exists.
-     */
-    function get_id() {
-        debugging('Call to deprecated method moodle_page::get_id(). It should not be necessary any more.', DEBUG_DEVELOPER);
-        if (!is_null($this->_legacypageobject)) {
-            return $this->_legacypageobject->get_id();
-        }
-        return 0;
-    }
-
-    /**
-     * Returns the ID for this page. DO NOT USE!
-     *
-     * @deprecated since Moodle 2.0
-     * @return the 'page id'. This concept no longer exists.
-     */
-    function get_pageid() {
-        debugging('Call to deprecated method moodle_page::get_pageid(). It should not be necessary any more.', DEBUG_DEVELOPER);
-        if (!is_null($this->_legacypageobject)) {
-            return $this->_legacypageobject->get_id();
-        }
-        return 0;
-    }
-
-    /**
-     * Returns the module record for this page.
-     *
-     * @deprecated since Moodle 2.0 - user $PAGE->cm instead.
-     * @return $this->cm;
-     */
-    function get_modulerecord() {
-        return $this->cm;
-    }
-
     /**
      * Returns true if the page URL has beem set.
      *
@@ -2000,221 +1792,5 @@ class moodle_page {
      */
     public function set_popup_notification_allowed($allowed) {
         $this->_popup_notification_allowed = $allowed;
-    }
-}
-
-/**
- * Not needed any more. DO NOT USE!
- *
- * @deprecated since Moodle 2.0
- * @param string $path the folder path
- * @return array an array of page types.
- */
-function page_import_types($path) {
-    global $CFG;
-    debugging('Call to deprecated function page_import_types.', DEBUG_DEVELOPER);
-}
-
-/**
- * Do not use this any more. The global $PAGE is automatically created for you.
- * If you need custom behaviour, you should just set properties of that object.
- *
- * @deprecated since Moodle 2.0
- * @param integer $instance legacy page instance id.
- * @return moodle_page The global $PAGE object.
- */
-function page_create_instance($instance) {
-    global $PAGE;
-    return page_create_object($PAGE->pagetype, $instance);
-}
-
-/**
- * Do not use this any more. The global $PAGE is automatically created for you.
- * If you need custom behaviour, you should just set properties of that object.
- *
- * @deprecated since Moodle 2.0
- * @return moodle_page The global $PAGE object.
- */
-function page_create_object($type, $id = NULL) {
-    global $CFG, $PAGE, $SITE, $ME;
-    debugging('Call to deprecated function page_create_object.', DEBUG_DEVELOPER);
-
-    $data = new stdClass;
-    $data->pagetype = $type;
-    $data->pageid = $id;
-
-    $classname = page_map_class($type);
-    if (!$classname) {
-        return $PAGE;
-    }
-    $legacypage = new $classname;
-    $legacypage->init_quick($data);
-
-    $course = $PAGE->course;
-    if ($course->id != $SITE->id) {
-        $legacypage->set_course($course);
-    } else {
-        try {
-            $category = $PAGE->category;
-        } catch (coding_exception $e) {
-            // Was not set before, so no need to try to set it again.
-            $category = false;
-        }
-        if ($category) {
-            $legacypage->set_category_by_id($category->id);
-        } else {
-            $legacypage->set_course($SITE);
-        }
-    }
-
-    $legacypage->set_pagetype($type);
-
-    $legacypage->set_url($ME);
-    $PAGE->set_url(str_replace($CFG->wwwroot . '/', '', $legacypage->url_get_full()));
-
-    $PAGE->set_pagetype($type);
-    $PAGE->set_legacy_page_object($legacypage);
-    return $PAGE;
-}
-
-/**
- * You should not be writing page subclasses any more. Just set properties on the
- * global $PAGE object to control its behaviour.
- *
- * @deprecated since Moodle 2.0
- * @return mixed Null if there is not a valid page mapping, or the mapping if
- *     it has been set.
- */
-function page_map_class($type, $classname = NULL) {
-    global $CFG;
-
-    static $mappings = array(
-        PAGE_COURSE_VIEW => 'page_course',
-    );
-
-    if (!empty($type) && !empty($classname)) {
-        $mappings[$type] = $classname;
-    }
-
-    if (!isset($mappings[$type])) {
-        debugging('Page class mapping requested for unknown type: '.$type);
-        return null;
-    } else if (empty($classname) && !class_exists($mappings[$type])) {
-        debugging('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
-        return null;
-    }
-
-    return $mappings[$type];
-}
-
-/**
- * Parent class from which all Moodle page classes derive
- *
- * @deprecated since Moodle 2.0
- * @package core
- * @category page
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class page_base extends moodle_page {
-    /**
-     * @var int The numeric identifier of the page being described.
-     */
-    public $id = null;
-
-    /**
-     * Returns the page id
-     * @deprecated since Moodle 2.0
-     * @return int Returns the id of the page.
-     */
-    public function get_id() {
-        return $this->id;
-    }
-
-    /**
-     * Initialize the data members of the parent class
-     * @param scalar $data
-     */
-    public function init_quick($data) {
-        $this->id   = $data->pageid;
-    }
-
-    /**
-     * DOES NOTHING... DO NOT USE.
-     * @deprecated since Moodle 2.0
-     */
-    public function init_full() {}
-}
-
-/**
- * Class that models the behavior of a moodle course.
- * Although this does nothing, this class declaration should be left for now
- * since there may be legacy class doing class page_... extends page_course
- *
- * @deprecated since Moodle 2.0
- * @package core
- * @category page
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class page_course extends page_base {}
-
-/**
- * Class that models the common parts of all activity modules
- *
- * @deprecated since Moodle 2.0
- * @package core
- * @category page
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class page_generic_activity extends page_base {
-
-    /**
-     * Although this function is deprecated, it should be left here because
-     * people upgrading legacy code need to copy it. See
-     * http://docs.moodle.org/dev/Migrating_your_code_to_the_2.0_rendering_API
-     *
-     * @param string $title
-     * @param array $morenavlinks
-     * @param string $bodytags
-     * @param string $meta
-     */
-    function print_header($title, $morenavlinks = NULL, $bodytags = '', $meta = '') {
-        global $USER, $CFG, $PAGE, $OUTPUT;
-
-        $this->init_full();
-        $replacements = array(
-            '%fullname%' => format_string($this->activityrecord->name)
-        );
-        foreach ($replacements as $search => $replace) {
-            $title = str_replace($search, $replace, $title);
-        }
-
-        $buttons = '<table><tr><td>'.$OUTPUT->update_module_button($this->modulerecord->id, $this->activityname).'</td>';
-        if ($this->user_allowed_editing()) {
-            $buttons .= '<td><form method="get" action="view.php"><div>'.
-                '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
-                '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
-                '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></div></form></td>';
-        }
-        $buttons .= '</tr></table>';
-
-        if (!empty($morenavlinks) && is_array($morenavlinks)) {
-            foreach ($morenavlinks as $navitem) {
-                if (is_array($navitem) && array_key_exists('name', $navitem)) {
-                    $link = null;
-                    if (array_key_exists('link', $navitem)) {
-                        $link = $navitem['link'];
-                    }
-                    $PAGE->navbar->add($navitem['name'], $link);
-                }
-            }
-        }
-
-        $PAGE->set_title($title);
-        $PAGE->set_heading($this->course->fullname);
-        $PAGE->set_button($buttons);
-        echo $OUTPUT->header();
     }
 }

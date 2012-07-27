@@ -41,7 +41,7 @@ if ($courseid) {
 
     // Check user is logged in
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     require_login($course);
 
     $completion = new completion_info($course);
@@ -53,7 +53,7 @@ if ($courseid) {
     if ($user && $rolec) {
         require_sesskey();
 
-        completion_criteria::factory((object) array('id'=>$rolec, 'criteriatype'=>COMPLETION_CRITERIA_TYPE_ROLE)); //TODO: this is dumb, because it does not fetch the data?!?!
+        completion_criteria::factory(array('id'=>$rolec, 'criteriatype'=>COMPLETION_CRITERIA_TYPE_ROLE)); //TODO: this is dumb, because it does not fetch the data?!?!
         $criteria = completion_criteria_role::fetch(array('id'=>$rolec));
 
         if ($criteria and user_has_role_assignment($USER->id, $criteria->role, $context->id)) {

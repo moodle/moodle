@@ -33,7 +33,7 @@ class profile_field_text extends profile_field_base {
 
         /// Create the form field
         $mform->addElement($fieldtype, $this->inputname, format_string($this->field->name), 'maxlength="'.$maxlength.'" size="'.$size.'" ');
-        $mform->setType($this->inputname, PARAM_MULTILANG);
+        $mform->setType($this->inputname, PARAM_TEXT);
     }
 
 }

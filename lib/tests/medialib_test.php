@@ -57,9 +57,6 @@ class medialib_testcase extends advanced_testcase {
         $CFG->core_media_enable_vimeo = false;
         $CFG->core_media_enable_swf = false;
 
-        // Strict headers turned off.
-        $CFG->xmlstrictheaders = false;
-
         $_SERVER = array('HTTP_USER_AGENT' => '');
         $this->pretend_to_be_safari();
     }

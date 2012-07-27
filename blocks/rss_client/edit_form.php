@@ -40,7 +40,7 @@ class block_rss_client_edit_form extends block_edit_form {
         $mform->setDefault('config_display_description', 0);
 
         $mform->addElement('text', 'config_shownumentries', get_string('shownumentrieslabel', 'block_rss_client'), array('size' => 5));
-        $mform->setType('config_shownumentries', PARAM_INTEGER);
+        $mform->setType('config_shownumentries', PARAM_INT);
         $mform->addRule('config_shownumentries', null, 'numeric', null, 'client');
         if (!empty($CFG->block_rss_client_num_entries)) {
             $mform->setDefault('config_shownumentries', $CFG->block_rss_client_num_entries);

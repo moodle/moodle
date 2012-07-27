@@ -149,7 +149,7 @@ abstract class user_selector_base {
 
     /**
      * @return array of user objects. The users that were selected. This is a more sophisticated version
-     * of optional_param($this->name, array(), PARAM_INTEGER) that validates the
+     * of optional_param($this->name, array(), PARAM_INT) that validates the
      * returned list of ids against the rules for this user selector.
      */
     public function get_selected_users() {
@@ -368,8 +368,8 @@ abstract class user_selector_base {
     protected function load_selected_users() {
         // See if we got anything.
         if ($this->multiselect) {
-            $userids = optional_param_array($this->name, array(), PARAM_INTEGER);
-        } else if ($userid = optional_param($this->name, 0, PARAM_INTEGER)) {
+            $userids = optional_param_array($this->name, array(), PARAM_INT);
+        } else if ($userid = optional_param($this->name, 0, PARAM_INT)) {
             $userids = array($userid);
         }
         // If there are no users there is nobody to load

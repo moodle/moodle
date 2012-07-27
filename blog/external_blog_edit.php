@@ -32,7 +32,7 @@ require_once($CFG->libdir . '/simplepie/moodle_simplepie.php');
 require_once($CFG->dirroot.'/tag/lib.php');
 
 require_login();
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 require_capability('moodle/blog:manageexternal', $context);
 
 // TODO redirect if $CFG->useexternalblogs is off, $CFG->maxexternalblogsperuser == 0, or if user doesn't have caps to manage external blogs

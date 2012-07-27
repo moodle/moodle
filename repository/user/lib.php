@@ -56,6 +56,8 @@ class repository_user extends repository {
         $ret['dynload'] = true;
         $ret['nosearch'] = true;
         $ret['nologin'] = true;
+        $manageurl = new moodle_url('/user/files.php');
+        $ret['manage'] = $manageurl->out();
         $list = array();
 
         if (!empty($encodedpath)) {
@@ -72,7 +74,7 @@ class repository_user extends repository {
         $filearea = 'private';
         $component = 'user';
         $itemid  = 0;
-        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $context = context_user::instance($USER->id);
 
         try {
             $browser = get_file_browser();

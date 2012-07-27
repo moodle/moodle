@@ -56,7 +56,7 @@ if (!empty($groupid) && empty($courseid)) {
     $courseid = $DB->get_field('groups', 'courseid', array('id'=>$groupid));
 }
 
-$sitecontext = get_context_instance(CONTEXT_SYSTEM);
+$sitecontext = context_system::instance();
 
 // check basic permissions
 if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
@@ -122,7 +122,7 @@ if (!empty($courseid)) {
     }
 
     $courseid = $course->id;
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $coursecontext = context_course::instance($course->id);
 
     require_login($course);
 
@@ -130,7 +130,7 @@ if (!empty($courseid)) {
         print_error('cannotviewcourseblog', 'blog');
     }
 } else {
-    $coursecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+    $coursecontext = context_course::instance(SITEID);
 }
 
 if (!empty($groupid)) {
@@ -146,7 +146,7 @@ if (!empty($groupid)) {
         print_error('invalidcourseid');
     }
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $coursecontext = context_course::instance($course->id);
     $courseid = $course->id;
     require_login($course);
 
@@ -183,7 +183,7 @@ if (!empty($userid)) {
             print_error('donothaveblog', 'blog');
         }
     } else {
-        $personalcontext = get_context_instance(CONTEXT_USER, $userid);
+        $personalcontext = context_user::instance($userid);
 
         if (!has_capability('moodle/blog:view', $sitecontext) && !has_capability('moodle/user:readuserblogs', $personalcontext)) {
             print_error('cannotviewuserblog', 'blog');

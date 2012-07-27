@@ -628,7 +628,7 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
 
         $this->displayoptions = new question_display_options();
         $this->quba = question_engine::make_questions_usage_by_activity('unit_test',
-            get_context_instance(CONTEXT_SYSTEM));
+            context_system::instance());
     }
 
     protected function tearDown() {

@@ -22,7 +22,7 @@ if (!extension_loaded('openssl')) {
     print_error('requiresopenssl', 'mnet');
 }
 
-$sitecontext = get_context_instance(CONTEXT_SYSTEM);
+$sitecontext = context_system::instance();
 $sesskey = sesskey();
 $formerror = array();
 

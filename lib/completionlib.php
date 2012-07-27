@@ -31,10 +31,10 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Include the required completion libraries
  */
-require_once $CFG->libdir.'/completion/completion_aggregation.php';
-require_once $CFG->libdir.'/completion/completion_criteria.php';
-require_once $CFG->libdir.'/completion/completion_completion.php';
-require_once $CFG->libdir.'/completion/completion_criteria_completion.php';
+require_once $CFG->dirroot.'/completion/completion_aggregation.php';
+require_once $CFG->dirroot.'/completion/criteria/completion_criteria.php';
+require_once $CFG->dirroot.'/completion/completion_completion.php';
+require_once $CFG->dirroot.'/completion/completion_criteria_completion.php';
 
 
 /**
@@ -616,8 +616,8 @@ class completion_info {
      * @return void
      */
     public function set_module_viewed($cm, $userid=0) {
-        global $PAGE, $UNITTEST;
-        if ($PAGE->headerprinted && empty($UNITTEST->running)) {
+        global $PAGE;
+        if ($PAGE->headerprinted) {
             debugging('set_module_viewed must be called before header is printed',
                     DEBUG_DEVELOPER);
         }

@@ -64,7 +64,7 @@ if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
 
 $groups = new stdClass();
 if (groups_get_activity_groupmode($cm)) {
-    $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $modulecontext = context_module::instance($cm->id);
     $canaccessgroups = has_capability('moodle/site:accessallgroups', $modulecontext);
     if ($canaccessgroups) {
         $groups->availablegroups = groups_get_all_groups($cm->course);

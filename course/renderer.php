@@ -52,6 +52,51 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Renders course info box.
+     *
+     * @param stdClass $course
+     * @return string
+     */
+    public function course_info_box(stdClass $course) {
+        global $CFG;
+
+        $context = context_course::instance($course->id);
+
+        $content = '';
+        $content .= $this->output->box_start('generalbox info');
+
+        $summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', null);
+        $content .= format_text($summary, $course->summaryformat, array('overflowdiv'=>true), $course->id);
+        if (!empty($CFG->coursecontact)) {
+            $coursecontactroles = explode(',', $CFG->coursecontact);
+            foreach ($coursecontactroles as $roleid) {
+                if ($users = get_role_users($roleid, $context, true)) {
+                    foreach ($users as $teacher) {
+                        $role = new stdClass();
+                        $role->id = $teacher->roleid;
+                        $role->name = $teacher->rolename;
+                        $role->shortname = $teacher->roleshortname;
+                        $role->coursealias = $teacher->rolecoursealias;
+                        $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context));
+                        $namesarray[] = role_get_name($role, $context).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
+                            $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
+                    }
+                }
+            }
+
+            if (!empty($namesarray)) {
+                $content .= "<ul class=\"teachers\">\n<li>";
+                $content .= implode('</li><li>', $namesarray);
+                $content .= "</li></ul>";
+            }
+        }
+
+        $content .= $this->output->box_end();
+
+        return $content;
+    }
+
+    /**
      * Renderers a structured array of courses and categories into a nice
      * XHTML tree structure.
      *
@@ -107,7 +152,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $classes[] = 'collapsed';
             }
         }
-        $categoryname = format_string($category->name, true, array('context' => get_context_instance(CONTEXT_COURSECAT, $category->id)));
+        $categoryname = format_string($category->name, true, array('context' => context_coursecat::instance($category->id)));
 
         $content .= html_writer::start_tag('div', array('class'=>join(' ', $classes)));
         $content .= html_writer::start_tag('div', array('class'=>'category_label'));
@@ -176,7 +221,7 @@ class core_course_renderer extends plugin_renderer_base {
         $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'id' => 'course',
                 'name' => 'course', 'value' => $course->id));
         $formcontent .= html_writer::tag('input', '',
-                array('type' => 'hidden', 'id' => 'jump', 'name' => 'jump', 'value' => ''));
+                array('type' => 'hidden', 'class' => 'jump', 'name' => 'jump', 'value' => ''));
         $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'name' => 'sesskey',
                 'value' => sesskey()));
         $formcontent .= html_writer::end_tag('div');
@@ -209,9 +254,9 @@ class core_course_renderer extends plugin_renderer_base {
 
         $formcontent .= html_writer::start_tag('div', array('class' => 'submitbuttons'));
         $formcontent .= html_writer::tag('input', '',
-                array('type' => 'submit', 'name' => 'submitbutton', 'id' => 'submitbutton', 'value' => get_string('add')));
+                array('type' => 'submit', 'name' => 'submitbutton', 'class' => 'submitbutton', 'value' => get_string('add')));
         $formcontent .= html_writer::tag('input', '',
-                array('type' => 'submit', 'name' => 'addcancel', 'id' => 'addcancel', 'value' => get_string('cancel')));
+                array('type' => 'submit', 'name' => 'addcancel', 'class' => 'addcancel', 'value' => get_string('cancel')));
         $formcontent .= html_writer::end_tag('div');
         $formcontent .= html_writer::end_tag('form');
 

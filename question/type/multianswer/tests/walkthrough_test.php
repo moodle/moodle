@@ -37,70 +37,53 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_base {
-    public function test_interactive() {
-        return; // TODO
+    public function test_deferred_feedback() {
 
         // Create a gapselect question.
-        $q = test_question_maker::make_question('calculated');
-        $q->hints = array(
-            new question_hint(1, 'This is the first hint.', FORMAT_HTML),
-            new question_hint(2, 'This is the second hint.', FORMAT_HTML),
-        );
-        $this->start_attempt_at_question($q, 'interactive', 3);
-        $values = $q->vs->get_values();
+        $q = test_question_maker::make_question('multianswer', 'fourmc');
+        $this->start_attempt_at_question($q, 'deferredfeedback', 4);
 
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_marked_out_of_summary(),
-                $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_feedback_expectation(),
-                $this->get_does_not_contain_validation_error_expectation(),
-                $this->get_does_not_contain_try_again_button_expectation(),
-                $this->get_no_hint_visible_expectation());
+                $this->get_does_not_contain_validation_error_expectation());
 
-        // Submit blank.
-        $this->process_submission(array('-submit' => 1, 'answer' => ''));
+        // Save in incomplete answer.
+        $this->process_submission(array('sub1_answer' => '1', 'sub2_answer' => '',
+                'sub3_answer' => '', 'sub4_answer' => ''));
 
         // Verify.
         $this->check_current_state(question_state::$invalid);
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_marked_out_of_summary(),
-                $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_feedback_expectation(),
-                $this->get_contains_validation_error_expectation(),
-                $this->get_does_not_contain_try_again_button_expectation(),
-                $this->get_no_hint_visible_expectation());
+                $this->get_does_not_contain_validation_error_expectation()); // TODO, really, it should. See MDL-32049.
 
-        // Sumit something that does not look like a number.
-        $this->process_submission(array('-submit' => 1, 'answer' => 'newt'));
+        // Save a partially correct answer.
+        $this->process_submission(array('sub1_answer' => '1', 'sub2_answer' => '1',
+                'sub3_answer' => '1', 'sub4_answer' => '1'));
 
         // Verify.
-        $this->check_current_state(question_state::$invalid);
+        $this->check_current_state(question_state::$complete);
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_marked_out_of_summary(),
-                $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_feedback_expectation(),
-                $this->get_contains_validation_error_expectation(),
-                new question_pattern_expectation('/' .
-                        preg_quote(get_string('invalidnumber', 'qtype_numerical') . '/')),
-                $this->get_does_not_contain_try_again_button_expectation(),
-                $this->get_no_hint_visible_expectation());
+                $this->get_does_not_contain_validation_error_expectation());
 
-        // Now get it right.
-        $this->process_submission(array('-submit' => 1, 'answer' => $values['a'] + $values['b']));
+        // Now submit all and finish.
+        $this->process_submission(array('-finish' => 1));
 
         // Verify.
-        $this->check_current_state(question_state::$gradedright);
-        $this->check_current_mark(3);
+        $this->check_current_state(question_state::$gradedpartial);
+        $this->check_current_mark(2);
         $this->check_current_output(
-                $this->get_contains_mark_summary(3),
-                $this->get_contains_submit_button_expectation(false),
-                $this->get_contains_correct_expectation(),
-                $this->get_does_not_contain_validation_error_expectation(),
-                $this->get_no_hint_visible_expectation());
+                $this->get_contains_mark_summary(2),
+                $this->get_contains_partcorrect_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
     }
 }

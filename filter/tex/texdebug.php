@@ -40,7 +40,7 @@
     $texexp = optional_param('tex', '', PARAM_RAW);
 
     require_login();
-    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM), $USER->id); /// Required cap to run this. MDL-18552
+    require_capability('moodle/site:config', context_system::instance(), $USER->id); /// Required cap to run this. MDL-18552
 
     $output = '';
 

@@ -33,7 +33,7 @@ $mnet = get_mnet_environment();
 require_login();
 admin_externalpage_setup('mnetpeers');
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
 $hostid = required_param('hostid', PARAM_INT);

@@ -98,7 +98,7 @@ class block_blog_menu extends block_base {
         $this->content->text = html_writer::alist($menulist, array('class'=>'list'));
 
         // Prepare the footer for this block
-        if (has_capability('moodle/blog:search', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('moodle/blog:search', context_system::instance())) {
             // Full-text search field
             $form  = html_writer::tag('label', get_string('search', 'admin'), array('for'=>'blogsearchquery', 'class'=>'accesshide'));
             $form .= html_writer::empty_tag('input', array('id'=>'blogsearchquery', 'type'=>'text', 'name'=>'search'));

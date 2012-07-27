@@ -19,7 +19,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $repository       = optional_param('repos', '', PARAM_ALPHANUMEXT);
-$action           = optional_param('action', '', PARAM_ACTION);
+$action           = optional_param('action', '', PARAM_ALPHANUMEXT);
 $sure             = optional_param('sure', '', PARAM_ALPHA);
 $downloadcontents = optional_param('downloadcontents', false, PARAM_BOOL);
 
@@ -47,7 +47,7 @@ if ($action == 'newon') {
     $visible = false;
 }
 
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+require_capability('moodle/site:config', context_system::instance());
 admin_externalpage_setup($pagename);
 
 $sesskeyurl = $CFG->wwwroot.'/'.$CFG->admin.'/repository.php?sesskey=' . sesskey();

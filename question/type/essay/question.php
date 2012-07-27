@@ -59,7 +59,7 @@ class qtype_essay_question extends question_with_responses {
         } else {
             $expecteddata = array('answer' => PARAM_CLEANHTML);
         }
-        $expecteddata['answerformat'] = PARAM_FORMAT;
+        $expecteddata['answerformat'] = PARAM_ALPHANUMEXT;
         if ($this->attachments != 0) {
             $expecteddata['attachments'] = question_attempt::PARAM_FILES;
         }

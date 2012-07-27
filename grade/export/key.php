@@ -59,7 +59,7 @@ if ($id) {
 $key->courseid = $course->id;
 
 require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 require_capability('moodle/grade:export', $context);
 
 // extra security check

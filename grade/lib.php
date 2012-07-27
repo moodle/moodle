@@ -135,7 +135,7 @@ class graded_users_iterator {
             return false;
         }
 
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $this->course->id);
+        $coursecontext = context_course::instance($this->course->id);
         $relatedcontexts = get_related_contexts_string($coursecontext);
 
         list($gradebookroles_sql, $params) =
@@ -568,7 +568,7 @@ function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=fa
 function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     global $CFG, $SITE;
 
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
 
     $plugin_info = array();
     $count = 0;
@@ -1674,7 +1674,7 @@ class grade_seq extends grade_structure {
         global $USER, $CFG;
 
         $this->courseid   = $courseid;
-        $this->context    = get_context_instance(CONTEXT_COURSE, $courseid);
+        $this->context    = context_course::instance($courseid);
 
         // get course grade tree
         $top_element = grade_category::fetch_course_tree($courseid, true);
@@ -1828,7 +1828,7 @@ class grade_tree extends grade_structure {
 
         $this->courseid   = $courseid;
         $this->levels     = array();
-        $this->context    = get_context_instance(CONTEXT_COURSE, $courseid);
+        $this->context    = context_course::instance($courseid);
 
         if (!empty($COURSE->id) && $COURSE->id == $this->courseid) {
             $course = $COURSE;
@@ -2459,7 +2459,7 @@ abstract class grade_helper {
         if (self::$managesetting !== null) {
             return self::$managesetting;
         }
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = context_course::instance($courseid);
         if (has_capability('moodle/course:update', $context)) {
             self::$managesetting = new grade_plugin_info('coursesettings', new moodle_url('/grade/edit/settings/index.php', array('id'=>$courseid)), get_string('course'));
         } else {
@@ -2479,7 +2479,7 @@ abstract class grade_helper {
         if (self::$gradereports !== null) {
             return self::$gradereports;
         }
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = context_course::instance($courseid);
         $gradereports = array();
         $gradepreferences = array();
         foreach (get_plugin_list('gradereport') as $plugin => $plugindir) {
@@ -2539,7 +2539,7 @@ abstract class grade_helper {
         if (self::$scaleinfo !== null) {
             return self::$scaleinfo;
         }
-        if (has_capability('moodle/course:managescales', get_context_instance(CONTEXT_COURSE, $courseid))) {
+        if (has_capability('moodle/course:managescales', context_course::instance($courseid))) {
             $url = new moodle_url('/grade/edit/scale/index.php', array('id'=>$courseid));
             self::$scaleinfo = new grade_plugin_info('scale', $url, get_string('view'));
         } else {
@@ -2558,7 +2558,7 @@ abstract class grade_helper {
         if (self::$outcomeinfo !== null) {
             return self::$outcomeinfo;
         }
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = context_course::instance($courseid);
         $canmanage = has_capability('moodle/grade:manage', $context);
         $canupdate = has_capability('moodle/course:update', $context);
         if (!empty($CFG->enableoutcomes) && ($canmanage || $canupdate)) {
@@ -2593,7 +2593,7 @@ abstract class grade_helper {
         if (self::$edittree !== null) {
             return self::$edittree;
         }
-        if (has_capability('moodle/grade:manage', get_context_instance(CONTEXT_COURSE, $courseid))) {
+        if (has_capability('moodle/grade:manage', context_course::instance($courseid))) {
             $url = new moodle_url('/grade/edit/tree/index.php', array('sesskey'=>sesskey(), 'showadvanced'=>'0', 'id'=>$courseid));
             self::$edittree = array(
                 'simpleview' => new grade_plugin_info('simpleview', $url, get_string('simpleview', 'grades')),
@@ -2613,7 +2613,7 @@ abstract class grade_helper {
         if (self::$letterinfo !== null) {
             return self::$letterinfo;
         }
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = context_course::instance($courseid);
         $canmanage = has_capability('moodle/grade:manage', $context);
         $canmanageletters = has_capability('moodle/grade:manageletters', $context);
         if ($canmanage || $canmanageletters) {
@@ -2638,7 +2638,7 @@ abstract class grade_helper {
             return self::$importplugins;
         }
         $importplugins = array();
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = context_course::instance($courseid);
 
         if (has_capability('moodle/grade:import', $context)) {
             foreach (get_plugin_list('gradeimport') as $plugin => $plugindir) {
@@ -2676,7 +2676,7 @@ abstract class grade_helper {
         if (self::$exportplugins !== null) {
             return self::$exportplugins;
         }
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = context_course::instance($courseid);
         $exportplugins = array();
         if (has_capability('moodle/grade:export', $context)) {
             foreach (get_plugin_list('gradeexport') as $plugin => $plugindir) {

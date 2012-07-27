@@ -216,8 +216,8 @@ $ACCESSLIB_PRIVATE->capabilities     = null;    // detailed information about th
  * @return void
  */
 function accesslib_clear_all_caches_for_unit_testing() {
-    global $UNITTEST, $USER;
-    if (empty($UNITTEST->running) and !PHPUNIT_TEST) {
+    global $USER;
+    if (!PHPUNIT_TEST) {
         throw new coding_exception('You must not call clear_all_caches outside of unit tests.');
     }
 

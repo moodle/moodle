@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,12 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * General database mover class
  *
- * @package    core
- * @subpackage dtl
+ * @package    core_dtl
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,33 +25,35 @@
 defined('MOODLE_INTERNAL') || die();
 
 class database_mover extends database_exporter {
-    /** Importer object used to transfer data. */
+    /** @var database_importer Importer object used to transfer data. */
     protected $importer;
-    protected $feeback;
+    /** @var progress_trace Progress tracing object */
+    protected $feedback;
 
     /**
      * Object constructor.
      *
-     * @param moodle_database $mdb Connection to the source database (a
+     * @param moodle_database $mdb_source Connection to the source database (a
      * @see moodle_database object).
      * @param moodle_database $mdb_target Connection to the target database (a
      * @see moodle_database object).
      * @param boolean $check_schema - whether or not to check that XML database
      * schema matches the RDBMS database schema before exporting (used by
+     * @param progress_trace $feedback Progress tracing object
      * @see export_database).
      */
     public function __construct(moodle_database $mdb_source, moodle_database $mdb_target,
-            $check_schema = true, progress_trace $feeback = null) {
-        if (empty($feeback)) {
-            $this->feeback = new null_progress_trace();
+            $check_schema = true, progress_trace $feedback = null) {
+        if (empty($feedback)) {
+            $this->feedback = new null_progress_trace();
         } else {
-            $this->feeback = $feeback;
+            $this->feedback = $feedback;
         }
         if ($check_schema) {
-            $this->feeback->output(get_string('checkingsourcetables', 'core_dbtransfer'));
+            $this->feedback->output(get_string('checkingsourcetables', 'core_dbtransfer'));
         }
         parent::__construct($mdb_source, $check_schema);
-        $this->feeback->output(get_string('creatingtargettables', 'core_dbtransfer'));
+        $this->feedback->output(get_string('creatingtargettables', 'core_dbtransfer'));
         $this->importer = new database_importer($mdb_target, $check_schema);
     }
 
@@ -70,12 +69,13 @@ class database_mover extends database_exporter {
      * Callback function. Calls importer's begin_database_import callback method.
      *
      * @param float $version the version of the system which generating the data
+     * @param string $release moodle release info
      * @param string $timestamp the timestamp of the data (in ISO 8601) format.
      * @param string $description a user description of the data.
      * @return void
      */
     public function begin_database_export($version, $release, $timestamp, $description) {
-        $this->feeback->output(get_string('copyingtables', 'core_dbtransfer'));
+        $this->feedback->output(get_string('copyingtables', 'core_dbtransfer'));
         $this->importer->begin_database_import($version, $timestamp, $description);
     }
 
@@ -86,7 +86,7 @@ class database_mover extends database_exporter {
      * @return void
      */
     public function begin_table_export(xmldb_table $table) {
-        $this->feeback->output(get_string('copyingtable', 'core_dbtransfer', $table->getName()), 1);
+        $this->feedback->output(get_string('copyingtable', 'core_dbtransfer', $table->getName()), 1);
         $this->importer->begin_table_import($table->getName(), $table->getHash());
     }
 
@@ -108,7 +108,7 @@ class database_mover extends database_exporter {
      * @return void
      */
     public function finish_table_export(xmldb_table $table) {
-        $this->feeback->output(get_string('done', 'core_dbtransfer', $table->getName()), 2);
+        $this->feedback->output(get_string('done', 'core_dbtransfer', $table->getName()), 2);
         $this->importer->finish_table_import($table->getName());
     }
 

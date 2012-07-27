@@ -42,7 +42,7 @@ class question_usage_by_activity_test extends advanced_testcase {
     public function test_set_get_preferred_model() {
         // Set up
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
 
         // Exercise SUT and verify.
         $quba->set_preferred_behaviour('deferredfeedback');
@@ -52,7 +52,7 @@ class question_usage_by_activity_test extends advanced_testcase {
     public function test_set_get_id() {
         // Set up
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
 
         // Exercise SUT and verify
         $quba->set_id_from_database(123);
@@ -62,7 +62,7 @@ class question_usage_by_activity_test extends advanced_testcase {
     public function test_fake_id() {
         // Set up
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
 
         // Exercise SUT and verify
         $this->assertNotEmpty($quba->get_id());
@@ -70,7 +70,7 @@ class question_usage_by_activity_test extends advanced_testcase {
 
     public function test_create_usage_and_add_question() {
         // Exercise SUT
-        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context = context_system::instance();
         $quba = question_engine::make_questions_usage_by_activity('unit_test', $context);
         $quba->set_preferred_behaviour('deferredfeedback');
         $tf = test_question_maker::make_question('truefalse', 'true');
@@ -87,7 +87,7 @@ class question_usage_by_activity_test extends advanced_testcase {
     public function test_get_question() {
         // Set up.
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
         $tf = test_question_maker::make_question('truefalse', 'true');
         $slot = $quba->add_question($tf);
@@ -103,7 +103,7 @@ class question_usage_by_activity_test extends advanced_testcase {
         // Start a deferred feedback attempt with CBM and add the question to it.
         $tf = test_question_maker::make_question('truefalse', 'true');
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
         $quba->set_preferred_behaviour('deferredcbm');
         $slot = $quba->add_question($tf);
         $quba->start_all_questions();
@@ -129,7 +129,7 @@ class question_usage_by_activity_test extends advanced_testcase {
         // Start a deferred feedback attempt with CBM and add the question to it.
         $tf = test_question_maker::make_question('truefalse', 'true');
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
-                get_context_instance(CONTEXT_SYSTEM));
+                context_system::instance());
         $quba->set_preferred_behaviour('deferredcbm');
         $slot = $quba->add_question($tf);
         $quba->start_all_questions();
@@ -169,16 +169,17 @@ class question_usage_by_activity_test extends advanced_testcase {
  */
 class question_usage_db_test extends data_loading_method_test_base {
     public function test_load() {
+        $scid = context_system::instance()->id;
         $records = new question_test_recordset(array(
         array('qubaid', 'contextid', 'component', 'preferredbehaviour',
-                                               'questionattemptid', 'contextid', 'questionusageid', 'slot',
+                                               'questionattemptid', 'questionusageid', 'slot',
                                                               'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
                                                                                                              'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
                                                                                                                                      'attemptstepid', 'sequencenumber', 'state', 'fraction',
                                                                                                                                                                      'timecreated', 'userid', 'name', 'value'),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',             null, 1256233700, 1,       null, null),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233705, 1,   'answer',  '1'),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 2, 'gradedright', 1.0000000, 1256233720, 1,  '-finish',  '1'),
+        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',             null, 1256233700, 1,       null, null),
+        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233705, 1,   'answer',  '1'),
+        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 2, 'gradedright', 1.0000000, 1256233720, 1,  '-finish',  '1'),
         ));
 
         $question = test_question_maker::make_question('truefalse', 'true');
@@ -220,5 +221,64 @@ class question_usage_db_test extends data_loading_method_test_base {
         $this->assertEquals(1256233720, $step->get_timecreated());
         $this->assertEquals(1, $step->get_user_id());
         $this->assertEquals(array('-finish' => '1'), $step->get_all_data());
+    }
+
+    public function test_load_data_no_steps() {
+        // The code had a bug where if one question_attempt had no steps,
+        // load_from_records got stuck in an infinite loop. This test is to
+        // verify that no longer happens.
+        $scid = context_system::instance()->id;
+        $records = new question_test_recordset(array(
+        array('qubaid', 'contextid', 'component', 'preferredbehaviour',
+                                                   'questionattemptid', 'questionusageid', 'slot',
+                                                             'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
+                                                                                                            'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
+                                                                                                                                                                               'attemptstepid', 'sequencenumber', 'state', 'fraction',
+                                                                                                                                                                                                         'timecreated', 'userid', 'name', 'value'),
+        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', 0, 1, 1.0000000, 0.0000000, 0, 'This question is missing. Unable to display anything.', '', '', 0, null, null, null, null, null, null, null, null),
+        array(1, $scid, 'unit_test', 'interactive', 2, 1, 2, 'interactive', 0, 1, 1.0000000, 0.0000000, 0, 'This question is missing. Unable to display anything.', '', '', 0, null, null, null, null, null, null, null, null),
+        array(1, $scid, 'unit_test', 'interactive', 3, 1, 3, 'interactive', 0, 1, 1.0000000, 0.0000000, 0, 'This question is missing. Unable to display anything.', '', '', 0, null, null, null, null, null, null, null, null),
+        ));
+
+        question_bank::start_unit_test();
+        $quba = question_usage_by_activity::load_from_records($records, 1);
+        question_bank::end_unit_test();
+
+        $this->assertEquals('unit_test', $quba->get_owning_component());
+        $this->assertEquals(1, $quba->get_id());
+        $this->assertInstanceOf('question_engine_unit_of_work', $quba->get_observer());
+        $this->assertEquals('interactive', $quba->get_preferred_behaviour());
+
+        $this->assertEquals(array(1, 2, 3), $quba->get_slots());
+
+        $qa = $quba->get_question_attempt(1);
+        $this->assertEquals(0, $qa->get_num_steps());
+    }
+
+    public function test_load_data_no_qas() {
+        // The code had a bug where if a question_usage had no question_attempts,
+        // load_from_records got stuck in an infinite loop. This test is to
+        // verify that no longer happens.
+        $scid = context_system::instance()->id;
+        $records = new question_test_recordset(array(
+        array('qubaid', 'contextid', 'component', 'preferredbehaviour',
+                                                   'questionattemptid', 'questionusageid', 'slot',
+                                                                        'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
+                                                                                                               'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
+                                                                                                                                         'attemptstepid', 'sequencenumber', 'state', 'fraction',
+                                                                                                                                                                   'timecreated', 'userid', 'name', 'value'),
+        array(1, $scid, 'unit_test', 'interactive', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
+        ));
+
+        question_bank::start_unit_test();
+        $quba = question_usage_by_activity::load_from_records($records, 1);
+        question_bank::end_unit_test();
+
+        $this->assertEquals('unit_test', $quba->get_owning_component());
+        $this->assertEquals(1, $quba->get_id());
+        $this->assertInstanceOf('question_engine_unit_of_work', $quba->get_observer());
+        $this->assertEquals('interactive', $quba->get_preferred_behaviour());
+
+        $this->assertEquals(array(), $quba->get_slots());
     }
 }
