@@ -31,8 +31,8 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 
 $attemptid = required_param('attempt', PARAM_INT);
-$page = optional_param('page', 0, PARAM_INT);
-$showall = optional_param('showall', 0, PARAM_BOOL);
+$page      = optional_param('page', 0, PARAM_INT);
+$showall   = optional_param('showall', 0, PARAM_BOOL);
 
 $url = new moodle_url('/mod/quiz/review.php', array('attempt'=>$attemptid));
 if ($page !== 0) {
@@ -44,6 +44,7 @@ if ($showall !== 0) {
 $PAGE->set_url($url);
 
 $attemptobj = quiz_attempt::create($attemptid);
+$page = $attemptobj->force_page_number_into_range($page);
 
 // Check login.
 require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
