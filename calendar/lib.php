@@ -1627,6 +1627,7 @@ function calendar_print_month_selector($name, $selected) {
     for ($i=1; $i<=12; $i++) {
         $months[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), '%B');
     }
+    echo html_writer::label(get_string('months'), 'menu'. $name, false, array('class' => 'accesshide'));
     echo html_writer::select($months, $name, $selected, false);
 }
 
