@@ -462,7 +462,7 @@ function lti_get_ims_role($user, $cmid, $courseid) {
         //If no cmid is passed, check if the user is a teacher in the course
         //This allows other modules to programmatically "fake" a launch without
         //a real LTI instance
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+        $coursecontext = context_course::instance($courseid);
 
         if (has_capability('moodle/course:manageactivities', $coursecontext)) {
             array_push($roles, 'Instructor');
@@ -470,7 +470,7 @@ function lti_get_ims_role($user, $cmid, $courseid) {
             array_push($roles, 'Learner');
         }
     } else {
-        $context = get_context_instance(CONTEXT_MODULE, $cmid);
+        $context = context_module::instance($cmid);
 
         if (has_capability('mod/lti:manage', $context)) {
             array_push($roles, 'Instructor');

@@ -68,7 +68,7 @@ if ($l) {  // Two ways to specify the module
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/lti:grade', $context);
 
 $url = new moodle_url('/mod/lti/grade.php', array('id' => $cm->id));
