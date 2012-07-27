@@ -206,7 +206,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             var group = this.get_group(drag);
             var dd = new Y.DD.Drag({
                 node: drag,
-                dragMode: 'intersect'
+                dragMode: 'point'
             }).plug(Y.Plugin.DDConstrained, {constrain2node: this.selectors.top_node()});
         },
         make_drop_zones : function () {
