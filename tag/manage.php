@@ -260,8 +260,10 @@ if ($tagrecords = $DB->get_records_sql($query, $params, $table->get_page_start()
         $flag           =   $tag->flag;
         $timemodified   =   format_time(time() - $tag->timemodified);
         $checkbox       =   '<input type="checkbox" name="tagschecked[]" value="'.$tag->id.'" />';
-        $text           =   '<input type="text" name="newname['.$tag->id.']" />';
-        $tagtype        =   html_writer::select($existing_tagtypes, 'tagtypes['.$tag->id.']', $tag->tagtype, false);
+        $text           =   html_writer::label(get_string('newname', 'tag'), 'newname_' . $tag->id, false, array('class' => 'accesshide'));
+        $text          .=   '<input type="text" id="newname_' . $tag->id. '" name="newname['.$tag->id.']" />';
+        $tagtype        =   html_writer::label(get_string('tagtype', 'tag'), 'menutagtypes'. $tag->id, false, array('class' => 'accesshide'));
+        $tagtype       .=   html_writer::select($existing_tagtypes, 'tagtypes['.$tag->id.']', $tag->tagtype, false, array('id' => 'menutagtypes'. $tag->id));
 
         //if the tag if flagged, highlight it
         if ($tag->flag > 0) {
@@ -283,6 +285,7 @@ if ($tagrecords = $DB->get_records_sql($query, $params, $table->get_page_start()
     echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" /> ';
     echo '<br/><br/>';
+    echo html_writer::label(get_string('withselectedtags', 'tag'), 'menuformaction', false, array('class' => 'accesshide'));
     echo '<select id="menuformaction" name="action">
                 <option value="" selected="selected">'. get_string('withselectedtags', 'tag') .'</option>
                 <option value="reset">'. get_string('resetflag', 'tag') .'</option>
