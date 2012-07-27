@@ -113,7 +113,7 @@ class new_table_from_mysql extends XMLDBAction {
             $o.= '    <input type="hidden" name ="postaction" value="edit_table" />';
             $o.= '    <input type="hidden" name ="sesskey" value="' . sesskey() . '" />';
             $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
-            $o.= '      <tr><td><label for="table" accesskey="t">' . $this->str['createtable'] .' </label>' . html_writer::select($selecttables, 'table') . '<label for="after" accesskey="a">' . $this->str['aftertable'] . ' </label>' .html_writer::select($aftertables, 'after') . '</td></tr>';
+            $o.= '      <tr><td><label for="menutable" accesskey="t">' . $this->str['createtable'] .' </label>' . html_writer::select($selecttables, 'table') . '<label for="menuafter" accesskey="a">' . $this->str['aftertable'] . ' </label>' .html_writer::select($aftertables, 'after') . '</td></tr>';
             $o.= '      <tr><td colspan="2" align="center"><input type="submit" value="' .$this->str['create'] . '" /></td></tr>';
             $o.= '      <tr><td colspan="2" align="center"><a href="index.php?action=edit_xml_file&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a></td></tr>';
             $o.= '    </table>';

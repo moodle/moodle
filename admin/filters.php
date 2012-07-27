@@ -242,6 +242,7 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
 
     // Disable/off/on
     $select = new single_select(filters_action_url($filter, 'setstate'), 'newstate', $activechoices, $filterinfo->active, null, 'active' . basename($filter));
+    $select->set_label(get_string('isactive', 'filters'), array('class' => 'accesshide'));
     $row[] = $OUTPUT->render($select);
 
     // Re-order
@@ -263,6 +264,7 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
 
     // Apply to strings.
     $select = new single_select(filters_action_url($filter, 'setapplyto'), 'stringstoo', $applytochoices, $applytostrings, null, 'applyto' . basename($filter));
+    $select->set_label(get_string('applyto', 'filters'), array('class' => 'accesshide'));
     $select->disabled = $filterinfo->active == TEXTFILTER_DISABLED;
     $row[] = $OUTPUT->render($select);
 
