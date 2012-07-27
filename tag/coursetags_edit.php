@@ -159,11 +159,12 @@ echo $OUTPUT->header();
                 <div class="coursetag_edit_centered">
                     <div class="coursetag_edit_row">
                         <div class="coursetag_edit_left">
-                            $edittagthisunit
+                            <label for="coursetag_new_tag">$edittagthisunit</label>
                         </div>
                         <div class="coursetag_edit_right">
                             <div class="coursetag_form_input1">
-                                <input type="text" name="coursetag_sug_keyword" class="coursetag_form_input1a" disabled="disabled" />
+                                <label clas="accesshide" for="coursetag_sug_keyword">$edittagthisunit</label>
+                                <input type="text" name="coursetag_sug_keyword" id="coursetag_sug_keyword" class="coursetag_form_input1a" disabled="disabled" />
                             </div>
                             <div class="coursetag_form_input2">
                                 <input type="text" name="coursetag_new_tag" id="coursetag_new_tag" class="coursetag_form_input2a"
@@ -182,10 +183,12 @@ EOT;
             $outstr .= <<<EOT1
                     <div class="coursetag_edit_row">
                         <div class="coursetag_edit_left">
-                            $editdeletemytag
+                            <label for="del_tag">
+                                $editdeletemytag
+                            </label>
                         </div>
                         <div class="coursetag_edit_right">
-                            <select name="del_tag">
+                            <select id="del_tag" name="del_tag">
                                 $selectoptions
                             </select>
                         </div>
