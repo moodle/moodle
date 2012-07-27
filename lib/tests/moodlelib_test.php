@@ -912,6 +912,56 @@ class moodlelib_testcase extends advanced_testcase {
         } catch (invalid_parameter_exception $ex) {
             $this->assertTrue(true);
         }
+        try {
+            $param = validate_param('1.0', PARAM_FLOAT);
+            $this->assertSame(1.0, $param);
+
+            // Make sure valid floats do not cause exception.
+            validate_param(1.0, PARAM_FLOAT);
+            validate_param(10, PARAM_FLOAT);
+            validate_param('0', PARAM_FLOAT);
+            validate_param('119813454.545464564564546564545646556564465465456465465465645645465645645645', PARAM_FLOAT);
+            validate_param('011.1', PARAM_FLOAT);
+            validate_param('11', PARAM_FLOAT);
+            validate_param('+.1', PARAM_FLOAT);
+            validate_param('-.1', PARAM_FLOAT);
+            validate_param('1e10', PARAM_FLOAT);
+            validate_param('.1e+10', PARAM_FLOAT);
+            validate_param('1E-1', PARAM_FLOAT);
+            $this->assertTrue(true);
+        } catch (invalid_parameter_exception $ex) {
+            $this->fail('Valid float notation not accepted');
+        }
+        try {
+            $param = validate_param('1,2', PARAM_FLOAT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
+        try {
+            $param = validate_param('', PARAM_FLOAT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
+        try {
+            $param = validate_param('.', PARAM_FLOAT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
+        try {
+            $param = validate_param('e10', PARAM_FLOAT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
+        try {
+            $param = validate_param('abc', PARAM_FLOAT);
+            $this->fail('invalid_parameter_exception expected');
+        } catch (invalid_parameter_exception $ex) {
+            $this->assertTrue(true);
+        }
     }
 
     function test_shorten_text() {
