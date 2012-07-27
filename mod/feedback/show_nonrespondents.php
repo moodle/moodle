@@ -288,6 +288,7 @@ if (!$students) {
             print_string('formathtml');
             echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         } else {
+            echo '<label for="menuformat" class="accesshide">'. get_string('format') .'</label>';
             choose_from_menu(format_text_menu(), "format", $format, "");
         }
         echo '<br /><div class="buttons">';
