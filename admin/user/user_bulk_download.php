@@ -148,23 +148,13 @@ function user_download_csv($fields) {
     global $CFG, $SESSION, $DB;
 
     require_once($CFG->dirroot.'/user/profile/lib.php');
+    require_once($CFG->libdir . '/csvlib.class.php');
 
-    $filename = clean_filename(get_string('users').'.csv');
+    $filename = clean_filename(get_string('users'));
 
-    header("Content-Type: application/download\n");
-    header("Content-Disposition: attachment; filename=\"$filename\"");
-    header("Expires: 0");
-    header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-    header("Pragma: public");
-
-    $delimiter = get_string('listsep', 'langconfig');
-    $encdelim  = '&#'.ord($delimiter);
-
-    $row = array();
-    foreach ($fields as $fieldname) {
-        $row[] = str_replace($delimiter, $encdelim, $fieldname);
-    }
-    echo implode($delimiter, $row)."\n";
+    $csvexport = new csv_export_writer();
+    $csvexport->set_filename($filename);
+    $csvexport->add_data($fields);
 
     foreach ($SESSION->bulk_users as $userid) {
         $row = array();
@@ -172,10 +162,19 @@ function user_download_csv($fields) {
             continue;
         }
         profile_load_data($user);
+        $userprofiledata = array();
         foreach ($fields as $field=>$unused) {
-            $row[] = str_replace($delimiter, $encdelim, $user->$field);
+            // Custom user profile textarea fields come in an array
+            // The first element is the text and the second is the format.
+            // We only take the text.
+            if (is_array($user->$field)) {
+                $userprofiledata[] = reset($user->$field);
+            } else {
+                $userprofiledata[] = $user->$field;
+            }
         }
-        echo implode($delimiter, $row)."\n";
+        $csvexport->add_data($userprofiledata);
     }
+    $csvexport->download_file();
     die;
 }

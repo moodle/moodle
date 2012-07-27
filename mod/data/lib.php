@@ -2646,37 +2646,19 @@ function data_supports($feature) {
  * @param bool $return
  * @return string|void
  */
-function data_export_csv($export, $delimiter_name, $dataname, $count, $return=false) {
+function data_export_csv($export, $delimiter_name, $database, $count, $return=false) {
     global $CFG;
     require_once($CFG->libdir . '/csvlib.class.php');
-    $delimiter = csv_import_reader::get_delimiter($delimiter_name);
-    $filename = clean_filename("{$dataname}-{$count}_record");
+
+    $filename = $database . '-' . $count . '-record';
     if ($count > 1) {
         $filename .= 's';
     }
-    $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
-    $filename .= clean_filename("-{$delimiter_name}_separated");
-    $filename .= '.csv';
-    if (empty($return)) {
-        header("Content-Type: application/download\n");
-        header("Content-Disposition: attachment; filename=\"$filename\"");
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
-        header('Pragma: public');
+    if ($return) {
+        return csv_export_writer::print_array($export, $delimiter_name, '"', true);
+    } else {
+        csv_export_writer::download_array($filename, $export, $delimiter_name);
     }
-    $encdelim = '&#' . ord($delimiter) . ';';
-    $returnstr = '';
-    foreach($export as $row) {
-        foreach($row as $key => $column) {
-            $row[$key] = str_replace($delimiter, $encdelim, $column);
-        }
-        $returnstr .= implode($delimiter, $row) . "\n";
-    }
-    if (empty($return)) {
-        echo $returnstr;
-        return;
-    }
-    return $returnstr;
 }
 
 /**

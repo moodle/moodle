@@ -279,6 +279,7 @@ class csv_import_reader {
             case 'tab':       return "\t";
             case 'cfg':       if (isset($CFG->CSV_DELIMITER)) { return $CFG->CSV_DELIMITER; } // no break; fall back to comma
             case 'comma':     return ',';
+            default :         return ',';  // If anything else comes in, default to comma.
         }
     }
 
@@ -317,5 +318,195 @@ class csv_import_reader {
         }
 
         return $iiid;
+    }
+}
+
+/**
+ * Utitily class for exporting of CSV files.
+ * @copyright 2012 Adrian Greeve
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core
+ * @category  csv
+ */
+class csv_export_writer {
+    /**
+     * @var string $delimiter  The name of the delimiter. Supported types(comma, tab, semicolon, colon, cfg)
+     */
+    var $delimiter;
+    /**
+     * @var string $csvenclosure  How fields with spaces and commas are enclosed.
+     */
+    var $csvenclosure;
+    /**
+     * @var string $mimetype  Mimetype of the file we are exporting.
+     */
+    var $mimetype;
+    /**
+     * @var string $filename  The filename for the csv file to be downloaded.
+     */
+    var $filename;
+    /**
+     * @var string $path  The directory path for storing the temporary csv file.
+     */
+    var $path;
+    /**
+     * @var resource $fp  File pointer for the csv file.
+     */
+    protected $fp;
+
+    /**
+     * Constructor for the csv export reader
+     *
+     * @param string $delimiter      The name of the character used to seperate fields. Supported types(comma, tab, semicolon, colon, cfg)
+     * @param string $enclosure      The character used for determining the enclosures.
+     * @param string $mimetype       Mime type of the file that we are exporting.
+     */
+    public function __construct($delimiter = 'comma', $enclosure = '"', $mimetype = 'application/download') {
+        $this->delimiter = $delimiter;
+        // Check that the enclosure is a single character.
+        if (strlen($enclosure) == 1) {
+            $this->csvenclosure = $enclosure;
+        } else {
+            $this->csvenclosure = '"';
+        }
+        $this->filename = "Moodle-data-export.csv";
+        $this->mimetype = $mimetype;
+    }
+
+    /**
+     * Set the file path to the temporary file.
+     */
+    protected function set_temp_file_path() {
+        global $USER, $CFG;
+        make_temp_directory('csvimport/' . $USER->id);
+        $path = $CFG->tempdir . '/csvimport/' . $USER->id. '/' . $this->filename;
+        // Check to see if the file exists, if so delete it.
+        if (file_exists($path)) {
+            unlink($path);
+        }
+        $this->path = $path;
+    }
+
+    /**
+     * Add data to the temporary file in csv format
+     *
+     * @param array $row  An array of values.
+     */
+    public function add_data($row) {
+        if(!isset($this->path)) {
+            $this->set_temp_file_path();
+            $this->fp = fopen($this->path, 'w+');
+        }
+        $delimiter = csv_import_reader::get_delimiter($this->delimiter);
+        fputcsv($this->fp, $row, $delimiter, $this->csvenclosure);
+    }
+
+    /**
+     * Echos or returns a csv data line by line for displaying.
+     *
+     * @param bool $return  Set to true to return a string with the csv data.
+     * @return string       csv data.
+     */
+    public function print_csv_data($return = false) {
+        fseek($this->fp, 0);
+        $returnstring = '';
+        while (($content = fgets($this->fp)) !== false) {
+            if (!$return){
+                echo $content;
+            } else {
+                $returnstring .= $content;
+            }
+        }
+        if ($return) {
+            return $returnstring;
+        }
+    }
+
+    /**
+     * Set the filename for the uploaded csv file
+     *
+     * @param string $dataname    The name of the module.
+     * @param string $extenstion  File extension for the file.
+     */
+    public function set_filename($dataname, $extension = '.csv') {
+        $filename = clean_filename($dataname);
+        $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
+        $filename .= clean_filename("-{$this->delimiter}_separated");
+        $filename .= $extension;
+        $this->filename = $filename;
+    }
+
+    /**
+     * Output file headers to initialise the download of the file.
+     */
+    protected function send_header() {
+        global $CFG;
+        if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+            header('Cache-Control: max-age=10');
+            header('Pragma: ');
+        } else { //normal http - prevent caching at all cost
+            header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
+            header('Pragma: no-cache');
+        }
+        header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
+        header("Content-Type: $this->mimetype\n");
+        header("Content-Disposition: attachment; filename=\"$this->filename\"");
+    }
+
+    /**
+     * Download the csv file.
+     */
+    public function download_file() {
+        $this->send_header();
+        $this->print_csv_data();
+        exit;
+    }
+
+    /**
+     * Creates a file for downloading an array into a deliminated format.
+     * This function is useful if you are happy with the defaults and all of your
+     * information is in one array.
+     *
+     * @param string $filename    The filename of the file being created.
+     * @param array $records      An array of information to be converted.
+     * @param string $delimiter   The name of the delimiter. Supported types(comma, tab, semicolon, colon, cfg)
+     * @param string $enclosure   How speical fields are enclosed.
+     */
+    public static function download_array($filename, array &$records, $delimiter = 'comma', $enclosure='"') {
+        $csvdata = new csv_export_writer($delimiter, $enclosure);
+        $csvdata->set_filename($filename);
+        foreach ($records as $row) {
+            $csvdata->add_data($row);
+        }
+        $csvdata->download_file();
+    }
+
+    /**
+     * This will convert an array of values into a deliminated string.
+     * Like the above function, this is for convenience.
+     *
+     * @param array $records     An array of information to be converted.
+     * @param string $delimiter  The name of the delimiter. Supported types(comma, tab, semicolon, colon, cfg)
+     * @param string $enclosure  How speical fields are enclosed.
+     * @param bool $return       If true will return a string with the csv data.
+     * @return string            csv data.
+     */
+    public static function print_array(array &$records, $delimiter = 'comma', $enclosure = '"', $return = false) {
+        $csvdata = new csv_export_writer($delimiter, $enclosure);
+        foreach ($records as $row) {
+            $csvdata->add_data($row);
+        }
+        $data = $csvdata->print_csv_data($return);
+        if ($return) {
+            return $data;
+        }
+    }
+
+    /**
+     * Make sure that everything is closed when we are finished.
+     */
+    public function __destruct() {
+        fclose($this->fp);
+        unlink($this->path);
     }
 }
