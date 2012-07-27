@@ -72,7 +72,7 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
 
         $this->exportdata = array('entries' => $entries, 'aliases' => $aliases, 'categoryentries' => $categoryentries);
         $fs = get_file_storage();
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $context = context_module::instance($this->cm->id);
         $this->multifiles = array();
         foreach (array_keys($entries) as $entry) {
             $this->keyedfiles[$entry] = array_merge(
@@ -186,7 +186,7 @@ class glossary_full_portfolio_caller extends portfolio_module_caller_base {
      * @return boolean
      */
     public function check_permissions() {
-        return has_capability('mod/glossary:export', get_context_instance(CONTEXT_MODULE, $this->cm->id));
+        return has_capability('mod/glossary:export', context_module::instance($this->cm->id));
     }
 
     /**
@@ -254,10 +254,10 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
             JOIN {glossary_categories} c
             ON c.id = ec.categoryid
             WHERE ec.entryid = ?', array($this->entryid));
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $context = context_module::instance($this->cm->id);
         if ($this->entry->sourceglossaryid == $this->cm->instance) {
             if ($maincm = get_coursemodule_from_instance('glossary', $this->entry->glossaryid)) {
-                $context = get_context_instance(CONTEXT_MODULE, $maincm->id);
+                $context = context_module::instance($maincm->id);
             }
         }
         $this->aliases = $DB->get_record('glossary_alias', array('entryid'=>$this->entryid));
@@ -283,7 +283,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
      * @return boolean
      */
     public function check_permissions() {
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $context = context_module::instance($this->cm->id);
         return has_capability('mod/glossary:exportentry', $context)
             || ($this->entry->userid == $this->user->id && has_capability('mod/glossary:exportownentry', $context));
     }
@@ -389,7 +389,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
     public static function entry_content($course, $cm, $glossary, $entry, $aliases, $format) {
         global $OUTPUT, $DB;
         $entry = clone $entry;
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
         $options = portfolio_format_text_options();
         $options->trusted = $entry->definitiontrust;
         $options->context = $context;
@@ -427,7 +427,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
             if (!$maincm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
                 return '';
             }
-            $filecontext = get_context_instance(CONTEXT_MODULE, $maincm->id);
+            $filecontext = context_module::instance($maincm->id);
 
         } else {
             $filecontext = $context;

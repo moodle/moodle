@@ -52,7 +52,7 @@ if ( !$entriesbypage = $glossary->entbypage ) {
 }
 
 require_course_login($course, true, $cm);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 // Prepare format_string/text options
 $fmtoptions = array(
