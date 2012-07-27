@@ -213,7 +213,8 @@ class assign_feedback_comments extends assign_feedback_plugin {
      */
     public function can_upgrade($type, $version) {
 
-        if (($type == 'upload' || $type == 'uploadsingle') && $version >= 2011112900) {
+        if (($type == 'upload' || $type == 'uploadsingle' ||
+             $type == 'online' || $type == 'offline') && $version >= 2011112900) {
             return true;
         }
         return false;
