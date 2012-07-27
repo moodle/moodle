@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2011051200;
+$plugin->version   = 2012062500;
 $plugin->requires  = 2011120500;
 $plugin->cron      = 0;
 $plugin->component = 'qtype_ddimageortext';
