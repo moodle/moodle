@@ -343,10 +343,15 @@ function forum_print_big_search_form($course) {
     }
 
     echo '<input name="timefromrestrict" type="checkbox" value="1" alt="'.get_string('searchdatefrom', 'forum').'" onclick="return lockoptions(\'searchform\', \'timefromrestrict\', timefromitems)" '.  $datefromchecked . ' /> ';
-    $selectors = html_writer::select_time('days', 'fromday', $datefrom)
+    $selectors = html_writer::label(get_string('day'), 'menufromday', false, array('class' => 'accesshide'))
+               . html_writer::select_time('days', 'fromday', $datefrom)
+               . html_writer::label(get_string('month'), 'menufrommonth', false, array('class' => 'accesshide'))
                . html_writer::select_time('months', 'frommonth', $datefrom)
+               . html_writer::label(get_string('year'), 'menufromyear', false, array('class' => 'accesshide'))
                . html_writer::select_time('years', 'fromyear', $datefrom)
+               . html_writer::label(get_string('hour'), 'menufromhour', false, array('class' => 'accesshide'))
                . html_writer::select_time('hours', 'fromhour', $datefrom)
+               . html_writer::label(get_string('minute'), 'menufromminute', false, array('class' => 'accesshide'))
                . html_writer::select_time('minutes', 'fromminute', $datefrom);
     echo $selectors;
     echo '<input type="hidden" name="hfromday" value="0" />';
@@ -369,10 +374,15 @@ function forum_print_big_search_form($course) {
     }
 
     echo '<input name="timetorestrict" type="checkbox" value="1" alt="'.get_string('searchdateto', 'forum').'" onclick="return lockoptions(\'searchform\', \'timetorestrict\', timetoitems)" ' .$datetochecked. ' /> ';
-    $selectors = html_writer::select_time('days', 'today', $dateto)
+    $selectors = html_writer::label(get_string('day'), 'menutoday', false, array('class' => 'accesshide'))
+               . html_writer::select_time('days', 'today', $dateto)
+               . html_writer::label(get_string('month'), 'menutomonth', false, array('class' => 'accesshide'))
                . html_writer::select_time('months', 'tomonth', $dateto)
+               . html_writer::label(get_string('year'), 'menutoyear', false, array('class' => 'accesshide'))
                . html_writer::select_time('years', 'toyear', $dateto)
+               . html_writer::label(get_string('hour'), 'menutohour', false, array('class' => 'accesshide'))
                . html_writer::select_time('hours', 'tohour', $dateto)
+               . html_writer::label(get_string('minute'), 'menutominute', false, array('class' => 'accesshide'))
                . html_writer::select_time('minutes', 'tominute', $dateto);
     echo $selectors;
 
