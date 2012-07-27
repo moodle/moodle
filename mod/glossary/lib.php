@@ -145,7 +145,7 @@ function glossary_delete_instance($id) {
         return false;
     }
 
-    if (!$context = context_module::instance($cm->id)) {
+    if (!$context = context_module::instance($cm->id, IGNORE_MISSING)) {
         return false;
     }
 
@@ -1530,7 +1530,7 @@ function glossary_search_entries($searchterms, $glossary, $extended) {
 function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
     global $CFG, $DB, $OUTPUT;
 
-    if (!$context = context_module::instance($cm->id)) {
+    if (!$context = context_module::instance($cm->id, IGNORE_MISSING)) {
         return '';
     }
 
