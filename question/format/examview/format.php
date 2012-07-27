@@ -46,10 +46,10 @@ class qformat_examview extends qformat_default {
         'mtf' => 99,
         'nr' => NUMERICAL,
         'pr' => 99,
-        'es' => 99,
+        'es' => ESSAY,
         'ca' => 99,
         'ot' => 99,
-        'sa' => ESSAY
+        'sa' => SHORTANSWER
         );
 
     public $matching_questions = array();
@@ -113,7 +113,7 @@ class qformat_examview extends qformat_default {
             return;
         }
         foreach ($matching_groups as $match_group) {
-            $newgroup = null;
+            $newgroup = new stdClass();
             $groupname = trim($match_group['@']['name']);
             $questiontext = $this->unxmlise($match_group['#']['text'][0]['#']);
             $newgroup->questiontext = trim($questiontext);
@@ -136,7 +136,7 @@ class qformat_examview extends qformat_default {
         $phrase = trim($this->unxmlise($qrec['text']['0']['#']));
         $answer = trim($this->unxmlise($qrec['answer']['0']['#']));
         $answer = strip_tags( $answer );
-        $match_group->subquestions[] = $this->text_field($phrase);
+        $match_group->subquestions[] = $phrase;
         $match_group->subanswers[] = $match_group->subchoices[$answer];
         $this->matching_questions[$groupname] = $match_group;
         return null;
@@ -159,7 +159,7 @@ class qformat_examview extends qformat_default {
             $question->subanswers = array();
             foreach ($match_group->subquestions as $key => $value) {
                 $htmltext = s($value);
-                $question->subquestions[] = $htmltext;
+                $question->subquestions[] = $this->text_field($htmltext);
 
                 $htmltext = s($match_group->subanswers[$key]);
                 $question->subanswers[] = $htmltext;
@@ -231,7 +231,7 @@ class qformat_examview extends qformat_default {
                 $question = $this->parse_co($qrec['#'], $question);
                 break;
             case ESSAY:
-                $question = $this->parse_sa($qrec['#'], $question);
+                $question = $this->parse_es($qrec['#'], $question);
                 break;
             case NUMERICAL:
                 $question = $this->parse_nr($qrec['#'], $question);
@@ -298,9 +298,13 @@ class qformat_examview extends qformat_default {
         return $question;
     }
 
-    protected function parse_sa($qrec, $question) {
+    protected function parse_es($qrec, $question) {
         $feedback = trim($this->unxmlise($qrec['answer'][0]['#']));
+        $question->graderinfo =  $this->text_field($feedback);
         $question->feedback = $feedback;
+        $question->responseformat = 'editor';
+        $question->responsefieldlines = 15;
+        $question->attachments = 0;
         $question->fraction = 0;
         return $question;
     }
@@ -317,8 +321,7 @@ class qformat_examview extends qformat_default {
                 $question->answer[$key] = $value;
                 $question->fraction[$key] = 1;
                 $question->feedback[$key] = $this->text_field("Correct");
-                $question->min[$key] = $question->answer[$key] - $errormargin;
-                $question->max[$key] = $question->answer[$key] + $errormargin;
+                $question->tolerance[$key] = $errormargin;
             }
         }
         return $question;
