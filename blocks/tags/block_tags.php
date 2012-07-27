@@ -225,7 +225,6 @@ class block_tags extends block_base {
             if ($officialtags) { $this->content->text .= $officialtagscontent; }
             if ($coursetags) { $this->content->text .= $coursetagscontent; }
             if ($commtags) { $this->content->text .= $commtagscontent; }
-
             // add the input form section (allowing a user to tag the current course) and navigation, or loggin message
             if ($loggedin) {
                 // only show the input form on course pages for those allowed (or not barred)
@@ -250,7 +249,8 @@ class block_tags extends block_base {
                             <div class="coursetag_form_wrapper">
                             <div class="coursetag_form_positioner">
                                 <div class="coursetag_form_input1">
-                                    <input type="text" name="coursetag_sug_keyword" class="coursetag_form_input1a" disabled="disabled" />
+                                    <label class="accesshide" for="coursetag_sug_keyword">$tagthisunit</label>
+                                    <input type="text" name="coursetag_sug_keyword" id="coursetag_sug_keyword" class="coursetag_form_input1a" disabled="disabled" />
                                 </div>
                                 <div class="coursetag_form_input2">
                                     <input type="text" name="coursetag_new_tag" id="coursetag_new_tag" class="coursetag_form_input2a"
