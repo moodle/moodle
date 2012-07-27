@@ -206,6 +206,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             var group = this.get_group(drag);
             var dd = new Y.DD.Drag({
                 node: drag,
+                groups: [this.get_group(drag)],
                 dragMode: 'point'
             }).plug(Y.Plugin.DDConstrained, {constrain2node: this.selectors.top_node()});
         },
@@ -214,7 +215,8 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
         },
         make_drop_zone : function (drop) {
             var dropdd = new Y.DD.Drop({
-                node: drop});
+                node: drop,
+                groups: [this.get_group(drop)] });
             dropdd.on('drop:hit', function(e) {
                 var drag = e.drag.get('node');
                 var drop = e.drop.get('node');
