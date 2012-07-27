@@ -151,7 +151,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                 draggable_for_question : function (drag, group, choice) {
                     var dd = new Y.DD.Drag({
                         node: drag,
-                        dragMode: 'intersect'
+                        dragMode: 'point'
                     }).plug(Y.Plugin.DDConstrained, {constrain2node: topnode});
 
                     drag.setData('group', group);
@@ -161,7 +161,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                 draggable_for_form : function (drag) {
                     var dd = new Y.DD.Drag({
                         node: drag,
-                        dragMode: 'intersect'
+                        dragMode: 'point'
                     }).plug(Y.Plugin.DDConstrained, {constrain2node: topnode});
                     dd.on('drag:end', function(e) {
                         var dragnode = e.target.get('node');
