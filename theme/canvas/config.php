@@ -194,16 +194,13 @@ $THEME->hidefromselector = true;
 // switched on.
 /////////////////////////////////////////////////////
 
-
-
-// $THEME->enable_dock = false;
+$THEME->enable_dock = true;
 
 ////////////////////////////////////////////////////
 // Do you want to use the new navigation dock?
 ////////////////////////////////////////////////////
 
-
-// $THEME->editor_sheets
+$THEME->editor_sheets = array('editor');
 
 ////////////////////////////////////////////////////
 // An array of stylesheets to include within the
@@ -265,5 +262,3 @@ $THEME->hidefromselector = true;
 // Sets a custom render factory to use with the
 // theme, used when working with custom renderers.
 ////////////////////////////////////////////////////
-
-$THEME->editor_sheets = array('editor');
