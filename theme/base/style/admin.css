@@ -68,6 +68,7 @@
 .path-admin-roles .capabilitysearchui {text-align: left;margin-left: auto;margin-right: auto;}
 #page-admin-roles-define .topfields {margin: 1em 0 2em;}
 #page-admin-roles-define .mform {width: 100%;}
+#page-admin-roles-define .capdefault {background-color: #eee; border: 1px solid #cecece;}
 #page-filter-manage .backlink,
 .path-admin-roles .backlink {margin-top: 1em}
 #page-admin-roles-explain #chooseuser h3,
