@@ -25,6 +25,12 @@
  */
 
 $string['customwelcomemessage'] = 'Custom welcome message';
+$string['customwelcomemessage_help'] = 'A custom welcome message may be added as plain text or Moodle-auto format, including HTML tags and multi-lang tags.
+
+The following placeholders may be included in the message:
+
+* Course name {$a->coursename}
+* Link to user\'s profile page {$a->profileurl}';
 $string['defaultrole'] = 'Default role assignment';
 $string['defaultrole_desc'] = 'Select role which should be assigned to users during self enrolment';
 $string['editenrolment'] = 'Edit enrolment';

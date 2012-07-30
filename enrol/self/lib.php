@@ -267,22 +267,32 @@ class enrol_self_plugin extends enrol_plugin {
         global $CFG, $DB;
 
         $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
+        $context = context_course::instance($course->id);
 
         $a = new stdClass();
-        $a->coursename = format_string($course->fullname);
+        $a->coursename = format_string($course->fullname, true, array('context'=>$context));
         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
 
         if (trim($instance->customtext1) !== '') {
             $message = $instance->customtext1;
             $message = str_replace('{$a->coursename}', $a->coursename, $message);
             $message = str_replace('{$a->profileurl}', $a->profileurl, $message);
+            if (strpos($message, '<') === false) {
+                // Plain text only.
+                $messagetext = $message;
+                $messagehtml = text_to_html($messagetext, null, false, true);
+            } else {
+                // This is most probably the tag/newline soup known as FORMAT_MOODLE.
+                $messagehtml = format_text($message, FORMAT_MOODLE, array('context'=>$context, 'para'=>false, 'newlines'=>true, 'filter'=>true));
+                $messagetext = html_to_text($messagehtml);
+            }
         } else {
-            $message = get_string('welcometocoursetext', 'enrol_self', $a);
+            $messagetext = get_string('welcometocoursetext', 'enrol_self', $a);
+            $messagehtml = text_to_html($messagetext, null, false, true);
         }
 
-        $subject = get_string('welcometocourse', 'enrol_self', format_string($course->fullname));
+        $subject = get_string('welcometocourse', 'enrol_self', format_string($course->fullname, true, array('context'=>$context)));
 
-        $context = context_course::instance($course->id);
         $rusers = array();
         if (!empty($CFG->coursecontact)) {
             $croles = explode(',', $CFG->coursecontact);
@@ -295,7 +305,7 @@ class enrol_self_plugin extends enrol_plugin {
         }
 
         //directly emailing welcome message rather than using messaging
-        email_to_user($user, $contact, $subject, $message);
+        email_to_user($user, $contact, $subject, $messagetext, $messagehtml);
     }
 
     /**
