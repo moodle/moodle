@@ -153,7 +153,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
 
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_combined_feedback($question, true);
-        $question = $this->data_preprocessing_hints($question);
+        $question = $this->data_preprocessing_hints($question, true, true);
 
         $dragids = array(); // drag no -> dragid
         if (!empty($question->options)) {
@@ -193,11 +193,12 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
      * @param object $question the data being passed to the form.
      * @return object $question the modified data.
      */
-    protected function data_preprocessing_hints($question) {
+    protected function data_preprocessing_hints($question, $withclearwrong = false,
+                                                $withshownumpartscorrect = false) {
         if (empty($question->hints)) {
             return $question;
         }
-        parent::data_preprocessing_hints($question, true, true);
+        parent::data_preprocessing_hints($question, $withclearwrong, $withshownumpartscorrect);
 
         $question->hintoptions = array();
         foreach ($question->hints as $hint) {
