@@ -661,7 +661,8 @@ function optional_param_array($parname, $default, $type) {
  * @param string $type PARAM_ constant
  * @param bool $allownull are nulls valid value?
  * @param string $debuginfo optional debug information
- * @return mixed the $param value converted to PHP type or invalid_parameter_exception
+ * @return mixed the $param value converted to PHP type
+ * @throws invalid_parameter_exception if $param is not of given type
  */
 function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='') {
     if (is_null($param)) {
@@ -676,7 +677,15 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
     }
 
     $cleaned = clean_param($param, $type);
-    if ((string)$param !== (string)$cleaned) {
+
+    if ($type == PARAM_FLOAT) {
+        // Do not detect precision loss here.
+        if (is_float($param) or is_int($param)) {
+            // These always fit.
+        } else if (!is_numeric($param) or !preg_match('/^[\+-]?[0-9]*\.?[0-9]*(e[-+]?[0-9]+)?$/i', (string)$param)) {
+            throw new invalid_parameter_exception($debuginfo);
+        }
+    } else if ((string)$param !== (string)$cleaned) {
         // conversion to string is usually lossless
         throw new invalid_parameter_exception($debuginfo);
     }
