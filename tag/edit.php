@@ -36,7 +36,7 @@ if (empty($CFG->usetags)) {
 }
 
 //Editing a tag requires moodle/tag:edit capability
-$systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext   = context_system::instance();
 require_capability('moodle/tag:edit', $systemcontext);
 
 if ($tag_name) {

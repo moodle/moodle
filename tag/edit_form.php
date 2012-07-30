@@ -51,7 +51,7 @@ class tag_edit_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+        $systemcontext   = context_system::instance();
 
         if (has_capability('moodle/tag:manage', $systemcontext)) {
             $mform->addElement('text', 'rawname', get_string('name', 'tag'),

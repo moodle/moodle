@@ -22,7 +22,7 @@ class user_filter_globalrole extends user_filter_type {
      * @return array of availble roles
      */
     function get_roles() {
-        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context = context_system::instance();
         $roles = array(0=> get_string('anyrole','filters')) + get_assignable_roles($context);
         return $roles;
     }
