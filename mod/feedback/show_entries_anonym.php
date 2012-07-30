@@ -52,7 +52,7 @@ if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
     print_error('invalidcoursemodule');
 }
 
-$context = context_module::instance($cm->id, IGNORE_MISSING);
+$context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
 
