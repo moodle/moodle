@@ -64,7 +64,7 @@ abstract class backup_activity_task extends backup_task {
         $this->sectionid  = $coursemodule->section;
         $this->modulename = $coursemodule->modname;
         $this->activityid = $coursemodule->instance;
-        $this->contextid  = get_context_instance(CONTEXT_MODULE, $this->moduleid)->id;
+        $this->contextid  = context_module::instance($this->moduleid)->id;
 
         parent::__construct($name, $plan);
     }
