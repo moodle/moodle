@@ -219,7 +219,14 @@ class grade_report_user extends grade_report {
         $this->calculate_averages();
     }
 
+    /**
+     * Recurses through a tree of elements setting the rowspan property on each element
+     *
+     * @param array $element Either the top element or, during recursion, the current element
+     * @return int The number of elements processed
+     */
     function inject_rowspans(&$element) {
+
         if ($element['depth'] > $this->maxdepth) {
             $this->maxdepth = $element['depth'];
         }
@@ -227,9 +234,11 @@ class grade_report_user extends grade_report {
             return 1;
         }
         $count = 1;
+
         foreach ($element['children'] as $key=>$child) {
             $count += $this->inject_rowspans($element['children'][$key]);
         }
+
         $element['rowspan'] = $count;
         return $count;
     }
