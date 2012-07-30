@@ -151,7 +151,8 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                 draggable_for_question : function (drag, group, choice) {
                     var dd = new Y.DD.Drag({
                         node: drag,
-                        dragMode: 'point'
+                        dragMode: 'point',
+                        groups: [group]
                     }).plug(Y.Plugin.DDConstrained, {constrain2node: topnode});
 
                     drag.setData('group', group);
@@ -419,7 +420,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                 dropnode.setData('inputid', drop.fieldname.replace(':', '_'));
                 dropnode.setData('group', drop.group);
                 var dropdd = new Y.DD.Drop({
-                      node: dropnode});
+                      node: dropnode, groups : [drop.group]});
                 dropdd.on('drop:hit', function(e) {
                     var drag = e.drag.get('node');
                     var drop = e.drop.get('node');

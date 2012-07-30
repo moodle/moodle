@@ -68,6 +68,12 @@
     position: absolute;
     z-index: 1;
 }
+
+.que.ddimageortext .dropzone.yui3-dd-drop-over.yui3-dd-drop-active-valid {
+    border-color: #0a0;
+    box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
+}
+
 .que.ddimageortext div.dragitems div.draghome, .que.ddimageortext div.dragitems div.drag,
 form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewareaheader div.drag {
     font:13px/1.231 arial,helvetica,clean,sans-serif;
