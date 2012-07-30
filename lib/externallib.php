@@ -328,7 +328,7 @@ class external_api {
             throw new invalid_parameter_exception('Context does not exist');
         }
         if (empty(self::$contextrestriction)) {
-            self::$contextrestriction = get_context_instance(CONTEXT_SYSTEM);
+            self::$contextrestriction = context_system::instance();
         }
         $rcontext = self::$contextrestriction;
 

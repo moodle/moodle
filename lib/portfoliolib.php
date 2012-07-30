@@ -1096,7 +1096,7 @@ function portfolio_insane_notify_admins($insane, $instances=false) {
     $site = get_site();
 
     $a = new StdClass;
-    $a->sitename = format_string($site->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID)));
+    $a->sitename = format_string($site->fullname, true, array('context' => context_course::instance(SITEID)));
     $a->fixurl   = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageportfolios";
     $a->htmllist = portfolio_report_insane($insane, $instances, true);
     $a->textlist = '';

@@ -318,7 +318,7 @@ function file_get_unused_draft_itemid() {
         print_error('noguest');
     }
 
-    $contextid = get_context_instance(CONTEXT_USER, $USER->id)->id;
+    $contextid = context_user::instance($USER->id)->id;
 
     $fs = get_file_storage();
     $draftitemid = rand(1, 999999999);
@@ -357,7 +357,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
         $options['forcehttps'] = false;
     }
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
     $fs = get_file_storage();
 
     if (empty($draftitemid)) {
@@ -465,7 +465,7 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $fil
 function file_get_draft_area_info($draftitemid) {
     global $CFG, $USER;
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
     $fs = get_file_storage();
 
     $results = array();
@@ -490,7 +490,7 @@ function file_get_draft_area_info($draftitemid) {
 function file_get_user_used_space() {
     global $DB, $USER;
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
     $sql = "SELECT SUM(files1.filesize) AS totalbytes FROM {files} files1
             JOIN (SELECT contenthash, filename, MAX(id) AS id
             FROM {files}
@@ -526,7 +526,7 @@ function file_correct_filepath($str) { //TODO: what is this? (skodak)
 function file_get_drafarea_folders($draftitemid, $filepath, &$data) {
     global $USER, $OUTPUT, $CFG;
     $data->children = array();
-    $context = get_context_instance(CONTEXT_USER, $USER->id);
+    $context = context_user::instance($USER->id);
     $fs = get_file_storage();
     if ($files = $fs->get_directory_files($context->id, 'user', 'draft', $draftitemid, $filepath, false)) {
         foreach ($files as $file) {
@@ -558,7 +558,7 @@ function file_get_drafarea_folders($draftitemid, $filepath, &$data) {
 function file_get_drafarea_files($draftitemid, $filepath = '/') {
     global $USER, $OUTPUT, $CFG;
 
-    $context = get_context_instance(CONTEXT_USER, $USER->id);
+    $context = context_user::instance($USER->id);
     $fs = get_file_storage();
 
     $data = new stdClass();
@@ -711,7 +711,7 @@ function file_restore_source_field_from_draft_file($storedfile) {
 function file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null, $forcehttps=false) {
     global $USER;
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
     $fs = get_file_storage();
 
     $options = (array)$options;
@@ -905,7 +905,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
 function file_rewrite_urls_to_pluginfile($text, $draftitemid, $forcehttps = false) {
     global $CFG, $USER;
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
 
     $wwwroot = $CFG->wwwroot;
     if ($forcehttps) {
@@ -3763,7 +3763,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
 
                 while (!$canview && count($courses) > 0) {
                     $course = array_shift($courses);
-                    if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                    if (has_capability('moodle/user:viewdetails', context_course::instance($course->id))) {
                         $canview = true;
                     }
                 }
@@ -3780,7 +3780,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
 
         } else if ($filearea === 'profile' and $context->contextlevel == CONTEXT_COURSE) {
             $userid = (int)array_shift($args);
-            $usercontext = get_context_instance(CONTEXT_USER, $userid);
+            $usercontext = context_user::instance($userid);
 
             if ($CFG->forcelogin) {
                 require_login();
