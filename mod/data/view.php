@@ -84,7 +84,7 @@
     require_once($CFG->dirroot . '/comment/lib.php');
     comment::init();
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     require_capability('mod/data:viewentry', $context);
 
 /// If we have an empty Database then redirect because this page is useless without data
@@ -275,7 +275,7 @@
         $USER->editing = $edit;
     }
 
-    $courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+    $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 
 /// RSS and CSS and JS meta
     $meta = '';
