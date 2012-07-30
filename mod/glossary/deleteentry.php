@@ -40,7 +40,7 @@ if (! $entry = $DB->get_record("glossary_entries", array("id"=>$entry))) {
 }
 
 require_login($course, false, $cm);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 $manageentries = has_capability('mod/glossary:manageentries', $context);
 
 if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
@@ -67,7 +67,7 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
         if (!$newcm = get_coursemodule_from_instance('glossary', $entry->sourceglossaryid)) {
             print_error('invalidcoursemodule');
         }
-        $newcontext = get_context_instance(CONTEXT_MODULE, $newcm->id);
+        $newcontext = context_module::instance($newcm->id);
 
         $entry->glossaryid       = $entry->sourceglossaryid;
         $entry->sourceglossaryid = 0;

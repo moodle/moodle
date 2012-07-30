@@ -39,7 +39,7 @@ $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*'
 
 require_login($course, false, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 $canmanage = has_capability('mod/lesson:manage', $context);
 
 $url = new moodle_url('/mod/lesson/mediafile.php', array('id'=>$id));

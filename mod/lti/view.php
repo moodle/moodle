@@ -73,7 +73,7 @@ if ($tool) {
 }
 
 $PAGE->set_cm($cm, $course); // set's up global $COURSE
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 
 $url = new moodle_url('/mod/lti/view.php', array('id'=>$cm->id));

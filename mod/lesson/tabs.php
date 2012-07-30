@@ -38,7 +38,7 @@ if (!isset($currenttab)) {
 }
 if (!isset($cm)) {
     $cm = get_coursemodule_from_instance('lesson', $lesson->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 }
 if (!isset($course)) {
     $course = $DB->get_record('course', array('id' => $lesson->course));

@@ -98,7 +98,7 @@ switch ($messagetype) {
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
 
         //Getting the grade requires the context is set
-        $context = get_context_instance(CONTEXT_COURSE, $ltiinstance->course);
+        $context = context_course::instance($ltiinstance->course);
         $PAGE->set_context($context);
 
         lti_verify_sourcedid($ltiinstance, $parsed);
