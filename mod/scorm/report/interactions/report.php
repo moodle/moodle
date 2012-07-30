@@ -327,13 +327,9 @@ class scorm_interactions_report extends scorm_default_report {
                 }
                 $rownum = 1;
             } else if ($download == 'CSV') {
-                $filename .= ".txt";
-                header("Content-Type: application/download\n");
-                header("Content-Disposition: attachment; filename=\"$filename\"");
-                header("Expires: 0");
-                header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-                header("Pragma: public");
-                echo implode("\t", $headers)." \n";
+                $csvexport = new csv_export_writer("tab");
+                $csvexport->set_filename($filename, ".txt");
+                $csvexport->add_data($headers);
             }
 
             if (!$download) {
@@ -546,8 +542,7 @@ class scorm_interactions_report extends scorm_default_report {
                         }
                         $rownum++;
                     } else if ($download == 'CSV') {
-                        $text = implode("\t", $row);
-                        echo $text." \n";
+                        $csvexport->add_data($row);
                     }
                 }
                 if (!$download) {
@@ -606,6 +601,7 @@ class scorm_interactions_report extends scorm_default_report {
                 $workbook->close();
                 exit;
             } else if ($download == 'CSV') {
+                $csvexport->download_file();
                 exit;
             }
         } else {
