@@ -156,7 +156,7 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function check_permissions() {
-        $context = get_context_instance(CONTEXT_MODULE, $this->assignment->cm->id);
+        $context = context_module::instance($this->assignment->cm->id);
         return has_capability('mod/assignment:exportownsubmission', $context);
     }
 

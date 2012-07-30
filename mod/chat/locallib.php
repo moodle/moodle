@@ -103,7 +103,7 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
      * @return bool
      */
     public function check_permissions() {
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $context = context_module::instance($this->cm->id);
         return has_capability('mod/chat:exportsession', $context)
             || ($this->participated
                 && has_capability('mod/chat:exportparticipatedsession', $context));

@@ -280,7 +280,7 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
         }
 
         if (groups_get_activity_groupmode($cm) != SEPARATEGROUPS
-         or has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+         or has_capability('moodle/site:accessallgroups', context_module::instance($cm->id))) {
             if ($timeout > time() - $cm->lasttime) {
                 $current[] = $cm;
             } else {
@@ -1218,7 +1218,7 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
 
     $currentgroup = groups_get_activity_group($cm, true);
 
-    if (has_capability('mod/chat:chat', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+    if (has_capability('mod/chat:chat', context_module::instance($cm->id))) {
         $strenterchat    = get_string('enterchat', 'chat');
 
         $target = $CFG->wwwroot.'/mod/chat/';

@@ -98,7 +98,7 @@ class folder_tree implements renderable {
         $this->cm     = $cm;
         $this->course = $course;
 
-        $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $this->context = context_module::instance($cm->id);
         $fs = get_file_storage();
         $this->dir = $fs->get_area_tree($this->context->id, 'mod_folder', 'content', 0);
     }
