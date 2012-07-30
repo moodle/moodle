@@ -46,6 +46,8 @@ abstract class backup_cron_automated_helper {
     const BACKUP_STATUS_UNFINISHED = 2;
     /** Course automated backup was skipped */
     const BACKUP_STATUS_SKIPPED = 3;
+    /** Course automated backup had warnings */
+    const BACKUP_STATUS_WARNING = 4;
 
     /** Run if required by the schedule set in config. Default. **/
     const RUN_ON_SCHEDULE = 0;
@@ -139,7 +141,7 @@ abstract class backup_cron_automated_helper {
                     $params = array('courseid' => $course->id, 'time' => $now-31*24*60*60, 'action' => '%view%');
                     $logexists = $DB->record_exists_select('log', $sqlwhere, $params);
                     if (!$logexists) {
-                        $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_SKIPPED;
+                        $backupcourse->laststatus = self::BACKUP_STATUS_SKIPPED;
                         $backupcourse->nextstarttime = $nextstarttime;
                         $DB->update_record('backup_courses', $backupcourse);
                         mtrace('Skipping unchanged course '.$course->fullname);
@@ -160,7 +162,7 @@ abstract class backup_cron_automated_helper {
                         $starttime = time();
 
                         $backupcourse->laststarttime = time();
-                        $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_UNFINISHED;
+                        $backupcourse->laststatus = self::BACKUP_STATUS_UNFINISHED;
                         $DB->update_record('backup_courses', $backupcourse);
 
                         $backupcourse->laststatus = backup_cron_automated_helper::launch_automated_backup($course, $backupcourse->laststarttime, $admin->id);
@@ -169,7 +171,7 @@ abstract class backup_cron_automated_helper {
 
                         $DB->update_record('backup_courses', $backupcourse);
 
-                        if ($backupcourse->laststatus) {
+                        if ($backupcourse->laststatus === self::BACKUP_STATUS_OK) {
                             // Clean up any excess course backups now that we have
                             // taken a successful backup.
                             $removedcount = backup_cron_automated_helper::remove_excess_backups($course);
@@ -188,17 +190,18 @@ abstract class backup_cron_automated_helper {
             $message = "";
 
             $count = backup_cron_automated_helper::get_backup_status_array();
-            $haserrors = ($count[backup_cron_automated_helper::BACKUP_STATUS_ERROR] != 0 || $count[backup_cron_automated_helper::BACKUP_STATUS_UNFINISHED] != 0);
+            $haserrors = ($count[self::BACKUP_STATUS_ERROR] != 0 || $count[self::BACKUP_STATUS_UNFINISHED] != 0);
 
             //Build the message text
             //Summary
             $message .= get_string('summary')."\n";
             $message .= "==================================================\n";
             $message .= "  ".get_string('courses').": ".array_sum($count)."\n";
-            $message .= "  ".get_string('ok').": ".$count[backup_cron_automated_helper::BACKUP_STATUS_OK]."\n";
-            $message .= "  ".get_string('skipped').": ".$count[backup_cron_automated_helper::BACKUP_STATUS_SKIPPED]."\n";
-            $message .= "  ".get_string('error').": ".$count[backup_cron_automated_helper::BACKUP_STATUS_ERROR]."\n";
-            $message .= "  ".get_string('unfinished').": ".$count[backup_cron_automated_helper::BACKUP_STATUS_UNFINISHED]."\n\n";
+            $message .= "  ".get_string('ok').": ".$count[self::BACKUP_STATUS_OK]."\n";
+            $message .= "  ".get_string('skipped').": ".$count[self::BACKUP_STATUS_SKIPPED]."\n";
+            $message .= "  ".get_string('error').": ".$count[self::BACKUP_STATUS_ERROR]."\n";
+            $message .= "  ".get_string('unfinished').": ".$count[self::BACKUP_STATUS_UNFINISHED]."\n";
+            $message .= "  ".get_string('warning').": ".$count[self::BACKUP_STATUS_WARNING]."\n\n";
 
             //Reference
             if ($haserrors) {
@@ -261,6 +264,7 @@ abstract class backup_cron_automated_helper {
             self::BACKUP_STATUS_OK => 0,
             self::BACKUP_STATUS_UNFINISHED => 0,
             self::BACKUP_STATUS_SKIPPED => 0,
+            self::BACKUP_STATUS_WARNING => 0
         );
 
         $statuses = $DB->get_records_sql('SELECT DISTINCT bc.laststatus, COUNT(bc.courseid) AS statuscount FROM {backup_courses} bc GROUP BY bc.laststatus');
@@ -334,7 +338,7 @@ abstract class backup_cron_automated_helper {
      */
     public static function launch_automated_backup($course, $starttime, $userid) {
 
-        $outcome = true;
+        $outcome = self::BACKUP_STATUS_OK;
         $config = get_config('backup');
         $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_AUTOMATED, $userid);
 
@@ -369,6 +373,7 @@ abstract class backup_cron_automated_helper {
 
             $bc->execute_plan();
             $results = $bc->get_results();
+            $outcome = self::outcome_from_results($results);
             $file = $results['backup_destination']; // may be empty if file already moved to target location
             $dir = $config->backup_auto_destination;
             $storage = (int)$config->backup_auto_storage;
@@ -377,8 +382,10 @@ abstract class backup_cron_automated_helper {
             }
             if ($file && !empty($dir) && $storage !== 0) {
                 $filename = backup_plan_dbops::get_default_backup_filename($format, $type, $course->id, $users, $anonymised, !$config->backup_shortname);
-                $outcome = $file->copy_content_to($dir.'/'.$filename);
-                if ($outcome && $storage === 1) {
+                if (!$file->copy_content_to($dir.'/'.$filename)) {
+                    $outcome = self::BACKUP_STATUS_ERROR;
+                }
+                if ($outcome != self::BACKUP_STATUS_ERROR && $storage === 1) {
                     $file->delete();
                 }
             }
@@ -387,12 +394,36 @@ abstract class backup_cron_automated_helper {
             $bc->log('backup_auto_failed_on_course', backup::LOG_ERROR, $course->shortname); // Log error header.
             $bc->log('Exception: ' . $e->errorcode, backup::LOG_ERROR, $e->a, 1); // Log original exception problem.
             $bc->log('Debug: ' . $e->debuginfo, backup::LOG_DEBUG, null, 1); // Log original debug information.
-            $outcome = false;
+            $outcome = self::BACKUP_STATUS_ERROR;
         }
 
         $bc->destroy();
         unset($bc);
 
+        return $outcome;
+    }
+
+    /**
+     * Returns the backup outcome by analysing its results.
+     *
+     * @param array $results returned by a backup
+     * @return int {@link self::BACKUP_STATUS_OK} and other constants
+     */
+    public static function outcome_from_results($results) {
+        $outcome = self::BACKUP_STATUS_OK;
+        foreach ($results as $code => $value) {
+            // Each possible error and warning code has to be specified in this switch
+            // which basically analyses the results to return the correct backup status.
+            switch ($code) {
+                case 'missing_files_in_pool':
+                    $outcome = self::BACKUP_STATUS_WARNING;
+                    break;
+            }
+            // If we found the highest error level, we exit the loop.
+            if ($outcome == self::BACKUP_STATUS_ERROR) {
+                break;
+            }
+        }
         return $outcome;
     }
 
