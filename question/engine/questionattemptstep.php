@@ -403,6 +403,18 @@ class question_attempt_step {
         if (!is_null($record->fraction)) {
             $step->fraction = $record->fraction + 0;
         }
+
+        // This next chunk of code requires getting $contextid and $qtype here.
+        // Somehow, we need to get that information to this point by modifying
+        // all the paths by which this method can be called.
+        foreach (question_bank::get_qtype($qtype)->response_file_areas() as $area) {
+            if (empty($step->data[$area])) {
+                continue;
+            }
+
+            $step->data[$area] = new question_file_loader($this, $area, $step->data[$area], $contextid)
+        }
+
         return $step;
     }
 }
