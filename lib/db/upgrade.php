@@ -163,6 +163,20 @@ function xmldb_main_upgrade($oldversion) {
         $table = new xmldb_table('grade_letters');
         $index = new xmldb_index('contextid-lowerboundary-letter', XMLDB_INDEX_UNIQUE, array('contextid', 'lowerboundary', 'letter'));
 
+        // MDL-30515 Removing duplicate entries before adding the unique index
+        $sql = "SELECT MAX(id) as newestid, contextid, lowerboundary, letter, COUNT('x') count
+                  FROM {grade_letters}
+              GROUP BY contextid, lowerboundary, letter
+                HAVING COUNT('x') > 1";
+        $duplicateletters = $DB->get_recordset_sql($sql);
+        foreach ($duplicateletters as $duplicateletter) {
+            // Removing duplicate/s and keeping the latest one
+            $where = 'contextid = ? AND lowerboundary = ? AND letter = ? AND id != ?';
+            $params = array($duplicateletter->contextid, $duplicateletter->lowerboundary, $duplicateletter->letter, $duplicateletter->newestid);
+            $DB->delete_records_select('grade_letters', $where, $params);
+        }
+        $duplicateletters->close();
+
     /// Launch add index contextid-lowerboundary-letter
         $dbman->add_index($table, $index);
 
