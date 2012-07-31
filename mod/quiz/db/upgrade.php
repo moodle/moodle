@@ -1196,6 +1196,17 @@ function xmldb_quiz_upgrade($oldversion) {
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2011112903) {
+
+        // MDL-32791 somebody reported having nonsense rows in their
+        // quiz_question_instances which caused various problems. These rows
+        // are meaningless, hence this upgrade step to clean them up.
+        $DB->delete_records('quiz_question_instances', array('question' => 0));
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2012061702, 'quiz');
+    }
+
     return true;
 }
 
