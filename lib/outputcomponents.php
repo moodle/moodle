@@ -626,7 +626,7 @@ class single_select implements renderable {
      */
     var $label = '';
     /**
-     * @var array Button label's
+     * @var array Button label's attributes
      */
     var $labelattributes = array();
     /**
