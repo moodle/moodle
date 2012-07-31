@@ -360,10 +360,11 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
         $str .= '<div>';
         if (count($formats)>1) {
-            $str.= html_writer::select($formats, $elname.'[format]', $format, false);
+            $str .= html_writer::label(get_string('format'), 'menu'. $elname. 'format', false, array('class' => 'accesshide'));
+            $str .= html_writer::select($formats, $elname.'[format]', $format, false, array('id' => 'menu'. $elname. 'format'));
         } else {
             $keys = array_keys($formats);
-            $str.= html_writer::empty_tag('input',
+            $str .= html_writer::empty_tag('input',
                     array('name'=>$elname.'[format]', 'type'=> 'hidden', 'value' => array_pop($keys)));
         }
         $str .= '</div>';
