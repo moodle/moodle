@@ -157,6 +157,7 @@ $string['pageindex_help'] = 'This wiki\'s page tree';
 $string['pageislocked'] = 'Someone is editing this page right now. Try to edit it in a few minutes.';
 $string['pagelist'] = 'Page list';
 $string['pagelist_help'] = 'Page list categorized by alphabetical order';
+$string['pagename'] = 'Page name';
 $string['peerreview'] = 'Peer review';
 $string['pluginadministration'] = 'Wiki administration';
 $string['pluginname'] = 'Wiki';
