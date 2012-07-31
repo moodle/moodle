@@ -1183,33 +1183,37 @@ function scorm_get_completion_state($course, $cm, $userid, $type) {
     if (!$scorm = $DB->get_record('scorm', array('id' => $cm->instance))) {
         print_error('cannotfindscorm');
     }
+    // Only check for existence of tracks and return false if completionstatusrequired or completionscorerequired
+    // this means that if only view is required we don't end up with a false state.
+    if ($scorm->completionstatusrequired !== null ||
+        $scorm->completionscorerequired !== null) {
+        // Get user's tracks data.
+        $tracks = $DB->get_records_sql(
+            "
+            SELECT
+                id,
+                element,
+                value
+            FROM
+                {scorm_scoes_track}
+            WHERE
+                scormid = ?
+            AND userid = ?
+            AND element IN
+            (
+                'cmi.core.lesson_status',
+                'cmi.completion_status',
+                'cmi.success_status',
+                'cmi.core.score.raw',
+                'cmi.score.raw'
+            )
+            ",
+            array($scorm->id, $userid)
+        );
 
-    // Get user's tracks data
-    $tracks = $DB->get_records_sql(
-        "
-        SELECT
-            id,
-            element,
-            value
-        FROM
-            {scorm_scoes_track}
-        WHERE
-            scormid = ?
-        AND userid = ?
-        AND element IN
-        (
-            'cmi.core.lesson_status',
-            'cmi.completion_status',
-            'cmi.success_status',
-            'cmi.core.score.raw',
-            'cmi.score.raw'
-        )
-        ",
-        array($scorm->id, $userid)
-    );
-
-    if (!$tracks) {
-        return completion_info::aggregate_completion_states($type, $result, false);
+        if (!$tracks) {
+            return completion_info::aggregate_completion_states($type, $result, false);
+        }
     }
 
     // Check for status
