@@ -2752,6 +2752,8 @@ class curl {
     public  $info;
     /** @var string error */
     public  $error;
+    /** @var int error code */
+    public  $errno;
 
     /** @var array cURL options */
     private $options;
@@ -2895,6 +2897,7 @@ class curl {
         unset($this->options['CURLOPT_INFILE']);
         unset($this->options['CURLOPT_INFILESIZE']);
         unset($this->options['CURLOPT_CUSTOMREQUEST']);
+        unset($this->options['CURLOPT_FILE']);
     }
 
     /**
@@ -3119,6 +3122,7 @@ class curl {
 
         $this->info  = curl_getinfo($curl);
         $this->error = curl_error($curl);
+        $this->errno = curl_errno($curl);
 
         if ($this->debug){
             echo '<h1>Return Data</h1>';
@@ -3203,6 +3207,62 @@ class curl {
     }
 
     /**
+     * Downloads one file and writes it to the specified file handler
+     *
+     * <code>
+     * $c = new curl();
+     * $file = fopen('savepath', 'w');
+     * $result = $c->download_one('http://localhost/', null,
+     *   array('file' => $file, 'timeout' => 5, 'followlocation' => true, 'maxredirs' => 3));
+     * fclose($file);
+     * $download_info = $c->get_info();
+     * if ($result === true) {
+     *   // file downloaded successfully
+     * } else {
+     *   $error_text = $result;
+     *   $error_code = $c->get_errno();
+     * }
+     * </code>
+     *
+     * <code>
+     * $c = new curl();
+     * $result = $c->download_one('http://localhost/', null,
+     *   array('filepath' => 'savepath', 'timeout' => 5, 'followlocation' => true, 'maxredirs' => 3));
+     * // ... see above, no need to close handle and remove file if unsuccessful
+     * </code>
+     *
+     * @param string $url
+     * @param array|null $params key-value pairs to be added to $url as query string
+     * @param array $options request options. Must include either 'file' or 'filepath'
+     * @return bool|string true on success or error string on failure
+     */
+    public function download_one($url, $params, $options = array()) {
+        $options['CURLOPT_HTTPGET'] = 1;
+        $options['CURLOPT_BINARYTRANSFER'] = true;
+        if (!empty($params)){
+            $url .= (stripos($url, '?') !== false) ? '&' : '?';
+            $url .= http_build_query($params, '', '&');
+        }
+        if (!empty($options['filepath']) && empty($options['file'])) {
+            // open file
+            if (!($options['file'] = fopen($options['filepath'], 'w'))) {
+                $this->errno = 100;
+                return get_string('cannotwritefile', 'error', $options['filepath']);
+            }
+            $filepath = $options['filepath'];
+        }
+        unset($options['filepath']);
+        $result = $this->request($url, $options);
+        if (isset($filepath)) {
+            fclose($options['file']);
+            if ($result !== true) {
+                unlink($filepath);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * HTTP PUT method
      *
      * @param string $url
@@ -3278,6 +3338,15 @@ class curl {
      */
     public function get_info() {
         return $this->info;
+    }
+
+    /**
+     * Get curl error code
+     *
+     * @return int
+     */
+    public function get_errno() {
+        return $this->errno;
     }
 }
 
