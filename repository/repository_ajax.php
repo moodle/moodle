@@ -220,24 +220,27 @@ switch ($action) {
                 throw new file_exception('storedfilecannotread');
             }
 
+            // {@link repository::build_source_field()}
+            $sourcefield = $repo->get_file_source_info($source);
+            $record->source = $repo::build_source_field($sourcefield);
+
+            $reference = $repo->get_file_reference($source);
+
             // If file is already a reference, set $source = file source, $repo = file repository
             // note that in this case user may not have permission to access the source file directly
             // so no file_browser/file_info can be used below
             if ($repo->has_moodle_files()) {
                 $file = repository::get_moodle_file($source);
                 if ($file && $file->is_external_file()) {
-                    $source = $file->get_reference();
+                    $sourcefield = $file->get_source(); // remember the original source
+                    $record->source = $repo::build_source_field($sourcefield);
+                    $reference = $file->get_reference();
                     $repo_id = $file->get_repository_id();
                     $repo = repository::get_repository_by_id($repo_id, $contextid, $repooptions);
                 }
             }
 
-            // {@link repository::build_source_field()}
-            $sourcefield = $repo->get_file_source_info($source);
-            $record->source = $repo::build_source_field($sourcefield);
-
             if ($usefilereference) {
-                $reference = $repo->get_file_reference($source);
                 // get reference life time from repo
                 $record->referencelifetime = $repo->get_reference_file_lifetime($reference);
                 // Check if file exists.
@@ -281,13 +284,13 @@ switch ($action) {
 
                 // If the moodle file is an alias we copy this alias, otherwise we copy the file
                 // {@link repository::copy_to_area()}.
-                $fileinfo = $repo->copy_to_area($source, $record, $maxbytes);
+                $fileinfo = $repo->copy_to_area($reference, $record, $maxbytes);
 
                 echo json_encode($fileinfo);
                 die;
             } else {
                 // Download file to moodle.
-                $downloadedfile = $repo->get_file($source, $saveas_filename);
+                $downloadedfile = $repo->get_file($reference, $saveas_filename);
                 if (empty($downloadedfile['path'])) {
                     $err->error = get_string('cannotdownload', 'repository');
                     die(json_encode($err));

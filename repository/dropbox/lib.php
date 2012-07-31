@@ -281,15 +281,22 @@ class repository_dropbox extends repository {
     }
 
     /**
+     * Downloads a file from external repository and saves it in temp dir
      *
-     * @param string $photo_id
-     * @param string $file
-     * @return string
+     * @throws moodle_exception when file could not be downloaded
+     *
+     * @param string $reference the content of files.reference field
+     * @param string $filename filename (without path) to save the downloaded file in the
+     * temporary directory, if omitted or file already exists the new filename will be generated
+     * @return array with elements:
+     *   path: internal location of the file
+     *   url: URL to the source (from parameters)
      */
-    public function get_file($filepath, $saveas = '') {
-        $this->dropbox->set_access_token($this->access_key, $this->access_secret);
+    public function get_file($reference, $saveas = '') {
+        $reference = unserialize($reference);
+        $this->dropbox->set_access_token($reference->access_key, $reference->access_secret);
         $saveas = $this->prepare_file($saveas);
-        return $this->dropbox->get_file($filepath, $saveas);
+        return $this->dropbox->get_file($reference->path, $saveas);
     }
     /**
      * Add Plugin settings input to Moodle form
@@ -354,10 +361,13 @@ class repository_dropbox extends repository {
      * @return string file referece
      */
     public function get_file_reference($source) {
+        global $USER;
         $reference = new stdClass;
         $reference->path = $source;
         $reference->access_key = get_user_preferences($this->setting.'_access_key', '');
         $reference->access_secret = get_user_preferences($this->setting.'_access_secret', '');
+        $reference->userid = $USER->id;
+        $reference->username = fullname($USER);
         return serialize($reference);
     }
 
@@ -380,13 +390,13 @@ class repository_dropbox extends repository {
             $this->set_access_secret($reference->access_secret);
             $path = $this->get_file($reference->path);
             $cachedfilepath = cache_file::create_from_file($reference, $path['path']);
-        }
+                }
         if ($cachedfilepath && is_readable($cachedfilepath)) {
             return (object)array('filepath' => $cachedfilepath);
         } else {
             return null;
         }
-    }
+        }
 
     /**
      * Get file from external repository by reference
@@ -399,8 +409,8 @@ class repository_dropbox extends repository {
      */
     public function cache_file_by_reference($reference, $storedfile) {
         $reference  = unserialize($reference);
-        $path = $this->get_file($reference->path);
-        cache_file::create_from_file($reference, $path['path']);
+        $path = $this->get_file($reference);
+        cache_file::create_from_file($reference->path, $path['path']);
     }
 
     /**
@@ -412,8 +422,12 @@ class repository_dropbox extends repository {
      * @return string
      */
     public function get_reference_details($reference, $filestatus = 0) {
+        global $USER;
         $ref  = unserialize($reference);
         $details = $this->get_name();
+        if (isset($ref->userid) && $ref->userid != $USER->id && isset($ref->username)) {
+            $details .= ' ('.$ref->username.')';
+        }
         if (isset($ref->path)) {
             $details .=  ': '. $ref->path;
         }
@@ -428,11 +442,12 @@ class repository_dropbox extends repository {
     /**
      * Return the source information
      *
-     * @param stdClass $filepath
-     * @return string|null
+     * @param string $source
+     * @return string
      */
-    public function get_file_source_info($filepath) {
-        return 'Dropbox: ' . $filepath;
+    public function get_file_source_info($source) {
+        global $USER;
+        return 'Dropbox ('.fullname($USER).'): ' . $source;
     }
 
     /**
@@ -471,10 +486,8 @@ class repository_dropbox extends repository {
             $cachedfile = cache_file::get($reference);
             if ($cachedfile === false) {
                 // Re-fetch resource.
-                $this->set_access_key($reference->access_key);
-                $this->set_access_secret($reference->access_secret);
-                $path = $this->get_file($reference->path);
-                cache_file::create_from_file($reference, $path['path']);
+                $path = $this->get_file($reference);
+                cache_file::create_from_file($reference->path, $path['path']);
             }
         }
     }
