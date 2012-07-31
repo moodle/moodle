@@ -324,6 +324,9 @@ abstract class base_moodleform extends moodleform {
         $config->noLabel = get_string('confirmcancelno', 'backup');
         $PAGE->requires->yui_module('moodle-backup-confirmcancel', 'M.core_backup.watch_cancel_buttons', array($config));
 
+        $PAGE->requires->yui_module('moodle-backup-backupselectall', 'M.core_backup.select_all_init',
+                array(array('select' => get_string('select'), 'all' => get_string('all'), 'none' => get_string('none'))));
+
         parent::display();
     }
 
