@@ -125,23 +125,31 @@ class repository_equella extends repository {
     /**
      * Download a file, this function can be overridden by subclass. {@link curl}
      *
-     * @param string $url the url of file
-     * @param string $filename save location
-     * @return string the location of the file
+     * @param string $reference the source of the file
+     * @param string $filename filename (without path) to save the downloaded file in the
+     * temporary directory
+     * @return null|array null if download failed or array with elements:
+     *   path: internal location of the file
+     *   url: URL to the source (from parameters)
      */
-    public function get_file($url, $filename = '') {
+    public function get_file($reference, $filename = '') {
         global $USER;
-        $cookiename = uniqid('', true) . '.cookie';
-        $dir = make_temp_directory('repository/equella/' . $USER->id);
-        $cookiepathname = $dir . '/' . $cookiename;
+        $ref = @unserialize(base64_decode($reference));
+        if (!isset($ref->url) || !($url = $this->appendtoken($ref->url))) {
+            // Occurs when the user isn't known..
+            return null;
+        }
         $path = $this->prepare_file($filename);
-        $fp = fopen($path, 'w');
+        $cookiepathname = $this->prepare_file($USER->id. '_'. uniqid('', true). '.cookie');
         $c = new curl(array('cookie'=>$cookiepathname));
-        $c->download(array(array('url'=>$url, 'file'=>$fp)), array('CURLOPT_FOLLOWLOCATION'=>true));
-        // Close file handler.
-        fclose($fp);
+        $result = $c->download_one($url, null, array('filepath' => $path, 'followlocation' => true, 'timeout' => self::GETFILE_TIMEOUT));
         // Delete cookie jar.
-        unlink($cookiepathname);
+        if (file_exists($cookiepathname)) {
+            unlink($cookiepathname);
+        }
+        if ($result !== true) {
+            throw new moodle_exception('errorwhiledownload', 'repository', '', $result);
+        }
         return array('path'=>$path, 'url'=>$url);
     }
 
@@ -170,7 +178,7 @@ class repository_equella extends repository {
             // Cache the file.
             $path = $this->get_file($url);
             $cachedfilepath = cache_file::create_from_file($url, $path['path']);
-        }
+            }
 
         if ($cachedfilepath && is_readable($cachedfilepath)) {
             return (object)array('filepath' => $cachedfilepath);
