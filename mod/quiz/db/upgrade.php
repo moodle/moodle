@@ -1204,7 +1204,7 @@ function xmldb_quiz_upgrade($oldversion) {
         $DB->delete_records('quiz_question_instances', array('question' => 0));
 
         // Quiz savepoint reached.
-        upgrade_mod_savepoint(true, 2012061702, 'quiz');
+        upgrade_mod_savepoint(true, 2011112903, 'quiz');
     }
 
     return true;
