@@ -1841,15 +1841,15 @@ class file_storage {
     /**
      * Convert file alias to local file
      *
+     * @throws moodle_exception if file could not be downloaded
+     *
      * @param stored_file $storedfile a stored_file instances
+     * @param int $maxbytes throw an exception if file size is bigger than $maxbytes (0 means no limit)
      * @return stored_file stored_file
      */
-    public function import_external_file(stored_file $storedfile) {
+    public function import_external_file(stored_file $storedfile, $maxbytes = 0) {
         global $CFG;
-        require_once($CFG->dirroot.'/repository/lib.php');
-        // sync external file
-        repository::sync_external_file($storedfile);
-        // Remove file references
+        $storedfile->import_external_file_contents($maxbytes);
         $storedfile->delete_reference();
         return $storedfile;
     }

@@ -2326,7 +2326,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     }
 
     // handle external resource
-    if ($stored_file && $stored_file->is_external_file()) {
+    if ($stored_file && $stored_file->is_external_file() && !isset($options['sendcachedexternalfile'])) {
         $stored_file->send_file($lifetime, $filter, $forcedownload, $options);
         die;
     }

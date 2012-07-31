@@ -928,4 +928,16 @@ class stored_file {
     public function send_file($lifetime, $filter, $forcedownload, $options) {
         $this->repository->send_file($this, $lifetime, $filter, $forcedownload, $options);
     }
+
+    /**
+     * Imports the contents of an external file into moodle filepool.
+     *
+     * @throws moodle_exception if file could not be downloaded or is too big
+     * @param int $maxbytes throw an exception if file size is bigger than $maxbytes (0 means no limit)
+     */
+    public function import_external_file_contents($maxbytes = 0) {
+        if ($this->repository) {
+            $this->repository->import_external_file_contents($this, $maxbytes);
+        }
+    }
 }
