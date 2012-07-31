@@ -744,7 +744,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts,
     echo '<div class="pagecontrols">';
 
     // Get the current context.
-    $thiscontext = get_context_instance(CONTEXT_COURSE, $quiz->course);
+    $thiscontext = context_course::instance($quiz->course);
     $contexts = new question_edit_contexts($thiscontext);
 
     // Get the default category.

@@ -40,7 +40,7 @@ if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
     print_error('coursemisconf');
 }
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 $PAGE->set_url('/mod/survey/download.php', array('id'=>$id, 'type'=>$type, 'group'=>$group));
 
@@ -146,7 +146,7 @@ foreach ($surveyanswers as $surveyanswer) {
 }
 
 // Output the file as a valid ODS spreadsheet if required
-$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+$coursecontext = context_course::instance($course->id);
 $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
 
 if ($type == "ods") {

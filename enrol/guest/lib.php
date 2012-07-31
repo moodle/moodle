@@ -85,7 +85,7 @@ class enrol_guest_plugin extends enrol_plugin {
 
         if ($allow) {
             // Temporarily assign them some guest role for this context
-            $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+            $context = context_course::instance($instance->courseid);
             load_temp_course_role($context, $CFG->guestroleid);
             return ENROL_MAX_TIMESTAMP;
         }
@@ -101,7 +101,7 @@ class enrol_guest_plugin extends enrol_plugin {
     public function get_newinstance_link($courseid) {
         global $DB;
 
-        $context = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
+        $context = context_course::instance($courseid, MUST_EXIST);
 
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/guest:config', $context)) {
             return NULL;
@@ -140,7 +140,7 @@ class enrol_guest_plugin extends enrol_plugin {
         if ($instance->id == $instanceid) {
             if ($data = $form->get_data()) {
                 // add guest role
-                $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+                $context = context_course::instance($instance->courseid);
                 $USER->enrol_guest_passwords[$instance->id] = $data->guestpassword; // this is a hack, ideally we should not add stuff to $USER...
                 if (isset($USER->enrol['tempguest'][$instance->courseid])) {
                     remove_temp_course_roles($context);
@@ -280,7 +280,7 @@ class enrol_guest_plugin extends enrol_plugin {
     public function course_updated($inserted, $course, $data) {
         global $DB;
 
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
 
         if (has_capability('enrol/guest:config', $context)) {
             if ($inserted) {

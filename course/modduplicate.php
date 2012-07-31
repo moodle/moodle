@@ -38,8 +38,8 @@ $sectionreturn  = optional_param('sr', 0, PARAM_INT);
 
 $course     = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $cm         = get_coursemodule_from_id('', $cmid, $course->id, true, MUST_EXIST);
-$cmcontext  = get_context_instance(CONTEXT_MODULE, $cm->id);
-$context    = get_context_instance(CONTEXT_COURSE, $courseid);
+$cmcontext  = context_module::instance($cm->id);
+$context    = context_course::instance($courseid);
 $section    = $DB->get_record('course_sections', array('id' => $cm->section, 'course' => $cm->course));
 
 require_login($course);
@@ -55,6 +55,15 @@ $PAGE->set_url(new moodle_url('/course/modduplicate.php', array('cmid' => $cm->i
 $PAGE->set_pagelayout('incourse');
 
 $output = $PAGE->get_renderer('core', 'backup');
+
+$a          = new stdClass();
+$a->modtype = get_string('modulename', $cm->modname);
+$a->modname = format_string($cm->name);
+
+if (!plugin_supports('mod', $cm->modname, FEATURE_BACKUP_MOODLE2)) {
+    $url = new moodle_url('/course/view.php#section-' . $cm->sectionnum, array('id' => $course->id));
+    print_error('duplicatenosupport', 'error', $url, $a);
+}
 
 // backup the activity
 
@@ -117,10 +126,6 @@ $rc->destroy();
 if (empty($CFG->keeptempdirectoriesonbackup)) {
     fulldelete($backupbasepath);
 }
-
-$a          = new stdClass();
-$a->modtype = get_string('modulename', $cm->modname);
-$a->modname = format_string($cm->name);
 
 echo $output->header();
 

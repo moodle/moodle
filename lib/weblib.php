@@ -2814,7 +2814,7 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
  * @return bool
  */
 function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
-    global $CFG, $USER, $UNITTEST;
+    global $CFG, $USER;
 
     $forcedebug = false;
     if (!empty($CFG->debugusers) && $USER) {
@@ -2837,14 +2837,6 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
         $from = format_backtrace($backtrace, CLI_SCRIPT);
         if (PHPUNIT_TEST) {
             echo 'Debugging: ' . $message . "\n" . $from;
-
-        } else if (!empty($UNITTEST->running)) {
-            // When the unit tests are running, any call to trigger_error
-            // is intercepted by the test framework and reported as an exception.
-            // Therefore, we cannot use trigger_error during unit tests.
-            // At the same time I do not think we should just discard those messages,
-            // so displaying them on-screen seems like the only option. (MDL-20398)
-            echo '<div class="notifytiny">' . $message . $from . '</div>';
 
         } else if (NO_DEBUG_DISPLAY) {
             // script does not want any errors or debugging in output,

@@ -44,7 +44,7 @@ if ($id) { // editing course
     $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
     require_login($course);
     $category = $DB->get_record('course_categories', array('id'=>$course->category), '*', MUST_EXIST);
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $coursecontext = context_course::instance($course->id);
     require_capability('moodle/course:update', $coursecontext);
     $PAGE->url->param('id',$id);
 
@@ -52,7 +52,7 @@ if ($id) { // editing course
     $course = null;
     require_login();
     $category = $DB->get_record('course_categories', array('id'=>$categoryid), '*', MUST_EXIST);
-    $catcontext = get_context_instance(CONTEXT_COURSECAT, $category->id);
+    $catcontext = context_coursecat::instance($category->id);
     require_capability('moodle/course:create', $catcontext);
     $PAGE->url->param('category',$categoryid);
     $PAGE->set_context($catcontext);
@@ -109,7 +109,7 @@ if ($editform->is_cancelled()) {
         $course = create_course($data, $editoroptions);
 
         // Get the context of the newly created course
-        $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
+        $context = context_course::instance($course->id, MUST_EXIST);
 
         if (!empty($CFG->creatornewroleid) and !is_viewing($context, NULL, 'moodle/role:assign') and !is_enrolled($context, NULL, 'moodle/role:assign')) {
             // deal with course creators - enrol them internally with default role

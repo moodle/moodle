@@ -968,6 +968,27 @@ class assign {
     }
 
     /**
+     * Load a count of users submissions in the current module that require grading
+     * This means the submission modification time is more recent than the
+     * grading modification time.
+     *
+     * @return int number of matching submissions
+     */
+    public function count_submissions_need_grading() {
+        global $DB;
+
+        $params = array($this->get_course_module()->instance);
+
+        return $DB->count_records_sql("SELECT COUNT('x')
+                                       FROM {assign_submission} s
+                                       LEFT JOIN {assign_grades} g ON s.assignment = g.assignment AND s.userid = g.userid
+                                       WHERE s.assignment = ?
+                                           AND s.timemodified IS NOT NULL
+                                           AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)",
+                                       $params);
+    }
+
+    /**
      * Load a count of users enrolled in the current course with the specified permission and group (optional)
      *
      * @param string $status The submission status - should match one of the constants
@@ -1724,6 +1745,7 @@ class assign {
                                                                   array('cm'=>$this->get_course_module()->id,
                                                                         'contextid'=>$this->context->id,
                                                                         'userid'=>$USER->id,
+                                                                        'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
                                                                         'showquickgrading'=>$showquickgrading,
                                                                         'quickgrading'=>$quickgrading),
                                                                   'post', '',
@@ -2091,7 +2113,8 @@ class assign {
                                                             $this->is_any_submission_plugin_enabled(),
                                                             $this->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED),
                                                             $this->get_instance()->duedate,
-                                                            $this->get_course_module()->id
+                                                            $this->get_course_module()->id,
+                                                            $this->count_submissions_need_grading()
                                                             ));
         }
         $grade = $this->get_user_grade($USER->id, false);
@@ -2651,7 +2674,11 @@ class assign {
         // Need submit permission to submit an assignment
         require_capability('mod/assign:grade', $this->context);
 
-        $mform = new mod_assign_grading_options_form(null, array('cm'=>$this->get_course_module()->id, 'contextid'=>$this->context->id, 'userid'=>$USER->id, 'showquickgrading'=>false));
+        $mform = new mod_assign_grading_options_form(null, array('cm'=>$this->get_course_module()->id,
+                                                                 'contextid'=>$this->context->id,
+                                                                 'userid'=>$USER->id,
+                                                                 'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
+                                                                 'showquickgrading'=>false));
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
             set_user_preference('assign_filter', $formdata->filter);

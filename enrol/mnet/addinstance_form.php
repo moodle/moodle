@@ -36,7 +36,7 @@ class enrol_mnet_addinstance_form extends moodleform {
         $course  = $this->_customdata['course'];
         $enrol   = $this->_customdata['enrol'];
         $service = $this->_customdata['service'];
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $coursecontext = context_course::instance($course->id);
 
         $subscribers = $service->get_remote_subscribers();
         $hosts = array(0 => get_string('remotesubscribersall', 'enrol_mnet'));

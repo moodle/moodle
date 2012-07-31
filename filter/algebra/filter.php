@@ -73,7 +73,7 @@ function filter_algebra_image($imagefile, $tex= "", $height="", $width="", $alig
     }
     $anchorcontents .= "\" $style />";
 
-    if (!file_exists("$CFG->dataroot/filter/algebra/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+    if (!file_exists("$CFG->dataroot/filter/algebra/$imagefile") && has_capability('moodle/site:config', context_system::instance())) {
         $link = '/filter/algebra/algebradebug.php';
         $action = null;
     } else {

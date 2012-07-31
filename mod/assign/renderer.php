@@ -248,6 +248,8 @@ class mod_assign_renderer extends plugin_renderer_base {
         if ($summary->submissionsenabled) {
             $this->add_table_row_tuple($t, get_string('numberofsubmittedassignments', 'assign'),
                                        $summary->submissionssubmittedcount);
+            $this->add_table_row_tuple($t, get_string('numberofsubmissionsneedgrading', 'assign'),
+                                       $summary->submissionsneedgradingcount);
         }
 
         $time = time();

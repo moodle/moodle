@@ -275,6 +275,10 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager.fm-updating .filemanager-updating {display:block;margin-top: 37px;}
 .filemanager.fm-updating .fm-content-wrapper {display:none;}
 .filemanager.fm-nomkdir .fp-btn-mkdir {display:none;}
+.fitem.disabled .filemanager .filemanager-toolbar,
+.fitem.disabled .filemanager .fp-pathbar,
+.fitem.disabled .filemanager .fp-restrictions,
+.fitem.disabled .filemanager .fm-content-wrapper {display:none;}
 
  /*
  * File Manager layout
@@ -292,6 +296,9 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager-container ul li a{padding:0}*/
 .filemanager .fp-content{overflow: auto;max-height: 472px;min-height: 157px;}
 .filemanager-container, .filepicker-filelist {overflow:hidden;}
+.fitem.disabled .filepicker-filelist, .fitem.disabled .filemanager-container {background-color:#EBEBE4;}
+.fitem.disabled .fp-btn-choose {color:graytext;}
+.fitem.disabled .filepicker-filelist .filepicker-filename {display:none;}
 
 /*
  * Icon view (File Manager only)
@@ -324,7 +331,7 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager .fp-tableview .fp-folder.fp-hascontextmenu .fp-contextmenu {display: inline;position: absolute;left: 14px;margin-right: -20px;top: 6px;}
 
 /*
- * Drag and drop support (File Manager only)
+ * Drag and drop support (filemanager and filepicker form elements)
  */
 .filepicker-filelist .filepicker-container,
 .filemanager.fm-noitems .fm-empty-container {display:block;position:absolute;top:10px;bottom:10px;left:10px;right:10px;border: 2px dashed #BBBBBB;padding-top:85px;text-align:center;z-index: 3000;}
@@ -339,6 +346,7 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .dndupload-uploadinprogress {display:none;text-align:center;}
 .dndupload-uploading .dndupload-uploadinprogress {display:block;}
 .dndupload-arrow {background:url([[pix:theme|fp/dnd_arrow]]) center no-repeat;width:60px;height:80px;position:absolute;margin-left: -28px;top: 5px;}
+.fitem.disabled .filepicker-container, .fitem.disabled .fm-empty-container {display:none;}
 
 /*
  * Select Dialogue (File Manager only)

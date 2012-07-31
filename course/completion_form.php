@@ -105,7 +105,7 @@ class course_completion_form extends moodleform {
             $selectbox = array();
             $selected = array();
             foreach ($courses as $c) {
-                $selectbox[$c->id] = $list[$c->category] . ' / ' . format_string($c->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $c->id)));
+                $selectbox[$c->id] = $list[$c->category] . ' / ' . format_string($c->fullname, true, array('context' => context_course::instance($c->id)));
 
                 // If already selected
                 if ($c->selected) {
@@ -134,7 +134,7 @@ class course_completion_form extends moodleform {
         // Role completion criteria
         $mform->addElement('header', 'roles', get_string('manualcompletionby', 'completion'));
 
-        $roles = get_roles_with_capability('moodle/course:markcomplete', CAP_ALLOW, get_context_instance(CONTEXT_COURSE, $course->id));
+        $roles = get_roles_with_capability('moodle/course:markcomplete', CAP_ALLOW, context_course::instance($course->id, IGNORE_MISSING));
 
         if (!empty($roles)) {
             $mform->addElement('select', 'role_aggregation', get_string('aggregationmethod', 'completion'), $aggregation_methods);

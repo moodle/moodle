@@ -62,7 +62,7 @@ foreach ($requiredtables as $table) {
     }
 }
 
-switch (optional_param('action', '', PARAM_ACTION)) {
+switch (optional_param('action', '', PARAM_ALPHANUMEXT)) {
     case 'setup':
         require_sesskey();
         if ($issetup == 0) {

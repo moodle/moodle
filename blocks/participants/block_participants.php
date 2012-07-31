@@ -26,7 +26,7 @@ class block_participants extends block_list {
             $this->content = '';
             return $this->content;
         } else if ($this->page->course->id == SITEID) {
-            if (!has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {
+            if (!has_capability('moodle/site:viewparticipants', context_system::instance())) {
                 $this->content = '';
                 return $this->content;
             }

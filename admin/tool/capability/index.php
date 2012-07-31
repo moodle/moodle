@@ -29,12 +29,12 @@ require_once($CFG->libdir.'/adminlib.php');
 
 // Check permissions.
 require_login();
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = context_system::instance();
 require_capability('moodle/role:manage', $systemcontext);
 
 // Get URL parameters.
 $capability = optional_param('capability', '', PARAM_CAPABILITY);
-$roleids = optional_param_array('roles', array('0'), PARAM_INTEGER);
+$roleids = optional_param_array('roles', array('0'), PARAM_INT);
 
 // Clean the passed in list of role ids. If 'All' selected as an option, or
 // if none were selected, do all roles.

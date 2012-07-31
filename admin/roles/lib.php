@@ -604,7 +604,7 @@ class define_role_table_advanced extends capability_table_with_risks {
         }
 
         // Role name.
-        $name = optional_param('name', null, PARAM_MULTILANG);
+        $name = optional_param('name', null, PARAM_TEXT);
         if (!is_null($name)) {
             $this->role->name = $name;
             // Hack: short names of standard roles are equal to archetypes, empty name means localised via lang packs.
@@ -1270,7 +1270,7 @@ abstract class role_allow_role_page {
      */
     protected function load_required_roles() {
     /// Get all roles
-        $this->roles = role_fix_names(get_all_roles(), get_context_instance(CONTEXT_SYSTEM), ROLENAME_ORIGINAL);
+        $this->roles = role_fix_names(get_all_roles(), context_system::instance(), ROLENAME_ORIGINAL);
     }
 
     /**

@@ -85,7 +85,7 @@ class core_course_external extends external_api {
         }
 
         // now security checks
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id, IGNORE_MISSING);
         try {
             self::validate_context($context);
         } catch (Exception $e) {
@@ -144,7 +144,7 @@ class core_course_external extends external_api {
                     $module['modicon'] = $cm->get_icon_url()->out(false);
                     $module['indent'] = $cm->indent;
 
-                    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    $modcontext = context_module::instance($cm->id);
 
                     if (!empty($cm->showdescription)) {
                         $module['description'] = $cm->get_content();
@@ -157,7 +157,7 @@ class core_course_external extends external_api {
                     }
 
                     $canviewhidden = has_capability('moodle/course:viewhiddenactivities',
-                                        get_context_instance(CONTEXT_MODULE, $cm->id));
+                                        context_module::instance($cm->id));
                     //user that can view hidden module should know about the visibility
                     $module['visible'] = $cm->visible;
 
@@ -297,7 +297,7 @@ class core_course_external extends external_api {
         foreach ($courses as $course) {
 
             // now security checks
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $context = context_course::instance($course->id, IGNORE_MISSING);
             try {
                 self::validate_context($context);
             } catch (Exception $e) {
@@ -511,7 +511,7 @@ class core_course_external extends external_api {
         foreach ($params['courses'] as $course) {
 
             // Ensure the current user is allowed to run this function
-            $context = get_context_instance(CONTEXT_COURSECAT, $course['categoryid']);
+            $context = context_coursecat::instance($course['categoryid'], IGNORE_MISSING);
             try {
                 self::validate_context($context);
             } catch (Exception $e) {

@@ -97,12 +97,12 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
         $showcourses = 1;
     }
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $sitecontext = context_system::instance();
 
     // Context for remote data is always SITE
     // Groups for remote data are always OFF
     if ($hostid == $CFG->mnet_localhost_id) {
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
 
         /// Setup for group handling.
         if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
@@ -397,8 +397,8 @@ function report_log_print_selector_form($course, $selecteduser=0, $selecteddate=
         $showcourses = 1;
     }
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $sitecontext = context_system::instance();
+    $context = context_course::instance($course->id);
 
     /// Setup for group handling.
     if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {

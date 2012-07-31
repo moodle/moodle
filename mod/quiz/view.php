@@ -54,7 +54,7 @@ if ($id) {
 
 // Check login and get context.
 require_login($course, false, $cm);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/quiz:view', $context);
 
 // Cache some other capabilities we use several times.

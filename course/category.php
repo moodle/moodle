@@ -93,7 +93,7 @@ if ($editingon && $sesskeyprovided) {
         // Some courses are being moved
         // user must have category update in both cats to perform this
         require_capability('moodle/category:manage', $context);
-        require_capability('moodle/category:manage', get_context_instance(CONTEXT_COURSECAT, $moveto));
+        require_capability('moodle/category:manage', context_coursecat::instance($moveto));
 
         if (!$destcategory = $DB->get_record('course_categories', array('id' => $data->moveto))) {
             print_error('cannotfindcategory', '', '', $data->moveto);
@@ -129,7 +129,7 @@ if ($editingon && $sesskeyprovided) {
         }
 
         if ($course) {
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $coursecontext = context_course::instance($course->id);
             require_capability('moodle/course:visibility', $coursecontext);
             // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
             $DB->update_record('course', array('id' => $course->id, 'visible' => $visible, 'visibleold' => $visible, 'timemodified' => time()));
@@ -268,7 +268,7 @@ $baseurl = new moodle_url('/course/category.php');
 foreach ($subcategories as $subcategory) {
     // Preload the context we will need it to format the category name shortly.
     context_helper::preload_from_record($subcategory);
-    $context = get_context_instance(CONTEXT_COURSECAT, $subcategory->id);
+    $context = context_coursecat::instance($subcategory->id);
     // Prepare the things we need to create a link to the subcategory
     $attributes = $subcategory->visible ? array() : array('class' => 'dimmed');
     $text = format_string($subcategory->name, true, array('context' => $context));
@@ -332,7 +332,7 @@ if (!$courses) {
 
     $baseurl = new moodle_url('/course/category.php', $urlparams + array('sesskey' => sesskey()));
     foreach ($courses as $acourse) {
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $acourse->id);
+        $coursecontext = context_course::instance($acourse->id);
 
         $count++;
         $up = ($count > 1 || !$atfirstpage);
@@ -447,7 +447,7 @@ if (has_capability('moodle/course:create', $context)) {
 }
 
 if (!empty($CFG->enablecourserequests) && $category->id == $CFG->defaultrequestcategory) {
-    print_course_request_buttons(get_context_instance(CONTEXT_SYSTEM));
+    print_course_request_buttons(context_system::instance());
 }
 echo '</div>';
 

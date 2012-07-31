@@ -52,7 +52,9 @@ class mod_assign_grading_options_form extends moodleform {
         $options = array('' => get_string('filternone', 'assign'),
                          ASSIGN_FILTER_SUBMITTED => get_string('filtersubmitted', 'assign'),
                          ASSIGN_FILTER_REQUIRE_GRADING => get_string('filterrequiregrading', 'assign'));
-        $mform->addElement('select', 'filter', get_string('filter', 'assign'), $options);
+        if ($instance['submissionsenabled']) {
+            $mform->addElement('select', 'filter', get_string('filter', 'assign'), $options);
+        }
 
         // quickgrading
         if ($instance['showquickgrading']) {

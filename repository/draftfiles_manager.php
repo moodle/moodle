@@ -63,7 +63,7 @@ $newfilename = optional_param('newfilename', '',   PARAM_FILE);
 $draftpath   = optional_param('draftpath', '/',    PARAM_PATH);
 
 // user context
-$user_context = get_context_instance(CONTEXT_USER, $USER->id);
+$user_context = context_user::instance($USER->id);
 
 
 $PAGE->set_context($user_context);

@@ -46,7 +46,7 @@ class enrol_meta_addinstance_form extends moodleform {
             if ($c->id == SITEID or $c->id == $course->id or isset($existing[$c->id])) {
                 continue;
             }
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $c->id);
+            $coursecontext = context_course::instance($c->id);
             if (!$c->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                 continue;
             }
@@ -79,7 +79,7 @@ class enrol_meta_addinstance_form extends moodleform {
         if (!$c = $DB->get_record('course', array('id'=>$data['link']))) {
             $errors['link'] = get_string('required');
         } else {
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $c->id);
+            $coursecontext = context_course::instance($c->id);
             $existing = $DB->get_records('enrol', array('enrol'=>'meta', 'courseid'=>$this->course->id), '', 'customint1, id');
             if (!$c->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                 $errors['link'] = get_string('error');

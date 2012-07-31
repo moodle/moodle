@@ -81,13 +81,12 @@ class block_tags extends block_base {
             require_once($CFG->dirroot.'/tag/coursetagslib.php');
 
             // Permissions and page awareness
-            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+            $systemcontext = context_system::instance();
             $loggedin = isloggedin() && !isguestuser();
             $coursepage = $canedit = false;
             $coursepage = (isset($this->page->course->id) && $this->page->course->id != SITEID);
             $mymoodlepage = ($SCRIPT == '/my/index.php') ? true : false;
             $sitepage = (isset($this->page->course->id) && $this->page->course->id == SITEID && !$mymoodlepage);
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $this->page->course->id);
             if ($coursepage) {
                 $canedit =  has_capability('moodle/tag:create', $systemcontext);
             }

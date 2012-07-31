@@ -28,14 +28,14 @@
 require_once('../config.php');
 require_once('lib.php');
 require_once($CFG->libdir.'/completionlib.php');
-require_once($CFG->libdir.'/completion/completion_criteria_self.php');
-require_once($CFG->libdir.'/completion/completion_criteria_date.php');
-require_once($CFG->libdir.'/completion/completion_criteria_unenrol.php');
-require_once($CFG->libdir.'/completion/completion_criteria_activity.php');
-require_once($CFG->libdir.'/completion/completion_criteria_duration.php');
-require_once($CFG->libdir.'/completion/completion_criteria_grade.php');
-require_once($CFG->libdir.'/completion/completion_criteria_role.php');
-require_once($CFG->libdir.'/completion/completion_criteria_course.php');
+require_once($CFG->dirroot.'/completion/criteria/completion_criteria_self.php');
+require_once($CFG->dirroot.'/completion/criteria/completion_criteria_date.php');
+require_once($CFG->dirroot.'/completion/criteria/completion_criteria_unenrol.php');
+require_once($CFG->dirroot.'/completion/criteria/completion_criteria_activity.php');
+require_once($CFG->dirroot.'/completion/criteria/completion_criteria_duration.php');
+require_once($CFG->dirroot.'/completion/criteria/completion_criteria_grade.php');
+require_once($CFG->dirroot.'/completion/criteria/completion_criteria_role.php');
+require_once($CFG->dirroot.'/completion/criteria/completion_criteria_course.php');
 require_once $CFG->libdir.'/gradelib.php';
 require_once('completion_form.php');
 
@@ -53,7 +53,7 @@ if ($id) { // editing course
         print_error('invalidcourseid');
     }
     require_login($course);
-    require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));
+    require_capability('moodle/course:update', context_course::instance($course->id));
 
 } else {
     require_login();

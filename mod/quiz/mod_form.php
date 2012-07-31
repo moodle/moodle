@@ -115,7 +115,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         $mform->removeElement('grade');
         $mform->addElement('hidden', 'grade', $quizconfig->maximumgrade);
-        $mform->setType('grade', PARAM_NUMBER);
+        $mform->setType('grade', PARAM_FLOAT);
 
         // Number of attempts.
         $attemptoptions = array('0' => get_string('unlimited'));

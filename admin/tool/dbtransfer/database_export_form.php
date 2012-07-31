@@ -17,19 +17,28 @@
 /**
  * Transfer form
  *
- * @package    tool
- * @subpackage dbtransfer
- * @copyright  2008 Petr Skoda
+ * @package    tool_dbtransfer
+ * @copyright  2008 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once $CFG->libdir.'/formslib.php';
+require_once($CFG->libdir.'/formslib.php');
 
+
+/**
+ * Definition of db export settings form.
+ *
+ * @package    tool_dbtransfer
+ * @copyright  2008 Petr Skoda {@link http://skodak.org/}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class database_export_form extends moodleform {
-
-    function definition() {
+    /**
+     * Define the export form.
+     */
+    public function definition() {
         $mform = $this->_form;
 
         $mform->addElement('header', 'database', get_string('dbexport', 'tool_dbtransfer'));

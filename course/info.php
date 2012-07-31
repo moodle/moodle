@@ -28,7 +28,7 @@
         require_login();
     }
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
         print_error('coursehidden', '', $CFG->wwwroot .'/');
     }
@@ -51,38 +51,8 @@
         echo $OUTPUT->box_end();
     }
 
-    echo $OUTPUT->box_start('generalbox info');
-
-    $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', NULL);
-    echo format_text($course->summary, $course->summaryformat, array('overflowdiv'=>true), $course->id);
-
-    if (!empty($CFG->coursecontact)) {
-        $coursecontactroles = explode(',', $CFG->coursecontact);
-        foreach ($coursecontactroles as $roleid) {
-            if ($users = get_role_users($roleid, $context, true)) {
-                foreach ($users as $teacher) {
-                    $role = new stdClass();
-                    $role->id = $teacher->roleid;
-                    $role->name = $teacher->rolename;
-                    $role->shortname = $teacher->roleshortname;
-                    $role->coursealias = $teacher->rolecoursealias;
-                    $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context));
-                    $namesarray[] = role_get_name($role, $context).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
-                                    $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
-                }
-            }
-        }
-
-        if (!empty($namesarray)) {
-            echo "<ul class=\"teachers\">\n<li>";
-            echo implode('</li><li>', $namesarray);
-            echo "</li></ul>";
-        }
-    }
-
-// TODO: print some enrol icons
-
-    echo $OUTPUT->box_end();
+    $courserenderer = $PAGE->get_renderer('core', 'course');
+    echo $courserenderer->course_info_box($course);
 
     echo "<br />";
 

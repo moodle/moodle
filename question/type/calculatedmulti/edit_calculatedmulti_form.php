@@ -82,7 +82,7 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         $addrepeated = array();
         $addrepeated[] = $mform->createElement('hidden', 'tolerance');
         $addrepeated[] = $mform->createElement('hidden', 'tolerancetype', 1);
-        $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
+        $repeatedoptions['tolerance']['type'] = PARAM_FLOAT;
         $repeatedoptions['tolerance']['default'] = 0.01;
 
         $addrepeated[] =  $mform->createElement('select', 'correctanswerlength',
@@ -157,8 +157,8 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
                     optional_param("unit[$i]", '', PARAM_NOTAGS));
             $mform->setType('unit'."[$i]", PARAM_NOTAGS);
             $mform->addElement('hidden', 'multiplier'."[$i]",
-                    optional_param("multiplier[$i]", '', PARAM_NUMBER));
-            $mform->setType("multiplier[$i]", PARAM_NUMBER);
+                    optional_param("multiplier[$i]", '', PARAM_FLOAT));
+            $mform->setType("multiplier[$i]", PARAM_FLOAT);
         }
 
         $this->add_combined_feedback_fields(true);

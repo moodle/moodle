@@ -26,7 +26,7 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$action  = required_param('action', PARAM_ACTION);
+$action  = required_param('action', PARAM_ALPHANUMEXT);
 $enrol   = required_param('enrol', PARAM_PLUGIN);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
@@ -34,7 +34,7 @@ $PAGE->set_url('/admin/enrol.php');
 $PAGE->set_context(context_system::instance());
 
 require_login();
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+require_capability('moodle/site:config', context_system::instance());
 require_sesskey();
 
 $enabled = enrol_get_plugins(true);

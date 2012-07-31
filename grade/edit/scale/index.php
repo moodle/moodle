@@ -37,7 +37,7 @@ if ($courseid) {
         print_error('nocourseid');
     }
     require_login($course);
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     require_capability('moodle/course:managescales', $context);
     $PAGE->set_pagelayout('admin');
 } else {
@@ -69,7 +69,7 @@ switch ($action) {
         }
 
         if (empty($scale->courseid)) {
-            require_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM));
+            require_capability('moodle/course:managescales', context_system::instance());
         } else if ($scale->courseid != $courseid) {
             print_error('invalidcourseid');
         }
@@ -147,10 +147,10 @@ if ($scales = grade_scale::fetch_all_global()) {
         $line[] = $used ? get_string('yes') : get_string('no');
 
         $buttons = "";
-        if (has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('moodle/course:managescales', context_system::instance())) {
             $buttons .= grade_button('edit', $courseid, $scale);
         }
-        if (!$used and has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
+        if (!$used and has_capability('moodle/course:managescales', context_system::instance())) {
             $buttons .= grade_button('delete', $courseid, $scale);
         }
         $line[] = $buttons;

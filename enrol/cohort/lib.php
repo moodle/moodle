@@ -47,7 +47,7 @@ class enrol_cohort_plugin extends enrol_plugin {
         } else if (empty($instance->name)) {
             $enrol = $this->get_name();
             if ($role = $DB->get_record('role', array('id'=>$instance->roleid))) {
-                $role = role_get_name($role, get_context_instance(CONTEXT_COURSE, $instance->courseid));
+                $role = role_get_name($role, context_course::instance($instance->courseid, IGNORE_MISSING));
                 return get_string('pluginname', 'enrol_'.$enrol) . ' (' . format_string($DB->get_field('cohort', 'name', array('id'=>$instance->customint1))) . ' - ' . $role .')';
             } else {
                 return get_string('pluginname', 'enrol_'.$enrol) . ' (' . format_string($DB->get_field('cohort', 'name', array('id'=>$instance->customint1))) . ')';
@@ -81,7 +81,7 @@ class enrol_cohort_plugin extends enrol_plugin {
     protected function can_add_new_instances($courseid) {
         global $DB;
 
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+        $coursecontext = context_course::instance($courseid);
         if (!has_capability('moodle/course:enrolconfig', $coursecontext) or !has_capability('enrol/cohort:config', $coursecontext)) {
             return false;
         }

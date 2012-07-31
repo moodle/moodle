@@ -104,10 +104,6 @@ if (!$version or !$release) {
     print_error('withoutversion', 'debug'); // without version, stop
 }
 
-// Turn off xmlstrictheaders during upgrade.
-$origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
-$CFG->xmlstrictheaders = false;
-
 if (!core_tables_exist()) {
     $PAGE->set_pagelayout('maintenance');
     $PAGE->set_popup_notification_allowed(false);
@@ -189,7 +185,7 @@ if (!core_tables_exist()) {
 // and upgrade if possible.
 
 $stradministration = get_string('administration');
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 
 if (empty($CFG->version)) {
     print_error('missingconfigversion', 'debug');
@@ -380,13 +376,9 @@ if (during_initial_install()) {
     upgrade_finished('upgradesettings.php');
 }
 
-// Turn xmlstrictheaders back on now.
-$CFG->xmlstrictheaders = $origxmlstrictheaders;
-unset($origxmlstrictheaders);
-
 // Check for valid admin user - no guest autologin
 require_login(0, false);
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 require_capability('moodle/site:config', $context);
 
 // check that site is properly customized

@@ -50,7 +50,7 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 
 $PAGE->set_pagelayout('incourse');
 require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 if (!has_capability('moodle/grade:manage', $context)) {
     require_capability('moodle/grade:edit', $context);
 }

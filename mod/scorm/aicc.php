@@ -195,7 +195,7 @@ if (!empty($command)) {
                     if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $scorm->course)) {
                         echo "error=1\r\nerror_text=Unknown\r\n"; // No one must see this error message if not hacked
                     }
-                    if (!empty($aiccdata) && has_capability('mod/scorm:savetrack', get_context_instance(CONTEXT_MODULE, $cm->id), $aiccuser->id)) {
+                    if (!empty($aiccdata) && has_capability('mod/scorm:savetrack', context_module::instance($cm->id), $aiccuser->id)) {
                         $initlessonstatus = 'not attempted';
                         $lessonstatus = 'not attempted';
                         if (isset($scormsession->scorm_lessonstatus)) {

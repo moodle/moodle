@@ -37,7 +37,7 @@ require_login();
 if ($contextid) {
     $context = get_context_instance_by_id($contextid, MUST_EXIST);
 } else {
-    $context = get_context_instance(CONTEXT_SYSTEM);
+    $context = context_system::instance();
 }
 
 if ($context->contextlevel != CONTEXT_COURSECAT and $context->contextlevel != CONTEXT_SYSTEM) {

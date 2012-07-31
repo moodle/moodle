@@ -155,7 +155,7 @@ class tinymce_texteditor extends texteditor {
                     'min_height' => 30,
                     'theme_advanced_toolbar_location' => "top",
                     'theme_advanced_statusbar_location' => "bottom",
-                    'spellchecker_rpc_url' => $CFG->wwwroot."/lib/editor/tinymce/tiny_mce/$this->version/plugins/spellchecker/rpc.php",
+                    'spellchecker_rpc_url' => $CFG->httpswwwroot."/lib/editor/tinymce/tiny_mce/$this->version/plugins/spellchecker/rpc.php",
                     'spellchecker_languages' => $spelllanguagelist
                   );
 
@@ -172,7 +172,7 @@ class tinymce_texteditor extends texteditor {
             $params['moodleemoticon_emoticons'] = json_encode($imgs);
         }
 
-        if (empty($CFG->xmlstrictheaders) and (!empty($options['legacy']) or !empty($options['noclean']) or !empty($options['trusted']))) {
+        if (!empty($options['legacy']) or !empty($options['noclean']) or !empty($options['trusted'])) {
             // now deal somehow with non-standard tags, people scream when we do not make moodle code xtml strict,
             // but they scream even more when we strip all tags that are not strict :-(
             $params['valid_elements'] = 'script[src|type],*[*]'; // for some reason the *[*] does not inlcude javascript src attribute MDL-25836

@@ -3,7 +3,7 @@
 // This file defines everything related to frontpage
 
 if (!during_initial_install()) { //do not use during installation
-    $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+    $frontpagecontext = context_course::instance(SITEID);
 
     if ($hassiteconfig or has_any_capability(array(
             'moodle/course:update',

@@ -28,7 +28,7 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/webservice/forms.php');
 require_once($CFG->libdir . '/externallib.php');
 
-$action = optional_param('action', '', PARAM_ACTION);
+$action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
@@ -42,7 +42,7 @@ if ($node && $newnode) {
     $newnode->make_active();
 }
 
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+require_capability('moodle/site:config', context_system::instance());
 
 $tokenlisturl = new moodle_url("/" . $CFG->admin . "/settings.php", array('section' => 'webservicetokens'));
 
@@ -83,7 +83,7 @@ switch ($action) {
                 // either move most of webservicelib.php functions into externallib.php
                 // (create externalmanager class) MDL-23523
                 external_generate_token(EXTERNAL_TOKEN_PERMANENT, $data->service,
-                        $data->user, get_context_instance(CONTEXT_SYSTEM),
+                        $data->user, context_system::instance(),
                         $data->validuntil, $data->iprestriction);
                 redirect($tokenlisturl);
             }

@@ -9,7 +9,7 @@ class user_bulk_action_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext = context_system::instance();
         $actions = array(0=>get_string('choose').'...');
         if (has_capability('moodle/user:update', $syscontext)) {
             $actions[1] = get_string('confirm');

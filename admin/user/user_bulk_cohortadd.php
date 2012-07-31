@@ -32,7 +32,7 @@ $sort = optional_param('sort', 'fullname', PARAM_ALPHA);
 $dir  = optional_param('dir', 'asc', PARAM_ALPHA);
 
 admin_externalpage_setup('userbulk');
-require_capability('moodle/cohort:assign', get_context_instance(CONTEXT_SYSTEM));
+require_capability('moodle/cohort:assign', context_system::instance());
 
 $users = $SESSION->bulk_users;
 

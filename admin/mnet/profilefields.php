@@ -34,7 +34,7 @@ $hostid = required_param('hostid', PARAM_INT);
 $mnet_peer = new mnet_peer();
 $mnet_peer->set_id($hostid);
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 
 require_capability('moodle/site:config', $context, $USER->id, true, 'nopermissions');
 admin_externalpage_setup('mnetpeers');

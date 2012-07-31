@@ -40,7 +40,7 @@ $PAGE->navbar->add(get_string('externalservice', 'webservice'));
 
 //Retrieve few general parameters
 $id = required_param('id', PARAM_INT);
-$action = optional_param('action', '', PARAM_ACTION);
+$action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 $webservicemanager = new webservice;
 $renderer = $PAGE->get_renderer('core', 'webservice');

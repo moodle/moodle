@@ -41,7 +41,7 @@ $section = $DB->get_record('course_sections', array('id' => $id), '*', MUST_EXIS
 $course = $DB->get_record('course', array('id' => $section->course), '*', MUST_EXIST);
 
 require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 require_capability('moodle/course:update', $context);
 
 $editoroptions = array('context'=>$context ,'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);

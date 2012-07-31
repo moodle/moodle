@@ -405,7 +405,7 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012042300.02) {
-        require_once($CFG->libdir . '/completion/completion_criteria.php');
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria.php');
         // Delete orphaned criteria which were left when modules were removed
         if ($DB->get_dbfamily() === 'mysql') {
             $sql = "DELETE cc FROM {course_completion_criteria} cc
@@ -1045,6 +1045,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012070600.11);
     }
 
+    if ($oldversion < 2012071900.01) {
+        // Cleanup after simpeltests tool
+        capabilities_cleanup('tool_unittest');
+        unset_all_config_for_plugin('tool_unittest');
+
+        upgrade_main_savepoint(true, 2012071900.01);
+    }
+
+    if ($oldversion < 2012072400.00) {
+        // Remove obsolete xhtml strict setting - use THEME->doctype in theme config if necessary,
+        // see theme_config->doctype in lib/outputlib.php for more details.
+        unset_config('xmlstrictheaders');
+        upgrade_main_savepoint(true, 2012072400.00);
+    }
+
+    if ($oldversion < 2012072401.00) {
+
+        // Saves orphaned questions from the Dark Side
+        upgrade_save_orphaned_questions();
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012072401.00);
+    }
 
     return true;
 }

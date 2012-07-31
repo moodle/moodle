@@ -3243,7 +3243,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
      * @return mixed true or message string
      */
     public function validate($data) {
-        $cleaned = clean_param($data, PARAM_MULTILANG);
+        $cleaned = clean_param($data, PARAM_TEXT);
         if ($cleaned === '') {
             return get_string('required');
         }

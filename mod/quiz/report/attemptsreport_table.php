@@ -189,8 +189,6 @@ abstract class quiz_attempts_report_table extends table_sql {
     public function col_duration($attempt) {
         if ($attempt->timefinish) {
             return format_time($attempt->timefinish - $attempt->timestart);
-        } else if ($attempt->timestart) {
-            return get_string('unfinished', 'quiz');
         } else {
             return '-';
         }

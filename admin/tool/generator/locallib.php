@@ -706,7 +706,7 @@ class generator {
                 shuffle($users);
                 $users_to_assign = array_slice($users, 0, $this->get('students_per_course'));
 
-                $context = get_context_instance(CONTEXT_COURSE, $courseid);
+                $context = context_course::instance($courseid);
                 foreach ($users_to_assign as $random_user) {
                     role_assign(5, $random_user, $context->id);
 

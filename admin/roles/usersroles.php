@@ -36,9 +36,9 @@ $courseid = required_param('courseid', PARAM_INT);
 $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-$usercontext = get_context_instance(CONTEXT_USER, $user->id);
-$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$usercontext = context_user::instance($user->id);
+$coursecontext = context_course::instance($course->id);
+$systemcontext = context_system::instance();
 
 $baseurl = new moodle_url('/admin/roles/usersroles.php', array('userid'=>$userid, 'courseid'=>$courseid));
 

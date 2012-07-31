@@ -55,9 +55,9 @@ abstract class moodleform_mod extends moodleform {
         $this->_section  = $section;
         $this->_cm       = $cm;
         if ($this->_cm) {
-            $this->context = get_context_instance(CONTEXT_MODULE, $this->_cm->id);
+            $this->context = context_module::instance($this->_cm->id);
         } else {
-            $this->context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $this->context = context_course::instance($course->id);
         }
 
         // Guess module name
@@ -424,7 +424,7 @@ abstract class moodleform_mod extends moodleform {
             $permission=CAP_ALLOW;
             $rolenamestring = null;
             if (!empty($this->_cm)) {
-                $context = get_context_instance(CONTEXT_MODULE, $this->_cm->id);
+                $context = context_module::instance($this->_cm->id);
 
                 $rolenames = get_role_names_with_caps_in_context($context, array('moodle/rating:rate', 'mod/'.$this->_cm->modname.':rate'));
                 $rolenamestring = implode(', ', $rolenames);
@@ -487,7 +487,7 @@ abstract class moodleform_mod extends moodleform {
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));
         if (!empty($this->_cm)) {
-            $context = get_context_instance(CONTEXT_MODULE, $this->_cm->id);
+            $context = context_module::instance($this->_cm->id);
             if (!has_capability('moodle/course:activityvisibility', $context)) {
                 $mform->hardFreeze('visible');
             }

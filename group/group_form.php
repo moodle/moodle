@@ -50,7 +50,7 @@ class group_form extends moodleform {
 
         $mform->addElement('text','name', get_string('groupname', 'group'),'maxlength="254" size="50"');
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
-        $mform->setType('name', PARAM_MULTILANG);
+        $mform->setType('name', PARAM_TEXT);
 
         $mform->addElement('text','idnumber', get_string('idnumbergroup'), 'maxlength="100" size="10"');
         $mform->addHelpButton('idnumber', 'idnumbergroup');

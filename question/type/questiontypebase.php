@@ -1005,7 +1005,7 @@ class question_type {
         $form->penalty = 0.3333333;
         $form->generalfeedback = "Well done";
 
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = context_course::instance($courseid);
         $newcategory = question_make_default_categories(array($context));
         $form->category = $newcategory->id . ',1';
 

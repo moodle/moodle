@@ -224,7 +224,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->addHelpButton('screenreader', 'screenreaderuse');
 
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="21"');
-    $mform->setType('city', PARAM_MULTILANG);
+    $mform->setType('city', PARAM_TEXT);
     $mform->addRule('city', $strrequired, 'required', null, 'client');
     if (!empty($CFG->defaultcity)) {
         $mform->setDefault('city', $CFG->defaultcity);
@@ -282,7 +282,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
         $mform->addHelpButton('imagefile', 'newpicture');
 
         $mform->addElement('text', 'imagealt', get_string('imagealt'), 'maxlength="100" size="30"');
-        $mform->setType('imagealt', PARAM_MULTILANG);
+        $mform->setType('imagealt', PARAM_TEXT);
 
     }
 
@@ -317,10 +317,10 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->setType('idnumber', PARAM_NOTAGS);
 
     $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="40" size="25"');
-    $mform->setType('institution', PARAM_MULTILANG);
+    $mform->setType('institution', PARAM_TEXT);
 
     $mform->addElement('text', 'department', get_string('department'), 'maxlength="30" size="25"');
-    $mform->setType('department', PARAM_MULTILANG);
+    $mform->setType('department', PARAM_TEXT);
 
     $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="25"');
     $mform->setType('phone1', PARAM_NOTAGS);
@@ -329,7 +329,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->setType('phone2', PARAM_NOTAGS);
 
     $mform->addElement('text', 'address', get_string('address'), 'maxlength="70" size="25"');
-    $mform->setType('address', PARAM_MULTILANG);
+    $mform->setType('address', PARAM_TEXT);
 
 
 }

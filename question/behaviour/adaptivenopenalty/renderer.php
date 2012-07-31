@@ -38,8 +38,7 @@ require_once(dirname(__FILE__) . '/../adaptive/renderer.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_adaptivenopenalty_renderer extends qbehaviour_adaptive_renderer {
-    protected function penalty_info(question_attempt $qa, $mark,
-                                    question_display_options $options) {
+    protected function penalty_info(qbehaviour_adaptive_mark_details $details, question_display_options $options) {
         return '';
     }
     protected function disregarded_info() {

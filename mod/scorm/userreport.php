@@ -64,7 +64,7 @@ $PAGE->set_url($url);
 
 // checking login +logging +getting context
 require_login($course, false, $cm);
-$contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
+$contextmodule = context_module::instance($cm->id);
 require_capability('mod/scorm:viewreport', $contextmodule);
 
 add_to_log($course->id, 'scorm', 'userreport', 'userreport.php?id='.$cm->id, $scorm->id, $cm->id);

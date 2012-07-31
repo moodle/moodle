@@ -93,7 +93,7 @@ class enrol_manual_external extends external_api {
 
         foreach ($params['enrolments'] as $enrolment) {
             // Ensure the current user is allowed to run this function in the enrolment context
-            $context = get_context_instance(CONTEXT_COURSE, $enrolment['courseid']);
+            $context = context_course::instance($enrolment['courseid'], IGNORE_MISSING);
             self::validate_context($context);
 
             //check that the user has the permission to manual enrol
