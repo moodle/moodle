@@ -466,10 +466,6 @@ function cron_run() {
     $fs = get_file_storage();
     $fs->cron();
 
-    mtrace("Clean up cached external files");
-    // 1 week
-    cache_file::cleanup(array(), 60 * 60 * 24 * 7);
-
     mtrace("Cron script completed correctly");
 
     $difftime = microtime_diff($starttime, microtime());
