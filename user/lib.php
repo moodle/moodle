@@ -464,7 +464,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
                     $coursecontext = context_course::instance($mycourse->id);
                     $enrolledcourse = array();
                     $enrolledcourse['id'] = $mycourse->id;
-                    $enrolledcourse['fullname'] = format_string($mycourse->fullname, true, array('context' => $coursecontext)));
+                    $enrolledcourse['fullname'] = format_string($mycourse->fullname, true, array('context' => $coursecontext));
                     $enrolledcourse['shortname'] = format_string($mycourse->shortname, true, array('context' => $coursecontext));
                     $enrolledcourses[] = $enrolledcourse;
                 }
