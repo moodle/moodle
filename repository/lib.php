@@ -1213,14 +1213,27 @@ abstract class repository {
 
     /**
      * Returns information about file in this repository by reference
-     * {@link repository::get_file_reference()}
-     * {@link repository::get_file()}
      *
-     * Returns null if file not found or is not readable
+     * This function must be implemented for repositories supporting FILE_REFERENCE, it is called
+     * for existing aliases when the lifetime of the previous syncronisation has expired.
      *
-     * @param stdClass $reference file reference db record
+     * Returns null if file not found or is not readable or timeout occured during request.
+     * Note that this function may be run for EACH file that needs to be synchronised at the
+     * moment. If anything is being downloaded or requested from external sources there
+     * should be a small timeout. The synchronisation is performed to update the size of
+     * the file and/or to update image and re-generated image preview. There is nothing
+     * fatal if syncronisation fails but it is fatal if syncronisation takes too long
+     * and hangs the script generating a page.
+     *
+     * If get_file_by_reference() returns filesize just the record in {files} table is being updated.
+     * If filepath, handle or content are returned - the file is also stored in moodle filepool
+     * (recommended for images to generate the thumbnails). For non-image files it is not
+     * recommended to download them to moodle during syncronisation since it may take
+     * unnecessary long time.
+     *
+     * @param stdClass $reference record from DB table {files_reference}
      * @return stdClass|null contains one of the following:
-     *   - 'contenthash' and 'filesize'
+     *   - 'filesize' and optionally 'contenthash'
      *   - 'filepath'
      *   - 'handle'
      *   - 'content'
@@ -2257,7 +2270,7 @@ abstract class repository {
     }
 
     /**
-     * Call to request proxy file sync with repository source.
+     * Performs synchronisation of reference to an external file if the previous one has expired.
      *
      * @param stored_file $file
      * @param bool $resetsynchistory whether to reset all history of sync (used by phpunit)
@@ -2300,20 +2313,31 @@ abstract class repository {
             return false;
         }
 
+        $lifetime = $repository->get_reference_file_lifetime($reference);
         $fileinfo = $repository->get_file_by_reference($reference);
         if ($fileinfo === null) {
             // does not exist any more - set status to missing
-            $file->set_missingsource();
-            //TODO: purge content from pool if we set some other content hash and it is no used any more
+            $file->set_missingsource($lifetime);
             $synchronized[$file->get_id()] = true;
             return true;
         }
 
         $contenthash = null;
         $filesize = null;
-        if (!empty($fileinfo->contenthash)) {
-            // contenthash returned, file already in moodle
-            $contenthash = $fileinfo->contenthash;
+        if (!empty($fileinfo->filesize)) {
+            // filesize returned
+            if (!empty($fileinfo->contenthash) && $fs->content_exists($fileinfo->contenthash)) {
+                // contenthash is specified and valid
+                $contenthash = $fileinfo->contenthash;
+            } else if ($fileinfo->filesize == $file->get_filesize()) {
+                // we don't know the new contenthash but the filesize did not change,
+                // assume the contenthash did not change either
+                $contenthash = $file->get_contenthash();
+            } else {
+                // we can't save empty contenthash so generate contenthash from empty string
+                $fs->add_string_to_pool('');
+                $contenthash = sha1('');
+            }
             $filesize = $fileinfo->filesize;
         } else if (!empty($fileinfo->filepath)) {
             // File path returned
@@ -2336,7 +2360,7 @@ abstract class repository {
         }
 
         // update files table
-        $file->set_synchronized($contenthash, $filesize);
+        $file->set_synchronized($contenthash, $filesize, 0, $lifetime);
         $synchronized[$file->get_id()] = true;
         return true;
     }
