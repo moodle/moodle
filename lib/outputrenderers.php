@@ -1234,7 +1234,7 @@ class core_renderer extends renderer_base {
         }
 
         if ($select->label) {
-            $output .= html_writer::label($select->label, $select->attributes['id']);
+            $output .= html_writer::label($select->label, $select->attributes['id'], false, $select->labelattributes);
         }
 
         if ($select->helpicon instanceof help_icon) {
@@ -1242,7 +1242,6 @@ class core_renderer extends renderer_base {
         } else if ($select->helpicon instanceof old_help_icon) {
             $output .= $this->render($select->helpicon);
         }
-
         $output .= html_writer::select($select->options, $select->name, $select->selected, $select->nothing, $select->attributes);
 
         $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
@@ -1310,7 +1309,7 @@ class core_renderer extends renderer_base {
         $output = '';
 
         if ($select->label) {
-            $output .= html_writer::label($select->label, $select->attributes['id']);
+            $output .= html_writer::label($select->label, $select->attributes['id'], false, $select->labelattributes);
         }
 
         if ($select->helpicon instanceof help_icon) {
@@ -1521,6 +1520,7 @@ class core_renderer extends renderer_base {
 
             $scalearray = array(RATING_UNSET_RATING => $strrate.'...') + $rating->settings->scale->scaleitems;
             $scaleattrs = array('class'=>'postratingmenu ratinginput','id'=>'menurating'.$rating->itemid);
+            $ratinghtml .= html_writer::label($rating->rating, 'menurating'.$rating->itemid, false, array('class' => 'accesshide'));
             $ratinghtml .= html_writer::select($scalearray, 'rating', $rating->rating, false, $scaleattrs);
 
             //output submit button

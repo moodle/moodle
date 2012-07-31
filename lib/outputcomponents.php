@@ -626,6 +626,10 @@ class single_select implements renderable {
      */
     var $label = '';
     /**
+     * @var array Button label's
+     */
+    var $labelattributes = array();
+    /**
      * Form submit method
      * @var string post or get
      */
@@ -718,10 +722,12 @@ class single_select implements renderable {
     /**
      * Sets select's label
      * @param string $label
+     * @param array $attributes (optional)
      * @return void
      */
-    public function set_label($label) {
+    public function set_label($label, $attributes = array()) {
         $this->label = $label;
+        $this->labelattributes = $attributes;
     }
 }
 
@@ -761,6 +767,10 @@ class url_select implements renderable {
      * @var string
      */
     var $label = '';
+    /**
+     * @var array Button label's attributes
+     */
+    var $labelattributes = array();
     /**
      * Wrapping div class
      * @var string
@@ -834,10 +844,12 @@ class url_select implements renderable {
     /**
      * Sets select's label
      * @param string $label
+     * @param array $attributes (optional)
      * @return void
      */
-    public function set_label($label) {
+    public function set_label($label, $attributes = array()) {
         $this->label = $label;
+        $this->labelattributes = $attributes;
     }
 }
 
