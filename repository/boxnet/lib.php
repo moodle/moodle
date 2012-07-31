@@ -277,12 +277,21 @@ class repository_boxnet extends repository {
      * @return null|stdClass with attribute 'filepath'
      */
     public function get_file_by_reference($reference) {
-        $boxnetfile = $this->get_file($reference->reference);
-        // Please note that here we will ALWAYS receive a file
-        // If source file has been removed from external server, box.com still returns
-        // a plain/text file with content 'no such file' (filesize will be 12 bytes)
-        if (!empty($boxnetfile['path'])) {
-            return (object)array('filepath' => $boxnetfile['path']);
+        $array = explode('/', $reference->reference);
+        $fileid = array_pop($array);
+        $fileinfo = $this->boxclient->get_file_info($fileid, self::SYNCFILE_TIMEOUT);
+        if ($fileinfo) {
+            $size = (int)$fileinfo->size;
+            if (file_extension_in_typegroup($fileinfo->file_name, 'web_image')) {
+                // this is an image - download it to moodle
+                $path = $this->prepare_file('');
+                $c = new curl;
+                $result = $c->download_one($reference->reference, null, array('filepath' => $path, 'timeout' => self::SYNCIMAGE_TIMEOUT));
+                if ($result === true) {
+                    return (object)array('filepath' => $path);
+                }
+            }
+            return (object)array('filesize' => $size);
         }
         return null;
     }
@@ -297,13 +306,16 @@ class repository_boxnet extends repository {
      */
     public function get_reference_details($reference, $filestatus = 0) {
         // Indicate it's from box.net repository + secure URL
+        $array = explode('/', $reference);
+        $fileid = array_pop($array);
+        $fileinfo = $this->boxclient->get_file_info($fileid, self::SYNCFILE_TIMEOUT);
+        if (!empty($fileinfo)) {
+            $reference = (string)$fileinfo->file_name;
+        }
         $details = $this->get_name() . ': ' . $reference;
-        if (!$filestatus) {
+        if (!empty($fileinfo)) {
             return $details;
         } else {
-            // at the moment for box.net files we never can be sure that source is missing
-            // because box.com never returns 404 error.
-            // So we never change the status and actually this part is unreachable
             return get_string('lostsource', 'repository', $details);
         }
     }
@@ -315,13 +327,14 @@ class repository_boxnet extends repository {
      * @return string|null
      */
     public function get_file_source_info($url) {
+        global $USER;
         $array = explode('/', $url);
         $fileid = array_pop($array);
-        $fileinfo = $this->boxclient->get_file_info($fileid);
+        $fileinfo = $this->boxclient->get_file_info($fileid, self::SYNCFILE_TIMEOUT);
         if (!empty($fileinfo)) {
-            return 'Box: ' . (string)$fileinfo->file_name;
+            return 'Box ('. fullname($USER). '): '. (string)$fileinfo->file_name. ': '. $url;
         } else {
-            return $url;
+            return 'Box: '. $url;
         }
     }
 

@@ -176,7 +176,7 @@ class boxclient {
         $params['action']     = 'get_account_tree';
         $params['onelevel']   = 1;
         $params['params[]']   = 'nozip';
-        $c = new curl(array('debug'=>$this->debug, 'cache'=>true, 'module_cache'=>'repository'));
+        $c = new curl(array('debug'=>$this->debug));
         $c->setopt(array('CURLOPT_FOLLOWLOCATION'=>1));
         try {
             $args = array();
@@ -196,23 +196,25 @@ class boxclient {
      * Get box.net file info
      *
      * @param string $fileid
-     * @return string|null
+     * @param int $timeout request timeout in seconds
+     * @return stdClass|null
      */
-    function get_file_info($fileid) {
+    function get_file_info($fileid, $timeout = 0) {
         $this->_clearErrors();
         $params = array();
         $params['action']     = 'get_file_info';
         $params['file_id']    = $fileid;
         $params['auth_token'] = $this->auth_token;
         $params['api_key']    = $this->api_key;
-        $http = new curl(array('debug'=>$this->debug, 'cache'=>true, 'module_cache'=>'repository'));
-        $xml = $http->get($this->_box_api_url, $params);
-        $o = simplexml_load_string(trim($xml));
-        if ($o->status == 's_get_file_info') {
-            return $o->info;
-        } else {
-            return null;
+        $http = new curl(array('debug'=>$this->debug));
+        $xml = $http->get($this->_box_api_url, $params, array('timeout' => $timeout));
+        if (!$http->get_errno()) {
+            $o = simplexml_load_string(trim($xml));
+            if ($o->status == 's_get_file_info') {
+                return $o->info;
+            }
         }
+        return null;
     }
 
     /**
