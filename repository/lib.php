@@ -1164,9 +1164,8 @@ abstract class repository {
 
     /**
      * Return human readable reference information
-     * {@link stored_file::get_reference()}
      *
-     * @param string $reference
+     * @param string $reference value of DB field files_reference.reference
      * @param int $filestatus status of the file, 0 - ok, 666 - source missing
      * @return string
      */
@@ -1258,14 +1257,23 @@ abstract class repository {
     /**
      * Return the source information
      *
-     * @param stdClass $url
+     * The result of the function is stored in files.source field. It may be analysed
+     * when the source file is lost or repository may use it to display human-readable
+     * location of reference original.
+     *
+     * This method is called when file is picked for the first time only. When file
+     * (either copy or a reference) is already in moodle and it is being picked
+     * again to another file area (also as a copy or as a reference), the value of
+     * files.source is copied.
+     *
+     * @param string $source the value that repository returned in listing as 'source'
      * @return string|null
      */
-    public function get_file_source_info($url) {
+    public function get_file_source_info($source) {
         if ($this->has_moodle_files()) {
-            return $this->get_reference_details($url, 0);
+            return $this->get_reference_details($source, 0);
         }
-        return $url;
+        return $source;
     }
 
     /**
