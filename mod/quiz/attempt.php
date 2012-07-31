@@ -41,6 +41,7 @@ $attemptid = required_param('attempt', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 
 $attemptobj = quiz_attempt::create($attemptid);
+$page = $attemptobj->force_page_number_into_range($page);
 $PAGE->set_url($attemptobj->attempt_url(null, $page));
 
 // Check login.
