@@ -1633,6 +1633,77 @@ abstract class repository {
     }
 
     /**
+     * Downloads the file from external repository and saves it in moodle filepool.
+     * This function is different from {@link repository::sync_external_file()} because it has
+     * bigger request timeout and always downloads the content.
+     *
+     * This function is invoked when we try to unlink the file from the source and convert
+     * a reference into a true copy.
+     *
+     * @throws exception when file could not be imported
+     *
+     * @param stored_file $file
+     * @param int $maxbytes throw an exception if file size is bigger than $maxbytes (0 means no limit)
+     */
+    public function import_external_file_contents(stored_file $file, $maxbytes = 0) {
+        if (!$file->is_external_file()) {
+            // nothing to import if the file is not a reference
+            return;
+        } else if ($file->get_repository_id() != $this->id) {
+            // error
+            debugging('Repository instance id does not match');
+            return;
+        } else if ($this->has_moodle_files()) {
+            // files that are references to local files are already in moodle filepool
+            // just validate the size
+            if ($maxbytes > 0 && $file->get_filesize() > $maxbytes) {
+                throw new file_exception('maxbytes');
+            }
+            return;
+        } else {
+            if ($maxbytes > 0 && $file->get_filesize() > $maxbytes) {
+                // note that stored_file::get_filesize() also calls synchronisation
+                throw new file_exception('maxbytes');
+            }
+            $fs = get_file_storage();
+            $contentexists = $fs->content_exists($file->get_contenthash());
+            if ($contentexists && $file->get_filesize() && $file->get_contenthash() === sha1('')) {
+                // even when 'file_storage::content_exists()' returns true this may be an empty
+                // content for the file that was not actually downloaded
+                $contentexists = false;
+            }
+            $now = time();
+            if ($file->get_referencelastsync() + $file->get_referencelifetime() >= $now &&
+                        !$file->get_status() &&
+                        $contentexists) {
+                // we already have the content in moodle filepool and it was synchronised recently.
+                // Repositories may overwrite it if they want to force synchronisation anyway!
+                return;
+            } else {
+                // attempt to get a file
+                try {
+                    $fileinfo = $this->get_file($file->get_reference());
+                    if (isset($fileinfo['path'])) {
+                        list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($fileinfo['path']);
+                        // set this file and other similar aliases synchronised
+                        $lifetime = $this->get_reference_file_lifetime($file->get_reference());
+                        $file->set_synchronized($contenthash, $filesize, 0, $lifetime);
+                    } else {
+                        throw new moodle_exception('errorwhiledownload', 'repository', '', '');
+                    }
+                } catch (Exception $e) {
+                    if ($contentexists) {
+                        // better something than nothing. We have a copy of file. It's sync time
+                        // has expired but it is still very likely that it is the last version
+                    } else {
+                        throw($e);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Return size of a file in bytes.
      *
      * @param string $source encoded and serialized data of file
