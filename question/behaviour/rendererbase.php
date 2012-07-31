@@ -88,12 +88,13 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                 array('id' => $id, 'name' => $inputname, 'rows' => 10, 'cols' => 60)));
 
         $commenteditor .= html_writer::start_tag('div');
-        if (count($formats == 1)) {
+        if (count($formats) == 1) {
             reset($formats);
             $commenteditor .= html_writer::empty_tag('input', array('type' => 'hidden',
                     'name' => $inputname . 'format', 'value' => key($formats)));
 
         } else {
+            $commenteditor .= html_writer::label(get_string('formattexttype'), 'menu' . $inputname . 'format', false, array('class' => 'accesshide'));
             $commenteditor .= html_writer::select(
                     $formats, $inputname . 'format', $commentformat, '');
         }
