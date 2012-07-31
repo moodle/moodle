@@ -7121,5 +7121,19 @@ FROM
         upgrade_main_savepoint(true, 2011120504.03);
     }
 
+    if ($oldversion < 2011120504.05) {
+
+        // Handle events with empty eventtype //MDL-32827
+
+        $DB->set_field('event', 'eventtype', 'site', array('eventtype' => '', 'courseid' => $SITE->id));
+        $DB->set_field_select('event', 'eventtype', 'due', "eventtype = '' AND courseid != 0 AND groupid = 0 AND (modulename = 'assignment' OR modulename = 'assign')");
+        $DB->set_field_select('event', 'eventtype', 'course', "eventtype = '' AND courseid != 0 AND groupid = 0");
+        $DB->set_field_select('event', 'eventtype', 'group', "eventtype = '' AND groupid != 0");
+        $DB->set_field_select('event', 'eventtype', 'user', "eventtype = '' AND userid != 0");
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011120504.05);
+    }
+
     return true;
 }
