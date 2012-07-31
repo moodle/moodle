@@ -1469,7 +1469,7 @@ $string['screenreaderuse'] = 'Screen reader';
 $string['screenreaderyes'] = 'Yes';
 $string['screenreaderuse_help'] = 'If set to yes, a more accessible interface is provided in various places such as chat.';
 $string['screenshot'] = 'Screenshot';
-$string['search'] = 'Search'; // TODO rename to searchforums and move to mod_forum
+$string['search'] = 'Search'; // TODO MDL-34652 rename to searchforums and move to mod_forum
 $string['search_help'] = 'For basic searching of one or more words anywhere in the text, just type them separated by spaces. All words longer than two characters are used.
 
 For advanced searching, press the search button without typing anything in the search box to access the advanced search form.';
@@ -1522,7 +1522,7 @@ $string['servererror'] = 'An error occurred whilst communicating with the server
 $string['serverlocaltime'] = 'Server\'s local time';
 $string['setcategorytheme'] = 'Set category theme';
 $string['settings'] = 'Settings';
-$string['shortname'] = 'Short name'; // @deprecated - use shortnamecourse or shortnameuser or some own context specific string
+$string['shortname'] = 'Short name'; // @deprecated MDL-34652 - use shortnamecourse or shortnameuser or some own context specific string
 $string['shortnamecollisionwarning'] = '[*] = This shortname is already in use by a course and will need to be changed upon approval';
 $string['shortnamecourse'] = 'Course short name';
 $string['shortnamecourse_help'] = 'The short name of the course is displayed in the navigation and is used in the subject line of course email messages.';
