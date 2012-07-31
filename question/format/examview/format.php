@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once ($CFG->libdir . '/xmlize.php');
+require_once($CFG->libdir . '/xmlize.php');
 
 
 /**
@@ -46,16 +46,20 @@ class qformat_examview extends qformat_default {
         'mtf' => 99,
         'nr' => NUMERICAL,
         'pr' => 99,
-        'es' => 99,
+        'es' => ESSAY,
         'ca' => 99,
         'ot' => 99,
-        'sa' => ESSAY
+        'sa' => SHORTANSWER
         );
 
     public $matching_questions = array();
 
-    function provide_import() {
+    public function provide_import() {
         return true;
+    }
+
+    public function mime_type() {
+        return 'application/xml';
     }
 
     /**
@@ -64,34 +68,52 @@ class qformat_examview extends qformat_default {
      * @param array $xml section of the xml data structure
      * @return string data with evrything else removed
      */
-    function unxmlise( $xml ) {
-        // if it's not an array then it's probably just data
+    protected function unxmlise( $xml ) {
+        // If it's not an array then it's probably just data.
         if (!is_array($xml)) {
             $text = s($xml);
-        }
-        else {
-            // otherwise parse the array
+        } else {
+            // Otherwise parse the array.
             $text = '';
-            foreach ($xml as $tag=>$data) {
-                // if tag is '@' then it's attributes and we don't care
+            foreach ($xml as $tag => $data) {
+                // If tag is '@' then it's attributes and we don't care.
                 if ($tag!=='@') {
                     $text = $text . $this->unxmlise( $data );
                 }
             }
         }
 
-        // currently we throw the tags we found
+        // Currently we throw the tags we found.
         $text = strip_tags($text);
         return $text;
     }
+    protected function text_field($text) {
+        return array(
+            'text' => htmlspecialchars(trim($text), ENT_NOQUOTES),
+            'format' => FORMAT_HTML,
+            'files' => array(),
+        );
+    }
 
-    function parse_matching_groups($matching_groups)
-    {
+    protected function add_blank_combined_feedback($question) {
+        $question->correctfeedback['text'] = '';
+        $question->correctfeedback['format'] = $question->questiontextformat;
+        $question->correctfeedback['files'] = array();
+        $question->partiallycorrectfeedback['text'] = '';
+        $question->partiallycorrectfeedback['format'] = $question->questiontextformat;
+        $question->partiallycorrectfeedback['files'] = array();
+        $question->incorrectfeedback['text'] = '';
+        $question->incorrectfeedback['format'] = $question->questiontextformat;
+        $question->incorrectfeedback['files'] = array();
+        return $question;
+    }
+
+    protected function parse_matching_groups($matching_groups) {
         if (empty($matching_groups)) {
             return;
         }
-        foreach($matching_groups as $match_group) {
-            $newgroup = NULL;
+        foreach ($matching_groups as $match_group) {
+            $newgroup = new stdClass();
             $groupname = trim($match_group['@']['name']);
             $questiontext = $this->unxmlise($match_group['#']['text'][0]['#']);
             $newgroup->questiontext = trim($questiontext);
@@ -99,8 +121,8 @@ class qformat_examview extends qformat_default {
             $newgroup->subquestions = array();
             $newgroup->subanswers = array();
             $choices = $match_group['#']['choices']['0']['#'];
-            foreach($choices as $key => $value) {
-                if (strpos(trim($key),'choice-') !== FALSE) {
+            foreach ($choices as $key => $value) {
+                if (strpos(trim($key), 'choice-') !== false) {
                     $key = strtoupper(trim(str_replace('choice-', '', $key)));
                     $newgroup->subchoices[$key] = trim($value['0']['#']);
                 }
@@ -109,8 +131,7 @@ class qformat_examview extends qformat_default {
         }
     }
 
-    function parse_ma($qrec, $groupname)
-    {
+    protected function parse_ma($qrec, $groupname) {
         $match_group = $this->matching_questions[$groupname];
         $phrase = trim($this->unxmlise($qrec['text']['0']['#']));
         $answer = trim($this->unxmlise($qrec['answer']['0']['#']));
@@ -118,25 +139,27 @@ class qformat_examview extends qformat_default {
         $match_group->subquestions[] = $phrase;
         $match_group->subanswers[] = $match_group->subchoices[$answer];
         $this->matching_questions[$groupname] = $match_group;
-        return NULL;
+        return null;
     }
 
-    function process_matches(&$questions)
-    {
+    protected function process_matches(&$questions) {
         if (empty($this->matching_questions)) {
             return;
         }
-        foreach($this->matching_questions as $match_group) {
+        foreach ($this->matching_questions as $match_group) {
             $question = $this->defaultquestion();
             $htmltext = s($match_group->questiontext);
             $question->questiontext = $htmltext;
-            $question->name = $question->questiontext;
+            $question->questiontextformat = FORMAT_HTML;
+            $question->questiontextfiles = array();
+            $question->name = shorten_text( $question->questiontext, 250 );
             $question->qtype = MATCH;
+            $question = $this->add_blank_combined_feedback($question);
             $question->subquestions = array();
             $question->subanswers = array();
-            foreach($match_group->subquestions as $key => $value) {
+            foreach ($match_group->subquestions as $key => $value) {
                 $htmltext = s($value);
-                $question->subquestions[] = $htmltext;
+                $question->subquestions[] = $this->text_field($htmltext);
 
                 $htmltext = s($match_group->subanswers[$key]);
                 $question->subanswers[] = $htmltext;
@@ -145,28 +168,28 @@ class qformat_examview extends qformat_default {
         }
     }
 
-    function cleanUnicode($text) {
+    protected function cleanunicode($text) {
         return str_replace('&#x2019;', "'", $text);
     }
 
     protected function readquestions($lines) {
-        /// Parses an array of lines into an array of questions,
-        /// where each item is a question object as defined by
-        /// readquestion().
+        // Parses an array of lines into an array of questions,
+        // where each item is a question object as defined by
+        // readquestion().
 
         $questions = array();
         $currentquestion = array();
 
         $text = implode($lines, ' ');
-        $text = $this->cleanUnicode($text);
+        $text = $this->cleanunicode($text);
 
         $xml = xmlize($text, 0);
         if (!empty($xml['examview']['#']['matching-group'])) {
             $this->parse_matching_groups($xml['examview']['#']['matching-group']);
         }
 
-        $questionNode = $xml['examview']['#']['question'];
-        foreach($questionNode as $currentquestion) {
+        $questionnode = $xml['examview']['#']['question'];
+        foreach ($questionnode as $currentquestion) {
             if ($question = $this->readquestion($currentquestion)) {
                 $questions[] = $question;
             }
@@ -175,139 +198,136 @@ class qformat_examview extends qformat_default {
         $this->process_matches($questions);
         return $questions;
     }
-    // end readquestions
 
-    function readquestion($qrec)
-    {
+    public function readquestion($qrec) {
 
         $type = trim($qrec['@']['type']);
         $question = $this->defaultquestion();
         if (array_key_exists($type, $this->qtypes)) {
             $question->qtype = $this->qtypes[$type];
-        }
-        else {
+        } else {
             $question->qtype = null;
         }
         $question->single = 1;
-        // Only one answer is allowed
+        // Only one answer is allowed.
         $htmltext = $this->unxmlise($qrec['#']['text'][0]['#']);
         $question->questiontext = $htmltext;
+        $question->questiontextformat = FORMAT_HTML;
+        $question->questiontextfiles = array();
         $question->name = shorten_text( $question->questiontext, 250 );
 
         switch ($question->qtype) {
-        case MULTICHOICE:
-            $question = $this->parse_mc($qrec['#'], $question);
-            break;
-        case MATCH:
-            $groupname = trim($qrec['@']['group']);
-            $question = $this->parse_ma($qrec['#'], $groupname);
-            break;
-        case TRUEFALSE:
-            $question = $this->parse_tf_yn($qrec['#'], $question);
-            break;
-        case SHORTANSWER:
-            $question = $this->parse_co($qrec['#'], $question);
-            break;
-        case ESSAY:
-            $question = $this->parse_sa($qrec['#'], $question);
-            break;
-        case NUMERICAL:
-            $question = $this->parse_nr($qrec['#'], $question);
-            break;
-            break;
+            case MULTICHOICE:
+                $question = $this->parse_mc($qrec['#'], $question);
+                break;
+            case MATCH:
+                $groupname = trim($qrec['@']['group']);
+                $question = $this->parse_ma($qrec['#'], $groupname);
+                break;
+            case TRUEFALSE:
+                $question = $this->parse_tf_yn($qrec['#'], $question);
+                break;
+            case SHORTANSWER:
+                $question = $this->parse_co($qrec['#'], $question);
+                break;
+            case ESSAY:
+                $question = $this->parse_es($qrec['#'], $question);
+                break;
+            case NUMERICAL:
+                $question = $this->parse_nr($qrec['#'], $question);
+                break;
+                break;
             default:
-            print("<p>Question type ".$type." import not supported for ".$question->questiontext."<p>");
-            $question = NULL;
+                print("<p>Question type ".$type." import not supported for ".$question->questiontext."<p>");
+                $question = null;
         }
-        // end switch ($question->qtype)
 
         return $question;
     }
-    // end readquestion
 
-    function parse_tf_yn($qrec, $question)
-    {
+    protected function parse_tf_yn($qrec, $question) {
         $choices = array('T' => 1, 'Y' => 1, 'F' => 0, 'N' => 0 );
         $answer = trim($qrec['answer'][0]['#']);
         $question->answer = $choices[$answer];
         $question->correctanswer = $question->answer;
         if ($question->answer == 1) {
-            $question->feedbacktrue = 'Correct';
-            $question->feedbackfalse = 'Incorrect';
+            $question->feedbacktrue = $this->text_field('Correct');
+            $question->feedbackfalse = $this->text_field('Incorrect');
         } else {
-            $question->feedbacktrue = 'Incorrect';
-            $question->feedbackfalse = 'Correct';
+            $question->feedbacktrue = $this->text_field('Incorrect');
+            $question->feedbackfalse = $this->text_field('Correct');
         }
         return $question;
     }
 
-    function parse_mc($qrec, $question)
-    {
+    protected function parse_mc($qrec, $question) {
+        $question = $this->add_blank_combined_feedback($question);
         $answer = 'choice-'.strtolower(trim($qrec['answer'][0]['#']));
 
         $choices = $qrec['choices'][0]['#'];
-        foreach($choices as $key => $value) {
-            if (strpos(trim($key),'choice-') !== FALSE) {
+        foreach ($choices as $key => $value) {
+            if (strpos(trim($key), 'choice-') !== false) {
 
-                $question->answer[$key] = s($this->unxmlise($value[0]['#']));
+                $question->answer[$key] = $this->text_field(s($this->unxmlise($value[0]['#'])));
                 if (strcmp($key, $answer) == 0) {
                     $question->fraction[$key] = 1;
-                    $question->feedback[$key] = 'Correct';
+                    $question->feedback[$key] = $this->text_field('Correct');
                 } else {
                     $question->fraction[$key] = 0;
-                    $question->feedback[$key] = 'Incorrect';
+                    $question->feedback[$key] = $this->text_field('Incorrect');
                 }
             }
         }
         return $question;
     }
 
-    function parse_co($qrec, $question)
-    {
+    protected function parse_co($qrec, $question) {
         $question->usecase = 0;
         $answer = trim($this->unxmlise($qrec['answer'][0]['#']));
         $answer = strip_tags( $answer );
-        $answers = explode("\n",$answer);
+        $answers = explode("\n", $answer);
 
-        foreach($answers as $key => $value) {
+        foreach ($answers as $key => $value) {
             $value = trim($value);
             if (strlen($value) > 0) {
                 $question->answer[$key] = $value;
                 $question->fraction[$key] = 1;
-                $question->feedback[$key] = "Correct";
+                $question->feedback[$key] = $this->text_field("Correct");
             }
         }
         return $question;
     }
 
-    function parse_sa($qrec, $question) {
+    protected function parse_es($qrec, $question) {
         $feedback = trim($this->unxmlise($qrec['answer'][0]['#']));
+        $question->graderinfo =  $this->text_field($feedback);
         $question->feedback = $feedback;
+        $question->responseformat = 'editor';
+        $question->responsefieldlines = 15;
+        $question->attachments = 0;
         $question->fraction = 0;
         return $question;
     }
 
-    function parse_nr($qrec, $question)
-    {
+    protected function parse_nr($qrec, $question) {
         $answer = trim($this->unxmlise($qrec['answer'][0]['#']));
         $answer = strip_tags( $answer );
-        $answers = explode("\n",$answer);
+        $answers = explode("\n", $answer);
 
-        foreach($answers as $key => $value) {
+        foreach ($answers as $key => $value) {
             $value = trim($value);
             if (is_numeric($value)) {
                 $errormargin = 0;
                 $question->answer[$key] = $value;
                 $question->fraction[$key] = 1;
-                $question->feedback[$key] = "Correct";
-                $question->min[$key] = $question->answer[$key] - $errormargin;
-                $question->max[$key] = $question->answer[$key] + $errormargin;
+                $question->feedback[$key] = $this->text_field("Correct");
+                $question->tolerance[$key] = $errormargin;
             }
         }
         return $question;
     }
 
 }
-// end class
+// End class.
 
 
