@@ -924,22 +924,15 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012062501.06) {
-        $rs = $DB->get_recordset('event', array( 'eventtype' => ''), '', 'id, courseid, groupid, userid, modulename');
-        foreach ($rs as $event) {
-            if ($event->courseid == $SITE->id) {                                // Site event
-                $DB->set_field('event', 'eventtype', 'site', array('id' => $event->id));
-            } else if ($event->courseid != 0 && $event->groupid == 0 && ($event->modulename == 'assignment' || $event->modulename == 'assign')) {
-                // Course assingment event
-                $DB->set_field('event', 'eventtype', 'due', array('id' => $event->id));
-            } else if ($event->courseid != 0 && $event->groupid == 0) {      // Course event
-                $DB->set_field('event', 'eventtype', 'course', array('id' => $event->id));
-            } else if ($event->groupid) {                                      // Group event
-                $DB->set_field('event', 'eventtype', 'group', array('id' => $event->id));
-            } else if ($event->userid) {                                       // User event
-                $DB->set_field('event', 'eventtype', 'user', array('id' => $event->id));
-            }
-        }
-        $rs->close();
+
+        // Handle events with empty eventtype MDL-32827
+
+        $DB->set_field('event', 'eventtype', 'site', array('eventtype' => '', 'courseid' => $SITE->id));
+        $DB->set_field_select('event', 'eventtype', 'due', "eventtype = '' AND courseid != 0 AND groupid = 0 AND (modulename = 'assignment' OR modulename = 'assign')");
+        $DB->set_field_select('event', 'eventtype', 'course', "eventtype = '' AND courseid != 0 AND groupid = 0");
+        $DB->set_field_select('event', 'eventtype', 'group', "eventtype = '' AND groupid != 0");
+        $DB->set_field_select('event', 'eventtype', 'user', "eventtype = '' AND userid != 0");
+
         // Main savepoint reached
         upgrade_main_savepoint(true, 2012062501.06);
     }
