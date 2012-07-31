@@ -101,15 +101,15 @@ if ($component === 'blog') {
         }
     }
 
-    if ('publishstate' === 'public') {
+    if ($entry->publishstate === 'public') {
         if ($CFG->forcelogin) {
             require_login();
         }
 
-    } else if ('publishstate' === 'site') {
+    } else if ($entry->publishstate === 'site') {
         require_login();
         //ok
-    } else if ('publishstate' === 'draft') {
+    } else if ($entry->publishstate === 'draft') {
         require_login();
         if ($USER->id != $entry->userid) {
             send_file_not_found();
