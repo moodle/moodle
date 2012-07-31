@@ -16,10 +16,9 @@
 
 /**
  * This file contains classes used to manage the repository plugins in Moodle
- * and was introduced as part of the changes occuring in Moodle 2.0
  *
  * @since 2.0
- * @package   repository
+ * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -49,7 +48,7 @@ define('RENAME_SUFFIX', '_2');
  * - When you create a type for a plugin that can't have multiple instances, a
  *   instance is automatically created.
  *
- * @package   repository
+ * @package   core_repository
  * @copyright 2009 Jerome Mouneyrac
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -460,12 +459,18 @@ class repository_type {
  * To create repository plugin, see: {@link http://docs.moodle.org/dev/Repository_plugins}
  * See an example: {@link repository_boxnet}
  *
- * @package   repository
- * @category  repository
+ * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class repository {
+    /** Timeout in seconds for downloading the external file into moodle */
+    const GETFILE_TIMEOUT = 30;
+    /** Timeout in seconds for syncronising the external file size */
+    const SYNCFILE_TIMEOUT = 1;
+    /** Timeout in seconds for downloading an image file from external repository during syncronisation */
+    const SYNCIMAGE_TIMEOUT = 3;
+
     // $disabled can be set to true to disable a plugin by force
     // example: self::$disabled = true
     /** @var bool force disable repository instance */
@@ -1342,8 +1347,7 @@ abstract class repository {
      * @param string $search searched string
      * @param bool $dynamicmode no recursive call is done when in dynamic mode
      * @param array $list the array containing the files under the passed $fileinfo
-     * @returns int the number of files found
-     *
+     * @return int the number of files found
      */
     public static function build_tree($fileinfo, $search, $dynamicmode, &$list) {
         global $CFG, $OUTPUT;
@@ -1559,6 +1563,7 @@ abstract class repository {
         }
         return $source;
     }
+
     /**
      * Decide where to save the file, can be overwriten by subclass
      *
@@ -1567,17 +1572,9 @@ abstract class repository {
      */
     public function prepare_file($filename) {
         global $CFG;
-        if (!file_exists($CFG->tempdir.'/download')) {
-            mkdir($CFG->tempdir.'/download/', $CFG->directorypermissions, true);
-        }
-        if (is_dir($CFG->tempdir.'/download')) {
-            $dir = $CFG->tempdir.'/download/';
-        }
-        if (empty($filename)) {
-            $filename = uniqid('repo', true).'_'.time().'.tmp';
-        }
-        if (file_exists($dir.$filename)) {
-            $filename = uniqid('m').$filename;
+        $dir = make_temp_directory('download/'.get_class($this).'/');
+        while (empty($filename) || file_exists($dir.$filename)) {
+            $filename = uniqid('', true).'_'.time().'.tmp';
         }
         return $dir.$filename;
     }
@@ -1604,25 +1601,33 @@ abstract class repository {
     }
 
     /**
-     * Download a file, this function can be overridden by subclass. {@link curl}
+     * Downloads a file from external repository and saves it in temp dir
      *
-     * @param string $url the url of file
-     * @param string $filename save location
+     * Function get_file() must be implemented by repositories that support returntypes
+     * FILE_INTERNAL or FILE_REFERENCE. It is invoked to pick up the file and copy it
+     * to moodle. This function is not called for moodle repositories, the function
+     * {@link repository::copy_to_area()} is used instead.
+     *
+     * This function can be overridden by subclass if the files.reference field contains
+     * not just URL or if request should be done differently.
+     *
+     * @see curl
+     * @throws file_exception when error occured
+     *
+     * @param string $url the content of files.reference field, in this implementaion
+     * it is asssumed that it contains the string with URL of the file
+     * @param string $filename filename (without path) to save the downloaded file in the
+     * temporary directory, if omitted or file already exists the new filename will be generated
      * @return array with elements:
      *   path: internal location of the file
      *   url: URL to the source (from parameters)
      */
     public function get_file($url, $filename = '') {
-        global $CFG;
         $path = $this->prepare_file($filename);
-        $fp = fopen($path, 'w');
         $c = new curl;
-        $result = $c->download(array(array('url'=>$url, 'file'=>$fp)));
-        // Close file handler.
-        fclose($fp);
-        if (empty($result)) {
-            unlink($path);
-            return null;
+        $result = $c->download_one($url, null, array('filepath' => $path, 'timeout' => self::GETFILE_TIMEOUT));
+        if ($result !== true) {
+            throw new moodle_exception('errorwhiledownload', 'repository', '', $result);
         }
         return array('path'=>$path, 'url'=>$url);
     }
@@ -2042,7 +2047,7 @@ abstract class repository {
      *
      * @param string $search_text search key word
      * @param int $page page
-     * @return mixed {@see repository::get_listing}
+     * @return mixed see {@link repository::get_listing()}
      */
     public function search($search_text, $page = 0) {
         $list = array();
@@ -2397,8 +2402,7 @@ abstract class repository {
  * Exception class for repository api
  *
  * @since 2.0
- * @package   repository
- * @category  repository
+ * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2409,8 +2413,7 @@ class repository_exception extends moodle_exception {
  * This is a class used to define a repository instance form
  *
  * @since 2.0
- * @package   repository
- * @category  repository
+ * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2524,8 +2527,7 @@ final class repository_instance_form extends moodleform {
  * This is a class used to define a repository type setting form
  *
  * @since 2.0
- * @package   repository
- * @category  repository
+ * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2739,6 +2741,7 @@ function initialise_filepicker($args) {
     }
     return $return;
 }
+
 /**
  * Small function to walk an array to attach repository ID
  *

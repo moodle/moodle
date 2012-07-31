@@ -449,12 +449,8 @@ class repository_flickr_public extends repository {
             $source = $result[2]['source'];
             $url = $result[2]['url'];
         }
-        $path = $this->prepare_file($file);
-        $fp = fopen($path, 'w');
-        $c = new curl;
-        $c->download(array(array('url'=>$source, 'file'=>$fp)));
-        // must close file handler, otherwise gd lib will fail to process it
-        fclose($fp);
+        $result = parent::get_file($source, $file);
+        $path = $result['path'];
         if (!empty($this->usewatermarks)) {
             $img = new moodle_image($path);
             $img->watermark($copyright, array(10,10), array('ttf'=>true, 'fontsize'=>12))->saveas($path);

@@ -252,14 +252,7 @@ class repository_flickr extends repository {
      */
     public function get_file($photoid, $file = '') {
         $url = $this->build_photo_url($photoid);
-        $path = $this->prepare_file($file);
-        $fp = fopen($path, 'w');
-        $c = new curl;
-        $c->download(array(
-            array('url'=>$url, 'file'=>$fp)
-        ));
-        fclose($fp);
-        return array('path'=>$path, 'url'=>$url);
+        return parent::get_file($url, $file);
     }
 
     /**
