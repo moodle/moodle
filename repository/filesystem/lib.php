@@ -245,6 +245,33 @@ class repository_filesystem extends repository {
     }
 
     /**
+     * Return reference file life time
+     *
+     * @param string $ref
+     * @return int
+     */
+    public function get_reference_file_lifetime($ref) {
+        // Does not cost us much to synchronise within our own filesystem, set to 1 minute
+        return 60;
+    }
+
+    /**
+     * Return human readable reference information
+     *
+     * @param string $reference value of DB field files_reference.reference
+     * @param int $filestatus status of the file, 0 - ok, 666 - source missing
+     * @return string
+     */
+    public function get_reference_details($reference, $filestatus = 0) {
+        $details = $this->get_name().': '.$reference;
+        if ($filestatus) {
+            return get_string('lostsource', 'repository', $details);
+        } else {
+            return $details;
+        }
+    }
+
+    /**
      * Returns information about file in this repository by reference
      * {@link repository::get_file_reference()}
      * {@link repository::get_file()}
