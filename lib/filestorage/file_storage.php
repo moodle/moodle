@@ -1806,6 +1806,39 @@ class file_storage {
     }
 
     /**
+     * Updates all files that are referencing this file with the new contenthash
+     * and filesize
+     *
+     * @param stored_file $storedfile
+     */
+    public function update_references_to_storedfile(stored_file $storedfile) {
+        global $CFG;
+        $params = array();
+        $params['contextid'] = $storedfile->get_contextid();
+        $params['component'] = $storedfile->get_component();
+        $params['filearea']  = $storedfile->get_filearea();
+        $params['itemid']    = $storedfile->get_itemid();
+        $params['filename']  = $storedfile->get_filename();
+        $params['filepath']  = $storedfile->get_filepath();
+        $reference = self::pack_reference($params);
+        $referencehash = sha1($reference);
+
+        $sql = "SELECT repositoryid, id FROM {files_reference}
+                 WHERE referencehash = ? and reference = ?";
+        $rs = $DB->get_recordset_sql($sql, array($referencehash, $reference));
+
+        $now = time();
+        foreach ($rs as $record) {
+            require_once($CFG->dirroot.'/repository/lib.php');
+            $repo = repository::get_instance($record->repositoryid);
+            $lifetime = $repo->get_reference_file_lifetime($reference);
+            $this->update_references($record->id, $now, $lifetime,
+                    $storedfile->get_contenthash(), $storedfile->get_filesize(), 0);
+        }
+        $rs->close();
+    }
+
+    /**
      * Convert file alias to local file
      *
      * @param stored_file $storedfile a stored_file instances
@@ -1996,5 +2029,41 @@ class file_storage {
 
         return $DB->get_field('files_reference', 'id',
             array('repositoryid' => $repositoryid, 'referencehash' => sha1($reference)), $strictness);
+    }
+
+    /**
+     * Updates a reference to the external resource and all files that use it
+     *
+     * This function is called after synchronisation of an external file and updates the
+     * contenthash, filesize and status of all files that reference this external file
+     * as well as time last synchronised and sync lifetime (how long we don't need to call
+     * synchronisation for this reference).
+     *
+     * @param int $referencefileid
+     * @param int $lastsync
+     * @param int $lifetime
+     * @param string $contenthash
+     * @param int $filesize
+     * @param int $status 0 if ok or 666 if source is missing
+     */
+    public function update_references($referencefileid, $lastsync, $lifetime, $contenthash, $filesize, $status) {
+        global $DB;
+        $referencefileid = clean_param($referencefileid, PARAM_INT);
+        $lastsync = clean_param($lastsync, PARAM_INT);
+        $lifetime = clean_param($lifetime, PARAM_INT);
+        validate_param($contenthash, PARAM_TEXT, NULL_NOT_ALLOWED);
+        $filesize = clean_param($filesize, PARAM_INT);
+        $status = clean_param($status, PARAM_INT);
+        $params = array('contenthash' => $contenthash,
+                    'filesize' => $filesize,
+                    'status' => $status,
+                    'referencefileid' => $referencefileid,
+                    'lastsync' => $lastsync,
+                    'lifetime' => $lifetime);
+        $DB->execute('UPDATE {files} SET contenthash = :contenthash, filesize = :filesize,
+            status = :status, referencelastsync = :lastsync, referencelifetime = :lifetime
+            WHERE referencefileid = :referencefileid', $params);
+        $data = array('id' => $referencefileid, 'lastsync' => $lastsync, 'lifetime' => $lifetime);
+        $DB->update_record('files_reference', (object)$data);
     }
 }

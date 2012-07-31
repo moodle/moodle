@@ -804,10 +804,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 continue;
             }
 
-            // Replaced file content
-            if ($oldfile->get_contenthash() != $newfile->get_contenthash()) {
-                $oldfile->replace_content_with($newfile);
-            }
             // Updated author
             if ($oldfile->get_author() != $newfile->get_author()) {
                 $oldfile->set_author($newfile->get_author());
@@ -827,14 +823,16 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                 $oldfile->set_sortorder($newfile->get_sortorder());
             }
 
-            // Update file size
-            if ($oldfile->get_filesize() != $newfile->get_filesize()) {
-                $oldfile->set_filesize($newfile->get_filesize());
-            }
-
             // Update file timemodified
             if ($oldfile->get_timemodified() != $newfile->get_timemodified()) {
                 $oldfile->set_timemodified($newfile->get_timemodified());
+            }
+
+            // Replaced file content
+            if ($oldfile->get_contenthash() != $newfile->get_contenthash() || $oldfile->get_filesize() != $newfile->get_filesize()) {
+                $oldfile->replace_content_with($newfile);
+                // push changes to all local files that are referencing this file
+                $fs->update_references_to_storedfile($this);
             }
 
             // unchanged file or directory - we keep it as is
