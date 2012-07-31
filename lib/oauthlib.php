@@ -59,6 +59,8 @@ class oauth_helper {
     protected $access_token_api;
     /** @var curl */
     protected $http;
+    /** @var array options to pass to the next curl request */
+    protected $http_options;
 
     /**
      * Contructor for oauth_helper.
@@ -106,6 +108,7 @@ class oauth_helper {
             $this->access_token_secret = $args['access_token_secret'];
         }
         $this->http = new curl(array('debug'=>false));
+        $this->http_options = array();
     }
 
     /**
@@ -203,6 +206,15 @@ class oauth_helper {
     }
 
     /**
+     * Sets the options for the next curl request
+     *
+     * @param array $options
+     */
+    public function setup_oauth_http_options($options) {
+        $this->http_options = $options;
+    }
+
+    /**
      * Request token for authentication
      * This is the first step to use OAuth, it will return oauth_token and oauth_token_secret
      * @return array
@@ -210,7 +222,7 @@ class oauth_helper {
     public function request_token() {
         $this->sign_secret = $this->consumer_secret.'&';
         $params = $this->prepare_oauth_parameters($this->request_token_api, array(), 'GET');
-        $content = $this->http->get($this->request_token_api, $params);
+        $content = $this->http->get($this->request_token_api, $params, $this->http_options);
         // Including:
         //     oauth_token
         //     oauth_token_secret
@@ -252,7 +264,7 @@ class oauth_helper {
         $this->sign_secret = $this->consumer_secret.'&'.$secret;
         $params = $this->prepare_oauth_parameters($this->access_token_api, array('oauth_token'=>$token, 'oauth_verifier'=>$verifier), 'POST');
         $this->setup_oauth_http_header($params);
-        $content = $this->http->post($this->access_token_api, $params);
+        $content = $this->http->post($this->access_token_api, $params, $this->http_options);
         $keys = $this->parse_result($content);
         $this->set_access_token($keys['oauth_token'], $keys['oauth_token_secret']);
         return $keys;
@@ -276,7 +288,7 @@ class oauth_helper {
         $this->sign_secret = $this->consumer_secret.'&'.$secret;
         $oauth_params = $this->prepare_oauth_parameters($url, array('oauth_token'=>$token), $method);
         $this->setup_oauth_http_header($oauth_params);
-        $content = call_user_func_array(array($this->http, strtolower($method)), array($url, $params));
+        $content = call_user_func_array(array($this->http, strtolower($method)), array($url, $params, $this->http_options));
         return $content;
     }
 
