@@ -71,8 +71,8 @@ class qtype_shortanswer_renderer extends qtype_renderer {
             $placeholder = $matches[0];
             $inputattributes['size'] = round(strlen($placeholder) * 1.1);
         }
-
-        $input = html_writer::empty_tag('input', $inputattributes) . $feedbackimg;
+        $input = html_writer::label($inputattributes['name'], $inputattributes['id'], false, array('class' => 'accesshide'));
+        $input .= html_writer::empty_tag('input', $inputattributes) . $feedbackimg;
 
         if ($placeholder) {
             $questiontext = substr_replace($questiontext, $input,

@@ -80,6 +80,7 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
             }
 
             $result .= html_writer::tag('td',
+                    html_writer::label(get_string('selectananswer', 'qtype_match'), 'menu' . $qa->get_qt_field_name('sub' . $key), false, array('class' => 'accesshide')) .
                     html_writer::select($choices, $qa->get_qt_field_name('sub' . $key), $selected,
                             array('0' => 'choose'), array('disabled' => $options->readonly)) .
                     ' ' . $feedbackimage, array('class' => $classes));

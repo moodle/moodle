@@ -95,12 +95,14 @@ class qformat_xhtml extends qformat_default {
             break;
         case SHORTANSWER:
             $expout .= "<ul class=\"shortanswer\">\n";
-            $expout .= "  <li><input name=\"quest_$id\" type=\"text\" /></li>\n";
+            $expout .= "  <li>" . html_writer::label(get_string('answer'), 'quest_'.$id, false, array('class' => 'accesshide'));
+            $expout .= "    <input id=\"quest_$id\" name=\"quest_$id\" type=\"text\" /></li>\n";
             $expout .= "</ul>\n";
             break;
         case NUMERICAL:
             $expout .= "<ul class=\"numerical\">\n";
-            $expout .= "  <li><input name=\"quest_$id\" type=\"text\" /></li>\n";
+            $expout .= "  <li>" . html_writer::label(get_string('answer'), 'quest_'.$id, false, array('class' => 'accesshide'));
+            $expout .= "    <input id=\"quest_$id\" name=\"quest_$id\" type=\"text\" /></li>\n";
             $expout .= "</ul>\n";
             break;
         case MATCH:
@@ -114,7 +116,8 @@ class qformat_xhtml extends qformat_default {
             shuffle( $ans_list ); // random display order
 
             // build drop down for answers
-            $dropdown = "<select name=\"quest_$id\">\n";
+            $dropdown = html_writer::label(get_string('selectansweroption'), 'quest_'.$id, false, array('class' => 'accesshide'));
+            $dropdown .= "<select id=\"quest_$id\" name=\"quest_$id\">\n";
             foreach($ans_list as $ans) {
                 $dropdown .= "<option value=\"" . s($ans) . "\">" . s($ans) . "</option>\n";
             }
