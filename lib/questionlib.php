@@ -992,7 +992,7 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
     foreach ($categoriesarray as $group => $opts) {
         $options[] = array($group => $opts);
     }
-
+    echo html_writer::label($selected, 'menucategory', false, array('class' => 'accesshide'));
     echo html_writer::select($options, 'category', $selected, $choose);
 }
 

@@ -462,7 +462,8 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
     $pinsane = portfolio_plugin_sanity_check();
 
     $count = 0;
-    $selectoutput = "\n" . '<select name="' . $selectname . '">' . "\n";
+    $selectoutput = "\n" . '<label class="accesshide" for="instanceid">' . get_string('plugin', 'portfolio') . '</label>';
+    $selectoutput .= "\n" . '<select id="instanceid" name="' . $selectname . '">' . "\n";
     $existingexports = portfolio_existing_exports_by_plugin($USER->id);
     foreach ($instances as $instance) {
         $formats = portfolio_supported_formats_intersect($callerformats, $instance->supported_formats());
