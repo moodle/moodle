@@ -46,6 +46,10 @@ function xmldb_assign_upgrade($oldversion) {
         // Assign savepoint reached.
         upgrade_mod_savepoint(true, 2012051700, 'assign');
     }
+
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
+
     if ($oldversion < 2012071800) {
 
         // Define field requiresubmissionstatement to be added to assign
@@ -60,10 +64,6 @@ function xmldb_assign_upgrade($oldversion) {
         // Assign savepoint reached.
         upgrade_mod_savepoint(true, 2012071800, 'assign');
     }
-
-    // Moodle v2.3.0 release upgrade line
-    // Put any upgrade step following this
-
 
     return true;
 }
