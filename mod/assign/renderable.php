@@ -35,15 +35,18 @@ class assign_submit_for_grading_page implements renderable {
     var $notifications = array();
     /** @var int $coursemoduleid */
     var $coursemoduleid = 0;
+    /** @var moodleform $confirmform */
+    var $confirmform = null;
 
     /**
      * Constructor
      * @param string $notifications - Any mesages to display
      * @param int $coursemoduleid
      */
-    public function __construct($notifications, $coursemoduleid) {
+    public function __construct($notifications, $coursemoduleid, $confirmform) {
         $this->notifications = $notifications;
         $this->coursemoduleid = $coursemoduleid;
+        $this->confirmform = $confirmform;
     }
 
 }

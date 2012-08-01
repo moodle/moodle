@@ -168,11 +168,8 @@ class mod_assign_renderer extends plugin_renderer_base {
 
             $o .= $this->output->continue_button($cancelurl);
         } else {
-            // All submission plugins ready - confirm the student really does want to submit for marking
-            $continueurl = new moodle_url('/mod/assign/view.php', array('id' => $page->coursemoduleid,
-                                                                        'action' => 'confirmsubmit',
-                                                                        'sesskey' => sesskey()));
-            $o .= $this->output->confirm(get_string('confirmsubmission', 'mod_assign'), $continueurl, $cancelurl);
+            // All submission plugins ready - show the confirmation form (may contain submission statement)
+            $o .= $this->moodleform($page->confirmform);
         }
         $o .= $this->output->container_end();
 
