@@ -3573,7 +3573,7 @@ class settings_navigation extends navigation_node {
             // Add the module chooser toggle
             $modchoosertoggleurl = clone($baseurl);
             if ($this->page->user_is_editing() && course_ajax_enabled($course)) {
-                if ($usemodchooser = get_user_preferences('usemodchooser', 1)) {
+                if ($usemodchooser = get_user_preferences('usemodchooser', $CFG->modchooserdefault)) {
                     $modchoosertogglestring = get_string('modchooserdisable', 'moodle');
                     $modchoosertoggleurl->param('modchooser', 'off');
                 } else {
