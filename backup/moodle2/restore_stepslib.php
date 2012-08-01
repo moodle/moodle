@@ -189,6 +189,15 @@ class restore_gradebook_structure_step extends restore_structure_step {
                 $data->id = $newitemid = $existinggradeitem->id;
                 $DB->update_record('grade_items', $data);
             }
+        } else if ($data->itemtype == 'manual') {
+            // Manual items aren't assigned to a cm, so don't go duplicating them in the target if one exists.
+            $gi = array(
+                'itemtype' => $data->itemtype,
+                'courseid' => $data->courseid,
+                'itemname' => $data->itemname,
+                'categoryid' => $data->categoryid,
+            );
+            $newitemid = $DB->get_field('grade_items', 'id', $gi);
         }
 
         if (empty($newitemid)) {
