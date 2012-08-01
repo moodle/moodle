@@ -220,28 +220,68 @@ class repository_dropbox extends repository {
             return $list;
         }
         $files = $result->contents;
+        $dirslist = array();
+        $fileslist = array();
         foreach ($files as $file) {
             if ($file->is_dir) {
-                $list['list'][] = array(
+                $dirslist[] = array(
                     'title' => substr($file->path, strpos($file->path, $current_path)+strlen($current_path)),
                     'path' => file_correct_filepath($file->path),
-                    'size' => $file->size,
-                    'date' => $file->modified,
-                    'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
+                    'date' => strtotime($file->modified),
+                    'thumbnail' => $OUTPUT->pix_url(file_folder_icon(64))->out(false),
+                    'thumbnail_height' => 64,
+                    'thumbnail_width' => 64,
                     'children' => array(),
                 );
             } else {
-                $list['list'][] = array(
+                $thumbnail = null;
+                if ($file->thumb_exists) {
+                    $thumburl = new moodle_url('/repository/dropbox/thumbnail.php',
+                            array('repo_id' => $this->id,
+                                'ctx_id' => $this->context->id,
+                                'source' => $file->path,
+                                'rev' => $file->rev // include revision to avoid cache problems
+                            ));
+                    $thumbnail = $thumburl->out(false);
+                }
+                $fileslist[] = array(
                     'title' => substr($file->path, strpos($file->path, $current_path)+strlen($current_path)),
                     'source' => $file->path,
-                    'size' => $file->size,
-                    'date' => $file->modified,
-                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->path, 90))->out(false)
+                    'size' => $file->bytes,
+                    'date' => strtotime($file->modified),
+                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->path, 64))->out(false),
+                    'realthumbnail' => $thumbnail,
+                    'thumbnail_height' => 64,
+                    'thumbnail_width' => 64,
                 );
             }
         }
+        $fileslist = array_filter($fileslist, array($this, 'filter'));
+        $list['list'] = array_merge($dirslist, array_values($fileslist));
         return $list;
     }
+
+    /**
+     * Displays a thumbnail for current user's dropbox file
+     *
+     * @param string $string
+     */
+    public function send_thumbnail($source) {
+        $saveas = $this->prepare_file('');
+        try {
+            $access_key = get_user_preferences($this->setting.'_access_key', '');
+            $access_secret = get_user_preferences($this->setting.'_access_secret', '');
+            $this->dropbox->set_access_token($access_key, $access_secret);
+            $this->dropbox->get_thumbnail($source, $saveas, self::SYNCIMAGE_TIMEOUT);
+            $content = file_get_contents($saveas);
+            unlink($saveas);
+            // set 30 days lifetime for the image. If the image is changed in dropbox it will have
+            // different revision number and URL will be different. It is completely safe
+            // to cache thumbnail in the browser for a long time
+            send_file($content, basename($source), 30*24*60*60, 0, true);
+        } catch (Exception $e) {}
+    }
+
     /**
      * Logout from dropbox
      * @return array

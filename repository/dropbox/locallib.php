@@ -86,6 +86,32 @@ class dropbox extends oauth_helper {
     }
 
     /**
+     * Retrieves the default (64x64) thumbnail for dropbox file
+     *
+     * @throws moodle_exception when file could not be downloaded
+     *
+     * @param string $filepath local path in Dropbox
+     * @param string $saveas path to file to save the result
+     * @param int $timeout request timeout in seconds, 0 means no timeout
+     * @return array with attributes 'path' and 'url'
+     */
+    public function get_thumbnail($filepath, $saveas, $timeout = 0) {
+        $url = $this->dropbox_content_api.'/thumbnails/'.$this->mode.$this->prepare_filepath($filepath);
+        if (!($fp = fopen($saveas, 'w'))) {
+            throw new moodle_exception('cannotwritefile', 'error', '', $saveas);
+        }
+        $this->setup_oauth_http_options(array('timeout' => $timeout, 'file' => $fp, 'BINARYTRANSFER' => true));
+        $result = $this->get($url);
+        fclose($fp);
+        if ($result === true) {
+            return array('path'=>$saveas, 'url'=>$url);
+        } else {
+            unlink($saveas);
+            throw new moodle_exception('errorwhiledownload', 'repository', '', $result);
+        }
+    }
+
+    /**
      * Downloads a file from Dropbox and saves it locally
      *
      * @throws moodle_exception when file could not be downloaded
