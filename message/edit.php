@@ -61,7 +61,6 @@ if (!$user = $DB->get_record('user', array('id' => $userid))) {
 
 $systemcontext   = context_system::instance();
 $personalcontext = context_user::instance($user->id);
-$coursecontext   = context_course::instance($course->id);
 
 $PAGE->set_context($personalcontext);
 $PAGE->set_pagelayout('course');

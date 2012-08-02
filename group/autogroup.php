@@ -42,7 +42,6 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
 require_login($course);
 
 $context       = context_course::instance($courseid);
-$systemcontext = context_system::instance();
 require_capability('moodle/course:managegroups', $context);
 
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id;
