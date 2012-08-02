@@ -946,8 +946,13 @@ class page_wiki_create extends page_wiki {
             $groupid = '0';
         }
         if (empty($this->subwiki)) {
+            // trap anomalous parameters that would lead to a shared subwiki being created for an individual user
+            if ($PAGE->activityrecord->wikimode == 'individual' && $this->uid == 0) {
+                throw new coding_exception('Tried creating a shared subwiki in \'individual\' mode. This shouldn\'t happen.');
+            }
+
             // If subwiki is not set then try find one and set else create one.
-            if (!$this->subwiki = wiki_get_subwiki_by_group($this->wid, $groupid)) {
+            if (!$this->subwiki = wiki_get_subwiki_by_group($this->wid, $groupid, $this->uid)) {
                 $swid = wiki_add_subwiki($PAGE->activityrecord->id, $groupid, $this->uid);
                 $this->subwiki = wiki_get_subwiki($swid);
             }

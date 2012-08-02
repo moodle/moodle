@@ -49,6 +49,11 @@ if ($wid) {
         print_error('incorrectwikiid', 'wiki');
     }
     if (!$subwiki = wiki_get_subwiki_by_group($wiki->id, $currentgroup, $userid)) {
+        // trap anomalous parameters that would lead to a shared subwiki being created for an individual user
+        if ($wiki->wikimode == 'individual' && $userid == 0) {
+            throw new coding_exception('Tried creating a shared subwiki in \'individual\' mode. This shouldn\'t happen.');
+        }
+
         // create subwiki if doesn't exist
         $subwikiid = wiki_add_subwiki($wiki->id, $currentgroup, $userid);
         $subwiki = wiki_get_subwiki($subwikiid);
