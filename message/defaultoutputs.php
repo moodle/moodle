@@ -29,7 +29,7 @@ require_once($CFG->libdir.'/adminlib.php');
 admin_externalpage_setup('defaultmessageoutputs');
 
 // Require site configuration capability
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+require_capability('moodle/site:config', context_system::instance());
 
 // Fetch processors
 $processors = get_message_processors(true);
@@ -98,7 +98,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
 
 
 // Page settings
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 $PAGE->requires->js_init_call('M.core_message.init_defaultoutputs');
 
 // Grab the renderer

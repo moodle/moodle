@@ -49,7 +49,7 @@ $PAGE->set_url($url);
 // Make sure that the user has permissions to manage groups.
 require_login($course);
 
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$context = context_course::instance($courseid);
 require_capability('moodle/course:managegroups', $context);
 
 $strgroups           = get_string('groups');

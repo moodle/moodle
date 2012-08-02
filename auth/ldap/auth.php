@@ -771,7 +771,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             if (!empty($users)) {
                 print_string('userentriestoupdate', 'auth_ldap', count($users));
 
-                $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+                $sitecontext = context_system::instance();
                 if (!empty($this->config->creators) and !empty($this->config->memberattribute)
                   and $roles = get_archetype_roles('coursecreator')) {
                     $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
@@ -820,7 +820,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         if (!empty($add_users)) {
             print_string('userentriestoadd', 'auth_ldap', count($add_users));
 
-            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+            $sitecontext = context_system::instance();
             if (!empty($this->config->creators) and !empty($this->config->memberattribute)
               and $roles = get_archetype_roles('coursecreator')) {
                 $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
@@ -1649,7 +1649,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         if ($roles = get_archetype_roles('coursecreator')) {
             $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
-            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+            $systemcontext = context_system::instance();
 
             if ($iscreator) { // Following calls will not create duplicates
                 role_assign($creatorrole->id, $user->id, $systemcontext->id, $this->roleauth);

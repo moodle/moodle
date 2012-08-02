@@ -56,7 +56,7 @@ function groups_add_member($grouporid, $userorid) {
     }
 
     //check if the user a participant of the group course
-    if (!is_enrolled(get_context_instance(CONTEXT_COURSE, $group->courseid), $userid)) {
+    if (!is_enrolled(context_course::instance($group->courseid), $userid)) {
         return false;
     }
 
@@ -140,7 +140,7 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
 
     //check that courseid exists
     $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
 
     $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
@@ -236,7 +236,7 @@ function groups_update_group_icon($group, $data, $editform) {
     require_once("$CFG->libdir/gdlib.php");
 
     $fs = get_file_storage();
-    $context = get_context_instance(CONTEXT_COURSE, $group->courseid, MUST_EXIST);
+    $context = context_course::instance($group->courseid, MUST_EXIST);
 
     //TODO: it would make sense to allow picture deleting too (skodak)
 
@@ -264,7 +264,7 @@ function groups_update_group_icon($group, $data, $editform) {
 function groups_update_group($data, $editform = false, $editoroptions = false) {
     global $CFG, $DB;
 
-    $context = get_context_instance(CONTEXT_COURSE, $data->courseid);
+    $context = context_course::instance($data->courseid);
 
     $data->timemodified = time();
     $data->name         = trim($data->name);
@@ -353,7 +353,7 @@ function groups_delete_group($grouporid) {
     $DB->delete_records('groups', array('id'=>$groupid));
 
     // Delete all files associated with this group
-    $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+    $context = context_course::instance($group->courseid);
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'group', 'description', $groupid);
     $fs->delete_area_files($context->id, 'group', 'icon', $groupid);
@@ -393,7 +393,7 @@ function groups_delete_grouping($groupingorid) {
     //group itself last
     $DB->delete_records('groupings', array('id'=>$groupingid));
 
-    $context = get_context_instance(CONTEXT_COURSE, $grouping->courseid);
+    $context = context_course::instance($grouping->courseid);
     $fs = get_file_storage();
     $files = $fs->get_area_files($context->id, 'grouping', 'description', $groupingid);
     foreach ($files as $file) {
@@ -484,7 +484,7 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     groups_delete_group_members($courseid, 0, $showfeedback);
 
     // delete group pictures and descriptions
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'group');
 
@@ -492,7 +492,7 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
     $DB->delete_records_select('event', "groupid IN ($groupssql)", array($courseid));
 
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'group');
 
@@ -529,7 +529,7 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
     $DB->set_field('course_modules', 'groupingid', 0, array('course'=>$courseid));
 
     // Delete all files associated with groupings for this course
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'grouping');
 
@@ -574,7 +574,7 @@ function groups_get_possible_roles($context) {
 function groups_get_potential_members($courseid, $roleid = null, $cohortid = null, $orderby = 'lastname ASC, firstname ASC') {
     global $DB;
 
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
 
     // we are looking for all users with this role assigned in this context or higher
     $listofcontexts = get_related_contexts_string($context);
@@ -689,7 +689,7 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
 
     // Retrieve information about all users and their roles on the course or
     // parent ('related') contexts
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
 
     if ($extrawheretest) {
         $extrawheretest = ' AND ' . $extrawheretest;

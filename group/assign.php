@@ -40,7 +40,7 @@ if (!$course = $DB->get_record('course', array('id'=>$grouping->courseid))) {
 $courseid = $course->id;
 
 require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$context = context_course::instance($courseid);
 require_capability('moodle/course:managegroups', $context);
 
 $returnurl = $CFG->wwwroot.'/group/groupings.php?id='.$courseid;

@@ -241,7 +241,7 @@ foreach ($posts as $post) {
     //add the ratings information to the post
     //Unfortunately seem to have do this individually as posts may be from different forums
     if ($forum->assessed != RATING_AGGREGATE_NONE) {
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $modcontext = context_module::instance($cm->id);
         $ratingoptions->context = $modcontext;
         $ratingoptions->items = array($post);
         $ratingoptions->aggregate = $forum->assessed;//the aggregation method
@@ -454,7 +454,7 @@ function forum_menu_list($course)  {
         if (!$cm->uservisible) {
             continue;
         }
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
         if (!has_capability('mod/forum:viewdiscussion', $context)) {
             continue;
         }

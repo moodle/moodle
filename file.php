@@ -83,7 +83,7 @@ if ($course->id != SITEID) {
     }
 }
 
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 
 $fs = get_file_storage();
 
