@@ -106,7 +106,7 @@ class block_news_items extends block_base {
                     $tooltiptext = get_string('rsssubscriberssposts','forum');
                 }
                 if (!isloggedin()) {
-                    $userid = 0;
+                    $userid = $CFG->siteguest;
                 } else {
                     $userid = $USER->id;
                 }
