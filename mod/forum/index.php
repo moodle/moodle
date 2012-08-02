@@ -129,7 +129,7 @@ foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
 
     $forum = $forums[$forumid];
 
-    if (!$context = context_module::instance($cm->id)) {
+    if (!$context = context_module::instance($cm->id, IGNORE_MISSING)) {
         continue;   // Shouldn't happen
     }
 
