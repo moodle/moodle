@@ -299,6 +299,7 @@ $string['coursedisplay_help'] = 'This setting determines whether the whole cours
 $string['coursedisplay_single'] = 'Show all sections on one page';
 $string['coursedisplay_multi'] = 'Show one section per page';
 $string['coursedeleted'] = 'Deleted course {$a}';
+$string['courseextendednamedisplay'] = '{$a->shortname} {$a->fullname}';
 $string['coursefiles'] = 'Legacy course files';
 $string['coursefilesedit'] = 'Edit legacy course files';
 $string['coursefileswarning'] = 'Course files are deprecated';
