@@ -44,6 +44,7 @@ class webdav_client {
     private $_server;
     private $_protocol = 'HTTP/1.1';
     private $_port = 80;
+    private $_socket = '';
     private $_path ='/';
     private $_auth = false;
     private $_user;
@@ -80,7 +81,7 @@ class webdav_client {
     /**
      * Constructor - Initialise class variables
      */
-    function __construct($server = '', $user = '', $pass = '', $auth = false) {
+    function __construct($server = '', $user = '', $pass = '', $auth = false, $socket = '') {
         if (!empty($server)) {
             $this->_server = $server;
         }
@@ -89,6 +90,7 @@ class webdav_client {
             $this->pass = $pass;
         }
         $this->_auth = $auth;
+        $this->_socket = $socket;
     }
     public function __set($key, $value) {
         $property = '_' . $key;
@@ -155,7 +157,7 @@ class webdav_client {
     function open() {
         // let's try to open a socket
         $this->_error_log('open a socket connection');
-        $this->sock = fsockopen($this->_server, $this->_port, $this->_errno, $this->_errstr, $this->_socket_timeout);
+        $this->sock = fsockopen($this->_socket . $this->_server, $this->_port, $this->_errno, $this->_errstr, $this->_socket_timeout);
         set_time_limit(30);
         if (is_resource($this->sock)) {
             socket_set_blocking($this->sock, true);
@@ -1401,7 +1403,12 @@ EOD;
                 fread($this->sock, 1);                           // also drop off the Line Feed
                 $chunk_size=hexdec($chunk_size);                // convert to a number in decimal system
                 if ($chunk_size > 0) {
-                    $buffer .= fread($this->sock,$chunk_size);
+                    $read = 0;
+                    // Reading the chunk in one bite is not secure, we read it byte by byte.
+                    while ($read < $chunk_size) {
+                        $buffer .= fread($this->sock, 1);
+                        $read++;
+                    }
                 }
                 fread($this->sock, 2);                            // ditch the CRLF that trails the chunk
             } while ($chunk_size);                            // till we reach the 0 length chunk (end marker)
