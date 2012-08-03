@@ -87,11 +87,8 @@ $coursemaxbytes = 0;
 if (!empty($course)) {
    $coursemaxbytes = $course->maxbytes;
 }
-$moodle_maxbytes = get_max_upload_file_size($CFG->maxbytes, $coursemaxbytes);
-// to prevent maxbytes greater than moodle maxbytes setting
-if (($maxbytes <= 0) || ($maxbytes >= $moodle_maxbytes)) {
-    $maxbytes = $moodle_maxbytes;
-}
+// Make sure maxbytes passed is within site filesize limits.
+$maxbytes = get_max_upload_file_size($CFG->maxbytes, $coursemaxbytes, $maxbytes);
 
 /// Wait as long as it takes for this script to finish
 set_time_limit(0);
