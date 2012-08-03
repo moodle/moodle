@@ -35,7 +35,7 @@ $PAGE->https_required();
 
 $PAGE->set_url('/login/change_password.php', array('id'=>$id));
 
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 
 if ($return) {
     // this redirect prevents security warning because https can not POST to http pages
@@ -52,7 +52,7 @@ if ($return) {
 
 $strparticipants = get_string('participants');
 
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = context_system::instance();
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');

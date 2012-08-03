@@ -92,7 +92,7 @@ class tinymce_texteditor extends texteditor {
         $lang           = current_language();
         $contentcss     = $PAGE->theme->editor_css_url()->out(false);
 
-        $context = empty($options['context']) ? get_context_instance(CONTEXT_SYSTEM) : $options['context'];
+        $context = empty($options['context']) ? context_system::instance() : $options['context'];
 
         $config = get_config('editor_tinymce');
 
@@ -152,6 +152,7 @@ class tinymce_texteditor extends texteditor {
                     'theme_advanced_fonts' => $fontselectlist,
                     'theme_advanced_resize_horizontal' => true,
                     'theme_advanced_resizing' => true,
+                    'theme_advanced_resizing_min_height' => 30,
                     'min_height' => 30,
                     'theme_advanced_toolbar_location' => "top",
                     'theme_advanced_statusbar_location' => "bottom",

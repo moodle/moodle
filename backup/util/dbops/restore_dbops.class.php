@@ -346,7 +346,7 @@ abstract class restore_dbops {
         global $CFG, $DB;
 
         // Gather various information about roles
-        $coursectx = get_context_instance(CONTEXT_COURSE, $courseid);
+        $coursectx = context_course::instance($courseid);
         $assignablerolesshortname = get_assignable_roles($coursectx, ROLENAME_SHORT, false, $userid);
 
         // Note: under 1.9 we had one function restore_samerole() that performed one complete
@@ -719,7 +719,7 @@ abstract class restore_dbops {
         switch ($contextlevel) {
              // For system is easy, the best context is the system context
              case CONTEXT_SYSTEM:
-                 $targetcontext = get_context_instance(CONTEXT_SYSTEM);
+                 $targetcontext = context_system::instance();
                  break;
 
              // For coursecat, we are going to look for stamps in all the
@@ -739,8 +739,8 @@ abstract class restore_dbops {
                  }
                  $contexts = array();
                  // Build the array of contexts we are going to look
-                 $systemctx = get_context_instance(CONTEXT_SYSTEM);
-                 $coursectx = get_context_instance(CONTEXT_COURSE, $courseid);
+                 $systemctx = context_system::instance();
+                 $coursectx = context_course::instance($courseid);
                  $parentctxs= get_parent_contexts($coursectx);
                  foreach ($parentctxs as $parentctx) {
                      // Exclude system context
@@ -761,14 +761,14 @@ abstract class restore_dbops {
                      $matchingcontexts = $DB->get_records_sql($sql, $params);
                      // Only if ONE and ONLY ONE context is found, use it as valid target
                      if (count($matchingcontexts) == 1) {
-                         $targetcontext = get_context_instance_by_id(reset($matchingcontexts)->contextid);
+                         $targetcontext = context::instance_by_id(reset($matchingcontexts)->contextid);
                      }
                  }
                  break;
 
              // For course is easy, the best context is the course context
              case CONTEXT_COURSE:
-                 $targetcontext = get_context_instance(CONTEXT_COURSE, $courseid);
+                 $targetcontext = context_course::instance($courseid);
                  break;
 
              // For module is easy, there is not best context, as far as the
@@ -777,7 +777,7 @@ abstract class restore_dbops {
              // case is handled by {@link prechek_precheck_qbanks_by_level}
              // in an special way
              case CONTEXT_MODULE:
-                 $targetcontext = get_context_instance(CONTEXT_COURSE, $courseid);
+                 $targetcontext = context_course::instance($courseid);
                  break;
         }
         return $targetcontext;
@@ -1065,7 +1065,7 @@ abstract class restore_dbops {
             // but for deleted users that don't have a context anymore (MDL-30192). We are done for them
             // and nothing else (custom fields, prefs, tags, files...) will be created.
             if (empty($user->deleted)) {
-                $newuserctxid = $user->deleted ? 0 : get_context_instance(CONTEXT_USER, $newuserid)->id;
+                $newuserctxid = $user->deleted ? 0 : context_user::instance($newuserid)->id;
                 self::set_backup_ids_record($restoreid, 'context', $recuser->parentitemid, $newuserctxid);
 
                 // Process custom fields
@@ -1342,7 +1342,7 @@ abstract class restore_dbops {
         $mnethosts = $DB->get_records('mnet_host', array(), 'wwwroot', 'wwwroot, id');
 
         // Calculate the context we are going to use for capability checking
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = context_course::instance($courseid);
 
         // Calculate if we have perms to create users, by checking:
         // to 'moodle/restore:createuser' and 'moodle/restore:userinfo'
@@ -1510,7 +1510,7 @@ abstract class restore_dbops {
         global $DB;
 
         // Get the course context
-        $coursectx = get_context_instance(CONTEXT_COURSE, $courseid);
+        $coursectx = context_course::instance($courseid);
         // Get all the mapped roles we have
         $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'role'), '', 'itemid');
         foreach ($rs as $recrole) {

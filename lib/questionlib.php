@@ -355,7 +355,7 @@ function question_delete_course($course, $feedback=true) {
 
     //Cache some strings
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $coursecontext = context_course::instance($course->id);
     $categoriescourse = $DB->get_records('question_categories',
             array('contextid' => $coursecontext->id), 'parent', 'id, parent, name, contextid');
 
@@ -407,7 +407,7 @@ function question_delete_course($course, $feedback=true) {
 function question_delete_course_category($category, $newcategory, $feedback=true) {
     global $DB, $OUTPUT;
 
-    $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
+    $context = context_coursecat::instance($category->id);
     if (empty($newcategory)) {
         $feedbackdata   = array(); // To store feedback to be showed at the end of the process
         $rescueqcategory = null; // See the code around the call to question_save_from_deletion.
@@ -464,7 +464,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
 
     } else {
         // Move question categories ot the new context.
-        if (!$newcontext = get_context_instance(CONTEXT_COURSECAT, $newcategory->id)) {
+        if (!$newcontext = context_coursecat::instance($newcategory->id)) {
             return false;
         }
         $DB->set_field('question_categories', 'contextid', $newcontext->id,
@@ -529,7 +529,7 @@ function question_delete_activity($cm, $feedback=true) {
 
     //Cache some strings
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
-    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $modcontext = context_module::instance($cm->id);
     if ($categoriesmods = $DB->get_records('question_categories',
             array('contextid' => $modcontext->id), 'parent', 'id, parent, name, contextid')) {
         //Sort categories following their tree (parent-child) relationships
@@ -992,7 +992,7 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
     foreach ($categoriesarray as $group => $opts) {
         $options[] = array($group => $opts);
     }
-
+    echo html_writer::label($selected, 'menucategory', false, array('class' => 'accesshide'));
     echo html_writer::select($options, 'category', $selected, $choose);
 }
 

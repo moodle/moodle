@@ -31,9 +31,7 @@
     $strchoice = get_string('modulename', 'choice');
     $strchoices = get_string('modulenameplural', 'choice');
 
-    if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
-        print_error('badcontext');
-    }
+    $context = context_module::instance($cm->id);
 
     if ($action == 'delchoice' and confirm_sesskey() and is_enrolled($context, NULL, 'mod/choice:choose') and $choice->allowupdate) {
         if ($answer = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) {
@@ -133,7 +131,7 @@
     }
 
     if (!$choiceformshown) {
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+        $sitecontext = context_system::instance();
 
         if (isguestuser()) {
             // Guest account
@@ -144,7 +142,7 @@
             $SESSION->wantsurl = qualified_me();
             $SESSION->enrolcancel = (!empty($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : '';
 
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $coursecontext = context_course::instance($course->id);
             $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
 
             echo $OUTPUT->box_start('generalbox', 'notice');

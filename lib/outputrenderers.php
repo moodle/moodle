@@ -457,7 +457,7 @@ class core_renderer extends renderer_base {
         if (!empty($CFG->debugpageinfo)) {
             $output .= '<div class="performanceinfo pageinfo">This page is: ' . $this->page->debug_summary() . '</div>';
         }
-        if (debugging(null, DEBUG_DEVELOPER) and has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {  // Only in developer mode
+        if (debugging(null, DEBUG_DEVELOPER) and has_capability('moodle/site:config', context_system::instance())) {  // Only in developer mode
             // Add link to profiling report if necessary
             if (function_exists('profiling_is_running') && profiling_is_running()) {
                 $txt = get_string('profiledscript', 'admin');
@@ -535,7 +535,7 @@ class core_renderer extends renderer_base {
             // $course->id is not defined during installation
             return '';
         } else if (isloggedin()) {
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $context = context_course::instance($course->id);
 
             $fullname = fullname($USER, true);
             // Since Moodle 2.0 this link always goes to the public profile page (not the course profile page)
@@ -579,7 +579,7 @@ class core_renderer extends renderer_base {
                         } else {
                             $loggedinas .= get_string('failedloginattemptsall', '', $count);
                         }
-                        if (file_exists("$CFG->dirroot/report/log/index.php") and has_capability('report/log:view', get_context_instance(CONTEXT_SYSTEM))) {
+                        if (file_exists("$CFG->dirroot/report/log/index.php") and has_capability('report/log:view', context_system::instance())) {
                             $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/report/log/index.php'.
                                                  '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                         }
@@ -1332,7 +1332,7 @@ class core_renderer extends renderer_base {
         }
 
         if ($select->label) {
-            $output .= html_writer::label($select->label, $select->attributes['id']);
+            $output .= html_writer::label($select->label, $select->attributes['id'], false, $select->labelattributes);
         }
 
         if ($select->helpicon instanceof help_icon) {
@@ -1340,7 +1340,6 @@ class core_renderer extends renderer_base {
         } else if ($select->helpicon instanceof old_help_icon) {
             $output .= $this->render($select->helpicon);
         }
-
         $output .= html_writer::select($select->options, $select->name, $select->selected, $select->nothing, $select->attributes);
 
         $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
@@ -1410,7 +1409,7 @@ class core_renderer extends renderer_base {
         $output = '';
 
         if ($select->label) {
-            $output .= html_writer::label($select->label, $select->attributes['id']);
+            $output .= html_writer::label($select->label, $select->attributes['id'], false, $select->labelattributes);
         }
 
         if ($select->helpicon instanceof help_icon) {
@@ -1627,6 +1626,7 @@ class core_renderer extends renderer_base {
 
             $scalearray = array(RATING_UNSET_RATING => $strrate.'...') + $rating->settings->scale->scaleitems;
             $scaleattrs = array('class'=>'postratingmenu ratinginput','id'=>'menurating'.$rating->itemid);
+            $ratinghtml .= html_writer::label($rating->rating, 'menurating'.$rating->itemid, false, array('class' => 'accesshide'));
             $ratinghtml .= html_writer::select($scalearray, 'rating', $rating->rating, false, $scaleattrs);
 
             //output submit button
@@ -2075,7 +2075,7 @@ EOD;
      */
     public function update_module_button($cmid, $modulename) {
         global $CFG;
-        if (has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_MODULE, $cmid))) {
+        if (has_capability('moodle/course:manageactivities', context_module::instance($cmid))) {
             $modulename = get_string('modulename', $modulename);
             $string = get_string('updatethis', '', $modulename);
             $url = new moodle_url("$CFG->wwwroot/course/mod.php", array('update' => $cmid, 'return' => true, 'sesskey' => sesskey()));

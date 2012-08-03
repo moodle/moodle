@@ -37,7 +37,7 @@ if (! $course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
 }
 
-$context = get_context_instance(CONTEXT_COURSE, $id);
+$context = context_course::instance($id);
 require_login($course);
 
 // to create notes the current user needs a capability

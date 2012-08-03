@@ -16,7 +16,7 @@ $restoretarget = optional_param('target', backup::TARGET_CURRENT_ADDING, PARAM_I
 
 // Load the course and context
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$context = context_course::instance($courseid);
 
 // Must pass login
 require_login($course);
@@ -50,7 +50,7 @@ if ($importcourseid === false) {
 
 // Load the course +context to import from
 $importcourse = $DB->get_record('course', array('id'=>$importcourseid), '*', MUST_EXIST);
-$importcontext = get_context_instance(CONTEXT_COURSE, $importcourseid);
+$importcontext = context_course::instance($importcourseid);
 
 // Make sure the user can backup from that course
 require_capability('moodle/backup:backuptargetimport', $importcontext);

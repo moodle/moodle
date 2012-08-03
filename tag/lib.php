@@ -600,7 +600,7 @@ function tag_delete($tagids) {
     }
 
     $success = true;
-    $context = get_context_instance(CONTEXT_SYSTEM);
+    $context = context_system::instance();
     foreach ($tagids as $tagid) {
         if (is_null($tagid)) { // can happen if tag doesn't exists
             continue;

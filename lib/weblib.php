@@ -713,7 +713,7 @@ class moodle_url {
     public static function make_draftfile_url($draftid, $pathname, $filename, $forcedownload = false) {
         global $CFG, $USER;
         $urlbase = "$CFG->httpswwwroot/draftfile.php";
-        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $context = context_user::instance($USER->id);
 
         return self::make_file_url($urlbase, "/$context->id/user/draft/$draftid".$pathname.$filename, $forcedownload);
     }
@@ -1076,7 +1076,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
         }
     } else if ($courseid_do_not_use) {
         // legacy courseid
-        $context = get_context_instance(CONTEXT_COURSE, $courseid_do_not_use);
+        $context = context_course::instance($courseid_do_not_use);
     } else {
         // fallback to $PAGE->context this may be problematic in CLI and other non-standard pages :-(
         $context = $PAGE->context;
@@ -1272,7 +1272,7 @@ function format_string($string, $striplinks = true, $options = NULL) {
 
     if (is_numeric($options)) {
         // legacy courseid usage
-        $options  = array('context'=>get_context_instance(CONTEXT_COURSE, $options));
+        $options  = array('context'=>context_course::instance($options));
     } else {
         $options = (array)$options; // detach object, we can not modify it
     }
@@ -1412,7 +1412,7 @@ function format_text_email($text, $format) {
 function format_module_intro($module, $activity, $cmid, $filter=true) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
     $options = array('noclean'=>true, 'para'=>false, 'filter'=>$filter, 'context'=>$context, 'overflowdiv'=>true);
     $intro = file_rewrite_pluginfile_urls($activity->intro, 'pluginfile.php', $context->id, 'mod_'.$module, 'intro', null);
     return trim(format_text($intro, $activity->introformat, $options, null));
@@ -2076,7 +2076,7 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
         }
     }
 
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+    $context = context_course::instance($courseid);
 
     // If there is no picture, do nothing
     if (!$group->picture) {
@@ -2132,7 +2132,7 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
     $output = '';
 
     if (is_null($viewfullnames)) {
-        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context = context_system::instance();
         $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
     }
 
@@ -2185,7 +2185,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
     $menu = array();
     $doneheading = false;
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $coursecontext = context_course::instance($course->id);
 
     $menu[] = '<ul class="navmenulist"><li class="jumpto section"><span>'.$strjumpto.'</span><ul>';
     foreach ($modinfo->cms as $mod) {

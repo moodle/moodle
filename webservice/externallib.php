@@ -71,7 +71,7 @@ class core_webservice_external extends external_api {
                       array('serviceshortnames'=>$serviceshortnames));
 
         $profileimageurl = moodle_url::make_pluginfile_url(
-                get_context_instance(CONTEXT_USER, $USER->id)->id, 'user', 'icon', NULL, '/', 'f1');
+                context_user::instance($USER->id)->id, 'user', 'icon', NULL, '/', 'f1');
 
         //site information
         $siteinfo =  array(

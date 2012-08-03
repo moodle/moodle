@@ -56,7 +56,7 @@ if ($id) {
 
 require_course_login($course, true, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 
 // show some info for guests
@@ -77,7 +77,7 @@ $stridle         = get_string('idle', 'chat');
 $strcurrentusers = get_string('currentusers', 'chat');
 $strnextsession  = get_string('nextsession', 'chat');
 
-$courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+$courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 $title = $courseshortname . ': ' . format_string($chat->name);
 
 // Mark viewed by user (if required)

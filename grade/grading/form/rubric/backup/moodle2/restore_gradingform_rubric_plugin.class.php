@@ -109,6 +109,9 @@ class restore_gradingform_rubric_plugin extends restore_gradingform_plugin {
         $data->criterionid = $this->get_mappingid('gradingform_rubric_criterion', $data->criterionid);
         $data->levelid = $this->get_mappingid('gradingform_rubric_level', $data->levelid);
 
-        $DB->insert_record('gradingform_rubric_fillings', $data);
+        if (!empty($data->criterionid)) {
+            $DB->insert_record('gradingform_rubric_fillings', $data);
+        }
+
     }
 }

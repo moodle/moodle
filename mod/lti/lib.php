@@ -395,7 +395,7 @@ function lti_grade_item_delete($basiclti) {
 function lti_extend_settings_navigation($settings, $parentnode) {
     global $PAGE;
 
-    if (has_capability('mod/lti:grade', get_context_instance(CONTEXT_MODULE, $PAGE->cm->id))) {
+    if (has_capability('mod/lti:grade', context_module::instance($PAGE->cm->id))) {
         $keys = $parentnode->get_children_key_list();
 
         $node = navigation_node::create('Submissions',

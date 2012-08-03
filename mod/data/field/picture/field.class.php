@@ -42,7 +42,7 @@ class data_field_picture extends data_field_base {
                 file_prepare_draft_area($itemid, $this->context->id, 'mod_data', 'content', $content->id);
                 if (!empty($content->content)) {
                     if ($file = $fs->get_file($this->context->id, 'mod_data', 'content', $content->id, '/', $content->content)) {
-                        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+                        $usercontext = context_user::instance($USER->id);
                         if (!$files = $fs->get_area_files($usercontext->id, 'user', 'draft', $itemid, 'id DESC', false)) {
                             return false;
                         }
@@ -214,7 +214,7 @@ class data_field_picture extends data_field_base {
             case 'file':
                 $fs = get_file_storage();
                 $fs->delete_area_files($this->context->id, 'mod_data', 'content', $content->id);
-                $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+                $usercontext = context_user::instance($USER->id);
                 $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $value);
                 if (count($files)<2) {
                     // no file

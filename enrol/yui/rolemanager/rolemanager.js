@@ -416,4 +416,4 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
         }
     }
 
-}, '@VERSION@', {requires:['base','node','io-base','json-parse','test','moodle-enrol-notification']});
+}, '@VERSION@', {requires:['base','node','io-base','json-parse','test','moodle-core-notification']});

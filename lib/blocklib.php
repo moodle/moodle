@@ -657,7 +657,7 @@ class block_manager {
         $blockinstance->id = $DB->insert_record('block_instances', $blockinstance);
 
         // Ensure the block context is created.
-        get_context_instance(CONTEXT_BLOCK, $blockinstance->id);
+        context_block::instance($blockinstance->id);
 
         // If the new instance was created, allow it to do additional setup
         if ($block = block_instance($blockname, $blockinstance)) {
@@ -1230,8 +1230,8 @@ class block_manager {
                 $bi->subpagepattern = $data->bui_subpagepattern;
             }
 
-            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-            $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+            $systemcontext = context_system::instance();
+            $frontpagecontext = context_course::instance(SITEID);
             $parentcontext = get_context_instance_by_id($data->bui_parentcontextid);
 
             // Updating stickiness and contexts.  See MDL-21375 for details.
@@ -2102,7 +2102,7 @@ function blocks_add_default_system_blocks() {
     global $DB;
 
     $page = new moodle_page();
-    $page->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $page->set_context(context_system::instance());
     $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('navigation', 'settings')), '*', null, true);
     $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('admin_bookmarks')), 'admin-*', null, null, 2);
 

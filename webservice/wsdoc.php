@@ -29,7 +29,7 @@ require($CFG->dirroot . '/webservice/lib.php');
 require_login();
 require_sesskey();
 
-$usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+$usercontext = context_user::instance($USER->id);
 $tokenid = required_param('id', PARAM_INT);
 
 // PAGE settings

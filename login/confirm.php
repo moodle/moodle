@@ -32,7 +32,7 @@ $p = optional_param('p', '', PARAM_ALPHANUM);   // Old parameter:  secret
 $s = optional_param('s', '', PARAM_RAW);        // Old parameter:  username
 
 $PAGE->set_url('/login/confirm.php');
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 
 if (empty($CFG->registerauth)) {
     print_error('cannotusepage2');

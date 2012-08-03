@@ -51,7 +51,7 @@ $webservicelib = new webservice();
 $authenticationinfo = $webservicelib->authenticate_user($token);
 
 // check the user can manage his own files (can upload)
-$context = get_context_instance(CONTEXT_USER, $USER->id);
+$context = context_user::instance($USER->id);
 require_capability('moodle/user:manageownfiles', $context);
 
 $fs = get_file_storage();
