@@ -4437,7 +4437,9 @@ function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=
     }
 
     // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
-    forum_trigger_content_uploaded_event($post, $cm, 'forum_add_discussion');
+    if (!empty($cm->id)) {
+        forum_trigger_content_uploaded_event($post, $cm, 'forum_add_discussion');
+    }
 
     return $post->discussion;
 }
