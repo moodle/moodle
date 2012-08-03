@@ -117,7 +117,7 @@ echo '<p>' . get_string('content', 'notes');
 echo '<br /><textarea name="content" rows="5" cols="50">' . strip_tags(@$content) . '</textarea></p>';
 
 echo '<p>';
-echo get_string('publishstate', 'notes');
+echo html_writer::label(get_string('publishstate', 'notes'), 'menustate');
 echo $OUTPUT->help_icon('publishstate', 'notes');
 echo html_writer::select($state_names, 'state', empty($state) ? NOTES_STATE_PUBLIC : $state, false);
 echo '</p>';
