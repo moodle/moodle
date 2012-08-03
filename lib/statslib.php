@@ -217,11 +217,15 @@ function stats_cron_daily($maxdays=1) {
             break;
         }
 
-        stats_progress('0');
-
         // Find out if any logs available for this day
         $sql = "SELECT 'x' FROM {temp_log1} l";
         $logspresent = $DB->get_records_sql($sql, null, 0, 1);
+
+        if ($logspresent) {
+            // Insert blank record to force Query 10 to generate additional row when no logs for
+            // the site with userid 0 exist.  Added for backwards compatibility.
+            $DB->insert_record('temp_log1', array('userid' => 0, 'course' => SITEID, 'action' => ''));
+        }
 
         // Calculate the number of active users today
         $sql = 'SELECT COUNT(DISTINCT u.id)
@@ -229,6 +233,8 @@ function stats_cron_daily($maxdays=1) {
                   JOIN {temp_log1} l ON l.userid = u.id
                  WHERE u.deleted = 0';
         $dailyactiveusers = $DB->count_records_sql($sql);
+
+        stats_progress('0');
 
         // Process login info first
         // Note: PostgreSQL doesn't like aliases in HAVING clauses
@@ -427,7 +433,6 @@ function stats_cron_daily($maxdays=1) {
                        SUM(CASE WHEN action $viewactionssql THEN 1 ELSE 0 END) AS statsreads,
                        SUM(CASE WHEN action $postactionssql THEN 1 ELSE 0 END) AS statswrites
                   FROM {temp_log1} l
-                 WHERE !(course = 0 AND userid = 0)
               GROUP BY userid, courseid";
 
         if ($logspresent && !stats_run_query($sql, array_merge($params1, $params2))) {
@@ -1640,10 +1645,10 @@ function stats_temp_table_drop() {
 function stats_temp_table_fill($timestart, $timeend) {
     global $DB;
 
-    $sql = "INSERT INTO {temp_log1} (userid, course, action)
+    $sql = 'INSERT INTO {temp_log1} (userid, course, action)
 
             SELECT userid, course, action FROM {log}
-             WHERE time >= ? AND time < ?";
+             WHERE time >= ? AND time < ?';
 
     $DB->execute($sql, array($timestart, $timeend));
 
