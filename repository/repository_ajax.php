@@ -83,9 +83,13 @@ if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
 /// Check permissions
 repository::check_capability($contextid, $repository);
 
-$moodle_maxbytes = get_max_upload_file_size();
+$coursemaxbytes = 0;
+if (!empty($course)) {
+   $coursemaxbytes = $course->maxbytes;
+}
+$moodle_maxbytes = get_max_upload_file_size($CFG->maxbytes, $coursemaxbytes);
 // to prevent maxbytes greater than moodle maxbytes setting
-if ($maxbytes == 0 || $maxbytes>=$moodle_maxbytes) {
+if (($maxbytes <= 0) || ($maxbytes >= $moodle_maxbytes)) {
     $maxbytes = $moodle_maxbytes;
 }
 
