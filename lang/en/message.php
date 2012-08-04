@@ -80,6 +80,7 @@ $string['maxmessages'] = 'Maximum number of messages to show in the discussion h
 $string['message'] = 'Message';
 $string['messagehistory'] = 'Message history';
 $string['messagehistoryfull'] = 'All messages';
+$string['messagenavigation'] = 'Message navigation:';
 $string['messages'] = 'Messages';
 $string['messaging'] = 'Messaging';
 $string['messagingblockednoncontact'] = '{$a} will not be able to reply as you have blocked non-contacts';
