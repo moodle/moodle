@@ -507,9 +507,10 @@ function message_print_usergroup_selector($viewing, $courses, $coursecontexts, $
     }
 
     echo html_writer::start_tag('form', array('id' => 'usergroupform','method' => 'get','action' => ''));
-        echo html_writer::start_tag('fieldset');
-            echo html_writer::select($options, 'viewing', $viewing, false, array('id' => 'viewing','onchange' => 'this.form.submit()'));
-        echo html_writer::end_tag('fieldset');
+    echo html_writer::start_tag('fieldset');
+    echo html_writer::label(get_string('messagenavigation', 'message'), 'viewing');
+    echo html_writer::select($options, 'viewing', $viewing, false, array('id' => 'viewing','onchange' => 'this.form.submit()'));
+    echo html_writer::end_tag('fieldset');
     echo html_writer::end_tag('form');
 }
 
