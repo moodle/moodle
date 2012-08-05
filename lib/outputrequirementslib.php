@@ -126,12 +126,6 @@ class page_requirements_manager {
     protected $topofbodydone = false;
 
     /**
-     * @var YAHOO_util_Loader YUI PHPLoader instance responsible for YUI2 loading
-     * from PHP only
-     */
-    protected $yui2loader;
-
-    /**
      * @var stdClass YUI PHPLoader instance responsible for YUI3 loading from PHP only
      */
     protected $yui3loader;
@@ -160,35 +154,24 @@ class page_requirements_manager {
         // You may need to set up URL rewrite rule because oversized URLs might not be allowed by web server.
         $sep = empty($CFG->yuislasharguments) ? '?' : '/';
 
-        require_once("$CFG->libdir/yui/phploader/phploader/loader.php");
-
         $this->yui3loader = new stdClass();
-        $this->yui2loader = new YAHOO_util_Loader($CFG->yui2version);
 
         // set up some loader options
         if (debugging('', DEBUG_DEVELOPER)) {
-            $this->yui3loader->filter = YUI_RAW; // for more detailed logging info use YUI_DEBUG here
-            $this->yui2loader->filter = YUI_RAW; // for more detailed logging info use YUI_DEBUG here
-            $this->yui2loader->allowRollups = false;
+            $this->yui3loader->filter = 'RAW'; // for more detailed logging info use YUI_DEBUG here
         } else {
             $this->yui3loader->filter = null;
-            $this->yui2loader->filter = null;
         }
         if (!empty($CFG->useexternalyui) and strpos($CFG->httpswwwroot, 'https:') !== 0) {
             $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/build/';
-            $this->yui2loader->base = 'http://yui.yahooapis.com/' . $CFG->yui2version . '/build/';
             $this->yui3loader->comboBase = 'http://yui.yahooapis.com/combo?';
-            $this->yui2loader->comboBase = 'http://yui.yahooapis.com/combo?';
         } else {
-            $this->yui3loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui3version . '/build/';
-            $this->yui2loader->base = $CFG->httpswwwroot . '/lib/yui/'. $CFG->yui2version . '/build/';
+            $this->yui3loader->base = $CFG->httpswwwroot . '/lib/yuilib/'. $CFG->yui3version . '/build/';
             $this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep;
-            $this->yui2loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep;
         }
 
         // enable combo loader? this significantly helps with caching and performance!
         $this->yui3loader->combine = !empty($CFG->yuicomboloading);
-        $this->yui2loader->combine = !empty($CFG->yuicomboloading);
 
         if (empty($CFG->cachejs)) {
             $jsrev = -1;
@@ -224,7 +207,7 @@ class page_requirements_manager {
             ),
             'local' => array(
                 'name' => 'gallery',
-                'base' => $CFG->wwwroot.'/lib/yui/gallery/',
+                'base' => $CFG->httpswwwroot . '/lib/yui/gallery/',
                 'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
                 'combine' => $this->yui3loader->combine,
                 'filter' => $this->M_yui_loader->filter,
@@ -236,73 +219,24 @@ class page_requirements_manager {
                         'configFn' => '@GALLERYCONFIGFN@',
                     )
                 )
+            ),
+            'yui2' => array(
+                'base' => $CFG->httpswwwroot . '/lib/yuilib/2in3/' . $CFG->yui2version . '/build/',
+                'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
+                'combine' => $this->yui3loader->combine,
+                'ext' => false,
+                'root' => '2in3/' . $CFG->yui2version .'/build/',
+                'patterns' => array(
+                    'yui2-' => array(
+                        'group' => 'yui2',
+                        'configFn' => '@2IN3CONFIGFN@'
+                    )
+                )
             )
         );
-        $this->add_yui2_modules(); // adds loading info for all YUI2 modules
         $this->js_module($this->find_module('core_filepicker'));
         $this->js_module($this->find_module('core_dock'));
 
-    }
-
-    /**
-     * This method adds yui2 modules into the yui3 JS loader so that they can
-     * be easily included for use in JavaScript.
-     */
-    protected function add_yui2_modules() {
-        //note: this function is definitely not perfect, because
-        //      it adds tons of markup into each page, but it can be
-        //      abstracted into separate JS file with proper headers
-        global $CFG;
-
-        $GLOBALS['yui_current'] = array();
-        require($CFG->libdir.'/yui/phploader/lib/meta/config_'.$CFG->yui2version.'.php');
-        $info = $GLOBALS['yui_current'];
-        unset($GLOBALS['yui_current']);
-
-        if (empty($CFG->yuicomboloading)) {
-            $urlbase = $this->yui2loader->base;
-        } else {
-            $urlbase = $this->yui2loader->comboBase.$CFG->yui2version.'/build/';
-        }
-
-        $modules = array();
-        $ignored = array(); // list of CSS modules that are not needed
-        foreach ($info['moduleInfo'] as $name => $module) {
-            if ($module['type'] === 'css') {
-                $ignored[$name] = true;
-            } else {
-                $modules['yui2-'.$name] = $module;
-            }
-        }
-        foreach ($modules as $name=>$module) {
-            $module['fullpath'] = $urlbase.$module['path']; // fix path to point to correct location
-            $module['async'] = false;
-            unset($module['path']);
-            unset($module['skinnable']); // we load all YUI2 css automatically, this prevents weird missing css loader problems
-            foreach(array('requires', 'optional', 'supersedes') as $fixme) {
-                if (!empty($module[$fixme])) {
-                    $fixed = false;
-                    foreach ($module[$fixme] as $key=>$dep) {
-                        if (isset($ignored[$dep])) {
-                            unset($module[$fixme][$key]);
-                            $fixed = true;
-                        } else {
-                            $module[$fixme][$key] = 'yui2-'.$dep;
-                        }
-                    }
-                    if ($fixed) {
-                        $module[$fixme] = array_merge($module[$fixme]); // fix keys
-                    }
-                }
-            }
-            $this->M_yui_loader->modules[$name] = $module;
-            if (debugging('', DEBUG_DEVELOPER)) {
-                if (!array_key_exists($name, $this->debug_moduleloadstacktraces)) {
-                    $this->debug_moduleloadstacktraces[$name] = array();
-                }
-                $this->debug_moduleloadstacktraces[$name][] = format_backtrace(debug_backtrace());
-            }
-        }
     }
 
     /**
@@ -333,9 +267,6 @@ class page_requirements_manager {
 
         // accessibility stuff
         $this->skip_link_to('maincontent', get_string('tocontent', 'access'));
-
-        // to be removed soon
-        $this->yui2_lib('dom');        // at least javascript-static.js needs to be migrated to YUI3
 
         $this->string_for_js('confirmation', 'admin');
         $this->string_for_js('cancel', 'moodle');
@@ -382,12 +313,10 @@ class page_requirements_manager {
      * is put into the page header, otherwise it is loaded in the page footer.
      *
      * @param string|array $libname the name of the YUI2 library you require. For example 'autocomplete'.
+     * @deprecated
      */
     public function yui2_lib($libname) {
-        $libnames = (array)$libname;
-        foreach ($libnames as $lib) {
-            $this->yui2loader->load($lib);
-        }
+        throw new coding_exception('PAGE->yui2_lib() is not available any more, use YUI 2in3 instead.');
     }
 
     /**
@@ -1025,47 +954,14 @@ class page_requirements_manager {
         }
 
 
-        if ($this->yui3loader->filter === YUI_RAW) {
+        if ($this->yui3loader->filter === 'RAW') {
             $code = str_replace('-min.css', '.css', $code);
             $code = str_replace('-min.js', '.js', $code);
-        } else if ($this->yui3loader->filter === YUI_DEBUG) {
+        } else if ($this->yui3loader->filter === 'DEBUG') {
             $code = str_replace('-min.css', '.css', $code);
             $code = str_replace('-min.js', '-debug.js', $code);
         }
 
-        return $code;
-    }
-
-    /**
-     * Returns basic YUI2 JS loading code.
-     * It can be called manually at any time.
-     * If called manually the result needs to be output using echo().
-     *
-     * Major benefit of this compared to standard js loader is much improved
-     * caching, better browser cache utilisation, much fewer http requests.
-     *
-     * All YUI2 CSS is loaded automatically.
-     *
-     * @return string JS embedding code
-     */
-    public function get_yui2lib_code() {
-        global $CFG;
-
-        if ($this->headdone) {
-            $code = $this->yui2loader->script();
-        } else {
-            $code = $this->yui2loader->script();
-            if ($this->yui2loader->combine) {
-                $skinurl = $this->yui2loader->comboBase . $CFG->yui2version . '/build/assets/skins/sam/skin.css';
-            } else {
-                $skinurl = $this->yui2loader->base . 'assets/skins/sam/skin.css';
-            }
-            // please note this is a temporary hack until we fully migrate to later YUI3 that has all the widgets
-            $attributes = array('rel'=>'stylesheet', 'type'=>'text/css', 'href'=>$skinurl);
-            $code .= "\n" . html_writer::empty_tag('link', $attributes) . "\n";
-        }
-        $code = str_replace('&amp;', '&', $code);
-        $code = str_replace('&', '&amp;', $code);
         return $code;
     }
 
@@ -1131,20 +1027,21 @@ class page_requirements_manager {
         // yui3 JS and CSS is always loaded first - it is cached in browser
         $output = $this->get_yui3lib_headcode();
 
-        // BC: load basic YUI2 for now, all yui2 things should be loaded via Y.use('yui2-oldmodulename')
-        $output .= $this->get_yui2lib_code();
-
         // now theme CSS + custom CSS in this specific order
         $output .= $this->get_css_code();
 
         // set up global YUI3 loader object - this should contain all code needed by plugins
         // note: in JavaScript just use "YUI(M.yui.loader).use('overlay', function(Y) { .... });"
         // this needs to be done before including any other script
-        $js = "var M = {}; M.yui = {}; var moodleConfigFn = function(me) {var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'.'+me.type;}; var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-(skin|core)/.test(me.name)) {me.type = 'css';p = p.replace(/-(skin|core)/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/(\-(min|debug))/, '');if (/-skin/.test(me.name)) {p.splice(p.length,0,v,'assets','skins','sam', f);} else {p.splice(p.length,0,v,'assets', f);};} else {p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');};\n";
+        $js = "var M = {}; M.yui = {};
+var moodleConfigFn = function(me) {var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'.'+me.type;};
+var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-(skin|core)/.test(me.name)) {me.type = 'css';p = p.replace(/-(skin|core)/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/(\-(min|debug))/, '');if (/-skin/.test(me.name)) {p.splice(p.length,0,v,'assets','skins','sam', f);} else {p.splice(p.length,0,v,'assets', f);};} else {p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');};
+var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin');}};\n";
         $js .= js_writer::set_variable('M.yui.loader', $this->M_yui_loader, false) . "\n";
         $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
         $js = str_replace('"@GALLERYCONFIGFN@"', 'galleryConfigFn', $js);
         $js = str_replace('"@MOODLECONFIGFN@"', 'moodleConfigFn', $js);
+        $js = str_replace('"@2IN3CONFIGFN@"', 'yui2in3ConfigFn', $js);
 
         $output .= html_writer::script($js);
 
@@ -1210,9 +1107,6 @@ class page_requirements_manager {
         global $CFG;
         // add other requested modules
         $output = $this->get_extra_modules_code();
-
-        // add missing YUI2 YUI - to be removed once we convert everything to YUI3!
-        $output .= $this->get_yui2lib_code();
 
         // all the other linked scripts - there should be as few as possible
         if ($this->jsincludes['footer']) {

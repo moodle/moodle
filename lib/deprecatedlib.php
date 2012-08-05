@@ -859,27 +859,7 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
  *      2. and 3. lead to a call $PAGE->requires->js('/lib/javascript-static.js').
  */
 function require_js($lib) {
-    global $CFG, $PAGE;
-    // Add the lib to the list of libs to be loaded, if it isn't already
-    // in the list.
-    if (is_array($lib)) {
-        foreach($lib as $singlelib) {
-            require_js($singlelib);
-        }
-        return;
-    }
-
-    debugging('Call to deprecated function require_js. Please use $PAGE->requires->js_module() instead.', DEBUG_DEVELOPER);
-
-    if (strpos($lib, 'yui_') === 0) {
-        $PAGE->requires->yui2_lib(substr($lib, 4));
-    } else {
-        if ($PAGE->requires->is_head_done()) {
-            echo html_writer::script('', $lib);
-        } else {
-            $PAGE->requires->js(new moodle_url($lib));
-        }
-    }
+    throw new coding_exception('require_js() was removed, use new JS api');
 }
 
 /**
