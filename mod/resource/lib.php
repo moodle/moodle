@@ -512,8 +512,8 @@ function resource_dndupload_handle($uploadinfo) {
     $data->popupwidth = $config->popupwidth;
     $data->printheading = $config->printheading;
     $data->printintro = $config->printintro;
-    $data->showsize = $config->showsize;
-    $data->showtype = $config->showtype;
+    $data->showsize = (isset($config->showsize)) ? $config->showsize : 0;
+    $data->showtype = (isset($config->showtype)) ? $config->showtype : 0;
     $data->filterfiles = $config->filterfiles;
 
     return resource_add_instance($data, null);
