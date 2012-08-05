@@ -113,7 +113,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
 
     /** scan TreeView to find which node contains image with id=imgid and replace it's html
      * with the new image source. */
-    YAHOO.widget.Node.prototype.refreshPreviews = function(imgid, newsrc, regex) {
+    Y.YUI2.widget.Node.prototype.refreshPreviews = function(imgid, newsrc, regex) {
         if (!regex) {
             regex = new RegExp("<img\\s[^>]*id=\""+imgid+"\"[^>]*?(/?)>", "im");
         }
@@ -199,7 +199,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
             }
             // create node
             tmpnodedata.html = el.getContent();
-            var tmpNode = new YAHOO.widget.HTMLNode(tmpnodedata, level, false);
+            var tmpNode = new Y.YUI2.widget.HTMLNode(tmpnodedata, level, false);
             if (node.dynamicLoadComplete) {
                 tmpNode.dynamicLoadComplete = true;
             }
@@ -219,7 +219,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
         var initialize_tree_view = function() {
             var parentid = scope.one('.'+classname).get('id');
             // TODO MDL-32736 use YUI3 gallery TreeView
-            scope.treeview = new YAHOO.widget.TreeView(parentid);
+            scope.treeview = new Y.YUI2.widget.TreeView(parentid);
             if (options.dynload) {
                 scope.treeview.setDynamicLoad(Y.bind(options.treeview_dynload, options.callbackcontext), 1);
             }
@@ -273,7 +273,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
                     callback = options.rightclickcallback;
                 }
                 Y.bind(callback, options.callbackcontext)(e, e.node.fileinfo);
-                YAHOO.util.Event.stopEvent(e.event)
+                Y.YUI2.util.Event.stopEvent(e.event)
             });
             // TODO MDL-32736 support right click
             /*if (options.rightclickcallback) {
