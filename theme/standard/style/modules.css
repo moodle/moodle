@@ -51,8 +51,6 @@ table.mod_index {width:90%;margin:1em auto;}
 .path-mod-chat .chat-event {text-align:center;color:gray;}
 .path-mod-chat .chat-event .event,
 .path-mod-chat .chat-message .title {color:#888}
-.path-mod-chat .chat-event .text,
-.path-mod-chat .chat-message .text {text-align: left;color:#000;}
 .path-mod-chat #chat-header {background: transparent;font-size: 200%;}
 .path-mod-chat #chat-header p {font-size: 50%;color: gray;}
 #page-mod-chat-gui_basic h1 {font-size:1.4em;}
