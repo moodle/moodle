@@ -918,6 +918,7 @@ class flexible_table {
             $html = '<form action="'. $this->baseurl .'" method="post">';
             $html .= '<div class="mdl-align">';
             $html .= '<input type="submit" value="'.get_string('downloadas', 'table').'"/>';
+            $html .= html_writer::label(get_string('downloadoptions', 'table'), 'menudownload', false, array('class' => 'accesshide'));
             $html .= html_writer::select($downloadoptions, 'download', $this->defaultdownloadformat, false);
             $html .= '</div></form>';
 

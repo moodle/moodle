@@ -42,11 +42,11 @@ class restore_create_and_clean_temp_stuff extends restore_execution_step {
         }
         // Create the old-course-ctxid to new-course-ctxid mapping, we need that available since the beginning
         $itemid = $this->task->get_old_contextid();
-        $newitemid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
+        $newitemid = context_course::instance($this->get_courseid())->id;
         restore_dbops::set_backup_ids_record($this->get_restoreid(), 'context', $itemid, $newitemid);
         // Create the old-system-ctxid to new-system-ctxid mapping, we need that available since the beginning
         $itemid = $this->task->get_old_system_contextid();
-        $newitemid = get_context_instance(CONTEXT_SYSTEM)->id;
+        $newitemid = context_system::instance()->id;
         restore_dbops::set_backup_ids_record($this->get_restoreid(), 'context', $itemid, $newitemid);
         // Create the old-course-id to new-course-id mapping, we need that available since the beginning
         $itemid = $this->task->get_old_courseid();
@@ -268,7 +268,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
         $data = (object)$data;
         $oldid = $data->id;
 
-        $data->contextid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
+        $data->contextid = context_course::instance($this->get_courseid())->id;
 
         $newitemid = $DB->insert_record('grade_letters', $data);
         $this->set_mapping('grade_letter', $oldid, $newitemid);
@@ -888,7 +888,7 @@ class restore_scales_structure_step extends restore_structure_step {
             $data->courseid = $data->courseid ? $this->get_courseid() : 0;
             // If global scale (course=0), check the user has perms to create it
             // falling to course scale if not
-            $systemctx = get_context_instance(CONTEXT_SYSTEM);
+            $systemctx = context_system::instance();
             if ($data->courseid == 0 && !has_capability('moodle/course:managescales', $systemctx , $this->task->get_userid())) {
                 $data->courseid = $this->get_courseid();
             }
@@ -950,7 +950,7 @@ class restore_outcomes_structure_step extends restore_structure_step {
             $data->courseid = $data->courseid ? $this->get_courseid() : null;
             // If global outcome (course=null), check the user has perms to create it
             // falling to course outcome if not
-            $systemctx = get_context_instance(CONTEXT_SYSTEM);
+            $systemctx = context_system::instance();
             if (is_null($data->courseid) && !has_capability('moodle/grade:manageoutcomes', $systemctx , $this->task->get_userid())) {
                 $data->courseid = $this->get_courseid();
             }
@@ -1275,7 +1275,7 @@ class restore_course_structure_step extends restore_structure_step {
         $data->fullname = $fullname;
         $data->shortname= $shortname;
 
-        $context = get_context_instance_by_id($this->task->get_contextid());
+        $context = context::instance_by_id($this->task->get_contextid());
         if (has_capability('moodle/course:changeidnumber', $context, $this->task->get_userid())) {
             $data->idnumber = '';
         } else {
@@ -1766,6 +1766,23 @@ class restore_calendarevents_structure_step extends restore_structure_step {
         if (!empty($data->groupid)) {
             $data->groupid = $this->get_mappingid('group', $data->groupid);
             if ($data->groupid === false) {
+                return;
+            }
+        }
+        // Handle events with empty eventtype //MDL-32827
+        if(empty($data->eventtype)) {
+            if ($data->courseid == $SITE->id) {                                // Site event
+                $data->eventtype = "site";
+            } else if ($data->courseid != 0 && $data->groupid == 0 && ($data->modulename == 'assignment' || $data->modulename == 'assign')) {
+                // Course assingment event
+                $data->eventtype = "due";
+            } else if ($data->courseid != 0 && $data->groupid == 0) {      // Course event
+                $data->eventtype = "course";
+            } else if ($data->groupid) {                                      // Group event
+                $data->eventtype = "group";
+            } else if ($data->userid) {                                       // User event
+                $data->eventtype = "user";
+            } else {
                 return;
             }
         }
@@ -2484,7 +2501,7 @@ class restore_block_instance_structure_step extends restore_structure_step {
         // Save the mapping (with restorefiles support)
         $this->set_mapping('block_instance', $oldid, $newitemid, true);
         // Create the block context
-        $newcontextid = get_context_instance(CONTEXT_BLOCK, $newitemid)->id;
+        $newcontextid = context_block::instance($newitemid)->id;
         // Save the block contexts mapping and sent it to task
         $this->set_mapping('context', $oldcontextid, $newcontextid);
         $this->task->set_contextid($newcontextid);
@@ -2619,7 +2636,7 @@ class restore_module_structure_step extends restore_structure_step {
         // set the new course_module id in the task
         $this->task->set_moduleid($newitemid);
         // we can now create the context safely
-        $ctxid = get_context_instance(CONTEXT_MODULE, $newitemid)->id;
+        $ctxid = context_module::instance($newitemid)->id;
         // set the new context id in the task
         $this->task->set_contextid($ctxid);
         // update sequence field in course_section

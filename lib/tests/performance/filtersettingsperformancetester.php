@@ -31,7 +31,7 @@ require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/ddllib.php');
 
 require_login();
-$syscontext = get_context_instance(CONTEXT_SYSTEM);
+$syscontext = context_system::instance();
 require_capability('moodle/site:config', $syscontext);
 
 $baseurl = new moodle_url('/lib/tests/performance/filtersettingsperformancetester.php');

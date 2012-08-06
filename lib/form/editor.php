@@ -80,7 +80,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
         }
         if (!$this->_options['context']) {
-            $this->_options['context'] = get_context_instance(CONTEXT_SYSTEM);
+            $this->_options['context'] = context_system::instance();
         }
         $this->_options['trusted'] = trusttext_trusted($this->_options['context']);
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
@@ -361,10 +361,11 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
         $str .= '<div>';
         if (count($formats)>1) {
-            $str.= html_writer::select($formats, $elname.'[format]', $format, false);
+            $str .= html_writer::label(get_string('format'), 'menu'. $elname. 'format', false, array('class' => 'accesshide'));
+            $str .= html_writer::select($formats, $elname.'[format]', $format, false, array('id' => 'menu'. $elname. 'format'));
         } else {
             $keys = array_keys($formats);
-            $str.= html_writer::empty_tag('input',
+            $str .= html_writer::empty_tag('input',
                     array('name'=>$elname.'[format]', 'type'=> 'hidden', 'value' => array_pop($keys)));
         }
         $str .= '</div>';

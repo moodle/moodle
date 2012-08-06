@@ -98,7 +98,7 @@ abstract class user_selector_base {
         if (isset($options['accesscontext'])) {
             $this->accesscontext = $options['accesscontext'];
         } else {
-            $this->accesscontext = get_context_instance(CONTEXT_SYSTEM);
+            $this->accesscontext = context_system::instance();
         }
 
         if (isset($options['extrafields'])) {
@@ -676,7 +676,7 @@ abstract class groups_user_selector_base extends user_selector_base {
      */
     public function __construct($name, $options) {
         global $CFG;
-        $options['accesscontext'] = get_context_instance(CONTEXT_COURSE, $options['courseid']);
+        $options['accesscontext'] = context_course::instance($options['courseid']);
         parent::__construct($name, $options);
         $this->groupid = $options['groupid'];
         $this->courseid = $options['courseid'];
@@ -809,7 +809,7 @@ class group_non_members_selector extends groups_user_selector_base {
         global $DB;
 
         // Get list of allowed roles.
-        $context = get_context_instance(CONTEXT_COURSE, $this->courseid);
+        $context = context_course::instance($this->courseid);
         if ($validroleids = groups_get_possible_roles($context)) {
             list($roleids, $roleparams) = $DB->get_in_or_equal($validroleids, SQL_PARAMS_NAMED, 'r');
         } else {

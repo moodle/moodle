@@ -256,7 +256,7 @@ abstract class restore_structure_step extends restore_step {
 
         // Re-enforce 'moodle/restore:rolldates' capability for the user in the course, just in case
         } else if (!has_capability('moodle/restore:rolldates',
-                                   get_context_instance(CONTEXT_COURSE, $this->get_courseid()),
+                                   context_course::instance($this->get_courseid()),
                                    $this->task->get_userid())) {
             $cache[$this->get_restoreid()] = 0;
 

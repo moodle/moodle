@@ -110,7 +110,7 @@ function page_add_instance($data, $mform = null) {
 
     // we need to use context now, so we need to make sure all needed info is already in db
     $DB->set_field('course_modules', 'instance', $data->id, array('id'=>$cmid));
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
 
     if ($mform and !empty($data->page['itemid'])) {
         $draftitemid = $data->page['itemid'];
@@ -152,7 +152,7 @@ function page_update_instance($data, $mform) {
 
     $DB->update_record('page', $data);
 
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
     if ($draftitemid) {
         $data->content = file_save_draft_area_files($draftitemid, $context->id, 'mod_page', 'content', 0, page_get_editor_options($context), $data->content);
         $DB->update_record('page', $data);
@@ -430,7 +430,7 @@ function page_page_type_list($pagetype, $parentcontext, $currentcontext) {
 function page_export_contents($cm, $baseurl) {
     global $CFG, $DB;
     $contents = array();
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     $page = $DB->get_record('page', array('id'=>$cm->instance), '*', MUST_EXIST);
 

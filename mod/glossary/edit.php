@@ -17,7 +17,7 @@ if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
 
 require_login($course, false, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 if (!$glossary = $DB->get_record('glossary', array('id'=>$cm->instance))) {
     print_error('invalidid', 'glossary');

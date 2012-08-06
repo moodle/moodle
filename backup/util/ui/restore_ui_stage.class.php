@@ -231,7 +231,7 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
             'filepath'=>$this->filepath,
             'contextid'=>$this->contextid,
             'stage'=>restore_ui::STAGE_DESTINATION));
-        $this->coursesearch = new restore_course_search(array('url'=>$url), get_context_instance_by_id($contextid)->instanceid);
+        $this->coursesearch = new restore_course_search(array('url'=>$url), context::instance_by_id($contextid)->instanceid);
         $this->categorysearch = new restore_category_search(array('url'=>$url));
     }
     public function process() {
@@ -286,7 +286,7 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
             'contextid' => $this->contextid,
             'filepath'  => $this->filepath,
             'stage'     => restore_ui::STAGE_SETTINGS));
-        $context = get_context_instance_by_id($this->contextid);
+        $context = context::instance_by_id($this->contextid);
 
         if ($context->contextlevel == CONTEXT_COURSE and has_capability('moodle/restore:restorecourse', $context)) {
             $currentcourse = $context->instanceid;
@@ -703,7 +703,7 @@ class restore_ui_stage_process extends restore_ui_stage {
                 $haserrors = (!empty($results['errors']));
                 $html .= $renderer->precheck_notices($results);
                 if (!empty($info->role_mappings->mappings)) {
-                    $context = get_context_instance(CONTEXT_COURSE, $this->ui->get_controller()->get_courseid());
+                    $context = context_course::instance($this->ui->get_controller()->get_courseid());
                     $assignableroles = get_assignable_roles($context, ROLENAME_ALIAS, false);
                     $html .= $renderer->role_mappings($info->role_mappings->mappings, $assignableroles);
                 }

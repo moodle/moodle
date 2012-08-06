@@ -38,7 +38,7 @@ if ($cancel) {
 //HTTPS is required in this page when $CFG->loginhttps enabled
 $PAGE->https_required();
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 $PAGE->set_url("$CFG->httpswwwroot/login/index.php");
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('login');

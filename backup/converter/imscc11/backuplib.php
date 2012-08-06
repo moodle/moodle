@@ -76,7 +76,7 @@ class imscc11_store_backup_file extends backup_execution_step {
         $id        = $dinfo[0]->id;                    // Id of activity/section/course (depends of type)
         $courseid  = $dinfo[0]->courseid;              // Id of the course
 
-        $ctxid     = get_context_instance(CONTEXT_USER, $userid)->id;
+        $ctxid     = context_user::instance($userid)->id;
         $component = 'user';
         $filearea  = 'backup';
         $itemid    = 0;

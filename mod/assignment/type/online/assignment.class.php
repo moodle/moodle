@@ -23,7 +23,7 @@ class assignment_online extends assignment_base {
         $edit  = optional_param('edit', 0, PARAM_BOOL);
         $saved = optional_param('saved', 0, PARAM_BOOL);
 
-        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $context = context_module::instance($this->cm->id);
         require_capability('mod/assignment:view', $context);
 
         $submission = $this->get_submission($USER->id, false);

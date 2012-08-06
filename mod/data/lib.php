@@ -114,7 +114,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
             $this->define_default_field();
         }
 
-        $this->context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        $this->context = context_module::instance($this->cm->id);
     }
 
 
@@ -783,7 +783,7 @@ function data_add_record($data, $groupid=0){
     global $USER, $DB;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     $record = new stdClass();
     $record->userid = $USER->id;
@@ -898,7 +898,7 @@ function data_delete_instance($id) {    // takes the dataid
     }
 
     $cm = get_coursemodule_from_instance('data', $data->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
 /// Delete all the associated information
 
@@ -1160,7 +1160,7 @@ function data_grade_item_delete($data) {
 function data_print_template($template, $records, $data, $search='', $page=0, $return=false) {
     global $CFG, $DB, $OUTPUT;
     $cm = get_coursemodule_from_instance('data', $data->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     static $fields = NULL;
     static $isteacher;
@@ -1418,7 +1418,7 @@ function data_rating_validate($params) {
 
     $course = $DB->get_record('course', array('id'=>$info->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('data', $info->dataid, $course->id, false, MUST_EXIST);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
+    $context = context_module::instance($cm->id);
 
     // if the supplied context doesnt match the item's context
     if ($context->id != $params['context']->id) {
@@ -1466,7 +1466,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     global $CFG, $DB, $PAGE, $OUTPUT;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     echo '<br /><div class="datapreferences">';
     echo '<form id="options" action="view.php" method="get">';
     echo '<div>';
@@ -1741,7 +1741,7 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
             $cmid = $cm->id;
         }
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
 
 
     // $data->participants:
@@ -2005,7 +2005,7 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode, $context = nu
 
     if (empty($context)) {
         $cm = get_coursemodule_from_instance('data', $data->id, 0, false, MUST_EXIST);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
     }
 
     if (has_capability('mod/data:manageentries', $context)) {
@@ -2377,7 +2377,7 @@ class data_preset_existing_importer extends data_preset_importer {
     public function __construct($course, $cm, $module, $fullname) {
         global $USER;
         list($userid, $shortname) = explode('/', $fullname, 2);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
         if ($userid && ($userid != $USER->id) && !has_capability('mod/data:manageuserpresets', $context) && !has_capability('mod/data:viewalluserpresets', $context)) {
            throw new coding_exception('Invalid preset provided');
         }
@@ -2402,7 +2402,7 @@ class data_preset_existing_importer extends data_preset_importer {
 function data_preset_path($course, $userid, $shortname) {
     global $USER, $CFG;
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
 
     $userid = (int)$userid;
 
@@ -2512,7 +2512,7 @@ function data_reset_userdata($data) {
                 if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
                     continue;
                 }
-                $datacontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $datacontext = context_module::instance($cm->id);
 
                 $ratingdeloptions->contextid = $datacontext->id;
                 $rm->delete_ratings($ratingdeloptions);
@@ -2534,7 +2534,7 @@ function data_reset_userdata($data) {
                               LEFT JOIN {user} u ON r.userid = u.id
                         WHERE d.course = ? AND r.userid > 0";
 
-        $course_context = get_context_instance(CONTEXT_COURSE, $data->courseid);
+        $course_context = context_course::instance($data->courseid);
         $notenrolled = array();
         $fields = array();
         $rs = $DB->get_recordset_sql($recordssql, array($data->courseid));
@@ -2545,7 +2545,7 @@ function data_reset_userdata($data) {
                 if (!$cm = get_coursemodule_from_instance('data', $record->dataid)) {
                     continue;
                 }
-                $datacontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $datacontext = context_module::instance($cm->id);
                 $ratingdeloptions->contextid = $datacontext->id;
                 $ratingdeloptions->itemid = $record->id;
                 $rm->delete_ratings($ratingdeloptions);
@@ -2578,7 +2578,7 @@ function data_reset_userdata($data) {
                 if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
                     continue;
                 }
-                $datacontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $datacontext = context_module::instance($cm->id);
 
                 $ratingdeloptions->contextid = $datacontext->id;
                 $rm->delete_ratings($ratingdeloptions);
@@ -2998,7 +2998,7 @@ function data_extend_navigation($navigation, $course, $module, $cm) {
 
      $numentries = data_numentries($data);
     /// Check the number of entries required against the number of entries already made (doesn't apply to teachers)
-    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', context_module::instance($cm->id))) {
         $data->entriesleft = $data->requiredentries - $numentries;
         $entriesnode = $navigation->add(get_string('entrieslefttoadd', 'data', $data));
         $entriesnode->add_class('note');
@@ -3360,7 +3360,7 @@ function data_comment_validate($comment_param) {
     if (!$data->comments) {
         throw new comment_exception('commentsoff', 'data');
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     //check if approved
     if ($data->approval and !$record->approved and !data_isowner($record) and !has_capability('mod/data:approve', $context)) {

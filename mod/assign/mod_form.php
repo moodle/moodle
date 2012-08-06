@@ -73,6 +73,8 @@ class mod_assign_mod_form extends moodleform_mod {
             $assignment->set_course($DB->get_record('course', array('id'=>$this->current->course), '*', MUST_EXIST));
         }
 
+        $config = get_config('assign');
+
         $mform->addElement('header', 'general', get_string('settings', 'assign'));
         $mform->addElement('date_time_selector', 'allowsubmissionsfromdate', get_string('allowsubmissionsfromdate', 'assign'), array('optional'=>true));
         $mform->addHelpButton('allowsubmissionsfromdate', 'allowsubmissionsfromdate', 'assign');
@@ -89,6 +91,15 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'submissiondrafts', get_string('submissiondrafts', 'assign'));
         $mform->addHelpButton('submissiondrafts', 'submissiondrafts', 'assign');
         $mform->setDefault('submissiondrafts', 0);
+        // submission statement
+        if (empty($config->requiresubmissionstatement)) {
+            $mform->addElement('selectyesno', 'requiresubmissionstatement', get_string('requiresubmissionstatement', 'assign'));
+            $mform->setDefault('requiresubmissionstatement', 0);
+            $mform->addHelpButton('requiresubmissionstatement', 'requiresubmissionstatement', 'assign');
+        } else {
+            $mform->addElement('hidden', 'requiresubmissionstatement', 1);
+        }
+
         $mform->addElement('selectyesno', 'sendnotifications', get_string('sendnotifications', 'assign'));
         $mform->addHelpButton('sendnotifications', 'sendnotifications', 'assign');
         $mform->setDefault('sendnotifications', 1);

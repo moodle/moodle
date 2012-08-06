@@ -38,7 +38,7 @@ $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*'
 
 require_login($course, false, $cm);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/lesson:manage', $context);
 
 $ufields = user_picture::fields('u'); // These fields are enough
@@ -162,7 +162,7 @@ if ($action === 'delete') {
     **************************************************************************/
     echo $lessonoutput->header($lesson, $cm, $action);
 
-    $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $course_context = context_course::instance($course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
         $seeallgradeslink = new moodle_url('/grade/report/grader/index.php', array('id'=>$course->id));
         $seeallgradeslink = html_writer::link($seeallgradeslink, get_string('seeallcoursegrades', 'grades'));
@@ -377,7 +377,7 @@ if ($action === 'delete') {
 **************************************************************************/
     echo $lessonoutput->header($lesson, $cm, $action);
 
-    $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $course_context = context_course::instance($course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
         $seeallgradeslink = new moodle_url('/grade/report/grader/index.php', array('id'=>$course->id));
         $seeallgradeslink = html_writer::link($seeallgradeslink, get_string('seeallcoursegrades', 'grades'));

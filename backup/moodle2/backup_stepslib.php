@@ -667,7 +667,7 @@ class backup_final_scales_structure_step extends backup_structure_step {
                                    AND bi.itemname = 'scalefinal'", array(backup::VAR_BACKUPID));
 
         // Annotate scale files (they store files in system context, so pass it instead of default one)
-        $scale->annotate_files('grade', 'scale', 'id', get_context_instance(CONTEXT_SYSTEM)->id);
+        $scale->annotate_files('grade', 'scale', 'id', context_system::instance()->id);
 
         // Return main element (scalesdef)
         return $scalesdef;
@@ -704,7 +704,7 @@ class backup_final_outcomes_structure_step extends backup_structure_step {
                                      AND bi.itemname = 'outcomefinal'", array(backup::VAR_BACKUPID));
 
         // Annotate outcome files (they store files in system context, so pass it instead of default one)
-        $outcome->annotate_files('grade', 'outcome', 'id', get_context_instance(CONTEXT_SYSTEM)->id);
+        $outcome->annotate_files('grade', 'outcome', 'id', context_system::instance()->id);
 
         // Return main element (outcomesdef)
         return $outcomesdef;
@@ -1470,8 +1470,8 @@ class backup_main_structure_step extends backup_structure_step {
         $info['original_course_fullname']  = $originalcourseinfo->fullname;
         $info['original_course_shortname'] = $originalcourseinfo->shortname;
         $info['original_course_startdate'] = $originalcourseinfo->startdate;
-        $info['original_course_contextid'] = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
-        $info['original_system_contextid'] = get_context_instance(CONTEXT_SYSTEM)->id;
+        $info['original_course_contextid'] = context_course::instance($this->get_courseid())->id;
+        $info['original_system_contextid'] = context_system::instance()->id;
 
         // Get more information from controller
         list($dinfo, $cinfo, $sinfo) = backup_controller_dbops::get_moodle_backup_information($this->get_backupid());
@@ -1835,7 +1835,7 @@ class backup_annotate_all_user_files extends backup_execution_step {
             'backupid' => $this->get_backupid(), 'itemname' => 'userfinal'));
         foreach ($rs as $record) {
             $userid = $record->itemid;
-            $userctx = get_context_instance(CONTEXT_USER, $userid);
+            $userctx = context_user::instance($userid);
             if (!$userctx) {
                 continue; // User has not context, sure it's a deleted user, so cannot have files
             }

@@ -46,7 +46,7 @@ function useredit_update_picture(stdClass $usernew, moodleform $userform, $filem
     global $CFG, $DB;
     require_once("$CFG->libdir/gdlib.php");
 
-    $context = get_context_instance(CONTEXT_USER, $usernew->id, MUST_EXIST);
+    $context = context_user::instance($usernew->id, MUST_EXIST);
     $user = $DB->get_record('user', array('id'=>$usernew->id), 'id, picture', MUST_EXIST);
 
     $newpicture = $user->picture;

@@ -605,7 +605,7 @@ function filter_set_global_state($filter, $state, $sortorder = false) {
     }
 
     // See if there is an existing record.
-    $syscontext = get_context_instance(CONTEXT_SYSTEM);
+    $syscontext = context_system::instance();
     $rec = $DB->get_record('filter_active', array('filter' => $filter, 'contextid' => $syscontext->id));
     if (empty($rec)) {
         $insert = true;
@@ -747,7 +747,7 @@ function filter_set_local_state($filter, $contextid, $state) {
                 "Must be one of TEXTFILTER_ON, TEXTFILTER_OFF or TEXTFILTER_INHERIT.");
     }
 
-    if ($contextid == get_context_instance(CONTEXT_SYSTEM)->id) {
+    if ($contextid == context_system::instance()->id) {
         throw new coding_exception('You cannot use filter_set_local_state ' .
                 'with $contextid equal to the system context id.');
     }
@@ -847,7 +847,7 @@ function filter_get_local_config($filter, $contextid) {
  */
 function filter_get_all_local_settings($contextid) {
     global $DB;
-    $context = get_context_instance(CONTEXT_SYSTEM);
+    $context = context_system::instance();
     return array(
         $DB->get_records('filter_active', array('contextid' => $contextid), 'filter', 'filter,active'),
         $DB->get_records('filter_config', array('contextid' => $contextid), 'filter,name', 'filter,name,value'),
@@ -940,13 +940,13 @@ function filter_preload_activities(course_modinfo $modinfo) {
     $cmcontexts = array();
     $cmcontextids = array();
     foreach ($modinfo->get_cms() as $cm) {
-        $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $modulecontext = context_module::instance($cm->id);
         $cmcontextids[] = $modulecontext->id;
         $cmcontexts[] = $modulecontext;
     }
 
     // Get course context and all other parents...
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $modinfo->get_course_id());
+    $coursecontext = context_course::instance($modinfo->get_course_id());
     $parentcontextids = explode('/', substr($coursecontext->path, 1));
     $allcontextids = array_merge($cmcontextids, $parentcontextids);
 
@@ -1094,7 +1094,7 @@ function filter_get_available_in_context($context) {
  */
 function filter_get_global_states() {
     global $DB;
-    $context = get_context_instance(CONTEXT_SYSTEM);
+    $context = context_system::instance();
     return $DB->get_records('filter_active', array('contextid' => $context->id), 'sortorder', 'filter,active,sortorder');
 }
 

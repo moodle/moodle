@@ -207,7 +207,7 @@ abstract class backup_cron_automated_helper {
 
             //Build the message subject
             $site = get_site();
-            $prefix = format_string($site->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID))).": ";
+            $prefix = format_string($site->shortname, true, array('context' => context_course::instance(SITEID))).": ";
             if ($haserrors) {
                 $prefix .= "[".strtoupper(get_string('error'))."] ";
             }
@@ -478,7 +478,7 @@ abstract class backup_cron_automated_helper {
         // Clean up excess backups in the course backup filearea
         if ($storage == 0 || $storage == 2) {
             $fs = get_file_storage();
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $context = context_course::instance($course->id);
             $component = 'backup';
             $filearea = 'automated';
             $itemid = 0;
