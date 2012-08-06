@@ -429,11 +429,6 @@ class page_requirements_manager {
                                     'fullpath' => '/rating/module.js',
                                     'requires' => array('node', 'event', 'overlay', 'io-base', 'json'));
                     break;
-                case 'core_filetree':
-                    $module = array('name'     => 'core_filetree',
-                                    'fullpath' => '/files/module.js',
-                                    'requires' => array('node', 'event', 'overlay', 'io-base', 'json', 'yui2-treeview'));
-                    break;
                 case 'core_dndupload':
                     $module = array('name'     => 'core_dndupload',
                                     'fullpath' => '/lib/form/dndupload.js',
