@@ -46,11 +46,6 @@
 
     require_course_login($course, true, $cm);
 
-/// Add ajax-related libs
-    $PAGE->requires->yui2_lib('event');
-    $PAGE->requires->yui2_lib('connection');
-    $PAGE->requires->yui2_lib('json');
-
     // move this down fix for MDL-6926
     require_once($CFG->dirroot.'/mod/forum/lib.php');
 
