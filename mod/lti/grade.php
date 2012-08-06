@@ -80,13 +80,11 @@ $PAGE->set_url($url);
 $module = array(
     'name'      => 'mod_lti_submissions',
     'fullpath'  => '/mod/lti/submissions.js',
-    'requires'  => array('base'),
+    'requires'  => array('base', 'yui2-datatable'),
     'strings'   => array(),
 );
 
 $PAGE->requires->js_init_call('M.mod_lti.submissions.init', array(), true, $module);
-
-$PAGE->requires->yui2_lib('datatable');
 
 $submissionquery = '
     SELECT s.id, u.firstname, u.lastname, u.id AS userid, s.datesubmitted, s.gradepercent

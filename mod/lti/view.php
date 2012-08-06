@@ -124,11 +124,11 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     $resize = '
         <script type="text/javascript">
         //<![CDATA[
-            (function(){
+            YUI().use("yui2-dom", function(Y) {
                 //Take scrollbars off the outer document to prevent double scroll bar effect
                 document.body.style.overflow = "hidden";
 
-                var dom = YAHOO.util.Dom;
+                var dom = Y.YUI2.util.Dom;
                 var frame = document.getElementById("contentframe");
 
                 var padding = 15; //The bottom of the iframe wasn\'t visible on some themes. Probably because of border widths, etc.
@@ -149,7 +149,7 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
                 resize();
 
                 setInterval(resize, 250);
-            })();
+            });
         //]]
         </script>
 ';
