@@ -58,8 +58,10 @@ function authorize_print_orders($courseid, $userid) {
 
     $searchmenu = array('orderid' => $authstrs->orderid, 'transid' => $authstrs->transid, 'cclastfour' => $authstrs->cclastfour);
     $buttons = "<form method='post' action='index.php' autocomplete='off'><div>";
+    $buttons .= html_writer::label(get_string('orderdetails', 'enrol_authorize'), 'menusearchtype', false, array('class' => 'accesshide'));
     $buttons .= html_writer::select($searchmenu, 'searchtype', $searchtype, false);
-    $buttons .= "<input type='text' size='16' name='searchquery' value='' />";
+    $buttons .= html_writer::label(get_string('search'), 'searchquery', false, array('class' => 'accesshide'));
+    $buttons .= "<input id='searchquery' type='text' size='16' name='searchquery' value='' />";
     $buttons .= "<input type='submit' value='$strs->search' />";
     $buttons .= "</div></form>";
 
