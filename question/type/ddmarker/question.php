@@ -313,7 +313,7 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
                 $nohit = new stdClass();
                 $nohit->coords = $place->coords;
                 $nohit->shape = $place->shape->name();
-                $nohit->markertext = $this->choices[1][$choice]->text;
+                $nohit->markertext = $this->choices[1][$this->choiceorder[1][$choice]]->text;
                 $nohits[] = $nohit;
             }
         }
