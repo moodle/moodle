@@ -205,9 +205,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             return array();
         }
 
-        if (!has_capability('moodle/course:update', context_course::instance($course->id))) {
-            return array();
-        }
+        $coursecontext = context_course::instance($course->id);
 
         if ($onsectionpage) {
             $baseurl = course_get_url($course, $section->section);
@@ -219,23 +217,25 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $controls = array();
 
         $url = clone($baseurl);
-        if ($section->visible) { // Show the hide/show eye.
-            $strhidefromothers = get_string('hidefromothers', 'format_'.$course->format);
-            $url->param('hide', $section->section);
-            $controls[] = html_writer::link($url,
-                html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/hide'),
-                'class' => 'icon hide', 'alt' => $strhidefromothers)),
-                array('title' => $strhidefromothers, 'class' => 'editing_showhide'));
-        } else {
-            $strshowfromothers = get_string('showfromothers', 'format_'.$course->format);
-            $url->param('show',  $section->section);
-            $controls[] = html_writer::link($url,
-                html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/show'),
-                'class' => 'icon hide', 'alt' => $strshowfromothers)),
-                array('title' => $strshowfromothers, 'class' => 'editing_showhide'));
+        if (has_capability('moodle/course:sectionvisibility', $coursecontext)) {
+            if ($section->visible) { // Show the hide/show eye.
+                $strhidefromothers = get_string('hidefromothers', 'format_'.$course->format);
+                $url->param('hide', $section->section);
+                $controls[] = html_writer::link($url,
+                    html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/hide'),
+                    'class' => 'icon hide', 'alt' => $strhidefromothers)),
+                    array('title' => $strhidefromothers, 'class' => 'editing_showhide'));
+            } else {
+                $strshowfromothers = get_string('showfromothers', 'format_'.$course->format);
+                $url->param('show',  $section->section);
+                $controls[] = html_writer::link($url,
+                    html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/show'),
+                    'class' => 'icon hide', 'alt' => $strshowfromothers)),
+                    array('title' => $strshowfromothers, 'class' => 'editing_showhide'));
+            }
         }
 
-        if (!$onsectionpage) {
+        if (!$onsectionpage && has_capability('moodle/course:update', $coursecontext)) {
             $url = clone($baseurl);
             if ($section->section > 1) { // Add a arrow to move section up.
                 $url->param('section', $section->section);
