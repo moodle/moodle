@@ -105,6 +105,7 @@ class enrol_self_edit_form extends moodleform {
         $mform->addHelpButton('customint4', 'sendcoursewelcomemessage', 'enrol_self');
 
         $mform->addElement('textarea', 'customtext1', get_string('customwelcomemessage', 'enrol_self'), array('cols'=>'60', 'rows'=>'8'));
+        $mform->addHelpButton('customtext1', 'customwelcomemessage', 'enrol_self');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
