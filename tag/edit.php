@@ -55,11 +55,6 @@ $PAGE->set_context($systemcontext);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 $PAGE->set_pagelayout('base');
 
-$PAGE->requires->yui2_lib('connection');
-$PAGE->requires->yui2_lib('animation');
-$PAGE->requires->yui2_lib('datasource');
-$PAGE->requires->yui2_lib('autocomplete');
-
 $tagname = tag_display_name($tag);
 
 // set the relatedtags field of the $tag object that will be passed to the form
