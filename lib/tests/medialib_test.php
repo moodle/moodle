@@ -338,13 +338,13 @@ class medialib_testcase extends advanced_testcase {
         // Format: youtube playlist.
         $url = new moodle_url('http://www.youtube.com/view_play_list?p=PL6E18E2927047B662');
         $t = $renderer->embed_url($url);
-        $this->assertTrue(self::str_contains($t, '</object>'));
+        $this->assertTrue(self::str_contains($t, '</iframe>'));
         $url = new moodle_url('http://www.youtube.com/playlist?list=PL6E18E2927047B662');
         $t = $renderer->embed_url($url);
-        $this->assertTrue(self::str_contains($t, '</object>'));
+        $this->assertTrue(self::str_contains($t, '</iframe>'));
         $url = new moodle_url('http://www.youtube.com/p/PL6E18E2927047B662');
         $t = $renderer->embed_url($url);
-        $this->assertTrue(self::str_contains($t, '</object>'));
+        $this->assertTrue(self::str_contains($t, '</iframe>'));
 
         // Format: vimeo.
         $url = new moodle_url('http://vimeo.com/1176321');
