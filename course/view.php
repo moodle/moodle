@@ -127,15 +127,16 @@
             }
         }
 
-        if (has_capability('moodle/course:update', $context)) {
+        if (has_capability('moodle/course:sectionvisibility', $context)) {
             if ($hide && confirm_sesskey()) {
                 set_section_visible($course->id, $hide, '0');
             }
-
             if ($show && confirm_sesskey()) {
                 set_section_visible($course->id, $show, '1');
             }
+        }
 
+        if (has_capability('moodle/course:update', $context)) {
             if (!empty($section)) {
                 if (!empty($move) and confirm_sesskey()) {
                     if (move_section($course, $section, $move)) {
