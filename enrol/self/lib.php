@@ -74,7 +74,7 @@ class enrol_self_plugin extends enrol_plugin {
 
         if (empty($instance->name)) {
             if (!empty($instance->roleid) and $role = $DB->get_record('role', array('id'=>$instance->roleid))) {
-                $role = ' (' . role_get_name($role, get_context_instance(CONTEXT_COURSE, $instance->courseid)) . ')';
+                $role = ' (' . role_get_name($role, context_course::instance($instance->courseid, IGNORE_MISSING)) . ')';
             } else {
                 $role = '';
             }
@@ -115,7 +115,7 @@ class enrol_self_plugin extends enrol_plugin {
              throw new coding_exception('Invalid enrol instance type!');
         }
 
-        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+        $context = context_course::instance($instance->courseid);
         if (has_capability('enrol/self:config', $context)) {
             $managelink = new moodle_url('/enrol/self/edit.php', array('courseid'=>$instance->courseid, 'id'=>$instance->id));
             $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
@@ -133,7 +133,7 @@ class enrol_self_plugin extends enrol_plugin {
         if ($instance->enrol !== 'self') {
             throw new coding_exception('invalid enrol instance!');
         }
-        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+        $context = context_course::instance($instance->courseid);
 
         $icons = array();
 
@@ -151,7 +151,7 @@ class enrol_self_plugin extends enrol_plugin {
      * @return moodle_url page url
      */
     public function get_newinstance_link($courseid) {
-        $context = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
+        $context = context_course::instance($courseid, MUST_EXIST);
 
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/self:config', $context)) {
             return NULL;
@@ -267,22 +267,32 @@ class enrol_self_plugin extends enrol_plugin {
         global $CFG, $DB;
 
         $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
+        $context = context_course::instance($course->id);
 
         $a = new stdClass();
-        $a->coursename = format_string($course->fullname);
+        $a->coursename = format_string($course->fullname, true, array('context'=>$context));
         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
 
         if (trim($instance->customtext1) !== '') {
             $message = $instance->customtext1;
             $message = str_replace('{$a->coursename}', $a->coursename, $message);
             $message = str_replace('{$a->profileurl}', $a->profileurl, $message);
+            if (strpos($message, '<') === false) {
+                // Plain text only.
+                $messagetext = $message;
+                $messagehtml = text_to_html($messagetext, null, false, true);
+            } else {
+                // This is most probably the tag/newline soup known as FORMAT_MOODLE.
+                $messagehtml = format_text($message, FORMAT_MOODLE, array('context'=>$context, 'para'=>false, 'newlines'=>true, 'filter'=>true));
+                $messagetext = html_to_text($messagehtml);
+            }
         } else {
-            $message = get_string('welcometocoursetext', 'enrol_self', $a);
+            $messagetext = get_string('welcometocoursetext', 'enrol_self', $a);
+            $messagehtml = text_to_html($messagetext, null, false, true);
         }
 
-        $subject = get_string('welcometocourse', 'enrol_self', format_string($course->fullname));
+        $subject = get_string('welcometocourse', 'enrol_self', format_string($course->fullname, true, array('context'=>$context)));
 
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
         $rusers = array();
         if (!empty($CFG->coursecontact)) {
             $croles = explode(',', $CFG->coursecontact);
@@ -295,7 +305,7 @@ class enrol_self_plugin extends enrol_plugin {
         }
 
         //directly emailing welcome message rather than using messaging
-        email_to_user($user, $contact, $subject, $message);
+        email_to_user($user, $contact, $subject, $messagetext, $messagehtml);
     }
 
     /**
