@@ -2,10 +2,12 @@
  * Toggles the selection checkboxes of all grade items children of the given eid (a category id)
  */
 function togglecheckboxes(event, args) {
-    var rows = YAHOO.util.Dom.getElementsByClassName(args.eid);
+YUI().use('yui2-dom', 'yui2-element', function (Y) {
+
+    var rows = Y.YUI2.util.Dom.getElementsByClassName(args.eid);
 
     for (var i = 0; i < rows.length; i++) {
-        var element = new YAHOO.util.Element(rows[i]);
+        var element = new Y.YUI2.util.Element(rows[i]);
         var checkboxes = element.getElementsByClassName('itemselect');
         if (checkboxes[0]) {
             checkboxes[0].checked=args.check;
@@ -14,42 +16,68 @@ function togglecheckboxes(event, args) {
 
     toggleCategorySelector();
 
+});
 }
 
 function toggle_advanced_columns() {
-    var advEls = YAHOO.util.Dom.getElementsByClassName("advanced");
-    var shownAdvEls = YAHOO.util.Dom.getElementsByClassName("advancedshown");
+YUI().use('yui2-dom', function (Y) {
+
+    var advEls = Y.YUI2.util.Dom.getElementsByClassName("advanced");
+    var shownAdvEls = Y.YUI2.util.Dom.getElementsByClassName("advancedshown");
 
     for (var i = 0; i < advEls.length; i++) {
-        YAHOO.util.Dom.replaceClass(advEls[i], "advanced", "advancedshown");
+        Y.YUI2.util.Dom.replaceClass(advEls[i], "advanced", "advancedshown");
     }
 
     for (var i = 0; i < shownAdvEls.length; i++) {
-        YAHOO.util.Dom.replaceClass(shownAdvEls[i], "advancedshown", "advanced");
+        Y.YUI2.util.Dom.replaceClass(shownAdvEls[i], "advancedshown", "advanced");
     }
+
+});
 }
 
 /**
  * Check if any of the grade item checkboxes is ticked. If yes, enable the dropdown. Otherwise, disable it
  */
 function toggleCategorySelector() {
-    var itemboxes = YAHOO.util.Dom.getElementsByClassName('itemselect');
+YUI().use('yui2-dom', function (Y) {
+
+    var menumoveafter = document.getElementById('menumoveafter');
+    if (!menumoveafter) {
+        return;
+    }
+
+    var itemboxes = Y.YUI2.util.Dom.getElementsByClassName('itemselect');
     for (var i = 0; i < itemboxes.length; i++) {
         if (itemboxes[i].checked) {
-            document.getElementById('menumoveafter').disabled = false;
+            menumoveafter.disabled = false;
             return true;
         }
     }
-    document.getElementById('menumoveafter').disabled = 'disabled';
+    menumoveafter.disabled = 'disabled';
+
+});
 }
 
-YAHOO.namespace('grade_edit_tree');
+function submit_bulk_move(e, args) {
+    document.getElementById('bulkmoveinput').value = 1;
+    document.getElementById('gradetreeform').submit();
+}
+
+function update_category_aggregation(e, args) {
+    var selectmenu = e.target;
+    window.location = 'index.php?id='+args.courseid+'&category='+args.category+'&aggregationtype='+selectmenu.get('value')+'&sesskey='+args.sesskey;
+}
+
+
+/* TODO: finish and rewrite for YUI3...
+Y.YUI2.namespace('grade_edit_tree');
 
 (function() {
-    var Dom = YAHOO.util.Dom;
-    var DDM = YAHOO.util.DragDropMgr;
-    var Event = YAHOO.util.Event;
-    var gretree = YAHOO.grade_edit_tree;
+    var Dom = Y.YUI2.util.Dom;
+    var DDM = Y.YUI2.util.DragDropMgr;
+    var Event = Y.YUI2.util.Event;
+    var gretree = Y.YUI2.grade_edit_tree;
 
     gretree.DDApp = {
 
@@ -60,7 +88,7 @@ YAHOO.namespace('grade_edit_tree');
             var item_rows = edit_tree_table.getElementsByClassName('item', 'tr');
             var category_rows = edit_tree_table.getElementsByClassName('category', 'tr');
 
-            new YAHOO.util.DDTarget('grade_edit_tree_table');
+            new Y.YUI2.util.DDTarget('grade_edit_tree_table');
 
             for (i = 0; i < item_rows.length; i++) {
                 if (!Dom.hasClass(item_rows[i],'categoryitem')) {
@@ -85,8 +113,8 @@ YAHOO.namespace('grade_edit_tree');
                 }
             }
 
-            YAHOO.util.Event.on("showButton", "click", this.showOrder);
-            YAHOO.util.Event.on("switchButton", "click", this.switchStyles);
+            Y.YUI2.util.Event.on("showButton", "click", this.showOrder);
+            Y.YUI2.util.Event.on("switchButton", "click", this.switchStyles);
         },
 
         showOrder: function() {
@@ -112,7 +140,7 @@ YAHOO.namespace('grade_edit_tree');
     gretree.DDList = function(id, sGroup, config) {
 
         gretree.DDList.superclass.constructor.call(this, id, sGroup, config);
-        this.logger =  this.logger || YAHOO;
+        this.logger =  this.logger || Y.YUI2;
         var el = this.getDragEl();
         Dom.setStyle(el, 'opacity', 0.67);
 
@@ -120,7 +148,7 @@ YAHOO.namespace('grade_edit_tree');
         this.lastY = 0;
     };
 
-    YAHOO.extend(gretree.DDList, YAHOO.util.DDProxy, {
+    Y.YUI2.extend(gretree.DDList, Y.YUI2.util.DDProxy, {
 
         startDrag: function(x, y) {
             this.logger.log(this.id + ' startDrag');
@@ -145,7 +173,7 @@ YAHOO.namespace('grade_edit_tree');
 
             // Show the proxy element and adnimate it to the src element's location
             Dom.setStyle(proxy, 'visibility', '');
-            var a = new YAHOO.util.Motion(proxy, { points: { to: Dom.getXY(srcEl) } }, 0.2, YAHOO.util.Easing.easeOut);
+            var a = new Y.YUI2.util.Motion(proxy, { points: { to: Dom.getXY(srcEl) } }, 0.2, Y.YUI2.util.Easing.easeOut);
             var proxyid = proxy.id;
             var thisid = this.id;
 
@@ -164,7 +192,7 @@ YAHOO.namespace('grade_edit_tree');
             // If there is one drop interaction, the tr was dropped either on the table, or it was dropped on the current location of the source element
 
             if (DDM.interactionInfo.drop.length === 1) {
-                // The position of the cursor at the time of the drop (YAHOO.util.Point)
+                // The position of the cursor at the time of the drop (Y.YUI2.util.Point)
                 var pt = DDM.interactionInfo.point;
 
                 // The region occupied by the source element at the time of the drop
@@ -214,15 +242,6 @@ YAHOO.namespace('grade_edit_tree');
             }
         }
     });
-    // YAHOO.util.Event.onDOMReady(gretree.DDApp.init, gretree.DDApp, true); // Uncomment this line when dragdrop is fully implemented
+    // Y.YUI2.util.Event.onDOMReady(gretree.DDApp.init, gretree.DDApp, true); // Uncomment this line when dragdrop is fully implemented
 })();
-
-function submit_bulk_move(e, args) {
-    document.getElementById('bulkmoveinput').value = 1;
-    document.getElementById('gradetreeform').submit();
-}
-
-function update_category_aggregation(e, args) {
-    var selectmenu = e.target;
-    window.location = 'index.php?id='+args.courseid+'&category='+args.category+'&aggregationtype='+selectmenu.get('value')+'&sesskey='+args.sesskey;
-}
+*/
