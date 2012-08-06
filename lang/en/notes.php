@@ -60,4 +60,5 @@ $string['publishstate_help'] = 'A note\'s context determines who can see the not
 * Site - The note will be visible to teachers in all courses';
 $string['site'] = 'site';
 $string['sitenotes'] = 'Site notes';
+$string['selectnotestate'] = "Select note state";
 $string['unknown'] = 'unknown';
