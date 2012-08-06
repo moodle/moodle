@@ -131,9 +131,9 @@ class page_requirements_manager {
     protected $yui3loader;
 
     /**
-     * @var stdClass YUI loader information for YUI3 loading from javascript
+     * @var stdClass YUI loader configuration for YUI3 loading from javascript
      */
-    protected $M_yui_loader;
+    protected $YUI_config;
 
     /**
      * @var array Some config vars exposed in JS, please no secret stuff there
@@ -182,14 +182,14 @@ class page_requirements_manager {
         }
 
         // set up JS YUI loader helper object
-        $this->M_yui_loader = new stdClass();
-        $this->M_yui_loader->base         = $this->yui3loader->base;
-        $this->M_yui_loader->comboBase    = $this->yui3loader->comboBase;
-        $this->M_yui_loader->combine      = $this->yui3loader->combine;
-        $this->M_yui_loader->filter       = (string)$this->yui3loader->filter;
-        $this->M_yui_loader->insertBefore = 'firstthemesheet';
-        $this->M_yui_loader->modules      = array();
-        $this->M_yui_loader->groups       = array(
+        $this->YUI_config = new stdClass();
+        $this->YUI_config->base         = $this->yui3loader->base;
+        $this->YUI_config->comboBase    = $this->yui3loader->comboBase;
+        $this->YUI_config->combine      = $this->yui3loader->combine;
+        $this->YUI_config->filter       = (string)$this->yui3loader->filter;
+        $this->YUI_config->insertBefore = 'firstthemesheet';
+        $this->YUI_config->modules      = array();
+        $this->YUI_config->groups       = array(
             'moodle' => array(
                 'name' => 'moodle',
                 'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
@@ -210,7 +210,7 @@ class page_requirements_manager {
                 'base' => $CFG->httpswwwroot . '/lib/yui/gallery/',
                 'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
                 'combine' => $this->yui3loader->combine,
-                'filter' => $this->M_yui_loader->filter,
+                'filter' => $this->YUI_config->filter,
                 'ext' => false,
                 'root' => 'gallery/',
                 'patterns' => array(
@@ -512,7 +512,7 @@ class page_requirements_manager {
         if ($this->headdone) {
             $this->extramodules[$module['name']] = $module;
         } else {
-            $this->M_yui_loader->modules[$module['name']] = $module;
+            $this->YUI_config->modules[$module['name']] = $module;
         }
         if (debugging('', DEBUG_DEVELOPER)) {
             if (!array_key_exists($module['name'], $this->debug_moduleloadstacktraces)) {
@@ -534,7 +534,7 @@ class page_requirements_manager {
         } else {
             $modulename = $module['name'];
         }
-        return array_key_exists($modulename, $this->M_yui_loader->modules) ||
+        return array_key_exists($modulename, $this->YUI_config->modules) ||
                array_key_exists($modulename, $this->extramodules);
     }
 
@@ -1037,7 +1037,8 @@ class page_requirements_manager {
 var moodleConfigFn = function(me) {var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'.'+me.type;};
 var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-(skin|core)/.test(me.name)) {me.type = 'css';p = p.replace(/-(skin|core)/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/(\-(min|debug))/, '');if (/-skin/.test(me.name)) {p.splice(p.length,0,v,'assets','skins','sam', f);} else {p.splice(p.length,0,v,'assets', f);};} else {p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');};
 var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin');}};\n";
-        $js .= js_writer::set_variable('M.yui.loader', $this->M_yui_loader, false) . "\n";
+        $js .= js_writer::set_variable('YUI_config', $this->YUI_config, false) . "\n";
+        $js .= "M.yui.loader = {modules: {}};\n"; // Backwars compatibility only, not used
         $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
         $js = str_replace('"@GALLERYCONFIGFN@"', 'galleryConfigFn', $js);
         $js = str_replace('"@MOODLECONFIGFN@"', 'moodleConfigFn', $js);
@@ -1142,7 +1143,7 @@ var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.na
         $handlersjs = $this->get_event_handler_code();
 
         // there is no global Y, make sure it is available in your scope
-        $js = "YUI(M.yui.loader).use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
+        $js = "YUI().use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
 
         $output .= html_writer::script($js);
 
