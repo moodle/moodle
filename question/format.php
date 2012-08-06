@@ -898,3 +898,57 @@ class qformat_default {
                 $question->questiontextformat, $formatoptions), 0, false);
     }
 }
+
+class qformat_based_on_xml extends qformat_default {
+
+    /**
+     * Return the array moodle is expecting
+     * for an HTML text. No processing is done on $text.
+     * qformat classes that want to process $text
+     * for instance to import external images files
+     * and recode urls in $text must overwrite this method.
+     * @param array $text some HTML text string
+     * @return array with keys text, format and files.
+     */
+    public function text_field($text) {
+        return array(
+            'text' => trim($text),
+            'format' => FORMAT_HTML,
+            'files' => array(),
+        );
+    }
+
+    /**
+     * Return the value of a node, given a path to the node
+     * if it doesn't exist return the default value.
+     * @param array xml data to read
+     * @param array path path to node expressed as array
+     * @param mixed default
+     * @param bool istext process as text
+     * @param string error if set value must exist, return false and issue message if not
+     * @return mixed value
+     */
+    public function getpath($xml, $path, $default, $istext=false, $error='') {
+        foreach ($path as $index) {
+            if (!isset($xml[$index])) {
+                if (!empty($error)) {
+                    $this->error($error);
+                    return false;
+                } else {
+                    return $default;
+                }
+            }
+
+            $xml = $xml[$index];
+        }
+
+        if ($istext) {
+            if (!is_string($xml)) {
+                $this->error(get_string('invalidxml', 'qformat_xml'));
+            }
+            $xml = trim($xml);
+        }
+
+        return $xml;
+    }
+}
