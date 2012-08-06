@@ -280,7 +280,8 @@ function slasharguments($texexp, $md5) {
           <form action="algebradebug.php" method="get"
            target="inlineframe">
             <center>
-             <input type="text" name="algebra" size="50"
+             <label for="algebra" class="accesshide"><?php print_string('algebraicexpression', 'filter_algebra'); ?></label>
+             <input type="text" id="algebra" name="algebra" size="50"
                     value="sin(z)/(x^2+y^2)" />
             </center>
            <ol>
