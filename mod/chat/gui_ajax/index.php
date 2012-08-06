@@ -77,7 +77,7 @@ echo $OUTPUT->box('', '', 'chat-options');
 echo $OUTPUT->box('<ul id="messages-list"></ul>', '', 'chat-messages');
 $table = new html_table();
 $table->data = array(
-    array(' &raquo; <input type="text" disabled="true" id="input-message" value="Loading..." size="50" /> <input type="button" id="button-send" value="'.get_string('send', 'chat').'" /> <a id="choosetheme" href="###">'.get_string('themes').' &raquo; </a>')
+    array(' &raquo; <label class="accesshide" for="input-message">' . get_string('entermessage', 'chat') . ' </label><input type="text" disabled="true" id="input-message" value="Loading..." size="50" /> <input type="button" id="button-send" value="'.get_string('send', 'chat').'" /> <a id="choosetheme" href="###">'.get_string('themes').' &raquo; </a>')
 );
 echo $OUTPUT->box(html_writer::table($table), '', 'chat-input-area');
 echo $OUTPUT->box('', '', 'chat-notify');
