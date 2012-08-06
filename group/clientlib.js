@@ -77,7 +77,9 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
     */
 
     // Hide the updategroups input since AJAX will take care of this.
-    YAHOO.util.Dom.setStyle("updategroups", "display", "none");
+    YUI().use('yui2-dom', function (Y) {
+        Y.YUI2.util.Dom.setStyle("updategroups", "display", "none");
+    });
 }
 
 
@@ -129,7 +131,9 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
     };
 
     // Hide the updatemembers input since AJAX will take care of this.
-    YAHOO.util.Dom.setStyle("updatemembers", "display", "none");
+    YUI().use('yui2-dom', function (Y) {
+        Y.YUI2.util.Dom.setStyle("updatemembers", "display", "none");
+    });
 }
 
 /**
@@ -181,7 +185,10 @@ UpdatableMembersCombo.prototype.refreshMembers = function () {
 
     if(singleSelection) {
         var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&group="+groupId+"&act_ajax_getmembersingroup";
-        YAHOO.util.Connect.asyncRequest("GET", sUrl, this.connectCallback, null);
+        var callback = this.connectCallback;
+        YUI().use('yui2-connection', function (Y) {
+            Y.YUI2.util.Connect.asyncRequest("GET", sUrl, callback, null);
+        });
     }
 };
 
