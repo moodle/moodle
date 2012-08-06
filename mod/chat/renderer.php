@@ -41,11 +41,11 @@ class mod_chat_renderer extends plugin_renderer_base {
      */
     protected function render_event_message(event_message $eventmessage) {
         global $CFG;
-    
+
         if (file_exists($CFG->dirroot . '/mod/chat/gui_ajax/theme/'.$eventmessage->theme.'/config.php')) {
             include($CFG->dirroot . '/mod/chat/gui_ajax/theme/'.$eventmessage->theme.'/config.php');
         }
-        
+
         $patterns = array();
         $patterns[] = '___senderprofile___';
         $patterns[] = '___sender___';
