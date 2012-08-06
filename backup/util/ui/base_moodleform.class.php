@@ -96,7 +96,6 @@ abstract class base_moodleform extends moodleform {
      * @global moodle_page $PAGE
      */
     function definition_after_data() {
-        global $PAGE;
         $buttonarray=array();
         $buttonarray[] = $this->_form->createElement('submit', 'submitbutton', get_string($this->uistage->get_ui()->get_name().'stage'.$this->uistage->get_stage().'action', 'backup'), array('class'=>'proceedbutton'));
         if (!$this->uistage->is_first_stage()) {
@@ -106,13 +105,9 @@ abstract class base_moodleform extends moodleform {
         $this->_form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $this->_form->closeHeaderBefore('buttonar');
 
-        $config = new stdClass;
-        $config->title = get_string('confirmcancel', 'backup');
-        $config->question = get_string('confirmcancelquestion', 'backup');
-        $config->yesLabel = get_string('confirmcancelyes', 'backup');
-        $config->noLabel = get_string('confirmcancelno', 'backup');
-        $PAGE->requires->yui_module('moodle-backup-confirmcancel', 'M.core_backup.watch_cancel_buttons', array($config));
+        $this->_definition_finalized = true;
     }
+
     /**
      * Closes any open divs
      */
@@ -318,7 +313,17 @@ abstract class base_moodleform extends moodleform {
      * Displays the form
      */
     public function display() {
+        global $PAGE;
+
         $this->require_definition_after_data();
+
+        $config = new stdClass;
+        $config->title = get_string('confirmcancel', 'backup');
+        $config->question = get_string('confirmcancelquestion', 'backup');
+        $config->yesLabel = get_string('confirmcancelyes', 'backup');
+        $config->noLabel = get_string('confirmcancelno', 'backup');
+        $PAGE->requires->yui_module('moodle-backup-confirmcancel', 'M.core_backup.watch_cancel_buttons', array($config));
+
         parent::display();
     }
 
@@ -327,7 +332,6 @@ abstract class base_moodleform extends moodleform {
      */
     public function require_definition_after_data() {
         if (!$this->_definition_finalized) {
-            $this->_definition_finalized = true;
             $this->definition_after_data();
         }
     }
