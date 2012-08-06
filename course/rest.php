@@ -75,7 +75,6 @@ switch($requestmethod) {
 
         switch ($class) {
             case 'section':
-                require_capability('moodle/course:update', $coursecontext);
 
                 if (!$DB->record_exists('course_sections', array('course'=>$course->id, 'section'=>$id))) {
                     throw new moodle_exception('AJAX commands.php: Bad Section ID '.$id);
@@ -83,11 +82,13 @@ switch($requestmethod) {
 
                 switch ($field) {
                     case 'visible':
+                        require_capability('moodle/course:sectionvisibility', $coursecontext);
                         $resourcestotoggle = set_section_visible($course->id, $id, $value);
                         echo json_encode(array('resourcestotoggle' => $resourcestotoggle));
                         break;
 
                     case 'move':
+                        require_capability('moodle/course:update', $coursecontext);
                         move_section_to($course, $id, $value);
                         // See if format wants to do something about it
                         $libfile = $CFG->dirroot.'/course/format/'.$course->format.'/lib.php';
@@ -178,7 +179,7 @@ switch($requestmethod) {
             case 'course':
                 switch($field) {
                     case 'marker':
-                        require_capability('moodle/course:update', $coursecontext);
+                        require_capability('moodle/course:setcurrentsection', $coursecontext);
                         course_set_marker($course->id, $value);
                         break;
                 }
