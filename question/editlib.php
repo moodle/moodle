@@ -407,9 +407,16 @@ class question_bank_checkbox_column extends question_bank_column_base {
         echo '<input title="' . $this->strselect . '" type="checkbox" name="q' .
                 $question->id . '" id="checkq' . $question->id . '" value="1"/>';
         if ($this->firstrow) {
-            $PAGE->requires->js('/question/qbank.js');
-            $PAGE->requires->js_function_call('question_bank.init_checkbox_column', array(get_string('selectall'),
-                    get_string('deselectall'), 'checkq' . $question->id));
+            $PAGE->requires->js('/question/qengine.js');
+            $module = array(
+                'name'      => 'qbank',
+                'fullpath'  => '/question/qbank.js',
+                'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
+                'strings'   => array(),
+                'async'     => false,
+            );
+            $PAGE->requires->js_init_call('question_bank.init_checkbox_column', array(get_string('selectall'),
+                    get_string('deselectall'), 'checkq' . $question->id), false, $module);
             $this->firstrow = false;
         }
     }
@@ -887,8 +894,6 @@ class question_bank_view {
         $this->init_column_types();
         $this->init_columns($this->wanted_columns());
         $this->init_sort();
-
-        $PAGE->requires->yui2_lib('container');
     }
 
     protected function wanted_columns() {
@@ -1184,8 +1189,6 @@ class question_bank_view {
         if ($this->process_actions_needing_ui()) {
             return;
         }
-
-        $PAGE->requires->js('/question/qbank.js');
 
         // Category selection form
         echo $OUTPUT->heading(get_string('questionbank', 'question'), 2);
@@ -1744,7 +1747,7 @@ function require_login_in_context($contextorid = null){
  */
 function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null) {
     global $CFG, $PAGE, $OUTPUT;
-    $PAGE->requires->js('/question/qbank.js');
+
     echo '<div id="chooseqtypehead" class="hd">' . "\n";
     echo $OUTPUT->heading(get_string('chooseqtypetoadd', 'question'), 3);
     echo "</div>\n";
@@ -1780,7 +1783,16 @@ function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = nu
     echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
     echo "</div></form>\n";
     echo "</div>\n";
-    $PAGE->requires->js_init_call('qtype_chooser.init', array('chooseqtype'));
+
+    $PAGE->requires->js('/question/qengine.js');
+    $module = array(
+        'name'      => 'qbank',
+        'fullpath'  => '/question/qbank.js',
+        'requires'  => array('yui2-dom', 'yui2-event', 'yui2-container'),
+        'strings'   => array(),
+        'async'     => false,
+    );
+    $PAGE->requires->js_init_call('qtype_chooser.init', array('chooseqtype'), false, $module);
 }
 
 /**
@@ -1821,8 +1833,6 @@ function create_new_question_button($categoryid, $params, $caption, $tooltip = '
     $url = new moodle_url('/question/addquestion.php', $params);
     echo $OUTPUT->single_button($url, $caption, 'get', array('disabled'=>$disabled, 'title'=>$tooltip));
 
-    $PAGE->requires->yui2_lib('dragdrop');
-    $PAGE->requires->yui2_lib('container');
     if (!$choiceformprinted) {
         echo '<div id="qtypechoicecontainer">';
         print_choose_qtype_to_add_form(array());
