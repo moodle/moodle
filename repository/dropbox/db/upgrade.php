@@ -15,16 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- *
- * @package    repository_dropbox
- * @copyright  2010 Dongsheng Cai
- * @author     Dongsheng Cai <dongsheng@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @param int $oldversion the version we are upgrading from
+ * @return bool result
  */
+function xmldb_repository_dropbox_upgrade($oldversion) {
+    global $CFG, $DB;
 
-defined('MOODLE_INTERNAL') || die();
+    $dbman = $DB->get_manager();
 
-$plugin->version   = 2012080702;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2012061700;        // Requires this Moodle version
-$plugin->component = 'repository_dropbox'; // Full name of the plugin (used for diagnostics)
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
+
+    if ($oldversion < 2012080702) {
+        // Set the default value for dropbox_cachelimit
+        $value = get_config('dropbox', 'dropbox_cachelimit');
+        if (empty($value)) {
+            set_config('dropbox_cachelimit', 1024*1024, 'dropbox');
+        }
+        upgrade_plugin_savepoint(true, 2012080702, 'repository', 'dropbox');
+    }
+
+    return true;
+}
