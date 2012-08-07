@@ -292,6 +292,7 @@ $string['coursecompletions'] = 'Course completions';
 $string['coursecreators'] = 'Course creator';
 $string['coursecreatorsdescription'] = 'Course creators can create new courses.';
 $string['coursedeleted'] = 'Deleted course {$a}';
+$string['courseextendednamedisplay'] = '{$a->shortname} {$a->fullname}';
 $string['coursefiles'] = 'Legacy course files';
 $string['coursefilesedit'] = 'Edit legacy course files';
 $string['coursefileswarning'] = 'Course files are deprecated';
