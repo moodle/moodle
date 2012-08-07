@@ -2899,6 +2899,13 @@ class curl {
     }
 
     /**
+     * Resets the HTTP Request headers (to prepare for the new request)
+     */
+    public function resetHeader() {
+        $this->header = array();
+    }
+
+    /**
      * Set HTTP Request Header
      *
      * @param array $header
