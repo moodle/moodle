@@ -237,6 +237,15 @@ class statslib_daily_testcase extends advanced_testcase {
                             'statswrites' => 0,
                             'stattype'    => 'activity'
                         ),
+                        array( // Query 10 - default record
+                            'courseid'    => SITEID,
+                            'userid'      => 0,
+                            'roleid'      => 0,
+                            'timeend'     => $end,
+                            'statsreads'  => 0,
+                            'statswrites' => 0,
+                            'stattype'    => 'activity'
+                        ),
                     ),
                 ),
             ),
@@ -314,6 +323,15 @@ class statslib_daily_testcase extends advanced_testcase {
                         array( // Query 10
                             'courseid'    => SITEID,
                             'userid'      => $user1,
+                            'roleid'      => 0,
+                            'timeend'     => $end,
+                            'statsreads'  => 0,
+                            'statswrites' => 0,
+                            'stattype'    => 'activity'
+                        ),
+                        array( // Query 10 - default record
+                            'courseid'    => SITEID,
+                            'userid'      => 0,
                             'roleid'      => 0,
                             'timeend'     => $end,
                             'statsreads'  => 0,
@@ -429,6 +447,15 @@ class statslib_daily_testcase extends advanced_testcase {
                         array(  // Query 10
                             'courseid'    => SITEID,
                             'userid'      => $guest,
+                            'roleid'      => 0,
+                            'timeend'     => $end,
+                            'statsreads'  => 0,
+                            'statswrites' => 0,
+                            'stattype'    => 'activity'
+                        ),
+                        array( // Query 10 - default record
+                            'courseid'    => SITEID,
+                            'userid'      => 0,
                             'roleid'      => 0,
                             'timeend'     => $end,
                             'statsreads'  => 0,
@@ -557,7 +584,16 @@ class statslib_daily_testcase extends advanced_testcase {
                             'statswrites' => 0,
                             'stattype'    => 'activity'
                         ),
-                    ),
+                        array( // Query 10 - default record
+                            'courseid'    => SITEID,
+                            'userid'      => 0,
+                            'roleid'      => 0,
+                            'timeend'     => $end,
+                            'statsreads'  => 0,
+                            'statswrites' => 0,
+                            'stattype'    => 'activity'
+                        ),
+                     ),
                 ),
             ),
             array( // Test #5 - Login and view course - Tests queries 4, 6, 10, 12, 14  (read)
@@ -666,6 +702,15 @@ class statslib_daily_testcase extends advanced_testcase {
                         array(  // Query 10
                             'courseid'    => SITEID,
                             'userid'      => $user1,
+                            'roleid'      => 0,
+                            'timeend'     => $end,
+                            'statsreads'  => 0,
+                            'statswrites' => 0,
+                            'stattype'    => 'activity'
+                        ),
+                        array( // Query 10 - default record
+                            'courseid'    => SITEID,
+                            'userid'      => 0,
                             'roleid'      => 0,
                             'timeend'     => $end,
                             'statsreads'  => 0,
@@ -794,7 +839,16 @@ class statslib_daily_testcase extends advanced_testcase {
                             'statswrites' => 0,
                             'stattype'    => 'activity'
                         ),
-                     ),
+                        array( // Query 10 - default record
+                            'courseid'    => SITEID,
+                            'userid'      => 0,
+                            'roleid'      => 0,
+                            'timeend'     => $end,
+                            'statsreads'  => 0,
+                            'statswrites' => 0,
+                            'stattype'    => 'activity'
+                        ),
+                    ),
                 ),
             ),
             array( // Test #7 - Login and view course - Tests queries 13 (not enroled), 14 (not default)
@@ -924,6 +978,15 @@ class statslib_daily_testcase extends advanced_testcase {
                             'statswrites' => 0,
                             'stattype'    => 'activity'
                         ),
+                        array( // Query 10 - default record
+                            'courseid'    => SITEID,
+                            'userid'      => 0,
+                            'roleid'      => 0,
+                            'timeend'     => $end,
+                            'statsreads'  => 0,
+                            'statswrites' => 0,
+                            'stattype'    => 'activity'
+                        ),
                     ),
                 ),
             ),
@@ -1019,6 +1082,15 @@ class statslib_daily_testcase extends advanced_testcase {
                             'roleid'      => 0,
                             'timeend'     => $end,
                             'statsreads'  => 1,
+                            'statswrites' => 0,
+                            'stattype'    => 'activity'
+                        ),
+                        array( // Query 10 - default record
+                            'courseid'    => SITEID,
+                            'userid'      => 0,
+                            'roleid'      => 0,
+                            'timeend'     => $end,
+                            'statsreads'  => 0,
                             'statswrites' => 0,
                             'stattype'    => 'activity'
                         ),
@@ -1428,6 +1500,15 @@ class statslib_daily_testcase extends advanced_testcase {
                     'roleid'      => 0,
                     'timeend'     => $end,
                     'statsreads'  => 1,
+                    'statswrites' => 0,
+                    'stattype'    => 'activity'
+                ),
+                array( // Query 10 - default record
+                    'courseid'    => SITEID,
+                    'userid'      => 0,
+                    'roleid'      => 0,
+                    'timeend'     => $end,
+                    'statsreads'  => 0,
                     'statswrites' => 0,
                     'stattype'    => 'activity'
                 ),
