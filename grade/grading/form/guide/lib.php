@@ -339,7 +339,9 @@ class gradingform_guide_controller extends gradingform_controller {
                 $modulename = substr($modulename, 4);
                 if ($dbman->table_exists($modulename)) {
                     $cm = get_coursemodule_from_id($modulename, $context->instanceid);
-                    $this->moduleinstance = $DB->get_record($modulename, array("id"=>$cm->instance));
+                    if (!empty($cm)) { // This should only occur when the course is being deleted.
+                        $this->moduleinstance = $DB->get_record($modulename, array("id"=>$cm->instance));
+                    }
                 }
             }
         }
