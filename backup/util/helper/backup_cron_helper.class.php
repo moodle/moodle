@@ -110,7 +110,7 @@ abstract class backup_cron_automated_helper {
             $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup($admin->timezone, $now);
             $showtime = "undefined";
             if ($nextstarttime > 0) {
-                $showtime = date('r', $nextstarttime);
+                $showtime = userdate($nextstarttime,"",$admin->timezone);
             }
 
             $rs = $DB->get_recordset('course');
@@ -124,14 +124,7 @@ abstract class backup_cron_automated_helper {
                 }
 
                 // Skip courses that do not yet need backup
-                $skipped = !(($backupcourse->nextstarttime > 0 && $backupcourse->nextstarttime < $now) || $rundirective == self::RUN_IMMEDIATELY);
-                if ($skipped && $backupcourse->nextstarttime != $nextstarttime) {
-                    $backupcourse->nextstarttime = $nextstarttime;
-                    $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_SKIPPED;
-                    $DB->update_record('backup_courses', $backupcourse);
-                    mtrace('Backup of \'' . $course->fullname . '\' is scheduled on ' . $showtime);
-                }
-
+                $skipped = !(($backupcourse->nextstarttime >= 0 && $backupcourse->nextstarttime < $now) || $rundirective == self::RUN_IMMEDIATELY);
                 // Skip backup of unavailable courses that have remained unmodified in a month
                 if (!$skipped && empty($course->visible) && ($now - $course->timemodified) > 31*24*60*60) {  //Hidden + settings were unmodified last month
                     //Check log if there were any modifications to the course content
@@ -146,10 +139,9 @@ abstract class backup_cron_automated_helper {
                         $skipped = true;
                     }
                 }
-
                 //Now we backup every non-skipped course
                 if (!$skipped) {
-                    mtrace('Backing up '.$course->fullname.'...');
+                    mtrace('Backing up '.$course->fullname, '...');
 
                     //We have to send a email because we have included at least one backup
                     $emailpending = true;
@@ -278,47 +270,38 @@ abstract class backup_cron_automated_helper {
     /**
      * Works out the next time the automated backup should be run.
      *
-     * @param mixed $timezone user timezone
-     * @param int $now timestamp, should not be in the past, most likely time()
-     * @return int timestamp of the next execution at server time
+     * @param mixed $timezone
+     * @param int $now
+     * @return int
      */
     public static function calculate_next_automated_backup($timezone, $now) {
 
-        $result = 0;
+        $result = -1;
         $config = get_config('backup');
-        $autohour = $config->backup_auto_hour;
-        $automin = $config->backup_auto_minute;
-
-        // Gets the user time relatively to the server time.
+        $midnight = usergetmidnight($now, $timezone);
         $date = usergetdate($now, $timezone);
-        $usertime = mktime($date['hours'], $date['minutes'], $date['seconds'], $date['mon'], $date['mday'], $date['year']);
-        $diff = $now - $usertime;
 
-        // Get number of days (from user's today) to execute backups.
+        // Get number of days (from today) to execute backups
         $automateddays = substr($config->backup_auto_weekdays, $date['wday']) . $config->backup_auto_weekdays;
-        $daysfromnow = strpos($automateddays, "1");
+        $daysfromtoday = strpos($automateddays, "1", 1);
 
-        // Error, there are no days to schedule the backup for.
-        if ($daysfromnow === false) {
-            return 0;
+        // If we can't find the next day, we set it to tomorrow
+        if (empty($daysfromtoday)) {
+            $daysfromtoday = 1;
         }
 
-        // Checks if the date would happen in the future (of the user).
-        $userresult = mktime($autohour, $automin, 0, $date['mon'], $date['mday'] + $daysfromnow, $date['year']);
-        if ($userresult <= $usertime) {
-            // If not, we skip the first scheduled day, that should fix it.
-            $daysfromnow = strpos($automateddays, "1", 1);
-            $userresult = mktime($autohour, $automin, 0, $date['mon'], $date['mday'] + $daysfromnow, $date['year']);
+        // If some day has been found
+        if ($daysfromtoday !== false) {
+            // Calculate distance
+            $dist = ($daysfromtoday * 86400) +                // Days distance
+                    ($config->backup_auto_hour * 3600) +      // Hours distance
+                    ($config->backup_auto_minute * 60);       // Minutes distance
+            $result = $midnight + $dist;
         }
 
-        // Now we generate the time relative to the server.
-        $result = $userresult + $diff;
-
-        // If that time is past, call the function recursively to obtain the next valid day.
-        if ($result <= $now) {
-            // Checking time() in here works, but makes PHPUnit Tests extremely hard to predict.
-            // $now should never be earlier than time() anyway...
-            $result = self::calculate_next_automated_backup($timezone, $now + DAYSECS);
+        // If that time is past, call the function recursively to obtain the next valid day
+        if ($result > 0 && $result < time()) {
+            $result = self::calculate_next_automated_backup($timezone, $result);
         }
 
         return $result;
@@ -428,12 +411,7 @@ abstract class backup_cron_automated_helper {
 
         $config = get_config('backup');
         $active = (int)$config->backup_auto_active;
-        $weekdays = (string)$config->backup_auto_weekdays;
-
-        // In case of automated backup also check that it is scheduled for at least one weekday.
-        if ($active === self::AUTO_BACKUP_DISABLED ||
-                ($rundirective == self::RUN_ON_SCHEDULE && $active === self::AUTO_BACKUP_MANUAL) ||
-                ($rundirective == self::RUN_ON_SCHEDULE && strpos($weekdays, '1') === false)) {
+        if ($active === self::AUTO_BACKUP_DISABLED || ($rundirective == self::RUN_ON_SCHEDULE && $active === self::AUTO_BACKUP_MANUAL)) {
             return self::STATE_DISABLED;
         } else if (!empty($config->backup_auto_running)) {
             // Detect if the backup_auto_running semaphore is a valid one
