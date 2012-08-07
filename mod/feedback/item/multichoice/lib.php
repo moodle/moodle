@@ -763,7 +763,8 @@ class feedback_item_multichoice extends feedback_item_base {
 
         ?>
         <li class="feedback_item_select_<?php echo $hv.'_'.$align;?>">
-            <select name="<?php echo $item->typ .'_' . $item->id;?>[]" size="1">
+            <label class="accesshide" for="<?php echo $item->typ .'_' . $item->id;?>"><?php echo $item->name; ?></label>
+            <select  id="<?php echo $item->typ .'_' . $item->id;?>" name="<?php echo $item->typ .'_' . $item->id;?>[]" size="1">
                 <option value="0">&nbsp;</option>
                 <?php
                 $index = 1;
