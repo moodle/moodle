@@ -174,7 +174,7 @@ class repository_webdav extends repository {
         $choices = array();
         $choices['none'] = get_string('none');
         $choices['basic'] = get_string('webdavbasicauth', 'repository_webdav');
-        //$choices['digest'] = get_string('webdavdigestauth', 'repository_webdav');
+        $choices['digest'] = get_string('webdavdigestauth', 'repository_webdav');
         $mform->addElement('select', 'webdav_auth', get_string('authentication', 'admin'), $choices);
         $mform->addRule('webdav_auth', get_string('required'), 'required', null, 'client');
 
