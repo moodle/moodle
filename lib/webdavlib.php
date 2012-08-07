@@ -44,6 +44,7 @@ class webdav_client {
     private $_server;
     private $_protocol = 'HTTP/1.1';
     private $_port = 80;
+    private $_socket = '';
     private $_path ='/';
     private $_auth = false;
     private $_user;
@@ -57,6 +58,7 @@ class webdav_client {
     private $_req;
     private $_resp_status;
     private $_parser;
+    private $_parserid;
     private $_xmltree;
     private $_tree;
     private $_ls = array();
@@ -79,7 +81,7 @@ class webdav_client {
     /**
      * Constructor - Initialise class variables
      */
-    function __construct($server = '', $user = '', $pass = '', $auth = false) {
+    function __construct($server = '', $user = '', $pass = '', $auth = false, $socket = '') {
         if (!empty($server)) {
             $this->_server = $server;
         }
@@ -88,6 +90,7 @@ class webdav_client {
             $this->pass = $pass;
         }
         $this->_auth = $auth;
+        $this->_socket = $socket;
     }
     public function __set($key, $value) {
         $property = '_' . $key;
@@ -154,7 +157,7 @@ class webdav_client {
     function open() {
         // let's try to open a socket
         $this->_error_log('open a socket connection');
-        $this->sock = fsockopen($this->_server, $this->_port, $this->_errno, $this->_errstr, $this->_socket_timeout);
+        $this->sock = fsockopen($this->_socket . $this->_server, $this->_port, $this->_errno, $this->_errstr, $this->_socket_timeout);
         set_time_limit(30);
         if (is_resource($this->sock)) {
             socket_set_blocking($this->sock, true);
@@ -612,9 +615,10 @@ class webdav_client {
                     if (strcmp($response['header']['Content-Type'], 'text/xml; charset="utf-8"') == 0) {
                         // ok let's get the content of the xml stuff
                         $this->_parser = xml_parser_create_ns();
+                        $this->_parserid = (int) $this->_parser;
                         // forget old data...
-                        unset($this->_lock[$this->_parser]);
-                        unset($this->_xmltree[$this->_parser]);
+                        unset($this->_lock[$this->_parserid]);
+                        unset($this->_xmltree[$this->_parserid]);
                         xml_parser_set_option($this->_parser,XML_OPTION_SKIP_WHITE,0);
                         xml_parser_set_option($this->_parser,XML_OPTION_CASE_FOLDING,0);
                         xml_set_object($this->_parser, $this);
@@ -630,8 +634,8 @@ class webdav_client {
                         // Free resources
                         xml_parser_free($this->_parser);
                         // add status code to array
-                        $this->_lock[$this->_parser]['status'] = 200;
-                        return $this->_lock[$this->_parser];
+                        $this->_lock[$this->_parserid]['status'] = 200;
+                        return $this->_lock[$this->_parserid];
 
                     } else {
                         print 'Missing Content-Type: text/xml header in response.<br>';
@@ -709,9 +713,10 @@ class webdav_client {
                     if (strcmp($response['header']['Content-Type'], 'text/xml; charset="utf-8"') == 0) {
                         // ok let's get the content of the xml stuff
                         $this->_parser = xml_parser_create_ns();
+                        $this->_parserid = (int) $this->_parser;
                         // forget old data...
-                        unset($this->_delete[$this->_parser]);
-                        unset($this->_xmltree[$this->_parser]);
+                        unset($this->_delete[$this->_parserid]);
+                        unset($this->_xmltree[$this->_parserid]);
                         xml_parser_set_option($this->_parser,XML_OPTION_SKIP_WHITE,0);
                         xml_parser_set_option($this->_parser,XML_OPTION_CASE_FOLDING,0);
                         xml_set_object($this->_parser, $this);
@@ -728,8 +733,8 @@ class webdav_client {
 
                         // Free resources
                         xml_parser_free($this->_parser);
-                        $this->_delete[$this->_parser]['status'] = $response['status']['status-code'];
-                        return $this->_delete[$this->_parser];
+                        $this->_delete[$this->_parserid]['status'] = $response['status']['status-code'];
+                        return $this->_delete[$this->_parserid];
 
                     } else {
                         print 'Missing Content-Type: text/xml header in response.<br>';
@@ -800,9 +805,10 @@ EOD;
                     if (preg_match('#(application|text)/xml;\s?charset=[\'\"]?utf-8[\'\"]?#i', $response['header']['Content-Type'])) {
                         // ok let's get the content of the xml stuff
                         $this->_parser = xml_parser_create_ns('UTF-8');
+                        $this->_parserid = (int) $this->_parser;
                         // forget old data...
-                        unset($this->_ls[$this->_parser]);
-                        unset($this->_xmltree[$this->_parser]);
+                        unset($this->_ls[$this->_parserid]);
+                        unset($this->_xmltree[$this->_parserid]);
                         xml_parser_set_option($this->_parser,XML_OPTION_SKIP_WHITE,0);
                         xml_parser_set_option($this->_parser,XML_OPTION_CASE_FOLDING,0);
                         // xml_parser_set_option($this->_parser,XML_OPTION_TARGET_ENCODING,'UTF-8');
@@ -819,7 +825,7 @@ EOD;
 
                         // Free resources
                         xml_parser_free($this->_parser);
-                        $arr = $this->_ls[$this->_parser];
+                        $arr = $this->_ls[$this->_parserid];
                         return $arr;
                     } else {
                         $this->_error_log('Missing Content-Type: text/xml header in response!!');
@@ -1035,7 +1041,8 @@ EOD;
 
     private function _endElement($parser, $name) {
         // end tag was found...
-        $this->_xmltree[$parser] = substr($this->_xmltree[$parser],0, strlen($this->_xmltree[$parser]) - (strlen($name) + 1));
+        $parserid = (int) $parser;
+        $this->_xmltree[$parserid] = substr($this->_xmltree[$parserid],0, strlen($this->_xmltree[$parserid]) - (strlen($name) + 1));
     }
 
     /**
@@ -1050,19 +1057,20 @@ EOD;
      */
     private function _propfind_startElement($parser, $name, $attrs) {
         // lower XML Names... maybe break a RFC, don't know ...
+        $parserid = (int) $parser;
 
         $propname = strtolower($name);
-        if (!empty($this->_xmltree[$parser])) {
-            $this->_xmltree[$parser] .= $propname . '_';
+        if (!empty($this->_xmltree[$parserid])) {
+            $this->_xmltree[$parserid] .= $propname . '_';
         } else {
-            $this->_xmltree[$parser] = $propname . '_';
+            $this->_xmltree[$parserid] = $propname . '_';
         }
 
         // translate xml tree to a flat array ...
-        switch($this->_xmltree[$parser]) {
+        switch($this->_xmltree[$parserid]) {
         case 'dav::multistatus_dav::response_':
             // new element in mu
-            $this->_ls_ref =& $this->_ls[$parser][];
+            $this->_ls_ref =& $this->_ls[$parserid][];
             break;
         case 'dav::multistatus_dav::response_dav::href_':
             $this->_ls_ref_cdata = &$this->_ls_ref['href'];
@@ -1110,7 +1118,7 @@ EOD;
 
         default:
             // handle unknown xml elements...
-            $this->_ls_ref_cdata = &$this->_ls_ref[$this->_xmltree[$parser]];
+            $this->_ls_ref_cdata = &$this->_ls_ref[$this->_xmltree[$parserid]];
         }
     }
 
@@ -1145,14 +1153,15 @@ EOD;
      */
     private function _delete_startElement($parser, $name, $attrs) {
         // lower XML Names... maybe break a RFC, don't know ...
+        $parserid = (int) $parser;
         $propname = strtolower($name);
-        $this->_xmltree[$parser] .= $propname . '_';
+        $this->_xmltree[$parserid] .= $propname . '_';
 
         // translate xml tree to a flat array ...
-        switch($this->_xmltree[$parser]) {
+        switch($this->_xmltree[$parserid]) {
         case 'dav::multistatus_dav::response_':
             // new element in mu
-            $this->_delete_ref =& $this->_delete[$parser][];
+            $this->_delete_ref =& $this->_delete[$parserid][];
             break;
         case 'dav::multistatus_dav::response_dav::href_':
             $this->_delete_ref_cdata = &$this->_ls_ref['href'];
@@ -1160,7 +1169,7 @@ EOD;
 
         default:
             // handle unknown xml elements...
-            $this->_delete_cdata = &$this->_delete_ref[$this->_xmltree[$parser]];
+            $this->_delete_cdata = &$this->_delete_ref[$this->_xmltree[$parserid]];
         }
     }
 
@@ -1196,8 +1205,9 @@ EOD;
      */
     private function _lock_startElement($parser, $name, $attrs) {
         // lower XML Names... maybe break a RFC, don't know ...
+        $parserid = (int) $parser;
         $propname = strtolower($name);
-        $this->_xmltree[$parser] .= $propname . '_';
+        $this->_xmltree[$parserid] .= $propname . '_';
 
         // translate xml tree to a flat array ...
         /*
@@ -1206,10 +1216,10 @@ EOD;
         dav::prop_dav::lockdiscovery_dav::activelock_dav::timeout_=
         dav::prop_dav::lockdiscovery_dav::activelock_dav::locktoken_dav::href_=
          */
-        switch($this->_xmltree[$parser]) {
+        switch($this->_xmltree[$parserid]) {
         case 'dav::prop_dav::lockdiscovery_dav::activelock_':
             // new element
-            $this->_lock_ref =& $this->_lock[$parser][];
+            $this->_lock_ref =& $this->_lock[$parserid][];
             break;
         case 'dav::prop_dav::lockdiscovery_dav::activelock_dav::locktype_dav::write_':
             $this->_lock_ref_cdata = &$this->_lock_ref['locktype'];
@@ -1235,7 +1245,7 @@ EOD;
             break;
         default:
             // handle unknown xml elements...
-            $this->_lock_cdata = &$this->_lock_ref[$this->_xmltree[$parser]];
+            $this->_lock_cdata = &$this->_lock_ref[$this->_xmltree[$parserid]];
 
         }
     }
@@ -1251,8 +1261,9 @@ EOD;
      * @access private
      */
     private function _lock_cData($parser, $cdata) {
+        $parserid = (int) $parser;
         if (trim($cdata) <> '') {
-            // $this->_error_log(($this->_xmltree[$parser]) . '='. htmlentities($cdata));
+            // $this->_error_log(($this->_xmltree[$parserid]) . '='. htmlentities($cdata));
             $this->_lock_ref_cdata .= $cdata;
         } else {
             // do nothing
@@ -1392,7 +1403,12 @@ EOD;
                 fread($this->sock, 1);                           // also drop off the Line Feed
                 $chunk_size=hexdec($chunk_size);                // convert to a number in decimal system
                 if ($chunk_size > 0) {
-                    $buffer .= fread($this->sock,$chunk_size);
+                    $read = 0;
+                    // Reading the chunk in one bite is not secure, we read it byte by byte.
+                    while ($read < $chunk_size) {
+                        $buffer .= fread($this->sock, 1);
+                        $read++;
+                    }
                 }
                 fread($this->sock, 2);                            // ditch the CRLF that trails the chunk
             } while ($chunk_size);                            // till we reach the 0 length chunk (end marker)

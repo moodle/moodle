@@ -38,24 +38,27 @@ class repository_webdav extends repository {
         if ($this->options['webdav_auth'] == 'none') {
             $this->options['webdav_auth'] = false;
         }
-        $this->dav = new webdav_client($this->options['webdav_server'], $this->options['webdav_user'], $this->options['webdav_password'], $this->options['webdav_auth']);
         if (empty($this->options['webdav_type'])) {
             $this->webdav_type = '';
         } else {
             $this->webdav_type = 'ssl://';
         }
         if (empty($this->options['webdav_port'])) {
-            if (empty($this->webdav_type)) {
-                $this->dav->port = 80;
-            } else {
-                $this->dav->port = 443;
-            }
             $port = '';
+            if (empty($this->webdav_type)) {
+                $this->webdav_port = 80;
+            } else {
+                $this->webdav_port = 443;
+                $port = ':443';
+            }
         } else {
-            $this->dav->port = $this->options['webdav_port'];
-            $port = ':'.$this->options['webdav_port'];
+            $this->webdav_port = $this->options['webdav_port'];
+            $port = ':' . $this->webdav_port;
         }
         $this->webdav_host = $this->webdav_type.$this->options['webdav_server'].$port;
+        $this->dav = new webdav_client($this->options['webdav_server'], $this->options['webdav_user'],
+                $this->options['webdav_password'], $this->options['webdav_auth'], $this->webdav_type);
+        $this->dav->port = $this->webdav_port;
         $this->dav->debug = false;
     }
     public function check_login() {
@@ -103,9 +106,10 @@ class repository_webdav extends repository {
             } else {
                 $partern = '#https://'.$this->webdav_host.'/#';
             }
-            $path = '/'.preg_replace($partern, '', $path);
+            $path = '/'.preg_replace($partern, '', ltrim($path, '/'));
             $dir = $this->dav->ls($path);
         }
+
         if (!is_array($dir)) {
             return $ret;
         }
@@ -116,9 +120,10 @@ class repository_webdav extends repository {
             } else {
                 $filedate = '';
             }
+
             if (!empty($v['resourcetype']) && $v['resourcetype'] == 'collection') {
                 // a folder
-                if (ltrim($path, '/') != ltrim($v['href'], '/')) {
+                if (ltrim($path, '/') != urldecode(ltrim($v['href'], '/'))) {
                     $matches = array();
                     preg_match('#(\w+)$#i', $v['href'], $matches);
                     if (!empty($matches[1])) {
