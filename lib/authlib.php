@@ -278,15 +278,15 @@ class auth_plugin_base {
         //override when can signup
         print_error('mustbeoveride', 'debug', '', 'user_signup()' );
     }
-    
+
     /**
-     * Return a form to capture user details for account creation. 
+     * Return a form to capture user details for account creation.
      * This is used in /login/signup.php.
      * @return moodle_form A form which edits a record from the user table.
      */
     function signup_form() {
         global $CFG;
-        
+
         require_once($CFG->dirroot.'/login/signup_form.php');
         return new login_signup_form(null, null, 'post', '', array('autocomplete'=>'on'));
     }
