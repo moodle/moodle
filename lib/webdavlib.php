@@ -75,6 +75,9 @@ class webdav_client {
     private $_body='';
     private $_connection_closed = false;
     private $_maxheaderlenth = 1000;
+    private $_digestchallenge = null;
+    private $_cnonce = '';
+    private $_nc = 0;
 
     /**#@-*/
 
@@ -1304,7 +1307,6 @@ EOD;
      * @access private
      */
     private function create_basic_request($method) {
-        $request = '';
         $this->header_add(sprintf('%s %s %s', $method, $this->_path, $this->_protocol));
         $this->header_add(sprintf('Host: %s:%s', $this->_server, $this->_port));
         //$request .= sprintf('Connection: Keep-Alive');
@@ -1313,7 +1315,102 @@ EOD;
         $this->header_add('TE: Trailers');
         if ($this->_auth == 'basic') {
             $this->header_add(sprintf('Authorization: Basic %s', base64_encode("$this->_user:$this->_pass")));
+        } else if ($this->_auth == 'digest') {
+            if ($signature = $this->digest_signature($method)){
+                $this->header_add($signature);
+            }
         }
+    }
+
+    /**
+     * Reads the header, stores the challenge information
+     *
+     * @return void
+     */
+    private function digest_auth() {
+
+        $headers = array();
+        $headers[] = sprintf('%s %s %s', 'HEAD', $this->_path, $this->_protocol);
+        $headers[] = sprintf('Host: %s:%s', $this->_server, $this->_port);
+        $headers[] = sprintf('User-Agent: %s', $this->_user_agent);
+        $headers = implode("\r\n", $headers);
+        $headers .= "\r\n\r\n";
+        fputs($this->sock, $headers);
+
+        // Reads the headers.
+        $i = 0;
+        $header = '';
+        do {
+            $header .= fread($this->sock, 1);
+            $i++;
+        } while (!preg_match('/\\r\\n\\r\\n$/', $header, $matches) && $i < $this->_maxheaderlenth);
+
+        // Analyse the headers.
+        $digest = array();
+        $splitheaders = explode("\r\n", $header);
+        foreach ($splitheaders as $line) {
+            if (!preg_match('/^WWW-Authenticate: Digest/', $line)) {
+                continue;
+            }
+            $line = substr($line, strlen('WWW-Authenticate: Digest '));
+            $params = explode(',', $line);
+            foreach ($params as $param) {
+                list($key, $value) = explode('=', trim($param), 2);
+                $digest[$key] = trim($value, '"');
+            }
+            break;
+        }
+
+        $this->_digestchallenge = $digest;
+    }
+
+    /**
+     * Generates the digest signature
+     *
+     * @return string signature to add to the headers
+     * @access private
+     */
+    private function digest_signature($method) {
+        if (!$this->_digestchallenge) {
+            $this->digest_auth();
+        }
+
+        $signature = array();
+        $signature['username'] = '"' . $this->_user . '"';
+        $signature['realm'] = '"' . $this->_digestchallenge['realm'] . '"';
+        $signature['nonce'] = '"' . $this->_digestchallenge['nonce'] . '"';
+        $signature['uri'] = '"' . $this->_path . '"';
+
+        if (isset($this->_digestchallenge['algorithm']) && $this->_digestchallenge['algorithm'] != 'MD5') {
+            $this->_error_log('Algorithm other than MD5 are not supported');
+            return false;
+        }
+
+        $a1 = $this->_user . ':' . $this->_digestchallenge['realm'] . ':' . $this->_pass;
+        $a2 = $method . ':' . $this->_path;
+
+        if (!isset($this->_digestchallenge['qop'])) {
+            $signature['response'] = '"' . md5(md5($a1) . ':' . $this->_digestchallenge['nonce'] . ':' . md5($a2)) . '"';
+        } else {
+            // Assume QOP is auth
+            if (empty($this->_cnonce)) {
+                $this->_cnonce = random_string();
+                $this->_nc = 0;
+            }
+            $this->_nc++;
+            $nc = sprintf('%08d', $this->_nc);
+            $signature['cnonce'] = '"' . $this->_cnonce . '"';
+            $signature['nc'] = '"' . $nc . '"';
+            $signature['qop'] = '"' . $this->_digestchallenge['qop'] . '"';
+            $signature['response'] = '"' . md5(md5($a1) . ':' . $this->_digestchallenge['nonce'] . ':' .
+                    $nc . ':' . $this->_cnonce . ':' . $this->_digestchallenge['qop'] . ':' . md5($a2)) . '"';
+        }
+
+        $response = array();
+        foreach ($signature as $key => $value) {
+            $response[] = "$key=$value";
+        }
+        return 'Authorization: Digest ' . implode(', ', $response);
     }
 
     /**
@@ -1384,7 +1481,10 @@ EOD;
             // Therefore we need to reopen the socket, before are sending the next request...
             $this->_error_log('Connection: close found');
             $this->_connection_closed = true;
+        } else if (preg_match('@^HTTP/1\.(1|0) 401 @', $header)) {
+            $this->_error_log('The server requires an authentication');
         }
+
         // check how to get the data on socket stream
         // chunked or content-length (HTTP/1.1) or
         // one block until feof is received (HTTP/1.0)
@@ -1488,6 +1588,7 @@ EOD;
         // $this->_buffer = $header . "\r\n\r\n" . $buffer;
         $this->_error_log($this->_header);
         $this->_error_log($this->_body);
+
     }
 
 
