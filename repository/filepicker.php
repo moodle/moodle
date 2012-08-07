@@ -89,11 +89,9 @@ if ($repo_id) {
 }
 
 $context = context::instance_by_id($contextid);
-$moodle_maxbytes = get_user_max_upload_file_size($context);
-// to prevent maxbytes greater than moodle maxbytes setting
-if ($maxbytes == 0 || $maxbytes>=$moodle_maxbytes) {
-    $maxbytes = $moodle_maxbytes;
-}
+
+// Make sure maxbytes passed is within site filesize limits.
+$maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $course->maxbytes, $maxbytes);
 
 $params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs, 'sesskey'=>sesskey());
 $params['action'] = 'browse';
