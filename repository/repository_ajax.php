@@ -180,10 +180,12 @@ switch ($action) {
         // allow external links in url element all the time
         $allowexternallink = ($allowexternallink || ($env == 'url'));
 
+        $reference = $repo->get_file_reference($source);
+
         // Use link of the files
         if ($allowexternallink and $linkexternal === 'yes' and ($repo->supported_returntypes() & FILE_EXTERNAL)) {
             // use external link
-            $link = $repo->get_link($source);
+            $link = $repo->get_link($reference);
             $info = array();
             $info['file'] = $saveas_filename;
             $info['type'] = 'link';
@@ -223,8 +225,6 @@ switch ($action) {
             // {@link repository::build_source_field()}
             $sourcefield = $repo->get_file_source_info($source);
             $record->source = $repo::build_source_field($sourcefield);
-
-            $reference = $repo->get_file_reference($source);
 
             // If file is already a reference, set $source = file source, $repo = file repository
             // note that in this case user may not have permission to access the source file directly
