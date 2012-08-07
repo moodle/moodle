@@ -289,6 +289,9 @@ class oauth_helper {
         $oauth_params = $this->prepare_oauth_parameters($url, array('oauth_token'=>$token), $method);
         $this->setup_oauth_http_header($oauth_params);
         $content = call_user_func_array(array($this->http, strtolower($method)), array($url, $params, $this->http_options));
+        // reset http header and options to prepare for the next request
+        $this->http->resetHeader();
+        // return request return value
         return $content;
     }
 
