@@ -66,7 +66,7 @@ class blog_entry implements renderable {
     public $form;
     public $tags = array();
 
-    // Data needed to render the entry
+    /** @var StdClass Data needed to render the entry */
     public $renderable;
 
     // Methods
@@ -104,12 +104,12 @@ class blog_entry implements renderable {
 
         $this->renderable->user = $DB->get_record('user', array('id'=>$this->userid));
 
-        // Entry comments
+        // Entry comments.
         if (!empty($CFG->usecomments) and $CFG->blogusecomments) {
             require_once($CFG->dirroot . '/comment/lib.php');
 
             $cmt = new stdClass();
-            $cmt->context = get_context_instance(CONTEXT_USER, $this->userid);
+            $cmt->context = context_user::instance($this->userid);
             $cmt->courseid = $PAGE->course->id;
             $cmt->area = 'format_blog';
             $cmt->itemid = $this->id;
@@ -118,73 +118,69 @@ class blog_entry implements renderable {
             $this->renderable->comment = new comment($cmt);
         }
 
-        // Post data
         $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog', 'post', $this->id);
 
-        $options = array('overflowdiv'=>true);
-        $this->renderable->body = format_text($this->summary, $this->summaryformat, $options);
-        $this->renderable->title = format_string($this->subject);
-        $this->renderable->userid = $this->userid;
-        $this->renderable->author = fullname($this->renderable->user);
-        $this->renderable->created = userdate($this->created);
-        if ($this->created != $this->lastmodified) {
-            $this->renderable->lastmod = userdate($this->lastmodified);
-        }
-        $this->renderable->publishstate = $this->publishstate;
-
-        // External blog
+        // External blog link.
         if ($this->uniquehash && $this->content) {
             if ($externalblog = $DB->get_record('blog_external', array('id' => $this->content))) {
                 $urlparts = parse_url($externalblog->url);
-                $this->renderable->externalblogtext = get_string('retrievedfrom', 'blog').get_string('labelsep', 'langconfig').html_writer::link($urlparts['scheme'].'://'.$urlparts['host'], $externalblog->name);
+                $this->renderable->externalblogtext = get_string('retrievedfrom', 'blog') . get_string('labelsep', 'langconfig');
+                $this->renderable->externalblogtext .= html_writer::link($urlparts['scheme'] . '://'.$urlparts['host'], $externalblog->name);
             }
         }
 
-        // Check to see if the entry is unassociated with group/course level access
+        // Retrieve associations
         $this->renderable->unassociatedentry = false;
-        if (!empty($CFG->useblogassociations) && ($this->publishstate == 'group' || $this->publishstate == 'course')) {
-            if (!$DB->record_exists('blog_association', array('blogid' => $this->id))) {
-                $this->renderable->unassociatedentry = true;
-            }
-        }
-
-        // Retrieve associations in case they're needed early
         if (!empty($CFG->useblogassociations)) {
-            $associations = $DB->get_records('blog_association', array('blogid' => $this->id));
 
-            // Adding the entry associations data
-            if ($associations) {
+            // Adding the entry associations data.
+            if ($associations = $associations = $DB->get_records('blog_association', array('blogid' => $this->id))) {
+
+                // Check to see if the entry is unassociated with group/course level access.
+                if ($this->publishstate == 'group' || $this->publishstate == 'course') {
+                    $this->renderable->unassociatedentry = true;
+                }
+
                 foreach ($associations as $key => $assocrec) {
-                    $context = get_context_instance_by_id($assocrec->contextid);
 
-                    // Course associations
+                    if (!$context = context::instance_by_id($assocrec->contextid, IGNORE_MISSING)) {
+                        unset($associations[$key]);
+                        continue;
+                    }
+
+                    // The renderer will need the contextlevel of the association.
+                    $associations[$key]->contextlevel = $context->contextlevel;
+
+                    // Course associations.
                     if ($context->contextlevel ==  CONTEXT_COURSE) {
                         $instancename = $DB->get_field('course', 'shortname', array('id' => $context->instanceid)); //TODO: performance!!!!
 
-                        $associations[$key]->type = get_string('course');
                         $associations[$key]->url = $assocurl = new moodle_url('/course/view.php', array('id' => $context->instanceid));
                         $associations[$key]->text = $instancename;
                         $associations[$key]->icon = new pix_icon('i/course', $associations[$key]->text);
                     }
 
-                    // Mod associations
+                    // Mod associations.
                     if ($context->contextlevel ==  CONTEXT_MODULE) {
 
-                        $modinfo = $DB->get_record('course_modules', array('id' => $context->instanceid));
-                        $modname = $DB->get_field('modules', 'name', array('id' => $modinfo->module));
-                        $instancename = $DB->get_field($modname, 'name', array('id' => $modinfo->instance)); //TODO: performance!!!!
+                        // Getting the activity type and the activity instance id
+                        $sql = 'SELECT cm.instance, m.name FROM {course_modules} cm
+                                  JOIN {modules} m ON m.id = cm.module
+                                 WHERE cm.id = :cmid';
+                        $modinfo = $DB->get_record_sql($sql, array('cmid' => $context->instanceid));
+                        $instancename = $DB->get_field($modinfo->name, 'name', array('id' => $modinfo->instance)); //TODO: performance!!!!
 
-                        $associations[$key]->type = get_string('modulename', $modname);
-                        $associations[$key]->url = new moodle_url('/mod/'.$modname.'/view.php', array('id' => $modinfo->id));
+                        $associations[$key]->type = get_string('modulename', $modinfo->name);
+                        $associations[$key]->url = new moodle_url('/mod/' . $modinfo->name . '/view.php', array('id' => $context->instanceid));
                         $associations[$key]->text = $instancename;
-                        $associations[$key]->icon = new pix_icon('icon', $associations[$key]->text, $modname);
+                        $associations[$key]->icon = new pix_icon('icon', $associations[$key]->text, $modinfo->name);
                     }
                 }
             }
             $this->renderable->blogassociations = $associations;
         }
 
-        // Entry attachments
+        // Entry attachments.
         $this->renderable->attachments = $this->get_attachments();
 
         $this->renderable->usercanedit = blog_user_can_edit_entry($this);
@@ -201,12 +197,12 @@ class blog_entry implements renderable {
 
         require_once($CFG->libdir.'/filelib.php');
 
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        $syscontext = context_system::instance();
 
         $fs = get_file_storage();
         $files = $fs->get_area_files($syscontext->id, 'blog', 'attachment', $this->id);
 
-        // Adding a blog_entry_attachment for each non-directory file
+        // Adding a blog_entry_attachment for each non-directory file.
         $attachments = array();
         foreach ($files as $file) {
             if ($file->is_directory()) {
@@ -1010,18 +1006,18 @@ class blog_entry_attachment implements renderable {
     public $file;
 
     /**
+     * Gets the file data
+     *
      * @param stored_file $file
      * @param int $entryid Attachment entry id
      */
     public function __construct($file, $entryid) {
 
-        global $OUTPUT, $CFG;
-
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
+        global $CFG;
 
         $this->file = $file;
         $this->filename = $file->get_filename();
-        $this->url    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/attachment/'.$entryid.'/'.$this->filename);
+        $this->url = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/attachment/'.$entryid.'/'.$this->filename);
     }
 
 }

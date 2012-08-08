@@ -105,7 +105,7 @@ if ($id) {
 }
 $returnurl->param('userid', $userid);
 
-// Blog renderer
+// Blog renderer.
 $output = $PAGE->get_renderer('blog');
 
 $strblogs = get_string('blogs','blog');
@@ -129,7 +129,7 @@ if ($action === 'delete'){
         $PAGE->set_heading($SITE->fullname);
         echo $OUTPUT->header();
 
-        // Output the entry
+        // Output the entry.
         $entry->prepare_render();
         echo $output->render($entry);
 

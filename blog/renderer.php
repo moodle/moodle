@@ -40,59 +40,58 @@ class core_blog_renderer extends plugin_renderer_base {
 
         global $CFG;
 
+        $syscontext = context_system::instance();
+
         $stredit = get_string('edit');
         $strdelete = get_string('delete');
 
-        // Start printing of the blog
-        $table = new html_table();
-        $table->cellspacing = 0;
-        $table->attributes['class'] = 'forumpost blog_entry blog'. ($entry->renderable->unassociatedentry ? 'draft' : $entry->renderable->publishstate);
-        $table->attributes['id'] = 'b'.$entry->id;
-        $table->width = '100%';
+        // Header.
+        $mainclass = 'forumpost blog_entry blog clearfix ';
+        if ($entry->renderable->unassociatedentry) {
+            $mainclass .= 'draft';
+        } else {
+            $mainclass .= $entry->publishstate;
+        }
+        $o = $this->output->container_start($mainclass, 'b' . $entry->id);
+        $o .= $this->output->container_start('row header clearfix');
 
-        $picturecell = new html_table_cell();
-        $picturecell->attributes['class'] = 'picture left';
-        $picturecell->text = $this->output->user_picture($entry->renderable->user);
+        // User picture.
+        $o .= $this->output->container_start('left picture header');
+        $o .= $this->output->user_picture($entry->renderable->user);
+        $o .= $this->output->container_end();
 
-        $table->head[] = $picturecell;
+        $o .= $this->output->container_start('topic starter header clearfix');
 
-        $topiccell = new html_table_cell();
-        $topiccell->attributes['class'] = 'topic starter';
-        $titlelink =  html_writer::link(new moodle_url('/blog/index.php', array('entryid' => $entry->id)), $entry->renderable->title);
-        $topiccell->text = $this->output->container($titlelink, 'subject');
-        $topiccell->text .= $this->output->container_start('author');
+        // Title.
+        $titlelink =  html_writer::link(new moodle_url('/blog/index.php', array('entryid' => $entry->id)), format_string($entry->subject));
+        $o .= $this->output->container($titlelink, 'subject');
 
-        // Post by
+        // Post by.
         $by = new stdClass();
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $this->page->course->id);
-        $fullname = fullname($entry->renderable->user, has_capability('moodle/site:viewfullnames', $coursecontext));
+        $fullname = fullname($entry->renderable->user, has_capability('moodle/site:viewfullnames', $syscontext));
         $userurlparams = array('id' => $entry->renderable->user->id, 'course' => $this->page->course->id);
-        $by->name =  html_writer::link(new moodle_url('/user/view.php', $userurlparams), $fullname);
-        $by->date = $entry->renderable->created;
+        $by->name = html_writer::link(new moodle_url('/user/view.php', $userurlparams), $fullname);
 
-        $topiccell->text .= get_string('bynameondate', 'forum', $by);
-        $topiccell->text .= $this->output->container_end();
+        $by->date = userdate($entry->created);
+        $o .= $this->output->container(get_string('bynameondate', 'forum', $by), 'author');
 
-        // Adding external blog link
+        // Adding external blog link.
         if (!empty($entry->renderable->externalblogtext)) {
-            $topiccell->text .= $this->output->container($entry->renderable->externalblogtext, 'externalblog');
+            $o .= $this->output->container($entry->renderable->externalblogtext, 'externalblog');
         }
 
-        $topiccell->header = false;
-        $table->head[] = $topiccell;
+        // Closing subject tag and header tag.
+        $o .= $this->output->container_end();
+        $o .= $this->output->container_end();
 
-        // Actual content
-        $mainrow = new html_table_row();
+        // Post content.
+        $o .= $this->output->container_start('row maincontent clearfix');
 
-        $leftsidecell = new html_table_cell();
-        $leftsidecell->attributes['class'] = 'left side';
-        $mainrow->cells[] = $leftsidecell;
+        // Entry.
+        $o .= $this->output->container_start('no-overflow content ');
 
-        $contentcell = new html_table_cell();
-        $contentcell->attributes['class'] = 'content';
-
-        // Determine text for publish state
-        switch ($entry->renderable->publishstate) {
+        // Determine text for publish state.
+        switch ($entry->publishstate) {
             case 'draft':
                 $blogtype = get_string('publishtonoone', 'blog');
                 break;
@@ -107,69 +106,62 @@ class core_blog_renderer extends plugin_renderer_base {
                 break;
 
         }
-        $contentcell->text .= $this->output->container($blogtype, 'audience');
+        $o .= $this->output->container($blogtype, 'audience');
 
-        // Entry body
-        $contentcell->text .= $entry->renderable->body;
-
-        // Entry attachments
+        // Attachments.
         $attachmentsoutputs = array();
         if ($entry->renderable->attachments) {
             foreach ($entry->renderable->attachments as $attachment) {
-                $attachmentsoutputs[] = $this->render($attachment, false);
+                $o .= $this->render($attachment, false);
             }
-            $contentcell->text .= $this->output->container(implode(', ', $attachmentsoutputs), 'attachments');
         }
 
-        // Uniquehash is used as a link to an external blog
+        // Body.
+        $o .= format_text($entry->summary, $entry->summaryformat, array('overflowdiv' => true));
+
+        // Uniquehash is used as a link to an external blog.
         if (!empty($entry->uniquehash)) {
-            $contentcell->text .= $this->output->container_start('externalblog');
-            $contentcell->text .= html_writer::link($entry->uniquehash, get_string('linktooriginalentry', 'blog'));
-            $contentcell->text .= $this->output->container_end();
+            $o .= $this->output->container_start('externalblog');
+            $o .= html_writer::link($entry->uniquehash, get_string('linktooriginalentry', 'blog'));
+            $o .= $this->output->container_end();
         }
 
-        // Links to tags
+        // Links to tags.
         $officialtags = tag_get_tags_csv('post', $entry->id, TAG_RETURN_HTML, 'official');
         $defaulttags = tag_get_tags_csv('post', $entry->id, TAG_RETURN_HTML, 'default');
 
         if (!empty($CFG->usetags) && ($officialtags || $defaulttags) ) {
-            $contentcell->text .= $this->output->container_start('tags');
+            $o .= $this->output->container_start('tags');
 
             if ($officialtags) {
-                $contentcell->text .= get_string('tags', 'tag') .': '. $this->output->container($officialtags, 'officialblogtags');
+                $o .= get_string('tags', 'tag') .': '. $this->output->container($officialtags, 'officialblogtags');
                 if ($defaulttags) {
-                    $contentcell->text .=  ', ';
+                    $o .=  ', ';
                 }
             }
-            $contentcell->text .=  $defaulttags;
-            $contentcell->text .= $this->output->container_end();
+            $o .=  $defaulttags;
+            $o .= $this->output->container_end();
         }
 
-        // Add associations
+        // Add associations.
         if (!empty($CFG->useblogassociations) && !empty($entry->renderable->blogassociations)) {
-            $contentcell->text .= $this->output->container_start('tags');
-            $hascourseassocs = false;
 
-            // First find and show the associated course
-            $coursesstr = '';
+            // First find and show the associated course.
+            $assocstr = '';
             $coursesarray = array();
             foreach ($entry->renderable->blogassociations as $assocrec) {
-                $context = get_context_instance_by_id($assocrec->contextid);
-                if ($context->contextlevel ==  CONTEXT_COURSE) {
+                if ($assocrec->contextlevel ==  CONTEXT_COURSE) {
                     $coursesarray[] = $this->output->action_icon($assocrec->url, $assocrec->icon, null, array(), true);
                 }
             }
             if (!empty($coursesarray)) {
-                $coursesstr .= get_string('associated', 'blog', $assocrec->type) . ': ' . implode(', ', $coursesarray);
+                $assocstr .= get_string('associated', 'blog', get_string('course')) . ': ' . implode(', ', $coursesarray);
             }
 
-            // Now show mod association
-            $modulesstr = '';
+            // Now show mod association.
             $modulesarray = array();
             foreach ($entry->renderable->blogassociations as $assocrec) {
-                $context = get_context_instance_by_id($assocrec->contextid);
-
-                if ($context->contextlevel ==  CONTEXT_MODULE) {
+                if ($assocrec->contextlevel ==  CONTEXT_MODULE) {
                     $str = get_string('associated', 'blog', $assocrec->type) . ': ';
                     $str .= $this->output->action_icon($assocrec->url, $assocrec->icon, null, array(), true);
                     $modulesarray[] = $str;
@@ -177,96 +169,84 @@ class core_blog_renderer extends plugin_renderer_base {
             }
             if (!empty($modulesarray)) {
                 if (!empty($coursesarray)) {
-                    $modulesstr .= '<br/>';
+                    $assocstr .= '<br/>';
                 }
-                $modulesstr .= implode('<br/>', $modulesarray);
+                $assocstr .= implode('<br/>', $modulesarray);
             }
 
-            $contentcell->text .= $coursesstr.$modulesstr;
-            $contentcell->text .= $this->output->container_end();
+            // Adding the asociations to the output.
+            $o .= $this->output->container($assocstr, 'tags');
         }
 
         if ($entry->renderable->unassociatedentry) {
-            $contentcell->text .= $this->output->container(get_string('associationunviewable', 'blog'), 'noticebox');
+            $o .= $this->output->container(get_string('associationunviewable', 'blog'), 'noticebox');
         }
 
-        /// Commands
-        $contentcell->text .= $this->output->container_start('commands');
+        // Commands.
+        $o .= $this->output->container_start('commands');
         if ($entry->renderable->usercanedit) {
+
+            // External blog entries should not be edited.
             if (empty($entry->uniquehash)) {
-                //External blog entries should not be edited
-                $contentcell->text .= html_writer::link(new moodle_url('/blog/edit.php',
+                $o .= html_writer::link(new moodle_url('/blog/edit.php',
                                                         array('action' => 'edit', 'entryid' => $entry->id)),
                                                         $stredit) . ' | ';
             }
-            $contentcell->text .= html_writer::link(new moodle_url('/blog/edit.php',
+            $o .= html_writer::link(new moodle_url('/blog/edit.php',
                                                     array('action' => 'delete', 'entryid' => $entry->id)),
                                                     $strdelete) . ' | ';
         }
 
         $entryurl = new moodle_url('/blog/index.php', array('entryid' => $entry->id));
-        $contentcell->text .= html_writer::link($entryurl, get_string('permalink', 'blog'));
+        $o .= html_writer::link($entryurl, get_string('permalink', 'blog'));
 
-        $contentcell->text .= $this->output->container_end();
+        $o .= $this->output->container_end();
 
-        if (isset($entry->renderable->lastmod) ) {
-            $contentcell->text .= '<div>';
-            $contentcell->text .= ' [ '.get_string('modified').': '.$entry->renderable->lastmod.' ]';
-            $contentcell->text .= '</div>';
+        // Last modification.
+        if ($entry->created != $entry->lastmodified) {
+            $o .= $this->output->container(' [ '.get_string('modified').': '.userdate($entry->lastmodified).' ]');
         }
 
-        //add comments under everything
+        // Comments.
         if (!empty($entry->renderable->comment)) {
-            $contentcell->text .= $entry->renderable->comment->output(true);
+            $o .= $entry->renderable->comment->output(true);
         }
 
-        $mainrow->cells[] = $contentcell;
-        $table->data = array($mainrow);
+        $o .= $this->output->container_end();
 
-        return html_writer::table($table);
+        // Closing maincontent div.
+        $o .= $this->output->container('&nbsp;', 'side options');
+        $o .= $this->output->container_end();
+
+        $o .= $this->output->container_end();
+
+        return $o;
     }
 
     /**
      * Renders an entry attachment
      *
-     * if return=html, then return a html string.
-     * if return=text, then return a text-only string.
-     * otherwise, print HTML for non-images, and return image HTML
+     * Print link for non-images and returns images as HTML
      *
      * @param blog_entry_attachment $attachment
-     * @param bool $return Whether to return or print the generated code
      * @return string List of attachments depending on the $return input
      */
-    public function render_blog_entry_attachment(blog_entry_attachment $attachment, $return = false) {
+    public function render_blog_entry_attachment(blog_entry_attachment $attachment) {
 
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
-        $strattachment = get_string("attachment", "forum");
+        $syscontext = context_system::instance();
 
-        $image = $this->output->pix_icon(file_file_icon($attachment->file), $attachment->filename, 'moodle', array('class'=>'icon'));
-
-        $o = '';
-        $imagereturn = '';
-
-        if ($return == "html") {
-            $o .= html_writer::link($attachment->url, $image);
-            $o .= html_writer::link($attachment->url, $attachment->filename);
-
-        } else if ($return == "text") {
-            $o .= "$strattachment $attachment->filename:\n$attachment->url\n";
-
+        // Image attachments don't get printed as links.
+        if (file_mimetype_in_typegroup($attachment->file->get_mimetype(), 'web_image')) {
+            $attrs = array('src' => $attachment->url, 'alt' => '');
+            $o = html_writer::empty_tag('img', $attrs);
+            $class = 'attachedimages';
         } else {
-            if (file_mimetype_in_typegroup($attachment->file->get_mimetype(), 'web_image')) {    // Image attachments don't get printed as links
-                $imagereturn .= '<br /><img src="'.$attachment->url.'" alt="" />';
-            } else {
-                $imagereturn .= html_writer::link($attachment->url, $image);
-                $imagereturn .= format_text(html_writer::link($attachment->url, $attachment->filename), FORMAT_HTML, array('context'=>$syscontext));
-            }
+            $image = $this->output->pix_icon(file_file_icon($attachment->file), $attachment->filename, 'moodle', array('class'=>'icon'));
+            $o = html_writer::link($attachment->url, $image);
+            $o .= format_text(html_writer::link($attachment->url, $attachment->filename), FORMAT_HTML, array('context' => $syscontext));
+            $class = 'attachments';
         }
 
-        if ($return) {
-            return $o;
-        }
-
-        return $imagereturn;
+        return $this->output->container($o, $class);
     }
 }
