@@ -55,7 +55,14 @@ class csv_import_reader {
      * @var object file handle used during import
      */
     var $_fp;
-
+    /**
+     * @var string delimiter of the records.
+     */
+    var $_delimiter;
+    /**
+     * @var string enclosure of each field.
+     */
+    var $_enclosure;
     /**
      * Contructor
      *
@@ -78,7 +85,7 @@ class csv_import_reader {
      * @param string $column_validation name of function for columns validation, must have one param $columns
      * @return bool false if error, count of data lines if ok; use get_error() to get error string
      */
-    function load_csv_content(&$content, $encoding, $delimiter_name, $column_validation=null) {
+    function load_csv_content(&$content, $encoding, $delimiter_name, $column_validation=null, $enclosure='"') {
         global $USER, $CFG;
 
         $this->close();
@@ -89,62 +96,56 @@ class csv_import_reader {
         $content = textlib::trim_utf8_bom($content);
         // Fix mac/dos newlines
         $content = preg_replace('!\r\n?!', "\n", $content);
-        // is there anyting in file?
-        $columns = strtok($content, "\n");
-        if ($columns === false) {
-            $this->_error = get_string('csvemptyfile', 'error');
-            return false;
-        }
+
         $csv_delimiter = csv_import_reader::get_delimiter($delimiter_name);
-        $csv_encode    = csv_import_reader::get_encoded_delimiter($delimiter_name);
+//        $csv_encode    = csv_import_reader::get_encoded_delimiter($delimiter_name);
+        $this->_delimiter = $csv_delimiter;
+        $this->_enclosure = $enclosure;
 
+        // create a temporary file and store the csv file there in csv file format.
+        $filename = $CFG->tempdir.'/csvimport/'.$this->_type.'/'.$USER->id.'/'.$this->_iid;
+        $fp = fopen($filename, 'w+');
+        fwrite($fp, $content);
+        fseek($fp, 0);
+        // Create an array to store the imported data for error checking.
+        $columns = array();
+        while ($fgetdata = fgetcsv($fp, 0, $csv_delimiter, $enclosure)) {
+            $columns[] = $fgetdata;
+        }
+
+        $col_count = 0;
         // process header - list of columns
-        $columns   = explode($csv_delimiter, $columns);
-        $col_count = count($columns);
-        if ($col_count === 0) {
+        if (!isset($columns[0])) {
             $this->_error = get_string('csvemptyfile', 'error');
+            fclose($fp);
+            $this->cleanup();
             return false;
+        } else {
+            $col_count = count($columns[0]);
         }
-
-        foreach ($columns as $key=>$value) {
-            $columns[$key] = str_replace($csv_encode, $csv_delimiter, trim($value));
-        }
+        // column validation
         if ($column_validation) {
-            $result = $column_validation($columns);
+            $result = $column_validation($columns[0]);
             if ($result !== true) {
                 $this->_error = $result;
+                fclose($fp);
+                $this->cleanup();
                 return false;
             }
         }
-        $this->_columns = $columns; // cached columns
 
-        // open file for writing
-        $filename = $CFG->tempdir.'/csvimport/'.$this->_type.'/'.$USER->id.'/'.$this->_iid;
-        $fp = fopen($filename, "w");
-        fwrite($fp, serialize($columns)."\n");
-
-        // again - do we have any data for processing?
-        $line = strtok("\n");
-        $data_count = 0;
-        while ($line !== false) {
-            $line = explode($csv_delimiter, $line);
-            foreach ($line as $key=>$value) {
-                $line[$key] = str_replace($csv_encode, $csv_delimiter, trim($value));
-            }
-            if (count($line) !== $col_count) {
-                // this is critical!!
+        $this->_columns = $columns[0]; // cached columns
+        // check to make sure that the data columns match up with the headers.
+        foreach ($columns as $rowdata) {
+            if (count($rowdata) !== $col_count) {
                 $this->_error = get_string('csvweirdcolumns', 'error');
                 fclose($fp);
                 $this->cleanup();
                 return false;
             }
-            fwrite($fp, serialize($line)."\n");
-            $data_count++;
-            $line = strtok("\n");
         }
-
-        fclose($fp);
-        return $data_count;
+        $datacount = count($columns);
+        return $datacount;
     }
 
     /**
@@ -164,12 +165,12 @@ class csv_import_reader {
             return false;
         }
         $fp = fopen($filename, "r");
-        $line = fgets($fp);
+        $line = fgetcsv($fp, 0, $this->_delimiter, $this->_enclosure);
         fclose($fp);
         if ($line === false) {
             return false;
         }
-        $this->_columns = unserialize($line);
+        $this->_columns = $line;
         return $this->_columns;
     }
 
@@ -194,7 +195,7 @@ class csv_import_reader {
             return false;
         }
         //skip header
-        return (fgets($this->_fp) !== false);
+        return (fgetcsv($this->_fp, 0, $this->_delimiter, $this->_enclosure) !== false);
     }
 
     /**
@@ -206,8 +207,8 @@ class csv_import_reader {
         if (empty($this->_fp) or feof($this->_fp)) {
             return false;
         }
-        if ($ser = fgets($this->_fp)) {
-            return unserialize($ser);
+        if ($ser = fgetcsv($this->_fp, 0, $this->_delimiter, $this->_enclosure)) {
+            return $ser;
         } else {
             return false;
         }
