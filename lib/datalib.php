@@ -173,6 +173,97 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
 }
 
 /**
+ * This function generates the standard ORDER BY clause for use when generating
+ * lists of users. If you don't have a reason to use a different order, then
+ * you should use this method to generate the order when displaying lists of users.
+ *
+ * If the optional $search parameter is passed, then exact matches to the search
+ * will be sorted first. For example, suppose you have two users 'Al Zebra' and
+ * 'Alan Aardvark'. The default sort is Alan, then Al. If, however, you search for
+ * 'Al', then Al will be listed first. (With two users, this is not a big deal,
+ * but with thousands of users, it is essential.)
+ *
+ * The list of fields scanned for exact matches are:
+ *  - firstname
+ *  - lastname
+ *  - $DB->sql_fullname
+ *  - those returned by get_extra_user_fields
+ *
+ * If named parameters are used (which is the default, and highly recommended),
+ * then the parameter names are like :usersortexactN, where N is an int.
+ *
+ * The simplest possible example use is:
+ * list($sort, $params) = users_order_by_sql();
+ * $sql = 'SELECT * FROM {users} ORDER BY ' . $sort;
+ *
+ * A more complex example, showing that this sort can be combined with other sorts:
+ * list($sort, $sortparams) = users_order_by_sql('u');
+ * $sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, u.firstname, u.lastname, u.idnumber, u.username
+ *           FROM {groups} g
+ *      LEFT JOIN {groupings_groups} gg ON g.id = gg.groupid
+ *      LEFT JOIN {groups_members} gm ON g.id = gm.groupid
+ *      LEFT JOIN {user} u ON gm.userid = u.id
+ *          WHERE g.courseid = :courseid $groupwhere $groupingwhere
+ *       ORDER BY g.name, $sort";
+ * $params += $sortparams;
+ *
+ * An example showing the use of $search:
+ * list($sort, $sortparams) = users_order_by_sql('u', $search, $this->get_context());
+ * $order = ' ORDER BY ' . $sort;
+ * $params += $sortparams;
+ * $availableusers = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
+ *
+ * @param string $usertablealias (optional) any table prefix for the {users} table. E.g. 'u'.
+ * @param string $search (optional) a current search string. If given,
+ *      any exact matches to this string will be sorted first.
+ * @param context $context the context we are in. Use by get_extra_user_fields.
+ *      Defaults to $PAGE->context.
+ * @return array with two elements:
+ *      string SQL fragment to use in the ORDER BY clause. For example, "firstname, lastname".
+ *      array of parameters used in the SQL fragment.
+ */
+function users_order_by_sql($usertablealias = '', $search = null, context $context = null) {
+    global $DB, $PAGE;
+
+    if ($usertablealias) {
+        $tableprefix = $usertablealias . '.';
+    } else {
+        $tableprefix = '';
+    }
+
+    $sort = "{$tableprefix}lastname, {$tableprefix}firstname, {$tableprefix}id";
+    $params = array();
+
+    if (!$search) {
+        return array($sort, $params);
+    }
+
+    if (!$context) {
+        $context = $PAGE->context;
+    }
+
+    $exactconditions = array();
+    $paramkey = 'usersortexact1';
+
+    $exactconditions[] = $DB->sql_fullname($tableprefix . 'firstname', $tableprefix  . 'lastname') .
+            ' = :' . $paramkey;
+    $params[$paramkey] = $search;
+    $paramkey++;
+
+    $fieldstocheck = array_merge(array('firstname', 'lastname'), get_extra_user_fields($context));
+    foreach ($fieldstocheck as $key => $field) {
+        $exactconditions[] = $tableprefix . $field . ' = :' . $paramkey;
+        $params[$paramkey] = $search;
+        $paramkey++;
+    }
+
+    $sort = 'CASE WHEN ' . implode(' OR ', $exactconditions) .
+            ' THEN 0 ELSE 1 END, ' . $sort;
+
+    return array($sort, $params);
+}
+
+/**
  * Returns a subset of users
  *
  * @global object
@@ -189,7 +280,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
  * @param string $recordsperpage The number of records to return per page
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
  * @return array|int|bool  {@link $USER} records unless get is false in which case the integer count of the records found is returned.
-  *                        False is returned if an error is encountered.
+ *                        False is returned if an error is encountered.
  */
 function get_users($get=true, $search='', $confirmed=false, array $exceptions=null, $sort='firstname ASC',
                    $firstinitial='', $lastinitial='', $page='', $recordsperpage='', $fields='*', $extraselect='', array $extraparams=null) {
