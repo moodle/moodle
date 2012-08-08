@@ -107,7 +107,7 @@ foreach ($users as $k => $v) {
     if(!$user = $DB->get_record('user', array('id'=>$v))) {
         continue;
     }
-    $checkbox = html_writer::label(get_string('selectnotestate', 'note'), 'menustates', false, array('class' => 'accesshide'));
+    $checkbox = html_writer::label(get_string('selectnotestate', 'notes'), 'menustates', false, array('class' => 'accesshide'));
     $checkbox .= html_writer::select($state_names, 'states[' . $k . ']', empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], false, array('id' => 'menustates'));
     $table->data[] = array(
         '<input type="hidden" name="userid['.$k.']" value="'.$v.'" />'. fullname($user, true),
