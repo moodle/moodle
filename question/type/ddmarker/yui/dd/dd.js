@@ -423,16 +423,14 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 }
             }, this);
             if (this.graphics !== null) {
-                var oldshapes = this.graphics.get('shapes');
-                for (var id in oldshapes) {
-                    oldshapes[id].destroy();
-                }
-            }
-            if (this.get('dropzones').length !== 0) {
-                this.restart_colours();
+                this.graphics.clear();
+            } else {
                 this.graphics = new Y.Graphic(
                     {render:this.doc.top_node().one("div.ddarea div.dropzones")}
                 );
+            }
+            if (this.get('dropzones').length !== 0) {
+                this.restart_colours();
                 for (var dropzoneno in this.get('dropzones')) {
                     var colourfordropzone = this.get_next_colour();
                     var d = this.get('dropzones')[dropzoneno];
