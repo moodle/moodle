@@ -349,9 +349,11 @@ class auth_plugin_db extends auth_plugin_base {
             $transaction = $DB->start_delegated_transaction();
             foreach($add_users as $user) {
                 $username = $user;
-                $user = $this->get_userinfo_asobj($user);
+
+                // Do not try to undelete users here, instead select suspending if you ever expect users will reappear.
 
                 // prep a few params
+                $user = $this->get_userinfo_asobj($user);
                 $user->username   = $username;
                 $user->confirmed  = 1;
                 $user->auth       = $this->authtype;
@@ -359,28 +361,22 @@ class auth_plugin_db extends auth_plugin_base {
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
                 }
-
-                // maybe the user has been deleted before
-                if ($old_user = $DB->get_record('user', array('username'=>$user->username, 'deleted'=>1, 'mnethostid'=>$user->mnethostid, 'auth'=>$user->auth))) {
-                    // note: this undeleting is deprecated and will be eliminated soon
-                    $DB->set_field('user', 'deleted', 0, array('id'=>$old_user->id));
-                    $DB->set_field('user', 'timemodified', time(), array('id'=>$old_user->id));
-                    if ($verbose) {
-                        mtrace("\t".get_string('auth_dbreviveduser', 'auth_db', array('name'=>$old_user->username, 'id'=>$old_user->id)));
-                    }
-
-                } else {
-                    $user->timecreated = time();
-                    $user->timemodified = $user->timecreated;
+                $user->timecreated = time();
+                $user->timemodified = $user->timecreated;
+                try {
                     $id = $DB->insert_record ('user', $user); // it is truly a new user
                     if ($verbose) {
                         mtrace("\t".get_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)));
                     }
-                    // if relevant, tag for password generation
-                    if ($this->is_internal()) {
-                        set_user_preference('auth_forcepasswordchange', 1, $id);
-                        set_user_preference('create_password',          1, $id);
+                } catch (moodle_exception $e) {
+                    if ($verbose) {
+                        mtrace("\t".get_string('auth_dbinsertusererror', 'auth_db', $user->username));
                     }
+                }
+                // if relevant, tag for password generation
+                if ($this->is_internal()) {
+                    set_user_preference('auth_forcepasswordchange', 1, $id);
+                    set_user_preference('create_password',          1, $id);
                 }
             }
             $transaction->allow_commit();
