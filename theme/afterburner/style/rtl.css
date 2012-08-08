@@ -1,7 +1,0 @@
-/** Overide for RTL layout **/
-.dir-rtl .block .header .block_action {
-    float:left;
-}
-.dir-rtl .block .header .commands {
-    text-align: right;
-}
