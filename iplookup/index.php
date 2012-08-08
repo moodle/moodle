@@ -41,7 +41,7 @@ if (isset($CFG->iplookup)) {
 
 $PAGE->set_url('/iplookup/index.php', array('id'=>$ip, 'user'=>$user));
 $PAGE->set_pagelayout('popup');
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_context(context_system::instance());
 
 $info = array($ip);
 $note = array();
@@ -68,7 +68,7 @@ if ($info['error']) {
 if ($user) {
     if ($user = $DB->get_record('user', array('id'=>$user, 'deleted'=>0))) {
         // note: better not show full names to everybody
-        if (has_capability('moodle/user:viewdetails', get_context_instance(CONTEXT_USER, $user->id))) {
+        if (has_capability('moodle/user:viewdetails', context_user::instance($user->id))) {
             array_unshift($info['title'], fullname($user));
         }
     }
