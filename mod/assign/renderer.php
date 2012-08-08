@@ -324,7 +324,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         }
 
         foreach ($status->feedbackplugins as $plugin) {
-            if ($plugin->is_enabled() && $plugin->is_visible() && !$plugin->is_empty($status->grade)) {
+            if ($plugin->is_enabled() && $plugin->is_visible() && !empty($status->grade) && !$plugin->is_empty($status->grade)) {
                 $row = new html_table_row();
                 $cell1 = new html_table_cell($plugin->get_name());
                 $pluginfeedback = new assign_feedback_plugin_feedback($plugin, $status->grade, assign_feedback_plugin_feedback::SUMMARY, $status->coursemoduleid, $status->returnaction, $status->returnparams);
