@@ -194,16 +194,18 @@ class web_service_token_form extends moodleform {
                     array('deleted' => 0, 'suspended' => 0, 'confirmed' => 1));
 
             if ($usertotal < 500) {
+                list($sort, $params) = users_order_by_sql('u');
                 //user searchable selector - get all users (admin and guest included)
                 //user must be confirmed, not deleted, not suspended, not guest
                 $sql = "SELECT u.id, u.firstname, u.lastname
                             FROM {user} u
-                            WHERE u.deleted = 0 AND u.confirmed = 1 AND u.suspended = 0 AND u.id != ?
-                            ORDER BY u.lastname";
-                $users = $DB->get_records_sql($sql, array($CFG->siteguest));
+                            WHERE u.deleted = 0 AND u.confirmed = 1 AND u.suspended = 0 AND u.id != :siteguestid
+                            ORDER BY $sort";
+                $params['siteguestid'] = $CFG->siteguest;
+                $users = $DB->get_records_sql($sql, $params);
                 $options = array();
                 foreach ($users as $userid => $user) {
-                    $options[$userid] = $user->firstname . " " . $user->lastname;
+                    $options[$userid] = fullname($user);
                 }
                 $mform->addElement('searchableselector', 'user', get_string('user'), $options);
             } else {

@@ -3017,8 +3017,14 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
         if (is_array($this->choices)) {
             return true;
         }
+        list($sort, $sortparams) = users_order_by_sql('u');
+        if (!empty($sortparams)) {
+            throw new coding_exception('users_order_by_sql returned some query parameters. ' .
+                    'This is unexpected, and a problem because there is no way to pass these ' .
+                    'parameters to get_users_by_capability. See MDL-34657.');
+        }
         $users = get_users_by_capability(context_system::instance(),
-            $this->capability, 'u.id,u.username,u.firstname,u.lastname', 'u.lastname,u.firstname');
+                $this->capability, 'u.id,u.username,u.firstname,u.lastname', $sort);
         $this->choices = array(
             '$@NONE@$' => get_string('nobody'),
             '$@ALL@$' => get_string('everyonewhocan', 'admin', get_capability_string($this->capability)),

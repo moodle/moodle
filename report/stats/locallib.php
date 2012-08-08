@@ -107,18 +107,25 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
     $table->width = 'auto';
 
     if ($mode == STATS_MODE_DETAILED) {
-        $param = stats_get_parameters($time,null,$course->id,$mode); // we only care about the table and the time string (if we have time)
+        $param = stats_get_parameters($time, null, $course->id, $mode); // we only care about the table and the time string (if we have time)
 
-        //TODO: lceanup this ugly mess
-        $sql = 'SELECT DISTINCT s.userid, u.firstname, u.lastname, u.idnumber
-                     FROM {stats_user_'.$param->table.'} s
-                     JOIN {user} u ON u.id = s.userid
-                     WHERE courseid = '.$course->id
-            . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '')
-            . ((!empty($time)) ? ' AND timeend >= '.$param->timeafter : '')
-            .' ORDER BY u.lastname, u.firstname ASC';
+        list($sort, $moreparams) = users_order_by_sql('u');
+        $moreparams['courseid'] = $course->id;
+        $sql = "SELECT DISTINCT s.userid, u.firstname, u.lastname, u.idnumber
+                  FROM {stats_user_{$param->table}} s
+                  JOIN {user} u ON u.id = s.userid
+                 WHERE courseid = :courseid";
+        if (!empty($param->stattype)) {
+            $sql .= " AND stattype = :stattype";
+            $moreparams['stattype'] = $param->stattype;
+        }
+        if (!empty($time)) {
+            $sql .= " AND timeend >= :timeafter";
+            $moreparams['timeafter'] = $param->timeafter;
+        }
+        $sql .= " ORDER BY {$sort}";
 
-        if (!$us = $DB->get_records_sql($sql, $param->params)) {
+        if (!$us = $DB->get_records_sql($sql, array_merge($param->params, $moreparams))) {
             print_error('nousers');
         }
 

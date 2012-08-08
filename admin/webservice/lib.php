@@ -25,8 +25,8 @@
 require_once($CFG->dirroot . '/user/selector/lib.php');
 
 /*
-* This class displays either all the Moodle users allowed to use a service,
-* either all the other Moodle users.
+ * This class displays either all the Moodle users allowed to use a service,
+ * either all the other Moodle users.
  */
 class service_user_selector extends user_selector_base {
     const MAX_USERS_PER_PAGE = 100;
@@ -81,7 +81,8 @@ class service_user_selector extends user_selector_base {
                                                         AND esu.userid = u.id)";
         }
 
-        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        $order = ' ORDER BY ' . $sort;
 
         if (!$this->is_validating()) {
             $potentialmemberscount = $DB->count_records_sql($countfields . $sql, $params);
@@ -90,7 +91,7 @@ class service_user_selector extends user_selector_base {
             }
         }
 
-        $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
+        $availableusers = $DB->get_records_sql($fields . $sql . $order, array_merge($params, $sortparams));
 
         if (empty($availableusers)) {
             return array();

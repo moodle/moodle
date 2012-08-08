@@ -400,9 +400,10 @@ class workshop {
             return array();
         }
 
-        $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $sql .= " ORDER BY $sort";
 
-        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+        return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
     }
 
     /**
@@ -448,9 +449,10 @@ class workshop {
             return array();
         }
 
-        $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $sql .= " ORDER BY $sort";
 
-        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+        return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
     }
 
     /**
@@ -498,9 +500,10 @@ class workshop {
             return array();
         }
 
-        $sql .= " ORDER BY lastname ASC, firstname ASC, id ASC";
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $sql .= " ORDER BY $sort";
 
-        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+        return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
     }
 
     /**
@@ -696,9 +699,10 @@ class workshop {
             // $authorid is empty
             return array();
         }
-        $sql .= " ORDER BY u.lastname, u.firstname";
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $sql .= " ORDER BY $sort";
 
-        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+        return $DB->get_records_sql($sql, array_merge($params, $sortparams), $limitfrom, $limitnum);
     }
 
     /**
@@ -1030,6 +1034,7 @@ class workshop {
         $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
         $authorfields   = user_picture::fields('author', null, 'authorid', 'author');
         $overbyfields   = user_picture::fields('overby', null, 'gradinggradeoverbyx', 'overby');
+        list($sort, $params) = users_order_by_sql('reviewer');
         $sql = "SELECT a.id, a.submissionid, a.reviewerid, a.timecreated, a.timemodified,
                        a.grade, a.gradinggrade, a.gradinggradeover, a.gradinggradeoverby,
                        $reviewerfields, $authorfields, $overbyfields,
@@ -1040,8 +1045,8 @@ class workshop {
             INNER JOIN {user} author ON (s.authorid = author.id)
              LEFT JOIN {user} overby ON (a.gradinggradeoverby = overby.id)
                  WHERE s.workshopid = :workshopid AND s.example = 0
-              ORDER BY reviewer.lastname, reviewer.firstname";
-        $params = array('workshopid' => $this->id);
+              ORDER BY $sort";
+        $params['workshopid'] = $this->id;
 
         return $DB->get_records_sql($sql, $params);
     }
@@ -1106,14 +1111,16 @@ class workshop {
 
         $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
         $overbyfields   = user_picture::fields('overby', null, 'gradinggradeoverbyx', 'overby');
+        list($sort, $params) = users_order_by_sql('reviewer');
         $sql = "SELECT a.*, s.title, $reviewerfields, $overbyfields
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
              LEFT JOIN {user} overby ON (a.gradinggradeoverby = overby.id)
                  WHERE s.example = 0 AND s.id = :submissionid AND s.workshopid = :workshopid
-              ORDER BY reviewer.lastname, reviewer.firstname, reviewer.id";
-        $params = array('submissionid' => $submissionid, 'workshopid' => $this->id);
+              ORDER BY $sort";
+        $params['submissionid'] = $submissionid;
+        $params['workshopid']   = $this->id;
 
         return $DB->get_records_sql($sql, $params);
     }
@@ -1702,6 +1709,7 @@ class workshop {
         $reviewers = array();
         if ($submissions) {
             list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
+            list($sort, $sortparams) = users_order_by_sql('r');
             $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.weight,
                            r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt, r.email,
                            s.id AS submissionid, s.authorid
@@ -1709,8 +1717,8 @@ class workshop {
                       JOIN {user} r ON (a.reviewerid = r.id)
                       JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
                      WHERE a.submissionid $submissionids
-                  ORDER BY a.weight DESC, r.lastname, r.firstname";
-            $reviewers = $DB->get_records_sql($sql, $params);
+                  ORDER BY a.weight DESC, $sort";
+            $reviewers = $DB->get_records_sql($sql, array_merge($params, $sortparams));
             foreach ($reviewers as $reviewer) {
                 if (!isset($userinfo[$reviewer->reviewerid])) {
                     $userinfo[$reviewer->reviewerid]            = new stdclass();
@@ -1728,6 +1736,7 @@ class workshop {
         $reviewees = array();
         if ($participants) {
             list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+            list($sort, $sortparams) = users_order_by_sql('e');
             $params['workshopid'] = $this->id;
             $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.reviewerid, a.weight,
                            s.id AS submissionid,
@@ -1737,8 +1746,8 @@ class workshop {
                       JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
                       JOIN {user} e ON (s.authorid = e.id)
                      WHERE u.id $participantids AND s.workshopid = :workshopid
-                  ORDER BY a.weight DESC, e.lastname, e.firstname";
-            $reviewees = $DB->get_records_sql($sql, $params);
+                  ORDER BY a.weight DESC, $sort";
+            $reviewees = $DB->get_records_sql($sql, array_merge($sortparams));
             foreach ($reviewees as $reviewee) {
                 if (!isset($userinfo[$reviewee->authorid])) {
                     $userinfo[$reviewee->authorid]            = new stdclass();
