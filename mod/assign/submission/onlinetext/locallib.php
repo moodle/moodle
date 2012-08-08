@@ -137,7 +137,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         $eventdata->itemid = $submission->id;
         $eventdata->courseid = $this->assignment->get_course()->id;
         $eventdata->userid = $USER->id;
-        $eventdata->content = trim(format_text($onlinetextsubmission->onlinetext, $onlinetextsubmission->onlineformat, array('context'=>$this->assignment->get_context())));
+        $eventdata->content = trim(format_text($data->onlinetext, $data->onlinetext_editor['format'], array('context'=>$this->assignment->get_context())));
         if ($files) {
             $eventdata->pathnamehashes = array_keys($files);
         }
