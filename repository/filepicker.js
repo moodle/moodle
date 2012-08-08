@@ -1618,7 +1618,8 @@ M.core_filepicker.init = function(Y, options) {
             var client_id = this.options.client_id;
             var id = data.upload.id+'_'+client_id;
             var content = this.fpnode.one('.fp-content');
-            content.setContent(M.core_filepicker.templates.uploadform);
+            var template = data.template || 'uploadform';
+            content.setContent(M.core_filepicker.templates[template]);
 
             content.all('.fp-file,.fp-saveas,.fp-setauthor,.fp-setlicense').each(function (node) {
                 node.all('label').set('for', node.one('input,select').generateID());
