@@ -234,6 +234,8 @@ switch ($action) {
                 if ($file && $file->is_external_file()) {
                     $sourcefield = $file->get_source(); // remember the original source
                     $record->source = $repo::build_source_field($sourcefield);
+                    $record->contenthash = $file->get_contenthash();
+                    $record->filesize = $file->get_filesize();
                     $reference = $file->get_reference();
                     $repo_id = $file->get_repository_id();
                     $repo = repository::get_repository_by_id($repo_id, $contextid, $repooptions);
@@ -241,8 +243,11 @@ switch ($action) {
             }
 
             if ($usefilereference) {
-                // get reference life time from repo
-                $record->referencelifetime = $repo->get_reference_file_lifetime($reference);
+                if ($repo->has_moodle_files()) {
+                    $sourcefile = repository::get_moodle_file($reference);
+                    $record->contenthash = $sourcefile->get_contenthash();
+                    $record->filesize = $sourcefile->get_filesize();
+                }
                 // Check if file exists.
                 if (repository::draftfile_exists($itemid, $saveas_path, $saveas_filename)) {
                     // File name being used, rename it.
