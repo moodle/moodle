@@ -1266,22 +1266,39 @@ class file_storage {
         $transaction = $DB->start_delegated_transaction();
 
         try {
-            $filerecord->referencefileid = $this->get_or_create_referencefileid($repositoryid, $reference,
-                $filerecord->referencelastsync, $filerecord->referencelifetime);
+            $filerecord->referencefileid = $this->get_or_create_referencefileid($repositoryid, $reference);
         } catch (Exception $e) {
             throw new file_reference_exception($repositoryid, $reference, null, null, $e->getMessage());
         }
 
-        // External file doesn't have content in moodle.
-        // So we create an empty file for it.
-        list($filerecord->contenthash, $filerecord->filesize, $newfile) = $this->add_string_to_pool(null);
+        if (isset($filerecord->contenthash) && $this->content_exists($filerecord->contenthash)) {
+            // there was specified the contenthash for a file already stored in moodle filepool
+            if (empty($filerecord->filesize)) {
+                $filepathname = $this->path_from_hash($filerecord->contenthash) . '/' . $filerecord->contenthash;
+                $filerecord->filesize = filesize($filepathname);
+            } else {
+                $filerecord->filesize = clean_param($filerecord->filesize, PARAM_INT);
+            }
+        } else {
+            // atempt to get the result of last synchronisation for this reference
+            $lastcontent = $DB->get_record('files', array('referencefileid' => $filerecord->referencefileid),
+                    'id, contenthash, filesize', IGNORE_MULTIPLE);
+            if ($lastcontent) {
+                $filerecord->contenthash = $lastcontent->contenthash;
+                $filerecord->filesize = $lastcontent->filesize;
+            } else {
+                // External file doesn't have content in moodle.
+                // So we create an empty file for it.
+                list($filerecord->contenthash, $filerecord->filesize, $newfile) = $this->add_string_to_pool(null);
+            }
+        }
 
         $filerecord->pathnamehash = $this->get_pathname_hash($filerecord->contextid, $filerecord->component, $filerecord->filearea, $filerecord->itemid, $filerecord->filepath, $filerecord->filename);
 
         try {
             $filerecord->id = $DB->insert_record('files', $filerecord);
         } catch (dml_exception $e) {
-            if ($newfile) {
+            if (!empty($newfile)) {
                 $this->deleted_file_cleanup($filerecord->contenthash);
             }
             throw new stored_file_creation_exception($filerecord->contextid, $filerecord->component, $filerecord->filearea, $filerecord->itemid,
