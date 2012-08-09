@@ -528,7 +528,8 @@ class moodle1_converter extends base_converter {
      * CONTEXT_SYSTEM and CONTEXT_COURSE ignore the $instance as they represent a
      * single system or the course being restored.
      *
-     * @see get_context_instance()
+     * @see context_system::instance()
+     * @see context_course::instance()
      * @param int $level the context level, like CONTEXT_COURSE or CONTEXT_MODULE
      * @param int $instance the instance id, for example $course->id for courses or $cm->id for activity modules
      * @return int the context id
