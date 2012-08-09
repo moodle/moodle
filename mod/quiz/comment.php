@@ -55,7 +55,7 @@ echo $OUTPUT->heading(format_string($attemptobj->get_question_name($slot)));
 
 // Process any data that was submitted.
 if (data_submitted() && confirm_sesskey()) {
-    if (optional_param('submit', false, PARAM_BOOL) && question_behaviour::is_manual_grade_in_range($attemptobj->get_uniqueid(), $slot)) {
+    if (optional_param('submit', false, PARAM_BOOL) && question_engine::is_manual_grade_in_range($attemptobj->get_uniqueid(), $slot)) {
         $transaction = $DB->start_delegated_transaction();
         $attemptobj->process_submitted_actions(time());
         $transaction->allow_commit();

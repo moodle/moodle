@@ -62,7 +62,6 @@ require_once(dirname(__FILE__) . '/../interactive/behaviour.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_interactivecountback extends qbehaviour_interactive {
-    const IS_ARCHETYPAL = false;
 
     public function is_compatible_question(question_definition $question) {
         return $question instanceof question_automatically_gradable_with_countback;

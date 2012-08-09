@@ -1,0 +1,7 @@
+This files describes API changes for the core question system.
+
+
+=== 2.4 ===
+
+1) The method question_behaviour::is_manual_grade_in_range and move and become
+question_engine::is_manual_grade_in_range.

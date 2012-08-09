@@ -390,8 +390,7 @@ class question_information_item extends question_definition {
     }
 
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
-        question_engine::load_behaviour_class('informationitem');
-        return new qbehaviour_informationitem($qa, $preferredbehaviour);
+        return question_engine::make_behaviour('informationitem', $qa, $preferredbehaviour);
     }
 
     public function get_expected_data() {

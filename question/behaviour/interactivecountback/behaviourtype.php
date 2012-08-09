@@ -15,30 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question behaviour for the old adaptive mode, with no penalties.
+ * Question behaviour type for interactive behaviour with count-back scoring behaviour.
  *
- * @package    qbehaviour
- * @subpackage adaptivenopenalty
- * @copyright  2009 The Open University
+ * @package    qbehaviour_interactivecountback
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../adaptive/behaviour.php');
+require_once(dirname(__FILE__) . '/../interactive/behaviourtype.php');
 
 
 /**
- * Question behaviour for adaptive mode, with no penalties.
+ * Question behaviour type information for interactive behaviour with count-back scoring.
  *
- * This is the old version of interactive mode, without penalties.
- *
- * @copyright  2009 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_adaptivenopenalty extends qbehaviour_adaptive {
-    protected function adjusted_fraction($fraction, $prevtries) {
-        return $fraction;
+class qbehaviour_interactivecountback_type extends qbehaviour_interactive_type {
+    public function is_archetypal() {
+        return false;
     }
 }

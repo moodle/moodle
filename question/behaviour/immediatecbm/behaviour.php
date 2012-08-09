@@ -43,8 +43,6 @@ require_once(dirname(__FILE__) . '/../immediatefeedback/behaviour.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_immediatecbm extends qbehaviour_immediatefeedback {
-    const IS_ARCHETYPAL = true;
-
     public function get_min_fraction() {
         return question_cbm::adjust_fraction(parent::get_min_fraction(), question_cbm::HIGH);
     }
@@ -147,9 +145,5 @@ class qbehaviour_immediatecbm extends qbehaviour_immediatefeedback {
                     $step->get_behaviour_var('certainty'));
         }
         return $summary;
-    }
-
-    public static function adjust_random_guess_score($fraction) {
-        return question_cbm::adjust_fraction($fraction, question_cbm::default_certainty());
     }
 }

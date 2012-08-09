@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the quetsion behaviour base class
+ * Defines the question behaviour base class
  *
  * @package    moodlecore
  * @subpackage questionbehaviours
@@ -40,21 +40,10 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_behaviour {
-    /**
-     * Certain behaviours are definitive of a  way that questions can
-     * behave when attempted. For example deferredfeedback model, interactive
-     * model, etc. These are the options that should be listed in the
-     * user-interface. These models should define the class constant
-     * IS_ARCHETYPAL as true. Other models are more implementation details, for
-     * example the informationitem model, or a special subclass like
-     * interactive_adapted_for_my_qtype. These models should IS_ARCHETYPAL as
-     * false.
-     * @var boolean
-     */
-    const IS_ARCHETYPAL = false;
 
     /** @var question_attempt the question attempt we are managing. */
     protected $qa;
+
     /** @var question_definition shortcut to $qa->get_question(). */
     protected $question;
 
@@ -93,16 +82,6 @@ abstract class question_behaviour {
      */
     public function get_name() {
         return substr(get_class($this), 11);
-    }
-
-    /**
-     * 'Override' this method if there are some display options that do not make
-     * sense 'during the attempt'.
-     * @return array of {@link question_display_options} field names, that are
-     * not relevant to this behaviour before a 'finish' action.
-     */
-    public static function get_unused_display_options() {
-        return array();
     }
 
     /**
@@ -188,17 +167,6 @@ abstract class question_behaviour {
      */
     public function get_min_fraction() {
         return 0;
-    }
-
-    /**
-     * Adjust a random guess score for a question using this model. You have to
-     * do this without knowing details of the specific question, or which usage
-     * it is in.
-     * @param number $fraction the random guess score from the question type.
-     * @return number the adjusted fraction.
-     */
-    public static function adjust_random_guess_score($fraction) {
-        return $fraction;
     }
 
     /**
@@ -475,20 +443,6 @@ abstract class question_behaviour {
         $pendingstep->set_state($this->qa->get_state()->corresponding_commented_state(
                 $pendingstep->get_fraction()));
         return question_attempt::KEEP;
-    }
-
-    /**
-     * Validate that the manual grade submitted for a particular question is in range.
-     * @param int $qubaid the question_usage id.
-     * @param int $slot the slot number within the usage.
-     * @return bool whether the submitted data is in range.
-     */
-    public static function is_manual_grade_in_range($qubaid, $slot) {
-        $prefix = 'q' . $qubaid . ':' . $slot . '_';
-        $mark = question_utils::optional_param_mark($prefix . '-mark');
-        $maxmark = optional_param($prefix . '-maxmark', null, PARAM_FLOAT);
-        $minfraction = optional_param($prefix . ':minfraction', null, PARAM_FLOAT);
-        return is_null($mark) || ($mark >= $minfraction * $maxmark && $mark <= $maxmark);
     }
 
     /**

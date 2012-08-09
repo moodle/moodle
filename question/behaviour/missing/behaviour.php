@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Fake question behaviour that is used when the actual qim was not
+ * Fake question behaviour that is used when the actual behaviour was not
  * available.
  *
  * @package    qbehaviour
