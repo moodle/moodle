@@ -117,7 +117,7 @@ class tinymce_texteditor extends texteditor {
             'apply_source_formatting' => true,
             'remove_script_host' => false,
             'entity_encoding' => "raw",
-            'plugins' => 'advimage,safari,table,style,layer,advhr,advlink,emotions,inlinepopups,' .
+            'plugins' => 'safari,table,style,layer,advhr,advlink,emotions,inlinepopups,' .
                 'searchreplace,paste,directionality,fullscreen,nonbreaking,contextmenu,' .
                 'insertdatetime,save,iespell,preview,print,noneditable,visualchars,' .
                 'xhtmlxtras,template,pagebreak',
