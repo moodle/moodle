@@ -8688,7 +8688,10 @@ function get_browser_version_classes() {
  */
 function can_use_rotated_text() {
     global $USER;
-    return ajaxenabled(array('Firefox' => 2.0)) && !$USER->screenreader;;
+    return (check_browser_version('MSIE', 9) || check_browser_version('Firefox', 2) ||
+            check_browser_version('Chrome', 21) || check_browser_version('Safari', 536.26) ||
+            check_browser_version('Opera', 12) || check_browser_version('Safari iOS', 533)) &&
+            !$USER->screenreader;
 }
 
 /**
