@@ -25,7 +25,7 @@
                 return "";
 
             html = '<a class="moodlebutton" id="' + id + '_link" href="javascript:openBrowser(\'' + id + '\',\'' + target_form_element + '\', \'' + type + '\',\'' + option + '\');" onmousedown="return false;">';
-            html += tinyMCEPopup.getLang('browseimage');
+            html += '<span id="' + id + '">' + tinyMCEPopup.getLang('browseimage') + '</span>';
             html += '</a>';
 
             return html;
