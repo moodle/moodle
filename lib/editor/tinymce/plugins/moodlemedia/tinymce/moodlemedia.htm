@@ -15,6 +15,22 @@
         editor_tinymce_include('utils/validate.js');
         editor_tinymce_include('utils/form_utils.js');
         editor_tinymce_include('utils/editable_selects.js');
+
+        var getFileBrowserHTML = function(id, target_form_element, type, prefix) {
+            var option = prefix + "_" + type + "_browser_callback", cb, html;
+
+            cb = tinyMCEPopup.getParam(option, tinyMCEPopup.getParam("file_browser_callback"));
+
+            if (!cb)
+                return "";
+
+            html = '<a class="moodlebutton" id="' + id + '_link" href="javascript:openBrowser(\'' + id + '\',\'' + target_form_element + '\', \'' + type + '\',\'' + option + '\');" onmousedown="return false;">';
+            html += tinyMCEPopup.getLang('browsemedia');
+            html += '</a>';
+
+            return html;
+        }
+
     </script>
 	<script type="text/javascript" src="js/media.js"></script>
 	<link href="css/media.css" rel="stylesheet" type="text/css" />
