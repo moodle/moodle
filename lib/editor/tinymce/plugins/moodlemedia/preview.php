@@ -38,7 +38,7 @@ $editor = new tinymce_texteditor();
 
 // Now output this file which is super-simple
 $PAGE->set_pagelayout('embedded');
-$PAGE->set_url(new moodle_url('/lib/editor/tinymce/tiny_mce/' . $editor->version . '/plugins/moodlemedia/preview.php',
+$PAGE->set_url(new moodle_url('/lib/editor/tinymce/plugins/moodlemedia/preview.php',
         array('path' => $path)));
 $PAGE->set_context(context_system::instance());
 $PAGE->add_body_class('core_media_preview');
