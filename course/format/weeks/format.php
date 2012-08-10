@@ -39,7 +39,7 @@ if ($week = optional_param('week', 0, PARAM_INT)) {
 
 $renderer = $PAGE->get_renderer('format_weeks');
 
-if (!empty($displaysection) && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+if (!empty($displaysection)) {
     $renderer->print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection);
 } else {
     $renderer->print_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused);

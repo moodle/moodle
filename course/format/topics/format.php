@@ -46,7 +46,7 @@ if (($marker >=0) && has_capability('moodle/course:setcurrentsection', $context)
 
 $renderer = $PAGE->get_renderer('format_topics');
 
-if (!empty($displaysection) && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+if (!empty($displaysection)) {
     $renderer->print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection);
 } else {
     $renderer->print_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused);
