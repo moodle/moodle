@@ -520,6 +520,10 @@ class plugin_manager {
                 'graphs'
             ),
 
+            'tinymce' => array(
+                'dragmath', 'moodleemoticon', 'moodleimage', 'moodlemedia', 'moodlenolink', 'spellchecker',
+            ),
+
             'theme' => array(
                 'afterburner', 'anomaly', 'arialist', 'base', 'binarius',
                 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor',
