@@ -70,6 +70,12 @@ class stored_file {
         } else {
             $this->repository = null;
         }
+        // make sure all reference fields exist in file_record even when it is not a reference
+        foreach (array('referencelastsync', 'referencelifetime', 'referencefileid', 'reference', 'repositoryid') as $key) {
+            if (empty($this->file_record->$key)) {
+                $this->file_record->$key = null;
+            }
+        }
     }
 
     /**
@@ -142,10 +148,16 @@ class stored_file {
                     }
                 }
 
-                if ($field === 'referencefileid' or $field === 'referencelastsync' or $field === 'referencelifetime') {
+                if ($field === 'referencefileid') {
                     if (!is_null($value) and !is_number($value)) {
                         throw new file_exception('storedfileproblem', 'Invalid reference info');
                     }
+                }
+
+                if ($field === 'referencelastsync' or $field === 'referencelifetime') {
+                    // do not update those fields
+                    // TODO MDL-33416 [2.4] fields referencelastsync and referencelifetime to be removed from {files} table completely
+                    continue;
                 }
 
                 // adding the field
@@ -226,8 +238,6 @@ class stored_file {
         // Update the underlying record in the database.
         $update = new stdClass();
         $update->referencefileid = null;
-        $update->referencelastsync = null;
-        $update->referencelifetime = null;
         $this->update($update);
 
         $transaction->allow_commit();

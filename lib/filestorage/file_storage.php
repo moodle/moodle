@@ -976,10 +976,6 @@ class file_storage {
             $filerecord->sortorder = 0;
         }
 
-        $filerecord->referencefileid   = !isset($filerecord->referencefileid) ? 0 : $filerecord->referencefileid;
-        $filerecord->referencelastsync = !isset($filerecord->referencelastsync) ? 0 : $filerecord->referencelastsync;
-        $filerecord->referencelifetime = !isset($filerecord->referencelifetime) ? 0 : $filerecord->referencelifetime;
-
         $filerecord->filepath = clean_param($filerecord->filepath, PARAM_PATH);
         if (strpos($filerecord->filepath, '/') !== 0 or strrpos($filerecord->filepath, '/') !== strlen($filerecord->filepath)-1) {
             // path must start and end with '/'
@@ -1094,9 +1090,6 @@ class file_storage {
         } else {
             $filerecord->sortorder = 0;
         }
-        $filerecord->referencefileid   = !isset($filerecord->referencefileid) ? 0 : $filerecord->referencefileid;
-        $filerecord->referencelastsync = !isset($filerecord->referencelastsync) ? 0 : $filerecord->referencelastsync;
-        $filerecord->referencelifetime = !isset($filerecord->referencelifetime) ? 0 : $filerecord->referencelifetime;
 
         $filerecord->filepath = clean_param($filerecord->filepath, PARAM_PATH);
         if (strpos($filerecord->filepath, '/') !== 0 or strrpos($filerecord->filepath, '/') !== strlen($filerecord->filepath)-1) {
@@ -1217,9 +1210,10 @@ class file_storage {
             $filerecord->sortorder = 0;
         }
 
-        $filerecord->referencefileid   = empty($filerecord->referencefileid) ? 0 : $filerecord->referencefileid;
-        $filerecord->referencelastsync = empty($filerecord->referencelastsync) ? 0 : $filerecord->referencelastsync;
-        $filerecord->referencelifetime = empty($filerecord->referencelifetime) ? 0 : $filerecord->referencelifetime;
+        // TODO MDL-33416 [2.4] fields referencelastsync and referencelifetime to be removed from {files} table completely
+        unset($filerecord->referencelastsync);
+        unset($filerecord->referencelifetime);
+
         $filerecord->mimetype          = empty($filerecord->mimetype) ? $this->mimetype($filerecord->filename) : $filerecord->mimetype;
         $filerecord->userid            = empty($filerecord->userid) ? null : $filerecord->userid;
         $filerecord->source            = empty($filerecord->source) ? null : $filerecord->source;
@@ -1309,10 +1303,8 @@ class file_storage {
 
         $transaction->allow_commit();
 
-        // Adding repositoryid and reference to file record to create stored_file instance
-        $filerecord->repositoryid = $repositoryid;
-        $filerecord->reference = $reference;
-        return $this->get_file_instance($filerecord);
+        // this will retrieve all reference information from DB as well
+        return $this->get_file_by_id($filerecord->id);
     }
 
     /**
@@ -1973,10 +1965,12 @@ class file_storage {
         // else problems like MDL-33172 occur.
         $filefields = array('contenthash', 'pathnamehash', 'contextid', 'component', 'filearea',
             'itemid', 'filepath', 'filename', 'userid', 'filesize', 'mimetype', 'status', 'source',
-            'author', 'license', 'timecreated', 'timemodified', 'sortorder', 'referencefileid',
-            'referencelastsync', 'referencelifetime');
+            'author', 'license', 'timecreated', 'timemodified', 'sortorder', 'referencefileid');
 
-        $referencefields = array('repositoryid', 'reference');
+        $referencefields = array('repositoryid' => 'repositoryid',
+            'reference' => 'reference',
+            'lastsync' => 'referencelastsync',
+            'lifetime' => 'referencelifetime');
 
         // id is specifically named to prevent overlaping between the two tables.
         $fields = array();
@@ -1985,8 +1979,8 @@ class file_storage {
             $fields[] = "{$filesprefix}.{$field}";
         }
 
-        foreach ($referencefields as $field) {
-            $fields[] = "{$filesreferenceprefix}.{$field}";
+        foreach ($referencefields as $field => $alias) {
+            $fields[] = "{$filesreferenceprefix}.{$field} AS {$alias}";
         }
 
         return implode(', ', $fields);
