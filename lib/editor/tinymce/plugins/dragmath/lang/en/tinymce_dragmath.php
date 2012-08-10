@@ -15,15 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for dragmath editor plugin.
+ * Strings for DragMath editor integration plugin.
  *
- * @package tinymce_dragmath
+ * @package   tinymce_dragmath
  * @copyright 2012 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['javaneeded'] = 'To use this page you need a Java-enabled browser. Download the latest Java plug-in from {$a}.';
 $string['pluginname'] = 'Insert equation';
+$string['title'] = 'DragMath Equation Editor';
 
-$string['dragmath_desc'] = 'Insert equation';
-$string['dragmath_javaneeded'] = 'To use this page you need a Java-enabled browser. Download the latest Java plug-in from {$a}.';
-$string['dragmath_title'] = 'DragMath Equation Editor';
+/* All lang strings used from TinyMCE JavaScript code must be named 'pluginname:stringname', no need to create langs/en_dlg.js */
+$string['dragmath:desc'] = 'Insert equation';

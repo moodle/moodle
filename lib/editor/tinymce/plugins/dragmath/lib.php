@@ -17,16 +17,15 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Plugin for 'dragmath' equation editor (for use with TeX filter).
+ * Plugin for DragMath equation editor (for use with TeX filter).
  *
- * @package tinymce_dragmath
+ * @package   tinymce_dragmath
  * @copyright 2012 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tinymce_dragmath extends editor_tinymce_plugin {
     protected function update_init_params(array &$params, context $context,
             array $options = null) {
-        global $OUTPUT;
 
         // If TeX filter is disabled, do not add button.
         $filters = filter_get_active_in_context($context);
