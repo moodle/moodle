@@ -27,8 +27,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 class tinymce_texteditor extends texteditor {
-    /** @var string active version - directory name */
-    public $version = '3.5.4.1';
+    /** @var string active version - this is the directory name where to find tinymce code */
+    public $version = '3.6.0';
 
     public function supported_by_browser() {
         if (check_browser_version('MSIE', 6)) {
