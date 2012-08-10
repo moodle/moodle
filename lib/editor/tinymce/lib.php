@@ -106,6 +106,7 @@ class tinymce_texteditor extends texteditor {
             'elements' => $elementid,
             'relative_urls' => false,
             'document_base_url' => $CFG->httpswwwroot,
+            'moodle_plugin_base' => "$CFG->httpswwwroot/lib/editor/tinymce/plugins/",
             'content_css' => $contentcss,
             'language' => $lang,
             'directionality' => $directionality,
@@ -180,5 +181,16 @@ class tinymce_texteditor extends texteditor {
         global $CFG;
         require_once($CFG->dirroot . '/lib/editor/tinymce/classes/plugin.php');
         return editor_tinymce_plugin::get($plugin);
+    }
+
+    /**
+     * Equivalent to tinyMCE.baseURL value available from JavaScript,
+     * always use instead of /../ when referencing tinymce core code from moodle plugins!
+     *
+     * @return moodle_url url pointing to the root of TinyMCE javascript code.
+     */
+    public function get_tinymce_base_url() {
+        global $CFG;
+        return new moodle_url("$CFG->httpswwwroot/lib/editor/tinymce/tiny_mce/$this->version/");
     }
 }
