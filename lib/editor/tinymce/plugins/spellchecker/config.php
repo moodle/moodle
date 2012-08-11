@@ -17,21 +17,18 @@
 /**
  * Spellchecker configuration. (Has been rewritten for Moodle.)
  *
- * @package tinymce_spellchecker
+ * @package   tinymce_spellchecker
  * @copyright 2012 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../../../../config.php');
 
-@error_reporting(E_ALL ^ E_NOTICE); // hide notices even if Moodle is configured to show them
+@error_reporting(E_ALL ^ E_NOTICE); // Hide notices even if Moodle is configured to show them.
 
 // General settings
 $config['general.engine'] = get_config('editor_tinymce', 'spellengine') ?
         get_config('editor_tinymce', 'spellengine') : 'GoogleSpell';
-//$config['general.engine'] = 'PSpell';
-//$config['general.engine'] = 'PSpellShell';
-//$config['general.remote_rpc_url'] = 'http://some.other.site/some/url/rpc.php';
 
 // GoogleSpell settings
 $config['GoogleSpell.proxyhost'] = isset($CFG->proxyhost) ? $CFG->proxyhost : '';
@@ -51,8 +48,4 @@ if ($config['general.engine'] === 'PSpell' || $config['general.engine'] === 'PSp
     $config['PSpellShell.mode'] = PSPELL_FAST;
     $config['PSpellShell.aspell'] = $CFG->aspellpath;
     $config['PSpellShell.tmp'] = '/tmp';
-
-    // Windows PSpellShell settings
-    //$config['PSpellShell.aspell'] = '"c:\Program Files\Aspell\bin\aspell.exe"';
-    //$config['PSpellShell.tmp'] = 'c:/temp';
 }

@@ -20,9 +20,9 @@ defined('MOODLE_INTERNAL') || die();
  * Plugin for spell checking (Moodle custom replacement for standard TinyMCE
  * plugin, but with same name, which seems a bit unhelpful).
  *
- * @package tinymce_spellchecker
+ * @package   tinymce_spellchecker
  * @copyright 2012 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tinymce_spellchecker extends editor_tinymce_plugin {
     protected function update_init_params(array &$params, context $context,
