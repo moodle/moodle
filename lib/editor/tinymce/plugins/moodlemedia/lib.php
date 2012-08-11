@@ -19,14 +19,13 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Plugin for Moodle media (audio/video) insertion dialog.
  *
- * @package tinymce_moodlemedia
+ * @package   tinymce_moodlemedia
  * @copyright 2012 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tinymce_moodlemedia extends editor_tinymce_plugin {
     protected function update_init_params(array &$params, context $context,
             array $options = null) {
-        global $OUTPUT;
 
         // Add button after emoticon button in advancedbuttons3.
         $added = $this->add_button_after($params, 3, 'moodlemedia', 'moodleemoticon', false);
