@@ -17,11 +17,12 @@
 /**
  * Strings for Moodle emoticon plugin.
  *
- * @package tinymce_moodleemoticon
+ * @package   tinymce_moodleemoticon
  * @copyright 2012 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['pluginname'] = 'Insert emoticon';
 
-$string['desc'] = 'Insert emoticon';
+/* All lang strings used from TinyMCE JavaScript code must be named 'pluginname:stringname', no need to create langs/en_dlg.js */
+$string['moodleemoticon:desc'] = 'Insert emoticon';

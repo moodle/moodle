@@ -19,9 +19,9 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Plugin for Moodle emoticons.
  *
- * @package tinymce_moodleemoticon
+ * @package   tinymce_moodleemoticon
  * @copyright 2012 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tinymce_moodleemoticon extends editor_tinymce_plugin {
     protected function update_init_params(array &$params, context $context,

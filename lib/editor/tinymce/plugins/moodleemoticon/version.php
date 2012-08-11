@@ -17,9 +17,9 @@
 /**
  * TinyMCE emoticon plugin version details.
  *
- * @package tinymce_moodleemoticon
+ * @package   tinymce_moodleemoticon
  * @copyright 2012 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

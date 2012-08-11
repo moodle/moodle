@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,17 +17,17 @@
 /**
  * Displays the TinyMCE popup window to insert a Moodle emoticon
  *
- * @package tinymce_moodleemoticon
+ * @package   tinymce_moodleemoticon
  * @copyright 2010 David Mudrak <david@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('NO_MOODLE_COOKIES', true); // Session not used here
-define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
+define('NO_MOODLE_COOKIES', true); // Session not used here.
 
-require_once(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))) . '/config.php');
+require(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))) . '/config.php');
 
-$PAGE->set_context(get_system_context());
+$PAGE->set_context(context_system::instance());
+$PAGE->set_url('/lib/editor/tinymce/plugins/moodleemoticon/dialog.php');
 
 $emoticonmanager = get_emoticon_manager();
 $stringmanager = get_string_manager();
@@ -36,12 +35,14 @@ $stringmanager = get_string_manager();
 $editor = get_texteditor('tinymce');
 $plugin = $editor->get_plugin('moodleemoticon');
 
+$htmllang = get_html_lang();
+header('Content-Type: text/html; charset=utf-8');
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html <?php echo $htmllang ?>
 <head>
-    <title><?php print_string('moodleemoticon:desc', 'editor_tinymce'); ?></title>
-    <script type="text/javascript" src="../../tiny_mce/<?php echo $editor->version ?>/tiny_mce_popup.js"></script>
+    <title><?php print_string('moodleemoticon:desc', 'tinymce_moodleemoticon'); ?></title>
+    <script type="text/javascript" src="<?php echo $editor->get_tinymce_base_url(); ?>/tiny_mce_popup.js"></script>
     <script type="text/javascript" src="<?php echo $plugin->get_tinymce_file_url('js/dialog.js'); ?>"></script>
 </head>
 <body>
@@ -50,7 +51,7 @@ $plugin = $editor->get_plugin('moodleemoticon');
 <?php
 
 $emoticons = $emoticonmanager->get_emoticons();
-// this is tricky - we must somehow include the information about the original
+// This is tricky - we must somehow include the information about the original
 // emoticon text so that we can replace the image back with it on editor save.
 // so we are going to encode the index of the emoticon. this will break when the
 // admin changes the mapping table while the user has the editor opened
