@@ -17,18 +17,17 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Plugin for insterint of images with Moodle file picker support insertion dialog.
+ * Plugin for inserting and editing of images with Moodle file picker support.
  *
  * @package   tinymce_moodleimage
- * @copyright 2012 petr Skoda
+ * @copyright 2012 Petr Skoda (http://skodak.org)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tinymce_moodleimage extends editor_tinymce_plugin {
     protected function update_init_params(array &$params, context $context,
             array $options = null) {
-        global $OUTPUT;
 
-        // This plugin overrides standard 'image' button.
+        // This plugin overrides standard 'image' button, no need to insert new button.
 
         // Add JS file, which uses default name.
         $this->add_js_plugin($params);

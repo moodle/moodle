@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TinyMCE image insert plugin version details.
+ * TinyMCE image insert/edit plugin version details.
  *
  * @package   tinymce_moodleimage
- * @copyright 2012 Petr Skoda
+ * @copyright 2012 Petr Skoda (http://skodak.org)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
