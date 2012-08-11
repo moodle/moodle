@@ -76,10 +76,10 @@ header('Content-Type: text/html; charset=utf-8');
     <?php print_string('javaneeded', 'tinymce_dragmath', '<a href="http://www.java.com">Java.com</a>')?>
 </object>
 <form name="form" action="#">
-	<div>
-	<button type="button" onclick="return DragMathDialog.insert();"><?php print_string('common:insert', 'editor_tinymce'); ?></button>
-	<button type="button" onclick="return tinyMCEPopup.close();"><?php print_string('cancel'); ?></button>
-	</div>
+    <div class="mceActionPanel">
+        <input type="submit" id="insert" name="insert" value="{#insert}" onclick="return DragMathDialog.insert();" />
+        <input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="return tinyMCEPopup.close();" />
+    </div>
 </form>
 
 </body>
