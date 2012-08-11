@@ -30,6 +30,9 @@ require('../../../../config.php');
 $lang  = optional_param('elanguage', 'en', PARAM_SAFEDIR);
 $theme = optional_param('etheme', 'advanced', PARAM_SAFEDIR);
 
+$PAGE->set_context(context_system::instance());
+$PAGE->set_url('/lib/editor/tinymce/extra/strings.php');
+
 if (!get_string_manager()->translation_exists($lang, false)) {
     $lang = 'en';
 }
@@ -42,27 +45,28 @@ $result = array();
 foreach ($string as $key=>$value) {
     $parts = explode(':', $key);
     if (count($parts) != 2) {
-        // incorrect string - ignore
+        // Ignore non-TinyMCE strings.
         continue;
     }
 
     $result[$parts[0]][$parts[1]] = $value;
 }
 
-// Add subplugin strings. These automatically are added under the plugin name
-// unless they include a colon, in which case they are treated same as the
-// main lang file strings. (Just in case you have a single Moodle plugin
-// creating multiple tinymce plugins.)
+// Add subplugin strings, accept only those with proper pluginname prefix with colon.
 foreach (get_plugin_list('tinymce') as $component => $ignored) {
     $componentstrings = get_string_manager()->load_component_strings(
             'tinymce_' . $component, $lang);
     foreach ($componentstrings as $key => $value) {
-        $parts = explode(':', $key);
-        if (count($parts) == 2) {
-            $result[$parts[0]][$parts[1]] = $value;
-        } else {
-            $result[$component][$key] = $value;
+        if (strpos($key, "$component:") !== 0) {
+            // Ignore normal lang strings.
+            continue;
         }
+        $parts = explode(':', $key);
+        if (count($parts) != 2) {
+            // Ignore malformed strings with more colons.
+            continue;
+        }
+        $result[$parts[0]][$parts[1]] = $value;
     }
 }
 
