@@ -19,14 +19,13 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Plugin for Moodle 'no link' button.
  *
- * @package tinymce_moodlenolink
+ * @package   tinymce_moodlenolink
  * @copyright 2012 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tinymce_moodlenolink extends editor_tinymce_plugin {
     protected function update_init_params(array &$params, context $context,
             array $options = null) {
-        global $OUTPUT;
 
         // Add button after 'unlink' in advancedbuttons3.
         $this->add_button_after($params, 3, 'moodlenolink', 'unlink');
