@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,25 +17,24 @@
 /**
  * This script imports TinyMCE lang strings into Moodle lang packs.
  *
- * @package    editor
- * @subpackage tinymce
+ * @package    editor_tinymce
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('CLI_SCRIPT', true);
-require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/config.php';
+require dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/config.php';
 
 if (!debugging('', DEBUG_DEVELOPER)) {
     die('Only for developers!!!!!');
 }
 
 $langconversion = array(
-    // mapping of TinyMCE lang codes to Moodle codes
+    // Mapping of TinyMCE lang codes to Moodle codes.
     'nb'    => 'no',
     'sr'    => 'sr_lt',
 
-    // ignore the following files due to known errors
+    // Ignore the following files due to known errors.
     'ch'    => false,   // XML parsing error, Moodle does not seem to have Chamorro yet anyway
     'zh'    => false,   // XML parsing error, use 'zh' => 'zh_tw' when sorted out
 );
@@ -46,17 +44,17 @@ $tempdir       = "$CFG->dirroot/lib/editor/tinymce/extra/tools/temp/tinylangs";
 $enfile        = "$CFG->dirroot/lib/editor/tinymce/lang/en/editor_tinymce.php";
 
 
-/// first update English lang pack
+/// First update English lang pack.
 if (!file_exists("$tempdir/en.xml")) {
     die('Missing temp/tinylangs/en.xml! Did you download langs?');
 }
 $old_strings = editor_tinymce_get_all_strings('en');
 ksort($old_strings);
 
-// our modifications and upstream changes in existing strings
+// Our modifications and upstream changes in existing strings.
 $tweaked = array();
 
-//detect changes and new additions
+// Detect changes and new additions.
 $parsed = editor_tinymce_parse_xml_lang("$tempdir/en.xml");
 ksort($parsed);
 foreach ($parsed as $key=>$value) {
@@ -76,7 +74,6 @@ if (!$handle = fopen($enfile, 'w')) {
 
 $header = <<<EOT
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -93,10 +90,9 @@ $header = <<<EOT
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'editor_tinymce', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'editor_tinymce', language 'en'
  *
- * @package    editor
- * @subpackage tinymce
+ * @package    editor_tinymce
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -110,7 +106,7 @@ foreach ($old_strings as $key=>$value) {
     fwrite($handle, editor_tinymce_encode_stringline($key, $value));
 }
 
-fwrite($handle, "\n\n// == TinyMCE upstream lang strings from all plugins ==\n");
+fwrite($handle, "\n\n// == TinyMCE upstream lang strings from all standard upstream plugins ==\n");
 foreach ($parsed as $key=>$value) {
     fwrite($handle, editor_tinymce_encode_stringline($key, $value));
 }
@@ -124,7 +120,7 @@ if ($tweaked) {
 
 fclose($handle);
 
-//now update all other langs
+// Now update all other langs.
 $en_strings = editor_tinymce_get_all_strings('en');
 if (!file_exists($targetlangdir)) {
     echo "Can not find target lang dir: $targetlangdir !!";

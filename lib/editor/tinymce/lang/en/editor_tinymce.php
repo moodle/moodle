@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'editor_tinymce', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'editor_tinymce', language 'en'
  *
- * @package    editor
- * @subpackage tinymce
+ * @package    editor_tinymce
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +31,7 @@ $string['media_dlg:filename'] = 'Filename';
 $string['pluginname'] = 'TinyMCE HTML editor';
 
 
-// == TinyMCE upstream lang strings from all plugins ==
+// == TinyMCE upstream lang strings from all standard upstream plugins ==
 $string['advanced:address'] = 'Address';
 $string['advanced:anchor_delta_height'] = '';
 $string['advanced:anchor_delta_width'] = '';

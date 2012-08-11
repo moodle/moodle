@@ -1,7 +1,7 @@
-Description of TinyMCE v3.6.0 library integration in Moodle
+Description of TinyMCE library integration in Moodle
 =========================================================================================
 
-Copyright: (c) 2004-2011, Moxiecode Systems AB, All rights reserved.
+Copyright: (c) 2004-2012, Moxiecode Systems AB, All rights reserved.
 License: GNU LESSER GENERAL PUBLIC LICENSE Version 2.1, February 1999
 
 Moodle maintainer: Petr Skoda (skodak)
@@ -39,7 +39,7 @@ Contact AMOS maintainer / custom-tinymce maintainer / integrators about that.
 =========================================================================================
 
 Modified:
- * string processing - uses our lang framework
+ * string processing - uses our lang framework instead of js files
 
- TODO:
+TODO:
  * update strings to integrate with AMOS

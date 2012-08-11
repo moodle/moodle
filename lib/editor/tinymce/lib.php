@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -30,6 +29,10 @@ class tinymce_texteditor extends texteditor {
     /** @var string active version - this is the directory name where to find tinymce code */
     public $version = '3.6.0';
 
+    /**
+     * Is the current browser supported by this editor?
+     * @return bool
+     */
     public function supported_by_browser() {
         if (check_browser_version('MSIE', 6)) {
             return true;
@@ -53,21 +56,44 @@ class tinymce_texteditor extends texteditor {
         return false;
     }
 
+    /**
+     * Returns array of supported text formats.
+     * @return array
+     */
     public function get_supported_formats() {
+        // FORMAT_MOODLE is not supported here, sorry.
         return array(FORMAT_HTML => FORMAT_HTML);
     }
 
+    /**
+     * Returns text format preferred by this editor.
+     * @return int
+     */
     public function get_preferred_format() {
         return FORMAT_HTML;
     }
 
+    /**
+     * Does this editor support picking from repositories?
+     * @return bool
+     */
     public function supports_repositories() {
         return true;
     }
 
+    /**
+     * Sets up head code if necessary.
+     */
     public function head_setup() {
     }
 
+    /**
+     * Use this editor for give element.
+     *
+     * @param string $elementid
+     * @param array $options
+     * @param null $fpoptions
+     */
     public function use_editor($elementid, array $options=null, $fpoptions=null) {
         global $PAGE;
         if (debugging('', DEBUG_DEVELOPER)) {
