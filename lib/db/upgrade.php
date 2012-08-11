@@ -164,7 +164,7 @@ function xmldb_main_upgrade($oldversion) {
         $index = new xmldb_index('contextid-lowerboundary-letter', XMLDB_INDEX_UNIQUE, array('contextid', 'lowerboundary', 'letter'));
 
         // MDL-30515 Removing duplicate entries before adding the unique index
-        $sql = "SELECT MAX(id) as newestid, contextid, lowerboundary, letter, COUNT('x') count
+        $sql = "SELECT MAX(id) as newestid, contextid, lowerboundary, letter, COUNT('x') AS dcount
                   FROM {grade_letters}
               GROUP BY contextid, lowerboundary, letter
                 HAVING COUNT('x') > 1";
