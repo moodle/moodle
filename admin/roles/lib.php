@@ -1042,12 +1042,10 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
         $countfields = 'SELECT COUNT(u.id)';
 
         $sql   = " FROM {user} u
-                  WHERE u.id IN ($enrolsql) $wherecondition
-                        AND u.id NOT IN (
-                           SELECT r.userid
-                             FROM {role_assignments} r
-                            WHERE r.contextid = :contextid
-                                  AND r.roleid = :roleid)";
+              LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.roleid = :roleid AND ra.contextid = :contextid)
+                  WHERE u.id IN ($enrolsql)
+                        $wherecondition
+                        AND ra.id IS NULL";
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
         $params['contextid'] = $this->context->id;
