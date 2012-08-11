@@ -17,11 +17,18 @@
 /**
  * Strings for component 'qformat_blackboard_six', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    qformat
- * @subpackage blackboard_six
+ * @package    qformat_blackboard_six
  * @copyright  2010 Helen Foster
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['defaultname'] = 'Imported question {$a}';
+$string['errormanifest'] = 'Error while parsing the IMS manifest document';
+$string['importnotext'] = 'Missing question text in XML file';
+$string['filenothandled'] = 'This archive contains reference to a file material {$a} wich is not currently handled by import';
+$string['imagenotfound'] = 'Image file with path {$a} was not found in the import.';
+$string['notenoughtsubans'] = 'Unable to import matching question \'{$a}\' because a matching question must comprise at least two questions and three answers.';
 $string['pluginname'] = 'Blackboard V6+';
-$string['pluginname_help'] = 'Blackboard V6+ format enables questions saved in Blackboard\'s export format to be imported via zip file. It provides limited support for Blackboard Version 6 and 7.';
+$string['pluginname_help'] = 'Blackboard V6+ format enables questions saved in all Blackboard export formats to be imported via a dat or zip file. For zip files, images import is supported.';
+$string['unhandledpresblock'] = 'Unhandled presentation bloc';
+$string['unknownorunhandledtype'] = 'Unknown or unhandled question type: {$a}';

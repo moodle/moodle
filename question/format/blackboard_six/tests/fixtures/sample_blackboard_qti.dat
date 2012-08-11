@@ -1,0 +1,1058 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<questestinterop>
+    <assessment title="sample_blackboard_six">
+        <section>
+            <item maxattempts="0">
+                <itemmetadata>
+                    <bbmd_asi_object_id>E03EE0034702442C9306629CBF618049</bbmd_asi_object_id>
+                    <bbmd_asitype>Item</bbmd_asitype>
+                    <bbmd_assessmenttype>Pool</bbmd_assessmenttype>
+                    <bbmd_sectiontype>Subsection</bbmd_sectiontype>
+                    <bbmd_questiontype>True/False</bbmd_questiontype>
+                    <bbmd_is_from_cartridge>false</bbmd_is_from_cartridge>
+                    <qmd_absolutescore>0.0,1.0</qmd_absolutescore>
+                    <qmd_absolutescore_min>0.0</qmd_absolutescore_min>
+                    <qmd_absolutescore_max>1.0</qmd_absolutescore_max>
+                    <qmd_assessmenttype>Proprietary</qmd_assessmenttype>
+                    <qmd_itemtype>Logical Identifier</qmd_itemtype>
+                    <qmd_levelofdifficulty>School</qmd_levelofdifficulty>
+                    <qmd_maximumscore>0.0</qmd_maximumscore>
+                    <qmd_numberofitems>0</qmd_numberofitems>
+                    <qmd_renderingtype>Proprietary</qmd_renderingtype>
+                    <qmd_responsetype>Single</qmd_responsetype>
+                    <qmd_scoretype>Absolute</qmd_scoretype>
+                    <qmd_status>Normal</qmd_status>
+                    <qmd_timelimit>0</qmd_timelimit>
+                    <qmd_weighting>0.0</qmd_weighting>
+                    <qmd_typeofsolution>Complete</qmd_typeofsolution>
+                </itemmetadata>
+                <presentation>
+                    <flow class="Block">
+                        <flow class="QUESTION_BLOCK">
+                            <flow class="FORMATTED_TEXT_BLOCK">
+                                <material>
+                                    <mat_extension>
+                                        <mat_formattedtext type="HTML">&lt;span style="font-size:12pt"&gt;42 is the Absolute Answer to everything.&lt;/span&gt;</mat_formattedtext>
+                                    </mat_extension>
+                                </material>
+                            </flow>
+                            <flow class="FILE_BLOCK">
+                                <material/>
+                            </flow>
+                            <flow class="LINK_BLOCK">
+                                <material>
+                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                </material>
+                            </flow>
+                        </flow>
+                        <flow class="RESPONSE_BLOCK">
+                            <response_lid ident="response" rcardinality="Single" rtiming="No">
+                                <render_choice maxnumber="0" minnumber="0" shuffle="No">
+                                    <flow_label class="Block">
+                                        <response_label ident="true" rarea="Ellipse" rrange="Exact" shuffle="Yes">
+                                            <flow_mat class="Block">
+                                                <material>
+                                                    <mattext charset="us-ascii" texttype="text/plain" xml:space="default">true</mattext>
+                                                </material>
+                                            </flow_mat>
+                                        </response_label>
+                                        <response_label ident="false" rarea="Ellipse" rrange="Exact" shuffle="Yes">
+                                            <flow_mat class="Block">
+                                                <material>
+                                                    <mattext charset="us-ascii" texttype="text/plain" xml:space="default">false</mattext>
+                                                </material>
+                                            </flow_mat>
+                                        </response_label>
+                                    </flow_label>
+                                </render_choice>
+                            </response_lid>
+                        </flow>
+                    </flow>
+                </presentation>
+                <resprocessing scoremodel="SumOfScores">
+                    <outcomes>
+                        <decvar defaultval="0.0" maxvalue="1.0" minvalue="0.0" varname="SCORE" vartype="Decimal"/>
+                    </outcomes>
+                    <respcondition title="correct">
+                        <conditionvar>
+                            <varequal case="No" respident="response">false</varequal>
+                        </conditionvar>
+                        <setvar action="Set" variablename="SCORE">SCORE.max</setvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="correct"/>
+                    </respcondition>
+                    <respcondition title="incorrect">
+                        <conditionvar>
+                            <other/>
+                        </conditionvar>
+                        <setvar action="Set" variablename="SCORE">0.0</setvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="incorrect"/>
+                    </respcondition>
+                </resprocessing>
+                <itemfeedback ident="correct" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML">You gave the right answer.</mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+                <itemfeedback ident="incorrect" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML">42 is the &lt;b&gt;Ultimate&lt;/b&gt; Answer.</mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+            </item>
+            <item maxattempts="0">
+                <itemmetadata>
+                    <bbmd_asi_object_id>C74698725FFD4F85A692662108608D53</bbmd_asi_object_id>
+                    <bbmd_asitype>Item</bbmd_asitype>
+                    <bbmd_assessmenttype>Pool</bbmd_assessmenttype>
+                    <bbmd_sectiontype>Subsection</bbmd_sectiontype>
+                    <bbmd_questiontype>Multiple Choice</bbmd_questiontype>
+                    <bbmd_is_from_cartridge>false</bbmd_is_from_cartridge>
+                    <qmd_absolutescore>0.0,1.0</qmd_absolutescore>
+                    <qmd_absolutescore_min>0.0</qmd_absolutescore_min>
+                    <qmd_absolutescore_max>1.0</qmd_absolutescore_max>
+                    <qmd_assessmenttype>Proprietary</qmd_assessmenttype>
+                    <qmd_itemtype>Logical Identifier</qmd_itemtype>
+                    <qmd_levelofdifficulty>School</qmd_levelofdifficulty>
+                    <qmd_maximumscore>0.0</qmd_maximumscore>
+                    <qmd_numberofitems>0</qmd_numberofitems>
+                    <qmd_renderingtype>Proprietary</qmd_renderingtype>
+                    <qmd_responsetype>Single</qmd_responsetype>
+                    <qmd_scoretype>Absolute</qmd_scoretype>
+                    <qmd_status>Normal</qmd_status>
+                    <qmd_timelimit>0</qmd_timelimit>
+                    <qmd_weighting>0.0</qmd_weighting>
+                    <qmd_typeofsolution>Complete</qmd_typeofsolution>
+                </itemmetadata>
+                <presentation>
+                    <flow class="Block">
+                        <flow class="QUESTION_BLOCK">
+                            <flow class="FORMATTED_TEXT_BLOCK">
+                                <material>
+                                    <mat_extension>
+                                        <mat_formattedtext type="HTML">&lt;span style="font-size:12pt"&gt;What's between orange and green in the spectrum?&lt;/span&gt;</mat_formattedtext>
+                                    </mat_extension>
+                                </material>
+                            </flow>
+                            <flow class="FILE_BLOCK">
+                                <material/>
+                            </flow>
+                            <flow class="LINK_BLOCK">
+                                <material>
+                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                </material>
+                            </flow>
+                        </flow>
+                        <flow class="RESPONSE_BLOCK">
+                            <response_lid ident="response" rcardinality="Single" rtiming="No">
+                                <render_choice maxnumber="0" minnumber="0" shuffle="Yes">
+                                    <flow_label class="Block">
+                                        <response_label ident="7C2A0246CE8D46599FC0120BAE9FC92D" rarea="Ellipse" rrange="Exact" shuffle="Yes">
+                                            <flow_mat class="FORMATTED_TEXT_BLOCK">
+                                                <material>
+                                                    <mat_extension>
+                                                        <mat_formattedtext type="HTML">&lt;span style="font-size:12pt"&gt;red&lt;/span&gt;</mat_formattedtext>
+                                                    </mat_extension>
+                                                </material>
+                                            </flow_mat>
+                                            <flow_mat class="FILE_BLOCK">
+                                                <material/>
+                                            </flow_mat>
+                                            <flow_mat class="LINK_BLOCK">
+                                                <material>
+                                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                                </material>
+                                            </flow_mat>
+                                        </response_label>
+                                    </flow_label>
+                                    <flow_label class="Block">
+                                        <response_label ident="2CBE1E044DE54F8395BDE7877A57837A" rarea="Ellipse" rrange="Exact" shuffle="Yes">
+                                            <flow_mat class="FORMATTED_TEXT_BLOCK">
+                                                <material>
+                                                    <mat_extension>
+                                                        <mat_formattedtext type="HTML">&lt;span style="font-size:12pt"&gt;yellow&lt;/span&gt;</mat_formattedtext>
+                                                    </mat_extension>
+                                                </material>
+                                            </flow_mat>
+                                            <flow_mat class="FILE_BLOCK">
+                                                <material/>
+                                            </flow_mat>
+                                            <flow_mat class="LINK_BLOCK">
+                                                <material>
+                                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                                </material>
+                                            </flow_mat>
+                                        </response_label>
+                                    </flow_label>
+                                    <flow_label class="Block">
+                                        <response_label ident="67A8748A0883467FB45328E922C31D29" rarea="Ellipse" rrange="Exact" shuffle="Yes">
+                                            <flow_mat class="FORMATTED_TEXT_BLOCK">
+                                                <material>
+                                                    <mat_extension>
+                                                        <mat_formattedtext type="HTML">&lt;span style="font-size:12pt"&gt;blue&lt;/span&gt;</mat_formattedtext>
+                                                    </mat_extension>
+                                                </material>
+                                            </flow_mat>
+                                            <flow_mat class="FILE_BLOCK">
+                                                <material/>
+                                            </flow_mat>
+                                            <flow_mat class="LINK_BLOCK">
+                                                <material>
+                                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                                </material>
+                                            </flow_mat>
+                                        </response_label>
+                                    </flow_label>
+                                </render_choice>
+                            </response_lid>
+                        </flow>
+                    </flow>
+                </presentation>
+                <resprocessing scoremodel="SumOfScores">
+                    <outcomes>
+                        <decvar defaultval="0.0" maxvalue="1.0" minvalue="0.0" varname="SCORE" vartype="Decimal"/>
+                    </outcomes>
+                    <respcondition title="correct">
+                        <conditionvar>
+                            <varequal case="No" respident="response">2CBE1E044DE54F8395BDE7877A57837A</varequal>
+                        </conditionvar>
+                        <setvar action="Set" variablename="SCORE">SCORE.max</setvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="correct"/>
+                    </respcondition>
+                    <respcondition title="incorrect">
+                        <conditionvar>
+                            <other/>
+                        </conditionvar>
+                        <setvar action="Set" variablename="SCORE">0.0</setvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="incorrect"/>
+                    </respcondition>
+                </resprocessing>
+                <itemfeedback ident="correct" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML"></mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+                <itemfeedback ident="incorrect" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML"></mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+                <itemfeedback ident="7C2A0246CE8D46599FC0120BAE9FC92D" view="All">
+                    <solution feedbackstyle="Complete" view="All">
+                        <solutionmaterial>
+                            <flow_mat class="Block">
+                                <flow_mat class="FORMATTED_TEXT_BLOCK">
+                                    <material>
+                                        <mat_extension>
+                                            <mat_formattedtext type="HTML">Red is not between orange and green in the spectrum but yellow is.</mat_formattedtext>
+                                        </mat_extension>
+                                    </material>
+                                </flow_mat>
+                                <flow_mat class="FILE_BLOCK">
+                                    <material/>
+                                </flow_mat>
+                                <flow_mat class="LINK_BLOCK">
+                                    <material>
+                                        <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                    </material>
+                                </flow_mat>
+                            </flow_mat>
+                        </solutionmaterial>
+                    </solution>
+                </itemfeedback>
+                <itemfeedback ident="2CBE1E044DE54F8395BDE7877A57837A" view="All">
+                    <solution feedbackstyle="Complete" view="All">
+                        <solutionmaterial>
+                            <flow_mat class="Block">
+                                <flow_mat class="FORMATTED_TEXT_BLOCK">
+                                    <material>
+                                        <mat_extension>
+                                            <mat_formattedtext type="HTML">You gave the right answer.</mat_formattedtext>
+                                        </mat_extension>
+                                    </material>
+                                </flow_mat>
+                                <flow_mat class="FILE_BLOCK">
+                                    <material/>
+                                </flow_mat>
+                                <flow_mat class="LINK_BLOCK">
+                                    <material>
+                                        <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                    </material>
+                                </flow_mat>
+                            </flow_mat>
+                        </solutionmaterial>
+                    </solution>
+                </itemfeedback>
+                <itemfeedback ident="67A8748A0883467FB45328E922C31D29" view="All">
+                    <solution feedbackstyle="Complete" view="All">
+                        <solutionmaterial>
+                            <flow_mat class="Block">
+                                <flow_mat class="FORMATTED_TEXT_BLOCK">
+                                    <material>
+                                        <mat_extension>
+                                            <mat_formattedtext type="HTML">Blue is not between orange and green in the spectrum but yellow is.</mat_formattedtext>
+                                        </mat_extension>
+                                    </material>
+                                </flow_mat>
+                                <flow_mat class="FILE_BLOCK">
+                                    <material/>
+                                </flow_mat>
+                                <flow_mat class="LINK_BLOCK">
+                                    <material>
+                                        <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                    </material>
+                                </flow_mat>
+                            </flow_mat>
+                        </solutionmaterial>
+                    </solution>
+                </itemfeedback>
+            </item>
+            <item maxattempts="0">
+                <itemmetadata>
+                    <bbmd_asi_object_id>C18C56154AA04D56A4AE2FE430F4F49D</bbmd_asi_object_id>
+                    <bbmd_asitype>Item</bbmd_asitype>
+                    <bbmd_assessmenttype>Pool</bbmd_assessmenttype>
+                    <bbmd_sectiontype>Subsection</bbmd_sectiontype>
+                    <bbmd_questiontype>Multiple Answer</bbmd_questiontype>
+                    <bbmd_is_from_cartridge>false</bbmd_is_from_cartridge>
+                    <qmd_absolutescore>0.0,1.0</qmd_absolutescore>
+                    <qmd_absolutescore_min>0.0</qmd_absolutescore_min>
+                    <qmd_absolutescore_max>1.0</qmd_absolutescore_max>
+                    <qmd_assessmenttype>Proprietary</qmd_assessmenttype>
+                    <qmd_itemtype>Logical Identifier</qmd_itemtype>
+                    <qmd_levelofdifficulty>School</qmd_levelofdifficulty>
+                    <qmd_maximumscore>0.0</qmd_maximumscore>
+                    <qmd_numberofitems>0</qmd_numberofitems>
+                    <qmd_renderingtype>Proprietary</qmd_renderingtype>
+                    <qmd_responsetype>Single</qmd_responsetype>
+                    <qmd_scoretype>Absolute</qmd_scoretype>
+                    <qmd_status>Normal</qmd_status>
+                    <qmd_timelimit>0</qmd_timelimit>
+                    <qmd_weighting>0.0</qmd_weighting>
+                    <qmd_typeofsolution>Complete</qmd_typeofsolution>
+                </itemmetadata>
+                <presentation>
+                    <flow class="Block">
+                        <flow class="QUESTION_BLOCK">
+                            <flow class="FORMATTED_TEXT_BLOCK">
+                                <material>
+                                    <mat_extension>
+                                        <mat_formattedtext type="HTML">&lt;i&gt;What's between orange and green in the spectrum?&lt;/i&gt;</mat_formattedtext>
+                                    </mat_extension>
+                                </material>
+                            </flow>
+                            <flow class="FILE_BLOCK">
+                                <material/>
+                            </flow>
+                            <flow class="LINK_BLOCK">
+                                <material>
+                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                </material>
+                            </flow>
+                        </flow>
+                        <flow class="RESPONSE_BLOCK">
+                            <response_lid ident="response" rcardinality="Multiple" rtiming="No">
+                                <render_choice maxnumber="0" minnumber="0" shuffle="Yes">
+                                    <flow_label class="Block">
+                                        <response_label ident="76CA08C366984445AC94B0244D1DBF4A" rarea="Ellipse" rrange="Exact" shuffle="Yes">
+                                            <flow_mat class="FORMATTED_TEXT_BLOCK">
+                                                <material>
+                                                    <mat_extension>
+                                                        <mat_formattedtext type="HTML">&lt;span style="font-size:12pt"&gt;yellow&lt;/span&gt;</mat_formattedtext>
+                                                    </mat_extension>
+                                                </material>
+                                            </flow_mat>
+                                            <flow_mat class="FILE_BLOCK">
+                                                <material/>
+                                            </flow_mat>
+                                            <flow_mat class="LINK_BLOCK">
+                                                <material>
+                                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                                </material>
+                                            </flow_mat>
+                                        </response_label>
+                                    </flow_label>
+                                    <flow_label class="Block">
+                                        <response_label ident="FEC2A9886C8B498787A573C9181C9698" rarea="Ellipse" rrange="Exact" shuffle="Yes">
+                                            <flow_mat class="FORMATTED_TEXT_BLOCK">
+                                                <material>
+                                                    <mat_extension>
+                                                        <mat_formattedtext type="HTML">&lt;span style="font-size:12pt"&gt;red&lt;/span&gt;</mat_formattedtext>
+                                                    </mat_extension>
+                                                </material>
+                                            </flow_mat>
+                                            <flow_mat class="FILE_BLOCK">
+                                                <material/>
+                                            </flow_mat>
+                                            <flow_mat class="LINK_BLOCK">
+                                                <material>
+                                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                                </material>
+                                            </flow_mat>
+                                        </response_label>
+                                    </flow_label>
+                                    <flow_label class="Block">
+                                        <response_label ident="7F66D24D2CAA472EA728773D46706DF3" rarea="Ellipse" rrange="Exact" shuffle="Yes">
+                                            <flow_mat class="FORMATTED_TEXT_BLOCK">
+                                                <material>
+                                                    <mat_extension>
+                                                        <mat_formattedtext type="HTML">&lt;span style="font-size:12pt"&gt;off-beige&lt;/span&gt;</mat_formattedtext>
+                                                    </mat_extension>
+                                                </material>
+                                            </flow_mat>
+                                            <flow_mat class="FILE_BLOCK">
+                                                <material/>
+                                            </flow_mat>
+                                            <flow_mat class="LINK_BLOCK">
+                                                <material>
+                                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                                </material>
+                                            </flow_mat>
+                                        </response_label>
+                                    </flow_label>
+                                    <flow_label class="Block">
+                                        <response_label ident="547B16C1D788446396618EDD0A41D623" rarea="Ellipse" rrange="Exact" shuffle="Yes">
+                                            <flow_mat class="FORMATTED_TEXT_BLOCK">
+                                                <material>
+                                                    <mat_extension>
+                                                        <mat_formattedtext type="HTML">&lt;span style="font-size:12pt"&gt;blue&lt;/span&gt;</mat_formattedtext>
+                                                    </mat_extension>
+                                                </material>
+                                            </flow_mat>
+                                            <flow_mat class="FILE_BLOCK">
+                                                <material/>
+                                            </flow_mat>
+                                            <flow_mat class="LINK_BLOCK">
+                                                <material>
+                                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                                </material>
+                                            </flow_mat>
+                                        </response_label>
+                                    </flow_label>
+                                </render_choice>
+                            </response_lid>
+                        </flow>
+                    </flow>
+                </presentation>
+                <resprocessing scoremodel="SumOfScores">
+                    <outcomes>
+                        <decvar defaultval="0.0" maxvalue="1.0" minvalue="0.0" varname="SCORE" vartype="Decimal"/>
+                    </outcomes>
+                    <respcondition title="correct">
+                        <conditionvar>
+                            <and>
+                                <varequal case="No" respident="response">76CA08C366984445AC94B0244D1DBF4A</varequal>
+                                <not>
+                                    <varequal case="No" respident="response">FEC2A9886C8B498787A573C9181C9698</varequal>
+                                </not>
+                                <varequal case="No" respident="response">7F66D24D2CAA472EA728773D46706DF3</varequal>
+                                <not>
+                                    <varequal case="No" respident="response">547B16C1D788446396618EDD0A41D623</varequal>
+                                </not>
+                            </and>
+                        </conditionvar>
+                        <setvar action="Set" variablename="SCORE">SCORE.max</setvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="correct"/>
+                    </respcondition>
+                    <respcondition title="incorrect">
+                        <conditionvar>
+                            <other/>
+                        </conditionvar>
+                        <setvar action="Set" variablename="SCORE">0.0</setvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="incorrect"/>
+                    </respcondition>
+                </resprocessing>
+                <itemfeedback ident="correct" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML"></mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+                <itemfeedback ident="incorrect" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML"></mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+            </item>
+            <item maxattempts="0">
+                <itemmetadata>
+                    <bbmd_asi_object_id>9C5DBA6A142A4B5887C61D333CFFEDA9</bbmd_asi_object_id>
+                    <bbmd_asitype>Item</bbmd_asitype>
+                    <bbmd_assessmenttype>Pool</bbmd_assessmenttype>
+                    <bbmd_sectiontype>Subsection</bbmd_sectiontype>
+                    <bbmd_questiontype>Matching</bbmd_questiontype>
+                    <bbmd_is_from_cartridge>false</bbmd_is_from_cartridge>
+                    <qmd_absolutescore>0.0,3</qmd_absolutescore>
+                    <qmd_absolutescore_min>0.0</qmd_absolutescore_min>
+                    <qmd_absolutescore_max>3</qmd_absolutescore_max>
+                    <qmd_assessmenttype>Proprietary</qmd_assessmenttype>
+                    <qmd_itemtype>Logical Identifier</qmd_itemtype>
+                    <qmd_levelofdifficulty>School</qmd_levelofdifficulty>
+                    <qmd_maximumscore>0.0</qmd_maximumscore>
+                    <qmd_numberofitems>0</qmd_numberofitems>
+                    <qmd_renderingtype>Proprietary</qmd_renderingtype>
+                    <qmd_responsetype>Single</qmd_responsetype>
+                    <qmd_scoretype>Absolute</qmd_scoretype>
+                    <qmd_status>Normal</qmd_status>
+                    <qmd_timelimit>0</qmd_timelimit>
+                    <qmd_weighting>0.0</qmd_weighting>
+                    <qmd_typeofsolution>Complete</qmd_typeofsolution>
+                </itemmetadata>
+                <presentation>
+                    <flow class="Block">
+                        <flow class="QUESTION_BLOCK">
+                            <flow class="FORMATTED_TEXT_BLOCK">
+                                <material>
+                                    <mat_extension>
+                                        <mat_formattedtext type="HTML">Classify the animals.</mat_formattedtext>
+                                    </mat_extension>
+                                </material>
+                            </flow>
+                            <flow class="FILE_BLOCK">
+                                <material/>
+                            </flow>
+                            <flow class="LINK_BLOCK">
+                                <material>
+                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                </material>
+                            </flow>
+                        </flow>
+                        <flow class="RESPONSE_BLOCK">
+                            <flow class="Block">
+                                <flow class="FORMATTED_TEXT_BLOCK">
+                                    <material>
+                                        <mat_extension>
+                                            <mat_formattedtext type="HTML">cat</mat_formattedtext>
+                                        </mat_extension>
+                                    </material>
+                                </flow>
+                                <flow class="FILE_BLOCK">
+                                    <material/>
+                                </flow>
+                                <flow class="LINK_BLOCK">
+                                    <material>
+                                        <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                    </material>
+                                </flow>
+                                <response_lid ident="6D3235200B3F43DFA8FA13E2B31BB40B" rcardinality="Single" rtiming="No">
+                                    <render_choice maxnumber="0" minnumber="0" shuffle="Yes">
+                                        <flow_label class="Block">
+                                            <response_label ident="2F591AA030B240EF869FD56392FC41BC" rarea="Ellipse" rrange="Exact" shuffle="Yes"/>
+                                            <response_label ident="D75FEB705DCE41D59106659A2F94D819" rarea="Ellipse" rrange="Exact" shuffle="Yes"/>
+                                            <response_label ident="207B18A11C4B42BF87882A4BAF3CC805" rarea="Ellipse" rrange="Exact" shuffle="Yes"/>
+                                        </flow_label>
+                                    </render_choice>
+                                </response_lid>
+                            </flow>
+                            <flow class="Block">
+                                <flow class="FORMATTED_TEXT_BLOCK">
+                                    <material>
+                                        <mat_extension>
+                                            <mat_formattedtext type="HTML">frog</mat_formattedtext>
+                                        </mat_extension>
+                                    </material>
+                                </flow>
+                                <flow class="FILE_BLOCK">
+                                    <material/>
+                                </flow>
+                                <flow class="LINK_BLOCK">
+                                    <material>
+                                        <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                    </material>
+                                </flow>
+                                <response_lid ident="0933892218204F5AB561E62A27701447" rcardinality="Single" rtiming="No">
+                                    <render_choice maxnumber="0" minnumber="0" shuffle="Yes">
+                                        <flow_label class="Block">
+                                            <response_label ident="2C1FB19B5F9A4F7A85E798B9C46B8BF8" rarea="Ellipse" rrange="Exact" shuffle="Yes"/>
+                                            <response_label ident="0EEF502254D2496FB21FFD82B0A7F2B9" rarea="Ellipse" rrange="Exact" shuffle="Yes"/>
+                                            <response_label ident="8A9B69A93B0943AFAB890702199AB290" rarea="Ellipse" rrange="Exact" shuffle="Yes"/>
+                                        </flow_label>
+                                    </render_choice>
+                                </response_lid>
+                            </flow>
+                            <flow class="Block">
+                                <flow class="FORMATTED_TEXT_BLOCK">
+                                    <material>
+                                        <mat_extension>
+                                            <mat_formattedtext type="HTML">newt</mat_formattedtext>
+                                        </mat_extension>
+                                    </material>
+                                </flow>
+                                <flow class="FILE_BLOCK">
+                                    <material/>
+                                </flow>
+                                <flow class="LINK_BLOCK">
+                                    <material>
+                                        <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                    </material>
+                                </flow>
+                                <response_lid ident="80F56B540A44490B8E94EC71C4584722" rcardinality="Single" rtiming="No">
+                                    <render_choice maxnumber="0" minnumber="0" shuffle="Yes">
+                                        <flow_label class="Block">
+                                            <response_label ident="1D066C2DAEF349EB8E7845B339B0A4A9" rarea="Ellipse" rrange="Exact" shuffle="Yes"/>
+                                            <response_label ident="F2FB88DFE0D04DBEBD42B961728CA022" rarea="Ellipse" rrange="Exact" shuffle="Yes"/>
+                                            <response_label ident="4D1F5B3DB0EB4C41A0012625750DF86C" rarea="Ellipse" rrange="Exact" shuffle="Yes"/>
+                                        </flow_label>
+                                    </render_choice>
+                                </response_lid>
+                            </flow>
+                        </flow>
+                        <flow class="RIGHT_MATCH_BLOCK">
+                            <flow class="Block">
+                                <flow class="FORMATTED_TEXT_BLOCK">
+                                    <material>
+                                        <mat_extension>
+                                            <mat_formattedtext type="HTML">insect</mat_formattedtext>
+                                        </mat_extension>
+                                    </material>
+                                </flow>
+                                <flow class="FILE_BLOCK">
+                                    <material/>
+                                </flow>
+                                <flow class="LINK_BLOCK">
+                                    <material>
+                                        <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                    </material>
+                                </flow>
+                            </flow>
+                            <flow class="Block">
+                                <flow class="FORMATTED_TEXT_BLOCK">
+                                    <material>
+                                        <mat_extension>
+                                            <mat_formattedtext type="HTML">mammal</mat_formattedtext>
+                                        </mat_extension>
+                                    </material>
+                                </flow>
+                                <flow class="FILE_BLOCK">
+                                    <material/>
+                                </flow>
+                                <flow class="LINK_BLOCK">
+                                    <material>
+                                        <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                    </material>
+                                </flow>
+                            </flow>
+                            <flow class="Block">
+                                <flow class="FORMATTED_TEXT_BLOCK">
+                                    <material>
+                                        <mat_extension>
+                                            <mat_formattedtext type="HTML">amphibian</mat_formattedtext>
+                                        </mat_extension>
+                                    </material>
+                                </flow>
+                                <flow class="FILE_BLOCK">
+                                    <material/>
+                                </flow>
+                                <flow class="LINK_BLOCK">
+                                    <material>
+                                        <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                    </material>
+                                </flow>
+                            </flow>
+                        </flow>
+                    </flow>
+                </presentation>
+                <resprocessing scoremodel="SumOfScores">
+                    <outcomes>
+                        <decvar defaultval="0.0" maxvalue="3.0" minvalue="0.0" varname="SCORE" vartype="Decimal"/>
+                    </outcomes>
+                    <respcondition>
+                        <conditionvar>
+                            <varequal case="No" respident="6D3235200B3F43DFA8FA13E2B31BB40B">D75FEB705DCE41D59106659A2F94D819</varequal>
+                        </conditionvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="correct"/>
+                    </respcondition>
+                    <respcondition>
+                        <conditionvar>
+                            <varequal case="No" respident="0933892218204F5AB561E62A27701447">8A9B69A93B0943AFAB890702199AB290</varequal>
+                        </conditionvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="correct"/>
+                    </respcondition>
+                    <respcondition>
+                        <conditionvar>
+                            <varequal case="No" respident="80F56B540A44490B8E94EC71C4584722">4D1F5B3DB0EB4C41A0012625750DF86C</varequal>
+                        </conditionvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="correct"/>
+                    </respcondition>
+                    <respcondition title="incorrect">
+                        <conditionvar>
+                            <other/>
+                        </conditionvar>
+                        <setvar action="Set" variablename="SCORE">0.0</setvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="incorrect"/>
+                    </respcondition>
+                </resprocessing>
+                <itemfeedback ident="correct" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML"></mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+                <itemfeedback ident="incorrect" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML"></mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+            </item>
+            <item maxattempts="0">
+                <itemmetadata>
+                    <bbmd_asi_object_id>DD76E663D4244C598FC91CFC433F6D5B</bbmd_asi_object_id>
+                    <bbmd_asitype>Item</bbmd_asitype>
+                    <bbmd_assessmenttype>Pool</bbmd_assessmenttype>
+                    <bbmd_sectiontype>Subsection</bbmd_sectiontype>
+                    <bbmd_questiontype>Fill in the Blank</bbmd_questiontype>
+                    <bbmd_is_from_cartridge>false</bbmd_is_from_cartridge>
+                    <qmd_absolutescore>0.0,1.0</qmd_absolutescore>
+                    <qmd_absolutescore_min>0.0</qmd_absolutescore_min>
+                    <qmd_absolutescore_max>1.0</qmd_absolutescore_max>
+                    <qmd_assessmenttype>Proprietary</qmd_assessmenttype>
+                    <qmd_itemtype>Logical Identifier</qmd_itemtype>
+                    <qmd_levelofdifficulty>School</qmd_levelofdifficulty>
+                    <qmd_maximumscore>0.0</qmd_maximumscore>
+                    <qmd_numberofitems>0</qmd_numberofitems>
+                    <qmd_renderingtype>Proprietary</qmd_renderingtype>
+                    <qmd_responsetype>Single</qmd_responsetype>
+                    <qmd_scoretype>Absolute</qmd_scoretype>
+                    <qmd_status>Normal</qmd_status>
+                    <qmd_timelimit>0</qmd_timelimit>
+                    <qmd_weighting>0.0</qmd_weighting>
+                    <qmd_typeofsolution>Complete</qmd_typeofsolution>
+                </itemmetadata>
+                <presentation>
+                    <flow class="Block">
+                        <flow class="QUESTION_BLOCK">
+                            <flow class="FORMATTED_TEXT_BLOCK">
+                                <material>
+                                    <mat_extension>
+                                        <mat_formattedtext type="HTML">&lt;span style="font-size:12pt"&gt;Name an amphibian&amp;#58; __________.&lt;/span&gt;</mat_formattedtext>
+                                    </mat_extension>
+                                </material>
+                            </flow>
+                            <flow class="FILE_BLOCK">
+                                <material/>
+                            </flow>
+                            <flow class="LINK_BLOCK">
+                                <material>
+                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                </material>
+                            </flow>
+                        </flow>
+                        <flow class="RESPONSE_BLOCK">
+                            <response_str ident="response" rcardinality="Single" rtiming="No">
+                                <render_fib charset="us-ascii" columns="127" encoding="UTF_8" fibtype="String" maxchars="0" maxnumber="0" minnumber="0" prompt="Box" rows="1"/>
+                            </response_str>
+                        </flow>
+                    </flow>
+                </presentation>
+                <resprocessing scoremodel="SumOfScores">
+                    <outcomes>
+                        <decvar defaultval="0.0" maxvalue="1.0" minvalue="0.0" varname="SCORE" vartype="Decimal"/>
+                    </outcomes>
+                    <respcondition title="1CE934E53BDB437B8FD315E68063DA47">
+                        <conditionvar>
+                            <varequal case="No" respident="response">frog</varequal>
+                        </conditionvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="correct"/>
+                        <displayfeedback feedbacktype="Response" linkrefid="1CE934E53BDB437B8FD315E68063DA47"/>
+                    </respcondition>
+                    <respcondition title="incorrect">
+                        <conditionvar>
+                            <other/>
+                        </conditionvar>
+                        <setvar action="Set" variablename="SCORE">0.0</setvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="incorrect"/>
+                    </respcondition>
+                </resprocessing>
+                <itemfeedback ident="correct" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML">A frog is an amphibian.</mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+                <itemfeedback ident="incorrect" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML">A frog is an amphibian.</mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+                <itemfeedback ident="1CE934E53BDB437B8FD315E68063DA47" view="All">
+                    <solution feedbackstyle="Complete" view="All">
+                        <solutionmaterial>
+                            <flow_mat class="Block">
+                                <flow_mat class="FORMATTED_TEXT_BLOCK">
+                                    <material>
+                                        <mat_extension>
+                                            <mat_formattedtext type="HTML">A frog is an amphibian.</mat_formattedtext>
+                                        </mat_extension>
+                                    </material>
+                                </flow_mat>
+                                <flow_mat class="FILE_BLOCK">
+                                    <material/>
+                                </flow_mat>
+                                <flow_mat class="LINK_BLOCK">
+                                    <material>
+                                        <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                    </material>
+                                </flow_mat>
+                            </flow_mat>
+                        </solutionmaterial>
+                    </solution>
+                </itemfeedback>
+            </item>
+            <item maxattempts="0">
+                <itemmetadata>
+                    <bbmd_asi_object_id>39970AD8D5AE425A82338E17D42B7845</bbmd_asi_object_id>
+                    <bbmd_asitype>Item</bbmd_asitype>
+                    <bbmd_assessmenttype>Pool</bbmd_assessmenttype>
+                    <bbmd_sectiontype>Subsection</bbmd_sectiontype>
+                    <bbmd_questiontype>Essay</bbmd_questiontype>
+                    <bbmd_is_from_cartridge>false</bbmd_is_from_cartridge>
+                    <qmd_absolutescore>0.0,1.0</qmd_absolutescore>
+                    <qmd_absolutescore_min>0.0</qmd_absolutescore_min>
+                    <qmd_absolutescore_max>1.0</qmd_absolutescore_max>
+                    <qmd_assessmenttype>Proprietary</qmd_assessmenttype>
+                    <qmd_itemtype>Logical Identifier</qmd_itemtype>
+                    <qmd_levelofdifficulty>School</qmd_levelofdifficulty>
+                    <qmd_maximumscore>0.0</qmd_maximumscore>
+                    <qmd_numberofitems>0</qmd_numberofitems>
+                    <qmd_renderingtype>Proprietary</qmd_renderingtype>
+                    <qmd_responsetype>Single</qmd_responsetype>
+                    <qmd_scoretype>Absolute</qmd_scoretype>
+                    <qmd_status>Normal</qmd_status>
+                    <qmd_timelimit>0</qmd_timelimit>
+                    <qmd_weighting>0.0</qmd_weighting>
+                    <qmd_typeofsolution>Complete</qmd_typeofsolution>
+                </itemmetadata>
+                <presentation>
+                    <flow class="Block">
+                        <flow class="QUESTION_BLOCK">
+                            <flow class="FORMATTED_TEXT_BLOCK">
+                                <material>
+                                    <mat_extension>
+                                        <mat_formattedtext type="HTML">How are you?</mat_formattedtext>
+                                    </mat_extension>
+                                </material>
+                            </flow>
+                            <flow class="FILE_BLOCK">
+                                <material/>
+                            </flow>
+                            <flow class="LINK_BLOCK">
+                                <material>
+                                    <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                                </material>
+                            </flow>
+                        </flow>
+                        <flow class="RESPONSE_BLOCK">
+                            <response_str ident="response" rcardinality="Single" rtiming="No">
+                                <render_fib charset="us-ascii" columns="127" encoding="UTF_8" fibtype="String" maxchars="0" maxnumber="0" minnumber="0" prompt="Box" rows="8"/>
+                            </response_str>
+                        </flow>
+                    </flow>
+                </presentation>
+                <resprocessing scoremodel="SumOfScores">
+                    <outcomes>
+                        <decvar defaultval="0.0" maxvalue="1.0" minvalue="0.0" varname="SCORE" vartype="Decimal"/>
+                    </outcomes>
+                    <respcondition title="correct">
+                        <conditionvar/>
+                        <setvar action="Set" variablename="SCORE">SCORE.max</setvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="correct"/>
+                    </respcondition>
+                    <respcondition title="incorrect">
+                        <conditionvar>
+                            <other/>
+                        </conditionvar>
+                        <setvar action="Set" variablename="SCORE">0.0</setvar>
+                        <displayfeedback feedbacktype="Response" linkrefid="incorrect"/>
+                    </respcondition>
+                </resprocessing>
+                <itemfeedback ident="correct" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML"></mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+                <itemfeedback ident="incorrect" view="All">
+                    <flow_mat class="Block">
+                        <flow_mat class="FORMATTED_TEXT_BLOCK">
+                            <material>
+                                <mat_extension>
+                                    <mat_formattedtext type="HTML"></mat_formattedtext>
+                                </mat_extension>
+                            </material>
+                        </flow_mat>
+                        <flow_mat class="FILE_BLOCK">
+                            <material/>
+                        </flow_mat>
+                        <flow_mat class="LINK_BLOCK">
+                            <material>
+                                <mattext charset="us-ascii" texttype="text/plain" uri="" xml:space="default"/>
+                            </material>
+                        </flow_mat>
+                    </flow_mat>
+                </itemfeedback>
+                <itemfeedback ident="solution" view="All">
+                    <solution feedbackstyle="Complete" view="All">
+                        <solutionmaterial>
+                            <flow_mat class="Block">
+                                <material>
+                                    <mat_extension>
+                                        <mat_formattedtext type="HTML">Blackboard answer for essay questions will be imported as informations for graders.</mat_formattedtext>
+                                    </mat_extension>
+                                </material>
+                            </flow_mat>
+                        </solutionmaterial>
+                    </solution>
+                </itemfeedback>
+            </item>
+        </section>
+    </assessment>
+</questestinterop>
