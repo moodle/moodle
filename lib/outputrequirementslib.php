@@ -131,7 +131,7 @@ class page_requirements_manager {
     protected $yui3loader;
 
     /**
-     * @var stdClass YUI loader configuration for YUI3 loading from javascript
+     * @var stdClass default YUI loader configuration
      */
     protected $YUI_config;
 
@@ -156,9 +156,9 @@ class page_requirements_manager {
 
         $this->yui3loader = new stdClass();
 
-        // set up some loader options
+        // Set up some loader options.
         if (debugging('', DEBUG_DEVELOPER)) {
-            $this->yui3loader->filter = 'RAW'; // for more detailed logging info use YUI_DEBUG here
+            $this->yui3loader->filter = 'RAW'; // For more detailed logging info use 'DEBUG' here.
         } else {
             $this->yui3loader->filter = null;
         }
@@ -170,7 +170,7 @@ class page_requirements_manager {
             $this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep;
         }
 
-        // enable combo loader? this significantly helps with caching and performance!
+        // Enable combo loader? This significantly helps with caching and performance!
         $this->yui3loader->combine = !empty($CFG->yuicomboloading);
 
         if (empty($CFG->cachejs)) {
@@ -181,7 +181,7 @@ class page_requirements_manager {
             $jsrev = $CFG->jsrev;
         }
 
-        // set up JS YUI loader helper object
+        // Set up JS YUI loader helper object.
         $this->YUI_config = new stdClass();
         $this->YUI_config->base         = $this->yui3loader->base;
         $this->YUI_config->comboBase    = $this->yui3loader->comboBase;
@@ -190,6 +190,7 @@ class page_requirements_manager {
         $this->YUI_config->insertBefore = 'firstthemesheet';
         $this->YUI_config->modules      = array();
         $this->YUI_config->groups       = array(
+            // Loader for our YUI modules stored in /yui/ subdirectories of our plugins and subsystems.
             'moodle' => array(
                 'name' => 'moodle',
                 'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
@@ -197,7 +198,7 @@ class page_requirements_manager {
                 'combine' => $this->yui3loader->combine,
                 'filter' => '',
                 'ext' => false,
-                'root' => 'moodle/'.$jsrev.'/', // Add the rev to the root path so that we can control caching
+                'root' => 'moodle/'.$jsrev.'/', // Add the rev to the root path so that we can control caching.
                 'patterns' => array(
                     'moodle-' => array(
                         'group' => 'moodle',
@@ -205,6 +206,7 @@ class page_requirements_manager {
                     )
                 )
             ),
+            // Gallery modules are not supported much, sorry.
             'local' => array(
                 'name' => 'gallery',
                 'base' => $CFG->httpswwwroot . '/lib/yui/gallery/',
@@ -220,6 +222,7 @@ class page_requirements_manager {
                     )
                 )
             ),
+            // Loader configuration for our 2in3, for now ignores $CFG->useexternalyui.
             'yui2' => array(
                 'base' => $CFG->httpswwwroot . '/lib/yuilib/2in3/' . $CFG->yui2version . '/build/',
                 'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
@@ -234,9 +237,10 @@ class page_requirements_manager {
                 )
             )
         );
+
+        // Every page should include definition of following modules.
         $this->js_module($this->find_module('core_filepicker'));
         $this->js_module($this->find_module('core_dock'));
-
     }
 
     /**
@@ -265,13 +269,15 @@ class page_requirements_manager {
             $this->M_cfg['developerdebug'] = true;
         }
 
-        // accessibility stuff
+        // Accessibility stuff.
         $this->skip_link_to('maincontent', get_string('tocontent', 'access'));
 
+        // Add strings used on many pages.
         $this->string_for_js('confirmation', 'admin');
         $this->string_for_js('cancel', 'moodle');
         $this->string_for_js('yes', 'moodle');
 
+        // Alter links in top frame to break out of frames.
         if ($page->pagelayout === 'frametop') {
             $this->js_init_call('M.util.init_frametop');
         }
@@ -280,8 +286,8 @@ class page_requirements_manager {
     /**
      * Ensure that the specified JavaScript file is linked to from this page.
      *
-     * NOTE: This function is to be used in rare cases only, please store your JS in module.js file
-     * and use $PAGE->requires->js_init_call() instead.
+     * NOTE: This function is to be used in RARE CASES ONLY, please store your JS in module.js file
+     * and use $PAGE->requires->js_init_call() instead or use /yui/ subdirectories for YUI modules.
      *
      * By default the link is put at the end of the page, since this gives best page-load performance.
      *
@@ -299,24 +305,17 @@ class page_requirements_manager {
     }
 
     /**
-     * Ensure that the specified YUI2 library file, and all its required dependencies,
-     * are linked to from this page.
+     * This method was used to load YUI2 libraries into global scope,
+     * use YUI 2in3 instead. Every YUI2 module is represented as a yui2-*
+     * sandboxed module in YUI3 code via Y.YUI2. property.
      *
-     * By default the link is put at the end of the page, since this gives best page-load
-     * performance. Optional dependencies are not loaded automatically - if you want
-     * them you will need to load them first with other calls to this method.
+     * {@see http://tracker.moodle.org/browse/MDL-34741}
      *
-     * Even if a particular library is requested more than once (perhaps as a dependency
-     * of other libraries) it will only be linked to once.
-     *
-     * The library is leaded as soon as possible, if $OUTPUT->header() not used yet it
-     * is put into the page header, otherwise it is loaded in the page footer.
-     *
-     * @param string|array $libname the name of the YUI2 library you require. For example 'autocomplete'.
-     * @deprecated
+     * @param string|array $libname
+     * @deprecated since 2.4
      */
     public function yui2_lib($libname) {
-        throw new coding_exception('PAGE->yui2_lib() is not available any more, use YUI 2in3 instead.');
+        throw new coding_exception('PAGE->yui2_lib() is not available any more, use YUI 2in3 instead, see MDL-34741 for more information.');
     }
 
     /**
@@ -338,7 +337,7 @@ class page_requirements_manager {
                 }
             }
             if (debugging()) {
-                // check file existence only when in debug mode
+                // Check file existence only when in debug mode.
                 if (!file_exists($CFG->dirroot . strtok($url, '?'))) {
                     throw new coding_exception('Attempt to require a JavaScript file that does not exist.', $url);
                 }
@@ -371,8 +370,8 @@ class page_requirements_manager {
         $module = null;
 
         if (strpos($component, 'core_') === 0) {
-            // must be some core stuff - list here is not complete, this is just the stuff used from multiple places
-            // so that we do nto have to repeat the definition of these modules over and over again
+            // Must be some core stuff - list here is not complete, this is just the stuff used from multiple places
+            // so that we do nto have to repeat the definition of these modules over and over again.
             switch($component) {
                 case 'core_filepicker':
                     $module = array('name'     => 'core_filepicker',
@@ -482,7 +481,7 @@ class page_requirements_manager {
         }
 
         $module['fullpath'] = $this->js_fix_url($module['fullpath'])->out(false);
-        // add all needed strings
+        // Add all needed strings.
         if (!empty($module['strings'])) {
             foreach ($module['strings'] as $string) {
                 $identifier = $string[0];
@@ -576,11 +575,11 @@ class page_requirements_manager {
             throw new coding_exception('Invalid stylesheet parameter.', $stylesheet);
         }
 
-        $this->cssurls[$stylesheet->out()] = $stylesheet; // overrides
+        $this->cssurls[$stylesheet->out()] = $stylesheet;
     }
 
     /**
-     * Add theme stylkesheet to page - do not use from plugin code,
+     * Add theme stylesheet to page - do not use from plugin code,
      * this should be called only from the core renderer!
      *
      * @param moodle_url $stylesheet
@@ -602,8 +601,8 @@ class page_requirements_manager {
      *
      * Even if a particular skip link is requested more than once, only one copy of it will be output.
      *
-     * @param $target the name of anchor this link should go to. For example 'maincontent'.
-     * @param $linktext The text to use for the skip link. Normally get_string('skipto', 'access', ...);
+     * @param string $target the name of anchor this link should go to. For example 'maincontent'.
+     * @param string $linktext The text to use for the skip link. Normally get_string('skipto', 'access', ...);
      */
     public function skip_link_to($target, $linktext) {
         if ($this->topofbodydone) {
@@ -627,6 +626,8 @@ class page_requirements_manager {
      * one link will be output).
      *
      * The main benefit of the method is the automatic encoding of all function parameters.
+     *
+     * @deprecated
      *
      * @param string $function the name of the JavaScritp function to call. Can
      *      be a compound name like 'Y.Event.purgeElement'. Can also be
@@ -661,7 +662,7 @@ class page_requirements_manager {
     }
 
     /**
-     * Creates a JavaScript function call that requires one or more modules to be loaded
+     * Creates a JavaScript function call that requires one or more modules to be loaded.
      *
      * This function can be used to include all of the standard YUI module types within JavaScript:
      *     - YUI3 modules    [node, event, io]
@@ -710,7 +711,7 @@ class page_requirements_manager {
     public function js_init_call($function, array $extraarguments = null, $ondomready = false, array $module = null) {
         $jscode = js_writer::function_call_with_Y($function, $extraarguments);
         if (!$module) {
-            // detect module automatically
+            // Detect module automatically.
             if (preg_match('/M\.([a-z0-9]+_[^\.]+)/', $function, $matches)) {
                 $module = $this->find_module($matches[1]);
             }
@@ -724,6 +725,7 @@ class page_requirements_manager {
      * This is intended primarily for loading of js modules and initialising page layout.
      * Ideally the JS code fragment should be stored in plugin renderer so that themes
      * may override it.
+     *
      * @param string $jscode
      * @param bool $ondomready wait for dom ready (helps with some IE problems when modifying DOM)
      * @param array $module JS module specification array
@@ -771,17 +773,17 @@ class page_requirements_manager {
      * an exception will be thrown. Once the placeholder is substituted, you can
      * use M.str or M.util.get_string() as shown above:
      *
-     *     // require the string in PHP and replace the placeholder
+     *     // Require the string in PHP and replace the placeholder.
      *     $PAGE->requires->string_for_js('fullnamedisplay', 'moodle', $USER);
-     *     // use the result of the substitution in Javascript
+     *     // Use the result of the substitution in Javascript.
      *     alert(M.str.moodle.fullnamedisplay);
      *
      * To substitute the placeholder at client side, use M.util.get_string()
      * function. It implements the same logic as {@link get_string()}:
      *
-     *     // require the string in PHP but keep {$a} as it is
+     *     // Require the string in PHP but keep {$a} as it is.
      *     $PAGE->requires->string_for_js('fullnamedisplay', 'moodle');
-     *     // provide the values on the fly in Javascript
+     *     // Provide the values on the fly in Javascript.
      *     user = { firstname : 'Harry', lastname : 'Potter' }
      *     alert(M.util.get_string('fullnamedisplay', 'moodle', user);
      *
@@ -793,7 +795,7 @@ class page_requirements_manager {
      * @param string $component the language file to look in.
      * @param mixed $a any extra data to add into the string (optional).
      */
-    public function string_for_js($identifier, $component, $a = NULL) {
+    public function string_for_js($identifier, $component, $a = null) {
         if (!$component) {
             throw new coding_exception('The $component parameter is required for page_requirements_manager::string_for_js().');
         }
@@ -808,7 +810,7 @@ class page_requirements_manager {
     }
 
     /**
-     * Make an array of language strings available for JS
+     * Make an array of language strings available for JS.
      *
      * This function calls the above function {@link string_for_js()} for each requested
      * string in the $identifiers array that is passed to the argument for a single module
@@ -817,7 +819,7 @@ class page_requirements_manager {
      * <code>
      * $PAGE->requires->strings_for_js(array('one', 'two', 'three'), 'mymod', array('a', null, 3));
      *
-     * // The above is identitical to calling
+     * // The above is identical to calling:
      *
      * $PAGE->requires->string_for_js('one', 'mymod', 'a');
      * $PAGE->requires->string_for_js('two', 'mymod');
@@ -831,7 +833,7 @@ class page_requirements_manager {
      *         key for the data matches that of the identifier it is meant for.
      *
      */
-    public function strings_for_js($identifiers, $component, $a=NULL) {
+    public function strings_for_js($identifiers, $component, $a = null) {
         foreach ($identifiers as $key => $identifier) {
             if (is_array($a) && array_key_exists($key, $a)) {
                 $extra = $a[$key];
@@ -852,6 +854,8 @@ class page_requirements_manager {
      *      $PAGE->requires->data_for_js('mydata', array('name' => 'Moodle'));
      * </pre>
      * then in JavsScript mydata.name will be 'Moodle'.
+     *
+     * @deprecated
      * @param string $variable the the name of the JavaScript variable to assign the data to.
      *      Will probably work if you use a compound name like 'mybuttons.button[1]', but this
      *      should be considered an experimental feature.
@@ -868,7 +872,7 @@ class page_requirements_manager {
     /**
      * Creates a YUI event handler.
      *
-     * @param mixed $selector standard YUI selector for elemnts, may be array or string, element id is in the form "#idvalue"
+     * @param mixed $selector standard YUI selector for elements, may be array or string, element id is in the form "#idvalue"
      * @param string $event A valid DOM event (click, mousedown, change etc.)
      * @param string $function The name of the function to call
      * @param array  $arguments An optional array of argument parameters to pass to the function
@@ -961,7 +965,7 @@ class page_requirements_manager {
     }
 
     /**
-     * Returns html tags needed for inclusion of theme CSS
+     * Returns html tags needed for inclusion of theme CSS.
      *
      * @return string
      */
@@ -983,7 +987,7 @@ class page_requirements_manager {
         foreach ($urls as $url) {
             $attributes['href'] = $url;
             $code .= html_writer::empty_tag('link', $attributes) . "\n";
-            // this id is needed in first sheet only so that theme may override YUI sheets laoded on the fly
+            // This id is needed in first sheet only so that theme may override YUI sheets loaded on the fly.
             unset($attributes['id']);
         }
 
@@ -991,7 +995,7 @@ class page_requirements_manager {
     }
 
     /**
-     * Adds extra modules specified after printing of page header
+     * Adds extra modules specified after printing of page header.
      *
      * @return string
      */
@@ -1015,25 +1019,25 @@ class page_requirements_manager {
     public function get_head_code(moodle_page $page, core_renderer $renderer) {
         global $CFG;
 
-        // note: the $page and $output are not stored here because it would
-        // create circular references in memory which prevents garbage collection
+        // Note: the $page and $output are not stored here because it would
+        // create circular references in memory which prevents garbage collection.
         $this->init_requirements_data($page, $renderer);
 
-        // yui3 JS and CSS is always loaded first - it is cached in browser
+        // YUI3 JS and CSS is always loaded first - it is cached in browser.
         $output = $this->get_yui3lib_headcode();
 
-        // now theme CSS + custom CSS in this specific order
+        // Now theme CSS + custom CSS in this specific order.
         $output .= $this->get_css_code();
 
-        // set up global YUI3 loader object - this should contain all code needed by plugins
-        // note: in JavaScript just use "YUI(M.yui.loader).use('overlay', function(Y) { .... });"
-        // this needs to be done before including any other script
+        // Set up global YUI3 loader object - this should contain all code needed by plugins.
+        // Note: in JavaScript just use "YUI().use('overlay', function(Y) { .... });",
+        //       this needs to be done before including any other script.
         $js = "var M = {}; M.yui = {};
 var moodleConfigFn = function(me) {var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n+'.'+me.type;};
 var galleryConfigFn = function(me) {var p = me.path,v=M.yui.galleryversion,f;if(/-(skin|core)/.test(me.name)) {me.type = 'css';p = p.replace(/-(skin|core)/, '').replace(/\.js/, '.css').split('/'), f = p.pop().replace(/(\-(min|debug))/, '');if (/-skin/.test(me.name)) {p.splice(p.length,0,v,'assets','skins','sam', f);} else {p.splice(p.length,0,v,'assets', f);};} else {p = p.split('/'), f = p.pop();p.splice(p.length,0,v, f);};me.path = p.join('/');};
 var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin');}};\n";
         $js .= js_writer::set_variable('YUI_config', $this->YUI_config, false) . "\n";
-        $js .= "M.yui.loader = {modules: {}};\n"; // Backwars compatibility only, not used
+        $js .= "M.yui.loader = {modules: {}};\n"; // Backwards compatibility only, not used any more.
         $js .= js_writer::set_variable('M.cfg', $this->M_cfg, false);
         $js = str_replace('"@GALLERYCONFIGFN@"', 'galleryConfigFn', $js);
         $js = str_replace('"@MOODLECONFIGFN@"', 'moodleConfigFn', $js);
@@ -1041,10 +1045,10 @@ var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.na
 
         $output .= html_writer::script($js);
 
-        // link our main JS file, all core stuff should be there
+        // Link our main JS file, all core stuff should be there.
         $output .= html_writer::script('', $this->js_fix_url('/lib/javascript-static.js'));
 
-        // add variables
+        // Add variables.
         if ($this->jsinitvariables['head']) {
             $js = '';
             foreach ($this->jsinitvariables['head'] as $data) {
@@ -1054,14 +1058,14 @@ var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.na
             $output .= html_writer::script($js);
         }
 
-        // all the other linked things from HEAD - there should be as few as possible
+        // All the other linked things from HEAD - there should be as few as possible.
         if ($this->jsincludes['head']) {
             foreach ($this->jsincludes['head'] as $url) {
                 $output .= html_writer::script('', $url);
             }
         }
 
-        // mark head sending done, it is not possible to anything there
+        // Mark head sending done, it is not possible to anything there.
         $this->headdone = true;
 
         return $output;
@@ -1076,7 +1080,7 @@ var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.na
      * @return string the HTML code to go at the start of the <body> tag.
      */
     public function get_top_of_body_code() {
-        // first the skip links
+        // First the skip links.
         $links = '';
         $attributes = array('class'=>'skip');
         foreach ($this->skiplinks as $url => $text) {
@@ -1085,7 +1089,7 @@ var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.na
         }
         $output = html_writer::tag('div', $links, array('class'=>'skiplinks')) . "\n";
 
-        // then the clever trick for hiding of things not needed when JS works
+        // Then the clever trick for hiding of things not needed when JS works.
         $output .= html_writer::script("document.body.className += ' jsenabled';") . "\n";
         $this->topofbodydone = true;
         return $output;
@@ -1101,17 +1105,18 @@ var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.na
      */
     public function get_end_code() {
         global $CFG;
-        // add other requested modules
+
+        // Add other requested modules.
         $output = $this->get_extra_modules_code();
 
-        // all the other linked scripts - there should be as few as possible
+        // All the other linked scripts - there should be as few as possible.
         if ($this->jsincludes['footer']) {
             foreach ($this->jsincludes['footer'] as $url) {
                 $output .= html_writer::script('', $url);
             }
         }
 
-        // add all needed strings
+        // Add all needed strings.
         if (!empty($this->stringsforjs)) {
             $strings = array();
             foreach ($this->stringsforjs as $component=>$v) {
@@ -1122,7 +1127,7 @@ var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.na
             $output .= html_writer::script(js_writer::set_variable('M.str', $strings));
         }
 
-        // add variables
+        // Add variables.
         if ($this->jsinitvariables['footer']) {
             $js = '';
             foreach ($this->jsinitvariables['footer'] as $data) {
@@ -1137,7 +1142,7 @@ var yui2in3ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.na
         $jsinit = $this->get_javascript_init_code();
         $handlersjs = $this->get_event_handler_code();
 
-        // there is no global Y, make sure it is available in your scope
+        // There is no global Y, make sure it is available in your scope.
         $js = "YUI().use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
 
         $output .= html_writer::script($js);
