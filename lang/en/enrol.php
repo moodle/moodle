@@ -79,6 +79,7 @@ $string['participationactive'] = 'Active';
 $string['participationstatus'] = 'Status';
 $string['participationsuspended'] = 'Suspended';
 $string['periodend'] = 'until {$a}';
+$string['periodnone'] = 'enrolled {$a}';
 $string['periodstart'] = 'from {$a}';
 $string['periodstartend'] = 'from {$a->start} until {$a->end}';
 $string['recovergrades'] = 'Recover user\'s old grades if possible';
