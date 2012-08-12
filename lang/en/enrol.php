@@ -55,6 +55,7 @@ $string['enrolnotpermitted'] = 'You do not have permission or are not allowed to
 $string['enrolperiod'] = 'Enrolment duration';
 $string['enrolusage'] = 'Instances / enrolments';
 $string['enrolusers'] = 'Enrol users';
+$string['enroltimecreated'] = 'Enrolment created';
 $string['enroltimeend'] = 'Enrolment ends';
 $string['enroltimestart'] = 'Enrolment starts';
 $string['errajaxfailedenrol'] = 'Failed to enrol user';
