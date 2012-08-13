@@ -198,7 +198,7 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->setAdvanced('assessmentend');
 
         $coursecontext = context_course::instance($this->course->id);
-        plagiarism_get_form_elements_module($mform, $coursecontext);
+        plagiarism_get_form_elements_module($mform, $coursecontext, 'mod_workshop');
 
         // Common module settings, Restrict availability, Activity completion etc. ----
         $features = array('groups'=>true, 'groupings'=>true, 'groupmembersonly'=>true,

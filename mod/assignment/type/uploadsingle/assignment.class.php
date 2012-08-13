@@ -294,7 +294,7 @@ class assignment_uploadsingle extends assignment_base {
         $mform->setDefault('maxbytes', $CFG->assignment_maxbytes);
 
         $course_context = context_course::instance($COURSE->id);
-        plagiarism_get_form_elements_module($mform, $course_context);
+        plagiarism_get_form_elements_module($mform, $course_context, 'mod_assignment');
     }
 
     function portfolio_exportable() {

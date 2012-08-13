@@ -1082,7 +1082,7 @@ class assignment_upload extends assignment_base {
         $mform->setDefault('var4', 1);
 
         $course_context = context_course::instance($COURSE->id);
-        plagiarism_get_form_elements_module($mform, $course_context);
+        plagiarism_get_form_elements_module($mform, $course_context, 'mod_assignment');
     }
 
     function portfolio_exportable() {
