@@ -863,7 +863,8 @@ class course_enrolment_manager {
                     $period = get_string('periodend', 'enrol', userdate($ue->timeend));
                     $periodoutside = ($ue->timeend && $now > $ue->timeend);
                 } else {
-                    $period = '';
+                    // If there is no start or end show when user was enrolled.
+                    $period = get_string('periodnone', 'enrol', userdate($ue->timecreated));
                     $periodoutside = false;
                 }
                 $details['enrolments'][$ue->id] = array(
