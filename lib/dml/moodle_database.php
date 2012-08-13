@@ -118,6 +118,9 @@ abstract class moodle_database {
     /** @var bool Flag used to force rollback of all current transactions. */
     private $force_rollback = false;
 
+    /** @var string MD5 of settings used for connection. Used by MUC as an identifier. */
+    private $settingshash;
+
     /**
      * @var int internal temporary variable used to fix params. Its used by {@link _fix_sql_params_dollar_callback()}.
      */
@@ -286,6 +289,20 @@ abstract class moodle_database {
         $this->dbname    = $dbname;
         $this->prefix    = $prefix;
         $this->dboptions = (array)$dboptions;
+    }
+
+    /**
+     * Returns a hash for the settings used during connection.
+     *
+     * If not already requested it is generated and stored in a private property.
+     *
+     * @return string
+     */
+    protected function get_settings_hash() {
+        if (empty($this->settingshash)) {
+            $this->settingshash = md5($this->dbhost . $this->dbuser . $this->prefix);
+        }
+        return $this->settingshash;
     }
 
     /**
@@ -909,6 +926,9 @@ abstract class moodle_database {
     public function reset_caches() {
         $this->columns = array();
         $this->tables  = null;
+        // Purge MUC as well
+        $identifiers = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+        cache_helper::purge_by_definition('core', 'databasemeta', $identifiers);
     }
 
     /**

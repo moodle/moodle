@@ -515,11 +515,16 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return array array of database_column_info objects indexed with column names
      */
     public function get_columns($table, $usecache=true) {
-        if ($usecache and isset($this->columns[$table])) {
-            return $this->columns[$table];
+
+        if ($usecache) {
+            $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+            $cache = cache::make('core', 'databasemeta', $properties);
+            if ($data = $cache->get($table)) {
+                return $data;
+            }
         }
 
-        $this->columns[$table] = array();
+        $structure = array();
 
         $sql = "SELECT column_name, data_type, character_maximum_length, numeric_precision,
                        numeric_scale, is_nullable, column_type, column_default, column_key, extra
@@ -539,7 +544,7 @@ class mysqli_native_moodle_database extends moodle_database {
             // standard table exists
             while ($rawcolumn = $result->fetch_assoc()) {
                 $info = (object)$this->get_column_info((object)$rawcolumn);
-                $this->columns[$table][$info->name] = new database_column_info($info);
+                $structure[$info->name] = new database_column_info($info);
             }
             $result->close();
 
@@ -614,12 +619,16 @@ class mysqli_native_moodle_database extends moodle_database {
                 }
 
                 $info = $this->get_column_info($rawcolumn);
-                $this->columns[$table][$info->name] = new database_column_info($info);
+                $structure[$info->name] = new database_column_info($info);
             }
             $result->close();
         }
 
-        return $this->columns[$table];
+        if ($usecache) {
+            $result = $cache->set($table, $structure);
+        }
+
+        return $structure;
     }
 
     /**
