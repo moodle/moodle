@@ -373,6 +373,13 @@ function cron_run() {
     }
 
 
+    // Run question bank clean-up.
+    mtrace("Starting the question bank cron...", '');
+    require_once($CFG->libdir . '/questionlib.php');
+    question_bank::cron();
+    mtrace('done.');
+
+
     //Run registration updated cron
     mtrace(get_string('siteupdatesstart', 'hub'));
     require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
