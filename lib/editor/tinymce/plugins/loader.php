@@ -34,7 +34,7 @@ require_once('../../../../config.php');
 require_once($CFG->dirroot . '/lib/filelib.php');
 require_once($CFG->dirroot . '/lib/jslib.php');
 
-// Safely get slash params (cleaned).
+// Safely get slash params (cleaned using PARAM_PATH, without /../).
 $path = get_file_argument();
 
 // Param must be of the form [plugin]/[version]/[path] where path is a relative
@@ -46,7 +46,7 @@ if (!preg_match('~^/([a-z0-9_]+)/((?:[0-9.]+)|-1)(/.*)$~', $path, $matches)) {
 list($junk, $tinymceplugin, $version, $innerpath) = $matches;
 
 // Note that version number is totally ignored, user can specify anything,
-// except for the difference between 'dev' and anything else.
+// except for the difference between '-1' and anything else.
 
 // Check the file exists.
 $pluginfolder = $CFG->dirroot . '/lib/editor/tinymce/plugins/' . $tinymceplugin;
@@ -57,7 +57,7 @@ if (!file_exists($file)) {
 
 // We don't actually care what the version number is but there is a special
 // case for '-1' which means, set the files to not be cached.
-$allowcache = $version !== '-1';
+$allowcache = ($version !== '-1');
 if ($allowcache) {
     // Set it to expire a year later. Note that this means we should never get
     // If-Modified-Since requests so there is no need to handle them specially.
