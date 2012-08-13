@@ -72,7 +72,7 @@ header('Content-Type: text/html; charset=utf-8');
     <param name="java_code" value="Display/MainApplet.class" />
     <param name="java_archive" value="DragMath.jar,lib/AbsoluteLayout.jar,lib/swing-layout-1.0.jar,lib/jdom.jar,lib/jep.jar" />
     <param name="language" value="<?php echo $lang; ?>" />
-	<param name="outputFormat" value="MoodleTex" />
+    <param name="outputFormat" value="MoodleTex" />
     <?php print_string('javaneeded', 'tinymce_dragmath', '<a href="http://www.java.com">Java.com</a>')?>
 </object>
 <form name="form" action="#">

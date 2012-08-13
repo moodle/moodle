@@ -32,42 +32,42 @@
         }
 
     </script>
-	<script type="text/javascript" src="js/media.js"></script>
-	<link href="css/media.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/media.js"></script>
+    <link href="css/media.css" rel="stylesheet" type="text/css" />
 </head>
 <body style="display: none">
     <form onsubmit="insertMedia();return false;" action="#">
-		<div class="panel_wrapper">
-			<div id="general_panel" class="panel current">
+        <div class="panel_wrapper">
+            <div id="general_panel" class="panel current">
                 <input id="src" name="src" type="hidden" value="" class="mceFocus" onchange="generatePreview();" />
                 <input id="filename" name="filename" type="hidden" value="" />
-				<fieldset>
-					<legend>{#media_dlg.general}</legend>
+                <fieldset>
+                    <legend>{#media_dlg.general}</legend>
 
-					<table align="center" border="0" cellpadding="4" cellspacing="0">
+                    <table align="center" border="0" cellpadding="4" cellspacing="0">
                         <tr align="center">
                             <td colspan='2' id="filebrowsercontainer">&nbsp;</td>
                         </tr>
-					</table>
-				</fieldset>
+                    </table>
+                </fieldset>
 
-				<fieldset>
-					<legend>{#media_dlg.preview}</legend>
-					<div id="prev"></div>
-				</fieldset>
-			</div>
+                <fieldset>
+                    <legend>{#media_dlg.preview}</legend>
+                    <div id="prev"></div>
+                </fieldset>
+            </div>
 
-		</div>
+        </div>
 
-		<div class="mceActionPanel">
-			<div style="float: left">
-				<input type="submit" id="insert" name="insert" value="{#insert}" />
-			</div>
+        <div class="mceActionPanel">
+            <div style="float: left">
+                <input type="submit" id="insert" name="insert" value="{#insert}" />
+            </div>
 
-			<div style="float: right">
-				<input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
-			</div>
-		</div>
-	</form>
+            <div style="float: right">
+                <input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
+            </div>
+        </div>
+    </form>
 </body>
 </html>
