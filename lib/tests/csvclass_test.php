@@ -32,6 +32,8 @@ class csvclass_testcase extends advanced_testcase {
 
     var $testdata = array();
     var $teststring = '';
+    var $teststring2 = '';
+    var $teststring3 = '';
 
     protected function setUp(){
 
@@ -58,6 +60,11 @@ class csvclass_testcase extends advanced_testcase {
 <p>Multiple lines</p>
 <p>and also contains ""double quotes""</p>",Yebisu
 ';
+
+    $this->teststring2 = 'fullname,"description of things",beer
+"Fred Flint","<p>Find the stone inside the box</p>",Asahi,"A fourth column"
+"Sarah Smith","<p>How are the people next door?</p>,Yebisu,"Forget the next"
+';
     }
 
     public function test_csv_functions() {
@@ -71,5 +78,40 @@ class csvclass_testcase extends advanced_testcase {
 
         $test_data = csv_export_writer::print_array($this->testdata, 'comma', '"', true);
         $this->assertEquals($test_data, $this->teststring);
+
+        // Testing that the content is imported correctly.
+        $iid = csv_import_reader::get_new_iid('lib');
+        $csvimport = new csv_import_reader($iid, 'lib');
+        $contentcount = $csvimport->load_csv_content($this->teststring, 'utf-8', 'comma');
+        $csvimport->init();
+        $dataset = array();
+        $dataset[] = $csvimport->get_columns();
+        while ($record = $csvimport->next()) {
+            $dataset[] = $record;
+        }
+        $csvimport->cleanup();
+        $csvimport->close();
+        $this->assertEquals($dataset, $this->testdata);
+
+        // Testing for the wrong count of columns.
+        $errortext = get_string('csvweirdcolumns', 'error');
+        $iid = csv_import_reader::get_new_iid('lib');
+        $csvimport = new csv_import_reader($iid, 'lib');
+        $contentcount = $csvimport->load_csv_content($this->teststring2, 'utf-8', 'comma');
+        $importerror = $csvimport->get_error();
+        $csvimport->cleanup();
+        $csvimport->close();
+        $this->assertEquals($importerror, $errortext);
+
+        // Testing for empty content
+        $errortext = get_string('csvemptyfile', 'error');
+
+        $iid = csv_import_reader::get_new_iid('lib');
+        $csvimport = new csv_import_reader($iid, 'lib');
+        $contentcount = $csvimport->load_csv_content($this->teststring3, 'utf-8', 'comma');
+        $importerror = $csvimport->get_error();
+        $csvimport->cleanup();
+        $csvimport->close();
+        $this->assertEquals($importerror, $errortext);
     }
 }
