@@ -91,36 +91,48 @@ class repository_filesystem extends repository {
         $list['dynload'] = true;
         $list['nologin'] = true;
         $list['nosearch'] = true;
+        // retrieve list of files and directories and sort them
+        $fileslist = array();
+        $dirslist = array();
         if ($dh = opendir($this->root_path)) {
             while (($file = readdir($dh)) != false) {
                 if ( $file != '.' and $file !='..') {
-                    if (filetype($this->root_path.$file) == 'file') {
-                        $list['list'][] = array(
-                            'title' => $file,
-                            'source' => $path.'/'.$file,
-                            'size' => filesize($this->root_path.$file),
-                            'datecreated' => filectime($this->root_path.$file),
-                            'datemodified' => filemtime($this->root_path.$file),
-                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file, 90))->out(false),
-                            'icon' => $OUTPUT->pix_url(file_extension_icon($file, 24))->out(false)
-                        );
+                    if (is_file($this->root_path.$file)) {
+                        $fileslist[] = $file;
                     } else {
-                        if (!empty($path)) {
-                            $current_path = $path . '/'. $file;
-                        } else {
-                            $current_path = $file;
-                        }
-                        $list['list'][] = array(
-                            'title' => $file,
-                            'children' => array(),
-                            'datecreated' => filectime($this->root_path.$file),
-                            'datemodified' => filemtime($this->root_path.$file),
-                            'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
-                            'path' => $current_path
-                            );
+                        $dirslist[] = $file;
                     }
                 }
             }
+        }
+        collatorlib::asort($fileslist, collatorlib::SORT_STRING);
+        collatorlib::asort($dirslist, collatorlib::SORT_STRING);
+        // fill the $list['list']
+        foreach ($dirslist as $file) {
+            if (!empty($path)) {
+                $current_path = $path . '/'. $file;
+            } else {
+                $current_path = $file;
+            }
+            $list['list'][] = array(
+                'title' => $file,
+                'children' => array(),
+                'datecreated' => filectime($this->root_path.$file),
+                'datemodified' => filemtime($this->root_path.$file),
+                'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
+                'path' => $current_path
+                );
+        }
+        foreach ($fileslist as $file) {
+            $list['list'][] = array(
+                'title' => $file,
+                'source' => $path.'/'.$file,
+                'size' => filesize($this->root_path.$file),
+                'datecreated' => filectime($this->root_path.$file),
+                'datemodified' => filemtime($this->root_path.$file),
+                'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file, 90))->out(false),
+                'icon' => $OUTPUT->pix_url(file_extension_icon($file, 24))->out(false)
+            );
         }
         $list['list'] = array_filter($list['list'], array($this, 'filter'));
         return $list;
