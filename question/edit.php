@@ -27,32 +27,15 @@
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
-$url = new moodle_url('/question/edit.php');
+list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
+        question_edit_setup('questions', '/question/edit.php');
+
+$url = new moodle_url($thispageurl);
 if (($lastchanged = optional_param('lastchanged', 0, PARAM_INT)) !== 0) {
     $url->param('lastchanged', $lastchanged);
 }
-if (($category = optional_param('category', 0, PARAM_TEXT)) !== 0) {
-    $url->param('category', $category);
-}
-if (($qpage = optional_param('qpage', 0, PARAM_INT)) !== 0) {
-    $url->param('qpage', $qpage);
-}
-if (($cat = optional_param('cat', 0, PARAM_TEXT)) !== 0) {
-    $url->param('cat', $cat);
-}
-if (($courseid = optional_param('courseid', 0, PARAM_INT)) !== 0) {
-    $url->param('courseid', $courseid);
-}
-if (($returnurl = optional_param('returnurl', 0, PARAM_INT)) !== 0) {
-    $url->param('returnurl', $returnurl);
-}
-if (($cmid = optional_param('cmid', 0, PARAM_INT)) !== 0) {
-    $url->param('cmid', $cmid);
-}
 $PAGE->set_url($url);
 
-list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
-        question_edit_setup('questions', '/question/edit.php');
 $questionbank = new question_bank_view($contexts, $thispageurl, $COURSE, $cm);
 $questionbank->process_actions();
 
