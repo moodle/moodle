@@ -75,32 +75,44 @@ class repository_filesystem extends repository {
         $list['dynload'] = true;
         $list['nologin'] = true;
         $list['nosearch'] = true;
+        // retrieve list of files and directories and sort them
+        $fileslist = array();
+        $dirslist = array();
         if ($dh = opendir($this->root_path)) {
             while (($file = readdir($dh)) != false) {
                 if ( $file != '.' and $file !='..') {
-                    if (filetype($this->root_path.$file) == 'file') {
-                        $list['list'][] = array(
-                            'title' => $file,
-                            'source' => $path.'/'.$file,
-                            'size' => filesize($this->root_path.$file),
-                            'date' => time(),
-                            'thumbnail' => $OUTPUT->pix_url(file_extension_icon($this->root_path.$file, 32))->out(false)
-                        );
+                    if (is_file($this->root_path.$file)) {
+                        $fileslist[] = $file;
                     } else {
-                        if (!empty($path)) {
-                            $current_path = $path . '/'. $file;
-                        } else {
-                            $current_path = $file;
-                        }
-                        $list['list'][] = array(
-                            'title' => $file,
-                            'children' => array(),
-                            'thumbnail' => $OUTPUT->pix_url('f/folder-32')->out(false),
-                            'path' => $current_path
-                            );
+                        $dirslist[] = $file;
                     }
                 }
             }
+        }
+        collatorlib::asort($fileslist);
+        collatorlib::asort($dirslist);
+        // fill the $list['list']
+        foreach ($dirslist as $file) {
+            if (!empty($path)) {
+                $current_path = $path . '/'. $file;
+            } else {
+                $current_path = $file;
+            }
+            $list['list'][] = array(
+                'title' => $file,
+                'children' => array(),
+                'thumbnail' => $OUTPUT->pix_url('f/folder-32')->out(false),
+                'path' => $current_path
+                );
+        }
+        foreach ($fileslist as $file) {
+            $list['list'][] = array(
+                'title' => $file,
+                'source' => $path.'/'.$file,
+                'size' => filesize($this->root_path.$file),
+                'date' => time(),
+                'thumbnail' => $OUTPUT->pix_url(file_extension_icon($this->root_path.$file, 32))->out(false)
+            );
         }
         $list['list'] = array_filter($list['list'], array($this, 'filter'));
         return $list;
