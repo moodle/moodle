@@ -101,8 +101,6 @@ class recent_form extends moodleform {
             $mform->setAdvanced('user');
         }
 
-        $sectiontitle = get_string('sectionname', 'format_'.$COURSE->format);
-
         $options = array(''=>get_string('allactivities'));
         $modsused = array();
 
