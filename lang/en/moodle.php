@@ -1805,6 +1805,7 @@ $string['visibletostudents'] = 'Visible to {$a}';
 $string['warningdeleteresource'] = 'Warning: {$a} is referred in a resource. Would you like to update the resource?';
 $string['webpage'] = 'Web page';
 $string['week'] = 'Week';
+$string['weeks'] = 'weeks';
 $string['weekhide'] = 'Hide this week from {$a}';
 $string['weeklyoutline'] = 'Weekly outline';
 $string['weekshow'] = 'Show this week to {$a}';
