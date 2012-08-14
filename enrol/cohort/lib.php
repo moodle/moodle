@@ -129,9 +129,7 @@ class enrol_cohort_plugin extends enrol_plugin {
         global $CFG;
 
         if (!$inserted) {
-            // sync cohort enrols
-            require_once("$CFG->dirroot/enrol/cohort/locallib.php");
-            enrol_cohort_sync($course->id);
+            // Let's not sync cohorts anytime a course is updated...
         } else {
             // cohorts are never inserted automatically
         }
