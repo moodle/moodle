@@ -227,6 +227,7 @@ WHERE
             throw new coding_exception('Failed to load question_attempt_step ' . $stepid);
         }
 
+        // TODO: pass a question_type and a contextid to load_from_records to get response files
         $step = question_attempt_step::load_from_records($records, $stepid);
         $records->close();
 
@@ -1355,10 +1356,10 @@ class question_file_loader implements question_response_files {
      * @param int $contextid the context id that the files belong to.
      */
     public function __construct(question_attempt_step $step, $name, $value, $contextid) {
-        $this->draftitemid = $draftitemid;
-        $this->component = $component;
-        $this->filearea = $filearea;
-        $this->value = $this->compute_value($draftitemid, $text);
+        $this->step = $step;
+        $this->name = $name;
+        $this->value = $value;
+        $this->contextid = $contextid;
     }
 
     public function __toString() {

@@ -370,9 +370,11 @@ class question_attempt_step {
      * Create a question_attempt_step from records loaded from the database.
      * @param Iterator $records Raw records loaded from the database.
      * @param int $stepid The id of the records to extract.
+     * @param string $qtype The question type of which this is an attempt
+     * @param int $contextid The contextid of this question attempt
      * @return question_attempt_step The newly constructed question_attempt_step.
      */
-    public static function load_from_records($records, $attemptstepid) {
+    public static function load_from_records($records, $attemptstepid, $qtype = null, $contextid = null) {
         $currentrec = $records->current();
         while ($currentrec->attemptstepid != $attemptstepid) {
             $records->next();
@@ -407,12 +409,15 @@ class question_attempt_step {
         // This next chunk of code requires getting $contextid and $qtype here.
         // Somehow, we need to get that information to this point by modifying
         // all the paths by which this method can be called.
-        foreach (question_bank::get_qtype($qtype)->response_file_areas() as $area) {
-            if (empty($step->data[$area])) {
-                continue;
-            }
+        // Can we only return files when it's possible? Should there be some kind of warning?
+        if ($qtype && $contextid) {
+            foreach (question_bank::get_qtype($qtype)->response_file_areas() as $area) {
+                if (empty($step->data[$area])) {
+                    continue;
+                }
 
-            $step->data[$area] = new question_file_loader($this, $area, $step->data[$area], $contextid)
+                $step->data[$area] = new question_file_loader($step, $area, $step->get_qt_var($area), $contextid);
+            }
         }
 
         return $step;
