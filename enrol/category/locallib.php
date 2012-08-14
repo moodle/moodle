@@ -233,12 +233,12 @@ function enrol_category_sync_course($course) {
     }
 }
 
-function enrol_category_sync_full() {
+function enrol_category_sync_full($verbose = false) {
     global $DB;
 
 
     if (!enrol_is_enabled('category')) {
-        return;
+        return 2;
     }
 
     // we may need a lot of time here
@@ -251,12 +251,22 @@ function enrol_category_sync_full() {
     // any interesting roles worth synchronising?
     if (!$roles = get_roles_with_capability('enrol/category:synchronised', CAP_ALLOW, $syscontext)) {
         // yay, nothing to do, so let's remove all leftovers
+        if ($verbose) {
+            mtrace("No roles with 'enrol/category:synchronised' capability found.");
+        }
         if ($instances = $DB->get_records('enrol', array('enrol'=>'category'))) {
             foreach ($instances as $instance) {
+                if ($verbose) {
+                    mtrace("  deleting category enrol instance from course {$instance->courseid}");
+                }
                 $plugin->delete_instance($instance);
             }
         }
-        return;
+        return 0;
+    }
+    $rolenames = role_fix_names($roles, null, ROLENAME_SHORT, true);
+    if ($verbose) {
+        mtrace('Synchronising category enrolments for roles: '.implode(', ', $rolenames).'...');
     }
 
     list($roleids, $params) = $DB->get_in_or_equal(array_keys($roles), SQL_PARAMS_NAMED, 'r');
@@ -325,6 +335,9 @@ function enrol_category_sync_full() {
         unset($instance->userid);
         unset($instance->estart);
         $plugin->enrol_user($instance, $userid, null, $estart);
+        if ($verbose) {
+            mtrace("  enrolling: user $userid ==> course $instance->courseid");
+        }
     }
     $rs->close();
 
@@ -343,6 +356,15 @@ function enrol_category_sync_full() {
         $userid = $instance->userid;
         unset($instance->userid);
         $plugin->unenrol_user($instance, $userid);
+        if ($verbose) {
+            mtrace("  unenrolling: user $userid ==> course $instance->courseid");
+        }
     }
     $rs->close();
+
+    if ($verbose) {
+        mtrace('...user enrolment synchronisation finished.');
+    }
+
+    return 0;
 }
