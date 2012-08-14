@@ -128,7 +128,7 @@ class dateselector_form_element_testcase extends basic_testcase {
                 'year' => 2011,
                 'usertimezone' => 0.0,
                 'timezone' => 0.0,
-                'timestamp' => 1309449600
+                'timestamp' => 1309478400 // 6am at UTC+0
             ),
             array (
                 'day' => 1,
@@ -136,7 +136,7 @@ class dateselector_form_element_testcase extends basic_testcase {
                 'year' => 2011,
                 'usertimezone' => 0.0,
                 'timezone' => 99,
-                'timestamp' => 1309449600
+                'timestamp' => 1309478400 // 6am at UTC+0
             )
         );
     }
