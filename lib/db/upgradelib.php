@@ -68,6 +68,23 @@ function upgrade_mysql_fix_unsigned_columns() {
 
             $column = (object)array_change_key_case((array)$column, CASE_LOWER);
             if (stripos($column->type, 'unsigned') !== false) {
+                $maxvalue = 0;
+                if (preg_match('/^int/i', $column->type)) {
+                    $maxvalue = 2147483647;
+                } else if (preg_match('/^medium/i', $column->type)) {
+                    $maxvalue = 8388607;
+                } else if (preg_match('/^smallint/i', $column->type)) {
+                    $maxvalue = 32767;
+                } else if (preg_match('/^tinyint/i', $column->type)) {
+                    $maxvalue = 127;
+                }
+                if ($maxvalue) {
+                    // Make sure nobody is abusing our integer ranges - moodle int sizes are in digits, not bytes!!!
+                    $invalidcount = $DB->get_field_sql("SELECT COUNT('x') FROM `{{$table}}` WHERE `$column->field` > :maxnumber", array('maxnumber'=>$maxvalue));
+                    if ($invalidcount) {
+                        throw new moodle_exception('notlocalisederrormessage', 'error', new moodle_url('/admin/'), "Database table '{$table}'' contains unsigned column '{$column->field}' with $invalidcount values that are out of allowed range, upgrade can not continue.");
+                    }
+                }
                 $type = preg_replace('/unsigned/i', 'signed', $column->type);
                 $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
                 $default = (!is_null($column->default) and $column->default !== '') ? "DEFAULT '$column->default'" : '';
