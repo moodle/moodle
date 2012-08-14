@@ -48,9 +48,9 @@ if ($hassiteconfig
     }
 
     $choices = array();
-    $choices[0] = new lang_string('coursedisplay_single');
-    $choices[1] = new lang_string('coursedisplay_multi');
-    $temp->add(new admin_setting_configselect('moodlecourse/coursedisplay', new lang_string('coursedisplay'), new lang_string('coursedisplay_help'), 0, $choices));        
+    $choices[COURSE_DISPLAY_SINGLEPAGE] = new lang_string('coursedisplay_single');
+    $choices[COURSE_DISPLAY_MULTIPAGE] = new lang_string('coursedisplay_multi');
+    $temp->add(new admin_setting_configselect('moodlecourse/coursedisplay', new lang_string('coursedisplay'), new lang_string('coursedisplay_help'), COURSE_DISPLAY_SINGLEPAGE, $choices));        
     
     $temp->add(new admin_setting_heading('groups', new lang_string('groups', 'group'), ''));
     $choices = array();

@@ -485,6 +485,12 @@ define('MOODLE_OFFICIAL_MOBILE_SERVICE', 'moodle_mobile_app');
  */
 define('USER_CAN_IGNORE_FILE_SIZE_LIMITS', -1);
 
+/**
+ * Course display settings
+ */
+define('COURSE_DISPLAY_SINGLEPAGE', 0); // display all sections on one page
+define('COURSE_DISPLAY_MULTIPAGE', 1); // split pages into a page per section
+
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
 /**
