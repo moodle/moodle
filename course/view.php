@@ -97,7 +97,7 @@
     $logparam = 'id='. $course->id;
     $loglabel = 'view';
     $infoid = $course->id;
-    if(!empty($section)) {
+    if ($section and $section > 0) {
         $loglabel = 'view section';
 
         // Get section details and check it exists.
