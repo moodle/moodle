@@ -464,23 +464,9 @@ class repository_dropbox extends repository {
         $mform->addElement('static', null, '',  $str_getkey);
 
         $mform->addElement('text', 'dropbox_cachelimit', get_string('cachelimit', 'repository_dropbox'), array('size' => '40'));
+        $mform->addRule('dropbox_cachelimit', null, 'numeric', null, 'client');
+        $mform->setType('dropbox_cachelimit', PARAM_INT);
         $mform->addElement('static', 'dropbox_cachelimit_info', '',  get_string('cachelimit_info', 'repository_dropbox'));
-    }
-
-    /**
-     * Validate Admin Settings Moodle form
-     *
-     * @param moodleform $mform Moodle form (passed by reference)
-     * @param array $data array of ("fieldname"=>value) of submitted data
-     * @param array $errors array of ("fieldname"=>errormessage) of errors
-     * @return array array of errors
-     */
-    public static function type_form_validation($mform, $data, $errors) {
-        if (!empty($data['dropbox_cachelimit']) && (!is_number($data['dropbox_cachelimit']) ||
-                (int)$data['dropbox_cachelimit']<0)) {
-            $errors['dropbox_cachelimit'] = get_string('error_cachelimit', 'repository_dropbox');
-        }
-        return $errors;
     }
 
     /**
