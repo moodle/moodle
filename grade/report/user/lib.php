@@ -228,6 +228,26 @@ class grade_report_user extends grade_report {
         }
         $count = 1;
         foreach ($element['children'] as $key=>$child) {
+
+            $grade_object = $child['object'];
+            // If grade object isn't hidden
+            if ($grade_object->hidden != 1) {
+
+                // If grade object is an module instance
+                if (!empty($grade_object->itemmodule) && !empty($grade_object->iteminstance)) {
+
+                    $instances = $this->gtree->modinfo->get_instances();
+                    // If we can find the module instance
+                    if (!empty($instances[$grade_object->itemmodule][$grade_object->iteminstance])) {
+
+                        $cm = $instances[$grade_object->itemmodule][$grade_object->iteminstance];
+                        // Skip generating rowspans if the user cannot see the module instance
+                        if (!$cm->uservisible) {
+                            continue;
+                        }
+                    }
+                }
+            }
             $count += $this->inject_rowspans($element['children'][$key]);
         }
         $element['rowspan'] = $count;
