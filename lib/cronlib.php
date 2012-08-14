@@ -352,7 +352,7 @@ function cron_run() {
 
 
     // Run external blog cron if needed
-    if ($CFG->useexternalblogs) {
+    if (!empty($CFG->enableblogs) && $CFG->useexternalblogs) {
         require_once($CFG->dirroot . '/blog/lib.php');
         mtrace("Fetching external blog entries...", '');
         $sql = "timefetched < ? OR timefetched = 0";
@@ -364,7 +364,7 @@ function cron_run() {
         mtrace('done.');
     }
     // Run blog associations cleanup
-    if ($CFG->useblogassociations) {
+    if (!empty($CFG->enableblogs) && $CFG->useblogassociations) {
         require_once($CFG->dirroot . '/blog/lib.php');
         // delete entries whose contextids no longer exists
         mtrace("Deleting blog associations linked to non-existent contexts...", '');

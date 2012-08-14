@@ -533,7 +533,7 @@ class plugin_manager {
             ),
 
             'tool' => array(
-                'assignmentupgrade', 'bloglevelupgrade', 'capability', 'customlang', 'dbtransfer', 'generator',
+                'assignmentupgrade', 'capability', 'customlang', 'dbtransfer', 'generator',
                 'health', 'innodb', 'langimport', 'multilangupgrade', 'phpunit', 'profiling',
                 'qeupgradehelper', 'replace', 'spamcleaner', 'timezoneimport', 'unittest',
                 'uploaduser', 'unsuproles', 'xmldb'

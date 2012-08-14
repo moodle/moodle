@@ -429,7 +429,7 @@ class blog_entry implements renderable {
         global $CFG, $USER, $DB;
         $sitecontext = context_system::instance();
 
-        if (empty($CFG->bloglevel) || !has_capability('moodle/blog:view', $sitecontext)) {
+        if (empty($CFG->enableblogs) || !has_capability('moodle/blog:view', $sitecontext)) {
             return false; // blog system disabled or user has no blog view capability
         }
 
