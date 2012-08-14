@@ -18,8 +18,9 @@
    this.connectPrereqCallback = {
 
         success: function(o) {
-            scorm_tree_node = YAHOO.widget.TreeView.getTree('scorm_tree');
-            if (o.responseText !== undefined) {
+            YUI.use('yui2-treeview', 'yui2-layout', function(Y) {
+                scorm_tree_node = Y.YUI2.widget.TreeView.getTree('scorm_tree');
+                if (o.responseText !== undefined) {
                     //alert('got a response: ' + o.responseText);
                     if (scorm_tree_node && o.responseText) {
                         var hnode = scorm_tree_node.getHighlightedNode();
@@ -61,7 +62,7 @@
                         hnode = scorm_tree_node.getNodeByIndex(hidx);
                         if (hnode) {
                             hnode.highlight();
-                            scorm_layout_widget = YAHOO.widget.Layout.getLayoutById('scorm_layout');
+                            scorm_layout_widget = Y.YUI2.widget.Layout.getLayoutById('scorm_layout');
                             var left = scorm_layout_widget.getUnitByPosition('left');
                             if (left.expanded) {
                                 hnode.focus();
@@ -69,6 +70,7 @@
                         }
                     }
                 }
+            });
         },
 
         failure: function(o) {

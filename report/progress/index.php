@@ -158,8 +158,8 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     echo $OUTPUT->header();
 
     if ($svgcleverness) {
-        $PAGE->requires->yui2_lib('event');
         $PAGE->requires->js('/report/progress/textrotate.js');
+        $PAGE->requires->js_function_call('textrotate_init', null, true);
     }
 
     // Handle groups (if enabled)

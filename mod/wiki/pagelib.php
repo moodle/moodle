@@ -388,7 +388,6 @@ class page_wiki_edit extends page_wiki {
         parent::__construct($wiki, $subwiki, $cm);
         self::$attachmentoptions = array('subdirs' => false, 'maxfiles' => - 1, 'maxbytes' => $CFG->maxbytes, 'accepted_types' => '*');
         $PAGE->requires->js_init_call('M.mod_wiki.renew_lock', null, true);
-        $PAGE->requires->yui2_lib('connection');
     }
 
     protected function print_pagetitle() {
