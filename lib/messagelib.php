@@ -60,7 +60,7 @@ function message_send($eventdata) {
     //TODO: we need to solve problems with database transactions here somehow, for now we just prevent transactions - sorry
     $DB->transactions_forbidden();
 
-    if (is_int($eventdata->userto)) {
+    if (is_number($eventdata->userto)) {
         $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->userto));
     }
     if (is_int($eventdata->userfrom)) {
