@@ -2614,7 +2614,7 @@ final class repository_type_form extends moodleform {
  */
 function initialise_filepicker($args) {
     global $CFG, $USER, $PAGE, $OUTPUT;
-    static $templatesinitialized;
+    static $templatesinitialized = array();
     require_once($CFG->libdir . '/licenselib.php');
 
     $return = new stdClass();
@@ -2684,18 +2684,26 @@ function initialise_filepicker($args) {
     // provided by form element
     $return->accepted_types = file_get_typegroup('extension', $args->accepted_types);
     $return->return_types = $args->return_types;
+    $templates = array();
     foreach ($repositories as $repository) {
         $meta = $repository->get_meta();
         // Please note that the array keys for repositories are used within
         // JavaScript a lot, the key NEEDS to be the repository id.
         $return->repositories[$repository->id] = $meta;
+        // Register custom repository template if it has one
+        if(method_exists($repository, 'get_upload_template') && !array_key_exists('uploadform_' . $meta->type, $templatesinitialized)) {
+            $templates['uploadform_' . $meta->type] = $repository->get_upload_template();
+            $templatesinitialized['uploadform_' . $meta->type] = true;
+        }
     }
-    if (!$templatesinitialized) {
-        // we need to send filepicker templates to the browser just once
+    if (!array_key_exists('core', $templatesinitialized)) {
+        // we need to send each filepicker template to the browser just once
         $fprenderer = $PAGE->get_renderer('core', 'files');
-        $templates = $fprenderer->filepicker_js_templates();
+        $templates = array_merge($templates, $fprenderer->filepicker_js_templates());
+        $templatesinitialized['core'] = true;
+    }
+    if (sizeof($templates)) {
         $PAGE->requires->js_init_call('M.core_filepicker.set_templates', array($templates), true);
-        $templatesinitialized = true;
     }
     return $return;
 }
