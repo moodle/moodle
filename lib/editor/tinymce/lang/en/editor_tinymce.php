@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'editor_tinymce', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'editor_tinymce', language 'en'
  *
- * @package    editor
- * @subpackage tinymce
+ * @package    editor_tinymce
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,17 +26,12 @@
 //== Custom Moodle strings that are not part of upstream TinyMCE ==
 $string['common:browseimage'] = 'Find or upload an image...';
 $string['common:browsemedia'] = 'Find or upload a sound, video or applet...';
-$string['dragmath:dragmath_desc'] = 'Insert equation';
-$string['dragmath:dragmath_javaneeded'] = 'To use this page you need a Java-enabled browser. Download the latest Java plug-in from {$a}.';
-$string['dragmath:dragmath_title'] = 'DragMath Equation Editor';
 $string['fontselectlist'] = 'Available fonts list';
 $string['media_dlg:filename'] = 'Filename';
-$string['moodleemoticon:desc'] = 'Insert emoticon';
-$string['moodlenolink:desc'] = 'Prevent automatic linking';
 $string['pluginname'] = 'TinyMCE HTML editor';
 
 
-// == TinyMCE upstream lang strings from all plugins ==
+// == TinyMCE upstream lang strings from all standard upstream plugins ==
 $string['advanced:address'] = 'Address';
 $string['advanced:anchor_delta_height'] = '';
 $string['advanced:anchor_delta_width'] = '';

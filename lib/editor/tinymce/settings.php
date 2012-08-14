@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * TinyMCE admin settings
  *
- * @package    editor
- * @subpackage tinymce
+ * @package    editor_tinymce
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

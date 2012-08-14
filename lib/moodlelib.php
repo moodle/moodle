@@ -7890,11 +7890,12 @@ function get_plugin_types($fullpaths=true) {
                       'theme'         => 'theme',  // this is a bit hacky, themes may be in $CFG->themedir too
         );
 
-        $mods = get_plugin_list('mod');
-        foreach ($mods as $mod => $moddir) {
-            if (file_exists("$moddir/db/subplugins.php")) {
+        $subpluginowners = array_merge(array_values(get_plugin_list('mod')),
+                array_values(get_plugin_list('editor')));
+        foreach ($subpluginowners as $ownerdir) {
+            if (file_exists("$ownerdir/db/subplugins.php")) {
                 $subplugins = array();
-                include("$moddir/db/subplugins.php");
+                include("$ownerdir/db/subplugins.php");
                 foreach ($subplugins as $subtype=>$dir) {
                     $info[$subtype] = $dir;
                 }
@@ -7940,6 +7941,10 @@ function get_plugin_list($plugintype) {
         // mod is an exception because we have to call this function from get_plugin_types()
         $fulldirs[] = $CFG->dirroot.'/mod';
 
+    } else if ($plugintype === 'editor') {
+        // Exception also needed for editor for same reason.
+        $fulldirs[] = $CFG->dirroot . '/lib/editor';
+
     } else if ($plugintype === 'theme') {
         $fulldirs[] = $CFG->dirroot.'/theme';
         // themes are special because they may be stored also in separate directory
@@ -7958,7 +7963,6 @@ function get_plugin_list($plugintype) {
         }
         $fulldirs[] = $fulldir;
     }
-
     $result = array();
 
     foreach ($fulldirs as $fulldir) {
