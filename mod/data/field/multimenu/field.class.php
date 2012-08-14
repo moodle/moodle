@@ -38,7 +38,7 @@ class data_field_multimenu extends data_field_base {
 
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<input name="field_' . $this->field->id . '[xxx]" type="hidden" value="xxx"/>'; // hidden field - needed for empty selection
-        $str .= '<label class="accesshide" for="field_' . $this->field->id . '">' . $this->field->name. ': </label>';
+        $str .= '<label class="accesshide" for="field_' . $this->field->id . '">' . $this->field->name. '</label>';
         $str .= '<select name="field_' . $this->field->id . '[]" id="field_' . $this->field->id . '" multiple="multiple">';
 
         foreach (explode("\n",$this->field->param1) as $option) {
