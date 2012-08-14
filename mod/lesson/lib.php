@@ -345,7 +345,7 @@ function lesson_get_user_grades($lesson, $userid=0) {
 
     $params = array("lessonid" => $lesson->id,"lessonid2" => $lesson->id);
 
-    if (isset($userid)) {
+    if (!empty($userid)) {
         $params["userid"] = $userid;
         $params["userid2"] = $userid;
         $user = "AND u.id = :userid";
