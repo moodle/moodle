@@ -197,19 +197,19 @@ abstract class backup_plan_dbops extends backup_dbops {
     * @param int $courseid/$sectionid/$cmid
     * @param bool $users Should be true is users were included in the backup
     * @param bool $anonymised Should be true is user information was anonymized.
-    * @param bool $useidasname true to use id, false to use strings (default)
+    * @param bool $withoutname if false, include the name in the file name (default)
     * @return string The filename to use
     */
-    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised, $useidasname = false) {
+    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised, $withoutname = false) {
         global $DB;
 
         // Calculate backup word
         $backupword = str_replace(' ', '_', moodle_strtolower(get_string('backupfilename')));
         $backupword = trim(clean_filename($backupword), '_');
 
+        // Not $withoutname, lets fetch the name
         $shortname = '';
-        // Not $useidasname, lets calculate it, else $id will be used
-        if (!$useidasname) {
+        if (!$withoutname) {
             // Calculate proper name element (based on type)
             switch ($type) {
                 case backup::TYPE_1COURSE:
@@ -231,7 +231,11 @@ abstract class backup_plan_dbops extends backup_dbops {
             $shortname = moodle_strtolower(trim(clean_filename($shortname), '_'));
         }
 
-        $name = empty($shortname) ? $id : $shortname;
+        // The name will always contain the ID, but we append the course short name if requested.
+        $name = $id;
+        if (!$withoutname && $shortname != '') {
+            $name .= '-' . $shortname;
+        }
 
         // Calculate date
         $backupdateformat = str_replace(' ', '_', get_string('backupnameformat', 'langconfig'));
