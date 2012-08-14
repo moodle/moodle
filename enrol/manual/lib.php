@@ -215,6 +215,7 @@ class enrol_manual_plugin extends enrol_plugin {
         $today = time();
         $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
         $startdateoptions[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
+        $defaultduration = $instance->enrolperiod > 0 ? $instance->enrolperiod / 86400 : '';
 
         $modules = array('moodle-enrol_manual-quickenrolment', 'moodle-enrol_manual-quickenrolment-skin');
         $arguments = array(
@@ -224,6 +225,7 @@ class enrol_manual_plugin extends enrol_plugin {
             'url'                 => $manager->get_moodlepage()->url->out(false),
             'optionsStartDate'    => $startdateoptions,
             'defaultRole'         => $instance->roleid,
+            'defaultDuration'     => $defaultduration,
             'disableGradeHistory' => $CFG->disablegradehistory,
             'recoverGradesDefault'=> ''
         );

@@ -41,8 +41,7 @@ if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
 // Make sure that the user has permissions to manage groups.
 require_login($course);
 
-$context       = get_context_instance(CONTEXT_COURSE, $courseid);
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$context       = context_course::instance($courseid);
 require_capability('moodle/course:managegroups', $context);
 
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id;

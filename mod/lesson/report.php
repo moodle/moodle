@@ -314,6 +314,7 @@ if ($action === 'delete') {
     if (has_capability('mod/lesson:edit', $context)) {
         $checklinks  = '<a href="javascript: checkall();">'.get_string('selectall').'</a> / ';
         $checklinks .= '<a href="javascript: checknone();">'.get_string('deselectall').'</a>';
+        $checklinks .= html_writer::label('action', 'menuaction', false, array('class' => 'accesshide'));
         $checklinks .= html_writer::select(array('delete' => get_string('deleteselected')), 'action', 0, array(''=>'choosedots'), array('id'=>'actionid'));
         $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('theform', 'actionid', ''));
         echo $OUTPUT->box($checklinks, 'center');

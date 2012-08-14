@@ -169,21 +169,36 @@ class restore_section_task extends restore_task {
 
         // Define section_userinfo. Dependent of:
         // - users root setting
-        // - section_included setting
+        // - section_included setting.
         $settingname = $settingprefix . 'userinfo';
-        $selectvalues = array(0=>get_string('no')); // Safer options
-        $defaultvalue = false;                      // Safer default
+        $defaultvalue = false;
         if (isset($this->info->settings[$settingname]) && $this->info->settings[$settingname]) { // Only enabled when available
-            $selectvalues = array(1=>get_string('yes'), 0=>get_string('no'));
             $defaultvalue = true;
         }
+
         $section_userinfo = new restore_section_userinfo_setting($settingname, base_setting::IS_BOOLEAN, $defaultvalue);
-        $section_userinfo->set_ui(new backup_setting_ui_select($section_userinfo, get_string('includeuserinfo','backup'), $selectvalues));
+        if (!$defaultvalue) {
+            // This is a bit hacky, but if there is no user data to restore, then
+            // we replace the standard check-box with a select menu with the
+            // single choice 'No', and the select menu is clever enough that if
+            // there is only one choice, it just displays a static string.
+            //
+            // It would probably be better design to have a special UI class
+            // setting_ui_checkbox_or_no, rather than this hack, but I am not
+            // going to do that today.
+            $section_userinfo->set_ui(new backup_setting_ui_select($section_userinfo, get_string('includeuserinfo','backup'),
+                    array(0 => get_string('no'))));
+        } else {
+            $section_userinfo->get_ui()->set_label(get_string('includeuserinfo','backup'));
+        }
+
         $this->add_setting($section_userinfo);
-        // Look for "users" root setting
+
+        // Look for "users" root setting.
         $users = $this->plan->get_setting('users');
         $users->add_dependency($section_userinfo);
-        // Look for "section_included" section setting
+
+        // Look for "section_included" section setting.
         $section_included->add_dependency($section_userinfo);
     }
 }

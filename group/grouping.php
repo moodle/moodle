@@ -63,7 +63,7 @@ if ($id) {
 $PAGE->set_url($url);
 
 require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 require_capability('moodle/course:managegroups', $context);
 
 $returnurl = $CFG->wwwroot.'/group/groupings.php?id='.$course->id;

@@ -321,6 +321,9 @@ function process_group_tag($tagcontents) {
     if (preg_match('{<description>.*?<short>(.*?)</short>.*?</description>}is', $tagcontents, $matches)) {
         $group->shortName = trim($matches[1]);
     }
+    if (preg_match('{<description>.*?<full>(.*?)</full>.*?</description>}is', $tagcontents, $matches)) {
+        $group->fulldescription = trim($matches[1]);
+    }
     if (preg_match('{<org>.*?<orgunit>(.*?)</orgunit>.*?</org>}is', $tagcontents, $matches)) {
         $group->category = trim($matches[1]);
     }
@@ -376,7 +379,10 @@ function process_group_tag($tagcontents) {
                     $courseconfig = get_config('moodlecourse'); // Load Moodle Course shell defaults
                     $course = new stdClass();
                     $course->fullname = $group->description;
-                    $course->shortname = $group->shortName;;
+                    $course->shortname = $group->shortName;
+                    if (!empty($group->fulldescription)) {
+                        $course->summary = format_text($group->fulldescription, FORMAT_HTML);
+                    }
                     $course->idnumber = $coursecode;
                     $course->format = $courseconfig->format;
                     $course->visible = $courseconfig->visible;

@@ -35,7 +35,7 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $PAGE->set_url('/group/import.php', array('id'=>$id));
 
 require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $id);
+$context = context_course::instance($id);
 
 require_capability('moodle/course:managegroups', $context);
 
@@ -160,7 +160,7 @@ if ($mform_post->is_cancelled()) {
             if (isset($newgroup->courseid)) {
                 $linenum++;
                 $groupname = $newgroup->name;
-                $newgrpcoursecontext = get_context_instance(CONTEXT_COURSE, $newgroup->courseid);
+                $newgrpcoursecontext = context_course::instance($newgroup->courseid);
 
                 ///Users cannot upload groups in courses they cannot update.
                 if (!has_capability('moodle/course:managegroups', $newgrpcoursecontext) or (!is_enrolled($newgrpcoursecontext) and !has_capability('moodle/course:view', $newgrpcoursecontext))) {

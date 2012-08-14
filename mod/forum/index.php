@@ -46,7 +46,7 @@ if ($id) {
 
 require_course_login($course);
 $PAGE->set_pagelayout('incourse');
-$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+$coursecontext = context_course::instance($course->id);
 
 
 unset($SESSION->fromdiscussion);
@@ -129,7 +129,7 @@ foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
 
     $forum = $forums[$forumid];
 
-    if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+    if (!$context = context_module::instance($cm->id, IGNORE_MISSING)) {
         continue;   // Shouldn't happen
     }
 
@@ -158,7 +158,7 @@ if (!is_null($subscribe)) {
     // Can proceed now, the user is not guest and is enrolled
     foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
         $forum = $forums[$forumid];
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $modcontext = context_module::instance($cm->id);
         $cansub = false;
 
         if (has_capability('mod/forum:viewdiscussion', $modcontext)) {
@@ -179,7 +179,7 @@ if (!is_null($subscribe)) {
         }
     }
     $returnto = forum_go_back_to("index.php?id=$course->id");
-    $shortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+    $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
     if ($subscribe) {
         add_to_log($course->id, 'forum', 'subscribeall', "index.php?id=$course->id", $course->id);
         redirect($returnto, get_string('nowallsubscribed', 'forum', $shortname), 1);
@@ -194,7 +194,7 @@ if (!is_null($subscribe)) {
 if ($generalforums) {
     foreach ($generalforums as $forum) {
         $cm      = $modinfo->instances['forum'][$forum->id];
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
 
         $count = forum_count_discussions($forum, $cm, $course);
 
@@ -321,7 +321,7 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
         $currentsection = '';
             foreach ($learningforums as $forum) {
             $cm      = $modinfo->instances['forum'][$forum->id];
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $context = context_module::instance($cm->id);
 
             $count = forum_count_discussions($forum, $cm, $course);
 

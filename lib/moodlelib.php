@@ -5861,15 +5861,15 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
         }
     }
 
-    if ($sitebytes and $sitebytes < $minimumsize) {
+    if (($sitebytes > 0) and ($sitebytes < $minimumsize)) {
         $minimumsize = $sitebytes;
     }
 
-    if ($coursebytes and $coursebytes < $minimumsize) {
+    if (($coursebytes > 0) and ($coursebytes < $minimumsize)) {
         $minimumsize = $coursebytes;
     }
 
-    if ($modulebytes and $modulebytes < $minimumsize) {
+    if (($modulebytes > 0) and ($modulebytes < $minimumsize)) {
         $minimumsize = $modulebytes;
     }
 
@@ -10797,6 +10797,22 @@ function get_home_page() {
         }
     }
     return HOMEPAGE_SITE;
+}
+
+/**
+ * Gets the name of a course to be displayed when showing a list of courses.
+ * By default this is just $course->fullname but user can configure it. The
+ * result of this function should be passed through print_string.
+ * @param object $course Moodle course object
+ * @return string Display name of course (either fullname or short + fullname)
+ */
+function get_course_display_name_for_list($course) {
+    global $CFG;
+    if (!empty($CFG->courselistshortnames)) {
+        return get_string('courseextendednamedisplay', '', $course);
+    } else {
+        return $course->fullname;
+    }
 }
 
 /**

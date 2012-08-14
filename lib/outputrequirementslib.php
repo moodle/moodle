@@ -219,8 +219,7 @@ class page_requirements_manager {
                     'moodle-' => array(
                         'group' => 'moodle',
                         'configFn' => '@MOODLECONFIGFN@'
-                    ),
-                    'root' => 'moodle'
+                    )
                 )
             ),
             'local' => array(
@@ -235,8 +234,7 @@ class page_requirements_manager {
                     'gallery-' => array(
                         'group' => 'gallery',
                         'configFn' => '@GALLERYCONFIGFN@',
-                    ),
-                    'root' => 'gallery'
+                    )
                 )
             )
         );

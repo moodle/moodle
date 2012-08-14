@@ -507,9 +507,10 @@ function message_print_usergroup_selector($viewing, $courses, $coursecontexts, $
     }
 
     echo html_writer::start_tag('form', array('id' => 'usergroupform','method' => 'get','action' => ''));
-        echo html_writer::start_tag('fieldset');
-            echo html_writer::select($options, 'viewing', $viewing, false, array('id' => 'viewing','onchange' => 'this.form.submit()'));
-        echo html_writer::end_tag('fieldset');
+    echo html_writer::start_tag('fieldset');
+    echo html_writer::label(get_string('messagenavigation', 'message'), 'viewing');
+    echo html_writer::select($options, 'viewing', $viewing, false, array('id' => 'viewing','onchange' => 'this.form.submit()'));
+    echo html_writer::end_tag('fieldset');
     echo html_writer::end_tag('form');
 }
 
@@ -523,7 +524,7 @@ function message_get_course_contexts($courses) {
     $coursecontexts = array();
 
     foreach($courses as $course) {
-        $coursecontexts[$course->id] = get_context_instance(CONTEXT_COURSE, $course->id);
+        $coursecontexts[$course->id] = context_course::instance($course->id);
     }
 
     return $coursecontexts;
@@ -1498,7 +1499,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
                                      $order", $params);
     } else {
 //TODO: add enabled enrolment join here (skodak)
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = context_course::instance($courseid);
         $contextlists = get_related_contexts_string($context);
 
         // everyone who has a role assignment in this course or higher
@@ -1535,7 +1536,7 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     global $CFG, $USER, $DB;
 
     // If user is searching all messages check they are allowed to before doing anything else
-    if ($courseid == SITEID && !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
+    if ($courseid == SITEID && !has_capability('moodle/site:readallmessages', context_system::instance())) {
         print_error('accessdenied','admin');
     }
 
@@ -1969,7 +1970,12 @@ function message_format_message($message, $format='', $keywords='', $class='othe
         $messagetext = highlight($keywords, $messagetext);
     }
 
-    return '<div class="message '.$class.'"><a name="m'.$message->id.'"></a> <span class="time">'.$time.'</span>: <span class="content">'.$messagetext.'</span></div>';
+    return <<<TEMPLATE
+<div class='message $class'>
+    <a name="m'.{$message->id}.'"></a>
+    <span class="message-meta"><span class="time">$time</span></span>: <span class="text">$messagetext</span>
+</div>
+TEMPLATE;
 }
 
 /**
@@ -2031,7 +2037,7 @@ function message_post_message($userfrom, $userto, $message, $format) {
     $eventdata->smallmessage     = $message;//store the message unfiltered. Clean up on output.
 
     $s = new stdClass();
-    $s->sitename = format_string($SITE->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID)));
+    $s->sitename = format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID)));
     $s->url = $CFG->wwwroot.'/message/index.php?user='.$userto->id.'&id='.$userfrom->id;
 
     $emailtagline = get_string_manager()->get_string('emailtagline', 'message', $s, $userto->lang);

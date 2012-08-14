@@ -113,7 +113,7 @@
     .has_dock.side-post-only .page-middle #region-main {margin-left:[[setting:blockcolumnwidth]];}
 
 /** Report layout **/
-    .pagelayout-report #report-main-content .region-content {margin-left:[[setting:blockcolumnwidth]];}
+    .pagelayout-report #report-main-content .region-content {background-color:white;margin-left:[[setting:blockcolumnwidth]];}
     .pagelayout-report #report-region-pre {width:[[setting:blockcolumnwidth]];}
 
 /** Correct for right to left languages **/

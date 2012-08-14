@@ -82,14 +82,14 @@ $url->param('viewing', $viewing);
 
 $PAGE->set_url($url);
 
-$PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));
+$PAGE->set_context(context_user::instance($USER->id));
 $PAGE->navigation->extend_for_user($USER);
 $PAGE->set_pagelayout('course');
 
 // Disable message notification popups while the user is viewing their messages
 $PAGE->set_popup_notification_allowed(false);
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 
 $user1 = null;
 $currentuser = true;

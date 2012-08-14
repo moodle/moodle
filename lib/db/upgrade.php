@@ -1081,5 +1081,18 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached
         upgrade_main_savepoint(true, 2012072600.01);
     }
+
+    if ($oldversion < 2012080200.02) {
+        // Drop obsolete question upgrade field that should have been added to the install.xml.
+        $table = new xmldb_table('question');
+        $field = new xmldb_field('oldquestiontextformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0');
+
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2012080200.02);
+    }
+
     return true;
 }

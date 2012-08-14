@@ -25,8 +25,6 @@
  */
 
 require('../config.php');
-require_once('signup_form.php');
-
 
 if (empty($CFG->registerauth)) {
     print_error('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
@@ -43,7 +41,7 @@ $PAGE->https_required();
 $PAGE->set_url('/login/signup.php');
 $PAGE->set_context(context_system::instance());
 
-$mform_signup = new login_signup_form(null, null, 'post', '', array('autocomplete'=>'on'));
+$mform_signup = $authplugin->signup_form();
 
 if ($mform_signup->is_cancelled()) {
     redirect(get_login_url());

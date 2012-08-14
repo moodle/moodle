@@ -5,15 +5,16 @@ $THEME->name = 'afterburner';
 $THEME->parents = array('base');
 
 $THEME->sheets = array(
-    'afterburner_layout',   /** Must come first: Page layout **/
+    'afterburner_pagelayout',   /** Must come first: page layout **/
     'afterburner_styles',   /** Must come second: default styles **/
     'afterburner_menu',
     'afterburner_blocks',
     'afterburner_mod',
     'afterburner_calendar',
     'afterburner_dock',
+    'afterburner_rtl',
     'afterburner_settings',
-    'rtl'
+
 );
 
 $THEME->parents_exclude_sheets = array(
