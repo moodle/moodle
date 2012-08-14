@@ -36,9 +36,35 @@ define('CLI_SCRIPT', true);
 
 require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once("$CFG->dirroot/enrol/category/locallib.php");
+require_once("$CFG->libdir/clilib.php");
 
-if (!enrol_is_enabled('category')) {
-     die('enrol_category plugin is disabled, sync is disabled');
+// Now get cli options.
+list($options, $unrecognized) = cli_get_params(array('verbose'=>false, 'help'=>false), array('v'=>'verbose', 'h'=>'help'));
+
+if ($unrecognized) {
+    $unrecognized = implode("\n  ", $unrecognized);
+    cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-enrol_category_sync_full();
+if ($options['help']) {
+    $help =
+        "Execute course category enrolment sync.
+
+Options:
+-v, --verbose         Print verbose progess information
+-h, --help            Print out this help
+
+Example:
+\$ sudo -u www-data /usr/bin/php enrol/category/cli/sync.php
+";
+    echo $help;
+    die;
+}
+
+
+if (!enrol_is_enabled('category')) {
+    cli_error('enrol_category plugin is disabled, synchronisation stopped');
+}
+
+$verbose = !empty($options['verbose']);
+return enrol_category_sync_full($verbose);
