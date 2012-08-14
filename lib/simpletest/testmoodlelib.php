@@ -1483,9 +1483,9 @@ class moodlelib_test extends UnitTestCase {
                 'hour' => '10',
                 'minutes' => '00',
                 'seconds' => '00',
-                'timezone' => '0.0', //no dst offset
-                'applydst' => false,
-                'expectedoutput' => '1309528800'
+                'timezone' => '0.0',
+                'applydst' => false, //no dst offset
+                'expectedoutput' => '1309514400' // 6pm at UTC+0
             ),
             array(
                 'usertimezone' => 'America/Moncton',
