@@ -17,8 +17,7 @@
 /**
  * Category enrolment plugin version specification.
  *
- * @package    enrol
- * @subpackage category
+ * @package    enrol_category
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
