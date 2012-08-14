@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,15 +18,14 @@
  * CLI sync for full category enrol synchronisation.
  *
  * Sample execution:
- * $sudo -u www-data /usr/bin/php /var/www/moodle/enrol/category/cli/sync.php
+ * $ sudo -u www-data /usr/bin/php /var/www/moodle/enrol/category/cli/sync.php
  *
  * Notes:
  *   - it is required to use the web server account when executing PHP CLI scripts
  *   - you need to change the "www-data" to match the apache user account
  *   - use "su" if "sudo" not available
  *
- * @package    enrol
- * @subpackage category
+ * @package    enrol_category
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -63,7 +61,7 @@ Example:
 
 
 if (!enrol_is_enabled('category')) {
-    cli_error('enrol_category plugin is disabled, synchronisation stopped');
+    cli_error('enrol_category plugin is disabled, synchronisation stopped', 2);
 }
 
 $verbose = !empty($options['verbose']);
