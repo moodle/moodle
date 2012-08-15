@@ -50,8 +50,7 @@ class enrol_manual_user_enrolment_form extends moodleform {
 
         $mform->addElement('date_time_selector', 'timeend', get_string('enroltimeend', 'enrol'), array('optional' => true));
 
-        $mform->addElement('date_time_selector', 'timecreated', get_string('enroltimecreated', 'enrol'));
-        $mform->hardFreeze('timecreated');
+        $mform->addElement('static', 'timecreated', get_string('enroltimecreated', 'enrol'), userdate($ue->timecreated));
 
         $mform->addElement('hidden', 'ue');
         $mform->setType('ue', PARAM_INT);
@@ -64,7 +63,6 @@ class enrol_manual_user_enrolment_form extends moodleform {
         $this->set_data(array(
             'ue' => $ue->id,
             'status' => $ue->status,
-            'timecreated' => $ue->timecreated,
             'timestart' => $ue->timestart,
             'timeend' => $ue->timeend
         ));
