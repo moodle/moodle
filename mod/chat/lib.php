@@ -767,16 +767,15 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     }
 
     // It's not a system event
-
-    $text = $message->message;
+    $text = trim($message->message);
 
     /// Parse the text to clean and filter it
-
     $options = new stdClass();
     $options->para = false;
     $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
 
     // And now check for special cases
+    $patternTo = '#^\s*To\s([^:]+):(.*)#';
     $special = false;
 
     if (substr($text, 0, 5) == 'beep ') {
@@ -799,23 +798,32 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
             return false;
         }
     } else if (substr($text, 0, 1) == '/') {     /// It's a user command
-        // support some IRC commands
-        $pattern = '#(^\/)(\w+).*#';
-        preg_match($pattern, trim($text), $matches);
-        $command = $matches[2];
-        switch ($command){
-        case 'me':
-            $special = true;
-            $outinfo = $message->strtime;
-            $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
-            break;
-        }
-    } elseif (substr($text, 0, 2) == 'To') {
-        $pattern = '#To[[:space:]](.*):(.*)#';
-        preg_match($pattern, trim($text), $matches);
         $special = true;
-        $outinfo = $message->strtime;
-        $outmain = $sender->firstname.' '.get_string('saidto', 'chat').' <i>'.$matches[1].'</i>: '.$matches[2];
+        $pattern = '#(^\/)(\w+).*#';
+        preg_match($pattern, $text, $matches);
+        $command = isset($matches[2]) ? $matches[2] : false;
+        // Support some IRC commands.
+        switch ($command){
+            case 'me':
+                $outinfo = $message->strtime;
+                $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
+                break;
+            default:
+                // Error, we set special back to false to use the classic message output.
+                $special = false;
+                break;
+        }
+    } else if (preg_match($patternTo, $text)) {
+        $special = true;
+        $matches = array();
+        preg_match($patternTo, $text, $matches);
+        if (isset($matches[1]) && isset($matches[2])) {
+            $outinfo = $message->strtime;
+            $outmain = $sender->firstname.' '.get_string('saidto', 'chat').' <i>'.$matches[1].'</i>: '.$matches[2];
+        } else {
+            // Error, we set special back to false to use the classic message output.
+            $special = false;
+        }
     }
 
     if(!$special) {
@@ -929,7 +937,7 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     }
 
     // It's not a system event
-    $text = $message->message;
+    $text = trim($message->message);
 
     /// Parse the text to clean and filter it
     $options = new stdClass();
@@ -940,8 +948,9 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     $special = false;
     $outtime = $message->strtime;
 
-    //Initilise output variable.
+    // Initialise variables.
     $outmain = '';
+    $patternTo = '#^\s*To\s([^:]+):(.*)#';
 
     if (substr($text, 0, 5) == 'beep ') {
         $special = true;
@@ -969,26 +978,33 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     } else if (substr($text, 0, 1) == '/') {     /// It's a user command
         $special = true;
         $result->type = 'command';
-        // support some IRC commands
         $pattern = '#(^\/)(\w+).*#';
-        preg_match($pattern, trim($text), $matches);
-        $command = $matches[2];
-        $special = true;
+        preg_match($pattern, $text, $matches);
+        $command = isset($matches[2]) ? $matches[2] : false;
+        // Support some IRC commands.
         switch ($command){
-        case 'me':
-            $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
-            break;
+            case 'me':
+                $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
+                break;
+            default:
+                // Error, we set special back to false to use the classic message output.
+                $special = false;
+                break;
         }
-    } elseif (substr($text, 0, 2) == 'To') {
+    } else if (preg_match($patternTo, $text)) {
         $special = true;
         $result->type = 'dialogue';
-        $pattern = '#To[[:space:]](.*):(.*)#';
-        preg_match($pattern, trim($text), $matches);
-        $special = true;
-        $outmain = $sender->firstname.' <b>'.get_string('saidto', 'chat').'</b> <i>'.$matches[1].'</i>: '.$matches[2];
+        $matches = array();
+        preg_match($patternTo, $text, $matches);
+        if (isset($matches[1]) && isset($matches[2])) {
+            $outmain = $sender->firstname.' <b>'.get_string('saidto', 'chat').'</b> <i>'.$matches[1].'</i>: '.$matches[2];
+        } else {
+            // Error, we set special back to false to use the classic message output.
+            $special = false;
+        }
     }
 
-    if(!$special) {
+    if (!$special) {
         $outmain = $text;
     }
 
@@ -1033,7 +1049,6 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
         return $result;
     }
 }
-
 
 /**
  * @global object $DB
