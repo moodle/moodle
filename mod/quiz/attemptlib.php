@@ -1335,6 +1335,8 @@ class quiz_attempt {
      * flagged state was changed in the request.
      */
     public function save_question_flags() {
+        global $DB;
+
         $transaction = $DB->start_delegated_transaction();
         $this->quba->update_question_flags();
         question_engine::save_questions_usage_by_activity($this->quba);
