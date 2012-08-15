@@ -510,8 +510,9 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
     }
 
     // Check that the user can associate with the course
-    $sitecontext =      get_context_instance(CONTEXT_SYSTEM);
-    if (!has_capability('moodle/blog:associatecourse', $sitecontext)) {
+    $sitecontext = context_system::instance();
+    $coursecontext = context_course::instance($course->id);
+    if (!has_capability('moodle/blog:associatecourse', $coursecontext)) {
         return $options;
     }
     // Generate the cache key
@@ -526,7 +527,6 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
         return $courseoptions[$key];
     }
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
     $canparticipate = (is_enrolled($coursecontext) or is_viewing($coursecontext));
 
     if (has_capability('moodle/blog:view', $coursecontext)) {
@@ -587,8 +587,9 @@ function blog_get_options_for_module($module, $user=null) {
     }
 
     // Check the user can associate with the module
-    $sitecontext =      get_context_instance(CONTEXT_SYSTEM);
-    if (!has_capability('moodle/blog:associatemodule', $sitecontext)) {
+    $modcontext = context_module::instance($module->id);
+    $sitecontext = context_system::instance();
+    if (!has_capability('moodle/blog:associatemodule', $modcontext)) {
         return $options;
     }
 
@@ -604,7 +605,6 @@ function blog_get_options_for_module($module, $user=null) {
         return $moduleoptions[$module->id];
     }
 
-    $modcontext = get_context_instance(CONTEXT_MODULE, $module->id);
     $canparticipate = (is_enrolled($modcontext) or is_viewing($modcontext));
 
     if (has_capability('moodle/blog:view', $modcontext)) {
@@ -743,7 +743,9 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
 
     $PAGE->set_pagelayout('standard');
 
-    if (!empty($modid) && $CFG->useblogassociations && has_capability('moodle/blog:associatemodule', $sitecontext)) { // modid always overrides courseid, so the $course object may be reset here
+    // modid always overrides courseid, so the $course object may be reset here
+    if (!empty($modid) && $CFG->useblogassociations) {
+
         $headers['filters']['module'] = $modid;
         // A groupid param may conflict with this coursemod's courseid. Ignore groupid in that case
         $courseid = $DB->get_field('course_modules', 'course', array('id'=>$modid));
