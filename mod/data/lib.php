@@ -2737,10 +2737,10 @@ function data_export_ods($export, $dataname, $count) {
  * @param array $selectedfields
  * @param int $currentgroup group ID of the current group. This is used for
  * exporting data while maintaining group divisions.
- * @param object $context the context in which the operation is performed (for capability checks) 
- * @param bool $userdetails whether to include the details of the record author 
- * @param bool $time whether to include time created/modified 
- * @param bool $approval whether to include approval status 
+ * @param object $context the context in which the operation is performed (for capability checks)
+ * @param bool $userdetails whether to include the details of the record author
+ * @param bool $time whether to include time created/modified
+ * @param bool $approval whether to include approval status
  * @return array
  */
 function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0, $context=null,
