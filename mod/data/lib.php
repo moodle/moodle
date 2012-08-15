@@ -2737,10 +2737,21 @@ function data_export_ods($export, $dataname, $count) {
  * @param array $selectedfields
  * @param int $currentgroup group ID of the current group. This is used for
  * exporting data while maintaining group divisions.
+ * @param object $context the context in which the operation is performed (for capability checks) 
+ * @param bool $userdetails whether to include the details of the record author 
+ * @param bool $time whether to include time created/modified 
+ * @param bool $approval whether to include approval status 
  * @return array
  */
-function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0) {
+function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0, $context=null,
+                             $userdetails=false, $time=false, $approval=false) {
     global $DB;
+
+    if (is_null($context)) {
+        $context = context_system::instance();
+    }
+    // exporting user data needs special permission
+    $userdetails = $userdetails && has_capability('mod/data:exportuserinfo', $context);
 
     $exportdata = array();
 
@@ -2752,6 +2763,18 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0)
         } else {
             $exportdata[0][] = $field->field->name;
         }
+    }
+    if ($userdetails) {
+        $exportdata[0][] = get_string('user');
+        $exportdata[0][] = get_string('username');
+        $exportdata[0][] = get_string('email');
+    }
+    if ($time) {
+        $exportdata[0][] = get_string('timeadded', 'data');
+        $exportdata[0][] = get_string('timemodified', 'data');
+    }
+    if ($approval) {
+        $exportdata[0][] = get_string('approved', 'data');
     }
 
     $datarecords = $DB->get_records('data_records', array('dataid'=>$dataid));
@@ -2774,6 +2797,19 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0)
                     $contents = $field->export_text_value($content[$field->field->id]);
                 }
                 $exportdata[$line][] = $contents;
+            }
+            if ($userdetails) { // Add user details to the export data
+                $userdata = get_complete_user_data('id', $record->userid);
+                $exportdata[$line][] = fullname($userdata);
+                $exportdata[$line][] = $userdata->username;
+                $exportdata[$line][] = $userdata->email;
+            }
+            if ($time) { // Add time added / modified
+                $exportdata[$line][] = userdate($record->timecreated);
+                $exportdata[$line][] = userdate($record->timemodified);
+            }
+            if ($approval) { // Add approval status
+                $exportdata[$line][] = (int) $record->approved;
             }
         }
         $line++;
