@@ -64,6 +64,7 @@ class enrol_self_user_enrolment_form extends moodleform {
         $this->set_data(array(
             'ue' => $ue->id,
             'status' => $ue->status,
+            'timecreated' => $ue->timecreated,
             'timestart' => $ue->timestart,
             'timeend' => $ue->timeend
         ));
