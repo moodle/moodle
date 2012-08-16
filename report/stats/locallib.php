@@ -197,7 +197,7 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
                 echo "(".get_string("gdneed").")";
             } else {
                 if ($mode == STATS_MODE_DETAILED) {
-                    echo '<div class="graph"><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;userid='.$userid.'" alt="'.get_string('statisticsgraph').'" /></div';
+                    echo '<div class="graph"><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;userid='.$userid.'" alt="'.get_string('statisticsgraph').'" /></div>';
                 } else {
                     echo '<div class="graph"><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;roleid='.$roleid.'" alt="'.get_string('statisticsgraph').'" /></div>';
                 }
