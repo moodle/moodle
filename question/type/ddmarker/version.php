@@ -26,12 +26,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2011051200;
+$plugin->version   = 2012081600;
 $plugin->requires  = 2012062500;
 $plugin->cron      = 0;
 $plugin->component = 'qtype_ddmarker';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.0';
+$plugin->release   = '1.1 for Moodle 2.3+';
 
 $plugin->dependencies = array(
     'qtype_gapselect'     => 2011020100,
