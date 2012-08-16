@@ -56,8 +56,13 @@ foreach ($assignments as $assignment) {
     $cm = get_coursemodule_from_instance('assign', $assignment->id, 0, false, MUST_EXIST);
 
     $link = html_writer::link(new moodle_url('/mod/assign/view.php', array('id' => $cm->id)), $assignment->name);
-    $date = userdate($assignment->duedate);
-    $submissions = $DB->count_records('assign_submission', array('assignment'=>$cm->instance));
+    $date = '-';
+    if (!empty($assignment->duedate)) {
+        $date = userdate($assignment->duedate);
+    }
+
+    $params = array('assignment'=>$cm->instance, 'status'=>ASSIGN_SUBMISSION_STATUS_SUBMITTED);
+    $submissions = $DB->count_records('assign_submission', $params);
     $row = array($link, $date, $submissions);
     $table->data[] = $row;
 
