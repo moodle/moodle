@@ -341,6 +341,25 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012061702, 'quiz');
     }
 
+    if ($oldversion < 2012061703) {
+
+        // MDL-34702 the questiondecimalpoints column was created with default -2
+        // when it should have been -1, and no-one has noticed in the last 2+ years!
+
+        // Changing the default of field questiondecimalpoints on table quiz to -1.
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('questiondecimalpoints', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '-1', 'decimalpoints');
+
+        // Launch change of default for field questiondecimalpoints.
+        $dbman->change_field_default($table, $field);
+
+        // Correct any wrong values.
+        $DB->set_field('quiz', 'questiondecimalpoints', -1, array('questiondecimalpoints' => -2));
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2012061703, 'quiz');
+    }
+
     return true;
 }
 
