@@ -42,7 +42,7 @@ require_once($CFG->libdir.'/formslib.php');
  */
 class course_request_form extends moodleform {
     function definition() {
-        global $DB, $USER;
+        global $CFG, $DB, $USER;
 
         $mform =& $this->_form;
 
@@ -67,6 +67,15 @@ class course_request_form extends moodleform {
         $mform->addHelpButton('shortname', 'shortnamecourse');
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_TEXT);
+
+        if (!empty($CFG->requestcategoryselection)) {
+            $displaylist = array();
+            $parentlist = array();
+            make_categories_list($displaylist, $parentlist, '');
+            $mform->addElement('select', 'category', get_string('category'), $displaylist);
+            $mform->setDefault('category', $CFG->defaultrequestcategory);
+            $mform->addHelpButton('category', 'category');
+        }
 
         $mform->addElement('editor', 'summary_editor', get_string('summary'), null, course_request::summary_editor_options());
         $mform->addHelpButton('summary_editor', 'coursesummary');

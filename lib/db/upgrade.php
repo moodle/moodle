@@ -1122,8 +1122,8 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2012082300.01) {
         // Add more custom enrol fields.
         $table = new xmldb_table('enrol');
-
         $field = new xmldb_field('customint5', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'customint4');
+
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -1192,6 +1192,18 @@ function xmldb_main_upgrade($oldversion) {
                             AND ' . $DB->sql_isnotempty('post', 'uniquehash', false, false);
         $DB->execute($sql);
         upgrade_main_savepoint(true, 2012090500.00);
+    }
+
+    if ($oldversion < 2012090700.01) {
+        // Add a category field in the course_request table
+        $table = new xmldb_table('course_request');
+        $field = new xmldb_field('category', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'summaryformat');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012090700.01);
     }
 
     return true;
