@@ -527,7 +527,7 @@ To arrange the questions over a number of pages, click the Repaginate button and
 $string['orderingquiz'] = 'Order and paging';
 $string['orderingquizx'] = 'Order and paging: {$a}';
 $string['outcomesadvanced'] = 'Outcomes are advanced settings';
-$string['outof'] = '{$a->grade} out of a maximum of {$a->maxgrade}';
+$string['outof'] = '{$a->grade} out of {$a->maxgrade}';
 $string['outofpercent'] = '{$a->grade} out of a maximum of {$a->maxgrade} ({$a->percent}%)';
 $string['outofshort'] = '{$a->grade}/{$a->maxgrade}';
 $string['overallfeedback'] = 'Overall feedback';

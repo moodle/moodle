@@ -69,6 +69,31 @@ abstract class question_behaviour_type {
     public function adjust_random_guess_score($fraction) {
         return $fraction;
     }
+
+    /**
+     * Get summary information about a queston usage.
+     *
+     * Behaviours are not obliged to do anything here, but this is an opportunity
+     * to provide additional information that can be displayed in places like
+     * at the top of the quiz review page.
+     *
+     * In the return value, the array keys should be identifiers of the form
+     * qbehaviour_behaviourname_meaningfullkey. For qbehaviour_deferredcbm_highsummary.
+     * The values should be arrays with two items, title and content. Each of these
+     * should be either a string, or a renderable.
+     *
+     * To understand how to implement this method, look at the CBM behaviours,
+     * and their unit tests.
+     *
+     * @param question_usage_by_activity $quba the usage to provide summary data for.
+     * @param question_display_options $options display options. Indicates what types
+     *      of information should, or should not, be returned.
+     * @return array as described above.
+     */
+    public function summarise_usage(question_usage_by_activity $quba,
+            question_display_options $options) {
+        return array();
+    }
 }
 
 
