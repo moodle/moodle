@@ -29,4 +29,4 @@ $plugin->requires = 2011120500;
 $plugin->cron      = 0;
 $plugin->component = 'qtype_gapselect';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.0';
+$plugin->release   = '1.1 for Moodle 2.2';
