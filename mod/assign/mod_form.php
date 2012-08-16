@@ -161,5 +161,15 @@ class mod_assign_mod_form extends moodleform_mod {
         $assignment->plugin_data_preprocessing($defaultvalues);
     }
 
+    function add_completion_rules() {
+        $mform =& $this->_form;
+
+        $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'assign'));
+        return array('completionsubmit');
+    }
+
+    function completion_rule_enabled($data) {
+        return !empty($data['completionsubmit']);
+    }
 
 }
