@@ -26,8 +26,20 @@
 $string['assumingcertainty'] = 'You did not select a certainty. Assuming: {$a}.';
 $string['basemark'] = 'Base mark {$a}';
 $string['cbmmark'] = 'CBM mark {$a}';
-$string['certainty1'] = 'Not very (less than 67%)';
-$string['certainty2'] = 'Fairly (more than 67%)';
-$string['certainty3'] = 'Very (more than 80%)';
+$string['certainty'] = 'Certainty';
+$string['certainty_help'] = 'Certainty-based marking requires you to indicate how reliable you think your answer is. The available levels are:
+
+Certainty level     | C=1 (Unsure) | C=2 (Mid) | C=3 (Quite sure)
+------------------- | ------------ | --------- | ----------------
+Mark if correct     |   1          |    2      |      3
+Mark if wrong       |   0          |   -2      |     -6
+Probability correct |  <67%        | 67-80%    |    >80%
+
+Best marks are gained by acknowledging uncertainty. For example, if you think there is more than a 1 in 3 chance of being wrong, you should enter C=1 and avoid the risk of a negative mark.
+';
+$string['certainty_link'] = 'qbehaviour/deferredcbm/certainty';
+$string['certainty1'] = 'C=1 (Unsure: <67%)';
+$string['certainty2'] = 'C=2 (Mid: >67%)';
+$string['certainty3'] = 'C=3 (Quite sure: >80%)';
 $string['howcertainareyou'] = 'How certain are you? {$a}';
 $string['pluginname'] = 'Deferred feedback with CBM';

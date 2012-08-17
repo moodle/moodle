@@ -1,0 +1,6 @@
+.que.deferredcbm .certaintychoices input[type="radio"] {
+    margin-left: 0.5em;
+}
+.que.deferredcbm .certaintychoices label {
+    white-space: nowrap;
+}

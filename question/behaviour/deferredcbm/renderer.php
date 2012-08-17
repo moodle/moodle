@@ -55,17 +55,20 @@ class qbehaviour_deferredcbm_renderer extends qbehaviour_renderer {
             } else {
                 unset($attributes['checked']);
             }
-            $choices .= ' ' . html_writer::empty_tag('input', $attributes) . ' ' .
-                    html_writer::tag('label', question_cbm::get_string($certainty),
-                            array('for' => $id));
+            $choices .= ' ' .
+                    html_writer::tag('label', html_writer::empty_tag('input', $attributes) .
+                            question_cbm::get_string($certainty), array('for' => $id));
         }
         return $choices;
     }
 
     public function controls(question_attempt $qa, question_display_options $options) {
-        return html_writer::tag('div', get_string('howcertainareyou', 'qbehaviour_deferredcbm',
-                $this->certainty_choices($qa->get_behaviour_field_name('certainty'),
-                $qa->get_last_behaviour_var('certainty'), $options->readonly)),
+        $a = new stdClass();
+        $a->help = $this->output->help_icon('certainty', 'qbehaviour_deferredcbm');
+        $a->choices = $this->certainty_choices($qa->get_behaviour_field_name('certainty'),
+                $qa->get_last_behaviour_var('certainty'), $options->readonly);
+
+        return html_writer::tag('div', get_string('howcertainareyou', 'qbehaviour_deferredcbm', $a),
                 array('class' => 'certaintychoices'));
     }
 
