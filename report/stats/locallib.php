@@ -46,6 +46,7 @@ function report_stats_mode_menu($course, $mode, $time, $url) {
     }
     $popupurl = $url."?course=$course->id&time=$time";
     $select = new single_select(new moodle_url($popupurl), 'mode', $options, $mode, null);
+    $select->set_label(get_string('reports'), array('class' => 'accesshide'));
     $select->formid = 'switchmode';
     return $OUTPUT->render($select);
 }
@@ -126,21 +127,21 @@ function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
         }
 
         $table->align = array('left','left','left','left','left','left','left','left');
-        $table->data[] = array(get_string('course'),html_writer::select($courseoptions,'course',$course->id,false),
-                               get_string('users'),html_writer::select($users,'userid',$userid,false),
-                               get_string('statsreporttype'),html_writer::select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
-                               get_string('statstimeperiod'),html_writer::select($timeoptions,'time',$time,false),
+        $table->data[] = array(html_writer::label(get_string('course'), 'menucourse'), html_writer::select($courseoptions, 'course', $course->id, false),
+                               html_writer::label(get_string('users'), 'menuuserid'), html_writer::select($users, 'userid', $userid, false),
+                               html_writer::label(get_string('statsreporttype'), 'menureport'), html_writer::select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
+                               html_writer::label(get_string('statstimeperiod'), 'menutime') ,html_writer::select($timeoptions,'time',$time,false),
                                '<input type="submit" value="'.get_string('view').'" />') ;
     } else if ($mode == STATS_MODE_RANKED) {
         $table->align = array('left','left','left','left','left','left');
-        $table->data[] = array(get_string('statsreporttype'),html_writer::select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
-                               get_string('statstimeperiod'),html_writer::select($timeoptions,'time',$time,false),
+        $table->data[] = array(html_writer::label(get_string('statsreporttype'), 'menureport'), html_writer::select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
+                               html_writer::label(get_string('statstimeperiod'), 'menutime'), html_writer::select($timeoptions,'time',$time,false),
                                '<input type="submit" value="'.get_string('view').'" />') ;
     } else if ($mode == STATS_MODE_GENERAL) {
         $table->align = array('left','left','left','left','left','left','left');
-        $table->data[] = array(get_string('course'),html_writer::select($courseoptions,'course',$course->id,false),
-                               get_string('statsreporttype'),html_writer::select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
-                               get_string('statstimeperiod'),html_writer::select($timeoptions,'time',$time,false),
+        $table->data[] = array(html_writer::label(get_string('course'), 'menucourse'), html_writer::select($courseoptions,'course',$course->id,false),
+                               html_writer::label(get_string('statsreporttype'), 'menureport'), html_writer::select($reportoptions,'report',($report == 5) ? $report.$roleid : $report,false),
+                               html_writer::label(get_string('statstimeperiod'), 'menutime'), html_writer::select($timeoptions,'time',$time,false),
                                '<input type="submit" value="'.get_string('view').'" />') ;
     }
 
