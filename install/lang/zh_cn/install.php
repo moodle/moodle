@@ -81,7 +81,7 @@ $string['phpversionhelp'] = '<p>Moodle需要PHP 4.3.0或5.1.0（5.0.x有若干�
 （如果正使用5.0.x，您也可以降级到4.4.x版）</p>
 ';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = '您看到这个页面表明您已经成功地在您的计算机上安装了<strong>{$a->packname} {$a->packversion}</strong>。恭喜您！';
+$string['welcomep20'] = '您看到这个页面表明您已经成功地在您的计算机上安装并启用了<strong>{$a->packname} {$a->packversion}</strong>软件包。恭喜您！';
 $string['welcomep30'] = '<strong>{$a->installername}</strong>的此发行版包含了可以创建<strong>Moodle</strong>运行环境的应用程序：';
 $string['welcomep40'] = '这个软件包还包含了<strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>。';
 $string['welcomep50'] = '使用本软件包中包含的应用程序时应遵循它们各自的授权协议。整个<strong>{$a->installername}</strong>软件包都是<a href="http://www.opensource.org/docs/definition_plain.html">开源</a>的，并且遵循<a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>授权协议发布。';
