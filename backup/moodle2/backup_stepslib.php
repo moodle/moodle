@@ -190,6 +190,7 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
      *      Element names in the XML must be unique, so if you are using usages in
      *      two different ways, you must give a prefix to at least one of them. If
      *      you only use one sort of usage, then you can just use the default empty prefix.
+     *      This should include a trailing underscore. For example "myprefix_"
      */
     protected function add_question_usages($element, $usageidname, $nameprefix = '') {
         global $CFG;

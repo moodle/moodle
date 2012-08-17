@@ -3482,12 +3482,15 @@ abstract class restore_questions_activity_structure_step extends restore_activit
      * If you use the $nameprefix parameter, then you will need to implement some
      * extra methods in your class, like
      *
-     * protected function process_{$nameprefix}_question_attempt($data) {
-     *     $this->process_question_attempt($data);
+     * protected function process_{nameprefix}question_attempt($data) {
+     *     $this->restore_question_usage_worker($data, '{nameprefix}');
      * }
-     *
-     * You need three methods like this, for question_usage, question_attempt and
-     * question_attempt_step.
+     * protected function process_{nameprefix}question_attempt($data) {
+     *     $this->restore_question_attempt_worker($data, '{nameprefix}');
+     * }
+     * protected function process_{nameprefix}question_attempt_step($data) {
+     *     $this->restore_question_attempt_step_worker($data, '{nameprefix}');
+     * }
      *
      * @param restore_path_element $element the parent element that the usages are stored inside.
      * @param array $paths the paths array that is being built.
@@ -3518,7 +3521,31 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     /**
      * Process question_usages
      */
-    protected function process_question_usage($data, $nameprefix = '') {
+    protected function process_question_usage($data) {
+        $this->restore_question_usage_worker($data, '');
+    }
+
+    /**
+     * Process question_attempts
+     */
+    protected function process_question_attempt($data) {
+        $this->restore_question_attempt_worker($data, '');
+    }
+
+    /**
+     * Process question_attempt_steps
+     */
+    protected function process_question_attempt_step($data) {
+        $this->restore_question_attempt_step_worker($data, '');
+    }
+
+    /**
+     * This method does the acutal work for process_question_usage or
+     * process_{nameprefix}_question_usage.
+     * @param array $data the data from the XML file.
+     * @param string $nameprefix the element name prefix.
+     */
+    protected function restore_question_usage_worker($data, $nameprefix) {
         global $DB;
 
         // Clear our caches.
@@ -3548,9 +3575,12 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     abstract protected function inform_new_usage_id($newusageid);
 
     /**
-     * Process question_attempts
+     * This method does the acutal work for process_question_attempt or
+     * process_{nameprefix}_question_attempt.
+     * @param array $data the data from the XML file.
+     * @param string $nameprefix the element name prefix.
      */
-    protected function process_question_attempt($data, $nameprefix = '') {
+    protected function restore_question_attempt_worker($data, $nameprefix) {
         global $DB;
 
         $data = (object)$data;
@@ -3569,9 +3599,12 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     }
 
     /**
-     * Process question_attempt_steps
+     * This method does the acutal work for process_question_attempt_step or
+     * process_{nameprefix}_question_attempt_step.
+     * @param array $data the data from the XML file.
+     * @param string $nameprefix the element name prefix.
      */
-    protected function process_question_attempt_step($data, $nameprefix = '') {
+    protected function restore_question_attempt_step_worker($data, $nameprefix) {
         global $DB;
 
         $data = (object)$data;
