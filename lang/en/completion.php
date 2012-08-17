@@ -71,6 +71,7 @@ $string['completionview_desc'] = 'Student must view this activity to complete it
 $string['configenablecompletion'] = 'When enabled, this lets you turn on completion tracking (progress) features at course level.';
 $string['csvdownload'] = 'Download in spreadsheet format (UTF-8 .csv)';
 $string['deletecoursecompletiondata'] = 'Delete course completion data';
+$string['deletecompletiondata'] = 'Delete completion data';
 $string['enablecompletion'] = 'Enable completion tracking';
 $string['err_noactivities'] = 'Completion information is not enabled for any activity, so none can be displayed. You can enable completion information by editing the settings for an activity.';
 $string['err_nousers'] = 'There are no students on this course or group for whom completion information is displayed. (By default, completion information is displayed only for students, so if there are no students, you will see this error. Administrators can alter this option via the admin screens.)';
