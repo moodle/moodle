@@ -35,10 +35,11 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configselect('moodlecourse/showgrades', get_string('showgrades'), get_string('coursehelpshowgrades'), 1,array(0 => get_string('no'), 1 => get_string('yes'))));
     $temp->add(new admin_setting_configselect('moodlecourse/showreports', get_string('showreports'), '', 0,array(0 => get_string('no'), 1 => get_string('yes'))));
 
+    $currentmaxbytes = get_config('moodlecourse', 'maxbytes');
     if (isset($CFG->maxbytes)) {
-        $choices = get_max_upload_sizes($CFG->maxbytes);
+        $choices = get_max_upload_sizes($CFG->maxbytes, 0, 0, $currentmaxbytes);
     } else {
-        $choices = get_max_upload_sizes();
+        $choices = get_max_upload_sizes(0, 0, 0, $currentmaxbytes);
     }
     $temp->add(new admin_setting_configselect('moodlecourse/maxbytes', get_string('maximumupload'), get_string('coursehelpmaximumupload'), key($choices), $choices));
 
