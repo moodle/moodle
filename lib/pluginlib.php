@@ -148,7 +148,7 @@ class plugin_manager {
         if ($disablecache or is_null($this->subpluginsinfo)) {
             $this->subpluginsinfo = array();
             foreach (array('mod', 'editor') as $type) {
-                $owners = get_plugin_list('type');
+                $owners = get_plugin_list($type);
                 foreach ($owners as $component => $ownerdir) {
                     $componentsubplugins = array();
                     if (file_exists($ownerdir . '/db/subplugins.php')) {
