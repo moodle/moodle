@@ -29,6 +29,7 @@ $string['common:browsemedia'] = 'Find or upload a sound, video or applet...';
 $string['fontselectlist'] = 'Available fonts list';
 $string['media_dlg:filename'] = 'Filename';
 $string['pluginname'] = 'TinyMCE HTML editor';
+$string['settings'] = 'General settings';
 $string['subplugindeleteconfirm'] = 'You are about to completely delete TinyMCE subplugin \'{$a}\'. This will completely delete everything in the database associated with this subplugin. Are you SURE you want to continue?';
 
 

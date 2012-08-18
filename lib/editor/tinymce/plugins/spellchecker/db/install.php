@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TinyMCE spellchecker plugin version details.
+ * Spellchecker post install script.
  *
  * @package   tinymce_spellchecker
- * @copyright 2012 The Open University
+ * @copyright 2012 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-// The current plugin version (Date: YYYYMMDDXX).
-$plugin->version   = 2012051800;
-// Required Moodle version.
-$plugin->requires  = 2011112900;
-// Full name of the plugin (used for diagnostics).
-$plugin->component = 'tinymce_spellchecker';
+function xmldb_tinymce_spellchecker_install() {
+    global $CFG, $DB;
+    require_once(__DIR__.'/upgradelib.php');
+
+    tinymce_spellchecker_migrate_settings();
+}

@@ -34,4 +34,13 @@ class plugininfo_tinymce extends plugininfo_base {
     public function get_uninstall_url() {
         return new moodle_url('/lib/editor/tinymce/subplugins.php', array('delete' => $this->name, 'sesskey' => sesskey()));
     }
+
+    public function get_settings_url() {
+        global $CFG;
+        if (file_exists("$CFG->dirroot/lib/editor/tinymce/plugins/$this->name/settings.php")) {
+            return new moodle_url('/admin/settings.php', array('section'=>'tinymce'.$this->name.'settings'));
+        } else {
+            return null;
+        }
+    }
 }
