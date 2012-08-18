@@ -98,6 +98,16 @@ class plugin_manager {
         global $CFG;
 
         if ($disablecache or is_null($this->pluginsinfo)) {
+            // Hack: include mod and editor subplugin management classes first,
+            //       the adminlib.php is supposed to contain extra admin settings too.
+            require_once($CFG->libdir.'/adminlib.php');
+            foreach(array('mod', 'editor') as $type) {
+                foreach (get_plugin_list($type) as $dir) {
+                    if (file_exists("$dir/adminlib.php")) {
+                        include_once("$dir/adminlib.php");
+                    }
+                }
+            }
             $this->pluginsinfo = array();
             $plugintypes = get_plugin_types();
             $plugintypes = $this->reorder_plugin_types($plugintypes);
