@@ -28,6 +28,8 @@ $ADMIN->add('editorsettings', new admin_category('editortinymce', new lang_strin
 
 $settings = new admin_settingpage('editorsettingstinymce', new lang_string('settings', 'editor_tinymce'));
 if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configtextarea('editor_tinymce/customtoolbar',
+        get_string('customtoolbar', 'editor_tinymce'), get_string('customtoolbar_desc', 'editor_tinymce'), '', PARAM_RAW, 100, 6));
     $settings->add(new admin_setting_configtextarea('editor_tinymce/fontselectlist',
         get_string('fontselectlist', 'editor_tinymce'), '',
         'Trebuchet=Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,times new roman,times,serif;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times,serif;Verdana=verdana,arial,helvetica,sans-serif;Impact=impact;Wingdings=wingdings', PARAM_RAW));

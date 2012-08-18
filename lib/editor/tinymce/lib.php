@@ -190,6 +190,25 @@ class tinymce_texteditor extends texteditor {
         // Allow plugins to adjust parameters.
         editor_tinymce_plugin::all_update_init_params($params, $context, $options);
 
+        // Should we override the default toolbar layout unconditionally?
+        $customtoolbar = trim($config->customtoolbar);
+        if ($customtoolbar) {
+            unset($params['theme_advanced_buttons1']);
+            unset($params['theme_advanced_buttons2']);
+            unset($params['theme_advanced_buttons3']);
+            unset($params['theme_advanced_buttons4']);
+            $customtoolbar = str_replace("\r", "\n", $customtoolbar);
+            $i = 1;
+            foreach (explode("\n", $customtoolbar) as $line) {
+                $line = preg_replace('/\s/', '', $line);
+                if ($line === '') {
+                    continue;
+                }
+                $params['theme_advanced_buttons'.$i] = $line;
+                $i++;
+            }
+        }
+
         // Remove temporary parameters.
         unset($params['moodle_config']);
 
