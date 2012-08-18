@@ -150,6 +150,7 @@ class plugin_manager {
                 foreach ($owners as $component => $ownerdir) {
                     $componentsubplugins = array();
                     if (file_exists($ownerdir . '/db/subplugins.php')) {
+                        $subplugins = array();
                         include($ownerdir . '/db/subplugins.php');
                         foreach ($subplugins as $subplugintype => $subplugintyperootdir) {
                             $subplugin = new stdClass();
@@ -961,6 +962,9 @@ class available_update_checker {
             // nothing to do
             return;
         }
+
+        $version = null;
+        $release = null;
 
         require($CFG->dirroot.'/version.php');
         $this->currentversion = $version;
