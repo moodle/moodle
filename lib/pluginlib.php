@@ -30,8 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/filelib.php');  // curl class needed here
-
 /**
  * Singleton class providing general plugins management functionality
  */
@@ -785,6 +783,9 @@ class available_update_checker {
      * @throws available_update_checker_exception
      */
     protected function get_response() {
+        global $CFG;
+        require_once($CFG->libdir.'/filelib.php');
+
         $curl = new curl(array('proxy' => true));
         $response = $curl->post($this->prepare_request_url(), $this->prepare_request_params());
         $curlinfo = $curl->get_info();
