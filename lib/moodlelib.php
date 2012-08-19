@@ -3289,11 +3289,24 @@ function get_user_key($script, $userid, $instance=null, $iprestriction=null, $va
 function update_user_login_times() {
     global $USER, $DB;
 
-    $user = new stdClass();
-    $USER->lastlogin = $user->lastlogin = $USER->currentlogin;
-    $USER->currentlogin = $user->lastaccess = $user->currentlogin = time();
+    $now = time();
 
+    $user = new stdClass();
     $user->id = $USER->id;
+
+    // Make sure all users that logged in have some firstaccess.
+    if ($USER->firstaccess == 0) {
+        $USER->firstaccess = $user->firstaccess = $now;
+    }
+
+    // Store the previous current as lastlogin.
+    $USER->lastlogin = $user->lastlogin = $USER->currentlogin;
+
+    $USER->currentlogin = $user->currentlogin = $now;
+
+    // Function user_accesstime_log() may not update immediately, better do it here.
+    $USER->lastaccess = $user->lastaccess = $now;
+    $USER->lastip = $user->lastip = getremoteaddr();
 
     $DB->update_record('user', $user);
     return true;
@@ -4092,10 +4105,6 @@ function authenticate_user_login($username, $password) {
             if (empty($user->auth)) {             // For some reason auth isn't set yet
                 $DB->set_field('user', 'auth', $auth, array('username'=>$username));
                 $user->auth = $auth;
-            }
-            if (empty($user->firstaccess)) { //prevent firstaccess from remaining 0 for manual account that never required confirmation
-                $DB->set_field('user','firstaccess', $user->timemodified, array('id' => $user->id));
-                $user->firstaccess = $user->timemodified;
             }
 
             update_internal_user_password($user, $password); // just in case salt or encoding were changed (magic quotes too one day)
