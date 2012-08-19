@@ -546,6 +546,8 @@ $string['globalswarning'] = '<p><strong>SECURITY WARNING!</strong></p><p> To ope
 $string['groupenrolmentkeypolicy'] = 'Group enrolment key policy';
 $string['groupenrolmentkeypolicy_desc'] = 'Turning this on will make Moodle check group enrolment keys against a valid password policy.';
 $string['googlemapkey'] = 'Google Maps API V2 key';
+$string['googlemapkey3'] = 'Google Maps API V3 key';
+$string['googlemapkey3_help'] = 'You need to enter a special key to use Google Maps for IP address lookup visualization. You can obtain the key free of charge at <a href="https://developers.google.com/maps/documentation/javascript/tutorial#api_key" target="_blank">https://developers.google.com/maps/documentation/javascript/tutorial#api_key</a>';
 $string['gotofirst'] = 'Go to first missing string';
 $string['gradebook'] = 'Gradebook';
 $string['gradebookroles'] = 'Graded roles';

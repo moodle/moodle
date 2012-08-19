@@ -80,7 +80,7 @@ $PAGE->set_title(get_string('iplookup', 'admin').': '.$title);
 $PAGE->set_heading($title);
 echo $OUTPUT->header();
 
-if (empty($CFG->googlemapkey)) {
+if (empty($CFG->googlemapkey) and empty($CFG->googlemapkey3)) {
     $imgwidth  = 620;
     $imgheight = 310;
     $dotwidth  = 18;
@@ -95,10 +95,22 @@ if (empty($CFG->googlemapkey)) {
     echo '</div>';
     echo '<div id="note">'.$info['note'].'</div>';
 
-} else {
+} else if (empty($CFG->googlemapkey3)) {
     $PAGE->requires->js(new moodle_url("http://maps.google.com/maps?file=api&v=2&key=$CFG->googlemapkey"));
     $module = array('name'=>'core_iplookup', 'fullpath'=>'/iplookup/module.js');
     $PAGE->requires->js_init_call('M.core_iplookup.init', array($info['latitude'], $info['longitude']), true, $module);
+
+    echo '<div id="map" style="width: 650px; height: 360px"></div>';
+    echo '<div id="note">'.$info['note'].'</div>';
+
+} else {
+    if (strpos($CFG->wwwroot, 'https:') === 0) {
+        $PAGE->requires->js(new moodle_url('https://maps.googleapis.com/maps/api/js', array('key'=>$CFG->googlemapkey3, 'sensor'=>'false')));
+    } else {
+        $PAGE->requires->js(new moodle_url('http://maps.googleapis.com/maps/api/js', array('key'=>$CFG->googlemapkey3, 'sensor'=>'false')));
+    }
+    $module = array('name'=>'core_iplookup', 'fullpath'=>'/iplookup/module.js');
+    $PAGE->requires->js_init_call('M.core_iplookup.init3', array($info['latitude'], $info['longitude'], $ip), true, $module);
 
     echo '<div id="map" style="width: 650px; height: 360px"></div>';
     echo '<div id="note">'.$info['note'].'</div>';
