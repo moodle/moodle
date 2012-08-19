@@ -40,6 +40,7 @@ class block_tags extends block_base {
         global $CFG, $COURSE, $SITE, $USER, $SCRIPT, $OUTPUT;
 
         if (empty($CFG->usetags)) {
+            $this->content = new stdClass();
             $this->content->text = '';
             if ($this->page->user_is_editing()) {
                 $this->content->text = get_string('disabledtags', 'block_tags');
