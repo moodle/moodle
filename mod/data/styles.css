@@ -41,6 +41,12 @@
     width:300px;
     height:150px;
 }
+.path-mod-data-field input.textareafieldsize {
+    width:50px;
+}
+.path-mod-data-field input.picturefieldsize {
+    width:70px;
+}
 
 /** UI Usability Hacks **/
 #page-mod-data-export #notice span {padding:0 10px;}
