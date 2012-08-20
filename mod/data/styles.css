@@ -10,6 +10,16 @@
 #page-mod-data-view img.list_picture {
     border:0px;
 }
+#page-mod-data-view div.search_none {
+    display: none;
+}
+#page-mod-data-view div.search_inline {
+    display: inline;
+}
+#page-mod-data-view div#data_adv_form {
+    margin-left:auto;
+    margin-right:auto;
+}
 
 #page-mod-data-edit .basefieldinput {
     width:300px;
