@@ -111,7 +111,8 @@ if ($tagnew = $tagform->get_data()) {
         unset($tagnew->rawname);
 
     } else {  // They might be trying to change the rawname, make sure it's a change that doesn't affect name
-        $tagnew->name = array_shift(tag_normalize($tagnew->rawname, TAG_CASE_LOWER));
+        $norm = tag_normalize($tagnew->rawname, TAG_CASE_LOWER);
+        $tagnew->name = array_shift($norm);
 
         if ($tag->name != $tagnew->name) {  // The name has changed, let's make sure it's not another existing tag
             if (tag_get_id($tagnew->name)) {   // Something exists already, so flag an error
