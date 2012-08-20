@@ -5,6 +5,7 @@ information provided here is intended especially for developers.
 
 * Pagelib: Numerous deprecated functions were removed as classes page_base, page_course
   and page_generic_activity.
+* use $CFG->googlemapkey3 instead of removed $CFG->googlemapkey and migrate to Google Maps API V3
 
 YUI changes:
 * moodle-enrol-notification has been renamed to moodle-core-notification

@@ -1113,5 +1113,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012081400.01);
     }
 
+    if ($oldversion < 2012081600.01) {
+        // Delete removed setting - Google Maps API V2 will not work in 2013.
+        unset_config('googlemapkey');
+        upgrade_main_savepoint(true, 2012081600.01);
+    }
+
+
     return true;
 }
