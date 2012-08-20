@@ -244,7 +244,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<label class="accesshide" for="field_'.$this->field->id.'">'.$this->field->description.'</label>';
-        $str .= '<input style="width:300px;" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id.'" value="'.s($content).'" />';
+        $str .= '<input class="basefieldinput" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id.'" value="'.s($content).'" />';
         $str .= '</div>';
 
         return $str;
