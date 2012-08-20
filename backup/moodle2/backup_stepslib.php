@@ -1835,7 +1835,7 @@ class backup_annotate_all_user_files extends backup_execution_step {
             'backupid' => $this->get_backupid(), 'itemname' => 'userfinal'));
         foreach ($rs as $record) {
             $userid = $record->itemid;
-            $userctx = context_user::instance($userid);
+            $userctx = context_user::instance($userid, IGNORE_MISSING);
             if (!$userctx) {
                 continue; // User has not context, sure it's a deleted user, so cannot have files
             }
