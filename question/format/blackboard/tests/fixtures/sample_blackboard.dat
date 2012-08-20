@@ -127,7 +127,7 @@
     </QUESTION_ESSAY>
     <QUESTION_FILLINBLANK id='q27'>
         <BODY>
-            <TEXT><![CDATA[Name an amphibian: __________.]]></TEXT>
+            <TEXT><![CDATA[<span style="font-size:12pt">Name an amphibian: __________.</span>]]></TEXT>
             <FLAGS>
                 <ISHTML value='true'/>
                 <ISNEWLINELITERAL value='false'/>
