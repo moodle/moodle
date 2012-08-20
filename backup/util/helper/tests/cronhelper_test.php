@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for backups.
+ * Unit tests for backups cron helper.
  *
- * @package   core
+ * @package   core_backup
  * @category  phpunit
  * @copyright 2012 Frédéric Massart <fred@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,12 +29,14 @@ global $CFG;
 require_once($CFG->dirroot . '/backup/util/helper/backup_cron_helper.class.php');
 
 /**
- * Unit tests for backup system
+ * Unit tests for backup cron helper
  */
-class backup_testcase extends advanced_testcase {
+class backup_cron_helper_testcase extends advanced_testcase {
 
+    /**
+     * Test {@link backup_cron_automated_helper::calculate_next_automated_backup}.
+     */
     public function test_next_automated_backup() {
-
         $this->resetAfterTest();
         set_config('backup_auto_active', '1', 'backup');
 
