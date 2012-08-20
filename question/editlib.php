@@ -1639,12 +1639,8 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         $pagevars['qpage'] = 0;
     }
 
-    $pagevars['qperpage'] = optional_param('qperpage', -1, PARAM_INT);
-    if ($pagevars['qperpage'] > -1) {
-        $thispageurl->param('qperpage', $pagevars['qperpage']);
-    } else {
-        $pagevars['qperpage'] = DEFAULT_QUESTIONS_PER_PAGE;
-    }
+    $pagevars['qperpage'] = question_get_display_preference(
+            'qperpage', DEFAULT_QUESTIONS_PER_PAGE, PARAM_INT, $thispageurl);
 
     for ($i = 1; $i <= question_bank_view::MAX_SORTS; $i++) {
         $param = 'qbs' . $i;
@@ -1672,34 +1668,44 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         $pagevars['cat'] = "$category->id,$category->contextid";
     }
 
-    if(($recurse = optional_param('recurse', -1, PARAM_BOOL)) != -1) {
-        $pagevars['recurse'] = $recurse;
-        $thispageurl->param('recurse', $recurse);
-    } else {
-        $pagevars['recurse'] = 1;
-    }
+    // Display options.
+    $pagevars['recurse']    = question_get_display_preference('recurse',    1, PARAM_BOOL, $thispageurl);
+    $pagevars['showhidden'] = question_get_display_preference('showhidden', 0, PARAM_BOOL, $thispageurl);
+    $pagevars['qbshowtext'] = question_get_display_preference('qbshowtext', 0, PARAM_BOOL, $thispageurl);
 
-    if(($showhidden = optional_param('showhidden', -1, PARAM_BOOL)) != -1) {
-        $pagevars['showhidden'] = $showhidden;
-        $thispageurl->param('showhidden', $showhidden);
-    } else {
-        $pagevars['showhidden'] = 0;
-    }
-
-    if(($showquestiontext = optional_param('qbshowtext', -1, PARAM_BOOL)) != -1) {
-        $pagevars['qbshowtext'] = $showquestiontext;
-        $thispageurl->param('qbshowtext', $showquestiontext);
-    } else {
-        $pagevars['qbshowtext'] = 0;
-    }
-
-    //category list page
+    // Category list page.
     $pagevars['cpage'] = optional_param('cpage', 1, PARAM_INT);
     if ($pagevars['cpage'] != 1){
         $thispageurl->param('cpage', $pagevars['cpage']);
     }
 
     return array($thispageurl, $contexts, $cmid, $cm, $module, $pagevars);
+}
+
+/**
+ * Get a particular question preference that is also stored as a user preference.
+ * If the the value is given in the GET/POST request, then that value is used,
+ * and the user preference is updated to that value. Otherwise, the last set
+ * value of the user preference is used, or if it has never been set the default
+ * passed to this function.
+ *
+ * @param string $param the param name. The URL parameter set, and the GET/POST
+ *      parameter read. The user_preference name is 'question_bank_' . $param.
+ * @param mixed $default The default value to use, if not otherwise set.
+ * @param int $type one of the PARAM_... constants.
+ * @param moodle_url $thispageurl if the value has been explicitly set, we add
+ *      it to this URL.
+ * @return mixed the parameter value to use.
+ */
+function question_get_display_preference($param, $default, $type, $thispageurl) {
+    $submittedvalue = optional_param($param, null, $type);
+    if (is_null($submittedvalue)) {
+        return get_user_preferences('question_bank_' . $param, $default);
+    }
+
+    set_user_preference('question_bank_' . $param, $submittedvalue);
+    $thispageurl->param($param, $submittedvalue);
+    return $submittedvalue;
 }
 
 /**
