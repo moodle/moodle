@@ -63,7 +63,7 @@ class quiz_responses_table extends quiz_attempts_report_table {
     }
 
     public function col_sumgrades($attempt) {
-        if ($attempt->state == quiz_attempt::FINISHED) {
+        if ($attempt->state != quiz_attempt::FINISHED) {
             return '-';
         }
 
