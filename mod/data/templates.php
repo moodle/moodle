@@ -141,7 +141,7 @@ if (($mytemplate = data_submitted()) && confirm_sesskey()) {
         }
     }
 } else {
-    echo '<div class="littleintro" style="text-align:center">'.get_string('header'.$mode,'data').'</div>';
+    echo '<div class="template_heading">'.get_string('header'.$mode,'data').'</div>';
 }
 
 /// If everything is empty then generate some defaults
@@ -198,7 +198,7 @@ if ($mode == 'listtemplate'){
     echo '<tr>';
     echo '<td>&nbsp;</td>';
     echo '<td>';
-    echo '<div style="text-align:center"><label for="edit-listtemplateheader">'.get_string('header','data').'</label></div>';
+    echo '<div class="template_heading"><label for="edit-listtemplateheader">'.get_string('header','data').'</label></div>';
 
     $field = 'listtemplateheader';
     $editor->use_editor($field, $options);
@@ -290,9 +290,9 @@ echo '</td>';
 
 echo '<td valign="top">';
 if ($mode == 'listtemplate'){
-    echo '<div style="text-align:center"><label for="edit-template">'.get_string('multientry','data').'</label></div>';
+    echo '<div class="template_heading"><label for="edit-template">'.get_string('multientry','data').'</label></div>';
 } else {
-    echo '<div style="text-align:center"><label for="edit-template">'.get_string($mode,'data').'</label></div>';
+    echo '<div class="template_heading"><label for="edit-template">'.get_string($mode,'data').'</label></div>';
 }
 
 $field = 'template';
@@ -305,7 +305,7 @@ if ($mode == 'listtemplate'){
     echo '<tr>';
     echo '<td>&nbsp;</td>';
     echo '<td>';
-    echo '<div style="text-align:center"><label for="edit-listtemplatefooter">'.get_string('footer','data').'</label></div>';
+    echo '<div class="template_heading"><label for="edit-listtemplatefooter">'.get_string('footer','data').'</label></div>';
 
     $field = 'listtemplatefooter';
     $editor->use_editor($field, $options);
@@ -316,7 +316,7 @@ if ($mode == 'listtemplate'){
     echo '<tr>';
     echo '<td>&nbsp;</td>';
     echo '<td>';
-    echo '<div style="text-align:center"><label for="edit-rsstitletemplate">'.get_string('rsstitletemplate','data').'</label></div>';
+    echo '<div class="template_heading"><label for="edit-rsstitletemplate">'.get_string('rsstitletemplate','data').'</label></div>';
 
     $field = 'rsstitletemplate';
     $editor->use_editor($field, $options);
@@ -325,7 +325,7 @@ if ($mode == 'listtemplate'){
     echo '</tr>';
 }
 
-echo '<tr><td style="text-align:center" colspan="2">';
+echo '<tr><td class="save_template" colspan="2">';
 echo '<input type="submit" value="'.get_string('savetemplate','data').'" />&nbsp;';
 
 echo '</td></tr></table>';
