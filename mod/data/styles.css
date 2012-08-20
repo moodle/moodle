@@ -7,6 +7,13 @@
 .path-mod-data-field .c0,
 #page-mod-data-view #sortsearch .c0 {text-align: right;}
 #page-mod-data-view .approve img.icon {width:34px;height:34px;}
+#page-mod-data-view img.list_picture {
+    border:0px;
+}
+
+#page-mod-data-edit .basefieldinput {
+    width:300px;
+}
 
 /** Styles for preset.php **/
 #page-mod-data-preset .presetmapping table {text-align: left;margin-left: auto;margin-right: auto;}
@@ -20,6 +27,10 @@
 .path-mod-data-field .sortdefault select {margin-left: 1em;}
 .path-mod-data-field .fieldname,
 .path-mod-data-field .fielddescription {width:300px;}
+.path-mod-data-field textarea.optionstextarea {
+    width:300px;
+    height:150px;
+}
 
 /** UI Usability Hacks **/
 #page-mod-data-export #notice span {padding:0 10px;}
