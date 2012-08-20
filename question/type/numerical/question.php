@@ -323,10 +323,13 @@ class qtype_numerical_answer extends question_answer {
             throw new coding_exception('Cannot work out tolerance interval for answer *.');
         }
 
+        // Smallest number that, when added to 1, is different from 1.
+        $epsilon = pow(10, -1 * ini_get('precision'));
+
         // We need to add a tiny fraction depending on the set precision to make
         // the comparison work correctly, otherwise seemingly equal values can
         // yield false. See MDL-3225.
-        $tolerance = (float) $this->tolerance + pow(10, -1 * ini_get('precision'));
+        $tolerance = abs($this->tolerance) + $epsilon;
 
         switch ($this->tolerancetype) {
             case 1: case 'relative':
@@ -334,8 +337,7 @@ class qtype_numerical_answer extends question_answer {
                 return array($this->answer - $range, $this->answer + $range);
 
             case 2: case 'nominal':
-                $tolerance = $this->tolerance + pow(10, -1 * ini_get('precision')) *
-                        max(1, abs($this->answer));
+                $tolerance = $this->tolerance + $epsilon * max(abs($this->tolerance), abs($this->answer), $epsilon);
                 return array($this->answer - $tolerance, $this->answer + $tolerance);
 
             case 3: case 'geometric':
