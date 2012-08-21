@@ -235,7 +235,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             }
         }
 
-        if (!$onsectionpage && has_capability('moodle/course:update', $coursecontext)) {
+        if (!$onsectionpage && has_capability('moodle/course:movesections', $coursecontext)) {
             $url = clone($baseurl);
             if ($section->section > 1) { // Add a arrow to move section up.
                 $url->param('section', $section->section);
