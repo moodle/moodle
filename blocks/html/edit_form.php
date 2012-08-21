@@ -41,6 +41,10 @@ class block_html_edit_form extends block_edit_form {
         $mform->addElement('editor', 'config_text', get_string('configcontent', 'block_html'), null, $editoroptions);
         $mform->addRule('config_text', null, 'required', null, 'client');
         $mform->setType('config_text', PARAM_RAW); // XSS is prevented when printing the block contents and serving files
+
+        $mform->addElement('text', 'config_classes', get_string('configclasses', 'block_html'));
+        $mform->setType('config_classes', PARAM_TEXT);
+        $mform->addHelpButton('config_classes', 'configclasses', 'block_html');
     }
 
     function set_data($defaults) {

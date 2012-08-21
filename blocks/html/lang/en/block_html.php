@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['configclasses'] = 'Additional HTML classes';
+$string['configclasses_help'] = 'The purpose of this configuration is to aid with theming by helping distinguish HTML blocks from each other. Any CSS classes entered here (space delimited) will be appended to the block\'s default classes.';
 $string['configcontent'] = 'Content';
 $string['configtitle'] = 'Block title';
 $string['leaveblanktohide'] = 'leave blank to hide the title';
