@@ -252,8 +252,9 @@ input#id_externalurl {direction:ltr;}
  * Blogs
  */
 .addbloglink {text-align: center;}
-.blog_entry .audience {text-align: right;}
+.blog_entry .audience {text-align: right;padding-right: 4px;}
 .blog_entry .tags {margin-top: 15px;}
+.blog_entry .content {margin-left: 43px;}
 
 /**
  * Group

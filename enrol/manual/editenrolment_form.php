@@ -46,9 +46,11 @@ class enrol_manual_user_enrolment_form extends moodleform {
             $mform->addElement('select', 'status', get_string('participationstatus', 'enrol'), $options);
         }
 
-        $mform->addElement('date_selector', 'timestart', get_string('enroltimestart', 'enrol'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'timestart', get_string('enroltimestart', 'enrol'), array('optional' => true));
 
-        $mform->addElement('date_selector', 'timeend', get_string('enroltimeend', 'enrol'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'timeend', get_string('enroltimeend', 'enrol'), array('optional' => true));
+
+        $mform->addElement('static', 'timecreated', get_string('enroltimecreated', 'enrol'), userdate($ue->timecreated));
 
         $mform->addElement('hidden', 'ue');
         $mform->setType('ue', PARAM_INT);

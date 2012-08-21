@@ -51,13 +51,6 @@ $context = context_course::instance($course->id);
 require_capability('moodle/grade:manage', $context);
 
 // todo $PAGE->requires->js_module() should be used here instead
-$PAGE->requires->yui2_lib('event');
-$PAGE->requires->yui2_lib('json');
-$PAGE->requires->yui2_lib('connection');
-$PAGE->requires->yui2_lib('dragdrop');
-$PAGE->requires->yui2_lib('element');
-$PAGE->requires->yui2_lib('container');
-$PAGE->requires->yui2_lib('animation');
 $PAGE->requires->js('/grade/edit/tree/functions.js');
 
 /// return tracking object

@@ -2296,7 +2296,7 @@ class global_navigation extends navigation_node {
         }
 
         // Add blog nodes
-        if (!empty($CFG->bloglevel)) {
+        if (!empty($CFG->enableblogs)) {
             if (!$this->cache->cached('userblogoptions'.$user->id)) {
                 require_once($CFG->dirroot.'/blog/lib.php');
                 // Get all options for the user
@@ -2658,7 +2658,7 @@ class global_navigation extends navigation_node {
         $filterselect = 0;
 
         // Blogs
-        if (!empty($CFG->bloglevel)
+        if (!empty($CFG->enableblogs)
           and ($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
           and has_capability('moodle/blog:view', context_system::instance())) {
             $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
@@ -4196,7 +4196,7 @@ class settings_navigation extends navigation_node {
         }
 
         // Blogs
-        if ($currentuser && !empty($CFG->bloglevel)) {
+        if ($currentuser && !empty($CFG->enableblogs)) {
             $blog = $usersetting->add(get_string('blogs', 'blog'), null, navigation_node::TYPE_CONTAINER, null, 'blogs');
             $blog->add(get_string('preferences', 'blog'), new moodle_url('/blog/preferences.php'), navigation_node::TYPE_SETTING);
             if (!empty($CFG->useexternalblogs) && $CFG->maxexternalblogsperuser > 0 && has_capability('moodle/blog:manageexternal', context_system::instance())) {

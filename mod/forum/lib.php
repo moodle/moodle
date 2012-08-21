@@ -303,6 +303,7 @@ function forum_supports($feature) {
         case FEATURE_RATE:                    return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_PLAGIARISM:              return true;
 
         default: return null;
     }
@@ -1014,7 +1015,8 @@ function forum_cron() {
 
                 $attachment = $attachname='';
                 $usetrueaddress = true;
-                //directly email forum digests rather than sending them via messaging
+                // Directly email forum digests rather than sending them via messaging, use the
+                // site shortname as 'from name', the noreply address will be used by email_to_user.
                 $mailresult = email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, $attachment, $attachname, $usetrueaddress, $CFG->forum_replytouser);
 
                 if (!$mailresult) {
@@ -3842,9 +3844,11 @@ function forum_print_mode_form($id, $mode, $forumtype='') {
     global $OUTPUT;
     if ($forumtype == 'single') {
         $select = new single_select(new moodle_url("/mod/forum/view.php", array('f'=>$id)), 'mode', forum_get_layout_modes(), $mode, null, "mode");
+        $select->set_label(get_string('displaymode', 'forum'), array('class' => 'accesshide'));
         $select->class = "forummode";
     } else {
         $select = new single_select(new moodle_url("/mod/forum/discuss.php", array('d'=>$id)), 'mode', forum_get_layout_modes(), $mode, null, "mode");
+        $select->set_label(get_string('displaymode', 'forum'), array('class' => 'accesshide'));
     }
     echo $OUTPUT->render($select);
 }

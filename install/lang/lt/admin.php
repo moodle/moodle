@@ -30,6 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['clianswerno'] = 'n';
 $string['cliansweryes'] = 't';
 $string['cliincorrectvalueerror'] = 'Klaida, klaidinga "{$a->option}" reikšmė "{$a->value}"';
 $string['cliincorrectvalueretry'] = 'Klaidinga reikšmė, bandykite dar kartą';
@@ -38,4 +39,4 @@ $string['clitypevaluedefault'] = 'tipo reikšmė, paspauskite „Enter“, jei n
 $string['cliunknowoption'] = 'Neatpažintos parinktys: {$a} naudokite --žinyno parinktį.';
 $string['cliyesnoprompt'] = 'įveskite t (taip) arba n (ne)';
 $string['environmentrequireinstall'] = 'turi būti įdiegta ir įgalinta';
-$string['environmentrequireversion'] = 'reikalinga $a-needed, o Jūs turite $a-current';
+$string['environmentrequireversion'] = 'reikalinga {$a->needed} versija, o Jūs turite {$a->current}';

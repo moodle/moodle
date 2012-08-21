@@ -243,6 +243,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         }
 
         $str = '<div title="'.s($this->field->description).'">';
+        $str .= '<label class="accesshide" for="field_'.$this->field->id.'">'.$this->field->description.'</label>';
         $str .= '<input style="width:300px;" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id.'" value="'.s($content).'" />';
         $str .= '</div>';
 
@@ -1605,9 +1606,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $fn = !empty($search_array[DATA_FIRSTNAME]->data) ? $search_array[DATA_FIRSTNAME]->data : '';
     $ln = !empty($search_array[DATA_LASTNAME]->data) ? $search_array[DATA_LASTNAME]->data : '';
     $patterns[]    = '/##firstname##/';
-    $replacement[] = '<input type="text" size="16" name="u_fn" value="'.$fn.'" />';
+    $replacement[] = '<label class="accesshide" for="u_fn">'.get_string('authorfirstname', 'data').'</label><input type="text" size="16" id="u_fn" name="u_fn" value="'.$fn.'" />';
     $patterns[]    = '/##lastname##/';
-    $replacement[] = '<input type="text" size="16" name="u_ln" value="'.$ln.'" />';
+    $replacement[] = '<label class="accesshide" for="u_ln">'.get_string('authorlastname', 'data').'</label><input type="text" size="16" id="u_ln" name="u_ln" value="'.$ln.'" />';
 
     // actual replacement of the tags
     $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
@@ -2737,10 +2738,21 @@ function data_export_ods($export, $dataname, $count) {
  * @param array $selectedfields
  * @param int $currentgroup group ID of the current group. This is used for
  * exporting data while maintaining group divisions.
+ * @param object $context the context in which the operation is performed (for capability checks)
+ * @param bool $userdetails whether to include the details of the record author
+ * @param bool $time whether to include time created/modified
+ * @param bool $approval whether to include approval status
  * @return array
  */
-function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0) {
+function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0, $context=null,
+                             $userdetails=false, $time=false, $approval=false) {
     global $DB;
+
+    if (is_null($context)) {
+        $context = context_system::instance();
+    }
+    // exporting user data needs special permission
+    $userdetails = $userdetails && has_capability('mod/data:exportuserinfo', $context);
 
     $exportdata = array();
 
@@ -2752,6 +2764,18 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0)
         } else {
             $exportdata[0][] = $field->field->name;
         }
+    }
+    if ($userdetails) {
+        $exportdata[0][] = get_string('user');
+        $exportdata[0][] = get_string('username');
+        $exportdata[0][] = get_string('email');
+    }
+    if ($time) {
+        $exportdata[0][] = get_string('timeadded', 'data');
+        $exportdata[0][] = get_string('timemodified', 'data');
+    }
+    if ($approval) {
+        $exportdata[0][] = get_string('approved', 'data');
     }
 
     $datarecords = $DB->get_records('data_records', array('dataid'=>$dataid));
@@ -2774,6 +2798,19 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0)
                     $contents = $field->export_text_value($content[$field->field->id]);
                 }
                 $exportdata[$line][] = $contents;
+            }
+            if ($userdetails) { // Add user details to the export data
+                $userdata = get_complete_user_data('id', $record->userid);
+                $exportdata[$line][] = fullname($userdata);
+                $exportdata[$line][] = $userdata->username;
+                $exportdata[$line][] = $userdata->email;
+            }
+            if ($time) { // Add time added / modified
+                $exportdata[$line][] = userdate($record->timecreated);
+                $exportdata[$line][] = userdate($record->timemodified);
+            }
+            if ($approval) { // Add approval status
+                $exportdata[$line][] = (int) $record->approved;
             }
         }
         $line++;

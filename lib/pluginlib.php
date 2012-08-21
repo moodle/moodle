@@ -137,7 +137,7 @@ class plugin_manager {
      * Returns list of plugins that define their subplugins and the information
      * about them from the db/subplugins.php file.
      *
-     * At the moment, only activity modules can define subplugins.
+     * At the moment, only activity modules and editors can define subplugins.
      *
      * @param bool $disablecache force reload, cache can be used otherwise
      * @return array with keys like 'mod_quiz', and values the data from the
@@ -147,18 +147,20 @@ class plugin_manager {
 
         if ($disablecache or is_null($this->subpluginsinfo)) {
             $this->subpluginsinfo = array();
-            $mods = get_plugin_list('mod');
-            foreach ($mods as $mod => $moddir) {
-                $modsubplugins = array();
-                if (file_exists($moddir . '/db/subplugins.php')) {
-                    include($moddir . '/db/subplugins.php');
-                    foreach ($subplugins as $subplugintype => $subplugintyperootdir) {
-                        $subplugin = new stdClass();
-                        $subplugin->type = $subplugintype;
-                        $subplugin->typerootdir = $subplugintyperootdir;
-                        $modsubplugins[$subplugintype] = $subplugin;
+            foreach (array('mod', 'editor') as $type) {
+                $owners = get_plugin_list('type');
+                foreach ($owners as $component => $ownerdir) {
+                    $componentsubplugins = array();
+                    if (file_exists($ownerdir . '/db/subplugins.php')) {
+                        include($ownerdir . '/db/subplugins.php');
+                        foreach ($subplugins as $subplugintype => $subplugintyperootdir) {
+                            $subplugin = new stdClass();
+                            $subplugin->type = $subplugintype;
+                            $subplugin->typerootdir = $subplugintyperootdir;
+                            $componentsubplugins[$subplugintype] = $subplugin;
+                        }
+                        $this->subpluginsinfo[$type . '_' . $component] = $componentsubplugins;
                     }
-                $this->subpluginsinfo['mod_' . $mod] = $modsubplugins;
                 }
             }
         }
@@ -518,6 +520,10 @@ class plugin_manager {
                 'graphs'
             ),
 
+            'tinymce' => array(
+                'dragmath', 'moodleemoticon', 'moodleimage', 'moodlemedia', 'moodlenolink', 'spellchecker',
+            ),
+
             'theme' => array(
                 'afterburner', 'anomaly', 'arialist', 'base', 'binarius',
                 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor',
@@ -527,7 +533,7 @@ class plugin_manager {
             ),
 
             'tool' => array(
-                'assignmentupgrade', 'bloglevelupgrade', 'capability', 'customlang', 'dbtransfer', 'generator',
+                'assignmentupgrade', 'capability', 'customlang', 'dbtransfer', 'generator',
                 'health', 'innodb', 'langimport', 'multilangupgrade', 'phpunit', 'profiling',
                 'qeupgradehelper', 'replace', 'spamcleaner', 'timezoneimport', 'unittest',
                 'uploaduser', 'unsuproles', 'xmldb'

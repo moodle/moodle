@@ -392,6 +392,8 @@ define('FEATURE_GRADE_OUTCOMES', 'outcomes');
 define('FEATURE_ADVANCED_GRADING', 'grade_advanced_grading');
 /** True if module controls the grade visibility over the gradebook */
 define('FEATURE_CONTROLS_GRADE_VISIBILITY', 'controlsgradevisbility');
+/** True if module supports plagiarism plugins */
+define('FEATURE_PLAGIARISM', 'plagiarism');
 
 /** True if module has code to track whether somebody viewed it */
 define('FEATURE_COMPLETION_TRACKS_VIEWS', 'completion_tracks_views');
@@ -7890,11 +7892,12 @@ function get_plugin_types($fullpaths=true) {
                       'theme'         => 'theme',  // this is a bit hacky, themes may be in $CFG->themedir too
         );
 
-        $mods = get_plugin_list('mod');
-        foreach ($mods as $mod => $moddir) {
-            if (file_exists("$moddir/db/subplugins.php")) {
+        $subpluginowners = array_merge(array_values(get_plugin_list('mod')),
+                array_values(get_plugin_list('editor')));
+        foreach ($subpluginowners as $ownerdir) {
+            if (file_exists("$ownerdir/db/subplugins.php")) {
                 $subplugins = array();
-                include("$moddir/db/subplugins.php");
+                include("$ownerdir/db/subplugins.php");
                 foreach ($subplugins as $subtype=>$dir) {
                     $info[$subtype] = $dir;
                 }
@@ -7940,6 +7943,10 @@ function get_plugin_list($plugintype) {
         // mod is an exception because we have to call this function from get_plugin_types()
         $fulldirs[] = $CFG->dirroot.'/mod';
 
+    } else if ($plugintype === 'editor') {
+        // Exception also needed for editor for same reason.
+        $fulldirs[] = $CFG->dirroot . '/lib/editor';
+
     } else if ($plugintype === 'theme') {
         $fulldirs[] = $CFG->dirroot.'/theme';
         // themes are special because they may be stored also in separate directory
@@ -7958,7 +7965,6 @@ function get_plugin_list($plugintype) {
         }
         $fulldirs[] = $fulldir;
     }
-
     $result = array();
 
     foreach ($fulldirs as $fulldir) {
@@ -8388,7 +8394,14 @@ function check_php_version($version='5.2.4') {
           if (empty($version)) {
               return true; // no version specified
           }
-          if (preg_match("/Opera\/([0-9\.]+)/i", $agent, $match)) {
+          // Recent Opera useragents have Version/ with the actual version, e.g.:
+          // Opera/9.80 (Windows NT 6.1; WOW64; U; en) Presto/2.10.289 Version/12.01
+          // That's Opera 12.01, not 9.8.
+          if (preg_match("/Version\/([0-9\.]+)/i", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
+              }
+          } else if (preg_match("/Opera\/([0-9\.]+)/i", $agent, $match)) {
               if (version_compare($match[1], $version) >= 0) {
                   return true;
               }
@@ -8403,7 +8416,7 @@ function check_php_version($version='5.2.4') {
           if (empty($version)) {
               return true; // no version specified
           }
-          if (preg_match("/AppleWebKit\/([0-9]+)/i", $agent, $match)) {
+          if (preg_match("/AppleWebKit\/([0-9.]+)/i", $agent, $match)) {
               if (version_compare($match[1], $version) >= 0) {
                   return true;
               }
@@ -8439,7 +8452,7 @@ function check_php_version($version='5.2.4') {
           if (empty($version)) {
               return true; // no version specified
           }
-          if (preg_match("/AppleWebKit\/([0-9]+)/i", $agent, $match)) {
+          if (preg_match("/AppleWebKit\/([0-9.]+)/i", $agent, $match)) {
               if (version_compare($match[1], $version) >= 0) {
                   return true;
               }
@@ -8688,7 +8701,10 @@ function get_browser_version_classes() {
  */
 function can_use_rotated_text() {
     global $USER;
-    return ajaxenabled(array('Firefox' => 2.0)) && !$USER->screenreader;;
+    return (check_browser_version('MSIE', 9) || check_browser_version('Firefox', 2) ||
+            check_browser_version('Chrome', 21) || check_browser_version('Safari', 536.25) ||
+            check_browser_version('Opera', 12) || check_browser_version('Safari iOS', 533)) &&
+            !$USER->screenreader;
 }
 
 /**

@@ -71,22 +71,23 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $ADMIN->add('appearance', $temp);
 
     // blog
-    $temp = new admin_settingpage('blog', new lang_string('blog','blog'));
-    $temp->add(new admin_setting_configcheckbox('useblogassociations', new lang_string('useblogassociations', 'blog'), new lang_string('configuseblogassociations','blog'), 1));
-    $temp->add(new admin_setting_bloglevel('bloglevel', new lang_string('bloglevel', 'admin'), new lang_string('configbloglevel', 'admin'), 4, array(BLOG_GLOBAL_LEVEL => new lang_string('worldblogs','blog'),
-                                                                                                                                           BLOG_SITE_LEVEL => new lang_string('siteblogs','blog'),
-                                                                                                                                           BLOG_USER_LEVEL => new lang_string('personalblogs','blog'),
-                                                                                                                                           0 => new lang_string('disableblogs','blog'))));
-    $temp->add(new admin_setting_configcheckbox('useexternalblogs', new lang_string('useexternalblogs', 'blog'), new lang_string('configuseexternalblogs','blog'), 1));
-    $temp->add(new admin_setting_configselect('externalblogcrontime', new lang_string('externalblogcrontime', 'blog'), new lang_string('configexternalblogcrontime', 'blog'), 86400,
-        array(43200 => new lang_string('numhours', '', 12),
-              86400 => new lang_string('numhours', '', 24),
-              172800 => new lang_string('numdays', '', 2),
-              604800 => new lang_string('numdays', '', 7))));
-    $temp->add(new admin_setting_configtext('maxexternalblogsperuser', new lang_string('maxexternalblogsperuser','blog'), new lang_string('configmaxexternalblogsperuser', 'blog'), 1));
-    $temp->add(new admin_setting_configcheckbox('blogusecomments', new lang_string('enablecomments', 'admin'), new lang_string('configenablecomments', 'admin'), 1));
-    $temp->add(new admin_setting_configcheckbox('blogshowcommentscount', new lang_string('showcommentscount', 'admin'), new lang_string('configshowcommentscount', 'admin'), 1));
-    $ADMIN->add('appearance', $temp);
+    if (!empty($CFG->enableblogs)) {
+        $temp = new admin_settingpage('blog', new lang_string('blog','blog'));
+        $temp->add(new admin_setting_configcheckbox('useblogassociations', new lang_string('useblogassociations', 'blog'), new lang_string('configuseblogassociations','blog'), 1));
+        $temp->add(new admin_setting_bloglevel('bloglevel', new lang_string('bloglevel', 'admin'), new lang_string('configbloglevel', 'admin'), 4, array(BLOG_GLOBAL_LEVEL => new lang_string('worldblogs','blog'),
+                                                                                                                                               BLOG_SITE_LEVEL => new lang_string('siteblogs','blog'),
+                                                                                                                                               BLOG_USER_LEVEL => new lang_string('personalblogs','blog'))));
+        $temp->add(new admin_setting_configcheckbox('useexternalblogs', new lang_string('useexternalblogs', 'blog'), new lang_string('configuseexternalblogs','blog'), 1));
+        $temp->add(new admin_setting_configselect('externalblogcrontime', new lang_string('externalblogcrontime', 'blog'), new lang_string('configexternalblogcrontime', 'blog'), 86400,
+            array(43200 => new lang_string('numhours', '', 12),
+                  86400 => new lang_string('numhours', '', 24),
+                  172800 => new lang_string('numdays', '', 2),
+                  604800 => new lang_string('numdays', '', 7))));
+        $temp->add(new admin_setting_configtext('maxexternalblogsperuser', new lang_string('maxexternalblogsperuser','blog'), new lang_string('configmaxexternalblogsperuser', 'blog'), 1));
+        $temp->add(new admin_setting_configcheckbox('blogusecomments', new lang_string('enablecomments', 'admin'), new lang_string('configenablecomments', 'admin'), 1));
+        $temp->add(new admin_setting_configcheckbox('blogshowcommentscount', new lang_string('showcommentscount', 'admin'), new lang_string('configshowcommentscount', 'admin'), 1));
+        $ADMIN->add('appearance', $temp);
+    }
 
     // Navigation settings
     $temp = new admin_settingpage('navigation', new lang_string('navigation'));

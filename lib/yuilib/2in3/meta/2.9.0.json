@@ -1,0 +1,875 @@
+{
+    "yui2-animation": {
+        "path": "animation/animation-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event"
+        ]
+    }, 
+    "yui2-autocomplete": {
+        "optional": [
+            "yui2-animation", 
+            "yui2-connection"
+        ], 
+        "path": "autocomplete/autocomplete-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-skin-sam-autocomplete", 
+            "yui2-datasource"
+        ]
+    }, 
+    "yui2-base": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids"
+        ], 
+        "path": "base/base-min.css", 
+        "type": "css"
+    }, 
+    "yui2-button": {
+        "optional": [
+            "yui2-containercore", 
+            "yui2-skin-sam-menu", 
+            "yui2-menu"
+        ], 
+        "path": "button/button-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-skin-sam-button", 
+            "yui2-element"
+        ]
+    }, 
+    "yui2-calendar": {
+        "path": "calendar/calendar-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-skin-sam-calendar"
+        ], 
+        "supersedes": [
+            "yui2-datemath"
+        ]
+    }, 
+    "yui2-carousel": {
+        "optional": [
+            "yui2-animation"
+        ], 
+        "path": "carousel/carousel-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-element", 
+            "yui2-skin-sam-carousel"
+        ]
+    }, 
+    "yui2-charts": {
+        "path": "charts/charts-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-element", 
+            "yui2-swf", 
+            "yui2-json", 
+            "yui2-datasource"
+        ]
+    }, 
+    "yui2-colorpicker": {
+        "optional": [
+            "yui2-animation"
+        ], 
+        "path": "colorpicker/colorpicker-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-skin-sam-slider", 
+            "yui2-event", 
+            "yui2-dragdrop", 
+            "yui2-slider", 
+            "yui2-element", 
+            "yui2-skin-sam-colorpicker"
+        ]
+    }, 
+    "yui2-connection": {
+        "path": "connection/connection-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-event"
+        ], 
+        "supersedes": [
+            "yui2-connectioncore"
+        ]
+    }, 
+    "yui2-connectioncore": {
+        "path": "connection/connection_core-min.js", 
+        "pkg": "yui2-connection", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-event"
+        ]
+    }, 
+    "yui2-container": {
+        "optional": [
+            "yui2-animation", 
+            "yui2-dragdrop", 
+            "yui2-connection"
+        ], 
+        "path": "container/container-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-skin-sam-container"
+        ], 
+        "supersedes": [
+            "yui2-containercore"
+        ]
+    }, 
+    "yui2-containercore": {
+        "path": "container/container_core-min.js", 
+        "pkg": "yui2-container", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event"
+        ]
+    }, 
+    "yui2-cookie": {
+        "path": "cookie/cookie-min.js", 
+        "requires": [
+            "yui2-yahoo"
+        ]
+    }, 
+    "yui2-datasource": {
+        "optional": [
+            "yui2-connection"
+        ], 
+        "path": "datasource/datasource-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-event"
+        ]
+    }, 
+    "yui2-datatable": {
+        "optional": [
+            "yui2-skin-sam-paginator", 
+            "yui2-paginator", 
+            "yui2-dragdrop", 
+            "yui2-skin-sam-calendar", 
+            "yui2-calendar"
+        ], 
+        "path": "datatable/datatable-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-skin-sam-datatable", 
+            "yui2-element", 
+            "yui2-datasource"
+        ]
+    }, 
+    "yui2-datemath": {
+        "path": "datemath/datemath-min.js", 
+        "requires": [
+            "yui2-yahoo"
+        ]
+    }, 
+    "yui2-dom": {
+        "path": "dom/dom-min.js", 
+        "requires": [
+            "yui2-yahoo"
+        ]
+    }, 
+    "yui2-dragdrop": {
+        "path": "dragdrop/dragdrop-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event"
+        ]
+    }, 
+    "yui2-editor": {
+        "optional": [
+            "yui2-animation", 
+            "yui2-dragdrop"
+        ], 
+        "path": "editor/editor-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-containercore", 
+            "yui2-skin-sam-editor", 
+            "yui2-skin-sam-button", 
+            "yui2-element", 
+            "yui2-skin-sam-menu", 
+            "yui2-menu", 
+            "yui2-button"
+        ], 
+        "supersedes": [
+            "yui2-simpleeditor"
+        ]
+    }, 
+    "yui2-element": {
+        "optional": [
+            "yui2-event-mouseenter", 
+            "yui2-event-delegate"
+        ], 
+        "path": "element/element-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event"
+        ]
+    }, 
+    "yui2-element-delegate": {
+        "path": "element-delegate/element-delegate-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-element"
+        ]
+    }, 
+    "yui2-event": {
+        "path": "event/event-min.js", 
+        "requires": [
+            "yui2-yahoo"
+        ]
+    }, 
+    "yui2-event-delegate": {
+        "optional": [
+            "yui2-dom", 
+            "yui2-selector"
+        ], 
+        "path": "event-delegate/event-delegate-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-event"
+        ]
+    }, 
+    "yui2-event-mouseenter": {
+        "path": "event-mouseenter/event-mouseenter-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event"
+        ]
+    }, 
+    "yui2-event-simulate": {
+        "path": "event-simulate/event-simulate-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-event"
+        ]
+    }, 
+    "yui2-fonts": {
+        "path": "fonts/fonts-min.css", 
+        "type": "css"
+    }, 
+    "yui2-get": {
+        "path": "get/get-min.js", 
+        "requires": [
+            "yui2-yahoo"
+        ]
+    }, 
+    "yui2-grids": {
+        "optional": [
+            "yui2-reset"
+        ], 
+        "path": "grids/grids-min.css", 
+        "requires": [
+            "yui2-fonts"
+        ], 
+        "type": "css"
+    }, 
+    "yui2-history": {
+        "path": "history/history-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-event"
+        ]
+    }, 
+    "yui2-imagecropper": {
+        "path": "imagecropper/imagecropper-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-dragdrop", 
+            "yui2-element", 
+            "yui2-skin-sam-resize", 
+            "yui2-resize", 
+            "yui2-skin-sam-imagecropper"
+        ]
+    }, 
+    "yui2-imageloader": {
+        "path": "imageloader/imageloader-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event"
+        ]
+    }, 
+    "yui2-json": {
+        "path": "json/json-min.js", 
+        "requires": [
+            "yui2-yahoo"
+        ]
+    }, 
+    "yui2-layout": {
+        "optional": [
+            "yui2-dragdrop", 
+            "yui2-skin-sam-resize", 
+            "yui2-animation", 
+            "yui2-selector", 
+            "yui2-resize"
+        ], 
+        "path": "layout/layout-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-skin-sam-layout", 
+            "yui2-event", 
+            "yui2-element"
+        ]
+    }, 
+    "yui2-logger": {
+        "optional": [
+            "yui2-dragdrop"
+        ], 
+        "path": "logger/logger-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-skin-sam-logger"
+        ]
+    }, 
+    "yui2-menu": {
+        "path": "menu/menu-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-containercore", 
+            "yui2-skin-sam-menu"
+        ]
+    }, 
+    "yui2-paginator": {
+        "path": "paginator/paginator-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-element", 
+            "yui2-skin-sam-paginator"
+        ]
+    }, 
+    "yui2-profiler": {
+        "path": "profiler/profiler-min.js", 
+        "requires": [
+            "yui2-yahoo"
+        ]
+    }, 
+    "yui2-profilerviewer": {
+        "path": "profilerviewer/profilerviewer-min.js", 
+        "requires": [
+            "yui2-skin-sam-profilerviewer", 
+            "yui2-yuiloader", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-element", 
+            "yui2-profiler"
+        ]
+    }, 
+    "yui2-progressbar": {
+        "optional": [
+            "yui2-animation"
+        ], 
+        "path": "progressbar/progressbar-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-element", 
+            "yui2-skin-sam-progressbar"
+        ]
+    }, 
+    "yui2-reset": {
+        "path": "reset/reset-min.css", 
+        "type": "css"
+    }, 
+    "yui2-reset-fonts": {
+        "path": "reset-fonts/reset-fonts.css", 
+        "rollup": 2, 
+        "supersedes": [
+            "yui2-reset", 
+            "yui2-fonts"
+        ], 
+        "type": "css"
+    }, 
+    "yui2-reset-fonts-grids": {
+        "path": "reset-fonts-grids/reset-fonts-grids.css", 
+        "rollup": 4, 
+        "supersedes": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-reset-fonts"
+        ], 
+        "type": "css"
+    }, 
+    "yui2-resize": {
+        "optional": [
+            "yui2-animation"
+        ], 
+        "path": "resize/resize-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-dragdrop", 
+            "yui2-element", 
+            "yui2-skin-sam-resize"
+        ]
+    }, 
+    "yui2-selector": {
+        "path": "selector/selector-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom"
+        ]
+    }, 
+    "yui2-simpleeditor": {
+        "optional": [
+            "yui2-containercore", 
+            "yui2-dragdrop", 
+            "yui2-skin-sam-button", 
+            "yui2-skin-sam-menu", 
+            "yui2-menu", 
+            "yui2-button", 
+            "yui2-animation"
+        ], 
+        "path": "editor/simpleeditor-min.js", 
+        "pkg": "yui2-editor", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-skin-sam-simpleeditor", 
+            "yui2-event", 
+            "yui2-element"
+        ]
+    }, 
+    "yui2-skin-sam": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam", 
+        "path": "assets/skins/sam/skin.css", 
+        "rollup": 3, 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-autocomplete": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-autocomplete", 
+        "path": "autocomplete/assets/skins/sam/autocomplete.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-button": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-button", 
+        "path": "button/assets/skins/sam/button.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-calendar": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-calendar", 
+        "path": "calendar/assets/skins/sam/calendar.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-carousel": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-carousel", 
+        "path": "carousel/assets/skins/sam/carousel.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-colorpicker": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-colorpicker", 
+        "path": "colorpicker/assets/skins/sam/colorpicker.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-container": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-container", 
+        "path": "container/assets/skins/sam/container.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-datatable": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-datatable", 
+        "path": "datatable/assets/skins/sam/datatable.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-editor": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-editor", 
+        "path": "editor/assets/skins/sam/editor.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-imagecropper": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-imagecropper", 
+        "path": "imagecropper/assets/skins/sam/imagecropper.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-layout": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-layout", 
+        "path": "layout/assets/skins/sam/layout.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-logger": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-logger", 
+        "path": "logger/assets/skins/sam/logger.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-menu": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-menu", 
+        "path": "menu/assets/skins/sam/menu.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-paginator": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-paginator", 
+        "path": "paginator/assets/skins/sam/paginator.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-profilerviewer": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-profilerviewer", 
+        "path": "profilerviewer/assets/skins/sam/profilerviewer.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-progressbar": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-progressbar", 
+        "path": "progressbar/assets/skins/sam/progressbar.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-resize": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-resize", 
+        "path": "resize/assets/skins/sam/resize.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-simpleeditor": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-simpleeditor", 
+        "path": "editor/assets/skins/sam/simpleeditor.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-slider": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-slider", 
+        "path": "slider/assets/skins/sam/slider.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-tabview": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-tabview", 
+        "path": "tabview/assets/skins/sam/tabview.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-treeview": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-treeview", 
+        "path": "treeview/assets/skins/sam/treeview.css", 
+        "type": "css"
+    }, 
+    "yui2-skin-sam-yuitest": {
+        "after": [
+            "yui2-reset", 
+            "yui2-fonts", 
+            "yui2-grids", 
+            "yui2-base"
+        ], 
+        "name": "yui2-skin-sam-yuitest", 
+        "path": "yuitest/assets/skins/sam/yuitest.css", 
+        "type": "css"
+    }, 
+    "yui2-slider": {
+        "optional": [
+            "yui2-animation"
+        ], 
+        "path": "slider/slider-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-skin-sam-slider", 
+            "yui2-event", 
+            "yui2-dragdrop"
+        ]
+    }, 
+    "yui2-storage": {
+        "optional": [
+            "yui2-dom", 
+            "yui2-element", 
+            "yui2-swf", 
+            "yui2-swfstore"
+        ], 
+        "path": "storage/storage-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-event", 
+            "yui2-cookie"
+        ]
+    }, 
+    "yui2-stylesheet": {
+        "path": "stylesheet/stylesheet-min.js", 
+        "requires": [
+            "yui2-yahoo"
+        ]
+    }, 
+    "yui2-swf": {
+        "path": "swf/swf-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-element"
+        ], 
+        "supersedes": [
+            "yui2-swfdetect"
+        ]
+    }, 
+    "yui2-swfdetect": {
+        "path": "swfdetect/swfdetect-min.js", 
+        "requires": [
+            "yui2-yahoo"
+        ]
+    }, 
+    "yui2-swfstore": {
+        "path": "swfstore/swfstore-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-element", 
+            "yui2-swf", 
+            "yui2-cookie"
+        ]
+    }, 
+    "yui2-tabview": {
+        "optional": [
+            "yui2-connection"
+        ], 
+        "path": "tabview/tabview-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-skin-sam-tabview", 
+            "yui2-element"
+        ]
+    }, 
+    "yui2-treeview": {
+        "optional": [
+            "yui2-skin-sam-calendar", 
+            "yui2-calendar", 
+            "yui2-animation"
+        ], 
+        "path": "treeview/treeview-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-skin-sam-treeview"
+        ]
+    }, 
+    "yui2-uploader": {
+        "path": "uploader/uploader-min.js", 
+        "requires": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-element"
+        ]
+    }, 
+    "yui2-utilities": {
+        "path": "utilities/utilities.js", 
+        "rollup": 8, 
+        "supersedes": [
+            "yui2-yahoo", 
+            "yui2-event", 
+            "yui2-dragdrop", 
+            "yui2-animation", 
+            "yui2-dom", 
+            "yui2-connection", 
+            "yui2-element", 
+            "yui2-yahoo-dom-event", 
+            "yui2-get", 
+            "yui2-yuiloader", 
+            "yui2-yuiloader-dom-event"
+        ]
+    }, 
+    "yui2-yahoo": {
+        "path": "yahoo/yahoo-min.js"
+    }, 
+    "yui2-yahoo-dom-event": {
+        "path": "yahoo-dom-event/yahoo-dom-event.js", 
+        "rollup": 3, 
+        "supersedes": [
+            "yui2-yahoo", 
+            "yui2-event", 
+            "yui2-dom"
+        ]
+    }, 
+    "yui2-yuiloader": {
+        "path": "yuiloader/yuiloader-min.js", 
+        "supersedes": [
+            "yui2-yahoo", 
+            "yui2-get"
+        ]
+    }, 
+    "yui2-yuiloader-dom-event": {
+        "path": "yuiloader-dom-event/yuiloader-dom-event.js", 
+        "rollup": 5, 
+        "supersedes": [
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-get", 
+            "yui2-yuiloader", 
+            "yui2-yahoo-dom-event"
+        ]
+    }, 
+    "yui2-yuitest": {
+        "optional": [
+            "yui2-event-simulate"
+        ], 
+        "path": "yuitest/yuitest-min.js", 
+        "requires": [
+            "yui2-skin-sam-yuitest", 
+            "yui2-yahoo", 
+            "yui2-dom", 
+            "yui2-event", 
+            "yui2-skin-sam-logger", 
+            "yui2-logger"
+        ]
+    }
+}

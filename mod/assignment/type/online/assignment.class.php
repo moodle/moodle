@@ -310,7 +310,7 @@ class assignment_online extends assignment_base {
         $mform->setDefault('var1', 0);
 
         $coursecontext = context_course::instance($COURSE->id);
-        plagiarism_get_form_elements_module($mform, $coursecontext);
+        plagiarism_get_form_elements_module($mform, $coursecontext, 'mod_assignment');
 
     }
 

@@ -684,9 +684,6 @@ class database_session extends session_stub {
         }
 
         if (isset($this->record->id)) {
-            $record = new stdClass();
-            $record->state              = 0;
-            $record->sid                = $sid;                         // might be regenerating sid
             $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
             $this->record->userid       = $userid;
             $this->record->timemodified = time();
