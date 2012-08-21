@@ -520,7 +520,7 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
         $service = $serviceorid;
     }
     if (!is_object($contextorid)){
-        $context = get_context_instance_by_id($contextorid, MUST_EXIST);
+        $context = context::instance_by_id($contextorid, MUST_EXIST);
     } else {
         $context = $contextorid;
     }

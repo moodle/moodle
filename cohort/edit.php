@@ -40,9 +40,9 @@ require_login();
 $category = null;
 if ($id) {
     $cohort = $DB->get_record('cohort', array('id'=>$id), '*', MUST_EXIST);
-    $context = get_context_instance_by_id($cohort->contextid, MUST_EXIST);
+    $context = context::instance_by_id($cohort->contextid, MUST_EXIST);
 } else {
-    $context = get_context_instance_by_id($contextid, MUST_EXIST);
+    $context = context::instance_by_id($contextid, MUST_EXIST);
     if ($context->contextlevel != CONTEXT_COURSECAT and $context->contextlevel != CONTEXT_SYSTEM) {
         print_error('invalidcontext');
     }

@@ -71,7 +71,7 @@ if ($param->delete && ($questionstomove = $DB->count_records("question", array("
     if (!$category = $DB->get_record("question_categories", array("id" => $param->delete))) {  // security
         print_error('nocate', 'question', $thispageurl->out(), $param->delete);
     }
-    $categorycontext = get_context_instance_by_id($category->contextid);
+    $categorycontext = context::instance_by_id($category->contextid);
     $qcobject->moveform = new question_move_form($thispageurl,
                 array('contexts'=>array($categorycontext), 'currentcat'=>$param->delete));
     if ($qcobject->moveform->is_cancelled()){

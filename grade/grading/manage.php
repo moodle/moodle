@@ -57,7 +57,7 @@ if (!is_null($areaid)) {
     if (is_null($contextid) or is_null($component) or is_null($area)) {
         throw new coding_exception('The caller script must identify the gradable area.');
     }
-    $context = get_context_instance_by_id($contextid, MUST_EXIST);
+    $context = context::instance_by_id($contextid, MUST_EXIST);
     $manager = get_grading_manager($context, $component, $area);
 }
 

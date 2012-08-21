@@ -246,7 +246,7 @@ class question_category_object {
             $listhtml = $list->to_html(0, array('str'=>$this->str));
             if ($listhtml){
                 echo $OUTPUT->box_start('boxwidthwide boxaligncenter generalbox questioncategories contextlevel' . $list->context->contextlevel);
-                echo $OUTPUT->heading(get_string('questioncatsfor', 'question', print_context_name(get_context_instance_by_id($context))), 3);
+                echo $OUTPUT->heading(get_string('questioncatsfor', 'question', print_context_name(context::instance_by_id($context))), 3);
                 echo $listhtml;
                 echo $OUTPUT->box_end();
             }
@@ -374,7 +374,7 @@ class question_category_object {
         }
         list($parentid, $contextid) = explode(',', $newparent);
         //moodle_form makes sure select element output is legal no need for further cleaning
-        require_capability('moodle/question:managecategory', get_context_instance_by_id($contextid));
+        require_capability('moodle/question:managecategory', context::instance_by_id($contextid));
 
         if ($parentid) {
             if(!($DB->get_field('question_categories', 'contextid', array('id' => $parentid)) == $contextid)) {
@@ -418,12 +418,12 @@ class question_category_object {
         }
 
         // Check permissions.
-        $fromcontext = get_context_instance_by_id($oldcat->contextid);
+        $fromcontext = context::instance_by_id($oldcat->contextid);
         require_capability('moodle/question:managecategory', $fromcontext);
 
         // If moving to another context, check permissions some more.
         if ($oldcat->contextid != $tocontextid) {
-            $tocontext = get_context_instance_by_id($tocontextid);
+            $tocontext = context::instance_by_id($tocontextid);
             require_capability('moodle/question:managecategory', $tocontext);
         }
 

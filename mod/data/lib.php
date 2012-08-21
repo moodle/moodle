@@ -1325,7 +1325,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
  * @return array an associative array of the user's rating permissions
  */
 function data_rating_permissions($contextid, $component, $ratingarea) {
-    $context = get_context_instance_by_id($contextid, MUST_EXIST);
+    $context = context::instance_by_id($contextid, MUST_EXIST);
     if ($component != 'mod_data' || $ratingarea != 'entry') {
         return null;
     }

@@ -637,7 +637,7 @@ function glossary_rating_permissions($contextid, $component, $ratingarea) {
         // default restrictive permissions.
         return null;
     }
-    $context = get_context_instance_by_id($contextid);
+    $context = context::instance_by_id($contextid);
     return array(
         'view'    => has_capability('mod/glossary:viewrating', $context),
         'viewany' => has_capability('mod/glossary:viewanyrating', $context),

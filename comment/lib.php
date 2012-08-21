@@ -120,7 +120,7 @@ class comment {
             $this->contextid = $this->context->id;
         } else if(!empty($options->contextid)) {
             $this->contextid = $options->contextid;
-            $this->context = get_context_instance_by_id($this->contextid);
+            $this->context = context::instance_by_id($this->contextid);
         } else {
             print_error('invalidcontext');
         }

@@ -63,7 +63,7 @@ class repository_local extends repository {
                 $itemid    = is_null($params['itemid']) ? NULL : clean_param($params['itemid'], PARAM_INT);
                 $filepath  = is_null($params['filepath']) ? NULL : clean_param($params['filepath'], PARAM_PATH);;
                 $filename  = is_null($params['filename']) ? NULL : clean_param($params['filename'], PARAM_FILE);
-                $context = get_context_instance_by_id(clean_param($params['contextid'], PARAM_INT));
+                $context = context::instance_by_id(clean_param($params['contextid'], PARAM_INT));
             }
         } else {
             $itemid   = null;

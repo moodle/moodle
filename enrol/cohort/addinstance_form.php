@@ -46,7 +46,7 @@ class enrol_cohort_addinstance_form extends moodleform {
               ORDER BY name ASC";
         $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $c) {
-            $context = get_context_instance_by_id($c->contextid);
+            $context = context::instance_by_id($c->contextid);
             if (!has_capability('moodle/cohort:view', $context)) {
                 continue;
             }

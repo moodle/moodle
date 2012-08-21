@@ -368,7 +368,7 @@ function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
           ORDER BY name ASC";
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach ($rs as $c) {
-        $context = get_context_instance_by_id($c->contextid);
+        $context = context::instance_by_id($c->contextid);
         if (!has_capability('moodle/cohort:view', $context)) {
             continue;
         }
@@ -394,7 +394,7 @@ function enrol_cohort_can_view_cohort($cohortid) {
     global $DB;
     $cohort = $DB->get_record('cohort', array('id' => $cohortid), 'id, contextid');
     if ($cohort) {
-        $context = get_context_instance_by_id($cohort->contextid);
+        $context = context::instance_by_id($cohort->contextid);
         if (has_capability('moodle/cohort:view', $context)) {
             return true;
         }
@@ -457,7 +457,7 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
         // Track offset
         $offset++;
         // Check capabilities
-        $context = get_context_instance_by_id($c->contextid);
+        $context = context::instance_by_id($c->contextid);
         if (!has_capability('moodle/cohort:view', $context)) {
             continue;
         }

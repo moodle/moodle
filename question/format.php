@@ -128,7 +128,7 @@ class qformat_default {
             debugging('You shouldn\'t call setCategory after setQuestions');
         }
         $this->category = $category;
-        $this->importcontext = get_context_instance_by_id($this->category->contextid);
+        $this->importcontext = context::instance_by_id($this->category->contextid);
     }
 
     /**
@@ -500,10 +500,10 @@ class qformat_default {
         }
 
         if ($this->contextfromfile && $contextid !== false) {
-            $context = get_context_instance_by_id($contextid);
+            $context = context::instance_by_id($contextid);
             require_capability('moodle/question:add', $context);
         } else {
-            $context = get_context_instance_by_id($this->category->contextid);
+            $context = context::instance_by_id($this->category->contextid);
         }
         $this->importcontext = $context;
 

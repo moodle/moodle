@@ -45,7 +45,7 @@ foreach ($allcohorts as $c) {
         // external cohorts can not be modified
         continue;
     }
-    $context = get_context_instance_by_id($c->contextid);
+    $context = context::instance_by_id($c->contextid);
     if (!has_capability('moodle/cohort:assign', $context)) {
         continue;
     }

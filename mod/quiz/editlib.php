@@ -183,7 +183,7 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
         print_error('invalidcategoryid', 'error');
     }
 
-    $catcontext = get_context_instance_by_id($category->contextid);
+    $catcontext = context::instance_by_id($category->contextid);
     require_capability('moodle/question:useall', $catcontext);
 
     // Find existing random questions in this category that are

@@ -103,7 +103,7 @@ class cohort_edit_form extends moodleform {
         }
         // always add current - this is not likely, but if the logic gets changed it might be a problem
         if (!isset($options[$currentcontextid])) {
-            $context = get_context_instance_by_id($currentcontextid, MUST_EXIST);
+            $context = context::instance_by_id($currentcontextid, MUST_EXIST);
             $options[$context->id] = print_context_name($syscontext);
         }
         return $options;

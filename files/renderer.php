@@ -965,7 +965,7 @@ class files_tree_viewer implements renderable {
         $this->path = array();
         while ($level) {
             $params = $level->get_params();
-            $context = get_context_instance_by_id($params['contextid']);
+            $context = context::instance_by_id($params['contextid']);
             // $this->context is current context
             if ($context->id != $this->context->id or empty($params['filearea'])) {
                 break;
