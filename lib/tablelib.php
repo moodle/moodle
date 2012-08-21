@@ -941,6 +941,7 @@ class flexible_table {
         } else {
             $this->start_html();
             $this->print_headers();
+            echo html_writer::start_tag('tbody');
         }
     }
 
@@ -1004,6 +1005,7 @@ class flexible_table {
             $this->print_nothing_to_display();
 
         } else {
+            echo html_writer::end_tag('tbody');
             echo html_writer::end_tag('table');
             echo html_writer::end_tag('div');
             $this->wrap_html_finish();
@@ -1051,6 +1053,7 @@ class flexible_table {
     function print_headers() {
         global $CFG, $OUTPUT;
 
+        echo html_writer::start_tag('thead');
         echo html_writer::start_tag('tr');
         foreach ($this->columns as $column => $index) {
 
@@ -1121,6 +1124,7 @@ class flexible_table {
         }
 
         echo html_writer::end_tag('tr');
+        echo html_writer::end_tag('thead');
     }
 
     /**
@@ -1717,6 +1721,7 @@ EOF;
 
     function output_headers($headers) {
         $this->table->print_headers();
+        echo html_writer::start_tag('tbody');
     }
 
     function add_data($row) {
