@@ -1515,6 +1515,12 @@ abstract class repository {
             $types = repository::get_editable_types($context);
             foreach ($types as $type) {
                 if (!empty($type) && $type->get_visible()) {
+                    // If the user does not have the permission to view the repository, it won't be displayed in
+                    // the list of instances. Hiding the link to create new instances will prevent the
+                    // user from creating them without being able to find them afterwards, which looks like a bug.
+                    if (!has_capability('repository/'.$type->get_typename().':view', $context)) {
+                        continue;
+                    }
                     $instanceoptionnames = repository::static_function($type->get_typename(), 'get_instance_option_names');
                     if (!empty($instanceoptionnames)) {
                         $baseurl->param('new', $type->get_typename());
