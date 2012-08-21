@@ -457,6 +457,12 @@ class block_manager {
         if (!$this->page->theme->enable_dock) {
             return false;
         }
+
+        // Do not dock the region when the user attemps to move a block.
+        if ($this->movingblock) {
+            return false;
+        }
+
         $this->check_is_loaded();
         $this->ensure_content_created($region, $output);
         foreach($this->visibleblockcontent[$region] as $instance) {
