@@ -186,19 +186,14 @@ class tinymce_texteditor extends texteditor {
         editor_tinymce_plugin::all_update_init_params($params, $context, $options);
 
         // Should we override the default toolbar layout unconditionally?
-        $customtoolbar = trim($config->customtoolbar);
+        $customtoolbar = self::parse_toolbar_setting($config->customtoolbar);
         if ($customtoolbar) {
             unset($params['theme_advanced_buttons1']);
             unset($params['theme_advanced_buttons2']);
             unset($params['theme_advanced_buttons3']);
             unset($params['theme_advanced_buttons4']);
-            $customtoolbar = str_replace("\r", "\n", $customtoolbar);
             $i = 1;
-            foreach (explode("\n", $customtoolbar) as $line) {
-                $line = preg_replace('/\s/', '', $line);
-                if ($line === '') {
-                    continue;
-                }
+            foreach ($customtoolbar as $line) {
                 $params['theme_advanced_buttons'.$i] = $line;
                 $i++;
             }
@@ -208,6 +203,32 @@ class tinymce_texteditor extends texteditor {
         unset($params['moodle_config']);
 
         return $params;
+    }
+
+    /**
+     * Parse the custom toolbar setting.
+     * @param string $customtoolbar
+     * @return array csv toolbar lines
+     */
+    public static function parse_toolbar_setting($customtoolbar) {
+        $result = array();
+        $customtoolbar = trim($customtoolbar);
+        if ($customtoolbar === '') {
+            return $result;
+        }
+        $customtoolbar = str_replace("\r", "\n", $customtoolbar);
+        $customtoolbar = strtolower($customtoolbar);
+        foreach (explode("\n", $customtoolbar) as $line) {
+            $line = preg_replace('/[^a-z0-9_,\|\-]/', ',', $line);
+            $line = str_replace('|', ',|,', $line);
+            $line = preg_replace('/,,+/', ',', $line);
+            $line = trim($line, ',|');
+            if ($line === '') {
+                continue;
+            }
+            $result[] = $line;
+        }
+        return $result;
     }
 
     /**
