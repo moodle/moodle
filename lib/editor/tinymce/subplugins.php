@@ -29,7 +29,7 @@ $delete  = optional_param('delete', '', PARAM_PLUGIN);
 $confirm = optional_param('confirm', '', PARAM_BOOL);
 $return  = optional_param('return', 'overview', PARAM_ALPHA);
 
-$PAGE->set_context(null);
+$PAGE->set_context(context_system::instance());
 $PAGE->set_url('/lib/editor/tinymce/subplugins.php', array('delete'=>$delete));
 
 require_login();
