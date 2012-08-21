@@ -106,12 +106,16 @@ if (!empty($new)){
     $type = repository::get_type_by_id($instance->options['typeid']);
 }
 
-if (isset($type) && !$type->get_visible()) {
-    print_error('typenotvisible', 'repository', $baseurl);
-}
-
-if (isset($type) && !$type->get_contextvisibility($context)) {
-    print_error('usercontextrepositorydisabled', 'repository', $baseurl);
+if (isset($type)) {
+    if (!$type->get_visible()) {
+        print_error('typenotvisible', 'repository', $baseurl);
+    }
+    // Prevents the user from creating/editing an instance if the repository is not visible in
+    // this context OR if the user does not have the capability to view this repository in this context.
+    $canviewrepository = has_capability('repository/'.$type->get_typename().':view', $context);
+    if (!$type->get_contextvisibility($context) || !$canviewrepository) {
+        print_error('usercontextrepositorydisabled', 'repository', $baseurl);
+    }
 }
 
 /// Create navigation links
