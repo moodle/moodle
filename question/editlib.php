@@ -1717,7 +1717,7 @@ function question_get_display_preference($param, $default, $type, $thispageurl) 
 function require_login_in_context($contextorid = null){
     global $DB, $CFG;
     if (!is_object($contextorid)){
-        $context = context::instance_by_id($contextorid);
+        $context = context::instance_by_id($contextorid, IGNORE_MISSING);
     } else {
         $context = $contextorid;
     }

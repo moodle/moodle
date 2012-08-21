@@ -1175,7 +1175,7 @@ abstract class repository {
             $fileinfo = null;
             $params = file_storage::unpack_reference($reference, true);
             if (is_array($params)) {
-                $context = context::instance_by_id($params['contextid']);
+                $context = context::instance_by_id($params['contextid'], IGNORE_MISSING);
                 if ($context) {
                     $browser = get_file_browser();
                     $fileinfo = $browser->get_file_info($context, $params['component'], $params['filearea'], $params['itemid'], $params['filepath'], $params['filename']);
