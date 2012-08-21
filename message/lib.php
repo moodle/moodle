@@ -844,7 +844,7 @@ function message_print_recent_notifications($user=null) {
 
     $showicontext = false;
     $showotheruser = false;
-    message_print_recent_messages_table($notifications, $user, $showotheruser, $showicontext);
+    message_print_recent_messages_table($notifications, $user, $showotheruser, $showicontext, true);
 }
 
 /**
@@ -854,9 +854,10 @@ function message_print_recent_notifications($user=null) {
  * @param object $user the current user
  * @param bool $showotheruser display information on the other user?
  * @param bool $showicontext show text next to the action icons?
+ * @param bool $forcetexttohtml Force text to go through @see text_to_html() via @see format_text()
  * @return void
  */
-function message_print_recent_messages_table($messages, $user=null, $showotheruser=true, $showicontext=false) {
+function message_print_recent_messages_table($messages, $user=null, $showotheruser=true, $showicontext=false, $forcetexttohtml=false) {
     global $OUTPUT;
     static $dateformat;
 
@@ -914,7 +915,7 @@ function message_print_recent_messages_table($messages, $user=null, $showotherus
         }
 
         echo html_writer::tag('span', userdate($message->timecreated, $dateformat), array('class' => 'messagedate'));
-        echo html_writer::tag('span', format_text($messagetoprint, FORMAT_HTML), array('class' => 'themessage'));
+        echo html_writer::tag('span', format_text($messagetoprint, $forcetexttohtml?FORMAT_MOODLE:FORMAT_HTML), array('class' => 'themessage'));
         echo message_format_contexturl($message);
         echo html_writer::end_tag('div');//end singlemessage
     }
