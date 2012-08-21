@@ -238,6 +238,8 @@ class core_message_renderer extends plugin_renderer_base {
 
         $number_procs = count($processors);
         // Populate the table with rows
+        asort($providers);
+        ksort($providers);
         foreach ( $providers as $provider) {
             $preferencebase = $provider->component.'_'.$provider->name;
 
