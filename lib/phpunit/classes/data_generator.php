@@ -240,11 +240,11 @@ EOD;
         }
 
         if (!isset($record['descriptionformat'])) {
-            $record['description'] = FORMAT_MOODLE;
+            $record['descriptionformat'] = FORMAT_MOODLE;
         }
 
         if (!isset($record['parent'])) {
-            $record['descriptionformat'] = 0;
+            $record['parent'] = 0;
         }
 
         if (empty($record['parent'])) {
@@ -310,12 +310,12 @@ EOD;
             $record['numsections'] = 5;
         }
 
-        if (!isset($record['description'])) {
-            $record['description'] = "Test course $i\n$this->loremipsum";
+        if (!isset($record['summary'])) {
+            $record['summary'] = "Test course $i\n$this->loremipsum";
         }
 
-        if (!isset($record['descriptionformat'])) {
-            $record['description'] = FORMAT_MOODLE;
+        if (!isset($record['summaryformat'])) {
+            $record['summaryformat'] = FORMAT_MOODLE;
         }
 
         if (!isset($record['category'])) {
