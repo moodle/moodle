@@ -949,18 +949,18 @@ function assign_user_outline($course, $user, $coursemodule, $assignment) {
  * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
  * @return bool True if completed, false if not, $type if conditions not set.
  */
-function assign_get_completion_state($course,$cm,$userid,$type) {
+function assign_get_completion_state($course, $cm, $userid, $type) {
     global $CFG,$DB;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
     $assign = new assign(null, $cm, $course);
 
-    // If completion option is enabled, evaluate it and return true/false
-    if($assign->get_instance()->completionsubmit) {
+    // If completion option is enabled, evaluate it and return true/false.
+    if ($assign->get_instance()->completionsubmit) {
         $submission = $DB->get_record('assign_submission', array('assignment'=>$assign->get_instance()->id, 'userid'=>$userid), '*', IGNORE_MISSING);
         return $submission && $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED;
     } else {
-        // Completion option is not enabled so just return $type
+        // Completion option is not enabled so just return $type.
         return $type;
     }
 }
