@@ -315,7 +315,7 @@ class core_course_external_testcase extends externallib_advanced_testcase {
         $course2['format'] = 'weeks';
         $course2['showgrades'] = 1;
         $course2['newsitems'] = 3;
-        $course2['startdate'] = 32882306400; // 01/01/3012
+        $course2['startdate'] = 1420092000; // 01/01/2015
         $course2['numsections'] = 4;
         $course2['maxbytes'] = 100000;
         $course2['showreports'] = 1;
