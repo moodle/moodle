@@ -225,7 +225,7 @@ class grade_report_grader extends grade_report {
                 $changedgrades = true;
 
             } else if ($datatype === 'feedback') {
-                if ($oldvalue->feedback === $postedvalue) {
+                if (($oldvalue->feedback === $postedvalue) or ($oldvalue->feedback === NULL and empty($postedvalue))) {
                     continue;
                 }
             }
