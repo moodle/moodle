@@ -417,7 +417,7 @@ class mod_assign_renderer extends plugin_renderer_base {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('timeremaining', 'assign'));
             if ($duedate - $time <= 0) {
-                if (!$status->submission || $status->submission != ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                if (!$status->submission || $status->submission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
                     if ($status->submissionsenabled) {
                         $cell2 = new html_table_cell(get_string('overdue', 'assign', format_time($time - $duedate)));
                         $cell2->attributes = array('class'=>'overdue');
