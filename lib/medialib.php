@@ -528,8 +528,8 @@ class core_media_player_youtube extends core_media_player_external {
     protected function embed_external(moodle_url $url, $name, $width, $height, $options) {
         global $CFG;
 
-        $site = $this->matches[1];
-        $videoid = $this->matches[3];
+        $site = 'www.youtube.com';
+        $videoid = end($this->matches);
 
         $info = trim($name);
         if (empty($info) or strpos($info, 'http') === 0) {
@@ -564,10 +564,15 @@ OET;
     }
 
     protected function get_regex() {
+        // Regex for standard youtube link
+         $link = '(youtube(-nocookie)?\.com/(?:watch\?v=|v/))';
+        // Regex for shortened youtube link
+        $shortlink = '((youtu|y2u)\.be/)';
+
         // Initial part of link.
-        $start = '~^https?://(www\.youtube(-nocookie)?\.com)/';
-        // Middle bit: either watch?v= or v/.
-        $middle = '(?:watch\?v=|v/)([a-z0-9\-_]+)';
+         $start = '~^https?://(www\.)?(' . $link . '|' . $shortlink . ')';
+        // Middle bit: Video key value
+        $middle = '([a-z0-9\-_]+)';
         return $start . $middle . core_media_player_external::END_LINK_REGEX_PART;
     }
 
@@ -578,7 +583,7 @@ OET;
     }
 
     public function get_embeddable_markers() {
-        return array('youtube');
+        return array('youtube.com', 'youtube-nocookie.com', 'youtu.be', 'y2u.be');
     }
 }
 
