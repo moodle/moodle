@@ -68,6 +68,6 @@ if ($ADMIN->fulltree) {
             get_string('defaultrole', 'enrol_paypal'), get_string('defaultrole_desc', 'enrol_paypal'), $student->id, $options));
     }
 
-    $settings->add(new admin_setting_configtext('enrol_paypal/enrolperiod',
-        get_string('enrolperiod', 'enrol_paypal'), get_string('enrolperiod_desc', 'enrol_paypal'), 0, PARAM_INT));
+    $settings->add(new admin_setting_configduration('enrol_paypal/enrolperiod',
+        get_string('enrolperiod', 'enrol_paypal'), get_string('enrolperiod_desc', 'enrol_paypal'), 0));
 }

@@ -2769,6 +2769,168 @@ class admin_setting_configtime extends admin_setting {
 
 
 /**
+ * Seconds duration setting.
+ *
+ * @copyright 2012 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_configduration extends admin_setting {
+
+    /** @var int default duration unit */
+    protected $defaultunit;
+
+    /**
+     * Constructor
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config,
+     *                     or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $visiblename localised name
+     * @param string $description localised long description
+     * @param mixed $defaultsetting string or array depending on implementation
+     * @param int $defaultunit - day, week, etc. (in seconds)
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting, $defaultunit = 86400) {
+        if (is_number($defaultsetting)) {
+            $defaultsetting = self::parse_seconds($defaultsetting);
+        }
+        $units = self::get_units();
+        if (isset($units[$defaultunit])) {
+            $this->defaultunit = $defaultunit;
+        } else {
+            $this->defaultunit = 86400;
+        }
+        parent::__construct($name, $visiblename, $description, $defaultsetting);
+    }
+
+    /**
+     * Returns selectable units.
+     * @static
+     * @return array
+     */
+    protected static function get_units() {
+        return array(
+            604800 => get_string('weeks'),
+            86400 => get_string('days'),
+            3600 => get_string('hours'),
+            60 => get_string('minutes'),
+            1 => get_string('seconds'),
+        );
+    }
+
+    /**
+     * Converts seconds to some more user friendly string.
+     * @static
+     * @param int $seconds
+     * @return string
+     */
+    protected static function get_duration_text($seconds) {
+        if (empty($seconds)) {
+            return get_string('none');
+        }
+        $data = self::parse_seconds($seconds);
+        switch ($data['u']) {
+            case (60*60*24*7):
+                return get_string('numweeks', '', $data['v']);
+            case (60*60*24):
+                return get_string('numdays', '', $data['v']);
+            case (60*60):
+                return get_string('numhours', '', $data['v']);
+            case (60):
+                return get_string('numminutes', '', $data['v']);
+            default:
+                return get_string('numseconds', '', $data['v']*$data['u']);
+        }
+    }
+
+    /**
+     * Finds suitable units for given duration.
+     * @static
+     * @param int $seconds
+     * @return array
+     */
+    protected static function parse_seconds($seconds) {
+        foreach (self::get_units() as $unit => $unused) {
+            if ($seconds % $unit === 0) {
+                return array('v'=>(int)($seconds/$unit), 'u'=>$unit);
+            }
+        }
+        return array('v'=>(int)$seconds, 'u'=>1);
+    }
+
+    /**
+     * Get the selected duration as array.
+     *
+     * @return mixed An array containing 'v'=>xx, 'u'=>xx, or null if not set
+     */
+    public function get_setting() {
+        $seconds = $this->config_read($this->name);
+        if (is_null($seconds)) {
+            return null;
+        }
+
+        return self::parse_seconds($seconds);
+    }
+
+    /**
+     * Store the duration as seconds.
+     *
+     * @param array $data Must be form 'h'=>xx, 'm'=>xx
+     * @return bool true if success, false if not
+     */
+    public function write_setting($data) {
+        if (!is_array($data)) {
+            return '';
+        }
+
+        $seconds = (int)($data['v']*$data['u']);
+        if ($seconds < 0) {
+            return get_string('errorsetting', 'admin');
+        }
+
+        $result = $this->config_write($this->name, $seconds);
+        return ($result ? '' : get_string('errorsetting', 'admin'));
+    }
+
+    /**
+     * Returns duration text+select fields.
+     *
+     * @param array $data Must be form 'v'=>xx, 'u'=>xx
+     * @param string $query
+     * @return string duration text+select fields and wrapping div(s)
+     */
+    public function output_html($data, $query='') {
+        $default = $this->get_defaultsetting();
+
+        if (is_number($default)) {
+            $defaultinfo = self::get_duration_text($default);
+        } else if (is_array($default)) {
+            $defaultinfo = self::get_duration_text($default['v']*$default['u']);
+        } else {
+            $defaultinfo = null;
+        }
+
+        $units = self::get_units();
+
+        $return = '<div class="form-duration defaultsnext">';
+        $return .= '<input type="text" size="5" id="'.$this->get_id().'v" name="'.$this->get_full_name().'[v]" value="'.s($data['v']).'" />';
+        $return .= '<select id="'.$this->get_id().'u" name="'.$this->get_full_name().'[u]">';
+        foreach ($units as $val => $text) {
+            $selected = '';
+            if ($data['v'] == 0) {
+                if ($val == $this->defaultunit) {
+                    $selected = ' selected="selected"';
+                }
+            } else if ($val == $data['u']) {
+                $selected = ' selected="selected"';
+            }
+            $return .= '<option value="'.$val.'"'.$selected.'>'.$text.'</option>';
+        }
+        $return .= '</select></div>';
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', $defaultinfo, $query);
+    }
+}
+
+
+/**
  * Used to validate a textarea used for ip addresses
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
