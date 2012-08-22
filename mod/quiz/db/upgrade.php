@@ -1223,7 +1223,7 @@ function xmldb_quiz_upgrade($oldversion) {
         $DB->set_field('quiz', 'questiondecimalpoints', -1, array('questiondecimalpoints' => -2));
 
         // Quiz savepoint reached.
-        upgrade_mod_savepoint(true, 2012061703, 'quiz');
+        upgrade_mod_savepoint(true, 2011112904, 'quiz');
     }
 
     return true;
