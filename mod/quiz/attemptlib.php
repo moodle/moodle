@@ -1687,7 +1687,7 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
                         get_string('showall', 'quiz'));
             }
         }
-        $html .= $output->finish_review_link($this->attemptobj->view_url());
+        $html .= $output->finish_review_link($this->attemptobj);
         $html .= $this->render_restart_preview_link($output);
         return $html;
     }
