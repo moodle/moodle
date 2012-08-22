@@ -75,14 +75,17 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/createnewcategories', get_string('createnewcategories', 'enrol_imsenterprise'), get_string('createnewcategories_desc', 'enrol_imsenterprise'), 0));
 
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imsunenrol', get_string('allowunenrol', 'enrol_imsenterprise'), get_string('allowunenrol_desc', 'enrol_imsenterprise'), 0));
-    
-    $settings->add(new admin_setting_heading('enrol_imsenterprise_coursesettings_names', get_string('names', 'enrol_imsenterprise'), get_string('imsnamesdescription', 'enrol_imsenterprise')));
 
     if (!during_initial_install()) {
-        $imsnames = new imsenterprise_names();
-        $assignablenames = array('ignore' => get_string('ignore', 'enrol_imsenterprise')) + $imsnames->get_imsnames();
-        foreach ($imsnames->get_coursenames() as $coursename) {
-            $settings->add(new admin_setting_configselect('enrol_imsenterprise/imsnamemap'.$coursename, get_string($coursename, 'enrol_imsenterprise'), '', (string)$imsnames->determine_default_namemapping($coursename), $assignablenames));
+        $imscourses = new imsenterprise_courses();
+        foreach ($imscourses->get_courseattrs() as $courseattr) {
+
+            // The assignable values of this course attribute
+            $assignablevalues = $imscourses->get_imsnames($courseattr);
+            $name = get_string('setting' . $courseattr, 'enrol_imsenterprise');
+            $description = get_string('setting' . $courseattr . 'description', 'enrol_imsenterprise');
+            $defaultvalue = (string) $imscourses->determine_default_coursemapping($courseattr);
+            $settings->add(new admin_setting_configselect('enrol_imsenterprise/imscoursemap' . $courseattr, $name, $description, $defaultvalue, $assignablevalues));
         }
     }
 

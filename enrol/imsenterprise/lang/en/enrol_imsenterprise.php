@@ -42,9 +42,8 @@ Users are searched for first by their "idnumber", and second by their Moodle use
 $string['cronfrequency'] = 'Frequency of processing';
 $string['deleteusers'] = 'Delete user accounts when specified in IMS data';
 $string['deleteusers_desc'] = 'If enabled, IMS Enterprise enrolment data can specify the deletion of user accounts (if the "recstatus" flag is set to 3, which represents deletion of an account). As is standard in Moodle, the user record isn\'t actually deleted from Moodle\'s database, but a flag is set to mark the account as deleted.';
-$string['pluginname_desc'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.  The file must follow the IMS Enterprise specifications containing person, group, and membership XML elements.';
 $string['doitnow'] = 'perform an IMS Enterprise import right now';
-$string['pluginname'] = 'IMS Enterprise file';
+$string['emptyattribute'] = 'Leave it empty';
 $string['filelockedmail'] = 'The text file you are using for IMS-file-based enrolments ({$a}) can not be deleted by the cron process.  This usually means the permissions are wrong on it.  Please fix the permissions so that Moodle can delete the file, otherwise it might be processed repeatedly.';
 $string['filelockedmailsubject'] = 'Important error: Enrolment file';
 $string['fixcasepersonalnames'] = 'Change personal names to Title Case';
@@ -56,12 +55,20 @@ $string['mailadmins'] = 'Notify admin by email';
 $string['mailusers'] = 'Notify users by email';
 $string['messageprovider:imsenterprise_enrolment'] = 'IMS Enterprise enrolment messages';
 $string['miscsettings'] = 'Miscellaneous';
+$string['pluginname'] = 'IMS Enterprise file';
+$string['pluginname_desc'] = 'This method will repeatedly check for and process a specially-formatted text file in the location that you specify.  The file must follow the IMS Enterprise specifications containing person, group, and membership XML elements.';
 $string['processphoto'] = 'Add user photo data to profile';
 $string['processphotowarning'] = 'Warning: Image processing is likely to add a significant burden to the server. You are recommended not to activate this option if large numbers of students are expected to be processed.';
 $string['restricttarget'] = 'Only process data if the following target is specified';
 $string['restricttarget_desc'] = 'An IMS Enterprise data file could be intended for multiple "targets" - different LMSes, or different systems within a school/university. It\'s possible to specify in the Enterprise file that the data is intended for one or more named target systems, by naming them in <target> tags contained within the <properties> tag.
 
 In general you don\'t need to worry about this. Leave the setting blank and Moodle will always process the data file, no matter whether a target is specified or not. Otherwise, fill in the exact name that will be output inside the <target> tag.';
+$string['settingfullname'] = 'IMS description tag for the course full name';
+$string['settingfullnamedescription'] = 'The full name is a required course field so you have to define the selected description tag in your IMS Enterprise file';
+$string['settingshortname'] = 'IMS description tag for the course short name';
+$string['settingshortnamedescription'] = 'The short name is a required course field so you have to define the selected description tag in your IMS Enterprise file';
+$string['settingsummary'] = 'IMS description tag for the course summary';
+$string['settingsummarydescription'] = 'Is an optional field, select \'Leave it empty\' if you dont\'t want to specify a course summary';
 $string['sourcedidfallback'] = 'Use the &quot;sourcedid&quot; for a person\'s userid if the &quot;userid&quot; field is not found';
 $string['sourcedidfallback_desc'] = 'In IMS data, the <sourcedid> field represents the persistent ID code for a person as used in the source system. The <userid> field is a separate field which should contain the ID code used by the user when logging in. In many cases these two codes may be the same - but not always.
 

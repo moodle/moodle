@@ -83,34 +83,62 @@ class imsenterprise_roles {
 
 }  // class
 
-class imsenterprise_names {
-    private $imsnames;
-    private $coursenames;
 
+/**
+ * Mapping between Moodle course attributes and IMS enterprise group description tags
+ *
+ * @package   enrol_imsenterprise
+ * @copyright 2011 Aaron C Spike
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class imsenterprise_courses {
+
+    private $imsnames;
+    private $courseattrs;
+
+    /**
+     * Loads default
+     */
     function __construct() {
         $this->imsnames = array(
-        'long'=>'long', 
-        'short'=>'short', 
-        'full'=>'full', 
-        'coursecode'=>'coursecode',
-	);
-        $this->coursenames = array('fullname', 'shortname', 'summary');
-    }
-
-    function get_imsnames() {
-        return $this->imsnames;
-    }
-
-    function get_coursenames() {
-        return $this->coursenames;
+            'short' => 'short',
+            'long' => 'long',
+            'full' => 'full',
+            'coursecode' => 'coursecode');
+        $this->courseattrs = array('shortname', 'fullname', 'summary');
     }
 
     /**
-    * This function is only used when first setting up the plugin, to
-    * decide which name assignments to recommend by default.
-    */
-    function determine_default_namemapping($coursename) {
-        switch($coursename) {
+     * Returns the assignable values for the course attribute
+     * @param string $courseattr The course attribute (shortname, fullname...)
+     * @return array Array of assignable values
+     */
+    function get_imsnames($courseattr) {
+
+        $values = $this->imsnames;
+        if ($courseattr == 'summary') {
+            $values = array_merge(array('ignore' => get_string('emptyattribute', 'enrol_imsenterprise')), $values);
+        }
+        return $values;
+    }
+
+    /**
+     * courseattrs getter
+     * @return array
+     */
+    function get_courseattrs() {
+        return $this->courseattrs;
+    }
+
+    /**
+     * This function is only used when first setting up the plugin, to
+     * decide which name assignments to recommend by default.
+     *
+     * @param string $coursename
+     * @return string
+     */
+    function determine_default_coursemapping($courseattr) {
+        switch($courseattr) {
             case 'fullname':
                 $imsname = 'short';
                 break;
@@ -118,10 +146,10 @@ class imsenterprise_names {
                 $imsname = 'coursecode';
                 break;
             default:
-                return 'ignore'; // Zero for no match
+                $imsname = 'ignore';
         }
+
         return $imsname;
     }
-
 
 }  // class

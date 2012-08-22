@@ -97,7 +97,7 @@ function cron() {
 
         // Make sure we understand how to map the IMS-E roles to Moodle roles
         $this->load_role_mappings();
-        // Make sure we understand how to map the IMS-E course names to Moodle course names
+        // Make sure we understand how to map the IMS-E course names to Moodle course names.
         $this->load_course_mappings();
 
         $md5 = md5_file($filename); // NB We'll write this value back to the database at the end of the cron
@@ -319,10 +319,10 @@ function process_group_tag($tagcontents) {
     }
 
     if (preg_match('{<description>.*?<long>(.*?)</long>.*?</description>}is', $tagcontents, $matches)) {
-        $group->longname = trim($matches[1]);
+        $group->long = trim($matches[1]);
     }
     if (preg_match('{<description>.*?<short>(.*?)</short>.*?</description>}is', $tagcontents, $matches)) {
-        $group->shortname = trim($matches[1]);
+        $group->short = trim($matches[1]);
     }
     if (preg_match('{<description>.*?<full>(.*?)</full>.*?</description>}is', $tagcontents, $matches)) {
         $group->full = trim($matches[1]);
@@ -365,28 +365,36 @@ function process_group_tag($tagcontents) {
                 if (!$createnewcourses) {
                     $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
                 } else {
-                    // Set shortname to description or description to shortname if one is set but not the other.
-                    $nodescription = !isset($group->longname);
-                    $noshortname = !isset($group->shortname);
-                    if ( $nodescription && $noshortname) {
-                        // If neither short nor long description are set let if fail
-                        $this->log_line("Neither long nor short name are set for $coursecode");
-                    } else if ($nodescription) {
-                        // If short and ID exist, then give the long short's value, then give short the ID's value
-                        $group->longname = $group->shortname;
-                        $group->shortname = $coursecode;
-                    } else if ($noshortname) {
-                        // If long and ID exist, then map long to long, then give short the ID's value.
-                        $group->shortname = $coursecode;
-                    }
-                    $group->full = format_text($group->full, FORMAT_HTML);
 
                     // Create the (hidden) course(s) if not found
                     $courseconfig = get_config('moodlecourse'); // Load Moodle Course shell defaults
+
+                    // New course.
                     $course = new stdClass();
-                    foreach ($this->coursemappings as $coursename => $imsname) {
-                        $course->$coursename = $group->$imsname;
+                    foreach ($this->coursemappings as $courseattr => $imsname) {
+
+                        if ($imsname == 'ignore') {
+                            continue;
+                        }
+
+                        // Check if the IMS file contains the mapped tag, otherwise fallback on coursecode.
+                        if ($imsname == 'coursecode') {
+                            $course->{$courseattr} = $coursecode;
+                        } else if (!empty($group->{$imsname})) {
+                            $course->{$courseattr} = $group->{$imsname};
+                        } else {
+                            $this->log_line('No ' . $imsname . ' description tag found for ' . $coursecode . ' coursecode, using ' . $coursecode . ' instead');
+                            $course->{$courseattr} = $coursecode;
+                        }
+
+                        if ($courseattr == 'summary') {
+                            $format = FORMAT_HTML;
+                        } else {
+                            $format = FORMAT_PLAIN;
+                        }
+                        $course->{$courseattr} = format_text($course->$courseattr, $format);
                     }
+
                     $course->idnumber = $coursecode;
                     $course->format = $courseconfig->format;
                     $course->visible = $courseconfig->visible;
@@ -425,7 +433,6 @@ function process_group_tag($tagcontents) {
                     $course->startdate = time();
                     // Choose a sort order that puts us at the start of the list!
                     $course->sortorder = 0;
-
                     $courseid = $DB->insert_record('course', $course);
 
                     // Setup default enrolment plugins
@@ -795,18 +802,17 @@ function load_role_mappings() {
 
     /**
      * Load the name mappings (from the config), so we can easily refer to
-     * how an IMS-E course properties corresponds to a Moodle course properties 
+     * how an IMS-E course properties corresponds to a Moodle course properties
      */
     function load_course_mappings() {
         require_once('locallib.php');
 
-        $imsnames = new imsenterprise_names();
-        $coursenames = $imsnames->get_coursenames();
-        $imsnames = $imsnames->get_imsnames();
+        $imsnames = new imsenterprise_courses();
+        $courseattrs = $imsnames->get_courseattrs();
 
         $this->coursemappings = array();
-        foreach($coursenames as $coursename) {
-            $this->coursemappings[$coursename] = $this->get_config('imsrolemap' . $coursename);
+        foreach($courseattrs as $courseattr) {
+            $this->coursemappings[$courseattr] = $this->get_config('imscoursemap' . $courseattr);
         }
     }
 
