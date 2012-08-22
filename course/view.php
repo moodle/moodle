@@ -105,7 +105,7 @@
         $coursesections = $modinfo->get_section_info($section, MUST_EXIST);
 
         // Check user is allowed to see it.
-        if (!$coursesections->uservisible) {
+        if (!$coursesections->uservisible && !empty($section->availableinfo)) {
             // Note: We actually already know they don't have this capability
             // or uservisible would have been true; this is just to get the
             // correct error message shown.

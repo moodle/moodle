@@ -448,7 +448,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $links = array('previous' => '', 'next' => '');
         $back = $sectionno - 1;
         while ($back > 0 and empty($links['previous'])) {
-            if ($canviewhidden || $sections[$back]->visible) {
+            if ($canviewhidden || $sections[$back]->uservisible) {
                 $params = array();
                 if (!$sections[$back]->visible) {
                     $params = array('class' => 'dimmed_text');
@@ -462,7 +462,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         $forward = $sectionno + 1;
         while ($forward <= $course->numsections and empty($links['next'])) {
-            if ($canviewhidden || $sections[$forward]->visible) {
+            if ($canviewhidden || $sections[$forward]->uservisible) {
                 $params = array();
                 if (!$sections[$forward]->visible) {
                     $params = array('class' => 'dimmed_text');
