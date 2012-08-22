@@ -229,7 +229,19 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param $url contains a url for the review link
      */
     public function finish_review_link($url) {
-        if ($this->page->pagelayout == 'popup') {
+
+        // This is an ugly hack to fix MDL-34733 without changing the renderer API.
+        global $attemptobj;
+        if (!empty($attemptobj)) {
+            // I think that every page in standard Moodle that ends up calling
+            // this method will actually end up coming down this branch.
+            $inpopup = $attemptobj->get_access_manager(time())->attempt_must_be_in_popup();
+        } else {
+            // Else fall back to old (not very good) heuristic.
+            $inpopup = $this->page->pagelayout == 'popup';
+        }
+
+        if ($inpopup) {
             // In a 'secure' popup window.
             $this->page->requires->js_init_call('M.mod_quiz.secure_window.init_close_button',
                     array($url), quiz_get_js_module());
