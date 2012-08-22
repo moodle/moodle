@@ -89,7 +89,7 @@ function filter_algebra_image($imagefile, $tex= "", $height="", $width="", $alig
 }
 
 class filter_algebra extends moodle_text_filter {
-    function filter($text, array $options = array()){
+    public function filter($text, array $options = array()){
         global $CFG, $DB;
 
         /// Do a quick check using stripos to avoid unnecessary wor
@@ -114,9 +114,6 @@ class filter_algebra extends moodle_text_filter {
 #        return $text;
 #    }
 
-
-        $text .= ' ';
-
         preg_match_all('/@(@@+)([^@])/',$text,$matches);
         for ($i=0;$i<count($matches[0]);$i++) {
             $replacement = str_replace('@','&#x00040;',$matches[1][$i]).$matches[2][$i];
@@ -129,6 +126,17 @@ class filter_algebra extends moodle_text_filter {
         preg_match_all('/<algebra>(.+?)<\/algebra>|@@(.+?)@@/is', $text, $matches);
         for ($i=0; $i<count($matches[0]); $i++) {
             $algebra = $matches[1][$i] . $matches[2][$i];
+
+            // Look for some common false positives, and skip processing them.
+            if ($algebra == 'PLUGINFILE' || $algebra == 'DRAFTFILE') {
+                // Raw pluginfile URL.
+                continue;
+            }
+            if (preg_match('/^ -\d+(,\d+)? \+\d+(,\d+)? $/', $algebra)) {
+                // Part of a unified diff.
+                continue;
+            }
+
             $algebra = str_replace('<nolink>','',$algebra);
             $algebra = str_replace('</nolink>','',$algebra);
             $algebra = str_replace('<span class="nolink">','',$algebra);
@@ -159,7 +167,7 @@ class filter_algebra extends moodle_text_filter {
                $algebra = str_replace('upsilon','zupslon',$algebra);
                $algebra = preg_replace('!\r\n?!',' ',$algebra);
                $algebra = escapeshellarg($algebra);
-               if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
+               if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
                   $cmd  = "cd $CFG->dirroot\\filter\\algebra & algebra2tex.pl $algebra";
                } else {
                   $cmd  = "cd $CFG->dirroot/filter/algebra; ./algebra2tex.pl $algebra";
@@ -220,6 +228,7 @@ class filter_algebra extends moodle_text_filter {
                   $texexp = preg_replace('/\\\int\\\left\((.+?d[a-z])\\\right\)/s','\int '. "\$1 ",$texexp);
                   $texexp = preg_replace('/\\\lim\\\left\((.+?),(.+?),(.+?)\\\right\)/s','\lim_'. "{\$2\\to \$3}\$1 ",$texexp);
                   $texexp = str_replace('\mbox', '', $texexp); // now blacklisted in tex, sorry
+                  $texcache = new stdClass();
                   $texcache->filter = 'algebra';
                   $texcache->version = 1;
                   $texcache->md5key = $md5;
