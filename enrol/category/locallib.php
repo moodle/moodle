@@ -286,7 +286,10 @@ function enrol_category_sync_full($verbose = false) {
         }
         return 0;
     }
-    $rolenames = role_fix_names($roles, null, ROLENAME_SHORT, true);
+    $rolenames = array();
+    foreach($roles as $role) {
+        $rolenames[$role->id] = $role->shortname;
+    }
     if ($verbose) {
         mtrace('Synchronising category enrolments for roles: '.implode(', ', $rolenames).'...');
     }
