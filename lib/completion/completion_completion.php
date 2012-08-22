@@ -165,7 +165,11 @@ class completion_completion extends data_object {
         $this->timecompleted = $timecomplete;
 
         // Save record
-        return $this->_save();
+        if ($result = $this->_save()) {
+            events_trigger('course_completed', $this->get_record_data());
+        }
+
+        return $result;
     }
 
     /**
