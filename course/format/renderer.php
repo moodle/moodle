@@ -291,9 +291,11 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o .= html_writer::tag('div', '', array('class' => 'right side'));
         $o .= html_writer::start_tag('div', array('class' => 'content'));
 
-        $title = html_writer::tag('a', get_section_name($course, $section),
-                array('href' => course_get_url($course, $section->section), 'class' => $linkclasses));
-        $o .= $this->output->heading($title, 3, 'section-title');
+        if ($section->uservisible) {
+            $title = html_writer::tag('a', get_section_name($course, $section),
+                    array('href' => course_get_url($course, $section->section), 'class' => $linkclasses));
+            $o .= $this->output->heading($title, 3, 'section-title');
+        }
 
         $o.= html_writer::start_tag('div', array('class' => 'summarytext'));
         $o.= $this->format_summary_text($section);
