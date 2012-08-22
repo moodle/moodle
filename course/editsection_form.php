@@ -38,6 +38,7 @@ class editsection_form extends moodleform {
         $course = $this->_customdata['course'];
 
         if (!empty($CFG->enableavailability)) {
+            $mform->addElement('header', '', get_string('availabilityconditions', 'condition'));
             // String used by conditions more than once
             $strcondnone = get_string('none', 'condition');
             // Grouping conditions - only if grouping is enabled at site level
@@ -51,7 +52,6 @@ class editsection_form extends moodleform {
                                 $grouping->name, true, array('context' => $context));
                     }
                 }
-                $mform->addElement('header', '', get_string('availabilityconditions', 'condition'));
                 $mform->addElement('select', 'groupingid', get_string('groupingsection', 'group'), $options);
                 $mform->addHelpButton('groupingid', 'groupingsection', 'group');
             }
