@@ -35,3 +35,15 @@ M.mod_assignment.init_tree = function(Y, expand_all, htmlid) {
         tree.render();
     });
 };
+
+M.mod_assignment.init_grade_change = function(Y) {
+    var gradenode = Y.one('#id_grade');
+    if (gradenode) {
+        var originalvalue = gradenode.get('value');
+        gradenode.on('change', function() {
+            if (gradenode.get('value') != originalvalue) {
+                alert(M.str.mod_assignment.changegradewarning);
+            }
+        });
+    }
+};

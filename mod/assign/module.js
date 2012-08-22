@@ -128,3 +128,15 @@ M.mod_assign.init_grading_options = function(Y) {
         }
     });
 };
+
+M.mod_assign.init_grade_change = function(Y) {
+    var gradenode = Y.one('#id_grade');
+    if (gradenode) {
+        var originalvalue = gradenode.get('value');
+        gradenode.on('change', function() {
+            if (gradenode.get('value') != originalvalue) {
+                alert(M.str.mod_assign.changegradewarning);
+            }
+        });
+    }
+};
