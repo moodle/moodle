@@ -64,6 +64,7 @@ $string['batchoperationconfirmreverttodraft'] = 'Revert selected submissions to 
 $string['batchoperationlock'] = 'lock submissions';
 $string['batchoperationunlock'] = 'unlock submissions';
 $string['batchoperationreverttodraft'] = 'revert submissions to draft';
+$string['changegradewarning'] = 'This assignment has graded submissions and changing the grade will not automatically re-calculate existing submission grades. You must re-grade all existing submissions, if you wish to change the grade.';
 $string['comment'] = 'Comment';
 $string['conversionexception'] = 'Could not convert assignment. Exception was: {$a}.';
 $string['configshowrecentsubmissions'] = 'Everyone can see notifications of submissions in recent activity reports.';
