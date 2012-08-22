@@ -43,6 +43,18 @@ class qformat_blackboard extends qformat_based_on_xml {
         return true;
     }
 
+    /**
+     * Check if the given file is capable of being imported by this plugin.
+     * As {@link file_storage::mimetype()} now uses finfo PHP extension if available,
+     * the value returned by $file->get_mimetype for a .dat file is not the same on all servers.
+     * So if the parent method fails we must use mimeinfo on the filename.
+     * @param stored_file $file the file to check
+     * @return bool whether this plugin can import the file
+     */
+    public function can_import_file($file) {
+        return parent::can_import_file($file) || mimeinfo('type', $file->get_filename()) == $this->mime_type();
+    }
+
     public function mime_type() {
         return mimeinfo('type', '.dat');
     }
