@@ -2828,11 +2828,16 @@ class admin_setting_configduration extends admin_setting {
         }
         $data = self::parse_seconds($seconds);
         switch ($data['u']) {
-            case (60*60*24*7) : return get_string('numweeks', '', $data['v']);
-            case (60*60*24) : return get_string('numdays', '', $data['v']);
-            case (60*60) : return get_string('numhours', '', $data['v']);
-            case (60) : return get_string('numminutes', '', $data['v']);
-            default: return get_string('numseconds', '', $data['v']*$data['u']);
+            case (60*60*24*7):
+                return get_string('numweeks', '', $data['v']);
+            case (60*60*24):
+                return get_string('numdays', '', $data['v']);
+            case (60*60):
+                return get_string('numhours', '', $data['v']);
+            case (60):
+                return get_string('numminutes', '', $data['v']);
+            default:
+                return get_string('numseconds', '', $data['v']*$data['u']);
         }
     }
 
@@ -2843,7 +2848,7 @@ class admin_setting_configduration extends admin_setting {
      * @return array
      */
     protected static function parse_seconds($seconds) {
-        foreach (self::get_units() as $unit=>$unused) {
+        foreach (self::get_units() as $unit => $unused) {
             if ($seconds % $unit === 0) {
                 return array('v'=>(int)($seconds/$unit), 'u'=>$unit);
             }
@@ -2908,7 +2913,7 @@ class admin_setting_configduration extends admin_setting {
         $return = '<div class="form-duration defaultsnext">';
         $return .= '<input type="text" size="5" id="'.$this->get_id().'v" name="'.$this->get_full_name().'[v]" value="'.s($data['v']).'" />';
         $return .= '<select id="'.$this->get_id().'u" name="'.$this->get_full_name().'[u]">';
-        foreach ($units as $val=>$text) {
+        foreach ($units as $val => $text) {
             $selected = '';
             if ($data['v'] == 0) {
                 if ($val == $this->defaultunit) {
