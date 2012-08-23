@@ -20,3 +20,24 @@ frequency should be defined in version.php, not in the quiz_reports table.
 === 2.3 ===
 
 * Support for the old way of doing cron in a separate cron.php file has been removed.
+You need a lib.php file inside the pluginneme (quiz report name) and a cron function
+with the name quiz_pluginname_cron(), where pluginnme is the report name (e.g.:
+quiz_statistics_cron()).
+
+* Some globally defined constants with the prefix "QUIZ_REPORT_ATTEMPTS_" are put inside
+the abstract class "quiz_attempts_report" in Moodle 2.3.and they associate as follows:
+
+withis the classes drived from "quiz_attempts_report":
+
+parent::ALL_WITH            replaces    QUIZ_REPORT_ATTEMPTS_ALL
+parent::ENROLLED_ALL        replaces    QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS
+parent::ENROLLED_WITH       replaces    QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH
+parent::ENROLLED_WITHOUT    replaces    QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO
+
+anywhere else:
+quiz_attempts_report::ALL_WITH            replaces    QUIZ_REPORT_ATTEMPTS_ALL
+quiz_attempts_report::ENROLLED_ALL        replaces    QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS
+quiz_attempts_report::ENROLLED_WITH       replaces    QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH
+quiz_attempts_report::ENROLLED_WITHOUT    replaces    QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO
+
+* The clas "quiz_attempt_report" ahd been renbamed as "quiz_attempts_report"
