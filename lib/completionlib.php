@@ -718,7 +718,7 @@ class completion_info {
      * Used by course reset page.
      */
     public function delete_all_completion_data() {
-        global $DB;
+        global $DB, $SESSION;
 
         // Delete from database.
         $DB->delete_records_select('course_modules_completion',
