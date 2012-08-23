@@ -115,19 +115,22 @@ class qformat_xhtml extends qformat_default {
             }
             shuffle( $ans_list ); // random display order
 
-            // build drop down for answers
-            $dropdown = html_writer::label(get_string('selectansweroption'), 'quest_'.$id, false, array('class' => 'accesshide'));
-            $dropdown .= "<select id=\"quest_$id\" name=\"quest_$id\">\n";
+            // Build select options.
+            $selectoptions = '';
             foreach($ans_list as $ans) {
-                $dropdown .= "<option value=\"" . s($ans) . "\">" . s($ans) . "</option>\n";
+                $selectoptions .= "<option value=\"" . s($ans) . "\">" . s($ans) . "</option>\n";
             }
-            $dropdown .= "</select>\n";
 
-            // finally display
+            // display
+            $option = 0;
             foreach($question->options->subquestions as $subquestion) {
-              $quest_text = $this->repchar( $subquestion->questiontext );
-              $expout .= "  <li>$quest_text</li>\n";
-              $expout .= $dropdown;
+                // build drop down for answers
+                $quest_text = $this->repchar( $subquestion->questiontext );
+                $dropdown = html_writer::label(get_string('answer', 'qtype_match', $option+1), 'quest_'.$id.'_'.$option, false, array('class' => 'accesshide'));
+                $dropdown .= "<select id=\"quest_{$id}_{$option}\" name=\"quest_{$id}_{$option}\">\n".$selectoptions."</select>\n";
+                $expout .= "  <li>$quest_text</li>\n";
+                $expout .= $dropdown;
+                $option++;
             }
             $expout .= "</ul>\n";
             break;
