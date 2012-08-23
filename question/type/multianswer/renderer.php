@@ -223,11 +223,11 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
                 s($correctanswer->answer), $options);
 
         $output = '';
-        $output .= html_writer::start_tag('label', array('class' => 'subq', 'for' => $inputattributes['id']));
+        $output .= html_writer::tag('label', get_string('answer'),
+                array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
         $output .= html_writer::empty_tag('input', $inputattributes);
         $output .= $feedbackimg;
         $output .= $feedbackpopup;
-        $output .= html_writer::end_tag('label');
 
         return $output;
     }
@@ -274,8 +274,7 @@ class qtype_multianswer_multichoice_inline_renderer
             $inputattributes['class'] = $this->feedback_class($matchinganswer->fraction);
             $feedbackimg = $this->feedback_image($matchinganswer->fraction);
         }
-        $select = html_writer::label($response, $inputattributes['id'], false, array('class' => 'accesshide'));
-        $select .= html_writer::select($choices, $qa->get_qt_field_name($fieldname),
+        $select = html_writer::select($choices, $qa->get_qt_field_name($fieldname),
                 $response, array('' => ''), $inputattributes);
 
         $order = $subq->get_order($qa);
@@ -287,11 +286,11 @@ class qtype_multianswer_multichoice_inline_renderer
                         $qa, 'question', 'answer', $rightanswer->id), $options);
 
         $output = '';
-        $output .= html_writer::start_tag('label', array('class' => 'subq'));
+        $output .= html_writer::tag('label', get_string('answer'),
+                array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
         $output .= $select;
         $output .= $feedbackimg;
         $output .= $feedbackpopup;
-        $output .= html_writer::end_tag('label');
 
         return $output;
     }

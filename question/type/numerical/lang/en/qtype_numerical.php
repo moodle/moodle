@@ -26,6 +26,7 @@
 $string['acceptederror'] = 'Accepted error';
 $string['addmoreanswerblanks'] = 'Blanks for {no} More Answers';
 $string['addmoreunitblanks'] = 'Blanks for {no} More Units';
+$string['answercolon'] = 'Answer:';
 $string['answermustbenumberorstar'] = 'The answer must be a number, for example -1.234 or 3e8, or \'*\'.';
 $string['answerno'] = 'Answer {$a}';
 $string['decfractionofquestiongrade'] = 'as a fraction (0-1) of the question grade';
