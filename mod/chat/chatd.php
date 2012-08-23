@@ -1,6 +1,8 @@
 #!/usr/bin/php -q
 <?php
 
+define('CLI_SCRIPT', true);
+
 // Browser quirks
 define('QUIRK_CHUNK_UPDATE', 0x0001);
 
