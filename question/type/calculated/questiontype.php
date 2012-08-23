@@ -1701,17 +1701,19 @@ class qtype_calculated extends question_type {
                      WHERE i.id = d.datasetdefinition AND i.category = ?";
             if ($records = $DB->get_records_sql($sql, array($category))) {
                 foreach ($records as $r) {
+                    $key = "$r->type-$r->category-$r->name";
                     $sql1 = "SELECT q.*
                                FROM {question} q
                               WHERE q.id = ?";
-                    if (!isset ($datasetdefs["$r->type-$r->category-$r->name"])) {
-                        $datasetdefs["$r->type-$r->category-$r->name"]= $r;
+                    if (!isset($datasetdefs[$key])) {
+                        $datasetdefs[$key] = $r;
                     }
                     if ($questionb = $DB->get_records_sql($sql1, array($r->question))) {
-                        $datasetdefs["$r->type-$r->category-$r->name"]->questions[
-                                $r->question]->name = $questionb[$r->question]->name;
-                        $datasetdefs["$r->type-$r->category-$r->name"]->questions[
-                                $r->question]->id = $questionb[$r->question]->id;
+                        $datasetdefs[$key]->questions[$r->question] = new stdClass();
+                        $datasetdefs[$key]->questions[$r->question]->name =
+                                $questionb[$r->question]->name;
+                        $datasetdefs[$key]->questions[$r->question]->id =
+                                $questionb[$r->question]->id;
                     }
                 }
             }
