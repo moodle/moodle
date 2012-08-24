@@ -465,7 +465,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         return 1;
     }
 
-    private function get_info($item) {
+    public function get_info($item) {
         $presentation = empty($item->presentation) ? '' : $item->presentation;
 
         $info = new stdClass();
