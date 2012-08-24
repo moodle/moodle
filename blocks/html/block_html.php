@@ -29,6 +29,10 @@ class block_html extends block_base {
         $this->title = get_string('pluginname', 'block_html');
     }
 
+    function has_config() {
+        return true;
+    }
+
     function applicable_formats() {
         return array('all' => true);
     }
@@ -138,10 +142,14 @@ class block_html extends block_base {
      * @return array
      */
     function html_attributes() {
+        global $CFG;
+
         $attributes = parent::html_attributes();
 
-        if (!empty($this->config->classes)) {
-            $attributes['class'] .= ' '.$this->config->classes;
+        if (!empty($CFG->block_html_allowcssclasses)) {
+            if (!empty($this->config->classes)) {
+                $attributes['class'] .= ' '.$this->config->classes;
+            }
         }
 
         return $attributes;
