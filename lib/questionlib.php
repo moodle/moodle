@@ -209,39 +209,44 @@ function get_grade_options() {
 }
 
 /**
- * match grade options
- * if no match return error or match nearest
+ * Check whether a given grade is one of a list of allowed options. If not,
+ * depending on $matchgrades, either return the nearest match, or return false
+ * to signal an error.
  * @param array $gradeoptionsfull list of valid options
  * @param int $grade grade to be tested
  * @param string $matchgrades 'error' or 'nearest'
- * @return mixed either 'fixed' value or false if erro
+ * @return mixed either 'fixed' value or false if error.
  */
-function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
+function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') {
+
     if ($matchgrades == 'error') {
-        // if we just need an error...
+        // (Almost) exact match, or an error.
         foreach ($gradeoptionsfull as $value => $option) {
-            // slightly fuzzy test, never check floats for equality :-)
+            // Slightly fuzzy test, never check floats for equality.
             if (abs($grade - $value) < 0.00001) {
-                return $grade;
+                return $value; // Be sure the return the proper value.
             }
         }
-        // didn't find a match so that's an error
+        // Didn't find a match so that's an error.
         return false;
+
     } else if ($matchgrades == 'nearest') {
-        // work out nearest value
-        $hownear = array();
+        // Work out nearest value
+        $best = false;
+        $bestmismatch = 2;
         foreach ($gradeoptionsfull as $value => $option) {
-            if ($grade==$value) {
-                return $grade;
+            $newmismatch = abs($grade - $value);
+            if ($newmismatch < $bestmismatch) {
+                $best = $value;
+                $bestmismatch = $newmismatch;
             }
-            $hownear[ $value ] = abs( $grade - $value );
         }
-        // reverse sort list of deltas and grab the last (smallest)
-        asort( $hownear, SORT_NUMERIC );
-        reset( $hownear );
-        return key( $hownear );
+        return $best;
+
     } else {
-        return false;
+        // Unknow option passed.
+        throw new coding_exception('Unknown $matchgrades ' . $matchgrades .
+                ' passed to match_grade_options');
     }
 }
 
