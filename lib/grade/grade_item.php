@@ -1727,6 +1727,7 @@ class grade_item extends grade_object {
             return true; // no need to recalculate locked items
         }
 
+        // Precreate grades - we need them to exist
         if ($userid) {
             $missing = array();
             if (!$DB->record_exists('grade_grades', array('itemid'=>$this->id, 'userid'=>$userid))) {
@@ -1735,14 +1736,14 @@ class grade_item extends grade_object {
                 $missing[] = $m;
             }
         } else {
-            // precreate grades - we need them to exist
-            $params = array($this->courseid, $this->id);
-            $sql = "SELECT go.userid
-                      FROM {grade_grades} go
+            // Find any users who have grades for some but not all grade items in this course
+            $params = array('gicourseid' => $this->courseid, 'ggitemid' => $this->id);
+            $sql = "SELECT gg.userid
+                      FROM {grade_grades} gg
                            JOIN {grade_items} gi
-                           ON (gi.id = go.itemid AND gi.courseid = ?)
-                     GROUP BY go.userid
-                     HAVING SUM(go.itemid = ?) = 0";
+                           ON (gi.id = gg.itemid AND gi.courseid = :gicourseid)
+                     GROUP BY gg.userid
+                     HAVING SUM(CASE WHEN gg.itemid = :ggitemid THEN 1 ELSE 0 END) = 0";
             $missing = $DB->get_records_sql($sql, $params);
         }
 
