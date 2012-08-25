@@ -449,7 +449,7 @@ class course_enrolment_table extends html_table implements renderable {
 
         // Collect the bulk operations for the currently filtered plugin if there is one.
         $plugin = $manager->get_filtered_enrolment_plugin();
-        if ($plugin) {
+        if ($plugin and enrol_is_enabled($plugin->get_name())) {
             $this->bulkoperations = $plugin->get_bulk_operations($manager);
         }
     }
