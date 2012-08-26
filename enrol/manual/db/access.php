@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
+    /* Add, edit or remove manual enrol instance. */
     'enrol/manual:config' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -34,6 +35,7 @@ $capabilities = array(
         )
     ),
 
+    /* Enrol anybody. */
     'enrol/manual:enrol' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -43,6 +45,7 @@ $capabilities = array(
         )
     ),
 
+    /* Manage enrolments of users. */
     'enrol/manual:manage' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -52,6 +55,7 @@ $capabilities = array(
         )
     ),
 
+    /* Unenrol anybody (including self) - watch out for data loss. */
     'enrol/manual:unenrol' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -61,6 +65,7 @@ $capabilities = array(
         )
     ),
 
+    /* Unenrol self - watch out for data loss. */
     'enrol/manual:unenrolself' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -69,4 +74,3 @@ $capabilities = array(
     ),
 
 );
-

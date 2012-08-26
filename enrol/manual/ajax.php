@@ -20,8 +20,7 @@
  * The general idea behind this file is that any errors should throw exceptions
  * which will be returned and acted upon by the calling AJAX script.
  *
- * @package    enrol
- * @subpackage manual
+ * @package    enrol_manual
  * @copyright  2010 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,8 +31,7 @@ require('../../config.php');
 require_once($CFG->dirroot.'/enrol/locallib.php');
 require_once($CFG->dirroot.'/group/lib.php');
 
-// Must have the sesskey
-$id      = required_param('id', PARAM_INT); // course id
+$id      = required_param('id', PARAM_INT); // Course id.
 $action  = required_param('action', PARAM_ALPHANUMEXT);
 
 $PAGE->set_url(new moodle_url('/enrol/ajax.php', array('id'=>$id, 'action'=>$action)));
@@ -49,7 +47,7 @@ require_login($course);
 require_capability('moodle/course:enrolreview', $context);
 require_sesskey();
 
-echo $OUTPUT->header(); // send headers
+echo $OUTPUT->header(); // Send headers.
 
 $manager = new course_enrolment_manager($PAGE, $course);
 

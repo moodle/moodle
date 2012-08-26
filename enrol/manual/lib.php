@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Manual enrolment plugin main library file.
  *
- * @package    enrol
- * @subpackage manual
+ * @package    enrol_manual
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,22 +27,22 @@ defined('MOODLE_INTERNAL') || die();
 class enrol_manual_plugin extends enrol_plugin {
 
     public function roles_protected() {
-        // users may tweak the roles later
+        // Users may tweak the roles later.
         return false;
     }
 
     public function allow_enrol(stdClass $instance) {
-        // users with enrol cap may unenrol other users manually manually
+        // Users with enrol cap may unenrol other users manually manually.
         return true;
     }
 
     public function allow_unenrol(stdClass $instance) {
-        // users with unenrol cap may unenrol other users manually manually
+        // Users with unenrol cap may unenrol other users manually manually.
         return true;
     }
 
     public function allow_manage(stdClass $instance) {
-        // users with manage cap may tweak period and status
+        // Users with manage cap may tweak period and status.
         return true;
     }
 
@@ -52,7 +50,7 @@ class enrol_manual_plugin extends enrol_plugin {
      * Returns link to manual enrol UI if exists.
      * Does the access control tests automatically.
      *
-     * @param object $instance
+     * @param stdClass $instance
      * @return moodle_url
      */
     public function get_manual_enrol_link($instance) {
@@ -96,7 +94,7 @@ class enrol_manual_plugin extends enrol_plugin {
     }
 
     /**
-     * Returns edit icons for the page with list of instances
+     * Returns edit icons for the page with list of instances.
      * @param stdClass $instance
      * @return array
      */
@@ -145,7 +143,7 @@ class enrol_manual_plugin extends enrol_plugin {
 
     /**
      * Add new instance of enrol plugin with default settings.
-     * @param object $course
+     * @param stdClass $course
      * @return int id of new instance, null if can not be created
      */
     public function add_default_instance($course) {
@@ -155,7 +153,7 @@ class enrol_manual_plugin extends enrol_plugin {
 
     /**
      * Add new instance of enrol plugin.
-     * @param object $course
+     * @param stdClass $course
      * @param array instance fields
      * @return int id of new instance, null if can not be created
      */
@@ -260,7 +258,7 @@ class enrol_manual_plugin extends enrol_plugin {
     }
 
     /**
-     * Gets an array of the user enrolment actions
+     * Gets an array of the user enrolment actions.
      *
      * @param course_enrolment_manager $manager
      * @param stdClass $ue A user enrolment object
@@ -284,7 +282,7 @@ class enrol_manual_plugin extends enrol_plugin {
     }
 
     /**
-     * The manual plugin has several bulk operations that can be performed
+     * The manual plugin has several bulk operations that can be performed.
      * @param course_enrolment_manager $manager
      * @return array
      */

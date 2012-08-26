@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,7 @@
  * Adds new instance of enrol_manual to specified course
  * or edits current instance.
  *
- * @package    enrol
- * @subpackage manual
+ * @package    enrol_manual
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -49,14 +47,14 @@ $plugin = enrol_get_plugin('manual');
 if ($instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'enrol'=>'manual'), 'id ASC')) {
     $instance = array_shift($instances);
     if ($instances) {
-        // oh - we allow only one instance per course!!
+        // Oh - we allow only one instance per course!!
         foreach ($instances as $del) {
             $plugin->delete_instance($del);
         }
     }
 } else {
     require_capability('moodle/course:enrolconfig', $context);
-    // no instance yet, we have to add new instance
+    // No instance yet, we have to add new instance.
     navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
     $instance = new stdClass();
     $instance->id       = null;
