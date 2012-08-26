@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,7 @@
  * Adds new instance of enrol_self to specified course
  * or edits current instance.
  *
- * @package    enrol
- * @subpackage self
+ * @package    enrol_self
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +27,7 @@ require('../../config.php');
 require_once('edit_form.php');
 
 $courseid   = required_param('courseid', PARAM_INT);
-$instanceid = optional_param('id', 0, PARAM_INT); // instanceid
+$instanceid = optional_param('id', 0, PARAM_INT);
 
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
@@ -51,7 +49,7 @@ if ($instanceid) {
     $instance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'self', 'id'=>$instanceid), '*', MUST_EXIST);
 } else {
     require_capability('moodle/course:enrolconfig', $context);
-    // no instance yet, we have to add new instance
+    // No instance yet, we have to add new instance.
     navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
     $instance = new stdClass();
     $instance->id         = null;

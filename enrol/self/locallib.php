@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Self enrol plugin implementation.
  *
- * @package    enrol
- * @subpackage self
+ * @package    enrol_self
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +31,7 @@ class enrol_self_enrol_form extends moodleform {
     protected $toomany = false;
 
     /**
-     * Overriding this function to get unique form id for multiple self enrolments
+     * Overriding this function to get unique form id for multiple self enrolments.
      *
      * @return string form identifier
      */
@@ -54,10 +52,10 @@ class enrol_self_enrol_form extends moodleform {
         $mform->addElement('header', 'selfheader', $heading);
 
         if ($instance->customint3 > 0) {
-            // max enrol limit specified
+            // Max enrol limit specified.
             $count = $DB->count_records('user_enrolments', array('enrolid'=>$instance->id));
             if ($count >= $instance->customint3) {
-                // bad luck, no more self enrolments here
+                // Bad luck, no more self enrolments here.
                 $this->toomany = true;
                 $mform->addElement('static', 'notice', '', get_string('maxenrolledreached', 'enrol_self'));
                 return;
@@ -65,7 +63,7 @@ class enrol_self_enrol_form extends moodleform {
         }
 
         if ($instance->password) {
-            //change the id of self enrolment key input as there can be multiple self enrolment methods
+            // Change the id of self enrolment key input as there can be multiple self enrolment methods.
             $mform->addElement('passwordunmask', 'enrolpassword', get_string('password', 'enrol_self'),
                     array('id' => 'enrolpassword_'.$instance->id));
         } else {
@@ -109,7 +107,7 @@ class enrol_self_enrol_form extends moodleform {
                         }
                     }
                     if (!$found) {
-                        // we can not hint because there are probably multiple passwords
+                        // We can not hint because there are probably multiple passwords.
                         $errors['enrolpassword'] = get_string('passwordinvalid', 'enrol_self');
                     }
 

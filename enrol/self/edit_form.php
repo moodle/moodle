@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,7 @@
  * Adds new instance of enrol_self to specified course
  * or edits current instance.
  *
- * @package    enrol
- * @subpackage self
+ * @package    enrol_self
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -193,7 +191,7 @@ class enrol_self_edit_form extends moodleform {
     }
 
     /**
-    * Gets a list of roles that this user can assign for the course as the default for self-enrolment
+    * Gets a list of roles that this user can assign for the course as the default for self-enrolment.
     *
     * @param context $context the context.
     * @param integer $defaultrole the id of the role that is set as the default for self-enrolment
