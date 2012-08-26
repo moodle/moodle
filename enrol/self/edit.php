@@ -54,8 +54,9 @@ if ($instanceid) {
     // no instance yet, we have to add new instance
     navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
     $instance = new stdClass();
-    $instance->id       = null;
-    $instance->courseid = $course->id;
+    $instance->id         = null;
+    $instance->courseid   = $course->id;
+    $instance->customint5 = 0;
 }
 
 $mform = new enrol_self_edit_form(NULL, array($instance, $plugin, $context));
@@ -74,6 +75,7 @@ if ($mform->is_cancelled()) {
         $instance->customint2     = $data->customint2;
         $instance->customint3     = $data->customint3;
         $instance->customint4     = $data->customint4;
+        $instance->customint5     = $data->customint5;
         $instance->customtext1    = $data->customtext1;
         $instance->roleid         = $data->roleid;
         $instance->enrolperiod    = $data->enrolperiod;
@@ -88,7 +90,7 @@ if ($mform->is_cancelled()) {
 
     } else {
         $fields = array('status'=>$data->status, 'name'=>$data->name, 'password'=>$data->password, 'customint1'=>$data->customint1, 'customint2'=>$data->customint2,
-                        'customint3'=>$data->customint3, 'customint4'=>$data->customint4, 'customtext1'=>$data->customtext1,
+                        'customint3'=>$data->customint3, 'customint4'=>$data->customint4, 'customint5'=>$data->customint5, 'customtext1'=>$data->customtext1,
                         'roleid'=>$data->roleid, 'enrolperiod'=>$data->enrolperiod, 'enrolstartdate'=>$data->enrolstartdate, 'enrolenddate'=>$data->enrolenddate);
         $plugin->add_instance($course, $fields);
     }

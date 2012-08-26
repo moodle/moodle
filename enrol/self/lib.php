@@ -101,7 +101,16 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
     public function show_enrolme_link(stdClass $instance) {
-        return ($instance->status == ENROL_INSTANCE_ENABLED);
+        global $CFG, $USER;
+
+        if ($instance->status != ENROL_INSTANCE_ENABLED) {
+            return false;
+        }
+        if ($instance->customint5) {
+            require_once("$CFG->dirroot/cohort/lib.php");
+            return cohort_is_member($instance->customint5, $USER->id);
+        }
+        return true;
     }
 
     /**
@@ -189,6 +198,18 @@ class enrol_self_plugin extends enrol_plugin {
             return null;
         }
 
+        if ($instance->customint5) {
+            require_once("$CFG->dirroot/cohort/lib.php");
+            if (!cohort_is_member($instance->customint5, $USER->id)) {
+                $cohort = $DB->get_record('cohort', array('id'=>$instance->customint5));
+                if (!$cohort) {
+                    return null;
+                }
+                $a = format_string($cohort->name, true, array('context'=>context::instance_by_id($cohort->contextid)));
+                return $OUTPUT->box(markdown_to_html(get_string('cohortnonmemberinfo', 'enrol_self', $a)));
+            }
+        }
+
         require_once("$CFG->dirroot/enrol/self/locallib.php");
         require_once("$CFG->dirroot/group/lib.php");
 
@@ -245,6 +266,7 @@ class enrol_self_plugin extends enrol_plugin {
                         'customint2'  => $this->get_config('longtimenosee'),
                         'customint3'  => $this->get_config('maxenrolled'),
                         'customint4'  => $this->get_config('sendcoursewelcomemessage'),
+                        'customint5'  => 0,
                         'enrolperiod' => $this->get_config('enrolperiod', 0),
                         'status'      => $this->get_config('status'),
                         'roleid'      => $this->get_config('roleid', 0));
