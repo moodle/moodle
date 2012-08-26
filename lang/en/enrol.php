@@ -98,8 +98,13 @@ $string['unenrolconfirm'] = 'Do you really want to unenrol user "{$a->user}" fro
 $string['unenrolme'] = 'Unenrol me from {$a}';
 $string['unenrolnotpermitted'] = 'You do not have permission or can not unenrol this user from this course.';
 $string['unenrolroleusers'] = 'Unenrol users';
-$string['uninstallconfirm'] = 'You are about to completely delete the enrol plugin \'{$a}\'.  This will completely delete everything in the database associated with this enrolment type.  Are you SURE you want to continue?';
+$string['uninstallconfirm'] = 'You are about to completely uninstall the enrol plugin \'{$a}\'. This will completely delete everything in the database associated with this enrolment type. Deleting of enrolments removes also users\' grades, group membership, subscriptions and other course related data or preferences.
+
+Are you SURE you want to continue?';
+$string['uninstalldelete'] = 'Delete all enrolments and uninstall';
 $string['uninstalldeletefiles'] = 'All data associated with the enrol plugin \'{$a->plugin}\' has been deleted from the database.  To complete the deletion (and prevent the plugin re-installing itself), you should now delete this directory from your server: {$a->directory}';
+$string['uninstallmigrate'] = 'Uninstall but keep all enrolments';
+$string['uninstallmigrating'] = 'Migrating "{$a}" enrolments';
 $string['unknowajaxaction'] = 'Unknown action requested';
 $string['unlimitedduration'] = 'Unlimited';
 $string['usersearch'] = 'Search ';
