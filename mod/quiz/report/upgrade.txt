@@ -3,9 +3,34 @@ This files describes API changes for quiz report plugins.
 Overview of this plugin type at http://docs.moodle.org/dev/Quiz_reports
 
 
-=== earlier versions ===
+=== 2.3 ===
 
-* ... API changes were not documented properly. Sorry. (There weren't many!)
+* Support for the old way of doing cron in a separate cron.php file has been removed.
+Instead, you need a lib.php file inside the plugin with a cron function
+called quiz_myreportname_cron(). The statistics report is an example of how
+it should be done.
+
+* There was a big refactor of the quiz reports, in issues MDL-32300, MDL-32322 and MDL-3030.
+It is difficult to explain the changes. Probably the best way to understand what
+happened is to look at
+    git log mod/quiz/report/overview
+    git log mod/quiz/report/responses
+and so on. Here are some notes on a few of the changes:
+
+The class quiz_attempt_report was renamed to quiz_attempts_report (with an extra s).
+
+Some globally defined constants with the prefix QUIZ_REPORT_ATTEMPTS_ moved into
+the quiz_attempts_report class. Specifically
+
+quiz_attempts_report::ALL_WITH         replaces QUIZ_REPORT_ATTEMPTS_ALL
+quiz_attempts_report::ENROLLED_ALL     replaces QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS
+quiz_attempts_report::ENROLLED_WITH    replaces QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH
+quiz_attempts_report::ENROLLED_WITHOUT replaces QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO
+
+Your if you have a table class, it needs to be renamed like
+quiz_report_myreportname_table -> quiz_myreportname_table. That is, all the
+class names in your plugin should start with the frankenstyle plugin name
+quiz_myreportname.
 
 
 === 2.2 ===
@@ -17,6 +42,6 @@ This replaces the old way of having a separate cron.php file. Also, the cron
 frequency should be defined in version.php, not in the quiz_reports table.
 
 
-=== 2.3 ===
+=== earlier versions ===
 
-* Support for the old way of doing cron in a separate cron.php file has been removed.
+* ... API changes were not documented properly. Sorry. (There weren't many!)
