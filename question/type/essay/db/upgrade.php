@@ -94,41 +94,51 @@ function xmldb_qtype_essay_upgrade($oldversion) {
     // Put any upgrade step following this
 
     if ($oldversion < 2011102701) {
-        // In Moodle <= 2.0 essay had both question.generalfeedback and question_answers.feedback.
-        // This was silly, and in Moodel >= 2.1 only question.generalfeedback. To avoid
-        // dataloss, we concatenate question_answers.feedback onto the end of question.generalfeedback.
-        $toupdate = $DB->get_recordset_sql("
-                SELECT q.id,
-                       q.generalfeedback,
-                       q.generalfeedbackformat,
-                       qa.feedback,
-                       qa.feedbackformat
-
+        $sql = "
                   FROM {question} q
                   JOIN {question_answers} qa ON qa.question = q.id
 
                  WHERE q.qtype = 'essay'
-                   AND " . $DB->sql_isnotempty('question_answers', 'feedback', false, true));
+                   AND " . $DB->sql_isnotempty('question_answers', 'feedback', false, true);
+        // In Moodle <= 2.0 essay had both question.generalfeedback and question_answers.feedback.
+        // This was silly, and in Moodel >= 2.1 only question.generalfeedback. To avoid
+        // dataloss, we concatenate question_answers.feedback onto the end of question.generalfeedback.
+        $count = $DB->count_records_sql("
+                SELECT COUNT(1) $sql");
+        if ($count) {
+            $progressbar = new progress_bar('essay23', 500, true);
+            $done = 0;
 
-        foreach ($toupdate as $data) {
-            upgrade_set_timeout(60);
-            if ($data->generalfeedbackformat == $data->feedbackformat) {
-                $DB->set_field('question', 'generalfeedback',
-                        $data->generalfeedback . $data->feedback,
-                        array('id' => $data->id));
+            $toupdate = $DB->get_recordset_sql("
+                    SELECT q.id,
+                           q.generalfeedback,
+                           q.generalfeedbackformat,
+                           qa.feedback,
+                           qa.feedbackformat
+                    $sql");
 
-            } else {
-                $newdata = new stdClass();
-                $newdata->id = $data->id;
-                $newdata->generalfeedback =
-                        qtype_essay_convert_to_html($data->generalfeedback, $data->generalfeedbackformat) .
-                        qtype_essay_convert_to_html($data->feedback,        $data->feedbackformat);
-                $newdata->generalfeedbackformat = FORMAT_HTML;
-                $DB->update_record('question', $newdata);
+            foreach ($toupdate as $data) {
+                $progressbar->update($done, $count, "Updating essay feedback ($done/$count).");
+                upgrade_set_timeout(60);
+                if ($data->generalfeedbackformat == $data->feedbackformat) {
+                    $DB->set_field('question', 'generalfeedback',
+                            $data->generalfeedback . $data->feedback,
+                            array('id' => $data->id));
+
+                } else {
+                    $newdata = new stdClass();
+                    $newdata->id = $data->id;
+                    $newdata->generalfeedback =
+                            qtype_essay_convert_to_html($data->generalfeedback, $data->generalfeedbackformat) .
+                            qtype_essay_convert_to_html($data->feedback,        $data->feedbackformat);
+                    $newdata->generalfeedbackformat = FORMAT_HTML;
+                    $DB->update_record('question', $newdata);
+                }
             }
-        }
 
-        $toupdate->close();
+            $progressbar->update($count, $count, "Updating essay feedback complete!");
+            $toupdate->close();
+        }
 
         // Essay savepoint reached.
         upgrade_plugin_savepoint(true, 2011102701, 'qtype', 'essay');
