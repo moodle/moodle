@@ -154,6 +154,22 @@ abstract class restore_qtype_plugin extends restore_plugin {
                        AND ' . $DB->sql_compare_text('answer', 255) . ' = ' . $DB->sql_compare_text('?', 255);
             $params = array($newquestionid, $data->answertext);
             $newitemid = $DB->get_field_sql($sql, $params);
+
+            // Not able to find the answer, let's try cleaning the answertext
+            // of all the question answers in DB as slower fallback. MDL-30018.
+            if (!$newitemid) {
+                $params = array('question' => $newquestionid);
+                $answers = $DB->get_records('question_answers', $params, '', 'id, answer');
+                foreach ($answers as $answer) {
+                    // Clean in the same way than {@link xml_writer::xml_safe_utf8()}.
+                    $clean = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is','', $answer->answer); // Clean CTRL chars.
+                    $clean = preg_replace("/\r\n|\r/", "\n", $clean); // Normalize line ending.
+                    if ($clean === $data->answertext) {
+                        $newitemid = $data->id;
+                    }
+                }
+            }
+
             // If we haven't found the newitemid, something has gone really wrong, question in DB
             // is missing answers, exception
             if (!$newitemid) {
