@@ -55,4 +55,19 @@ class questionlib_testcase extends basic_testcase {
             array(0 => 't1', 1 => 't2', 2 => 't3'));
     }
 
+    public function test_match_grade_options() {
+        $gradeoptions = question_bank::fraction_options_full();
+
+        $this->assertEquals(0.3333333, match_grade_options($gradeoptions, 0.3333333, 'error'));
+        $this->assertEquals(0.3333333, match_grade_options($gradeoptions, 0.333333, 'error'));
+        $this->assertEquals(0.3333333, match_grade_options($gradeoptions, 0.33333, 'error'));
+        $this->assertFalse(match_grade_options($gradeoptions, 0.3333, 'error'));
+
+        $this->assertEquals(0.3333333, match_grade_options($gradeoptions, 0.3333333, 'nearest'));
+        $this->assertEquals(0.3333333, match_grade_options($gradeoptions, 0.333333, 'nearest'));
+        $this->assertEquals(0.3333333, match_grade_options($gradeoptions, 0.33333, 'nearest'));
+        $this->assertEquals(0.3333333, match_grade_options($gradeoptions, 0.33, 'nearest'));
+
+        $this->assertEquals(-0.1428571, match_grade_options($gradeoptions, -0.15, 'nearest'));
+    }
 }
