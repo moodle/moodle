@@ -77,8 +77,9 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
             var clearbtn = Y.one('#'+this.name + '_clearbutton');
             this.clearbutton = Y.Node.create('<input type="button" value="'+clearbtn.get('value')+'" />');
             clearbtn.replace(Y.Node.getDOMNode(this.clearbutton));
-            this.clearbutton.set('id',+this.name+"_clearbutton");
+            this.clearbutton.set('id', this.name+"_clearbutton");
             this.clearbutton.on('click', this.handle_clear, this);
+            this.clearbutton.set('disabled', (this.get_search_text() == ''));
 
             this.send_query(false);
         },
