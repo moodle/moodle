@@ -572,7 +572,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
 
     $csvexporter->set_filename('logs', '.txt');
     $title = array(get_string('savedat').userdate(time(), $strftimedatetime));
-    $csvexporter->add_data($title);   
+    $csvexporter->add_data($title);
     $csvexporter->add_data($header);
 
     if (empty($logs['logs'])) {
