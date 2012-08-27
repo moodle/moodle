@@ -785,14 +785,22 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  */
 function _tidy_question($question, $loadtags = false) {
     global $CFG;
+
+    // Load question-type specific fields.
     if (!question_bank::is_qtype_installed($question->qtype)) {
         $question->questiontext = html_writer::tag('p', get_string('warningmissingtype',
                 'qtype_missingtype')) . $question->questiontext;
     }
     question_bank::get_qtype($question->qtype)->get_question_options($question);
+
+    // Convert numeric fields to float. (Prevents these being displayed as 1.0000000.)
+    $question->defaultmark += 0;
+    $question->penalty += 0;
+
     if (isset($question->_partiallyloaded)) {
         unset($question->_partiallyloaded);
     }
+
     if ($loadtags && !empty($CFG->usetags)) {
         require_once($CFG->dirroot . '/tag/lib.php');
         $question->tags = tag_get_tags_array('question', $question->id);
