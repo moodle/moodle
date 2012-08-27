@@ -1204,6 +1204,10 @@ function get_fast_modinfo(&$course, $userid=0) {
         debugging('Coding problem - missing course modinfo property in get_fast_modinfo() call');
     }
 
+    if (!property_exists($course, 'sectioncache')) {
+        debugging('Coding problem - missing course sectioncache property in get_fast_modinfo() call');
+    }
+
     unset($cache[$course->id]); // prevent potential reference problems when switching users
 
     $cache[$course->id] = new course_modinfo($course, $userid);
