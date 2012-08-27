@@ -40,7 +40,7 @@ $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
 // Get the course the enrolment is to.
 $sql = "SELECT c.*
           FROM {course} c
-     LEFT JOIN {enrol} e ON e.courseid = c.id
+          JOIN {enrol} e ON e.courseid = c.id
          WHERE e.id = :enrolid";
 $params = array('enrolid' => $ue->enrolid);
 $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
