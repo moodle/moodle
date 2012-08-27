@@ -17,8 +17,7 @@
 /**
  * Auxiliary manual user enrolment lib, the main purpose is to lower memory requirements...
  *
- * @package    enrol
- * @subpackage manual
+ * @package    enrol_manual
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +29,7 @@ require_once($CFG->dirroot . '/enrol/locallib.php');
 
 
 /**
- * Enrol candidates
+ * Enrol candidates.
  */
 class enrol_manual_potential_participant extends user_selector_base {
     protected $enrolid;
@@ -42,12 +41,12 @@ class enrol_manual_potential_participant extends user_selector_base {
 
     /**
      * Candidate users
-     * @param <type> $search
+     * @param string $search
      * @return array
      */
     public function find_users($search) {
         global $DB;
-        //by default wherecondition retrieves all users except the deleted, not confirmed and guest
+        // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['enrolid'] = $this->enrolid;
 
@@ -92,7 +91,7 @@ class enrol_manual_potential_participant extends user_selector_base {
 }
 
 /**
- * Enroled users
+ * Enrolled users.
  */
 class enrol_manual_current_participant extends user_selector_base {
     protected $courseid;
@@ -105,12 +104,12 @@ class enrol_manual_current_participant extends user_selector_base {
 
     /**
      * Candidate users
-     * @param <type> $search
+     * @param string $search
      * @return array
      */
     public function find_users($search) {
         global $DB;
-        //by default wherecondition retrieves all users except the deleted, not confirmed and guest
+        // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['enrolid'] = $this->enrolid;
 
@@ -182,7 +181,6 @@ class enrol_manual_editselectedusers_operation extends enrol_bulk_enrolment_oper
     /**
      * Processes the bulk operation request for the given userids with the provided properties.
      *
-     * @global moodle_database $DB
      * @param course_enrolment_manager $manager
      * @param array $userids
      * @param stdClass $properties The data returned by the form.
@@ -194,7 +192,7 @@ class enrol_manual_editselectedusers_operation extends enrol_bulk_enrolment_oper
             return false;
         }
 
-        // Get all of the user enrolment id's
+        // Get all of the user enrolment id's.
         $ueids = array();
         $instances = array();
         foreach ($users as $user) {
@@ -237,15 +235,15 @@ class enrol_manual_editselectedusers_operation extends enrol_bulk_enrolment_oper
             return true;
         }
 
-        // Update the modifierid
+        // Update the modifierid.
         $updatesql[] = 'modifierid = :modifierid';
         $params['modifierid'] = (int)$USER->id;
 
-        // Update the time modified
+        // Update the time modified.
         $updatesql[] = 'timemodified = :timemodified';
         $params['timemodified'] = time();
 
-        // Build the SQL statement
+        // Build the SQL statement.
         $updatesql = join(', ', $updatesql);
         $sql = "UPDATE {user_enrolments}
                    SET $updatesql
