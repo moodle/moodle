@@ -181,7 +181,6 @@ $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontac
 /// Display page header
 $streditmymessage = get_string('editmymessage', 'message');
 $strparticipants  = get_string('participants');
-$userfullname     = fullname($user, true);
 
 $PAGE->set_title("$course->shortname: $streditmymessage");
 if ($course->id != SITEID) {
