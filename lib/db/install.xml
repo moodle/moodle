@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20120717" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20120825" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -235,14 +235,21 @@
         <FIELD NAME="customint1" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general int" PREVIOUS="roleid" NEXT="customint2"/>
         <FIELD NAME="customint2" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general int" PREVIOUS="customint1" NEXT="customint3"/>
         <FIELD NAME="customint3" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general int" PREVIOUS="customint2" NEXT="customint4"/>
-        <FIELD NAME="customint4" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general int" PREVIOUS="customint3" NEXT="customchar1"/>
-        <FIELD NAME="customchar1" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general short name" PREVIOUS="customint4" NEXT="customchar2"/>
-        <FIELD NAME="customchar2" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general short name" PREVIOUS="customchar1" NEXT="customdec1"/>
-        <FIELD NAME="customdec1" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="Custom - general decimal" PREVIOUS="customchar2" NEXT="customdec2"/>
+        <FIELD NAME="customint4" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general int" PREVIOUS="customint3" NEXT="customint5"/>
+        <FIELD NAME="customint5" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general int" PREVIOUS="customint4" NEXT="customint6"/>
+        <FIELD NAME="customint6" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general int" PREVIOUS="customint5" NEXT="customint7"/>
+        <FIELD NAME="customint7" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general int" PREVIOUS="customint6" NEXT="customint8"/>
+        <FIELD NAME="customint8" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general int" PREVIOUS="customint7" NEXT="customchar1"/>
+        <FIELD NAME="customchar1" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general short name" PREVIOUS="customint8" NEXT="customchar2"/>
+        <FIELD NAME="customchar2" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general short name" PREVIOUS="customchar1" NEXT="customchar3"/>
+        <FIELD NAME="customchar3" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general short name" PREVIOUS="customchar2" NEXT="customdec1"/>
+        <FIELD NAME="customdec1" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="Custom - general decimal" PREVIOUS="customchar3" NEXT="customdec2"/>
         <FIELD NAME="customdec2" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="Custom - general decimal" PREVIOUS="customdec1" NEXT="customtext1"/>
         <FIELD NAME="customtext1" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general text" PREVIOUS="customdec2" NEXT="customtext2"/>
-        <FIELD NAME="customtext2" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general text" PREVIOUS="customtext1" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="customtext2" NEXT="timemodified"/>
+        <FIELD NAME="customtext2" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general text" PREVIOUS="customtext1" NEXT="customtext3"/>
+        <FIELD NAME="customtext3" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general text" PREVIOUS="customtext2" NEXT="customtext4"/>
+        <FIELD NAME="customtext4" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Custom - general text" PREVIOUS="customtext3" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="customtext4" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated"/>
       </FIELDS>
       <KEYS>
