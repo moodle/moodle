@@ -36,6 +36,7 @@ $string['conversioncomplete'] = 'Assignment converted';
 $string['conversionfailed'] = 'The assignment conversion was not successful. The log from the upgrade was: <br />{$a}';
 $string['listnotupgraded'] = 'List assignments that have not been upgraded';
 $string['listnotupgraded_desc'] = 'You can upgrade individual assignments from here';
+$string['noassignmentsselected'] = 'No assignments selected';
 $string['noassignmentstoupgrade'] = 'There are no assignments that require upgrading';
 $string['notsupported'] = '';
 $string['notupgradedintro'] = 'This page lists the assignments created with an older version of Moodle that have not been upgraded to the new assignment module in Moodle 2.3. Not all assignments can be upgraded - if they were created with a custom assignment subtype, then that subtype will need to be upgraded to the new assignment plugin format in order to complete the upgrade.';
