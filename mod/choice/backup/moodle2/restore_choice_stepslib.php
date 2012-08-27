@@ -80,10 +80,9 @@ class restore_choice_activity_structure_step extends restore_activity_structure_
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
 
         $data->choiceid = $this->get_new_parentid('choice');
-        $data->optionid = $this->get_mappingid('choice_option', $oldid);
+        $data->optionid = $this->get_mappingid('choice_option', $data->optionid);
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
