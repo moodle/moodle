@@ -154,6 +154,7 @@ $string['gradeoutofhelp'] = 'Grade';
 $string['gradeoutofhelp_help'] = 'Enter the grade for the student\'s submission here. You may include decimals.';
 $string['gradestudent'] = 'Grade student: (id={$a->id}, fullname={$a->fullname}). ';
 $string['grading'] = 'Grading';
+$string['gradingmethodpreview'] = 'Grading criteria';
 $string['gradingoptions'] = 'Options';
 $string['gradingstatus'] = 'Grading status';
 $string['gradingstudentprogress'] = 'Grading student {$a->index} of {$a->count}';
