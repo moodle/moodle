@@ -42,7 +42,6 @@ $string['pluginnameadding'] = 'Adding an Embedded answers (Cloze) question';
 $string['pluginnameediting'] = 'Editing an Embedded answers (Cloze) question';
 $string['pluginnamesummary'] = 'Questions of this type are very flexible, but can only be created by entering text containing special codes that create embedded multiple-choice, short answers and numerical questions.';
 $string['qtypenotrecognized'] = 'questiontype {$a} not recognized';
-$string['questionnadded'] = 'Question added';
 $string['questiondefinition'] = 'Question definition';
 $string['questiondeleted'] = 'Question deleted';
 $string['questioninquiz'] = '
@@ -52,6 +51,7 @@ $string['questioninquiz'] = '
   <li>change the questions order in the text,</li>
   <li>change their question type (numerical, shortanswer, multiple choice). </li></ul>
 ';
+$string['questionsadded'] = 'Question added';
 $string['questionsless'] = '{$a} question(s) less than in the multianswer question stored in the database';
 $string['questionsmissing'] = 'The question text must include at least one embedded answer.';
 $string['questionsmore'] = '{$a} question(s) more than in the multianswer question stored in the database';
