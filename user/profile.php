@@ -277,10 +277,11 @@ if (isset($identityfields['idnumber']) && $user->idnumber) {
     print_row(get_string("idnumber").":", "$user->idnumber");
 }
 
-if ($currentuser
+if (($currentuser
   or $user->maildisplay == 1
   or has_capability('moodle/course:useremail', $context)
-  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER))) {
+  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))
+  and isset($identityfields['email'])) {
 
     print_row(get_string("email").":", obfuscate_mailto($user->email, ''));
 }
