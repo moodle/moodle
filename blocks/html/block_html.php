@@ -131,4 +131,19 @@ class block_html extends block_base {
     public function instance_can_be_docked() {
         return (!empty($this->config->title) && parent::instance_can_be_docked());
     }
+
+    /*
+     * Add custom html attributes to aid with theming and styling
+     *
+     * @return array
+     */
+    function html_attributes() {
+        $attributes = parent::html_attributes();
+
+        if (!empty($this->config->classes)) {
+            $attributes['class'] .= ' '.$this->config->classes;
+        }
+
+        return $attributes;
+    }
 }

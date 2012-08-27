@@ -261,7 +261,8 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
 
     global $CFG, $USER, $OUTPUT;
 
-    $query = array_shift(tag_normalize($query, TAG_CASE_ORIGINAL));
+    $norm = tag_normalize($query, TAG_CASE_ORIGINAL);
+    $query = array_shift($norm);
 
     $count = sizeof(tag_find_tags($query, false));
     $tags = array();

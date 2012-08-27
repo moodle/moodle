@@ -30,8 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/filelib.php');  // curl class needed here
-
 /**
  * Singleton class providing general plugins management functionality
  */
@@ -100,6 +98,16 @@ class plugin_manager {
         global $CFG;
 
         if ($disablecache or is_null($this->pluginsinfo)) {
+            // Hack: include mod and editor subplugin management classes first,
+            //       the adminlib.php is supposed to contain extra admin settings too.
+            require_once($CFG->libdir.'/adminlib.php');
+            foreach(array('mod', 'editor') as $type) {
+                foreach (get_plugin_list($type) as $dir) {
+                    if (file_exists("$dir/adminlib.php")) {
+                        include_once("$dir/adminlib.php");
+                    }
+                }
+            }
             $this->pluginsinfo = array();
             $plugintypes = get_plugin_types();
             $plugintypes = $this->reorder_plugin_types($plugintypes);
@@ -148,10 +156,11 @@ class plugin_manager {
         if ($disablecache or is_null($this->subpluginsinfo)) {
             $this->subpluginsinfo = array();
             foreach (array('mod', 'editor') as $type) {
-                $owners = get_plugin_list('type');
+                $owners = get_plugin_list($type);
                 foreach ($owners as $component => $ownerdir) {
                     $componentsubplugins = array();
                     if (file_exists($ownerdir . '/db/subplugins.php')) {
+                        $subplugins = array();
                         include($ownerdir . '/db/subplugins.php');
                         foreach ($subplugins as $subplugintype => $subplugintyperootdir) {
                             $subplugin = new stdClass();
@@ -785,6 +794,9 @@ class available_update_checker {
      * @throws available_update_checker_exception
      */
     protected function get_response() {
+        global $CFG;
+        require_once($CFG->libdir.'/filelib.php');
+
         $curl = new curl(array('proxy' => true));
         $response = $curl->post($this->prepare_request_url(), $this->prepare_request_params());
         $curlinfo = $curl->get_info();
@@ -960,6 +972,9 @@ class available_update_checker {
             // nothing to do
             return;
         }
+
+        $version = null;
+        $release = null;
 
         require($CFG->dirroot.'/version.php');
         $this->currentversion = $version;

@@ -2551,23 +2551,38 @@ function obfuscate_text($plaintext) {
  * @param string $email The email address to display
  * @param string $label The text to displayed as hyperlink to $email
  * @param boolean $dimmed If true then use css class 'dimmed' for hyperlink
+ * @param string $subject The subject of the email in the mailto link
+ * @param string $body The content of the email in the mailto link
  * @return string The obfuscated mailto link
  */
-function obfuscate_mailto($email, $label='', $dimmed=false) {
+function obfuscate_mailto($email, $label='', $dimmed=false, $subject = '', $body = '') {
 
     if (empty($label)) {
         $label = $email;
     }
-    if ($dimmed) {
-        $title = get_string('emaildisable');
-        $dimmed = ' class="dimmed"';
-    } else {
-        $title = '';
-        $dimmed = '';
+
+    $label = obfuscate_text($label);
+    $email = obfuscate_email($email);
+    $mailto = obfuscate_text('mailto');
+    $url = new moodle_url("mailto:$email");
+    $attrs = array();
+
+    if (!empty($subject)) {
+        $url->param('subject', format_string($subject));
     }
-    return sprintf("<a href=\"%s:%s\" $dimmed title=\"$title\">%s</a>",
-                    obfuscate_text('mailto'), obfuscate_email($email),
-                    obfuscate_text($label));
+    if (!empty($body)) {
+        $url->param('body', format_string($body));
+    }
+
+    // Use the obfuscated mailto
+    $url = preg_replace('/^mailto/', $mailto, $url->out());
+
+    if ($dimmed) {
+        $attrs['title'] = get_string('emaildisable');
+        $attrs['class'] = 'dimmed';
+    }
+
+    return html_writer::link($url, $label, $attrs);
 }
 
 /**

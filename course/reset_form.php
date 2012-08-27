@@ -19,7 +19,7 @@ class course_reset_form extends moodleform {
         $mform->addElement('checkbox', 'reset_logs', get_string('deletelogs'));
         $mform->addElement('checkbox', 'reset_notes', get_string('deletenotes', 'notes'));
         $mform->addElement('checkbox', 'reset_comments', get_string('deleteallcomments', 'moodle'));
-        $mform->addElement('checkbox', 'reset_course_completion', get_string('deletecoursecompletiondata', 'completion'));
+        $mform->addElement('checkbox', 'reset_completion', get_string('deletecompletiondata', 'completion'));
         $mform->addElement('checkbox', 'delete_blog_associations', get_string('deleteblogassociations', 'blog'));
         $mform->addHelpButton('delete_blog_associations', 'deleteblogassociations', 'blog');
 

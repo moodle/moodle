@@ -578,6 +578,9 @@ class moodle_page {
         global $CFG;
         if (is_null($this->_blocks)) {
             if (!empty($CFG->blockmanagerclass)) {
+                if (!empty($CFG->blockmanagerclassfile)) {
+                    require_once($CFG->blockmanagerclassfile);
+                }
                 $classname = $CFG->blockmanagerclass;
             } else {
                 $classname = 'block_manager';

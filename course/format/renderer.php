@@ -235,7 +235,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             }
         }
 
-        if (!$onsectionpage && has_capability('moodle/course:update', $coursecontext)) {
+        if (!$onsectionpage && has_capability('moodle/course:movesections', $coursecontext)) {
             $url = clone($baseurl);
             if ($section->section > 1) { // Add a arrow to move section up.
                 $url->param('section', $section->section);
@@ -291,8 +291,11 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o .= html_writer::tag('div', '', array('class' => 'right side'));
         $o .= html_writer::start_tag('div', array('class' => 'content'));
 
-        $title = html_writer::tag('a', get_section_name($course, $section),
-                array('href' => course_get_url($course, $section->section), 'class' => $linkclasses));
+        $title = get_section_name($course, $section);
+        if ($section->uservisible) {
+            $title = html_writer::tag('a', $title,
+                    array('href' => course_get_url($course, $section->section), 'class' => $linkclasses));
+        }
         $o .= $this->output->heading($title, 3, 'section-title');
 
         $o.= html_writer::start_tag('div', array('class' => 'summarytext'));
@@ -448,7 +451,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $links = array('previous' => '', 'next' => '');
         $back = $sectionno - 1;
         while ($back > 0 and empty($links['previous'])) {
-            if ($canviewhidden || $sections[$back]->visible) {
+            if ($canviewhidden || $sections[$back]->uservisible) {
                 $params = array();
                 if (!$sections[$back]->visible) {
                     $params = array('class' => 'dimmed_text');
@@ -462,7 +465,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         $forward = $sectionno + 1;
         while ($forward <= $course->numsections and empty($links['next'])) {
-            if ($canviewhidden || $sections[$forward]->visible) {
+            if ($canviewhidden || $sections[$forward]->uservisible) {
                 $params = array();
                 if (!$sections[$forward]->visible) {
                     $params = array('class' => 'dimmed_text');

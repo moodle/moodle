@@ -226,16 +226,18 @@ class mod_quiz_renderer extends plugin_renderer_base {
     /**
      * Returns either a liink or button
      *
-     * @param $url contains a url for the review link
+     * @param quiz_attempt $attemptobj instance of quiz_attempt
      */
-    public function finish_review_link($url) {
-        if ($this->page->pagelayout == 'popup') {
-            // In a 'secure' popup window.
+    public function finish_review_link(quiz_attempt $attemptobj) {
+        $url = $attemptobj->view_url();
+
+        if ($attemptobj->get_access_manager(time())->attempt_must_be_in_popup()) {
             $this->page->requires->js_init_call('M.mod_quiz.secure_window.init_close_button',
                     array($url), quiz_get_js_module());
             return html_writer::empty_tag('input', array('type' => 'button',
                     'value' => get_string('finishreview', 'quiz'),
                     'id' => 'secureclosebutton'));
+
         } else {
             return html_writer::link($url, get_string('finishreview', 'quiz'));
         }
@@ -250,7 +252,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function review_next_navigation(quiz_attempt $attemptobj, $page, $lastpage) {
         if ($lastpage) {
-            $nav = $this->finish_review_link($attemptobj->view_url());
+            $nav = $this->finish_review_link($attemptobj);
         } else {
             $nav = link_arrow_right(get_string('next'), $attemptobj->review_url(null, $page + 1));
         }

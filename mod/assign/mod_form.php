@@ -45,7 +45,7 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return void
      */
     function definition() {
-        global $CFG, $DB;
+        global $CFG, $DB, $PAGE;
         $mform = $this->_form;
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -120,6 +120,21 @@ class mod_assign_mod_form extends moodleform_mod {
         $this->standard_coursemodule_elements();
 
         $this->add_action_buttons();
+
+        // Add warning popup/noscript tag, if grades are changed by user.
+        if ($mform->elementExists('grade') && !empty($this->_instance) && $DB->record_exists_select('assign_grades', 'assignment = ? AND grade <> -1', array($this->_instance))) {
+            $module = array(
+                'name' => 'mod_assign',
+                'fullpath' => '/mod/assign/module.js',
+                'requires' => array('node', 'event'),
+                'strings' => array(array('changegradewarning', 'mod_assign'))
+                );
+            $PAGE->requires->js_init_call('M.mod_assign.init_grade_change', null, false, $module);
+
+            // Add noscript tag in case
+            $noscriptwarning = $mform->createElement('static', 'warning', null,  html_writer::tag('noscript', get_string('changegradewarning', 'mod_assign')));
+            $mform->insertElementBefore($noscriptwarning, 'grade');
+        }
     }
 
     /**
@@ -161,5 +176,15 @@ class mod_assign_mod_form extends moodleform_mod {
         $assignment->plugin_data_preprocessing($defaultvalues);
     }
 
+    function add_completion_rules() {
+        $mform =& $this->_form;
+
+        $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'assign'));
+        return array('completionsubmit');
+    }
+
+    function completion_rule_enabled($data) {
+        return !empty($data['completionsubmit']);
+    }
 
 }

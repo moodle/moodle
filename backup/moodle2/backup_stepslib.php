@@ -182,8 +182,17 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
     /**
      * Attach to $element (usually attempts) the needed backup structures
      * for question_usages and all the associated data.
+     *
+     * @param backup_nested_element $element the element that will contain all the question_usages data.
+     * @param string $usageidname the name of the element that holds the usageid.
+     *      This must be child of $element, and must be a final element.
+     * @param string $nameprefix this prefix is added to all the element names we create.
+     *      Element names in the XML must be unique, so if you are using usages in
+     *      two different ways, you must give a prefix to at least one of them. If
+     *      you only use one sort of usage, then you can just use the default empty prefix.
+     *      This should include a trailing underscore. For example "myprefix_"
      */
-    protected function add_question_usages($element, $usageidname) {
+    protected function add_question_usages($element, $usageidname, $nameprefix = '') {
         global $CFG;
         require_once($CFG->dirroot . '/question/engine/lib.php');
 
@@ -195,21 +204,21 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
             throw new backup_step_exception('question_states_bad_question_attempt_element', $usageidname);
         }
 
-        $quba = new backup_nested_element('question_usage', array('id'),
+        $quba = new backup_nested_element($nameprefix . 'question_usage', array('id'),
                 array('component', 'preferredbehaviour'));
 
-        $qas = new backup_nested_element('question_attempts');
-        $qa = new backup_nested_element('question_attempt', array('id'), array(
+        $qas = new backup_nested_element($nameprefix . 'question_attempts');
+        $qa = new backup_nested_element($nameprefix . 'question_attempt', array('id'), array(
                 'slot', 'behaviour', 'questionid', 'maxmark', 'minfraction',
                 'flagged', 'questionsummary', 'rightanswer', 'responsesummary',
                 'timemodified'));
 
-        $steps = new backup_nested_element('steps');
-        $step = new backup_nested_element('step', array('id'), array(
+        $steps = new backup_nested_element($nameprefix . 'steps');
+        $step = new backup_nested_element($nameprefix . 'step', array('id'), array(
                 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid'));
 
-        $response = new backup_nested_element('response');
-        $variable = new backup_nested_element('variable', null,  array('name', 'value'));
+        $response = new backup_nested_element($nameprefix . 'response');
+        $variable = new backup_nested_element($nameprefix . 'variable', null,  array('name', 'value'));
 
         // Build the tree
         $element->add_child($quba);
@@ -1835,7 +1844,7 @@ class backup_annotate_all_user_files extends backup_execution_step {
             'backupid' => $this->get_backupid(), 'itemname' => 'userfinal'));
         foreach ($rs as $record) {
             $userid = $record->itemid;
-            $userctx = context_user::instance($userid);
+            $userctx = context_user::instance($userid, IGNORE_MISSING);
             if (!$userctx) {
                 continue; // User has not context, sure it's a deleted user, so cannot have files
             }

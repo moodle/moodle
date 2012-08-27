@@ -14,7 +14,6 @@
         stopOnIncomplete="false"
         stopOnSkipped="false"
         strict="false"
-        verbose="false"
         printerClass="Hint_ResultPrinter"
         >
 

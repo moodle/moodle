@@ -176,7 +176,7 @@
 
         if (has_capability('moodle/course:update', $context)) {
             if (!empty($section)) {
-                if (!empty($move) and confirm_sesskey()) {
+                if (!empty($move) and has_capability('moodle/course:movesections', $context) and confirm_sesskey()) {
                     $destsection = $section + $move;
                     if (move_section_to($course, $section, $destsection)) {
                         // Rebuild course cache, after moving section

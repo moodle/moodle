@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,25 +17,25 @@
 /**
  * Category enrolment plugin.
  *
- * @package    enrol
- * @subpackage category
+ * @package    enrol_category
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+
 /**
  * category enrolment plugin implementation.
- * @author Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author  Petr Skoda
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_category_plugin extends enrol_plugin {
 
    /**
      * Is it possible to delete enrol instance via standard UI?
      *
-     * @param object $instance
+     * @param stdClass $instance
      * @return bool
      */
     public function instance_deleteable($instance) {
@@ -45,7 +44,7 @@ class enrol_category_plugin extends enrol_plugin {
         if (!enrol_is_enabled('category')) {
             return true;
         }
-        // allow delete only when no synced users here
+        // Allow delete only when no synced users here.
         return !$DB->record_exists('user_enrolments', array('enrolid'=>$instance->id));
     }
 
@@ -55,8 +54,8 @@ class enrol_category_plugin extends enrol_plugin {
      * @return moodle_url page url
      */
     public function get_newinstance_link($courseid) {
-        // instances are added automatically as necessary
-        return NULL;
+        // Instances are added automatically as necessary.
+        return null;
     }
 
     /**
@@ -78,8 +77,8 @@ class enrol_category_plugin extends enrol_plugin {
      * Called after updating/inserting course.
      *
      * @param bool $inserted true if course just inserted
-     * @param object $course
-     * @param object $data form data
+     * @param stdClass $course
+     * @param stdClass $data form data
      * @return void
      */
     public function course_updated($inserted, $course, $data) {
@@ -89,10 +88,8 @@ class enrol_category_plugin extends enrol_plugin {
             return;
         }
 
-        // sync category enrols
+        // Sync category enrols.
         require_once("$CFG->dirroot/enrol/category/locallib.php");
         enrol_category_sync_course($course);
     }
 }
-
-

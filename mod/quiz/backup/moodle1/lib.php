@@ -56,7 +56,7 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
                 array(
                     'newfields' => array(
                         'showuserpicture'   => 0,
-                        'questiondecimalpoints' => -2,
+                        'questiondecimalpoints' => -1,
                         'introformat'   => 0,
                         'showblocks'    => 0,
                     )

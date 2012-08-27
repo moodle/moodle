@@ -112,7 +112,7 @@ abstract class backup_plan_dbops extends backup_dbops {
 
         // Get all sections belonging to requested course
         $sectionsarr = array();
-        $sections = $DB->get_records('course_sections', array('course' => $courseid));
+        $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section');
         foreach ($sections as $section) {
             $sectionsarr[] = $section->id;
         }

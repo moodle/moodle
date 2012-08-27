@@ -83,6 +83,7 @@ function assign_supports($feature) {
         case FEATURE_GROUPMEMBERSONLY:        return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_COMPLETION_HAS_RULES:    return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
@@ -936,4 +937,30 @@ function assign_user_outline($course, $user, $coursemodule, $assignment) {
     $result->time = $gradebookgrade->dategraded;
 
     return $result;
+}
+
+/**
+ * Obtains the automatic completion state for this module based on any conditions
+ * in assign settings.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ */
+function assign_get_completion_state($course, $cm, $userid, $type) {
+    global $CFG,$DB;
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+    $assign = new assign(null, $cm, $course);
+
+    // If completion option is enabled, evaluate it and return true/false.
+    if ($assign->get_instance()->completionsubmit) {
+        $submission = $DB->get_record('assign_submission', array('assignment'=>$assign->get_instance()->id, 'userid'=>$userid), '*', IGNORE_MISSING);
+        return $submission && $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+    } else {
+        // Completion option is not enabled so just return $type.
+        return $type;
+    }
 }

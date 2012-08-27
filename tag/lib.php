@@ -558,7 +558,8 @@ function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
 function tag_rename($tagid, $newrawname) {
     global $DB;
 
-    if (! $newrawname_clean = array_shift(tag_normalize($newrawname, TAG_CASE_ORIGINAL)) ) {
+    $norm = tag_normalize($newrawname, TAG_CASE_ORIGINAL);
+    if (! $newrawname_clean = array_shift($norm) ) {
         return false;
     }
 
@@ -1020,7 +1021,8 @@ function tag_cron() {
 function tag_find_tags($text, $ordered=true, $limitfrom='', $limitnum='') {
     global $DB;
 
-    $text = array_shift(tag_normalize($text, TAG_CASE_LOWER));
+    $norm = tag_normalize($text, TAG_CASE_LOWER);
+    $text = array_shift($norm);
 
     if ($ordered) {
         $query = "SELECT tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count

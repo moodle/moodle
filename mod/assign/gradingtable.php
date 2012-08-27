@@ -287,13 +287,15 @@ class assign_grading_table extends table_sql implements renderable {
     }
 
     /**
-     * Format a user record for display (don't link to profile)
+     * Format a user record for display (link to profile)
      *
      * @param stdClass $row
      * @return string
      */
     function col_fullname($row) {
-        return fullname($row);
+        $courseid = $this->assignment->get_course()->id;
+        $link= new moodle_url('/user/view.php', array('id' =>$row->id, 'course'=>$courseid));
+        return $this->output->action_link($link, fullname($row));
     }
 
     /**

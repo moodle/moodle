@@ -55,7 +55,8 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                                                   'duedate',
                                                   'allowsubmissionsfromdate',
                                                   'grade',
-                                                  'timemodified'));
+                                                  'timemodified',
+                                                  'completionsubmit'));
 
         $submissions = new backup_nested_element('submissions');
 

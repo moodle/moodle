@@ -3478,31 +3478,74 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     /**
      * Attach below $element (usually attempts) the needed restore_path_elements
      * to restore question_usages and all they contain.
+     *
+     * If you use the $nameprefix parameter, then you will need to implement some
+     * extra methods in your class, like
+     *
+     * protected function process_{nameprefix}question_attempt($data) {
+     *     $this->restore_question_usage_worker($data, '{nameprefix}');
+     * }
+     * protected function process_{nameprefix}question_attempt($data) {
+     *     $this->restore_question_attempt_worker($data, '{nameprefix}');
+     * }
+     * protected function process_{nameprefix}question_attempt_step($data) {
+     *     $this->restore_question_attempt_step_worker($data, '{nameprefix}');
+     * }
+     *
+     * @param restore_path_element $element the parent element that the usages are stored inside.
+     * @param array $paths the paths array that is being built.
+     * @param string $nameprefix should match the prefix passed to the corresponding
+     *      backup_questions_activity_structure_step::add_question_usages call.
      */
-    protected function add_question_usages($element, &$paths) {
+    protected function add_question_usages($element, &$paths, $nameprefix = '') {
         // Check $element is restore_path_element
         if (! $element instanceof restore_path_element) {
             throw new restore_step_exception('element_must_be_restore_path_element', $element);
         }
+
         // Check $paths is one array
         if (!is_array($paths)) {
             throw new restore_step_exception('paths_must_be_array', $paths);
         }
-        $paths[] = new restore_path_element('question_usage',
-                $element->get_path() . '/question_usage');
-        $paths[] = new restore_path_element('question_attempt',
-                $element->get_path() . '/question_usage/question_attempts/question_attempt');
-        $paths[] = new restore_path_element('question_attempt_step',
-                $element->get_path() . '/question_usage/question_attempts/question_attempt/steps/step',
+        $paths[] = new restore_path_element($nameprefix . 'question_usage',
+                $element->get_path() . "/{$nameprefix}question_usage");
+        $paths[] = new restore_path_element($nameprefix . 'question_attempt',
+                $element->get_path() . "/{$nameprefix}question_usage/{$nameprefix}question_attempts/{$nameprefix}question_attempt");
+        $paths[] = new restore_path_element($nameprefix . 'question_attempt_step',
+                $element->get_path() . "/{$nameprefix}question_usage/{$nameprefix}question_attempts/{$nameprefix}question_attempt/{$nameprefix}steps/{$nameprefix}step",
                 true);
-        $paths[] = new restore_path_element('question_attempt_step_data',
-                $element->get_path() . '/question_usage/question_attempts/question_attempt/steps/step/response/variable');
+        $paths[] = new restore_path_element($nameprefix . 'question_attempt_step_data',
+                $element->get_path() . "/{$nameprefix}question_usage/{$nameprefix}question_attempts/{$nameprefix}question_attempt/{$nameprefix}steps/{$nameprefix}step/{$nameprefix}response/{$nameprefix}variable");
     }
 
     /**
      * Process question_usages
      */
     protected function process_question_usage($data) {
+        $this->restore_question_usage_worker($data, '');
+    }
+
+    /**
+     * Process question_attempts
+     */
+    protected function process_question_attempt($data) {
+        $this->restore_question_attempt_worker($data, '');
+    }
+
+    /**
+     * Process question_attempt_steps
+     */
+    protected function process_question_attempt_step($data) {
+        $this->restore_question_attempt_step_worker($data, '');
+    }
+
+    /**
+     * This method does the acutal work for process_question_usage or
+     * process_{nameprefix}_question_usage.
+     * @param array $data the data from the XML file.
+     * @param string $nameprefix the element name prefix.
+     */
+    protected function restore_question_usage_worker($data, $nameprefix) {
         global $DB;
 
         // Clear our caches.
@@ -3520,7 +3563,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
 
         $this->inform_new_usage_id($newitemid);
 
-        $this->set_mapping('question_usage', $oldid, $newitemid, false);
+        $this->set_mapping($nameprefix . 'question_usage', $oldid, $newitemid, false);
     }
 
     /**
@@ -3532,30 +3575,36 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     abstract protected function inform_new_usage_id($newusageid);
 
     /**
-     * Process question_attempts
+     * This method does the acutal work for process_question_attempt or
+     * process_{nameprefix}_question_attempt.
+     * @param array $data the data from the XML file.
+     * @param string $nameprefix the element name prefix.
      */
-    protected function process_question_attempt($data) {
+    protected function restore_question_attempt_worker($data, $nameprefix) {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
         $question = $this->get_mapping('question', $data->questionid);
 
-        $data->questionusageid = $this->get_new_parentid('question_usage');
+        $data->questionusageid = $this->get_new_parentid($nameprefix . 'question_usage');
         $data->questionid      = $question->newitemid;
         $data->timemodified    = $this->apply_date_offset($data->timemodified);
 
         $newitemid = $DB->insert_record('question_attempts', $data);
 
-        $this->set_mapping('question_attempt', $oldid, $newitemid);
+        $this->set_mapping($nameprefix . 'question_attempt', $oldid, $newitemid);
         $this->qtypes[$newitemid] = $question->info->qtype;
         $this->newquestionids[$newitemid] = $data->questionid;
     }
 
     /**
-     * Process question_attempt_steps
+     * This method does the acutal work for process_question_attempt_step or
+     * process_{nameprefix}_question_attempt_step.
+     * @param array $data the data from the XML file.
+     * @param string $nameprefix the element name prefix.
      */
-    protected function process_question_attempt_step($data) {
+    protected function restore_question_attempt_step_worker($data, $nameprefix) {
         global $DB;
 
         $data = (object)$data;
@@ -3563,14 +3612,14 @@ abstract class restore_questions_activity_structure_step extends restore_activit
 
         // Pull out the response data.
         $response = array();
-        if (!empty($data->response['variable'])) {
-            foreach ($data->response['variable'] as $variable) {
+        if (!empty($data->{$nameprefix . 'response'}[$nameprefix . 'variable'])) {
+            foreach ($data->{$nameprefix . 'response'}[$nameprefix . 'variable'] as $variable) {
                 $response[$variable['name']] = $variable['value'];
             }
         }
         unset($data->response);
 
-        $data->questionattemptid = $this->get_new_parentid('question_attempt');
+        $data->questionattemptid = $this->get_new_parentid($nameprefix . 'question_attempt');
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->userid      = $this->get_mappingid('user', $data->userid);
 
@@ -3583,6 +3632,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
                 $this->qtypes[$data->questionattemptid],
                 $this->newquestionids[$data->questionattemptid],
                 $data->sequencenumber, $response);
+
         foreach ($response as $name => $value) {
             $row = new stdClass();
             $row->attemptstepid = $newitemid;

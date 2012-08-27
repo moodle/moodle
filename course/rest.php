@@ -88,7 +88,7 @@ switch($requestmethod) {
                         break;
 
                     case 'move':
-                        require_capability('moodle/course:update', $coursecontext);
+                        require_capability('moodle/course:movesections', $coursecontext);
                         move_section_to($course, $id, $value);
                         // See if format wants to do something about it
                         $libfile = $CFG->dirroot.'/course/format/'.$course->format.'/lib.php';

@@ -712,6 +712,31 @@ class completion_info {
     }
 
     /**
+     * Deletes all activity and course completion data for an entire course
+     * (the below delete_all_state function does this for a single activity).
+     *
+     * Used by course reset page.
+     */
+    public function delete_all_completion_data() {
+        global $DB, $SESSION;
+
+        // Delete from database.
+        $DB->delete_records_select('course_modules_completion',
+                'coursemoduleid IN (SELECT id FROM {course_modules} WHERE course=?)',
+                array($this->course_id));
+
+        // Reset cache for current user.
+        if (isset($SESSION->completioncache) &&
+            array_key_exists($this->course_id, $SESSION->completioncache)) {
+
+            unset($SESSION->completioncache[$this->course_id]);
+        }
+
+        // Wipe course completion data too.
+        $this->delete_course_completion_data();
+    }
+
+    /**
      * Deletes completion state related to an activity for all users.
      *
      * Intended for use only when the activity itself is deleted.

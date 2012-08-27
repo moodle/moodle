@@ -832,10 +832,9 @@ class group_non_members_selector extends groups_user_selector_base {
                    JOIN ($enrolsql) e ON e.id = u.id
               LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid " . get_related_contexts_string($context) . " AND ra.roleid $roleids)
               LEFT JOIN {role} r ON r.id = ra.roleid
+              LEFT JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)
                   WHERE u.deleted = 0
-                        AND u.id NOT IN (SELECT userid
-                                          FROM {groups_members}
-                                         WHERE groupid = :groupid)
+                        AND gm.id IS NULL
                         AND $searchcondition";
         $orderby = "ORDER BY u.lastname, u.firstname";
 

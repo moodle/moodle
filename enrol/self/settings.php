@@ -65,8 +65,8 @@ if ($ADMIN->fulltree) {
             get_string('defaultrole', 'enrol_self'), get_string('defaultrole_desc', 'enrol_self'), $student->id, $options));
     }
 
-    $settings->add(new admin_setting_configtext('enrol_self/enrolperiod',
-        get_string('enrolperiod', 'enrol_self'), get_string('enrolperiod_desc', 'enrol_self'), 0, PARAM_INT));
+    $settings->add(new admin_setting_configduration('enrol_self/enrolperiod',
+        get_string('enrolperiod', 'enrol_self'), get_string('enrolperiod_desc', 'enrol_self'), 0));
 
     $options = array(0 => get_string('never'),
                      1800 * 3600 * 24 => get_string('numdays', '', 1800),

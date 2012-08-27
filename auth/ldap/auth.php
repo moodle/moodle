@@ -546,7 +546,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                     return AUTH_CONFIRM_FAIL;
                 }
                 $DB->set_field('user', 'confirmed', 1, array('id'=>$user->id));
-                $DB->set_field('user', 'firstaccess', time(), array('id'=>$user->id));
+                if ($user->firstaccess == 0) {
+                    $DB->set_field('user', 'firstaccess', time(), array('id'=>$user->id));
+                }
                 return AUTH_CONFIRM_OK;
             }
         } else {
