@@ -213,41 +213,55 @@ class qformat_gift extends qformat_default {
             $question->name = false;
         }
 
-
-        // FIND ANSWER section
-        // no answer means its a description
+        // Find the answer section.
         $answerstart = strpos($text, '{');
         $answerfinish = strpos($text, '}');
 
         $description = false;
-        if (($answerstart === false) and ($answerfinish === false)) {
+        if ($answerstart === false && $answerfinish === false) {
+            // No answer means it's a description.
             $description = true;
             $answertext = '';
             $answerlength = 0;
-        } else if (!(($answerstart !== false) and ($answerfinish !== false))) {
+
+        } else if ($answerstart === false || $answerfinish === false) {
             $this->error(get_string('braceerror', 'qformat_gift'), $text);
             return false;
+
         } else {
             $answerlength = $answerfinish - $answerstart;
             $answertext = trim(substr($text, $answerstart + 1, $answerlength - 1));
         }
 
-        // Format QUESTION TEXT without answer, inserting "_____" as necessary
+        // Format the question text, without answer, inserting "_____" as necessary.
         if ($description) {
             $questiontext = $text;
         } else if (substr($text, -1) == "}") {
-            // no blank line if answers follow question, outside of closing punctuation
-            $questiontext = substr_replace($text, "", $answerstart, $answerlength+1);
+            // No blank line if answers follow question, outside of closing punctuation.
+            $questiontext = substr_replace($text, "", $answerstart, $answerlength + 1);
         } else {
-            // inserts blank line for missing word format
-            $questiontext = substr_replace($text, "_____", $answerstart, $answerlength+1);
+            // Inserts blank line for missing word format.
+            $questiontext = substr_replace($text, "_____", $answerstart, $answerlength + 1);
         }
 
-        // Get questiontext format from questiontext
+        // Look to see if there is any general feedback.
+        $gfseparator = strrpos($answertext, '####');
+        if ($gfseparator === false) {
+            $generalfeedback = '';
+        } else {
+            $generalfeedback = substr($answertext, $gfseparator + 4);
+            $answertext = trim(substr($answertext, 0, $gfseparator));
+        }
+
+        // Get questiontext format from questiontext.
         $text = $this->parse_text_with_format($questiontext);
         $question->questiontextformat = $text['format'];
-        $question->generalfeedbackformat = $text['format'];
         $question->questiontext = $text['text'];
+
+        // Get generalfeedback format from questiontext.
+        $text = $this->parse_text_with_format($generalfeedback, $question->questiontextformat);
+        $question->generalfeedback = $text['text'];
+        $question->generalfeedbackformat = $text['format'];
 
         // set question name if not already set
         if ($question->name === false) {
@@ -609,6 +623,27 @@ class qformat_gift extends qformat_default {
         return $output;
     }
 
+    /**
+     * Outputs the general feedback for the question, if any. This needs to be the
+     * last thing before the }.
+     * @param object $question the question data.
+     * @param string $indent to put before the general feedback. Defaults to a tab.
+     *      If this is not blank, a newline is added after the line.
+     */
+    public function write_general_feedback($question, $indent = "\t") {
+        $generalfeedback = $this->write_questiontext($question->generalfeedback,
+                $question->generalfeedbackformat, $question->questiontextformat);
+
+        if ($generalfeedback) {
+            $generalfeedback = '####' . $generalfeedback;
+            if ($indent) {
+                $generalfeedback = $indent . $generalfeedback . "\n";
+            }
+        }
+
+        return $generalfeedback;
+    }
+
     public function writequestion($question) {
         global $OUTPUT;
 
@@ -631,7 +666,9 @@ class qformat_gift extends qformat_default {
         case ESSAY:
             $expout .= $this->write_name($question->name);
             $expout .= $this->write_questiontext($question->questiontext, $question->questiontextformat);
-            $expout .= "{}\n";
+            $expout .= "{";
+            $expout .= $this->write_general_feedback($question, '');
+            $expout .= "}\n";
             break;
 
         case TRUEFALSE:
@@ -662,6 +699,7 @@ class qformat_gift extends qformat_default {
             if ($rightfeedback) {
                 $expout .= '#' . $rightfeedback;
             }
+            $expout .= $this->write_general_feedback($question, '');
             $expout .= "}\n";
             break;
 
@@ -686,6 +724,7 @@ class qformat_gift extends qformat_default {
                 }
                 $expout .= "\n";
             }
+            $expout .= $this->write_general_feedback($question);
             $expout .= "}\n";
             break;
 
@@ -699,6 +738,7 @@ class qformat_gift extends qformat_default {
                         '#' . $this->write_questiontext($answer->feedback,
                             $answer->feedbackformat, $question->questiontextformat) . "\n";
             }
+            $expout .= $this->write_general_feedback($question);
             $expout .= "}\n";
             break;
 
@@ -717,6 +757,7 @@ class qformat_gift extends qformat_default {
                             $answer->feedbackformat, $question->questiontextformat) . "\n";
                 }
             }
+            $expout .= $this->write_general_feedback($question);
             $expout .= "}\n";
             break;
 
@@ -729,6 +770,7 @@ class qformat_gift extends qformat_default {
                         $subquestion->questiontextformat, $question->questiontextformat) .
                         ' -> ' . $this->repchar($subquestion->answertext) . "\n";
             }
+            $expout .= $this->write_general_feedback($question);
             $expout .= "}\n";
             break;
 
