@@ -7149,5 +7149,15 @@ FROM
         upgrade_main_savepoint(true, 2011120504.05);
     }
 
+    if ($oldversion < 2011120504.11) {
+        $subquery = 'SELECT b.id FROM {blog_external} b where ' . $DB->sql_compare_text('b.id') . ' = ' . $DB->sql_compare_text('{post}.content');
+        $sql = 'DELETE FROM {post}
+                      WHERE {post}.module = \'blog_external\'
+                            AND NOT EXISTS (' . $subquery . ')
+                            AND ' . $DB->sql_isnotempty('post', 'uniquehash', false, false);
+        $DB->execute($sql);
+        upgrade_main_savepoint(true, 2011120504.11);
+    }
+
     return true;
 }
