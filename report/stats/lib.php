@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die;
  */
 function report_stats_extend_navigation_course($navigation, $course, $context) {
     global $CFG;
-    if (!empty($CFG->enablestats)) {
+    if (empty($CFG->enablestats)) {
         return;
     }
     if (has_capability('report/stats:view', $context)) {
@@ -54,7 +54,7 @@ function report_stats_extend_navigation_course($navigation, $course, $context) {
  */
 function report_stats_extend_navigation_user($navigation, $user, $course) {
     global $CFG;
-    if (!empty($CFG->enablestats)) {
+    if (empty($CFG->enablestats)) {
         return;
     }
     if (report_stats_can_access_user_report($user, $course)) {
