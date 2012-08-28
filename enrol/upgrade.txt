@@ -8,6 +8,9 @@ required changes in code:
 * use role_get_name() or role_fix_names() if you need any role names, using role.name
   directly from database is not correct any more
 
+other changes:
+* course enrolment manager now works with disabled plugins too
+
 
 === 2.2 ===
 

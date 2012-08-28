@@ -54,6 +54,11 @@ if ($course->id == SITEID) {
     redirect(new moodle_url('/'));
 }
 
+// Do not allow any changes if plugin disabled.
+if (!enrol_is_enabled('self')) {
+    redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
+}
+
 // Obvioulsy
 require_login($course);
 // The user must be able to manage self enrolments within the course

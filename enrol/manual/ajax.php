@@ -111,11 +111,14 @@ switch ($action) {
 
         $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
         $instances = $manager->get_enrolment_instances();
-        $plugins = $manager->get_enrolment_plugins();
+        $plugins = $manager->get_enrolment_plugins(true); // Do not allow actions on disabled plugins.
         if (!array_key_exists($enrolid, $instances)) {
             throw new enrol_ajax_exception('invalidenrolinstance');
         }
         $instance = $instances[$enrolid];
+        if (!isset($plugins[$instance->enrol])) {
+            throw new enrol_ajax_exception('enrolnotpermitted');
+        }
         $plugin = $plugins[$instance->enrol];
         if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
             $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend);
