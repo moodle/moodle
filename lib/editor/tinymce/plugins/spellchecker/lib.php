@@ -25,6 +25,9 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tinymce_spellchecker extends editor_tinymce_plugin {
+    /** @var array list of buttons defined by this plugin */
+    protected $buttons = array('spellchecker');
+
     protected function update_init_params(array &$params, context $context,
             array $options = null) {
         global $CFG;

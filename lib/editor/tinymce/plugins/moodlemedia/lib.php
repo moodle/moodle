@@ -24,8 +24,18 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tinymce_moodlemedia extends editor_tinymce_plugin {
+    /** @var array list of buttons defined by this plugin */
+    protected $buttons = array('moodlemedia');
+
     protected function update_init_params(array &$params, context $context,
             array $options = null) {
+
+        // Add file picker callback.
+        if (empty($options['legacy'])) {
+            if (isset($options['maxfiles']) and $options['maxfiles'] != 0) {
+                $params['file_browser_callback'] = "M.editor_tinymce.filepicker";
+            }
+        }
 
         // Add button after emoticon button in advancedbuttons3.
         $added = $this->add_button_after($params, 3, 'moodlemedia', 'moodleemoticon', false);

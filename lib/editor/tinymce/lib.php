@@ -177,11 +177,6 @@ class tinymce_texteditor extends texteditor {
         $params['extended_valid_elements'] = 'nolink,tex,algebra,lang[lang]';
         $params['custom_elements'] = 'nolink,~tex,~algebra,lang';
 
-        if (empty($options['legacy'])) {
-            if (isset($options['maxfiles']) and $options['maxfiles'] != 0) {
-                $params['file_browser_callback'] = "M.editor_tinymce.filepicker";
-            }
-        }
         //Add onblur event for client side text validation
         if (!empty($options['required'])) {
             $params['init_instance_callback'] = 'M.editor_tinymce.onblur_event';
