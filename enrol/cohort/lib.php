@@ -92,7 +92,7 @@ class enrol_cohort_plugin extends enrol_plugin {
               ORDER BY name ASC";
         $cohorts = $DB->get_records_sql($sql, $params);
         foreach ($cohorts as $c) {
-            $context = get_context_instance_by_id($c->contextid);
+            $context = context::instance_by_id($c->contextid);
             if (has_capability('moodle/cohort:view', $context)) {
                 return true;
             }

@@ -34,7 +34,7 @@
             'id' => $courseid));
 
     if ($contextid) {
-        $context = get_context_instance_by_id($contextid, MUST_EXIST);
+        $context = context::instance_by_id($contextid, MUST_EXIST);
         if ($context->contextlevel != CONTEXT_COURSE) {
             print_error('invalidcontext');
         }

@@ -1119,7 +1119,7 @@ function question_category_options($contexts, $top = false, $currentcat = 0,
     $categoriesarray = array();
     foreach ($pcontexts as $pcontext) {
         $contextstring = print_context_name(
-                get_context_instance_by_id($pcontext), true, true);
+                context::instance_by_id($pcontext), true, true);
         foreach ($categories as $category) {
             if ($category->contextid == $pcontext) {
                 $cid = $category->id;
@@ -1346,7 +1346,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
         }
     }
     $category = $categories[$question->category];
-    $context = get_context_instance_by_id($category->contextid);
+    $context = context::instance_by_id($category->contextid);
 
     if (array_search($cap, $question_questioncaps)!== false) {
         if (!has_capability('moodle/question:' . $cap . 'all', $context)) {

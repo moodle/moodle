@@ -3527,7 +3527,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
  * @return array an associative array of the user's rating permissions
  */
 function forum_rating_permissions($contextid, $component, $ratingarea) {
-    $context = get_context_instance_by_id($contextid, MUST_EXIST);
+    $context = context::instance_by_id($contextid, MUST_EXIST);
     if ($component != 'mod_forum' || $ratingarea != 'post') {
         // We don't know about this component/ratingarea so just return null to get the
         // default restrictive permissions.

@@ -82,7 +82,7 @@ class core_files_external extends external_api {
         if (empty($fileinfo['contextid'])) {
             $context  = get_system_context();
         } else {
-            $context  = get_context_instance_by_id($fileinfo['contextid']);
+            $context  = context::instance_by_id($fileinfo['contextid']);
         }
         if (empty($fileinfo['component'])) {
             $fileinfo['component'] = null;
@@ -272,7 +272,7 @@ class core_files_external extends external_api {
         }
 
         if (!empty($fileinfo['contextid'])) {
-            $context = get_context_instance_by_id($fileinfo['contextid']);
+            $context = context::instance_by_id($fileinfo['contextid']);
         } else {
             $context = get_system_context();
         }

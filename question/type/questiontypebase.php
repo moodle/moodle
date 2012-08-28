@@ -1023,7 +1023,7 @@ class question_type {
     protected function get_context_by_category_id($category) {
         global $DB;
         $contextid = $DB->get_field('question_categories', 'contextid', array('id'=>$category));
-        $context = get_context_instance_by_id($contextid);
+        $context = context::instance_by_id($contextid, IGNORE_MISSING);
         return $context;
     }
 

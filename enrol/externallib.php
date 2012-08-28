@@ -381,7 +381,7 @@ class core_role_external extends external_api {
 
         foreach ($params['assignments'] as $assignment) {
             // Ensure the current user is allowed to run this function in the enrolment context
-            $context = get_context_instance_by_id($assignment['contextid']);
+            $context = context::instance_by_id($assignment['contextid'], IGNORE_MISSING);
             self::validate_context($context);
             require_capability('moodle/role:assign', $context);
 
@@ -445,7 +445,7 @@ class core_role_external extends external_api {
 
         foreach ($params['unassignments'] as $unassignment) {
             // Ensure the current user is allowed to run this function in the unassignment context
-            $context = get_context_instance_by_id($unassignment['contextid']);
+            $context = context::instance_by_id($unassignment['contextid'], IGNORE_MISSING);
             self::validate_context($context);
             require_capability('moodle/role:assign', $context);
 

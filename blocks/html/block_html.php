@@ -108,7 +108,7 @@ class block_html extends block_base {
     function content_is_trusted() {
         global $SCRIPT;
 
-        if (!$context = get_context_instance_by_id($this->instance->parentcontextid)) {
+        if (!$context = context::instance_by_id($this->instance->parentcontextid, IGNORE_MISSING)) {
             return false;
         }
         //find out if this block is on the profile page

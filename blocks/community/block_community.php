@@ -43,7 +43,7 @@ class block_community extends block_list {
     function user_can_edit() {
         // Don't allow people to edit the block if they can't even use it
         if (!has_capability('moodle/community:add',
-                        get_context_instance_by_id($this->instance->parentcontextid))) {
+                        context::instance_by_id($this->instance->parentcontextid))) {
             return false;
         }
         return parent::user_can_edit();
@@ -52,7 +52,7 @@ class block_community extends block_list {
     function get_content() {
         global $CFG, $OUTPUT, $USER;
 
-        $coursecontext = get_context_instance_by_id($this->instance->parentcontextid);
+        $coursecontext = context::instance_by_id($this->instance->parentcontextid);
 
         if (!has_capability('moodle/community:add', $coursecontext)
                 or $this->content !== NULL) {

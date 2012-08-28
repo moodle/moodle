@@ -65,7 +65,7 @@ class block_quiz_results extends block_base {
         if (empty($this->instance->parentcontextid)) {
             return 0;
         }
-        $parentcontext = get_context_instance_by_id($this->instance->parentcontextid);
+        $parentcontext = context::instance_by_id($this->instance->parentcontextid);
         if ($parentcontext->contextlevel != CONTEXT_MODULE) {
             return 0;
         }

@@ -73,7 +73,7 @@ function module_specific_buttons($cmid, $cmoptions) {
 function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmoptions) {
     global $OUTPUT;
     $out = '';
-    $catcontext = get_context_instance_by_id($category->contextid);
+    $catcontext = context::instance_by_id($category->contextid);
     if (has_capability('moodle/question:useall', $catcontext)) {
         if ($cmoptions->hasattempts) {
             $disabled = ' disabled="disabled"';
