@@ -780,6 +780,17 @@ class restore_groups_structure_step extends restore_structure_step {
         // map user newitemid and insert if not member already
         if ($data->userid = $this->get_mappingid('user', $data->userid)) {
             if (!$DB->record_exists('groups_members', array('groupid' => $data->groupid, 'userid' => $data->userid))) {
+                // Check the componment, if any, exists
+                if (!empty($data->component)) {
+                    $dir = get_component_directory($data->component);
+                    if (!$dir || !is_dir($dir)) {
+                        // Component does not exist on restored system; clear
+                        // component and itemid
+                        unset($data->component);
+                        unset($data->itemid);
+                    }
+                }
+
                 $DB->insert_record('groups_members', $data);
             }
         }

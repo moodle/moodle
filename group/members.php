@@ -67,6 +67,10 @@ if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
     $userstoremove = $groupmembersselector->get_selected_users();
     if (!empty($userstoremove)) {
         foreach ($userstoremove as $user) {
+            if (!groups_remove_member_allowed($groupid, $user->id)) {
+                print_error('errorremovenotpermitted', 'group', $returnurl,
+                        $user->fullname);
+            }
             if (!groups_remove_member($groupid, $user->id)) {
                 print_error('erroraddremoveuser', 'group', $returnurl);
             }

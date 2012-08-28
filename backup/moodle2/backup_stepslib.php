@@ -1005,7 +1005,7 @@ class backup_groups_structure_step extends backup_structure_step {
         $members = new backup_nested_element('group_members');
 
         $member = new backup_nested_element('group_member', array('id'), array(
-            'userid', 'timeadded'));
+            'userid', 'timeadded', 'component', 'itemid'));
 
         $groupings = new backup_nested_element('groupings');
 

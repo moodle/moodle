@@ -87,6 +87,9 @@ foreach ($users as &$group) {
         if (!empty($user->disabled)) {
             $output->disabled = true;
         }
+        if (!empty($user->infobelow)) {
+            $output->infobelow = $user->infobelow;
+        }
         $group[$user->id] = $output;
     }
 }

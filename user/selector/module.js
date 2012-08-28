@@ -240,6 +240,11 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
                     option.set('selected', false);
                 }
                 optgroup.append(option);
+                if (user.infobelow) {
+                    extraoption = Y.Node.create('<option disabled="disabled" class="userselector-infobelow"/>');
+                    extraoption.appendChild(document.createTextNode(user.infobelow));
+                    optgroup.append(extraoption);
+                }
                 count++;
             }
 
