@@ -708,7 +708,7 @@ class question_usage_by_activity {
         }
 
         $quba = new question_usage_by_activity($record->component,
-            context::instance_by_id($record->contextid));
+            context::instance_by_id($record->contextid, IGNORE_MISSING));
         $quba->set_id_from_database($record->qubaid);
         $quba->set_preferred_behaviour($record->preferredbehaviour);
 
