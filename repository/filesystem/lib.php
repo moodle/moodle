@@ -273,17 +273,13 @@ class repository_filesystem extends repository {
 
     /**
      * Returns information about file in this repository by reference
-     * {@link repository::get_file_reference()}
-     * {@link repository::get_file()}
      *
      * Returns null if file not found or is not readable
      *
      * @param stdClass $reference file reference db record
      * @return stdClass|null contains one of the following:
-     *   - 'contenthash' and 'filesize'
-     *   - 'filepath'
-     *   - 'handle'
-     *   - 'content'
+     *   - 'filesize' if file should not be copied to moodle filepool
+     *   - 'filepath' if file should be copied to moodle filepool
      */
     public function get_file_by_reference($reference) {
         $ref = $reference->reference;
@@ -293,7 +289,16 @@ class repository_filesystem extends repository {
             $filepath = $this->root_path.$ref;
         }
         if (file_exists($filepath) && is_readable($filepath)) {
-            return (object)array('filepath' => $filepath);
+            if (file_extension_in_typegroup($filepath, 'web_image')) {
+                // return path to image files so it will be copied into moodle filepool
+                // we need the file in filepool to generate an image thumbnail
+                return (object)array('filepath' => $filepath);
+            } else {
+                // return just the file size so file will NOT be copied into moodle filepool
+                return (object)array(
+                    'filesize' => filesize($filepath)
+                );
+            }
         } else {
             return null;
         }
