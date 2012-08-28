@@ -207,13 +207,14 @@ class repository_flickr_public extends repository {
 
     public function license4moodle ($license_id) {
         $license = array(
+            '0' => 'allrightsreserved',
             '1' => 'cc-nc-sa',
             '2' => 'cc-nc',
             '3' => 'cc-nc-nd',
             '4' => 'cc',
             '5' => 'cc-sa',
             '6' => 'cc-nd',
-            '7' => 'allrightsreserved'
+            '7' => 'other'
             );
         return $license[$license_id];
     }
