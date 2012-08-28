@@ -122,6 +122,9 @@ class tinymce_texteditor extends texteditor {
         $context = empty($options['context']) ? context_system::instance() : $options['context'];
 
         $config = get_config('editor_tinymce');
+        if (!isset($config->disabledsubplugins)) {
+            $config->disabledsubplugins = '';
+        }
 
         $fontselectlist = empty($config->fontselectlist) ? '' : $config->fontselectlist;
         $fontbutton = ($fontselectlist === '') ? '' : 'fontselect,';
