@@ -1131,7 +1131,13 @@ class global_navigation extends navigation_node {
                     $addedcategories[$category->id] = $categoryparent->add($category->name, $url, self::TYPE_CATEGORY, $category->name, $category->id);
 
                     if (!$category->visible) {
-                        if (!has_capability('moodle/category:viewhiddencategories', get_context_instance(CONTEXT_COURSECAT, $category->parent))) {
+                        // Let's decide the context where viewhidden cap checks will happen.
+                        if ($category->parent == '0') {
+                            $contexttocheck = context_system::instance();
+                        } else {
+                            $contexttocheck = context_coursecat::instance($category->parent);
+                        }
+                        if (!has_capability('moodle/category:viewhiddencategories', $contexttocheck)) {
                             $addedcategories[$category->id]->display = false;
                         } else {
                             $addedcategories[$category->id]->hidden = true;
