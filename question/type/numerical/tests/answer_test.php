@@ -25,7 +25,9 @@
  */
 
 global $CFG;
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/numerical/question.php');
+
 
 class qtype_numerical_answer_test extends advanced_testcase {
     public function test_within_tolerance_nominal() {
@@ -38,16 +40,46 @@ class qtype_numerical_answer_test extends advanced_testcase {
         $this->assertFalse($answer->within_tolerance(8.01));
     }
 
+    public function test_within_tolerance_nominal_zero() {
+        // Either an answer or tolerance of 0 requires special care. We still
+        // don't want to end up comparing two floats for absolute equality.
+
+        // Zero tol, non-zero answer.
+        $answer = new qtype_numerical_answer(13, 1e-20, 1.0, '', FORMAT_MOODLE, 0.0);
+        $this->assertFalse($answer->within_tolerance(0.9999999e-20));
+        $this->assertTrue($answer->within_tolerance(1e-20));
+        $this->assertFalse($answer->within_tolerance(1.0000001e-20));
+
+        // Non-zero tol, zero answer.
+        $answer = new qtype_numerical_answer(13, 0.0, 1.0, '', FORMAT_MOODLE, 1e-24);
+        $this->assertFalse($answer->within_tolerance(-2e-24));
+        $this->assertTrue($answer->within_tolerance(-1e-24));
+        $this->assertTrue($answer->within_tolerance(0));
+        $this->assertTrue($answer->within_tolerance(1e-24));
+        $this->assertFalse($answer->within_tolerance(2e-24));
+
+        // Zero tol, zero answer.
+        $answer = new qtype_numerical_answer(13, 0.0, 1.0, '', FORMAT_MOODLE, 1e-24);
+        $this->assertFalse($answer->within_tolerance(-1e-20));
+        $this->assertTrue($answer->within_tolerance(-1e-35));
+        $this->assertTrue($answer->within_tolerance(0));
+        $this->assertTrue($answer->within_tolerance(1e-35));
+        $this->assertFalse($answer->within_tolerance(1e-20));
+
+        // Non-zero tol, non-zero answer.
+        $answer = new qtype_numerical_answer(13, 1e-20, 1.0, '', FORMAT_MOODLE, 1e-24);
+        $this->assertFalse($answer->within_tolerance(1.0002e-20));
+        $this->assertTrue($answer->within_tolerance(1.0001e-20));
+        $this->assertTrue($answer->within_tolerance(1e-20));
+        $this->assertTrue($answer->within_tolerance(1.0001e-20));
+        $this->assertFalse($answer->within_tolerance(1.0002e-20));
+    }
+
     public function test_within_tolerance_blank() {
         $answer = new qtype_numerical_answer(13, 1234, 1.0, '', FORMAT_MOODLE, '');
         $this->assertTrue($answer->within_tolerance(1234));
         $this->assertFalse($answer->within_tolerance(1234.000001));
         $this->assertFalse($answer->within_tolerance(0));
-
-        $answer = new qtype_numerical_answer(13, 0, 1.0, '', FORMAT_MOODLE, '');
-        $this->assertTrue($answer->within_tolerance(0));
-        $this->assertFalse($answer->within_tolerance(pow(10, -1 * ini_get('precision') + 1)));
-        $this->assertTrue($answer->within_tolerance(pow(10, -1 * ini_get('precision'))));
     }
 
     public function test_within_tolerance_relative() {
