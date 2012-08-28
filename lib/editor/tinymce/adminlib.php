@@ -49,7 +49,7 @@ class plugininfo_tinymce extends plugininfo_base {
     }
 
     public function is_enabled() {
-        static $disabledsubplugins = null; // TODO: remove this once get_config() is cached via MUC!
+        static $disabledsubplugins = null; // TODO: MDL-34344 remove this once get_config() is cached via MUC!
 
         if (is_null($disabledsubplugins)) {
             $disabledsubplugins = array();
@@ -200,7 +200,7 @@ class tiynce_subplugins_settings extends admin_setting {
 
             // Add available buttons.
             $buttons = implode(', ', $plugin->get_buttons());
-            $buttons = html_writer::tag('span', $buttons, array('class'=>'tinamcebuttons'));
+            $buttons = html_writer::tag('span', $buttons, array('class'=>'tinymcebuttons'));
 
             // Add settings link.
             if (!$version) {
