@@ -196,7 +196,7 @@ class enrol_manual_lib_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('enrol', array('courseid'=>$course5->id, 'enrol'=>'manual')));
         $this->assertEquals(0, $DB->count_records('enrol', array('courseid'=>$course5->id, 'enrol'=>'xxx')));
 
-        // Make sure wrong params are ignored.
+        // Make sure wrong params do not produce errors or notices.
 
         enrol_manual_migrate_plugin_enrolments('manual');
         enrol_manual_migrate_plugin_enrolments('yyyy');
