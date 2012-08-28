@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qformat_blackboard_six';
-$plugin->version   = 2012061700;
+$plugin->version   = 2012061701;
 
 $plugin->requires  = 2012061700;
 
