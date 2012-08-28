@@ -551,19 +551,6 @@ class qformat_gift extends qformat_default {
         }
     }
 
-    protected function add_blank_combined_feedback($question) {
-        $question->correctfeedback['text'] = '';
-        $question->correctfeedback['format'] = $question->questiontextformat;
-        $question->correctfeedback['files'] = array();
-        $question->partiallycorrectfeedback['text'] = '';
-        $question->partiallycorrectfeedback['format'] = $question->questiontextformat;
-        $question->partiallycorrectfeedback['files'] = array();
-        $question->incorrectfeedback['text'] = '';
-        $question->incorrectfeedback['format'] = $question->questiontextformat;
-        $question->incorrectfeedback['files'] = array();
-        return $question;
-    }
-
     protected function repchar($text, $notused = 0) {
         // Escapes 'reserved' characters # = ~ {) :
         // Removes new lines

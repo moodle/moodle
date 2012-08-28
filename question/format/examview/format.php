@@ -62,28 +62,6 @@ class qformat_examview extends qformat_based_on_xml {
     }
 
     /**
-     * Some softwares put entities in exported files.
-     * This method try to clean up known problems.
-     * @param string str string to correct
-     * @return string the corrected string
-     */
-    public function cleaninput($str) {
-
-        $html_code_list = array(
-            "&#039;" => "'",
-            "&#8217;" => "'",
-            "&#8220;" => "\"",
-            "&#8221;" => "\"",
-            "&#8211;" => "-",
-            "&#8212;" => "-",
-        );
-        $str = strtr($str, $html_code_list);
-        // Use textlib entities_to_utf8 function to convert only numerical entities.
-        $str = textlib::entities_to_utf8( $str, false);
-        return $str;
-    }
-
-    /**
      * unxmlise reconstructs part of the xml data structure in order
      * to identify the actual data therein
      * @param array $xml section of the xml data structure
@@ -107,19 +85,6 @@ class qformat_examview extends qformat_based_on_xml {
         // Currently we throw the tags we found.
         $text = strip_tags($text);
         return $text;
-    }
-
-    protected function add_blank_combined_feedback($question) {
-        $question->correctfeedback['text'] = '';
-        $question->correctfeedback['format'] = $question->questiontextformat;
-        $question->correctfeedback['files'] = array();
-        $question->partiallycorrectfeedback['text'] = '';
-        $question->partiallycorrectfeedback['format'] = $question->questiontextformat;
-        $question->partiallycorrectfeedback['files'] = array();
-        $question->incorrectfeedback['text'] = '';
-        $question->incorrectfeedback['format'] = $question->questiontextformat;
-        $question->incorrectfeedback['files'] = array();
-        return $question;
     }
 
     public function parse_matching_groups($matching_groups) {
