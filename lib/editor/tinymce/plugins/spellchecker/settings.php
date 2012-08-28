@@ -15,18 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TinyMCE spellchecker plugin version details.
+ * Spellchecker settings.
  *
  * @package   tinymce_spellchecker
- * @copyright 2012 The Open University
+ * @copyright 2012 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-// The current plugin version (Date: YYYYMMDDXX).
-$plugin->version   = 2012051800;
-// Required Moodle version.
-$plugin->requires  = 2011112900;
-// Full name of the plugin (used for diagnostics).
-$plugin->component = 'tinymce_spellchecker';
+if ($ADMIN->fulltree) {
+    $options = array(
+        'PSpell'=>'PSpell',
+        'GoogleSpell'=>'Google Spell',
+        'PSpellShell'=>'PSpellShell');
+    $settings->add(new admin_setting_configselect('tinymce_spellchecker/spellengine',
+        get_string('spellengine', 'admin'), '', 'GoogleSpell', $options));
+    $settings->add(new admin_setting_configtextarea('tinymce_spellchecker/spelllanguagelist',
+        get_string('spelllanguagelist', 'admin'), '',
+        '+English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr,German=de,Italian=it,Polish=pl,' .
+            'Portuguese=pt,Spanish=es,Swedish=sv', PARAM_RAW));
+}

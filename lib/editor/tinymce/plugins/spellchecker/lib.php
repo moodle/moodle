@@ -30,8 +30,7 @@ class tinymce_spellchecker extends editor_tinymce_plugin {
         global $CFG;
 
         // Check at least one language is supported.
-        $config = $params['moodle_config'];
-        $spelllanguagelist = empty($config->spelllanguagelist) ? '' : $config->spelllanguagelist;
+        $spelllanguagelist = $this->get_config('spelllanguagelist', '');
         if ($spelllanguagelist !== '') {
             // Add button after code button in advancedbuttons3.
             $added = $this->add_button_after($params, 3, 'spellchecker', 'code', false);
