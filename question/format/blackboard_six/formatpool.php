@@ -15,62 +15,37 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Blackboard question importer.
+ * Blackboard V5 and V6 question importer.
  *
- * @package qformat_blackboard
+ * @package    qformat_blackboard_six
  * @copyright  2003 Scott Elliott
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/xmlize.php');
 
-
 /**
- * Blackboard question importer.
+ * Blackboard pool question importer.
  *
  * @copyright  2003 Scott Elliott
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qformat_blackboard extends qformat_based_on_xml {
+
+class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
     // Is the current question's question text escaped HTML (true for most if not all Blackboard files).
     public $ishtml = true;
 
-
-    public function provide_import() {
-        return true;
-    }
-
     /**
-     * Check if the given file is capable of being imported by this plugin.
-     * As {@link file_storage::mimetype()} now uses finfo PHP extension if available,
-     * the value returned by $file->get_mimetype for a .dat file is not the same on all servers.
-     * So if the parent method fails we must use mimeinfo on the filename.
-     * @param stored_file $file the file to check
-     * @return bool whether this plugin can import the file
-     */
-    public function can_import_file($file) {
-        return parent::can_import_file($file) || mimeinfo('type', $file->get_filename()) == $this->mime_type();
-    }
-
-    public function mime_type() {
-        return mimeinfo('type', '.dat');
-    }
-
-    /**
-     * Parse the array of lines into an array of questions
+     * Parse the xml document into an array of questions
      * this *could* burn memory - but it won't happen that much
      * so fingers crossed!
      * @param array of lines from the input file.
      * @param stdClass $context
-     * @return array (of objects) question objects.
+     * @return array (of objects) questions objects.
      */
-    protected function readquestions($lines) {
-
-        $text = implode($lines, ' ');
-        unset($lines);
+    protected function readquestions($text) {
 
         // This converts xml to big nasty data structure,
         // the 0 means keep white space as it is.
@@ -99,7 +74,6 @@ class qformat_blackboard extends qformat_based_on_xml {
      * @return object initialized question object.
      */
     public function process_common($questiondata) {
-        global $CFG;
 
         // This routine initialises the question object.
         $question = $this->defaultquestion();
@@ -112,23 +86,18 @@ class qformat_blackboard extends qformat_based_on_xml {
         // Put questiontext in question object.
         $text = $this->getpath($questiondata,
                 array('#', 'BODY', 0, '#', 'TEXT', 0, '#'),
-                '', true, get_string('importnotext', 'qformat_blackboard'));
+                '', true, get_string('importnotext', 'qformat_blackboard_six'));
 
-        if ($this->ishtml) {
-            $question->questiontext = $this->cleaninput($text);
-            $question->questiontextformat = FORMAT_HTML;
-            $question->questiontextfiles = array();
+        $question->questiontext = $this->cleaned_text_field($text);
+        $question->questiontextformat = FORMAT_HTML; // Needed because add_blank_combined_feedback uses it.
 
-        } else {
-            $question->questiontext = $text;
-        }
         // Put name in question object. We must ensure it is not empty and it is less than 250 chars.
-        $question->name = shorten_text(strip_tags($question->questiontext), 200);
+        $question->name = shorten_text(strip_tags($question->questiontext['text']), 200);
         $question->name = substr($question->name, 0, 250);
         if (!$question->name) {
             $id = $this->getpath($questiondata,
                     array('@', 'id'), '',  true);
-            $question->name = get_string('defaultname', 'qformat_blackboard' , $id);
+            $question->name = get_string('defaultname', 'qformat_blackboard_six' , $id);
         }
 
         $question->generalfeedback = '';
@@ -163,7 +132,7 @@ class qformat_blackboard extends qformat_based_on_xml {
             $question->answer = '';
             $answer = $this->getpath($thisquestion,
                     array('#', 'ANSWER', 0, '#', 'TEXT', 0, '#'), '', true);
-            $question->graderinfo =  $this->text_field($this->cleaninput($answer));
+            $question->graderinfo =  $this->cleaned_text_field($answer);
             $question->feedback = '';
             $question->responseformat = 'editor';
             $question->responsefieldlines = 15;
@@ -197,7 +166,7 @@ class qformat_blackboard extends qformat_based_on_xml {
 
             $choices = $this->getpath($thisquestion, array('#', 'ANSWER'), array(), false);
 
-            $correct_answer = $this->getpath($thisquestion,
+            $correctanswer = $this->getpath($thisquestion,
                     array('#', 'GRADABLE', 0, '#', 'CORRECTANSWER', 0, '@', 'answer_id'),
                     '', true);
 
@@ -209,14 +178,14 @@ class qformat_blackboard extends qformat_based_on_xml {
             $incorrectfeedback = $this->getpath($thisquestion,
                     array('#', 'GRADABLE', 0, '#', 'FEEDBACK_WHEN_INCORRECT', 0, '#'),
                     '', true);
-            if (strcmp($id,  $correct_answer) == 0) {  // True is correct.
+            if (strcmp($id,  $correctanswer) == 0) {  // True is correct.
                 $question->answer = 1;
-                $question->feedbacktrue = $this->text_field($this->cleaninput($correctfeedback));
-                $question->feedbackfalse = $this->text_field($this->cleaninput($incorrectfeedback));
+                $question->feedbacktrue = $this->cleaned_text_field($correctfeedback);
+                $question->feedbackfalse = $this->cleaned_text_field($incorrectfeedback);
             } else {  // False is correct.
                 $question->answer = 0;
-                $question->feedbacktrue = $this->text_field($this->cleaninput($incorrectfeedback));
-                $question->feedbackfalse = $this->text_field($this->cleaninput($correctfeedback));
+                $question->feedbacktrue = $this->cleaned_text_field($incorrectfeedback);
+                $question->feedbackfalse = $this->cleaned_text_field($correctfeedback);
             }
             $question->correctanswer = $question->answer;
             $questions[] = $question;
@@ -247,25 +216,25 @@ class qformat_blackboard extends qformat_based_on_xml {
             $incorrectfeedback = $this->getpath($thisquestion,
                     array('#', 'GRADABLE', 0, '#', 'FEEDBACK_WHEN_INCORRECT', 0, '#'),
                     '', true);
-            $question->correctfeedback = $this->text_field($this->cleaninput($correctfeedback));
+            $question->correctfeedback = $this->cleaned_text_field($correctfeedback);
             $question->partiallycorrectfeedback = $this->text_field('');
-            $question->incorrectfeedback = $this->text_field($this->cleaninput($incorrectfeedback));
+            $question->incorrectfeedback = $this->cleaned_text_field($incorrectfeedback);
 
             $question->qtype = 'multichoice';
             $question->single = 1; // Only one answer is allowed.
 
             $choices = $this->getpath($thisquestion, array('#', 'ANSWER'), false, false);
-            $correct_answer_id = $this->getpath($thisquestion,
+            $correctanswerid = $this->getpath($thisquestion,
                         array('#', 'GRADABLE', 0, '#', 'CORRECTANSWER', 0, '@', 'answer_id'),
                         '', true);
             foreach ($choices as $choice) {
                 $choicetext = $this->getpath($choice, array('#', 'TEXT', 0, '#'), '', true);
                 // Put this choice in the question object.
-                $question->answer[] =  $this->text_field($this->cleaninput($choicetext));
+                $question->answer[] =  $this->cleaned_text_field($choicetext);
 
-                $choice_id = $this->getpath($choice, array('@', 'id'), '', true);
+                $choiceid = $this->getpath($choice, array('@', 'id'), '', true);
                 // If choice is the right answer, give 100% mark, otherwise give 0%.
-                if (strcmp ($choice_id, $correct_answer_id) == 0) {
+                if (strcmp ($choiceid, $correctanswerid) == 0) {
                     $question->fraction[] = 1;
                 } else {
                     $question->fraction[] = 0;
@@ -299,35 +268,35 @@ class qformat_blackboard extends qformat_based_on_xml {
             $incorrectfeedback = $this->getpath($thisquestion,
                     array('#', 'GRADABLE', 0, '#', 'FEEDBACK_WHEN_INCORRECT', 0, '#'),
                     '', true);
-            $question->correctfeedback = $this->text_field($this->cleaninput($correctfeedback));
+            $question->correctfeedback = $this->cleaned_text_field($correctfeedback);
             // As there is no partially correct feedback we use incorrect one.
-            $question->partiallycorrectfeedback = $this->text_field($this->cleaninput($incorrectfeedback));
-            $question->incorrectfeedback = $this->text_field($this->cleaninput($incorrectfeedback));
+            $question->partiallycorrectfeedback = $this->cleaned_text_field($incorrectfeedback);
+            $question->incorrectfeedback = $this->cleaned_text_field($incorrectfeedback);
 
             $question->qtype = 'multichoice';
             $question->defaultmark = 1;
             $question->single = 0; // More than one answers allowed.
 
             $choices = $this->getpath($thisquestion, array('#', 'ANSWER'), false, false);
-            $correct_answer_ids = array();
+            $correctanswerids = array();
             foreach ($this->getpath($thisquestion,
                     array('#', 'GRADABLE', 0, '#', 'CORRECTANSWER'), false, false) as $correctanswer) {
                 if ($correctanswer) {
-                    $correct_answer_ids[] = $this->getpath($correctanswer,
+                    $correctanswerids[] = $this->getpath($correctanswer,
                             array('@', 'answer_id'),
                             '', true);
                 }
             }
-            $fraction = 1/count($correct_answer_ids);
+            $fraction = 1/count($correctanswerids);
 
             foreach ($choices as $choice) {
                 $choicetext = $this->getpath($choice, array('#', 'TEXT', 0, '#'), '', true);
                 // Put this choice in the question object.
-                $question->answer[] =  $this->text_field($this->cleaninput($choicetext));
+                $question->answer[] =  $this->cleaned_text_field($choicetext);
 
-                $choice_id = $this->getpath($choice, array('@', 'id'), '', true);
+                $choiceid = $this->getpath($choice, array('@', 'id'), '', true);
 
-                $iscorrect = in_array($choice_id, $correct_answer_ids);
+                $iscorrect = in_array($choiceid, $correctanswerids);
 
                 if ($iscorrect) {
                     $question->fraction[] = $fraction;
@@ -372,11 +341,11 @@ class qformat_blackboard extends qformat_based_on_xml {
                 $question->answer[] = $this->getpath($answer,
                         array('#', 'TEXT', 0, '#'), '', true);
                 $question->fraction[] = 1;
-                $question->feedback[] = $this->text_field($this->cleaninput($correctfeedback));
+                $question->feedback[] = $this->cleaned_text_field($correctfeedback);
             }
             $question->answer[] = '*';
             $question->fraction[] = 0;
-            $question->feedback[] = $this->text_field($this->cleaninput($incorrectfeedback));
+            $question->feedback[] = $this->cleaned_text_field($incorrectfeedback);
 
             $questions[] = $question;
         }
@@ -398,12 +367,12 @@ class qformat_blackboard extends qformat_based_on_xml {
         // as core match question don't allow HTML in subanswers. The contributed ddmatch
         // question type support HTML in subanswers.
         // The ddmatch question type is not part of core, so we need to check if it is defined.
-        $ddmatch_is_installed = question_bank::is_qtype_installed('ddmatch');
+        $ddmatchisinstalled = question_bank::is_qtype_installed('ddmatch');
 
         foreach ($matchquestions as $thisquestion) {
 
             $question = $this->process_common($thisquestion);
-            if ($ddmatch_is_installed) {
+            if ($ddmatchisinstalled) {
                 $question->qtype = 'ddmatch';
             } else {
                 $question->qtype = 'match';
@@ -415,10 +384,10 @@ class qformat_blackboard extends qformat_based_on_xml {
             $incorrectfeedback = $this->getpath($thisquestion,
                     array('#', 'GRADABLE', 0, '#', 'FEEDBACK_WHEN_INCORRECT', 0, '#'),
                     '', true);
-            $question->correctfeedback = $this->text_field($this->cleaninput($correctfeedback));
+            $question->correctfeedback = $this->cleaned_text_field($correctfeedback);
             // As there is no partially correct feedback we use incorrect one.
-            $question->partiallycorrectfeedback = $this->text_field($this->cleaninput($incorrectfeedback));
-            $question->incorrectfeedback = $this->text_field($this->cleaninput($incorrectfeedback));
+            $question->partiallycorrectfeedback = $this->cleaned_text_field($incorrectfeedback);
+            $question->incorrectfeedback = $this->cleaned_text_field($incorrectfeedback);
 
             $choices = $this->getpath($thisquestion,
                     array('#', 'CHOICE'), false, false); // Blackboard "choices" are Moodle subanswers.
@@ -429,19 +398,19 @@ class qformat_blackboard extends qformat_based_on_xml {
             $mappings = array();
             foreach ($correctanswers as $correctanswer) {
                 if ($correctanswer) {
-                    $correct_choice_id = $this->getpath($correctanswer,
+                    $correctchoiceid = $this->getpath($correctanswer,
                                 array('@', 'choice_id'), '', true);
-                    $correct_answer_id = $this->getpath($correctanswer,
+                    $correctanswerid = $this->getpath($correctanswer,
                             array('@', 'answer_id'),
                             '', true);
-                    $mappings[$correct_answer_id] = $correct_choice_id;
+                    $mappings[$correctanswerid] = $correctchoiceid;
                 }
             }
 
             foreach ($choices as $choice) {
-                if ($ddmatch_is_installed) {
-                    $choicetext = $this->text_field($this->cleaninput($this->getpath($choice,
-                            array('#', 'TEXT', 0, '#'), '', true)));
+                if ($ddmatchisinstalled) {
+                    $choicetext = $this->cleaned_text_field($this->getpath($choice,
+                            array('#', 'TEXT', 0, '#'), '', true));
                 } else {
                     $choicetext = trim(strip_tags($this->getpath($choice,
                             array('#', 'TEXT', 0, '#'), '', true)));
@@ -449,22 +418,22 @@ class qformat_blackboard extends qformat_based_on_xml {
 
                 if ($choicetext != '') { // Only import non empty subanswers.
                     $subquestion = '';
-                    $choice_id = $this->getpath($choice,
+                    $choiceid = $this->getpath($choice,
                             array('@', 'id'), '', true);
-                    $fiber = array_search($choice_id, $mappings);
-                    $fiber = array_keys ($mappings, $choice_id);
-                    foreach ($fiber as $correct_answer_id) {
+                    $fiber = array_search($choiceid, $mappings);
+                    $fiber = array_keys ($mappings, $choiceid);
+                    foreach ($fiber as $correctanswerid) {
                         // We have found a correspondance for this choice so we need to take the associated answer.
                         foreach ($answers as $answer) {
-                            $current_ans_id = $this->getpath($answer,
+                            $currentanswerid = $this->getpath($answer,
                                     array('@', 'id'), '', true);
-                            if (strcmp ($current_ans_id, $correct_answer_id) == 0) {
+                            if (strcmp ($currentanswerid, $correctanswerid) == 0) {
                                 $subquestion = $this->getpath($answer,
                                         array('#', 'TEXT', 0, '#'), '', true);
                                 break;
                             }
                         }
-                        $question->subquestions[] = $this->text_field($this->cleaninput($subquestion));
+                        $question->subquestions[] = $this->cleaned_text_field($subquestion);
                         $question->subanswers[] = $choicetext;
                     }
 
@@ -488,7 +457,7 @@ class qformat_blackboard extends qformat_based_on_xml {
                 $subanswercount++;
             }
             if ($subquestioncount < 2 || $subanswercount < 3) {
-                    $this->error(get_string('notenoughtsubans', 'qformat_blackboard', $question->questiontext));
+                    $this->error(get_string('notenoughtsubans', 'qformat_blackboard_six', $question->questiontext['text']));
             } else {
                 $questions[] = $question;
             }
