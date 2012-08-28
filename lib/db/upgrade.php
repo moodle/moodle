@@ -1119,6 +1119,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012081600.01);
     }
 
+    if ($oldversion < 2012082300.01) {
+        $subquery = 'SELECT b.id FROM {blog_external} b where ' . $DB->sql_compare_text('b.id') . ' = ' . $DB->sql_compare_text('{post}.content');
+        $sql = 'DELETE FROM {post}
+                      WHERE {post}.module = \'blog_external\'
+                            AND NOT EXISTS (' . $subquery . ')
+                            AND ' . $DB->sql_isnotempty('post', 'uniquehash', false, false);
+        $DB->execute($sql);
+        upgrade_main_savepoint(true, 2012082300.01);
+    }
 
     return true;
 }
