@@ -16,10 +16,9 @@
 
 /**
  * This file contains classes used to manage the repository plugins in Moodle
- * and was introduced as part of the changes occuring in Moodle 2.0
  *
  * @since 2.0
- * @package   repository
+ * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -49,7 +48,7 @@ define('RENAME_SUFFIX', '_2');
  * - When you create a type for a plugin that can't have multiple instances, a
  *   instance is automatically created.
  *
- * @package   repository
+ * @package   core_repository
  * @copyright 2009 Jerome Mouneyrac
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -460,12 +459,18 @@ class repository_type {
  * To create repository plugin, see: {@link http://docs.moodle.org/dev/Repository_plugins}
  * See an example: {@link repository_boxnet}
  *
- * @package   repository
- * @category  repository
+ * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class repository {
+    /** Timeout in seconds for downloading the external file into moodle */
+    const GETFILE_TIMEOUT = 30;
+    /** Timeout in seconds for syncronising the external file size */
+    const SYNCFILE_TIMEOUT = 1;
+    /** Timeout in seconds for downloading an image file from external repository during syncronisation */
+    const SYNCIMAGE_TIMEOUT = 3;
+
     // $disabled can be set to true to disable a plugin by force
     // example: self::$disabled = true
     /** @var bool force disable repository instance */
@@ -1164,9 +1169,8 @@ abstract class repository {
 
     /**
      * Return human readable reference information
-     * {@link stored_file::get_reference()}
      *
-     * @param string $reference
+     * @param string $reference value of DB field files_reference.reference
      * @param int $filestatus status of the file, 0 - ok, 666 - source missing
      * @return string
      */
@@ -1213,14 +1217,27 @@ abstract class repository {
 
     /**
      * Returns information about file in this repository by reference
-     * {@link repository::get_file_reference()}
-     * {@link repository::get_file()}
      *
-     * Returns null if file not found or is not readable
+     * This function must be implemented for repositories supporting FILE_REFERENCE, it is called
+     * for existing aliases when the lifetime of the previous syncronisation has expired.
      *
-     * @param stdClass $reference file reference db record
+     * Returns null if file not found or is not readable or timeout occured during request.
+     * Note that this function may be run for EACH file that needs to be synchronised at the
+     * moment. If anything is being downloaded or requested from external sources there
+     * should be a small timeout. The synchronisation is performed to update the size of
+     * the file and/or to update image and re-generated image preview. There is nothing
+     * fatal if syncronisation fails but it is fatal if syncronisation takes too long
+     * and hangs the script generating a page.
+     *
+     * If get_file_by_reference() returns filesize just the record in {files} table is being updated.
+     * If filepath, handle or content are returned - the file is also stored in moodle filepool
+     * (recommended for images to generate the thumbnails). For non-image files it is not
+     * recommended to download them to moodle during syncronisation since it may take
+     * unnecessary long time.
+     *
+     * @param stdClass $reference record from DB table {files_reference}
      * @return stdClass|null contains one of the following:
-     *   - 'contenthash' and 'filesize'
+     *   - 'filesize' and optionally 'contenthash'
      *   - 'filepath'
      *   - 'handle'
      *   - 'content'
@@ -1245,14 +1262,23 @@ abstract class repository {
     /**
      * Return the source information
      *
-     * @param stdClass $url
+     * The result of the function is stored in files.source field. It may be analysed
+     * when the source file is lost or repository may use it to display human-readable
+     * location of reference original.
+     *
+     * This method is called when file is picked for the first time only. When file
+     * (either copy or a reference) is already in moodle and it is being picked
+     * again to another file area (also as a copy or as a reference), the value of
+     * files.source is copied.
+     *
+     * @param string $source the value that repository returned in listing as 'source'
      * @return string|null
      */
-    public function get_file_source_info($url) {
+    public function get_file_source_info($source) {
         if ($this->has_moodle_files()) {
-            return $this->get_reference_details($url, 0);
+            return $this->get_reference_details($source, 0);
         }
-        return $url;
+        return $source;
     }
 
     /**
@@ -1321,8 +1347,7 @@ abstract class repository {
      * @param string $search searched string
      * @param bool $dynamicmode no recursive call is done when in dynamic mode
      * @param array $list the array containing the files under the passed $fileinfo
-     * @returns int the number of files found
-     *
+     * @return int the number of files found
      */
     public static function build_tree($fileinfo, $search, $dynamicmode, &$list) {
         global $CFG, $OUTPUT;
@@ -1538,6 +1563,7 @@ abstract class repository {
         }
         return $source;
     }
+
     /**
      * Decide where to save the file, can be overwriten by subclass
      *
@@ -1546,17 +1572,9 @@ abstract class repository {
      */
     public function prepare_file($filename) {
         global $CFG;
-        if (!file_exists($CFG->tempdir.'/download')) {
-            mkdir($CFG->tempdir.'/download/', $CFG->directorypermissions, true);
-        }
-        if (is_dir($CFG->tempdir.'/download')) {
-            $dir = $CFG->tempdir.'/download/';
-        }
-        if (empty($filename)) {
-            $filename = uniqid('repo', true).'_'.time().'.tmp';
-        }
-        if (file_exists($dir.$filename)) {
-            $filename = uniqid('m').$filename;
+        $dir = make_temp_directory('download/'.get_class($this).'/');
+        while (empty($filename) || file_exists($dir.$filename)) {
+            $filename = uniqid('', true).'_'.time().'.tmp';
         }
         return $dir.$filename;
     }
@@ -1583,27 +1601,106 @@ abstract class repository {
     }
 
     /**
-     * Download a file, this function can be overridden by subclass. {@link curl}
+     * Downloads a file from external repository and saves it in temp dir
      *
-     * @param string $url the url of file
-     * @param string $filename save location
+     * Function get_file() must be implemented by repositories that support returntypes
+     * FILE_INTERNAL or FILE_REFERENCE. It is invoked to pick up the file and copy it
+     * to moodle. This function is not called for moodle repositories, the function
+     * {@link repository::copy_to_area()} is used instead.
+     *
+     * This function can be overridden by subclass if the files.reference field contains
+     * not just URL or if request should be done differently.
+     *
+     * @see curl
+     * @throws file_exception when error occured
+     *
+     * @param string $url the content of files.reference field, in this implementaion
+     * it is asssumed that it contains the string with URL of the file
+     * @param string $filename filename (without path) to save the downloaded file in the
+     * temporary directory, if omitted or file already exists the new filename will be generated
      * @return array with elements:
      *   path: internal location of the file
      *   url: URL to the source (from parameters)
      */
     public function get_file($url, $filename = '') {
-        global $CFG;
         $path = $this->prepare_file($filename);
-        $fp = fopen($path, 'w');
         $c = new curl;
-        $result = $c->download(array(array('url'=>$url, 'file'=>$fp)));
-        // Close file handler.
-        fclose($fp);
-        if (empty($result)) {
-            unlink($path);
-            return null;
+        $result = $c->download_one($url, null, array('filepath' => $path, 'timeout' => self::GETFILE_TIMEOUT));
+        if ($result !== true) {
+            throw new moodle_exception('errorwhiledownload', 'repository', '', $result);
         }
         return array('path'=>$path, 'url'=>$url);
+    }
+
+    /**
+     * Downloads the file from external repository and saves it in moodle filepool.
+     * This function is different from {@link repository::sync_external_file()} because it has
+     * bigger request timeout and always downloads the content.
+     *
+     * This function is invoked when we try to unlink the file from the source and convert
+     * a reference into a true copy.
+     *
+     * @throws exception when file could not be imported
+     *
+     * @param stored_file $file
+     * @param int $maxbytes throw an exception if file size is bigger than $maxbytes (0 means no limit)
+     */
+    public function import_external_file_contents(stored_file $file, $maxbytes = 0) {
+        if (!$file->is_external_file()) {
+            // nothing to import if the file is not a reference
+            return;
+        } else if ($file->get_repository_id() != $this->id) {
+            // error
+            debugging('Repository instance id does not match');
+            return;
+        } else if ($this->has_moodle_files()) {
+            // files that are references to local files are already in moodle filepool
+            // just validate the size
+            if ($maxbytes > 0 && $file->get_filesize() > $maxbytes) {
+                throw new file_exception('maxbytes');
+            }
+            return;
+        } else {
+            if ($maxbytes > 0 && $file->get_filesize() > $maxbytes) {
+                // note that stored_file::get_filesize() also calls synchronisation
+                throw new file_exception('maxbytes');
+            }
+            $fs = get_file_storage();
+            $contentexists = $fs->content_exists($file->get_contenthash());
+            if ($contentexists && $file->get_filesize() && $file->get_contenthash() === sha1('')) {
+                // even when 'file_storage::content_exists()' returns true this may be an empty
+                // content for the file that was not actually downloaded
+                $contentexists = false;
+            }
+            $now = time();
+            if ($file->get_referencelastsync() + $file->get_referencelifetime() >= $now &&
+                        !$file->get_status() &&
+                        $contentexists) {
+                // we already have the content in moodle filepool and it was synchronised recently.
+                // Repositories may overwrite it if they want to force synchronisation anyway!
+                return;
+            } else {
+                // attempt to get a file
+                try {
+                    $fileinfo = $this->get_file($file->get_reference());
+                    if (isset($fileinfo['path'])) {
+                        list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($fileinfo['path']);
+                        // set this file and other similar aliases synchronised
+                        $lifetime = $this->get_reference_file_lifetime($file->get_reference());
+                        $file->set_synchronized($contenthash, $filesize, 0, $lifetime);
+                    } else {
+                        throw new moodle_exception('errorwhiledownload', 'repository', '', '');
+                    }
+                } catch (Exception $e) {
+                    if ($contentexists) {
+                        // better something than nothing. We have a copy of file. It's sync time
+                        // has expired but it is still very likely that it is the last version
+                    } else {
+                        throw($e);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -2021,7 +2118,7 @@ abstract class repository {
      *
      * @param string $search_text search key word
      * @param int $page page
-     * @return mixed {@see repository::get_listing}
+     * @return mixed see {@link repository::get_listing()}
      */
     public function search($search_text, $page = 0) {
         $list = array();
@@ -2257,7 +2354,7 @@ abstract class repository {
     }
 
     /**
-     * Call to request proxy file sync with repository source.
+     * Performs synchronisation of reference to an external file if the previous one has expired.
      *
      * @param stored_file $file
      * @param bool $resetsynchistory whether to reset all history of sync (used by phpunit)
@@ -2300,20 +2397,31 @@ abstract class repository {
             return false;
         }
 
+        $lifetime = $repository->get_reference_file_lifetime($reference);
         $fileinfo = $repository->get_file_by_reference($reference);
         if ($fileinfo === null) {
             // does not exist any more - set status to missing
-            $file->set_missingsource();
-            //TODO: purge content from pool if we set some other content hash and it is no used any more
+            $file->set_missingsource($lifetime);
             $synchronized[$file->get_id()] = true;
             return true;
         }
 
         $contenthash = null;
         $filesize = null;
-        if (!empty($fileinfo->contenthash)) {
-            // contenthash returned, file already in moodle
-            $contenthash = $fileinfo->contenthash;
+        if (!empty($fileinfo->filesize)) {
+            // filesize returned
+            if (!empty($fileinfo->contenthash) && $fs->content_exists($fileinfo->contenthash)) {
+                // contenthash is specified and valid
+                $contenthash = $fileinfo->contenthash;
+            } else if ($fileinfo->filesize == $file->get_filesize()) {
+                // we don't know the new contenthash but the filesize did not change,
+                // assume the contenthash did not change either
+                $contenthash = $file->get_contenthash();
+            } else {
+                // we can't save empty contenthash so generate contenthash from empty string
+                $fs->add_string_to_pool('');
+                $contenthash = sha1('');
+            }
             $filesize = $fileinfo->filesize;
         } else if (!empty($fileinfo->filepath)) {
             // File path returned
@@ -2336,7 +2444,7 @@ abstract class repository {
         }
 
         // update files table
-        $file->set_synchronized($contenthash, $filesize);
+        $file->set_synchronized($contenthash, $filesize, 0, $lifetime);
         $synchronized[$file->get_id()] = true;
         return true;
     }
@@ -2365,8 +2473,7 @@ abstract class repository {
  * Exception class for repository api
  *
  * @since 2.0
- * @package   repository
- * @category  repository
+ * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2377,8 +2484,7 @@ class repository_exception extends moodle_exception {
  * This is a class used to define a repository instance form
  *
  * @since 2.0
- * @package   repository
- * @category  repository
+ * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2492,8 +2598,7 @@ final class repository_instance_form extends moodleform {
  * This is a class used to define a repository type setting form
  *
  * @since 2.0
- * @package   repository
- * @category  repository
+ * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2707,6 +2812,7 @@ function initialise_filepicker($args) {
     }
     return $return;
 }
+
 /**
  * Small function to walk an array to attach repository ID
  *

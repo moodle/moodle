@@ -70,6 +70,12 @@ class stored_file {
         } else {
             $this->repository = null;
         }
+        // make sure all reference fields exist in file_record even when it is not a reference
+        foreach (array('referencelastsync', 'referencelifetime', 'referencefileid', 'reference', 'repositoryid') as $key) {
+            if (empty($this->file_record->$key)) {
+                $this->file_record->$key = null;
+            }
+        }
     }
 
     /**
@@ -142,10 +148,16 @@ class stored_file {
                     }
                 }
 
-                if ($field === 'referencefileid' or $field === 'referencelastsync' or $field === 'referencelifetime') {
+                if ($field === 'referencefileid') {
                     if (!is_null($value) and !is_number($value)) {
                         throw new file_exception('storedfileproblem', 'Invalid reference info');
                     }
+                }
+
+                if ($field === 'referencelastsync' or $field === 'referencelifetime') {
+                    // do not update those fields
+                    // TODO MDL-33416 [2.4] fields referencelastsync and referencelifetime to be removed from {files} table completely
+                    continue;
                 }
 
                 // adding the field
@@ -195,6 +207,7 @@ class stored_file {
     public function replace_content_with(stored_file $storedfile) {
         $contenthash = $storedfile->get_contenthash();
         $this->set_contenthash($contenthash);
+        $this->set_filesize($storedfile->get_filesize());
     }
 
     /**
@@ -225,8 +238,6 @@ class stored_file {
         // Update the underlying record in the database.
         $update = new stdClass();
         $update->referencefileid = null;
-        $update->referencelastsync = null;
-        $update->referencelifetime = null;
         $this->update($update);
 
         $transaction->allow_commit();
@@ -877,36 +888,43 @@ class stored_file {
      * We update contenthash, filesize and status in files table if changed
      * and we always update lastsync in files_reference table
      *
-     * @param type $contenthash
-     * @param type $filesize
+     * @param string $contenthash
+     * @param int $filesize
+     * @param int $status
+     * @param int $lifetime the life time of this synchronisation results
      */
-    public function set_synchronized($contenthash, $filesize, $status = 0) {
+    public function set_synchronized($contenthash, $filesize, $status = 0, $lifetime = null) {
         global $DB;
         if (!$this->is_external_file()) {
             return;
         }
         $now = time();
-        $filerecord = new stdClass();
-        if ($this->get_contenthash() !== $contenthash) {
-            $filerecord->contenthash = $contenthash;
+        if ($contenthash != $this->file_record->contenthash) {
+            $oldcontenthash = $this->file_record->contenthash;
         }
-        if ($this->get_filesize() != $filesize) {
-            $filerecord->filesize = $filesize;
+        if ($lifetime === null) {
+            $lifetime = $this->file_record->referencelifetime;
         }
-        if ($this->get_status() != $status) {
-            $filerecord->status = $status;
+        // this will update all entries in {files} that have the same filereference id
+        $this->fs->update_references($this->file_record->referencefileid, $now, $lifetime, $contenthash, $filesize, $status);
+        // we don't need to call update() for this object, just set the values of changed fields
+        $this->file_record->contenthash = $contenthash;
+        $this->file_record->filesize = $filesize;
+        $this->file_record->status = $status;
+        $this->file_record->referencelastsync = $now;
+        $this->file_record->referencelifetime = $lifetime;
+        if (isset($oldcontenthash)) {
+            $this->fs->deleted_file_cleanup($oldcontenthash);
         }
-        $filerecord->referencelastsync = $now; // TODO MDL-33416 remove this
-        if (!empty($filerecord)) {
-            $this->update($filerecord);
-        }
-
-        $DB->set_field('files_reference', 'lastsync', $now, array('id'=>$this->get_referencefileid()));
-        // $this->file_record->lastsync = $now; // TODO MDL-33416 uncomment or remove
     }
 
-    public function set_missingsource() {
-        $this->set_synchronized($this->get_contenthash(), 0, 666);
+    /**
+     * Sets the error status for a file that could not be synchronised
+     *
+     * @param int $lifetime the life time of this synchronisation results
+     */
+    public function set_missingsource($lifetime = null) {
+        $this->set_synchronized($this->get_contenthash(), $this->get_filesize(), 666, $lifetime);
     }
 
     /**
@@ -919,5 +937,17 @@ class stored_file {
      */
     public function send_file($lifetime, $filter, $forcedownload, $options) {
         $this->repository->send_file($this, $lifetime, $filter, $forcedownload, $options);
+    }
+
+    /**
+     * Imports the contents of an external file into moodle filepool.
+     *
+     * @throws moodle_exception if file could not be downloaded or is too big
+     * @param int $maxbytes throw an exception if file size is bigger than $maxbytes (0 means no limit)
+     */
+    public function import_external_file_contents($maxbytes = 0) {
+        if ($this->repository) {
+            $this->repository->import_external_file_contents($this, $maxbytes);
+        }
     }
 }

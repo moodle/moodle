@@ -185,12 +185,21 @@ class google_docs {
      *
      * @param string $url url of file
      * @param string $path path to save file to
+     * @param int $timeout request timeout, default 0 which means no timeout
      * @return array stucture for repository download_file
      */
-    public function download_file($url, $path) {
-        $content = $this->googleoauth->get($url);
-        file_put_contents($path, $content);
-        return array('path'=>$path, 'url'=>$url);
+    public function download_file($url, $path, $timeout = 0) {
+        $result = $this->googleoauth->download_one($url, null, array('filepath' => $path, 'timeout' => $timeout));
+        if ($result === true) {
+            $info = $this->googleoauth->get_info();
+            if (isset($info['http_code']) && $info['http_code'] == 200) {
+                return array('path'=>$path, 'url'=>$url);
+            } else {
+                throw new moodle_exception('cannotdownload', 'repository');
+            }
+        } else {
+            throw new moodle_exception('errorwhiledownload', 'repository', '', $result);
+        }
     }
 }
 
