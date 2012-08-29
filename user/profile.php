@@ -61,7 +61,7 @@ $user = $DB->get_record('user', array('id' => $userid));
 if ($user->deleted) {
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('userdeleted'));
+    echo $OUTPUT->notification(get_string('userdeleted'));
     echo $OUTPUT->footer();
     die;
 }
@@ -82,7 +82,7 @@ if (!$currentuser &&
     $PAGE->set_url('/user/profile.php', array('id'=>$userid));
     $PAGE->navbar->add($struser);
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('usernotavailable', 'error'));
+    echo $OUTPUT->notification(get_string('usernotavailable', 'error'));
     echo $OUTPUT->footer();
     exit;
 }
