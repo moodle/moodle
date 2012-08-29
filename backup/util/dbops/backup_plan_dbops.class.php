@@ -197,19 +197,19 @@ abstract class backup_plan_dbops extends backup_dbops {
     * @param int $courseid/$sectionid/$cmid
     * @param bool $users Should be true is users were included in the backup
     * @param bool $anonymised Should be true is user information was anonymized.
-    * @param bool $withoutname if false, include the name in the file name (default)
+    * @param bool $useidonly only use the ID in the file name
     * @return string The filename to use
     */
-    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised, $withoutname = false) {
+    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised, $useidonly = false) {
         global $DB;
 
         // Calculate backup word
         $backupword = str_replace(' ', '_', textlib::strtolower(get_string('backupfilename')));
         $backupword = trim(clean_filename($backupword), '_');
 
-        // Not $withoutname, lets fetch the name
+        // Not $useidonly, lets fetch the name
         $shortname = '';
-        if (!$withoutname) {
+        if (!$useidonly) {
             // Calculate proper name element (based on type)
             switch ($type) {
                 case backup::TYPE_1COURSE:
@@ -233,7 +233,7 @@ abstract class backup_plan_dbops extends backup_dbops {
 
         // The name will always contain the ID, but we append the course short name if requested.
         $name = $id;
-        if (!$withoutname && $shortname != '') {
+        if (!$useidonly && $shortname != '') {
             $name .= '-' . $shortname;
         }
 
