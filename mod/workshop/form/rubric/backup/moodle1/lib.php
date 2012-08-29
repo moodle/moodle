@@ -46,8 +46,11 @@ class moodle1_workshopform_rubric_handler extends moodle1_workshopform_handler {
 
     /**
      * Processes one <ELEMENT>
+     *
+     * @param array $data legacy element data
+     * @param array $raw raw element data
      */
-    public function process_legacy_element($data, $raw) {
+    public function process_legacy_element(array $data, array $raw) {
         $this->elements[] = $data;
         $this->rubrics[$data['id']] = array();
     }
