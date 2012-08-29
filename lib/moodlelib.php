@@ -4961,12 +4961,12 @@ function reset_course_userdata($data) {
     if ($allmods = $DB->get_records('modules') ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
-            if (!$DB->count_records($modname, array('course'=>$data->courseid))) {
-                continue; // skip mods with no instances
-            }
             $modfile = $CFG->dirroot.'/mod/'. $modname.'/lib.php';
             $moddeleteuserdata = $modname.'_reset_userdata';   // Function to delete user data
             if (file_exists($modfile)) {
+                if (!$DB->count_records($modname, array('course'=>$data->courseid))) {
+                    continue; // Skip mods with no instances
+                }
                 include_once($modfile);
                 if (function_exists($moddeleteuserdata)) {
                     $modstatus = $moddeleteuserdata($data);
