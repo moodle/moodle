@@ -178,6 +178,7 @@ table.quizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: left;bac
 #page-mod-quiz-edit h2.main{display:inline;padding-right:1em;clear:left;}
 
 #categoryquestions .r1 {background: #e4e4e4;}
+#categoryquestions .r1.highlight {background-color:#AAFFAA;}
 #categoryquestions .header {text-align: center;padding: 0 2px;border: 0 none;}
 #categoryquestions th.modifiername .sorters,
 #categoryquestions th.creatorname .sorters {font-weight: normal;font-size: 0.8em;}
