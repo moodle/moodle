@@ -4767,7 +4767,7 @@ function shift_course_mod_dates($modname, $fields, $timeshift, $courseid) {
     foreach ($fields as $field) {
         $updatesql = "UPDATE {".$modname."}
                           SET $field = $field + ?
-                        WHERE course=? AND $field<>0 AND $field<>0";
+                        WHERE course=? AND $field<>0";
         $return = $DB->execute($updatesql, array($timeshift, $courseid)) && $return;
     }
 
