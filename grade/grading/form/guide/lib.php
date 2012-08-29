@@ -506,14 +506,7 @@ class gradingform_guide_controller extends gradingform_controller {
         $comments = $this->definition->guide_comment;
         $options = $this->get_options();
         $guide = '';
-        if (has_capability('moodle/grade:managegradingforms', $page->context)) {
-            $showdescription = true;
-        } else {
-            $showdescription = $options['showdescriptionstudent'];
-        }
-        if ($showdescription) {
-            $guide .= $output->box($this->get_formatted_description(), 'gradingform_guide-description');
-        }
+        $guide .= $output->box($this->get_formatted_description(), 'gradingform_guide-description');
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
             $guide .= $output->display_guide_mapping_explained($this->get_min_max_score());
             $guide .= $output->display_guide($criteria, $comments, $options, self::DISPLAY_PREVIEW, 'guide');
@@ -880,10 +873,8 @@ class gradingform_guide_instance extends gradingform_instance {
             $html .= html_writer::tag('div', get_string('restoredfromdraft', 'gradingform_guide'),
                 array('class' => 'gradingform_guide-restored'));
         }
-        if (!empty($options['showdescriptionteacher'])) {
-            $html .= html_writer::tag('div', $this->get_controller()->get_formatted_description(),
-                array('class' => 'gradingform_guide-description'));
-        }
+        $html .= html_writer::tag('div', $this->get_controller()->get_formatted_description(),
+            array('class' => 'gradingform_guide-description'));
         $html .= $this->get_controller()->get_renderer($page)->display_guide($criteria, $comments, $options, $mode,
             $gradingformelement->getName(), $value, $this->validationerrors);
         return $html;
