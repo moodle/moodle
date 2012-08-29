@@ -6419,7 +6419,7 @@ class context_module extends context {
                     if ($withprefix){
                         $name = get_string('modulename', $cm->modname).': ';
                     }
-                    $name .= $mod->name;
+                    $name .= format_string($mod->name, true, array('context' => $this));
                 }
             }
         return $name;
