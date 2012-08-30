@@ -384,6 +384,15 @@ class qformat_default {
                         $newpage->title = "Page $count";
                     }
                     $newpage->contents = $question->questiontext;
+                    $newpage->contentsformat = isset($question->questionformat) ? $question->questionformat : FORMAT_HTML;
+
+                    // Sometimes, questiontext is not a simple text, but one array
+                    // containing both text and format, so we need to support here
+                    // that case with the following dirty patch. MDL-35147
+                    if (is_array($question->questiontext)) {
+                        $newpage->contents = isset($question->questiontext['text']) ? $question->questiontext['text'] : '';
+                        $newpage->contentsformat = isset($question->questiontext['format']) ? $question->questiontext['format'] : FORMAT_HTML;
+                    }
 
                     // set up page links
                     if ($pageid) {
