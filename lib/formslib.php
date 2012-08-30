@@ -1596,10 +1596,14 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         $unfiltered = array();
         if (null === $elementList) {
             // iterate over all elements, calling their exportValue() methods
-            $emptyarray = array();
             foreach (array_keys($this->_elements) as $key) {
-                if ($this->_elements[$key]->isFrozen() && !$this->_elements[$key]->_persistantFreeze){
-                    $value = $this->_elements[$key]->exportValue($emptyarray, true);
+                if ($this->_elements[$key]->isFrozen() && !$this->_elements[$key]->_persistantFreeze) {
+                    $varname = $this->_elements[$key]->_attributes['name'];
+                    $value = '';
+                    // If we have a default value then export it.
+                    if (isset($this->_defaultValues[$varname])) {
+                        $value = array($varname => $this->_defaultValues[$varname]);
+                    }
                 } else {
                     $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
                 }
@@ -1626,7 +1630,6 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         if (is_array($this->_constantValues)) {
             $unfiltered = HTML_QuickForm::arrayMerge($unfiltered, $this->_constantValues);
         }
-
         return $unfiltered;
     }
 
