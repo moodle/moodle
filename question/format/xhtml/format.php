@@ -72,7 +72,7 @@ class qformat_xhtml extends qformat_default {
 
         // selection depends on question type
         switch($question->qtype) {
-        case TRUEFALSE:
+        case 'truefalse':
             $st_true = get_string('true', 'qtype_truefalse');
             $st_false = get_string('false', 'qtype_truefalse');
             $expout .= "<ul class=\"truefalse\">\n";
@@ -80,7 +80,7 @@ class qformat_xhtml extends qformat_default {
             $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$st_false\" />$st_false</li>\n";
             $expout .= "</ul>\n";
             break;
-        case MULTICHOICE:
+        case 'multichoice':
             $expout .= "<ul class=\"multichoice\">\n";
             foreach($question->options->answers as $answer) {
                 $ans_text = $this->repchar( $answer->answer );
@@ -93,17 +93,17 @@ class qformat_xhtml extends qformat_default {
             }
             $expout .= "</ul>\n";
             break;
-        case SHORTANSWER:
+        case 'shortanswer':
             $expout .= "<ul class=\"shortanswer\">\n";
             $expout .= "  <li><input name=\"quest_$id\" type=\"text\" /></li>\n";
             $expout .= "</ul>\n";
             break;
-        case NUMERICAL:
+        case 'numerical':
             $expout .= "<ul class=\"numerical\">\n";
             $expout .= "  <li><input name=\"quest_$id\" type=\"text\" /></li>\n";
             $expout .= "</ul>\n";
             break;
-        case MATCH:
+        case 'match':
             $expout .= "<ul class=\"match\">\n";
 
             // build answer list
@@ -128,9 +128,9 @@ class qformat_xhtml extends qformat_default {
             }
             $expout .= "</ul>\n";
             break;
-        case DESCRIPTION:
+        case 'description':
             break;
-        case MULTIANSWER:
+        case 'multichoice':
             $expout .= "<!-- CLOZE type is not supported  -->\n";
             break;
         default:
