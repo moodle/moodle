@@ -31,7 +31,6 @@ require_once($CFG->libdir.'/textlib.class.php');
 
 $id = required_param('id', PARAM_INT); // Category id
 $page = optional_param('page', 0, PARAM_INT); // which page to show
-$perpage = optional_param('perpage', $CFG->coursesperpage, PARAM_INT); // how many per page
 $categoryedit = optional_param('categoryedit', -1, PARAM_BOOL);
 $hide = optional_param('hide', 0, PARAM_INT);
 $show = optional_param('show', 0, PARAM_INT);
@@ -40,6 +39,15 @@ $movedown = optional_param('movedown', 0, PARAM_INT);
 $moveto = optional_param('moveto', 0, PARAM_INT);
 $resort = optional_param('resort', 0, PARAM_BOOL);
 $sesskey = optional_param('sesskey', '', PARAM_RAW);
+
+// MDL-27824 - This is a temporary fix until we have the proper 
+// way to check/initialize $CFG value.
+if (isset($CFG->coursesperpage)) {
+    $defaultperpage =  $CFG->coursesperpage;
+} else {
+    $defaultperpage = 20;
+}
+$perpage = optional_param('perpage', $defaultperpage, PARAM_INT); // how many per page
 
 if (empty($id)) {
     print_error("unknowcategory");
