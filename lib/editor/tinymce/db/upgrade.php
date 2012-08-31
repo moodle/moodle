@@ -15,16 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TinyMCE text editor integration version file.
+ * TinyMCE editor integration upgrade.
  *
  * @package    editor_tinymce
- * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2012083100;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2012083100;        // Requires this Moodle version
-$plugin->component = 'editor_tinymce';  // Full name of the plugin (used for diagnostics)
-$plugin->release   = '3.6.0';           // This is NOT a directory name, see lib.php if you need to know where is the editor code!
+function xmldb_editor_tinymce_upgrade($oldversion) {
+    global $CFG, $DB;
+
+    $dbman = $DB->get_manager();
+
+
+    if ($oldversion < 2012083100) {
+        // Reset redesigned editor toolbar setting.
+        unset_config('customtoolbar', 'editor_tinymce');
+        upgrade_plugin_savepoint(true, 2012083100, 'editor', 'tinymce');
+    }
+
+
+    return true;
+}
