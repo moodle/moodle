@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
 required changes in code:
 * use role_get_name() or role_fix_names() if you need any role names, using role.name
   directly from database is not correct any more
+* new restore support: ENROL_RESTORE_EXACT, ENROL_RESTORE_NOUSERS
+  and ENROL_RESTORE_CLASS were removed, implement new restore_* plugin methods instead
 
 other changes:
 * course enrolment manager now works with disabled plugins too

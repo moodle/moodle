@@ -1407,13 +1407,14 @@ class restore_course_structure_step extends restore_structure_step {
 
 /*
  * Structure step that will read the roles.xml file (at course/activity/block levels)
- * containig all the role_assignments and overrides for that context. If corresponding to
+ * containing all the role_assignments and overrides for that context. If corresponding to
  * one mapped role, they will be applied to target context. Will observe the role_assignments
  * setting to decide if ras are restored.
- * Note: only ras with component == null are restored as far as the any ra with component
- * is handled by one enrolment plugin, hence it will createt the ras later
+ *
+ * Note: this needs to be executed after all users are enrolled.
  */
 class restore_ras_and_caps_structure_step extends restore_structure_step {
+    protected $plugins = null;
 
     protected function define_structure() {
 
@@ -1462,15 +1463,15 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
             role_assign($newroleid, $newuserid, $contextid);
 
         } else if ((strpos($data->component, 'enrol_') === 0)) {
-            // Deal with enrolment roles
+            // Deal with enrolment roles - ignore the component and just find out the instance via new id,
+            // it is possible that enrolment was restored using different plugin type.
+            if (!isset($this->plugins)) {
+                $this->plguins = enrol_get_plugins(true);
+            }
             if ($enrolid = $this->get_mappingid('enrol', $data->itemid)) {
-                if ($component = $DB->get_field('enrol', 'component', array('id'=>$enrolid))) {
-                    //note: we have to verify component because it might have changed
-                    if ($component === 'enrol_manual') {
-                        // manual is a special case, we do not use components - this owudl happen when converting from other plugin
-                        role_assign($newroleid, $newuserid, $contextid); //TODO: do we need modifierid?
-                    } else {
-                        role_assign($newroleid, $newuserid, $contextid, $component, $enrolid); //TODO: do we need modifierid?
+                if ($instance = $DB->get_record('enrol', array('id'=>$enrolid))) {
+                    if (isset($this->plguins[$instance->enrol])) {
+                        $this->plguins[$instance->enrol]->restore_role_assignment($instance, $newroleid, $newuserid, $contextid);
                     }
                 }
             }
@@ -1496,6 +1497,9 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
  * enrolments, performing all the mappings and/or movements required
  */
 class restore_enrolments_structure_step extends restore_structure_step {
+    protected $enrolsynced = false;
+    protected $plugins = null;
+    protected $originalstatus = array();
 
     /**
      * Conditionally decide if this step should be executed.
@@ -1542,64 +1546,77 @@ class restore_enrolments_structure_step extends restore_structure_step {
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id; // We'll need this later
+        $oldid = $data->id; // We'll need this later.
+        unset($data->id);
 
-        $restoretype = plugin_supports('enrol', $data->enrol, ENROL_RESTORE_TYPE, null);
+        $this->originalstatus[$oldid] = $data->status;
 
-        if ($restoretype !== ENROL_RESTORE_EXACT and $restoretype !== ENROL_RESTORE_NOUSERS) {
-            // TODO: add complex restore support via custom class
-            debugging("Skipping '{$data->enrol}' enrolment plugin. Will be implemented before 2.0 release", DEBUG_DEVELOPER);
+        if (!$courserec = $DB->get_record('course', array('id' => $this->get_courseid()))) {
             $this->set_mapping('enrol', $oldid, 0);
             return;
         }
 
-        // Perform various checks to decide what to do with the enrol plugin
-        if (!array_key_exists($data->enrol, enrol_get_plugins(false))) {
-            // TODO: decide if we want to switch to manual enrol - we need UI for this
-            debugging("Enrol plugin data can not be restored because it is not installed");
-            $this->set_mapping('enrol', $oldid, 0);
-            return;
-
-        }
-        if (!enrol_is_enabled($data->enrol)) {
-            // TODO: decide if we want to switch to manual enrol - we need UI for this
-            debugging("Enrol plugin data can not be restored because it is not enabled");
-            $this->set_mapping('enrol', $oldid, 0);
-            return;
+        if (!isset($this->plugins)) {
+            $this->plugins = enrol_get_plugins(true);
         }
 
-        // map standard fields - plugin has to process custom fields from own restore class
-        $data->roleid = $this->get_mappingid('role', $data->roleid);
-        //TODO: should we move the enrol start and end date here?
-
-        // always add instance, if the course does not support multiple instances it just returns NULL
-        $enrol = enrol_get_plugin($data->enrol);
-        $courserec = $DB->get_record('course', array('id' => $this->get_courseid())); // Requires object, uses only id!!
-        if ($newitemid = $enrol->add_instance($courserec, (array)$data)) {
-            // ok
-        } else {
-            if ($instances = $DB->get_records('enrol', array('courseid'=>$courserec->id, 'enrol'=>$data->enrol))) {
-                // most probably plugin that supports only one instance
-                $newitemid = key($instances);
-            } else {
-                debugging('Can not create new enrol instance or reuse existing');
-                $newitemid = 0;
+        if (!$this->enrolsynced) {
+            // Make sure that all plugin may create instances and enrolments automatically
+            // before the first instance restore - this is suitable especially for plugins
+            // that synchronise data automatically using course->idnumber or by course categories.
+            foreach ($this->plugins as $plugin) {
+                $plugin->restore_sync_course($courserec);
             }
+            $this->enrolsynced = true;
         }
 
-        if ($restoretype === ENROL_RESTORE_NOUSERS) {
-            // plugin requests to prevent restore of any users
-            $newitemid = 0;
-        }
+        // Map standard fields - plugin has to process custom fields manually.
+        $data->roleid   = $this->get_mappingid('role', $data->roleid);
+        $data->courseid = $courserec->id;
 
-        $this->set_mapping('enrol', $oldid, $newitemid);
+        if ($this->get_setting_value('enrol_migratetomanual')) {
+            unset($data->sortorder); // Remove useless sortorder from <2.4 backups.
+            if (!enrol_is_enabled('manual')) {
+                $this->set_mapping('enrol', $oldid, 0);
+                return;
+            }
+            if ($instances = $DB->get_records('enrol', array('courseid'=>$data->courseid, 'enrol'=>'manual'), 'id')) {
+                $instance = reset($instances);
+                $this->set_mapping('enrol', $oldid, $instance->id);
+            } else {
+                if ($data->enrol === 'manual') {
+                    $instanceid = $this->plugins['manual']->add_instance($courserec, (array)$data);
+                } else {
+                    $instanceid = $this->plugins['manual']->add_default_instance($courserec);
+                }
+                $this->set_mapping('enrol', $oldid, $instanceid);
+            }
+
+        } else {
+            if (!enrol_is_enabled($data->enrol) or !isset($this->plugins[$data->enrol])) {
+                debugging("Enrol plugin data can not be restored because it is not enabled, use migration to manual enrolments");
+                $this->set_mapping('enrol', $oldid, 0);
+                return;
+            }
+            if ($task = $this->get_task() and $task->get_target() == backup::TARGET_NEW_COURSE) {
+                // Let's keep the sortorder in old backups.
+            } else {
+                // Prevent problems with colliding sortorders in old backups,
+                // new 2.4 backups do not need sortorder because xml elements are ordered properly.
+                unset($data->sortorder);
+            }
+            // Note: plugin is responsible for setting up the mapping, it may also decide to migrate to different type.
+            $this->plugins[$data->enrol]->restore_instance($this, $data, $courserec, $oldid);
+        }
     }
 
     /**
-     * Create user enrolments
+     * Create user enrolments.
      *
      * This has to be called after creation of enrolment instances
      * and before adding of role assignments.
+     *
+     * Roles are assigned in restore_ras_and_caps_structure_step::process_assignment() processing afterwards.
      *
      * @param mixed $data
      * @return void
@@ -1607,17 +1624,25 @@ class restore_enrolments_structure_step extends restore_structure_step {
     public function process_enrolment($data) {
         global $DB;
 
+        if (!isset($this->plugins)) {
+            $this->plugins = enrol_get_plugins(true);
+        }
+
         $data = (object)$data;
 
-        // Process only if parent instance have been mapped
+        // Process only if parent instance have been mapped.
         if ($enrolid = $this->get_new_parentid('enrol')) {
+            $oldinstancestatus = ENROL_INSTANCE_ENABLED;
+            $oldenrolid = $this->get_old_parentid('enrol');
+            if (isset($this->originalstatus[$oldenrolid])) {
+                $oldinstancestatus = $this->originalstatus[$oldenrolid];
+            }
             if ($instance = $DB->get_record('enrol', array('id'=>$enrolid))) {
-                // And only if user is a mapped one
+                // And only if user is a mapped one.
                 if ($userid = $this->get_mappingid('user', $data->userid)) {
-                    $enrol = enrol_get_plugin($instance->enrol);
-                    //TODO: do we need specify modifierid?
-                    $enrol->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
-                    //note: roles are assigned in restore_ras_and_caps_structure_step::process_assignment() processing above
+                    if (isset($this->plugins[$instance->enrol])) {
+                        $this->plugins[$instance->enrol]->restore_user_enrolment($this, $data, $instance, $userid, $oldinstancestatus);
+                    }
                 }
             }
         }

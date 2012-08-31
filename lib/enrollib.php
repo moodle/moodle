@@ -51,14 +51,8 @@ define('ENROL_EXT_REMOVED_UNENROL', 0);
 /** When user disappears from external source, the enrolment is kept as is - one way sync */
 define('ENROL_EXT_REMOVED_KEEP', 1);
 
-/** enrol plugin feature describing requested restore type */
+/** @deprecated since 2.4 not used any more, migrate plugin to new restore methods */
 define('ENROL_RESTORE_TYPE', 'enrolrestore');
-/** User custom backup/restore class  stored in backup/moodle2/ subdirectory */
-define('ENROL_RESTORE_CLASS', 'class');
-/** Restore all custom fields from enrol table without any changes and all user_enrolments records */
-define('ENROL_RESTORE_EXACT', 'exact');
-/** Restore enrol record like ENROL_RESTORE_EXACT, but no user enrolments */
-define('ENROL_RESTORE_NOUSERS', 'nousers');
 
 /**
  * When user disappears from external source, user enrolment is suspended, roles are kept as is.
@@ -1766,5 +1760,52 @@ abstract class enrol_plugin {
      */
     public function get_bulk_operations(course_enrolment_manager $manager) {
         return array();
+    }
+
+    /**
+     * Automatic enrol sync executed during restore.
+     * Useful for automatic sync by course->idnumber or course category.
+     * @param stdClass $course course record
+     */
+    public function restore_sync_course($course) {
+        // Override if necessary.
+    }
+
+    /**
+     * Restore instance and map settings.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $course
+     * @param int $oldid
+     */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+        // Do not call this from overridden methods, restore and set new id there.
+        $step->set_mapping('enrol', $oldid, 0);
+    }
+
+    /**
+     * Restore user enrolment.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $instance
+     * @param int $oldinstancestatus
+     * @param int $userid
+     */
+    public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
+        // Override as necessary if plugin supports restore of enrolments.
+    }
+
+    /**
+     * Restore role assignment.
+     *
+     * @param stdClass $instance
+     * @param int $roleid
+     * @param int $userid
+     * @param int $contextid
+     */
+    public function restore_role_assignment($instance, $roleid, $userid, $contextid) {
+        // No role assignment by default, override if necessary.
     }
 }

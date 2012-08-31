@@ -92,4 +92,15 @@ class enrol_category_plugin extends enrol_plugin {
         require_once("$CFG->dirroot/enrol/category/locallib.php");
         enrol_category_sync_course($course);
     }
+
+    /**
+     * Automatic enrol sync executed during restore.
+     * Useful for automatic sync by course->idnumber or course category.
+     * @param stdClass $course course record
+     */
+    public function restore_sync_course($course) {
+        global $CFG;
+        require_once("$CFG->dirroot/enrol/category/locallib.php");
+        enrol_category_sync_course($course);
+    }
 }

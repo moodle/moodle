@@ -366,18 +366,22 @@ class enrol_guest_plugin extends enrol_plugin {
         return $this->add_instance($course, $fields);
     }
 
-}
+    /**
+     * Restore instance and map settings.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $course
+     * @param int $oldid
+     */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+        global $DB;
 
-/**
- * Indicates API features that the enrol plugin supports.
- *
- * @param string $feature
- * @return mixed True if yes (some features may use other values)
- */
-function enrol_guest_supports($feature) {
-    switch($feature) {
-        case ENROL_RESTORE_TYPE: return ENROL_RESTORE_NOUSERS;
+        if (!$DB->record_exists('enrol', array('courseid' => $data->courseid, 'enrol' => $this->get_name()))) {
+            $this->add_instance($course, (array)$data);
+        }
 
-        default: return null;
+        // No need to set mapping, we do not restore users or roles here.
+        $step->set_mapping('enrol', $oldid, 0);
     }
 }
