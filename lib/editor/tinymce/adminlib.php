@@ -145,7 +145,7 @@ class tiynce_subplugins_settings extends admin_setting {
      * @return string
      */
     public function output_html($data, $query='') {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $PAGE;
         require_once("$CFG->libdir/editorlib.php");
         require_once("$CFG->libdir/pluginlib.php");
         require_once(__DIR__.'/lib.php');
@@ -197,6 +197,13 @@ class tiynce_subplugins_settings extends admin_setting {
                 $hideshow = html_writer::link($url, $hideshow);
                 $displayname = html_writer::tag('span', $namestr, array('class'=>'dimmed_text'));
             }
+
+            if ($PAGE->theme->resolve_image_location('icon', 'tinymce_' . $name)) {
+                $icon = $OUTPUT->pix_icon('icon', '', 'tinymce_' . $name, array('class' => 'smallicon pluginicon'));
+            } else {
+                $icon = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'smallicon pluginicon noicon'));
+            }
+            $displayname  = $icon . ' ' . $displayname;
 
             // Add available buttons.
             $buttons = implode(', ', $plugin->get_buttons());
