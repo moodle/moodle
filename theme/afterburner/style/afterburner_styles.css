@@ -206,6 +206,10 @@ select, input, button {
     background-color: #34637f;
     color: #fff;
 }
+.ie7 select { /* fixes compatibility view */
+    background-color: #eee;
+    color: #036;
+}
 #loginbtn, input, button, select {
     cursor: pointer;
     margin-left: 5px;
