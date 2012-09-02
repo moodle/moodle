@@ -224,6 +224,78 @@ class enrol_cohort_plugin extends enrol_plugin {
 
         return $button;
     }
+
+    /**
+     * Restore instance and map settings.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $course
+     * @param int $oldid
+     */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+        global $DB, $CFG;
+
+        if (!$step->get_task()->is_samesite()) {
+            // No cohort restore from other sites.
+            $step->set_mapping('enrol', $oldid, 0);
+            return;
+        }
+
+        if ($data->roleid and $DB->record_exists('cohort', array('id'=>$data->customint1))) {
+            $instance = $DB->get_record('enrol', array('roleid'=>$data->roleid, 'customint1'=>$data->customint1, 'courseid'=>$course->id, 'enrol'=>$this->get_name()));
+            if ($instance) {
+                $instanceid = $instance;
+            } else {
+                $instanceid = $this->add_instance($course, (array)$data);
+            }
+            $step->set_mapping('enrol', $oldid, $instanceid);
+
+            require_once("$CFG->dirroot/enrol/cohort/locallib.php");
+            enrol_cohort_sync($course->id, false);
+
+        } else if ($this->get_config('unenrolaction') == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+            $data->customint1 = 0;
+            $instance = $DB->get_record('enrol', array('roleid'=>$data->roleid, 'customint1'=>$data->customint1, 'courseid'=>$course->id, 'enrol'=>$this->get_name()));
+
+            if ($instance) {
+                $instanceid = $instance;
+            } else {
+                $data->status = ENROL_INSTANCE_DISABLED;
+                $instanceid = $this->add_instance($course, (array)$data);
+            }
+            $step->set_mapping('enrol', $oldid, $instanceid);
+
+            require_once("$CFG->dirroot/enrol/cohort/locallib.php");
+            enrol_cohort_sync($course->id, false);
+
+        } else {
+            $step->set_mapping('enrol', $oldid, 0);
+        }
+    }
+
+    /**
+     * Restore user enrolment.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $instance
+     * @param int $oldinstancestatus
+     * @param int $userid
+     */
+    public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
+        global $DB;
+
+        if ($this->get_config('unenrolaction') != ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+            // Enrolments were already synchronised in restore_instance(), we do not want any suspended leftovers.
+            return;
+        }
+
+        // ENROL_EXT_REMOVED_SUSPENDNOROLES means all previous enrolments are restored
+        // but without roles and suspended.
+
+        if (!$DB->record_exists('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid))) {
+            $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, ENROL_USER_SUSPENDED);
+        }
+    }
 }
-
-

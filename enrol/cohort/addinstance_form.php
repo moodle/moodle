@@ -29,12 +29,15 @@ defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/formslib.php");
 
 class enrol_cohort_addinstance_form extends moodleform {
+
+    protected $course;
+
     function definition() {
         global $CFG, $DB;
 
         $mform  = $this->_form;
-        $course = $this->_customdata;
-        $coursecontext = context_course::instance($course->id);
+        $this->course = $this->_customdata;
+        $coursecontext = context_course::instance($this->course->id);
 
         $enrol = enrol_get_plugin('cohort');
 
@@ -72,8 +75,18 @@ class enrol_cohort_addinstance_form extends moodleform {
 
         $this->add_action_buttons(true, get_string('addinstance', 'enrol'));
 
-        $this->set_data(array('id'=>$course->id));
+        $this->set_data(array('id'=>$this->course->id));
     }
 
-    //TODO: validate duplicate role-cohort does not exist
+    function validation($data, $files) {
+        global $DB;
+
+        $errors = parent::validation($data, $files);
+
+        if ($DB->record_exists('enrol', array('roleid'=>$data['roleid'], 'customint1'=>$data['cohortid'], 'courseid'=>$this->course->id, 'enrol'=>'cohort'))) {
+            $errors['cohortid'] = get_string('instanceexists', 'enrol_cohort');
+        }
+
+        return $errors;
+    }
 }
