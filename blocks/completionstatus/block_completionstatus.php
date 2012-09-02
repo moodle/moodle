@@ -19,15 +19,14 @@
  *
  * @package    block
  * @subpackage completion
- * @copyright  2009 Catalyst IT Ltd
+ * @copyright  2009-2012 Catalyst IT Ltd
  * @author     Aaron Barnes <aaronb@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-
-require_once($CFG->libdir.'/completionlib.php');
+require_once("{$CFG->libdir}/completionlib.php");
 
 /**
  * Course completion status
@@ -36,25 +35,27 @@ require_once($CFG->libdir.'/completionlib.php');
 class block_completionstatus extends block_base {
 
     public function init() {
-        $this->title   = get_string('pluginname', 'block_completionstatus');
+        $this->title = get_string('pluginname', 'block_completionstatus');
     }
 
     public function get_content() {
-        global $USER, $CFG, $DB, $COURSE;
+        global $USER;
 
         // If content is cached
         if ($this->content !== NULL) {
             return $this->content;
         }
 
+        $course  = $this->page->course;
+
         // Create empty content
-        $this->content = new stdClass;
+        $this->content = new stdClass();
 
         // Can edit settings?
-        $can_edit = has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $this->page->course->id));
+        $can_edit = has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));
 
         // Get course completion data
-        $info = new completion_info($this->page->course);
+        $info = new completion_info($course);
 
         // Don't display if completion isn't enabled!
         if (!completion_info::is_enabled_for_site()) {
@@ -84,9 +85,9 @@ class block_completionstatus extends block_base {
         // Check this user is enroled
         if (!$info->is_tracked_user($USER->id)) {
             // If not enrolled, but are can view the report:
-            if (has_capability('report/completion:view', get_context_instance(CONTEXT_COURSE, $COURSE->id))) {
-                $this->content->text = '<a href="'.$CFG->wwwroot.'/report/completion/index.php?course='.$COURSE->id.
-                                       '">'.get_string('viewcoursereport', 'completion').'</a>';
+            if (has_capability('report/completion:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                $report = new moodle_url('/report/completion/index.php', array('course' => $course->id));
+                $this->content->text = '<a href="'.$report->out().'">'.get_string('viewcoursereport', 'completion').'</a>';
                 return $this->content;
             }
 
@@ -187,7 +188,7 @@ class block_completionstatus extends block_base {
         // Load course completion
         $params = array(
             'userid' => $USER->id,
-            'course' => $COURSE->id
+            'course' => $course->id
         );
         $ccompletion = new completion_completion($params);
 
@@ -221,7 +222,8 @@ class block_completionstatus extends block_base {
         $this->content->text .= $shtml.'</tbody></table>';
 
         // Display link to detailed view
-        $this->content->footer = '<br><a href="'.$CFG->wwwroot.'/blocks/completionstatus/details.php?course='.$COURSE->id.'">'.get_string('moredetails', 'completion').'</a>';
+        $details = new moodle_url('/blocks/completionstatus/details.php', array('course' => $course->id));
+        $this->content->footer = '<br><a href="'.$details->out().'">'.get_string('moredetails', 'completion').'</a>';
 
         return $this->content;
     }
