@@ -83,10 +83,10 @@ $string['phpversionhelp'] = '<p>무들은 적어도 PHP4.3.0 혹은 5.1.0. 이�
 <p>PHP를 업그레이드 하시거나 새버전을 제공하는 웹호스팅 업체로 이전하기를 권합니다!<br />(만일 5.0.x버전을 사용 중이라면 4.4.x 버전으로 다운그레이드 할 수 있습니다)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = '컴퓨터에 <strong>{$a->packname} {$a->packversion}</strong> 패키지를 성공적으로 설치하고 기동하였습니다. 축하합니다!';
-$string['welcomep30'] = '<strong>{$a->installername}</strong> 릴리스는 <strong>무들</strong>이 동작하는 환경을 생성하기 위한 다음 어플리케이션을 포함하고 있습니다:';
+$string['welcomep30'] = '<strong>{$a->installername}</strong> 판본은 <strong>무들</strong>이 동작하는 환경을 생성하기 위한 어플리케이션을 포함하고 있습니다.';
 $string['welcomep40'] = '이 패키지는 <strong>무들 {$a->moodlerelease} ({$a->moodleversion})</strong> 을 포함하고 있습니다.';
 $string['welcomep50'] = '이 패키지에 있는 모든 어플리케이션을 사용하는 것은 각각의 라이센스에의해 지배받습니다. 완전한<strong>{$a->installername}</strong> 패키지는
 <a href="http://www.opensource.org/docs/definition_plain.html">공개 소스이며 </a> <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> 라이선스에 의해 배포됩니다.';
-$string['welcomep60'] = '다음 페이지들은 당신의 컴퓨터에 <strong>무들</strong>을 설정하고 설치하는 길라잡이 역할을 할 것입니다. 기본 설정을 선택하거나 목적에 맞게 선택적으로 수정할 수 있습니다.';
+$string['welcomep60'] = '다음 페이지들은 컴퓨터에 <strong>무들</strong>을 설치하고 설정하는 길라잡이 역할을 할 것입니다. 기본 설정을 선택하거나 목적에 맞게 선택적으로 수정할 수 있습니다.';
 $string['welcomep70'] = '<strong>무들</strong> 설정을 계속하기 위해서는 "다음" 버튼을 클릭하세요.';
 $string['wwwroot'] = '웹 주소';
