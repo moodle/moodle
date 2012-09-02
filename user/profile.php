@@ -258,11 +258,11 @@ if (isset($identityfields['address']) && $user->address) {
 }
 
 if (isset($identityfields['phone1']) && $user->phone1) {
-        print_row(get_string("phone").":", "$user->phone1");
+    print_row(get_string("phone").":", "$user->phone1");
 }
 
 if (isset($identityfields['phone2']) && $user->phone2) {
-        print_row(get_string("phone2").":", "$user->phone2");
+    print_row(get_string("phone2").":", "$user->phone2");
 }
 
 if (isset($identityfields['institution']) && $user->institution) {
@@ -277,12 +277,10 @@ if (isset($identityfields['idnumber']) && $user->idnumber) {
     print_row(get_string("idnumber").":", "$user->idnumber");
 }
 
-if (($currentuser
+if (isset($identityfields['email']) and ($currentuser
   or $user->maildisplay == 1
   or has_capability('moodle/course:useremail', $context)
-  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))
-  and isset($identityfields['email'])) {
-
+  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))) {
     print_row(get_string("email").":", obfuscate_mailto($user->email, ''));
 }
 
