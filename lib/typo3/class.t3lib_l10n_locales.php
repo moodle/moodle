@@ -47,6 +47,7 @@ class t3lib_l10n_Locales implements t3lib_Singleton {
 	 */
 	protected $languages = array(
 		'default' => 'English',
+		'af' => 'Afrikaans',
 		'ar' => 'Arabic',
 		'bs' => 'Bosnian',
 		'bg' => 'Bulgarian',
@@ -101,7 +102,7 @@ class t3lib_l10n_Locales implements t3lib_Singleton {
 
 	/**
 	 * Supported TYPO3 locales
-	 * @deprecated since TYPO3 4.6, will be removed in TYPO3 4.8
+	 * @deprecated since TYPO3 4.6, will be removed in TYPO3 6.0
 	 * @var array
 	 */
 	protected $locales = array();
@@ -176,12 +177,12 @@ class t3lib_l10n_Locales implements t3lib_Singleton {
 		}
 
 		/**
-		 * @deprecated since TYPO3 4.6, will be removed in TYPO3 4.8
+		 * @deprecated since TYPO3 4.6, will be removed in TYPO3 6.0
 		 */
 		$instance->locales = array_keys($instance->languages);
 
 		/**
-		 * @deprecated since TYPO3 4.6, will be removed in TYPO3 4.8
+		 * @deprecated since TYPO3 4.6, will be removed in TYPO3 6.0
 		 */
 		define('TYPO3_languages', implode('|', $instance->getLocales()));
 	}
