@@ -118,6 +118,12 @@ if (has_capability('moodle/user:viewhiddendetails', $context)) {
     $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
 }
 
+if (has_capability('moodle/site:viewuseridentity', $context)) {
+    $identityfields = array_flip(explode(',', $CFG->showuseridentity));
+} else {
+    $identityfields = array();
+}
+
 // Start setting up the page
 $strpublicprofile = get_string('publicprofile');
 
@@ -247,22 +253,35 @@ if (! isset($hiddenfields['city']) && $user->city) {
     print_row(get_string('city') . ':', $user->city);
 }
 
-if (has_capability('moodle/user:viewhiddendetails', $context)) {
-    if ($user->address) {
-        print_row(get_string("address").":", "$user->address");
-    }
-    if ($user->phone1) {
-        print_row(get_string("phone").":", "$user->phone1");
-    }
-    if ($user->phone2) {
-        print_row(get_string("phone2").":", "$user->phone2");
-    }
+if (isset($identityfields['address']) && $user->address) {
+    print_row(get_string("address").":", "$user->address");
 }
 
-if ($currentuser
+if (isset($identityfields['phone1']) && $user->phone1) {
+        print_row(get_string("phone").":", "$user->phone1");
+}
+
+if (isset($identityfields['phone2']) && $user->phone2) {
+        print_row(get_string("phone2").":", "$user->phone2");
+}
+
+if (isset($identityfields['institution']) && $user->institution) {
+    print_row(get_string("institution").":", "$user->institution");
+}
+
+if (isset($identityfields['department']) && $user->department) {
+    print_row(get_string("department").":", "$user->department");
+}
+
+if (isset($identityfields['idnumber']) && $user->idnumber) {
+    print_row(get_string("idnumber").":", "$user->idnumber");
+}
+
+if (($currentuser
   or $user->maildisplay == 1
   or has_capability('moodle/course:useremail', $context)
-  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER))) {
+  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))
+  and isset($identityfields['email'])) {
 
     print_row(get_string("email").":", obfuscate_mailto($user->email, ''));
 }
