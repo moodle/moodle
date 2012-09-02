@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Adds instance form
  *
- * @package    enrol
- * @subpackage cohort
+ * @package    enrol_cohort
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,7 +40,7 @@ class enrol_cohort_addinstance_form extends moodleform {
         $enrol = enrol_get_plugin('cohort');
 
         $cohorts = array('' => get_string('choosedots'));
-        list($sqlparents, $params) = $DB->get_in_or_equal(get_parent_contexts($coursecontext));
+        list($sqlparents, $params) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids());
         $sql = "SELECT id, name, contextid
                   FROM {cohort}
                  WHERE contextid $sqlparents
@@ -59,7 +57,7 @@ class enrol_cohort_addinstance_form extends moodleform {
 
         $roles = get_assignable_roles($coursecontext);
         $roles[0] = get_string('none');
-        $roles = array_reverse($roles, true); // descending default sortorder
+        $roles = array_reverse($roles, true); // Descending default sortorder.
 
         $mform->addElement('header','general', get_string('pluginname', 'enrol_cohort'));
 

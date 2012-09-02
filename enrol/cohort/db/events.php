@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/* List of handlers */
+/* List of handlers. */
 $handlers = array (
     'cohort_member_added' => array (
         'handlerfile'      => '/enrol/cohort/locallib.php',
