@@ -1483,6 +1483,10 @@ class assign {
             $submission = $this->get_user_submission($member->id, false);
             if ($submission && $submission->status != ASSIGN_SUBMISSION_STATUS_DRAFT) {
                 unset($members[$id]);
+            } else {
+                if ($this->is_blind_marking()) {
+                    $members[$id]->alias = get_string('hiddenuser', 'assign') . $this->get_uniqueid_for_user($id);
+                }
             }
         }
         return $members;
@@ -1987,8 +1991,7 @@ class assign {
             if ($grade) {
                 $extensionduedate = $grade->extensionduedate;
             }
-            $showedit = has_capability('mod/assign:submit', $this->context) &&
-                         $this->submissions_open($userid) && ($this->is_any_submission_plugin_enabled());
+            $showedit = $this->submissions_open($userid) && ($this->is_any_submission_plugin_enabled());
 
             if ($teamsubmission) {
                 $showsubmit = $showedit && $teamsubmission && ($teamsubmission->status == ASSIGN_SUBMISSION_STATUS_DRAFT);
@@ -2019,7 +2022,8 @@ class assign {
                                                               $showsubmit,
                                                               $viewfullnames,
                                                               $extensionduedate,
-                                                              $this->get_context()));
+                                                              $this->get_context(),
+                                                              $this->is_blind_marking()));
         }
         if ($grade) {
             $data = new stdClass();

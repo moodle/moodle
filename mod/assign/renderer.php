@@ -429,7 +429,11 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $userslist = array();
                 foreach ($members as $member) {
                     $url = new moodle_url('/user/view.php', array('id' => $member->id, 'course'=>$status->courseid));
-                    $userslist[] = $this->output->action_link($url, fullname($member, $status->canviewfullnames));
+                    if ($status->view == assign_submission_status::GRADER_VIEW && $status->blindmarking) {
+                        $userslist[] = $member->alias;
+                    } else {
+                        $userslist[] = $this->output->action_link($url, fullname($member, $status->canviewfullnames));
+                    }
                 }
                 if (count($userslist) > 0) {
                     $userstr = join(', ', $userslist);
