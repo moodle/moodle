@@ -165,7 +165,7 @@
     <location>phpmailer</location>
     <name>PHPMailer</name>
     <license>LGPL</license>
-    <version>5.1</version>
+    <version>5.2.1</version>
     <licenseversion>2.1</licenseversion>
   </library>
   <library>
