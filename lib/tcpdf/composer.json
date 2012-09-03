@@ -1,0 +1,38 @@
+{
+	"name": "tcpdf/tcpdf",
+	"version": "5.9.181",
+	"homepage": "http://www.tcpdf.org/",
+	"type": "library",
+	"description": "TCPDF is a PHP class for generating PDF files on-the-fly without requiring external extensions.",
+	"keywords": ["pdf"],
+	"license": "LGPLv3",
+	"authors": [
+	{
+		"name": "Nicola Asuni",
+		"email": "info@tecnick.com",
+		"homepage": "http://nicolaasuni.tecnick.com"
+	}
+	],
+	"require": {
+		"php": ">5.2"
+	},
+	"autoload": {
+		"classmap": [
+		"fonts",
+		"config/lang",
+		"config",
+		"2dbarcodes.php",
+		"barcodes.php",
+		"datamatrix.php",
+		"encodings_maps.php",
+		"htmlcolors.php",
+		"pdf417.php",
+		"qrcode.php",
+		"spotcolors.php",
+		"tcpdf.php",
+		"tcpdf_filters.php",
+		"tcpdf_parser.php",
+		"unicode_data.php"
+		]
+	}
+}
