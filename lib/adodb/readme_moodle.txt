@@ -1,4 +1,4 @@
-Description of ADODB V5.16 library import into Moodle
+Description of ADODB V5.17 library import into Moodle
 
 This library will be probably removed in Moodle 2.1,
 it is now used only in enrol and auth db plugins.
@@ -19,6 +19,6 @@ Added:
  * readme_moodle.txt - this file ;-)
 
 Our changes:
- * fixed leading whitespace in adodb-active-record.inc.php
+ * none
 
 skodak, iarenaza, moodler, stronk7
