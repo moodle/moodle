@@ -515,7 +515,3 @@ function page_dndupload_handle($uploadinfo) {
 
     return page_add_instance($data, null);
 }
-
-function mod_page_allow_group_member_remove($itemid, $groupid, $userid) {
-    return true;
-}
