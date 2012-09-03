@@ -448,16 +448,83 @@ class book_file_info extends file_info {
      * @return array of file_info instances
      */
     public function get_children() {
-        global $DB;
+        return $this->get_filtered_children('*', false, true);
+    }
 
+    /**
+     * Help function to return files matching extensions or their count
+     *
+     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @param bool $countonly if true returns the count of children (0, 1 or 2 if more than 1)
+     * @param bool $returnemptyfolders if true returns items that don't have matching files inside
+     * @return array|int array of file_info instances or the count
+     */
+    private function get_filtered_children($extensions = '*', $countonly = false, $returnemptyfolders = false) {
+        global $DB;
+        $params = array('contextid' => $this->context->id,
+            'component' => 'mod_book',
+            'filearea' => $this->filearea,
+            'bookid' => $this->cm->instance);
+        $sql = 'SELECT DISTINCT bc.id, bc.pagenum
+                    FROM {files} f, {book_chapters} bc
+                    WHERE f.contextid = :contextid
+                    AND f.component = :component
+                    AND f.filearea = :filearea
+                    AND bc.bookid = :bookid
+                    AND bc.id = f.itemid';
+        if (!$returnemptyfolders) {
+            $sql .= ' AND filename <> :emptyfilename';
+            $params['emptyfilename'] = '.';
+        }
+        list($sql2, $params2) = $this->build_search_files_sql($extensions, 'f');
+        $sql .= ' '.$sql2;
+        $params = array_merge($params, $params2);
+        if (!$countonly) {
+            $sql .= ' ORDER BY bc.pagenum';
+        }
+
+        $rs = $DB->get_recordset_sql($sql, $params);
         $children = array();
-        $chapters = $DB->get_records('book_chapters', array('bookid'=>$this->cm->instance), 'pagenum', 'id, pagenum');
-        foreach ($chapters as $itemid => $unused) {
-            if ($child = $this->browser->get_file_info($this->context, 'mod_book', $this->filearea, $itemid)) {
-                $children[] = $child;
+        foreach ($rs as $record) {
+            if ($child = $this->browser->get_file_info($this->context, 'mod_book', $this->filearea, $record->id)) {
+                if ($returnemptyfolders || $child->count_non_empty_children($extensions)) {
+                    $children[] = $child;
+                }
+            }
+            if ($countonly && count($children)>1) {
+                break;
             }
         }
+        $rs->close();
+        if ($countonly) {
+            return count($children);
+        }
         return $children;
+    }
+
+    /**
+     * Returns list of children which are either files matching the specified extensions
+     * or folders that contain at least one such file.
+     *
+     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @return array of file_info instances
+     */
+    public function get_non_empty_children($extensions = '*') {
+        return $this->get_filtered_children($extensions, false);
+    }
+
+    /**
+     * Returns the number of children which are either files matching the specified extensions
+     * or folders containing at least one such file.
+     *
+     * NOTE: We don't need the exact number of non empty children if it is >=2
+     * In this function 1 is never returned to avoid skipping the single subfolder
+     *
+     * @param string|array $extensions, for example '*' or array('.gif','.jpg')
+     * @return int
+     */
+    public function count_non_empty_children($extensions = '*') {
+        return $this->get_filtered_children($extensions, true);
     }
 
     /**

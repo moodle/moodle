@@ -351,6 +351,70 @@ class file_info_stored extends file_info {
     }
 
     /**
+     * Returns list of children which are either files matching the specified extensions
+     * or folders that contain at least one such file.
+     *
+     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @return array of file_info instances
+     */
+    public function get_non_empty_children($extensions = '*') {
+        $result = array();
+        if (!$this->lf->is_directory()) {
+            return $result;
+        }
+
+        $fs = get_file_storage();
+
+        $storedfiles = $fs->get_directory_files($this->context->id, $this->lf->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid(),
+                                                $this->lf->get_filepath(), false, true, "filepath, filename");
+        foreach ($storedfiles as $file) {
+            $extension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
+            if ($file->is_directory() || $extensions === '*' || (!empty($extension) && in_array('.'.$extension, $extensions))) {
+                $fileinfo = new file_info_stored($this->browser, $this->context, $file, $this->urlbase, $this->topvisiblename,
+                                                 $this->itemidused, $this->readaccess, $this->writeaccess, false);
+                if (!$file->is_directory() || $fileinfo->count_non_empty_children($extensions)) {
+                    $result[] = $fileinfo;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns the number of children which are either files matching the specified extensions
+     * or folders containing at least one such file.
+     *
+     * NOTE: We don't need the exact number of non empty children if it is >=2
+     * In this function 1 is never returned to avoid skipping the single subfolder
+     *
+     * @param string|array $extensions, for example '*' or array('.gif','.jpg')
+     * @return int
+     */
+    public function count_non_empty_children($extensions = '*') {
+        global $DB;
+        if (!$this->lf->is_directory()) {
+            return 0;
+        }
+
+        $filepath = $this->lf->get_filepath();
+        $length = textlib::strlen($filepath);
+        $sql = "SELECT 1
+                  FROM {files} f
+                 WHERE f.contextid = :contextid AND f.component = :component AND f.filearea = :filearea AND f.itemid = :itemid
+                       AND ".$DB->sql_substr("f.filepath", 1, $length)." = :filepath
+                       AND filename <> '.' ";
+        $params = array('contextid' => $this->context->id,
+            'component' => $this->lf->get_component(),
+            'filearea' => $this->lf->get_filearea(),
+            'itemid' => $this->lf->get_itemid(),
+            'filepath' => $filepath);
+        list($sql2, $params2) = $this->build_search_files_sql($extensions);
+        // we don't need to check access to individual files here, since the user can access parent
+        return $DB->record_exists_sql($sql.' '.$sql2, array_merge($params, $params2)) ? 2 : 0;
+    }
+
+    /**
      * Returns parent file_info instance
      *
      * @return file_info|null file_info instance or null for root
