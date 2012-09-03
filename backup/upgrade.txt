@@ -1,0 +1,17 @@
+This files describes API changes in /backup/*,
+information provided here is intended especially for developers.
+
+=== 2.4 ===
+
+* Since 2.3.1+ the backup file name schema has changed. The ID of the course will always be part of
+    the filename regardless of the setting 'backup_shortname'. See MDL-33812.
+
+=== 2.3 ===
+
+* Since 2.3.1+ the backup file name schema has changed. The ID of the course will always be part of
+    the filename regardless of the setting 'backup_shortname'. See MDL-33812.
+
+=== 2.2 ===
+
+* Since 2.2.4+ the backup file name schema has changed. The ID of the course will always be part of
+    the filename regardless of the setting 'backup_shortname'. See MDL-33812.
