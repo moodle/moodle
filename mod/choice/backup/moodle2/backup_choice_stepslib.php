@@ -65,8 +65,9 @@ class backup_choice_activity_structure_step extends backup_activity_structure_st
 
         $option->set_source_sql('
             SELECT *
-              FROM {choice_options}
-             WHERE choiceid = ?',
+            FROM {choice_options}
+            WHERE choiceid = ?
+            ORDER BY id',
             array(backup::VAR_PARENTID));
 
         // All the rest of elements only happen if we are including user info
