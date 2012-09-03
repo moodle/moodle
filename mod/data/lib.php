@@ -244,7 +244,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<label class="accesshide" for="field_'.$this->field->id.'">'.$this->field->description.'</label>';
-        $str .= '<input style="width:300px;" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id.'" value="'.s($content).'" />';
+        $str .= '<input class="basefieldinput" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id.'" value="'.s($content).'" />';
         $str .= '</div>';
 
         return $str;
@@ -1480,14 +1480,16 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $pagesizes = array(2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
     echo html_writer::select($pagesizes, 'perpage', $perpage, false, array('id'=>'pref_perpage'));
-    echo '<div id="reg_search" style="display: ';
+
     if ($advanced) {
-        echo 'none';
+        $regsearchclass = 'search_none';
+        $advancedsearchclass = 'search_inline';
+    } else {
+        $regsearchclass = 'search_inline';
+        $advancedsearchclass = 'search_none';
     }
-    else {
-        echo 'inline';
-    }
-    echo ';" >&nbsp;&nbsp;&nbsp;<label for="pref_search">'.get_string('search').'</label> <input type="text" size="16" name="search" id= "pref_search" value="'.s($search).'" /></div>';
+    echo '<div id="reg_search" class="' . $regsearchclass . '" >&nbsp;&nbsp;&nbsp;';
+    echo '<label for="pref_search">'.get_string('search').'</label> <input type="text" size="16" name="search" id= "pref_search" value="'.s($search).'" /></div>';
     echo '&nbsp;&nbsp;&nbsp;<label for="pref_sortby">'.get_string('sortby').'</label> ';
     // foreach field, print the option
     echo '<select name="sort" id="pref_sortby">';
@@ -1547,15 +1549,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '&nbsp;<input type="submit" value="'.get_string('savesettings','data').'" />';
 
     echo '<br />';
-    echo '<div class="dataadvancedsearch" id="data_adv_form" style="display: ';
-
-    if ($advanced) {
-        echo 'inline';
-    }
-    else {
-        echo 'none';
-    }
-    echo ';margin-left:auto;margin-right:auto;" >';
+    echo '<div class="' . $advancedsearchclass . '" id="data_adv_form">';
     echo '<table class="boxaligncenter">';
 
     // print ASC or DESC
@@ -1620,7 +1614,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo format_text($newtext, FORMAT_HTML, $options);
     echo '</td></tr>';
 
-    echo '<tr><td colspan="4" style="text-align: center;"><br/><input type="submit" value="'.get_string('savesettings','data').'" /><input type="submit" name="resetadv" value="'.get_string('resetsettings','data').'" /></td></tr>';
+    echo '<tr><td colspan="4"><br/><input type="submit" value="'.get_string('savesettings','data').'" /><input type="submit" name="resetadv" value="'.get_string('resetsettings','data').'" /></td></tr>';
     echo '</table>';
     echo '</div>';
     echo '</div>';
