@@ -554,7 +554,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                     $row = new html_table_row();
                     $cell1 = new html_table_cell($plugin->get_name());
                     $pluginsubmission = new assign_submission_plugin_submission($plugin,
-                                                                                $status->submission,
+                                                                                $submission,
                                                                                 assign_submission_plugin_submission::SUMMARY,
                                                                                 $status->coursemoduleid,
                                                                                 $status->returnaction,
