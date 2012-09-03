@@ -83,12 +83,12 @@ function xmldb_assign_upgrade($oldversion) {
     // Individual extension dates support.
     if ($oldversion < 2012082100) {
 
-        // Define field sendlatenotifications to be added to assign.
+        // Define field cutoffdate to be added to assign.
         $table = new xmldb_table('assign');
         $field = new xmldb_field('cutoffdate', XMLDB_TYPE_INTEGER, '10', null,
                                  XMLDB_NOTNULL, null, '0', 'completionsubmit');
 
-        // Conditionally launch add field sendlatenotifications.
+        // Conditionally launch add field cutoffdate.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
