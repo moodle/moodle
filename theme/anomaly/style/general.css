@@ -491,8 +491,7 @@ h1.headermain {
     padding-top: 10px;
 }
 
-.forumpost .content .shortenedpost a,
-.forumpost .content p {
+.forumpost .content .shortenedpost a {
     margin: 0 10px;
     padding: 0;
 }
