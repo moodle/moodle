@@ -204,17 +204,21 @@
             break;
 
             case FRONTPAGECOURSELIST:
+                $ncourses = $DB->count_records('course');
                 if (isloggedin() and !$hassiteconfig and !isguestuser() and empty($CFG->disablemycourses)) {
                     echo html_writer::tag('a', get_string('skipa', 'access', textlib::strtolower(get_string('mycourses'))), array('href'=>'#skipmycourses', 'class'=>'skip-block'));
                     echo $OUTPUT->heading(get_string('mycourses'), 2, 'headingblock header');
                     print_my_moodle();
                     echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipmycourses'));
-                } else if ((!$hassiteconfig and !isguestuser()) or ($DB->count_records('course') <= FRONTPAGECOURSELIMIT)) {
+                } else if ((!$hassiteconfig and !isguestuser()) or ($ncourses <= FRONTPAGECOURSELIMIT)) {
                     // admin should not see list of courses when there are too many of them
                     echo html_writer::tag('a', get_string('skipa', 'access', textlib::strtolower(get_string('availablecourses'))), array('href'=>'#skipavailablecourses', 'class'=>'skip-block'));
                     echo $OUTPUT->heading(get_string('availablecourses'), 2, 'headingblock header');
                     print_courses(0);
                     echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipavailablecourses'));
+                } else {
+                    echo html_writer::tag('div', get_string('therearecourses', '', $ncourses), array('class' => 'notifyproblem'));
+                    print_course_search('', false, 'short');
                 }
             break;
 
