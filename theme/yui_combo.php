@@ -109,7 +109,8 @@ foreach ($parts as $part) {
         $contentfile = "$CFG->libdir/yui/$part";
     }
     if (!file_exists($contentfile) or !is_file($contentfile)) {
-        $content .= "\n// Combo resource $part ($contentfile) not found!\n";
+        $location = '$CFG->dirroot'.preg_replace('/^'.preg_quote($CFG->dirroot, '/').'/', '', $contentfile);
+        $content .= "\n// Combo resource $part ($location) not found!\n";
         continue;
     }
     $filecontent = file_get_contents($contentfile);
