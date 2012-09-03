@@ -363,6 +363,7 @@ $string['createaccount'] = 'Create my new account';
 $string['createcategory'] = 'Create category';
 $string['createfolder'] = 'Create a folder in {$a}';
 $string['createuserandpass'] = 'Choose your username and password';
+$string['createuser'] = 'Create user';
 $string['createziparchive'] = 'Create zip archive';
 $string['creatingblocks'] = 'Creating blocks';
 $string['creatingblocksroles'] = 'Creating block level role assignments and overrides';
