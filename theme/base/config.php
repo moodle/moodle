@@ -153,11 +153,17 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
     ),
-    // The pagelayout used for reports
+    // The pagelayout used for reports.
     'report' => array(
         'file' => 'report.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
+    ),
+    // The pagelayout used for safebrowser and securewindow.
+    'secure' => array(
+        'file' => 'general.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true, 'nologinlinks'=>true),
     ),
 );
 
