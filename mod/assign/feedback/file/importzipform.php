@@ -88,12 +88,17 @@ class assignfeedback_file_import_zip_form extends moodleform implements renderab
                                     $assignment->get_unique_id_for_user($user->id);
                     }
                     $grade = $assignment->get_user_grade($user->id, false);
-                    $exists = $fs->file_exists($contextid,
-                                               'assignfeedback_file',
-                                               ASSIGNFEEDBACK_FILE_FILEAREA,
-                                               $grade->id,
-                                               '/',
-                                               $filename);
+
+                    $exists = false;
+                    if ($grade) {
+                        $exists = $fs->file_exists($contextid,
+                                                   'assignfeedback_file',
+                                                   ASSIGNFEEDBACK_FILE_FILEAREA,
+                                                   $grade->id,
+                                                   '/',
+                                                   $filename);
+                    }
+
                     if (!$grade || !$exists) {
                         $updates[] = get_string('feedbackfileadded', 'assignfeedback_file',
                                             array('filename'=>$filename, 'student'=>$userdesc));

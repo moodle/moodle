@@ -247,6 +247,9 @@ class assign {
     public function get_plugin_by_type($subtype, $type) {
         $shortsubtype = substr($subtype, strlen('assign'));
         $name = $shortsubtype . 'plugins';
+        if ($name != 'feedbackplugins' && $name != 'submissionplugins') {
+            return null;
+        }
         $pluginlist = $this->$name;
         foreach ($pluginlist as $plugin) {
             if ($plugin->get_type() == $type) {
@@ -1776,63 +1779,72 @@ class assign {
     private function download_submissions() {
         global $CFG,$DB;
 
-        // more efficient to load this here
+        // More efficient to load this here.
         require_once($CFG->libdir.'/filelib.php');
 
-        // load all submissions
-        $submissions = $this->get_all_submissions('','');
+        // Load all users with submit.
+        $students = get_enrolled_users($this->context, "mod/assign:submit");
 
-        if (empty($submissions)) {
-            print_error('errornosubmissions', 'assign');
-            return;
-        }
-
-        // build a list of files to zip
+        // Build a list of files to zip.
         $filesforzipping = array();
         $fs = get_file_storage();
 
         $groupmode = groups_get_activity_groupmode($this->get_course_module());
-        $groupid = 0;   // All users
+        // All users.
+        $groupid = 0;
         $groupname = '';
         if ($groupmode) {
             $groupid = groups_get_activity_group($this->get_course_module(), true);
             $groupname = groups_get_group_name($groupid).'-';
         }
 
-        // construct the zip file name
-        $filename = str_replace(' ', '_', clean_filename($this->get_course()->shortname.'-'.$this->get_instance()->name.'-'.$groupname.$this->get_course_module()->id.".zip")); //name of new zip file.
+        // Construct the zip file name.
+        $filename = clean_filename($this->get_course()->shortname.'-'.
+                                   $this->get_instance()->name.'-'.
+                                   $groupname.$this->get_course_module()->id.".zip");
 
-        // get all the files for each submission
-        foreach ($submissions as $submission) {
-            $userid = $submission->userid; //get userid
+        // Get all the files for each student.
+        foreach ($students as $student) {
+            $userid = $student->id;
+
             if ((groups_is_member($groupid,$userid) or !$groupmode or !$groupid)) {
-                // get the plugins to add their own files to the zip
+                // Get the plugins to add their own files to the zip.
 
-                $user = $DB->get_record("user", array("id"=>$userid),'id,username,firstname,lastname', MUST_EXIST);
-
-                if ($this->is_blind_marking()) {
-                    $prefix = clean_filename(get_string('participant', 'assign') . "_" . $this->get_uniqueid_for_user($userid) . "_");
+                $submissiongroup = false;
+                $groupname = '';
+                if ($this->get_instance()->teamsubmission) {
+                    $submission = $this->get_group_submission($userid, 0, false);
+                    $submissiongroup = $this->get_submission_group($userid);
+                    $groupname = '-' . $submissiongroup->name;
                 } else {
-                    $prefix = clean_filename(fullname($user) . "_" . $this->get_uniqueid_for_user($userid) . "_");
+                    $submission = $this->get_user_submission($userid, false);
                 }
 
-                foreach ($this->submissionplugins as $plugin) {
-                    if ($plugin->is_enabled() && $plugin->is_visible()) {
-                        $pluginfiles = $plugin->get_files($submission);
+                if ($this->is_blind_marking()) {
+                    $prefix = clean_filename(str_replace('_', ' ', get_string('participant', 'assign') . $groupname) .
+                                             "_" . $this->get_uniqueid_for_user($userid) . "_");
+                } else {
+                    $prefix = clean_filename(str_replace('_', ' ', fullname($student) . $groupname) .
+                                             "_" . $this->get_uniqueid_for_user($userid) . "_");
+                }
 
-
-                        foreach ($pluginfiles as $zipfilename => $file) {
-                            $prefixedfilename = $prefix . $plugin->get_subtype() . '_' . $plugin->get_type() . '_' . $zipfilename;
-                            $filesforzipping[$prefixedfilename] = $file;
+                if ($submission) {
+                    foreach ($this->submissionplugins as $plugin) {
+                        if ($plugin->is_enabled() && $plugin->is_visible()) {
+                            $pluginfiles = $plugin->get_files($submission);
+                            foreach ($pluginfiles as $zipfilename => $file) {
+                                $prefixedfilename = $prefix . $plugin->get_subtype() . '_' . $plugin->get_type() . '_' . $zipfilename;
+                                $filesforzipping[$prefixedfilename] = $file;
+                            }
                         }
                     }
                 }
-
             }
-        } // end of foreach loop
+        }
         if ($zipfile = $this->pack_files($filesforzipping)) {
             $this->add_to_log('download all submissions', get_string('downloadall', 'assign'));
-            send_temp_file($zipfile, $filename); //send file and delete after sending.
+            // Send file and delete after sending.
+            send_temp_file($zipfile, $filename);
         }
     }
 
@@ -2447,7 +2459,7 @@ class assign {
 
             if ($data->operation == 'grantextension') {
                 return 'grantextension';
-            } else if (strpos($prefix, $data->operation) == 0) {
+            } else if (strpos($data->operation, $prefix) === 0) {
                 $tail = substr($data->operation, strlen($prefix));
                 list($plugintype, $action) = explode('_', $tail, 2);
 
