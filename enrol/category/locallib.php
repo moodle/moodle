@@ -45,8 +45,8 @@ class enrol_category_handler {
             return true;
         }
 
-        // Only category level roles are interesting.
-        $parentcontext = get_context_instance_by_id($ra->contextid);
+        //only category level roles are interesting
+        $parentcontext = context::instance_by_id($ra->contextid);
         if ($parentcontext->contextlevel != CONTEXT_COURSECAT) {
             return true;
         }
@@ -102,8 +102,8 @@ class enrol_category_handler {
             return true;
         }
 
-        // Only category level roles are interesting.
-        $parentcontext = get_context_instance_by_id($ra->contextid);
+        // only category level roles are interesting
+        $parentcontext = context::instance_by_id($ra->contextid);
         if ($parentcontext->contextlevel != CONTEXT_COURSECAT) {
             return true;
         }

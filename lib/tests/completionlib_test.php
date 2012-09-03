@@ -257,7 +257,7 @@ class completionlib_testcase extends basic_testcase {
             ->will($this->returnValue(true));
         $c->expects($this->at(1))
             ->method('get_data')
-            ->with($cm, 1337)
+            ->with($cm, false, 1337)
             ->will($this->returnValue((object)array('viewed'=>COMPLETION_NOT_VIEWED)));
         $c->expects($this->at(2))
             ->method('internal_set_data')

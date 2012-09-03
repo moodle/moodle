@@ -270,7 +270,14 @@ class restore_gradebook_structure_step extends restore_structure_step {
 
         $data->contextid = context_course::instance($this->get_courseid())->id;
 
-        $newitemid = $DB->insert_record('grade_letters', $data);
+        $gradeletter = (array)$data;
+        unset($gradeletter['id']);
+        if (!$DB->record_exists('grade_letters', $gradeletter)) {
+            $newitemid = $DB->insert_record('grade_letters', $data);
+        } else {
+            $newitemid = $data->id;
+        }
+
         $this->set_mapping('grade_letter', $oldid, $newitemid);
     }
     protected function process_grade_setting($data) {
@@ -773,6 +780,17 @@ class restore_groups_structure_step extends restore_structure_step {
         // map user newitemid and insert if not member already
         if ($data->userid = $this->get_mappingid('user', $data->userid)) {
             if (!$DB->record_exists('groups_members', array('groupid' => $data->groupid, 'userid' => $data->userid))) {
+                // Check the componment, if any, exists
+                if (!empty($data->component)) {
+                    $dir = get_component_directory($data->component);
+                    if (!$dir || !is_dir($dir)) {
+                        // Component does not exist on restored system; clear
+                        // component and itemid
+                        unset($data->component);
+                        unset($data->itemid);
+                    }
+                }
+
                 $DB->insert_record('groups_members', $data);
             }
         }
@@ -2399,17 +2417,21 @@ class restore_activity_grades_structure_step extends restore_structure_step {
 
     /**
      * process activity grade_letters. Note that, while these are possible,
-     * because grade_letters are contextid based, in proctice, only course
+     * because grade_letters are contextid based, in practice, only course
      * context letters can be defined. So we keep here this method knowing
      * it won't be executed ever. gradebook restore will restore course letters.
      */
     protected function process_grade_letter($data) {
         global $DB;
 
-        $data = (object)$data;
+        $data['contextid'] = $this->task->get_contextid();
+        $gradeletter = (object)$data;
 
-        $data->contextid = $this->task->get_contextid();
-        $newitemid = $DB->insert_record('grade_letters', $data);
+        // Check if it exists before adding it
+        unset($data['id']);
+        if (!$DB->record_exists('grade_letters', $data)) {
+            $newitemid = $DB->insert_record('grade_letters', $gradeletter);
+        }
         // no need to save any grade_letter mapping
     }
 }

@@ -1238,7 +1238,7 @@ class block_manager {
 
             $systemcontext = context_system::instance();
             $frontpagecontext = context_course::instance(SITEID);
-            $parentcontext = get_context_instance_by_id($data->bui_parentcontextid);
+            $parentcontext = context::instance_by_id($data->bui_parentcontextid);
 
             // Updating stickiness and contexts.  See MDL-21375 for details.
             if (has_capability('moodle/site:manageblocks', $parentcontext)) { // Check permissions in destination

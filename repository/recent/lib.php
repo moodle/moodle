@@ -122,7 +122,7 @@ class repository_recent extends repository {
             foreach ($files as $file) {
                 // Check that file exists and accessible, retrieve size/date info
                 $browser = get_file_browser();
-                $context = get_context_instance_by_id($file['contextid']);
+                $context = context::instance_by_id($file['contextid']);
                 $fileinfo = $browser->get_file_info($context, $file['component'],
                         $file['filearea'], $file['itemid'], $file['filepath'], $file['filename']);
                 if ($fileinfo) {

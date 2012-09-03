@@ -154,7 +154,7 @@ if (!$category = $DB->get_record('question_categories', array('id' => $question-
 // Check permissions
 $question->formoptions = new stdClass();
 
-$categorycontext = get_context_instance_by_id($category->contextid);
+$categorycontext = context::instance_by_id($category->contextid);
 $addpermission = has_capability('moodle/question:add', $categorycontext);
 
 if ($id) {
@@ -259,7 +259,7 @@ if ($mform->is_cancelled()) {
     if ($movecontext) {
         // We are just moving the question to a different context.
         list($tocatid, $tocontextid) = explode(',', $fromform->categorymoveto);
-        require_capability('moodle/question:add', get_context_instance_by_id($tocontextid));
+        require_capability('moodle/question:add', context::instance_by_id($tocontextid));
         question_move_questions_to_category(array($question->id), $tocatid);
 
     } else {
@@ -267,7 +267,7 @@ if ($mform->is_cancelled()) {
         if (!empty($question->id)) {
             question_require_capability_on($question, 'edit');
         } else {
-            require_capability('moodle/question:add', get_context_instance_by_id($newcontextid));
+            require_capability('moodle/question:add', context::instance_by_id($newcontextid));
             if (!empty($fromform->makecopy) && !$question->formoptions->cansaveasnew) {
                 print_error('nopermissions', '', '', 'edit');
             }

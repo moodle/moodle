@@ -156,6 +156,18 @@ function cohort_remove_member($cohortid, $userid) {
 }
 
 /**
+ * Is this user a cohort member?
+ * @param int $cohortid
+ * @param int $userid
+ * @return bool
+ */
+function cohort_is_member($cohortid, $userid) {
+    global $DB;
+
+    return $DB->record_exists('cohort_members', array('cohortid'=>$cohortid, 'userid'=>$userid));
+}
+
+/**
  * Returns list of visible cohorts in course.
  *
  * @param  object $course

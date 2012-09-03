@@ -24,12 +24,17 @@
 
 
 //== Custom Moodle strings that are not part of upstream TinyMCE ==
+$string['availablebuttons'] = 'Available buttons';
 $string['common:browseimage'] = 'Find or upload an image...';
 $string['common:browsemedia'] = 'Find or upload a sound, video or applet...';
+$string['customtoolbar'] = 'Custom editor toolbar';
+$string['customtoolbar_desc'] = 'Each line contains a list of comma separated button names, use "|" as a group separator. Leave empty if you want standard toolbar. See <a href="{$a}" target="_blank">{$a}</a> for the list of default TinyMCE buttons.';
 $string['fontselectlist'] = 'Available fonts list';
 $string['media_dlg:filename'] = 'Filename';
 $string['pluginname'] = 'TinyMCE HTML editor';
+$string['settings'] = 'General settings';
 $string['subplugindeleteconfirm'] = 'You are about to completely delete TinyMCE subplugin \'{$a}\'. This will completely delete everything in the database associated with this subplugin. Are you SURE you want to continue?';
+$string['subplugintype_tinymce_plural'] = 'Plugins';
 
 
 // == TinyMCE upstream lang strings from all standard upstream plugins ==

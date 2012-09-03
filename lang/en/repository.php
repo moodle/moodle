@@ -100,6 +100,7 @@ $string['error'] = 'An unknown error occurred!';
 $string['errornotyourfile'] = 'You cannot pick file which is not added by your';
 $string['erroruniquename'] = 'Repository instance name should be unique';
 $string['errorpostmaxsize'] = 'The uploaded file may exceed max_post_size directive in php.ini.';
+$string['errorwhiledownload'] = 'An error occured while downloading the file: {$a}';
 $string['existingrepository'] = 'This repository already exists';
 $string['federatedsearch'] = 'Federated search';
 $string['fileexists'] = 'File name already being used, please use another name';

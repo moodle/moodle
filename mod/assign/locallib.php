@@ -417,7 +417,7 @@ class assign {
         $update->duedate = $formdata->duedate;
         $update->allowsubmissionsfromdate = $formdata->allowsubmissionsfromdate;
         $update->grade = $formdata->grade;
-        $update->completionsubmit = $formdata->completionsubmit;
+        $update->completionsubmit = !empty($formdata->completionsubmit);
         $returnid = $DB->insert_record('assign', $update);
         $this->instance = $DB->get_record('assign', array('id'=>$returnid), '*', MUST_EXIST);
         // cache the course record
@@ -637,7 +637,7 @@ class assign {
         $update->duedate = $formdata->duedate;
         $update->allowsubmissionsfromdate = $formdata->allowsubmissionsfromdate;
         $update->grade = $formdata->grade;
-        $update->completionsubmit = $formdata->completionsubmit;
+        $update->completionsubmit = !empty($formdata->completionsubmit);
 
         $result = $DB->update_record('assign', $update);
         $this->instance = $DB->get_record('assign', array('id'=>$update->id), '*', MUST_EXIST);

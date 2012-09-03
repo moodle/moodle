@@ -65,7 +65,7 @@ if ($usercourseid != SITEID) {
     $url->param('usercourseid', $usercourseid);
 }
 
-$context = get_context_instance_by_id($contextid);
+$context = context::instance_by_id($contextid);
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);
@@ -177,7 +177,7 @@ if (!empty($edit) || !empty($new)) {
             }
             $success = $instance->set_option($settings);
         } else {
-            $success = repository::static_function($plugin, 'create', $plugin, 0, get_context_instance_by_id($contextid), $fromform);
+            $success = repository::static_function($plugin, 'create', $plugin, 0, context::instance_by_id($contextid), $fromform);
             $data = data_submitted();
         }
         if ($success) {

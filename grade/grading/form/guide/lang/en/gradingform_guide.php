@@ -76,7 +76,6 @@ $string['save'] = 'Save';
 $string['saveguide'] = 'Save marking guide and make it ready';
 $string['saveguidedraft'] = 'Save as draft';
 $string['score'] = 'score';
-$string['showdescriptionstudent'] = 'Display description to those being graded';
 $string['showmarkerdesc'] = 'Show marker criterion descriptions';
 $string['showmarkspercriterionstudents'] = 'Show marks per criterion to students';
 $string['showstudentdesc'] = 'Show student criterion descriptions';

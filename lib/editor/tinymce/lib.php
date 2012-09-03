@@ -122,6 +122,9 @@ class tinymce_texteditor extends texteditor {
         $context = empty($options['context']) ? context_system::instance() : $options['context'];
 
         $config = get_config('editor_tinymce');
+        if (!isset($config->disabledsubplugins)) {
+            $config->disabledsubplugins = '';
+        }
 
         $fontselectlist = empty($config->fontselectlist) ? '' : $config->fontselectlist;
         $fontbutton = ($fontselectlist === '') ? '' : 'fontselect,';
@@ -177,11 +180,6 @@ class tinymce_texteditor extends texteditor {
         $params['extended_valid_elements'] = 'nolink,tex,algebra,lang[lang]';
         $params['custom_elements'] = 'nolink,~tex,~algebra,lang';
 
-        if (empty($options['legacy'])) {
-            if (isset($options['maxfiles']) and $options['maxfiles'] != 0) {
-                $params['file_browser_callback'] = "M.editor_tinymce.filepicker";
-            }
-        }
         //Add onblur event for client side text validation
         if (!empty($options['required'])) {
             $params['init_instance_callback'] = 'M.editor_tinymce.onblur_event';
@@ -190,10 +188,50 @@ class tinymce_texteditor extends texteditor {
         // Allow plugins to adjust parameters.
         editor_tinymce_plugin::all_update_init_params($params, $context, $options);
 
+        // Should we override the default toolbar layout unconditionally?
+        $customtoolbar = self::parse_toolbar_setting($config->customtoolbar);
+        if ($customtoolbar) {
+            unset($params['theme_advanced_buttons1']);
+            unset($params['theme_advanced_buttons2']);
+            unset($params['theme_advanced_buttons3']);
+            unset($params['theme_advanced_buttons4']);
+            $i = 1;
+            foreach ($customtoolbar as $line) {
+                $params['theme_advanced_buttons'.$i] = $line;
+                $i++;
+            }
+        }
+
         // Remove temporary parameters.
         unset($params['moodle_config']);
 
         return $params;
+    }
+
+    /**
+     * Parse the custom toolbar setting.
+     * @param string $customtoolbar
+     * @return array csv toolbar lines
+     */
+    public static function parse_toolbar_setting($customtoolbar) {
+        $result = array();
+        $customtoolbar = trim($customtoolbar);
+        if ($customtoolbar === '') {
+            return $result;
+        }
+        $customtoolbar = str_replace("\r", "\n", $customtoolbar);
+        $customtoolbar = strtolower($customtoolbar);
+        foreach (explode("\n", $customtoolbar) as $line) {
+            $line = preg_replace('/[^a-z0-9_,\|\-]/', ',', $line);
+            $line = str_replace('|', ',|,', $line);
+            $line = preg_replace('/,,+/', ',', $line);
+            $line = trim($line, ',|');
+            if ($line === '') {
+                continue;
+            }
+            $result[] = $line;
+        }
+        return $result;
     }
 
     /**

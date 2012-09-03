@@ -60,7 +60,7 @@ if ($cmid = optional_param('cmid', 0, PARAM_INT)) {
     require_login();
     $category = $DB->get_record('question_categories',
             array('id' => $question->category), '*', MUST_EXIST);
-    $context = get_context_instance_by_id($category->contextid);
+    $context = context::instance_by_id($category->contextid);
     $PAGE->set_context($context);
     // Note that in the other cases, require_login will set the correct page context.
 }

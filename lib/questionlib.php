@@ -209,39 +209,44 @@ function get_grade_options() {
 }
 
 /**
- * match grade options
- * if no match return error or match nearest
+ * Check whether a given grade is one of a list of allowed options. If not,
+ * depending on $matchgrades, either return the nearest match, or return false
+ * to signal an error.
  * @param array $gradeoptionsfull list of valid options
  * @param int $grade grade to be tested
  * @param string $matchgrades 'error' or 'nearest'
- * @return mixed either 'fixed' value or false if erro
+ * @return mixed either 'fixed' value or false if error.
  */
-function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
+function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') {
+
     if ($matchgrades == 'error') {
-        // if we just need an error...
+        // (Almost) exact match, or an error.
         foreach ($gradeoptionsfull as $value => $option) {
-            // slightly fuzzy test, never check floats for equality :-)
+            // Slightly fuzzy test, never check floats for equality.
             if (abs($grade - $value) < 0.00001) {
-                return $grade;
+                return $value; // Be sure the return the proper value.
             }
         }
-        // didn't find a match so that's an error
+        // Didn't find a match so that's an error.
         return false;
+
     } else if ($matchgrades == 'nearest') {
-        // work out nearest value
-        $hownear = array();
+        // Work out nearest value
+        $best = false;
+        $bestmismatch = 2;
         foreach ($gradeoptionsfull as $value => $option) {
-            if ($grade==$value) {
-                return $grade;
+            $newmismatch = abs($grade - $value);
+            if ($newmismatch < $bestmismatch) {
+                $best = $value;
+                $bestmismatch = $newmismatch;
             }
-            $hownear[ $value ] = abs( $grade - $value );
         }
-        // reverse sort list of deltas and grab the last (smallest)
-        asort( $hownear, SORT_NUMERIC );
-        reset( $hownear );
-        return key( $hownear );
+        return $best;
+
     } else {
-        return false;
+        // Unknow option passed.
+        throw new coding_exception('Unknown $matchgrades ' . $matchgrades .
+                ' passed to match_grade_options');
     }
 }
 
@@ -780,14 +785,22 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  */
 function _tidy_question($question, $loadtags = false) {
     global $CFG;
+
+    // Load question-type specific fields.
     if (!question_bank::is_qtype_installed($question->qtype)) {
         $question->questiontext = html_writer::tag('p', get_string('warningmissingtype',
                 'qtype_missingtype')) . $question->questiontext;
     }
     question_bank::get_qtype($question->qtype)->get_question_options($question);
+
+    // Convert numeric fields to float. (Prevents these being displayed as 1.0000000.)
+    $question->defaultmark += 0;
+    $question->penalty += 0;
+
     if (isset($question->_partiallyloaded)) {
         unset($question->_partiallyloaded);
     }
+
     if ($loadtags && !empty($CFG->usetags)) {
         require_once($CFG->dirroot . '/tag/lib.php');
         $question->tags = tag_get_tags_array('question', $question->id);
@@ -1106,7 +1119,7 @@ function question_category_options($contexts, $top = false, $currentcat = 0,
     $categoriesarray = array();
     foreach ($pcontexts as $pcontext) {
         $contextstring = print_context_name(
-                get_context_instance_by_id($pcontext), true, true);
+                context::instance_by_id($pcontext), true, true);
         foreach ($categories as $category) {
             if ($category->contextid == $pcontext) {
                 $cid = $category->id;
@@ -1333,7 +1346,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
         }
     }
     $category = $categories[$question->category];
-    $context = get_context_instance_by_id($category->contextid);
+    $context = context::instance_by_id($category->contextid);
 
     if (array_search($cap, $question_questioncaps)!== false) {
         if (!has_capability('moodle/question:' . $cap . 'all', $context)) {

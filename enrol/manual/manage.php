@@ -17,8 +17,7 @@
 /**
  * Manual user enrolment UI.
  *
- * @package    enrol
- * @subpackage manual
+ * @package    enrol_manual
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,7 +46,7 @@ $roles = get_assignable_roles($context);
 $roles = array('0'=>get_string('none')) + $roles;
 
 if (!isset($roles[$roleid])) {
-    // weird - security always first!
+    // Weird - security always first!
     $roleid = 0;
 }
 
@@ -88,14 +87,14 @@ $timeformat = get_string('strftimedatefullshort');
 $today = time();
 $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
 
-// enrolment start
+// Enrolment start.
 $basemenu = array();
 if ($course->startdate > 0) {
     $basemenu[2] = get_string('coursestart') . ' (' . userdate($course->startdate, $timeformat) . ')';
 }
 $basemenu[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
 
-// process add and removes
+// Process add and removes.
 if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     $userstoassign = $potentialuserselector->get_selected_users();
     if (!empty($userstoassign)) {
@@ -126,7 +125,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     }
 }
 
-// Process incoming role unassignments
+// Process incoming role unassignments.
 if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
     $userstounassign = $currentuserselector->get_selected_users();
     if (!empty($userstounassign)) {

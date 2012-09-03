@@ -37,11 +37,75 @@ abstract class editor_tinymce_plugin {
     /** @var string Plugin folder */
     protected $plugin;
 
+    /** @var array Plugin settings */
+    protected $config = null;
+
+    /** @var array list of buttons defined by this plugin */
+    protected $buttons = array();
+
     /**
      * @param string $plugin Name of folder
      */
     public function __construct($plugin) {
         $this->plugin = $plugin;
+    }
+
+    /**
+     * Returns list of buttons defined by this plugin.
+     * useful mostly as information when setting custom toolbar.
+     *
+     * @return array
+     */
+    public function get_buttons() {
+        return $this->buttons;
+    }
+    /**
+     * Makes sure config is loaded and cached.
+     * @return void
+     */
+    protected function load_config() {
+        if (!isset($this->config)) {
+            $name = $this->get_name();
+            $this->config = get_config("tinymce_$name");
+        }
+    }
+
+    /**
+     * Returns plugin config value.
+     * @param  string $name
+     * @param  string $default value if config does not exist yet
+     * @return string value or default
+     */
+    public function get_config($name, $default = null) {
+        $this->load_config();
+        return isset($this->config->$name) ? $this->config->$name : $default;
+    }
+
+    /**
+     * Sets plugin config value.
+     * @param  string $name name of config
+     * @param  string $value string config value, null means delete
+     * @return string value
+     */
+    public function set_config($name, $value) {
+        $pluginname = $this->get_name();
+        $this->load_config();
+        if ($value === null) {
+            unset($this->config->$name);
+        } else {
+            $this->config->$name = $value;
+        }
+        set_config($name, $value, "tinymce_$pluginname");
+    }
+
+    /**
+     * Returns name of this tinymce plugin.
+     * @return string
+     */
+    public function get_name() {
+        // All class names start with "tinymce_".
+        $words = explode('_', get_class($this), 2);
+        return $words[1];
     }
 
     /**
@@ -274,9 +338,23 @@ abstract class editor_tinymce_plugin {
         // Get list of plugin directories.
         $plugins = get_plugin_list('tinymce');
 
+        // Get list of disabled subplugins.
+        $disabled = array();
+        if ($params['moodle_config']->disabledsubplugins) {
+            foreach (explode(',', $params['moodle_config']->disabledsubplugins) as $sp) {
+                $sp = trim($sp);
+                if ($sp !== '') {
+                    $disabled[$sp] = $sp;
+                }
+            }
+        }
+
         // Construct all the plugins.
         $pluginobjects = array();
         foreach ($plugins as $plugin => $dir) {
+            if (isset($disabled[$plugin])) {
+                continue;
+            }
             require_once($dir . '/lib.php');
             $classname = 'tinymce_' . $plugin;
             $pluginobjects[] = new $classname($plugin);

@@ -117,7 +117,7 @@ function question_can_delete_cat($todelete) {
         print_error('cannotdeletecate', 'question');
     } else {
         $contextid = $DB->get_field('question_categories', 'contextid', array('id' => $todelete));
-        require_capability('moodle/question:managecategory', get_context_instance_by_id($contextid));
+        require_capability('moodle/question:managecategory', context::instance_by_id($contextid));
     }
 }
 
@@ -1323,7 +1323,7 @@ class question_bank_view {
         $strdelete = get_string('delete');
 
         list($categoryid, $contextid) = explode(',', $categoryandcontext);
-        $catcontext = get_context_instance_by_id($contextid);
+        $catcontext = context::instance_by_id($contextid);
 
         $canadd = has_capability('moodle/question:add', $catcontext);
         $caneditall =has_capability('moodle/question:editall', $catcontext);
@@ -1467,7 +1467,7 @@ class question_bank_view {
             if (! $tocategory = $DB->get_record('question_categories', array('id' => $tocategoryid, 'contextid' => $contextid))) {
                 print_error('cannotfindcate', 'question');
             }
-            $tocontext = get_context_instance_by_id($contextid);
+            $tocontext = context::instance_by_id($contextid);
             require_capability('moodle/question:add', $tocontext);
             $rawdata = (array) data_submitted();
             $questionids = array();
@@ -1717,7 +1717,7 @@ function question_get_display_preference($param, $default, $type, $thispageurl) 
 function require_login_in_context($contextorid = null){
     global $DB, $CFG;
     if (!is_object($contextorid)){
-        $context = get_context_instance_by_id($contextorid);
+        $context = context::instance_by_id($contextorid, IGNORE_MISSING);
     } else {
         $context = $contextorid;
     }

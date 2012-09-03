@@ -20,46 +20,42 @@
  * This page allows the current user to edit a manual user enrolment.
  * It is not compatible with the frontpage.
  *
- * @package    enrol
- * @subpackage manual
+ * @package    enrol_manual
  * @copyright  2011 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
 require_once("$CFG->dirroot/enrol/locallib.php");
-require_once("$CFG->dirroot/enrol/renderer.php"); // Required for the course enrolment manager table
+require_once("$CFG->dirroot/enrol/renderer.php"); // Required for the course enrolment manager table.
 require_once("$CFG->dirroot/enrol/manual/editenrolment_form.php");
 
-$ueid   = required_param('ue', PARAM_INT); // user enrolment id
+$ueid   = required_param('ue', PARAM_INT); // User enrolment id.
 $filter = optional_param('ifilter', 0, PARAM_INT);
 
-// Get the user enrolment object
-$ue     = $DB->get_record('user_enrolments', array('id' => $ueid), '*', MUST_EXIST);
-// Get the user for whom the enrolment is
-$user   = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
-// Get the course the enrolment is to
-list($ctxsql, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-$sql = "SELECT c.* $ctxsql
+// Get the user enrolment object.
+$ue = $DB->get_record('user_enrolments', array('id' => $ueid), '*', MUST_EXIST);
+// Get the user for whom the enrolment is.
+$user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
+// Get the course the enrolment is to.
+$sql = "SELECT c.*
           FROM {course} c
-     LEFT JOIN {enrol} e ON e.courseid = c.id
-               $ctxjoin
+          JOIN {enrol} e ON e.courseid = c.id
          WHERE e.id = :enrolid";
 $params = array('enrolid' => $ue->enrolid);
 $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
-context_instance_preload($course);
 
-// Make sure its not the front page course
+// Make sure its not the front page course.
 if ($course->id == SITEID) {
     redirect(new moodle_url('/'));
 }
 
-// Obviously
+// Obviously.
 require_login($course);
-// Make sure the user can manage manual enrolments for this course
+// Make sure the user can manage manual enrolments for this course.
 require_capability("enrol/manual:manage", context_course::instance($course->id, MUST_EXIST));
 
-// Get the enrolment manager for this course
+// Get the enrolment manager for this course.
 $manager = new course_enrolment_manager($PAGE, $course, $filter);
 // Get an enrolment users table object. Doign this will automatically retrieve the the URL params
 // relating to table the user was viewing before coming here, and allows us to return the user to the
@@ -70,7 +66,7 @@ $table = new course_enrolment_users_table($manager, $PAGE);
 $usersurl = new moodle_url('/enrol/users.php', array('id' => $course->id));
 // The URl to return the user too after this screen.
 $returnurl = new moodle_url($usersurl, $manager->get_url_params()+$table->get_url_params());
-// The URL of this page
+// The URL of this page.
 $url = new moodle_url('/enrol/manual/editenrolment.php', $returnurl->params());
 
 $PAGE->set_url($url);
@@ -88,9 +84,7 @@ $mform->set_data($PAGE->url->params());
 // Check the form hasn't been cancelled
 if ($mform->is_cancelled()) {
     redirect($returnurl);
-} else if ($mform->is_submitted() && $mform->is_validated() && confirm_sesskey()) {
-    // The forms been submit, validated and the sesskey has been checked ... edit the enrolment.
-    $data = $mform->get_data();
+} else if ($data = $mform->get_data()) {
     if ($manager->edit_enrolment($ue, $data)) {
         redirect($returnurl);
     }

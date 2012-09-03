@@ -27,8 +27,11 @@ require('../../../../../config.php');
 @error_reporting(E_ALL ^ E_NOTICE); // Hide notices even if Moodle is configured to show them.
 
 // General settings
-$config['general.engine'] = get_config('editor_tinymce', 'spellengine') ?
-        get_config('editor_tinymce', 'spellengine') : 'GoogleSpell';
+$engine = get_config('tinymce_spellchecker', 'spellengine');
+if (!$engine) {
+    $engine = 'GoogleSpell';
+}
+$config['general.engine'] = $engine;
 
 // GoogleSpell settings
 $config['GoogleSpell.proxyhost'] = isset($CFG->proxyhost) ? $CFG->proxyhost : '';

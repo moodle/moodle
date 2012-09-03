@@ -522,9 +522,12 @@ class backup_enrolments_structure_step extends backup_structure_step {
         $enrol = new backup_nested_element('enrol', array('id'), array(
             'enrol', 'status', 'sortorder', 'name', 'enrolperiod', 'enrolstartdate',
             'enrolenddate', 'expirynotify', 'expirytreshold', 'notifyall',
-            'password', 'cost', 'currency', 'roleid', 'customint1', 'customint2', 'customint3',
-            'customint4', 'customchar1', 'customchar2', 'customdec1', 'customdec2',
-            'customtext1', 'customtext2', 'timecreated', 'timemodified'));
+            'password', 'cost', 'currency', 'roleid',
+            'customint1', 'customint2', 'customint3', 'customint4', 'customint5', 'customint6', 'customint7', 'customint8',
+            'customchar1', 'customchar2', 'customchar3',
+            'customdec1', 'customdec2',
+            'customtext1', 'customtext2', 'customtext3', 'customtext4',
+            'timecreated', 'timemodified'));
 
         $userenrolments = new backup_nested_element('user_enrolments');
 
@@ -1002,7 +1005,7 @@ class backup_groups_structure_step extends backup_structure_step {
         $members = new backup_nested_element('group_members');
 
         $member = new backup_nested_element('group_member', array('id'), array(
-            'userid', 'timeadded'));
+            'userid', 'timeadded', 'component', 'itemid'));
 
         $groupings = new backup_nested_element('groupings');
 

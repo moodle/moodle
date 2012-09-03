@@ -60,33 +60,6 @@ class qformat_blackboard extends qformat_based_on_xml {
     }
 
     /**
-     * Some softwares put entities in exported files.
-     * This method try to clean up known problems.
-     * @param string str string to correct
-     * @return string the corrected string
-     */
-    public function cleaninput($str) {
-        if (!$this->ishtml) {
-            return $str;
-        }
-        $html_code_list = array(
-            "&#039;" => "'",
-            "&#8217;" => "'",
-            "&#091;" => "[",
-            "&#8220;" => "\"",
-            "&#8221;" => "\"",
-            "&#093;" => "]",
-            "&#039;" => "'",
-            "&#8211;" => "-",
-            "&#8212;" => "-",
-        );
-        $str = strtr($str, $html_code_list);
-        // Use textlib entities_to_utf8 function to convert only numerical entities.
-        $str = textlib::entities_to_utf8($str, false);
-        return $str;
-    }
-
-    /**
      * Parse the array of lines into an array of questions
      * this *could* burn memory - but it won't happen that much
      * so fingers crossed!

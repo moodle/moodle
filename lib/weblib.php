@@ -1072,7 +1072,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
         if (is_object($options['context'])) {
             $context = $options['context'];
         } else {
-            $context = get_context_instance_by_id($options['context']);
+            $context = context::instance_by_id($options['context']);
         }
     } else if ($courseid_do_not_use) {
         // legacy courseid
@@ -1281,7 +1281,7 @@ function format_string($string, $striplinks = true, $options = NULL) {
         // fallback to $PAGE->context this may be problematic in CLI and other non-standard pages :-(
         $options['context'] = $PAGE->context;
     } else if (is_numeric($options['context'])) {
-        $options['context'] = get_context_instance_by_id($options['context']);
+        $options['context'] = context::instance_by_id($options['context']);
     }
 
     if (!$options['context']) {

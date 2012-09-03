@@ -949,7 +949,7 @@ abstract class webservice_server implements webservice_server_interface {
                     . ' is not supported - check this allowed user');
         }
 
-        $this->restricted_context = get_context_instance_by_id($token->contextid);
+        $this->restricted_context = context::instance_by_id($token->contextid);
         $this->restricted_serviceid = $token->externalserviceid;
 
         $user = $DB->get_record('user', array('id'=>$token->userid), '*', MUST_EXIST);

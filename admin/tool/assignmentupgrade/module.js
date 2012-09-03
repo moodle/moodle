@@ -42,8 +42,8 @@ M.tool_assignmentupgrade = {
             }
         });
 
-        var batchform = Y.one('.tool_assignmentupgrade_batchform form');
-        batchform.on('submit', function(e) {
+        var upgradeselectedbutton = Y.one('#id_upgradeselected');
+        upgradeselectedbutton.on('click', function(e) {
             checkboxes = Y.all('td.c0 input');
             var selectedassignments = [];
             checkboxes.each(function(node) {
@@ -56,7 +56,7 @@ M.tool_assignmentupgrade = {
             assignmentsinput = Y.one('input.selectedassignments');
             assignmentsinput.set('value', selectedassignments.join(','));
             if (selectedassignments.length == 0) {
-                alert(M.str.assign.noassignmentsselected);
+                alert(M.str.tool_assignmentupgrade.noassignmentsselected);
                 e.preventDefault();
             }
         });

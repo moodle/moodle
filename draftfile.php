@@ -61,7 +61,7 @@ if ($component !== 'user' or $filearea !== 'draft') {
     send_file_not_found();
 }
 
-$context = get_context_instance_by_id($contextid);
+$context = context::instance_by_id($contextid);
 if ($context->contextlevel != CONTEXT_USER) {
     send_file_not_found();
 }
