@@ -487,6 +487,9 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
         if (!empty($this->results['include_file_references_to_external_content'])) {
             $output .= $renderer->notification(get_string('filereferencesincluded', 'backup'), 'notifyproblem');
         }
+        if (!empty($this->results['missing_files_in_pool'])) {
+            $output .= $renderer->notification(get_string('missingfilesinpool', 'backup'), 'notifyproblem');
+        }
         $output .= $renderer->notification(get_string('executionsuccess', 'backup'), 'notifysuccess');
         $output .= $renderer->continue_button($restorerul);
         $output .= $renderer->box_end();

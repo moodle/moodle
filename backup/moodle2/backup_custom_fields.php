@@ -96,14 +96,19 @@ class file_nested_element extends backup_nested_element {
         if (is_null($this->backupid)) {
             $this->backupid = $processor->get_var(backup::VAR_BACKUPID);
         }
-        parent::process($processor);
+        return parent::process($processor);
     }
 
     public function fill_values($values) {
         // Fill values
         parent::fill_values($values);
         // Do our own tasks (copy file from moodle to backup)
-        backup_file_manager::copy_file_moodle2backup($this->backupid, $values);
+        try {
+            backup_file_manager::copy_file_moodle2backup($this->backupid, $values);
+        } catch (file_exception $e) {
+            $this->add_result(array('missing_files_in_pool' => true));
+            $this->add_log('missing file in pool: ' . $e->debuginfo, backup::LOG_WARNING);
+        }
     }
 }
 
