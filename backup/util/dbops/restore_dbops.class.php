@@ -622,9 +622,23 @@ abstract class restore_dbops {
      * Given one component/filearea/context and
      * optionally one source itemname to match itemids
      * put the corresponding files in the pool
+     *
+     * @param string $basepath the full path to the root of unzipped backup file
+     * @param string $restoreid the restore job's identification
+     * @param string $component
+     * @param string $filearea
+     * @param int $oldcontextid
+     * @param int $dfltuserid default $file->user if the old one can't be mapped
+     * @param string|null $itemname
+     * @param int|null $olditemid
+     * @param int|null $forcenewcontextid explicit value for the new contextid (skip mapping)
+     * @param bool $skipparentitemidctxmatch
+     * @return array of result object
      */
     public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null, $forcenewcontextid = null, $skipparentitemidctxmatch = false) {
         global $DB;
+
+        $results = array();
 
         if ($forcenewcontextid) {
             // Some components can have "forced" new contexts (example: questions can end belonging to non-standard context mappings,
@@ -701,7 +715,12 @@ abstract class restore_dbops {
             // Find file in backup pool
             $backuppath = $basepath . backup_file_manager::get_backup_content_file_location($file->contenthash);
             if (!file_exists($backuppath)) {
-                throw new restore_dbops_exception('file_not_found_in_pool', $file);
+                $result = new stdClass();
+                $result->code = 'file_missing_in_backup';
+                $result->message = sprintf('missing file %s%s in backup', $file->filepath, $file->filename);
+                $result->level = backup::LOG_WARNING;
+                $results[] = $result;
+                continue;
             }
             if (!$fs->file_exists($newcontextid, $component, $filearea, $rec->newitemid, $file->filepath, $file->filename)) {
                 $file_record = array(
@@ -721,6 +740,7 @@ abstract class restore_dbops {
             }
         }
         $rs->close();
+        return $results;
     }
 
     /**

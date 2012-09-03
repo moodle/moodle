@@ -94,11 +94,22 @@ abstract class backup_structure_step extends backup_step {
         // Process structure definition
         $structure->process($pr);
 
+        // Get the results from the nested elements
+        $results = $structure->get_results();
+
+        // Get the log messages to append to the log
+        $logs = $structure->get_logs();
+        foreach ($logs as $log) {
+            $this->log($log->message, $log->level, $log->a, $log->depth, $log->display);
+        }
+
         // Close everything
         $xw->stop();
 
         // Destroy the structure. It helps PHP 5.2 memory a lot!
         $structure->destroy();
+
+        return $results;
     }
 
     /**

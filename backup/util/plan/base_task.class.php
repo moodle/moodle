@@ -191,6 +191,34 @@ abstract class base_task implements checksumable, executable, loggable {
                    backup_general_helper::array_checksum_recursive($this->steps));
     }
 
+    /**
+    * Add the given info to the current plan's results.
+    *
+    * @see base_plan::add_result()
+    * @param array $result associative array describing a result of a task/step
+    */
+    public function add_result($result) {
+        if (!is_null($this->plan)) {
+            $this->plan->add_result($result);
+        } else {
+            debugging('Attempting to add a result of a task not binded with a plan', DEBUG_DEVELOPER);
+        }
+    }
+
+    /**
+    * Return the current plan's results
+    *
+    * @return array|null
+    */
+    public function get_results() {
+        if (!is_null($this->plan)) {
+            return $this->plan->get_results();
+        } else {
+            debugging('Attempting to get results of a task not binded with a plan', DEBUG_DEVELOPER);
+            return null;
+        }
+    }
+
 // Protected API starts here
 
     /**
