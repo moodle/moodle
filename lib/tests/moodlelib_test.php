@@ -1910,4 +1910,64 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertEquals('5.43000', format_float(5.43, 5, false));
         $this->assertEquals('5.43', format_float(5.43, 5, false, true));
     }
+
+    /**
+     * Test deleting of users.
+     */
+    public function test_delete_user() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        $guest = $DB->get_record('user', array('id'=>$CFG->siteguest), '*', MUST_EXIST);
+        $admin = $DB->get_record('user', array('id'=>$CFG->siteadmins), '*', MUST_EXIST);
+        $this->assertEquals(0, $DB->count_records('user', array('deleted'=>1)));
+
+        $user = $this->getDataGenerator()->create_user(array('idnumber'=>'abc'));
+        $user2 = $this->getDataGenerator()->create_user(array('idnumber'=>'xyz'));
+
+        $result = delete_user($user);
+        $this->assertTrue($result);
+        $deluser = $DB->get_record('user', array('id'=>$user->id), '*', MUST_EXIST);
+        $this->assertEquals(1, $deluser->deleted);
+        $this->assertEquals(0, $deluser->picture);
+        $this->assertSame('', $deluser->idnumber);
+        $this->assertSame(md5($user->username), $deluser->email);
+        $this->assertRegExp('/^'.preg_quote($user->email, '/').'\.\d*$/', $deluser->username);
+
+        $this->assertEquals(1, $DB->count_records('user', array('deleted'=>1)));
+
+        // Try invalid params.
+
+        $record = new stdClass();
+        $record->grrr = 1;
+        try {
+            delete_user($record);
+            $this->fail('Expecting exception for invalid delete_user() $user parameter');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
+        $record->id = 1;
+        try {
+            delete_user($record);
+            $this->fail('Expecting exception for invalid delete_user() $user parameter');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        $CFG->debug = DEBUG_MINIMAL; // Prevent standard debug warnings.
+
+        $record = new stdClass();
+        $record->id = 666;
+        $record->username = 'xx';
+        $this->assertFalse($DB->record_exists('user', array('id'=>666))); // Any non-existent id is ok.
+        $result = delete_user($record);
+        $this->assertFalse($result);
+
+        $result = delete_user($guest);
+        $this->assertFalse($result);
+
+        $result = delete_user($admin);
+        $this->assertFalse($result);
+    }
 }

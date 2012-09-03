@@ -3927,14 +3927,44 @@ function truncate_userinfo($info) {
  * Any plugin that needs to purge user data should register the 'user_deleted' event.
  *
  * @param stdClass $user full user object before delete
- * @return boolean always true
+ * @return boolean success
+ * @throws coding_exception if invalid $user parameter detected
  */
-function delete_user($user) {
+function delete_user(stdClass $user) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
     require_once($CFG->dirroot.'/tag/lib.php');
+
+    // Make sure nobody sends bogus record type as parameter.
+    if (!property_exists($user, 'id') or !property_exists($user, 'username')) {
+        throw new coding_exception('Invalid $user parameter in delete_user() detected');
+    }
+
+    // Better not trust the parameter and fetch the latest info,
+    // this will be very expensive anyway.
+    if (!$user = $DB->get_record('user', array('id'=>$user->id))) {
+        debugging('Attempt to delete unknown user account.');
+        return false;
+    }
+
+    // There must be always exactly one guest record,
+    // originally the guest account was identified by username only,
+    // now we use $CFG->siteguest for performance reasons.
+    if ($user->username === 'guest' or isguestuser($user)) {
+        debugging('Guest user account can not be deleted.');
+        return false;
+    }
+
+    // Admin can be theoretically from different auth plugin,
+    // but we want to prevent deletion of internal accoutns only,
+    // if anything goes wrong ppl may force somebody to be admin via
+    // config.php setting $CFG->siteadmins.
+    if ($user->auth === 'manual' and is_siteadmin($user)) {
+        debugging('Local administrator accounts can not be deleted.');
+        return false;
+    }
 
     // delete all grades - backup is kept in grade_grades_history table
     grade_user_delete($user->id);
