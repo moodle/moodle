@@ -23,6 +23,7 @@
  */
 
 $string['configmaxbytes'] = 'Maximum file size';
+$string['countfiles'] = '{$a} files';
 $string['default'] = 'Enabled by default';
 $string['default_help'] = 'If set, this feedback method will be enabled by default for all new assignments.';
 $string['enabled'] = 'File feedback';

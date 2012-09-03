@@ -48,11 +48,11 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                                                   'intro',
                                                   'introformat',
                                                   'alwaysshowdescription',
-                                                  'preventlatesubmissions',
                                                   'submissiondrafts',
                                                   'sendnotifications',
                                                   'sendlatenotifications',
                                                   'duedate',
+                                                  'cutoffdate',
                                                   'allowsubmissionsfromdate',
                                                   'grade',
                                                   'timemodified',
@@ -75,7 +75,8 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                                                  'grader',
                                                  'grade',
                                                  'locked',
-                                                 'mailed'));
+                                                 'mailed',
+                                                 'extensionduedate'));
 
         $pluginconfigs = new backup_nested_element('plugin_configs');
 
