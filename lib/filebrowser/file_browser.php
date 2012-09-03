@@ -201,8 +201,13 @@ class file_browser {
     private function get_file_info_context_module($context, $component, $filearea, $itemid, $filepath, $filename) {
         global $COURSE, $DB, $CFG;
 
+        static $cachedmodules = array();
 
-        if (!$cm = get_coursemodule_from_id('', $context->instanceid)) {
+        if (!array_key_exists($context->instanceid, $cachedmodules)) {
+            $cachedmodules[$context->instanceid] = get_coursemodule_from_id('', $context->instanceid);
+        }
+
+        if (!($cm = $cachedmodules[$context->instanceid])) {
             return null;
         }
 

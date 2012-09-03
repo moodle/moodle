@@ -89,6 +89,111 @@ abstract class file_info {
     public abstract function get_children();
 
     /**
+     * Builds SQL sub query (WHERE clause) for selecting files with the specified extensions
+     *
+     * If $extensions == '*' (any file), the result is array('', array())
+     * otherwise the result is something like array('AND filename ...', array(...))
+     *
+     * @param string|array $extensions - either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @param string $prefix prefix for DB table files in the query (empty by default)
+     * @return array of two elements: $sql - sql where clause and $params - array of parameters
+     */
+    protected function build_search_files_sql($extensions, $prefix = null) {
+        global $DB;
+        if (strlen($prefix)) {
+            $prefix = $prefix.'.';
+        } else {
+            $prefix = '';
+        }
+        $sql = '';
+        $params = array();
+        if (is_array($extensions) && !in_array('*', $extensions)) {
+            $likes = array();
+            $cnt = 0;
+            foreach ($extensions as $ext) {
+                $cnt++;
+                $likes[] = $DB->sql_like($prefix.'filename', ':filename'.$cnt, false);
+                $params['filename'.$cnt] = '%'.$ext;
+            }
+            $sql .= ' AND ('.join(' OR ', $likes).')';
+        }
+        return array($sql, $params);
+     }
+
+    /**
+     * Returns list of children which are either files matching the specified extensions
+     * or folders that contain at least one such file.
+     *
+     * It is recommended to overwrite this function so it uses a proper SQL
+     * query and does not create unnecessary file_info objects (might require a lot of time
+     * and memory usage on big sites).
+     *
+     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @return array of file_info instances
+     */
+    public function get_non_empty_children($extensions = '*') {
+        $list = $this->get_children();
+        $nonemptylist = array();
+        foreach ($list as $fileinfo) {
+            if ($fileinfo->is_directory()) {
+                if ($fileinfo->count_non_empty_children($extensions)) {
+                    $nonemptylist[] = $fileinfo;
+                }
+            } else if ($extensions === '*') {
+                $nonemptylist[] = $fileinfo;
+            } else {
+                $filename = $fileinfo->get_visible_name();
+                $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                if (!empty($extension) && in_array('.'.$extension, $extensions)) {
+                    $nonemptylist[] = $fileinfo;
+                }
+            }
+        }
+        return $nonemptylist;
+    }
+
+    /**
+     * Returns the number of children which are either files matching the specified extensions
+     * or folders containing at least one such file.
+     *
+     * NOTE: We don't need the exact number of non empty children if it is >=2
+     * This function is used by repository_local to evaluate if the folder is empty. But
+     * it also can be used to check if folder has only one subfolder because in some cases
+     * this subfolder can be skipped.
+     *
+     * It is strongly recommended to overwrite this function so it uses a proper SQL
+     * query and does not create file_info objects (later might require a lot of time
+     * and memory usage on big sites).
+     *
+     * @param string|array $extensions, for example '*' or array('.gif','.jpg')
+     * @return int
+     */
+    public function count_non_empty_children($extensions = '*') {
+        $list = $this->get_children();
+        $cnt = 0;
+        foreach ($list as $fileinfo) {
+            if ($cnt > 1) {
+                // it only matters if it is 0, 1 or 2+
+                return $cnt;
+            }
+            if ($fileinfo->is_directory()) {
+                if ($fileinfo->count_non_empty_children($extensions)) {
+                    $cnt++;
+                }
+            } else if ($extensions === '*') {
+                $cnt++;
+            } else {
+                $filename = $fileinfo->get_visible_name();
+                $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                if (!empty($extension) && in_array('.'.$extension, $extensions)) {
+                    $cnt++;
+                }
+            }
+        }
+        return $cnt;
+    }
+
+    /**
      * Returns parent file_info instance
      *
      * @return file_info or null for root
