@@ -49,9 +49,12 @@ class moodle1_workshopform_numerrors_handler extends moodle1_workshopform_handle
     /**
      * Converts <ELEMENT> into <workshopform_numerrors_dimension> and stores it for later writing
      *
+     * @param array $data legacy element data
+     * @param array $raw raw element data
+     *
      * @return array to be written to workshop.xml
      */
-    public function process_legacy_element($data, $raw) {
+    public function process_legacy_element(array $data, array $raw) {
 
         $workshop = $this->parenthandler->get_current_workshop();
 
