@@ -52,6 +52,11 @@ class assign_grading_table extends table_sql implements renderable {
     private $quickgrading = false;
     /** @var boolean $hasgrantextension - Only do the capability check once for the entire table */
     private $hasgrantextension = false;
+    /** @var array $groupsubmissions - A static cache of group submissions */
+    private $groupsubmissions = array();
+    /** @var array $submissiongroups - A static cache of submission groups */
+    private $submissiongroups = array();
+
 
     /**
      * overridden constructor keeps a reference to the assignment class that is displaying this table
@@ -274,7 +279,9 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string The team name
      */
     function col_team(stdClass $row) {
-        $group = $this->assignment->get_submission_group($row->id);
+        $submission = false;
+        $group = false;
+        $this->get_group_and_submission($row->id, $group, $submission);
         if ($group) {
             return $group->name;
         }
@@ -282,13 +289,46 @@ class assign_grading_table extends table_sql implements renderable {
     }
 
     /**
-     * Get the team info for this user
+     * Use a static cache to try and reduce DB calls.
+     *
+     * @param int $userid The user id for this submission
+     * @param int $groupid The groupid (returned)
+     * @param mixed $submission The stdClass submission or false (returned)
+     */
+    function get_group_and_submission($userid, &$group, &$submission) {
+        $group = false;
+        if (isset($this->submissiongroups[$userid])) {
+            $group = $this->submissiongroups[$userid];
+        } else {
+            $group = $this->assignment->get_submission_group($userid, false);
+            $this->submissiongroups[$userid] = $group;
+        }
+
+        $groupid = 0;
+        if ($group) {
+            $groupid = $group->id;
+        }
+
+        if (isset($this->groupsubmissions[$groupid])) {
+            $submission = $this->groupsubmissions[$groupid];
+        } else {
+            $submission = $this->assignment->get_group_submission($userid, $groupid, false);
+            $this->groupsubmissions[$groupid] = $submission;
+        }
+    }
+
+
+    /**
+     * Get the team status for this user
      *
      * @param stdClass $row
      * @return string The team name
      */
     function col_teamstatus(stdClass $row) {
-        $submission = $this->assignment->get_group_submission($row->id, 0, false);
+        $submission = false;
+        $group = false;
+        $this->get_group_and_submission($row->id, $group, $submission);
+
         $status = '';
         if ($submission) {
             $status = $submission->status;
@@ -648,7 +688,15 @@ class assign_grading_table extends table_sql implements renderable {
             $plugin = $this->assignment->get_submission_plugin_by_type(substr($colname, strlen('assignsubmission_')));
 
             if ($plugin->is_visible() && $plugin->is_enabled()) {
-                if ($row->submissionid) {
+                if ($this->assignment->get_instance()->teamsubmission) {
+                    $group = false;
+                    $submission = false;
+                    $this->get_group_and_submission($row->id, $group, $submission);
+                    if ($submission) {
+                        return $this->format_plugin_summary_with_link($plugin, $submission, 'grading', array());
+                    }
+                } else if ($row->submissionid) {
+
                     $submission = new stdClass();
                     $submission->id = $row->submissionid;
                     $submission->timecreated = $row->firstsubmission;

@@ -2702,7 +2702,14 @@ class assign {
         if (!is_enrolled($this->get_course_context(), $userid)) {
             return false;
         }
-        if ($submission = $this->get_user_submission($userid, false)) {
+        $submission = false;
+        if ($this->get_instance()->teamsubmission) {
+            $submission = $this->get_group_submission($USER->id, 0, false);
+        } else {
+            $submission = $this->get_user_submission($USER->id, false);
+        }
+        if ($submission) {
+
             if ($this->get_instance()->submissiondrafts && $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
                 // drafts are tracked and the student has submitted the assignment
                 return false;
