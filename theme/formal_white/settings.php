@@ -47,7 +47,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('customlogourl','theme_formal_white');
     $description = get_string('customlogourldesc', 'theme_formal_white');
     $default = '';
-    $setting = new admin_setting_configtext($name, $title, $description, $default, PARAM_URL);
+    $setting = new admin_setting_configtext($name, $title, $description, $default, PARAM_RAW); // we want it accepting ../ at the beginning. Security is not at its top but Moodle trusts admins.
     $settings->add($setting);
 
     // Custom front page site logo setting
@@ -55,7 +55,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('frontpagelogourl','theme_formal_white');
     $description = get_string('frontpagelogourldesc', 'theme_formal_white');
     $default = '';
-    $setting = new admin_setting_configtext($name, $title, $description, $default, PARAM_URL);
+    $setting = new admin_setting_configtext($name, $title, $description, $default, PARAM_RAW); // we want it accepting ../ at the beginning. Security is not at its top but Moodle trusts admins.
     $settings->add($setting);
 
     // page header background colour setting
