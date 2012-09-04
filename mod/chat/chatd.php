@@ -3,6 +3,9 @@
 
 define('CLI_SCRIPT', true);
 
+require(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once($CFG->dirroot . '/mod/chat/lib.php');
+
 // Browser quirks
 define('QUIRK_CHUNK_UPDATE', 0x0001);
 
@@ -29,30 +32,15 @@ $_SERVER['PHP_SELF']        = 'dummy';
 $_SERVER['SERVER_NAME']     = 'dummy';
 $_SERVER['HTTP_USER_AGENT'] = 'dummy';
 
-define('NO_MOODLE_COOKIES', true); // session not used here
-
-include('../../config.php');
-include('lib.php');
-
 $_SERVER['SERVER_NAME'] = $CFG->chat_serverhost;
 $_SERVER['PHP_SELF']    = "http://$CFG->chat_serverhost:$CFG->chat_serverport/mod/chat/chatd.php";
 
 $safemode = ini_get('safe_mode');
-
-if($phpversion < '4.3') {
-    die("Error: The Moodle chat daemon requires at least PHP version 4.3 to run.\n       Since your version is $phpversion, you have to upgrade.\n\n");
-}
 if(!empty($safemode)) {
     die("Error: Cannot run with PHP safe_mode = On. Turn off safe_mode in php.ini.\n");
 }
 
-$passref = ini_get('allow_call_time_pass_reference');
-if(empty($passref)) {
-    die("Error: Cannot run with PHP allow_call_time_pass_reference = Off. Turn on allow_call_time_pass_reference in php.ini.\n");
-}
-
 @set_time_limit (0);
-set_magic_quotes_runtime(0);
 error_reporting(E_ALL);
 
 function chat_empty_connection() {
