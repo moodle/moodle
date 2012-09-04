@@ -20,7 +20,7 @@
         <INDEX NAME="usercourseaction" UNIQUE="false" FIELDS="userid, course, action" PREVIOUS="user"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="temp_log2" COMMENT="Duplicate temporary storage for daily logs (work around for MySQL issue)" PREVIOUS="temp_log1">
+    <TABLE NAME="temp_log2" COMMENT="Duplicate temporary storage for daily logs (work around for MySQL issue)" PREVIOUS="temp_log1" NEXT="temp_enroled">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="course"/>
@@ -35,6 +35,22 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course" PREVIOUS="action" NEXT="user"/>
         <INDEX NAME="user" UNIQUE="false" FIELDS="userid" PREVIOUS="course" NEXT="usercourseaction"/>
         <INDEX NAME="usercourseaction" UNIQUE="false" FIELDS="userid, course, action" PREVIOUS="user"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="temp_enroled" COMMENT="Temporary storage for course enrolments" PREVIOUS="temp_log2">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="roleid"/>
+        <FIELD NAME="roleid" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" PREVIOUS="courseid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="courseid"/>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" PREVIOUS="userid" NEXT="roleid"/>
+        <INDEX NAME="roleid" UNIQUE="false" FIELDS="roleid" PREVIOUS="courseid"/>
       </INDEXES>
     </TABLE>
   </TABLES>

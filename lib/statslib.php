@@ -104,7 +104,7 @@ function stats_cron_daily($maxdays=1) {
 
     $now = time();
 
-    $fpcontext = get_context_instance(CONTEXT_COURSE, SITEID, MUST_EXIST);
+    $fpcontext = context_course::instance(SITEID, MUST_EXIST);
 
     // read last execution date from db
     if (!$timestart = get_config(NULL, 'statslastdaily')) {
@@ -165,7 +165,13 @@ function stats_cron_daily($maxdays=1) {
         $days = 1;
         $failed = true;
     }
-    mtrace("Temporary tables created");
+    mtrace('Temporary tables created');
+
+    if(!stats_temp_table_setup()) {
+        $days = 1;
+        $failed = true;
+    }
+    mtrace('Enrolments caclulated');
 
     while (!$failed && ($now > $nextmidnight)) {
         if ($days >= $maxdays) {
@@ -190,7 +196,7 @@ function stats_cron_daily($maxdays=1) {
             break;
         }
 
-    /// find out if any logs available for this day
+        /// find out if any logs available for this day
         $sql = "SELECT 'x' FROM {temp_log1} l";
         $logspresent = $DB->get_records_sql($sql, null, 0, 1);
 
@@ -243,15 +249,12 @@ function stats_cron_daily($maxdays=1) {
 
         $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'enrolments' as stattype, $nextmidnight as timeend, e.courseid, ra.roleid,
-                        COUNT(DISTINCT ue.userid) as stat1, 0 as stat2
-                FROM {role_assignments} ra
-                JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = :courselevel)
-                JOIN {enrol} e ON e.courseid = c.instanceid
-                JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = ra.userid)
+                SELECT 'enrolments' as stattype, $nextmidnight as timeend, courseid, roleid,
+                        COUNT(DISTINCT userid) as stat1, 0 as stat2
+                FROM {temp_enroled}
                 GROUP BY courseid, roleid";
 
-        if (!$DB->execute($sql, array('courselevel'=>CONTEXT_COURSE))) {
+        if (!$DB->execute($sql)) {
             $failed = true;
             break;
         }
@@ -260,17 +263,14 @@ function stats_cron_daily($maxdays=1) {
         // Set stat2 to the number distinct users with role assignments in the course that were active
         // using table alias in UPDATE does not work in pg < 8.2
         $sql = "UPDATE {temp_stats_daily}
-                   SET stat2 = (SELECT COUNT(DISTINCT ra.userid)
-                                  FROM {role_assignments} ra
-                                  JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = :courselevel)
-                                  JOIN {enrol} e ON e.courseid = c.instanceid
-                                  JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = ra.userid)
-                                  WHERE ra.roleid = {temp_stats_daily}.roleid AND
-                                       e.courseid = {temp_stats_daily}.courseid AND
-                                       EXISTS (SELECT 'x'
-                                                 FROM {temp_log1} l
-                                                WHERE l.course = {temp_stats_daily}.courseid AND
-                                                      l.userid = ra.userid))
+                   SET stat2 = (SELECT COUNT(DISTINCT userid)
+                                  FROM {temp_enroled} te
+                                  WHERE roleid = {temp_stats_daily}.roleid AND
+                                        courseid = {temp_stats_daily}.courseid AND
+                                        EXISTS (SELECT 'x'
+                                                  FROM {temp_log1} l
+                                                 WHERE l.course = {temp_stats_daily}.courseid AND
+                                                       l.userid = te.userid))
                  WHERE {temp_stats_daily}.stattype = 'enrolments' AND
                        {temp_stats_daily}.timeend = $nextmidnight AND
                        {temp_stats_daily}.courseid IN
@@ -286,10 +286,9 @@ function stats_cron_daily($maxdays=1) {
         /// now get course total enrolments (roleid==0) - except frontpage
         $sql = "INSERT INTO {temp_stats_daily} (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'enrolments', $nextmidnight AS timeend, e.courseid AS courseid, 0 AS roleid,
+                SELECT 'enrolments', $nextmidnight AS timeend, te.courseid AS courseid, 0 AS roleid,
                        COUNT(DISTINCT userid) AS stat1, 0 AS stat2
-                FROM {enrol} e
-                JOIN {user_enrolments} ue ON ue.enrolid = e.id
+                FROM {temp_enroled} te
                 GROUP BY courseid
                 HAVING COUNT(DISTINCT userid) > 0";
 
@@ -301,14 +300,13 @@ function stats_cron_daily($maxdays=1) {
 
         // Set stat 2 to the number of enrolled users who were active in the course
         $sql = "UPDATE {temp_stats_daily}
-                   SET stat2 = (SELECT COUNT(DISTINCT ue.userid)
-                                  FROM {enrol} e
-                                  JOIN {user_enrolments} ue ON ue.enrolid = e.id
-                                 WHERE e.courseid = {temp_stats_daily}.courseid AND
+                   SET stat2 = (SELECT COUNT(DISTINCT te.userid)
+                                  FROM {temp_enroled} te
+                                 WHERE te.courseid = {temp_stats_daily}.courseid AND
                                        EXISTS (SELECT 'x'
                                                  FROM {temp_log1} l
                                                 WHERE l.course = {temp_stats_daily}.courseid AND
-                                                      l.userid = ue.userid))
+                                                      l.userid = te.userid))
                  WHERE {temp_stats_daily}.stattype = 'enrolments' AND
                        {temp_stats_daily}.timeend = $nextmidnight AND
                        {temp_stats_daily}.roleid = 0 AND
@@ -422,13 +420,10 @@ function stats_cron_daily($maxdays=1) {
                   FROM (
                            SELECT pl.courseid, pl.roleid, sud.statsreads, sud.statswrites
                              FROM {temp_stats_user_daily} sud,
-                                      (SELECT DISTINCT ra.userid, ra.roleid, e.courseid
-                                         FROM {role_assignments} ra
-                                         JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = :courselevel)
-                                         JOIN {enrol} e ON e.courseid = c.instanceid
-                                         JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = ra.userid)
-                                        WHERE ra.roleid <> $guestrole AND
-                                              ra.userid <> $guest
+                                      (SELECT DISTINCT te.userid, te.roleid, te.courseid
+                                         FROM {temp_enroled} te
+                                        WHERE te.roleid <> $guestrole AND
+                                              te.userid <> $guest
                                       ) pl
                             WHERE sud.userid = pl.userid AND
                                   sud.courseid = pl.courseid AND
@@ -457,10 +452,9 @@ function stats_cron_daily($maxdays=1) {
                             WHERE sud.timeend = $nextmidnight AND sud.courseid <> ".SITEID." AND
                                   sud.stattype='activity' AND
                                   (sud.userid = $guest OR sud.userid
-                                    NOT IN (SELECT ue.userid
-                                              FROM {user_enrolments} ue
-                                              JOIN {enrol} e ON ue.enrolid = e.id
-                                             WHERE e.courseid = sud.courseid))
+                                    NOT IN (SELECT userid
+                                              FROM {temp_enroled} te
+                                             WHERE te.courseid = sud.courseid))
                        ) inline_view
               GROUP BY timeend, courseid, roleid
                 HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
@@ -1353,7 +1347,7 @@ function stats_get_report_options($courseid,$mode) {
     switch ($mode) {
     case STATS_MODE_GENERAL:
         $reportoptions[STATS_REPORT_ACTIVITY] = get_string('statsreport'.STATS_REPORT_ACTIVITY);
-        if ($courseid != SITEID && $context = get_context_instance(CONTEXT_COURSE, $courseid)) {
+        if ($courseid != SITEID && $context = context_course::instance(CONTEXT_COURSE, $courseid)) {
             $sql = 'SELECT r.id, r.name FROM {role} r JOIN {stats_daily} s ON s.roleid = r.id WHERE s.courseid = :courseid GROUP BY r.id, r.name';
             if ($roles = $DB->get_records_sql($sql, array('courseid' => $courseid))) {
                 foreach ($roles as $role) {
@@ -1371,19 +1365,19 @@ function stats_get_report_options($courseid,$mode) {
     case STATS_MODE_DETAILED:
         $reportoptions[STATS_REPORT_USER_ACTIVITY] = get_string('statsreport'.STATS_REPORT_USER_ACTIVITY);
         $reportoptions[STATS_REPORT_USER_ALLACTIVITY] = get_string('statsreport'.STATS_REPORT_USER_ALLACTIVITY);
-        if (has_capability('report/stats:view', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('report/stats:view', context_system::instance())) {
             $site = get_site();
             $reportoptions[STATS_REPORT_USER_LOGINS] = get_string('statsreport'.STATS_REPORT_USER_LOGINS);
         }
         break;
     case STATS_MODE_RANKED:
-        if (has_capability('report/stats:view', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('report/stats:view', context_system::instance())) {
             $reportoptions[STATS_REPORT_ACTIVE_COURSES] = get_string('statsreport'.STATS_REPORT_ACTIVE_COURSES);
             $reportoptions[STATS_REPORT_ACTIVE_COURSES_WEIGHTED] = get_string('statsreport'.STATS_REPORT_ACTIVE_COURSES_WEIGHTED);
             $reportoptions[STATS_REPORT_PARTICIPATORY_COURSES] = get_string('statsreport'.STATS_REPORT_PARTICIPATORY_COURSES);
             $reportoptions[STATS_REPORT_PARTICIPATORY_COURSES_RW] = get_string('statsreport'.STATS_REPORT_PARTICIPATORY_COURSES_RW);
         }
-     break;
+        break;
     }
 
     return $reportoptions;
@@ -1499,7 +1493,7 @@ function stats_temp_table_create() {
     $tables   = array();
     $files    = array(
         $xmlfile  => array('stats_daily', 'stats_user_daily'),
-        $tempfile => array('temp_log1', 'temp_log2'),
+        $tempfile => array('temp_log1', 'temp_log2', 'temp_enroled'),
     );
 
     foreach ($files as $file => $contents) {
@@ -1552,7 +1546,7 @@ function stats_temp_table_drop() {
 
     $dbman = $DB->get_manager();
 
-    $tables = array('temp_log1', 'temp_log2', 'temp_stats_daily', 'temp_stats_user_daily');
+    $tables = array('temp_log1', 'temp_log2', 'temp_stats_daily', 'temp_stats_user_daily', 'temp_enroled');
 
     foreach ($tables as $name) {
 
@@ -1571,6 +1565,35 @@ function stats_temp_table_drop() {
 /**
  * Fills the temporary stats tables with new data
  *
+ * This function is meant to be called once at the start of stats generation
+ *
+ * @param timestart timestamp of the start time of logs view
+ * @param timeend timestamp of the end time of logs view
+ * @returns boolen success (true) or failure(false)
+ */
+function stats_temp_table_setup() {
+    global $DB;
+
+    $sql = "INSERT INTO {temp_enroled} (userid, courseid, roleid)
+
+               SELECT ue.userid, e.courseid, ra.roleid
+                FROM {role_assignments} ra
+                JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = :courselevel)
+                JOIN {enrol} e ON e.courseid = c.instanceid
+                JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = ra.userid)";
+
+    if (!$DB->execute($sql, array('courselevel' => CONTEXT_COURSE))) {
+       return false;
+    }
+
+    return true;
+}
+
+/**
+ * Fills the temporary stats tables with new data
+ *
+ * This function is meant to be called to get a new day of data
+ *
  * @param timestart timestamp of the start time of logs view
  * @param timeend timestamp of the end time of logs view
  * @returns boolen success (true) or failure(false)
@@ -1578,7 +1601,6 @@ function stats_temp_table_drop() {
 function stats_temp_table_fill($timestart, $timeend) {
     global $DB;
 
-    // Note: We need to create a placeholder here to simulate the effects of old, slow unions
     $sql = "INSERT INTO {temp_log1}
                 SELECT id, userid, course, action FROM {log} l
                 WHERE l.time >= $timestart AND l.time < $timeend";
