@@ -58,11 +58,17 @@ if (!empty($forcejs)) {
 
 require_login($course, false, $cm);
 
+$context = context_course::instance($course->id);
+$contextmodule = context_module::instance($cm->id);
+
+$launch = false; // Does this automatically trigger a launch based on skipview.
 if (!empty($scorm->popup)) {
-    $launch = 0;
     $orgidentifier = '';
     $scoid = 0;
-    if ($scorm->skipview >= 1) {
+    if ($scorm->skipview >= 1 &&
+        has_capability('mod/scorm:skipview', $contextmodule) &&
+        !has_capability('mod/scorm:viewreport', $contextmodule)) { // Don't skip users with the capability to view reports.
+
         // do we launch immediately and redirect the parent back ?
         if ($scorm->skipview == 2 || (scorm_get_tracks($scoes[0]->id, $USER->id) === false)) {
             $orgidentifier = '';
@@ -88,9 +94,6 @@ if (!empty($scorm->popup)) {
     $PAGE->requires->js('/mod/scorm/view.js', true);
 }
 
-$context = context_course::instance($course->id);
-$contextmodule = context_module::instance($cm->id);
-
 if (isset($SESSION->scorm)) {
     unset($SESSION->scorm);
 }
@@ -103,7 +106,7 @@ $pagetitle = strip_tags($shortname.': '.format_string($scorm->name));
 
 add_to_log($course->id, 'scorm', 'pre-view', 'view.php?id='.$cm->id, "$scorm->id", $cm->id);
 
-if ((has_capability('mod/scorm:skipview', $contextmodule))) {
+if (empty($launch) && (has_capability('mod/scorm:skipview', $contextmodule))) {
     scorm_simple_play($scorm, $USER, $contextmodule, $cm->id);
 }
 
@@ -134,7 +137,7 @@ require($CFG->dirroot . '/mod/scorm/tabs.php');
 // Print the main part of the page
 echo $OUTPUT->heading(format_string($scorm->name));
 $attemptstatus = '';
-if ($scorm->displayattemptstatus == 1) {
+if ($scorm->displayattemptstatus == 1 && empty($launch)) {
     $attemptstatus = scorm_get_attempt_status($USER, $scorm, $cm);
 }
 echo $OUTPUT->box(format_module_intro('scorm', $scorm, $cm->id).$attemptstatus, 'generalbox boxaligncenter boxwidthwide', 'intro');
@@ -149,7 +152,7 @@ if (!empty($scorm->timeclose) && $timenow > $scorm->timeclose) {
     echo $OUTPUT->box(get_string("expired", "scorm", userdate($scorm->timeclose)), "generalbox boxaligncenter");
     $scormopen = false;
 }
-if ($scormopen) {
+if ($scormopen && empty($launch)) {
     scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
 }
 if (!empty($forcejs)) {

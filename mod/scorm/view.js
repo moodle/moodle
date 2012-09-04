@@ -24,7 +24,7 @@ M.mod_scormform.init = function(Y) {
         poptions = poptions+',width='+cwidth+',height='+cheight;
     }
 
-    if (launch != 0) {
+    if (launch != false) {
         if (launch == 2) {
             launch_url = launch_url+"&display=popup";
         }

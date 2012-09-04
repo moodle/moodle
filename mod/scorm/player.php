@@ -180,7 +180,7 @@ if (empty($scorm->popup) || $displaymode=='popup') {
     $PAGE->set_button($exitlink);
 }
 
-$PAGE->requires->data_for_js('scormplayerdata', Array('launch' => 0,
+$PAGE->requires->data_for_js('scormplayerdata', Array('launch' => false,
                                                        'currentorg' => '',
                                                        'sco' => 0,
                                                        'scorm' => 0,
