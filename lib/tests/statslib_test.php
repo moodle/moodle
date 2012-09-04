@@ -44,6 +44,7 @@ class statslib_daily_testcase extends advanced_testcase {
         parent::setUp();
 
         // Settings to force statistic to run during testing
+        $CFG->timezone                = 99;
         $CFG->statsfirstrun           = 'all';
         $CFG->statslastdaily          = 0;
         $CFG->statslastexecution      = 0;
@@ -127,8 +128,9 @@ class statslib_daily_testcase extends advanced_testcase {
         $guest    = $CFG->siteguest;
         $user1    = $guest + 1;
         $user2    = $user1 + 1;
-        $end      = 1272772800;
-        $fpid     = (int)$CFG->defaultfrontpageroleid;
+        $start    = stats_get_base_daily(1272758400);
+        $end      = stats_get_next_day_start($start);
+        $fpid     = (int) $CFG->defaultfrontpageroleid;
         $gr       = get_guest_role();
         $stid     = 5;
         $nologend = stats_get_next_day_start(stats_get_base_daily(stats_get_start_from('daily')));
@@ -162,7 +164,7 @@ class statslib_daily_testcase extends advanced_testcase {
                 array(  // Logs
                     array(
                         'id'     => 1,
-                        'time'   => 1272686410,
+                        'time'   => $start + 14410,
                         'userid' => $guest,
                         'course' => SITEID,
                         'action' => 'view'
@@ -253,7 +255,7 @@ class statslib_daily_testcase extends advanced_testcase {
                 array(  // Logs
                     array(
                         'id'     => 1,
-                        'time'   => 1272686410,
+                        'time'   => $start + 14410,
                         'userid' => $user1,
                         'course' => SITEID,
                         'action' => 'login'
@@ -345,14 +347,14 @@ class statslib_daily_testcase extends advanced_testcase {
                 array(  // logs
                     array(
                         'id'     => 1,
-                        'time'   => 1272686410,
+                        'time'   => $start + 14410,
                         'userid' => $guest,
                         'course' => SITEID,
                         'action' => 'login'
                     ),
                     array(
                         'id' => 2,
-                        'time' => 1272686420,
+                        'time'   => $start + 14420,
                         'userid' => $guest,
                         'course' => $course1,
                         'action' => 'view'
@@ -469,21 +471,21 @@ class statslib_daily_testcase extends advanced_testcase {
                 array(  // logs
                     array(
                         'id'     => 1,
-                        'time'   => 1272686410,
+                        'time'   => $start + 14410,
                         'userid' => $guest,
                         'course' => SITEID,
                         'action' => 'login'
                     ),
                     array(
                         'id' => 2,
-                        'time' => 1272686420,
+                        'time'   => $start + 14420,
                         'userid' => $guest,
                         'course' => $course1,
                         'action' => 'view'
                     ),
                     array(
                         'id' => 3,
-                        'time' => 1272686430,
+                        'time'   => $start + 14430,
                         'userid' => $guest,
                         'course' => $course1,
                         'action' => 'add post'
@@ -600,14 +602,14 @@ class statslib_daily_testcase extends advanced_testcase {
                 array(  // logs
                     array(
                         'id'     => 1,
-                        'time'   => 1272686410,
+                        'time'   => $start + 14410,
                         'userid' => $user1,
                         'course' => SITEID,
                         'action' => 'login'
                     ),
                     array(
                         'id' => 2,
-                        'time' => 1272686420,
+                        'time'   => $start + 14420,
                         'userid' => $user1,
                         'course' => $course1,
                         'action' => 'view'
@@ -724,21 +726,21 @@ class statslib_daily_testcase extends advanced_testcase {
                 array(  // logs
                     array(
                         'id'     => 1,
-                        'time'   => 1272686410,
+                        'time'   => $start + 14410,
                         'userid' => $user1,
                         'course' => SITEID,
                         'action' => 'login'
                     ),
                     array(
                         'id' => 2,
-                        'time' => 1272686420,
+                        'time'   => $start + 14420,
                         'userid' => $user1,
                         'course' => $course1,
                         'action' => 'view'
                     ),
                     array(
                         'id' => 3,
-                        'time' => 1272686430,
+                        'time'   => $start + 14430,
                         'userid' => $user1,
                         'course' => $course1,
                         'action' => 'add post'
@@ -855,21 +857,21 @@ class statslib_daily_testcase extends advanced_testcase {
                 array(  // logs
                     array(
                         'id'     => 1,
-                        'time'   => 1272686410,
+                        'time'   => $start + 14410,
                         'userid' => $user2,
                         'course' => SITEID,
                         'action' => 'login'
                     ),
                     array(
                         'id' => 2,
-                        'time' => 1272686420,
+                        'time'   => $start + 14420,
                         'userid' => $user2,
                         'course' => SITEID,
                         'action' => 'view'
                     ),
                     array(
                         'id' => 3,
-                        'time' => 1272686430,
+                        'time'   => $start + 14430,
                         'userid' => $user2,
                         'course' => $course1,
                         'action' => 'view'
@@ -994,14 +996,14 @@ class statslib_daily_testcase extends advanced_testcase {
                 array(  // logs
                     array(
                         'id'     => 1,
-                        'time'   => 1272686410,
+                        'time'   => $start + 14410,
                         'userid' => $user1,
                         'course' => SITEID,
                         'action' => 'login'
                     ),
                     array(
                         'id' => 2,
-                        'time' => 1272686420,
+                        'time'   => $start + 14420,
                         'userid' => $user1,
                         'course' => SITEID,
                         'action' => 'view'
@@ -1177,7 +1179,7 @@ class statslib_daily_testcase extends advanced_testcase {
 
         $stats = array(  // stats_daily
             'courseid' => SITEID,
-            'timeend'  => 1272772800,
+            'timeend'  => 1272758400,
             'roleid'   => 0,
             'stattype' => 'logins',
             'stat1'    => 1,
@@ -1199,7 +1201,7 @@ class statslib_daily_testcase extends advanced_testcase {
         $this->assertLessThanOrEqual(1, stats_get_start_from('daily') - ($time - (14515200)));
 
         $DB->insert_record_raw('stats_daily', $stats);
-        $this->assertEquals(1272772800, stats_get_start_from('daily'));
+        $this->assertEquals(1272758400, stats_get_start_from('daily'));
     }
 
     /**
@@ -1208,8 +1210,8 @@ class statslib_daily_testcase extends advanced_testcase {
     public function test_statslib_get_base_daily() {
         global $CFG;
 
-        $CFG->timezone = 99;
-        $this->assertEquals(1272686400, stats_get_base_daily(1272686410));
+        $CFG->timezone = 0;
+        $this->assertEquals(1272672000, stats_get_base_daily(1272686410));
         $CFG->timezone = 5;
         $this->assertEquals(1272654000, stats_get_base_daily(1272686410));
     }
@@ -1218,7 +1220,10 @@ class statslib_daily_testcase extends advanced_testcase {
      * Test the function that gets the start of the next day
      */
     public function test_statslib_get_next_day_start() {
-        $this->assertEquals(1272772800, stats_get_next_day_start(1272686410));
+        global $CFG;
+
+        $CFG->timezone = 0;
+        $this->assertEquals(1272758400, stats_get_next_day_start(1272686410));
     }
 
     /**
@@ -1362,10 +1367,25 @@ class statslib_daily_testcase extends advanced_testcase {
         $this->prepare_db($logs);
 
         stats_temp_table_create();
-        stats_temp_table_fill(1272686410, 1272772800);
+        stats_temp_table_fill(1272686410, 1272758400);
 
         $this->assertEquals(1, $DB->count_records('temp_log1'));
         $this->assertEquals(1, $DB->count_records('temp_log2'));
+    }
+
+    /**
+     * Test the temporary table creation and deletion.
+     */
+    public function test_statslib_temp_table_setup() {
+        global $DB;
+
+        $logs = array();
+        $this->prepare_db($logs);
+
+        stats_temp_table_create();
+        stats_temp_table_setup();
+
+        $this->assertEquals(1, $DB->count_records('temp_enroled'));
     }
 
     /**
@@ -1401,6 +1421,8 @@ class statslib_daily_testcase extends advanced_testcase {
     /**
      * Test the daily stats function
      *
+     * @depends test_statslib_get_base_daily
+     * @depends test_statslib_get_next_day_start
      * @dataProvider daily_log_provider
      */
     public function test_statslib_cron_daily($logs, $stats) {
@@ -1412,7 +1434,7 @@ class statslib_daily_testcase extends advanced_testcase {
 
         // Stats cron daily uses mtrace, turn on buffering to silence output.
         ob_start();
-        stats_cron_daily($maxdays=1);
+        stats_cron_daily(1);
         ob_end_clean();
 
         $this->verify_stats($stats);
@@ -1420,6 +1442,8 @@ class statslib_daily_testcase extends advanced_testcase {
 
     /**
      * Test the daily stats function
+     * @depends test_statslib_get_base_daily
+     * @depends test_statslib_get_next_day_start
      */
     public function test_statslib_cron_daily_no_default_profile_id() {
         global $CFG;
@@ -1427,7 +1451,8 @@ class statslib_daily_testcase extends advanced_testcase {
 
         $course1  = SITEID + 1;
         $guest    = $CFG->siteguest;
-        $end      = 1272772800;
+        $start    = stats_get_base_daily(1272758400);
+        $end      = stats_get_next_day_start($start);
         $stid     = 5;
         $fpid     = 0;
         $gr       = get_guest_role();
@@ -1435,7 +1460,7 @@ class statslib_daily_testcase extends advanced_testcase {
         $logs = array(  // Logs
             array(
                 'id'     => 1,
-                'time'   => 1272686410,
+                'time'   => $start + 14410,
                 'userid' => $guest,
                 'course' => SITEID,
                 'action' => 'view'
