@@ -1617,7 +1617,7 @@ class core_renderer extends renderer_base {
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
         $title = get_string('helpprefix2', '', trim($helpicon->title, ". \t"));
 
-        $attributes = array('href'=>$url, 'title'=>$title);
+        $attributes = array('href'=>$url, 'title'=>$title, 'aria-haspopup' => 'true');
         $id = html_writer::random_id('helpicon');
         $attributes['id'] = $id;
         $output = html_writer::tag('a', $output, $attributes);
@@ -1681,7 +1681,7 @@ class core_renderer extends renderer_base {
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
         $title = get_string('helpprefix2', '', trim($title, ". \t"));
 
-        $attributes = array('href'=>$url, 'title'=>$title);
+        $attributes = array('href'=>$url, 'title'=>$title, 'aria-haspopup' => 'true');
         $id = html_writer::random_id('helpicon');
         $attributes['id'] = $id;
         $output = html_writer::tag('a', $output, $attributes);
