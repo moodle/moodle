@@ -90,7 +90,7 @@ class filter_mediaplugin extends moodle_text_filter {
             $search = '/<a\s[^>]*href="(https?:\/\/www\.youtube(-nocookie)?\.com)\/v\/([a-z0-9\-_]+)[^"#]*(#d=([\d]{1,4})x([\d]{1,4}))?[^>]*>([^>]*)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
 
-            $search = '/<a\s[^>]*href="(https?:\/\/(www\.)?(youtu|y2u)\.be)\/([a-z0-9\-_]+)"[^>]*>([^>]*)<\/a>/is';
+            $search = '/<a\s[^>]*href="(https?:\/\/(www\.)?(youtu|y2u)\.be)\/([a-z0-9\-_]+)[^"#]*(#d=([\d]{1,4})x([\d]{1,4}))?"[^>]*>([^>]*)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_shortened_youtube_callback', $newtext);
 
             $search = '/<a\s[^>]*href="(https?:\/\/www\.youtube(-nocookie)?\.com)\/view_play_list\?p=([a-z0-9\-_]+)[^"#]*(#d=([\d]{1,4})x([\d]{1,4}))?[^>]*>([^>]*)<\/a>/is';
@@ -768,7 +768,7 @@ OET;
  * @return string
  */
 function filter_mediaplugin_shortened_youtube_callback($link) {
-    $newlink = array($link[0], 'https://www.youtube.com','',$link[4],'','','',$link[5]);
+    $newlink = array($link[0], 'https://www.youtube.com','',$link[4],'',$link[6],$link[7],$link[8]);
     return filter_mediaplugin_youtube_callback($newlink);
 }
 
