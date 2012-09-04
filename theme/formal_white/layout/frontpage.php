@@ -36,6 +36,9 @@ if (!empty($PAGE->theme->settings->frontpagelogourl)) {
 } else {
     $logourl = $OUTPUT->pix_url('logo', 'theme');
 }
+if (strtolower(substr($logourl, 0, 4)) != 'http') {
+    $logourl = $CFG->wwwroot.'/'.$logourl;
+}
 
 $hasframe = !isset($PAGE->theme->settings->noframe) || !$PAGE->theme->settings->noframe;
 
