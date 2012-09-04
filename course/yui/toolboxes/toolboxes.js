@@ -49,32 +49,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
 
     Y.extend(TOOLBOX, Y.Base, {
         /**
-         * Replace the button click at the selector with the specified
-         * callback
-         *
-         * @param toolboxtarget The selector of the working area
-         * @param selector The 'button' to replace
-         * @param callback The callback to apply
-         * @param cursor An optional cursor style to apply
+         * Toggle the visibility and availability for the specified
+         * resource show/hide button
          */
-        replace_button : function(toolboxtarget, selector, callback, cursor) {
-            if (!cursor) {
-                // Set the default cursor type to pointer to match the
-                // anchor
-                cursor = 'pointer';
-            }
-            var button = Y.one(toolboxtarget).all(selector)
-                .setStyle('cursor', cursor);
-
-            // on isn't chainable and will return an event
-            button.on('click', callback, this);
-
-            return button;
-        },
-          /**
-           * Toggle the visibility and availability for the specified
-           * resource show/hide button
-           */
         toggle_hide_resource_ui : function(button) {
             var element = button.ancestor(CSS.ACTIVITYLI);
             var hideicon = button.one('img');
@@ -634,6 +611,11 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         initializer : function(config) {
             this.setup_for_section();
             M.course.coursebase.register_module(this);
+
+            // Section Highlighting
+            Y.delegate('click', this.toggle_highlight, CSS.PAGECONTENT, CSS.SECTIONLI + ' ' + CSS.HIGHLIGHT, this);
+            // Section Visibility
+            Y.delegate('click', this.toggle_hide_section, CSS.PAGECONTENT, CSS.SECTIONLI + ' ' + CSS.SHOWHIDE, this);
         },
         /**
          * Update any section areas within the scope of the specified
@@ -643,18 +625,15 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          * @return void
          */
         setup_for_section : function(baseselector) {
-            if (!baseselector) {
+            // Left here for potential future use - not currently needed due to YUI delegation in initializer()
+            /*if (!baseselector) {
                 var baseselector = CSS.PAGECONTENT;
             }
 
-            Y.all(baseselector).each(this._setup_for_section, this);
+            Y.all(baseselector).each(this._setup_for_section, this);*/
         },
         _setup_for_section : function(toolboxtarget) {
-            // Section Highlighting
-            this.replace_button(toolboxtarget, CSS.RIGHTSIDE + ' ' + CSS.HIGHLIGHT, this.toggle_highlight);
-
-            // Section Visibility
-            this.replace_button(toolboxtarget, CSS.RIGHTSIDE + ' ' + CSS.SHOWHIDE, this.toggle_hide_section);
+            // Left here for potential future use - not currently needed due to YUI delegation in initializer()
         },
         toggle_hide_section : function(e) {
             // Prevent the default button action
