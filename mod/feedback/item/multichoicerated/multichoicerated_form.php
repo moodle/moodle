@@ -29,7 +29,7 @@ class feedback_multichoicerated_form extends feedback_item_form {
 
         $mform->addElement('header', 'general', get_string($this->type, 'feedback'));
 
-        $mform->addElement('checkbox', 'required', get_string('required', 'feedback'));
+        $mform->addElement('advcheckbox', 'required', get_string('required', 'feedback'), '' , null , array(0, 1));
 
         $mform->addElement('text',
                             'name',
