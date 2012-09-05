@@ -559,8 +559,6 @@ class core_calendar_renderer extends plugin_renderer_base {
         $table->data[] = $row;
         $output .= html_writer::table($table);
 
-        // OK, now for the filtering display
-        $output .= $this->filter_selection_table($calendar);
         return $output;
     }
 
@@ -569,9 +567,13 @@ class core_calendar_renderer extends plugin_renderer_base {
      *
      * @param calendar_information $calendar
      * @return string
+     * @deprecated since Moodle 2.4 MDL-32309
+     * @see calendar_filter_controls()
      */
     protected function filter_selection_table(calendar_information $calendar, moodle_url $returnurl = null) {
         global $SESSION;
+        debugging('Method core_calendar_renderer::filter_selection_table() is deprecated, please use '.
+                'calendar_filter_controls() instead', DEBUG_DEVELOPER);
 
         if ($returnurl === null) {
             $returnurl = $this->page->url;

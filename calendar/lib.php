@@ -872,6 +872,49 @@ function calendar_top_controls($type, $data) {
 }
 
 /**
+ * Formats a filter control element.
+ *
+ * @param moodle_url $url of the filter
+ * @param int $type constant defining the type filter
+ * @return string html content of the element
+ */
+function calendar_filter_controls_element(moodle_url $url, $type) {
+    global $OUTPUT;
+    switch ($type) {
+        case CALENDAR_EVENT_GLOBAL:
+            $typeforhumans = 'global';
+            $class = 'calendar_event_global';
+            break;
+        case CALENDAR_EVENT_COURSE:
+            $typeforhumans = 'course';
+            $class = 'calendar_event_course';
+            break;
+        case CALENDAR_EVENT_GROUP:
+            $typeforhumans = 'groups';
+            $class = 'calendar_event_group';
+            break;
+        case CALENDAR_EVENT_USER:
+            $typeforhumans = 'user';
+            $class = 'calendar_event_user';
+            break;
+    }
+    if (calendar_show_event_type($type)) {
+        $icon = $OUTPUT->pix_icon('t/hide', get_string('hide'));
+        $str = get_string('hide'.$typeforhumans.'events', 'calendar');
+    } else {
+        $icon = $OUTPUT->pix_icon('t/show', get_string('show'));
+        $str = get_string('show'.$typeforhumans.'events', 'calendar');
+    }
+    $content = html_writer::start_tag('li', array('class' => 'calendar_event'));
+    $content .= html_writer::start_tag('a', array('href' => $url));
+    $content .= html_writer::tag('span', $icon, array('class' => $class));
+    $content .= html_writer::tag('span', $str, array('class' => 'eventname'));
+    $content .= html_writer::end_tag('a');
+    $content .= html_writer::end_tag('li');
+    return $content;
+}
+
+/**
  * Get the controls filter for calendar.
  *
  * Filter is used to hide calendar info from the display page
@@ -883,60 +926,28 @@ function calendar_filter_controls(moodle_url $returnurl) {
     global $CFG, $USER, $OUTPUT;
 
     $groupevents = true;
-
     $id = optional_param( 'id',0,PARAM_INT );
-
     $seturl = new moodle_url('/calendar/set.php', array('return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
-
-    $content = '<table>';
-    $content .= '<tr>';
+    $content = html_writer::start_tag('ul');
 
     $seturl->param('var', 'showglobal');
-    if (calendar_show_event_type(CALENDAR_EVENT_GLOBAL)) {
-        $content .= '<td class="eventskey calendar_event_global" style="width: 11px;"><img src="'.$OUTPUT->pix_url('t/hide') . '" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_hideglobal', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".$seturl."'".'" /></td>';
-        $content .= '<td><a href="'.$seturl.'" title="'.get_string('tt_hideglobal', 'calendar').'">'.get_string('global', 'calendar').'</a></td>'."\n";
-    } else {
-        $content .= '<td style="width: 11px;"><img src="'.$OUTPUT->pix_url('t/show') . '" class="iconsmall" alt="'.get_string('show').'" title="'.get_string('tt_showglobal', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".$seturl."'".'" /></td>';
-        $content .= '<td><a href="'.$seturl.'" title="'.get_string('tt_showglobal', 'calendar').'">'.get_string('global', 'calendar').'</a></td>'."\n";
-    }
+    $content .= calendar_filter_controls_element($seturl, CALENDAR_EVENT_GLOBAL);
 
     $seturl->param('var', 'showcourses');
-    if (calendar_show_event_type(CALENDAR_EVENT_COURSE)) {
-        $content .= '<td class="eventskey calendar_event_course" style="width: 11px;"><img src="'.$OUTPUT->pix_url('t/hide') . '" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_hidecourse', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".$seturl."'".'" /></td>';
-        $content .= '<td><a href="'.$seturl.'" title="'.get_string('tt_hidecourse', 'calendar').'">'.get_string('course', 'calendar').'</a></td>'."\n";
-    } else {
-        $content .= '<td style="width: 11px;"><img src="'.$OUTPUT->pix_url('t/show') . '" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_showcourse', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".$seturl."'".'" /></td>';
-        $content .= '<td><a href="'.$seturl.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('course', 'calendar').'</a></td>'."\n";
-    }
+    $content .= calendar_filter_controls_element($seturl, CALENDAR_EVENT_COURSE);
 
     if (isloggedin() && !isguestuser()) {
-        $content .= "</tr>\n<tr>";
-
         if ($groupevents) {
             // This course MIGHT have group events defined, so show the filter
             $seturl->param('var', 'showgroups');
-            if (calendar_show_event_type(CALENDAR_EVENT_GROUP)) {
-                $content .= '<td class="eventskey calendar_event_group" style="width: 11px;"><img src="'.$OUTPUT->pix_url('t/hide') . '" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_hidegroups', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".$seturl."'".'" /></td>';
-                $content .= '<td><a href="'.$seturl.'" title="'.get_string('tt_hidegroups', 'calendar').'">'.get_string('group', 'calendar').'</a></td>'."\n";
-            } else {
-                $content .= '<td style="width: 11px;"><img src="'.$OUTPUT->pix_url('t/show') . '" class="iconsmall" alt="'.get_string('show').'" title="'.get_string('tt_showgroups', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".$seturl."'".'" /></td>';
-                $content .= '<td><a href="'.$seturl.'" title="'.get_string('tt_showgroups', 'calendar').'">'.get_string('group', 'calendar').'</a></td>'."\n";
-            }
+            $content .= calendar_filter_controls_element($seturl, CALENDAR_EVENT_GROUP);
         } else {
             // This course CANNOT have group events, so lose the filter
-            $content .= '<td style="width: 11px;"></td><td>&nbsp;</td>'."\n";
         }
-
         $seturl->param('var', 'showuser');
-        if (calendar_show_event_type(CALENDAR_EVENT_USER)) {
-            $content .= '<td class="eventskey calendar_event_user" style="width: 11px;"><img src="'.$OUTPUT->pix_url('t/hide') . '" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_hideuser', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".$seturl."'".'" /></td>';
-            $content .= '<td><a href="'.$seturl.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
-        } else {
-            $content .= '<td style="width: 11px;"><img src="'.$OUTPUT->pix_url('t/show') . '" class="iconsmall" alt="'.get_string('show').'" title="'.get_string('tt_showuser', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".$seturl."'".'" /></td>';
-            $content .= '<td><a href="'.$seturl.'" title="'.get_string('tt_showuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
-        }
+        $content .= calendar_filter_controls_element($seturl, CALENDAR_EVENT_USER);
     }
-    $content .= "</tr>\n</table>\n";
+    $content .= html_writer::end_tag('ul');
 
     return $content;
 }
