@@ -190,19 +190,13 @@ function stats_cron_daily($maxdays=1) {
             break;
         }
 
+        stats_progress('0');
+
     /// find out if any logs available for this day
         $sql = "SELECT 'x' FROM {temp_log1} l";
         $logspresent = $DB->get_records_sql($sql, null, 0, 1);
 
-        if ($logspresent) {
-            // Insert blank record to force Query 10 to generate additional row when no logs for
-            // the site with userid 0 exist.  Added for backwards compatibility.
-            $DB->insert_record_raw('temp_log1', array('userid' => 0, 'course' => SITEID, 'action' => ''));
-        }
-
-        stats_progress('0');
-
-        /// process login info first
+    /// process login info first
         $sql = "INSERT INTO {temp_stats_user_daily} (stattype, timeend, courseid, userid, statsreads)
 
                 SELECT 'logins', $nextmidnight AS timeend, ".SITEID." AS courseid, userid, count(id) as statsreads
@@ -388,6 +382,7 @@ function stats_cron_daily($maxdays=1) {
                        SUM(CASE WHEN action $viewactionssql THEN 1 ELSE 0 END) AS statsreads,
                        SUM(CASE WHEN action $postactionssql THEN 1 ELSE 0 END) AS statswrites
                 FROM {temp_log1} l
+                WHERE !(course = 0 AND userid = 0)
                 GROUP BY userid, courseid";
 
         if ($logspresent and !$DB->execute($sql, array_merge($params1, $params2))) {
@@ -1578,7 +1573,6 @@ function stats_temp_table_drop() {
 function stats_temp_table_fill($timestart, $timeend) {
     global $DB;
 
-    // Note: We need to create a placeholder here to simulate the effects of old, slow unions
     $sql = "INSERT INTO {temp_log1}
                 SELECT id, userid, course, action FROM {log} l
                 WHERE l.time >= $timestart AND l.time < $timeend";
