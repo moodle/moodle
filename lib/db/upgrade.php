@@ -1184,14 +1184,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012082300.02);
     }
 
-    if ($oldversion < 2012090400.00) {
-        $subquery = 'SELECT b.id FROM {blog_external} b where ' . $DB->sql_compare_text('b.id') . ' = ' . $DB->sql_compare_text('{post}.content');
+    if ($oldversion < 2012090500.00) {
+        $subquery = 'SELECT b.id FROM {blog_external} b where b.id = ' . $DB->sql_cast_char2int('{post}.content', true);
         $sql = 'DELETE FROM {post}
                       WHERE {post}.module = \'blog_external\'
                             AND NOT EXISTS (' . $subquery . ')
                             AND ' . $DB->sql_isnotempty('post', 'uniquehash', false, false);
         $DB->execute($sql);
-        upgrade_main_savepoint(true, 2012090400.00);
+        upgrade_main_savepoint(true, 2012090500.00);
     }
 
     return true;
