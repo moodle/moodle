@@ -221,7 +221,7 @@ class tinymce_texteditor extends texteditor {
             if ($line === '') {
                 continue;
             }
-            if ($i == 9) {
+            if ($i == 10) {
                 // Maximum is ten lines, merge the rest to the last line.
                 $result[9] = $result[9].','.$line;
             } else {
