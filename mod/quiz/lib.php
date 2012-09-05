@@ -1153,7 +1153,7 @@ function quiz_update_events($quiz, $override = null) {
         if (!empty($quiz->coursemodule)) {
             $cmid = $quiz->coursemodule;
         } else {
-            $cmid = get_coursemodule_from_instance('quiz', $quiz->id, $courseid)->id;
+            $cmid = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course)->id;
         }
 
         $event = new stdClass();
