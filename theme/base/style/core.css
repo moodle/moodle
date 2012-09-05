@@ -905,6 +905,9 @@ sup {vertical-align: super;}
     -webkit-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
     -moz-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
 }
+.dir-rtl.jsenabled .choosercontainer #chooseform .alloptions {
+    max-width: 18.3em;
+}
 
 /* Settings for option rows and option subtypes */
 .choosercontainer #chooseform .moduletypetitle,
