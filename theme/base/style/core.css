@@ -939,6 +939,9 @@ sup {vertical-align: super;}
     margin-bottom: 0;
     padding: 0 1.6em 0 3.2em;
 }
+.dir-rtl .choosercontainer #chooseform .subtype {
+    padding: 0 2.6em 0 3.2em;
+}
 
 .choosercontainer #chooseform .subtype .typename {
     margin: 0 0 0 0.2em;
