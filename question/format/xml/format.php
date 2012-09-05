@@ -387,7 +387,7 @@ class qformat_xml extends qformat_default {
         $qo = $this->import_headers($question);
 
         // 'header' parts particular to multichoice
-        $qo->qtype = MULTICHOICE;
+        $qo->qtype = 'multichoice';
         $single = $this->getpath($question, array('#', 'single', 0, '#'), 'true');
         $qo->single = $this->trans_single($single);
         $shuffleanswers = $this->getpath($question,
@@ -473,7 +473,7 @@ class qformat_xml extends qformat_default {
         $qo = $this->import_headers($question);
 
         // 'header' parts particular to true/false
-        $qo->qtype = TRUEFALSE;
+        $qo->qtype = 'truefalse';
 
         // In the past, it used to be assumed that the two answers were in the file
         // true first, then false. Howevever that was not always true. Now, we
@@ -548,7 +548,7 @@ class qformat_xml extends qformat_default {
         $qo = $this->import_headers($question);
 
         // header parts particular to shortanswer
-        $qo->qtype = SHORTANSWER;
+        $qo->qtype = 'shortanswer';
 
         // get usecase
         $qo->usecase = $this->getpath($question, array('#', 'usecase', 0, '#'), $qo->usecase);
@@ -578,7 +578,7 @@ class qformat_xml extends qformat_default {
         // get common parts
         $qo = $this->import_headers($question);
         // header parts particular to shortanswer
-        $qo->qtype = DESCRIPTION;
+        $qo->qtype = 'description';
         $qo->defaultmark = 0;
         $qo->length = 0;
         return $qo;
@@ -594,7 +594,7 @@ class qformat_xml extends qformat_default {
         $qo = $this->import_headers($question);
 
         // header parts particular to numerical
-        $qo->qtype = NUMERICAL;
+        $qo->qtype = 'numerical';
 
         // get answers array
         $answers = $question['#']['answer'];
@@ -706,7 +706,7 @@ class qformat_xml extends qformat_default {
         $qo = $this->import_headers($question);
 
         // header parts particular to essay
-        $qo->qtype = ESSAY;
+        $qo->qtype = 'essay';
 
         $qo->responseformat = $this->getpath($question,
                 array('#', 'responseformat', 0, '#'), 'editor');
@@ -734,7 +734,7 @@ class qformat_xml extends qformat_default {
         $qo = $this->import_headers($question);
 
         // header parts particular to calculated
-        $qo->qtype = CALCULATED;
+        $qo->qtype = 'calculated';
         $qo->synchronize = $this->getpath($question, array('#', 'synchronize', 0, '#'), 0);
         $single = $this->getpath($question, array('#', 'single', 0, '#'), 'true');
         $qo->single = $this->trans_single($single);
@@ -1363,7 +1363,7 @@ class qformat_xml extends qformat_default {
                         $expout .= "<dataset_definition>\n";
                         $expout .= "    <status>".$this->writetext($def->status)."</status>\n";
                         $expout .= "    <name>".$this->writetext($def->name)."</name>\n";
-                        if ($question->qtype == CALCULATED) {
+                        if ($question->qtype == 'calculated') {
                             $expout .= "    <type>calculated</type>\n";
                         } else {
                             $expout .= "    <type>calculatedsimple</type>\n";

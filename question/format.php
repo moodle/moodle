@@ -27,29 +27,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-/**#@+
- * The core question types.
- *
- * These used to be in lib/questionlib.php, but are being deprecated. Copying
- * them here to keep the import/export code working for now (there are 135
- * references to these constants which I don't want to try to fix at the moment.)
- */
-if (!defined('SHORTANSWER')) {
-    define("SHORTANSWER",   "shortanswer");
-    define("TRUEFALSE",     "truefalse");
-    define("MULTICHOICE",   "multichoice");
-    define("RANDOM",        "random");
-    define("MATCH",         "match");
-    define("RANDOMSAMATCH", "randomsamatch");
-    define("DESCRIPTION",   "description");
-    define("NUMERICAL",     "numerical");
-    define("MULTIANSWER",   "multianswer");
-    define("CALCULATED",    "calculated");
-    define("ESSAY",         "essay");
-}
-/**#@-*/
-
-
 /**
  * Base class for question import and export formats.
  *

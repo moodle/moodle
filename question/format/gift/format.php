@@ -283,26 +283,26 @@ class qformat_gift extends qformat_default {
         }
 
         if ($description) {
-            $question->qtype = DESCRIPTION;
+            $question->qtype = 'description';
 
         } else if ($answertext == '') {
-            $question->qtype = ESSAY;
+            $question->qtype = 'essay';
 
         } else if ($answertext{0} == '#') {
-            $question->qtype = NUMERICAL;
+            $question->qtype = 'numerical';
 
         } else if (strpos($answertext, '~') !== false)  {
             // only Multiplechoice questions contain tilde ~
-            $question->qtype = MULTICHOICE;
+            $question->qtype = 'multichoice';
 
         } else if (strpos($answertext, '=')  !== false
                 && strpos($answertext, '->') !== false) {
             // only Matching contains both = and ->
-            $question->qtype = MATCH;
+            $question->qtype = 'match';
 
-        } else { // either TRUEFALSE or SHORTANSWER
+        } else { // either truefalse or shortanswer
 
-            // TRUEFALSE question check
+            // truefalse question check
             $truefalse_check = $answertext;
             if (strpos($answertext, '#') > 0) {
                 // strip comments to check for TrueFalse question
@@ -311,10 +311,10 @@ class qformat_gift extends qformat_default {
 
             $valid_tf_answers = array('T', 'TRUE', 'F', 'FALSE');
             if (in_array($truefalse_check, $valid_tf_answers)) {
-                $question->qtype = TRUEFALSE;
+                $question->qtype = 'truefalse';
 
-            } else { // Must be SHORTANSWER
-                $question->qtype = SHORTANSWER;
+            } else { // Must be shortanswer
+                $question->qtype = 'shortanswer';
             }
         }
 
@@ -325,12 +325,12 @@ class qformat_gift extends qformat_default {
         }
 
         switch ($question->qtype) {
-            case DESCRIPTION:
+            case 'description':
                 $question->defaultmark = 0;
                 $question->length = 0;
                 return $question;
 
-            case ESSAY:
+            case 'essay':
                 $question->responseformat = 'editor';
                 $question->responsefieldlines = 15;
                 $question->attachments = 0;
@@ -338,7 +338,7 @@ class qformat_gift extends qformat_default {
                         'text' => '', 'format' => FORMAT_HTML, 'files' => array());
                 return $question;
 
-            case MULTICHOICE:
+            case 'multichoice':
                 if (strpos($answertext,"=") === false) {
                     $question->single = 0; // multiple answers are enabled if no single answer is 100% correct
                 } else {
@@ -382,7 +382,7 @@ class qformat_gift extends qformat_default {
 
                 return $question;
 
-            case MATCH:
+            case 'match':
                 $question = $this->add_blank_combined_feedback($question);
 
                 $answers = explode('=', $answertext);
@@ -413,7 +413,7 @@ class qformat_gift extends qformat_default {
 
                 return $question;
 
-            case TRUEFALSE:
+            case 'truefalse':
                 list($answer, $wrongfeedback, $rightfeedback) =
                         $this->split_truefalse_comment($answertext, $question->questiontextformat);
 
@@ -431,8 +431,8 @@ class qformat_gift extends qformat_default {
 
                 return $question;
 
-            case SHORTANSWER:
-                // SHORTANSWER Question
+            case 'shortanswer':
+                // Shortanswer question.
                 $answers = explode("=", $answertext);
                 if (isset($answers[0])) {
                     $answers[0] = trim($answers[0]);
@@ -464,7 +464,7 @@ class qformat_gift extends qformat_default {
 
                 return $question;
 
-            case NUMERICAL:
+            case 'numerical':
                 // Note similarities to ShortAnswer
                 $answertext = substr($answertext, 1); // remove leading "#"
 
@@ -645,12 +645,12 @@ class qformat_gift extends qformat_default {
             $expout .= "\$CATEGORY: $question->category\n";
             break;
 
-        case DESCRIPTION:
+        case 'description':
             $expout .= $this->write_name($question->name);
             $expout .= $this->write_questiontext($question->questiontext, $question->questiontextformat);
             break;
 
-        case ESSAY:
+        case 'essay':
             $expout .= $this->write_name($question->name);
             $expout .= $this->write_questiontext($question->questiontext, $question->questiontextformat);
             $expout .= "{";
@@ -658,7 +658,7 @@ class qformat_gift extends qformat_default {
             $expout .= "}\n";
             break;
 
-        case TRUEFALSE:
+        case 'truefalse':
             $trueanswer = $question->options->answers[$question->options->trueanswer];
             $falseanswer = $question->options->answers[$question->options->falseanswer];
             if ($trueanswer->fraction == 1) {
@@ -690,7 +690,7 @@ class qformat_gift extends qformat_default {
             $expout .= "}\n";
             break;
 
-        case MULTICHOICE:
+        case 'multichoice':
             $expout .= $this->write_name($question->name);
             $expout .= $this->write_questiontext($question->questiontext, $question->questiontextformat);
             $expout .= "{\n";
@@ -715,7 +715,7 @@ class qformat_gift extends qformat_default {
             $expout .= "}\n";
             break;
 
-        case SHORTANSWER:
+        case 'shortanswer':
             $expout .= $this->write_name($question->name);
             $expout .= $this->write_questiontext($question->questiontext, $question->questiontextformat);
             $expout .= "{\n";
@@ -729,7 +729,7 @@ class qformat_gift extends qformat_default {
             $expout .= "}\n";
             break;
 
-        case NUMERICAL:
+        case 'numerical':
             $expout .= $this->write_name($question->name);
             $expout .= $this->write_questiontext($question->questiontext, $question->questiontextformat);
             $expout .= "{#\n";
@@ -748,7 +748,7 @@ class qformat_gift extends qformat_default {
             $expout .= "}\n";
             break;
 
-        case MATCH:
+        case 'match':
             $expout .= $this->write_name($question->name);
             $expout .= $this->write_questiontext($question->questiontext, $question->questiontextformat);
             $expout .= "{\n";

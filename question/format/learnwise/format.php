@@ -125,7 +125,7 @@ class qformat_learnwise extends qformat_default {
         }
 
         $question = $this->defaultquestion();
-        $question->qtype = MULTICHOICE;
+        $question->qtype = 'multichoice';
         $question->name = substr($questiontext, 0, 30);
         if (strlen($questiontext) > 30) {
             $question->name .= '...';

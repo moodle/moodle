@@ -37,18 +37,18 @@ require_once($CFG->libdir . '/xmlize.php');
 class qformat_examview extends qformat_based_on_xml {
 
     public $qtypes = array(
-        'tf' => TRUEFALSE,
-        'mc' => MULTICHOICE,
-        'yn' => TRUEFALSE,
-        'co' => SHORTANSWER,
-        'ma' => MATCH,
+        'tf' => 'truefalse',
+        'mc' => 'multichoice',
+        'yn' => 'truefalse',
+        'co' => 'shortanswer',
+        'ma' => 'match',
         'mtf' => 99,
-        'nr' => NUMERICAL,
+        'nr' => 'numerical',
         'pr' => 99,
-        'es' => ESSAY,
+        'es' => 'essay',
         'ca' => 99,
         'ot' => 99,
-        'sa' => SHORTANSWER,
+        'sa' => 'shortanswer',
     );
 
     public $matching_questions = array();
@@ -132,7 +132,7 @@ class qformat_examview extends qformat_based_on_xml {
             $question->questiontextformat = FORMAT_HTML;
             $question->questiontextfiles = array();
             $question->name = shorten_text( $question->questiontext, 250 );
-            $question->qtype = MATCH;
+            $question->qtype = 'match';
             $question = $this->add_blank_combined_feedback($question);
             $question->subquestions = array();
             $question->subanswers = array();
@@ -203,23 +203,23 @@ class qformat_examview extends qformat_based_on_xml {
         $question->name = shorten_text( $question->questiontext, 250 );
 
         switch ($question->qtype) {
-            case MULTICHOICE:
+            case 'multichoice':
                 $question = $this->parse_mc($qrec['#'], $question);
                 break;
-            case MATCH:
+            case 'match':
                 $groupname = trim($qrec['@']['group']);
                 $question = $this->parse_ma($qrec['#'], $groupname);
                 break;
-            case TRUEFALSE:
+            case 'truefalse':
                 $question = $this->parse_tf_yn($qrec['#'], $question);
                 break;
-            case SHORTANSWER:
+            case 'shortanswer':
                 $question = $this->parse_co($qrec['#'], $question);
                 break;
-            case ESSAY:
+            case 'essay':
                 $question = $this->parse_es($qrec['#'], $question);
                 break;
-            case NUMERICAL:
+            case 'numerical':
                 $question = $this->parse_nr($qrec['#'], $question);
                 break;
                 break;
