@@ -863,6 +863,12 @@ M.core_dock.genericblock.prototype = {
             return;
         }
 
+        // Disable the skip anchor when docking
+        var skipanchor = node.previous();
+        if (skipanchor.hasClass('skip-block')) {
+            skipanchor.hide();
+        }
+
         var blockclass = (function(classes){
             var r = /(^|\s)(block_[a-zA-Z0-9_]+)(\s|$)/;
             var m = r.exec(classes);
@@ -936,6 +942,12 @@ M.core_dock.genericblock.prototype = {
      */
     return_to_block : function(dockitem) {
         var placeholder = this.Y.one('#content_placeholder_'+this.id);
+
+        // Enable the skip anchor when going back to block mode
+        var skipanchor = placeholder.previous();
+        if (skipanchor.hasClass('skip-block')) {
+            skipanchor.show();
+        }
 
         if (this.cachedcontentnode.one('.header')) {
             this.cachedcontentnode.one('.header').insert(dockitem.contents, 'after');
