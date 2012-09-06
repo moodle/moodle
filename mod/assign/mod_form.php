@@ -127,6 +127,13 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->setDefault('teamsubmissiongroupingid', 0);
         $mform->disabledIf('teamsubmissiongroupingid', 'teamsubmission', 'eq', 0);
 
+        $mform->addElement('selectyesno', 'blindmarking', get_string('blindmarking', 'assign'));
+        $mform->addHelpButton('blindmarking', 'blindmarking', 'assign');
+        $mform->setDefault('blindmarking', 0);
+        if ($assignment->has_submissions_or_grades() ) {
+            $mform->freeze('blindmarking');
+        }
+
 
         // plagiarism enabling form
         if (!empty($CFG->enableplagiarism)) {

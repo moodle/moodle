@@ -116,6 +116,10 @@ class assign_user_summary implements renderable {
     public $courseid;
     /** @var bool $viewfullnames */
     public $viewfullnames = false;
+    /** @var bool $blindmarking */
+    public $blindmarking = false;
+    /** @var int $uniqueidforuser */
+    public $uniqueidforuser;
 
     /**
      * Constructor
@@ -123,10 +127,12 @@ class assign_user_summary implements renderable {
      * @param int $courseid
      * @param bool $viewfullnames
      */
-    public function __construct(stdClass $user, $courseid, $viewfullnames) {
+    public function __construct(stdClass $user, $courseid, $viewfullnames, $blindmarking, $uniqueidforuser) {
         $this->user = $user;
         $this->courseid = $courseid;
         $this->viewfullnames = $viewfullnames;
+        $this->blindmarking = $blindmarking;
+        $this->uniqueidforuser = $uniqueidforuser;
     }
 }
 
@@ -329,6 +335,8 @@ class assign_submission_status implements renderable {
     public $extensionduedate = 0;
     /** @var context context */
     public $context = 0;
+    /** @var bool blindmarking - Should we hide student identities from graders? */
+    public $blindmarking = false;
 
     /**
      * constructor
@@ -356,13 +364,14 @@ class assign_submission_status implements renderable {
      * @param bool $canviewfullnames
      * @param int $extensionduedate - Any extension to the due date granted for this user
      * @param context $context - Any extension to the due date granted for this user
+     * @param blindmarking $blindmarking - Should we hide student identities from graders?
      */
     public function __construct($allowsubmissionsfromdate, $alwaysshowdescription, $submission,
                                 $teamsubmissionenabled, $teamsubmission, $submissiongroup,
                                 $submissiongroupmemberswhoneedtosubmit, $submissionsenabled,
                                 $locked, $graded, $duedate, $cutoffdate, $submissionplugins, $returnaction, $returnparams,
                                 $coursemoduleid, $courseid, $view, $canedit, $cansubmit, $canviewfullnames, $extensionduedate,
-                                $context) {
+                                $context, $blindmarking) {
         $this->allowsubmissionsfromdate = $allowsubmissionsfromdate;
         $this->alwaysshowdescription = $alwaysshowdescription;
         $this->submission = $submission;
@@ -386,6 +395,7 @@ class assign_submission_status implements renderable {
         $this->canviewfullnames = $canviewfullnames;
         $this->extensionduedate = $extensionduedate;
         $this->context = $context;
+        $this->blindmarking = $blindmarking;
     }
 
 }

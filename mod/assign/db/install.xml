@@ -25,7 +25,9 @@
         <FIELD NAME="cutoffdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The final date after which submissions will no longer be accepted for this assignment without an extensions." PREVIOUS="completionsubmit" NEXT="teamsubmission"/>
         <FIELD NAME="teamsubmission" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Do students submit in teams?" PREVIOUS="cutoffdate" NEXT="requireallteammemberssubmit"/>
         <FIELD NAME="requireallteammemberssubmit" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If enabled, a submission will not be accepted until all team members have submitted it." PREVIOUS="teamsubmission" NEXT="teamsubmissiongroupingid"/>
-        <FIELD NAME="teamsubmissiongroupingid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="A grouping id to get groups for team submissions" PREVIOUS="requireallteammemberssubmit"/>
+        <FIELD NAME="teamsubmissiongroupingid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="A grouping id to get groups for team submissions" PREVIOUS="requireallteammemberssubmit" NEXT="blindmarking"/>
+        <FIELD NAME="blindmarking" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Hide student/grader identities until the reveal identities action is performed" PREVIOUS="teamsubmissiongroupingid" NEXT="revealidentities"/>
+        <FIELD NAME="revealidentities" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Show identities for a blind marking assignment" PREVIOUS="blindmarking"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this assignment instance."/>
@@ -75,7 +77,7 @@
         <INDEX NAME="mailed" UNIQUE="false" FIELDS="mailed" COMMENT="True if notifications have been sent about the most recent grader update about this submission." PREVIOUS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="assign_plugin_config" COMMENT="Config data for an instance of a plugin in an assignment." PREVIOUS="assign_grades">
+    <TABLE NAME="assign_plugin_config" COMMENT="Config data for an instance of a plugin in an assignment." PREVIOUS="assign_grades" NEXT="assign_user_mapping">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="assignment"/>
         <FIELD NAME="assignment" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="plugin"/>
@@ -93,6 +95,18 @@
         <INDEX NAME="subtype" UNIQUE="false" FIELDS="subtype" COMMENT="The subtype of this plugin (assign_submission or assign_feedback)." PREVIOUS="plugin" NEXT="name"/>
         <INDEX NAME="name" UNIQUE="false" FIELDS="name" COMMENT="The name of this plugin setting." PREVIOUS="subtype"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="assign_user_mapping" COMMENT="Map an assignment specific id number to a user" PREVIOUS="assign_plugin_config">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="assignment"/>
+        <FIELD NAME="assignment" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assignment"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Unique ID for this user/assignment combination." NEXT="assignment"/>
+        <KEY NAME="assignment" TYPE="foreign" FIELDS="assignment" REFTABLE="assign" REFFIELDS="id" COMMENT="The assignment instance" PREVIOUS="primary" NEXT="user"/>
+        <KEY NAME="user" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="The user to map to an id" PREVIOUS="assignment"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>
