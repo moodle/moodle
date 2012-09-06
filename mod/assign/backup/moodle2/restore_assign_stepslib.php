@@ -73,6 +73,9 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->allowsubmissionsfromdate = $this->apply_date_offset($data->allowsubmissionsfromdate);
         $data->duedate = $this->apply_date_offset($data->duedate);
+        if ($data->teamsubmissiongroupingid > 0) {
+            $data->teamsubmissiongroupingid = $this->get_mappingid('grouping', $data->teamsubmissiongroupingid);
+        }
 
         if (!isset($data->cutoffdate)) {
             $data->cutoffdate = 0;
@@ -105,7 +108,12 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
 
         $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->userid = $this->get_mappingid('user', $data->userid);
+        if ($data->userid > 0) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
+        if ($data->groupid > 0) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
 
         $newitemid = $DB->insert_record('assign_submission', $data);
 
