@@ -1114,7 +1114,7 @@ class block_manager {
      * @return boolean true if anything was done. False if not.
      */
     public function process_url_delete() {
-        global $CFG;
+        global $CFG, $PAGE, $OUTPUT;
 
         $blockid = optional_param('bui_deleteid', null, PARAM_INT);
         $confirmdelete = optional_param('bui_confirm', null, PARAM_INT);
