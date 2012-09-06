@@ -127,7 +127,6 @@ class tinymce_texteditor extends texteditor {
         }
 
         $fontselectlist = empty($config->fontselectlist) ? '' : $config->fontselectlist;
-        $fontbutton = ($fontselectlist === '') ? '' : 'fontselect,';
 
         $params = array(
             'moodle_config' => $config,
@@ -154,13 +153,6 @@ class tinymce_texteditor extends texteditor {
             'theme_advanced_font_sizes' => "1,2,3,4,5,6,7",
             'theme_advanced_layout_manager' => "SimpleLayout",
             'theme_advanced_toolbar_align' => "left",
-            'theme_advanced_buttons1' => $fontbutton . 'fontsizeselect,formatselect,|,' .
-                'undo,redo,|,search,replace,|,fullscreen',
-            'theme_advanced_buttons2' => 'bold,italic,underline,strikethrough,sub,sup,|,' .
-                'justifyleft,justifycenter,justifyright,|,' .
-                'cleanup,removeformat,pastetext,pasteword,|,forecolor,backcolor,|,ltr,rtl',
-            'theme_advanced_buttons3' => 'bullist,numlist,outdent,indent,|,' .
-                'link,unlink,|,image,nonbreaking,charmap,table,|,code',
             'theme_advanced_fonts' => $fontselectlist,
             'theme_advanced_resize_horizontal' => true,
             'theme_advanced_resizing' => true,
@@ -169,6 +161,19 @@ class tinymce_texteditor extends texteditor {
             'theme_advanced_toolbar_location' => "top",
             'theme_advanced_statusbar_location' => "bottom",
         );
+
+        // Should we override the default toolbar layout unconditionally?
+        $customtoolbar = self::parse_toolbar_setting($config->customtoolbar);
+        if ($customtoolbar) {
+            $i = 1;
+            foreach ($customtoolbar as $line) {
+                $params['theme_advanced_buttons'.$i] = $line;
+                $i++;
+            }
+        } else {
+            // At least one line is required.
+            $params['theme_advanced_buttons1'] = '';
+        }
 
         if (!empty($options['legacy']) or !empty($options['noclean']) or !empty($options['trusted'])) {
             // now deal somehow with non-standard tags, people scream when we do not make moodle code xtml strict,
@@ -187,20 +192,6 @@ class tinymce_texteditor extends texteditor {
 
         // Allow plugins to adjust parameters.
         editor_tinymce_plugin::all_update_init_params($params, $context, $options);
-
-        // Should we override the default toolbar layout unconditionally?
-        $customtoolbar = self::parse_toolbar_setting($config->customtoolbar);
-        if ($customtoolbar) {
-            unset($params['theme_advanced_buttons1']);
-            unset($params['theme_advanced_buttons2']);
-            unset($params['theme_advanced_buttons3']);
-            unset($params['theme_advanced_buttons4']);
-            $i = 1;
-            foreach ($customtoolbar as $line) {
-                $params['theme_advanced_buttons'.$i] = $line;
-                $i++;
-            }
-        }
 
         // Remove temporary parameters.
         unset($params['moodle_config']);
@@ -221,6 +212,7 @@ class tinymce_texteditor extends texteditor {
         }
         $customtoolbar = str_replace("\r", "\n", $customtoolbar);
         $customtoolbar = strtolower($customtoolbar);
+        $i = 0;
         foreach (explode("\n", $customtoolbar) as $line) {
             $line = preg_replace('/[^a-z0-9_,\|\-]/', ',', $line);
             $line = str_replace('|', ',|,', $line);
@@ -229,7 +221,13 @@ class tinymce_texteditor extends texteditor {
             if ($line === '') {
                 continue;
             }
-            $result[] = $line;
+            if ($i == 10) {
+                // Maximum is ten lines, merge the rest to the last line.
+                $result[9] = $result[9].','.$line;
+            } else {
+                $result[] = $line;
+                $i++;
+            }
         }
         return $result;
     }
