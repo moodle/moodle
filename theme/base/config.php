@@ -162,8 +162,7 @@ $THEME->layouts = array(
     // The pagelayout used for safebrowser and securewindow.
     'secure' => array(
         'file' => 'general.php',
-        'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre',
+        'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true, 'nologinlinks'=>true),
     ),
 );
