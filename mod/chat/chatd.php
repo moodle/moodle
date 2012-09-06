@@ -538,8 +538,18 @@ EOD;
 
         // $this->trace('QUIRKS value for this connection is '.$customdata['quirks']);
 
+        $header  = "HTTP/1.1 200 OK\n";
+        $header .= "Connection: close\n";
+        $header .= "Date: ".date('r')."\n";
+        $header .= "Server: Moodle\n";
+        $header .= "Content-Type: text/html; charset=utf-8\n";
+        $header .= "Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT\n";
+        $header .= "Cache-Control: no-cache, must-revalidate\n";
+        $header .= "Expires: Wed, 4 Oct 1978 09:32:45 GMT\n";
+        $header .= "\n";
+
         $this->dismiss_half($sessionid, false);
-        $this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $CHAT_HTMLHEAD_JS);
+        $this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $header . $CHAT_HTMLHEAD_JS);
         $this->trace('Connection accepted: '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL].', SID: '.$sessionid.' UID: '.$chatuser->userid.' GID: '.$chatuser->groupid, E_USER_WARNING);
 
         // Finally, broadcast the "entered the chat" message
