@@ -218,7 +218,7 @@ class edit_category_form extends moodleform {
         $mform->addElement('header', 'headerparent', get_string('parentcategory', 'grades'));
 
         $options = array();
-        $default = '';
+        $default = -1;
         $categories = grade_category::fetch_all(array('courseid'=>$COURSE->id));
 
         foreach ($categories as $cat) {
@@ -231,6 +231,7 @@ class edit_category_form extends moodleform {
 
         if (count($categories) > 1) {
             $mform->addElement('select', 'parentcategory', get_string('parentcategory', 'grades'), $options);
+            $mform->setDefault('parentcategory', $default);
             $mform->addElement('static', 'currentparentaggregation', get_string('currentparentaggregation', 'grades'));
         }
 
