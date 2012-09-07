@@ -25,8 +25,42 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot.'/course/lib.php');
 
 class courselib_testcase extends advanced_testcase {
+
+    public function test_create_course() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $defaultcategory = $DB->get_field_select('course_categories', "MIN(id)", "parent=0");
+
+        $course = new stdClass();
+        $course->fullname = 'Apu loves Unit Təsts';
+        $course->shortname = 'Spread the lŭve';
+        $course->idnumber = '123';
+        $course->summary = 'Awesome!';
+        $course->summaryformat = FORMAT_PLAIN;
+        $course->format = 'topics';
+        $course->newsitems = 0;
+        $course->numsections = 5;
+        $course->category = $defaultcategory;
+
+        $created = create_course($course);
+        $context = context_course::instance($created->id);
+
+        // Compare original and created.
+        $original = (array) $course;
+        $this->assertEquals($original, array_intersect_key((array) $created, $original));
+
+        // Ensure default section is created.
+        $sectioncreated = $DB->record_exists('course_sections', array('course' => $created->id, 'section' => 0));
+        $this->assertTrue($sectioncreated);
+
+        // Ensure blocks have been associated to the course.
+        $blockcount = $DB->count_records('block_instances', array('parentcontextid' => $context->id));
+        $this->assertGreaterThan(0, $blockcount);
+    }
 
     public function test_reorder_sections() {
         global $DB;
