@@ -121,6 +121,7 @@ $string['advanced_dlg:about_version'] = 'Version';
 $string['advanced_dlg:anchor_name'] = 'Anchor name';
 $string['advanced_dlg:anchor_title'] = 'Insert/edit anchor';
 $string['advanced_dlg:charmap_title'] = 'Select custom character';
+$string['advanced_dlg:charmap_usage'] = 'Use left and right arrows to navigate.';
 $string['advanced_dlg:code_title'] = 'HTML Source Editor';
 $string['advanced_dlg:code_wordwrap'] = 'Word wrap';
 $string['advanced_dlg:colorpicker_color'] = 'Color:';
