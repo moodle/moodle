@@ -66,7 +66,13 @@ foreach (get_plugin_list('tinymce') as $component => $ignored) {
             // Ignore malformed strings with more colons.
             continue;
         }
-        $result[$parts[0]][$parts[1]] = $value;
+        $component = $parts[0];
+        $string = $parts[1];
+        if ($component === 'colors') {
+            // Colors are a special case, the hex values must be uppercase.
+            $string = strtoupper($string);
+        }
+        $result[$component][$string] = $value;
     }
 }
 
