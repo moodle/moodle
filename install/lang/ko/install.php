@@ -34,7 +34,8 @@ $string['admindirname'] = '관리 디렉토리';
 $string['availablelangs'] = '가능한 언어 목록';
 $string['chooselanguagehead'] = '언어를 선택하시오';
 $string['chooselanguagesub'] = '설치 과정에서 사용할 언어를 선택하십시오. 선택한 언어는 사이트의 기본 언어로 사용할 수 있으며, 추후 다른 언어로 바꿀 수도 있습니다.';
-$string['clialreadyinstalled'] = '이미 config.php 파일이 존재함. 사이트를 업데이트하려면 admin/cli/upgrade.php를 사용하십시오';
+$string['clialreadyconfigured'] = '만일 이 사이트를 설치하고 싶은데 이미 config.php파일이 있다면, admin/cli/install_database.php 를 이용하시기 바랍니다.';
+$string['clialreadyinstalled'] = '이미 config.php 파일이 존재함. 사이트를 업그레이드하려면 admin/cli/upgrade.php를 사용하시기 바랍니다.';
 $string['cliinstallheader'] = '무들 {$a} 명령 입력 설치 프로그램';
 $string['databasehost'] = '데이터베이스 호스트';
 $string['databasename'] = '데이터베이스 명칭';
@@ -82,10 +83,10 @@ $string['phpversionhelp'] = '<p>무들은 적어도 PHP4.3.0 혹은 5.1.0. 이�
 <p>PHP를 업그레이드 하시거나 새버전을 제공하는 웹호스팅 업체로 이전하기를 권합니다!<br />(만일 5.0.x버전을 사용 중이라면 4.4.x 버전으로 다운그레이드 할 수 있습니다)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = '당신의 컴퓨터에 <strong>{$a->packname} {$a->packversion}</strong> 패키지를 성공적으로 설치한 것을 축하합니다!';
-$string['welcomep30'] = '<strong>{$a->installername}</strong> 의 이 릴리스는 <strong>무들</strong>이 그 속에서 동작하는 환경을 생성하기 위한 어플리케이션을 포함하고 있습니다.';
+$string['welcomep30'] = '<strong>{$a->installername}</strong> 판본은 <strong>무들</strong>이 동작하는 환경을 생성하기 위한 어플리케이션을 포함하고 있습니다.';
 $string['welcomep40'] = '이 패키지는 <strong>무들 {$a->moodlerelease} ({$a->moodleversion})</strong> 을 포함하고 있습니다.';
 $string['welcomep50'] = '이 패키지에 있는 모든 어플리케이션을 사용하는 것은 각각의 라이센스에의해 지배받습니다. 완전한<strong>{$a->installername}</strong> 패키지는
 <a href="http://www.opensource.org/docs/definition_plain.html">공개 소스이며 </a> <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> 라이선스에 의해 배포됩니다.';
-$string['welcomep60'] = '다음 페이지들은 당신의 컴퓨터에 <strong>무들</strong>을 설정하고 설치하는 길라잡이 역할을 할 것입니다. 기본 설정을 선택하거나 목적에 맞게 선택적으로 수정할 수 있습니다.';
+$string['welcomep60'] = '다음 페이지들은 컴퓨터에 <strong>무들</strong>을 설치하고 설정하는 길라잡이 역할을 할 것입니다. 기본 설정을 선택하거나 목적에 맞게 선택적으로 수정할 수 있습니다.';
 $string['welcomep70'] = '<strong>무들</strong> 설정을 계속하기 위해서는 "다음" 버튼을 클릭하세요.';
 $string['wwwroot'] = '웹 주소';
