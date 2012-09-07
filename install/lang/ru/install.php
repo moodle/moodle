@@ -40,6 +40,7 @@ $string['databasehost'] = 'Сервер баз данных';
 $string['databasename'] = 'Название базы данных';
 $string['databasetypehead'] = 'Выберите драйвер базы данных';
 $string['dataroot'] = 'Каталог данных';
+$string['datarootpermission'] = 'Разрешения на каталоги данных';
 $string['dbprefix'] = 'Префикс имён таблиц';
 $string['dirroot'] = 'Каталог Moodle';
 $string['environmenthead'] = 'Проверка среды...';
