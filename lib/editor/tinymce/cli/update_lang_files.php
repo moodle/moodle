@@ -24,7 +24,7 @@
 
 define('CLI_SCRIPT', true);
 
-require __DIR__.'/../../../../../config.php';
+require __DIR__ . '/../../../../config.php';
 
 if (!debugging('', DEBUG_DEVELOPER)) {
     die('Only for developers!!!!!');
@@ -181,9 +181,6 @@ function editor_tinymce_parse_js_files() {
     }
     foreach($maindata as $component=>$data) {
         foreach ($data as $key=>$value) {
-            if ($component === 'colors') {
-                $key = strtolower($key);
-            }
             $strings["$component:$key"] = $value;
         }
     }

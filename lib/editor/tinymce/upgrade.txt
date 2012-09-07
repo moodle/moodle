@@ -7,3 +7,9 @@ information provided here is intended especially for developers.
 new features:
 
 * subplugin support - see http://docs.moodle.org/dev/TinyMCE_plugins
+
+
+changes:
+
+* Editor directory exception was removed from Moodle JS loader, use moodle_url instance
+  if you want to prevent standard caching.
