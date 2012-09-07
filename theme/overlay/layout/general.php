@@ -125,7 +125,7 @@ echo $OUTPUT->doctype() ?>
 
 </div>
 <!-- START OF FOOTER -->
-
+    <?php if ($hasfooter) { ?>
     <div id="page-footer" class="wrapper2">
         <p class="helplink">
         <?php echo page_doc_link(get_string('moodledocslink')) ?>
@@ -139,7 +139,7 @@ echo $OUTPUT->doctype() ?>
         echo $OUTPUT->standard_footer_html();
         ?>
     </div>
-
+    <?php } ?>
 <!-- END OF FOOTER -->
 
 <?php echo $OUTPUT->standard_end_of_body_html() ?>

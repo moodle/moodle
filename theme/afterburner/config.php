@@ -123,11 +123,18 @@ $THEME->layouts = array(
         'file' => 'embedded.php',
         'regions' => array()
     ),
-    // The pagelayout used for reports
+    // The pagelayout used for reports.
     'report' => array(
         'file' => 'default.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
+    ),
+    // The pagelayout used for safebrowser and securewindow.
+    'secure' => array(
+        'file' => 'default.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-pre',
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true, 'nologinlinks'=>true),
     ),
 );
 

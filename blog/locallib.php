@@ -292,11 +292,10 @@ class blog_entry implements renderable {
      * @return void
      */
     public function delete() {
-        global $DB, $USER;
-
-        $returnurl = '';
+        global $DB;
 
         $this->delete_attachments();
+        $this->remove_associations();
 
         $DB->delete_records('post', array('id' => $this->id));
         tag_set('post', $this->id, array());

@@ -1,6 +1,11 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.4 ===
+
+optional changes:
+* new optional boolean parameter $withlinks for public function login_info() in lib/outputrenderers.php (MDL-31365)
+* new layout option "nologinlinks" and new page layout "secure" e.g. for safebrowser and securewindow (MDL-31365)
 
 === 2.3 ===
 

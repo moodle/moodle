@@ -82,12 +82,12 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'duedate', get_string('duedate', 'assign'), array('optional'=>true));
         $mform->addHelpButton('duedate', 'duedate', 'assign');
         $mform->setDefault('duedate', time()+7*24*3600);
+        $mform->addElement('date_time_selector', 'cutoffdate', get_string('cutoffdate', 'assign'), array('optional'=>true));
+        $mform->addHelpButton('cutoffdate', 'cutoffdate', 'assign');
+        $mform->setDefault('cutoffdate', time()+7*24*3600);
         $mform->addElement('selectyesno', 'alwaysshowdescription', get_string('alwaysshowdescription', 'assign'));
         $mform->addHelpButton('alwaysshowdescription', 'alwaysshowdescription', 'assign');
         $mform->setDefault('alwaysshowdescription', 1);
-        $mform->addElement('selectyesno', 'preventlatesubmissions', get_string('preventlatesubmissions', 'assign'));
-        $mform->addHelpButton('preventlatesubmissions', 'preventlatesubmissions', 'assign');
-        $mform->setDefault('preventlatesubmissions', 0);
         $mform->addElement('selectyesno', 'submissiondrafts', get_string('submissiondrafts', 'assign'));
         $mform->addHelpButton('submissiondrafts', 'submissiondrafts', 'assign');
         $mform->setDefault('submissiondrafts', 0);
@@ -107,6 +107,33 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addHelpButton('sendlatenotifications', 'sendlatenotifications', 'assign');
         $mform->setDefault('sendlatenotifications', 1);
         $mform->disabledIf('sendlatenotifications', 'sendnotifications', 'eq', 1);
+        $mform->addElement('selectyesno', 'teamsubmission', get_string('teamsubmission', 'assign'));
+        $mform->addHelpButton('teamsubmission', 'teamsubmission', 'assign');
+        $mform->setDefault('teamsubmission', 0);
+        $mform->addElement('selectyesno', 'requireallteammemberssubmit', get_string('requireallteammemberssubmit', 'assign'));
+        $mform->addHelpButton('requireallteammemberssubmit', 'requireallteammemberssubmit', 'assign');
+        $mform->setDefault('requireallteammemberssubmit', 0);
+        $mform->disabledIf('requireallteammemberssubmit', 'teamsubmission', 'eq', 0);
+        $mform->disabledIf('requireallteammemberssubmit', 'submissiondrafts', 'eq', 0);
+
+        $groupings = groups_get_all_groupings($assignment->get_course()->id);
+        $options = array();
+        $options[0] = get_string('none');
+        foreach ($groupings as $grouping) {
+            $options[$grouping->id] = $grouping->name;
+        }
+        $mform->addElement('select', 'teamsubmissiongroupingid', get_string('teamsubmissiongroupingid', 'assign'), $options);
+        $mform->addHelpButton('teamsubmissiongroupingid', 'teamsubmissiongroupingid', 'assign');
+        $mform->setDefault('teamsubmissiongroupingid', 0);
+        $mform->disabledIf('teamsubmissiongroupingid', 'teamsubmission', 'eq', 0);
+
+        $mform->addElement('selectyesno', 'blindmarking', get_string('blindmarking', 'assign'));
+        $mform->addHelpButton('blindmarking', 'blindmarking', 'assign');
+        $mform->setDefault('blindmarking', 0);
+        if ($assignment->has_submissions_or_grades() ) {
+            $mform->freeze('blindmarking');
+        }
+
 
         // plagiarism enabling form
         if (!empty($CFG->enableplagiarism)) {
@@ -150,6 +177,17 @@ class mod_assign_mod_form extends moodleform_mod {
                 $errors['duedate'] = get_string('duedatevalidation', 'assign');
             }
         }
+        if ($data['duedate'] && $data['cutoffdate']) {
+            if ($data['duedate'] > $data['cutoffdate']) {
+                $errors['cutoffdate'] = get_string('cutoffdatevalidation', 'assign');
+            }
+        }
+        if ($data['allowsubmissionsfromdate'] && $data['cutoffdate']) {
+            if ($data['allowsubmissionsfromdate'] > $data['cutoffdate']) {
+                $errors['cutoffdate'] = get_string('cutoffdatefromdatevalidation', 'assign');
+            }
+        }
+
         return $errors;
     }
 

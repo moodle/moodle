@@ -1117,16 +1117,18 @@ function question_category_options($contexts, $top = false, $currentcat = 0,
 
     // sort cats out into different contexts
     $categoriesarray = array();
-    foreach ($pcontexts as $pcontext) {
-        $contextstring = print_context_name(
-                context::instance_by_id($pcontext), true, true);
+    foreach ($pcontexts as $contextid) {
+        $context = context::instance_by_id($contextid);
+        $contextstring = $context->get_context_name(true, true);
         foreach ($categories as $category) {
-            if ($category->contextid == $pcontext) {
+            if ($category->contextid == $contextid) {
                 $cid = $category->id;
                 if ($currentcat != $cid || $currentcat == 0) {
                     $countstring = !empty($category->questioncount) ?
                             " ($category->questioncount)" : '';
-                    $categoriesarray[$contextstring][$cid] = $category->indentedname.$countstring;
+                    $categoriesarray[$contextstring][$cid] =
+                            format_string($category->indentedname, true,
+                                array('context' => $context)) . $countstring;
                 }
             }
         }

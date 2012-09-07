@@ -49,5 +49,8 @@ class editor_tinymce_testcase extends advanced_testcase {
 
         $result = tinymce_texteditor::parse_toolbar_setting("| \n\n| \n \r");
         $this->assertSame(array(), $result);
+
+        $result = tinymce_texteditor::parse_toolbar_setting("one\ntwo\n\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten");
+        $this->assertSame(array('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'), $result);
     }
 }

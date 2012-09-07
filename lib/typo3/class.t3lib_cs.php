@@ -194,6 +194,7 @@ class t3lib_cs {
 		// mapping of iso-639-1 language codes to script names
 	var $lang_to_script = array(
 			// iso-639-1 language codes, see http://www.loc.gov/standards/iso639-2/php/code_list.php
+		'af' => 'west_european', //Afrikaans
 		'ar' => 'arabic',
 		'bg' => 'cyrillic', // Bulgarian
 		'bs' => 'east_european', // Bosnian
@@ -244,6 +245,7 @@ class t3lib_cs {
 		'zh' => 'chinese',
 			// MS language codes, see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_language_strings.asp
 			// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/wceinternational5/html/wce50conLanguageIdentifiersandLocales.asp
+		'afk'=> 'west_european', // Afrikaans
 		'ara' => 'arabic',
 		'bgr' => 'cyrillic', // Bulgarian
 		'cat' => 'west_european', // Catalan
@@ -304,6 +306,7 @@ class t3lib_cs {
 		'trk' => 'turkish',
 		'ukr' => 'cyrillic', // Ukrainian
 			// English language names
+		'afrikaans' => 'west_european',
 		'albanian' => 'albanian',
 		'arabic' => 'arabic',
 		'basque' => 'west_european',
@@ -412,6 +415,7 @@ class t3lib_cs {
 		// TYPO3 specific: Array with the system charsets used for each system language in TYPO3:
 		// Empty values means "iso-8859-1"
 	var $charSetArray = array(
+		'af' => '',
 		'ar' => 'iso-8859-6',
 		'ba' => 'iso-8859-2',
 		'bg' => 'windows-1251',
@@ -481,7 +485,7 @@ class t3lib_cs {
 
 		// TYPO3 specific: Array with the iso names used for each system language in TYPO3:
 		// Missing keys means: same as TYPO3
-		// @deprecated since TYPO3 4.6, will be removed in TYPO3 4.8 - use t3lib_l10n_Locales::getIsoMapping()
+		// @deprecated since TYPO3 4.6, will be removed in TYPO3 6.0 - use t3lib_l10n_Locales::getIsoMapping()
 	var $isoArray = array(
 		'ba' => 'bs',
 		'br' => 'pt_BR',
@@ -568,7 +572,7 @@ class t3lib_cs {
 		if (TYPO3_OS == 'WIN') {
 			$cs = $this->script_to_charset_windows[$script] ? $this->script_to_charset_windows[$script] : 'windows-1252';
 		} else {
-			$cs = $this->script_to_charset_unix[$script] ? $this->script_to_charset_unix[$script] : 'iso-8859-1';
+			$cs = $this->script_to_charset_unix[$script] ? $this->script_to_charset_unix[$script] : 'utf-8';
 		}
 
 		return $cs;
@@ -810,26 +814,32 @@ class t3lib_cs {
 	 * @param	boolean		If set, then all string-HTML entities (like &amp; or &pound; will be converted as well)
 	 * @return	string		Output string
 	 */
-	function entities_to_utf8($str, $alsoStdHtmlEnt = 0) {
+	function entities_to_utf8($str, $alsoStdHtmlEnt = FALSE) {
 		if ($alsoStdHtmlEnt) {
-			$trans_tbl = array_flip(get_html_translation_table(HTML_ENTITIES)); // Getting them in iso-8859-1 - but thats ok since this is observed below.
+			$trans_tbl = array_flip(get_html_translation_table(HTML_ENTITIES, ENT_COMPAT, 'UTF-8'));
 		}
 
 		$token = md5(microtime());
 		$parts = explode($token, preg_replace('/(&([#[:alnum:]]*);)/', $token . '${2}' . $token, $str));
 		foreach ($parts as $k => $v) {
-			if ($k % 2) {
-				if (substr($v, 0, 1) == '#') { // Dec or hex entities:
-					if (substr($v, 1, 1) == 'x') {
-						$parts[$k] = $this->UnumberToChar(hexdec(substr($v, 2)));
-					} else {
-						$parts[$k] = $this->UnumberToChar(substr($v, 1));
-					}
-				} elseif ($alsoStdHtmlEnt && $trans_tbl['&' . $v . ';']) { // Other entities:
-					$parts[$k] = $this->utf8_encode($trans_tbl['&' . $v . ';'], 'iso-8859-1');
-				} else { // No conversion:
-					$parts[$k] = '&' . $v . ';';
+				// only take every second element
+			if ($k % 2 === 0) {
+				continue;
+			}
+
+			$position = 0;
+			if (substr($v, $position, 1) == '#') { // Dec or hex entities:
+				$position++;
+				if (substr($v, $position, 1) == 'x') {
+					$v = hexdec(substr($v, ++$position));
+				} else {
+					$v = substr($v, $position);
 				}
+				$parts[$k] = $this->UnumberToChar($v);
+			} elseif ($alsoStdHtmlEnt && isset($trans_tbl['&' . $v . ';'])) { // Other entities:
+				$parts[$k] = $trans_tbl['&' . $v . ';'];
+			} else { // No conversion:
+				$parts[$k] = '&' . $v . ';';
 			}
 		}
 
@@ -1696,9 +1706,9 @@ class t3lib_cs {
 	/**
 	 * Converts special chars (like æøåÆØÅ, umlauts etc) to ascii equivalents (usually double-bytes, like æ => ae etc.)
 	 *
-	 * @param	string		Character set of string
-	 * @param	string		Input string to convert
-	 * @return	string		The converted string
+	 * @param string $charset Character set of string
+	 * @param string $string Input string to convert
+	 * @return string The converted string
 	 */
 	function specCharsToASCII($charset, $string) {
 		if ($charset == 'utf-8') {

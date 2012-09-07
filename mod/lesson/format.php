@@ -29,27 +29,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**#@+
- * The core question types.
- *
- * These used to be in lib/questionlib.php, but are being deprecated. Copying them
- * here to keep this code working for now.
- */
-if (!defined('SHORTANSWER')) {
-    define("SHORTANSWER",   "shortanswer");
-    define("TRUEFALSE",     "truefalse");
-    define("MULTICHOICE",   "multichoice");
-    define("RANDOM",        "random");
-    define("MATCH",         "match");
-    define("RANDOMSAMATCH", "randomsamatch");
-    define("DESCRIPTION",   "description");
-    define("NUMERICAL",     "numerical");
-    define("MULTIANSWER",   "multianswer");
-    define("CALCULATED",    "calculated");
-    define("ESSAY",         "essay");
-}
-/**#@-*/
-
 /**
  * Given some question info and some data about the the answers
  * this function parses, organises and saves the question
@@ -59,10 +38,10 @@ if (!defined('SHORTANSWER')) {
  * Lifted from mod/quiz/lib.php -
  *    1. all reference to oldanswers removed
  *    2. all reference to quiz_multichoice table removed
- *    3. In SHORTANSWER questions usecase is store in the qoption field
- *    4. In NUMERIC questions store the range as two answers
- *    5. TRUEFALSE options are ignored
- *    6. For MULTICHOICE questions with more than one answer the qoption field is true
+ *    3. In shortanswer questions usecase is store in the qoption field
+ *    4. In numeric questions store the range as two answers
+ *    5. truefalse options are ignored
+ *    6. For multichoice questions with more than one answer the qoption field is true
  *
  * @param opject $question Contains question data like question, type and answers.
  * @return object Returns $result->error or $result->notice.
@@ -116,7 +95,7 @@ function lesson_save_question_options($question, $lesson) {
             }
             break;
 
-        case LESSON_PAGE_NUMERICAL:   // Note similarities to SHORTANSWER
+        case LESSON_PAGE_NUMERICAL:   // Note similarities to shortanswer.
 
             $answers = array();
             $maxfraction = -1;
@@ -305,11 +284,11 @@ class qformat_default {
     var $displayerrors = true;
     var $category = NULL;
     var $questionids = array();
-    var $qtypeconvert = array(NUMERICAL   => LESSON_PAGE_NUMERICAL,
-                              MULTICHOICE => LESSON_PAGE_MULTICHOICE,
-                              TRUEFALSE   => LESSON_PAGE_TRUEFALSE,
-                              SHORTANSWER => LESSON_PAGE_SHORTANSWER,
-                              MATCH       => LESSON_PAGE_MATCHING
+    var $qtypeconvert = array('numerical'   => LESSON_PAGE_NUMERICAL,
+                               'multichoice' => LESSON_PAGE_MULTICHOICE,
+                               'truefalse'   => LESSON_PAGE_TRUEFALSE,
+                               'shortanswer' => LESSON_PAGE_SHORTANSWER,
+                               'match'       => LESSON_PAGE_MATCHING
                               );
 
     // Importing functions
@@ -352,11 +331,11 @@ class qformat_default {
                 case 'category':
                     break;
                 // the good ones
-                case SHORTANSWER :
-                case NUMERICAL :
-                case TRUEFALSE :
-                case MULTICHOICE :
-                case MATCH :
+                case 'shortanswer' :
+                case 'numerical' :
+                case 'truefalse' :
+                case 'multichoice' :
+                case 'match' :
                     $count++;
 
                     //Show nice formated question in one line.
@@ -366,12 +345,12 @@ class qformat_default {
                     $newpage->lessonid = $lesson->id;
                     $newpage->qtype = $this->qtypeconvert[$question->qtype];
                     switch ($question->qtype) {
-                        case SHORTANSWER :
+                        case 'shortanswer' :
                             if (isset($question->usecase)) {
                                 $newpage->qoption = $question->usecase;
                             }
                             break;
-                        case MULTICHOICE :
+                        case 'multichoice' :
                             if (isset($question->single)) {
                                 $newpage->qoption = !$question->single;
                             }

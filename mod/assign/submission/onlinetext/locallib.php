@@ -250,7 +250,18 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         if ($onlinetextsubmission) {
             $user = $DB->get_record("user", array("id"=>$submission->userid),'id,username,firstname,lastname', MUST_EXIST);
 
-            $prefix = clean_filename(fullname($user) . "_" .$submission->userid . "_");
+            if (!$this->assignment->is_blind_marking()) {
+                $filename = str_replace('_', '', fullname($user)) . '_' .
+                            $this->assignment->get_uniqueid_for_user($userid) . '_' .
+                            $this->get_name() . '_';
+                $prefix = clean_filename($filename);
+            } else {
+                $filename = get_string('participant', 'assign') . '_' .
+                            $this->assignment->get_uniqueid_for_user($userid) . '_' .
+                            $this->get_name() . '_';
+                $prefix = clean_filename($filename);
+            }
+
             $finaltext = str_replace('@@PLUGINFILE@@/', $prefix, $onlinetextsubmission->onlinetext);
             $submissioncontent = "<html><body>". format_text($finaltext, $onlinetextsubmission->onlineformat, array('context'=>$this->assignment->get_context())). "</body></html>";      //fetched from database
 

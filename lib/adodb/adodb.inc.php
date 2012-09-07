@@ -14,7 +14,7 @@
 /**
 	\mainpage
 	
-	 @version V5.16 26 Mar 2012   (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
+	 @version V5.17 17 May 2012   (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -177,7 +177,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V5.16 26 Mar 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V5.17 17 May 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -3499,22 +3499,21 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
    *
    * $upper  0 = lowercase, 1 = uppercase, 2 = whatever is returned by FetchField
    */
-	function GetRowAssoc($upper=1)
+	function GetRowAssoc($upper=1) 
 	{
 		$record = array();
-	 //	if (!$this->fields) return $record;
-		
-	   	if (!$this->bind) {
+		if (!$this->bind) {
 			$this->GetAssocKeys($upper);
 		}
-		
 		foreach($this->bind as $k => $v) {
-			$record[$k] = $this->fields[$v];
+			if( isset( $this->fields[$v] ) ) {
+				$record[$k] = $this->fields[$v];
+			} else if (isset($this->fields[$k])) {
+				$record[$k] = $this->fields[$k];
+			}
 		}
-
 		return $record;
 	}
-	
 	
 	/**
 	 * Clean up recordset

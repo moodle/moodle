@@ -303,7 +303,7 @@ class theme_mymobile_core_renderer extends core_renderer {
      *
      * @return string
      */
-    public function login_info() {
+    public function login_info($withlinks = null) {
         global $USER, $CFG, $DB, $SESSION;
 
         if (during_initial_install()) {

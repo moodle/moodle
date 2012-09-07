@@ -130,3 +130,7 @@ div.earlysubmission {
 #page-mod-assign-view div.gradingtable tr .quickgrademodified {
     background-color: #FFCC99;
 }
+
+td.submissioneditable {
+    color: red;
+}

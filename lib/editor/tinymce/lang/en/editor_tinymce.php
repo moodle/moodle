@@ -27,8 +27,8 @@
 $string['availablebuttons'] = 'Available buttons';
 $string['common:browseimage'] = 'Find or upload an image...';
 $string['common:browsemedia'] = 'Find or upload a sound, video or applet...';
-$string['customtoolbar'] = 'Custom editor toolbar';
-$string['customtoolbar_desc'] = 'Each line contains a list of comma separated button names, use "|" as a group separator. Leave empty if you want standard toolbar. See <a href="{$a}" target="_blank">{$a}</a> for the list of default TinyMCE buttons.';
+$string['customtoolbar'] = 'Editor toolbar';
+$string['customtoolbar_desc'] = 'Each line contains a list of comma separated button names, use "|" as a group separator, empty lines are ignored. See <a href="{$a}" target="_blank">{$a}</a> for the list of default TinyMCE buttons.';
 $string['fontselectlist'] = 'Available fonts list';
 $string['media_dlg:filename'] = 'Filename';
 $string['pluginname'] = 'TinyMCE HTML editor';
