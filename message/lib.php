@@ -749,27 +749,13 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
         }
     }
 
-    //Sort the conversations. This is a bit complicated as we need to sort by $conversation->timecreated
-    //and there may be multiple conversations with the same timecreated value.
-    //The conversations array contains both read and unread messages (different tables) so sorting by ID won't work
-    usort($conversations, "conversationsort");
+    // Sort the conversations by $conversation->timecreated, newest to oldest
+    // There may be multiple conversations with the same timecreated
+    // The conversations array contains both read and unread messages (different tables) so sorting by ID won't work
+    $result = collatorlib::asort_objects_by_property($conversations, 'timecreated', collatorlib::SORT_NUMERIC);
+    $conversations = array_reverse($conversations);
 
     return $conversations;
-}
-
-/**
- * Sort function used to order conversations
- *
- * @param object $a A conversation object
- * @param object $b A conversation object
- * @return integer
- */
-function conversationsort($a, $b)
-{
-    if ($a->timecreated == $b->timecreated) {
-        return 0;
-    }
-    return ($a->timecreated > $b->timecreated) ? -1 : 1;
 }
 
 /**
@@ -1804,7 +1790,7 @@ function message_get_history($user1, $user2, $limitnum=0, $viewingnewmessages=fa
                                                     array($user1->id, $user2->id, $user2->id, $user1->id, $user1->id),
                                                     "timecreated $sort", '*', 0, $limitnum)) {
         foreach ($messages_read as $message) {
-            $messages[$message->timecreated] = $message;
+            $messages[] = $message;
         }
     }
     if ($messages_new =  $DB->get_records_select('message', "((useridto = ? AND useridfrom = ?) OR
@@ -1812,15 +1798,16 @@ function message_get_history($user1, $user2, $limitnum=0, $viewingnewmessages=fa
                                                     array($user1->id, $user2->id, $user2->id, $user1->id, $user1->id),
                                                     "timecreated $sort", '*', 0, $limitnum)) {
         foreach ($messages_new as $message) {
-            $messages[$message->timecreated] = $message;
+            $messages[] = $message;
         }
     }
 
+    $result = collatorlib::asort_objects_by_property($messages, 'timecreated', collatorlib::SORT_NUMERIC);
+
     //if we only want the last $limitnum messages
-    ksort($messages);
     $messagecount = count($messages);
-    if ($limitnum>0 && $messagecount>$limitnum) {
-        $messages = array_slice($messages, $messagecount-$limitnum, $limitnum, true);
+    if ($limitnum > 0 && $messagecount > $limitnum) {
+        $messages = array_slice($messages, $messagecount - $limitnum, $limitnum, true);
     }
 
     return $messages;

@@ -1114,25 +1114,65 @@ class block_manager {
      * @return boolean true if anything was done. False if not.
      */
     public function process_url_delete() {
-        $blockid = optional_param('bui_deleteid', null, PARAM_INTEGER);
+        global $CFG, $PAGE, $OUTPUT;
+
+        $blockid = optional_param('bui_deleteid', null, PARAM_INT);
+        $confirmdelete = optional_param('bui_confirm', null, PARAM_INT);
+
         if (!$blockid) {
             return false;
         }
 
         require_sesskey();
-
         $block = $this->page->blocks->find_instance($blockid);
-
         if (!$block->user_can_edit() || !$this->page->user_can_edit_blocks() || !$block->user_can_addto($this->page)) {
             throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('deleteablock'));
         }
 
-        blocks_delete_instance($block->instance);
+        if (!$confirmdelete) {
+            $deletepage = new moodle_page();
+            $deletepage->set_pagelayout('admin');
+            $deletepage->set_course($this->page->course);
+            $deletepage->set_context($this->page->context);
+            if ($this->page->cm) {
+                $deletepage->set_cm($this->page->cm);
+            }
 
-        // If the page URL was a guess, it will contain the bui_... param, so we must make sure it is not there.
-        $this->page->ensure_param_not_in_url('bui_deleteid');
+            $deleteurlbase = str_replace($CFG->wwwroot . '/', '/', $this->page->url->out_omit_querystring());
+            $deleteurlparams = $this->page->url->params();
+            $deletepage->set_url($deleteurlbase, $deleteurlparams);
+            $deletepage->set_block_actions_done();
+            // At this point we are either going to redirect, or display the form, so
+            // overwrite global $PAGE ready for this. (Formslib refers to it.)
+            $PAGE = $deletepage;
+            //some functions like MoodleQuickForm::addHelpButton use $OUTPUT so we need to replace that too
+            $output = $deletepage->get_renderer('core');
+            $OUTPUT = $output;
 
-        return true;
+            $site = get_site();
+            $blocktitle = $block->get_title();
+            $strdeletecheck = get_string('deletecheck', 'block', $blocktitle);
+            $message = get_string('deleteblockcheck', 'block', $blocktitle);
+
+            $PAGE->navbar->add($strdeletecheck);
+            $PAGE->set_title($blocktitle . ': ' . $strdeletecheck);
+            $PAGE->set_heading($site->fullname);
+            echo $OUTPUT->header();
+            $confirmurl = new moodle_url("$deletepage->url?", array('sesskey' => sesskey(), 'bui_deleteid' => $block->instance->id, 'bui_confirm' => 1));
+            $cancelurl = new moodle_url($deletepage->url);
+            $yesbutton = new single_button($confirmurl, get_string('yes'));
+            $nobutton = new single_button($cancelurl, get_string('no'));
+            echo $OUTPUT->confirm($message, $yesbutton, $nobutton);
+            echo $OUTPUT->footer();
+            // Make sure that nothing else happens after we have displayed this form.
+            exit;
+        } else {
+            blocks_delete_instance($block->instance);
+            // bui_deleteid and bui_confirm should not be in the PAGE url.
+            $this->page->ensure_param_not_in_url('bui_deleteid');
+            $this->page->ensure_param_not_in_url('bui_confirm');
+            return true;
+        }
     }
 
     /**

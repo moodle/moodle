@@ -42,6 +42,7 @@
 #page-admin-report-backups-index .backup-unfinished {color: #f00000;}
 #page-admin-report-backups-index .backup-skipped,
 #page-admin-report-backups-index .backup-ok {color: #006400;}
+#page-admin-report-backups-index .backup-warning {color: #ff9900;}
 
 #page-admin-qbehaviours .disabled {color: gray;}
 #page-admin-qbehaviours th {white-space: normal;}

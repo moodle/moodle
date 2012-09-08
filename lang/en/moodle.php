@@ -1803,6 +1803,7 @@ $string['virusfounduser'] = 'The file you have uploaded, {$a->filename}, has bee
 $string['virusplaceholder'] = 'This file that has been uploaded was found to contain a virus and has been moved or deleted and the user notified.';
 $string['visible'] = 'Visible';
 $string['visibletostudents'] = 'Visible to {$a}';
+$string['warning'] = 'Warning';
 $string['warningdeleteresource'] = 'Warning: {$a} is referred in a resource. Would you like to update the resource?';
 $string['webpage'] = 'Web page';
 $string['week'] = 'Week';
