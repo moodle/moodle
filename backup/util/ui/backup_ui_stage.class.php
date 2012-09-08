@@ -469,6 +469,9 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
         }
 
         echo $OUTPUT->box_start();
+        if (!empty($this->results['missing_files_in_pool'])) {
+            echo $OUTPUT->notification(get_string('missingfilesinpool', 'backup'), 'notifyproblem');
+        }
         echo $OUTPUT->notification(get_string('executionsuccess', 'backup'), 'notifysuccess');
         echo $OUTPUT->continue_button($restorerul);
         echo $OUTPUT->box_end();

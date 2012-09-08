@@ -37,6 +37,11 @@ class repository_flickr extends repository {
     public $photos;
 
     /**
+     * Stores sizes of images to prevent multiple API call
+     */
+    static private $sizes = array();
+
+    /**
      *
      * @param int $repositoryid
      * @param object $context
@@ -221,18 +226,41 @@ class repository_flickr extends repository {
         return $this->search('', $page);
     }
 
+    /**
+     * Return photo url by given photo id
+     * @param string $photo_id
+     * @return string
+     */
     public function get_link($photo_id) {
-        global $CFG;
-        $result = $this->flickr->photos_getSizes($photo_id);
-        $url = '';
-        if(!empty($result[4])) {
-            $url = $result[4]['source'];
-        } elseif(!empty($result[3])) {
-            $url = $result[3]['source'];
-        } elseif(!empty($result[2])) {
-            $url = $result[2]['source'];
+        $bestsize = $this->get_best_size($photo_id);
+        if (!isset($bestsize['source'])) {
+            throw new repository_exception('cannotdownload', 'repository');
         }
-        return $url;
+        return $bestsize['source'];
+    }
+
+    /**
+     * Returns the best size for a photo
+     *
+     * @param string $photoid the photo identifier
+     * @return array of information provided by the API
+     */
+    protected function get_best_size($photoid) {
+        if (!isset(self::$sizes[$photoid])) {
+            // Sizes are returned from smallest to greatest.
+            self::$sizes[$photoid] = $this->flickr->photos_getSizes($photoid);
+        }
+        $sizes = self::$sizes[$photoid];
+        $bestsize = array();
+        if (is_array($sizes)) {
+            while ($bestsize = array_pop($sizes)) {
+                // Make sure the source is set. Exit the loop if found.
+                if (isset($bestsize['source'])) {
+                    break;
+                }
+            }
+        }
+        return $bestsize;
     }
 
     /**
