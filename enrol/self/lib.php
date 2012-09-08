@@ -334,31 +334,57 @@ class enrol_self_plugin extends enrol_plugin {
      * @return void
      */
     public function cron() {
+        $this->sync(null, true);
+    }
+
+    /**
+     * Sync all meta course links.
+     *
+     * @param int $courseid one course, empty mean all
+     * @param bool $verbose verbose CLI output
+     * @return int 0 means ok, 1 means error, 2 means plugin disabled
+     */
+    public function sync($courseid = null, $verbose = false) {
         global $DB;
 
         if (!enrol_is_enabled('self')) {
-            return;
+            return 2;
         }
 
-        $plugin = enrol_get_plugin('self');
+        // Unfortunately this may take a long time, execution can be interrupted safely here.
+        @set_time_limit(0);
+        raise_memory_limit(MEMORY_HUGE);
 
-        $now = time();
+        if ($verbose) {
+            mtrace('Verifying self-enrolments...');
+        }
+
+        $params = array('now'=>time(), 'useractive'=>ENROL_USER_ACTIVE, 'courselevel'=>CONTEXT_COURSE);
+        $coursesql = "";
+        if ($courseid) {
+            $coursesql = "AND e.courseid = :courseid";
+            $params['courseid'] = $courseid;
+        }
 
         // Note: the logic of self enrolment guarantees that user logged in at least once (=== u.lastaccess set)
         //       and that user accessed course at least once too (=== user_lastaccess record exists).
 
-        // First deal with users that did not log in for a really long time.
+        // First deal with users that did not log in for a really long time - they do not have user_lastaccess records.
         $sql = "SELECT e.*, ue.userid
                   FROM {user_enrolments} ue
                   JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'self' AND e.customint2 > 0)
                   JOIN {user} u ON u.id = ue.userid
-                 WHERE :now - u.lastaccess > e.customint2";
-        $rs = $DB->get_recordset_sql($sql, array('now'=>$now));
+                 WHERE :now - u.lastaccess > e.customint2
+                       $coursesql";
+        $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $instance) {
             $userid = $instance->userid;
             unset($instance->userid);
-            $plugin->unenrol_user($instance, $userid);
-            mtrace("unenrolling user $userid from course $instance->courseid as they have did not log in for $instance->customint2 days");
+            $this->unenrol_user($instance, $userid);
+            if ($verbose) {
+                $days = $instance->customint2 / 60*60*24;
+                mtrace("  unenrolling user $userid from course $instance->courseid as they have did not log in for at least $days days");
+            }
         }
         $rs->close();
 
@@ -367,17 +393,85 @@ class enrol_self_plugin extends enrol_plugin {
                   FROM {user_enrolments} ue
                   JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'self' AND e.customint2 > 0)
                   JOIN {user_lastaccess} ul ON (ul.userid = ue.userid AND ul.courseid = e.courseid)
-                 WHERE :now - ul.timeaccess > e.customint2";
-        $rs = $DB->get_recordset_sql($sql, array('now'=>$now));
+                 WHERE :now - ul.timeaccess > e.customint2
+                       $coursesql";
+        $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $instance) {
             $userid = $instance->userid;
             unset($instance->userid);
-            $plugin->unenrol_user($instance, $userid);
-            mtrace("unenrolling user $userid from course $instance->courseid as they have did not access course for $instance->customint2 days");
+            $this->unenrol_user($instance, $userid);
+            if ($verbose) {
+                $days = $instance->customint2 / 60*60*24;
+                mtrace("  unenrolling user $userid from course $instance->courseid as they have did not access course for at least $days days");
+            }
         }
         $rs->close();
 
-        flush();
+        // Deal with expired accounts.
+        $action = $this->get_config('expiredaction', ENROL_EXT_REMOVED_KEEP);
+
+        if ($action == ENROL_EXT_REMOVED_UNENROL) {
+            $instances = array();
+            $sql = "SELECT ue.*, e.courseid, c.id AS contextid
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'self')
+                      JOIN {context} c ON (c.instanceid = e.courseid AND c.contextlevel = :courselevel)
+                     WHERE ue.timeend > 0 AND ue.timeend < :now
+                           $coursesql";
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $ue) {
+                if (empty($instances[$ue->enrolid])) {
+                    $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
+                }
+                $instance = $instances[$ue->enrolid];
+                if ($instance->roleid) {
+                    role_unassign($instance->roleid, $ue->userid, $ue->contextid, '', 0);
+                }
+                $this->unenrol_user($instance, $ue->userid);
+                if ($verbose) {
+                    mtrace("  unenrolling expired user $ue->userid from course $instance->courseid");
+                }
+            }
+            $rs->close();
+            unset($instances);
+
+        } else if ($action == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+            $instances = array();
+            $sql = "SELECT ue.*, e.courseid, c.id AS contextid
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'self')
+                      JOIN {context} c ON (c.instanceid = e.courseid AND c.contextlevel = :courselevel)
+                     WHERE ue.timeend > 0 AND ue.timeend < :now
+                           AND ue.status = :useractive
+                           $coursesql";
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $ue) {
+                if (empty($instances[$ue->enrolid])) {
+                    $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
+                }
+                $instance = $instances[$ue->enrolid];
+                if (1 == $DB->count_records('role_assignments', array('userid'=>$ue->userid, 'contextid'=>$ue->contextid))) {
+                    role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$ue->contextid, 'component'=>'', 'itemid'=>0), true);
+                } else if ($instance->roleid) {
+                    role_unassign($instance->roleid, $ue->userid, $ue->contextid, '', 0);
+                }
+                $this->update_user_enrol($instance, $ue->userid, ENROL_USER_SUSPENDED);
+                if ($verbose) {
+                    mtrace("  suspending expired user $ue->userid in course $instance->courseid");
+                }
+            }
+            $rs->close();
+            unset($instances);
+
+        } else {
+            // ENROL_EXT_REMOVED_KEEP means no changes.
+        }
+
+        if ($verbose) {
+            mtrace('...user self-enrolment updates finished.');
+        }
+
+        return 0;
     }
 
      /**
