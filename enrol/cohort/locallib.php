@@ -51,8 +51,8 @@ class enrol_cohort_handler {
         $sql = "SELECT e.*, r.id as roleexists
                   FROM {enrol} e
              LEFT JOIN {role} r ON (r.id = e.roleid)
-                 WHERE customint1 = :cohortid AND enrol = 'cohort'
-              ORDER BY id ASC";
+                 WHERE e.customint1 = :cohortid AND e.enrol = 'cohort'
+              ORDER BY e.id ASC";
         if (!$instances = $DB->get_records_sql($sql, array('cohortid'=>$ca->cohortid))) {
             return true;
         }
