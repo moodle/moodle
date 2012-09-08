@@ -109,23 +109,21 @@ class google_docs {
                     $source = 'https://spreadsheets.google.com/feeds/download/spreadsheets/Export?key='.$docid.'&exportFormat=xls';
                     break;
                 case 'pdf':
-                    $title  = (string)$gdoc->title;
-                    $source = (string)$gdoc->content[0]->attributes()->src;
-                    break;
                 case 'file':
-                    $title = (string)$gdoc->title;
-                    $source = (string)$gdoc->content[0]->attributes()->src;
+                    $title  = (string)$gdoc->title;
+                    // Some files don't have a content probably because the download has been restricted.
+                    if (isset($gdoc->content)) {
+                        $source = (string)$gdoc->content[0]->attributes()->src;
+                    }
                     break;
             }
 
-            if (!empty($source)) {
-                $files[] =  array( 'title' => $title,
-                    'url' => "{$gdoc->link[0]->attributes()->href}",
-                    'source' => $source,
-                    'date'   => usertime(strtotime($gdoc->updated)),
-                    'thumbnail' => (string) $OUTPUT->pix_url(file_extension_icon($title, 32))
-                );
-            }
+            $files[] =  array( 'title' => $title,
+                'url' => "{$gdoc->link[0]->attributes()->href}",
+                'source' => $source,
+                'date'   => usertime(strtotime($gdoc->updated)),
+                'thumbnail' => (string) $OUTPUT->pix_url(file_extension_icon($title, 32))
+            );
         }
 
         return $files;

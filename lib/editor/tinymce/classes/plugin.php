@@ -152,7 +152,12 @@ abstract class editor_tinymce_plugin {
      */
     protected function add_button_after(array &$params, $row, $button,
             $after = '', $alwaysadd = true) {
-        $this->check_row($row);
+
+        if ($this->is_button_present($params, $button)) {
+            return true;
+        }
+
+        $row = $this->fix_row($params, $row);
 
         $field = 'theme_advanced_buttons' . $row;
         $old = $params[$field];
@@ -190,7 +195,7 @@ abstract class editor_tinymce_plugin {
      * to see if it succeeded.
      *
      * @param array $params TinyMCE init parameters array
-     * @param int $row Row to add button to (1 to 3)
+     * @param int $row Row to add button to (1 to 10)
      * @param string $button Identifier of button/plugin
      * @param string $before Adds button directly before the named plugin
      * @param bool $alwaysadd If specified $after string not found, add at start
@@ -198,7 +203,11 @@ abstract class editor_tinymce_plugin {
      */
     protected function add_button_before(array &$params, $row, $button,
             $before = '', $alwaysadd = true) {
-        $this->check_row($row);
+
+        if ($this->is_button_present($params, $button)) {
+            return true;
+        }
+        $row = $this->fix_row($params, $row);
 
         $field = 'theme_advanced_buttons' . $row;
         $old = $params[$field];
@@ -226,15 +235,47 @@ abstract class editor_tinymce_plugin {
     }
 
     /**
-     * Checks the row value is valid.
-     *
-     * @param int $row Row to add button to (1 to 3)
-     * @throws coding_exception If row value is outside the range 1-3
+     * Tests if button already present.
+     * @param array $params
+     * @param string $button
+     * @return bool
      */
-    private function check_row($row) {
-        if ($row < 1 || $row > 3) {
-            throw new coding_exception("Invalid row option: $row");
+    private function is_button_present(array $params, $button) {
+        for($i=1; $i<=10; $i++) {
+            $field = 'theme_advanced_buttons' . $i;
+            if (!isset($params[$field])) {
+                continue;
+            }
+            $buttons = explode(',', $params[$field]);
+            if (in_array($button, $buttons)) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    /**
+     * Checks the row value is valid, fix if necessary.
+     *
+     * @param array $params TinyMCE init parameters array
+     * @param int $row Row to add button if exists
+     * @return int requested row if exists, lower number if does not exist.
+     */
+    private function fix_row(array &$params, $row) {
+        $row = ($row < 1) ? 1 : (int)$row;
+        $row = ($row > 10) ? 10 : $row;
+
+        $field = 'theme_advanced_buttons' . $row;
+        if (isset($params[$field])) {
+            return $row;
+        }
+        for($i=$row; $i>=1; $i--) {
+            if (isset($params[$field])) {
+                return $row;
+            }
+        }
+        // This should not happen.
+        return 1;
     }
 
     /**

@@ -73,6 +73,19 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->allowsubmissionsfromdate = $this->apply_date_offset($data->allowsubmissionsfromdate);
         $data->duedate = $this->apply_date_offset($data->duedate);
+        if ($data->teamsubmissiongroupingid > 0) {
+            $data->teamsubmissiongroupingid = $this->get_mappingid('grouping', $data->teamsubmissiongroupingid);
+        }
+
+        if (!isset($data->cutoffdate)) {
+            $data->cutoffdate = 0;
+        }
+
+        if (!empty($data->preventlatesubmissions)) {
+            $data->cutoffdate = $data->duedate;
+        } else {
+            $data->cutoffdate = $this->apply_date_offset($data->cutoffdate);
+        }
 
 
         $newitemid = $DB->insert_record('assign', $data);
@@ -95,7 +108,12 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
 
         $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->userid = $this->get_mappingid('user', $data->userid);
+        if ($data->userid > 0) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
+        if ($data->groupid > 0) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
 
         $newitemid = $DB->insert_record('assign_submission', $data);
 
@@ -121,6 +139,7 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->grader = $this->get_mappingid('user', $data->grader);
+        $data->extensionduedate = $this->apply_date_offset($data->extensionduedate);
 
         $newitemid = $DB->insert_record('assign_grades', $data);
 

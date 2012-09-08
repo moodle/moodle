@@ -112,7 +112,7 @@ class qformat_missingword extends qformat_default {
                 return false;
 
             case 1:
-                $question->qtype = SHORTANSWER;
+                $question->qtype = 'shortanswer';
 
                 $answer = trim($answers[0]);
                 if ($answer[0] == "=") {
@@ -125,7 +125,7 @@ class qformat_missingword extends qformat_default {
                 return $question;
 
             default:
-                $question->qtype = MULTICHOICE;
+                $question->qtype = 'multichoice';
 
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);

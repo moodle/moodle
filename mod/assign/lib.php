@@ -113,7 +113,7 @@ function assign_grading_areas_list() {
  * @return void
  */
 function assign_extend_settings_navigation(settings_navigation $settings, navigation_node $navref) {
-    global $PAGE;
+    global $PAGE, $DB;
 
     $cm = $PAGE->cm;
     if (!$cm) {
@@ -144,6 +144,14 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
        $node = $navref->add(get_string('downloadall', 'assign'), $link, navigation_node::TYPE_SETTING);
    }
 
+   if (has_capability('mod/assign:revealidentities', $context)) {
+       $assignment = $DB->get_record('assign', array('id'=>$cm->instance), 'blindmarking, revealidentities');
+
+       if ($assignment && $assignment->blindmarking && !$assignment->revealidentities) {
+           $link = new moodle_url('/mod/assign/view.php', array('id' => $cm->id,'action'=>'revealidentities'));
+           $node = $navref->add(get_string('revealidentities', 'assign'), $link, navigation_node::TYPE_SETTING);
+       }
+   }
 }
 
 
@@ -216,9 +224,14 @@ function assign_print_overview($courses, &$htmlarray) {
         $time = time();
         $isopen = false;
         if ($assignment->duedate) {
-            $isopen = $assignment->allowsubmissionsfromdate <= $time;
-            if ($assignment->preventlatesubmissions) {
-                $isopen = ($isopen && $time <= $assignment->duedate);
+            $duedate = false;
+            if ($assignment->cutoffdate) {
+                $duedate = $assignment->cutoffdate;
+            }
+            if ($duedate) {
+                $isopen = ($assignment->allowsubmissionsfromdate <= $time && $time <= $duedate);
+            } else {
+                $isopen = ($assignment->allowsubmissionsfromdate <= $time);
             }
         }
         if ($isopen) {
@@ -232,6 +245,9 @@ function assign_print_overview($courses, &$htmlarray) {
     }
 
     $strduedate = get_string('duedate', 'assign');
+    $strcutoffdate = get_string('nosubmissionsacceptedafter', 'assign');
+    $strnolatesubmissions = get_string('nolatesubmissions', 'assign');
+    $strduedateno = get_string('duedateno', 'assign');
     $strduedateno = get_string('duedateno', 'assign');
     $strgraded = get_string('graded', 'assign');
     $strnotgradedyet = get_string('notgradedyet', 'assign');
@@ -278,6 +294,13 @@ function assign_print_overview($courses, &$htmlarray) {
             $str .= '<div class="info">'.$strduedate.': '.userdate($assignment->duedate).'</div>';
         } else {
             $str .= '<div class="info">'.$strduedateno.'</div>';
+        }
+        if ($assignment->cutoffdate) {
+            if ($assignment->cutoffdate == $assignment->duedate) {
+                $str .= '<div class="info">'.$strnolatesubmissions.'</div>';
+            } else {
+                $str .= '<div class="info">'.$strcutoffdate.': '.userdate($assignment->cutoffdate).'</div>';
+            }
         }
         $context = context_module::instance($assignment->coursemodule);
         if (has_capability('mod/assign:grade', $context)) {

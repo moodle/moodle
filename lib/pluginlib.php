@@ -1085,7 +1085,7 @@ class available_update_checker {
             return true;
         }
 
-        if ($now - $recent > HOURSECS) {
+        if ($now - $recent > 24 * HOURSECS) {
             return false;
         }
 
