@@ -129,8 +129,10 @@ class tinymce_texteditor extends texteditor {
 
         $fontselectlist = empty($config->fontselectlist) ? '' : $config->fontselectlist;
 
-        // TODO: MDL-35318 somehow implement cache invalidation - we need to get lang revision somehow and sync purging.
         $langrev = -1;
+        if (!empty($CFG->cachejs)) {
+            $langrev = get_string_manager()->get_revision();
+        }
 
         $params = array(
             'moodle_config' => $config,
