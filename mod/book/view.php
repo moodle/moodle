@@ -181,11 +181,12 @@ if (!$book->customtitles) {
     $hidden = $chapter->hidden ? 'dimmed_text' : '';
     if (!$chapter->subchapter) {
         $currtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
-        echo '<p class="book_chapter_title '.$hidden.'">'.$currtitle.'</p>';
+        echo $OUTPUT->heading($currtitle, 2, array('class' => 'book_chapter_title '.$hidden));
     } else {
         $currtitle = book_get_chapter_title($chapters[$chapter->id]->parent, $chapters, $book, $context);
         $currsubtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
-        echo '<p class="book_chapter_title '.$hidden.'">'.$currtitle.'<br />'.$currsubtitle.'</p>';
+        echo $OUTPUT->heading($currtitle, 2, array('class' => 'book_chapter_title '.$hidden));
+        echo $OUTPUT->heading($currsubtitle, 3, array('class' => 'book_chapter_title '.$hidden));
     }
 }
 $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $chapter->id);
