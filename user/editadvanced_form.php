@@ -72,7 +72,13 @@ class user_editadvanced_form extends moodleform {
         /// Next the customisable profile fields
         profile_definition($mform, $userid);
 
-        $this->add_action_buttons(false, get_string('updatemyprofile'));
+        if ($userid == -1) {
+            $btnstring = get_string('createuser');
+        } else {
+            $btnstring = get_string('updatemyprofile');
+        }
+
+        $this->add_action_buttons(false, $btnstring);
     }
 
     function definition_after_data() {
