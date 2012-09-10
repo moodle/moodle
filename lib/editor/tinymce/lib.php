@@ -96,10 +96,11 @@ class tinymce_texteditor extends texteditor {
      */
     public function use_editor($elementid, array $options=null, $fpoptions=null) {
         global $PAGE;
+        // Note: use full moodle_url instance to prevent standard JS loader.
         if (debugging('', DEBUG_DEVELOPER)) {
-            $PAGE->requires->js('/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce_src.js');
+            $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce_src.js'));
         } else {
-            $PAGE->requires->js('/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce.js');
+            $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/tiny_mce/'.$this->version.'/tiny_mce.js'));
         }
         $PAGE->requires->js_init_call('M.editor_tinymce.init_editor', array($elementid, $this->get_init_params($elementid, $options)), true);
         if ($fpoptions) {
@@ -127,6 +128,9 @@ class tinymce_texteditor extends texteditor {
         }
 
         $fontselectlist = empty($config->fontselectlist) ? '' : $config->fontselectlist;
+
+        // TODO: MDL-35318 somehow implement cache invalidation - we need to get lang revision somehow and sync purging.
+        $langrev = -1;
 
         $params = array(
             'moodle_config' => $config,
@@ -160,6 +164,8 @@ class tinymce_texteditor extends texteditor {
             'min_height' => 30,
             'theme_advanced_toolbar_location' => "top",
             'theme_advanced_statusbar_location' => "bottom",
+            'language_load' => false, // We load all lang strings directly from Moodle.
+            'langrev' => $langrev,
         );
 
         // Should we override the default toolbar layout unconditionally?
