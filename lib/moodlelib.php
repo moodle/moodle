@@ -6962,7 +6962,7 @@ class core_string_manager implements string_manager {
             // Increment the revision counter.
             $langrev = get_config('core', 'langrev');
             $next = time();
-            if ($langrev !== false and $langrev > 60*60 + $next) {
+            if ($langrev !== false and $next <= $langrev and $langrev - $next < 60*60) {
                 // This resolves problems when reset is requested repeatedly within 1s,
                 // the < 1h condition prevents accidental switching to future dates
                 // because we might not recover from it.
