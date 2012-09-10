@@ -1,6 +1,34 @@
 #!/usr/bin/php -q
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Chat daemon
+ *
+ * @package    mod_chat
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+define('CLI_SCRIPT', true);
+
+require(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once($CFG->dirroot . '/mod/chat/lib.php');
+
 // Browser quirks
 define('QUIRK_CHUNK_UPDATE', 0x0001);
 
@@ -27,30 +55,15 @@ $_SERVER['PHP_SELF']        = 'dummy';
 $_SERVER['SERVER_NAME']     = 'dummy';
 $_SERVER['HTTP_USER_AGENT'] = 'dummy';
 
-define('NO_MOODLE_COOKIES', true); // session not used here
-
-include('../../config.php');
-include('lib.php');
-
 $_SERVER['SERVER_NAME'] = $CFG->chat_serverhost;
 $_SERVER['PHP_SELF']    = "http://$CFG->chat_serverhost:$CFG->chat_serverport/mod/chat/chatd.php";
 
 $safemode = ini_get('safe_mode');
-
-if($phpversion < '4.3') {
-    die("Error: The Moodle chat daemon requires at least PHP version 4.3 to run.\n       Since your version is $phpversion, you have to upgrade.\n\n");
-}
 if(!empty($safemode)) {
     die("Error: Cannot run with PHP safe_mode = On. Turn off safe_mode in php.ini.\n");
 }
 
-$passref = ini_get('allow_call_time_pass_reference');
-if(empty($passref)) {
-    die("Error: Cannot run with PHP allow_call_time_pass_reference = Off. Turn on allow_call_time_pass_reference in php.ini.\n");
-}
-
 @set_time_limit (0);
-set_magic_quotes_runtime(0);
 error_reporting(E_ALL);
 
 function chat_empty_connection() {
@@ -225,12 +238,11 @@ class ChatDaemon {
     }
 
     function get_user_window($sessionid) {
-        global $CFG, $PAGE, $OUTPUT;
+        global $CFG, $OUTPUT;
 
         static $str;
 
         $info = &$this->sets_info[$sessionid];
-        $PAGE->set_course($info['course']);
 
         $timenow = time();
 
@@ -717,7 +729,6 @@ EOD;
     }
 
     function message_broadcast($message, $sender) {
-        global $PAGE;
 
         if(empty($this->conn_sets)) {
             return true;
@@ -735,7 +746,6 @@ EOD;
             {
 
                 // Simply give them the message
-                $PAGE->set_course($info['course']);
                 $output = chat_format_message_manually($message, $info['courseid'], $sender, $info['user']);
                 $this->trace('Delivering message "'.$output->text.'" to '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL]);
 
