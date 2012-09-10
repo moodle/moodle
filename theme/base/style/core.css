@@ -184,6 +184,12 @@ a.skip:active {position: static;display: block;}
 #page-footer .validators ul {margin:0px;padding:0px;list-style-type:none;}
 #page-footer .validators ul li {display:inline;margin-right:10px;margin-left:10px;}
 
+.performanceinfo .cachesused {margin-top:1em;}
+.performanceinfo .cachesused .cache-stats-heading {font-weight: bold;text-decoration: underline;font-size:110%;}
+.performanceinfo .cachesused .cache-definition-stats {font-weight:bold;margin-top:0.3em;}
+.performanceinfo .cachesused .cache-store-stats {text-indent: 1em;}
+.performanceinfo .cachesused .cache-total-stats {font-weight:bold;margin-top:0.3em;}
+
 /**
  * Tabs
  */

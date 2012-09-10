@@ -216,6 +216,16 @@ $temp->add(new admin_setting_configselect('memcachedpconn', new lang_string('mem
                                           array( '0' => new lang_string('no'),
                                                  '1' => new lang_string('yes'))));
 */
+
+$ADMIN->add('server', new admin_category('cache', new lang_string('caching', 'cache')));
+$ADMIN->add('cache', new admin_externalpage('cacheconfig', get_string('cacheconfig', 'cache'), new moodle_url('/cache/admin.php')));
+$ADMIN->add('cache', new admin_externalpage('cachetestperformance', get_string('testperformance', 'cache'), new moodle_url('/cache/testperformance.php')));
+foreach (get_plugin_list_with_file('cache', 'settings.php') as $plugin => $path) {
+    $settings = new admin_settingpage('cache_'.$plugin.'_settings', new lang_string('pluginname', 'cache_'.$plugin));
+    require_once($path);
+    $ADMIN->add('cache', $settings);
+}
+
 $ADMIN->add('server', $temp);
 
 
