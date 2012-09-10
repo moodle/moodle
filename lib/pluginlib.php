@@ -843,6 +843,11 @@ class available_update_checker {
     /**
      * Loads the most recent raw response record we have fetched
      *
+     * After this method is called, $this->recentresponse is set to an array. If the
+     * array is empty, then either no data have been fetched yet or the fetched data
+     * do not have expected format (and thence they are ignored and a debugging
+     * message is displayed).
+     *
      * This implementation uses the config_plugins table as the permanent storage.
      *
      * @param bool $forcereload reload even if it was already loaded
@@ -862,7 +867,8 @@ class available_update_checker {
                 $this->recentfetch = $config->recentfetch;
                 $this->recentresponse = $this->decode_response($config->recentresponse);
             } catch (available_update_checker_exception $e) {
-                // do not set recentresponse if the validation fails
+                debugging('Invalid info about available updates detected and will be ignored: '.$e->getMessage(), DEBUG_ALL);
+                $this->recentresponse = array();
             }
 
         } else {
