@@ -1,0 +1,397 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Cache configuration reader
+ *
+ * This file is part of Moodle's cache API, affectionately called MUC.
+ * It contains the components that are requried in order to use caching.
+ *
+ * @package    core
+ * @category   cache
+ * @copyright  2012 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Cache configuration reader.
+ *
+ * This class is used to interact with the cache's configuration.
+ * The configuration is stored in the Moodle data directory.
+ *
+ * @package    core
+ * @category   cache
+ * @copyright  2012 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_config {
+
+    /**
+     * The configured stores
+     * @var array
+     */
+    protected $configstores = array();
+
+    /**
+     * The configured mode mappings
+     * @var array
+     */
+    protected $configmodemappings = array();
+
+    /**
+     * The configured definitions as picked up from cache.php files
+     * @var array
+     */
+    protected $configdefinitions = array();
+
+    /**
+     * The definition mappings that have been configured.
+     * @var array
+     */
+    protected $configdefinitionmappings = array();
+
+    /**
+     * Please use cache_config::instance to get an instance of the cache config that is ready to be used.
+     */
+    public function __construct() {
+        //$this->config_load();
+    }
+
+    /**
+     * Gets an instance of the cache_configuration class.
+     *
+     * @return cache_config
+     */
+    public static function instance() {
+        $factory = cache_factory::instance();
+        return $factory->create_config_instance();
+    }
+
+    /**
+     * Checks if the configuration file exists.
+     *
+     * @return bool True if it exists
+     */
+    public static function config_file_exists() {
+        // Allow for late static binding
+        return file_exists(self::get_config_file_path());
+    }
+
+    /**
+     * Returns the expected path to the configuration file.
+     *
+     * @return string The absolute path
+     */
+    protected static function get_config_file_path() {
+        global $CFG;
+        return $CFG->dataroot.'/muc/config.php';
+    }
+
+    /**
+     * Loads the configuration file and parses its contents into the expected structure.
+     *
+     * @return boolean
+     */
+    public function load() {
+        global $CFG;
+
+        $configuration = $this->include_configuration();
+
+        $this->configstores = array();
+        $this->configdefinitions = array();
+        $this->configmodemappings = array();
+        $this->configdefinitionmappings = array();
+
+        // Filter the stores
+        $availableplugins = cache_helper::early_get_cache_plugins();
+        foreach ($configuration['stores'] as $store) {
+            if (!is_array($store) || !array_key_exists('name', $store) || !array_key_exists('plugin', $store)) {
+                // Not a valid instance configuration
+                debugging('Invalid cache store in config. Missing name or plugin.', DEBUG_DEVELOPER);
+                continue;
+            }
+            $plugin = $store['plugin'];
+            $class = 'cache_store_'.$plugin;
+            if (!array_key_exists($plugin, $availableplugins) && (!class_exists($class) || !is_subclass_of($class, 'cache_store'))) {
+                // Not a valid plugin, or has been uninstalled, just skip it an carry on.
+                debugging('Invalid cache store in config. Not an available plugin.', DEBUG_DEVELOPER);
+                continue;
+            }
+            $file = $CFG->dirroot.'/cache/stores/'.$plugin.'/lib.php';
+            if (!class_exists($class) && file_exists($file)) {
+                require_once($file);
+            }
+            if (!class_exists($class)) {
+                continue;
+            }
+            if (!array_key_exists('cache_store', class_implements($class))) {
+                continue;
+            }
+            if (!array_key_exists('configuration', $store) || !is_array($store['configuration'])) {
+                $store['configuration'] = array();
+            }
+            if (!empty($store['useforlocking'])) {
+                // The site has a specified cache for locking.
+                unset($this->configstores['default_locking']);
+            }
+            $store['class'] = $class;
+            $store['default'] = !empty($store['default']);
+            $this->configstores[$store['name']] = $store;
+        }
+
+        // Filter the definitions
+        foreach ($configuration['definitions'] as $id => $conf) {
+            if (!is_array($conf)) {
+                // Something is very wrong here.
+                continue;
+            }
+            if (!array_key_exists('mode', $conf) || !array_key_exists('component', $conf) || !array_key_exists('area', $conf)) {
+                // Not a valid definition configuration
+                continue;
+            }
+            if (array_key_exists($id, $this->configdefinitions)) {
+                debugging('Duplicate cache definition detected. This should never happen.', DEBUG_DEVELOPER);
+                continue;
+            }
+            $conf['mode'] = (int)$conf['mode'];
+            if ($conf['mode'] < cache_store::MODE_APPLICATION || $conf['mode'] > cache_store::MODE_REQUEST) {
+                // Invalid cache mode used for the definition
+                continue;
+            }
+            $this->configdefinitions[$id] = $conf;
+        }
+
+        // Filter the mode mappings
+        foreach ($configuration['modemappings'] as $mapping) {
+            if (!is_array($mapping) || !array_key_exists('mode', $mapping) || !array_key_exists('store', $mapping)) {
+                // Not a valid mapping configuration
+                debugging('A cache mode mapping entry is invalid.', DEBUG_DEVELOPER);
+                continue;
+            }
+            if (!array_key_exists($mapping['store'], $this->configstores)) {
+                // Mapped array instance doesn't exist
+                debugging('A cache mode mapping exists for a mode or store that does not exist.', DEBUG_DEVELOPER);
+                continue;
+            }
+            $mapping['mode'] = (int)$mapping['mode'];
+            if ($mapping['mode'] < 0 || $mapping['mode'] > 4) {
+                // Invalid cache type used for the mapping
+                continue;
+            }
+            if (!array_key_exists('sort', $mapping)) {
+                $mapping['sort'] = 0;
+            }
+            $this->configmodemappings[] = $mapping;
+        }
+
+        // Filter the definition mappings
+        foreach ($configuration['definitionmappings'] as $mapping) {
+            if (!is_array($mapping) || !array_key_exists('definition', $mapping) || !array_key_exists('store', $mapping)) {
+                // Not a valid mapping configuration
+                continue;
+            }
+            if (!array_key_exists($mapping['store'], $this->configstores)) {
+                // Mapped array instance doesn't exist
+                continue;
+            }
+            if (!array_key_exists($mapping['definition'], $this->configdefinitions)) {
+                // Mapped array instance doesn't exist
+                continue;
+            }
+            if (!array_key_exists('sort', $mapping)) {
+                $mapping['sort'] = 0;
+            }
+            $this->configdefinitionmappings[] = $mapping;
+        }
+
+        usort($this->configmodemappings, array($this, 'sort_mappings'));
+        usort($this->configdefinitionmappings, array($this, 'sort_mappings'));
+
+        return true;
+    }
+
+    /**
+     * Includes the configuration file and makes sure it contains the expected bits.
+     *
+     * You need to ensure that the config file exists before this is called.
+     *
+     * @return array
+     * @throws cache_exception
+     */
+    protected function include_configuration() {
+        $configuration = array();
+        $cachefile = self::get_config_file_path();
+
+        if (!file_exists($cachefile)) {
+            throw new cache_exception('Default cache configuration could not be found. It should have already been created by now.');
+        }
+        include($cachefile);
+        if (!is_array($configuration)) {
+            throw new cache_exception('Invalid cache configuration file');
+        }
+        if (!array_key_exists('stores', $configuration) || !is_array($configuration['stores'])) {
+            $configuration['stores'] = array();
+        }
+        if (!array_key_exists('modemappings', $configuration) || !is_array($configuration['modemappings'])) {
+            $configuration['modemappings'] = array();
+        }
+        if (!array_key_exists('definitions', $configuration) || !is_array($configuration['definitions'])) {
+            $configuration['definitions'] = array();
+        }
+        if (!array_key_exists('definitionmappings', $configuration) || !is_array($configuration['definitionmappings'])) {
+            $configuration['definitionmappings'] = array();
+        }
+
+        return $configuration;
+    }
+
+    /**
+     * Used to sort cache config arrays based upon a sort key.
+     *
+     * Highest number at the top.
+     *
+     * @param array $a
+     * @param array $b
+     * @return int
+     */
+    protected function sort_mappings(array $a, array $b) {
+        if ($a['sort'] == $b['sort']) {
+            return 0;
+        }
+        return ($a['sort'] < $b['sort']) ? 1 : -1 ;
+    }
+
+    /**
+     * Gets a definition from the config given its name.
+     *
+     * @param string $id
+     * @return bool
+     */
+    public function get_definition_by_id($id) {
+        if (array_key_exists($id, $this->configdefinitions)) {
+            return $this->configdefinitions[$id];
+        }
+        return false;
+    }
+
+    /**
+     * Returns all the known definitions.
+     *
+     * @return array
+     */
+    public function get_definitions() {
+        return $this->configdefinitions;
+    }
+
+    /**
+     * Returns all of the stores that are suitable for the given mode and requirements.
+     *
+     * @param int $mode One of cache_store::MODE_*
+     * @param int $requirements The requirements of the cache as a binary flag
+     * @return array An array of suitable stores.
+     */
+    public function get_stores($mode, $requirements = 0) {
+        $stores = array();
+        foreach ($this->configstores as $name => $store) {
+            // If the mode is supported and all of the requirements are provided features.
+            if (($store['modes'] & $mode) && ($store['features'] & $requirements) === $requirements) {
+                $stores[$name] = $store;
+            }
+        }
+        return $stores;
+    }
+
+    /**
+     * Gets all of the stores that are to be used for the given definition.
+     *
+     * @param cache_definition $definition
+     * @return array
+     */
+    public function get_stores_for_definition(cache_definition $definition) {
+        // Check if MUC has been disabled.
+        if (defined('NO_CACHE_STORES') && NO_CACHE_STORES !== false) {
+            // Yip its been disabled.
+            // To facilitate this we are going to always return an empty array of stores to use.
+            // This will force all cache instances to use the cache_store_dummy.
+            // MUC will still be used essentially so that code using it will still continue to function but because no cache stores
+            // are being used interaction with MUC will be purely based around a static var.
+            return array();
+        }
+
+        $availablestores = $this->get_stores($definition->get_mode(), $definition->get_requirements_bin());
+        $stores = array();
+        $id = $definition->get_id();
+
+        // Now get any mappings and give them priority.
+        foreach ($this->configdefinitionmappings as $mapping) {
+            if ($mapping['definition'] !== $id) {
+                continue;
+            }
+            $storename = $mapping['store'];
+            if (!array_key_exists($storename, $availablestores)) {
+                continue;
+            }
+            if (array_key_exists($storename, $stores)) {
+                $store = $stores[$storename];
+                unset($stores[$storename]);
+                $stores[$storename] = $store;
+            } else {
+                $stores[$storename] = $availablestores[$storename];
+            }
+        }
+
+        if (empty($stores) && !$definition->is_for_mappings_only()) {
+            $mode = $definition->get_mode();
+            // Load the default stores.
+            foreach ($this->configmodemappings as $mapping) {
+                if ($mapping['mode'] === $mode && array_key_exists($mapping['store'], $availablestores)) {
+                    $store = $availablestores[$mapping['store']];
+                    if (empty($store['mappingsonly'])) {
+                        $stores[$mapping['store']] = $store;
+                    }
+                }
+            }
+        }
+
+        return $stores;
+    }
+
+    /**
+     * Returns all of the configured stores
+     * @return array
+     */
+    public function get_all_stores() {
+        return $this->configstores;
+    }
+
+    /**
+     * Returns all of the configured mode mappings
+     * @return array
+     */
+    public function get_mode_mappings() {
+        return $this->configmodemappings;
+    }
+
+    /**
+     * Returns all of the known definition mappings.
+     * @return array
+     */
+    public function get_definition_mappings() {
+        return $this->configdefinitionmappings;
+    }
+}

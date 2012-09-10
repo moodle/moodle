@@ -1,0 +1,853 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * The supplementary cache API.
+ *
+ * This file is part of Moodle's cache API, affectionately called MUC.
+ * It contains elements of the API that are not required in order to use caching.
+ * Things in here are more in line with administration and management of the cache setup and configuration.
+ *
+ * @package    core
+ * @category   cache
+ * @copyright  2012 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Cache configuration writer.
+ *
+ * This class should only be used when you need to write to the config, all read operations exist within the cache_config.
+ *
+ * @package    core
+ * @category   cache
+ * @copyright  2012 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class cache_config_writer extends cache_config {
+
+    /**
+     * Returns an instance of the configuration writer.
+     *
+     * @return cache_config_writer
+     */
+    public static function instance() {
+        $factory = cache_factory::instance();
+        return $factory->create_config_instance(true);
+    }
+
+    /**
+     * Saves the current configuration.
+     */
+    protected function config_save() {
+        global $CFG;
+        $cachefile = self::get_config_file_path();
+        $directory = dirname($cachefile);
+        if ($directory !== $CFG->dataroot && !file_exists($directory)) {
+            $result = make_writable_directory($directory, false);
+            if (!$result) {
+                throw new cache_exception('ex_configcannotsave', 'cache', '', null, 'Cannot create config directory.');
+            }
+        }
+        if (!file_exists($directory) || !is_writable($directory)) {
+            throw new cache_exception('ex_configcannotsave', 'cache', '', null, 'Config directory is not writable.');
+        }
+
+        // Prepare a configuration array to store.
+        $configuration = array();
+        $configuration['stores'] = $this->configstores;
+        $configuration['modemappings'] = $this->configmodemappings;
+        $configuration['definitions'] = $this->configdefinitions;
+        $configuration['definitionmappings'] = $this->configdefinitionmappings;
+
+        // Prepare the file content.
+        $content = "<?php defined('MOODLE_INTERNAL') || die();\n \$configuration = ".var_export($configuration, true).";";
+
+        if (cache_lock::lock('config', false)) {
+            $handle = fopen($cachefile, 'w');
+            fwrite($handle, $content);
+            fflush($handle);
+            fclose($handle);
+            cache_lock::unlock('config');
+        } else {
+            throw new cache_exception('ex_configcannotsave', 'cache', '', null, 'Unable to open the cache config file.');
+        }
+    }
+
+    /**
+     * Adds a plugin instance.
+     *
+     * This function also calls save so you should redirect immediately, or at least very shortly after
+     * calling this method.
+     *
+     * @param string $name The name for the instance (must be unique)
+     * @param string $plugin The name of the plugin.
+     * @param array $configuration The configuration data for the plugin instance.
+     * @return bool
+     * @throws cache_exception
+     */
+    public function add_plugin_instance($name, $plugin, array $configuration = array()) {
+        if (array_key_exists($name, $this->configstores)) {
+            throw new cache_exception('Duplicate name specificed for cache plugin instance. You must provide a unique name.');
+        }
+        $class = 'cache_store_'.$plugin;
+        if (!class_exists($class)) {
+            $plugins = get_plugin_list_with_file('cache', 'lib.php');
+            if (!array_key_exists($plugin, $plugins)) {
+                throw new cache_exception('Invalid plugin name specified. The plugin either does not exist or is not a valid cache plugin.');
+            }
+            $file = $plugins[$plugin];
+            if (file_exists($file)) {
+                require_once($file);
+            }
+            if (!class_exists($class)) {
+                throw new cache_exception('Invalid cache plugin specified. The plugin does not contain the required class.');
+            }
+        }
+        if (!is_subclass_of($class, 'cache_store')) {
+            throw new cache_exception('Invalid cache plugin specified. The plugin does not extend the required class.');
+        }
+        if (!$class::are_requirements_met()) {
+            throw new cache_exception('Unable to add new cache plugin instance. The requested plugin type is not supported.');
+        }
+        $this->configstores[$name] = array(
+            'name' => $name,
+            'plugin' => $plugin,
+            'configuration' => $configuration,
+            'features' => $class::get_supported_features($configuration),
+            'modes' => $class::get_supported_modes($configuration),
+            'mappingsonly' => !empty($configuration['mappingsonly']),
+            'useforlocking' => !empty($configuration['useforlocking'])
+
+        );
+        $this->config_save();
+        return true;
+    }
+
+    /**
+     * Sets the mode mappings.
+     *
+     * These determine the default caches for the different modes.
+     * This function also calls save so you should redirect immediately, or at least very shortly after
+     * calling this method.
+     *
+     * @param array $modemappings
+     * @return bool
+     * @throws cache_exception
+     */
+    public function set_mode_mappings(array $modemappings) {
+        $mappings = array(
+            cache_store::MODE_APPLICATION => array(),
+            cache_store::MODE_SESSION => array(),
+            cache_store::MODE_REQUEST => array(),
+        );
+        foreach ($modemappings as $mode => $stores) {
+            if (!array_key_exists($mode, $mappings)) {
+                throw new cache_exception('The cache mode for the new mapping does not exist');
+            }
+            $sort = 0;
+            foreach ($stores as $store) {
+                if (!array_key_exists($store, $this->configstores)) {
+                    throw new cache_exception('The instance name for the new mapping does not exist');
+                }
+                if (array_key_exists($store, $mappings[$mode])) {
+                    throw new cache_exception('This cache mapping already exists');
+                }
+                $mappings[$mode][] = array(
+                    'store' => $store,
+                    'mode' => $mode,
+                    'sort' => $sort++
+                );
+            }
+        }
+        $this->configmodemappings = array_merge(
+            $mappings[cache_store::MODE_APPLICATION],
+            $mappings[cache_store::MODE_SESSION],
+            $mappings[cache_store::MODE_REQUEST]
+        );
+
+        $this->config_save();
+        return true;
+    }
+
+    /**
+     * Edits a give plugin instance.
+     *
+     * The plugin instance if determined by its name, hence you cannot rename plugins.
+     * This function also calls save so you should redirect immediately, or at least very shortly after
+     * calling this method.
+     *
+     * @param string $name
+     * @param string $plugin
+     * @param array $configuration
+     * @return bool
+     * @throws cache_exception
+     */
+    public function edit_plugin_instance($name, $plugin, $configuration) {
+        if (!array_key_exists($name, $this->configstores)) {
+            throw new cache_exception('The requested instance does not exist.');
+        }
+        $plugins = get_plugin_list_with_file('cache', 'lib.php');
+        if (!array_key_exists($plugin, $plugins)) {
+            throw new cache_exception('Invalid plugin name specified. The plugin either does not exist or is not valid.');
+        }
+        $class = 'cache_store_.'.$plugin;
+        $file = $plugins[$plugin];
+        if (!class_exists($class)) {
+            if (file_exists($file)) {
+                require_once($file);
+            }
+            if (!class_exists($class)) {
+                throw new cache_exception('Invalid cache plugin specified. The plugin does not contain the require class.');
+            }
+        }
+        $this->configstores[$name] = array(
+            'name' => $name,
+            'plugin' => $plugin,
+            'configuration' => $configuration,
+            'features' => $class::get_supported_features($configuration),
+            'modes' => $class::get_supported_modes($configuration),
+            'mappingsonly' => !empty($configuration['mappingsonly']),
+            'useforlocking' => !empty($configuration['useforlocking'])
+        );
+        $this->config_save();
+        return true;
+    }
+
+    /**
+     * Deletes a store instance.
+     *
+     * This function also calls save so you should redirect immediately, or at least very shortly after
+     * calling this method.
+     *
+     * @param string $name The name of the instance to delete.
+     * @return bool
+     * @throws cache_exception
+     */
+    public function delete_store($name) {
+        if (!array_key_exists($name, $this->configstores)) {
+            throw new cache_exception('The requested store does not exist.');
+        }
+        if ($this->configstores[$name]['default']) {
+            throw new cache_exception('The can not delete the default stores.');
+        }
+        foreach ($this->configmodemappings as $mapping) {
+            if ($mapping['store'] === $name) {
+                throw new cache_exception('You cannot delete a cache store that has mode mappings.');
+            }
+        }
+        foreach ($this->configdefinitionmappings as $mapping) {
+            if ($mapping['store'] === $name) {
+                throw new cache_exception('You cannot delete a cache store that has definition mappings.');
+            }
+        }
+        unset($this->configstores[$name]);
+        $this->config_save();
+        return true;
+    }
+
+    /**
+     * Creates the default configuration and saves it.
+     *
+     * This function calls config_save, however it is safe to continue using it afterwards as this function should only ever
+     * be called when there is no configuration file already.
+     */
+    public static function create_default_configuration() {
+        global $CFG;
+
+        // HACK ALERT.
+        // We probably need to come up with a better way to create the default stores, or at least ensure 100% that the
+        // default store plugins are protected from deletion.
+        require_once($CFG->dirroot.'/cache/stores/file/lib.php');
+        require_once($CFG->dirroot.'/cache/stores/session/lib.php');
+        require_once($CFG->dirroot.'/cache/stores/static/lib.php');
+
+        $writer = new self;
+        $writer->configstores = array(
+            'default_locking' => array(
+                'name' => 'default_locking',
+                'plugin' => 'file',
+                'configuration' => array(),
+                'features' => cache_store_file::get_supported_features(),
+                'modes' => cache_store::MODE_APPLICATION,
+                'useforlocking' => true,
+                'mappingsonly' => true,
+                'default' => true,
+                //'class' => 'cache_store_file'
+            ),
+            'default_application' => array(
+                'name' => 'default_application',
+                'plugin' => 'file',
+                'configuration' => array(),
+                'features' => cache_store_file::get_supported_features(),
+                'modes' => cache_store::MODE_APPLICATION,
+                'default' => true,
+                //'class' => 'cache_store_file'
+            ),
+            'default_session' => array(
+                'name' => 'default_session',
+                'plugin' => 'session',
+                'configuration' => array(),
+                'features' => cache_store_session::get_supported_features(),
+                'modes' => cache_store::MODE_SESSION,
+                'default' => true,
+                //'class' => 'cache_store_session'
+            ),
+            'default_request' => array(
+                'name' => 'default_request',
+                'plugin' => 'static',
+                'configuration' => array(),
+                'features' => cache_store_static::get_supported_features(),
+                'modes' => cache_store::MODE_REQUEST,
+                'default' => true,
+                //'class' => 'cache_store_static'
+            )
+        );
+        $writer->configdefinitions = self::locate_definitions();
+        $writer->configmodemappings = array(
+            array(
+                'mode' => cache_store::MODE_APPLICATION,
+                'store' => 'default_application',
+                'sort' => -1
+            ),
+            array(
+                'mode' => cache_store::MODE_SESSION,
+                'store' => 'default_session',
+                'sort' => -1
+            ),
+            array(
+                'mode' => cache_store::MODE_REQUEST,
+                'store' => 'default_request',
+                'sort' => -1
+            )
+        );
+        $writer->configdefinitionmappings = array(
+            array(
+                'store' => 'default_locking',
+                'definition' => 'core/locking',
+                'sort' => -1
+            )
+        );
+        $writer->config_save();
+    }
+
+    /**
+     * Updates the definition in the configuration from those found in the cache files.
+     *
+     * Calls config_save further down, you should redirect immediately or asap after calling this method.
+     */
+    public static function update_definitions() {
+        $config = cache_config_writer::instance();
+        $config->write_definitions_to_cache(self::locate_definitions());
+    }
+
+    /**
+     * Locates all of the definition files.
+     *
+     * @return array
+     */
+    protected static function locate_definitions() {
+        global $CFG;
+
+        $files = array();
+        if (file_exists($CFG->dirroot.'/lib/db/caches.php')) {
+            $files['core'] = $CFG->dirroot.'/lib/db/caches.php';
+        }
+
+        $plugintypes = get_plugin_types();
+        foreach ($plugintypes as $type => $location) {
+            $plugins = get_plugin_list_with_file($type, 'db/caches.php');
+            foreach ($plugins as $plugin => $filepath) {
+                $component = clean_param($type.'_'.$plugin, PARAM_COMPONENT); // standardised plugin name
+                $files[$component] = $filepath;
+            }
+        }
+
+        $definitions = array();
+        foreach ($files as $component => $file) {
+            $filedefs = self::load_caches_file($file);
+            foreach ($filedefs as $area => $definition) {
+                $area = clean_param($area, PARAM_AREA);
+                $id = $component.'/'.$area;
+                $definition['component'] = $component;
+                $definition['area'] = $area;
+                if (array_key_exists($id, $definitions)) {
+                    debugging('Error: duplicate cache definition found with name '.$name, DEBUG_DEVELOPER);
+                    continue;
+                }
+                $definitions[$id] = $definition;
+            }
+        }
+
+        return $definitions;
+    }
+
+    /**
+     * Writes the updated definitions for the config file.
+     * @param array $definitions
+     */
+    private function write_definitions_to_cache(array $definitions) {
+        $this->configdefinitions = $definitions;
+        foreach ($this->configdefinitionmappings as $key => $mapping) {
+            if (!array_key_exists($mapping['definition'], $definitions)) {
+                unset($this->configdefinitionmappings[$key]);
+            }
+        }
+        $this->config_save();
+    }
+
+    /**
+     * Loads the caches file if it exists.
+     * @param string $file Absolute path to the file.
+     * @return array
+     */
+    private static function load_caches_file($file) {
+        if (!file_exists($file)) {
+            return array();
+        }
+        $definitions = array();
+        include $file;
+        return $definitions;
+    }
+
+    /**
+     * Sets the mappings for a given definition.
+     *
+     * @param string $definition
+     * @param array $mappings
+     * @throws coding_exception
+     */
+    public function set_definition_mappings($definition, $mappings) {
+        if (!array_key_exists($definition, $this->configdefinitions)) {
+            throw new coding_exception('Invalid definition name passed when updating mappings.');
+        }
+        foreach ($mappings as $store) {
+            if (!array_key_exists($store, $this->configstores)) {
+                throw new coding_exception('Invalid store name passed when updating definition mappings.');
+            }
+        }
+        foreach ($this->configdefinitionmappings as $key => $mapping) {
+            if ($mapping['definition'] == $definition) {
+                unset($this->configdefinitionmappings[$key]);
+            }
+        }
+        $sort = count($mappings);
+        foreach ($mappings as $store) {
+            $this->configdefinitionmappings[] = array(
+                'store' => $store,
+                'definition' => $definition,
+                'sort' => $sort
+            );
+            $sort--;
+        }
+
+        $this->config_save();
+    }
+
+}
+
+/**
+ * A cache helper for administration tasks
+ *
+ * @package    core
+ * @category   cache
+ * @copyright  2012 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class cache_administration_helper extends cache_helper {
+
+    /**
+     * Returns an array containing all of the information about stores a renderer needs.
+     * @return array
+     */
+    public static function get_store_summaries() {
+        $return = array();
+        $default = array();
+        $instance = cache_config::instance();
+        $stores = $instance->get_all_stores();
+        foreach ($stores as $name => $details) {
+            $class = $details['class'];
+            $store = new $class($details['name'], $details['configuration']);
+            $record = array(
+                'name' => $name,
+                'plugin' => $details['plugin'],
+                'default' => $details['default'],
+                'isready' => $store->is_ready(),
+                'requirementsmet' => $store->are_requirements_met(),
+                'mappings' => 0,
+                'modes' => array(
+                    cache_store::MODE_APPLICATION =>
+                        ($store->get_supported_modes($return) & cache_store::MODE_APPLICATION) == cache_store::MODE_APPLICATION,
+                    cache_store::MODE_SESSION =>
+                        ($store->get_supported_modes($return) & cache_store::MODE_SESSION) == cache_store::MODE_SESSION,
+                    cache_store::MODE_REQUEST =>
+                        ($store->get_supported_modes($return) & cache_store::MODE_REQUEST) == cache_store::MODE_REQUEST,
+                ),
+                'supports' => array(
+                    'multipleidentifiers' => $store->supports_multiple_indentifiers(),
+                    'dataguarantee' => $store->supports_data_guarantee(),
+                    'nativettl' => $store->supports_native_ttl(),
+                    'nativelocking' => ($store instanceof cache_is_lockable),
+                    'keyawareness' => ($store instanceof cache_is_key_aware),
+                )
+            );
+            if (empty($details['default'])) {
+                $return[$name] = $record;
+            } else {
+                $default[$name] = $record;
+            }
+        }
+
+        ksort($return);
+        ksort($default);
+        $return = $return + $default;
+
+        foreach ($instance->get_mode_mappings() as $mapping) {
+            if (!array_key_exists($mapping['store'], $return)) {
+                continue;
+            }
+            $return[$mapping['store']]['mappings']++;
+        }
+        foreach ($instance->get_definition_mappings() as $mapping) {
+            if (!array_key_exists($mapping['store'], $return)) {
+                continue;
+            }
+            $return[$mapping['store']]['mappings']++;
+        }
+
+        return $return;
+    }
+
+    /**
+     * Returns an array of information about plugins, everything a renderer needs.
+     * @return array
+     */
+    public static function get_plugin_summaries() {
+        $return = array();
+        $plugins = get_plugin_list_with_file('cache', 'lib.php', true);
+        foreach ($plugins as $plugin => $path) {
+            $class = 'cache_store_'.$plugin;
+            $return[$plugin] = array(
+                'name' => get_string('pluginname', 'cache_'.$plugin),
+                'requirementsmet' => $class::are_requirements_met(),
+                'instances' => 0,
+                'modes' => array(
+                    cache_store::MODE_APPLICATION => ($class::get_supported_modes() & cache_store::MODE_APPLICATION),
+                    cache_store::MODE_SESSION => ($class::get_supported_modes() & cache_store::MODE_SESSION),
+                    cache_store::MODE_REQUEST => ($class::get_supported_modes() & cache_store::MODE_REQUEST),
+                ),
+                'supports' => array(
+                    'multipleidentifiers' => ($class::get_supported_features() & cache_store::SUPPORTS_MULTIPLE_IDENTIFIERS),
+                    'dataguarantee' => ($class::get_supported_features() & cache_store::SUPPORTS_DATA_GUARANTEE),
+                    'nativettl' => ($class::get_supported_features() & cache_store::SUPPORTS_NATIVE_TTL),
+                    'nativelocking' => (in_array('cache_is_lockable', class_implements($class))),
+                    'keyawareness' => (array_key_exists('cache_is_key_aware', class_implements($class))),
+                ),
+                'canaddinstance' => ($class::can_add_instance())
+            );
+        }
+
+        $instance = cache_config::instance();
+        $stores = $instance->get_all_stores();
+        foreach ($stores as $store) {
+            $plugin = $store['plugin'];
+            if (array_key_exists($plugin, $return)) {
+                $return[$plugin]['instances']++;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Returns an array about the definitions. All the information a renderer needs.
+     * @return array
+     */
+    public static function get_definition_summaries() {
+        $instance = cache_config::instance();
+        $definitions = $instance->get_definitions();
+
+        $storenames = array();
+        foreach ($instance->get_all_stores() as $key => $store) {
+            if (!empty($store['default'])) {
+                $storenames[$key] = new lang_string('store_'.$key, 'cache');
+            }
+        }
+
+        $modemappings = array();
+        foreach ($instance->get_mode_mappings() as $mapping) {
+            $mode = $mapping['mode'];
+            if (!array_key_exists($mode, $modemappings)) {
+                $modemappings[$mode] = array();
+            }
+            if (array_key_exists($mapping['store'], $storenames)) {
+                $modemappings[$mode][] = $storenames[$mapping['store']];
+            } else {
+                $modemappings[$mode][] = $mapping['store'];
+            }
+        }
+
+        $definitionmappings = array();
+        foreach ($instance->get_definition_mappings() as $mapping) {
+            $definition = $mapping['definition'];
+            if (!array_key_exists($definition, $definitionmappings)) {
+                $definitionmappings[$definition] = array();
+            }
+            if (array_key_exists($mapping['store'], $storenames)) {
+                $definitionmappings[$definition][] = $storenames[$mapping['store']];
+            } else {
+                $definitionmappings[$definition][] = $mapping['store'];
+            }
+        }
+
+        $return = array();
+
+        foreach ($definitions as $id => $definition) {
+
+            $mappings = array();
+            if (array_key_exists($id, $definitionmappings)) {
+                $mappings = $definitionmappings[$id];
+            } else if (empty($definition['mappingsonly'])) {
+                $mappings = $modemappings[$definition['mode']];
+            }
+
+            $return[$id] = array(
+                'id' => $id,
+                'name' => cache_helper::get_definition_name($definition),
+                'mode' => $definition['mode'],
+                'component' => $definition['component'],
+                'area' => $definition['area'],
+                'mappings' => $mappings
+            );
+        }
+        return $return;
+    }
+
+    /**
+     * Returns all of the actions that can be performed on a definition.
+     * @param context $context
+     * @return array
+     */
+    public static function get_definition_actions(context $context) {
+        if (has_capability('moodle/site:config', $context)) {
+            return array(
+                array(
+                    'text' => get_string('editmappings', 'cache'),
+                    'url' => new moodle_url('/cache/admin.php', array('action' => 'editdefinitionmapping', 'sesskey' => sesskey()))
+                )
+            );
+        }
+        return array();
+    }
+
+    /**
+     * Returns all of the actions that can be performed on a store.
+     *
+     * @param string $name The name of the store
+     * @param array $storedetails
+     * @return array
+     */
+    public static function get_store_actions($name, array $storedetails) {
+        $actions = array();
+        if (has_capability('moodle/site:config', get_system_context())) {
+            $baseurl = new moodle_url('/cache/admin.php', array('store' => $name, 'sesskey' => sesskey()));
+            if (empty($storedetails['default'])) {
+                $actions[] = array(
+                    'text' => get_string('editstore', 'cache'),
+                    'url' => new moodle_url($baseurl, array('action' => 'editstore', 'plugin' => $storedetails['plugin']))
+                );
+                $actions[] = array(
+                    'text' => get_string('deletestore', 'cache'),
+                    'url' => new moodle_url($baseurl, array('action' => 'deletestore'))
+                );
+            }
+            $actions[] = array(
+                'text' => get_string('purge', 'cache'),
+                'url' => new moodle_url($baseurl, array('action' => 'purge'))
+            );
+        }
+        return $actions;
+    }
+
+
+    /**
+     * Returns all of the actions that can be performed on a plugin.
+     *
+     * @param string $name The name of the plugin
+     * @param array $plugindetails
+     * @return array
+     */
+    public static function get_plugin_actions($name, array $plugindetails) {
+        $actions = array();
+        if (has_capability('moodle/site:config', get_system_context())) {
+            if (!empty($plugindetails['canaddinstance'])) {
+                $url = new moodle_url('/cache/admin.php', array('action' => 'addstore', 'plugin' => $name, 'sesskey' => sesskey()));
+                $actions[] = array(
+                    'text' => get_string('addinstance', 'cache'),
+                    'url' => $url
+                );
+            }
+        }
+        return $actions;
+    }
+
+    /**
+     * Returns a form that can be used to add a store instance.
+     *
+     * @param string $plugin The plugin to add an instance of
+     * @return cache_store_addinstance_form
+     * @throws coding_exception
+     */
+    public static function get_add_store_form($plugin) {
+        global $CFG; // Needed for includes
+        $plugindir = get_plugin_directory('cache', $plugin);
+        $class = 'cache_store_addinstance_form';
+        if (file_exists($plugindir.'/addinstanceform.php')) {
+            require_once($plugindir.'/addinstanceform.php');
+            if (class_exists('cache_store_'.$plugin.'_addinstance_form')) {
+                $class = 'cache_store_'.$plugin.'_addinstance_form';
+                if (!array_key_exists('cache_store_addinstance_form', class_parents($class))) {
+                    throw new coding_exception('Cache plugin add instance forms must extend cache_store_addinstance_form');
+                }
+            }
+        }
+
+        $url = new moodle_url('/cache/admin.php', array('action' => 'addstore'));
+        return new $class($url, array('plugin' => $plugin, 'store' => null));
+    }
+
+    /**
+     * Returns a form that can be used to edit a store instance.
+     *
+     * @param string $plugin
+     * @param string $store
+     * @return cache_store_addinstance_form
+     * @throws coding_exception
+     */
+    public static function get_edit_store_form($plugin, $store) {
+        global $CFG; // Needed for includes
+        $plugindir = get_plugin_directory('cache', $plugin);
+        $class = 'cache_store_addinstance_form';
+        if (file_exists($plugindir.'/addinstanceform.php')) {
+            require_once($plugindir.'/addinstanceform.php');
+            if (class_exists('cache_store_'.$plugin.'_addinstance_form')) {
+                $class = 'cache_store_'.$plugin.'_addinstance_form';
+                if (!array_key_exists('cache_store_addinstance_form', class_parents($class))) {
+                    throw new coding_exception('Cache plugin add instance forms must extend cache_store_addinstance_form');
+                }
+            }
+        }
+
+        $url = new moodle_url('/cache/admin.php', array('action' => 'editstore'));
+        return new $class($url, array('plugin' => $plugin, 'store' => $store));
+    }
+
+    /**
+     * Processes the results of the add/edit instance form data for a plugin returning an array of config information suitable to
+     * store in configuration.
+     *
+     * @param stdClass $data The mform data.
+     * @return array
+     * @throws coding_exception
+     */
+    public static function get_store_configuration_from_data(stdClass $data) {
+        global $CFG;
+        $file = $CFG->dirroot.'/cache/stores/'.$data->plugin.'/lib.php';
+        if (!file_exists($file)) {
+            throw new coding_exception('Invalid cache plugin provided. '.$file);
+        }
+        require_once($file);
+        $class = 'cache_store_'.$data->plugin;
+        $method = 'config_get_configuration_array';
+        if (!class_exists($class)) {
+            throw new coding_exception('Invalid cache plugin provided.');
+        }
+        if (method_exists($class, $method)) {
+            return call_user_func(array($class, $method), $data);
+        }
+        return array();
+    }
+
+    /**
+     * Get an array of stores that are suitable to be used for a given definition.
+     *
+     * @param string $component
+     * @param string $area
+     * @return array Array containing 3 elements
+     *      1. An array of currently used stores
+     *      2. An array of suitable stores
+     *      3. An array of default stores
+     */
+    public static function get_definition_store_options($component, $area) {
+        $factory = cache_factory::instance();
+        $definition = $factory->create_definition($component, $area);
+        $config = cache_config::instance();
+        $currentstores = $config->get_stores_for_definition($definition);
+        $possiblestores = $config->get_stores($definition->get_mode(), $definition->get_requirements_bin());
+
+        $defaults = array();
+        foreach ($currentstores as $key => $store) {
+            if (!empty($store['default'])) {
+                $defaults[] = $key;
+                unset($currentstores[$key]);
+            }
+        }
+        foreach ($possiblestores as $key => $store) {
+            if ($key === 'default_locking') {
+                unset($possiblestores[$key]);
+            } else if ($store['default']) {
+                unset($possiblestores[$key]);
+                $possiblestores[$key] = $store;
+            }
+        }
+        return array($currentstores, $possiblestores, $defaults);
+    }
+
+    /**
+     * Get the default stores for all modes.
+     *
+     * @return array An array containing sub-arrays, one for each mode.
+     */
+    public static function get_default_mode_stores() {
+        $instance = cache_config::instance();
+        $storenames = array();
+        foreach ($instance->get_all_stores() as $key => $store) {
+            if (!empty($store['default'])) {
+                $storenames[$key] = new lang_string('store_'.$key, 'cache');
+            }
+        }
+        $modemappings = array(
+            cache_store::MODE_APPLICATION => array(),
+            cache_store::MODE_SESSION => array(),
+            cache_store::MODE_REQUEST => array(),
+        );
+        foreach ($instance->get_mode_mappings() as $mapping) {
+            $mode = $mapping['mode'];
+            if (!array_key_exists($mode, $modemappings)) {
+                debugging('Unknown mode in cache store mode mappings', DEBUG_DEVELOPER);
+                continue;
+            }
+            if (array_key_exists($mapping['store'], $storenames)) {
+                $modemappings[$mode][$mapping['store']] = $storenames[$mapping['store']];
+            } else {
+                $modemappings[$mode][$mapping['store']] = $mapping['store'];
+            }
+        }
+        return $modemappings;
+    }
+}
