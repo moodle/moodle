@@ -1227,14 +1227,16 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
 /**
  * Resets all data related to filters, called during upgrade or when filter settings change.
  *
- * @global object
- * @global object
+ * @param bool $phpunitreset true means called from our PHPUnit integration test reset
  * @return void
  */
-function reset_text_filters_cache() {
+function reset_text_filters_cache($phpunitreset = false) {
     global $CFG, $DB;
 
-    $DB->delete_records('cache_text');
+    if (!$phpunitreset) {
+        $DB->delete_records('cache_text');
+    }
+
     $purifdir = $CFG->cachedir.'/htmlpurifier';
     remove_dir($purifdir, true);
 }

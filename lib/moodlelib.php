@@ -6371,8 +6371,16 @@ interface string_manager {
 
     /**
      * Invalidates all caches, should the implementation use any
+     * @param bool $phpunitreset true means called from our PHPUnit integration test reset
      */
-    public function reset_caches();
+    public function reset_caches($phpunitreset = false);
+
+    /**
+     * Returns string revision counter, this is incremented after any
+     * string cache reset.
+     * @return int lang string revision counter, -1 if unknown
+     */
+    public function get_revision();
 }
 
 
@@ -6938,8 +6946,9 @@ class core_string_manager implements string_manager {
 
     /**
      * Clears both in-memory and on-disk caches
+     * @param bool $phpunitreset true means called from our PHPUnit integration test reset
      */
-    public function reset_caches() {
+    public function reset_caches($phpunitreset = false) {
         global $CFG;
         require_once("$CFG->libdir/filelib.php");
 
@@ -6949,10 +6958,40 @@ class core_string_manager implements string_manager {
         // clear the in-memory cache of loaded strings
         $this->cache = array();
 
+        if (!$phpunitreset) {
+            // Increment the revision counter.
+            $langrev = get_config('core', 'langrev');
+            $next = time();
+            if ($langrev !== false and $next <= $langrev and $langrev - $next < 60*60) {
+                // This resolves problems when reset is requested repeatedly within 1s,
+                // the < 1h condition prevents accidental switching to future dates
+                // because we might not recover from it.
+                $next = $langrev+1;
+            }
+            set_config('langrev', $next);
+        }
+
         // clear the cache containing the list of available translations
         // and re-populate it again
         fulldelete($this->menucache);
         $this->get_list_of_translations(true);
+    }
+
+    /**
+     * Returns string revision counter, this is incremented after any
+     * string cache reset.
+     * @return int lang string revision counter, -1 if unknown
+     */
+    public function get_revision() {
+        global $CFG;
+        if (!$this->usediskcache) {
+            return -1;
+        }
+        if (isset($CFG->langrev)) {
+            return (int)$CFG->langrev;
+        } else {
+            return -1;
+        }
     }
 }
 
@@ -7168,8 +7207,20 @@ class install_string_manager implements string_manager {
 
     /**
      * This implementation does not use any caches
+     * @param bool $phpunitreset true means called from our PHPUnit integration test reset
      */
-    public function reset_caches() {}
+    public function reset_caches($phpunitreset = false) {
+        // Nothing to do.
+    }
+
+    /**
+     * Returns string revision counter, this is incremented after any
+     * string cache reset.
+     * @return int lang string revision counter, -1 if unknown
+     */
+    public function get_revision() {
+        return -1;
+    }
 }
 
 
