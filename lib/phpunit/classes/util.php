@@ -533,6 +533,9 @@ class phpunit_util {
         make_temp_directory('');
         make_cache_directory('');
         make_cache_directory('htmlpurifier');
+        // Reset the cache API so that it recreates it's required directories as well.
+        cache_lock::reset();
+        cache_factory::reset();
     }
 
     /**

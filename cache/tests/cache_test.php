@@ -49,7 +49,6 @@ class cache_phpunit_tests extends advanced_testcase {
     public function setUp() {
         parent::setUp();
         cache_factory::reset();
-        cache_lock::reset();
         cache_config_phpunittest::create_default_configuration();
     }
 
