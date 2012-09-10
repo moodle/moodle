@@ -17,6 +17,7 @@ if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
 $USER = $DB->get_record('user', array('id'=>$chatuser->userid));
 
 //Setup course, lang and theme
+$PAGE->set_pagelayout('embedded');
 $PAGE->set_course($DB->get_record('course', array('id' => $chatuser->course)));
 $PAGE->requires->js('/mod/chat/gui_sockets/chat_gui_sockets.js', true);
 $PAGE->requires->js_function_call('setfocus');
