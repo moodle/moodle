@@ -53,8 +53,10 @@ var DIALOGUE = function(config) {
         config.buttons = [
             {
                 section: Y.WidgetStdMod.HEADER,
+                value     : '',
                 classNames: 'closebutton',
                 action: function (e) {
+                	e.preventDefault();
                     this.hide();
                 }
             }
