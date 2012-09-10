@@ -239,7 +239,7 @@
 
         $r = html_writer::start_tag('li');
             $r.= html_writer::start_tag('div',array('class'=>'link'));
-                $r.= html_writer::link(clean_param($link,PARAM_URL), s($title), array('onclick'=>'this.target="_blank"'));
+                $r.= html_writer::link($link, s($title), array('onclick'=>'this.target="_blank"'));
             $r.= html_writer::end_tag('div');
 
             if($this->config->display_description && !empty($description)){
