@@ -167,6 +167,15 @@ function book_print_recent_activity($course, $viewfullnames, $timestart) {
 }
 
 /**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function book_reset_userdata($data) {
+    return array();
+}
+
+/**
  * No cron in book.
  *
  * @return bool
