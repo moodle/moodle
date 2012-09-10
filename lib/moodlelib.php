@@ -3295,6 +3295,11 @@ function get_user_key($script, $userid, $instance=null, $iprestriction=null, $va
 function update_user_login_times() {
     global $USER, $DB;
 
+    if (isguestuser()) {
+        // Do not update guest access times/ips for performance.
+        return true;
+    }
+
     $now = time();
 
     $user = new stdClass();
