@@ -549,12 +549,12 @@ class assign {
     }
 
     /**
-    * Actual implementation of the reset course functionality, delete all the
-    * assignment submissions for course $data->courseid.
-    *
-    * @param $data the data submitted from the reset course.
-    * @return array status array
-    */
+     * Actual implementation of the reset course functionality, delete all the
+     * assignment submissions for course $data->courseid.
+     *
+     * @param stdClass $data the data submitted from the reset course.
+     * @return array status array
+     */
     public function reset_userdata($data) {
         global $CFG,$DB;
 
@@ -565,42 +565,40 @@ class assign {
         if (!empty($data->reset_assign_submissions)) {
             // Delete files associated with this assignment.
             foreach ($this->submissionplugins as $plugin) {
-                $fileareas = array();
                 $fileareas = $plugin->get_file_areas();
                 foreach ($fileareas as $filearea) {
-                    $fs->delete_area_files($this->context->id,'mod_assign', $filearea);
+                    $fs->delete_area_files($this->context->id, 'mod_assign', $filearea);
                 }
 
                 if (!$plugin->delete_instance()) {
-                    $status[] = array('component'=>$componentstr,
-                                      'item'=>get_string('deleteallsubmissions','assign'),
-                                      'error'=>$plugin->get_error());
+                    $status[] = array('component' => $componentstr,
+                                      'item' => get_string('deleteallsubmissions', 'assign'),
+                                      'error' => $plugin->get_error());
                 }
             }
 
             foreach ($this->feedbackplugins as $plugin) {
-                $fileareas = array();
                 $fileareas = $plugin->get_file_areas();
                 foreach ($fileareas as $filearea) {
-                    $fs->delete_area_files($this->context->id,'mod_assign', $filearea);
+                    $fs->delete_area_files($this->context->id, 'mod_assign', $filearea);
                 }
 
                 if (!$plugin->delete_instance()) {
-                    $status[] = array('component'=>$componentstr,
-                                      'item'=>get_string('deleteallsubmissions','assign'),
-                                      'error'=>$plugin->get_error());
+                    $status[] = array('component' => $componentstr,
+                                      'item' => get_string('deleteallsubmissions', 'assign'),
+                                      'error' => $plugin->get_error());
                 }
             }
 
             $assignssql = "SELECT a.id
                              FROM {assign} a
-                           WHERE a.course=:course";
+                           WHERE a.course = :course";
             $params = array ("course" => $data->courseid);
 
             $DB->delete_records_select('assign_submission', "assignment IN ($assignssql)", $params);
-            $status[] = array('component'=>$componentstr,
-                              'item'=>get_string('deleteallsubmissions','assign'),
-                              'error'=>false);
+            $status[] = array('component' => $componentstr,
+                              'item' => get_string('deleteallsubmissions', 'assign'),
+                              'error' => false);
 
             if (empty($data->reset_gradebook_grades)) {
                 // Remove all grades from gradebook.
@@ -610,10 +608,10 @@ class assign {
         }
         // Updating dates - shift may be negative too.
         if ($data->timeshift) {
-            shift_course_mod_dates('assign', array('duedate', 'allowsubmissionsfromdate','cutoffdate'), $data->timeshift, $data->courseid);
-            $status[] = array('component'=>$componentstr,
-                              'item'=>get_string('datechanged'),
-                              'error'=>false);
+            shift_course_mod_dates('assign', array('duedate', 'allowsubmissionsfromdate', 'cutoffdate'), $data->timeshift, $data->courseid);
+            $status[] = array('component' => $componentstr,
+                              'item' => get_string('datechanged'),
+                              'error' => false);
         }
 
         return $status;
@@ -3940,7 +3938,7 @@ class assign {
      * @return void
      */
     private function process_revert_to_draft($userid = 0) {
-        global $DB;
+        global $DB, $USER;
 
         // Need grade permission
         require_capability('mod/assign:grade', $this->context);
