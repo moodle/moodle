@@ -92,12 +92,14 @@ class repository_webdav extends repository {
         if (!$this->dav->open()) {
             return $ret;
         }
+
+        $webdavroot = '/' . trim($this->options['webdav_path'], './@#$ ');
+        if ($webdavroot != '/') {
+            $webdavroot .= '/';
+        }
+
         if (empty($path)) {
-            if ($this->options['webdav_path'] == '/') {
-                $path = '/';
-            } else {
-                $path = '/' . trim($this->options['webdav_path'], './@#$ ') . '/';
-            }
+            $path = $webdavroot;
             $dir = $this->dav->ls($path);
         } else {
             $path = urldecode($path);
@@ -110,9 +112,24 @@ class repository_webdav extends repository {
             $dir = $this->dav->ls($path);
         }
 
+        // Building breadcrumb
+        $pathrel = preg_replace('|^' . preg_quote($webdavroot) . '|', '', $path);
+        if (!empty($pathrel)) {
+            $chunks = preg_split('|/|', trim($pathrel, '/'));
+            for ($i = 0; $i < count($chunks); $i++) {
+                $ret['path'][] = array(
+                    'name' => urldecode($chunks[$i]),
+                    'path' => $webdavroot . join('/', array_slice($chunks, 0, $i+1)). '/'
+                );
+            }
+        }
+
         if (!is_array($dir)) {
             return $ret;
         }
+
+        $files = array();
+        $folders = array();
         foreach ($dir as $v) {
             if (!empty($v['creationdate'])) {
                 $ts = $this->dav->iso8601totime($v['creationdate']);
@@ -131,7 +148,7 @@ class repository_webdav extends repository {
                     } else {
                         $title = urldecode($v['href']);
                     }
-                    $ret['list'][] = array(
+                    $folders[strtoupper($title)] = array(
                         'title'=>urldecode(basename($title)),
                         'thumbnail'=>$OUTPUT->pix_url('f/folder-32')->out(false),
                         'children'=>array(),
@@ -146,7 +163,7 @@ class repository_webdav extends repository {
                 $title = urldecode(substr($v['href'], strpos($v['href'], $path)+strlen($path)));
                 $title = basename($title);
                 $size = !empty($v['getcontentlength'])? $v['getcontentlength']:'';
-                $ret['list'][] = array(
+                $files[strtoupper($title)] = array(
                     'title'=>$title,
                     'thumbnail' => $OUTPUT->pix_url(file_extension_icon($title, 32))->out(false),
                     'size'=>$size,
@@ -155,6 +172,9 @@ class repository_webdav extends repository {
                 );
             }
         }
+        ksort($files);
+        ksort($folders);
+        $ret['list'] = array_merge($folders, $files);
         return $ret;
     }
     public static function get_instance_option_names() {
