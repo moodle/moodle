@@ -132,6 +132,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * Get the saved text content from the editor
      *
      * @param string $name
+     * @param string $value
      * @param int $gradeid
      * @return string
      */
