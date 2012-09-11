@@ -1617,8 +1617,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     // Display link itself
                     echo '<a ' . $linkcss . $mod->extra . $onclick .
                             ' href="' . $url . '"><img src="' . $mod->get_icon_url() .
-                            '" class="activityicon" alt="' .
-                            $modulename . '" /> ' .
+                            '" class="activityicon" alt="" /> ' .
                             $accesstext . '<span class="instancename">' .
                             $instancename . $altname . '</span></a>';
 
@@ -1655,9 +1654,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     // Display greyed-out text of link
                     echo '<div ' . $textcss . $mod->extra .
                             ' >' . '<img src="' . $mod->get_icon_url() .
-                            '" class="activityicon" alt="' .
-                            $modulename .
-                            '" /> <span>'. $instancename . $altname .
+                            '" class="activityicon" alt="" /> <span>'. $instancename . $altname .
                             '</span></div>';
 
                     // Do not display content after link when it is greyed out like this.
@@ -3147,7 +3144,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
         if ($indent > 0) {
             $actions[] = new action_link(
                 new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '-1')),
-                new pix_icon($leftarrow, $str->moveleft, 'moodle', array('class' => 'iconsmall')),
+                new pix_icon($leftarrow, $str->moveleft, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
                 array('class' => 'editing_moveleft', 'title' => $str->moveleft)
             );
@@ -3155,7 +3152,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
         if ($indent >= 0) {
             $actions[] = new action_link(
                 new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '1')),
-                new pix_icon($rightarrow, $str->moveright, 'moodle', array('class' => 'iconsmall')),
+                new pix_icon($rightarrow, $str->moveright, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
                 array('class' => 'editing_moveright', 'title' => $str->moveright)
             );
@@ -3167,20 +3164,20 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
         if ($moveselect) {
             $actions[] = new action_link(
                 new moodle_url($baseurl, array('copy' => $mod->id)),
-                new pix_icon('t/move', $str->move, 'moodle', array('class' => 'iconsmall')),
+                new pix_icon('t/move', $str->move, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
                 array('class' => 'editing_move', 'title' => $str->move)
             );
         } else {
             $actions[] = new action_link(
                 new moodle_url($baseurl, array('id' => $mod->id, 'move' => '-1')),
-                new pix_icon('t/up', $str->moveup, 'moodle', array('class' => 'iconsmall')),
+                new pix_icon('t/up', $str->moveup, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
                 array('class' => 'editing_moveup', 'title' => $str->moveup)
             );
             $actions[] = new action_link(
                 new moodle_url($baseurl, array('id' => $mod->id, 'move' => '1')),
-                new pix_icon('t/down', $str->movedown, 'moodle', array('class' => 'iconsmall')),
+                new pix_icon('t/down', $str->movedown, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
                 array('class' => 'editing_movedown', 'title' => $str->movedown)
             );
@@ -3191,7 +3188,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
     if ($hasmanageactivities) {
         $actions[] = new action_link(
             new moodle_url($baseurl, array('update' => $mod->id)),
-            new pix_icon('t/edit', $str->update, 'moodle', array('class' => 'iconsmall')),
+            new pix_icon('t/edit', $str->update, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             null,
             array('class' => 'editing_update', 'title' => $str->update)
         );
@@ -3201,7 +3198,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
     if (has_all_capabilities($dupecaps, $coursecontext) && plugin_supports('mod', $mod->modname, FEATURE_BACKUP_MOODLE2)) {
         $actions[] = new action_link(
             new moodle_url($baseurl, array('duplicate' => $mod->id)),
-            new pix_icon('t/copy', $str->duplicate, 'moodle', array('class' => 'iconsmall')),
+            new pix_icon('t/copy', $str->duplicate, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             null,
             array('class' => 'editing_duplicate', 'title' => $str->duplicate)
         );
@@ -3211,7 +3208,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
     if ($hasmanageactivities) {
         $actions[] = new action_link(
             new moodle_url($baseurl, array('delete' => $mod->id)),
-            new pix_icon('t/delete', $str->delete, 'moodle', array('class' => 'iconsmall')),
+            new pix_icon('t/delete', $str->delete, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             null,
             array('class' => 'editing_delete', 'title' => $str->delete)
         );
@@ -3222,14 +3219,14 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
         if ($mod->visible) {
             $actions[] = new action_link(
                 new moodle_url($baseurl, array('hide' => $mod->id)),
-                new pix_icon('t/hide', $str->hide, 'moodle', array('class' => 'iconsmall')),
+                new pix_icon('t/hide', $str->hide, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
                 array('class' => 'editing_hide', 'title' => $str->hide)
             );
         } else {
             $actions[] = new action_link(
                 new moodle_url($baseurl, array('show' => $mod->id)),
-                new pix_icon('t/show', $str->show, 'moodle', array('class' => 'iconsmall')),
+                new pix_icon('t/show', $str->show, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
                 array('class' => 'editing_show', 'title' => $str->show)
             );
@@ -3260,7 +3257,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
         if ($mod->groupmodelink) {
             $actions[] = new action_link(
                 new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $groupmode)),
-                new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall')),
+                new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 null,
                 array('class' => $groupclass, 'title' => $grouptitle)
             );
@@ -3273,7 +3270,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
     if (has_capability('moodle/role:assign', $modcontext)){
         $actions[] = new action_link(
             new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid' => $modcontext->id)),
-            new pix_icon('i/roles', $str->assign, 'moodle', array('class' => 'iconsmall')),
+            new pix_icon('i/roles', $str->assign, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             null,
             array('class' => 'editing_assign', 'title' => $str->assign)
         );
