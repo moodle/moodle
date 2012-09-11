@@ -76,7 +76,7 @@ $sesskeyprovided = !empty($sesskey) && confirm_sesskey($sesskey);
 // Process any category actions.
 if ($canmanage && $resort && $sesskeyprovided) {
     // Resort the category if requested
-    if ($courses = get_courses($category->id, 'c.id,c.fullname,c.sortorder')) {
+    if ($courses = get_courses($category->id, '', 'c.id,c.fullname,c.sortorder')) {
         collatorlib::asort_objects_by_property($courses, 'fullname', collatorlib::SORT_NATURAL);
         $i = 1;
         foreach ($courses as $course) {
