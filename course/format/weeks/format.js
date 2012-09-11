@@ -36,7 +36,7 @@ M.course.format.get_config = function() {
 M.course.format.swap_sections = function(Y, node1, node2) {
     var CSS = {
         COURSECONTENT : 'course-content',
-        SECTIONADDMENUS : 'section_add_menus',
+        SECTIONADDMENUS : 'section_add_menus'
     };
 
     var sectionlist = Y.Node.all('.'+CSS.COURSECONTENT+' '+M.course.format.get_section_selector(Y));
