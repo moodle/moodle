@@ -1633,6 +1633,7 @@ $string['theme'] = 'Theme';
 $string['themes'] = 'Themes';
 $string['themesaved'] = 'New theme saved';
 $string['thereareno'] = 'There are no {$a} in this course';
+$string['therearecourses'] = 'There are {$a} courses';
 $string['thiscategorycontains'] = 'This category contains';
 $string['time'] = 'Time';
 $string['timezone'] = 'Timezone';
