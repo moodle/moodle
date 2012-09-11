@@ -23,8 +23,7 @@ YUI.add('moodle-block_community-comments', function(Y) {
                     bodyContent:Y.one('#commentoverlay-'+commentid).get('innerHTML'),
                     visible: false, //by default it is not displayed
                     lightbox : false,
-                    zIndex:100,
-                    height: '350px'
+                    zIndex:100
                 });
 
                 this.overlays[commentid].get('contentBox').one('.commenttitle').remove();
