@@ -6237,9 +6237,8 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
     $str = '
 <div class="form-item clearfix" id="admin-'.$setting->name.'">
   <div class="form-label">
-    <label '.$labelfor.'>'.highlightfast($query, $title).'<span class="form-shortname">'.highlightfast($query, $name).'</span>
-      '.$override.$warning.'
-    </label>
+    <label '.$labelfor.'>'.highlightfast($query, $title).$override.$warning.'</label>
+    <span class="form-shortname">'.highlightfast($query, $name).'</span>
   </div>
   <div class="form-setting">'.$form.$defaultinfo.'</div>
   <div class="form-description">'.highlight($query, markdown_to_html($description)).'</div>
