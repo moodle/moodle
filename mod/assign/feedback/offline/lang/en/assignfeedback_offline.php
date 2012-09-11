@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'feedback_file', language 'en'
+ * Strings for component 'feedback_offline', language 'en'
  *
- * @package   assignfeedback_file
+ * @package   assignfeedback_offline
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,7 +37,7 @@ $string['ignoremodified_help'] = 'When the grading worksheet is downloaded from 
 $string['importgrades'] = 'Confirm changes in grading worksheet';
 $string['invalidgradeimport'] = 'Moodle could not read the uploaded worksheet. Make sure it is saved in comma separated value format (.csv) and try again.';
 $string['gradesfile'] = 'Grading worksheet (csv format)';
-$string['gradesfile_help'] = 'Grading worksheet with modified grades. This file must be a csv file that has been downloaded form this assignment and must contain columns for the student grade, and identifier.';
+$string['gradesfile_help'] = 'Grading worksheet with modified grades. This file must be a csv file that has been downloaded from this assignment and must contain columns for the student grade, and identifier. The encoding for the file must be &quot;UTF-8&quot;';
 $string['nochanges'] = 'No modified grades found in uploaded worksheet';
 $string['offlinegradingworksheet'] = 'Grades';
 $string['pluginname'] = 'Offline grading worksheet';

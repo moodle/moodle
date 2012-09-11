@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * library class for importing feedback files from a zip
  *
- * @package   asignfeedback_file
+ * @package   assignfeedback_file
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,6 +41,7 @@ class assignfeedback_file_zip_importer {
      * @param stored_file $fileinfo - The fileinfo
      * @param array $participants - A list of valid participants for this module indexed by unique_id
      * @param stdClass $user - Set to the user that matches by participant id
+     * @param assign_plugin $plugin - Set to the plugin that exported the file
      * @param string $filename - Set to truncated filename (prefix stripped)
      * @return true If the participant Id can be extracted and this is a valid user
      */
@@ -269,7 +270,6 @@ class assignfeedback_file_zip_importer {
                 }
             }
         }
-
 
         require_once($CFG->dirroot . '/mod/assign/feedback/file/renderable.php');
         $importsummary = new assignfeedback_file_import_summary($assignment->get_course_module()->id,

@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/grade/grading/lib.php');
 /**
  * library class for file feedback plugin extending feedback plugin base class
  *
- * @package   asignfeedback_offline
+ * @package   assignfeedback_offline
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -69,6 +69,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
      *
      * @param int $draftid - The unique draft item id for this import
      * @param int $importid - The unique import ID for this csv import operation
+     * @param bool $ignoremodified - Ignore the last modified date when checking fields
      * @return string - The html response
      */
     public function process_import_grades($draftid, $importid, $ignoremodified) {
@@ -324,7 +325,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
                                    $this->assignment->get_course()->shortname . '-' .
                                    $this->assignment->get_instance()->name . '-' .
                                    $groupname .
-                                   $this->assignment->get_course_module()->id); //name of new zip file.
+                                   $this->assignment->get_course_module()->id);
 
         $table = new assign_grading_table($this->assignment, 0, '', 0, false, $filename);
 

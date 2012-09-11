@@ -72,7 +72,7 @@ class assign_grading_table extends table_sql implements renderable {
      * @param int $rowoffset For showing a subsequent page of results
      * @param bool $quickgrading Is this table wrapped in a quickgrading form?
      */
-    function __construct(assign $assignment, $perpage, $filter, $rowoffset, $quickgrading, $downloadfilename = null) {
+    public function __construct(assign $assignment, $perpage, $filter, $rowoffset, $quickgrading, $downloadfilename = null) {
         global $CFG, $PAGE, $DB;
         parent::__construct('mod_assign_grading');
         $this->assignment = $assignment;
@@ -339,7 +339,7 @@ class assign_grading_table extends table_sql implements renderable {
      * @param stdClass $row - The row of data
      * @return string A list of valid options for the current scale
      */
-    function col_scale($row) {
+    public function col_scale($row) {
         global $DB;
 
         if (empty($this->scale)) {
@@ -535,8 +535,8 @@ class assign_grading_table extends table_sql implements renderable {
      * @param stdClass $row
      * @return string
      */
-    function col_grademax(stdClass $row) {
-        return format_float($this->assignment->get_instance()->grade,2);
+    public function col_grademax(stdClass $row) {
+        return format_float($this->assignment->get_instance()->grade, 2);
     }
 
     /**

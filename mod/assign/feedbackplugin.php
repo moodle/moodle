@@ -145,15 +145,18 @@ abstract class assign_feedback_plugin extends assign_plugin {
     /**
      * Show a grading action form
      *
+     * @param string $gradingaction The action chosen from the grading actions menu
      * @return string The page containing the form
      */
-    public function grading_action($action) {
+    public function grading_action($gradingaction) {
         return '';
     }
 
     /**
      * Show a batch operations form
      *
+     * @param string $action The action chosen from the batch operations menu
+     * @param array $users The list of selected userids
      * @return string The page containing the form
      */
     public function grading_batch_operation($action, $users) {

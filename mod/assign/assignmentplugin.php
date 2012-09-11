@@ -349,7 +349,7 @@ abstract class assign_plugin {
     }
 
     /**
-     * Given a field name and value should update this plugins submission or grade
+     * Given a field name and value should update the text for this field in the plugins submission or grade
      *
      * @param string $name Name of the field.
      * @param string $value Updated text
@@ -361,14 +361,14 @@ abstract class assign_plugin {
     }
 
     /**
-     * Given a field name and value should update this plugins submission or grade
+     * Given a field name and value should update the format for this field in the plugins submission or grade
      *
      * @param string $name Name of the field.
-     * @param int $format Updated format
-     * @param int $submissionorgradeid The id of the submission or grade
+     * @param int $format Updated format.
+     * @param int $submissionorgradeid The id of the submission or grade.
      * @return bool - true if the value was updated
      */
-    public function set_editor_format($name, $value, $submissionorgradeid) {
+    public function set_editor_format($name, $format, $submissionorgradeid) {
         return false;
     }
 
@@ -404,7 +404,7 @@ abstract class assign_plugin {
         return array();
     }
 
-     /**
+    /**
      * Given a field name, should return the format of an editor field that is part of
      * this plugin. This is used when exporting to portfolio.
      *
@@ -416,7 +416,7 @@ abstract class assign_plugin {
         return 0;
     }
 
-     /**
+    /**
      * Return true if this plugin can upgrade an old Moodle 2.2 assignment of this type
      * and version.
      *
@@ -428,7 +428,7 @@ abstract class assign_plugin {
         return false;
     }
 
-     /**
+    /**
      * Upgrade the settings from the old assignment to the new one
      *
      * @param context $oldcontext The context for the old assignment module

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -28,7 +27,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/mod/assign/feedback/offline/importgradeslib.php');
 
-/*
+/**
  * Import grades form
  *
  * @package   assignfeedback_offline
@@ -40,7 +39,7 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
     /**
      * Create this grade import form
      */
-    function definition() {
+    public function definition() {
         global $CFG, $PAGE, $DB;
 
         $mform = $this->_form;

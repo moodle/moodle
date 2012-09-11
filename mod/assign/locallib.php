@@ -423,7 +423,7 @@ class assign {
             $o .= $this->view_reveal_identities_confirm($mform);
         } else if ($action == 'plugingradingbatchoperation') {
             $o .= $this->view_plugin_grading_batch_operation($mform);
-         } else if ($action == 'viewpluginpage') {
+        } else if ($action == 'viewpluginpage') {
              $o .= $this->view_plugin_page();
         } else {
             $o .= $this->view_submission_page();
@@ -1807,7 +1807,7 @@ class assign {
         foreach ($students as $student) {
             $userid = $student->id;
 
-            if ((groups_is_member($groupid,$userid) or !$groupmode or !$groupid)) {
+            if ((groups_is_member($groupid, $userid) or !$groupmode or !$groupid)) {
                 // Get the plugins to add their own files to the zip.
 
                 $submissiongroup = false;
@@ -1833,7 +1833,9 @@ class assign {
                         if ($plugin->is_enabled() && $plugin->is_visible()) {
                             $pluginfiles = $plugin->get_files($submission);
                             foreach ($pluginfiles as $zipfilename => $file) {
-                                $prefixedfilename = $prefix . $plugin->get_subtype() . '_' . $plugin->get_type() . '_' . $zipfilename;
+                                $subtype = $plugin->get_subtype();
+                                $type = $plugin->get_type();
+                                $prefixedfilename = $prefix . $subtype . '_' . $type . '_' . $zipfilename;
                                 $filesforzipping[$prefixedfilename] = $file;
                             }
                         }
@@ -2431,9 +2433,9 @@ class assign {
         print_error('invalidformdata', '');
     }
 
-
     /**
      * Ask the user to confirm they want to perform this batch operation
+     * @param moodleform $mform Set to a grading batch operations form
      * @return string - the page to view after processing these actions
      */
     private function process_grading_batch_operation(& $mform) {
@@ -4415,6 +4417,7 @@ class assign {
     /**
      * Lookup this unique id and return the user id for this assignment
      *
+     * @param int $assignid The id of the assignment this user mapping is in
      * @param int $uniqueid The uniqueid to lookup
      * @return int The user id or false if they don't exist
      */

@@ -79,14 +79,15 @@ class assign_feedback_file extends assign_feedback_plugin {
     /**
      * Copy all the files from one file area to another
      *
-     * @param int fromcontextid - The source context id
-     * @param string fromcomponent - The source component
-     * @param string fromfilearea - The source filearea
-     * @param int fromitemid - The source item id
-     * @param int tocontextid - The destination context id
-     * @param string tocomponent - The destination component
-     * @param string tofilearea - The destination filearea
-     * @param int toitemid - The destination item id
+     * @param file_storage $fs - The source context id
+     * @param int $fromcontextid - The source context id
+     * @param string $fromcomponent - The source component
+     * @param string $fromfilearea - The source filearea
+     * @param int $fromitemid - The source item id
+     * @param int $tocontextid - The destination context id
+     * @param string $tocomponent - The destination component
+     * @param string $tofilearea - The destination filearea
+     * @param int $toitemid - The destination item id
      * @return boolean
      */
     private function copy_area_files(file_storage $fs,
@@ -186,7 +187,13 @@ class assign_feedback_file extends assign_feedback_plugin {
     public function save(stdClass $grade, stdClass $data) {
         $fileoptions = $this->get_file_options();
 
-        $data = file_postupdate_standard_filemanager($data, 'files', $fileoptions, $this->assignment->get_context(), 'assignfeedback_file', ASSIGNFEEDBACK_FILE_FILEAREA, $grade->id);
+        $data = file_postupdate_standard_filemanager($data,
+                                                     'files',
+                                                     $fileoptions,
+                                                     $this->assignment->get_context(),
+                                                     'assignfeedback_file',
+                                                     ASSIGNFEEDBACK_FILE_FILEAREA,
+                                                     $grade->id);
 
         return $this->update_file_count($grade);
     }
@@ -393,7 +400,6 @@ class assign_feedback_file extends assign_feedback_plugin {
                                        ASSIGNFEEDBACK_FILE_FILEAREA,
                                        $grade->id);
 
-
                 $filefeedback = $this->get_file_feedback($grade->id);
                 if ($filefeedback) {
                     $filefeedback->numfiles = $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA);
@@ -452,7 +458,7 @@ class assign_feedback_file extends assign_feedback_plugin {
      *
      * @return string - The html response
      */
-    function view_upload_zip() {
+    public function view_upload_zip() {
         global $CFG, $USER;
 
         require_capability('mod/assign:grade', $this->assignment->get_context());

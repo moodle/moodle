@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-require_once ($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir.'/formslib.php');
 
 /**
  * Upload modified grading worksheet
@@ -37,7 +37,7 @@ class assignfeedback_offline_upload_grades_form extends moodleform {
     /**
      * Define this form - called by the parent constructor
      */
-    function definition() {
+    public function definition() {
         global $COURSE, $USER;
 
         $mform = $this->_form;

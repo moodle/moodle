@@ -114,7 +114,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * Get the saved text content from the editor
      *
      * @param string $name
-     * @param int $submissionid
+     * @param int $gradeid
      * @return string
      */
     public function get_editor_text($name, $gradeid) {
@@ -132,7 +132,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * Get the saved text content from the editor
      *
      * @param string $name
-     * @param int $submissionid
+     * @param int $gradeid
      * @return string
      */
     public function set_editor_text($name, $value, $gradeid) {

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -28,7 +27,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/mod/assign/feedback/file/importziplib.php');
 
-/*
+/**
  * Import zip form
  *
  * @package   assignfeedback_file
@@ -58,7 +57,6 @@ class assignfeedback_file_import_zip_form extends moodleform implements renderab
             print_error('invalidarguments');
             return;
         }
-
 
         $files = $importer->get_import_files($contextid);
 
@@ -109,7 +107,6 @@ class assignfeedback_file_import_zip_form extends moodleform implements renderab
                 }
             }
         }
-
 
         if (count($updates)) {
             $mform->addElement('html', $renderer->list_block_contents(array(), $updates));

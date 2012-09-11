@@ -17,7 +17,7 @@
 /**
  * This file contains the forms to create and edit an instance of this module
  *
- * @package   mod_assign
+ * @package   assignfeedback_file
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/mod/assign/feedback/file/locallib.php');
 /**
  * Assignment grading options form
  *
- * @package   mod_assign
+ * @package   assignfeedback_file
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,7 +38,7 @@ class assignfeedback_file_batch_upload_files_form extends moodleform {
     /**
      * Define this form - called by the parent constructor
      */
-    function definition() {
+    public function definition() {
         global $COURSE, $USER;
 
         $mform = $this->_form;
@@ -53,7 +53,12 @@ class assignfeedback_file_batch_upload_files_form extends moodleform {
                                 'accepted_types'=>'*',
                                 'return_types'=>FILE_INTERNAL);
 
-        $data = file_prepare_standard_filemanager($data, 'files', $fileoptions, $params['context'], 'assignfeedback_file', ASSIGNFEEDBACK_BATCHFILE_FILEAREA, $USER->id);
+        $data = file_prepare_standard_filemanager($data,
+                                                  'files',
+                                                  $fileoptions,
+                                                  $params['context'],
+                                                  'assignfeedback_file',
+                                                  ASSIGNFEEDBACK_BATCHFILE_FILEAREA, $USER->id);
 
         $mform->addElement('filemanager', 'files_filemanager', '', null, $fileoptions);
 

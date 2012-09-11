@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-/*
+/**
  * CSV Grade importer
  *
  * @package   assignfeedback_offline
@@ -34,7 +33,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
  */
 class assignfeedback_offline_grade_importer {
 
-    /** var string $importid - unique id for this import operation - must be passed between requests */
+    /** @var string $importid - unique id for this import operation - must be passed between requests */
     public $importid;
 
     /** @var csv_import_reader $csvreader - the csv importer class */
@@ -61,9 +60,10 @@ class assignfeedback_offline_grade_importer {
     /**
      * Constructor
      *
-     * @param string importid
+     * @param string $importid A unique id for this import
+     * @param assign $assignment The current assignment
      */
-    function __construct($importid, assign $assignment) {
+    public function __construct($importid, assign $assignment) {
         $this->importid = $importid;
         $this->assignment = $assignment;
     }
@@ -72,9 +72,10 @@ class assignfeedback_offline_grade_importer {
      * Parse a csv file and save the content to a temp file
      * Should be called before init()
      *
+     * @param string $csvdata The csv data
      * @return bool false is a failed import
      */
-    function parsecsv($csvdata) {
+    public function parsecsv($csvdata) {
         $this->csvreader = new csv_import_reader($this->importid, 'assignfeedback_offline');
         $this->csvreader->load_csv_content($csvdata, 'utf-8', 'comma');
     }
@@ -84,7 +85,7 @@ class assignfeedback_offline_grade_importer {
      *
      * @return bool false is a failed import
      */
-    function init() {
+    public function init() {
         if ($this->csvreader == null) {
             $this->csvreader = new csv_import_reader($this->importid, 'assignfeedback_offline');
         }
@@ -142,10 +143,9 @@ class assignfeedback_offline_grade_importer {
     /**
      * Get the next row of data from the csv file (only the columns we care about)
      *
-     * @global moodle_database $DB
      * @return stdClass or false The stdClass is an object containing user, grade and lastmodified
      */
-    function next() {
+    public function next() {
         global $DB;
         $result = new stdClass();
 
@@ -178,7 +178,7 @@ class assignfeedback_offline_grade_importer {
      *
      * @param bool $delete
      */
-    function close($delete) {
+    public function close($delete) {
         $this->csvreader->close();
         if ($delete) {
             $this->csvreader->cleanup();

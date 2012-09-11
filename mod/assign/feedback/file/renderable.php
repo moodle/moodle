@@ -45,7 +45,7 @@ class assignfeedback_file_import_summary implements renderable {
      * Constructor for this renderable class
      *
      * @param int $cmid - The course module id for navigation
-     * @param int $userswithnewfeedbac - The number of users with new feedback
+     * @param int $userswithnewfeedback - The number of users with new feedback
      * @param int $feedbackfilesadded - The number of feedback files added
      * @param int $feedbackfilesupdated - The number of feedback files updated
      */
