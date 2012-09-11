@@ -1,6 +1,6 @@
 M.mod_scormform = {};
 M.mod_scormform.init = function(Y) {
-    var scormform = Y.one('#scormviewform');
+    var scormform = document.getElementById('scormviewform');
     var cwidth = scormplayerdata.cwidth;
     var cheight = scormplayerdata.cheight;
     var poptions = scormplayerdata.popupoptions;
@@ -15,5 +15,5 @@ M.mod_scormform.init = function(Y) {
         }
         poptions = poptions+',width='+cwidth+',height='+cheight;
     }
-    scormform.setAttribute('onsubmit', "window.open('','Popup','"+poptions+"'); this.target='Popup';");
+    scormform.onsubmit = function() {window.open('', 'Popup', poptions); this.target='Popup';};
 }
