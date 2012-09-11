@@ -31,6 +31,9 @@ if ($hascustommenu) {
 /************************************************************************************************/
 if (!empty($PAGE->theme->settings->customlogourl)) {
     $logourl = $PAGE->theme->settings->customlogourl;
+    if (strtolower(substr($logourl, 0, 4)) != 'http') {
+        $logourl = $CFG->wwwroot.'/'.$logourl;
+    }
 } else {
     $logourl = $OUTPUT->pix_url('logo_small', 'theme');
 }
