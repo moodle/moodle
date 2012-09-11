@@ -650,7 +650,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                         ?>
 <div class="qorder">
                         <?php
-                        echo '<label class="accesshide" for="o' . $question->id . '">' . 
+                        echo '<label class="accesshide" for="o' . $question->id . '">' .
                                 get_string('questionposition', 'quiz', $qnodisplay) . '</label>';
                         echo '<input type="text" name="o' . $question->id .
                                 '" id="o' . $question->id . '"' .
