@@ -834,7 +834,7 @@ EOD;
 
         // [pj]: I really must have a good read on sockets. What exactly does this do?
         // http://www.unixguide.net/network/socketfaq/4.5.shtml is still not enlightening enough for me.
-        socket_setopt($this->listen_socket, SOL_SOCKET, SO_REUSEADDR, 1);
+        socket_set_option($this->listen_socket, SOL_SOCKET, SO_REUSEADDR, 1);
         socket_set_nonblock($this->listen_socket);
     }
 
@@ -934,8 +934,8 @@ if(!$DAEMON->query_start()) {
     die();
 }
 
-if (!function_exists('socket_setopt')) {
-    echo "Error: Function socket_setopt() does not exist.\n";
+if (!function_exists('socket_set_option')) {
+    echo "Error: Function socket_set_option() does not exist.\n";
     echo "Possibly PHP has not been compiled with --enable-sockets.\n\n";
     die();
 }
