@@ -56,7 +56,6 @@ class mod_folder_renderer extends plugin_renderer_base {
         if (empty($dir['subdirs']) and empty($dir['files'])) {
             return '';
         }
-        $browser = get_file_browser();
         $result = '<ul>';
         foreach ($dir['subdirs'] as $subdir) {
             $image = $this->output->pix_icon(file_folder_icon(24), $subdir['dirname'], 'moodle');
