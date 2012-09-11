@@ -433,7 +433,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         $pagingdisabled . ' />';
 
     $reordercontrols2top = '<div class="moveselectedonpage">' .
-        get_string('moveselectedonpage', 'quiz', $a) .
+        '<label>' . get_string('moveselectedonpage', 'quiz', $a) . '</label>' .
         '<input type="submit" name="savechanges" value="' .
         $strmove . '"  ' . $pagingdisabled . ' />' . '
         <br /><input type="submit" name="savechanges" value="' .
@@ -441,7 +441,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
     $reordercontrols2bottom = '<div class="moveselectedonpage">' .
         '<input type="submit" name="savechanges" value="' .
         $strreorderquestions . '" /><br />' .
-        get_string('moveselectedonpage', 'quiz', $b) .
+        '<label>' . get_string('moveselectedonpage', 'quiz', $b) . '</label>' .
         '<input type="submit" name="savechanges" value="' .
         $strmove . '"  ' . $pagingdisabled . ' /> ' . '</div>';
 
@@ -650,7 +650,10 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                         ?>
 <div class="qorder">
                         <?php
+                        echo '<label class="accesshide" for="o' . $question->id . '">' . 
+                                get_string('questionposition', 'quiz', $qnodisplay) . '</label>';
                         echo '<input type="text" name="o' . $question->id .
+                                '" id="o' . $question->id . '"' .
                                 '" size="2" value="' . (10*$count + 10) .
                                 '" tabindex="' . ($lastindex + $qno) . '" />';
                         ?>
