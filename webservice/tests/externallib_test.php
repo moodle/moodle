@@ -17,7 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-
+require_once($CFG->dirroot . '/webservice/externallib.php');
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
@@ -30,23 +30,24 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  */
 class core_webservice_external_testcase extends externallib_advanced_testcase {
 
-    /**
-     * Tests set up
-     */
-    protected function setUp() {
-        global $CFG;
-        require_once($CFG->dirroot . '/webservice/externallib.php');
-        $_POST = array();
-        // Enable the webservices and set a release number.
+    public function setUp() {
+        // Calling parent is good, always
+        parent::setUp();
+
+        // We always need enabled WS for this testcase
         set_config('enablewebservices', '1');
-        set_config('release', '2.4dev (Build: 20120823)');
-        set_config('version', '2012083100.00');
     }
 
     public function test_get_site_info() {
         global $DB, $USER, $CFG;
 
         $this->resetAfterTest(true);
+
+        // This is the info we are going to check
+        set_config('release', '2.4dev (Build: 20120823)');
+        set_config('version', '2012083100.00');
+
+        // Set current user
         $user = array();
         $user['username'] = 'johnd';
         $user['firstname'] = 'John';
