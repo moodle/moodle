@@ -65,7 +65,7 @@ class core_webservice_external extends external_api {
      * Note:
      * - no capability checking because we return only known information about logged user
      *
-     * @param array $serviceshortnames - DEPRECATED PARAMETER - values will be ignored - 
+     * @param array $serviceshortnames - DEPRECATED PARAMETER - values will be ignored -
      * it was an original design error, we keep for backward compatibility.
      * @return array site info
      * @since Moodle 2.2
