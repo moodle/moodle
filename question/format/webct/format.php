@@ -259,11 +259,8 @@ class qformat_webct extends qformat_default {
 
                     // Setup default value of missing fields
                     if (!isset($question->name)) {
-                        $question->name = $question->questiontext;
-                    }
-                    if (strlen($question->name) > 255) {
-                        $question->name = substr($question->name,0,250)."...";
-                        $warnings[] = get_string("questionnametoolong", "qformat_webct", $nQuestionStartLine);
+                        $question->name = $this->create_default_question_name(
+                                $question->questiontext, get_string('questionname', 'question'));
                     }
                     if (!isset($question->defaultmark)) {
                         $question->defaultmark = 1;
@@ -466,11 +463,7 @@ class qformat_webct extends qformat_default {
 
             if (preg_match("~^:TITLE:(.*)~i",$line,$webct_options)) {
                 $name = trim($webct_options[1]);
-                if (strlen($name) > 255) {
-                    $name = substr($name,0,250)."...";
-                    $warnings[] = get_string("questionnametoolong", "qformat_webct", $nLineCounter);
-                }
-                $question->name = $name;
+                $question->name = $this->clean_question_name($name);
                 continue;
             }
 

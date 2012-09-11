@@ -62,18 +62,7 @@ class qformat_multianswer extends qformat_default {
         $question->penalty = 0.3333333;
 
         if (!empty($question)) {
-            $name = html_to_text(implode(' ', $lines));
-            $name = preg_replace('/{[^}]*}/', '', $name);
-            $name = trim($name);
-
-            if ($name) {
-                $question->name = shorten_text($name, 45);
-            } else {
-                // We need some name, so use the current time, since that will be
-                // reasonably unique.
-                $question->name = userdate(time());
-            }
-
+            $question->name = $this->create_default_question_name($question->questiontext, get_string('questionname', 'question'));
             $questions[] = $question;
         }
 

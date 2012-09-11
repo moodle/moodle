@@ -87,4 +87,71 @@ class qformat_default_test extends advanced_testcase {
         $path = '<evil>Nasty <virus //> thing<//evil>';
         $this->assertEquals(array('Nasty  thing'), $format->split_category_path($path));
     }
+
+    public function test_clean_question_name() {
+        $format = new testable_qformat();
+
+        $name = 'Nice simple name';
+        $this->assertEquals($name, $format->clean_question_name($name));
+
+        $name = 'Question in <span lang="en" class="multilang">English</span><span lang="fr" class="multilang">French</span>';
+        $this->assertEquals($name, $format->clean_question_name($name));
+
+        $name = 'Evil <script type="text/javascrip">alert("You have been hacked!");</script>';
+        $this->assertEquals('Evil alert("You have been hacked!");', $format->clean_question_name($name));
+
+        $name = 'This is a very long question name. It goes on and on and on. ' .
+                'I wonder if it will ever stop. The quetsion name field in the database is only ' .
+                'two hundred and fifty five characters wide, so if the import file contains a ' .
+                'name longer than that, the code had better truncate it!';
+        $this->assertEquals(shorten_text($name, 251), $format->clean_question_name($name));
+
+        // The worst case scenario is a whole lot of single charaters in separate multilang tags.
+        $name = '<span lang="en" class="multilang">A</span>' .
+                '<span lang="fr" class="multilang">B</span>' .
+                '<span lang="fr_ca" class="multilang">C</span>' .
+                '<span lang="en_us" class="multilang">D</span>' .
+                '<span lang="de" class="multilang">E</span>' .
+                '<span lang="cz" class="multilang">F</span>' .
+                '<span lang="it" class="multilang">G</span>' .
+                '<span lang="es" class="multilang">H</span>' .
+                '<span lang="pt" class="multilang">I</span>' .
+                '<span lang="ch" class="multilang">J</span>';
+        $this->assertEquals(shorten_text($name, 1), $format->clean_question_name($name));
+    }
+
+    public function test_create_default_question_name() {
+        $format = new testable_qformat();
+
+        $text = 'Nice simple name';
+        $this->assertEquals($text, $format->create_default_question_name($text, 'Default'));
+
+        $this->assertEquals('Default', $format->create_default_question_name('', 'Default'));
+
+        $text = 'Question in <span lang="en" class="multilang">English</span><span lang="fr" class="multilang">French</span>';
+        $this->assertEquals($text, $format->create_default_question_name($text, 'Default'));
+
+        $text = 'Evil <script type="text/javascrip">alert("You have been hacked!");</script>';
+        $this->assertEquals('Evil alert("You have been hacked!");',
+                $format->create_default_question_name($text, 'Default'));
+
+        $text = 'This is a very long question text. It goes on and on and on. ' .
+                'I wonder if it will ever stop. The question name field in the database is only ' .
+                'two hundred and fifty five characters wide, so if the import file contains a ' .
+                'name longer than that, the code had better truncate it!';
+        $this->assertEquals(shorten_text($text, 80), $format->create_default_question_name($text, 'Default'));
+
+        // The worst case scenario is a whole lot of single charaters in separate multilang tags.
+        $text = '<span lang="en" class="multilang">A</span>' .
+                '<span lang="fr" class="multilang">B</span>' .
+                '<span lang="fr_ca" class="multilang">C</span>' .
+                '<span lang="en_us" class="multilang">D</span>' .
+                '<span lang="de" class="multilang">E</span>' .
+                '<span lang="cz" class="multilang">F</span>' .
+                '<span lang="it" class="multilang">G</span>' .
+                '<span lang="es" class="multilang">H</span>' .
+                '<span lang="pt" class="multilang">I</span>' .
+                '<span lang="ch" class="multilang">J</span>';
+        $this->assertEquals(shorten_text($text, 1), $format->create_default_question_name($text, 'Default'));
+    }
 }
