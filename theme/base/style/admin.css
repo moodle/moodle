@@ -29,6 +29,8 @@
 #page-admin-course-index .editcourse th,
 #page-admin-course-index .editcourse td {padding-left:10px;padding-right:10px;}
 #page-admin-course-index .editcourse .count {text-align:right;}
+#page-admin-course-index.dir-rtl .editcourse td[align="left"] {text-align: right;}
+#page-admin-course-index.dir-rtl .editcourse td[align="right"] {text-align: left;}
 
 #page-admin-report-security-index .timewarninghidden {display:none;}
 #page-admin-report-security-index .statuswarning {background-color: #f0e000;}
