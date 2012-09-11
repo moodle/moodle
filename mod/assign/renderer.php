@@ -132,7 +132,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o .= $this->output->container_start('usersummary');
         $o .= $this->output->box_start('boxaligncenter usersummarysection');
         if ($summary->blindmarking) {
-            $o .= get_string('hiddenuser', 'assign', $summary->uniqueidforuser);
+            $o .= get_string('hiddenuser', 'assign') . $summary->uniqueidforuser;
         } else {
             $o .= $this->output->user_picture($summary->user);
             $o .= $this->output->spacer(array('width'=>30));
@@ -343,7 +343,12 @@ class mod_assign_renderer extends plugin_renderer_base {
         }
 
         foreach ($status->feedbackplugins as $plugin) {
-            if ($plugin->is_enabled() && $plugin->is_visible() && !empty($status->grade) && !$plugin->is_empty($status->grade)) {
+            if ($plugin->is_enabled() &&
+                    $plugin->is_visible() &&
+                    $plugin->has_user_summary() &&
+                    !empty($status->grade) &&
+                    !$plugin->is_empty($status->grade)) {
+
                 $row = new html_table_row();
                 $cell1 = new html_table_cell($plugin->get_name());
                 $pluginfeedback = new assign_feedback_plugin_feedback($plugin, $status->grade, assign_feedback_plugin_feedback::SUMMARY, $status->coursemoduleid, $status->returnaction, $status->returnparams);
@@ -558,7 +563,11 @@ class mod_assign_renderer extends plugin_renderer_base {
             $t->data[] = $row;
 
             foreach ($status->submissionplugins as $plugin) {
-                if ($plugin->is_enabled() && $plugin->is_visible() && !$plugin->is_empty($submission)) {
+                if ($plugin->is_enabled() &&
+                    $plugin->is_visible() &&
+                    $plugin->has_user_summary() &&
+                    !$plugin->is_empty($submission)) {
+
                     $row = new html_table_row();
                     $cell1 = new html_table_cell($plugin->get_name());
                     $pluginsubmission = new assign_submission_plugin_submission($plugin,
@@ -653,6 +662,7 @@ class mod_assign_renderer extends plugin_renderer_base {
     public function render_assign_grading_table(assign_grading_table $table) {
         $o = '';
         $o .= $this->output->box_start('boxaligncenter gradingtable');
+
         $this->page->requires->js_init_call('M.mod_assign.init_grading_table', array());
         $this->page->requires->string_for_js('nousersselected', 'assign');
         $this->page->requires->string_for_js('batchoperationconfirmgrantextension', 'assign');
@@ -660,6 +670,11 @@ class mod_assign_renderer extends plugin_renderer_base {
         $this->page->requires->string_for_js('batchoperationconfirmreverttodraft', 'assign');
         $this->page->requires->string_for_js('batchoperationconfirmunlock', 'assign');
         $this->page->requires->string_for_js('editaction', 'assign');
+        foreach ($table->plugingradingbatchoperations as $plugin => $operations) {
+            foreach ($operations as $operation => $description) {
+                $this->page->requires->string_for_js('batchoperationconfirm' . $operation, 'assignfeedback_' . $plugin);
+            }
+        }
         // need to get from prefs
         $o .= $this->flexible_table($table, $table->get_rows_per_page(), true);
         $o .= $this->output->box_end();

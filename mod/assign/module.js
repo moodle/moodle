@@ -76,7 +76,18 @@ M.mod_assign.init_grading_table = function(Y) {
                 alert(M.str.assign.nousersselected);
                 e.preventDefault();
             } else {
-                if (!confirm(eval('M.str.assign.batchoperationconfirm' + operation.get('value')))) {
+                action = operation.get('value');
+                prefix = 'plugingradingbatchoperation_';
+                if (action.indexOf(prefix) == 0) {
+                    pluginaction = action.substr(prefix.length);
+                    plugin = pluginaction.split('_')[0];
+                    action = pluginaction.substr(plugin.length + 1);
+                    confirmmessage = eval('M.str.assignfeedback_' + plugin + '.batchoperationconfirm' + action);
+                } else {
+                    confirmmessage = eval('M.str.assign.batchoperationconfirm' + operation.get('value'));
+                }
+                console.log(confirmmessage);
+                if (!confirm(confirmmessage)) {
                     e.preventDefault();
                 }
             }
