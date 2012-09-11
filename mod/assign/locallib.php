@@ -2146,7 +2146,8 @@ class assign {
                                                               $viewfullnames,
                                                               $extensionduedate,
                                                               $this->get_context(),
-                                                              $this->is_blind_marking()));
+                                                              $this->is_blind_marking(),
+                                                              ''));
         }
         if ($grade) {
             $data = new stdClass();
@@ -2635,6 +2636,15 @@ class assign {
             $showedit = has_capability('mod/assign:submit', $this->context) &&
                          $this->submissions_open($user->id) && ($this->is_any_submission_plugin_enabled()) && $showlinks;
             $gradelocked = ($grade && $grade->locked) || $this->grading_disabled($user->id);
+            // Grading criteria preview.
+            $gradingmanager = get_grading_manager($this->context, 'mod_assign', 'submissions');
+            $gradingcontrollerpreview = '';
+            if ($gradingmethod = $gradingmanager->get_active_method()) {
+                $controller = $gradingmanager->get_controller($gradingmethod);
+                if ($controller->is_form_defined()) {
+                    $gradingcontrollerpreview = $controller->render_preview($PAGE);
+                }
+            }
 
             $showsubmit = ($submission || $teamsubmission) && $showlinks;
             if ($teamsubmission && ($teamsubmission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED)) {
@@ -2671,7 +2681,9 @@ class assign {
                                                               $viewfullnames,
                                                               $extensionduedate,
                                                               $this->get_context(),
-                                                              $this->is_blind_marking()));
+                                                              $this->is_blind_marking(),
+                                                              $gradingcontrollerpreview));
+
             require_once($CFG->libdir.'/gradelib.php');
             require_once($CFG->dirroot.'/grade/grading/lib.php');
 
