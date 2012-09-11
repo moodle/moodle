@@ -131,7 +131,7 @@ class qformat_examview extends qformat_based_on_xml {
             $question->questiontext = $htmltext;
             $question->questiontextformat = FORMAT_HTML;
             $question->questiontextfiles = array();
-            $question->name = shorten_text( $question->questiontext, 250 );
+            $question->name = $this->create_default_question_name($question->questiontext, get_string('questionname', 'question'));
             $question->qtype = MATCH;
             $question = $this->add_blank_combined_feedback($question);
             $question->subquestions = array();
@@ -200,7 +200,7 @@ class qformat_examview extends qformat_based_on_xml {
         $question->questiontext = $this->cleaninput($htmltext);
         $question->questiontextformat = FORMAT_HTML;
         $question->questiontextfiles = array();
-        $question->name = shorten_text( $question->questiontext, 250 );
+        $question->name = $this->create_default_question_name($question->questiontext, get_string('questionname', 'question'));
 
         switch ($question->qtype) {
             case MULTICHOICE:

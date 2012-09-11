@@ -510,11 +510,8 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
         $question->questiontext = $this->cleaned_text_field($text);
         $question->questiontextformat = FORMAT_HTML; // Needed because add_blank_combined_feedback uses it.
 
-        $question->name = shorten_text(strip_tags($question->questiontext['text']), 200);
-        $question->name = substr($question->name, 0, 250);
-        if (!$question->name) {
-            $question->name = get_string('defaultname', 'qformat_blackboard_six' , $quest->id);
-        }
+        $question->name = $this->create_default_question_name($question->questiontext['text'],
+                get_string('defaultname', 'qformat_blackboard_six' , $quest->id));
         $question->generalfeedback = '';
         $question->generalfeedbackformat = FORMAT_HTML;
         $question->generalfeedbackfiles = array();

@@ -95,7 +95,7 @@ class qformat_aiken extends qformat_default {
                 } else {
                     // Must be the first line of a new question, since no recognised prefix.
                     $question->qtype = MULTICHOICE;
-                    $question->name = shorten_text(s($nowline), 50);
+                    $question->name = $this->create_default_question_name($nowline, get_string('questionname', 'question'));
                     $question->questiontext = htmlspecialchars(trim($nowline), ENT_NOQUOTES);
                     $question->questiontextformat = FORMAT_HTML;
                     $question->generalfeedback = '';
