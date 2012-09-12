@@ -80,7 +80,7 @@ if (!empty($scorm->popup)) {
                 }
                 $scoid = $sco->id;
             }
-            $launch = $scorm->skipview;
+            $launch = true;
         }
     }
     $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => $launch,
