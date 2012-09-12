@@ -782,7 +782,9 @@ function assign_get_user_grades($assign, $userid=0) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
-    $assignment = new assign(null, null, null);
+    $cm = get_coursemodule_from_instance('assign', $assign->id, 0, false, MUST_EXIST);
+    $context = context_module::instance($cm->id);
+    $assignment = new assign($context, null, null);
     $assignment->set_instance($assign);
     return $assignment->get_user_grades_for_gradebook($userid);
 }
