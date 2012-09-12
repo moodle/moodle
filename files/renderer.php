@@ -526,6 +526,7 @@ class core_files_renderer extends plugin_renderer_base {
                     <div class="{!}fp-tb-logout"><img src="'.$this->pix_url('a/logout').'" /><a href="#"></a></div>
                     <div class="{!}fp-tb-manage"><a href="#"><img src="'.$this->pix_url('a/setting').'" /> '.get_string('manageurl', 'repository').'</a></div>
                     <div class="{!}fp-tb-help"><a href="#"><img src="'.$this->pix_url('a/help').'" /> '.get_string('help').'</a></div>
+                    <div class="{!}fp-tb-message"></div>
                 </div>
                 <div class="{!}fp-viewbar">
                     <a class="{!}fp-vb-icons" href="#"></a>
