@@ -93,20 +93,24 @@ class qformat_xhtml extends qformat_default {
             }
             $expout .= "</ul>\n";
             break;
-        case 'shortanswer':
-            $expout .= "<ul class=\"shortanswer\">\n";
-            $expout .= "  <li>" . html_writer::label(get_string('answer'), 'quest_'.$id, false, array('class' => 'accesshide'));
-            $expout .= "    <input id=\"quest_$id\" name=\"quest_$id\" type=\"text\" /></li>\n";
-            $expout .= "</ul>\n";
+        case SHORTANSWER:
+            $expout .= html_writer::start_tag('ul', array('class' => 'shortanswer'));
+            $expout .= html_writer::start_tag('li');
+            $expout .= html_writer::label(get_string('answer'), 'quest_'.$id, false, array('class' => 'accesshide'));
+            $expout .= html_writer::empty_tag('input', array('id' => "quest_$id", 'name' => "quest_$id", 'type' => 'text'));
+            $expout .= html_writer::end_tag('li');
+            $expout .= html_writer::end_tag('ul');
             break;
-        case 'numerical':
-            $expout .= "<ul class=\"numerical\">\n";
-            $expout .= "  <li>" . html_writer::label(get_string('answer'), 'quest_'.$id, false, array('class' => 'accesshide'));
-            $expout .= "    <input id=\"quest_$id\" name=\"quest_$id\" type=\"text\" /></li>\n";
-            $expout .= "</ul>\n";
+        case NUMERICAL:
+            $expout .= html_writer::start_tag('ul', array('class' => 'numerical'));
+            $expout .= html_writer::start_tag('li');
+            $expout .= html_writer::label(get_string('answer'), 'quest_'.$id, false, array('class' => 'accesshide'));
+            $expout .= html_writer::empty_tag('input', array('id' => "quest_$id", 'name' => "quest_$id", 'type' => 'text'));
+            $expout .= html_writer::end_tag('li');
+            $expout .= html_writer::end_tag('ul');
             break;
-        case 'match':
-            $expout .= "<ul class=\"match\">\n";
+        case MATCH:
+            $expout .= html_writer::start_tag('ul', array('class' => 'match'));
 
             // build answer list
             $ans_list = array();
@@ -116,9 +120,9 @@ class qformat_xhtml extends qformat_default {
             shuffle( $ans_list ); // random display order
 
             // Build select options.
-            $selectoptions = '';
+            $selectoptions = array();
             foreach($ans_list as $ans) {
-                $selectoptions .= "<option value=\"" . s($ans) . "\">" . s($ans) . "</option>\n";
+                $selectoptions[s($ans)] = s($ans);
             }
 
             // display
@@ -127,12 +131,12 @@ class qformat_xhtml extends qformat_default {
                 // build drop down for answers
                 $quest_text = $this->repchar( $subquestion->questiontext );
                 $dropdown = html_writer::label(get_string('answer', 'qtype_match', $option+1), 'quest_'.$id.'_'.$option, false, array('class' => 'accesshide'));
-                $dropdown .= "<select id=\"quest_{$id}_{$option}\" name=\"quest_{$id}_{$option}\">\n".$selectoptions."</select>\n";
-                $expout .= "  <li>$quest_text</li>\n";
+                $dropdown .= html_writer::select($selectoptions, "quest_{$id}_{$option}", '', false, array('id' => "quest_{$id}_{$option}"));
+                $expout .= html_writer::tag('li', $quest_text);;
                 $expout .= $dropdown;
                 $option++;
             }
-            $expout .= "</ul>\n";
+            $expout .= html_writer::end_tag('ul');
             break;
         case 'description':
             break;
