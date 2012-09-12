@@ -132,6 +132,8 @@ class repository_dropbox extends repository {
         $list['manage'] = false;
         $list['dynload'] = true;
         $list['nosearch'] = true;
+        $list['logouturl'] = 'https://www.dropbox.com/logout';
+        $list['message'] = get_string('logoutdesc', 'repository_dropbox');
         // process breadcrumb trail
         $list['path'] = array(
             array('name'=>get_string('dropbox', 'repository_dropbox'), 'path'=>'/')
