@@ -248,7 +248,7 @@ function xmldb_main_upgrade($oldversion) {
         if ($CFG->restrictmodulesfor === 'all') {
             $courses = $DB->get_records_menu('course', array(), 'id', 'id, 1');
         } else if ($CFG->restrictmodulesfor === 'requested') {
-            $courses = $DB->get_records_menu('course', array('retrictmodules' => 1), 'id', 'id, 1');
+            $courses = $DB->get_records_menu('course', array('restrictmodules' => 1), 'id', 'id, 1');
         } else {
             $courses = array();
         }
@@ -314,7 +314,7 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2012031500.02) {
 
-        // Define field retrictmodules to be dropped from course
+        // Define field restrictmodules to be dropped from course
         $table = new xmldb_table('course');
         $field = new xmldb_field('restrictmodules');
 
