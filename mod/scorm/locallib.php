@@ -865,12 +865,12 @@ function scorm_simple_play($scorm, $user, $context, $cmid) {
                 $orgidentifier = $sco->organization;
             }
         }
-        if ($scorm->skipview >= 1) {
+        if ($scorm->skipview >= SCORM_SKIPVIEW_FIRST) {
             $sco = current($scoes);
             $url = new moodle_url('/mod/scorm/player.php', array('a' => $scorm->id,
                                                                 'currentorg'=>$orgidentifier,
                                                                 'scoid'=>$sco->id));
-            if ($scorm->skipview == 2 || scorm_get_tracks($sco->id, $user->id) === false) {
+            if ($scorm->skipview == SCORM_SKIPVIEW_ALWAYS || scorm_get_tracks($sco->id, $user->id) === false) {
                 if (!empty($scorm->forcenewattempt)) {
                     $result = scorm_get_toc($user, $scorm, $cmid, TOCFULLURL, $orgidentifier);
                     if ($result->incomplete === false) {
