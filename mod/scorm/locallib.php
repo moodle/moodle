@@ -436,6 +436,18 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
     return $id;
 }
 
+/**
+ * simple quick function to return true/false if this user has tracks in this scorm
+ *
+ * @param integer $scormid The scorm ID
+ * @param integer $userid the users id
+ * @return boolean (false if there are no tracks)
+ */
+function scorm_has_tracks($scormid, $userid) {
+    global $DB;
+    return $DB->record_exists('scorm_scoes_track', array('userid'=>$userid, 'scormid'=>$scormid));
+}
+
 function scorm_get_tracks($scoid, $userid, $attempt='') {
     /// Gets all tracks of specified sco and user
     global $CFG, $DB;
@@ -870,7 +882,7 @@ function scorm_simple_play($scorm, $user, $context, $cmid) {
             $url = new moodle_url('/mod/scorm/player.php', array('a' => $scorm->id,
                                                                 'currentorg'=>$orgidentifier,
                                                                 'scoid'=>$sco->id));
-            if ($scorm->skipview == SCORM_SKIPVIEW_ALWAYS || scorm_get_tracks($sco->id, $user->id) === false) {
+            if ($scorm->skipview == SCORM_SKIPVIEW_ALWAYS || !scorm_has_tracks($scorm->id, $user->id)) {
                 if (!empty($scorm->forcenewattempt)) {
                     $result = scorm_get_toc($user, $scorm, $cmid, TOCFULLURL, $orgidentifier);
                     if ($result->incomplete === false) {

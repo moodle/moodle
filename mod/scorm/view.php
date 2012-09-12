@@ -70,7 +70,7 @@ if (!empty($scorm->popup)) {
         !has_capability('mod/scorm:viewreport', $contextmodule)) { // Don't skip users with the capability to view reports.
 
         // do we launch immediately and redirect the parent back ?
-        if ($scorm->skipview == SCORM_SKIPVIEW_ALWAYS || (scorm_get_tracks($scoes[0]->id, $USER->id) === false)) {
+        if ($scorm->skipview == SCORM_SKIPVIEW_ALWAYS || !scorm_has_tracks($scorm->id, $USER->id)) {
             $orgidentifier = '';
             if ($sco = scorm_get_sco($scorm->launch, SCO_ONLY)) {
                 if (($sco->organization == '') && ($sco->launch == '')) {
