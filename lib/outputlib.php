@@ -269,7 +269,7 @@ class theme_config {
     public $rarrow = null;
 
     /**
-     * @var string Accessibility: Right arrow-like character is
+     * @var string Accessibility: Left arrow-like character is
      * used in the breadcrumb trail, course navigation menu
      * (previous/next activity), calendar, and search forum block.
      * If the theme does not set characters, appropriate defaults
