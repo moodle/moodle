@@ -8052,3 +8052,77 @@ class admin_setting_configmultiselect_modules extends admin_setting_configmultis
         return true;
     }
 }
+
+
+/**
+ * Checkbox for the updateautodeploy setting
+ *
+ * This class implements the extra check to make sure that the web server
+ * process user has write access to the $CFG->dirroot.
+ *
+ * @copyright 2012 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_updateautodeploy extends admin_setting_configcheckbox {
+
+    /**
+     * Sets the value for the setting
+     *
+     * When the feature is just about to be enabled, proceed some extra checks
+     * prior to setting the value.
+     *
+     * @param string $data the checkbox value
+     * @return string empty string or error
+     */
+    public function write_setting($data) {
+
+        // Are we just going to activate the feature?
+        $currentlyenabled = $this->config_read('updateautodeploy');
+        if ((string)$data === $this->yes and empty($currentlyenabled)) {
+            if (!$this->plugin_locations_writeable()) {
+                return get_string('updateautodeploy_unablewriteplugins', 'core_admin');
+            }
+            // TODO MDL-35239 check if the whole dirroot is writeable
+        }
+
+        // Let the parent class actually save the value.
+        return parent::write_setting($data);
+    }
+
+    /**
+     * Check if it is possible to write into plugin locations
+     *
+     * @return bool
+     */
+    private function plugin_locations_writeable() {
+        global $CFG;
+        require_once($CFG->libdir.'/pluginlib.php');
+
+        // Check that the web server process is able to deploy new plugins of all types
+        $plugintypes = get_plugin_types(true);
+        foreach ($plugintypes as $plugintype => $plugintyperoot) {
+            if (!is_writeable($plugintyperoot)) {
+                debugging('Plugin type location not writeable: '.$plugintyperoot, DEBUG_ALL);
+                return false;
+            }
+        }
+
+        // Check that the web server process is able to modify contributed plugins
+        $pluginman = plugin_manager::instance();
+        $plugininfo = $pluginman->get_plugins();
+        foreach ($plugininfo as $plugintype => $plugininstances) {
+            foreach ($plugininstances as $pluginname => $plugininfo) {
+                if ($plugininfo->is_standard()) {
+                    // No need to check for these now until MDL-35239 is implemented
+                    continue;
+                }
+                if (!is_writeable($plugininfo->rootdir)) {
+                    debugging('Contributed plugin directory not writeable: '.$plugininfo->rootdir);
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+}

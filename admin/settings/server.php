@@ -228,6 +228,8 @@ if (empty($CFG->disableupdatenotifications)) {
     $temp = new admin_settingpage('updatenotifications', new lang_string('updatenotifications', 'core_admin'));
     $temp->add(new admin_setting_configcheckbox('updateautocheck', new lang_string('updateautocheck', 'core_admin'),
                                                 new lang_string('updateautocheck_desc', 'core_admin'), 1));
+    $temp->add(new admin_setting_updateautodeploy('updateautodeploy', new lang_string('updateautodeploy', 'core_admin'),
+                                                new lang_string('updateautodeploy_desc', 'core_admin'), 0));
     $temp->add(new admin_setting_configselect('updateminmaturity', new lang_string('updateminmaturity', 'core_admin'),
                                               new lang_string('updateminmaturity_desc', 'core_admin'), MATURITY_STABLE,
                                               array(
