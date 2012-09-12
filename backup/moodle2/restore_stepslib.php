@@ -1466,12 +1466,12 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
             // Deal with enrolment roles - ignore the component and just find out the instance via new id,
             // it is possible that enrolment was restored using different plugin type.
             if (!isset($this->plugins)) {
-                $this->plguins = enrol_get_plugins(true);
+                $this->plugins = enrol_get_plugins(true);
             }
             if ($enrolid = $this->get_mappingid('enrol', $data->itemid)) {
                 if ($instance = $DB->get_record('enrol', array('id'=>$enrolid))) {
-                    if (isset($this->plguins[$instance->enrol])) {
-                        $this->plguins[$instance->enrol]->restore_role_assignment($instance, $newroleid, $newuserid, $contextid);
+                    if (isset($this->plugins[$instance->enrol])) {
+                        $this->plugins[$instance->enrol]->restore_role_assignment($instance, $newroleid, $newuserid, $contextid);
                     }
                 }
             }
