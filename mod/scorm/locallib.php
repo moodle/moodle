@@ -445,7 +445,7 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
  */
 function scorm_has_tracks($scormid, $userid) {
     global $DB;
-    return $DB->record_exists('scorm_scoes_track', array('userid'=>$userid, 'scormid'=>$scormid));
+    return $DB->record_exists('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scormid));
 }
 
 function scorm_get_tracks($scoid, $userid, $attempt='') {
