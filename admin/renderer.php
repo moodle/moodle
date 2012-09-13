@@ -495,21 +495,39 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Displays the info about available Moodle updates
+     * Displays the info about available Moodle core and plugin updates
      *
-     * @param array|null $updates array of available_update_info objects or null
+     * The structure of the $updates param has changed since 2.4. It contains not only updates
+     * for the core itself, but also for all other installed plugins.
+     *
+     * @param array|null $updates array of (string)component => array of available_update_info objects or null
      * @param int|null $fetch timestamp of the most recent updates fetch or null (unknown)
      * @return string
      */
     protected function available_updates($updates, $fetch) {
 
         $updateinfo = $this->box_start('generalbox adminwarning availableupdatesinfo');
+        $someupdateavailable = false;
         if (is_array($updates)) {
-            $updateinfo .= $this->heading(get_string('updateavailable', 'core_admin'), 3);
-            foreach ($updates as $update) {
-                $updateinfo .= $this->moodle_available_update_info($update);
+            if (is_array($updates['core'])) {
+                $someupdateavailable = true;
+                $updateinfo .= $this->heading(get_string('updateavailable', 'core_admin'), 3);
+                foreach ($updates['core'] as $update) {
+                    $updateinfo .= $this->moodle_available_update_info($update);
+                }
             }
-        } else {
+            unset($updates['core']);
+            // If something has left in the $updates array now, it is updates for plugins.
+            if (!empty($updates)) {
+                $someupdateavailable = true;
+                $updateinfo .= $this->heading(get_string('updateavailableforplugin', 'core_admin'), 3);
+                $pluginsoverviewurl = new moodle_url('/admin/plugins.php', array('updatesonly' => 1));
+                $updateinfo .= $this->container(get_string('pluginsoverviewsee', 'core_admin',
+                    array('url' => $pluginsoverviewurl->out())));
+            }
+        }
+
+        if (!$someupdateavailable) {
             $now = time();
             if ($fetch and ($fetch <= $now) and ($now - $fetch < HOURSECS)) {
                 $updateinfo .= $this->heading(get_string('updateavailablenot', 'core_admin'), 3);
