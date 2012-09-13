@@ -28,18 +28,22 @@ require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/editorlib.php');
 require_once($CFG->libdir . '/editor/tinymce/lib.php');
 
-// Must be logged in
+// Must be logged in and have a valid session key.
 require_login();
+require_sesskey();
 
-// Require path to draftfile.php file
-$path = required_param('path', PARAM_PATH);
+// URL to the media.
+$path = required_param('path', PARAM_RAW);
+$path = base64_decode($path);
+$url = clean_param($path, PARAM_URL);
+$url = new moodle_url($url);
 
 $editor = new tinymce_texteditor();
 
-// Now output this file which is super-simple
+// Now output this file which is super-simple.
 $PAGE->set_pagelayout('embedded');
 $PAGE->set_url(new moodle_url('/lib/editor/tinymce/tiny_mce/'.$editor->version.'/plugins/moodlemedia/preview.php',
-        array('path' => $path)));
+        array('path' => base64_encode($path))));
 $PAGE->set_context(context_system::instance());
 $PAGE->add_body_class('core_media_preview');
 
@@ -47,14 +51,6 @@ echo $OUTPUT->header();
 
 $mediarenderer = $PAGE->get_renderer('core', 'media');
 
-$path = '/'.trim($path, '/');
-
-if (empty($CFG->slasharguments)) {
-    $url = new moodle_url('/draftfile.php', array('file'=>$path));
-} else {
-    $url = new moodle_url('/draftfile.php');
-    $url->set_slashargument($path);
-}
 if ($mediarenderer->can_embed_url($url)) {
     echo $mediarenderer->embed_url($url);
 }
