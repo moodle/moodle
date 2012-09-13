@@ -243,7 +243,7 @@ class enrol_cohort_plugin extends enrol_plugin {
         if ($data->roleid and $DB->record_exists('cohort', array('id'=>$data->customint1))) {
             $instance = $DB->get_record('enrol', array('roleid'=>$data->roleid, 'customint1'=>$data->customint1, 'courseid'=>$course->id, 'enrol'=>$this->get_name()));
             if ($instance) {
-                $instanceid = $instance;
+                $instanceid = $instance->id;
             } else {
                 $instanceid = $this->add_instance($course, (array)$data);
             }
@@ -257,7 +257,7 @@ class enrol_cohort_plugin extends enrol_plugin {
             $instance = $DB->get_record('enrol', array('roleid'=>$data->roleid, 'customint1'=>$data->customint1, 'courseid'=>$course->id, 'enrol'=>$this->get_name()));
 
             if ($instance) {
-                $instanceid = $instance;
+                $instanceid = $instance->id;
             } else {
                 $data->status = ENROL_INSTANCE_DISABLED;
                 $instanceid = $this->add_instance($course, (array)$data);
