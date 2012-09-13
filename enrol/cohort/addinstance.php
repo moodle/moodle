@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * Adds new instance of enrol_cohort to specified course.
  *
- * @package    enrol
- * @subpackage cohort
+ * @package    enrol_cohort
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,7 +26,7 @@ require('../../config.php');
 require_once("$CFG->dirroot/enrol/cohort/addinstance_form.php");
 require_once("$CFG->dirroot/enrol/cohort/locallib.php");
 
-$id = required_param('id', PARAM_INT); // course id
+$id = required_param('id', PARAM_INT); // Course id.
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
@@ -42,7 +40,7 @@ $PAGE->set_pagelayout('admin');
 
 navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
 
-// Try and make the manage instances node on the navigation active
+// Try and make the manage instances node on the navigation active.
 $courseadmin = $PAGE->settingsnav->get('courseadmin');
 if ($courseadmin && $courseadmin->get('users') && $courseadmin->get('users')->get('manageinstances')) {
     $courseadmin->get('users')->get('manageinstances')->make_active();
