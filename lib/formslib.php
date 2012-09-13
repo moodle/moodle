@@ -1301,13 +1301,15 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         } else {
             $this->_pageparams = '';
         }
-        //no 'name' atttribute for form in xhtml strict :
-        $attributes = array('action'=>$action, 'method'=>$method,
-                'accept-charset'=>'utf-8', 'id'=>'mform'.$formcounter) + $target;
+        // No 'name' atttribute for form in xhtml strict :
+        $attributes = array('action' => $action, 'method' => $method, 'accept-charset' => 'utf-8') + $target;
+        if (is_null($this->getAttribute('id'))) {
+            $attributes['id'] = 'mform' . $formcounter;
+        }
         $formcounter++;
         $this->updateAttributes($attributes);
 
-        //this is custom stuff for Moodle :
+        // This is custom stuff for Moodle :
         $oldclass=   $this->getAttribute('class');
         if (!empty($oldclass)){
             $this->updateAttributes(array('class'=>$oldclass.' mform'));
