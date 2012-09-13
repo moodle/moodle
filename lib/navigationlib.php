@@ -2026,9 +2026,7 @@ class global_navigation extends navigation_node {
                     // pre 2.3 style format url
                     $url = $urlfunction($course->id, $section->section);
                 }else{
-                    if ($course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
-                        $url = course_get_url($course, $section->section);
-                    }
+                    $url = course_get_url($course, $section->section, array('navigation' => true));
                 }
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
