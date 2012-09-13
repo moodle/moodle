@@ -24,7 +24,7 @@ function scorm_seq_overall ($scoid, $userid, $request, $attempt) {
         }
         if ($seq->sequencing != null) {
             $seq = scorm_seq_sequencing($scoid, $userid, $seq);
-            if($seq->sequencing == 'exit'){//return the control to the LTS
+            if ($seq->sequencing == 'exit') { // Return the control to the LTS.
                 return 'true';
             }
         }
@@ -42,7 +42,7 @@ function scorm_seq_overall ($scoid, $userid, $request, $attempt) {
 function scorm_seq_navigation ($scoid, $userid, $request, $attempt=0) {
     global $DB;
 
-    // Sequencing structure
+    // Sequencing structure.
     $seq = new stdClass();
     $seq->currentactivity = scorm_get_sco($scoid);
     $seq->traversaldir = null;
@@ -63,7 +63,7 @@ function scorm_seq_navigation ($scoid, $userid, $request, $attempt=0) {
     $seq->exception = null;
     $seq->reachable = true;
     $seq->prevact = true;
-    
+
     $sco = scorm_get_sco($scoid);
 
     switch ($request) {
@@ -72,19 +72,22 @@ function scorm_seq_navigation ($scoid, $userid, $request, $attempt=0) {
                 $seq->navigation = true;
                 $seq->sequencing = 'start';
             } else {
-                $seq->exception = 'NB.2.1-1'; /// Sequencing session already begun
+                $seq->exception = 'NB.2.1-1'; // Sequencing session already begun.
             }
         break;
         case 'resumeall_':
             if (empty($seq->currentactivity)) {
-                if ($track = $DB->get_record('scorm_scoes_track', array('scoid'=>$scoid,'userid'=>$userid,'element'=>'suspendedactivity'))) {//I think it's suspend instead of suspendedactivity
+                // TODO: I think it's suspend instead of suspendedactivity.
+                if ($track = $DB->get_record('scorm_scoes_track',
+                    array('scoid'=>$scoid, 'userid'=>$userid, 'element'=>'suspendedactivity'))) {
+
                     $seq->navigation = true;
                     $seq->sequencing = 'resumeall';
                 } else {
-                    $seq->exception = 'NB.2.1-3'; /// No suspended activity found
+                    $seq->exception = 'NB.2.1-3'; // No suspended activity found.
                 }
             } else {
-                $seq->exception = 'NB.2.1-1'; /// Sequencing session already begun
+                $seq->exception = 'NB.2.1-1'; // Sequencing session already begun.
             }
         break;
         case 'continue_':
@@ -94,9 +97,9 @@ function scorm_seq_navigation ($scoid, $userid, $request, $attempt=0) {
                 if ($sco->parent != '/') {
                     if ($parentsco = scorm_get_parent($sco)) {
 
-                         if (isset($parentsco->flow) && ($parentsco->flow == true)) {//I think it's parentsco
-                            // Current activity is active !
-                            if (scorm_seq_is('active',$sco->id,$userid)) {
+                        if (isset($parentsco->flow) && ($parentsco->flow == true)) { // I think it's parentsco.
+                            // Current activity is active!
+                            if (scorm_seq_is('active', $sco->id, $userid)) {
                                 if ($request == 'continue_') {
                                     $seq->navigation = true;
                                     $seq->termination = 'exit';
@@ -107,7 +110,7 @@ function scorm_seq_navigation ($scoid, $userid, $request, $attempt=0) {
                                         $seq->termination = 'exit';
                                         $seq->sequencing = 'previous';
                                     } else {
-                                        $seq->exception = 'NB.2.1-5'; /// Violates control mode
+                                        $seq->exception = 'NB.2.1-5'; // Violates control mode.
                                     }
                                 }
                             }
@@ -116,36 +119,36 @@ function scorm_seq_navigation ($scoid, $userid, $request, $attempt=0) {
                     }
                 }
             } else {
-                $seq->exception = 'NB.2.1-2'; /// Current activity not defined
+                $seq->exception = 'NB.2.1-2'; // Current activity not defined.
             }
         break;
         case 'forward_':
         case 'backward_':
-            $seq->exception = 'NB.2.1-7' ; /// None to be done, behavior not defined
+            $seq->exception = 'NB.2.1-7'; // None to be done, behavior not defined.
         break;
         case 'exit_':
         case 'abandon_':
             if (!empty($seq->currentactivity)) {
                 // Current activity is active !
                 $seq->navigation = true;
-                $seq->termination = substr($request,0,-1);
+                $seq->termination = substr($request, 0, -1);
                 $seq->sequencing = 'exit';
             } else {
-                $seq->exception = 'NB.2.1-2'; /// Current activity not defined
+                $seq->exception = 'NB.2.1-2'; // Current activity not defined.
             }
         case 'exitall_':
         case 'abandonall_':
         case 'suspendall_':
             if (!empty($seq->currentactivity)) {
                 $seq->navigation = true;
-                $seq->termination = substr($request,0,-1);
+                $seq->termination = substr($request, 0, -1);
                 $seq->sequencing = 'exit';
             } else {
-                $seq->exception = 'NB.2.1-2'; /// Current activity not defined
+                $seq->exception = 'NB.2.1-2'; // Current activity not defined.
             }
         break;
-        default: /// {target=<STRING>}choice
-            if ($targetsco = $DB->get_record('scorm_scoes', array('scorm'=>$sco->scorm,'identifier'=>$request))) {
+        default: // Example {target=<STRING>}choice.
+            if ($targetsco = $DB->get_record('scorm_scoes', array('scorm'=>$sco->scorm, 'identifier'=>$request))) {
                 if ($targetsco->parent != '/') {
                     $seq->target = $request;
                 } else {
@@ -165,16 +168,17 @@ function scorm_seq_navigation ($scoid, $userid, $request, $attempt=0) {
                         }
                         if ($sco->parent != $targetsco->parent) {
                             $ancestors = scorm_get_ancestors($sco);
-                            $commonpos = scorm_find_common_ancestor($ancestors,$targetsco);
+                            $commonpos = scorm_find_common_ancestor($ancestors, $targetsco);
                             if ($commonpos !== false) {
-                                if ($activitypath = array_slice($ancestors,0,$commonpos)) {
+                                if ($activitypath = array_slice($ancestors, 0, $commonpos)) {
                                     foreach ($activitypath as $activity) {
-                                        if (scorm_seq_is('active',$activity->id,$userid) && (isset($activity->choiceexit) && ($activity->choiceexit == false))) {
+                                        if (scorm_seq_is('active', $activity->id, $userid) &&
+                                            (isset($activity->choiceexit) && ($activity->choiceexit == false))) {
                                             $seq->navigation = false;
                                             $seq->termination = null;
                                             $seq->sequencing = null;
                                             $seq->target = null;
-                                            $seq->exception = 'NB.2.1-8'; /// Violates control mode
+                                            $seq->exception = 'NB.2.1-8'; // Violates control mode.
                                             return $seq;
                                         }
                                     }
@@ -192,17 +196,17 @@ function scorm_seq_navigation ($scoid, $userid, $request, $attempt=0) {
                         $seq->sequencing = 'choice';
                     }
                 } else {
-                    $seq->exception = 'NB.2.1-10';  /// Violates control mode
+                    $seq->exception = 'NB.2.1-10';  // Violates control mode.
                 }
             } else {
-                $seq->exception = 'NB.2.1-11';  /// Target activity does not exists
+                $seq->exception = 'NB.2.1-11';  // Target activity does not exists.
             }
         break;
     }
     return $seq;
 }
 
-function scorm_seq_termination ($seq,$userid) {
+function scorm_seq_termination ($seq, $userid) {
     if (empty($seq->currentactivity)) {
         $seq->termination = false;
         $seq->exception = 'TB.2.3-1';
@@ -218,18 +222,18 @@ function scorm_seq_termination ($seq,$userid) {
     }
     switch ($seq->termination) {
         case 'exit':
-            scorm_seq_end_attempt($sco,$userid,$seq);
-            $seq = scorm_seq_exit_action_rules($seq,$userid);
+            scorm_seq_end_attempt($sco, $userid, $seq);
+            $seq = scorm_seq_exit_action_rules($seq, $userid);
             do {
-                $exit = false;// I think this is false. Originally this was true
-                $seq = scorm_seq_post_cond_rules($seq,$userid);
+                $exit = false;// I think this is false. Originally this was true.
+                $seq = scorm_seq_post_cond_rules($seq, $userid);
                 if ($seq->termination == 'exitparent') {
                     if ($sco->parent != '/') {
                         $sco = scorm_get_parent($sco);
                         $seq->currentactivity = $sco;
-                        $seq->active = scorm_seq_is('active',$sco->id,$userid);
-                        scorm_seq_end_attempt($sco,$userid,$seq);
-                        $exit = true;//I think it's true. Originally this was false
+                        $seq->active = scorm_seq_is('active', $sco->id, $userid);
+                        scorm_seq_end_attempt($sco, $userid, $seq);
+                        $exit = true; // I think it's true. Originally this was false.
                     } else {
                         $seq->termination = false;
                         $seq->exception = 'TB.2.3-4';
@@ -243,39 +247,37 @@ function scorm_seq_termination ($seq,$userid) {
             }
         case 'exitall':
             if ($seq->active) {
-                scorm_seq_end_attempt($sco,$userid,$seq);
+                scorm_seq_end_attempt($sco, $userid, $seq);
             }
-            /// Terminate Descendent Attempts Process
-
+            // Terminate Descendent Attempts Process.
 
             if ($ancestors = scorm_get_ancestors($sco)) {
                 foreach ($ancestors as $ancestor) {
-                    scorm_seq_end_attempt($ancestor,$userid,$seq);
+                    scorm_seq_end_attempt($ancestor, $userid, $seq);
                     $seq->currentactivity = $ancestor;
                 }
             }
 
-            $seq->active = scorm_seq_is('active',$seq->currentactivity->id,$userid);
+            $seq->active = scorm_seq_is('active', $seq->currentactivity->id, $userid);
             $seq->termination = true;
             $seq->sequencing = exit;
         break;
         case 'suspendall':
             if (($seq->active) || ($seq->suspended)) {
-                scorm_seq_set('suspended',$sco->id,$userid, $attempt);
+                scorm_seq_set('suspended', $sco->id, $userid, $attempt);
             } else {
                 if ($sco->parent != '/') {
                     $parentsco = scorm_get_parent($sco);
-                    scorm_seq_set('suspended',$parentsco->id,$userid, $attempt);
+                    scorm_seq_set('suspended', $parentsco->id, $userid, $attempt);
                 } else {
                     $seq->termination = false;
                     $seq->exception = 'TB.2.3-3';
-                    // return $seq;
                 }
             }
             if ($ancestors = scorm_get_ancestors($sco)) {
                 foreach ($ancestors as $ancestor) {
-                    scorm_seq_set('active',$ancestor->id,$userid, $attempt, false);
-                    scorm_seq_set('suspended',$ancestor->id,$userid, $attempt);
+                    scorm_seq_set('active', $ancestor->id, $userid, $attempt, false);
+                    scorm_seq_set('suspended', $ancestor->id, $userid, $attempt);
                     $seq->currentactivity = $ancestor;
                 }
                 $seq->termination = true;
@@ -286,14 +288,14 @@ function scorm_seq_termination ($seq,$userid) {
             }
         break;
         case 'abandon':
-            scorm_seq_set('active',$sco->id,$userid, $attempt, false);
+            scorm_seq_set('active', $sco->id, $userid, $attempt, false);
             $seq->active = null;
             $seq->termination = true;
         break;
         case 'abandonall':
             if ($ancestors = scorm_get_ancestors($sco)) {
                 foreach ($ancestors as $ancestor) {
-                    scorm_seq_set('active',$ancestor->id,$userid, $attempt, false);
+                    scorm_seq_set('active', $ancestor->id, $userid, $attempt, false);
                     $seq->currentactivity = $ancestor;
                 }
                 $seq->termination = true;
@@ -315,13 +317,14 @@ function scorm_seq_end_attempt($sco, $userid, $seq) {
     global $DB;
     if (scorm_is_leaf($sco)) {
         if (!isset($sco->tracked) || ($sco->tracked == 1)) {
-            if (!scorm_seq_is('suspended',$sco->id,$userid)) {
+            if (!scorm_seq_is('suspended', $sco->id, $userid)) {
                 if (!isset($sco->completionsetbycontent) || ($sco->completionsetbycontent == 0)) {
-                    if (!scorm_seq_is('attemptprogressstatus',$sco->id, $userid, $seq->attempt)) {
-                        $incomplete = $DB->get_field('scorm_scoes_track', 'value', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'cmi.completion_status'));
+                    if (!scorm_seq_is('attemptprogressstatus', $sco->id, $userid, $seq->attempt)) {
+                        $incomplete = $DB->get_field('scorm_scoes_track', 'value',
+                            array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'cmi.completion_status'));
                         if ($incomplete != 'incomplete') {
-                            scorm_seq_set('attemptprogressstatus',$sco->id,$userid, $seq->attempt);  
-                            scorm_seq_set('attemptcompletionstatus',$sco->id,$userid, $seq->attempt);
+                            scorm_seq_set('attemptprogressstatus', $sco->id, $userid, $seq->attempt);
+                            scorm_seq_set('attemptcompletionstatus', $sco->id, $userid, $seq->attempt);
                         }
                     }
                 }
@@ -329,7 +332,6 @@ function scorm_seq_end_attempt($sco, $userid, $seq) {
                     if ($objectives = $DB->get_records('scorm_seq_objective', array('scoid'=>$sco->id))) {
                         foreach ($objectives as $objective) {
                             if ($objective->primaryobj) {
-                                //if (!scorm_seq_objective_progress_status($sco,$userid,$objective)) {
                                 if (!scorm_seq_is('objectiveprogressstatus', $sco->id, $userid, $seq->attempt)) {
                                     scorm_seq_set('objectiveprogressstatus', $sco->id, $userid, $seq->attempt);
                                     scorm_seq_set('objectivesatisfiedstatus', $sco->id, $userid, $seq->attempt);
@@ -343,15 +345,15 @@ function scorm_seq_end_attempt($sco, $userid, $seq) {
     } else if ($children = scorm_get_children($sco)) {
         $suspended = false;
         foreach ($children as $child) {
-            if (scorm_seq_is('suspended',$child, $userid, $seq->attempt)) {
+            if (scorm_seq_is('suspended', $child, $userid, $seq->attempt)) {
                 $suspended = true;
                 break;
             }
         }
         if ($suspended) {
-            scorm_seq_set('suspended',$sco, $userid, $seq->attempt);
+            scorm_seq_set('suspended', $sco, $userid, $seq->attempt);
         } else {
-            scorm_seq_set('suspended',$sco,$userid, $seq->attempt, false);
+            scorm_seq_set('suspended', $sco, $userid, $seq->attempt, false);
         }
     }
     scorm_seq_set('active', $sco->id, $userid, $seq->attempt, false);
@@ -361,9 +363,11 @@ function scorm_seq_end_attempt($sco, $userid, $seq) {
 function scorm_seq_is($what, $scoid, $userid, $attempt=0) {
     global $DB;
 
-    /// Check if passed activity $what is active
+    // Check if passed activity $what is active.
     $active = false;
-    if ($track = $DB->get_record('scorm_scoes_track', array('scoid'=>$scoid,'userid'=>$userid,'attempt'=>$attempt,'element'=>$what))) {
+    if ($track = $DB->get_record('scorm_scoes_track',
+        array('scoid'=>$scoid, 'userid'=>$userid, 'attempt'=>$attempt, 'element'=>$what))) {
+
         $active = true;
     }
     return $active;
@@ -374,14 +378,14 @@ function scorm_seq_set($what, $scoid, $userid, $attempt=0, $value='true') {
 
     $sco = scorm_get_sco($scoid);
 
-    /// set passed activity to active or not
+    // Set passed activity to active or not.
     if ($value == false) {
-        $DB->delete_records('scorm_scoes_track', array('scoid'=>$scoid,'userid'=>$userid,'attempt'=>$attempt,'element'=>$what));
+        $DB->delete_records('scorm_scoes_track', array('scoid'=>$scoid, 'userid'=>$userid, 'attempt'=>$attempt, 'element'=>$what));
     } else {
         scorm_insert_track($userid, $sco->scorm, $sco->id, $attempt, $what, $value);
     }
 
-    // update grades in gradebook
+    // Update grades in gradebook.
     $scorm = $DB->get_record('scorm', array('id'=>$sco->scorm));
     scorm_update_grades($scorm, $userid, true);
 }
@@ -394,11 +398,11 @@ function scorm_evaluate_condition ($rollupruleconds, $sco, $userid) {
     if (strpos($rollupruleconds, 'and ')) {
         $rollupruleconds = array_filter(explode(' and ', $rollupruleconds));
         $conditioncombination = 'all';
-    } else { 
+    } else {
         $rollupruleconds = array_filter(explode(' or ', $rollupruleconds));
         $conditioncombination = 'or';
     }
-    foreach($rollupruleconds as $rolluprulecond) {
+    foreach ($rollupruleconds as $rolluprulecond) {
         $notflag = false;
         if (strpos($rolluprulecond, 'not') !== false) {
             $rolluprulecond = str_replace('not', '', $rolluprulecond);
@@ -416,9 +420,11 @@ function scorm_evaluate_condition ($rollupruleconds, $sco, $userid) {
         }
         switch ($condition['condition']) {
             case 'satisfied':
-                $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'objectivesatisfiedstatus'));
+                $r = $DB->get_record('scorm_scoes_track',
+                    array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'objectivesatisfiedstatus'));
                 if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
-                    $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'objectiveprogressstatus'));
+                    $r = $DB->get_record('scorm_scoes_track',
+                        array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'objectiveprogressstatus'));
                     if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
                         $res = true;
                     }
@@ -426,59 +432,71 @@ function scorm_evaluate_condition ($rollupruleconds, $sco, $userid) {
                 break;
 
             case 'objectiveStatusKnown':
-                $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'objectiveprogressstatus'));
+                $r = $DB->get_record('scorm_scoes_track',
+                    array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'objectiveprogressstatus'));
                 if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
                     $res = true;
                 }
                 break;
-                
+
             case 'notobjectiveStatusKnown':
-                $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'objectiveprogressstatus'));
+                $r = $DB->get_record('scorm_scoes_track',
+                    array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'objectiveprogressstatus'));
                 if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
                     $res = true;
                 }
                 break;
 
             case 'objectiveMeasureKnown':
-                $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'objectivemeasurestatus'));
+                $r = $DB->get_record('scorm_scoes_track',
+                    array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'objectivemeasurestatus'));
                 if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
                     $res = true;
-                 }
-                 break;
+                }
+                break;
 
             case 'notobjectiveMeasureKnown':
-                $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'objectivemeasurestatus'));
+                $r = $DB->get_record('scorm_scoes_track',
+                    array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'objectivemeasurestatus'));
                 if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
                     $res = true;
                 }
                 break;
 
             case 'completed':
-                $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'attemptcompletionstatus'));
+                $r = $DB->get_record('scorm_scoes_track',
+                    array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'attemptcompletionstatus'));
                 if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
-                    $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'attemptprogressstatus'));
+                    $r = $DB->get_record('scorm_scoes_track',
+                        array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'attemptprogressstatus'));
                     if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
                         $res = true;
                     }
                 }
                 break;
-    
+
             case 'attempted':
-                $attempt = $DB->get_field('scorm_scoes_track', 'attempt', array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'x.start.time'));
+                $attempt = $DB->get_field('scorm_scoes_track', 'attempt',
+                    array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'x.start.time'));
                 if ($checknot && $attempt > 0) {
                     $res = true;
                 } else if (!$checknot && $attempt <= 0) {
                     $res = true;
                 }
                 break;
-    
+
             case 'attemptLimitExceeded':
-                $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'activityprogressstatus'));
+                $r = $DB->get_record('scorm_scoes_track',
+                    array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'activityprogressstatus'));
                 if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
-                    $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'limitconditionattemptlimitcontrol'));
+                    $r = $DB->get_record('scorm_scoes_track',
+                        array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'limitconditionattemptlimitcontrol'));
                     if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
-                        if ($r = $DB->get_field('scorm_scoes_track', 'attempt', array('scoid'=>$sco->id,'userid'=>$userid)) &&
-                            $r2 = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'limitconditionattemptlimit')) ){
+                        if ($r = $DB->get_field('scorm_scoes_track',
+                            'attempt', array('scoid'=>$sco->id, 'userid'=>$userid)) &&
+                            $r2 = $DB->get_record('scorm_scoes_track',
+                                array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'limitconditionattemptlimit')) ) {
+
                             if ($checknot && ($r->value >= $r2->value)) {
                                 $res = true;
                             } else if (!$checknot && ($r->value < $r2->value)) {
@@ -488,18 +506,20 @@ function scorm_evaluate_condition ($rollupruleconds, $sco, $userid) {
                     }
                 }
                 break;
-    
+
             case 'activityProgressKnown':
-                $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'activityprogressstatus'));
+                $r = $DB->get_record('scorm_scoes_track',
+                    array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'activityprogressstatus'));
                 if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
-                    $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'attemptprogressstatus'));
+                    $r = $DB->get_record('scorm_scoes_track',
+                        array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'attemptprogressstatus'));
                     if ((!isset($r->value) && !$checknot) || (isset($r->value) && ($r->value == $checknot))) {
                         $res = true;
                     }
                 }
                 break;
         }
-        
+
         if ($conditioncombination == 'all' && !$res) {
             break;
         } else if ($conditioncombination == 'or' && $res) {
@@ -510,94 +530,98 @@ function scorm_evaluate_condition ($rollupruleconds, $sco, $userid) {
     return $res;
 }
 
-function scorm_check_activity ($activity,$userid){
-    $act = scorm_seq_rules_check($activity,'disabled');
-    if ($act != null){
+function scorm_check_activity ($activity, $userid) {
+    $act = scorm_seq_rules_check($activity, 'disabled');
+    if ($act != null) {
         return true;
     }
-    if(scorm_limit_cond_check ($activity,$userid)){
+    if (scorm_limit_cond_check ($activity, $userid)) {
         return true;
     }
     return false;
 }
 
-function scorm_limit_cond_check ($activity,$userid){
+function scorm_limit_cond_check ($activity, $userid) {
     global $DB;
 
-    if (isset($activity->tracked) && ($activity->tracked == 0)){
+    if (isset($activity->tracked) && ($activity->tracked == 0)) {
 
         return false;
     }
 
-    if (scorm_seq_is('active',$activity->id,$userid) || scorm_seq_is('suspended',$activity->id,$userid)){
+    if (scorm_seq_is('active', $activity->id, $userid) || scorm_seq_is('suspended', $activity->id, $userid)) {
         return false;
     }
 
-    if (!isset($activity->limitcontrol) || ($activity->limitcontrol == 1)){
-        $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$activity->id,'userid'=>$userid,'element'=>'activityattemptcount'));
-        if (scorm_seq_is('activityprogressstatus',$activity->id,$userid) && ($r->value >=$activity->limitattempt)){
+    if (!isset($activity->limitcontrol) || ($activity->limitcontrol == 1)) {
+        $r = $DB->get_record('scorm_scoes_track',
+            array('scoid'=>$activity->id, 'userid'=>$userid, 'element'=>'activityattemptcount'));
+        if (scorm_seq_is('activityprogressstatus', $activity->id, $userid) && ($r->value >=$activity->limitattempt)) {
             return true;
         }
     }
 
-     if (!isset($activity->limitabsdurcontrol) || ($activity->limitabsdurcontrol == 1)){
-        $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$activity->id,'userid'=>$userid,'element'=>'activityabsoluteduration'));
-        if (scorm_seq_is('activityprogressstatus',$activity->id,$userid) && ($r->value >=$activity->limitabsduration)){
+    if (!isset($activity->limitabsdurcontrol) || ($activity->limitabsdurcontrol == 1)) {
+        $r = $DB->get_record('scorm_scoes_track',
+            array('scoid'=>$activity->id, 'userid'=>$userid, 'element'=>'activityabsoluteduration'));
+        if (scorm_seq_is('activityprogressstatus', $activity->id, $userid) && ($r->value >=$activity->limitabsduration)) {
             return true;
         }
     }
 
-    if (!isset($activity->limitexpdurcontrol) || ($activity->limitexpdurcontrol == 1)){
-        $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$activity->id,'userid'=>$userid,'element'=>'activityexperiencedduration'));
-        if (scorm_seq_is('activityprogressstatus',$activity->id,$userid) && ($r->value >=$activity->limitexpduration)){
+    if (!isset($activity->limitexpdurcontrol) || ($activity->limitexpdurcontrol == 1)) {
+        $r = $DB->get_record('scorm_scoes_track',
+            array('scoid'=>$activity->id, 'userid'=>$userid, 'element'=>'activityexperiencedduration'));
+        if (scorm_seq_is('activityprogressstatus', $activity->id, $userid) && ($r->value >=$activity->limitexpduration)) {
             return true;
         }
     }
 
-     if (!isset($activity->limitattabsdurcontrol) || ($activity->limitattabsdurcontrol == 1)){
-        $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$activity->id,'userid'=>$userid,'element'=>'attemptabsoluteduration'));
-        if (scorm_seq_is('activityprogressstatus',$activity->id,$userid) && ($r->value >=$activity->limitattabsduration)){
+    if (!isset($activity->limitattabsdurcontrol) || ($activity->limitattabsdurcontrol == 1)) {
+        $r = $DB->get_record('scorm_scoes_track',
+            array('scoid'=>$activity->id, 'userid'=>$userid, 'element'=>'attemptabsoluteduration'));
+        if (scorm_seq_is('activityprogressstatus', $activity->id, $userid) && ($r->value >=$activity->limitattabsduration)) {
             return true;
         }
     }
 
-    if (!isset($activity->limitattexpdurcontrol) || ($activity->limitattexpdurcontrol == 1)){
-        $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$activity->id,'userid'=>$userid,'element'=>'attemptexperiencedduration'));
-        if (scorm_seq_is('activityprogressstatus',$activity->id,$userid) && ($r->value >=$activity->limitattexpduration)){
+    if (!isset($activity->limitattexpdurcontrol) || ($activity->limitattexpdurcontrol == 1)) {
+        $r = $DB->get_record('scorm_scoes_track',
+            array('scoid'=>$activity->id, 'userid'=>$userid, 'element'=>'attemptexperiencedduration'));
+        if (scorm_seq_is('activityprogressstatus', $activity->id, $userid) && ($r->value >=$activity->limitattexpduration)) {
             return true;
         }
     }
 
-    if (!isset($activity->limitbegincontrol) || ($activity->limitbegincontrol == 1)){
-        $r = $DB->get_record('scorm_scoes_track', array('scoid'=>$activity->id,'userid'=>$userid,'element'=>'begintime'));
-        if (isset($activity->limitbegintime) && time() >= $activity->limitbegintime){
+    if (!isset($activity->limitbegincontrol) || ($activity->limitbegincontrol == 1)) {
+        $r = $DB->get_record('scorm_scoes_track',
+            array('scoid'=>$activity->id, 'userid'=>$userid, 'element'=>'begintime'));
+        if (isset($activity->limitbegintime) && time() >= $activity->limitbegintime) {
             return true;
         }
     }
 
-    if (!isset($activity->limitbegincontrol) || ($activity->limitbegincontrol == 1)){
-        if (isset($activity->limitbegintime) && time() < $activity->limitbegintime){
+    if (!isset($activity->limitbegincontrol) || ($activity->limitbegincontrol == 1)) {
+        if (isset($activity->limitbegintime) && time() < $activity->limitbegintime) {
             return true;
         }
     }
 
-    if (!isset($activity->limitendcontrol) || ($activity->limitendcontrol == 1)){
+    if (!isset($activity->limitendcontrol) || ($activity->limitendcontrol == 1)) {
         if (isset($activity->limitendtime) && time() > $activity->limitendtime) {
             return true;
         }
     }
     return false;
-
-
 }
 
-function scorm_seq_rules_check ($sco, $action){
+function scorm_seq_rules_check ($sco, $action) {
     global $DB;
     $act = null;
-    
+
     if ($rules = $DB->get_records('scorm_seq_ruleconds', array('scoid' => $sco->id, 'action' => $action))) {
         foreach ($rules as $rule) {
-            if ($act = scorm_seq_rule_check($sco, $rule)){
+            if ($act = scorm_seq_rule_check($sco, $rule)) {
                 return $act;
             }
         }
@@ -606,88 +630,85 @@ function scorm_seq_rules_check ($sco, $action){
 
 }
 
-function scorm_seq_rule_check ($sco, $rule){
+function scorm_seq_rule_check ($sco, $rule) {
     global $DB;
 
     $bag = Array();
     $cond = '';
-    $ruleconds = $DB->get_records('scorm_seq_rulecond', array('scoid'=>$sco->id,'ruleconditionsid'=>$rule->id));
-    foreach ($ruleconds as $rulecond){
-         if ($rulecond->operator == 'not') {
-             if ($rulecond->cond != 'unknown' ){
+    $ruleconds = $DB->get_records('scorm_seq_rulecond', array('scoid'=>$sco->id, 'ruleconditionsid'=>$rule->id));
+    foreach ($ruleconds as $rulecond) {
+        if ($rulecond->operator == 'not') {
+            if ($rulecond->cond != 'unknown' ) {
                 $rulecond->cond = 'not'.$rulecond->cond;
-             }
-         }
+            }
+        }
          $bag[] = $rulecond->cond;
     }
-    if (empty($bag)){
+    if (empty($bag)) {
         $cond = 'unknown';
         return $cond;
     }
 
     if ($rule->conditioncombination == 'all') {
-        foreach ($bag as $con){
+        foreach ($bag as $con) {
                 $cond = $cond.' and '.$con;
         }
     } else {
-        foreach ($bag as $con){
+        foreach ($bag as $con) {
             $cond = $cond.' or '.$con;
         }
     }
     return $cond;
 }
 
-function scorm_seq_overall_rollup($sco,$userid, $seq){//Carlos
-
-     if ($ancestors = scorm_get_ancestors($sco)) {
-            foreach ($ancestors as $ancestor) {
-                if(!scorm_is_leaf($ancestor)){
-                    scorm_seq_measure_rollup($sco, $userid, $seq->attempt);
-                }
-                scorm_seq_objective_rollup($sco, $userid, $seq->attempt);
-                scorm_seq_activity_progress_rollup($sco,$userid, $seq);
-
+function scorm_seq_overall_rollup($sco, $userid, $seq) {
+    if ($ancestors = scorm_get_ancestors($sco)) {
+        foreach ($ancestors as $ancestor) {
+            if (!scorm_is_leaf($ancestor)) {
+                scorm_seq_measure_rollup($sco, $userid, $seq->attempt);
             }
-
-     }
+            scorm_seq_objective_rollup($sco, $userid, $seq->attempt);
+            scorm_seq_activity_progress_rollup($sco, $userid, $seq);
+        }
+    }
 }
 
 function scorm_seq_measure_rollup($sco, $userid, $attempt = 0) {
     global $DB;
 
-    $totalmeasure = 0; //Check if there is something similar in the database
-    $valid = false; //Same as in the last line
-    $countedmeasures = 0; //Same too
+    $totalmeasure = 0; // Check if there is something similar in the database.
+    $valid = false; // Same as in the last line.
+    $countedmeasures = 0; // Same too.
     $targetobjective = null;
-    $readable = true; //to check if status and measure weight are readable
     $objectives = $DB->get_records('scorm_seq_objective', array('scoid'=>$sco->id));
 
-    foreach ($objectives as $objective){
-        if ($objective->primaryobj == true){ //Objective contributes to rollup
+    foreach ($objectives as $objective) {
+        if ($objective->primaryobj == true) { // Objective contributes to rollup.
             $targetobjective = $objective;
             break;
         }
 
     }
-    if ($targetobjective != null){
+    if ($targetobjective != null) {
         $children = scorm_get_children($sco);
         if (!empty ($children)) {
-            foreach ($children as $child){
+            foreach ($children as $child) {
                 $child = scorm_get_sco ($child);
-                if (!isset($child->tracked) || ($child->tracked == 1)){
-                    $rolledupobjective = null;// we set the rolled up activity to undefined
+                if (!isset($child->tracked) || ($child->tracked == 1)) {
+                    $rolledupobjective = null;// We set the rolled up activity to undefined.
                     $objectives = $DB->get_records('scorm_seq_objective', array('scoid'=>$child->id));
-                    foreach ($objectives as $objective){
-                        if ($objective->primaryobj == true){//Objective contributes to rollup I'm using primaryobj field, but not
+                    foreach ($objectives as $objective) {
+                        if ($objective->primaryobj == true) {// Objective contributes to rollup I'm using primaryobj field, but not.
                             $rolledupobjective = $objective;
                             break;
                         }
                     }
-                    if ($rolledupobjective != null){
+                    if ($rolledupobjective != null) {
                         $child = scorm_get_sco($child->id);
                         $countedmeasures = $countedmeasures + ($child->measureweight);
                         if (!scorm_seq_is('objectivemeasurestatus', $sco->id, $userid, $attempt)) {
-                            $normalizedmeasure = $DB->get_record('scorm_scoes_track', array('scoid'=>$child->id,'userid'=>$userid,'element'=>'objectivenormalizedmeasure'));
+                            $normalizedmeasure = $DB->get_record('scorm_scoes_track',
+                                array('scoid'=>$child->id, 'userid'=>$userid, 'element'=>'objectivenormalizedmeasure'));
                             $totalmeasure = $totalmeasure + (($normalizedmeasure->value) * ($child->measureweight));
                             $valid = true;
                         }
@@ -702,7 +723,7 @@ function scorm_seq_measure_rollup($sco, $userid, $attempt = 0) {
             if ($countedmeasures > 0) {
                 scorm_seq_set('objectivemeasurestatus', $sco->id, $userid, $attempt);
                 $val = $totalmeasure/$countedmeasures;
-                scorm_seq_set('objectivenormalizedmeasure',$sco->id, $userid, $attempt, $val);
+                scorm_seq_set('objectivenormalizedmeasure', $sco->id, $userid, $attempt, $val);
             } else {
                 scorm_seq_set('objectivemeasurestatus', $sco->id, $userid, $attempt, false);
             }
@@ -710,31 +731,33 @@ function scorm_seq_measure_rollup($sco, $userid, $attempt = 0) {
     }
 }
 
-function scorm_seq_objective_rollup($sco,$userid, $attempt = 0){
+function scorm_seq_objective_rollup($sco, $userid, $attempt = 0) {
     global $DB;
 
-    scorm_seq_objective_rollup_measure($sco,$userid, $attempt);
+    scorm_seq_objective_rollup_measure($sco, $userid, $attempt);
     scorm_seq_objective_rollup_rules($sco, $userid, $attempt);
     scorm_seq_objective_rollup_default($sco, $userid, $attempt);
 
-/*
-    if($targetobjective->satisfiedbymeasure){
-        scorm_seq_objective_rollup_measure($sco,$userid);
+    /*
+    if ($targetobjective->satisfiedbymeasure) {
+        scorm_seq_objective_rollup_measure($sco, $userid);
     }
     else{
-        if ((scorm_seq_rollup_rule_check($sco,$userid,'incomplete'))|| (scorm_seq_rollup_rule_check($sco,$userid,'completed'))){
-            scorm_seq_objective_rollup_rules($sco,$userid);
+        if ((scorm_seq_rollup_rule_check($sco, $userid, 'incomplete'))
+             || (scorm_seq_rollup_rule_check($sco, $userid, 'completed'))) {
+            scorm_seq_objective_rollup_rules($sco, $userid);
         }
         else{
 
-            $rolluprules = $DB->get_record('scorm_seq_rolluprule', array('scoid'=>$sco->id,'userid'=>$userid));
-            foreach($rolluprules as $rolluprule){
+            $rolluprules = $DB->get_record('scorm_seq_rolluprule', array('scoid'=>$sco->id, 'userid'=>$userid));
+            foreach ($rolluprules as $rolluprule) {
                 $rollupruleconds = $DB->get_records('scorm_seq_rolluprulecond', array('rollupruleid'=>$rolluprule->id));
-                foreach($rollupruleconds as $rolluprulecond){
+                foreach ($rollupruleconds as $rolluprulecond) {
 
-                    switch ($rolluprulecond->cond!='satisfied' && $rolluprulecond->cond!='completed' && $rolluprulecond->cond!='attempted'){
+                    switch ($rolluprulecond->cond!='satisfied'
+                            && $rolluprulecond->cond!='completed' && $rolluprulecond->cond!='attempted') {
 
-                           scorm_seq_set('objectivesatisfiedstatus',$sco->id,$userid, false);
+                           scorm_seq_set('objectivesatisfiedstatus', $sco->id, $userid, false);
 
                         break;
                     }
@@ -743,7 +766,7 @@ function scorm_seq_objective_rollup($sco,$userid, $attempt = 0){
 
         }
     }
-*/
+    */
 }
 
 function scorm_seq_objective_rollup_measure($sco, $userid, $attempt = 0) {
@@ -751,18 +774,17 @@ function scorm_seq_objective_rollup_measure($sco, $userid, $attempt = 0) {
 
     $targetobjective = null;
 
-
     $objectives = $DB->get_records('scorm_seq_objective', array('scoid'=>$sco->id));
-    foreach ($objectives as $objective){
-        if ($objective->primaryobj == true){
+    foreach ($objectives as $objective) {
+        if ($objective->primaryobj == true) {
             $targetobjective = $objective;
             break;
         }
     }
-    if ($targetobjective != null){
-        if($targetobjective->satisfiedbymeasure){
-            if (!scorm_seq_is('objectiveprogressstatus',$sco->id, $userid, $attempt)) {
-                scorm_seq_set('objectiveprogressstatus',$sco->id, $userid, $attempt, false);
+    if ($targetobjective != null) {
+        if ($targetobjective->satisfiedbymeasure) {
+            if (!scorm_seq_is('objectiveprogressstatus', $sco->id, $userid, $attempt)) {
+                scorm_seq_set('objectiveprogressstatus', $sco->id, $userid, $attempt, false);
             } else {
                 if (scorm_seq_is('active', $sco->id, $userid, $attempt)) {
                     $isactive = true;
@@ -770,17 +792,19 @@ function scorm_seq_objective_rollup_measure($sco, $userid, $attempt = 0) {
                     $isactive = false;
                 }
 
-                $normalizedmeasure = $DB->get_record('scorm_scoes_track', array('scoid'=>$sco->id,'userid'=>$userid,'element'=>'objectivenormalizedmeasure'));
+                $normalizedmeasure = $DB->get_record('scorm_scoes_track',
+                    array('scoid'=>$sco->id, 'userid'=>$userid, 'element'=>'objectivenormalizedmeasure'));
 
                 $sco = scorm_get_sco ($sco->id);
 
-                if (!$isactive || ($isactive && (!isset($sco->measuresatisfactionifactive) || $sco->measuresatisfactionifactive == true))){
+                if (!$isactive || ($isactive &&
+                    (!isset($sco->measuresatisfactionifactive) || $sco->measuresatisfactionifactive == true))) {
                     if (isset($normalizedmeasure->value) && ($normalizedmeasure->value >= $targetobjective->minnormalizedmeasure)) {
                         scorm_seq_set('objectiveprogressstatus', $sco->id, $userid, $attempt);
                         scorm_seq_set('objectivesatisfiedstatus', $sco->id, $userid, $attempt);
                     } else {
-                        // TODO: handle the case where cmi.success_status is passed and objectivenormalizedmeasure undefined
-                        scorm_seq_set('objectiveprogressstatus', $sco->id, $userid, $attempt);              
+                        // TODO: handle the case where cmi.success_status is passed and objectivenormalizedmeasure undefined.
+                        scorm_seq_set('objectiveprogressstatus', $sco->id, $userid, $attempt);
                         // scorm_seq_set('objectivesatisfiedstatus', $sco->id, $userid, $attempt, false);
                     }
                 } else {
@@ -794,13 +818,15 @@ function scorm_seq_objective_rollup_measure($sco, $userid, $attempt = 0) {
 function scorm_seq_objective_rollup_default($sco, $userid, $attempt = 0) {
     global $DB;
 
-    if (!(scorm_seq_rollup_rule_check($sco,$userid,'incomplete')) && !(scorm_seq_rollup_rule_check($sco,$userid,'completed'))){
+    if (!(scorm_seq_rollup_rule_check($sco, $userid, 'incomplete')) && !(scorm_seq_rollup_rule_check($sco, $userid, 'completed'))) {
         if ($rolluprules = $DB->get_record('scorm_seq_rolluprule', array('scoid'=>$sco->id))) {
-            foreach($rolluprules as $rolluprule){
+            foreach ($rolluprules as $rolluprule) {
                 $rollupruleconds = $DB->get_records('scorm_seq_rolluprulecond', array('rollupruleid'=>$rolluprule->id));
-                foreach($rollupruleconds as $rolluprulecond){
-                    if ($rolluprulecond->cond!='satisfied' && $rolluprulecond->cond!='completed' && $rolluprulecond->cond!='attempted'){
-                        scorm_seq_set('objectivesatisfiedstatus',$sco->id,$userid, $attempt, false);
+                foreach ($rollupruleconds as $rolluprulecond) {
+                    if ($rolluprulecond->cond!='satisfied' && $rolluprulecond->cond!='completed'
+                        && $rolluprulecond->cond!='attempted') {
+
+                        scorm_seq_set('objectivesatisfiedstatus', $sco->id, $userid, $attempt, false);
                         break;
                     }
                 }
@@ -810,25 +836,25 @@ function scorm_seq_objective_rollup_default($sco, $userid, $attempt = 0) {
 }
 
 
-function scorm_seq_objective_rollup_rules($sco,$userid, $attempt = 0){
+function scorm_seq_objective_rollup_rules($sco, $userid, $attempt = 0) {
     global $DB;
 
     $targetobjective = null;
 
     $objectives = $DB->get_records('scorm_seq_objective', array('scoid'=>$sco->id));
-    foreach ($objectives as $objective){
-        if ($objective->primaryobj == true){//Objective contributes to rollup I'm using primaryobj field, but not
+    foreach ($objectives as $objective) {
+        if ($objective->primaryobj == true) {// Objective contributes to rollup I'm using primaryobj field, but not.
             $targetobjective = $objective;
             break;
         }
     }
-    if ($targetobjective != null){
+    if ($targetobjective != null) {
 
-        if(scorm_seq_rollup_rule_check($sco,$userid,'notsatisfied')){//with not satisfied rollup for the activity
-            scorm_seq_set('objectiveprogressstatus', $sco->id, $userid, $attempt);            
+        if (scorm_seq_rollup_rule_check($sco, $userid, 'notsatisfied')) {// With not satisfied rollup for the activity.
+            scorm_seq_set('objectiveprogressstatus', $sco->id, $userid, $attempt);
             scorm_seq_set('objectivesatisfiedstatus', $sco->id, $userid, $attempt, false);
         }
-        if(scorm_seq_rollup_rule_check($sco, $userid, 'satisfied')){//with satisfied rollup for the activity
+        if (scorm_seq_rollup_rule_check($sco, $userid, 'satisfied')) {// With satisfied rollup for the activity.
             scorm_seq_set('objectiveprogressstatus', $sco->id, $userid, $attempt);
             scorm_seq_set('objectivesatisfiedstatus', $sco->id, $userid, $attempt);
         }
@@ -837,47 +863,47 @@ function scorm_seq_objective_rollup_rules($sco,$userid, $attempt = 0){
 
 }
 
-function scorm_seq_activity_progress_rollup ($sco, $userid, $seq){
+function scorm_seq_activity_progress_rollup ($sco, $userid, $seq) {
 
-    if(scorm_seq_rollup_rule_check($sco,$userid,'incomplete')){
-        //incomplete rollup action
-        scorm_seq_set('attemptcompletionstatus', $sco->id,$userid, $seq->attempt, false);
-        scorm_seq_set('attemptprogressstatus', $sco->id,$userid, $seq->attempt, true);
+    if (scorm_seq_rollup_rule_check($sco, $userid, 'incomplete')) {
+        // Incomplete rollup action.
+        scorm_seq_set('attemptcompletionstatus', $sco->id, $userid, $seq->attempt, false);
+        scorm_seq_set('attemptprogressstatus', $sco->id, $userid, $seq->attempt, true);
 
     }
-    if(scorm_seq_rollup_rule_check($sco,$userid,'completed')){
-        //incomplete rollup action
-        scorm_seq_set('attemptcompletionstatus',$sco->id,$userid, $seq->attempt, true);
-        scorm_seq_set('attemptprogressstatus',$sco->id,$userid, $seq->attempt, true);
+    if (scorm_seq_rollup_rule_check($sco, $userid, 'completed')) {
+        // Incomplete rollup action.
+        scorm_seq_set('attemptcompletionstatus', $sco->id, $userid, $seq->attempt, true);
+        scorm_seq_set('attemptprogressstatus', $sco->id, $userid, $seq->attempt, true);
     }
 
 }
 
-function scorm_seq_rollup_rule_check ($sco, $userid, $action){
+function scorm_seq_rollup_rule_check ($sco, $userid, $action) {
     global $DB;
 
-    if($rolluprules = $DB->get_record('scorm_seq_rolluprule', array('scoid'=>$sco->id, 'action'=>$action))) {
+    if ($rolluprules = $DB->get_record('scorm_seq_rolluprule', array('scoid'=>$sco->id, 'action'=>$action))) {
         $childrenbag = Array ();
         $children = scorm_get_children ($sco);
 
-        foreach($rolluprules as $rolluprule){
-            foreach ($children as $child){
+        foreach ($rolluprules as $rolluprule) {
+            foreach ($children as $child) {
 
-                /*$tracked = $DB->get_records('scorm_scoes_track', array('scoid'=>$child->id,'userid'=>$userid));
-                if($tracked && $tracked->attemp != 0){*/
-                 $child = scorm_get_sco ($child);
-                 if (!isset($child->tracked) || ($child->tracked == 1)) {
-                    if(scorm_seq_check_child ($child,$action,$userid)) {
+                /*$tracked = $DB->get_records('scorm_scoes_track', array('scoid'=>$child->id, 'userid'=>$userid));
+                if ($tracked && $tracked->attemp != 0) {*/
+                $child = scorm_get_sco ($child);
+                if (!isset($child->tracked) || ($child->tracked == 1)) {
+                    if (scorm_seq_check_child ($child, $action, $userid)) {
                         $rollupruleconds = $DB->get_records('scorm_seq_rolluprulecond', array('rollupruleid'=>$rolluprule->id));
-                        $evaluate = scorm_seq_evaluate_rollupcond($child,$rolluprule->conditioncombination,$rollupruleconds,$userid);
-                        if ($evaluate=='unknown'){
-                            array_push($childrenbag,'unknown');
+                        $evaluate = scorm_seq_evaluate_rollupcond($child, $rolluprule->conditioncombination,
+                                                                  $rollupruleconds, $userid);
+                        if ($evaluate=='unknown') {
+                            array_push($childrenbag, 'unknown');
                         } else {
-                            if($evaluate == true){
-                                array_push($childrenbag,true);
-                            }
-                            else{
-                                array_push($childrenbag,false);
+                            if ($evaluate == true) {
+                                array_push($childrenbag, true);
+                            } else {
+                                array_push($childrenbag, false);
                             }
                         }
                     }
@@ -886,75 +912,79 @@ function scorm_seq_rollup_rule_check ($sco, $userid, $action){
             }
             $change = false;
 
-            switch ($rolluprule->childactivityset){
+            switch ($rolluprule->childactivityset) {
 
                 case 'all':
-                    if((array_search(false,$childrenbag)===false)&&(array_search('unknown',$childrenbag)===false)){//I think I can use this condition instead equivalent to OR
+                    // I think I can use this condition instead equivalent to OR.
+                    if ((array_search(false, $childrenbag)===false)&&(array_search('unknown', $childrenbag)===false)) {
                         $change = true;
                     }
                 break;
 
                 case 'any':
-                    if(array_search(true,$childrenbag)!==false){//I think I can use this condition instead equivalent to OR
+                    // I think I can use this condition instead equivalent to OR.
+                    if (array_search(true, $childrenbag)!==false) {
                         $change = true;
                     }
                 break;
 
                 case 'none':
-                    if((array_search(true,$childrenbag)===false)&&(array_search('unknown',$childrenbag)===false)){//I think I can use this condition instead equivalent to OR
+                    // I think I can use this condition instead equivalent to OR.
+                    if ((array_search(true, $childrenbag)===false)&&(array_search('unknown', $childrenbag)===false)) {
                         $change = true;
                     }
                 break;
 
                 case 'atleastcount':
-                    foreach ($childrenbag as $itm){//I think I can use this condition instead equivalent to OR
+                    // I think I can use this condition instead equivalent to OR.
+                    foreach ($childrenbag as $itm) {
                         $cont = 0;
-                        if($itm === true){
+                        if ($itm === true) {
                             $cont++;
                         }
-                        if($cont >= $rolluprule->minimumcount){
+                        if ($cont >= $rolluprule->minimumcount) {
                             $change = true;
                         }
                     }
                 break;
 
                 case 'atleastcount':
-                    foreach ($childrenbag as $itm){//I think I can use this condition instead equivalent to OR
+                    foreach ($childrenbag as $itm) {// I think I can use this condition instead equivalent to OR.
                         $cont = 0;
-                        if($itm === true){
+                        if ($itm === true) {
                             $cont++;
                         }
-                        if($cont >= $rolluprule->minimumcount){
+                        if ($cont >= $rolluprule->minimumcount) {
                             $change = true;
                         }
                     }
                 break;
 
                 case 'atleastpercent':
-                    foreach ($childrenbag as $itm){//I think I can use this condition instead equivalent to OR
+                    foreach ($childrenbag as $itm) {// I think I can use this condition instead equivalent to OR.
                         $cont = 0;
-                        if($itm === true){
+                        if ($itm === true) {
                             $cont++;
                         }
-                        if(($cont/sizeof($childrenbag)) >= $rolluprule->minimumcount){
+                        if (($cont/count($childrenbag)) >= $rolluprule->minimumcount) {
                             $change = true;
                         }
                     }
                 break;
             }
-            if ($change==true){
+            if ($change==true) {
                 return true;
             }
         }
-     }
-     return false;
+    }
+    return false;
 }
 
 function scorm_seq_flow_tree_traversal($activity, $direction, $childrenflag, $prevdirection, $seq, $userid, $skip = false) {
     $revdirection = false;
     $parent = scorm_get_parent($activity);
     $children = scorm_get_available_children($parent);
-    $childrensize = sizeof($children);
+    $childrensize = count($children);
 
     if (($prevdirection != null && $prevdirection == 'backward') && ($children[$childrensize-1]->id == $activity->id)) {
         $direction = 'backward';
@@ -962,14 +992,14 @@ function scorm_seq_flow_tree_traversal($activity, $direction, $childrenflag, $pr
         $revdirection = true;
     }
 
-    if($direction == 'forward'){
+    if ($direction == 'forward') {
         $ancestors = scorm_get_ancestors($activity);
         $ancestorsroot = array_reverse($ancestors);
         $preorder = array();
         $preorder = scorm_get_preorder($preorder, $ancestorsroot[0]);
-        $preordersize = sizeof($preorder);
+        $preordersize = count($preorder);
         if (($activity->id == $preorder[$preordersize - 1]->id) || (($activity->parent == '/') && !($childrenflag))) {
-            //scorm_seq_terminate_descent($ancestorsroot,$userid); TODO: undefined
+            // scorm_seq_terminate_descent($ancestorsroot, $userid); TODO: undefined
             $seq->endsession = true;
             $seq->nextactivity = null;
             return $seq;
@@ -980,28 +1010,28 @@ function scorm_seq_flow_tree_traversal($activity, $direction, $childrenflag, $pr
                 if ($seq->nextactivity->launch == null) {
                     $seq = scorm_seq_flow_tree_traversal ($seq->nextactivity, $direction, true, null, $seq, $userid);
                 }
-				return $seq;
+                return $seq;
             } else {
-				$position = 0;
+                $position = 0;
                 foreach ($children as $sco) {
-					if ($sco->id == $activity->id) {
-						break;
-					}
-					$position++;
-				}
-				if ($position != ($childrensize - 1)) {
+                    if ($sco->id == $activity->id) {
+                        break;
+                    }
+                    $position++;
+                }
+                if ($position != ($childrensize - 1)) {
                     $seq->nextactivity = $children[$position + 1];
-					$seq->traversaldir = $direction;
+                    $seq->traversaldir = $direction;
                     return $seq;
                 } else {
-     				$siblings = scorm_get_siblings($activity);
+                    $siblings = scorm_get_siblings($activity);
                     $children = scorm_get_children($siblings[0]);
                     $seq->nextactivity = $children[0];
                     return $seq;
                 }
             }
         } else {
-		    $children = scorm_get_available_children($activity);
+            $children = scorm_get_available_children($activity);
             if (!empty($children)) {
                 $seq->traversaldir = $direction;
                 $seq->nextactivity = $children[0];
@@ -1013,7 +1043,7 @@ function scorm_seq_flow_tree_traversal($activity, $direction, $childrenflag, $pr
                 return $seq;
             }
         }
-    } else if($direction == 'backward') {
+    } else if ($direction == 'backward') {
         if ($activity->parent == '/') {
             $seq->traversaldir = null;
             $seq->nextactivity = null;
@@ -1032,36 +1062,34 @@ function scorm_seq_flow_tree_traversal($activity, $direction, $childrenflag, $pr
             if ($children[0]->id == $activity->id) {
                 $seq = scorm_seq_flow_tree_traversal($parent, 'backward', false, null, $seq, $userid);
                 return $seq;
-            } else { 
+            } else {
                 $ancestors = scorm_get_ancestors($activity);
-	            $ancestorsroot = array_reverse($ancestors);
+                $ancestorsroot = array_reverse($ancestors);
                 $preorder = array();
-	            $preorder = scorm_get_preorder($preorder, $ancestorsroot[0]);
-	            $position = 0;
-	            foreach ($preorder as $sco) {
-	                if ($sco->id == $activity->id) {
-	                    break;
-	                }
-	                $position++;
-	            }
-	            if (isset($preorder[$position])) {
-	                $seq->nextactivity = $preorder[$position - 1];
-	                $seq->traversaldir = $direction;
-	            }
-	            return $seq;
+                $preorder = scorm_get_preorder($preorder, $ancestorsroot[0]);
+                $position = 0;
+                foreach ($preorder as $sco) {
+                    if ($sco->id == $activity->id) {
+                        break;
+                    }
+                    $position++;
+                }
+                if (isset($preorder[$position])) {
+                    $seq->nextactivity = $preorder[$position - 1];
+                    $seq->traversaldir = $direction;
+                }
+                return $seq;
             }
-         }
-         else{
-			$children = scorm_get_available_children($activity);
-            if (!empty($children)){
-                $activity = scorm_get_sco($activity->id);
+        } else {
+            $children = scorm_get_available_children($activity);
+            if (!empty($children)) {
                 if (isset($parent->flow) && ($parent->flow == true)) {
                     $seq->traversaldir = 'forward';
                     $seq->nextactivity = $children[0];
                     return $seq;
                 } else {
                     $seq->traversaldir = 'backward';
-                    $seq->nextactivity = $children[sizeof($children) - 1];
+                    $seq->nextactivity = $children[count($children) - 1];
                     return $seq;
                 }
             } else {
@@ -1074,7 +1102,8 @@ function scorm_seq_flow_tree_traversal($activity, $direction, $childrenflag, $pr
     }
 }
 
-function scorm_seq_flow_activity_traversal ($activity, $userid, $direction, $childrenflag, $prevdirection, $seq,$userid) {// returns the next activity on the tree, traversal direction, control returned to the LTS, (may) exception
+// Returns the next activity on the tree, traversal direction, control returned to the LTS, (may) exception.
+function scorm_seq_flow_activity_traversal ($activity, $userid, $direction, $childrenflag, $prevdirection, $seq, $userid) {
     $parent = scorm_get_parent ($activity);
     if (!isset($parent->flow) || ($parent->flow == false)) {
         $seq->deliverable = false;
@@ -1088,32 +1117,35 @@ function scorm_seq_flow_activity_traversal ($activity, $userid, $direction, $chi
         $skip = scorm_evaluate_condition ($rulecheck, $activity, $userid);
         if ($skip) {
             $seq = scorm_seq_flow_tree_traversal($activity, $direction, false, $prevdirection, $seq, $userid, $skip);
-            $seq = scorm_seq_flow_activity_traversal($seq->nextactivity, $userid, $direction, $childrenflag, $prevdirection, $seq, $userid);
+            $seq = scorm_seq_flow_activity_traversal($seq->nextactivity, $userid, $direction,
+                                                     $childrenflag, $prevdirection, $seq, $userid);
         } else if (!empty($seq->identifiedactivity)) {
             $seq->nextactivity = $activity;
         }
         return $seq;
     }
 
-    $ch = scorm_check_activity ($activity,$userid);
-    if ($ch){
+    $ch = scorm_check_activity ($activity, $userid);
+    if ($ch) {
         $seq->deliverable = false;
         $seq->exception = 'SB.2.2-2';
         $seq->nextactivity = $activity;
         return $seq;
     }
 
-    if (!scorm_is_leaf($activity)){
+    if (!scorm_is_leaf($activity)) {
         $seq = scorm_seq_flow_tree_traversal ($activity, $direction, true, null, $seq, $userid);
-        if ($seq->identifiedactivity == null){
+        if ($seq->identifiedactivity == null) {
             $seq->deliverable = false;
             $seq->nextactivity = $activity;
             return $seq;
         } else {
-            if ($direction == 'backward' && $seq->traversaldir == 'forward'){
-                $seq = scorm_seq_flow_activity_traversal($seq->identifiedactivity, $userid, 'forward', $childrenflag, 'backward', $seq, $userid);
+            if ($direction == 'backward' && $seq->traversaldir == 'forward') {
+                $seq = scorm_seq_flow_activity_traversal($seq->identifiedactivity, $userid,
+                                                         'forward', $childrenflag, 'backward', $seq, $userid);
             } else {
-                $seq = scorm_seq_flow_activity_traversal($seq->identifiedactivity, $userid, $direction, $childrenflag, null, $seq, $userid);
+                $seq = scorm_seq_flow_activity_traversal($seq->identifiedactivity, $userid,
+                                                         $direction, $childrenflag, null, $seq, $userid);
             }
             return $seq;
         }
@@ -1122,16 +1154,16 @@ function scorm_seq_flow_activity_traversal ($activity, $userid, $direction, $chi
 
     $seq->deliverable = true;
     $seq->nextactivity = $activity;
-	$seq->exception = null;
+    $seq->exception = null;
     return $seq;
 
 }
 
-function scorm_seq_flow ($activity, $direction, $seq, $childrenflag, $userid){
-    //TODO: $PREVDIRECTION NOT DEFINED YET
+function scorm_seq_flow ($activity, $direction, $seq, $childrenflag, $userid) {
+    // TODO: $PREVDIRECTION NOT DEFINED YET.
     $prevdirection = null;
     $seq = scorm_seq_flow_tree_traversal ($activity, $direction, $childrenflag, $prevdirection, $seq, $userid);
-    if($seq->nextactivity == null) {
+    if ($seq->nextactivity == null) {
         $seq->nextactivity = $activity;
         $seq->deliverable = false;
         return $seq;

@@ -418,14 +418,18 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
             }
         }
         if (($element == 'cmi.success_status') && ($value == 'passed' || $value == 'failed')) {
-            if ($DB->get_record('scorm_scoes_data', array('scoid'=>$scoid, 'name'=>'objectivesetbycontent'))) {
+            if ($DB->get_record('scorm_scoes_data', array('scoid' => $scoid, 'name' => 'objectivesetbycontent'))) {
         	    $objectiveprogressstatus = true;
         	    $objectivesatisfiedstatus = false;
         	    if ($value == 'passed') {
         		    $objectivesatisfiedstatus = true;
                 }
 
-        		if ($track = $DB->get_record('scorm_scoes_track', array('userid'=>$userid, 'scormid'=>$scormid, 'scoid'=>$scoid, 'attempt'=>$attempt, 'element'=>'objectiveprogressstatus'))) {
+        		if ($track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
+                                                                        'scormid' => $scormid,
+                                                                        'scoid' => $scoid,
+                                                                        'attempt' => $attempt,
+                                                                        'element' => 'objectiveprogressstatus'))) {
                     $track->value = $objectiveprogressstatus;
                     $track->timemodified = time();
                     $DB->update_record('scorm_scoes_track', $track);
@@ -442,7 +446,11 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
                     $id = $DB->insert_record('scorm_scoes_track', $track);
         		}
         		if ($objectivesatisfiedstatus) {
-                    if ($track = $DB->get_record('scorm_scoes_track', array('userid'=>$userid, 'scormid'=>$scormid, 'scoid'=>$scoid, 'attempt'=>$attempt, 'element'=>'objectivesatisfiedstatus'))) {
+                    if ($track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
+                                                                            'scormid' => $scormid,
+                                                                            'scoid' => $scoid,
+                                                                            'attempt' => $attempt,
+                                                                            'element' => 'objectivesatisfiedstatus'))) {
                         $track->value = $objectivesatisfiedstatus;
                         $track->timemodified = time();
                         $DB->update_record('scorm_scoes_track', $track);
@@ -471,8 +479,12 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
 
     }
 
-    if ($track = $DB->get_record('scorm_scoes_track', array('userid'=>$userid, 'scormid'=>$scormid, 'scoid'=>$scoid, 'attempt'=>$attempt, 'element'=>$element))) {
-        if ($element != 'x.start.time' ) { //don't update x.start.time - keep the original value.
+    if ($track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
+                                                            'scormid' => $scormid,
+                                                            'scoid' => $scoid,
+                                                            'attempt' => $attempt,
+                                                            'element' => $element))) {
+        if ($element != 'x.start.time' ) { // Don't update x.start.time - keep the original value.
             $track->value = $value;
             $track->timemodified = time();
             $DB->update_record('scorm_scoes_track', $track);
@@ -1388,7 +1400,7 @@ function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='n
         $usertracks = array();
         foreach ($scoes as $sco) {
             if (!empty($sco->launch)) {
-                if ($usertrack = scorm_get_tracks($sco->id,$user->id, $attempt)) {
+                if ($usertrack = scorm_get_tracks($sco->id, $user->id, $attempt)) {
                     if ($usertrack->status == '') {
                         $usertrack->status = 'notattempted';
                     }
@@ -1595,7 +1607,7 @@ function scorm_format_toc_for_treeview($user, $scorm, $scoes, $usertracks, $cmid
                 $score = '';
 
                 if (isset($usertracks[$sco->identifier])) {
-                    $viewscore = has_capability('mod/scorm:viewscores', get_context_instance(CONTEXT_MODULE, $cmid));
+                    $viewscore = has_capability('mod/scorm:viewscores', context_module::instance($cmid));
                     if (isset($usertracks[$sco->identifier]->score_raw) && $viewscore) {
                         if ($usertracks[$sco->identifier]->score_raw != '') {
                             $score = '('.get_string('score','scorm').':&nbsp;'.$usertracks[$sco->identifier]->score_raw.')';

@@ -85,7 +85,7 @@ if (!$sco = scorm_get_sco($scoid)) {
     print_error('cannotfindsco', 'scorm');
 }
 if (scorm_version_check($scorm->version, SCORM_13)) {
-    $objectives = $DB->get_records('scorm_seq_objective', array('scoid'=>$scoid));
+    $objectives = $DB->get_records('scorm_seq_objective', array('scoid' => $scoid));
     $index = 0;
     foreach ($objectives as $objective) {
         if (!empty($objective->minnormalizedmeasure)) {
