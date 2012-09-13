@@ -1545,11 +1545,10 @@ function scorm_get_toc_get_parent_child(&$result) {
             if (empty($prevparent)) {
                 $prevparent = $ident;
             }
-
+            if (!isset($final[$i][$prevparent]->children)) {
+                $final[$i][$prevparent]->children = array();
+            }
             if ($sco->parent == $prevparent) {
-                if (!isset($final[$i][$prevparent]->children)) {
-                    $final[$i][$prevparent]->children = array();
-                }
                 $final[$i][$prevparent]->children[] = $sco;
                 $prevparent = $ident;
             } else {
@@ -1572,7 +1571,7 @@ function scorm_get_toc_get_parent_child(&$result) {
         $keys = array_keys($final[$i]);
         $results[] = $final[$i][$keys[0]];
     }
-    
+
     return $results;
 }
 
@@ -1581,6 +1580,7 @@ function scorm_format_toc_for_treeview($user, $scorm, $scoes, $usertracks, $cmid
 
     $result = new stdClass();
     $result->prerequisites = true;
+    $result->incomplete = true;
 
     if (!$children) {
         $result->attemptleft = $scorm->maxattempt == 0 ? 1 : $scorm->maxattempt - $attempt;
