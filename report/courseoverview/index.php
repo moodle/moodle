@@ -68,8 +68,8 @@ if (empty($timeoptions)) {
     print_error('nostatstodisplay', 'error', $CFG->wwwroot.'/course/view.php?id='.$course->id);
 }
 
-echo '<form action="index.php" method="post">'."\n";
-echo '<div>';
+echo html_writer::start_tag('form', array('action' => 'index.php', 'method' => 'post'));
+echo html_writer::start_tag('div');
 
 $table = new html_table();
 $table->width = '*';
@@ -82,13 +82,13 @@ $timeoptionsmenu .= html_writer::select($timeoptions,'time',$time, false);
 
 $table->data[] = array(get_string('statsreporttype'),$reporttypemenu,
                        get_string('statstimeperiod'),$timeoptionsmenu,
-                       '<label class="accesshide" for="numcourses">' . get_string('numberofcourses') . '</label>' .
-                       '<input type="text" id="numcourses" name="numcourses" size="3" maxlength="2" value="'.$numcourses.'" />',
-                       '<input type="submit" value="'.get_string('view').'" />') ;
+                       html_writer::label(get_string('numberofcourses'), 'numcourses', false, array('class' => 'accesshide')) .
+                       html_writer::empty_tag('input', array('type' => 'text', 'id' => 'numcourses', 'name' => 'numcourses', 'size' => '3', 'maxlength' => '2', 'value' => $numcourses)),
+                       html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('view'))));
 
 echo html_writer::table($table);
-echo '</div>';
-echo '</form>';
+echo html_writer::end_tag('div');
+echo html_writer::end_tag('form');
 
 echo $OUTPUT->heading($reportoptions[$report]);
 
