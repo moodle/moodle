@@ -123,6 +123,11 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
             } else if ($assignment->grading_disabled($user->id)) {
                 // Skip grade is locked.
                 $skip = true;
+            } else if (!is_numeric($gradedesc) && ($assignment->get_instance()->grade) > -1) {
+                $skip = true;
+            } else if (($assignment->get_instance()->grade > -1) &&
+                      (($gradedesc < 0) || ($gradedesc > $assignment->get_instance()->grade))) {
+                $skip = true;
             }
 
             if (!$skip) {
