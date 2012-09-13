@@ -348,7 +348,7 @@ class course_modinfo extends stdClass {
 
         // Remove unnecessary data and add availability
         foreach ($sections as $number => $section) {
-            // Clone just in case it is reused elsewhere (get_all_sections cache)
+            // Clone just in case it is reused elsewhere
             $compressedsections[$number] = clone($section);
             section_info::convert_for_section_cache($compressedsections[$number]);
         }

@@ -1262,31 +1262,6 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
 }
 
 /**
- * Returns an array of sections for the requested course id
- *
- * This function stores the sections against the course id within a staticvar encase
- * of subsequent requests. This is used all over + in some standard libs and course
- * format callbacks so subsequent requests are a reality.
- *
- * Note: Since Moodle 2.3, it is more efficient to get this data by calling
- * get_fast_modinfo, then using $modinfo->get_section_info or get_section_info_all.
- *
- * @staticvar array $coursesections
- * @param int $courseid
- * @return array Array of sections
- */
-function get_all_sections($courseid) {
-    global $DB;
-    static $coursesections = array();
-    if (!array_key_exists($courseid, $coursesections)) {
-        $coursesections[$courseid] = $DB->get_records("course_sections", array("course"=>"$courseid"), "section",
-                'section, id, course, name, summary, summaryformat, sequence, visible, ' .
-                'availablefrom, availableuntil, showavailability, groupingid');
-    }
-    return $coursesections[$courseid];
-}
-
-/**
  * Set highlighted section. Only one section can be highlighted at the time.
  *
  * @param int $courseid course id
@@ -2759,10 +2734,11 @@ function add_course_module($mod) {
 }
 
 /**
- * Returns course section - creates new if does not exist yet.
- * @param int $relative section number
+ * Returns course section - creates new if does not exist yet
+ *
+ * @param int $section relative section number (field course_sections.section)
  * @param int $courseid
- * @return object $course_section object
+ * @return stdClass record from table {course_sections}
  */
 function get_course_section($section, $courseid) {
     global $DB;
