@@ -308,15 +308,6 @@ class assign {
     }
 
     /**
-     * Expose the renderer to plugins
-     *
-     * @return assign_renderer
-     */
-    public function get_renderer() {
-        return $this->output;
-    }
-
-    /**
      * Display the assignment, used by view.php
      *
      * The assignment is displayed differently depending on your role,
@@ -1499,7 +1490,7 @@ class assign {
         } else {
             $data->batchusers = $batchusers;
         }
-        $o .= $this->get_output()->render(new assign_header($this->get_instance(),
+        $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
                                                       $this->get_context(),
                                                       $this->show_intro(),
                                                       $this->get_course_module()->id,
@@ -1512,7 +1503,7 @@ class assign {
                                                                $this->get_instance(),
                                                                $data));
         }
-        $o .= $this->get_output()->render(new assign_form('extensionform', $mform));
+        $o .= $this->get_renderer()->render(new assign_form('extensionform', $mform));
         $o .= $this->view_footer();
         return $o;
     }
@@ -1712,12 +1703,12 @@ class assign {
             if ($item->userid != $USER->id) {
                 require_capability('mod/assign:grade', $this->context);
             }
-            $o .= $this->get_output()->render(new assign_header($this->get_instance(),
+            $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
                                                               $this->get_context(),
                                                               $this->show_intro(),
                                                               $this->get_course_module()->id,
                                                               $plugin->get_name()));
-            $o .= $this->get_output()->render(new assign_submission_plugin_submission($plugin,
+            $o .= $this->get_renderer()->render(new assign_submission_plugin_submission($plugin,
                                                               $item,
                                                               assign_submission_plugin_submission::FULL,
                                                               $this->get_course_module()->id,
@@ -1735,12 +1726,12 @@ class assign {
             if ($item->userid != $USER->id) {
                 require_capability('mod/assign:grade', $this->context);
             }
-            $o .= $this->get_output()->render(new assign_header($this->get_instance(),
+            $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
                                                               $this->get_context(),
                                                               $this->show_intro(),
                                                               $this->get_course_module()->id,
                                                               $plugin->get_name()));
-            $o .= $this->get_output()->render(new assign_feedback_plugin_feedback($plugin,
+            $o .= $this->get_renderer()->render(new assign_feedback_plugin_feedback($plugin,
                                                               $item,
                                                               assign_feedback_plugin_feedback::FULL,
                                                               $this->get_course_module()->id,
@@ -1806,12 +1797,12 @@ class assign {
      */
     private function view_quickgrading_result($message) {
         $o = '';
-        $o .= $this->get_output()->render(new assign_header($this->get_instance(),
+        $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
                                                       $this->get_context(),
                                                       $this->show_intro(),
                                                       $this->get_course_module()->id,
                                                       get_string('quickgradingresult', 'assign')));
-        $o .= $this->get_output()->render(new assign_quickgrading_result($message, $this->get_course_module()->id));
+        $o .= $this->get_renderer()->render(new assign_quickgrading_result($message, $this->get_course_module()->id));
         $o .= $this->view_footer();
         return $o;
     }
@@ -1822,7 +1813,7 @@ class assign {
      * @return string
      */
     private function view_footer() {
-        return $this->get_output()->render_footer();
+        return $this->get_renderer()->render_footer();
     }
 
     /**
@@ -1936,12 +1927,13 @@ class assign {
 
         add_to_log($this->get_course()->id, 'assign', $action, $fullurl, $info, $this->get_course_module()->id, $USER->id);
     }
-    
+
     /**
-     * Load the page renderer
+     * Lazy load the page renderer and expose the renderer to plugins
+     *
      * @return assign_renderer
      */
-    private function get_output() {
+    private function get_renderer() {
         global $PAGE;
         if ($this->output) {
             return $this->output;
@@ -2071,7 +2063,7 @@ class assign {
         // Need submit permission to submit an assignment
         require_capability('mod/assign:grade', $this->context);
 
-        $o .= $this->get_output()->render(new assign_header($this->get_instance(),
+        $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
                                                       $this->get_context(), false, $this->get_course_module()->id,get_string('grading', 'assign')));
 
         $rownum = required_param('rownum', PARAM_INT) + $offset;
@@ -2095,7 +2087,7 @@ class assign {
         }
         $user = $DB->get_record('user', array('id' => $userid));
         if ($user) {
-            $o .= $this->get_output()->render(new assign_user_summary($user,
+            $o .= $this->get_renderer()->render(new assign_user_summary($user,
                                                                 $this->get_course()->id,
                                                                 has_capability('moodle/site:viewfullnames',
                                                                 $this->get_course_context()),
@@ -2135,7 +2127,7 @@ class assign {
             }
             $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_course_context());
 
-            $o .= $this->get_output()->render(new assign_submission_status($this->get_instance()->allowsubmissionsfromdate,
+            $o .= $this->get_renderer()->render(new assign_submission_status($this->get_instance()->allowsubmissionsfromdate,
                                                               $this->get_instance()->alwaysshowdescription,
                                                               $submission,
                                                               $this->get_instance()->teamsubmission,
@@ -2181,7 +2173,7 @@ class assign {
                                                '',
                                                array('class'=>'gradeform'));
         }
-        $o .= $this->get_output()->render(new assign_form('gradingform',$mform));
+        $o .= $this->get_renderer()->render(new assign_form('gradingform',$mform));
 
         $msg = get_string('viewgradingformforstudent', 'assign', array('id'=>$user->id, 'fullname'=>fullname($user)));
         $this->add_to_log('view grading form', $msg);
@@ -2201,7 +2193,7 @@ class assign {
         require_capability('mod/assign:revealidentities', $this->get_context());
 
         $o = '';
-        $o .= $this->get_output()->render(new assign_header($this->get_instance(),
+        $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
                                                       $this->get_context(), false, $this->get_course_module()->id));
 
         $confirmurl = new moodle_url('/mod/assign/view.php', array('id'=>$this->get_course_module()->id,
@@ -2211,7 +2203,7 @@ class assign {
         $cancelurl = new moodle_url('/mod/assign/view.php', array('id'=>$this->get_course_module()->id,
                                                                     'action'=>'grading'));
 
-        $o .= $this->get_output()->confirm(get_string('revealidentitiesconfirm', 'assign'), $confirmurl, $cancelurl);
+        $o .= $this->get_renderer()->confirm(get_string('revealidentitiesconfirm', 'assign'), $confirmurl, $cancelurl);
         $o .= $this->view_footer();
         $this->add_to_log('view', get_string('viewrevealidentitiesconfirm', 'assign'));
         return $o;
@@ -2234,7 +2226,7 @@ class assign {
         parse_str($returnparams, $params);
         $params = array_merge( array('id' => $this->get_course_module()->id, 'action' => $returnaction), $params);
 
-        return $this->get_output()->single_button(new moodle_url('/mod/assign/view.php', $params), get_string('back'), 'get');
+        return $this->get_renderer()->single_button(new moodle_url('/mod/assign/view.php', $params), get_string('back'), 'get');
 
     }
 
@@ -2316,8 +2308,8 @@ class assign {
         $gradingoptionsdata->filter = $filter;
         $gradingoptionsform->set_data($gradingoptionsdata);
 
-        $actionformtext = $this->get_output()->render($gradingactions);
-        $o .= $this->get_output()->render(new assign_header($this->get_instance(),
+        $actionformtext = $this->get_renderer()->render($gradingactions);
+        $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
                                                       $this->get_context(), false, $this->get_course_module()->id, get_string('grading', 'assign'), $actionformtext));
         $o .= groups_print_activity_menu($this->get_course_module(), $CFG->wwwroot . '/mod/assign/view.php?id=' . $this->get_course_module()->id.'&action=grading', true);
 
@@ -2330,22 +2322,22 @@ class assign {
 
         // load and print the table of submissions
         if ($showquickgrading && $quickgrading) {
-            $table = $this->get_output()->render(new assign_grading_table($this, $perpage, $filter, 0, true));
+            $table = $this->get_renderer()->render(new assign_grading_table($this, $perpage, $filter, 0, true));
             $quickgradingform = new mod_assign_quick_grading_form(null,
                                                                   array('cm'=>$this->get_course_module()->id,
                                                                         'gradingtable'=>$table));
-            $o .= $this->get_output()->render(new assign_form('quickgradingform', $quickgradingform));
+            $o .= $this->get_renderer()->render(new assign_form('quickgradingform', $quickgradingform));
         } else {
-            $o .= $this->get_output()->render(new assign_grading_table($this, $perpage, $filter, 0, false));
+            $o .= $this->get_renderer()->render(new assign_grading_table($this, $perpage, $filter, 0, false));
         }
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
         $users = array_keys($this->list_participants($currentgroup, true));
         if (count($users) != 0) {
             // if no enrolled user in a course then don't display the batch operations feature
-            $o .= $this->get_output()->render(new assign_form('gradingbatchoperationsform', $gradingbatchoperationsform));
+            $o .= $this->get_renderer()->render(new assign_form('gradingbatchoperationsform', $gradingbatchoperationsform));
         }
-        $o .= $this->get_output()->render(new assign_form('gradingoptionsform', $gradingoptionsform, 'M.mod_assign.init_grading_options'));
+        $o .= $this->get_renderer()->render(new assign_form('gradingoptionsform', $gradingoptionsform, 'M.mod_assign.init_grading_options'));
         return $o;
     }
 
@@ -2402,13 +2394,13 @@ class assign {
         // Need submit permission to submit an assignment
         require_capability('mod/assign:submit', $this->context);
 
-        $o .= $this->get_output()->render(new assign_header($this->get_instance(),
+        $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
                                                       $this->get_context(),
                                                       $this->show_intro(),
                                                       $this->get_course_module()->id,
                                                       get_string('editsubmission', 'assign')));
 
-        $o .= $this->get_output()->notification(get_string('submissionsclosed', 'assign'));
+        $o .= $this->get_renderer()->notification(get_string('submissionsclosed', 'assign'));
 
         $o .= $this->view_footer();
 
@@ -2434,7 +2426,7 @@ class assign {
         if (!$this->submissions_open()) {
             return $this->view_student_error_message();
         }
-        $o .= $this->get_output()->render(new assign_header($this->get_instance(),
+        $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
                                                       $this->get_context(),
                                                       $this->show_intro(),
                                                       $this->get_course_module()->id,
@@ -2446,7 +2438,7 @@ class assign {
             $mform = new mod_assign_submission_form(null, array($this, $data));
         }
 
-        $o .= $this->get_output()->render(new assign_form('editsubmissionform',$mform));
+        $o .= $this->get_renderer()->render(new assign_form('editsubmissionform',$mform));
 
         $o .= $this->view_footer();
         $this->add_to_log('view submit assignment form', get_string('viewownsubmissionform', 'assign'));
@@ -2607,8 +2599,8 @@ class assign {
                                                                         $data));
         }
         $o = '';
-        $o .= $this->get_output()->header();
-        $o .= $this->get_output()->render(new assign_submit_for_grading_page($notifications, $this->get_course_module()->id, $mform));
+        $o .= $this->get_renderer()->header();
+        $o .= $this->get_renderer()->render(new assign_submit_for_grading_page($notifications, $this->get_course_module()->id, $mform));
         $o .= $this->view_footer();
 
         $this->add_to_log('view confirm submit assignment form', get_string('viewownsubmissionform', 'assign'));
@@ -2670,7 +2662,7 @@ class assign {
                 $extensionduedate = $grade->extensionduedate;
             }
             $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_course_context());
-            $o .= $this->get_output()->render(new assign_submission_status($this->get_instance()->allowsubmissionsfromdate,
+            $o .= $this->get_renderer()->render(new assign_submission_status($this->get_instance()->allowsubmissionsfromdate,
                                                               $this->get_instance()->alwaysshowdescription,
                                                               $submission,
                                                               $this->get_instance()->teamsubmission,
@@ -2749,7 +2741,7 @@ class assign {
                                                       $this->get_return_action(),
                                                       $this->get_return_params());
 
-                $o .= $this->get_output()->render($feedbackstatus);
+                $o .= $this->get_renderer()->render($feedbackstatus);
             }
 
         }
@@ -2765,7 +2757,7 @@ class assign {
         global $CFG, $DB, $USER, $PAGE;
 
         $o = '';
-        $o .= $this->get_output()->render(new assign_header($this->get_instance(),
+        $o .= $this->get_renderer()->render(new assign_header($this->get_instance(),
                                                       $this->get_context(),
                                                       $this->show_intro(),
                                                       $this->get_course_module()->id));
@@ -2782,7 +2774,7 @@ class assign {
                                                       $this->get_course_module()->id,
                                                       $this->count_submissions_need_grading(),
                                                       $this->get_instance()->teamsubmission);
-                $o .= $this->get_output()->render($summary);
+                $o .= $this->get_renderer()->render($summary);
             } else {
                 $summary = new assign_grading_summary($this->count_participants(0),
                                                       $this->get_instance()->submissiondrafts,
@@ -2794,7 +2786,7 @@ class assign {
                                                       $this->get_course_module()->id,
                                                       $this->count_submissions_need_grading(),
                                                       $this->get_instance()->teamsubmission);
-                $o .= $this->get_output()->render($summary);
+                $o .= $this->get_renderer()->render($summary);
             }
         }
         $grade = $this->get_user_grade($USER->id, false);
@@ -3069,7 +3061,7 @@ class assign {
         $fs = get_file_storage();
         $browser = get_file_browser();
         $files = $fs->get_area_files($this->get_context()->id, $component, $area , $submissionid , "timemodified", false);
-        return $this->get_output()->assign_files($this->context, $submissionid, $area, $component);
+        return $this->get_renderer()->assign_files($this->context, $submissionid, $area, $component);
 
     }
 
@@ -3910,7 +3902,7 @@ class assign {
         }
 
         if (has_all_capabilities(array('gradereport/grader:view', 'moodle/grade:viewall'), $this->get_course_context())) {
-            $gradestring = $this->get_output()->action_link(new moodle_url('/grade/report/grader/index.php',
+            $gradestring = $this->get_renderer()->action_link(new moodle_url('/grade/report/grader/index.php',
                                                               array('id'=>$this->get_course()->id)),
                                                 $gradinginfo->items[0]->grades[$userid]->str_grade);
         } else {
