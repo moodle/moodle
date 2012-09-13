@@ -1418,8 +1418,7 @@ function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='n
             }
 
             if (scorm_version_check($scorm->version, SCORM_13)) {
-                require_once($CFG->dirroot.'/mod/scorm/datamodels/sequencinglib.php');
-                $sco->prereq = scorm_seq_evaluate($sco->id, $usertracks);
+                $sco->prereq = true;
             } else {
                 $sco->prereq = empty($sco->prerequisites) || scorm_eval_prerequisites($sco->prerequisites, $usertracks);
             }

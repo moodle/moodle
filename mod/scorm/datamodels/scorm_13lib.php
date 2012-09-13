@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/mod/scorm/datamodels/scormlib.php');
+require_once($CFG->dirroot.'/mod/scorm/datamodels/sequencinglib.php');
 
 function scorm_seq_overall ($scoid, $userid, $request, $attempt) {
     $seq = scorm_seq_navigation($scoid, $userid, $request, $attempt);

@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-function scorm_seq_evaluate($scoid,$usertracks) {
-    return true;
-}
-
 function scorm_seq_exit_action_rules($seq,$userid) {
     $sco = $seq->currentactivity;
     $ancestors = scorm_get_ancestors($sco);
