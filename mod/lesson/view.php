@@ -73,7 +73,7 @@ if ($userhasgrade && !$lesson->retake) {
 ///     Check for high scores
 if (!$canmanage) {
     if (!$lesson->is_accessible()) {  // Deadline restrictions
-        echo $lessonoutput->header($lesson, $cm);
+        echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('lessonnotready2', 'lesson'));
         if ($lesson->deadline != 0 && time() > $lesson->deadline) {
             echo $lessonoutput->lesson_inaccessible(get_string('lessonclosed', 'lesson', userdate($lesson->deadline)));
         } else {
@@ -91,7 +91,7 @@ if (!$canmanage) {
                 redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id");
             }
         } else {
-            echo $lessonoutput->header($lesson, $cm);
+            echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)));
             echo $lessonoutput->login_prompt($lesson, $userpassword !== '');
             echo $lessonoutput->footer();
             exit();
@@ -144,7 +144,7 @@ if (!$canmanage) {
             }
 
             if (!empty($errors)) {  // print out the errors if any
-                echo $lessonoutput->header($lesson, $cm);
+                echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('completethefollowingconditions', 'lesson', format_string($lesson->name)));
                 echo $lessonoutput->dependancy_errors($dependentlesson, $errors);
                 echo $lessonoutput->footer();
                 exit();
@@ -226,7 +226,7 @@ if (empty($pageid)) {
         }
     }
     if (isset($lastpageseen) && $DB->count_records('lesson_attempts', array('lessonid'=>$lesson->id, 'userid'=>$USER->id, 'retry'=>$retries)) > 0) {
-        echo $lessonoutput->header($lesson, $cm);
+        echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('leftduringtimedsession', 'lesson'));
         if ($lesson->timed) {
             if ($lesson->retake) {
                 $continuelink = new single_button(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('continue', 'lesson'), 'get');
@@ -244,7 +244,7 @@ if (empty($pageid)) {
 
     if ($attemptflag) {
         if (!$lesson->retake) {
-            echo $lessonoutput->header($lesson, $cm, 'view');
+            echo $lessonoutput->header($lesson, $cm, 'view', '', null, get_string("noretake", "lesson"));
             $courselink = new single_button(new moodle_url('/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
             echo $lessonoutput->footer();
@@ -573,7 +573,7 @@ if ($pageid != LESSON_EOL) {
     $lessoncontent .= html_writer::link($url, get_string('viewgrades', 'lesson'), array('class'=>'centerpadded lessonbutton standardbutton'));
 
     lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
-    echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid);
+    echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid, get_string("congratulations", "lesson"));
     echo $lessoncontent;
     echo $lessonoutput->footer();
 }

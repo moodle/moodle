@@ -47,7 +47,7 @@ if ($mode != get_user_preferences('lesson_view', 'collapsed') && $mode !== 'sing
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 $PAGE->navbar->add(get_string('edit'));
-echo $lessonoutput->header($lesson, $cm, $mode);
+echo $lessonoutput->header($lesson, $cm, $mode, false, null, get_string('edit', 'lesson'));
 
 if (!$lesson->has_pages()) {
     // There are no pages; give teacher some options
