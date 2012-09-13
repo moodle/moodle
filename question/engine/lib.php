@@ -789,6 +789,33 @@ abstract class question_utils {
         return self::$thousands[$number / 1000 % 10] . self::$hundreds[$number / 100 % 10] .
                 self::$tens[$number / 10 % 10] . self::$units[$number % 10];
     }
+
+    /**
+     * Typically, $mark will have come from optional_param($name, null, PARAM_RAW_TRIMMED).
+     * This method copes with:
+     *  - keeping null or '' input unchanged.
+     *  - nubmers that were typed as either 1.00 or 1,00 form.
+     *
+     * @param string|null $mark raw use input of a mark.
+     * @return float|string|null cleaned mark as a float if possible. Otherwise '' or null.
+     */
+    public static function clean_param_mark($mark) {
+        if ($mark === '' || is_null($mark)) {
+            return $mark;
+        }
+
+        return clean_param(str_replace(',', '.', $mark), PARAM_FLOAT);
+    }
+
+    /**
+     * Get a sumitted variable (from the GET or POST data) that is a mark.
+     * @param string $parname the submitted variable name.
+     * @return float|string|null cleaned mark as a float if possible. Otherwise '' or null.
+     */
+    public static function optional_param_mark($parname) {
+        return self::clean_param_mark(
+                optional_param($parname, null, PARAM_RAW_TRIMMED));
+    }
 }
 
 
