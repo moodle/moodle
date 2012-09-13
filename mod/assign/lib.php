@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param mod_assign_mod_form $form
  * @return int The instance id of the new assignment
  */
-function assign_add_instance(stdClass $data, mod_assign_mod_form $form) {
+function assign_add_instance(stdClass $data, mod_assign_mod_form $form = null) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
