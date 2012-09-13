@@ -48,9 +48,6 @@ $PAGE->navbar->add($strscorms);
 echo $OUTPUT->header();
 
 $usesections = course_format_uses_sections($course->format);
-if ($usesections) {
-    $sections = get_all_sections($course->id);
-}
 
 if ($usesections) {
     $sortorder = "cw.section ASC";
@@ -78,7 +75,7 @@ foreach ($scorms as $scorm) {
     $tt = "";
     if ($usesections) {
         if ($scorm->section) {
-            $tt = get_section_name($course, $sections[$scorm->section]);
+            $tt = get_section_name($course, $scorm->section);
         }
     } else {
         $tt = userdate($scorm->timemodified);

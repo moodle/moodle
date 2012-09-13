@@ -36,7 +36,6 @@ class recent_form extends moodleform {
         $mform =& $this->_form;
         $context = context_course::instance($COURSE->id);
         $modinfo = get_fast_modinfo($COURSE);
-        $sections = get_all_sections($COURSE->id);
 
         $mform->addElement('header', 'filters', get_string('managefilters')); //TODO: add better string
 
@@ -127,7 +126,7 @@ class recent_form extends moodleform {
         }
 
         foreach ($modinfo->sections as $section=>$cmids) {
-            $options["section/$section"] = "-- ".get_section_name($COURSE, $sections[$section])." --";
+            $options["section/$section"] = "-- ".get_section_name($COURSE, $section)." --";
             foreach ($cmids as $cmid) {
                 $cm = $modinfo->cms[$cmid];
                 if (empty($modsused[$cm->modname]) or !$cm->uservisible) {

@@ -65,9 +65,6 @@ echo $OUTPUT->header();
 
 $modinfo = get_fast_modinfo($course);
 $usesections = course_format_uses_sections($course->format);
-if ($usesections) {
-    $sections = get_all_sections($course->id);
-}
 $cms = array();
 $resources = array();
 foreach ($modinfo->cms as $cm) {
@@ -116,7 +113,7 @@ foreach ($cms as $cm) {
         $printsection = '';
         if ($cm->sectionnum !== $currentsection) {
             if ($cm->sectionnum) {
-                $printsection = get_section_name($course, $sections[$cm->sectionnum]);
+                $printsection = get_section_name($course, $cm->sectionnum);
             }
             if ($currentsection !== '') {
                 $table->data[] = 'hr';

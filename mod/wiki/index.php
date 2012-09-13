@@ -64,9 +64,6 @@ if (!$wikis = get_all_instances_in_course("wiki", $course)) {
 }
 
 $usesections = course_format_uses_sections($course->format);
-if ($usesections) {
-    $sections = get_all_sections($course->id);
-}
 
 /// Print the list of instances (your module will probably extend this)
 
@@ -89,7 +86,7 @@ foreach ($wikis as $wiki) {
     $link = html_writer::link(new moodle_url('/mod/wiki/view.php', array('id' => $wiki->coursemodule)), $wiki->name, $linkcss);
 
     if ($usesections) {
-        $table->data[] = array(get_section_name($course, $sections[$wiki->section]), $link);
+        $table->data[] = array(get_section_name($course, $wiki->section), $link);
     } else {
         $table->data[] = array($link);
     }

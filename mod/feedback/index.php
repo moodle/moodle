@@ -61,9 +61,6 @@ if (! $feedbacks = get_all_instances_in_course("feedback", $course)) {
 }
 
 $usesections = course_format_uses_sections($course->format);
-if ($usesections) {
-    $sections = get_all_sections($course->id);
-}
 
 /// Print the list of instances (your module will probably extend this)
 
@@ -105,7 +102,7 @@ foreach ($feedbacks as $feedback) {
     $link = '<a '.$dimmedclass.' href="'.$viewurl->out().'">'.$feedback->name.'</a>';
 
     if ($usesections) {
-        $tabledata = array (get_section_name($course, $sections[$feedback->section]), $link);
+        $tabledata = array (get_section_name($course, $feedback->section), $link);
     } else {
         $tabledata = array ($link);
     }

@@ -37,9 +37,6 @@ if (!$cms = get_coursemodules_in_course('assignment', $course->id, 'cm.idnumber,
 }
 
 $usesections = course_format_uses_sections($course->format);
-if ($usesections) {
-    $sections = get_all_sections($course->id);
-}
 
 $timenow = time();
 
@@ -74,7 +71,7 @@ foreach ($modinfo->instances['assignment'] as $cm) {
     if ($usesections) {
         if ($cm->sectionnum !== $currentsection) {
             if ($cm->sectionnum) {
-                $printsection = get_section_name($course, $sections[$cm->sectionnum]);
+                $printsection = get_section_name($course, $cm->sectionnum);
             }
             if ($currentsection !== "") {
                 $table->data[] = 'hr';

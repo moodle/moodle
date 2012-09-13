@@ -79,7 +79,6 @@ if ($showlastaccess) {
 }
 
 $modinfo = get_fast_modinfo($course);
-$sections = get_all_sections($course->id);
 
 $sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
           FROM {course_modules} cm
@@ -105,7 +104,7 @@ foreach ($modinfo->sections as $sectionnum=>$section) {
             $sectioncell = new html_table_cell();
             $sectioncell->colspan = count($outlinetable->head);
 
-            $sectiontitle = get_section_name($course, $sections[$sectionnum]);
+            $sectiontitle = get_section_name($course, $sectionnum);
 
             $sectioncell->text = $OUTPUT->heading($sectiontitle, 3);
             $sectionrow->cells[] = $sectioncell;

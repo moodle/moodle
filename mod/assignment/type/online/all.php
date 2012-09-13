@@ -47,8 +47,6 @@ $PAGE->navbar->add($str->onlinetext);
 // get all the assignments in the course
 $assignments = get_all_instances_in_course('assignment',$course, $USER->id );
 
-$sections = get_all_sections($course->id);
-
 // array to hold display data
 $views = array();
 
@@ -98,7 +96,7 @@ foreach( $assignments as $assignment ) {
     $view = new stdClass;
 
     // start to build view object
-    $view->section = get_section_name($course, $sections[$assignment->section]);
+    $view->section = get_section_name($course, $assignment->section);
 
     $view->name = $assignment->name;
     $view->submitted = $submitted;

@@ -33,9 +33,6 @@
     }
 
     $usesections = course_format_uses_sections($course->format);
-    if ($usesections) {
-        $sections = get_all_sections($course->id);
-    }
 
     $table = new html_table();
     $table->width = '100%';
@@ -58,7 +55,7 @@
         if ($usesections) {
             if ($survey->section !== $currentsection) {
                 if ($survey->section) {
-                    $printsection = get_section_name($course, $sections[$survey->section]);
+                    $printsection = get_section_name($course, $survey->section);
                 }
                 if ($currentsection !== "") {
                     $table->data[] = 'hr';

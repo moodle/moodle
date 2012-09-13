@@ -38,9 +38,6 @@ if (! $chats = get_all_instances_in_course('chat', $course)) {
 }
 
 $usesections = course_format_uses_sections($course->format);
-if ($usesections) {
-    $sections = get_all_sections($course->id);
-}
 
 /// Print the list of instances (your module will probably extend this)
 
@@ -69,7 +66,7 @@ foreach ($chats as $chat) {
     $printsection = '';
     if ($chat->section !== $currentsection) {
         if ($chat->section) {
-            $printsection = get_section_name($course, $sections[$chat->section]);
+            $printsection = get_section_name($course, $chat->section);
         }
         if ($currentsection !== '') {
             $table->data[] = 'hr';

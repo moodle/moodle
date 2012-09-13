@@ -226,13 +226,12 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
 /// Casting $course->modinfo to string prevents one notice when the field is null
     if ($modinfo = unserialize((string)$course->modinfo)) {
         $section = 0;
-        $sections = get_all_sections($course->id);
         foreach ($modinfo as $mod) {
             if ($mod->mod == "label") {
                 continue;
             }
             if ($mod->section > 0 and $section <> $mod->section) {
-                $activities["section/$mod->section"] = '--- '.get_section_name($course, $sections[$mod->section]).' ---';
+                $activities["section/$mod->section"] = '--- '.get_section_name($course, $mod->section).' ---';
             }
             $section = $mod->section;
             $mod->name = strip_tags(format_string($mod->name, true));
@@ -476,13 +475,12 @@ function report_log_print_selector_form($course, $selecteduser=0, $selecteddate=
 /// Casting $course->modinfo to string prevents one notice when the field is null
     if ($modinfo = unserialize((string)$course->modinfo)) {
         $section = 0;
-        $sections = get_all_sections($course->id);
         foreach ($modinfo as $mod) {
             if ($mod->mod == "label") {
                 continue;
             }
             if ($mod->section > 0 and $section <> $mod->section) {
-                $activities["section/$mod->section"] = '--- '.get_section_name($course, $sections[$mod->section]).' ---';
+                $activities["section/$mod->section"] = '--- '.get_section_name($course, $mod->section).' ---';
             }
             $section = $mod->section;
             $mod->name = strip_tags(format_string($mod->name, true));
