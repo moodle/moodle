@@ -94,8 +94,9 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
         $pluginconfigs->add_child($pluginconfig);
 
 
-        // Define sources
+        // Define sources.
         $assign->set_source_table('assign', array('id' => backup::VAR_ACTIVITYID));
+        $pluginconfig->set_source_table('assign_plugin_config', array('assignment' => backup::VAR_PARENTID));
 
         if ($userinfo) {
             $submission->set_source_table('assign_submission',
@@ -103,14 +104,11 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
 
             $grade->set_source_table('assign_grades',
                                      array('assignment' => backup::VAR_PARENTID));
-            $pluginconfig->set_source_table('assign_plugin_config',
-                                     array('assignment' => backup::VAR_PARENTID));
 
-            // support 2 types of subplugins
+            // Support 2 types of subplugins.
             $this->add_subplugin_structure('assignsubmission', $submission, true);
             $this->add_subplugin_structure('assignfeedback', $grade, true);
         }
-
 
         // Define id annotations
         $submission->annotate_ids('user', 'userid');
