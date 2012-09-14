@@ -153,6 +153,7 @@ abstract class database_exporter {
                 $this->export_table_data($table, $row);
             }
             $this->finish_table_export($table);
+            $rs->close();
         }
         $this->finish_database_export();
     }
