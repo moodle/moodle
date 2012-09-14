@@ -117,7 +117,11 @@ require_capability('report/log:view', $context);
 
 add_to_log($course->id, "course", "report log", "report/log/index.php?id=$course->id", $course->id);
 
-$strlogs = get_string('logs');
+if (!empty($page)) {
+    $strlogs = get_string('logs'). ": ". get_string('page', 'report_log', $page+1);
+} else {
+    $strlogs = get_string('logs');
+}
 $stradministration = get_string('administration');
 $strreports = get_string('reports');
 
@@ -139,6 +143,7 @@ if (!empty($chooselog)) {
         case 'showashtml':
             if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
                 admin_externalpage_setup('reportlog');
+                $PAGE->set_title($course->shortname .': '. $strlogs);
                 echo $OUTPUT->header();
 
             } else {
