@@ -303,7 +303,7 @@ if (!empty($instanceid) && !empty($roleid)) {
     }
     echo '</div>';
     echo '<div>';
-    echo html_writer::label(get_string('withselectedusers', 'formactionselect'), 'formactionselect');
+    echo html_writer::label(get_string('withselectedusers'), 'formactionselect');
     $displaylist['messageselect.php'] = get_string('messageselectadd');
     echo html_writer::select($displaylist, 'formaction', '', array(''=>'choosedots'), array('id'=>'formactionselect'));
     echo $OUTPUT->help_icon('withselectedusers');
