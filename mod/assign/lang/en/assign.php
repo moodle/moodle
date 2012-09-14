@@ -91,7 +91,6 @@ $string['cutoffdatefromdatevalidation'] = 'Cut-off date must be after the allow 
 $string['defaultplugins'] = 'Default assignment settings';
 $string['defaultplugins_help'] = 'These settings define the defaults for all new assignments.';
 $string['defaultteam'] = 'Default team';
-$string['deleteallsubmissions'] = 'Delete all submissions';
 $string['deletepluginareyousure'] = 'Delete assignment plugin {$a}: are you sure?';
 $string['deletepluginareyousuremessage'] = 'You are about to completely delete the assignment plugin {$a}. This will completely delete everything in the database associated with this assignment plugin. Are you SURE you want to continue?';
 $string['deletingplugin'] = 'Deleting plugin {$a}.';
