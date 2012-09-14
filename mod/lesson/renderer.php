@@ -30,17 +30,22 @@ class mod_lesson_renderer extends plugin_renderer_base {
     /**
      * Returns the header for the lesson module
      *
-     * @param lesson $lesson
-     * @param string $currenttab
-     * @param bool $extraeditbuttons
-     * @param int $lessonpageid
+     * @param lesson $lesson a lesson object.
+     * @param string $currenttab current tab that is shown.
+     * @param bool   $extraeditbuttons if extra edit buttons should be displayed.
+     * @param int    $lessonpageid id of the lesson page that needs to be displayed.
+     * @param string $extrapagetitle String to appent to the page title.
      * @return string
      */
-    public function header($lesson, $cm, $currenttab = '', $extraeditbuttons = false, $lessonpageid = null) {
+    public function header($lesson, $cm, $currenttab = '', $extraeditbuttons = false, $lessonpageid = null, $extrapagetitle = null) {
         global $CFG;
 
         $activityname = format_string($lesson->name, true, $lesson->course);
-        $title = $this->page->course->shortname.": ".$activityname;
+        if (empty($extrapagetitle)) {
+            $title = $this->page->course->shortname.": ".$activityname;
+        } else {
+            $title = $this->page->course->shortname.": ".$activityname.": ".$extrapagetitle;
+        }
 
         // Build the buttons
         $context = context_module::instance($cm->id);

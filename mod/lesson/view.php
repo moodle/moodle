@@ -349,6 +349,7 @@ if ($pageid != LESSON_EOL) {
     $currenttab = 'view';
     $extraeditbuttons = true;
     $lessonpageid = $page->id;
+    $extrapagetitle = $page->title;
 
     if (($edit != -1) && $PAGE->user_allowed_editing()) {
         $USER->editing = $edit;
@@ -387,7 +388,7 @@ if ($pageid != LESSON_EOL) {
     }
 
     lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
-    echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid);
+    echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid, $extrapagetitle);
     if ($attemptflag) {
         // We are using level 3 header because attempt heading is a sub-heading of lesson title (MDL-30911).
         echo $OUTPUT->heading(get_string('attempt', 'lesson', $retries), 3);
