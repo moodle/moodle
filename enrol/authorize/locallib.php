@@ -415,7 +415,7 @@ function authorize_print_order($orderid)
         }
         $a = new stdClass;
         $a->upto = $upto;
-        $extrahtml = '<label for="amount">'.get_string('howmuch', 'enrol_authorize').'</label>' .
+        $extrahtml = '<label for="amount">'.get_string('howmuch', 'enrol_authorize').'</label> ' .
                      '<input id="amount" type="text" size="5" name="amount" value="'.$amount.'" /> ' .
                      get_string('canbecredit', 'enrol_authorize', $a) . '<br />';
         $table->data[] = array("<b>$strs->confirm:</b>",
