@@ -223,7 +223,6 @@ function forum_update_instance($forum, $mform) {
             forum_subscribe($user->id, $forum->id);
         }
     }
-
     forum_grade_item_update($forum);
 
     return true;
