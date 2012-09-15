@@ -2,6 +2,7 @@
 .qce-panel .yui3-widget-hd {background:url("sprite.png");background-repeat:repeat-x;background-color:#DDD;background-position: 0 -15px;border-bottom:1px solid #555;border-top:1px solid #fff;}
 .qce-panel .yui3-widget-hd h2 {margin:3px 5px 2px;padding:0;font-size:110%;}
 .qce-panel .yui3-widget-hd .close {width:25px;height:15px;position:absolute;top:3px;right:1em;cursor:pointer;background:url("sprite.png") no-repeat scroll 0 0 transparent;}
+.dir-rtl .qce-panel .yui3-widget-hd .close {right:auto;left:1em;}
 .qce-panel .yui3-overlay-content {background-color:#F6F6F6;border:1px solid #555;margin-top:-2px;margin-left:-2px;}
 .qce-panel .qce-enrollable-cohorts {margin:5px;}
 .qce-panel .qce-cohorts {border:1px solid #666;min-width:408px;background-color:#FFF;height:375px;overflow:auto;}
