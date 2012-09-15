@@ -1102,6 +1102,20 @@ abstract class moodle_database {
     public abstract function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0);
 
     /**
+     * Get all records from a table.
+     *
+     * This method works around potential memory problems and may improve performance,
+     * this method may block access to table until the recordset is closed.
+     *
+     * @param string $table Name of database table.
+     * @return moodle_recordset A moodle_recordset instance {@link function get_recordset}.
+     * @throws dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function export_table_recordset($table) {
+        return $this->get_recordset($table, array());
+    }
+
+    /**
      * Get a number of records as an array of objects where all the given conditions met.
      *
      * If the query succeeds and returns at least one record, the
