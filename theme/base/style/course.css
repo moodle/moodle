@@ -19,8 +19,10 @@
 .course-content .single-section .section-navigation { display: block; padding: 0.5em; margin-bottom: -0.5em; }
 .course-content .single-section .section-navigation .title { font-weight: bold; font-size: 108%; }
 .course-content .single-section .section-navigation .mdl-left { font-weight: normal; float: left; margin-right: 1em; }
+.dir-rtl .course-content .single-section .section-navigation .mdl-left {float:right;}
 .course-content .single-section .section-navigation .mdl-left .larrow { margin-right: 0.1em; }
 .course-content .single-section .section-navigation .mdl-right { font-weight: normal; float: right; margin-left: 1em; }
+.dir-rtl .course-content .single-section .section-navigation .mdl-right {float: left;}
 .course-content .single-section .section-navigation .mdl-right .rarrow { margin-left: 0.1em; }
 .course-content .single-section .section-navigation .mdl-bottom { margin-top: 0; }
 
