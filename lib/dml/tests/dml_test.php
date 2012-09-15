@@ -1300,6 +1300,36 @@ class dml_testcase extends database_driver_testcase {
         // note: fetching nulls, empties, LOBs already tested by test_insert_record() no needed here
     }
 
+    public function test_export_table_recordset() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $ids = array();
+        $ids[] = $DB->insert_record($tablename, array('course' => 3));
+        $ids[] = $DB->insert_record($tablename, array('course' => 5));
+        $ids[] = $DB->insert_record($tablename, array('course' => 4));
+        $ids[] = $DB->insert_record($tablename, array('course' => 3));
+        $ids[] = $DB->insert_record($tablename, array('course' => 2));
+        $ids[] = $DB->insert_record($tablename, array('course' => 1));
+        $ids[] = $DB->insert_record($tablename, array('course' => 0));
+
+        $rs = $DB->export_table_recordset($tablename);
+        $rids = array();
+        foreach ($rs as $record) {
+            $rids[] = $record->id;
+        }
+        $rs->close();
+        $this->assertEquals($ids, $rids, '', 0, 0, true);
+    }
+
     public function test_get_records() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();

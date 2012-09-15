@@ -905,6 +905,27 @@ class mysqli_native_moodle_database extends moodle_database {
         return $this->create_recordset($result);
     }
 
+    /**
+     * Get all records from a table.
+     *
+     * This method works around potential memory problems and may improve performance,
+     * this method may block access to table until the recordset is closed.
+     *
+     * @param string $table Name of database table.
+     * @return moodle_recordset A moodle_recordset instance {@link function get_recordset}.
+     * @throws dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function export_table_recordset($table) {
+        $sql = $this->fix_table_names("SELECT * FROM {{$table}}");
+
+        $this->query_start($sql, array(), SQL_QUERY_SELECT);
+        // MYSQLI_STORE_RESULT may eat all memory for large tables, unfortunately MYSQLI_USE_RESULT blocks other queries.
+        $result = $this->mysqli->query($sql, MYSQLI_USE_RESULT);
+        $this->query_end($result);
+
+        return $this->create_recordset($result);
+    }
+
     protected function create_recordset($result) {
         return new mysqli_native_moodle_recordset($result);
     }
