@@ -59,16 +59,11 @@ $courseid = $course->id;
 $contextname = print_context_name($context);
 
 // Get the user_selector we will need.
-// Teachers within a course just get to see the same list of people they can
-// assign roles to. Admins (people with moodle/role:manage) can run this report for any user.
-$options = array('context' => $context, 'roleid' => 0);
-if (has_capability('moodle/role:manage', $context)) {
-    $userselector = new potential_assignees_course_and_above('reportuser', $options);
-} else {
-    $userselector = roles_get_potential_user_selector($context, 'reportuser', $options);
-}
-$userselector->set_multiselect(false);
-$userselector->set_rows(10);
+// Teachers within a course just get to see the same list of enrolled users.
+// Admins (people with moodle/role:manage) can run this report for any user.
+$options = array('accesscontext' => $context);
+$userselector = new role_check_users_selector('reportuser', $options);
+$userselector->set_rows(20);
 
 // Work out an appropriate page title.
 $title = get_string('checkpermissionsin', 'role', $contextname);
