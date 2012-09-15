@@ -80,26 +80,26 @@ function form_init_date_js() {
         $module   = 'moodle-form-dateselector';
         $function = 'M.form.dateselector.init_date_selectors';
         $config = array(array(
-            'firstdayofweek'    =>  get_string('firstdayofweek', 'langconfig'),
-            'mon'               => strftime('%a', strtotime("Monday")),      // 5th Jan 1970 at 12pm
+            'firstdayofweek'    => get_string('firstdayofweek', 'langconfig'),
+            'mon'               => strftime('%a', strtotime("Monday")),
             'tue'               => strftime('%a', strtotime("Tuesday")),
             'wed'               => strftime('%a', strtotime("Wednesday")),
             'thu'               => strftime('%a', strtotime("Thursday")),
             'fri'               => strftime('%a', strtotime("Friday")),
             'sat'               => strftime('%a', strtotime("Saturday")),
             'sun'               => strftime('%a', strtotime("Sunday")),
-            'january'           => strftime('%B', strtotime("January")),       // 1st Jan 1970 at 12pm
-            'february'          => strftime('%B', strtotime("February")),
-            'march'             => strftime('%B', strtotime("March")),
-            'april'             => strftime('%B', strtotime("April")),
-            'may'               => strftime('%B', strtotime("May")),
-            'june'              => strftime('%B', strtotime("June")),
-            'july'              => strftime('%B', strtotime("July")),
-            'august'            => strftime('%B', strtotime("August")),
-            'september'         => strftime('%B', strtotime("September")),
-            'october'           => strftime('%B', strtotime("October")),
-            'november'          => strftime('%B', strtotime("November")),
-            'december'          => strftime('%B', strtotime("December"))
+            'january'           => strftime('%B', strtotime("January 1")),
+            'february'          => strftime('%B', strtotime("February 1")),
+            'march'             => strftime('%B', strtotime("March 1")),
+            'april'             => strftime('%B', strtotime("April 1")),
+            'may'               => strftime('%B', strtotime("May 1")),
+            'june'              => strftime('%B', strtotime("June 1")),
+            'july'              => strftime('%B', strtotime("July 1")),
+            'august'            => strftime('%B', strtotime("August 1")),
+            'september'         => strftime('%B', strtotime("September 1")),
+            'october'           => strftime('%B', strtotime("October 1")),
+            'november'          => strftime('%B', strtotime("November 1")),
+            'december'          => strftime('%B', strtotime("December 1"))
         ));
         $PAGE->requires->yui_module($module, $function, $config);
         $done = true;
@@ -1596,10 +1596,14 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         $unfiltered = array();
         if (null === $elementList) {
             // iterate over all elements, calling their exportValue() methods
-            $emptyarray = array();
             foreach (array_keys($this->_elements) as $key) {
-                if ($this->_elements[$key]->isFrozen() && !$this->_elements[$key]->_persistantFreeze){
-                    $value = $this->_elements[$key]->exportValue($emptyarray, true);
+                if ($this->_elements[$key]->isFrozen() && !$this->_elements[$key]->_persistantFreeze) {
+                    $varname = $this->_elements[$key]->_attributes['name'];
+                    $value = '';
+                    // If we have a default value then export it.
+                    if (isset($this->_defaultValues[$varname])) {
+                        $value = array($varname => $this->_defaultValues[$varname]);
+                    }
                 } else {
                     $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
                 }
@@ -1626,7 +1630,6 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         if (is_array($this->_constantValues)) {
             $unfiltered = HTML_QuickForm::arrayMerge($unfiltered, $this->_constantValues);
         }
-
         return $unfiltered;
     }
 

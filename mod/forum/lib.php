@@ -4125,15 +4125,34 @@ function forum_get_file_info($browser, $areas, $course, $cm, $context, $filearea
         return new forum_file_info_container($browser, $course, $cm, $context, $areas, $filearea);
     }
 
-    if (!$post = $DB->get_record('forum_posts', array('id' => $itemid))) {
+    static $cached = array();
+    // $cached will store last retrieved post, discussion and forum. To make sure that the cache
+    // is cleared between unit tests we check if this is the same session
+    if (!isset($cached['sesskey']) || $cached['sesskey'] != sesskey()) {
+        $cached = array('sesskey' => sesskey());
+    }
+
+    if (isset($cached['post']) && $cached['post']->id == $itemid) {
+        $post = $cached['post'];
+    } else if ($post = $DB->get_record('forum_posts', array('id' => $itemid))) {
+        $cached['post'] = $post;
+    } else {
         return null;
     }
 
-    if (!$discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion))) {
+    if (isset($cached['discussion']) && $cached['discussion']->id == $post->discussion) {
+        $discussion = $cached['discussion'];
+    } else if ($discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion))) {
+        $cached['discussion'] = $discussion;
+    } else {
         return null;
     }
 
-    if (!$forum = $DB->get_record('forum', array('id' => $cm->instance))) {
+    if (isset($cached['forum']) && $cached['forum']->id == $cm->instance) {
+        $forum = $cached['forum'];
+    } else if ($forum = $DB->get_record('forum', array('id' => $cm->instance))) {
+        $cached['forum'] = $forum;
+    } else {
         return null;
     }
 
@@ -4150,12 +4169,10 @@ function forum_get_file_info($browser, $areas, $course, $cm, $context, $filearea
         return null;
     }
     // Make sure groups allow this user to see this file
-    if ($discussion->groupid > 0) {
+    if ($discussion->groupid > 0 && !has_capability('moodle/site:accessallgroups', $context)) {
         $groupmode = groups_get_activity_groupmode($cm, $course);
-        if ($groupmode == SEPARATEGROUPS) {
-            if (!groups_is_member($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $context)) {
-                return null;
-            }
+        if ($groupmode == SEPARATEGROUPS && !groups_is_member($discussion->groupid)) {
+            return null;
         }
     }
 

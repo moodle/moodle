@@ -278,6 +278,7 @@ abstract class restore_structure_step extends restore_step {
     /**
      * As far as restore structure steps are implementing restore_plugin stuff, they need to
      * have the parent task available for wrapping purposes (get course/context....)
+     * @return restore_task|null
      */
     public function get_task() {
         return $this->task;

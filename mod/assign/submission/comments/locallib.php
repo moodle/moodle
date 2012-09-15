@@ -176,5 +176,4 @@ class assign_submission_comments extends assign_submission_plugin {
         return parent::is_enabled();
     }
 
-
 }

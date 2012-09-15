@@ -41,6 +41,7 @@ $string['dataroot'] = 'Katalog z danymi';
 $string['dbprefix'] = 'Prefiks tabel';
 $string['dirroot'] = 'Katalog Moodle';
 $string['environmenthead'] = 'Sprawdzam środowisko (ustawienia) ...';
+$string['environmentsub2'] = 'Każde wydanie Moodle ma pewne minimalne wymagania wersji PHP i pewną liczbę obowiązkowych rozszerzeń PHP. Pełna kontrola środowiska odbywa się przed każdą instalacją i aktualizacją. Prosimy o kontakt z administratorem serwera, jeśli nie wiesz jak zainstalować nową wersję lub włączyć rozszerzenie PHP.';
 $string['errorsinenvironment'] = 'Kontrola środowiska zakończona niepowodzeniem!';
 $string['installation'] = 'Instalacja';
 $string['langdownloaderror'] = 'Niestety język "{$a}" nie może zostać pobrany. Proces instalacji będzie kontynuowany w języku angielskim.';

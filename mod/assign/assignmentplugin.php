@@ -349,14 +349,47 @@ abstract class assign_plugin {
     }
 
     /**
+     * Given a field name and value should update the text for this field in the plugins submission or grade
+     *
+     * @param string $name Name of the field.
+     * @param string $value Updated text
+     * @param int $submissionorgradeid The id of the submission or grade
+     * @return bool - true if the value was updated
+     */
+    public function set_editor_text($name, $value, $submissionorgradeid) {
+        return false;
+    }
+
+    /**
+     * Given a field name and value should update the format for this field in the plugins submission or grade
+     *
+     * @param string $name Name of the field.
+     * @param int $format Updated format.
+     * @param int $submissionorgradeid The id of the submission or grade.
+     * @return bool - true if the value was updated
+     */
+    public function set_editor_format($name, $format, $submissionorgradeid) {
+        return false;
+    }
+
+    /**
+     * Return a list of the fields that can be exported or imported via text.
+     *
+     * @return array - The list of field names (strings) and descriptions. ($name => $description)
+     */
+    public function get_editor_fields() {
+        return array();
+    }
+
+    /**
      * Given a field name, should return the text of an editor field that is part of
      * this plugin. This is used when exporting to portfolio.
      *
      * @param string $name Name of the field.
-     * @param int $submissionid The id of the submission
+     * @param int $submissionorgradeid The id of the submission or grade
      * @return string - The text for the editor field
      */
-    public function get_editor_text($name, $submissionid) {
+    public function get_editor_text($name, $submissionorgradeid) {
         return '';
     }
 
@@ -371,7 +404,7 @@ abstract class assign_plugin {
         return array();
     }
 
-     /**
+    /**
      * Given a field name, should return the format of an editor field that is part of
      * this plugin. This is used when exporting to portfolio.
      *
@@ -383,7 +416,7 @@ abstract class assign_plugin {
         return 0;
     }
 
-     /**
+    /**
      * Return true if this plugin can upgrade an old Moodle 2.2 assignment of this type
      * and version.
      *
@@ -395,7 +428,7 @@ abstract class assign_plugin {
         return false;
     }
 
-     /**
+    /**
      * Upgrade the settings from the old assignment to the new one
      *
      * @param context $oldcontext The context for the old assignment module
@@ -520,6 +553,34 @@ abstract class assign_plugin {
                                     true,
                                     true,
                                     false);
+    }
+
+    /**
+     * This allows a plugin to render a page in the context of the assignment
+     *
+     * If the plugin creates a link to the assignment view.php page with
+     * The following required parameters:
+     *      id=coursemoduleid
+     *      plugin=type
+     *      pluginsubtype=assignfeedback|assignsubmission
+     *      pluginaction=customaction
+     *
+     * Then this function will be called to display the page with the pluginaction passed as action
+     * @param string $action The plugin specified action
+     * @return string
+     */
+    public function view_page($action) {
+        return '';
+    }
+
+    /**
+     * If this plugin should not include a column in the grading table or a row on the summary page
+     * return false
+     *
+     * @return bool
+     */
+    public function has_user_summary() {
+        return true;
     }
 
 }

@@ -17,8 +17,7 @@
 /**
  * Local stuff for cohort enrolment plugin.
  *
- * @package    enrol
- * @subpackage cohort
+ * @package    enrol_cohort
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,7 +35,7 @@ require_once($CFG->dirroot . '/enrol/locallib.php');
  */
 class enrol_cohort_handler {
     /**
-     * Event processor - cohort member added
+     * Event processor - cohort member added.
      * @param stdClass $ca
      * @return bool
      */
@@ -47,12 +46,12 @@ class enrol_cohort_handler {
             return true;
         }
 
-        // does any enabled cohort instance want to sync with this cohort?
+        // Does any enabled cohort instance want to sync with this cohort?
         $sql = "SELECT e.*, r.id as roleexists
                   FROM {enrol} e
              LEFT JOIN {role} r ON (r.id = e.roleid)
-                 WHERE customint1 = :cohortid AND enrol = 'cohort'
-              ORDER BY id ASC";
+                 WHERE e.customint1 = :cohortid AND e.enrol = 'cohort'
+              ORDER BY e.id ASC";
         if (!$instances = $DB->get_records_sql($sql, array('cohortid'=>$ca->cohortid))) {
             return true;
         }
@@ -60,14 +59,14 @@ class enrol_cohort_handler {
         $plugin = enrol_get_plugin('cohort');
         foreach ($instances as $instance) {
             if ($instance->status != ENROL_INSTANCE_ENABLED ) {
-                // no roles for disabled instances
+                // No roles for disabled instances.
                 $instance->roleid = 0;
             } else if ($instance->roleid and !$instance->roleexists) {
-                // invalid role - let's just enrol, they will have to create new sync and delete this one
+                // Invalid role - let's just enrol, they will have to create new sync and delete this one.
                 $instance->roleid = 0;
             }
             unset($instance->roleexists);
-            // no problem if already enrolled
+            // No problem if already enrolled.
             $plugin->enrol_user($instance, $ca->userid, $instance->roleid, 0, 0, ENROL_USER_ACTIVE);
         }
 
@@ -75,14 +74,14 @@ class enrol_cohort_handler {
     }
 
     /**
-     * Event processor - cohort member removed
+     * Event processor - cohort member removed.
      * @param stdClass $ca
      * @return bool
      */
     public static function member_removed($ca) {
         global $DB;
 
-        // does anything want to sync with this cohort?
+        // Does anything want to sync with this cohort?
         if (!$instances = $DB->get_records('enrol', array('customint1'=>$ca->cohortid, 'enrol'=>'cohort'), 'id ASC')) {
             return true;
         }
@@ -110,14 +109,14 @@ class enrol_cohort_handler {
     }
 
     /**
-     * Event processor - cohort deleted
+     * Event processor - cohort deleted.
      * @param stdClass $cohort
      * @return bool
      */
     public static function deleted($cohort) {
         global $DB;
 
-        // does anything want to sync with this cohort?
+        // Does anything want to sync with this cohort?
         if (!$instances = $DB->get_records('enrol', array('customint1'=>$cohort->id, 'enrol'=>'cohort'), 'id ASC')) {
             return true;
         }
@@ -149,7 +148,7 @@ class enrol_cohort_handler {
 function enrol_cohort_sync($courseid = NULL, $verbose = false) {
     global $CFG, $DB;
 
-    // purge all roles if cohort sync disabled, those can be recreated later here by cron or CLI
+    // Purge all roles if cohort sync disabled, those can be recreated later here by cron or CLI.
     if (!enrol_is_enabled('cohort')) {
         if ($verbose) {
             mtrace('Cohort sync plugin is disabled, unassigning all plugin roles and stopping.');
@@ -158,7 +157,7 @@ function enrol_cohort_sync($courseid = NULL, $verbose = false) {
         return 2;
     }
 
-    // unfortunately this may take a long time, this script can be interrupted without problems
+    // Unfortunately this may take a long time, this script can be interrupted without problems.
     @set_time_limit(0);
     raise_memory_limit(MEMORY_HUGE);
 
@@ -173,7 +172,7 @@ function enrol_cohort_sync($courseid = NULL, $verbose = false) {
     $unenrolaction = $plugin->get_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL);
 
 
-    // iterate through all not enrolled yet users
+    // Iterate through all not enrolled yet users.
     $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
     $sql = "SELECT cm.userid, e.id AS enrolid, ue.status
               FROM {cohort_members} cm
@@ -204,7 +203,7 @@ function enrol_cohort_sync($courseid = NULL, $verbose = false) {
     $rs->close();
 
 
-    // unenrol as necessary
+    // Unenrol as necessary.
     $sql = "SELECT ue.*, e.courseid
               FROM {user_enrolments} ue
               JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'cohort' $onecourse)
@@ -217,14 +216,14 @@ function enrol_cohort_sync($courseid = NULL, $verbose = false) {
         }
         $instance = $instances[$ue->enrolid];
         if ($unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
-            // remove enrolment together with group membership, grades, preferences, etc.
+            // Temove enrolment together with group membership, grades, preferences, etc.
             $plugin->unenrol_user($instance, $ue->userid);
             if ($verbose) {
                 mtrace("  unenrolling: $ue->userid ==> $instance->courseid via cohort $instance->customint1");
             }
 
         } else { // ENROL_EXT_REMOVED_SUSPENDNOROLES
-            // just disable and ignore any changes
+            // Just disable and ignore any changes.
             if ($ue->status != ENROL_USER_SUSPENDED) {
                 $plugin->update_user_enrol($instance, $ue->userid, ENROL_USER_SUSPENDED);
                 $context = context_course::instance($instance->courseid);
@@ -239,7 +238,7 @@ function enrol_cohort_sync($courseid = NULL, $verbose = false) {
     unset($instances);
 
 
-    // now assign all necessary roles to enrolled users - skip suspended instances and users
+    // Now assign all necessary roles to enrolled users - skip suspended instances and users.
     $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
     $sql = "SELECT e.roleid, ue.userid, c.id AS contextid, e.id AS itemid, e.courseid
               FROM {user_enrolments} ue
@@ -264,7 +263,7 @@ function enrol_cohort_sync($courseid = NULL, $verbose = false) {
     $rs->close();
 
 
-    // remove unwanted roles - sync role can not be changed, we only remove role when unenrolled
+    // Remove unwanted roles - sync role can not be changed, we only remove role when unenrolled.
     $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
     $sql = "SELECT ra.roleid, ra.userid, ra.contextid, ra.itemid, e.courseid
               FROM {role_assignments} ra
@@ -384,7 +383,7 @@ function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
 }
 
 /**
- * Check if cohort exists and user is allowed to enrol it
+ * Check if cohort exists and user is allowed to enrol it.
  *
  * @global moodle_database $DB
  * @param int $cohortid Cohort ID
@@ -426,10 +425,10 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
 
     list($sqlparents, $params) = $DB->get_in_or_equal(get_parent_contexts($context));
 
-    // Add some additional sensible conditions
+    // Add some additional sensible conditions.
     $tests = array('contextid ' . $sqlparents);
 
-    // Modify the query to perform the search if required
+    // Modify the query to perform the search if required.
     if (!empty($search)) {
         $conditions = array(
             'name',
@@ -452,17 +451,17 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
     $order = ' ORDER BY name ASC';
     $rs = $DB->get_recordset_sql($fields . $sql . $order, $params, $offset);
 
-    // Produce the output respecting parameters
+    // Produce the output respecting parameters.
     foreach ($rs as $c) {
-        // Track offset
+        // Track offset.
         $offset++;
-        // Check capabilities
+        // Check capabilities.
         $context = context::instance_by_id($c->contextid);
         if (!has_capability('moodle/cohort:view', $context)) {
             continue;
         }
         if ($limit === 0) {
-            // we have reached the required number of items and know that there are more, exit now
+            // we have reached the required number of items and know that there are more, exit now.
             $offset--;
             break;
         }
@@ -472,7 +471,7 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
             'users'=>$DB->count_records('cohort_members', array('cohortid'=>$c->id)),
             'enrolled'=>in_array($c->id, $enrolled)
         );
-        // Count items
+        // Count items.
         $limit--;
     }
     $rs->close();

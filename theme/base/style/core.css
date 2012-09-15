@@ -106,7 +106,6 @@ img.iconkbhelp {height:17px;width:49px;}
 .buttons .singlebutton form,
 .buttons .singlebutton div {display: inline;}
 .buttons .singlebutton input {margin:20px 5px;}
-.blink {text-decoration: blink;}
 .headermain {font-weight:bold;}
 #maincontent {display: block;height: 1px;overflow: hidden;}
 img.uihint {cursor: help;}

@@ -210,6 +210,7 @@ $string['restoretonewcourse'] = 'Restore as a new course';
 $string['restoringcourse'] = 'Course restoration in progress';
 $string['restoringcourseshortname'] = 'restoring';
 $string['restorerolemappings'] = 'Restore role mappings';
+$string['rootenrolmanual'] = 'Restore as manual enrolments';
 $string['rootsettings'] = 'Backup settings';
 $string['rootsettingusers'] = 'Include enrolled users';
 $string['rootsettinganonymize'] = 'Anonymize user information';

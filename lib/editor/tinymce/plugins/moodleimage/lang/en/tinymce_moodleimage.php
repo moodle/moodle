@@ -25,3 +25,4 @@
 $string['pluginname'] = 'Insert image';
 
 /* This plugin abuses strings from the standard TinyMCE advimage plugin, there is no need to duplicate them here. */
+$string['moodleimage:browseimage'] = 'Find or upload an image...';

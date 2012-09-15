@@ -609,7 +609,8 @@ class phpunit_util {
 
         // reset all static caches
         accesslib_clear_all_caches(true);
-        get_string_manager()->reset_caches();
+        get_string_manager()->reset_caches(true);
+        reset_text_filters_cache(true);
         events_get_handlers('reset');
         textlib::reset_caches();
         if (class_exists('repository')) {

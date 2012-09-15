@@ -295,18 +295,89 @@ class enrol_manual_plugin extends enrol_plugin {
         );
         return $bulkoperations;
     }
-}
 
-/**
- * Indicates API features that the enrol plugin supports.
- *
- * @param string $feature
- * @return mixed True if yes (some features may use other values)
- */
-function enrol_manual_supports($feature) {
-    switch($feature) {
-        case ENROL_RESTORE_TYPE: return ENROL_RESTORE_EXACT;
+    /**
+     * Restore instance and map settings.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $course
+     * @param int $oldid
+     */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+        global $DB;
+        // There is only I manual enrol instance allowed per course.
+        if ($instances = $DB->get_records('enrol', array('courseid'=>$data->courseid, 'enrol'=>'manual'), 'id')) {
+            $instance = reset($instances);
+            $instanceid = $instance->id;
+        } else {
+            $instanceid = $this->add_instance($course, (array)$data);
+        }
+        $step->set_mapping('enrol', $oldid, $instanceid);
+    }
 
-        default: return null;
+    /**
+     * Restore user enrolment.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $instance
+     * @param int $oldinstancestatus
+     * @param int $userid
+     */
+    public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
+        global $DB;
+
+        // Note: this is a bit tricky because other types may be converted to manual enrolments,
+        //       and manual is restricted to one enrolment per user.
+
+        $ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid));
+        $enrol = false;
+        if ($ue and $ue->status == ENROL_USER_ACTIVE) {
+            // We do not want to restrict current active enrolments, let's kind of merge the times only.
+            // This prevents some teacher lockouts too.
+            if ($data->status == ENROL_USER_ACTIVE) {
+                if ($data->timestart > $ue->timestart) {
+                    $data->timestart = $ue->timestart;
+                    $enrol = true;
+                }
+
+                if ($data->timeend == 0) {
+                    if ($ue->timeend != 0) {
+                        $enrol = true;
+                    }
+                } else if ($ue->timeend == 0) {
+                    $data->timeend = 0;
+                } else if ($data->timeend < $ue->timeend) {
+                    $data->timeend = $ue->timeend;
+                    $enrol = true;
+                }
+            }
+        } else {
+            if ($instance->status == ENROL_INSTANCE_ENABLED and $oldinstancestatus != ENROL_INSTANCE_ENABLED) {
+                // Make sure that user enrolments are not activated accidentally,
+                // we do it only here because it is not expected that enrolments are migrated to other plugins.
+                $data->status = ENROL_USER_SUSPENDED;
+            }
+            $enrol = true;
+        }
+
+        if ($enrol) {
+            $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
+        }
+    }
+
+    /**
+     * Restore role assignment.
+     *
+     * @param stdClass $instance
+     * @param int $roleid
+     * @param int $userid
+     * @param int $contextid
+     */
+    public function restore_role_assignment($instance, $roleid, $userid, $contextid) {
+        // This is necessary only because we may migrate other types to this instance,
+        // we do not use component in manual or self enrol.
+        role_assign($roleid, $userid, $contextid, '', 0);
     }
 }

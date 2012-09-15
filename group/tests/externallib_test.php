@@ -1,0 +1,204 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Group external PHPunit tests
+ *
+ * @package    core_group
+ * @category   external
+ * @copyright  2012 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.4
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+
+require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+require_once($CFG->dirroot . '/group/externallib.php');
+
+class core_group_external_testcase extends externallib_advanced_testcase {
+
+    /**
+     * Test create_groups
+     */
+    public function test_create_groups() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $course  = self::getDataGenerator()->create_course();
+
+        $group1 = array();
+        $group1['courseid'] = $course->id;
+        $group1['name'] = 'Group Test 1';
+        $group1['description'] = 'Group Test 1 description';
+        $group1['descriptionformat'] = FORMAT_MOODLE;
+        $group1['enrolmentkey'] = 'Test group enrol secret phrase';
+        $group2 = array();
+        $group2['courseid'] = $course->id;
+        $group2['name'] = 'Group Test 2';
+        $group2['description'] = 'Group Test 2 description';
+        $group3 = array();
+        $group3['courseid'] = $course->id;
+        $group3['name'] = 'Group Test 3';
+        $group3['description'] = 'Group Test 3 description';
+
+        // Set the required capabilities by the external function
+        $context = context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:managegroups', $context->id);
+        $this->assignUserCapability('moodle/course:view', $context->id, $roleid);
+
+        // Call the external function.
+        $groups = core_group_external::create_groups(array($group1, $group2));
+
+        // Checks against DB values
+        $this->assertEquals(2, count($groups));
+        foreach ($groups as $group) {
+            $dbgroup = $DB->get_record('groups', array('id' => $group['id']), '*', MUST_EXIST);
+            switch ($dbgroup->name) {
+                case $group1['name']:
+                    $groupdescription = $group1['description'];
+                    $groupcourseid = $group1['courseid'];
+                    $this->assertEquals($dbgroup->descriptionformat, $group1['descriptionformat']);
+                    $this->assertEquals($dbgroup->enrolmentkey, $group1['enrolmentkey']);
+                    break;
+                case $group2['name']:
+                    $groupdescription = $group2['description'];
+                    $groupcourseid = $group2['courseid'];
+                    break;
+                default:
+                    throw new moodle_exception('unknowgroupname');
+                    break;
+            }
+            $this->assertEquals($dbgroup->description, $groupdescription);
+            $this->assertEquals($dbgroup->courseid, $groupcourseid);
+        }
+
+        // Call without required capability
+        $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
+        $this->setExpectedException('required_capability_exception');
+        $froups = core_group_external::create_groups(array($group3));
+    }
+
+    /**
+     * Test get_groups
+     */
+    public function test_get_groups() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $course = self::getDataGenerator()->create_course();
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Group Test 1';
+        $group1data['description'] = 'Group Test 1 description';
+        $group1data['descriptionformat'] = FORMAT_MOODLE;
+        $group1data['enrolmentkey'] = 'Test group enrol secret phrase';
+        $group2data = array();
+        $group2data['courseid'] = $course->id;
+        $group2data['name'] = 'Group Test 2';
+        $group2data['description'] = 'Group Test 2 description';
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+
+        // Set the required capabilities by the external function
+        $context = context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:managegroups', $context->id);
+        $this->assignUserCapability('moodle/course:view', $context->id, $roleid);
+
+        // Call the external function.
+        $groups = core_group_external::get_groups(array($group1->id, $group2->id));
+
+        // Checks against DB values
+        $this->assertEquals(2, count($groups));
+        foreach ($groups as $group) {
+            $dbgroup = $DB->get_record('groups', array('id' => $group['id']), '*', MUST_EXIST);
+            switch ($dbgroup->name) {
+                case $group1->name:
+                    $groupdescription = $group1->description;
+                    $groupcourseid = $group1->courseid;
+                    $this->assertEquals($dbgroup->descriptionformat, $group1->descriptionformat);
+                    $this->assertEquals($dbgroup->enrolmentkey, $group1->enrolmentkey);
+                    break;
+                case $group2->name:
+                    $groupdescription = $group2->description;
+                    $groupcourseid = $group2->courseid;
+                    break;
+                default:
+                    throw new moodle_exception('unknowgroupname');
+                    break;
+            }
+            $this->assertEquals($dbgroup->description, $groupdescription);
+            $this->assertEquals($dbgroup->courseid, $groupcourseid);
+        }
+
+        // Call without required capability
+        $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
+        $this->setExpectedException('required_capability_exception');
+        $froups = core_group_external::get_groups(array($group1->id, $group2->id));
+    }
+
+    /**
+     * Test delete_groups
+     */
+    public function test_delete_groups() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $course = self::getDataGenerator()->create_course();
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Group Test 1';
+        $group1data['description'] = 'Group Test 1 description';
+        $group1data['descriptionformat'] = FORMAT_MOODLE;
+        $group1data['enrolmentkey'] = 'Test group enrol secret phrase';
+        $group2data = array();
+        $group2data['courseid'] = $course->id;
+        $group2data['name'] = 'Group Test 2';
+        $group2data['description'] = 'Group Test 2 description';
+        $group3data['courseid'] = $course->id;
+        $group3data['name'] = 'Group Test 3';
+        $group3data['description'] = 'Group Test 3 description';
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+        $group3 = self::getDataGenerator()->create_group($group3data);
+
+        // Set the required capabilities by the external function
+        $context = context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:managegroups', $context->id);
+        $this->assignUserCapability('moodle/course:view', $context->id, $roleid);
+
+        // Checks against DB values
+        $groupstotal = $DB->count_records('groups', array());
+        $this->assertEquals(3, $groupstotal);
+
+        // Call the external function.
+        core_group_external::delete_groups(array($group1->id, $group2->id));
+
+        // Checks against DB values
+        $groupstotal = $DB->count_records('groups', array());
+        $this->assertEquals(1, $groupstotal);
+
+        // Call without required capability
+        $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
+        $this->setExpectedException('required_capability_exception');
+        $froups = core_group_external::delete_groups(array($group3->id));
+    }
+}

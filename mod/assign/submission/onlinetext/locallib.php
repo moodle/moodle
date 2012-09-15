@@ -165,6 +165,15 @@ class assign_submission_onlinetext extends assign_submission_plugin {
     }
 
     /**
+     * Return a list of the text fields that can be imported/exported by this plugin
+     *
+     * @return array An array of field names and descriptions. (name=>description, ...)
+     */
+    public function get_editor_fields() {
+        return array('onlinetext' => get_string('pluginname', 'assignsubmission_comments'));
+    }
+
+    /**
      * Get the saved text content from the editor
      *
      * @param string $name
@@ -252,12 +261,12 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
             if (!$this->assignment->is_blind_marking()) {
                 $filename = str_replace('_', '', fullname($user)) . '_' .
-                            $this->assignment->get_uniqueid_for_user($userid) . '_' .
+                            $this->assignment->get_uniqueid_for_user($submission->userid) . '_' .
                             $this->get_name() . '_';
                 $prefix = clean_filename($filename);
             } else {
                 $filename = get_string('participant', 'assign') . '_' .
-                            $this->assignment->get_uniqueid_for_user($userid) . '_' .
+                            $this->assignment->get_uniqueid_for_user($submission->userid) . '_' .
                             $this->get_name() . '_';
                 $prefix = clean_filename($filename);
             }

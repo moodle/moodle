@@ -520,7 +520,7 @@ class backup_enrolments_structure_step extends backup_structure_step {
         $enrols = new backup_nested_element('enrols');
 
         $enrol = new backup_nested_element('enrol', array('id'), array(
-            'enrol', 'status', 'sortorder', 'name', 'enrolperiod', 'enrolstartdate',
+            'enrol', 'status', 'name', 'enrolperiod', 'enrolstartdate',
             'enrolenddate', 'expirynotify', 'expirytreshold', 'notifyall',
             'password', 'cost', 'currency', 'roleid',
             'customint1', 'customint2', 'customint3', 'customint4', 'customint5', 'customint6', 'customint7', 'customint8',
@@ -541,9 +541,8 @@ class backup_enrolments_structure_step extends backup_structure_step {
         $enrol->add_child($userenrolments);
         $userenrolments->add_child($enrolment);
 
-        // Define sources
-
-        $enrol->set_source_table('enrol', array('courseid' => backup::VAR_COURSEID));
+        // Define sources - the instances are restored using the same sortorder, we do not need to store it in xml and deal with it afterwards.
+        $enrol->set_source_sql("SELECT * FROM {enrol} WHERE courseid = :courseid ORDER BY sortorder", array('courseid' => backup::VAR_COURSEID));
 
         // User enrolments only added only if users included
         if ($users) {

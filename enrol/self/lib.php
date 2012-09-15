@@ -403,18 +403,68 @@ class enrol_self_plugin extends enrol_plugin {
         }
         return $actions;
     }
-}
 
-/**
- * Indicates API features that the enrol plugin supports.
- *
- * @param string $feature
- * @return mixed true if yes (some features may use other values)
- */
-function enrol_self_supports($feature) {
-    switch($feature) {
-        case ENROL_RESTORE_TYPE: return ENROL_RESTORE_EXACT;
+    /**
+     * Restore instance and map settings.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $course
+     * @param int $oldid
+     */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+        global $DB;
+        if ($step->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
+            $merge = false;
+        } else {
+            $merge = array(
+                'courseid'   => $data->courseid,
+                'enrol'      => $this->get_name(),
+                'roleid'     => $data->roleid,
+            );
+        }
+        if ($merge and $instances = $DB->get_records('enrol', $merge, 'id')) {
+            $instance = reset($instances);
+            $instanceid = $instance->id;
+        } else {
+            if (!empty($data->customint5)) {
+                if ($step->get_task()->is_samesite()) {
+                    // Keep cohort restriction unchanged - we are on the same site.
+                } else {
+                    // Use some id that can not exist in order to prevent self enrolment,
+                    // because we do not know what cohort it is in this site.
+                    $data->customint5 = -1;
+                }
+            }
+            $instanceid = $this->add_instance($course, (array)$data);
+        }
+        $step->set_mapping('enrol', $oldid, $instanceid);
+    }
 
-        default: return null;
+    /**
+     * Restore user enrolment.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $instance
+     * @param int $oldinstancestatus
+     * @param int $userid
+     */
+    public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
+        $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
+    }
+
+    /**
+     * Restore role assignment.
+     *
+     * @param stdClass $instance
+     * @param int $roleid
+     * @param int $userid
+     * @param int $contextid
+     */
+    public function restore_role_assignment($instance, $roleid, $userid, $contextid) {
+        // This is necessary only because we may migrate other types to this instance,
+        // we do not use component in manual or self enrol.
+        role_assign($roleid, $userid, $contextid, '', 0);
     }
 }

@@ -426,8 +426,9 @@
         <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="fullname" NEXT="summary"/>
         <FIELD NAME="summary" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" NEXT="summaryformat"/>
-        <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="summary" NEXT="reason"/>
-        <FIELD NAME="reason" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="requester"/>
+        <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="summary" NEXT="category"/>
+        <FIELD NAME="category" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="reason"/>
+        <FIELD NAME="reason" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="category" NEXT="requester"/>
         <FIELD NAME="requester" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="reason" NEXT="password"/>
         <FIELD NAME="password" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="requester"/>
       </FIELDS>

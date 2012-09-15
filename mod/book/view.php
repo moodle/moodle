@@ -114,7 +114,8 @@ $strbook  = get_string('modulename', 'mod_book');
 $strtoc   = get_string('toc', 'mod_book');
 
 // prepare header
-$PAGE->set_title($book->name);
+$pagetitle = $book->name . ": " . $chapter->title;
+$PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 
 book_add_fake_block($chapters, $chapter, $book, $cm, $edit);

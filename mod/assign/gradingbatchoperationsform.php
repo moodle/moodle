@@ -55,7 +55,16 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         if ($instance['duedate']) {
             $options['grantextension'] = get_string('grantextension', 'assign');
         }
-        $mform->addElement('hidden', 'action', 'batchgradingoperation');
+
+        foreach ($instance['feedbackplugins'] as $plugin) {
+            if ($plugin->is_visible() && $plugin->is_enabled()) {
+                foreach ($plugin->get_grading_batch_operations() as $action => $description) {
+                    $options['plugingradingbatchoperation_' . $plugin->get_type() . '_' . $action] = $description;
+                }
+            }
+        }
+
+        $mform->addElement('hidden', 'action', 'gradingbatchoperation');
         $mform->addElement('hidden', 'id', $instance['cm']);
         $mform->addElement('hidden', 'selectedusers', '', array('class'=>'selectedusers'));
         $mform->addElement('hidden', 'returnaction', 'grading');

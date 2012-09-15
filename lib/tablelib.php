@@ -915,11 +915,15 @@ class flexible_table {
     function download_buttons() {
         if ($this->is_downloadable() && !$this->is_downloading()) {
             $downloadoptions = $this->get_download_menu();
+
+            $downloadelements = new stdClass();
+            $downloadelements->formatsmenu = html_writer::select($downloadoptions,
+                    'download', $this->defaultdownloadformat, false);
+            $downloadelements->downloadbutton = '<input type="submit" value="'.
+                    get_string('download').'"/>';
             $html = '<form action="'. $this->baseurl .'" method="post">';
             $html .= '<div class="mdl-align">';
-            $html .= '<input type="submit" value="'.get_string('downloadas', 'table').'"/>';
-            $html .= html_writer::label(get_string('downloadoptions', 'table'), 'menudownload', false, array('class' => 'accesshide'));
-            $html .= html_writer::select($downloadoptions, 'download', $this->defaultdownloadformat, false);
+            $html .= html_writer::tag('label', get_string('downloadas', 'table', $downloadelements));
             $html .= '</div></form>';
 
             return $html;

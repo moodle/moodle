@@ -56,28 +56,29 @@ class mod_folder_renderer extends plugin_renderer_base {
         if (empty($dir['subdirs']) and empty($dir['files'])) {
             return '';
         }
-        $browser = get_file_browser();
         $result = '<ul>';
         foreach ($dir['subdirs'] as $subdir) {
             $image = $this->output->pix_icon(file_folder_icon(24), $subdir['dirname'], 'moodle');
-            $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')). html_writer::tag('span', s($subdir['dirname']), array('class' => 'fp-filename'));
+            $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
+                    html_writer::tag('span', s($subdir['dirname']), array('class' => 'fp-filename'));
             $filename = html_writer::tag('div', $filename, array('class' => 'fp-filename-icon'));
             $result .= html_writer::tag('li', $filename. $this->htmllize_tree($tree, $subdir));
         }
         foreach ($dir['files'] as $file) {
-            $fileinfo = $browser->get_file_info($tree->context, $file->get_component(),
-                    $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-            $url = $fileinfo->get_url(true);
             $filename = $file->get_filename();
-            if ($imageinfo = $fileinfo->get_imageinfo()) {
-                $fileurl = new moodle_url($fileinfo->get_url());
-                $image = $fileurl->out(false, array('preview' => 'tinyicon', 'oid' => $fileinfo->get_timemodified()));
+            $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(),
+                    $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $filename, false);
+            if (file_extension_in_typegroup($filename, 'web_image')) {
+                $image = $url->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
                 $image = html_writer::empty_tag('img', array('src' => $image));
             } else {
                 $image = $this->output->pix_icon(file_file_icon($file, 24), $filename, 'moodle');
             }
-            $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')). html_writer::tag('span', $filename, array('class' => 'fp-filename'));
-            $filename = html_writer::tag('span', html_writer::link($url, $filename), array('class' => 'fp-filename-icon'));
+            $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
+                    html_writer::tag('span', $filename, array('class' => 'fp-filename'));
+            $filename = html_writer::tag('span',
+                    html_writer::link($url->out(false, array('forcedownload' => 1)), $filename),
+                    array('class' => 'fp-filename-icon'));
             $result .= html_writer::tag('li', $filename);
         }
         $result .= '</ul>';

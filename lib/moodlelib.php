@@ -3295,6 +3295,11 @@ function get_user_key($script, $userid, $instance=null, $iprestriction=null, $va
 function update_user_login_times() {
     global $USER, $DB;
 
+    if (isguestuser()) {
+        // Do not update guest access times/ips for performance.
+        return true;
+    }
+
     $now = time();
 
     $user = new stdClass();
@@ -5964,9 +5969,11 @@ function get_user_max_upload_file_size($context, $sitebytes=0, $coursebytes=0, $
  * @param int $sizebytes Set maximum size
  * @param int $coursebytes Current course $course->maxbytes (in bytes)
  * @param int $modulebytes Current module ->maxbytes (in bytes)
+ * @param int|array $custombytes custom upload size/s which will be added to list,
+ *        Only value/s smaller then maxsize will be added to list.
  * @return array
  */
-function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
+function get_max_upload_sizes($sitebytes = 0, $coursebytes = 0, $modulebytes = 0, $custombytes = null) {
     global $CFG;
 
     if (!$maxsize = get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes)) {
@@ -5977,6 +5984,14 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
 
     $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152,
                       5242880, 10485760, 20971520, 52428800, 104857600);
+
+    // If custombytes is given then add it to the list.
+    if (!is_null($custombytes)) {
+        if (is_number($custombytes)) {
+            $custombytes = array((int)$custombytes);
+        }
+        $sizelist = array_unique(array_merge($sizelist, $custombytes));
+    }
 
     // Allow maxbytes to be selected if it falls outside the above boundaries
     if (isset($CFG->maxbytes) && !in_array(get_real_size($CFG->maxbytes), $sizelist)) {
@@ -6371,8 +6386,16 @@ interface string_manager {
 
     /**
      * Invalidates all caches, should the implementation use any
+     * @param bool $phpunitreset true means called from our PHPUnit integration test reset
      */
-    public function reset_caches();
+    public function reset_caches($phpunitreset = false);
+
+    /**
+     * Returns string revision counter, this is incremented after any
+     * string cache reset.
+     * @return int lang string revision counter, -1 if unknown
+     */
+    public function get_revision();
 }
 
 
@@ -6938,8 +6961,9 @@ class core_string_manager implements string_manager {
 
     /**
      * Clears both in-memory and on-disk caches
+     * @param bool $phpunitreset true means called from our PHPUnit integration test reset
      */
-    public function reset_caches() {
+    public function reset_caches($phpunitreset = false) {
         global $CFG;
         require_once("$CFG->libdir/filelib.php");
 
@@ -6949,10 +6973,40 @@ class core_string_manager implements string_manager {
         // clear the in-memory cache of loaded strings
         $this->cache = array();
 
+        if (!$phpunitreset) {
+            // Increment the revision counter.
+            $langrev = get_config('core', 'langrev');
+            $next = time();
+            if ($langrev !== false and $next <= $langrev and $langrev - $next < 60*60) {
+                // This resolves problems when reset is requested repeatedly within 1s,
+                // the < 1h condition prevents accidental switching to future dates
+                // because we might not recover from it.
+                $next = $langrev+1;
+            }
+            set_config('langrev', $next);
+        }
+
         // clear the cache containing the list of available translations
         // and re-populate it again
         fulldelete($this->menucache);
         $this->get_list_of_translations(true);
+    }
+
+    /**
+     * Returns string revision counter, this is incremented after any
+     * string cache reset.
+     * @return int lang string revision counter, -1 if unknown
+     */
+    public function get_revision() {
+        global $CFG;
+        if (!$this->usediskcache) {
+            return -1;
+        }
+        if (isset($CFG->langrev)) {
+            return (int)$CFG->langrev;
+        } else {
+            return -1;
+        }
     }
 }
 
@@ -7168,8 +7222,20 @@ class install_string_manager implements string_manager {
 
     /**
      * This implementation does not use any caches
+     * @param bool $phpunitreset true means called from our PHPUnit integration test reset
      */
-    public function reset_caches() {}
+    public function reset_caches($phpunitreset = false) {
+        // Nothing to do.
+    }
+
+    /**
+     * Returns string revision counter, this is incremented after any
+     * string cache reset.
+     * @return int lang string revision counter, -1 if unknown
+     */
+    public function get_revision() {
+        return -1;
+    }
 }
 
 

@@ -338,6 +338,9 @@ class assign_submission_status implements renderable {
     /** @var bool blindmarking - Should we hide student identities from graders? */
     public $blindmarking = false;
 
+    /** @var string gradingcontrollerpreview */
+    public $gradingcontrollerpreview = '';
+
     /**
      * constructor
      *
@@ -371,7 +374,7 @@ class assign_submission_status implements renderable {
                                 $submissiongroupmemberswhoneedtosubmit, $submissionsenabled,
                                 $locked, $graded, $duedate, $cutoffdate, $submissionplugins, $returnaction, $returnparams,
                                 $coursemoduleid, $courseid, $view, $canedit, $cansubmit, $canviewfullnames, $extensionduedate,
-                                $context, $blindmarking) {
+                                $context, $blindmarking, $gradingcontrollerpreview) {
         $this->allowsubmissionsfromdate = $allowsubmissionsfromdate;
         $this->alwaysshowdescription = $alwaysshowdescription;
         $this->submission = $submission;
@@ -396,6 +399,7 @@ class assign_submission_status implements renderable {
         $this->extensionduedate = $extensionduedate;
         $this->context = $context;
         $this->blindmarking = $blindmarking;
+        $this->gradingcontrollerpreview = $gradingcontrollerpreview;
     }
 
 }
